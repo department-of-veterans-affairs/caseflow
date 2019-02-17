@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190212142949) do
+ActiveRecord::Schema.define(version: 20190215194659) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
   end
 
   create_table "appeals", force: :cascade do |t|
+    t.string "closest_regional_office"
     t.string "docket_type"
     t.datetime "established_at"
     t.datetime "establishment_attempted_at"
@@ -111,6 +112,8 @@ ActiveRecord::Schema.define(version: 20190212142949) do
 
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
+    t.integer "appeal_id"
+    t.string "appeal_type"
     t.string "city"
     t.string "classification"
     t.datetime "created_at", null: false
@@ -120,7 +123,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "name"
     t.string "state"
     t.datetime "updated_at", null: false
-    t.string "veteran_file_number", null: false
+    t.string "veteran_file_number"
     t.string "zip_code"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
@@ -242,6 +245,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
   create_table "decision_issues", force: :cascade do |t|
     t.string "benefit_type"
     t.date "caseflow_decision_date"
+    t.datetime "created_at"
     t.integer "decision_review_id"
     t.string "decision_review_type"
     t.string "decision_text"
@@ -583,6 +587,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
+    t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
     t.string "dispatched_to_station"
@@ -767,7 +772,6 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
     t.string "contested_rating_issue_diagnostic_code"
-    t.string "contested_rating_issue_disability_code"
     t.string "contested_rating_issue_profile_date"
     t.string "contested_rating_issue_reference_id"
     t.datetime "created_at"
@@ -778,7 +782,6 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "decision_sync_error"
     t.datetime "decision_sync_processed_at"
     t.datetime "decision_sync_submitted_at"
-    t.string "description"
     t.string "disposition"
     t.integer "end_product_establishment_id"
     t.bigint "ineligible_due_to_id"
@@ -791,11 +794,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.integer "parent_request_issue_id"
     t.string "ramp_claim_id"
     t.datetime "rating_issue_associated_at"
-    t.datetime "rating_issue_profile_date"
-    t.string "rating_issue_reference_id"
     t.datetime "removed_at"
-    t.bigint "review_request_id"
-    t.string "review_request_type"
     t.string "unidentified_issue_text"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
@@ -809,8 +808,6 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
     t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
-    t.index ["rating_issue_reference_id"], name: "index_request_issues_on_rating_issue_reference_id"
-    t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 
   create_table "request_issues_updates", force: :cascade do |t|

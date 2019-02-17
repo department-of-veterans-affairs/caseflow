@@ -39,7 +39,7 @@ class NonratingRequestIssueModal extends React.Component {
       selectedNonratingIssueId: '',
       ineligibleDueToId: null,
       ineligibleReason: null,
-      reviewRequestTitle: null
+      decisionReviewTitle: null
     };
   }
 
@@ -58,7 +58,7 @@ class NonratingRequestIssueModal extends React.Component {
       selectedNonratingIssueId: '',
       ineligibleDueToId: null,
       ineligibleReason: null,
-      reviewRequestTitle: null
+      decisionReviewTitle: null
     });
   }
 
@@ -91,7 +91,7 @@ class NonratingRequestIssueModal extends React.Component {
         description: activeNonratingRequestIssue.description,
         decisionDate: activeNonratingRequestIssue.decisionDate,
         ineligibleDueToId: activeNonratingRequestIssue.id,
-        reviewRequestTitle: activeNonratingRequestIssue.reviewRequestTitle,
+        decisionReviewTitle: activeNonratingRequestIssue.decisionReviewTitle,
         ineligibleReason: 'duplicate_of_nonrating_issue_in_active_review'
       });
     }
@@ -133,7 +133,7 @@ class NonratingRequestIssueModal extends React.Component {
       decisionDate: this.state.decisionDate,
       ineligibleDueToId: this.state.ineligibleDueToId,
       ineligibleReason: this.state.ineligibleReason,
-      reviewRequestTitle: this.state.reviewRequestTitle,
+      decisionReviewTitle: this.state.decisionReviewTitle,
       isRating: false,
       timely: this.isTimely()
     };

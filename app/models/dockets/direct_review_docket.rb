@@ -13,7 +13,7 @@ class DirectReviewDocket < Docket
   end
 
   def time_until_due_of_oldest_appeal
-    oldest_target = appeals(priority: false).limit(1).first.target_decision_date
+    oldest_target = nonpriority_nonihp_ready_appeals.limit(1).first.target_decision_date
     time_until_due = Integer(oldest_target - Time.zone.today.to_date) - DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION
     time_until_due.clamp(0, time_until_due_of_new_appeal)
   end
@@ -45,5 +45,13 @@ class DirectReviewDocket < Docket
 
   def all_nonpriority
     Appeal.all_nonpriority.where(docket_type: docket_type)
+  end
+
+  def nonpriority_nonihp_ready_appeals
+    docket_appeals
+      .merge(Appeal.ready_for_distribution)
+      .merge(Appeal.all_nonpriority)
+      .merge(Appeal.non_ihp)
+      .order("receipt_date")
   end
 end
