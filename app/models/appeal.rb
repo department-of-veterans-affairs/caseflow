@@ -51,6 +51,8 @@ class Appeal < DecisionReview
       .group("appeals.id")
       .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
               DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+      .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
+              MailTask.blocking_subclasses, Task.inactive_statuses, 0)
   }
 
   scope :non_ihp, lambda {

@@ -65,8 +65,53 @@ describe Appeal do
 
       expect(subject.include?(direct_review_appeal)).to eq(true)
       expect(subject.include?(evidence_submission_appeal)).to eq(false)
-      # TODO: support hearing appeals
-      # expect(subject.include?(hearing_appeal)).to eq(false)
+      expect(subject.include?(hearing_appeal)).to eq(false)
+    end
+
+    context "if mail tasks exist" do
+      let(:blocking_mail_task_class) { CongressionalInterestMailTask }
+      let(:nonblocking_mail_task_class) { AodMotionMailTask }
+      let(:user) { FactoryBot.create(:user) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
+      end
+
+      let!(:blocked_appeal) do
+        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
+        blocking_mail_task_class.create_from_params({
+                                                      appeal: appeal,
+                                                      parent_id: appeal.root_task.id
+                                                    }, user)
+        appeal
+      end
+      let!(:nonblocked_appeal) do
+        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
+        nonblocking_mail_task_class.create_from_params({
+                                                         appeal: appeal,
+                                                         parent_id: appeal.root_task.id
+                                                       }, user)
+        appeal
+      end
+      let!(:nonblocked_appeal2) do
+        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
+        blocking_mail_task_class.create_from_params({
+                                                      appeal: appeal,
+                                                      parent_id: appeal.root_task.id
+                                                    }, user)
+        MailTask.find_by(appeal: appeal).update!(status: "completed")
+        appeal
+      end
+
+      it "does not return appeals with open blocking mail tasks" do
+        expect(subject.include?(blocked_appeal)).to eq(false)
+      end
+      it "returns appeals with open nonblocking mail tasks" do
+        expect(subject.include?(nonblocked_appeal)).to eq(true)
+      end
+      it "does not return appeals with completed blocking mail tasks " do
+        expect(subject.include?(nonblocked_appeal2)).to eq(true)
+      end
     end
   end
 
