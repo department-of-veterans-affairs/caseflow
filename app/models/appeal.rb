@@ -27,16 +27,12 @@ class Appeal < DecisionReview
   }
 
   scope :all_priority, lambda {
-    unduped_ids = join_aod_motions
+    ids = join_aod_motions
       .where("advance_on_docket_motions.created_at > appeals.established_at")
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
-      .select("appeals.id")
-
-    # The above query can return some appeals more than once due to the joins,
-    # and adding .distinct throws an error when we combine with scopes with an .order.
-    where(id: unduped_ids)
+      .group("appeals.id")
   }
 
   # rubocop:disable Metrics/LineLength
