@@ -27,7 +27,7 @@ class Appeal < DecisionReview
   }
 
   scope :all_priority, lambda {
-    ids = join_aod_motions
+    join_aod_motions
       .where("advance_on_docket_motions.created_at > appeals.established_at")
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
