@@ -62,7 +62,7 @@ class Docket
   def assign_judge_tasks_for_appeals(appeals, judge)
     appeals.map do |appeal|
       Rails.logger.info("Assigning judge task for appeal #{appeal.id}")
-      task = JudgeTask.create!(appeal: appeal,
+      task = JudgeAssignTask.create!(appeal: appeal,
                                parent: appeal.root_task,
                                appeal_type: Appeal.name,
                                assigned_at: Time.zone.now,
