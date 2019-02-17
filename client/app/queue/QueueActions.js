@@ -473,14 +473,18 @@ export const reassignTasksToUser = ({
     });
 }));
 
-const refreshLegacyTasks = (dispatch, userId) =>
-  ApiUtil.get(`/queue/${userId}`, { timeout: { response: 5 * 60 * 1000 } }).
-    then((response) =>
-      dispatch(onReceiveQueue({
-        amaTasks: {},
-        ...associateTasksWithAppeals(JSON.parse(response.text))
-      }))
-    );
+const refreshTasks = (dispatch, userId, userRole) => {
+  return Promise.all([
+    ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`),
+    ApiUtil.get(`/queue/${userId}`, { timeout: { response: 5 * 60 * 1000 } })
+  ]).then((responses) => {
+    dispatch(onReceiveQueue(extractAppealsAndAmaTasks(responses[0].body.tasks.data)));
+    dispatch(onReceiveQueue({
+      amaTasks: {},
+      ...associateTasksWithAppeals(JSON.parse(responses[1].text))
+    }));
+  });
+};
 
 const setPendingDistribution = (distribution) => ({
   type: ACTIONS.SET_PENDING_DISTRIBUTION,
@@ -496,7 +500,7 @@ const distributionError = (dispatch, userId, error) => {
 
   if (firstError.error === 'unassigned_cases') {
     dispatch(setPendingDistribution({ status: 'completed' }));
-    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+    refreshTasks(dispatch, userId, 'judge').then(() => dispatch(setPendingDistribution(null)));
   } else {
     dispatch(setPendingDistribution(null));
   }
@@ -515,12 +519,14 @@ const receiveDistribution = (dispatch, userId, response) => {
       detail: `${caseN} new ${pluralize('case', caseN)} have been distributed from the docket.`
     }));
 
-    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+    refreshTasks(dispatch, userId, 'judge').then(() => dispatch(setPendingDistribution(null)));
   } else {
-    // Poll until the distribution completes or errors out.
-    ApiUtil.get(`/distributions/${distribution.id}`).
-      then((resp) => receiveDistribution(dispatch, userId, resp)).
-      catch((error) => distributionError(dispatch, userId, error));
+    setTimeout(() => {
+      // Poll until the distribution completes or errors out.
+      ApiUtil.get(`/distributions/${distribution.id}`).
+        then((resp) => receiveDistribution(dispatch, userId, resp)).
+        catch((error) => distributionError(dispatch, userId, error));
+    }, 2000);
   }
 };
 
