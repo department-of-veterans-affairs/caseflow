@@ -116,8 +116,7 @@ class Fakes::BGSService
         RequestIssue.find_or_create_by!(
           decision_review: hlr,
           benefit_type: "compensation",
-          end_product_establishment: epe,
-          contested_rating_issue_reference_id: in_active_review_reference_id
+          end_product_establishment: epe
         ) do |reqi|
           reqi.contested_rating_issue_profile_date = (Time.zone.today - 100).to_s
         end
@@ -140,7 +139,6 @@ class Fakes::BGSService
           decision_review: previous_hlr,
           benefit_type: "compensation",
           end_product_establishment: cleared_epe,
-          rating_issue_reference_id: completed_review_reference_id,
           contention_reference_id: 999
         ) do |reqi|
           reqi.rating_issue_profile_date = Time.zone.today - 100

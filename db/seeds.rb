@@ -962,9 +962,9 @@ class SeedDB
 
     create_higher_level_reviews_and_supplemental_claims
 
-    create_ama_hearing_appeals
-    create_board_grant_tasks
-    create_veteran_record_request_tasks
+    # create_ama_hearing_appeals
+    # create_board_grant_tasks 
+    # create_veteran_record_request_tasks
 
     FetchHearingLocationsForVeteransJob.perform_now
 
