@@ -141,7 +141,7 @@ class Fakes::BGSService
           end_product_establishment: cleared_epe,
           contention_reference_id: 999
         ) do |reqi|
-          reqi.rating_issue_profile_date = Time.zone.today - 100
+          # reqi.rating_issue_profile_date = Time.zone.today - 100
         end
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
