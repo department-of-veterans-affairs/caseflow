@@ -1052,7 +1052,7 @@ describe Appeal do
       it "waiting for a decision" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:decision_in_progress)
-        expect(status[:details]).to be_empty
+        expect(status[:details][:decision_timeliness]).to eq([1, 2])
       end
     end
 
@@ -1097,8 +1097,8 @@ describe Appeal do
       it "effectuation had an ep" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:bva_decision_effectuation)
-        expect(status[:details][:bvaDecisionDate].to_date).to eq((receipt_date + 60.days).to_date)
-        expect(status[:details][:aojDecisionDate].to_date).to eq((receipt_date + 100.days).to_date)
+        expect(status[:details][:bva_decision_date].to_date).to eq((receipt_date + 60.days).to_date)
+        expect(status[:details][:aoj_decision_date].to_date).to eq((receipt_date + 100.days).to_date)
       end
     end
 
@@ -1198,8 +1198,8 @@ describe Appeal do
             { description: "Partial loss of upper jaw", disposition: "granted" },
             description: "Partial loss of hard palate", disposition: "denied"
           )
-          expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
-          expect(status[:details][:aojDecisionDate]).to eq((receipt_date + 101.days).to_date)
+          expect(status[:details][:bva_decision_date]).to eq((receipt_date + 60.days).to_date)
+          expect(status[:details][:aoj_decision_date]).to eq((receipt_date + 101.days).to_date)
         end
       end
 
@@ -1213,8 +1213,8 @@ describe Appeal do
             { description: "Partial loss of hard palate", disposition: "remanded" },
             description: "Partial loss of hard palate", disposition: "remanded"
           )
-          expect(status[:details][:bvaDecisionDate]).to be_nil
-          expect(status[:details][:aojDecisionDate]).to be_nil
+          expect(status[:details][:bva_decision_date]).to be_nil
+          expect(status[:details][:aoj_decision_date]).to be_nil
         end
       end
     end
