@@ -50,6 +50,7 @@ else
 end
 
 ENV["TZ"] ||= "America/New York"
+Time.zone = ENV["TZ"].tr(" ", "_")
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options = ::Selenium::WebDriver::Chrome::Options.new

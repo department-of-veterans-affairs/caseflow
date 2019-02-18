@@ -9,7 +9,6 @@ feature "Appeal Intake" do
     FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
     FeatureToggle.enable!(:intake_legacy_opt_in, users: [current_user.css_id])
 
-    #Time.zone = "America/New_York"
     Timecop.freeze(post_ramp_start_date)
   end
 
@@ -132,13 +131,13 @@ feature "Appeal Intake" do
     click_on "Search"
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: future_date.strftime("%D")
+    fill_in "What is the Receipt Date of this form?", with: future_date.mdY
     click_intake_continue
 
     expect(page).to have_content("Receipt date cannot be in the future.")
     expect(page).to have_content("Please select an option.")
 
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.strftime("%D")
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
@@ -185,7 +184,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: profile_date.strftime("%D")
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("2 issues")
@@ -232,7 +231,7 @@ feature "Appeal Intake" do
 
     visit "/intake"
 
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.strftime("%D")
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
@@ -374,7 +373,7 @@ feature "Appeal Intake" do
     duplicate_reference_id = "xyz789"
     old_reference_id = "old1234"
     promulgation_date = receipt_date - 40.days
-    rating_date = promulgation_date.strftime("%m/%d/%Y")
+    rating_date = promulgation_date.mdY
 
     Generators::Rating.build(
       participant_id: veteran.participant_id,
@@ -465,7 +464,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: profile_date.strftime("%D")
+      date: profile_date.mdY
     )
     expect(page).to have_content("2 issues")
 
@@ -515,7 +514,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Another Description for Active Duty Adjustments",
-      date: untimely_date.strftime("%D")
+      date: untimely_date.mdY
     )
     add_untimely_exemption_response("No", "I am an untimely exemption")
     expect(page).to have_content("6 issues")
@@ -544,7 +543,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Drill Pay Adjustments",
       description: "A nonrating issue before AMA",
-      date: pre_ramp_start_date.strftime("%D")
+      date: pre_ramp_start_date.mdY
     )
     expect(page).to have_content(
       "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
@@ -755,7 +754,7 @@ feature "Appeal Intake" do
       benefit_type: "Education",
       category: "Accrued",
       description: "Description for Accrued",
-      date: profile_date.strftime("%D")
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("Description for Accrued")
@@ -766,7 +765,7 @@ feature "Appeal Intake" do
       benefit_type: "Vocational Rehabilitation and Employment",
       category: "Basic Eligibility",
       description: "Description for basic eligibility",
-      date: profile_date.strftime("%D")
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("Description for basic eligibility")
@@ -824,7 +823,7 @@ feature "Appeal Intake" do
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",
-          date: profile_date.strftime("%D"),
+          date: profile_date.mdY,
           legacy_issues: true
         )
 
@@ -854,10 +853,6 @@ feature "Appeal Intake" do
         )
 
         click_intake_finish
-
-        binding.pry
-
-        # server error when timezone set
 
         ineligible_checklist = find("ul.cf-ineligible-checklist")
         expect(ineligible_checklist).to have_content(
@@ -957,7 +952,7 @@ feature "Appeal Intake" do
 
       visit "/intake/add_issues"
       click_intake_add_issue
-      expect(page).to have_content(decision_issue_date.strftime("%m/%d/%Y"))
+      expect(page).to have_content(decision_issue_date.mdY)
       expect(page).to have_content("granted issue")
       expect(page).to have_content("dismissed issue")
     end

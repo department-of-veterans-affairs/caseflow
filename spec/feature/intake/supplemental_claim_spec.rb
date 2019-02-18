@@ -8,8 +8,7 @@ feature "Supplemental Claim Intake" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 11, 28))
+    Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -49,7 +48,7 @@ feature "Supplemental Claim Intake" do
 
   let(:inaccessible) { false }
 
-  let(:receipt_date) { Date.new(2018, 9, 20) }
+  let(:receipt_date) { Time.zone.today - 30.days }
 
   let(:benefit_type) { "compensation" }
 
@@ -59,7 +58,7 @@ feature "Supplemental Claim Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { Time.zone.local(2018, 9, 15) }
+  let(:profile_date) { receipt_date - 15.days }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -169,13 +168,13 @@ feature "Supplemental Claim Intake" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
+    fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
     click_intake_continue
     expect(page).to have_content(
       "Receipt date cannot be in the future."
     )
 
-    fill_in "What is the Receipt Date of this form?", with: "09/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     expect(page).to_not have_content("Please select the claimant listed on the form.")
     within_fieldset("Is the claimant someone other than the Veteran?") do
@@ -238,7 +237,7 @@ feature "Supplemental Claim Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "10/27/2018"
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("2 issues")
@@ -361,7 +360,7 @@ feature "Supplemental Claim Intake" do
       contested_rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
-      decision_date: 1.month.ago.to_date
+      decision_date: profile_date.to_date
     )
 
     # skip the sync call since all edit requests require resyncing
@@ -371,7 +370,7 @@ feature "Supplemental Claim Intake" do
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
     expect(page).to have_content("Ed Merica (#{veteran_file_number})")
-    expect(page).to have_content("09/20/2018")
+    expect(page).to have_content(receipt_date.mdY)
     expect(page).to_not have_content("Informal conference request")
     expect(page).to_not have_content("Same office request")
     expect(page).to have_content("PTSD denied")
@@ -434,7 +433,7 @@ feature "Supplemental Claim Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "10/27/2018"
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("1 issue")
@@ -529,7 +528,7 @@ feature "Supplemental Claim Intake" do
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",
-          date: "04/19/2018"
+          date: profile_date.mdY
         )
 
         expect(page).to have_content("1 issue")
@@ -584,7 +583,7 @@ feature "Supplemental Claim Intake" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "10/27/2018"
+        date: profile_date.mdY
       )
       expect(page).to have_content("2 issues")
       # SC is always timely
@@ -628,7 +627,7 @@ feature "Supplemental Claim Intake" do
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
-        date: "10/19/2017"
+        date: (profile_date - 400.days).mdY
       )
       expect(page).to have_content(
         "A nonrating issue before AMA #{ineligible_constants.before_ama}"
@@ -686,7 +685,7 @@ feature "Supplemental Claim Intake" do
                decision_review: supplemental_claim,
                issue_category: "Active Duty Adjustments",
                nonrating_issue_description: "Description for Active Duty Adjustments",
-               decision_date: 1.month.ago.to_date,
+               decision_date: profile_date.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
              )).to_not be_nil
 
@@ -802,7 +801,7 @@ feature "Supplemental Claim Intake" do
           add_intake_nonrating_issue(
             category: "Accrued",
             description: "I am a description",
-            date: "10/25/2017"
+            date: profile_date.mdY
           )
 
           expect(page).to_not have_content("Establish EP")
@@ -896,7 +895,7 @@ feature "Supplemental Claim Intake" do
           add_intake_nonrating_issue(
             category: "Active Duty Adjustments",
             description: "Description for Active Duty Adjustments",
-            date: "10/25/2017",
+            date: profile_date.mdY,
             legacy_issues: true
           )
 
