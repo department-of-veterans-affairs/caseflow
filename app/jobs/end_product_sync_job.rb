@@ -6,6 +6,10 @@ class EndProductSyncJob < CaseflowJob
   def perform(end_product_establishment_id)
     RequestStore.store[:current_user] = User.system_user
 
-    EndProductEstablishment.find(end_product_establishment_id).sync!
+    begin
+      EndProductEstablishment.find(end_product_establishment_id).sync!
+    rescue StandardError => err
+      Raven.capture_exception(err, extra: { end_product_establishment_id: end_product_establishment_id })
+    end
   end
 end
