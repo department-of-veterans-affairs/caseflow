@@ -479,10 +479,6 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  def contested_issue
-    @contested_issue ||= build_contested_issue
-  end
-
   private
 
   def fetch_diagnostic_code_status_description(diagnostic_code)
@@ -512,6 +508,10 @@ class RequestIssue < ApplicationRecord
     elsif contested_rating_issue
       ContestableIssue.from_rating_issue(contested_rating_issue, decision_review)
     end
+  end
+
+  def contested_issue
+    @contested_issue ||= build_contested_issue
   end
 
   def title_of_active_review
@@ -587,7 +587,7 @@ class RequestIssue < ApplicationRecord
 
     return preexisting_decision_issue if preexisting_decision_issue
 
-    decision_issues.create!(
+    DecisionIssue.create!(
       rating_issue_reference_id: rating_issue.reference_id,
       disposition: contention_disposition.disposition,
       participant_id: rating_issue.participant_id,
