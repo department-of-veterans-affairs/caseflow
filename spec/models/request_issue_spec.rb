@@ -321,7 +321,7 @@ describe RequestIssue do
             let(:request_issue) { rating_request_issue }
             it { is_expected.to eq "040HDERPMC" }
 
-            context "when missing rating_issue_reference_id but comes from a previous rating request issue" do
+            context "when missing contested_rating_issue_reference_id but comes from a previous rating request issue" do
               let(:contested_rating_issue_reference_id) { nil }
               let(:contested_decision_issue_id) { decision_issue.id }
               let(:original_request_issue) do
