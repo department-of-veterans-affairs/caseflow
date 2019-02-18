@@ -236,17 +236,11 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
-    associated_rating_issue? || previous_rating_issue?
+    !!associated_rating_issue? || previous_rating_issue?
   end
 
   def associated_rating_issue?
     contested_rating_issue_reference_id
-  end
-
-  # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
-  # But the request issue should still be added to a rating End Product
-  def previous_rating_issue?
-    contested_decision_issue&.associated_request_issue&.end_product_establishment&.rating?
   end
 
   # TODO: If a nonrating decision issue is contested, the request issue should also be considered
@@ -480,6 +474,12 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
+  # But the request issue should still be added to a rating End Product
+  def previous_rating_issue?
+    contested_decision_issue&.associated_request_issue&.end_product_establishment&.rating?
+  end
 
   def fetch_diagnostic_code_status_description(diagnostic_code)
     if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
