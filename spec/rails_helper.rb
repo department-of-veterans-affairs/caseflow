@@ -49,8 +49,8 @@ else
   Dir.mkdir cache_directory
 end
 
-ENV["TZ"] ||= "America/New York"
-Time.zone = ENV["TZ"].tr(" ", "_")
+ENV["TZ"] ||= "America/New_York"
+Time.zone = ENV["TZ"]
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options = ::Selenium::WebDriver::Chrome::Options.new
@@ -241,7 +241,6 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    FeatureToggle.enable!(:use_ama_activation_date)
     @spec_time_zone = Time.zone
   end
 

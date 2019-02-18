@@ -8,7 +8,6 @@ feature "Appeal time zone" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
     Timecop.freeze(now_utc)
   end
 
@@ -22,11 +21,12 @@ feature "Appeal time zone" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:now_localtime) { Time.new(2018, 11, 2, 0, 0, 0).in_time_zone }
+  let(:now_localtime) { Time.new(2019, 2, 14, 0, 0, 0).in_time_zone }
   let(:now_utc) { now_localtime.utc }
 
   let!(:veteran) { create(:veteran) }
 
+  # rubocop:disable Metrics/AbcSize
   def initiate_appeal_intake
     visit "/intake"
     safe_click ".Select"
@@ -43,7 +43,7 @@ feature "Appeal time zone" do
     click_on "Search"
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: now_utc.strftime("%D")
+    fill_in "What is the Receipt Date of this form?", with: now_utc.to_date.mdY
 
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
@@ -53,35 +53,33 @@ feature "Appeal time zone" do
       find("label", text: "No", match: :prefer_exact).click
     end
 
-    within_fieldset("Did they agree to withdraw their issues from the legacy system?") do
-      find("label", text: "No", match: :prefer_exact).click
-    end
-
-    binding.pry
-
+    select_agree_to_withdraw_legacy_issues(false)
     click_intake_continue
 
     expect(page).to have_current_path("/intake/add_issues")
   end
+  # rubocop:enable Metrics/AbcSize
 
   describe "browser to server" do
     it "writes all times in UTC" do
-      binding.pry
+      expect(now_localtime.iso8601).to_not eq(now_utc.iso8601)
+      expect(now_localtime.to_date).to eq(now_utc.to_date)
+      expect(now_localtime.to_date.mdY).to eq("02/14/2019")
+      expect(now_utc.to_date.mdY).to eq("02/14/2019")
 
-      expect(now_localtime.to_date.to_s).to eq("2018-11-01")
-      expect(now_utc.to_date.to_s).to eq("2018-11-02")
-      
       initiate_appeal_intake
-
-      binding.pry
 
       appeal = Appeal.last
       intake = Intake.last
 
+      expect(appeal.receipt_date).to eq(now_localtime.to_date)
+      expect(appeal.receipt_date).to eq(now_utc.to_date)
+      expect(intake.started_at).to eq(now_localtime)
     end
 
-    it "displays all times in browser time zone" do
-
+    it "browser time zone is the same as server (tests only)" do
+      browser_utc_offset = evaluate_script("(new Date()).getTimezoneOffset()/60")
+      expect(browser_utc_offset).to eq((Time.zone.utc_offset / 3600) * -1)
     end
   end
 end

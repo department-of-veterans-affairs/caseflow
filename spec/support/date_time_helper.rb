@@ -20,11 +20,12 @@ module DateTimeHelper
   end
 end
 
-# rubocop:disable Naming/MethodName
 class Date
+  # rubocop:disable Naming/MethodName
   def mdY
     strftime("%m/%d/%Y")
   end
+  # rubocop:enable Naming/MethodName
 
   # cheatsheet from https://apidock.com/ruby/DateTime/strftime
   #   Combination:
@@ -39,4 +40,3 @@ class Date
   #   %T - 24-hour time (%H:%M:%S)
   #   %+ - date(1) (%a %b %e %H:%M:%S %Z %Y)
 end
-# rubocop:enable Naming/MethodName
