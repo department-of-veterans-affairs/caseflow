@@ -81,5 +81,32 @@ feature "Appeal time zone" do
       browser_utc_offset = evaluate_script("(new Date()).getTimezoneOffset()/60")
       expect(browser_utc_offset).to eq((Time.zone.utc_offset / 3600) * -1)
     end
+
+    # Honolulu is as far from New York as New York is from UTC
+    # and our browser is fixed at start time to New York.
+    # So adjust the server the same number of hours forward, to mimic
+    # what it's like for a browser in Honolulu time and server in New York.
+    context "server time zone is 4/5 hours ahead of browser" do
+      before do
+        Time.zone = "UTC"
+      end
+
+      it "treats browser input dates as if they were in EST" do
+        initiate_appeal_intake
+
+        appeal = Appeal.last
+        intake = Intake.last
+
+        expect(appeal.receipt_date).to eq(now_localtime.to_date)
+        expect(appeal.receipt_date).to eq(now_utc.to_date)
+        expect(intake.started_at).to eq(now_localtime)
+      end
+
+      it "browser time zone is EST, server is UTC" do
+        browser_utc_offset = evaluate_script("(new Date()).getTimezoneOffset()/60")
+        expect(browser_utc_offset).to eq 5
+        expect(Time.zone.utc_offset).to eq 0
+      end
+    end
   end
 end
