@@ -1052,7 +1052,7 @@ describe Appeal do
       it "waiting for a decision" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:decision_in_progress)
-        expect(status[:details]).to be_empty
+        expect(status[:details][:decision_timeliness]).to eq([1, 2])
       end
     end
 
