@@ -323,6 +323,7 @@ describe RequestIssue do
 
             context "when missing rating_issue_reference_id but comes from a previous rating request issue" do
               let(:contested_rating_issue_reference_id) { nil }
+              let(:contested_decision_issue_id) { decision_issue.id }
               # let(:decision_issue) { create(:decision_issue, decision_review: decision_review_remanded, request_issues: [original_request_issue]) }
               let(:original_request_issue) { create(
                 :request_issue,
@@ -338,9 +339,9 @@ describe RequestIssue do
               end
 
               it "is assigned a rating ep code" do
-                binding.pry
-                expect(request_issue.rating?).to be_falsey
-                expect(request_issue.dta_rating?).to be true
+                # binding.pry
+                expect(request_issue.associated_rating_issue?).to be_falsey
+                expect(request_issue.previous_rating_issue?).to be true
                 expect(subject).to eq("040HDERPMC")
               end
             end

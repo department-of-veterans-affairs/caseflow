@@ -206,10 +206,10 @@ class EndProductEstablishment < ApplicationRecord
 
     VBMSService.associate_rating_request_issues!(
       claim_id: reference_id,
-      rating_issue_contention_map: rating_issue_contention_map(rating_request_issues)
+      rating_issue_contention_map: rating_issue_contention_map(rating_request_issues_to_associate)
     )
 
-    RequestIssue.where(id: rating_request_issues.map(&:id)).update_all(
+    RequestIssue.where(id: rating_request_issues_to_associate.map(&:id)).update_all(
       rating_issue_associated_at: Time.zone.now
     )
   end
@@ -351,12 +351,12 @@ class EndProductEstablishment < ApplicationRecord
     request_issues.reject(&:closed?)
   end
 
-  def rating_request_issues
-    open_request_issues.select(&:rating?)
+  def rating_request_issues_to_associate
+    open_request_issues.select(&:associated_rating_issue?)
   end
 
   def unassociated_rating_request_issues
-    eligible_rating_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
+    eligible_rating_request_issues.select { |ri| ri.associated_rating_issue? && ri.rating_issue_associated_at.nil? }
   end
 
   def eligible_request_issues
