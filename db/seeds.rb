@@ -815,7 +815,7 @@ class SeedDB
 
       request_issues = FactoryBot.create_list(:request_issue, 3,
                                               :nonrating,
-                                              description: "#{index} #{description}",
+                                              contested_issue_description: "#{index} #{description}",
                                               notes: "#{index} #{notes}",
                                               benefit_type: nca.url,
                                               decision_review: board_grant_task.appeal)
@@ -920,7 +920,9 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(
+        :request_issue, 1, contested_issue_description: description, notes: notes
+      )
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
@@ -928,7 +930,9 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",
-      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(
+        :request_issue, 8, contested_issue_description: description, notes: notes
+      )
     )
 
     user = User.find_by(css_id: "BVATWARNER")
