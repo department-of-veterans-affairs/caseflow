@@ -32,9 +32,7 @@ class Appeal < DecisionReview
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
-    # TODO: this method returns duplicate results when appeals match both clauses in the `or`.
-    # adding .distinct here throws an error when combined with other scopes using .order.
-    # ensure results are distinct.
+      .group("appeals.id")
   }
 
   # rubocop:disable Metrics/LineLength
@@ -343,15 +341,15 @@ class Appeal < DecisionReview
   end
 
   def active_status?
-    active? || active_ep? || active_remanded_claims?
+    active? || active_effectuation_ep? || active_remanded_claims?
   end
 
-  def active_ep?
+  def active_effectuation_ep?
     decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
   end
 
   def location
-    if active_ep? || active_remanded_claims?
+    if active_effectuation_ep? || active_remanded_claims?
       "aoj"
     else
       "bva"
@@ -391,20 +389,21 @@ class Appeal < DecisionReview
   def fetch_post_decision_status
     if remand_supplemental_claims.any?
       active_remanded_claims? ? :ama_remand : :post_bva_dta_decision
-    elsif effectuation_ep? && !active_ep?
+    elsif effectuation_ep? && !active_effectuation_ep?
       :bva_decision_effectuation
     elsif decision_issues.any?
       :bva_decision
     elsif withdrawn?
       :withdrawn
-    else decision_issues.empty?
-         :other_close
+    else
+      :other_close
     end
   end
   # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable CyclomaticComplexity
   def fetch_details_for_status
     case fetch_status
     when :bva_decision
@@ -419,25 +418,30 @@ class Appeal < DecisionReview
       post_bva_dta_decision_status_details
     when :bva_decision_effectuation
       {
-        bvaDecisionDate: decision_event_date,
-        aojDecisionDate: decision_effectuation_event_date
+        bva_decision_date: decision_event_date,
+        aoj_decision_date: decision_effectuation_event_date
       }
     when :pending_hearing_scheduling
       {
         type: "video"
       }
+    when :decision_in_progress
+      {
+        decision_timeliness: AppealSeries::DECISION_TIMELINESS
+      }
     else
       {}
     end
   end
+  # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/MethodLength
 
   def post_bva_dta_decision_status_details
     issue_list = remanded_sc_decision_issues
     {
       issues: api_issues_for_status_details_issues(issue_list),
-      bvaDecisionDate: decision_event_date,
-      aojDecisionDate: remand_decision_event_date
+      bva_decision_date: decision_event_date,
+      aoj_decision_date: remand_decision_event_date
     }
   end
 
@@ -488,7 +492,7 @@ class Appeal < DecisionReview
   end
 
   def alerts
-    # to be implemented
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end
 
   def aoj
@@ -570,9 +574,8 @@ class Appeal < DecisionReview
   end
 
   def decision_effectuation_event_date
-    return if decision_issues.remanded.any?
     return unless effectuation_ep?
-    return if active_ep?
+    return if active_effectuation_ep?
 
     decision_document.end_product_establishments.first.last_synced_at.to_date
   end
@@ -600,6 +603,16 @@ class Appeal < DecisionReview
     return decision_issues if active_remanded_claims?
 
     super
+  end
+
+  def cavc_due_date
+    decision_event_date + 120.days if decision_event_date
+  end
+
+  def available_review_options
+    return ["cavc"] if request_issues.any? { |ri| ri.benefit_type == "fiduciary" }
+
+    %w[supplemental_claim cavc]
   end
 
   private
