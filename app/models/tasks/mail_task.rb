@@ -3,6 +3,16 @@ class MailTask < GenericTask
   def verify_org_task_unique; end
 
   class << self
+    def blocking?
+      # Some open mail tasks should block distribution of an appeal to judges.
+      # Define this method in subclasses for blocking task types.
+      false
+    end
+
+    def blocking_subclasses
+      MailTask.subclasses.select(&:blocking?).map(&:name)
+    end
+
     def subclass_routing_options
       MailTask.subclasses.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
     end
@@ -96,6 +106,10 @@ class ClearAndUnmistakeableErrorMailTask < MailTask
 end
 
 class CongressionalInterestMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL
   end
@@ -140,6 +154,10 @@ class EvidenceOrArgumentMailTask < MailTask
 end
 
 class ExtensionRequestMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::EXTENSION_REQUEST_MAIL_TASK_LABEL
   end
@@ -152,6 +170,10 @@ class ExtensionRequestMailTask < MailTask
 end
 
 class FoiaRequestMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::FOIA_REQUEST_MAIL_TASK_LABEL
   end
@@ -162,6 +184,10 @@ class FoiaRequestMailTask < MailTask
 end
 
 class HearingRelatedMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::HEARING_RELATED_MAIL_TASK_LABEL
   end
@@ -186,6 +212,10 @@ class OtherMotionMailTask < MailTask
 end
 
 class PowerOfAttorneyRelatedMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::POWER_OF_ATTORNEY_MAIL_TASK_LABEL
   end
@@ -200,6 +230,10 @@ class PowerOfAttorneyRelatedMailTask < MailTask
 end
 
 class PrivacyActRequestMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::PRIVACY_ACT_REQUEST_MAIL_TASK_LABEL
   end
@@ -210,6 +244,10 @@ class PrivacyActRequestMailTask < MailTask
 end
 
 class PrivacyComplaintMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::PRIVACY_COMPLAINT_MAIL_TASK_LABEL
   end

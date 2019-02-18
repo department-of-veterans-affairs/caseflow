@@ -277,4 +277,44 @@ describe SupplementalClaim do
       end
     end
   end
+
+  context "#alerts" do
+    let(:receipt_date) { Time.new("2018", "03", "01").utc }
+    let(:benefit_type) { "compensation" }
+
+    let!(:sc) do
+      create(:supplemental_claim,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             benefit_type: benefit_type)
+    end
+
+    context "have a decision" do
+      let(:decision_date) { receipt_date + 100.days }
+
+      let!(:sc_ep) do
+        create(:end_product_establishment,
+               :cleared, source: sc, last_synced_at: decision_date)
+      end
+
+      let!(:decision_issue) do
+        create(:decision_issue,
+               decision_review: sc, end_product_last_action_date: decision_date,
+               benefit_type: benefit_type, diagnostic_code: nil)
+      end
+
+      it "has a ama post decision alert" do
+        alerts = sc.alerts
+
+        expect(alerts.empty?).to be(false)
+        expect(alerts.first[:type]).to eq("ama_post_decision")
+        expect(alerts.first[:details][:decisionDate]).to eq(decision_date)
+        expect(alerts.first[:details][:dueDate]).to eq(decision_date + 365.days)
+        expect(alerts.first[:details][:cavcDueDate]).to be_nil
+
+        available_options = %w[supplemental_claim higher_level_review appeal]
+        expect(alerts.first[:details][:availableOptions]).to eq(available_options)
+      end
+    end
+  end
 end
