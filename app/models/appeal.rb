@@ -403,6 +403,7 @@ class Appeal < DecisionReview
   # rubocop:enable Metrics/PerceivedComplexity
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable CyclomaticComplexity
   def fetch_details_for_status
     case fetch_status
     when :bva_decision
@@ -417,25 +418,30 @@ class Appeal < DecisionReview
       post_bva_dta_decision_status_details
     when :bva_decision_effectuation
       {
-        bvaDecisionDate: decision_event_date,
-        aojDecisionDate: decision_effectuation_event_date
+        bva_decision_date: decision_event_date,
+        aoj_decision_date: decision_effectuation_event_date
       }
     when :pending_hearing_scheduling
       {
         type: "video"
       }
+    when :decision_in_progress
+      {
+        decision_timeliness: AppealSeries::DECISION_TIMELINESS
+      }
     else
       {}
     end
   end
+  # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/MethodLength
 
   def post_bva_dta_decision_status_details
     issue_list = remanded_sc_decision_issues
     {
       issues: api_issues_for_status_details_issues(issue_list),
-      bvaDecisionDate: decision_event_date,
-      aojDecisionDate: remand_decision_event_date
+      bva_decision_date: decision_event_date,
+      aoj_decision_date: remand_decision_event_date
     }
   end
 
