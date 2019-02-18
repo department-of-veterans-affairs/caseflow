@@ -8,8 +8,7 @@ feature "Appeal Edit issues" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
@@ -31,8 +30,8 @@ feature "Appeal Edit issues" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:receipt_date) { Time.zone.today - 20 }
-  let(:profile_date) { "2017-11-02T07:00:00.000Z" }
+  let(:receipt_date) { Time.zone.today - 20.days }
+  let(:profile_date) { receipt_date - 30.days }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -211,7 +210,7 @@ feature "Appeal Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "A description!",
-        date: "04/26/2018"
+        date: profile_date.mdY
       )
 
       click_edit_submit_and_confirm
