@@ -137,7 +137,7 @@ RSpec.feature "AmaQueue" do
         visit "/queue"
 
         click_on appeals.first.veteran.first_name
-        expect(page).to have_content("A. Judge")
+        expect(page).to have_content("A. Judge", wait: 10)
 
         expect(page).to have_content("About the Veteran")
 
