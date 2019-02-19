@@ -1489,58 +1489,70 @@ describe Appeal do
   end
 
   context "#alerts" do
+    subject { appeal.alerts }
     let(:receipt_date) { Time.zone.today - 10.days }
     let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
 
-    context "has a remand and effecutation tracked in VBMS"
-    # the effectuation
-    let(:decision_date) { receipt_date + 30.days }
-    let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
-    let!(:decision_issue) do
-      create(:decision_issue,
-             decision_review: appeal, disposition: "allowed", caseflow_decision_date: decision_date)
+    context "has a remand and effectuation tracked in VBMS" do
+      # the effectuation
+      let(:decision_date) { receipt_date + 30.days }
+      let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+      let!(:decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "allowed", caseflow_decision_date: decision_date)
+      end
+      let(:effectuation_ep_cleared_date) { receipt_date + 250.days }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               :cleared, source: decision_document, last_synced_at: effectuation_ep_cleared_date)
+      end
+      # the remand
+      let!(:remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal,
+               disposition: "remanded",
+               benefit_type: "compensation",
+               caseflow_decision_date: decision_date)
+      end
+      let!(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let(:remanded_ep_clr_date) { receipt_date + 200.days }
+      let!(:remanded_ep) { create(:end_product_establishment, :cleared, source: remanded_sc) }
+      let!(:remanded_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: remanded_sc,
+               end_product_last_action_date: remanded_ep_clr_date)
+      end
+
+      it "has 3 ama_post_decision alerts" do
+        expect(subject.count).to eq(3)
+
+        expect(subject[0][:type]).to eq("ama_post_decision")
+        expect(subject[0][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
+        expect(subject[0][:details][:dueDate].to_date).to eq((decision_date + 365.days).to_date)
+        expect(subject[0][:details][:cavcDueDate].to_date).to eq((decision_date + 120.days).to_date)
+
+        expect(subject[1][:type]).to eq("ama_post_decision")
+        expect(subject[1][:details][:availableOptions]).to eq(%w[supplemental_claim higher_level_review appeal])
+        expect(subject[1][:details][:dueDate].to_date).to eq((remanded_ep_clr_date + 365.days).to_date)
+        expect(subject[1][:details][:cavcDueDate].to_date).to eq((remanded_ep_clr_date + 120.days).to_date)
+
+        expect(subject[2][:type]).to eq("ama_post_decision")
+        expect(subject[2][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
+        expect(subject[2][:details][:dueDate].to_date).to eq((effectuation_ep_cleared_date + 365.days).to_date)
+        expect(subject[2][:details][:cavcDueDate].to_date).to eq((effectuation_ep_cleared_date + 120.days).to_date)
+      end
     end
-    let(:effectuation_ep_cleared_date) { receipt_date + 250.days }
-    let!(:effectuation_ep) do
-      create(:end_product_establishment,
-             :cleared, source: decision_document, last_synced_at: effectuation_ep_cleared_date)
-    end
-    # the remand
-    let!(:remanded_decision_issue) do
-      create(:decision_issue,
-             decision_review: appeal,
-             disposition: "remanded",
-             benefit_type: "compensation",
-             caseflow_decision_date: decision_date)
-    end
-    let!(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
-    let(:remanded_ep_clr_date) { receipt_date + 200.days }
-    let!(:remanded_ep) { create(:end_product_establishment, :cleared, source: remanded_sc) }
-    let!(:remanded_sc_decision_issue) do
-      create(:decision_issue,
-             decision_review: remanded_sc,
-             end_product_last_action_date: remanded_ep_clr_date)
-    end
 
-    it "it has 3 ama_post_decision alerts" do
-      alerts = appeal.alerts
+    context "has an open evidence submission task" do
+      let!(:evidence_submission_task) do
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, status: "in_progress", assigned_to: Bva.singleton)
+      end
 
-      expect(alerts.count).to eq(3)
-
-      expect(alerts[0][:type]).to eq("ama_post_decision")
-      expect(alerts[0][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
-      expect(alerts[0][:details][:dueDate].to_date).to eq((decision_date + 365.days).to_date)
-      expect(alerts[0][:details][:cavcDueDate].to_date).to eq((decision_date + 120.days).to_date)
-
-      expect(alerts[1][:type]).to eq("ama_post_decision")
-      expect(alerts[1][:details][:availableOptions]).to eq(%w[supplemental_claim higher_level_review appeal])
-      expect(alerts[1][:details][:dueDate].to_date).to eq((remanded_ep_clr_date + 365.days).to_date)
-      expect(alerts[1][:details][:cavcDueDate].to_date).to eq((remanded_ep_clr_date + 120.days).to_date)
-
-      expect(alerts[2][:type]).to eq("ama_post_decision")
-      expect(alerts[2][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
-      expect(alerts[2][:details][:dueDate].to_date).to eq((effectuation_ep_cleared_date + 365.days).to_date)
-      expect(alerts[2][:details][:cavcDueDate].to_date).to eq((effectuation_ep_cleared_date + 120.days).to_date)
+      it "has an evidentiary_period alert" do
+        expect(subject.count).to eq(1)
+        expect(subject[0][:type]).to eq("evidentiary_period")
+        expect(subject[0][:details][:due_date]).to eq((receipt_date + 90.days).to_date)
+      end
     end
   end
 end
