@@ -220,9 +220,19 @@ class Appeal < DecisionReview
            :gender,
            :date_of_birth,
            :age,
-           :closest_regional_office,
-           :available_hearing_locations,
            :country, to: :veteran, prefix: true
+
+  def veteran_if_exists
+    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
+  end
+
+  def veteran_closest_regional_office
+    veteran_if_exists&.closest_regional_office
+  end
+
+  def veteran_available_hearing_locations
+    veteran_if_exists&.available_hearing_locations
+  end
 
   delegate :city,
            :state, to: :appellant, prefix: true
