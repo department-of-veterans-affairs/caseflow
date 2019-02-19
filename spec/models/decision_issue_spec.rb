@@ -76,6 +76,11 @@ describe DecisionIssue do
   context "#save" do
     subject { decision_issue.save }
 
+    it "sets created at" do
+      subject
+      expect(decision_issue).to have_attributes(created_at: Time.zone.now)
+    end
+
     context "when description is not set" do
       let(:description) { nil }
 
