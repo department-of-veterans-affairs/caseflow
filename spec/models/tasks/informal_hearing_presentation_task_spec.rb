@@ -11,7 +11,8 @@ describe InformalHearingPresentationTask do
       let(:expected_actions) do
         [
           Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
       end
       it "should return team assign, person reassign, and mark complete actions" do
@@ -27,7 +28,8 @@ describe InformalHearingPresentationTask do
       let(:expected_actions) do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
       end
       before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
