@@ -14,14 +14,7 @@ describe FetchHearingLocationsForVeteransJob do
       Fakes::BGSService.veteran_records = { "123456789" => veteran_record(file_number: "123456789S", state: "MA") }
     end
 
-    describe "#create_missing_veterans" do
-      it "creates a veteran" do
-        job.create_missing_veterans
-        expect(Veteran.where(file_number: bfcorlid_file_number).count).to eq 1
-      end
-    end
-
-    describe "#veterans" do
+    describe "#appeals" do
       context "when veterans exist in location 57 or have schedule hearing tasks" do
         # Legacy appeal with schedule hearing task
         let!(:veteran_2) { create(:veteran, file_number: "999999999") }
@@ -81,11 +74,18 @@ describe FetchHearingLocationsForVeteransJob do
           create(:legacy_appeal, vbms_id: "111111111", vacols_case: vac_case)
         end
 
-        it "returns only veterans with scheduled hearings tasks without an admin action or who are in location 57" do
-          job.create_missing_veterans
-          created_vet = Veteran.find_by(file_number: bfcorlid_file_number)
-          expect(job.veterans.pluck(:id)).to contain_exactly(veteran_2.id, veteran_3.id, veteran_4.id, created_vet.id)
+        it "returns only appeals with scheduled hearings tasks without an admin action or who are in location 57" do
+          expect(job.appeals.pluck(:id)).to contain_exactly(
+            legacy_appeal.id, legacy_appeal_2.id, appeal.id, appeal_2.id
+          )
         end
+      end
+    end
+
+    describe "#validate_zip_code" do
+      it "returns correct zip code" do
+        address = job.validate_zip_code(legacy_appeal, error: nil)
+        expect(address[:lat]).to eq 42.364031 # 01002 zipcode latitude
       end
     end
 
@@ -110,6 +110,18 @@ describe FetchHearingLocationsForVeteransJob do
           expect(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).once
           FetchHearingLocationsForVeteransJob.perform_now
           expect(AvailableHearingLocations.count).to eq 1
+        end
+      end
+
+      context "when veteran requests central office" do
+        let!(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: 1) }
+        let(:distance_response) do
+          HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11, id: "vba_372").to_json)
+        end
+
+        it "sets Central as closest_regional_office" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          expect(LegacyAppeal.first.closest_regional_office).to eq "C"
         end
       end
 
@@ -165,6 +177,11 @@ describe FetchHearingLocationsForVeteransJob do
       end
 
       context "when va_dot_gov_service throws an Address error" do
+        let!(:vacols_case) do
+          create(:case,
+                 bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S",
+                 correspondent: create(:correspondent, saddrzip: "01002", saddrstt: "MA", saddrcnty: "USA"))
+        end
         before do
           message = {
             "messages" => [
@@ -185,11 +202,16 @@ describe FetchHearingLocationsForVeteransJob do
         it "finds closest RO based on zipcode" do
           FetchHearingLocationsForVeteransJob.perform_now
 
-          expect(Veteran.first.closest_regional_office).to eq "RO01"
-          expect(Veteran.first.available_hearing_locations.count).to eq 1
+          expect(LegacyAppeal.first.closest_regional_office).to eq "RO01"
+          expect(LegacyAppeal.first.available_hearing_locations.count).to eq 1
         end
 
         context "and Veteran has no zipcode" do
+          let!(:vacols_case) do
+            create(:case,
+                   bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S",
+                   correspondent: create(:correspondent, saddrzip: nil))
+          end
           before do
             Fakes::BGSService.veteran_records = {
               "123456789" => veteran_record(file_number: "123456789S", state: nil, zip_code: nil, country: nil)
@@ -198,7 +220,6 @@ describe FetchHearingLocationsForVeteransJob do
           it "creates an ScheduleHearingTask and admin action" do
             FetchHearingLocationsForVeteransJob.perform_now
             tsk = ScheduleHearingTask.first
-            expect(tsk.appeal.veteran_file_number).to eq bfcorlid_file_number
             expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
           end
 
@@ -225,7 +246,7 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
-    describe "#fetch_and_update_ro_for_veteran" do
+    describe "#fetch_and_update_ro_for_appeal" do
       let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
       let(:veteran_state) { "NH" }
       let(:mock_va_dot_gov_address) do
@@ -266,8 +287,8 @@ describe FetchHearingLocationsForVeteransJob do
       end
 
       it "updates veteran closest_regional_office with fetched RO within veteran's state" do
-        job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
-        expect(Veteran.first.closest_regional_office).to eq expected_ro
+        job.fetch_and_update_ro_for_appeal(legacy_appeal, va_dot_gov_address: mock_va_dot_gov_address)
+        expect(LegacyAppeal.first.closest_regional_office).to eq expected_ro
       end
 
       context "when ROs are not found in facility locator" do
@@ -279,7 +300,7 @@ describe FetchHearingLocationsForVeteransJob do
         end
 
         it "raises VADotGovServiceError" do
-          expect { job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address) }
+          expect { job.fetch_and_update_ro_for_appeal(legacy_appeal, va_dot_gov_address: mock_va_dot_gov_address) }
             .to raise_error(Caseflow::Error::VaDotGovAPIError)
         end
       end
@@ -308,9 +329,9 @@ describe FetchHearingLocationsForVeteransJob do
           end
 
           it "closest_regional_office is in appropriate state" do
-            job.fetch_and_update_ro_for_veteran(veteran, va_dot_gov_address: mock_va_dot_gov_address)
+            job.fetch_and_update_ro_for_appeal(legacy_appeal, va_dot_gov_address: mock_va_dot_gov_address)
             index = RegionalOffice::CITIES.values.find_index { |ro| ro[:state] == expected_state }
-            expect(Veteran.first.closest_regional_office).to eq RegionalOffice::CITIES.keys[index]
+            expect(LegacyAppeal.first.closest_regional_office).to eq RegionalOffice::CITIES.keys[index]
           end
         end
       end

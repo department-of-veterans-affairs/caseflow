@@ -185,6 +185,10 @@ class LegacyAppeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
+  def appellant
+    claimant
+  end
+
   def appellant_is_not_veteran
     !!appellant_first_name
   end
@@ -349,7 +353,7 @@ class LegacyAppeal < ApplicationRecord
         middle_name: veteran_middle_initial,
         last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
-        address: get_address_from_corres_entry(case_record.correspondent),
+        address: address_from_veteran_record_or_corres_entry(case_record.correspondent),
         representative: representative_to_hash
       }
     end
