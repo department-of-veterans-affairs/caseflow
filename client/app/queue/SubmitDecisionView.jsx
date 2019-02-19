@@ -67,13 +67,22 @@ class SubmitDecisionView extends React.PureComponent {
     _.merge(decision.opts, { document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
       overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
+      untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false),
       reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
     });
     const extendedDecision = { ...decision };
 
     extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
-    if (extendedDecision.opts && extendedDecision.opts.overtime === null) {
-      extendedDecision.opts.overtime = false;
+
+    // TODO: create a frontend method that converts null to false, 
+    //  since these are required params in case_reviews_controller.rb
+    if (extendedDecision.opts) {
+      if (extendedDecision.opts.overtime === null) {
+        extendedDecision.opts.overtime = false;
+      }
+      if (extendedDecision.opts.untimely_evidence === null) {
+        extendedDecision.opts.untimely_evidence = false;
+      }
     }
 
     return extendedDecision;
@@ -237,6 +246,20 @@ class SubmitDecisionView extends React.PureComponent {
         willNeverBeLoading
         onClick={() => {
           this.linkClicked = !this.linkClicked;
+          // change the css to this on click as well
+          // &::before {
+          //   background: url(#{$image-path}/arrow-down.svg) 50% 100% no-repeat;
+          //   background-size: .75em;
+          //   content: ' ';
+          //   display: inline-block;
+          //   height: 1rem;
+          //   margin-right: 1rem;
+          //   width: 1rem;
+
+          //   &:hover {
+          //     color: $color-white;
+          //   }
+          // }
           this.setState({ linkClicked: this.linkClicked });
         }}>
               What is ineligible evidence?

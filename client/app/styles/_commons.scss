@@ -358,7 +358,7 @@ $rems: ('0', '0rem', '1rem', '2rem', '3rem', '4rem', '5rem', '6rem', '7rem', '8r
 
 #ineligible-evidence {
   &::before {
-    background: url(#{$image-path}/arrow-down.svg) 50% 100% no-repeat;
+    background: url(#{$image-path}/arrow-left.svg) 50% 100% no-repeat;
     background-size: .75em;
     content: ' ';
     display: inline-block;
