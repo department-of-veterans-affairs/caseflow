@@ -47,7 +47,7 @@ describe('TableFilter', () => {
           isDropdownFilterOpen={false} />
       );
 
-      expect(wrapper.find('QueueDropdownFilter')).to.have.length(0);
+      expect(wrapper.find('NewDropdownFilter')).to.have.length(0);
     });
 
     it('generates the correct list of unique filter options', () => {
