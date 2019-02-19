@@ -86,10 +86,10 @@ describe ScheduleHearingTask do
       end
     end
 
-    context "when canceled" do
+    context "when cancelled" do
       let(:update_params) do
         {
-          status: "canceled"
+          status: Constants.TASK_STATUSES.cancelled
         }
       end
 
@@ -104,7 +104,7 @@ describe ScheduleHearingTask do
           it "completes the task and updates the location to case storage" do
             schedule_hearing_task.update_from_params(update_params, hearings_user)
 
-            expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+            expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
             expect(vacols_case.bfha).to eq("5")
             expect(vacols_case.bfhr).to eq("5")
@@ -132,7 +132,7 @@ describe ScheduleHearingTask do
           it "completes the task and updates the location to service organization" do
             schedule_hearing_task.update_from_params(update_params, hearings_user)
 
-            expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+            expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:service_organization])
             expect(vacols_case.bfha).to eq("5")
             expect(vacols_case.bfhr).to eq("5")
@@ -149,7 +149,7 @@ describe ScheduleHearingTask do
         it "completes the task and creates an EvidenceSubmissionWindowTask" do
           schedule_hearing_task.update_from_params(update_params, hearings_user)
 
-          expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+          expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
         end
       end

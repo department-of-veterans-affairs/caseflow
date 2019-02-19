@@ -52,6 +52,7 @@ feature "Higher-Level Review" do
     end
 
     step "EPs use the updated Veteran name" do
+      # TODO: logging adds additional check
       expect(bgs).to have_received(:fetch_veteran_info).exactly(5).times
 
       veteran.reload

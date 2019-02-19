@@ -117,7 +117,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def api_status_last_action_date
-    approx_decision_date
+    approx_decision_date.try(&:to_date)
   end
 
   def api_status_disposition
@@ -130,6 +130,12 @@ class DecisionIssue < ApplicationRecord
     return description if description
 
     "#{benefit_type.capitalize} issue"
+  end
+
+  def associated_request_issue
+    return unless request_issues.any?
+
+    request_issues.first
   end
 
   private
@@ -165,12 +171,6 @@ class DecisionIssue < ApplicationRecord
     return nil unless associated_request_issue
 
     "#{disposition}: #{associated_request_issue.description}"
-  end
-
-  def associated_request_issue
-    return unless request_issues.any?
-
-    request_issues.first
   end
 
   def veteran_file_number

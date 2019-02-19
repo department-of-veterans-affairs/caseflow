@@ -19,6 +19,13 @@ FactoryBot.define do
       on_hold_duration [30, 60, 90].sample
     end
 
+    trait :completed_hold do
+      status Constants.TASK_STATUSES.on_hold
+      started_at { rand(25..30).days.ago }
+      placed_on_hold_at { rand(15..25).days.ago }
+      on_hold_duration 10
+    end
+
     trait :completed do
       status Constants.TASK_STATUSES.completed
       started_at { rand(20..30).days.ago }

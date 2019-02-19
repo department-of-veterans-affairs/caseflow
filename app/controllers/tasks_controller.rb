@@ -120,7 +120,8 @@ class TasksController < ApplicationController
       data: ActiveModelSerializers::SerializableResource.new(
         tasks,
         user: current_user,
-        role: user_role
+        role: user_role,
+        exclude_extra_fields: true
       ).as_json[:data]
     }
   end

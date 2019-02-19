@@ -42,10 +42,12 @@ class HigherLevelReview < ClaimReview
   end
 
   def alerts
-    # need to implement. add logic to return alert enum
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end
 
   def active_status?
+    # for the purposes for appeal status api, an HLR is considered active if there are
+    # still active remand claims.
     active? || active_remanded_claims?
   end
 
@@ -53,7 +55,7 @@ class HigherLevelReview < ClaimReview
     return if active?
     return unless remand_supplemental_claims.any?
 
-    decision_issues.remanded.first.approx_decision_date
+    decision_issues.remanded.first.approx_decision_date.to_date
   end
 
   def other_close_event_date
@@ -61,11 +63,36 @@ class HigherLevelReview < ClaimReview
     return unless decision_issues.empty?
     return unless end_product_establishments.any?
 
-    end_product_establishments.first.last_synced_at
+    end_product_establishments.first.last_synced_at.to_date
   end
 
   def events
     @events ||= AppealEvents.new(appeal: self).all
+  end
+
+  def api_alerts_show_decision_alert?
+    # for HLR, only want to show the decision alert when the HLR is no longer active,
+    # meaning any remands have been resolved.
+    !active_status? && decision_issues.any?
+  end
+
+  def due_date_to_appeal_decision
+    # the deadline to contest the decision for this claim
+    return remand_decision_event_date + 365.days if remand_decision_event_date
+
+    return decision_event_date + 365.days if decision_event_date
+  end
+
+  def decision_date_for_api_alert
+    return remand_decision_event_date if remand_decision_event_date
+
+    decision_event_date
+  end
+
+  def available_review_options
+    ["appeal"] if benefit_type == "fiduciary"
+
+    %w[supplemental_claim appeal]
   end
 
   private
