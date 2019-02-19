@@ -226,8 +226,8 @@ class SubmitDecisionView extends React.PureComponent {
       <Checkbox
         name="untimely_evidence"
         label="The Veteran submitted evidence that is ineligible for review"
-        onChange={(untimelyEvidence) => this.props.setDecisionOptions({ untimelyEvidence })}
-        value={decisionOpts.untimelyEvidence || false}
+        onChange={(untimelyEvidence) => this.props.setDecisionOptions({ untimely_evidence: untimelyEvidence })}
+        value={decisionOpts.untimely_evidence || false}
         styling={css(marginBottom(1), marginTop(1))}
       />
 
@@ -237,7 +237,6 @@ class SubmitDecisionView extends React.PureComponent {
         willNeverBeLoading
         onClick={() => {
           this.linkClicked = !this.linkClicked;
-          console.log(this.linkClicked, 'was the linkclicked ?');
           this.setState({ linkClicked: this.linkClicked });
         }}>
               What is ineligible evidence?
