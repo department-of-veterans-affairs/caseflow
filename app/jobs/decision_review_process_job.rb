@@ -11,11 +11,13 @@ class DecisionReviewProcessJob < CaseflowJob
 
     return_value = nil
 
+    Raven.extra_context(class: decision_review.class.to_s, id: decision_review.id)
+
     begin
       return_value = decision_review.establish!
-    rescue StandardError => err
+    rescue VBMS::ClientError => err
       decision_review.update_error!(err.to_s)
-      Raven.capture_exception(err, extra: { class: decision_review.class.to_s, id: decision_review.id })
+      Raven.capture_exception(err)
     end
 
     RequestStore.store[:current_user] = current_user
