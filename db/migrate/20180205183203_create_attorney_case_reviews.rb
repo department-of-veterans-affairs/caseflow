@@ -6,7 +6,7 @@ class CreateAttorneyCaseReviews < ActiveRecord::Migration[5.1]
       t.integer "attorney_id"
       t.string  "work_product"
       t.boolean  "overtime", default: false
-      t.booleam "untimely_evidence", default: false
+      t.boolean "untimely_evidence", default: false
       t.string "type"
       t.text "note"
       t.datetime "created_at", null: false
