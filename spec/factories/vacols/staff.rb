@@ -56,7 +56,7 @@ FactoryBot.define do
       sattyid nil
     end
 
-    trait :has_location_code do
+    trait :has_assigned_to_location do
       slogid "55"
     end
 

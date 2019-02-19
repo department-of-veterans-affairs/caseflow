@@ -215,7 +215,7 @@ class AppealRepository
       citation_number: folder_record.tiread2,
       case_record: case_record,
       disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[case_record.bfdc],
-      location_code: case_record.bfcurloc,
+      assigned_to_location: case_record.bfcurloc,
       decision_date: normalize_vacols_date(case_record.bfddec),
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],

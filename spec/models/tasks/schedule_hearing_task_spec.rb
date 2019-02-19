@@ -105,7 +105,7 @@ describe ScheduleHearingTask do
             schedule_hearing_task.update_from_params(update_params, hearings_user)
 
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
-            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::ASSIGNED_TO_LOCATIONS[:case_storage])
             expect(vacols_case.bfha).to eq("5")
             expect(vacols_case.bfhr).to eq("5")
           end
@@ -133,7 +133,7 @@ describe ScheduleHearingTask do
             schedule_hearing_task.update_from_params(update_params, hearings_user)
 
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
-            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:service_organization])
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::ASSIGNED_TO_LOCATIONS[:service_organization])
             expect(vacols_case.bfha).to eq("5")
             expect(vacols_case.bfhr).to eq("5")
           end

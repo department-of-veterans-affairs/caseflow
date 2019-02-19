@@ -196,7 +196,7 @@ describe ColocatedTask do
         it "should update location to translation in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
-          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:translation]
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::ASSIGNED_TO_LOCATIONS[:translation]
         end
       end
 
@@ -205,7 +205,7 @@ describe ColocatedTask do
         it "should update location to schedule hearing in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
-          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::ASSIGNED_TO_LOCATIONS[:schedule_hearing]
         end
       end
 

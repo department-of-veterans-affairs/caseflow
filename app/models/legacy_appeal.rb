@@ -39,7 +39,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :certification_date, :case_review_date, :notice_of_death_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
-  vacols_attr_accessor :location_code
+  vacols_attr_accessor :assigned_to_location
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :number_of_issues
@@ -118,7 +118,7 @@ class LegacyAppeal < ApplicationRecord
     "Clear and Unmistakable Error" => "cue"
   }.freeze
 
-  LOCATION_CODES = {
+  ASSIGNED_TO_LOCATIONS = {
     remand_returned_to_bva: "96",
     bva_dispatch: "4E",
     omo_office: "20",
@@ -424,9 +424,9 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def in_location?(location)
-    fail UnknownLocationError unless LOCATION_CODES[location]
+    fail UnknownLocationError unless ASSIGNED_TO_LOCATIONS[location]
 
-    location_code == LOCATION_CODES[location]
+    assigned_to_location == ASSIGNED_TO_LOCATIONS[location]
   end
 
   cache_attribute :case_assignment_exists do

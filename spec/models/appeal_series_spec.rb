@@ -38,7 +38,7 @@ describe AppealSeries do
       bfdrodec: 1.day.ago,
       bfddec: decision_date,
       bfdc: disposition,
-      bfcurloc: location_code,
+      bfcurloc: assigned_to_location,
       bfmpro: status,
       bfac: type,
       bfso: "F",
@@ -56,7 +56,7 @@ describe AppealSeries do
   let(:certification_date) { nil }
   let(:decision_date) { nil }
   let(:disposition) { nil }
-  let(:location_code) { "77" }
+  let(:assigned_to_location) { "77" }
   let(:status) { "ADV" }
 
   # Sometimes there are empty issues in VACOLS; we should ignore these issues
@@ -188,22 +188,22 @@ describe AppealSeries do
       it { is_expected.to eq(:decision_in_progress) }
 
       context "and it is in location 49" do
-        let(:location_code) { "49" }
+        let(:assigned_to_location) { "49" }
         it { is_expected.to eq(:stayed) }
       end
 
       context "and it is in location 55" do
-        let(:location_code) { "55" }
+        let(:assigned_to_location) { "55" }
         it { is_expected.to eq(:at_vso) }
       end
 
       context "and it is in location 20" do
-        let(:location_code) { "20" }
+        let(:assigned_to_location) { "20" }
         it { is_expected.to eq(:bva_development) }
       end
 
       context "and it is in location 18" do
-        let(:location_code) { "18" }
+        let(:assigned_to_location) { "18" }
         it { is_expected.to eq(:bva_development) }
       end
     end
@@ -343,7 +343,7 @@ describe AppealSeries do
 
     context "when it is at VSO" do
       let(:status) { "ACT" }
-      let(:location_code) { "55" }
+      let(:assigned_to_location) { "55" }
 
       it "returns a details hash with the vso name" do
         expect(subject[:type]).to eq(:at_vso)

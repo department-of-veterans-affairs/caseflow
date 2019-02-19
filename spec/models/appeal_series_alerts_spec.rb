@@ -29,7 +29,7 @@ describe AppealSeriesAlerts do
         :type_original,
         :certified,
         bfcorlid: "999887777S",
-        bfcurloc: location_code,
+        bfcurloc: assigned_to_location,
         bfdrodec: 1.year.ago,
         bfdsoc: soc_date,
         bfd19: form9_date,
@@ -47,7 +47,7 @@ describe AppealSeriesAlerts do
   let(:series) { AppealSeries.create(appeals: [appeal]) }
   let(:hearings) { [] }
   let(:status) { "ADV" }
-  let(:location_code) { "77" }
+  let(:assigned_to_location) { "77" }
   let(:soc_date) { 5.days.ago }
   let(:form9_date) { nil }
   let(:certification_date) { nil }
@@ -150,7 +150,7 @@ describe AppealSeriesAlerts do
     context "blocked_by_vso alert" do
       let(:form9_date) { docket_month }
       let(:status) { "ACT" }
-      let(:location_code) { "55" }
+      let(:assigned_to_location) { "55" }
 
       before { series.appeals.each { |appeal| appeal.aod = false } }
 

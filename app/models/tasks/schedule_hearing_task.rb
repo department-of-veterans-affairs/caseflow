@@ -69,7 +69,7 @@ class ScheduleHearingTask < GenericTask
   # We only want to take this off hold, not actually complete it, like the inherited method does
   def update_status_if_children_tasks_are_complete
     if appeal.is_a?(LegacyAppeal)
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:schedule_hearing])
+      AppealRepository.update_location!(appeal, LegacyAppeal::ASSIGNED_TO_LOCATIONS[:schedule_hearing])
     end
 
     return update!(status: :assigned) if on_hold?
@@ -136,9 +136,9 @@ class ScheduleHearingTask < GenericTask
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
       location = if appeal.vsos.empty?
-                   LegacyAppeal::LOCATION_CODES[:case_storage]
+                   LegacyAppeal::ASSIGNED_TO_LOCATIONS[:case_storage]
                  else
-                   LegacyAppeal::LOCATION_CODES[:service_organization]
+                   LegacyAppeal::ASSIGNED_TO_LOCATIONS[:service_organization]
                  end
 
       AppealRepository.withdraw_hearing!(appeal)

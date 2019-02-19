@@ -79,7 +79,7 @@ class ColocatedTask < Task
   def location_based_on_action
     case action.to_sym
     when :translation, :schedule_hearing
-      LegacyAppeal::LOCATION_CODES[action.to_sym]
+      LegacyAppeal::ASSIGNED_TO_LOCATIONS[action.to_sym]
     else
       assigned_by.vacols_uniq_id
     end
