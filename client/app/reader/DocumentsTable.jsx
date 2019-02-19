@@ -83,7 +83,7 @@ class DocumentsTable extends React.Component {
   }
 
   // eslint-disable-next-line max-statements
-  getDocumentColumns = (tableData, row) => {
+  getDocumentColumns = (row) => {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
     const notSortedIcon = <DoubleArrow />;
 
@@ -137,12 +137,29 @@ class DocumentsTable extends React.Component {
       },
       {
         cellClass: 'categories-column',
-        header: 'Categories',
-        valueName: 'category',
-        enableFilter: true,
-        columnName: 'category',
-        tableData,
-        label: 'Filter by category',
+        header: <div
+          id="categories-header">
+          Categories <FilterIcon
+            label="Filter by category"
+            idPrefix="category"
+            getRef={this.getCategoryFilterIconRef}
+            selected={isCategoryDropdownFilterOpen || anyCategoryFiltersAreSet}
+            handleActivate={this.toggleCategoryDropdownFilterVisiblity} />
+
+          {isCategoryDropdownFilterOpen &&
+            <DropdownFilter
+              clearFilters={this.props.clearCategoryFilters}
+              name="category"
+              isClearEnabled={anyCategoryFiltersAreSet}
+              handleClose={this.toggleCategoryDropdownFilterVisiblity}
+              addClearFiltersRow>
+              <DocCategoryPicker
+                categoryToggleStates={this.props.docFilterCriteria.category}
+                handleCategoryToggle={this.props.setCategoryFilter} />
+            </DropdownFilter>
+          }
+
+        </div>,
         valueFunction: (doc) => <DocumentCategoryIcons doc={doc} />
       },
       {
@@ -220,7 +237,7 @@ class DocumentsTable extends React.Component {
 
     return <div>
       <Table
-        columns={this.getDocumentColumns(rowObjects)}
+        columns={this.getDocumentColumns}
         rowObjects={rowObjects}
         summary="Document list"
         className="documents-table"
@@ -263,27 +280,3 @@ const mapStateToProps = (state) => ({
 export default connect(
   mapStateToProps, mapDispatchToProps
 )(DocumentsTable);
-
-// <div
-//           id="categories-header">
-//           Categories <FilterIcon
-//             label="Filter by category"
-//             idPrefix="category"
-//             getRef={this.getCategoryFilterIconRef}
-//             selected={isCategoryDropdownFilterOpen || anyCategoryFiltersAreSet}
-//             handleActivate={this.toggleCategoryDropdownFilterVisiblity} />
-
-//           {isCategoryDropdownFilterOpen &&
-//             <DropdownFilter
-//               clearFilters={this.props.clearCategoryFilters}
-//               name="category"
-//               isClearEnabled={anyCategoryFiltersAreSet}
-//               handleClose={this.toggleCategoryDropdownFilterVisiblity}
-//               addClearFiltersRow>
-//               <DocCategoryPicker
-//                 categoryToggleStates={this.props.docFilterCriteria.category}
-//                 handleCategoryToggle={this.props.setCategoryFilter} />
-//             </DropdownFilter>
-//           }
-
-//         </div>,
