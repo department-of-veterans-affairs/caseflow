@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
+import Button from '../components/Button';
 import _ from 'lodash';
 import {
   getDecisionTypeDisplay,
@@ -35,9 +36,16 @@ import {
 } from './constants';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
+const verticalLine = css(
+  {
+    borderLeft: 'thick solid lightgrey',
+    marginLeft: '20px',
+    paddingLeft: '20px'
+  }
+);
 
 class SubmitDecisionView extends React.PureComponent {
-
+  linkClicked = false;
   componentDidMount = () => {
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
@@ -215,6 +223,32 @@ class SubmitDecisionView extends React.PureComponent {
         value={decisionOpts.overtime || false}
         styling={css(marginBottom(1), marginTop(1))}
       />
+      <Checkbox
+        name="untimely_evidence"
+        label="The Veteran submitted evidence that is ineligible for review"
+        onChange={(untimelyEvidence) => this.props.setDecisionOptions({ untimelyEvidence })}
+        value={decisionOpts.untimelyEvidence || false}
+        styling={css(marginBottom(1), marginTop(1))}
+      />
+
+      <Button
+        id="ineligible-evidence"
+        linkStyling
+        willNeverBeLoading
+        onClick={() => {
+          this.linkClicked = !this.linkClicked;
+          console.log(this.linkClicked, 'was the linkclicked ?');
+          this.setState({ linkClicked: this.linkClicked });
+        }}>
+              What is ineligible evidence?
+      </Button>
+      {this.linkClicked && <div {...verticalLine}>
+        <div>AMA requires that VA capture how frequently a Veteran submits evidence that can't be considered.  This includes when the Veteran:</div>
+        <br />
+        <div>1. Requested a Direct Review appeal option and submiited evidence</div>
+        <div> 2. Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD</div>
+        <div>3. Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing</div>
+      </div>}
     </React.Fragment>;
   };
 }
