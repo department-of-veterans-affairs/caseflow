@@ -5,11 +5,11 @@ import { css, hover } from 'glamor';
 import _ from 'lodash';
 import scrollToComponent from 'react-scroll-to-component';
 
-import Tooltip from '../components/Tooltip';
-import { DoubleArrow } from '../components/RenderFunctions';
-import TableFilter from '../components/TableFilter';
-import FilterSummary from '../components/FilterSummary';
-import TablePagination from '../components/TablePagination';
+import Tooltip from './Tooltip';
+import { DoubleArrow } from './RenderFunctions';
+import TableFilter from './TableFilter';
+import FilterSummary from './FilterSummary';
+import TablePagination from './TablePagination';
 import { COLORS } from '../constants/AppConstants';
 
 /**
@@ -188,7 +188,7 @@ class FooterRow extends React.PureComponent {
   }
 }
 
-export default class QueueTable extends React.PureComponent {
+export default class NewTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -327,7 +327,7 @@ export default class QueueTable extends React.PureComponent {
     if (!getKeyForRow) {
       keyGetter = _.identity;
       if (!slowReRendersAreOk) {
-        console.warn('<QueueTable> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
+        console.warn('<NewTable> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
           'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
       }
     }
@@ -391,7 +391,7 @@ export default class QueueTable extends React.PureComponent {
   }
 }
 
-QueueTable.propTypes = {
+NewTable.propTypes = {
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([

@@ -2,10 +2,10 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 
-import QueueTable from '../../../app/queue/QueueTable';
+import NewTable from '../../../app/components/NewTable';
 import { createTask } from '../../factory';
 
-describe('QueueTable', () => {
+describe('NewTable', () => {
   let columns;
   let rowObjects;
   let wrapper;
@@ -26,7 +26,7 @@ describe('QueueTable', () => {
   context('renders', () => {
     it('works', () => {
       wrapper = mount(
-        <QueueTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       let headerCount = 3;
@@ -51,7 +51,7 @@ describe('QueueTable', () => {
 
       rowObjects = rowObjects.concat(additionalRows);
       wrapper = mount(
-        <QueueTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       wrapper.instance().updateFilteredByList({ type: ['AttorneyLegacyTask'] });
@@ -65,7 +65,7 @@ describe('QueueTable', () => {
 
       rowObjects = rowObjects.concat(additionalRows);
       wrapper = mount(
-        <QueueTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       wrapper.instance().updateFilteredByList({ type: ['AttorneyLegacyTask'] });
@@ -76,7 +76,7 @@ describe('QueueTable', () => {
 
     it('updates current page', () => {
       wrapper = mount(
-        <QueueTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       wrapper.instance().updateCurrentPage(1);
@@ -87,7 +87,7 @@ describe('QueueTable', () => {
 
     it('paginates table data', () => {
       wrapper = mount(
-        <QueueTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       const paginatedData = wrapper.instance().paginateData(rowObjects);

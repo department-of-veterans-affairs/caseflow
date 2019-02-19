@@ -264,18 +264,6 @@ export const unsetSuccessMessage = () => ({
   type: ACTIONS.UNSET_SUCCESS_MESSAGE
 });
 
-// export const toggleTypeFilterVisibility = () => ({
-//   type: ACTIONS.TOGGLE_TYPE_FILTER_DROPDOWN
-// });
-
-// export const toggleLocationFilterVisibility = () => ({
-//   type: ACTIONS.TOGGLE_LOCATION_FILTER_DROPDOWN
-// });
-
-// export const toggleVljFilterVisibility = () => ({
-//   type: ACTIONS.TOGGLE_VLJ_FILTER_DROPDOWN
-// });
-
 export const selectRequestType = (requestType) => ({
   type: ACTIONS.SELECT_REQUEST_TYPE,
   payload: {
