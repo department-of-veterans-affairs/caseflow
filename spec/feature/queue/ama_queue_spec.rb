@@ -276,7 +276,6 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Task assigned to #{other_organization.name}")
         expect(Task.last.instructions.first).to eq(instructions)
       end
-
       context "A TranslationTask is assigned to the organization" do
         let(:veteran_first_name) { "Milivoj" }
         let(:veteran_last_name) { "Veilleux" }
@@ -504,9 +503,8 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content("Submit Draft Decision for Review")
 
       fill_in "Document ID:", with: valid_document_id
-      click_on "Select a judge"
-      find(".Select-control", text: "Select a judge…").click
-      first("div", class: "Select-option", text: judge_user.full_name).click
+      # the judge should be pre selected
+      expect(page).to have_content(judge_user.full_name)
       fill_in "notes", with: "all done"
 
       click_on "Continue"
@@ -636,10 +634,9 @@ RSpec.feature "AmaQueue" do
         click_on "Continue"
 
         expect(page).to have_content("Submit Draft Decision for Review")
-
+        # these now should be preserved the next time the attorney checks out
         fill_in "Document ID:", with: valid_document_id
-        click_on "Select a judge"
-        click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
+        expect(page).to have_content(judge_user.full_name)
         fill_in "notes", with: "all done"
         click_on "Continue"
 
@@ -686,11 +683,117 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Submit Draft Decision for Review")
 
         fill_in "Document ID:", with: valid_document_id
-        click_on "Select a judge"
-        click_dropdown(prompt: "Select a judge", text: judge_user.full_name)
+        expect(page).to have_content(judge_user.full_name)
         fill_in "notes", with: "corrections made"
         click_on "Continue"
+        expect(page).to have_content(
+          "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
+          "sent to #{judge_user.full_name} for review."
+        )
+      end
 
+      step "judge sees the case in their review queue" do
+        User.authenticate!(user: judge_user)
+        visit "/queue"
+
+        expect(page).to have_content veteran_full_name
+        expect(page).to have_content valid_document_id
+      end
+    end
+    it "checkout details (documentID, judge, attorney notes) are preserved in attorney checkout" do
+      step "judge reviews case and assigns a task to an attorney" do
+        visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Assign to attorney")
+        click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+
+        click_on "Submit"
+
+        expect(page).to have_content("Assigned 1 case")
+      end
+
+      step "attorney completes task and returns the case to the judge" do
+        User.authenticate!(user: attorney_user)
+        visit "/queue"
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
+
+        expect(page).not_to have_content("Select special issues (optional)")
+
+        expect(page).to have_content("Select Dispositions")
+        click_dropdown({ prompt: "Select disposition", text: "Allowed" }, find("#table-row-0"))
+        click_dropdown({ prompt: "Select disposition", text: "Remanded" }, find("#table-row-1"))
+        click_on "Continue"
+
+        expect(page).to have_content("Select Remand Reasons")
+        find_field("Legally inadequate notice", visible: false).sibling("label").click
+        find_field("Post AOJ", visible: false).sibling("label").click
+        click_on "Continue"
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge_user.full_name)
+        fill_in "notes", with: "all done"
+        click_on "Continue"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
+          "sent to #{judge_user.full_name} for review."
+        )
+      end
+
+      step "judge returns case to attorney for corrections" do
+        User.authenticate!(user: judge_user)
+        visit "/queue"
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
+        fill_in "taskInstructions", with: "Please fix this"
+
+        click_on "Submit"
+
+        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+      end
+
+      step "attorney corrects case and returns it to the judge" do
+        User.authenticate!(user: attorney_user)
+        visit "/queue"
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
+
+        expect(page).not_to have_content("Select special issues (optional)")
+
+        expect(page).to have_content("Select Dispositions")
+        expect(dropdown_selected_value(find("#table-row-0"))).to eq "Allowed"
+        expect(dropdown_selected_value(find("#table-row-1"))).to eq "Remanded"
+        click_on "Continue"
+
+        expect(page).to have_content("Select Remand Reasons")
+        expect(find_field("Legally inadequate notice", visible: false)).to be_checked
+        expect(find_field("Post AOJ", visible: false)).to be_checked
+        click_on "Continue"
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+        # info below should be preserved from attorney completing the task
+        document_id_node = find("#document_id")
+        notes_node = find("#notes")
+        expect(document_id_node.value).to eq valid_document_id
+        expect(page).to have_content(judge_user.full_name)
+        expect(notes_node.value).to eq "all done"
+        click_on "Continue"
         expect(page).to have_content(
           "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
           "sent to #{judge_user.full_name} for review."

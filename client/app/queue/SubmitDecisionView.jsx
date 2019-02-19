@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -37,46 +36,51 @@ import {
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
 
-import type {
-  Task,
-  Appeal,
-  Judges
-} from './types/models';
-import type { UiStateMessage } from './types/state';
+class SubmitDecisionView extends React.PureComponent {
 
-type Params = {|
-  appealId: string,
-  taskId: string,
-  checkoutFlow: string,
-  nextStep: string
-|};
+  componentDidMount = () => {
+    this.extendedDecision = this.setInitialDecisionOptions(
+      this.props.decision,
+      this.props.appeal && this.props.appeal.attorneyCaseRewriteDetails);
 
-type Props = Params & {|
-  // state
-  appeal: Appeal,
-  judges: Judges,
-  decision: Object,
-  task: Task,
-  highlightFormItems: Boolean,
-  amaDecisionIssues: Boolean,
-  userRole: string,
-  error: ?UiStateMessage,
-  // dispatch
-  setDecisionOptions: typeof setDecisionOptions,
-  requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal
-|};
+    _.each(this.extendedDecision.opts, (value, key) => {
+      this.props.setDecisionOptions({
+        [key]: value
+      });
+    });
+  }
 
-class SubmitDecisionView extends React.PureComponent<Props> {
+  // this handles the case where there is no document_id on this.props.decision.opts
+  // and it comes from this.props.appeal.attorneyCaseRewriteDetails instead
+  // if you don't do this you will get validation errors and a 400 for a missing document_id
+  // this is also needed to keep the onChange values in sync
+  setInitialDecisionOptions = (decision, attorneyCaseRewriteDetails) => {
+    const decisionOptsWithAttorneyCheckoutInfo =
+    _.merge(decision.opts, { document_id: _.get(this.props, 'appeal.documentID'),
+      note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
+      overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
+      reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
+    });
+    const extendedDecision = { ...decision };
+
+    extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
+    if (extendedDecision.opts && extendedDecision.opts.overtime === null) {
+      extendedDecision.opts.overtime = false;
+    }
+
+    return extendedDecision;
+  }
   validateForm = () => {
     const {
       opts: decisionOpts
     } = this.props.decision;
-    const requiredParams = ['document_id', 'reviewing_judge_id', 'work_product'];
 
+    const requiredParams = ['document_id', 'reviewing_judge_id', 'work_product'];
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
 
-    return !missingParams.length;
+    const isValid = !missingParams.length;
+
+    return isValid;
   };
 
   getPrevStepUrl = () => {
@@ -116,7 +120,8 @@ class SubmitDecisionView extends React.PureComponent<Props> {
     } = this.props;
 
     const issuesToPass = !isLegacyAppeal && amaDecisionIssues ? decisionIssues : issues;
-    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issuesToPass, { isLegacyAppeal });
+    const payload = buildCaseReviewPayload(checkoutFlow, decision,
+      userRole, issuesToPass, { isLegacyAppeal });
 
     const fields = {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
@@ -136,6 +141,12 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       });
   };
 
+  getDefaultJudgeSelector = () => {
+    return this.props.task && this.props.task.isLegacy ?
+      this.props.task.addedByCssId :
+      this.props.task && this.props.task.assignedBy.pgId;
+  }
+
   render = () => {
     const {
       highlightFormItems,
@@ -145,6 +156,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         opts: decisionOpts
       }
     } = this.props;
+
     const decisionTypeDisplay = getDecisionTypeDisplay(checkoutFlow);
     let documentIdErrorMessage = '';
 
@@ -190,13 +202,15 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         maxLength={DOCUMENT_ID_MAX_LENGTH}
         autoComplete="off"
       />
-      <JudgeSelectComponent assignedByCssId={
-        (this.props.task && this.props.task.addedByCssId) || '' /* not compatible with AMA tasks */
-      } />
+      <JudgeSelectComponent
+        judgeSelector={
+          this.getDefaultJudgeSelector()
+        }
+      />
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.note}
+        value={decisionOpts.note || ''}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
@@ -233,7 +247,7 @@ const mapStateToProps = (state, ownProps) => {
     error,
     userRole,
     highlightFormItems,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)
+    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal && appeal.decisionIssues)
   };
 };
 
@@ -248,5 +262,5 @@ export default (connect(
   mapDispatchToProps
 )(
   decisionViewBase(SubmitDecisionView)
-): React.ComponentType<Params>
+)
 );
