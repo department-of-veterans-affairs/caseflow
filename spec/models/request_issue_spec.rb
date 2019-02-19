@@ -320,6 +320,29 @@ describe RequestIssue do
           context "when rating" do
             let(:request_issue) { rating_request_issue }
             it { is_expected.to eq "040HDERPMC" }
+
+            context "when missing contested_rating_issue_reference_id but comes from a previous rating request issue" do
+              let(:contested_rating_issue_reference_id) { nil }
+              let(:contested_decision_issue_id) { decision_issue.id }
+              let(:original_request_issue) do
+                create(
+                  :request_issue,
+                  decision_review: decision_review_remanded,
+                  end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+                )
+              end
+              let(:decision_issue) do
+                create(:decision_issue,
+                       decision_review: decision_review_remanded,
+                       request_issues: [original_request_issue])
+              end
+
+              it "is assigned a rating ep code" do
+                expect(request_issue.associated_rating_issue?).to be_falsey
+                expect(request_issue.rating?).to be true
+                expect(subject).to eq("040HDERPMC")
+              end
+            end
           end
 
           context "when nonrating" do
@@ -591,8 +614,7 @@ describe RequestIssue do
         contested_rating_issue_profile_date: profile_date,
         contested_issue_description: "a rating request issue",
         contention_reference_id: contention_reference_id,
-        end_product_establishment: previous_end_product_establishment,
-        description: "a rating request issue"
+        end_product_establishment: previous_end_product_establishment
       ).tap(&:submit_for_processing!)
     end
 
@@ -625,6 +647,41 @@ describe RequestIssue do
 
     it "returns nil if decision issues have not yet been synced" do
       expect(rating_request_issue.previous_request_issue).to be_nil
+    end
+  end
+
+  context "#rating?" do
+    subject { request_issue.rating? }
+    let(:request_issue) { rating_request_issue }
+
+    context "when there is an associated rating issue" do
+      let(:contested_rating_issue_reference_id) { "123" }
+      it { is_expected.to be true }
+    end
+
+    context "when the request issue was a rating issue on its previous end product" do
+      let(:contested_rating_issue_reference_id) { nil }
+      let(:contested_decision_issue_id) { decision_issue.id }
+      let(:previous_review) { create(:higher_level_review) }
+      let(:original_request_issue) do
+        create(
+          :request_issue,
+          decision_review: previous_review,
+          end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+        )
+      end
+      let(:decision_issue) do
+        create(:decision_issue,
+               decision_review: previous_review,
+               request_issues: [original_request_issue])
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context "when it's a nonrating issue" do
+      let(:request_issue) { nonrating_request_issue }
+      it { is_expected.to be_falsey }
     end
   end
 
@@ -668,8 +725,7 @@ describe RequestIssue do
         :request_issue,
         decision_review: appeal_in_progress,
         contested_rating_issue_reference_id: duplicate_appeal_reference_id,
-        contested_issue_description: "Appealed injury",
-        description: "Appealed injury"
+        contested_issue_description: "Appealed injury"
       )
     end
 
@@ -716,8 +772,7 @@ describe RequestIssue do
         :request_issue,
         end_product_establishment: active_epe,
         contested_rating_issue_reference_id: duplicate_reference_id,
-        contested_issue_description: "Old injury",
-        description: "Old injury"
+        contested_issue_description: "Old injury"
       )
     end
 

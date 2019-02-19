@@ -1,5 +1,15 @@
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
+  # TODO: remove this eventually, used to protect caching from screwing up removed columns
+  self.ignored_columns = %w[
+    contested_rating_issue_disability_code
+    rating_issue_reference_id
+    rating_issue_profile_date
+    review_request_id
+    review_request_type
+    description
+  ]
+
   include Asyncable
   include HasBusinessLine
 
@@ -189,9 +199,6 @@ class RequestIssue < ApplicationRecord
       contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_issue_id]
 
       {
-        # TODO: these are going away in favor of `contested_rating_issue_*`
-        rating_issue_reference_id: data[:rating_issue_reference_id],
-        rating_issue_profile_date: data[:rating_issue_profile_date],
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
@@ -229,6 +236,10 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
+    !!associated_rating_issue? || previous_rating_issue?
+  end
+
+  def associated_rating_issue?
     contested_rating_issue_reference_id
   end
 
@@ -463,6 +474,12 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
+  # But the request issue should still be added to a rating End Product
+  def previous_rating_issue?
+    contested_decision_issue&.associated_request_issue&.end_product_establishment&.rating?
+  end
 
   def fetch_diagnostic_code_status_description(diagnostic_code)
     if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]

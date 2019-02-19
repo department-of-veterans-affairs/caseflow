@@ -25,11 +25,13 @@ feature "Intake Edit Confirmation" do
     end
 
     let!(:request_issue) do
-      create(:request_issue,
-             contested_rating_issue_reference_id: rating_reference_id,
-             contested_rating_issue_profile_date: rating.profile_date,
-             decision_review: decision_review,
-             description: "PTSD denied")
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: rating_reference_id,
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: decision_review,
+        contested_issue_description: "PTSD denied"
+      )
     end
 
     before do

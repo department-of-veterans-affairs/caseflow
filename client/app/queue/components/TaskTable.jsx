@@ -13,11 +13,10 @@ import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
+import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
-import {
-  renderAppealType
-} from '../utils';
+import { renderAppealType, taskHasCompletedHold } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
@@ -49,6 +48,8 @@ type Params = {|
   includeDaysOnHold?: boolean,
   includeReaderLink?: boolean,
   includeDocumentCount?: boolean,
+  includeNewDocsIcon?: boolean,
+  useOnHoldDate?: boolean,
   requireDasRecord?: boolean,
   tasks: Array<TaskWithAppeal>,
   customColumns?: Array<Function>,
@@ -241,6 +242,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return this.props.includeDueDate ? {
       header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
       tooltip: <React.Fragment>Calendar days this case <br /> has been assigned to you</React.Fragment>,
+      align: 'center',
       valueFunction: (task: TaskWithAppeal) => {
         if (!this.taskHasDASRecord(task)) {
           return null;
@@ -264,8 +266,15 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
       tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
-      valueFunction: (task: TaskWithAppeal) => moment().startOf('day').
-        diff(moment(task.assignedOn), 'days'),
+      align: 'center',
+      valueFunction: (task: TaskWithAppeal) => {
+        return <React.Fragment>
+          <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>{moment().startOf('day').
+            diff(moment(task.assignedOn), 'days')}</span>
+          { taskHasCompletedHold(task) ? <ContinuousProgressBar level={moment().startOf('day').
+            diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
+        </React.Fragment>;
+      },
       getSortValue: (task: TaskWithAppeal) => moment().startOf('day').
         diff(moment(task.assignedOn), 'days')
     } : null;
@@ -273,7 +282,14 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
   caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
-    valueFunction: (task: TaskWithAppeal) => <OnHoldLabel task={task} />,
+    align: 'center',
+    valueFunction: (task: TaskWithAppeal) => {
+      return <React.Fragment>
+        <OnHoldLabel task={task} />
+        <ContinuousProgressBar limit={task.onHoldDuration} level={moment().startOf('day').
+          diff(task.placedOnHoldAt, 'days')} />
+      </React.Fragment>;
+    },
     getSortValue: (task: TaskWithAppeal) => numDaysOnHold(task)
   } : null)
 
@@ -307,6 +323,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
           appeal={task.appeal}
+          newDocsIcon={this.props.includeNewDocsIcon}
+          onHoldDate={this.props.useOnHoldDate ? task.placedOnHoldAt : null}
           cached
           docCountBelowLink />;
       }
