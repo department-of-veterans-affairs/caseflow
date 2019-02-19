@@ -51,7 +51,7 @@ feature "Higher-Level Review" do
       expect(page).to have_content("Intake completed")
     end
 
-    step "EPs use the updated Veteran name", focus: true do
+    step "EPs use the updated Veteran name" do
       # TODO: logging adds additional check
       expect(bgs).to have_received(:fetch_veteran_info).exactly(5).times
 
