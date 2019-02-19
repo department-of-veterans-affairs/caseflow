@@ -72,21 +72,7 @@ class ContestableIssue
   private
 
   def contested_by_request_issue
-    find_contested_request_issue_by_rating_issue || find_contested_request_issue_by_decision_issue
-  end
-
-  def find_contested_request_issue_by_rating_issue
-    # only find based on rating issue if a decision issue does not exist
-    # otherwise we end up with a cycle where we find the same request issues over and over again
-    return nil if !rating_issue_reference_id || !decision_issue.nil?
-
-    RequestIssue.active_or_decided.find_by(contested_rating_issue_reference_id: rating_issue_reference_id, contested_decision_issue_id: nil)
-  end
-
-  def find_contested_request_issue_by_decision_issue
-    return nil unless decision_issue&.id
-
-    RequestIssue.active_or_decided.find_by(contested_decision_issue_id: decision_issue.id)
+    RequestIssue.open.find_by(contested_rating_issue_reference_id: rating_issue_reference_id, contested_decision_issue_id: decision_issue&.id)
   end
 
   def serialize_latest_decision_issues

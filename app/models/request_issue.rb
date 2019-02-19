@@ -181,10 +181,6 @@ class RequestIssue < ApplicationRecord
       new(attrs).tap(&:validate_eligibility!)
     end
 
-    def active_or_decided
-      open.where(decision_sync_error: nil).where.not(decision_sync_submitted_at: nil)
-    end
-
     private
 
     # rubocop:disable Metrics/MethodLength

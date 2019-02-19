@@ -100,13 +100,13 @@ class AddIssuesModal extends React.Component {
           let hasLaterIssueInChain = false;
 
           // if current decisionIssueId is not in any of the latest issues, it is a prior decision
-          let foundLatestIssueIds = issue.latestIssueInChains.filter((latestIssue) => {
+          let foundLatestIssueIds = issue.latestIssuesInChain.filter((latestIssue) => {
             return latestIssue.id === issue.decisionIssueId;
           });
 
           if (foundLatestIssueIds.length === 0) {
             hasLaterIssueInChain = true;
-            let dates = _.uniq(issue.latestIssueInChains.map((latestIssue) => {
+            let dates = _.uniq(issue.latestIssuesInChain.map((latestIssue) => {
               return formatDateStr(latestIssue.date);
             })).join(', ');
 
