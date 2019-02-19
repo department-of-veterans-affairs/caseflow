@@ -85,14 +85,14 @@ RSpec.describe HearingsController, type: :controller do
         }
       end
 
-      before { Time.zone = "America/New_York" }
-
       context "for a legacy hearing" do
         it "should create a new VACOLS hearing and LegacyHearing" do
           patch :update, as: :json, params: {
             id: legacy_hearing.external_id, hearing: params, master_record_updated: master_record_params
           }
           expect(response.status).to eq 200
+
+          binding.pry
 
           expect(LegacyHearing.last.location.facility_id).to eq "vba_301"
           expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
