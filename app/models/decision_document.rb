@@ -33,6 +33,7 @@ class DecisionDocument < ApplicationRecord
   end
 
   def submit_for_processing!
+    appeal.decision_issues.each { |di| di.update!(caseflow_decision_date: decision_date) }
     return no_processing_required! unless upload_enabled?
 
     cache_file!
