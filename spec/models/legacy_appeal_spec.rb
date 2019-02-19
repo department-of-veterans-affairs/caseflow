@@ -459,7 +459,7 @@ describe LegacyAppeal do
     end
   end
 
-  context "#new_documents_from_caseflow" do
+  context "#new_documents_for_user" do
     before do
       documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
     end
@@ -476,7 +476,7 @@ describe LegacyAppeal do
     let!(:appeal) { Generators::LegacyAppeal.create }
     let!(:vacols_case) { create(:case, documents: documents) }
 
-    subject { appeal.new_documents_from_caseflow(user) }
+    subject { appeal.new_documents_for_user(user: user) }
 
     context "when appeal has no appeal view" do
       it "should return all documents" do
