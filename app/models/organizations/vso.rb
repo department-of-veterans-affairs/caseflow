@@ -20,8 +20,3 @@ class Vso < Organization
     vso_config&.ihp_dockets || [Constants.AMA_DOCKETS.evidence_submission, Constants.AMA_DOCKETS.direct_review]
   end
 end
-
-# vso_configs (ID) | organization_id | ihp_dockets                                          | queue_table_columns
-# default          | ***             | [evidence_submission, direct_review]
-# PVA              | ***             | [evidence_submission, direct_review, hearing_docket]
-# field VSOs       | ***             | []
