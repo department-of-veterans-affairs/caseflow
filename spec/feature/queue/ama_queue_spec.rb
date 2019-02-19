@@ -787,7 +787,7 @@ RSpec.feature "AmaQueue" do
         click_on "Continue"
 
         expect(page).to have_content("Submit Draft Decision for Review")
-        #info below should be preserved from attorney completing the task 
+        # info below should be preserved from attorney completing the task
         expect(page).to have_content(valid_document_id)
         expect(page).to have_content(judge_user.full_name)
         expect(page).to have_content("all done")
