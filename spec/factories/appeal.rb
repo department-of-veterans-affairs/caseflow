@@ -28,7 +28,7 @@ FactoryBot.define do
     end
 
     trait :hearing_docket do
-      docket_type Constants.AMA_DOCKETS.evidence_submission
+      docket_type Constants.AMA_DOCKETS.hearing
     end
 
     trait :advanced_on_docket_due_to_age do
