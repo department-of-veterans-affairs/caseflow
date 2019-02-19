@@ -8,17 +8,17 @@ class HearingDocket
   attr_accessor :master_record, :hearings_count, :regional_office_key
 
   SLOTS_BY_TIMEZONE = {
-    "America/New_York" => 11,
-    "America/Chicago" => 9,
-    "America/Indiana/Indianapolis" => 11,
-    "America/Kentucky/Louisville" => 11,
-    "America/Denver" => 9,
-    "America/Los_Angeles" => 7,
-    "America/Boise" => 9,
-    "America/Puerto_Rico" => 11,
-    "Asia/Manila" => 7,
-    "Pacific/Honolulu" => 7,
-    "America/Anchorage" => 7
+    "America/New_York" => 12,
+    "America/Chicago" => 10,
+    "America/Indiana/Indianapolis" => 12,
+    "America/Kentucky/Louisville" => 12,
+    "America/Denver" => 10,
+    "America/Los_Angeles" => 8,
+    "America/Boise" => 10,
+    "America/Puerto_Rico" => 12,
+    "Asia/Manila" => 8,
+    "Pacific/Honolulu" => 8,
+    "America/Anchorage" => 8
   }.freeze
 
   def to_hash
@@ -28,12 +28,7 @@ class HearingDocket
   end
 
   def slots
-    ro_staff = VACOLS::Staff.find_by(stafkey: regional_office_key)
-    @slots ||= HearingDayRepository.slots_based_on_type(
-      staff: ro_staff,
-      type: request_type,
-      date: scheduled_for
-    ) || SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
+    @slots ||= SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
   end
 
   def attributes
