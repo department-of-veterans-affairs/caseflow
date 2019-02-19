@@ -167,7 +167,6 @@ class Appeal < DecisionReview
     decision_documents.last
   end
 
-  # TODO: Write PR to migrate existing use of string literal docket types to Constants.
   def hearing_docket?
     docket_type == Constants.AMA_DOCKETS.hearing
   end
