@@ -83,29 +83,44 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :previous_task do
-    {
-      assigned_at: object.previous_task.try(:assigned_at)
-    }
+    if @instance_options[:exclude_extra_fields]
+      {
+        assigned_at: nil
+      }
+    else
+      {
+        assigned_at: object.previous_task.try(:assigned_at)
+      }
+    end
   end
 
   attribute :document_id do
-    object.latest_attorney_case_review ? object.latest_attorney_case_review.document_id : nil
+    if @instance_options[:exclude_extra_fields]
+      nil
+    else
+      object.latest_attorney_case_review ? object.latest_attorney_case_review.document_id : nil
+    end
   end
 
   attribute :decision_prepared_by do
-    {
-      first_name: object.prepared_by_display_name ? object.prepared_by_display_name.first : nil,
-      last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
-    }
+    if @instance_options[:exclude_extra_fields]
+      {
+        first_name: nil,
+        last_name: nil
+      }
+    else
+      {
+        first_name: object.prepared_by_display_name ? object.prepared_by_display_name.first : nil,
+        last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
+      }
+    end
   end
 
   attribute :available_actions do
-    object.available_actions_unwrapper(@instance_options[:user])
-  end
-
-  attribute :task_business_payloads do
-    object.task_business_payloads.map do |payload|
-      { description: payload.description, values: payload.values }
+    if @instance_options[:exclude_extra_fields]
+      nil
+    else
+      object.available_actions_unwrapper(@instance_options[:user])
     end
   end
 end

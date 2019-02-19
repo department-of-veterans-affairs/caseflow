@@ -2,7 +2,7 @@
 import { createSelector } from 'reselect';
 import _ from 'lodash';
 import {
-  taskHasNewDocuments,
+  taskIsActive,
   taskIsOnHold
 } from './utils';
 
@@ -51,11 +51,9 @@ const getModals = (state: State): UiStateModals => state.ui.modals;
 const getNewDocsForAppeal = (state: State): NewDocsForAppeal => state.queue.newDocsForAppeal;
 const getClaimReviews = (state: State): ClaimReviews => state.queue.claimReviews;
 
-export const incompleteTasksSelector = (tasks: Tasks | Array<Task>) =>
-  _.filter(tasks, (task) => task.status !== TASK_STATUSES.completed);
+export const incompleteTasksSelector = (tasks: Tasks | Array<Task>) => _.filter(tasks, (task) => taskIsActive(task));
 
-export const completeTasksSelector = (tasks: Tasks) =>
-  _.filter(tasks, (task) => task.status === TASK_STATUSES.completed);
+export const completeTasksSelector = (tasks: Tasks) => _.filter(tasks, (task) => !taskIsActive(task));
 
 export const taskIsNotOnHoldSelector = (tasks: Tasks) =>
   _.filter(tasks, (task) => !taskIsOnHold(task));
@@ -264,17 +262,10 @@ const incompleteTasksWithHold: (State) => Array<Task> = createSelector(
   (tasks: Array<Task>) => tasks.filter((task) => taskIsOnHold(task))
 );
 
-export const pendingTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
-  [incompleteTasksWithHold, getNewDocsForAppeal],
-  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
-    !taskIsOnHold(task) || taskHasNewDocuments(task, newDocsForAppeal)
-  )
-);
-
 export const onHoldTasksByAssigneeCssIdSelector: (State) => Array<Task> = createSelector(
   [incompleteTasksWithHold, getNewDocsForAppeal],
-  (tasks: Array<Task>, newDocsForAppeal: NewDocsForAppeal) => tasks.filter((task) =>
-    taskIsOnHold(task) && !taskHasNewDocuments(task, newDocsForAppeal)
+  (tasks: Array<Task>) => tasks.filter((task) =>
+    taskIsOnHold(task)
   )
 );
 

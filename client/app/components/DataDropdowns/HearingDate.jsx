@@ -19,7 +19,7 @@ class HearingDateDropdown extends React.Component {
     const { hearingDates: { options }, validateValueOnMount, onChange } = this.props;
 
     if (!_.isEqual(prevProps.hearingDates.options, options) && validateValueOnMount) {
-      const option = this.getSelectedOption();
+      const option = this.getSelectedOption() || {};
 
       onChange(option.value, option.label);
     }
@@ -103,7 +103,7 @@ class HearingDateDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value, option.label)}
+        onChange={(option) => onChange((option || {}).value, (option || {}).label)}
         options={this.props.hearingDates.options}
         errorMessage={errorMessage}
         placeholder={placeholder} />

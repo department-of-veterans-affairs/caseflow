@@ -14,6 +14,7 @@ class LegacyAppeal < ApplicationRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_one :special_issue_list, as: :appeal
+  has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -108,14 +109,12 @@ class LegacyAppeal < ApplicationRecord
   }.freeze
   # rubocop:enable Metrics/LineLength
 
-  # TODO: the type code should be the base value, and should be
-  #       converted to be human readable, not vis-versa
-  # TODO: integrate with Constants::LEGACY_APPEAL_TYPES_BY_ID
+  # Codes for Appeals Status API
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
     "Reconsideration" => "reconsideration",
-    "Court Remand" => "cavc_remand",
+    "Court Remand" => "post_cavc_remand",
     "Clear and Unmistakable Error" => "cue"
   }.freeze
 
@@ -137,7 +136,7 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
-  delegate :documents, :new_documents_for_user, :number_of_documents,
+  delegate :documents, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification
@@ -897,6 +896,10 @@ class LegacyAppeal < ApplicationRecord
       VACOLS::Case::BVA_DISPOSITION_CODES.map do |code|
         Constants::VACOLS_DISPOSITIONS_BY_ID[code]
       end
+    end
+
+    def nonpriority_decisions_per_year
+      repository.nonpriority_decisions_per_year
     end
 
     private

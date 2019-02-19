@@ -12,9 +12,9 @@ RSpec.describe CaseReviewsController, type: :controller do
       let!(:judge_staff) { create(:staff, :judge_role, slogid: "CSF444", sdomainid: judge.css_id) }
       let!(:attorney_staff) { create(:staff, :attorney_role, slogid: "CSF555", sdomainid: attorney.css_id) }
 
-      let!(:request_issue1) { create(:request_issue, review_request: task.appeal) }
-      let(:request_issue2) { create(:request_issue, review_request: task.appeal) }
-      let(:request_issue3) { create(:request_issue, review_request: task.appeal) }
+      let!(:request_issue1) { create(:request_issue, decision_review: task.appeal) }
+      let(:request_issue2) { create(:request_issue, decision_review: task.appeal) }
+      let(:request_issue3) { create(:request_issue, decision_review: task.appeal) }
 
       context "Attorney Case Review" do
         before do

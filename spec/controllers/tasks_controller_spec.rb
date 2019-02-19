@@ -135,6 +135,38 @@ RSpec.describe TasksController, type: :controller do
         expect(response.status).to eq 200
       end
 
+      context "and theres a task to return" do
+        let!(:vacols_case) do
+          create(
+            :case,
+            folder: create(:folder, tinum: "docket-number"),
+            bfregoff: "RO04",
+            bfcurloc: "57",
+            bfhr: "2",
+            bfdocind: HearingDay::REQUEST_TYPES[:video]
+          )
+        end
+        let!(:legacy_appeal) do
+          create(:legacy_appeal, vacols_case: vacols_case)
+        end
+        let!(:task) do
+          create(:generic_task, assigned_to: user, appeal: legacy_appeal)
+        end
+
+        it "does not make a BGS call" do
+          BGSService.instance_methods(false).each do |method_name|
+            expect_any_instance_of(BGSService).not_to receive(method_name)
+          end
+
+          get :index, params: { user_id: user.id, role: "unknown" }
+          expect(response).to have_http_status(:success)
+
+          data = JSON.parse(response.body)["tasks"]["data"]
+
+          expect(data.size).to be(1)
+        end
+      end
+
       context "when a task is assignable" do
         let(:root_task) { FactoryBot.create(:root_task) }
 
@@ -162,7 +194,7 @@ RSpec.describe TasksController, type: :controller do
 
             task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
 
             # org count minus one since we can't assign to ourselves.
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
@@ -189,7 +221,7 @@ RSpec.describe TasksController, type: :controller do
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
 
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
               action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
@@ -523,7 +555,7 @@ RSpec.describe TasksController, type: :controller do
       let(:new_attorney) { create(:user) }
 
       it "should update successfully" do
-        User.stub = judge
+        User.stub = attorney
         create(:staff, :attorney_role, sdomainid: new_attorney.css_id)
         patch :update, params: { task: { assigned_to_id: new_attorney.id }, id: attorney_task.id }
         expect(response.status).to eq 200
@@ -724,7 +756,9 @@ RSpec.describe TasksController, type: :controller do
           expect_any_instance_of(BGSService).not_to receive(method_name)
         end
 
-        get :ready_for_hearing_schedule, params: { ro: "RO04" }
+        AppealRepository.create_schedule_hearing_tasks
+
+        get :ready_for_hearing_schedule, params: { ro: closest_regional_office }
         expect(response).to have_http_status(:success)
         data = JSON.parse(response.body)["data"]
 
@@ -733,33 +767,6 @@ RSpec.describe TasksController, type: :controller do
         expect(data.first["attributes"]["veteran_available_hearing_locations"].first["address"]).to eq(
           address
         )
-      end
-    end
-
-    context "when veteran is not defined" do
-      let!(:vacols_case) do
-        create(
-          :case,
-          folder: create(:folder, tinum: "docket-number"),
-          bfregoff: "RO04",
-          bfcurloc: "57",
-          bfhr: "2",
-          bfdocind: HearingDay::REQUEST_TYPES[:video]
-        )
-      end
-
-      it "does not make a BGS call" do
-        BGSService.instance_methods(false).each do |method_name|
-          expect_any_instance_of(BGSService).not_to receive(method_name)
-        end
-
-        get :ready_for_hearing_schedule, params: { ro: "RO04" }
-        expect(response).to have_http_status(:success)
-        data = JSON.parse(response.body)["data"]
-
-        expect(data.size).to be(1)
-        expect(data.first["attributes"]["closest_regional_office"]).to eq(nil)
-        expect(data.first["attributes"]["veteran_available_hearing_locations"]).to eq(nil)
       end
     end
   end

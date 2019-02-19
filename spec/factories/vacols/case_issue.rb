@@ -23,6 +23,14 @@ FactoryBot.define do
       end
     end
 
+    transient do
+      with_notes { false }
+    end
+
+    after(:create) do |issue, evaluator|
+      issue.issdesc = "note for issue with id #{issue.id}" if evaluator.with_notes
+    end
+
     trait :compensation do
       issprog "02"
       isscode "15"

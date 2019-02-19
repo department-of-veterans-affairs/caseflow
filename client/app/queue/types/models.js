@@ -91,7 +91,6 @@ export type Task = {
     lastName: string,
   },
   availableActions: Array<{ label?: string, value: string, data: ?Object }>,
-  taskBusinessPayloads: Array<{description: string, values: Object}>,
   hideFromQueueTableView: boolean,
   hideFromCaseTimeline: boolean,
   hideFromTaskSnapshot: boolean,
@@ -136,7 +135,8 @@ export type AppealDetail = {
   caseflowVeteranId: ?string,
   tasks: ?Array<Task>,
   veteranAvailableHearingLocations: ?Array<Object>,
-  veteranClosestRegionalOffice: ?string
+  veteranClosestRegionalOffice: ?string,
+  attorneyCaseRewriteDetails: ?Object
 };
 
 export type AppealDetails = { [string]: AppealDetail };

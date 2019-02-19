@@ -88,6 +88,10 @@ class SeedDB
     user = User.create(css_id: "BVALSPORER", station_id: 101, full_name: "Co-located with cases", roles: %w[Reader])
     FactoryBot.create(:staff, :colocated_role, user: user, sdept: "DSP")
     OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
+
+    admin = User.create(css_id: "VLJ_SUPPORT_ADMIN", station_id: 101, full_name: "VLJ Support admin", roles: %w[Reader])
+    FactoryBot.create(:staff, :colocated_role, user: admin, sdept: "DSP")
+    OrganizationsUser.make_user_admin(admin, Colocated.singleton)
   end
 
   def create_vso_users_and_tasks
@@ -181,7 +185,7 @@ class SeedDB
         [3, 4, 5].sample,
         contested_issue_description: description,
         notes: "Pain disorder with 100\% evaluation per examination",
-        review_request: root.appeal
+        decision_review: root.appeal
       )
       parent = FactoryBot.create(
         :bva_dispatch_task,
@@ -457,7 +461,7 @@ class SeedDB
                           :nonrating,
                           end_product_establishment: epe,
                           veteran_participant_id: veteran.participant_id,
-                          review_request: higher_level_review)
+                          decision_review: higher_level_review)
       end
       FactoryBot.create(:higher_level_review_task,
                         assigned_to: Organization.find_by(name: "National Cemetery Association"),
@@ -511,6 +515,7 @@ class SeedDB
     LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
     LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
+    LegacyAppeal.create(vacols_id: "2657227", vbms_id: "169397130S")
   end
 
   def create_higher_level_reviews_and_supplemental_claims
@@ -611,7 +616,7 @@ class SeedDB
     )
 
     eligible_request_issue = RequestIssue.create!(
-      review_request: higher_level_review,
+      decision_review: higher_level_review,
       issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
@@ -621,7 +626,7 @@ class SeedDB
     )
 
     untimely_request_issue = RequestIssue.create!(
-      review_request: higher_level_review,
+      decision_review: higher_level_review,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "12345",
@@ -672,7 +677,7 @@ class SeedDB
     FactoryBot.create(:attorney_case_review, task_id: child.id)
   end
 
-  def create_task_at_colocated(appeal, judge, attorney, colocated_user, task_attributes = {})
+  def create_task_at_colocated(appeal, judge, attorney, task_attributes = {})
     parent = FactoryBot.create(
       :ama_judge_task,
       :on_hold,
@@ -694,36 +699,21 @@ class SeedDB
                       parent: atty_task,
                       assigned_by: attorney,
                       assigned_to: Colocated.singleton }.merge(task_attributes)
-    org_task = FactoryBot.create(:ama_colocated_task, :on_hold, org_task_args)
-
-    personal_task_args = org_task_args.merge(
-      parent: org_task,
-      action: org_task.action,
-      instructions: org_task.instructions,
-      assigned_to: colocated_user
-    )
-    FactoryBot.create(:ama_colocated_task, personal_task_args)
+    FactoryBot.create(:ama_colocated_task, :on_hold, org_task_args)
   end
 
-  def create_colocated_legacy_tasks(attorney, colocated_user)
+  def create_colocated_legacy_tasks(attorney)
     [
       { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
       { vacols_id: "2226048", trait: nil, additional: { action: "translation" } },
       { vacols_id: "2249056", trait: :in_progress },
-      { vacols_id: "2306397", trait: :on_hold }
+      { vacols_id: "2306397", trait: :on_hold },
+      { vacols_id: "2657227", trait: :completed_hold }
     ].each do |attrs|
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                         assigned_by: attorney,
                         assigned_to: Colocated.singleton }.merge(attrs[:additional] || {})
-      org_task = FactoryBot.create(:colocated_task, :on_hold, org_task_args)
-
-      personal_task_args = org_task_args.merge(
-        parent: org_task,
-        action: org_task.action,
-        instructions: org_task.instructions,
-        assigned_to: colocated_user
-      )
-      FactoryBot.create(*[:colocated_task, attrs[:trait]].compact, personal_task_args)
+      FactoryBot.create(:colocated_task, :on_hold, org_task_args)
     end
   end
 
@@ -782,7 +772,6 @@ class SeedDB
   def create_tasks
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
-    colocated = User.find_by(css_id: "BVALSPORER")
 
     create_task_at_judge_assignment(@ama_appeals[0], judge, 35.days.ago)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
@@ -790,20 +779,20 @@ class SeedDB
     create_task_at_judge_assignment(@ama_appeals[3], judge)
     create_task_at_judge_review(@ama_appeals[4], judge, attorney)
     create_task_at_judge_review(@ama_appeals[5], judge, attorney)
-    create_task_at_colocated(@ama_appeals[6], judge, attorney, colocated)
-    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, colocated, action: "translation")
+    create_task_at_colocated(@ama_appeals[6], judge, attorney)
+    create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, action: "translation")
     create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
     create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
     create_task_at_judge_assignment(@ama_appeals[9], judge)
     create_task_at_judge_review(@ama_appeals[10], judge, attorney)
-    create_task_at_colocated(@ama_appeals[11], judge, attorney, colocated)
+    create_task_at_colocated(@ama_appeals[11], judge, attorney)
 
     9.times do
       appeal = FactoryBot.create(:appeal)
       create_task_at_judge_assignment(appeal, judge, Time.zone.today)
     end
 
-    create_colocated_legacy_tasks(attorney, colocated)
+    create_colocated_legacy_tasks(attorney)
 
     FactoryBot.create_list(
       :generic_task,
@@ -826,10 +815,10 @@ class SeedDB
 
       request_issues = FactoryBot.create_list(:request_issue, 3,
                                               :nonrating,
-                                              description: "#{index} #{description}",
+                                              contested_issue_description: "#{index} #{description}",
                                               notes: "#{index} #{notes}",
                                               benefit_type: nca.url,
-                                              review_request: board_grant_task.appeal)
+                                              decision_review: board_grant_task.appeal)
 
       request_issues.each do |request_issue|
         # create matching decision issue
@@ -922,6 +911,7 @@ class SeedDB
     description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
 
+    FeatureToggle.enable!(:ama_acd_tasks)
     FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
@@ -930,7 +920,9 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(
+        :request_issue, 1, contested_issue_description: description, notes: notes
+      )
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
@@ -938,7 +930,9 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",
-      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(
+        :request_issue, 8, contested_issue_description: description, notes: notes
+      )
     )
 
     user = User.find_by(css_id: "BVATWARNER")
@@ -975,6 +969,8 @@ class SeedDB
     create_ama_hearing_appeals
     create_board_grant_tasks
     create_veteran_record_request_tasks
+
+    FetchHearingLocationsForVeteransJob.perform_now
 
     return if Rails.env.development?
 

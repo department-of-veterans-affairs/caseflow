@@ -1,7 +1,6 @@
 describe VACOLS::CaseDocket do
   before do
     FeatureToggle.enable!(:test_facols)
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
   after do
@@ -117,6 +116,75 @@ describe VACOLS::CaseDocket do
     end
   end
 
+  context ".age_of_n_oldest_priority_appeals" do
+    subject { VACOLS::CaseDocket.age_of_n_oldest_priority_appeals(2) }
+    it "returns the sorted ages of the n oldest priority appeals" do
+      expect(subject).to eq([aod_ready_case_ready_time, 2.days.ago].map(&:to_date))
+    end
+
+    context "when an appeal is tied to a judge" do
+      let(:original_docket_number) { aod_ready_case_docket_number }
+      let!(:hearing) do
+        create(:case_hearing,
+               :disposition_held,
+               folder_nr: original.bfkey,
+               hearing_date: 5.days.ago.to_date,
+               board_member: judge.vacols_attorney_id)
+      end
+
+      it "does not include the hearing appeal" do
+        expect(subject).to eq([2.days.ago.to_date])
+      end
+    end
+  end
+
+  context ".nonpriority_decisions_per_year" do
+    subject { VACOLS::CaseDocket.nonpriority_decisions_per_year }
+
+    before do
+      4.times do
+        create(:case,
+               bfddec: 6.months.ago,
+               bfac: "1",
+               bfdc: "1")
+      end
+
+      4.times do
+        create(:case,
+               bfddec: 6.months.ago,
+               bfac: "1",
+               bfdc: "3")
+      end
+
+      2.times do
+        create(:case,
+               bfddec: 6.months.ago,
+               bfac: "1",
+               bfdc: "4")
+      end
+
+      create(:case,
+             bfddec: 13.months.ago,
+             bfac: "1",
+             bfdc: "1")
+
+      create(:case,
+             bfddec: 6.months.ago,
+             bfac: "7",
+             bfdc: "5")
+
+      create(:case,
+             :aod,
+             bfddec: 6.months.ago,
+             bfac: "1",
+             bfdc: "3")
+    end
+
+    it "counts decisions in the last year" do
+      expect(subject).to eq(10)
+    end
+  end
+
   context ".distribute_nonpriority_appeals" do
     let(:genpop) { "any" }
     let(:range) { nil }
@@ -169,7 +237,7 @@ describe VACOLS::CaseDocket do
         create(:case_hearing,
                :disposition_held,
                folder_nr: original.bfkey,
-               hearing_date: 5.days.ago,
+               hearing_date: 5.days.ago.to_date,
                board_member: hearing_judge)
       end
 
@@ -177,7 +245,7 @@ describe VACOLS::CaseDocket do
         create(:case_hearing,
                :disposition_held,
                folder_nr: another_nonpriority_ready_case.bfkey,
-               hearing_date: 5.days.ago,
+               hearing_date: 5.days.ago.to_date,
                board_member: another_judge.vacols_attorney_id)
       end
 
@@ -311,7 +379,7 @@ describe VACOLS::CaseDocket do
         create(:case_hearing,
                :disposition_held,
                folder_nr: original.bfkey,
-               hearing_date: 5.days.ago,
+               hearing_date: 5.days.ago.to_date,
                board_member: hearing_judge)
       end
 
@@ -319,7 +387,7 @@ describe VACOLS::CaseDocket do
         create(:case_hearing,
                :disposition_held,
                folder_nr: postcavc_ready_case.bfkey,
-               hearing_date: 5.days.ago,
+               hearing_date: 5.days.ago.to_date,
                board_member: another_judge.vacols_attorney_id)
       end
 

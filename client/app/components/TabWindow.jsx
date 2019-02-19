@@ -35,6 +35,7 @@ export default class TabWindow extends React.Component {
     return <span>
       {tab.icon ? tab.icon : ''}
       <span>{tab.label}</span>
+      {tab.indicator ? tab.indicator : ''}
     </span>;
   }
 
@@ -95,6 +96,7 @@ TabWindow.propTypes = {
   tabs: PropTypes.arrayOf(PropTypes.shape({
     disable: PropTypes.boolean,
     icon: PropTypes.obj,
+    indicator: PropTypes.obj,
     label: PropTypes.node.isRequired,
     page: PropTypes.node.isRequired
   })),

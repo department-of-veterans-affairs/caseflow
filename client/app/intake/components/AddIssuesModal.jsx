@@ -20,7 +20,7 @@ class AddIssuesModal extends React.Component {
     super(props);
 
     this.state = {
-      profileDate: '',
+      approxDecisionDate: '',
       selectedContestableIssueIndex: '',
       notes: ''
     };
@@ -90,7 +90,7 @@ class AddIssuesModal extends React.Component {
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
 
     const contestableIssuesSections = _.map(intakeData.contestableIssues,
-      (contestableIssuesByIndex, date) => {
+      (contestableIssuesByIndex, approxDecisionDate) => {
         const radioOptions = _.map(contestableIssuesByIndex, (issue) => {
           const foundIndex = _.findIndex(addedIssues, { index: issue.index });
           let text = foundIndex === -1 ?
@@ -124,10 +124,10 @@ class AddIssuesModal extends React.Component {
 
         return <RadioField
           vertical
-          label={<h3>Past decisions from { formatDateStr(date) }</h3>}
+          label={<h3>Past decisions from { formatDateStr(approxDecisionDate) }</h3>}
           name="rating-radio"
           options={radioOptions}
-          key={date}
+          key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
         />;
