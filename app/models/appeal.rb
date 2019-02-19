@@ -437,7 +437,7 @@ class Appeal < DecisionReview
       }
     when :decision_in_progress
       {
-        decision_timeliness: AppealSeries::DECISION_TIMELINESS
+        decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
       }
     else
       {}
