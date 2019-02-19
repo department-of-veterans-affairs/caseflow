@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
