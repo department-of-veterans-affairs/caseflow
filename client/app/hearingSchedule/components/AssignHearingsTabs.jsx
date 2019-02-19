@@ -5,8 +5,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import LEGACY_APPEAL_TYPES_BY_ID from '../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
-// import Table from '../../components/Table';
-import QueueTable from '../../queue/QueueTable';
+import NewTable from '../../components/NewTable';
 import TabWindow from '../../components/TabWindow';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { renderAppealType } from '../../queue/utils';
@@ -53,7 +52,7 @@ const AvailableVeteransTable = ({ rows, columns }) => {
     </div>;
   }
 
-  return <QueueTable
+  return <NewTable
     columns={removeTimeColumn}
     rowObjects={rows}
     summary="scheduled-hearings-table"
@@ -66,7 +65,7 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => (
   <div>
     <Link to={`/schedule/docket/${selectedHearingDay.id}`}>
       {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }</Link>
-    <QueueTable
+    <NewTable
       columns={columns}
       rowObjects={rows}
       summary="scheduled-hearings-table"

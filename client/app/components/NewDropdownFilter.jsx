@@ -18,7 +18,7 @@ const dropdownFilterViewListItemStyle = css(
   }
 );
 
-class QueueDropdownFilter extends React.PureComponent {
+class NewDropdownFilter extends React.PureComponent {
   constructor() {
     super();
     this.state = {
@@ -79,11 +79,11 @@ class QueueDropdownFilter extends React.PureComponent {
   }
 }
 
-QueueDropdownFilter.propTypes = {
+NewDropdownFilter.propTypes = {
   children: PropTypes.node,
   disableClearFilters: PropTypes.bool,
   clearFilters: PropTypes.func,
   handleClose: PropTypes.func
 };
 
-export default QueueDropdownFilter;
+export default NewDropdownFilter;

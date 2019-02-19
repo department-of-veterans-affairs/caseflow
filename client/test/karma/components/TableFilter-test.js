@@ -37,7 +37,7 @@ describe('TableFilter', () => {
           isDropdownFilterOpen />
       );
 
-      expect(wrapper.find('QueueDropdownFilter')).to.have.length(1);
+      expect(wrapper.find('NewDropdownFilter')).to.have.length(1);
     });
 
     it('does not display filter dropdown when isDropdownFilterOpen is false', () => {

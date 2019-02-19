@@ -5,13 +5,12 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 import moment from 'moment';
 
-import QueueTable from '../../queue/QueueTable';
+import NewTable from '../../components/NewTable';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
 import { CSVLink } from 'react-csv';
 import {
-  onReceiveHearingSchedule,
   onViewStartDateChange,
   onViewEndDateChange
 } from '../actions';
@@ -31,14 +30,14 @@ const formatVljName = (lastName, firstName) => {
   }
 };
 
-const judgeNameToIdMap = (hearings) => {
-  let nameToIdMap = {};
+// const judgeNameToIdMap = (hearings) => {
+//   let nameToIdMap = {};
 
-  _.forEach(hearings, (hearingDay) => nameToIdMap[formatVljName(hearingDay.judgeLastName,
-    hearingDay.judgeFirstName)] = hearingDay.judgeId);
+//   _.forEach(hearings, (hearingDay) => nameToIdMap[formatVljName(hearingDay.judgeLastName,
+//     hearingDay.judgeFirstName)] = hearingDay.judgeId);
 
-  return nameToIdMap;
-};
+//   return nameToIdMap;
+// };
 
 const inlineFormStyling = css({
   '> div': {
@@ -199,7 +198,7 @@ class ListSchedule extends React.Component {
                 }
               </div>
             </div>
-            <QueueTable
+            <NewTable
               columns={hearingScheduleColumns}
               rowObjects={hearingScheduleRows}
               summary="hearing-schedule"
@@ -229,21 +228,14 @@ ListSchedule.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  // filterTypeIsOpen: state.hearingSchedule.filterTypeIsOpen,
-  // filterLocationIsOpen: state.hearingSchedule.filterLocationIsOpen,
-  // filterVljIsOpen: state.hearingSchedule.filterVljIsOpen,
   startDate: state.hearingSchedule.viewStartDate,
   endDate: state.hearingSchedule.viewEndDate,
   hearingSchedule: state.hearingSchedule.hearingSchedule
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  // toggleTypeFilterVisibility,
-  // toggleLocationFilterVisibility,
-  // toggleVljFilterVisibility,
   onViewStartDateChange,
-  onViewEndDateChange,
-  onReceiveHearingSchedule
+  onViewEndDateChange
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListSchedule));
