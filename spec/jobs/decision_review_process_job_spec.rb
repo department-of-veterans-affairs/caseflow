@@ -17,6 +17,10 @@ class AClaimReview
 end
 
 describe DecisionReviewProcessJob do
+  before do
+    allow(Raven).to receive(:extra_context)
+  end
+
   let(:claim_review) { AClaimReview.new }
 
   let(:vbms_error) do
@@ -33,6 +37,7 @@ describe DecisionReviewProcessJob do
 
     expect(claim_review.error).to eq(vbms_error.to_s)
     expect(@raven_called).to eq(true)
+    expect(Raven).to have_received(:extra_context).with(id: 123, class: "AClaimReview")
   end
 
   it "ignores error on success" do
