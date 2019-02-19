@@ -311,6 +311,7 @@ describe RampElectionIntake do
           expect(intake.detail.established_at).to_not be_nil
           expect(veteran_end_products.count).to eq 3
           expect(veteran_end_products.map(&:claim_id)).to include(preexisting_ep.claim_id)
+          expect(intake.detail.end_product_establishment.reference_id).to_not eq(preexisting_ep.claim_id)
         end
       end
 
