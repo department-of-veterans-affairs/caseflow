@@ -28,6 +28,12 @@ module PowerOfAttorneyMapper
     end
   end
 
+  def get_limited_poa_from_bgs(bgs_response)
+    return unless bgs_response
+
+    Array.wrap(bgs_response)
+  end
+
   def get_rep_name_from_rep_record(rep_record)
     return if !rep_record || (rep_record.repfirst.blank? && rep_record.replast.blank?)
 

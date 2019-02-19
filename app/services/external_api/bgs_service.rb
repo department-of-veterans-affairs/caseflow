@@ -136,6 +136,21 @@ class ExternalApi::BGSService
     get_hash_of_poa_from_bgs_poas(bgs_poas || [])
   end
 
+  def fetch_limited_poas_by_claim_id(claim_id)
+    DBService.release_db_connections
+    unless @limited_poa[claim_id]
+      bgs_limited_poas = MetricsService.record("BGS: fetch limited poas for claim id: #{claim_id}",
+                                       service: :bgs,
+                                       name: "org.find_limited_poas_by_bnft_claim_ids") do
+        client.org.find_limited_poas_by_bnft_claim_ids(claim_id)
+      end
+
+      @limited_poa[claim_id] = get_limited_poa_from_bgs(bgs_limited_poas)
+    end
+
+    @limited_poa[claim_id]
+  end
+
   def find_address_by_participant_id(participant_id)
     DBService.release_db_connections
 

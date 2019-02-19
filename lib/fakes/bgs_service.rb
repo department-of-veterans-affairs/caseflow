@@ -555,6 +555,14 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
+  def fetch_limited_poas_by_claim_id(claim_id)
+    {
+      authzn_poa_access_ind: "Y",
+      bnft_claim_id: claim_id,
+      poa_cd: "084"
+    }
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
