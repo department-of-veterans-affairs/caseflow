@@ -11,6 +11,8 @@ class DecisionReviewProcessJob < CaseflowJob
 
     return_value = nil
 
+    Raven.extra_context(class: decision_review.class.to_s, id: decision_review.id)
+
     begin
       return_value = decision_review.establish!
     rescue VBMS::ClientError => err
