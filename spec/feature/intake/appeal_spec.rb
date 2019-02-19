@@ -41,15 +41,15 @@ feature "Appeal Intake" do
                               participant_id: "44444444")
   end
 
-  let(:future_date) { Time.zone.now + 30.days }
+  let(:future_date) { (Time.zone.now + 30.days).to_date }
 
-  let(:receipt_date) { post_ramp_start_date - 30.days }
+  let(:receipt_date) { (post_ramp_start_date - 30.days).to_date }
 
   let(:untimely_days) { 372.days }
 
-  let(:profile_date) { post_ramp_start_date.to_datetime - 35.days }
+  let(:profile_date) { (post_ramp_start_date - 35.days).to_date }
 
-  let(:untimely_date) { receipt_date - untimely_days - 1.day }
+  let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -543,7 +543,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Drill Pay Adjustments",
       description: "A nonrating issue before AMA",
-      date: pre_ramp_start_date.mdY
+      date: pre_ramp_start_date.to_date.mdY
     )
     expect(page).to have_content(
       "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
