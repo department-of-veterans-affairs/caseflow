@@ -259,6 +259,20 @@ class DecisionReview < ApplicationRecord
     (di_list + remand_sc_decisions).uniq
   end
 
+  def api_alerts_show_decision_alert?
+    # For Appeal and SC, want to show the decision alert once the decisions are available.
+    # HLR has different logic and overrides this method
+    decision_issues.any?
+  end
+
+  def decision_date_for_api_alert
+    decision_event_date
+  end
+
+  def due_date_to_appeal_decision
+    decision_event_date + 365.days if decision_event_date
+  end
+
   private
 
   def can_contest_rating_issues?

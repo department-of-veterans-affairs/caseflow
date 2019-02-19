@@ -10,6 +10,7 @@ import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiRedu
 import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
 import pluralize from 'pluralize';
+import moment from 'moment';
 import type { Dispatch } from './types/state';
 import type {
   Task,
@@ -90,7 +91,7 @@ export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: stri
   }
 });
 
-export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch: Dispatch) => {
+export const getNewDocuments = (appealId: string, cached?: boolean, onHoldDate?: string) => (dispatch: Dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_LOADING_DOCUMENTS,
     payload: {
@@ -101,7 +102,15 @@ export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch
     timeout: { response: 5 * 60 * 1000 }
   };
 
-  ApiUtil.get(`/appeals/${appealId}/new_documents${cached ? '?cached' : ''}`, requestOptions).then((response) => {
+  let query = cached ? 'cached' : '';
+
+  if (onHoldDate) {
+    const timestamp = moment(onHoldDate).unix();
+
+    query += query ? `&placed_on_hold_date=${timestamp}` : `placed_on_hold_date=${timestamp}`;
+  }
+
+  ApiUtil.get(`/appeals/${appealId}/new_documents${query ? `?${query}` : ''}`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
     dispatch(receiveNewDocuments({
@@ -464,14 +473,18 @@ export const reassignTasksToUser = ({
     });
 }));
 
-const refreshLegacyTasks = (dispatch, userId) =>
-  ApiUtil.get(`/queue/${userId}`, { timeout: { response: 5 * 60 * 1000 } }).
-    then((response) =>
-      dispatch(onReceiveQueue({
-        amaTasks: {},
-        ...associateTasksWithAppeals(JSON.parse(response.text))
-      }))
-    );
+const refreshTasks = (dispatch, userId, userRole) => {
+  return Promise.all([
+    ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`),
+    ApiUtil.get(`/queue/${userId}`, { timeout: { response: 5 * 60 * 1000 } })
+  ]).then((responses) => {
+    dispatch(onReceiveQueue(extractAppealsAndAmaTasks(responses[0].body.tasks.data)));
+    dispatch(onReceiveQueue({
+      amaTasks: {},
+      ...associateTasksWithAppeals(JSON.parse(responses[1].text))
+    }));
+  });
+};
 
 const setPendingDistribution = (distribution) => ({
   type: ACTIONS.SET_PENDING_DISTRIBUTION,
@@ -487,7 +500,7 @@ const distributionError = (dispatch, userId, error) => {
 
   if (firstError.error === 'unassigned_cases') {
     dispatch(setPendingDistribution({ status: 'completed' }));
-    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+    refreshTasks(dispatch, userId, 'judge').then(() => dispatch(setPendingDistribution(null)));
   } else {
     dispatch(setPendingDistribution(null));
   }
@@ -506,12 +519,14 @@ const receiveDistribution = (dispatch, userId, response) => {
       detail: `${caseN} new ${pluralize('case', caseN)} have been distributed from the docket.`
     }));
 
-    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+    refreshTasks(dispatch, userId, 'judge').then(() => dispatch(setPendingDistribution(null)));
   } else {
-    // Poll until the distribution completes or errors out.
-    ApiUtil.get(`/distributions/${distribution.id}`).
-      then((resp) => receiveDistribution(dispatch, userId, resp)).
-      catch((error) => distributionError(dispatch, userId, error));
+    setTimeout(() => {
+      // Poll until the distribution completes or errors out.
+      ApiUtil.get(`/distributions/${distribution.id}`).
+        then((resp) => receiveDistribution(dispatch, userId, resp)).
+        catch((error) => distributionError(dispatch, userId, error));
+    }, 2000);
   }
 };
 

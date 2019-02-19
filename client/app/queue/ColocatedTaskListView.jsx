@@ -11,7 +11,6 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 
 import {
   newTasksByAssigneeCssIdSelector,
-  pendingTasksByAssigneeCssIdSelector,
   onHoldTasksByAssigneeCssIdSelector,
   completeTasksByAssigneeCssIdSelector
 } from './selectors';
@@ -25,6 +24,7 @@ import {
 
 import Alert from '../components/Alert';
 import TabWindow from '../components/TabWindow';
+import NewFileAll from './components/NewFileAll';
 
 import type { TaskWithAppeal } from './types/models';
 import type { State, UiStateMessage } from './types/state';
@@ -40,7 +40,6 @@ type Props = Params & {|
   success: UiStateMessage,
   organizations: Array<Object>,
   numNewTasks: number,
-  numPendingTasks: number,
   numOnHoldTasks: number,
   // Action creators
   clearCaseSelectSearch: typeof clearCaseSelectSearch,
@@ -59,7 +58,6 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
       success,
       organizations,
       numNewTasks,
-      numPendingTasks,
       numOnHoldTasks
     } = this.props;
 
@@ -69,12 +67,9 @@ class ColocatedTaskListView extends React.PureComponent<Props> {
         page: <NewTasksTab />
       },
       {
-        label: sprintf(COPY.COLOCATED_QUEUE_PAGE_PENDING_TAB_TITLE, numPendingTasks),
-        page: <PendingTasksTab />
-      },
-      {
         label: sprintf(COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE, numOnHoldTasks),
-        page: <OnHoldTasksTab />
+        page: <OnHoldTasksTab />,
+        indicator: <NewFileIcon />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
@@ -98,7 +93,6 @@ const mapStateToProps = (state) => {
     success,
     organizations: state.ui.organizations,
     numNewTasks: newTasksByAssigneeCssIdSelector(state).length,
-    numPendingTasks: pendingTasksByAssigneeCssIdSelector(state).length,
     numOnHoldTasks: onHoldTasksByAssigneeCssIdSelector(state).length
   };
 };
@@ -109,6 +103,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);
+
+const NewFileIcon = connect(
+  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
+  (props: { tasks: Array<TaskWithAppeal> }) => <NewFileAll tasks={props.tasks} useOnHoldDate />);
 
 const NewTasksTab = connect(
   (state: State) => ({
@@ -132,28 +130,6 @@ const NewTasksTab = connect(
     </React.Fragment>;
   });
 
-const PendingTasksTab = connect(
-  (state: State) => ({
-    tasks: pendingTasksByAssigneeCssIdSelector(state),
-    belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
-  }))(
-  (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
-    return <React.Fragment>
-      <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_PENDING_TASKS_DESCRIPTION}</p>
-      <TaskTable
-        includeHearingBadge
-        includeDetailsLink
-        includeTask
-        includeRegionalOffice={props.belongsToHearingSchedule}
-        includeType
-        includeDocketNumber
-        includeDaysOnHold
-        includeReaderLink
-        tasks={props.tasks}
-      />
-    </React.Fragment>;
-  });
-
 const OnHoldTasksTab = connect(
   (state: State) => ({
     tasks: onHoldTasksByAssigneeCssIdSelector(state),
@@ -171,6 +147,8 @@ const OnHoldTasksTab = connect(
         includeDocketNumber
         includeDaysOnHold
         includeReaderLink
+        includeNewDocsIcon
+        useOnHoldDate
         tasks={props.tasks}
       />
     </React.Fragment>;

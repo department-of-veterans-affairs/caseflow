@@ -511,6 +511,15 @@ export const taskIsOnHold = (task: Task) => {
   return task.status === TASK_STATUSES.on_hold;
 };
 
+export const taskHasCompletedHold = (task: Task) => {
+  if (task.onHoldDuration && task.placedOnHoldAt) {
+    return moment().startOf('day').
+      diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
+  }
+
+  return task.status === TASK_STATUSES.on_hold;
+};
+
 export const taskIsActive = (task: Task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
 
 export const taskActionData = (props: Object) => {
