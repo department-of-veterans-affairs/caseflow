@@ -122,6 +122,7 @@ class LegacyAppeal < ApplicationRecord
     remand_returned_to_bva: "96",
     bva_dispatch: "4E",
     omo_office: "20",
+    caseflow: "CASEFLOW",
     quality_review: "48",
     translation: "14",
     schedule_hearing: "57",
@@ -426,7 +427,7 @@ class LegacyAppeal < ApplicationRecord
   def in_location?(location)
     fail UnknownLocationError unless LOCATION_CODES[location]
 
-    assigned_to_location == LOCATION_CODES[location]
+    location_code == LOCATION_CODES[location]
   end
 
   cache_attribute :case_assignment_exists do

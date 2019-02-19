@@ -166,7 +166,6 @@ class ScheduleHearingTask < GenericTask
                                        appeal: appeal,
                                        hearing_location_attrs: hearing_location&.to_hash,
                                        scheduled_time: hearing_time&.stringify_keys)
-
     if appeal.is_a?(LegacyAppeal)
       AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
