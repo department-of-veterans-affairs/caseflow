@@ -6,6 +6,7 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { prepareAppealForStore, prepareAllTasksForStore } from './utils';
+import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 
