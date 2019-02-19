@@ -16,6 +16,7 @@ feature "Higher-Level Review" do
   end
 
   after do
+    FeatureToggle.disable!(:intake)
     FeatureToggle.disable!(:intakeAma)
     FeatureToggle.disable!(:intake_legacy_opt_in)
   end
@@ -42,7 +43,7 @@ feature "Higher-Level Review" do
 
   let(:inaccessible) { false }
 
-  let(:receipt_date) { Date.new(2018, 9, 20) }
+  let(:receipt_date) { Time.zone.today - 5.days }
 
   let(:promulgation_date) { receipt_date - 10.days }
 
@@ -54,7 +55,7 @@ feature "Higher-Level Review" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { Time.zone.local(2018, 9, 15) }
+  let(:profile_date) { receipt_date - 8.days }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -150,7 +151,7 @@ feature "Higher-Level Review" do
 
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
     click_intake_continue
 
     expect(page).to have_content(
@@ -176,7 +177,7 @@ feature "Higher-Level Review" do
       find("label", text: "Fiduciary", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "09/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -274,7 +275,7 @@ feature "Higher-Level Review" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "10/27/2018"
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("2 issues")
@@ -426,7 +427,7 @@ feature "Higher-Level Review" do
       contested_rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
-      decision_date: 1.month.ago.to_date
+      decision_date: profile_date
     )
 
     # skip the sync call since all edit requests require resyncing
@@ -436,7 +437,7 @@ feature "Higher-Level Review" do
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     expect(page).to have_content("Ed Merica (#{veteran_file_number})")
-    expect(page).to have_content("09/20/2018")
+    expect(page).to have_content(receipt_date.mdY)
     expect(find("#table-row-4")).to have_content("Yes")
     expect(find("#table-row-5")).to have_content("No")
     expect(page).to have_content("PTSD denied")
@@ -466,7 +467,7 @@ feature "Higher-Level Review" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.strftime("%D")
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -561,7 +562,7 @@ feature "Higher-Level Review" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("1 issue")
@@ -583,7 +584,7 @@ feature "Higher-Level Review" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: profile_date.mdY
     )
 
     click_intake_finish
@@ -737,7 +738,7 @@ feature "Higher-Level Review" do
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",
-          date: "04/19/2018"
+          date: profile_date.mdY
         )
 
         expect(page).to have_content("1 issue")
@@ -748,7 +749,7 @@ feature "Higher-Level Review" do
       start_higher_level_review(veteran)
       visit "/intake/add_issues"
       click_intake_add_issue
-      rating_date = promulgation_date.strftime("%m/%d/%Y")
+      rating_date = promulgation_date.mdY
 
       expect(page).to have_content("Past decisions from #{rating_date}")
     end
@@ -817,7 +818,7 @@ feature "Higher-Level Review" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "10/27/2018"
+        date: profile_date.mdY
       )
       expect(page).to have_content("2 issues")
       # this nonrating request issue is timely
@@ -902,7 +903,7 @@ feature "Higher-Level Review" do
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
-        date: "10/19/2017"
+        date: pre_ramp_start_date.to_date.mdY
       )
       expect(page).to have_content(
         "A nonrating issue before AMA #{ineligible_constants.before_ama}"
@@ -984,7 +985,7 @@ feature "Higher-Level Review" do
         decision_review: higher_level_review,
         issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "Description for Active Duty Adjustments",
-        decision_date: 1.month.ago,
+        decision_date: profile_date,
         end_product_establishment_id: non_rating_end_product_establishment.id,
         benefit_type: "compensation"
       )
@@ -1222,7 +1223,7 @@ feature "Higher-Level Review" do
           add_intake_nonrating_issue(
             category: "Accrued",
             description: "I am a description",
-            date: "10/25/2017"
+            date: profile_date.mdY
           )
           expect(page).to_not have_content("Establish EP")
           expect(page).to have_content("Establish Higher-Level Review")
@@ -1315,7 +1316,7 @@ feature "Higher-Level Review" do
           add_intake_nonrating_issue(
             category: "Active Duty Adjustments",
             description: "Description for Active Duty Adjustments",
-            date: "10/25/2017",
+            date: (profile_date - untimely_days).mdY,
             legacy_issues: true
           )
 
