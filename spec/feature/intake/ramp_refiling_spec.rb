@@ -50,6 +50,8 @@ RSpec.feature "RAMP Refiling Intake" do
   let(:search_page_title) { "Search for Veteran ID" }
 
   context "RAMP Refiling" do
+    let(:receipt_date) { 4.days.ago.to_date }
+
     scenario "Attempt to start RAMP refiling for a veteran without a complete RAMP election" do
       # Create an incomplete RAMP election
       create(:ramp_election, veteran_file_number: "12341234", notice_date: 3.days.ago)
@@ -120,7 +122,7 @@ RSpec.feature "RAMP Refiling Intake" do
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              option_selected: "higher_level_review_with_hearing",
-                             receipt_date: 4.days.ago,
+                             receipt_date: receipt_date,
                              established_at: 2.days.ago)
       ep = Generators::EndProduct.build(
         veteran_file_number: "12341234",
@@ -151,7 +153,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       visit "/intake"
 
-      fill_in "What is the Receipt Date of this form?", with: "11/03/2017"
+      fill_in "What is the Receipt Date of this form?", with: ramp_start_date.to_date.mdY
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
@@ -175,7 +177,7 @@ RSpec.feature "RAMP Refiling Intake" do
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
-                             receipt_date: 4.days.ago,
+                             receipt_date: receipt_date,
                              established_at: 2.days.ago)
 
       ep = Generators::EndProduct.build(
@@ -200,7 +202,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       visit "/intake"
 
-      fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
+      fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
@@ -218,7 +220,7 @@ RSpec.feature "RAMP Refiling Intake" do
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
-                             receipt_date: 4.days.ago,
+                             receipt_date: receipt_date,
                              established_at: 2.days.ago)
 
       ep = Generators::EndProduct.build(
@@ -265,7 +267,7 @@ RSpec.feature "RAMP Refiling Intake" do
       expect(ramp_election.issues.count).to eq(2)
 
       # Validate validation
-      fill_in "What is the Receipt Date of this form?", with: "11/02/2017"
+      fill_in "What is the Receipt Date of this form?", with: ramp_start_date.to_date.mdY
 
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Appeal to Board").click
@@ -274,10 +276,10 @@ RSpec.feature "RAMP Refiling Intake" do
       click_intake_continue
 
       expect(page).to have_content(
-        "Receipt date cannot be earlier than the original RAMP election receipt date of 12/03/2017"
+        "Receipt date cannot be earlier than the original RAMP election receipt date of #{receipt_date.mdY}"
       )
 
-      fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
+      fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
       click_intake_continue
 
       expect(page).to have_content("Please select an option")
@@ -293,7 +295,7 @@ RSpec.feature "RAMP Refiling Intake" do
       expect(ramp_refiling).to_not be_nil
       expect(ramp_refiling.option_selected).to eq("appeal")
       expect(ramp_refiling.appeal_docket).to eq("evidence_submission")
-      expect(ramp_refiling.receipt_date).to eq(Date.new(2017, 12, 3))
+      expect(ramp_refiling.receipt_date.to_date).to eq(receipt_date)
 
       safe_click "#finish-intake"
 
@@ -329,7 +331,7 @@ RSpec.feature "RAMP Refiling Intake" do
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              option_selected: "higher_level_review_with_hearing",
-                             receipt_date: 4.days.ago,
+                             receipt_date: receipt_date,
                              established_at: 2.days.ago)
 
       claim_id = Generators::EndProduct.build(
@@ -366,7 +368,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       visit "/intake"
 
-      fill_in "What is the Receipt Date of this form?", with: "12/07/2017"
+      fill_in "What is the Receipt Date of this form?", with: Time.zone.yesterday.mdY
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Supplemental Claim", match: :prefer_exact).click
       end
@@ -432,7 +434,7 @@ RSpec.feature "RAMP Refiling Intake" do
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
                              option_selected: "higher_level_review_with_hearing",
-                             receipt_date: 4.days.ago,
+                             receipt_date: receipt_date,
                              established_at: 2.days.ago)
       ep = Generators::EndProduct.build(
         veteran_file_number: "12341234",
@@ -463,7 +465,7 @@ RSpec.feature "RAMP Refiling Intake" do
 
       visit "/intake"
 
-      fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
+      fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Supplemental Claim", match: :prefer_exact).click
       end
@@ -490,7 +492,7 @@ RSpec.feature "RAMP Refiling Intake" do
       ramp_election = create(:ramp_election,
                              veteran_file_number: "12341234",
                              notice_date: 5.days.ago,
-                             receipt_date: 4.days.ago,
+                             receipt_date: receipt_date,
                              established_at: 2.days.ago)
 
       ep = Generators::EndProduct.build(
@@ -518,7 +520,7 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click ".cf-submit.usa-button"
       fill_in search_bar_title, with: "12341234"
       click_on "Search"
-      fill_in "What is the Receipt Date of this form?", with: "12/03/2017"
+      fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
       within_fieldset("Which review lane did the Veteran select?") do
         find("label", text: "Higher-Level Review", match: :prefer_exact).click
       end
