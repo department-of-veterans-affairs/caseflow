@@ -9,14 +9,10 @@ class Judge
       HearingDocket.from_hearings(hearings)
     end
 
-    # get bulk slots for all the dockets from vacols
-    dockets_slots = get_dockets_slots(@upcoming_dockets)
-
     # assign number of slots to its corresponding docket
     @upcoming_dockets.map do |date, hearing_docket|
-      hearing_docket.slots = dockets_slots[date] ||
-                             HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper
-                               .timezone(hearing_docket.regional_office_key)]
+      hearing_docket.slots = HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper
+        .timezone(hearing_docket.regional_office_key)]
       [date, hearing_docket]
     end.to_h
   end
@@ -44,23 +40,6 @@ class Judge
   def upcoming_hearings(is_fetching_issues = false)
     HearingRepository.fetch_hearings_for_judge(user.css_id, is_fetching_issues).sort_by(&:scheduled_for) +
       Hearing.joins(:judge).where(users: { css_id: user.css_id }).sort_by(&:scheduled_for)
-  end
-
-  def get_dockets_slots(dockets)
-    # fetching all the RO keys of the dockets
-    regional_office_keys = dockets.map { |_date, docket| docket.regional_office_key }
-
-    # fetching data of all dockets staff based on the regional office keys
-    ro_staff_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
-
-    # returns a hash of docket date (string) as key and number of slots for the docket
-    # as they key
-    dockets.map do |date, docket|
-      record = ro_staff_hash[docket.regional_office_key]
-      [date, (if record
-                HearingDayRepository.fetch_hearing_day_slots(docket.regional_office_key)
-              end)]
-    end.to_h
   end
 
   class << self
