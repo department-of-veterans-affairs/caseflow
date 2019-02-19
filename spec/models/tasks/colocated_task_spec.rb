@@ -44,8 +44,6 @@ describe ColocatedTask do
           expect(user_task.assigned_by).to eq attorney
           expect(user_task.action).to eq "aoj"
           expect(user_task.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
-
-          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
           expect(Task.where(type: ColocatedTask.name).count).to eq 2
         end
       end

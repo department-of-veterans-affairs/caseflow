@@ -1,6 +1,4 @@
 class ScheduleHearingTask < GenericTask
-  after_update :update_location_in_vacols
-
   class << self
     def find_or_create_if_eligible(appeal)
       if appeal.is_a?(LegacyAppeal) && appeal.case_record&.bfcurloc == "57" &&
@@ -66,12 +64,6 @@ class ScheduleHearingTask < GenericTask
 
   def label
     "Schedule hearing"
-  end
-
-  def update_location_in_vacols
-    if saved_change_to_status? && appeal.is_a?(LegacyAppeal) && on_hold?
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-    end
   end
 
   # We only want to take this off hold, not actually complete it, like the inherited method does
@@ -166,8 +158,5 @@ class ScheduleHearingTask < GenericTask
                                        appeal: appeal,
                                        hearing_location_attrs: hearing_location&.to_hash,
                                        scheduled_time: hearing_time&.stringify_keys)
-    if appeal.is_a?(LegacyAppeal)
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-    end
   end
 end

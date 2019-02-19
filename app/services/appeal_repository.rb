@@ -351,8 +351,6 @@ class AppealRepository
           task.parent = parent
         end
       end
-
-      update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
 

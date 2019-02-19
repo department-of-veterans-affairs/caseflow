@@ -13,15 +13,7 @@ class ColocatedTask < Task
       ActiveRecord::Base.multi_transaction do
         team_tasks = super(params_array.map { |p| p.merge(assigned_to: Colocated.singleton) }, user)
 
-        all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
-
-        all_tasks.map(&:appeal).uniq.each do |appeal|
-          if appeal.is_a? LegacyAppeal
-            AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-          end
-        end
-
-        all_tasks
+        team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
       end
     end
 
