@@ -46,6 +46,7 @@ const verticalLine = css(
 
 class SubmitDecisionView extends React.PureComponent {
   linkClicked = false;
+  imagePath = '~uswds/src/img';
   componentDidMount = () => {
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
@@ -239,37 +240,24 @@ class SubmitDecisionView extends React.PureComponent {
         value={decisionOpts.untimely_evidence || false}
         styling={css(marginBottom(1), marginTop(1))}
       />
-
+      {/* TODO: componentize this once the style guide directives are in */}
       <Button
         id="ineligible-evidence"
         linkStyling
         willNeverBeLoading
         onClick={() => {
           this.linkClicked = !this.linkClicked;
-          // change the css to this on click as well
-          // &::before {
-          //   background: url(#{$image-path}/arrow-down.svg) 50% 100% no-repeat;
-          //   background-size: .75em;
-          //   content: ' ';
-          //   display: inline-block;
-          //   height: 1rem;
-          //   margin-right: 1rem;
-          //   width: 1rem;
-
-          //   &:hover {
-          //     color: $color-white;
-          //   }
-          // }
-          this.setState({ linkClicked: this.linkClicked });
+          this.setState({ linkClicked: this.linkClicked,
+            buttonDirection: this.linkClicked ? 'down' : 'right' });
         }}>
-              What is ineligible evidence?
+        {COPY.WHAT_IS_INELIGIBLE_EVIDENCE}
       </Button>
       {this.linkClicked && <div {...verticalLine}>
-        <div>AMA requires that VA capture how frequently a Veteran submits evidence that can't be considered.  This includes when the Veteran:</div>
+        <div>{COPY.UNTIMELY_EVIDENCE_TITLE}</div>
         <br />
-        <div>1. Requested a Direct Review appeal option and submiited evidence</div>
-        <div> 2. Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD</div>
-        <div>3. Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing</div>
+        <div>{COPY.UNTIMELY_EVIDENCE_BULLET_ONE}</div>
+        <div> {COPY.UNTIMELY_EVIDENCE_BULLET_TWO}</div>
+        <div> {COPY.UNTIMELY_EVIDENCE_BULLET_THREE}</div>
       </div>}
     </React.Fragment>;
   };
