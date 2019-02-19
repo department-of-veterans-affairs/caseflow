@@ -249,7 +249,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           contested_issue_description: "this is a big decision"
@@ -257,7 +257,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           vacols_id: vacols_id,
@@ -267,7 +267,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           contested_issue_description: "description too long for bgs" * 20
@@ -277,7 +277,7 @@ describe EndProductEstablishment do
           end_product_establishment: end_product_establishment,
           is_unidentified: true,
           unidentified_issue_text: "identity unknown",
-          review_request: source,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30)
         )
@@ -355,7 +355,7 @@ describe EndProductEstablishment do
             :request_issue,
             :rating,
             end_product_establishment: end_product_establishment,
-            review_request: source,
+            decision_review: source,
             ineligible_reason: :duplicate_of_rating_issue_in_active_review
           )
         ]
@@ -374,7 +374,7 @@ describe EndProductEstablishment do
             :request_issue,
             :rating,
             end_product_establishment: end_product_establishment,
-            review_request: source,
+            decision_review: source,
             contention_reference_id: contention_ref_id
           )
         ]
@@ -386,6 +386,40 @@ describe EndProductEstablishment do
           claim_id: reference_id,
           rating_issue_contention_map: { request_issues[0].contested_rating_issue_reference_id => contention_ref_id }
         )
+      end
+    end
+
+    context "request issue is rating but has no associated_rating_issue" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: nil,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contention_reference_id: contention_ref_id,
+            contested_decision_issue_id: decision_issue.id
+          )
+        ]
+      end
+      let(:original_request_issue) do
+        create(
+          :request_issue,
+          decision_review: previous_review,
+          end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+        )
+      end
+      let(:decision_issue) do
+        create(:decision_issue,
+               decision_review: previous_review,
+               request_issues: [original_request_issue])
+      end
+      let(:previous_review) { create(:higher_level_review) }
+
+      it "skips rating request issues with no associated rating issue" do
+        subject
+        expect(request_issues.first.rating?).to be true
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
   end
@@ -471,7 +505,7 @@ describe EndProductEstablishment do
 
     let(:for_object) do
       RequestIssue.new(
-        review_request: source,
+        decision_review: source,
         contested_rating_issue_reference_id: "reference-id",
         contested_rating_issue_profile_date: Date.new(2018, 4, 30),
         contested_issue_description: "this is a big decision",
@@ -532,6 +566,19 @@ describe EndProductEstablishment do
     end
   end
 
+  context "#rating?" do
+    subject { end_product_establishment.rating? }
+    context "when the end product code is a rating code" do
+      let(:code) { "030HLRRPMC" }
+      it { is_expected.to be true }
+    end
+
+    context "when the end product code is not rating code" do
+      let(:code) { "Something" }
+      it { is_expected.to be_falsey }
+    end
+  end
+
   context "#status_active?" do
     let(:end_product) do
       Generators::EndProduct.build(
@@ -587,7 +634,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source
+          decision_review: source
         )
       ]
     end
@@ -699,7 +746,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           removed_at: removed_at
         )
       ]
@@ -823,7 +870,7 @@ describe EndProductEstablishment do
           :request_issue,
           :rating,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           decision_sync_submitted_at: nil
         )
       end
@@ -832,7 +879,7 @@ describe EndProductEstablishment do
           :request_issue,
           :nonrating,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           decision_sync_submitted_at: nil
         )
       end
@@ -876,11 +923,11 @@ describe EndProductEstablishment do
     let(:processed_at) { Time.zone.now }
 
     let(:processing_request_issue) do
-      create(:request_issue, review_request: source)
+      create(:request_issue, decision_review: source)
     end
 
     let!(:processed_request_issue) do
-      create(:request_issue, review_request: source, decision_sync_processed_at: Time.zone.now)
+      create(:request_issue, decision_review: source, decision_sync_processed_at: Time.zone.now)
     end
 
     context "when decision issues are all synced" do
@@ -896,7 +943,7 @@ describe EndProductEstablishment do
         let!(:decision_issue) do
           create(:decision_issue,
                  decision_review: source,
-                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 disposition: DecisionIssue::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
                  end_product_last_action_date: 5.days.ago.to_date)
         end
@@ -923,7 +970,7 @@ describe EndProductEstablishment do
 
     context "when decision issues are not all synced" do
       let!(:not_processed_request_issue) do
-        create(:request_issue, review_request: source)
+        create(:request_issue, decision_review: source)
       end
 
       it "does nothing" do
@@ -960,7 +1007,7 @@ describe EndProductEstablishment do
           let!(:pending_request_issue) do
             create(
               :request_issue,
-              review_request: epe.source,
+              decision_review: epe.source,
               end_product_establishment: epe
             )
           end
@@ -971,7 +1018,7 @@ describe EndProductEstablishment do
             let!(:pending_request_issue) do
               create(
                 :request_issue,
-                review_request: epe.source,
+                decision_review: epe.source,
                 end_product_establishment: epe,
                 decision_sync_submitted_at: Time.zone.now + 1.second
               )
@@ -983,7 +1030,7 @@ describe EndProductEstablishment do
               let!(:errored_request_issue) do
                 create(
                   :request_issue,
-                  review_request: epe.source,
+                  decision_review: epe.source,
                   end_product_establishment: epe,
                   decision_sync_submitted_at: Time.zone.now,
                   decision_sync_error: "oh no"

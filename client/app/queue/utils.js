@@ -313,7 +313,8 @@ export const prepareAppealForStore =
         caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
         documentID: appeal.attributes.document_id,
         caseReviewId: appeal.attributes.attorney_case_review_id,
-        canEditDocumentId: appeal.attributes.can_edit_document_id
+        canEditDocumentId: appeal.attributes.can_edit_document_id,
+        attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details
       };
 
       return accumulator;
@@ -509,6 +510,17 @@ export const taskIsOnHold = (task: Task) => {
 
   return task.status === TASK_STATUSES.on_hold;
 };
+
+export const taskHasCompletedHold = (task: Task) => {
+  if (task.onHoldDuration && task.placedOnHoldAt) {
+    return moment().startOf('day').
+      diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
+  }
+
+  return task.status === TASK_STATUSES.on_hold;
+};
+
+export const taskIsActive = (task: Task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
 
 export const taskActionData = (props: Object) => {
   if (!props.task) {

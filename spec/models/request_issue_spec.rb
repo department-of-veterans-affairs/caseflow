@@ -55,7 +55,7 @@ describe RequestIssue do
   let!(:rating_request_issue) do
     create(
       :request_issue,
-      review_request: review,
+      decision_review: review,
       contested_rating_issue_reference_id: contested_rating_issue_reference_id,
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "a rating request issue",
@@ -75,7 +75,7 @@ describe RequestIssue do
   let!(:nonrating_request_issue) do
     create(
       :request_issue,
-      review_request: review,
+      decision_review: review,
       nonrating_issue_description: "a nonrating request issue description",
       contested_issue_description: nonrating_contested_issue_description,
       issue_category: "a category",
@@ -92,7 +92,7 @@ describe RequestIssue do
   let!(:unidentified_issue) do
     create(
       :request_issue,
-      review_request: review,
+      decision_review: review,
       unidentified_issue_text: "an unidentified issue",
       is_unidentified: true
     )
@@ -149,9 +149,9 @@ describe RequestIssue do
   context ".not_deleted" do
     subject { RequestIssue.not_deleted }
 
-    let!(:deleted_request_issue) { create(:request_issue, review_request: nil) }
+    let!(:deleted_request_issue) { create(:request_issue, decision_review: nil) }
 
-    it "filters by whether it is associated with a review_request" do
+    it "filters by whether it is associated with a decision_review" do
       expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
     end
   end
@@ -320,6 +320,29 @@ describe RequestIssue do
           context "when rating" do
             let(:request_issue) { rating_request_issue }
             it { is_expected.to eq "040HDERPMC" }
+
+            context "when missing contested_rating_issue_reference_id but comes from a previous rating request issue" do
+              let(:contested_rating_issue_reference_id) { nil }
+              let(:contested_decision_issue_id) { decision_issue.id }
+              let(:original_request_issue) do
+                create(
+                  :request_issue,
+                  decision_review: decision_review_remanded,
+                  end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+                )
+              end
+              let(:decision_issue) do
+                create(:decision_issue,
+                       decision_review: decision_review_remanded,
+                       request_issues: [original_request_issue])
+              end
+
+              it "is assigned a rating ep code" do
+                expect(request_issue.associated_rating_issue?).to be_falsey
+                expect(request_issue.rating?).to be true
+                expect(subject).to eq("040HDERPMC")
+              end
+            end
           end
 
           context "when nonrating" do
@@ -396,7 +419,7 @@ describe RequestIssue do
       let!(:request_issue_in_active_review) do
         create(
           :request_issue,
-          review_request: previous_higher_level_review,
+          decision_review: previous_higher_level_review,
           contested_rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
           end_product_establishment: active_epe,
@@ -408,7 +431,7 @@ describe RequestIssue do
       let!(:ineligible_request_issue) do
         create(
           :request_issue,
-          review_request: new_higher_level_review,
+          decision_review: new_higher_level_review,
           contested_rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
           ineligible_reason: :duplicate_of_rating_issue_in_active_review,
@@ -553,7 +576,7 @@ describe RequestIssue do
   end
 
   context "#review_title" do
-    it "munges the review_request_type appropriately" do
+    it "munges the decision_review_type appropriately" do
       expect(rating_request_issue.review_title).to eq "Higher-Level Review"
     end
   end
@@ -586,13 +609,12 @@ describe RequestIssue do
     let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: previous_higher_level_review,
+        decision_review: previous_higher_level_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
         contested_rating_issue_profile_date: profile_date,
         contested_issue_description: "a rating request issue",
         contention_reference_id: contention_reference_id,
-        end_product_establishment: previous_end_product_establishment,
-        description: "a rating request issue"
+        end_product_establishment: previous_end_product_establishment
       ).tap(&:submit_for_processing!)
     end
 
@@ -628,6 +650,41 @@ describe RequestIssue do
     end
   end
 
+  context "#rating?" do
+    subject { request_issue.rating? }
+    let(:request_issue) { rating_request_issue }
+
+    context "when there is an associated rating issue" do
+      let(:contested_rating_issue_reference_id) { "123" }
+      it { is_expected.to be true }
+    end
+
+    context "when the request issue was a rating issue on its previous end product" do
+      let(:contested_rating_issue_reference_id) { nil }
+      let(:contested_decision_issue_id) { decision_issue.id }
+      let(:previous_review) { create(:higher_level_review) }
+      let(:original_request_issue) do
+        create(
+          :request_issue,
+          decision_review: previous_review,
+          end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+        )
+      end
+      let(:decision_issue) do
+        create(:decision_issue,
+               decision_review: previous_review,
+               request_issues: [original_request_issue])
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context "when it's a nonrating issue" do
+      let(:request_issue) { nonrating_request_issue }
+      it { is_expected.to be_falsey }
+    end
+  end
+
   context "#valid?" do
     subject { request_issue.valid? }
     let(:request_issue) do
@@ -654,7 +711,7 @@ describe RequestIssue do
     let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: previous_review,
+        decision_review: previous_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
         contention_reference_id: contention_reference_id
       )
@@ -666,10 +723,9 @@ describe RequestIssue do
     let(:appeal_request_issue_in_progress) do
       create(
         :request_issue,
-        review_request: appeal_in_progress,
+        decision_review: appeal_in_progress,
         contested_rating_issue_reference_id: duplicate_appeal_reference_id,
-        contested_issue_description: "Appealed injury",
-        description: "Appealed injury"
+        contested_issue_description: "Appealed injury"
       )
     end
 
@@ -716,8 +772,7 @@ describe RequestIssue do
         :request_issue,
         end_product_establishment: active_epe,
         contested_rating_issue_reference_id: duplicate_reference_id,
-        contested_issue_description: "Old injury",
-        description: "Old injury"
+        contested_issue_description: "Old injury"
       )
     end
 
@@ -955,7 +1010,7 @@ describe RequestIssue do
         let(:rating_promulgation_date) { 10.years.ago }
 
         it "does not flag rating issues before AMA" do
-          rating_request_issue.review_request.legacy_opt_in_approved = true
+          rating_request_issue.decision_review.legacy_opt_in_approved = true
           rating_request_issue.vacols_id = "something"
           rating_request_issue.contested_rating_issue_reference_id = "xyz123"
 
@@ -1015,7 +1070,7 @@ describe RequestIssue do
       let!(:decision_issue) do
         rating_request_issue.decision_issues.create!(
           participant_id: veteran.participant_id,
-          decision_review: rating_request_issue.review_request,
+          decision_review: rating_request_issue.decision_review,
           benefit_type: review.benefit_type,
           disposition: "allowed",
           end_product_last_action_date: Time.zone.now

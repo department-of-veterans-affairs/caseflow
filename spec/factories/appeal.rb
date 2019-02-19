@@ -22,7 +22,7 @@ FactoryBot.define do
 
     after(:create) do |appeal, _evaluator|
       appeal.request_issues.each do |issue|
-        issue.review_request = appeal
+        issue.decision_review = appeal
         issue.save
       end
     end

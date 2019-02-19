@@ -5,8 +5,8 @@ RSpec.feature "Case details" do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
 
-  let(:attorney_first_name) { "Robby" }
-  let(:attorney_last_name) { "McDobby" }
+  let(:attorney_first_name) { "Chanel" }
+  let(:attorney_last_name) { "Afshari" }
   let!(:attorney_user) do
     FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
@@ -20,8 +20,8 @@ RSpec.feature "Case details" do
     )
   end
 
-  let(:judge_first_name) { "Jane" }
-  let(:judge_last_name) { "Ricotta-Lotta" }
+  let(:judge_first_name) { "Eeva" }
+  let(:judge_last_name) { "Jovich" }
   let!(:judge_user) { FactoryBot.create(:user, full_name: "#{judge_first_name} #{judge_last_name}") }
   let!(:vacols_judge) do
     FactoryBot.create(
@@ -41,9 +41,13 @@ RSpec.feature "Case details" do
   end
 
   context "hearings pane on attorney task detail view" do
+    let(:veteran_first_name) { "Linda" }
+    let(:veteran_last_name) { "Verne" }
     let!(:veteran) do
       FactoryBot.create(
         :veteran,
+        first_name: veteran_first_name,
+        last_name: veteran_last_name,
         file_number: 123_456_789
       )
     end
@@ -129,11 +133,37 @@ RSpec.feature "Case details" do
         find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
           .click_link
 
+        expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+        scroll_element_in_to_view("#hearings-section")
         worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
-        expect(worksheet_link.text).to eq("View VLJ Hearing Worksheet")
+        expect(worksheet_link.text).to eq(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
 
         details_link = page.find("a[href='/hearings/#{hearing.external_id}/details']")
-        expect(details_link.text).to eq("View Hearing Details")
+        expect(details_link.text).to eq(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
+      end
+
+      context "the user has a VSO role" do
+        let!(:vso) { FactoryBot.create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
+        let!(:vso_user) { FactoryBot.create(:user, :vso_role) }
+        let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
+
+        before do
+          OrganizationsUser.add_user_to_organization(vso_user, vso)
+          allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+          User.authenticate!(user: vso_user)
+        end
+
+        scenario "worksheet and details links are not visible" do
+          visit vso.path
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+          scroll_element_in_to_view("#hearings-section")
+          expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
+          expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
+          expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
+          expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/details']")
+        end
       end
     end
 
@@ -171,7 +201,6 @@ RSpec.feature "Case details" do
         expect(page).to have_content("About the Veteran")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
-        expect(page).to have_content("5/25/2016")
         expect(page).to have_content(appeal.regional_office.city)
         expect(page).to have_content(appeal.veteran_address_line_1)
       end
@@ -514,17 +543,15 @@ RSpec.feature "Case details" do
         let!(:request_issue) do
           FactoryBot.create(
             :request_issue,
-            review_request_id: appeal.id,
-            contested_issue_description: issue_description,
-            review_request_type: "Appeal"
+            decision_review: appeal,
+            contested_issue_description: issue_description
           )
         end
         let!(:request_issue2) do
           FactoryBot.create(
             :request_issue,
-            review_request_id: appeal.id,
-            contested_issue_description: issue_description2,
-            review_request_type: "Appeal"
+            decision_review: appeal,
+            contested_issue_description: issue_description2
           )
         end
 
@@ -581,7 +608,7 @@ RSpec.feature "Case details" do
     before { FeatureToggle.enable!(:ama_decision_issues) }
     after { FeatureToggle.disable!(:ama_decision_issues) }
 
-    let(:request_issue) { create(:request_issue, description: "knee pain", notes: notes) }
+    let(:request_issue) { create(:request_issue, contested_issue_description: "knee pain", notes: notes) }
     let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
 
     context "when notes are nil" do

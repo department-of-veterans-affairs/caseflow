@@ -376,7 +376,7 @@ describe "Appeals API v2", type: :request do
 
     let!(:hlr_request_issue) do
       create(:request_issue,
-             review_request: hlr,
+             decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: nil)
     end
@@ -396,7 +396,7 @@ describe "Appeals API v2", type: :request do
 
     let!(:sc_request_issue) do
       create(:request_issue,
-             review_request: supplemental_claim_review,
+             decision_review: supplemental_claim_review,
              benefit_type: "pension",
              contested_rating_issue_diagnostic_code: "9999")
     end
@@ -464,7 +464,7 @@ describe "Appeals API v2", type: :request do
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(3)
 
-      # check the attribtues on the hlr
+      # check the attributes on the hlr
       expect(json["data"].first["type"]).to eq("higherLevelReview")
       expect(json["data"].first["id"]).to include("HLR")
       expect(json["data"].first["attributes"]["appealIds"].length).to eq(1)
@@ -476,7 +476,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["description"]).to eq("1 compensation issue")
       expect(json["data"].first["attributes"]["aod"]).to be_nil
       expect(json["data"].first["attributes"]["location"]).to eq("aoj")
-      expect(json["data"].first["attributes"]["alerts"]).to be_nil
+      expect(json["data"].first["attributes"]["alerts"].count).to eq(0)
       expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]).to be_nil
@@ -506,7 +506,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][1]["attributes"]["description"]).to eq("Dental or oral condition")
       expect(json["data"][1]["attributes"]["aod"]).to be_nil
       expect(json["data"][1]["attributes"]["location"]).to eq("aoj")
-      expect(json["data"][1]["attributes"]["alerts"]).to be_nil
+      expect(json["data"][1]["attributes"]["alerts"].count).to eq(1)
       expect(json["data"][1]["attributes"]["aoj"]).to eq("vba")
       expect(json["data"][1]["attributes"]["programArea"]).to eq("pension")
       expect(json["data"][1]["attributes"]["docket"]).to be_nil
@@ -543,8 +543,8 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["description"]).to eq("2 issues")
       expect(json["data"][2]["attributes"]["aod"]).to eq(false)
       expect(json["data"][2]["attributes"]["location"]).to eq("bva")
-      expect(json["data"][2]["attributes"]["alerts"]).to be_nil
-      expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
+      expect(json["data"][2]["attributes"]["alerts"].count).to eq(0)
+      expect(json["data"][2]["attributes"]["aoj"]).to eq("vba")
       expect(json["data"][2]["attributes"]["programArea"]).to eq("multiple")
       expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("evidenceSubmission")
       expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)

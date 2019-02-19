@@ -3,10 +3,10 @@ describe EvidenceSubmissionWindowTask do
   let(:participant_id_with_no_vso) { "11111" }
 
   before do
-    FeatureToggle.enable!(:ama_auto_case_distribution)
+    FeatureToggle.enable!(:ama_acd_tasks)
   end
   after do
-    FeatureToggle.disable!(:ama_auto_case_distribution)
+    FeatureToggle.disable!(:ama_acd_tasks)
   end
 
   let!(:receipt_date) { 2.days.ago }
