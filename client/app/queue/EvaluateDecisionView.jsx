@@ -337,8 +337,7 @@ const mapStateToProps = (state, ownProps) => {
     task: taskById(state, { taskId: ownProps.taskId }),
     decision: state.queue.stagedChanges.taskDecision,
     userRole: state.ui.userRole,
-    error: state.ui.messages.error,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)
+    error: state.ui.messages.error
   };
 };
 
