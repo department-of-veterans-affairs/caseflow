@@ -50,7 +50,7 @@ describe RootTask do
       end
       context "when it has no vso representation" do
         let(:appeal) do
-          create(:appeal, docket_type: "direct_docket", claimants: [
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
                    create(:claimant, participant_id: participant_id_with_no_vso)
                  ])
         end
@@ -68,7 +68,7 @@ describe RootTask do
 
       context "when it has an ihp-writing vso" do
         let(:appeal) do
-          create(:appeal, docket_type: "direct_docket", claimants: [
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
                    create(:claimant, participant_id: participant_id_with_pva),
                    create(:claimant, participant_id: participant_id_with_aml)
                  ])
