@@ -51,7 +51,7 @@ RSpec.describe HearingsController, type: :controller do
     end
 
     context "when setting disposition as postponed" do
-      let!(:scheduled_for) { Date.new(2019, 4, 2) }
+      let!(:scheduled_for) { Date.new(2019, 4, 2).in_time_zone.to_s }
       let!(:hearing_day) do
         HearingDay.create_hearing_day(
           request_type: HearingDay::REQUEST_TYPES[:central],
@@ -95,6 +95,9 @@ RSpec.describe HearingsController, type: :controller do
           binding.pry
 
           expect(LegacyHearing.last.location.facility_id).to eq "vba_301"
+
+          # this is failing because the VACOLS insert writes assuming UTC but with a ET value.
+          # e.g. "2019-04-02 10:00:00"
           expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
             Time.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)")
           )
