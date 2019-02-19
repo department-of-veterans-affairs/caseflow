@@ -541,10 +541,10 @@ describe LegacyAppeal do
 
   context "#in_location?" do
     let(:vacols_case) do
-      create(:case, bfcurloc: assigned_to_location)
+      create(:case, bfcurloc: location_code)
     end
 
-    let(:assigned_to_location) { "96" }
+    let(:location_code) { "96" }
 
     subject { appeal.in_location?(location) }
     let(:location) { :remand_returned_to_bva }
@@ -562,7 +562,7 @@ describe LegacyAppeal do
     end
 
     context "when is not in location" do
-      let(:assigned_to_location) { "97" }
+      let(:location_code) { "97" }
       it { is_expected.to be_falsey }
     end
   end
@@ -1200,7 +1200,7 @@ describe LegacyAppeal do
   context "#ramp_ineligibility_reason" do
     subject { appeal.ramp_ineligibility_reason }
 
-    let(:assigned_to_location) { nil }
+    let(:location_code) { nil }
     let(:issues) { [create(:case_issue, :compensation)] }
 
     context "if status is not advance or remand" do

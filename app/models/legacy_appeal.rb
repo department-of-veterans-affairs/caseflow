@@ -39,7 +39,7 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :certification_date, :case_review_date, :notice_of_death_date
   vacols_attr_accessor :type
   vacols_attr_accessor :disposition, :decision_date, :status
-  vacols_attr_accessor :assigned_to_location
+  vacols_attr_accessor :location_code
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :number_of_issues
@@ -118,7 +118,7 @@ class LegacyAppeal < ApplicationRecord
     "Clear and Unmistakable Error" => "cue"
   }.freeze
 
-  ASSIGNED_TO_LOCATIONS = {
+  LOCATION_CODES = {
     remand_returned_to_bva: "96",
     bva_dispatch: "4E",
     omo_office: "20",
@@ -424,9 +424,9 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def in_location?(location)
-    fail UnknownLocationError unless ASSIGNED_TO_LOCATIONS[location]
+    fail UnknownLocationError unless LOCATION_CODES[location]
 
-    assigned_to_location == ASSIGNED_TO_LOCATIONS[location]
+    assigned_to_location == LOCATION_CODES[location]
   end
 
   cache_attribute :case_assignment_exists do
@@ -712,6 +712,20 @@ class LegacyAppeal < ApplicationRecord
 
   def external_id
     vacols_id
+  end
+
+  def assigned_to_location
+    return location_code unless LOCATION_CODES[:caseflow] == location_code
+
+    active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+    return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
+
+    on_hold_tasks = tasks.where(status: Constants.TASK_STATUSES.on_hold)
+    return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
+
+    return most_recently_assigned_to_label(tasks) if tasks.any?
+
+    location_code
   end
 
   private

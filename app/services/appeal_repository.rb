@@ -215,7 +215,7 @@ class AppealRepository
       citation_number: folder_record.tiread2,
       case_record: case_record,
       disposition: Constants::VACOLS_DISPOSITIONS_BY_ID[case_record.bfdc],
-      assigned_to_location: case_record.bfcurloc,
+      location_code: case_record.bfcurloc,
       decision_date: normalize_vacols_date(case_record.bfddec),
       prior_decision_date: normalize_vacols_date(case_record.bfdpdcn),
       status: VACOLS::Case::STATUS[case_record.bfmpro],
@@ -351,6 +351,8 @@ class AppealRepository
           task.parent = parent
         end
       end
+
+      update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
 

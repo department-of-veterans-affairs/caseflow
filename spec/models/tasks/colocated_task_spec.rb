@@ -45,6 +45,7 @@ describe ColocatedTask do
           expect(user_task.action).to eq "aoj"
           expect(user_task.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
           expect(Task.where(type: ColocatedTask.name).count).to eq 2
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
         end
       end
 
@@ -196,7 +197,7 @@ describe ColocatedTask do
         it "should update location to translation in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
-          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::ASSIGNED_TO_LOCATIONS[:translation]
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:translation]
         end
       end
 
@@ -205,7 +206,7 @@ describe ColocatedTask do
         it "should update location to schedule hearing in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
-          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::ASSIGNED_TO_LOCATIONS[:schedule_hearing]
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
         end
       end
 

@@ -134,7 +134,7 @@ RSpec.feature "Colocated checkout flows" do
       )
 
       expect(translation_action.reload.status).to eq "completed"
-      expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::ASSIGNED_TO_LOCATIONS[translation_action.action.to_sym]
+      expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[translation_action.action.to_sym]
     end
   end
 end

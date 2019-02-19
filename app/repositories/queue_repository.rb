@@ -93,7 +93,7 @@ class QueueRepository
       )
       assign_case_for_quality_review(decass_record.case) if location == :quality_review
 
-      decass_record.update_vacols_location!(LegacyAppeal::ASSIGNED_TO_LOCATIONS[location])
+      decass_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[location])
     end
 
     def tasks_query(css_id)

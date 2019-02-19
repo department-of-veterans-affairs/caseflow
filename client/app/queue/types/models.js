@@ -122,7 +122,7 @@ export type AppealDetail = {
   appellantFullName: string,
   appellantAddress: Address,
   appellantRelationship: string,
-  locationCode: ?string,
+  assignedToLocation: ?string,
   externalId: string,
   status: string,
   decisionDate: string,
