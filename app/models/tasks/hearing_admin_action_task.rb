@@ -25,11 +25,13 @@ class HearingAdminActionTask < GenericTask
       [
         Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
     elsif task_is_assigned_to_users_organization?(user)
       [
-        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
+        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
     else
       []

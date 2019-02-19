@@ -4,7 +4,8 @@ class QualityReviewTask < GenericTask
 
     [
       Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-      Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h
+      Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h,
+      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
     ]
   end
 
