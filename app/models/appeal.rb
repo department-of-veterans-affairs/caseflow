@@ -566,7 +566,7 @@ class Appeal < DecisionReview
     judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
     return unless judge_tasks.any?
 
-    judge_tasks.min_by(&:created_at).created_at
+    judge_tasks.min_by(&:created_at).created_at.to_date
   end
 
   def effectuation_ep?
@@ -584,7 +584,7 @@ class Appeal < DecisionReview
     return if active_status?
     return if decision_issues.any?
 
-    root_task.closed_at
+    root_task.closed_at.to_date
   end
 
   def events
