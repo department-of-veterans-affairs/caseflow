@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,33 +8,8 @@ import ApiUtil from '../util/ApiUtil';
 import { prepareAppealForStore, prepareAllTasksForStore } from './utils';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
-import type { Appeal, Appeals, Tasks } from './types/models';
-import type { State, UsersById } from './types/state';
-import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
-type Params = {|
-  userId: number,
-  userRole: string,
-  appealId: string,
-  children: React.Node
-|};
-
-type Props = Params & {|
-  // From state
-  caseflowTasks: Tasks,
-  vacolsTasks: Tasks,
-  appealDetails: Appeals,
-  loadedUserId: number,
-  activeAppeal: Appeal,
-  judges: UsersById,
-  // Action creators
-  setAttorneysOfJudge: typeof setAttorneysOfJudge,
-  fetchAllAttorneys: typeof fetchAllAttorneys,
-  onReceiveTasks: typeof onReceiveTasks,
-  onReceiveAppealDetails: typeof onReceiveAppealDetails
-|};
-
-class CaseDetailLoadingScreen extends React.PureComponent<Props> {
+class CaseDetailLoadingScreen extends React.PureComponent {
   loadActiveAppealAndTask = () => {
     const {
       appealId,
@@ -118,7 +92,7 @@ class CaseDetailLoadingScreen extends React.PureComponent<Props> {
   };
 }
 
-const mapStateToProps = (state: State) => {
+const mapStateToProps = (state) => {
   const { amaTasks, tasks, appealDetails } = state.queue;
 
   return {
@@ -136,4 +110,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchAllAttorneys
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(CaseDetailLoadingScreen): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(CaseDetailLoadingScreen));
