@@ -457,7 +457,7 @@ RSpec.feature "Attorney checkout flow" do
     end
 
     context "with four issues" do
-      let(:case_issues) { FactoryBot.create_list(:case_issue, 4) }
+      let(:case_issues) { FactoryBot.create_list(:case_issue, 4, with_notes: true) }
 
       scenario "selects issue dispositions" do
         visit "/queue"
@@ -511,20 +511,28 @@ RSpec.feature "Attorney checkout flow" do
         page.find("div", class: "Select-option", text: "Stay").click
 
         click_on "Continue"
+
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.first.note)
 
-        page.all("label", text: "Current findings", count: 1)[0].click
-        page.all("label", text: "After certification", count: 1)[0].click
+        expect(page.all("label", text: "Current findings").size).to eq 1
+        page.all("label", text: "Current findings")[0].click
+        expect(page.all("label", text: "After certification").size).to eq 1
+        page.all("label", text: "After certification")[0].click
+
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.second.note)
-        page.all("label", text: "Current findings", count: 2)[1].click
-        page.all("label", text: "Before certification", count: 2)[1].click
 
-        page.all("label", text: "Nexus opinion", count: 2)[1].click
-        page.all("label", text: "After certification", count: 3)[2].click
+        expect(page.all("label", text: "Current findings").size).to eq 2
+        page.all("label", text: "Current findings")[1].click
+        page.all("label", text: "Nexus opinion")[1].click
+
+        expect(page.all("label", text: "Before certification").size).to eq 3
+        expect(page.all("label", text: "After certification").size).to eq 3
+        page.all("label", text: "Before certification")[1].click
+        page.all("label", text: "After certification")[2].click
 
         click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
