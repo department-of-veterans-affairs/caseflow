@@ -82,10 +82,40 @@ describe FetchHearingLocationsForVeteransJob do
       end
     end
 
-    describe "#validate_zip_code" do
+    describe "#validate_address_for_appeal" do
+      let(:distance_response) { HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11).to_json) }
+      let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body.to_json) }
+      before do
+        VADotGovService = ExternalApi::VADotGovService
+
+        allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
+        allow(HTTPI).to receive(:post).with(instance_of(HTTPI::Request)).and_return(validate_response)
+      end
+
       it "returns correct zip code" do
-        address = job.validate_zip_code(legacy_appeal, error: nil)
-        expect(address[:lat]).to eq 42.364031 # 01002 zipcode latitude
+        address = FetchHearingLocationsForVeteransJob.validate_address_for_appeal(legacy_appeal)
+        expect(address[:lat]).to eq 38.768185
+      end
+
+      context "and no address is found" do
+        before do
+          message = {
+            "messages" => [
+              {
+                "key" => "AddressCouldNotBeFound"
+              }
+            ]
+          }
+
+          error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
+          allow(VADotGovService).to receive(:send_va_dot_gov_request)
+            .with(hash_including(endpoint: "address_validation/v1/validate")).and_raise(error)
+        end
+
+        it "return address from zip code" do
+          address = FetchHearingLocationsForVeteransJob.validate_address_for_appeal(legacy_appeal)
+          expect(address[:lat]).to eq 42.364031 # 01002 zipcode latitude
+        end
       end
     end
 
