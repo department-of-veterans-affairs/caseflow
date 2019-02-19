@@ -32,8 +32,7 @@ class GenericTask < Task
 
     if task_is_assigned_to_user_within_organization?(user)
       return [
-        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
       ]
     end
 
