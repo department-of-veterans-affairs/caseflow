@@ -39,6 +39,8 @@ const tableNumberStyling = css({
 });
 
 const AvailableVeteransTable = ({ rows, columns }) => {
+  let removeTimeColumn = _.slice(columns, 0, -1);
+
   if (_.isEmpty(rows)) {
     return <div>
       <StatusMessage
@@ -51,7 +53,7 @@ const AvailableVeteransTable = ({ rows, columns }) => {
   }
 
   return <Table
-    columns={columns}
+    columns={removeTimeColumn}
     rowObjects={rows}
     summary="scheduled-hearings-table"
     slowReRendersAreOk
@@ -178,14 +180,19 @@ export default class AssignHearingsTabs extends React.Component {
       return filteredBy === appeal.attributes.veteranAvailableHearingLocations[0].facilityId;
     });
 
+    /*
+      Sorting by docket number within each category of appeal:
+      CAVC, AOD and normal. Prepended * and + to docket number for
+      CAVC and AOD to group them first and second.
+     */
     const sortedByAodCavc = _.sortBy(filtered, (appeal) => {
       if (appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand) {
-        return 0;
+        return `*${appeal.attributes.docketNumber}`;
       } else if (appeal.attributes.aod) {
-        return 1;
+        return `+${appeal.attributes.docketNumber}`;
       }
 
-      return 2;
+      return appeal.attributes.docketNumber;
     });
 
     return _.map(sortedByAodCavc, (appeal, index) => ({

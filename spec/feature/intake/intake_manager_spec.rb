@@ -2,8 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Intake Manager Page" do
   before do
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 12, 8))
+    Timecop.freeze(post_ramp_start_date)
   end
 
   context "As a user with Admin Intake role" do
@@ -83,6 +82,53 @@ RSpec.feature "Intake Manager Page" do
       expect(find("#table-row-0")).to have_content("Canceled: I am canceled just because")
 
       expect(page).not_to have_selector("#table-row-5")
+    end
+
+    def select_user_stats(css_id)
+      fill_in "Enter the User ID", with: css_id
+      click_on "Search"
+    end
+
+    scenario "choose a user to see stats" do
+      veteran_file_number = "1234"
+      user1 = create(:user)
+      user2 = create(:user)
+      busy_day = 3.days.ago.beginning_of_day
+
+      5.times do
+        Intake.create!(
+          user: user1,
+          veteran_file_number: veteran_file_number,
+          detail_type: "SupplementalClaim",
+          completed_at: busy_day,
+          completion_status: "success"
+        )
+      end
+      3.times do
+        Intake.create!(
+          user: user2,
+          veteran_file_number: veteran_file_number,
+          detail_type: "HigherLevelReview",
+          completed_at: busy_day - 2.days,
+          completion_status: "success"
+        )
+      end
+
+      visit "/intake/manager"
+
+      busy_day_ymd = busy_day.strftime("%F")
+
+      expect(page).to_not have_content(busy_day_ymd)
+      expect(page).to_not have_content("5")
+
+      select_user_stats(user1.css_id)
+      expect(page).to have_content("#{busy_day_ymd} 5")
+
+      select_user_stats(user2.css_id)
+      expect(page).to have_content("#{(busy_day - 2.days).strftime('%F')} 3")
+
+      select_user_stats("nosuchuser")
+      expect(page).to have_content("Not found: nosuchuser")
     end
   end
 

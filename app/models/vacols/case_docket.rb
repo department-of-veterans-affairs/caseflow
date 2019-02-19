@@ -228,7 +228,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     joins(VACOLS::Case::JOIN_AOD)
       .where(
         "BFDC in ('1', '3', '4') and BFDDEC >= ? and AOD = 0 and BFAC <> '7'",
-        1.year.ago
+        1.year.ago.to_date
       )
       .count
   end

@@ -14,7 +14,7 @@ class BoardGrantIssue extends React.PureComponent {
       index
     } = this.props;
 
-    let issueDate = formatDateStr(issue.decisionIssue.promulgationDate);
+    let issueDate = formatDateStr(issue.decisionIssue.approxDecisionDate);
 
     return <div className="cf-decision">
       <hr />
