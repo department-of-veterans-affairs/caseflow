@@ -439,6 +439,8 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def find_open_modifier
+    fail NoAvailableModifiers unless valid_modifiers.any?
+
     return valid_modifiers.first if valid_modifiers.count == 1
 
     valid_modifiers.each do |modifier|

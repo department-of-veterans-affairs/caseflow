@@ -213,13 +213,14 @@ describe RampElectionIntake do
     describe "if there are existing ramp elections" do
       let(:existing_option_selected) { "supplemental_claim" }
       let(:status_type_code) { "PEND" }
+      let(:preexisting_ep_receive_date) { 38.days.ago.to_formatted_s(:short_date) }
 
-      let(:preexisting_ep) do
+      let!(:preexisting_ep) do
         Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
           bgs_attrs: {
             claim_type_code: "683SCRRRAMP",
-            claim_receive_date: 38.days.ago.to_formatted_s(:short_date),
+            claim_receive_date: preexisting_ep_receive_date,
             status_type_code: status_type_code,
             end_product_type_code: "683"
           }
@@ -233,14 +234,15 @@ describe RampElectionIntake do
                     option_selected: existing_option_selected,
                     receipt_date: 38.days.ago,
                     established_at: 38.days.ago)
+        # must set the reference_id *after* we create it because otherwise the factory
+        # will automatically create an EP that will overwrite preexisting_ep
         create(
           :end_product_establishment,
           veteran_file_number: veteran_file_number,
           source: re,
-          reference_id: preexisting_ep.claim_id,
           synced_status: status_type_code,
           last_synced_at: 38.days.ago
-        )
+        ).tap { |epe| epe.update!(reference_id: preexisting_ep.claim_id) }
         re
       end
 
@@ -274,15 +276,41 @@ describe RampElectionIntake do
         end
       end
 
+      def veteran_end_products
+        BGSService.new.get_end_products(veteran_file_number).map { |ep| EndProduct.from_bgs_hash(ep) }
+      end
+
       context "the existing RAMP election EP is inactive" do
         let(:status_type_code) { "CAN" }
 
         it "establishes new ramp election" do
+          expect(veteran_end_products.count).to eq 2
+
           subject
 
           expect(intake.reload).to be_success
           expect(intake.detail).to_not eq(existing_ramp_election)
           expect(intake.detail.established_at).to_not be_nil
+          expect(veteran_end_products.count).to eq 3
+          expect(veteran_end_products.map(&:claim_id)).to include(preexisting_ep.claim_id)
+        end
+      end
+
+      context "a new Intake for an existing canceled RAMP election" do
+        let(:status_type_code) { "CAN" }
+        let(:preexisting_ep_receive_date) { detail.receipt_date.to_date.to_formatted_s(:short_date) }
+
+        it "does not attempt to re-use the existing canceled EP" do
+          expect(veteran_end_products.count).to eq 2
+          expect(veteran_end_products.map(&:claim_id)).to include(preexisting_ep.claim_id)
+
+          subject
+
+          expect(intake.reload).to be_success
+          expect(intake.detail).to_not eq(existing_ramp_election)
+          expect(intake.detail.established_at).to_not be_nil
+          expect(veteran_end_products.count).to eq 3
+          expect(veteran_end_products.map(&:claim_id)).to include(preexisting_ep.claim_id)
         end
       end
 
