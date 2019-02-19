@@ -9,6 +9,10 @@ class AClaimReview
     @err
   end
 
+  def id
+    123
+  end
+
   def establish!; end
 end
 
