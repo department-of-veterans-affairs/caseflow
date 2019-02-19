@@ -46,59 +46,6 @@ describe DocumentFetcher do
     end
   end
 
-  context "#new_documents_for_user" do
-    let!(:documents) do
-      [
-        create(:document, upload_date: 5.days.ago),
-        create(:document, upload_date: 5.days.ago)
-      ]
-    end
-
-    subject { document_service.new_documents_for_user(user) }
-
-    context "when appeal has no appeal view" do
-      it "should return all documents" do
-        expect(subject).to eq(documents)
-      end
-    end
-
-    context "when appeal has an appeal view newer than documents" do
-      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-
-      it "should return no documents" do
-        expect(subject).to eq([])
-      end
-
-      context "when one document is missing an upload_date" do
-        let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-        let!(:documents) do
-          [
-            create(:document, upload_date: nil),
-            create(:document, upload_date: 5.days.ago)
-          ]
-        end
-
-        it "should return no documents" do
-          expect(subject).to eq([])
-        end
-      end
-    end
-
-    context "when appeal has an appeal view newer than documents" do
-      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-      let!(:documents) do
-        [
-          create(:document, upload_date: -2.days.ago),
-          create(:document, upload_date: -2.days.ago)
-        ]
-      end
-
-      it "should return both documents" do
-        expect(subject).to eq(documents)
-      end
-    end
-  end
-
   context "#number_of_documents" do
     subject { document_service.number_of_documents }
 
