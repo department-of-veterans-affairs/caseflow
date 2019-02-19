@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
-import _ from 'lodash';
 
 const dropdownFilterViewListStyle = css({
   margin: 0
@@ -29,23 +28,25 @@ class DropdownFilter extends React.PureComponent {
   render() {
     const { children, name } = this.props;
 
-    // Some of the filter names are camelCase, which would be displayed to the user.
-    // To make this more readable, convert the camelCase text to regular casing.
-    const displayName = _.capitalize(_.upperCase(name));
+    const style = {
+      top: '25px',
+      right: 0
+    };
 
     const rel = {
       position: 'relative'
     };
 
     return <div style={rel}>
-      <div className="cf-dropdown-filter" style={{ top: '10px' }} ref={(rootElem) => {
+      <div className="cf-dropdown-filter" style={style} ref={(rootElem) => {
         this.rootElem = rootElem;
       }}>
-        {!this.props.disableClearFilters &&
-          <div className="cf-filter-option-row">
-            <button className="cf-text-button" onClick={this.props.clearFilters}>
+        {this.props.addClearFiltersRow &&
+          <div className="cf-clear-filter-row">
+            <button className="cf-text-button" onClick={this.props.clearFilters}
+              disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
-                Clear {displayName} filter
+                Clear {name} filter
               </div>
             </button>
           </div>
@@ -81,9 +82,10 @@ class DropdownFilter extends React.PureComponent {
 
 DropdownFilter.propTypes = {
   children: PropTypes.node,
-  disableClearFilters: PropTypes.bool,
+  isClearEnabled: PropTypes.bool,
   clearFilters: PropTypes.func,
-  handleClose: PropTypes.func
+  handleClose: PropTypes.func,
+  addClearFiltersRow: PropTypes.bool
 };
 
 export default DropdownFilter;
