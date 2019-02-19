@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190215194659) do
+ActiveRecord::Schema.define(version: 20190218223805) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -209,8 +209,8 @@ ActiveRecord::Schema.define(version: 20190215194659) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "claimants", force: :cascade do |t|
-    t.string "participant_id", null: false
+  create_table "claimants", force: :cascade, comment: "Stores the claimant for each Decision Review, and its payee_code if required" do |t|
+    t.string "participant_id", null: false, comment: "The claimant's participant ID"
     t.string "payee_code"
     t.bigint "review_request_id", null: false
     t.string "review_request_type", null: false
