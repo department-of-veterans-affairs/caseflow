@@ -186,13 +186,6 @@ class SubmitDecisionView extends React.PureComponent {
         options={OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES}
         errorMessage={(highlightFormItems && !decisionOpts.work_product) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
       />}
-      <Checkbox
-        name="overtime"
-        label="This work product is overtime"
-        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-        value={decisionOpts.overtime || false}
-        styling={css(marginBottom(1), marginTop(1))}
-      />
       <TextField
         label="Document ID:"
         name="document_id"
@@ -214,6 +207,13 @@ class SubmitDecisionView extends React.PureComponent {
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+      />
+      <Checkbox
+        name="overtime"
+        label="This work product is overtime"
+        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
+        value={decisionOpts.overtime || false}
+        styling={css(marginBottom(1), marginTop(1))}
       />
     </React.Fragment>;
   };
