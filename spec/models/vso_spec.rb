@@ -206,7 +206,7 @@ describe Vso do
       end
     end
 
-    context "when vso_configs record for this VSO contains all 3 AMA docket types (field VSOs)" do
+    context "when vso_configs record for this VSO doesn't contain any docket types" do
       before do
         VsoConfig.create(
           organization: vso,
