@@ -86,7 +86,7 @@ class ApiStatusAlerts
     {
       type: "evidentiary_period",
       details: {
-        due_date: task.timer_ends_at
+        due_date: task.timer_ends_at.to_date
       }
     }
   end
