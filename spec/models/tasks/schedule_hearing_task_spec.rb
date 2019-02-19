@@ -47,11 +47,7 @@ describe ScheduleHearingTask do
   context "#update_from_params" do
     context "AMA appeal" do
       let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video]) }
-      let(:appeal) { create(:appeal) }
-      let(:hearing_task) { HearingTask.create!(appeal: appeal)}
-      let(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, parent: hearing_task)
-      end
+      let(:schedule_hearing_task) { create(:schedule_hearing_task) }
       let(:update_params) do
         {
           status: "completed",
@@ -76,14 +72,14 @@ describe ScheduleHearingTask do
 
         expect(Hearing.count).to eq(1)
         expect(Hearing.first.hearing_day).to eq(hearing_day)
-        expect(Hearing.first.appeal).to eq(appeal)
+        expect(Hearing.first.appeal).to eq(schedule_hearing_task.appeal)
       end
 
       it "creates a HoldHearingTask and associated object" do
         schedule_hearing_task.update_from_params(update_params, hearings_user)
 
         expect(HoldHearingTask.count).to eq(1)
-        expect(HoldHearingTask.first.appeal).to eq(appeal)
+        expect(HoldHearingTask.first.appeal).to eq(schedule_hearing_task.appeal)
         expect(HearingTaskAssociation.count).to eq(1)
         expect(HearingTaskAssociation.first.hearing).to eq(Hearing.first)
         expect(HearingTaskAssociation.first.hearing_task).to eq(HearingTask.first)
