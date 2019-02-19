@@ -2,11 +2,6 @@
 class ContestableIssue
   include ActiveModel::Model
 
-# <<<<<<< HEAD
-#   attr_accessor :rating_issue_reference_id, :date, :description, :ramp_claim_id, :contesting_decision_review,
-#                 :decision_issue, :promulgation_date, :rating_issue_profile_date, :source_request_issues,
-#                 :rating_issue_diagnostic_code
-# =======
   # approx_decision_date is our best guess at the decision date.
   # it is used for timeliness checks on the client side and for user display.
   attr_accessor :rating_issue_reference_id, :approx_decision_date, :description,
