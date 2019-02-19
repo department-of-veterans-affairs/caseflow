@@ -55,7 +55,7 @@ class HigherLevelReview < ClaimReview
     return if active?
     return unless remand_supplemental_claims.any?
 
-    decision_issues.remanded.first.approx_decision_date
+    decision_issues.remanded.first.approx_decision_date.to_date
   end
 
   def other_close_event_date
@@ -63,7 +63,7 @@ class HigherLevelReview < ClaimReview
     return unless decision_issues.empty?
     return unless end_product_establishments.any?
 
-    end_product_establishments.first.last_synced_at
+    end_product_establishments.first.last_synced_at.to_date
   end
 
   def events
