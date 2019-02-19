@@ -1,13 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import type { State } from './types/state';
 import { caseTimelineTasksForAppeal } from './selectors';
 import COPY from '../../COPY.json';
 import TaskRows from './components/TaskRows';
-
-type Params = {|
-  appealId: string
-|};
 
 class CaseTimeline extends React.PureComponent {
   render = () => {
@@ -27,7 +22,7 @@ class CaseTimeline extends React.PureComponent {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state, ownProps) => {
   return {
     tasks: caseTimelineTasksForAppeal(state, { appealId: ownProps.appeal.externalId })
   };
