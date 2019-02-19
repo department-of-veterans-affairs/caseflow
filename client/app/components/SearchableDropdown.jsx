@@ -10,41 +10,9 @@ const TAG_ALREADY_EXISTS_MSG = 'Tag already exists';
 const NO_RESULTS_TEXT = 'Not an option';
 const DEFAULT_PLACEHOLDER = 'Select option';
 
-export type OptionType = { value: string, label?: string };
+class SearchableDropdown extends React.Component {
 
-type Props = {|
-  value?: ?OptionType | string,
-  creatable?: boolean,
-  errorMessage?: ?string,
-  label?: string,
-  strongLabel?: boolean,
-  hideLabel?: boolean,
-  name: string,
-  onChange: (value: ?OptionType, deletedValue?: ?Array<any>) => mixed,
-  // eslint-disable-next-line no-undef
-  options: $ReadOnlyArray<OptionType>,
-  readOnly?: boolean,
-  required?: boolean,
-  placeholder: string | Object,
-  creatableOptions?: {
-    tagAlreadyExistsMsg: string,
-    promptTextCreator: Function
-  },
-  dropdownStyling?: Object,
-  styling?: Object,
-  multi?: boolean,
-  selfManageValueState?: boolean,
-  searchable?: boolean,
-  noResultsText?: string
-|};
-
-type ComponentState = {|
-  value: ?OptionType | string
-|};
-
-class SearchableDropdown extends React.Component<Props, ComponentState> {
-
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -52,11 +20,11 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
     };
   }
 
-  componentWillReceiveProps = (nextProps: Props) => {
+  componentWillReceiveProps = (nextProps) => {
     this.setState({ value: nextProps.value });
   };
 
-  onChange = (value: OptionType) => {
+  onChange = (value) => {
     let newValue = value;
     let deletedValue = null;
 
@@ -88,7 +56,7 @@ class SearchableDropdown extends React.Component<Props, ComponentState> {
   }
 
   // Override the default keys to create a new tag (allows creating options that contain a comma)
-  shouldKeyDownEventCreateNewOption = ({ keyCode }: { keyCode: number }) => {
+  shouldKeyDownEventCreateNewOption = ({ keyCode }) => {
     switch (keyCode) {
     // Tab and Enter only
     case 9:
