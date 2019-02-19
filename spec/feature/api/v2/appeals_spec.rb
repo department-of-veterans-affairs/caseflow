@@ -476,7 +476,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["description"]).to eq("1 compensation issue")
       expect(json["data"].first["attributes"]["aod"]).to be_nil
       expect(json["data"].first["attributes"]["location"]).to eq("aoj")
-      expect(json["data"].first["attributes"]["alerts"]).to be_nil
+      expect(json["data"].first["attributes"]["alerts"].count).to eq(0)
       expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]).to be_nil
@@ -506,7 +506,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][1]["attributes"]["description"]).to eq("Dental or oral condition")
       expect(json["data"][1]["attributes"]["aod"]).to be_nil
       expect(json["data"][1]["attributes"]["location"]).to eq("aoj")
-      expect(json["data"][1]["attributes"]["alerts"]).to be_nil
+      expect(json["data"][1]["attributes"]["alerts"].count).to eq(1)
       expect(json["data"][1]["attributes"]["aoj"]).to eq("vba")
       expect(json["data"][1]["attributes"]["programArea"]).to eq("pension")
       expect(json["data"][1]["attributes"]["docket"]).to be_nil
@@ -543,8 +543,8 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["description"]).to eq("2 issues")
       expect(json["data"][2]["attributes"]["aod"]).to eq(false)
       expect(json["data"][2]["attributes"]["location"]).to eq("bva")
-      expect(json["data"][2]["attributes"]["alerts"]).to be_nil
-      expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
+      expect(json["data"][2]["attributes"]["alerts"].count).to eq(0)
+      expect(json["data"][2]["attributes"]["aoj"]).to eq("vba")
       expect(json["data"][2]["attributes"]["programArea"]).to eq("multiple")
       expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("evidenceSubmission")
       expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)

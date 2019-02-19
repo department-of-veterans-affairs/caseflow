@@ -136,7 +136,7 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
-  delegate :documents, :new_documents_for_user, :number_of_documents,
+  delegate :documents, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification

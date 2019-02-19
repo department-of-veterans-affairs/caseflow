@@ -74,7 +74,7 @@ class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
   end
 end
 class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
-  after_update :fetch_closest_ro_and_ahls, if: :status_changed_to_completed?
+  after_update :fetch_closest_ro_and_ahls, if: :task_just_closed?
 
   def self.label
     "Verify Address"

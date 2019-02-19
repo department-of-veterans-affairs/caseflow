@@ -53,7 +53,7 @@ RSpec.feature "Colocated checkout flows" do
       User.authenticate!(user: colocated_user)
     end
 
-    scenario "reassigns task to assigning attorney" do
+    scenario "returns task to assigning attorney" do
       visit "/queue"
 
       appeal = colocated_action.appeal
@@ -70,7 +70,7 @@ RSpec.feature "Colocated checkout flows" do
         format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, vet_name)
       )
 
-      expect(colocated_action.reload.status).to eq "completed"
+      expect(colocated_action.reload.status).to eq(Constants.TASK_STATUSES.completed)
       expect(colocated_action.assigned_at.to_date).to eq Time.zone.today
     end
 

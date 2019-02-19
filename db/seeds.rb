@@ -515,6 +515,7 @@ class SeedDB
     LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
     LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
+    LegacyAppeal.create(vacols_id: "2657227", vbms_id: "169397130S")
   end
 
   def create_higher_level_reviews_and_supplemental_claims
@@ -706,7 +707,8 @@ class SeedDB
       { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
       { vacols_id: "2226048", trait: nil, additional: { action: "translation" } },
       { vacols_id: "2249056", trait: :in_progress },
-      { vacols_id: "2306397", trait: :on_hold }
+      { vacols_id: "2306397", trait: :on_hold },
+      { vacols_id: "2657227", trait: :completed_hold }
     ].each do |attrs|
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                         assigned_by: attorney,
@@ -813,7 +815,7 @@ class SeedDB
 
       request_issues = FactoryBot.create_list(:request_issue, 3,
                                               :nonrating,
-                                              description: "#{index} #{description}",
+                                              contested_issue_description: "#{index} #{description}",
                                               notes: "#{index} #{notes}",
                                               benefit_type: nca.url,
                                               decision_review: board_grant_task.appeal)
@@ -919,7 +921,9 @@ class SeedDB
       veteran_file_number: "808415990",
       docket_type: "hearing",
       closest_regional_office: "RO17",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(
+        :request_issue, 1, contested_issue_description: description, notes: notes
+      )
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
@@ -928,7 +932,9 @@ class SeedDB
       veteran_file_number: "992190636",
       docket_type: "hearing",
       closest_regional_office: "RO17",
-      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
+      request_issues: FactoryBot.create_list(
+        :request_issue, 8, contested_issue_description: description, notes: notes
+      )
     )
 
     user = User.find_by(css_id: "BVATWARNER")
