@@ -55,9 +55,7 @@ class SubmitDecisionView extends React.PureComponent {
   // if you don't do this you will get validation errors and a 400 for a missing document_id
   // this is also needed to keep the onChange values in sync
   setInitialDecisionOptions = (decision, attorneyCaseRewriteDetails) => {
-
     const decisionOptsWithAttorneyCheckoutInfo =
-
     _.merge(decision.opts, { document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
       overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
@@ -144,7 +142,6 @@ class SubmitDecisionView extends React.PureComponent {
   };
 
   getDefaultJudgeSelector = () => {
-
     return this.props.task && this.props.task.isLegacy ?
       this.props.task.addedByCssId :
       this.props.task && this.props.task.assignedBy.pgId;
