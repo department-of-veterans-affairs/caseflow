@@ -15,7 +15,7 @@ class V2::HLRStatusSerializer < ActiveModel::Serializer
     false
   end
 
-  attribute :active?, key: :active
+  attribute :active_status?, key: :active
   attribute :description
 
   attribute :location do

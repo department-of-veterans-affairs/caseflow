@@ -65,8 +65,53 @@ describe Appeal do
 
       expect(subject.include?(direct_review_appeal)).to eq(true)
       expect(subject.include?(evidence_submission_appeal)).to eq(false)
-      # TODO: support hearing appeals
-      # expect(subject.include?(hearing_appeal)).to eq(false)
+      expect(subject.include?(hearing_appeal)).to eq(false)
+    end
+
+    context "if mail tasks exist" do
+      let(:blocking_mail_task_class) { CongressionalInterestMailTask }
+      let(:nonblocking_mail_task_class) { AodMotionMailTask }
+      let(:user) { FactoryBot.create(:user) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
+      end
+
+      let!(:blocked_appeal) do
+        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
+        blocking_mail_task_class.create_from_params({
+                                                      appeal: appeal,
+                                                      parent_id: appeal.root_task.id
+                                                    }, user)
+        appeal
+      end
+      let!(:nonblocked_appeal) do
+        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
+        nonblocking_mail_task_class.create_from_params({
+                                                         appeal: appeal,
+                                                         parent_id: appeal.root_task.id
+                                                       }, user)
+        appeal
+      end
+      let!(:nonblocked_appeal2) do
+        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
+        blocking_mail_task_class.create_from_params({
+                                                      appeal: appeal,
+                                                      parent_id: appeal.root_task.id
+                                                    }, user)
+        MailTask.find_by(appeal: appeal).update!(status: "completed")
+        appeal
+      end
+
+      it "does not return appeals with open blocking mail tasks" do
+        expect(subject.include?(blocked_appeal)).to eq(false)
+      end
+      it "returns appeals with open nonblocking mail tasks" do
+        expect(subject.include?(nonblocked_appeal)).to eq(true)
+      end
+      it "does not return appeals with completed blocking mail tasks " do
+        expect(subject.include?(nonblocked_appeal2)).to eq(true)
+      end
     end
   end
 
@@ -1007,7 +1052,7 @@ describe Appeal do
       it "waiting for a decision" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:decision_in_progress)
-        expect(status[:details]).to be_empty
+        expect(status[:details][:decision_timeliness]).to eq([1, 2])
       end
     end
 
@@ -1052,8 +1097,8 @@ describe Appeal do
       it "effectuation had an ep" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:bva_decision_effectuation)
-        expect(status[:details][:bvaDecisionDate].to_date).to eq((receipt_date + 60.days).to_date)
-        expect(status[:details][:aojDecisionDate].to_date).to eq((receipt_date + 100.days).to_date)
+        expect(status[:details][:bva_decision_date].to_date).to eq((receipt_date + 60.days).to_date)
+        expect(status[:details][:aoj_decision_date].to_date).to eq((receipt_date + 100.days).to_date)
       end
     end
 
@@ -1153,8 +1198,8 @@ describe Appeal do
             { description: "Partial loss of upper jaw", disposition: "granted" },
             description: "Partial loss of hard palate", disposition: "denied"
           )
-          expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
-          expect(status[:details][:aojDecisionDate]).to eq((receipt_date + 101.days).to_date)
+          expect(status[:details][:bva_decision_date]).to eq((receipt_date + 60.days).to_date)
+          expect(status[:details][:aoj_decision_date]).to eq((receipt_date + 101.days).to_date)
         end
       end
 
@@ -1168,8 +1213,8 @@ describe Appeal do
             { description: "Partial loss of hard palate", disposition: "remanded" },
             description: "Partial loss of hard palate", disposition: "remanded"
           )
-          expect(status[:details][:bvaDecisionDate]).to be_nil
-          expect(status[:details][:aojDecisionDate]).to be_nil
+          expect(status[:details][:bva_decision_date]).to be_nil
+          expect(status[:details][:aoj_decision_date]).to be_nil
         end
       end
     end
@@ -1440,6 +1485,62 @@ describe Appeal do
         expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
       end
+    end
+  end
+
+  context "#alerts" do
+    let(:receipt_date) { Time.zone.today - 10.days }
+    let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
+
+    context "has a remand and effecutation tracked in VBMS"
+    # the effectuation
+    let(:decision_date) { receipt_date + 30.days }
+    let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+    let!(:decision_issue) do
+      create(:decision_issue,
+             decision_review: appeal, disposition: "allowed", caseflow_decision_date: decision_date)
+    end
+    let(:effectuation_ep_cleared_date) { receipt_date + 250.days }
+    let!(:effectuation_ep) do
+      create(:end_product_establishment,
+             :cleared, source: decision_document, last_synced_at: effectuation_ep_cleared_date)
+    end
+    # the remand
+    let!(:remanded_decision_issue) do
+      create(:decision_issue,
+             decision_review: appeal,
+             disposition: "remanded",
+             benefit_type: "compensation",
+             caseflow_decision_date: decision_date)
+    end
+    let!(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+    let(:remanded_ep_clr_date) { receipt_date + 200.days }
+    let!(:remanded_ep) { create(:end_product_establishment, :cleared, source: remanded_sc) }
+    let!(:remanded_sc_decision_issue) do
+      create(:decision_issue,
+             decision_review: remanded_sc,
+             end_product_last_action_date: remanded_ep_clr_date)
+    end
+
+    it "it has 3 ama_post_decision alerts" do
+      alerts = appeal.alerts
+
+      expect(alerts.count).to eq(3)
+
+      expect(alerts[0][:type]).to eq("ama_post_decision")
+      expect(alerts[0][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
+      expect(alerts[0][:details][:dueDate].to_date).to eq((decision_date + 365.days).to_date)
+      expect(alerts[0][:details][:cavcDueDate].to_date).to eq((decision_date + 120.days).to_date)
+
+      expect(alerts[1][:type]).to eq("ama_post_decision")
+      expect(alerts[1][:details][:availableOptions]).to eq(%w[supplemental_claim higher_level_review appeal])
+      expect(alerts[1][:details][:dueDate].to_date).to eq((remanded_ep_clr_date + 365.days).to_date)
+      expect(alerts[1][:details][:cavcDueDate].to_date).to eq((remanded_ep_clr_date + 120.days).to_date)
+
+      expect(alerts[2][:type]).to eq("ama_post_decision")
+      expect(alerts[2][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
+      expect(alerts[2][:details][:dueDate].to_date).to eq((effectuation_ep_cleared_date + 365.days).to_date)
+      expect(alerts[2][:details][:cavcDueDate].to_date).to eq((effectuation_ep_cleared_date + 120.days).to_date)
     end
   end
 end
