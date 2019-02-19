@@ -3,7 +3,7 @@ describe RoundRobinTaskDistributor do
   let!(:assignee_pool) { FactoryBot.create_list(:user, assignee_pool_size) }
   let(:task_class) { Task }
   let(:round_robin_distributor) do
-    RoundRobinTaskDistributor.new(assignee_pool: assignee_pool.pluck(:css_id), task_class: task_class)
+    RoundRobinTaskDistributor.new(assignee_pool: assignee_pool, task_class: task_class)
   end
 
   describe ".latest_task" do
