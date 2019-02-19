@@ -175,15 +175,15 @@ class Appeal < DecisionReview
   end
 
   def hearing_docket?
-    docket_type == "hearing"
+    docket_type == Constants.AMA_DOCKETS.hearing
   end
 
   def evidence_submission_docket?
-    docket_type == "evidence_submission"
+    docket_type == Constants.AMA_DOCKETS.evidence_submission
   end
 
   def direct_review_docket?
-    docket_type == "direct_review"
+    docket_type == Constants.AMA_DOCKETS.direct_review
   end
 
   def active?
@@ -576,7 +576,7 @@ class Appeal < DecisionReview
     judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
     return unless judge_tasks.any?
 
-    judge_tasks.min_by(&:created_at).created_at
+    judge_tasks.min_by(&:created_at).created_at.to_date
   end
 
   def effectuation_ep?
@@ -594,7 +594,7 @@ class Appeal < DecisionReview
     return if active_status?
     return if decision_issues.any?
 
-    root_task.closed_at
+    root_task.closed_at.to_date
   end
 
   def events

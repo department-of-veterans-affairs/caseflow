@@ -43,9 +43,7 @@ class RoSchedulePeriod < SchedulePeriod
           rooms.each do |room|
             acc << HearingDayMapper.hearing_day_field_validations(
               request_type: :video,
-              scheduled_for: Time.use_zone("Eastern Time (US & Canada)") do
-                Time.zone.local(date.year, date.month, date.day, 8, 30, 0).to_datetime
-              end,
+              scheduled_for: Date.new(date.year, date.month, date.day),
               room: room[:room_num],
               regional_office: ro_key
             )
@@ -58,7 +56,9 @@ class RoSchedulePeriod < SchedulePeriod
 
   def generate_ro_hearing_schedule
     generate_hearings_days = HearingSchedule::GenerateHearingDaysSchedule.new(self)
-    hearing_days = format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
+    video_hearing_days = format_ro_data(generate_hearings_days.allocate_hearing_days_to_ros)
+    co_hearing_days = generate_hearings_days.generate_co_hearing_days_schedule
+    hearing_days = video_hearing_days + co_hearing_days
     hearing_days.sort_by { |day| day[:scheduled_for] }
   end
 end

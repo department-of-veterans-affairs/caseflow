@@ -51,7 +51,7 @@ class SupplementalClaim < ClaimReview
     return unless decision_issues.empty?
     return unless end_product_establishments.any?
 
-    end_product_establishments.first.last_synced_at
+    end_product_establishments.first.last_synced_at.to_date
   end
 
   def events
