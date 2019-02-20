@@ -46,7 +46,7 @@ class LegacyHearing < ApplicationRecord
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
-    else
+    elsif venue
       venue[:label]
     end
   end
