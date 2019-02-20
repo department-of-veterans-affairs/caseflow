@@ -70,7 +70,7 @@ describe ContestableIssue do
         titleOfActiveReview: nil,
         sourceReviewType: nil,
         timely: true,
-        latestIssuesInChain: [{id: nil, date: promulgation_date}]
+        latestIssuesInChain: [{ id: nil, date: promulgation_date }]
       )
     end
 
@@ -89,7 +89,7 @@ describe ContestableIssue do
           titleOfActiveReview: nil,
           sourceReviewType: nil,
           timely: false,
-          latestIssuesInChain: [{id: nil, date: promulgation_date}]
+          latestIssuesInChain: [{ id: nil, date: promulgation_date }]
         )
       end
     end
@@ -122,7 +122,7 @@ describe ContestableIssue do
         titleOfActiveReview: nil,
         sourceReviewType: "Appeal",
         timely: true,
-        latestIssuesInChain: [{id: decision_issue.id, date: caseflow_decision_date}]
+        latestIssuesInChain: [{ id: decision_issue.id, date: caseflow_decision_date }]
       )
     end
 
@@ -141,7 +141,7 @@ describe ContestableIssue do
           titleOfActiveReview: nil,
           sourceReviewType: "Appeal",
           timely: false,
-          latestIssuesInChain: [{id: decision_issue.id, date: caseflow_decision_date}]
+          latestIssuesInChain: [{ id: decision_issue.id, date: caseflow_decision_date }]
         )
       end
     end
@@ -217,12 +217,14 @@ describe ContestableIssue do
                                   decision_review: future_contestable_issues.second.contesting_decision_review,
                                   description: "another decision issue",
                                   request_issues: future_contestable_issues.second.source_request_issues)
-          ContestableIssue.from_decision_issue(decision_issue, future_contestable_issues.second.contesting_decision_review)
+          ContestableIssue.from_decision_issue(decision_issue,
+                                               future_contestable_issues.second.contesting_decision_review)
         end
 
         it "finds both latest contestable issues" do
           expect(subject.length).to eq(2)
-          expect(subject.map(&:decision_issue).map(&:id)).to include(another_contestable_issue.decision_issue.id, future_contestable_issues.last.decision_issue.id)
+          expect(subject.map(&:decision_issue).map(&:id)).to
+          include(another_contestable_issue.decision_issue.id, future_contestable_issues.last.decision_issue.id)
         end
       end
     end

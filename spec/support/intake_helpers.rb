@@ -382,7 +382,7 @@ module IntakeHelpers
     nonrating_request_issue = setup_request_issue_with_nonrating_decision_issue(supplemental_claim_with_decision_issues)
     rating_request_issue = setup_request_issue_with_rating_decision_issue(supplemental_claim_with_decision_issues)
 
-    rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
+    DecisionIssue.where(id: [nonrating_request_issue.contested_decision_issue_id, rating_request_issue.contested_decision_issue_id])
   end
 
   def setup_prior_claim_with_payee_code(appeal, veteran, prior_payee_code = "10")

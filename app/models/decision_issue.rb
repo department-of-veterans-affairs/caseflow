@@ -140,12 +140,6 @@ class DecisionIssue < ApplicationRecord
 
   private
 
-  def associated_request_issue
-    return unless request_issues.any?
-
-    request_issues.first
-  end
-
   def fetch_diagnostic_code_status_description(diagnostic_code)
     if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
       description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]

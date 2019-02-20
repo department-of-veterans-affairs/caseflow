@@ -84,7 +84,8 @@ class ContestableIssue
   private
 
   def contested_by_request_issue
-    RequestIssue.open.find_by(contested_rating_issue_reference_id: rating_issue_reference_id, contested_decision_issue_id: decision_issue&.id)
+    RequestIssue.open.find_by(contested_rating_issue_reference_id: rating_issue_reference_id,
+                              contested_decision_issue_id: decision_issue&.id)
   end
 
   def serialize_latest_decision_issues

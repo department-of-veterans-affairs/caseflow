@@ -966,7 +966,7 @@ feature "Appeal Intake" do
       request_issue = create(:request_issue,
                              contested_rating_issue_reference_id: "old123",
                              contested_rating_issue_profile_date: untimely_rating.profile_date,
-                             review_request: prior_appeal)
+                             decision_review: prior_appeal)
 
       # another alternate decision issue based on the same request issue
       create(:decision_issue,
@@ -989,7 +989,7 @@ feature "Appeal Intake" do
       3.times do |index|
         later_appeal = create(:appeal, :outcoded, veteran: veteran)
         later_request_issue = create(:request_issue,
-                                     review_request: later_appeal,
+                                     decision_review: later_appeal,
                                      contested_decision_issue_id: contesting_decision_issue_id)
         later_decision_issue = create(:decision_issue,
                                       decision_review: later_appeal,
