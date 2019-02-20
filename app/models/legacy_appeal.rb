@@ -730,6 +730,10 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
+  
+  def most_recently_assigned_to_label(tasks)
+    tasks.order(:updated_at).last.assigned_to_label
+  end
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&

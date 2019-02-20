@@ -174,7 +174,7 @@ class AppealSeries < ApplicationRecord
   def disambiguate_status_active
     return :scheduled_hearing if latest_appeal.hearing_scheduled?
 
-    case latest_appeal.location_code
+    case latest_appeal.assigned_to_location
     when "49"
       :stayed
     when "55"
