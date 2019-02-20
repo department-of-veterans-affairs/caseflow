@@ -237,7 +237,8 @@ class SubmitDecisionView extends React.PureComponent {
         value={decisionOpts.untimely_evidence || false}
         styling={css(marginBottom(1), marginTop(1))}
       />
-      {/* TODO: componentize this once the style guide directives are in, add in arrow to the left of link once provided by UX team */}
+      {/* TODO: 1. componentize this once the style guide directives are in 
+                2. add in arrow to the left of link once provided by UX team */}
       <Button
         id="ineligible-evidence"
         linkStyling
