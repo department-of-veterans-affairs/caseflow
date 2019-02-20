@@ -110,8 +110,7 @@ class ScheduleHearingTask < GenericTask
       return [
         Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+        Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
       ]
     end
 
