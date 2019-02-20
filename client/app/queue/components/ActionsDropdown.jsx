@@ -1,11 +1,10 @@
-// @flow
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import { withRouter } from 'react-router-dom';
 
-import SearchableDropdown, { type OptionType } from '../../components/SearchableDropdown';
+import SearchableDropdown from '../../components/SearchableDropdown';
 
 import {
   resetDecisionOptions,
@@ -16,33 +15,8 @@ import {
 } from '../constants';
 import COPY from '../../../COPY.json';
 
-import type {
-  State
-} from '../types/state';
-
-import type {
-  Task
-} from '../types/models';
-
-type Params = {|
-  task: Task,
-  appealId: string
-|};
-
-type Props = Params & {|
-  // state
-  featureToggles: Object,
-  appeal: Object,
-  changedAppeals: Array<number>,
-  // dispatch
-  stageAppeal: typeof stageAppeal,
-  resetDecisionOptions: typeof resetDecisionOptions,
-  // withrouter
-  history: Object
-|};
-
-class ActionsDropdown extends React.PureComponent<Props> {
-  changeRoute = (option: ?OptionType) => {
+class ActionsDropdown extends React.PureComponent {
+  changeRoute = (option) => {
     const {
       appealId,
       task,
@@ -74,7 +48,7 @@ class ActionsDropdown extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps) => ({
+const mapStateToProps = (state, ownProps) => ({
   appeal: state.queue.appeals[ownProps.appealId],
   changedAppeals: _.keys(state.queue.stagedChanges.appeals),
   featureToggles: state.ui.featureToggles
@@ -87,4 +61,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 export default (withRouter(
   connect(mapStateToProps, mapDispatchToProps)(ActionsDropdown)
-): React.ComponentType<Params>);
+));

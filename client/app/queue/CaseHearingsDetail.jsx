@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -29,22 +28,8 @@ const noTopBottomMargin = css({
   marginBottom: '1rem'
 });
 
-import type {
-  Appeal,
-  Hearing
-} from './types/models';
-
-type Props = {|
-  appeal: Appeal,
-  userIsVsoEmployee: boolean
-|};
-
-type Params = Props & {|
-  showVeteranCaseList: typeof showVeteranCaseList
-|}
-
-class CaseHearingsDetail extends React.PureComponent<Params> {
-  getHearingAttrs = (hearing: Hearing, userIsVsoEmployee: boolean): Array<Object> => {
+class CaseHearingsDetail extends React.PureComponent {
+  getHearingAttrs = (hearing, userIsVsoEmployee) => {
     const hearingAttrs = [{
       label: 'Type',
       value: hearing.type
@@ -118,7 +103,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
   }
 
   getDetailField = (
-    { label, valueFunction, value }: { label: string, valueFunction: Function, value?: string}
+    { label, valueFunction, value }
   ) => () => <React.Fragment>
     {label && <span {...boldText}>{label}:</span>} {typeof value === 'undefined' ? valueFunction() : value}
   </React.Fragment>;
@@ -177,4 +162,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showVeteranCaseList
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(CaseHearingsDetail): React.ComponentType<Props>);
+export default (connect(mapStateToProps, mapDispatchToProps)(CaseHearingsDetail));
