@@ -133,8 +133,7 @@ class EvaluateDecisionView extends React.PureComponent {
       checkoutFlow,
       decision,
       userRole,
-      appealId,
-      amaDecisionIssues
+      appealId
     } = this.props;
 
     let loc = 'bva_dispatch';
@@ -144,7 +143,7 @@ class EvaluateDecisionView extends React.PureComponent {
       loc = 'omo_office';
       successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
     }
-    const issuesToPass = !appeal.isLegacyAppeal && amaDecisionIssues ? appeal.decisionIssues : appeal.issues;
+    const issuesToPass = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
     const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issuesToPass, {
       location: loc,
       attorney_id: appeal.isLegacyAppeal ? task.assignedBy.pgId : appeal.assignedAttorney.id,
