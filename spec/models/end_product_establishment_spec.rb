@@ -388,6 +388,40 @@ describe EndProductEstablishment do
         )
       end
     end
+
+    context "request issue is rating but has no associated_rating_issue" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: nil,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contention_reference_id: contention_ref_id,
+            contested_decision_issue_id: decision_issue.id
+          )
+        ]
+      end
+      let(:original_request_issue) do
+        create(
+          :request_issue,
+          decision_review: previous_review,
+          end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+        )
+      end
+      let(:decision_issue) do
+        create(:decision_issue,
+               decision_review: previous_review,
+               request_issues: [original_request_issue])
+      end
+      let(:previous_review) { create(:higher_level_review) }
+
+      it "skips rating request issues with no associated rating issue" do
+        subject
+        expect(request_issues.first.rating?).to be true
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+      end
+    end
   end
 
   context "#generate_claimant_letter!" do
@@ -531,6 +565,19 @@ describe EndProductEstablishment do
       let(:reference_id) { matching_ep.claim_id }
 
       it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
+    end
+  end
+
+  context "#rating?" do
+    subject { end_product_establishment.rating? }
+    context "when the end product code is a rating code" do
+      let(:code) { "030HLRRPMC" }
+      it { is_expected.to be true }
+    end
+
+    context "when the end product code is not rating code" do
+      let(:code) { "Something" }
+      it { is_expected.to be_falsey }
     end
   end
 

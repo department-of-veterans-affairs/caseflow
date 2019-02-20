@@ -10,17 +10,6 @@ import {
   LEGACY_APPEAL_TYPES
 } from './constants';
 
-import type {
-  Task,
-  Tasks,
-  BasicAppeal,
-  BasicAppeals,
-  AppealDetails,
-  Issue,
-  Issues
-} from './types/models';
-import type { NewDocsForAppeal } from './types/state';
-
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOLS_DISPOSITIONS_BY_ID.json';
@@ -37,7 +26,7 @@ import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
  * @returns {Array}
  */
 
-export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) => {
+export const getUndecidedIssues = (issues) => _.filter(issues, (issue) => {
   if (!issue.disposition) {
     return true;
   }
@@ -47,7 +36,7 @@ export const getUndecidedIssues = (issues: Issues) => _.filter(issues, (issue) =
   }
 });
 
-export const prepareMostRecentlyHeldHearingForStore = (appealId: string, hearing) => {
+export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
   return {
     appealId,
     hearing: {
@@ -61,8 +50,8 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId: string, hearing
   };
 };
 
-export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
-  tasks.reduce((acc, task: Object): Tasks => {
+export const prepareTasksForStore = (tasks) =>
+  tasks.reduce((acc, task) => {
     const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
       firstName: task.attributes.decision_prepared_by.first_name,
       lastName: task.attributes.decision_prepared_by.last_name
@@ -116,8 +105,7 @@ export const prepareTasksForStore = (tasks: Array<Object>): Tasks =>
   }, {});
 
 const extractAppealsFromTasks =
-  (tasks: Array<Object>):
-    BasicAppeals => {
+  (tasks) => {
     return tasks.reduce((accumulator, task) => {
       if (!accumulator[task.attributes.external_appeal_id]) {
         accumulator[task.attributes.external_appeal_id] = {
@@ -141,13 +129,13 @@ const extractAppealsFromTasks =
   };
 
 export const extractAppealsAndAmaTasks =
-(tasks: Array<Object>): { appeals: BasicAppeals, amaTasks: Tasks, tasks: Tasks } => ({
+(tasks) => ({
   tasks: {},
   appeals: extractAppealsFromTasks(tasks),
   amaTasks: prepareTasksForStore(tasks) });
 
-export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
-  const mappedLegacyTasks = tasks.map((task): Task => {
+export const prepareLegacyTasksForStore = (tasks) => {
+  const mappedLegacyTasks = tasks.map((task) => {
     return {
       uniqueId: task.attributes.external_appeal_id,
       type: task.attributes.type,
@@ -191,7 +179,7 @@ export const prepareLegacyTasksForStore = (tasks: Array<Object>): Tasks => {
   return _.pickBy(_.keyBy(mappedLegacyTasks, (task) => task.uniqueId), (task) => task);
 };
 
-export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks, tasks: Tasks } => {
+export const prepareAllTasksForStore = (tasks) => {
   const amaTasks = tasks.filter((task) => {
     return !task.attributes.is_legacy;
   });
@@ -206,8 +194,7 @@ export const prepareAllTasksForStore = (tasks: Array<Object>): { amaTasks: Tasks
 };
 
 export const associateTasksWithAppeals =
-  (serverData: { tasks: { data: Array<Object> } }):
-    { appeals: BasicAppeals, tasks: Tasks } => {
+  (serverData) => {
     const {
       tasks: { data: tasks }
     } = serverData;
@@ -218,7 +205,7 @@ export const associateTasksWithAppeals =
     };
   };
 
-export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
+export const prepareAppealIssuesForStore = (appeal) => {
   // Give even legacy issues an 'id' property, because other issues will have it,
   // so we can refer to this property and phase out use of vacols_sequence_id.
   let issues = appeal.attributes.issues;
@@ -233,7 +220,7 @@ export const prepareAppealIssuesForStore = (appeal: { attributes: Object }) => {
   return issues;
 };
 
-export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) => appeal.attributes.hearings.
+export const prepareAppealHearingsForStore = (appeal) => appeal.attributes.hearings.
   map((hearing) => ({
     heldBy: hearing.held_by,
     viewedByJudge: hearing.viewed_by_judge,
@@ -243,7 +230,7 @@ export const prepareAppealHearingsForStore = (appeal: { attributes: Object }) =>
     disposition: hearing.disposition
   }));
 
-const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: Object }) => appeal.attributes.
+const prepareAppealAvailableHearingLocationsForStore = (appeal) => appeal.attributes.
   veteran_available_hearing_locations.map((ahl) => ({
     name: ahl.name,
     address: ahl.address,
@@ -257,8 +244,7 @@ const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: Ob
   }));
 
 export const prepareAppealForStore =
-  (appeals: Array<Object>):
-    { appeals: BasicAppeals, appealDetails: AppealDetails } => {
+  (appeals) => {
 
     const appealHash = appeals.reduce((accumulator, appeal) => {
       const {
@@ -313,7 +299,8 @@ export const prepareAppealForStore =
         caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
         documentID: appeal.attributes.document_id,
         caseReviewId: appeal.attributes.attorney_case_review_id,
-        canEditDocumentId: appeal.attributes.can_edit_document_id
+        canEditDocumentId: appeal.attributes.can_edit_document_id,
+        attorneyCaseRewriteDetails: appeal.attributes.attorney_case_rewrite_details
       };
 
       return accumulator;
@@ -325,7 +312,7 @@ export const prepareAppealForStore =
     };
   };
 
-export const prepareClaimReviewForStore = (claimReviews: Array<Object>) => {
+export const prepareClaimReviewForStore = (claimReviews) => {
   const claimReviewHash = claimReviews.reduce((accumulator, claimReview) => {
     const key = `${claimReview.review_type}-${claimReview.claim_id}`;
 
@@ -348,7 +335,7 @@ export const prepareClaimReviewForStore = (claimReviews: Array<Object>) => {
   };
 };
 
-export const renderAppealType = (appeal: BasicAppeal) => {
+export const renderAppealType = (appeal) => {
   const {
     isAdvancedOnDocket,
     caseType
@@ -361,7 +348,7 @@ export const renderAppealType = (appeal: BasicAppeal) => {
   </React.Fragment>;
 };
 
-export const renderLegacyAppealType = ({ aod, type }: {aod: boolean, type: string}) => {
+export const renderLegacyAppealType = ({ aod, type }) => {
   const cavc = type === 'Court Remand';
 
   return <React.Fragment>
@@ -370,7 +357,7 @@ export const renderLegacyAppealType = ({ aod, type }: {aod: boolean, type: strin
   </React.Fragment>;
 };
 
-export const getDecisionTypeDisplay = (checkoutFlow: string) => {
+export const getDecisionTypeDisplay = (checkoutFlow) => {
   switch (checkoutFlow) {
   case DECISION_TYPES.OMO_REQUEST:
     return 'OMO';
@@ -381,9 +368,9 @@ export const getDecisionTypeDisplay = (checkoutFlow: string) => {
   }
 };
 
-export const getIssueProgramDescription = (issue: Issue) =>
+export const getIssueProgramDescription = (issue) =>
   _.get(ISSUE_INFO[issue.program], 'description', '') || 'Compensation';
-export const getIssueTypeDescription = (issue: Issue) => {
+export const getIssueTypeDescription = (issue) => {
   const {
     program,
     type,
@@ -397,7 +384,7 @@ export const getIssueTypeDescription = (issue: Issue) => {
   return _.get(ISSUE_INFO[program].levels, `${type}.description`);
 };
 
-export const getIssueDiagnosticCodeLabel = (code: string): string => {
+export const getIssueDiagnosticCodeLabel = (code) => {
   const readableLabel = DIAGNOSTIC_CODE_DESCRIPTIONS[code];
 
   if (!readableLabel) {
@@ -408,8 +395,8 @@ export const getIssueDiagnosticCodeLabel = (code: string): string => {
 };
 
 export const buildCaseReviewPayload = (
-  checkoutFlow: string, decision: Object, userRole: string, issues: Issues, args: Object = {}
-): Object => {
+  checkoutFlow, decision, userRole, issues, args = {}
+) => {
   const payload = {
     data: {
       tasks: {
@@ -473,7 +460,7 @@ export const buildCaseReviewPayload = (
  * IME work product document ID formats:
  * /^M\d{7}\.\d{3,4}$/
  */
-export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
+export const validateWorkProductTypeAndId = (decision) => {
   const {
     opts: {
       document_id: documentId,
@@ -493,7 +480,7 @@ export const validateWorkProductTypeAndId = (decision: {opts: Object}) => {
   return oldFormat.test(documentId) || newFormat.test(documentId);
 };
 
-export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppeal) => {
+export const taskHasNewDocuments = (task, newDocsForAppeal) => {
   if (!newDocsForAppeal[task.externalAppealId] || !newDocsForAppeal[task.externalAppealId].docs) {
     return false;
   }
@@ -501,7 +488,7 @@ export const taskHasNewDocuments = (task: Task, newDocsForAppeal: NewDocsForAppe
   return newDocsForAppeal[task.externalAppealId].docs.length > 0;
 };
 
-export const taskIsOnHold = (task: Task) => {
+export const taskIsOnHold = (task) => {
   if (task.onHoldDuration && task.placedOnHoldAt) {
     return moment().startOf('day').
       diff(moment(task.placedOnHoldAt), 'days') < task.onHoldDuration;
@@ -510,7 +497,7 @@ export const taskIsOnHold = (task: Task) => {
   return task.status === TASK_STATUSES.on_hold;
 };
 
-export const taskHasCompletedHold = (task: Task) => {
+export const taskHasCompletedHold = (task) => {
   if (task.onHoldDuration && task.placedOnHoldAt) {
     return moment().startOf('day').
       diff(moment(task.placedOnHoldAt), 'days') >= task.onHoldDuration;
@@ -519,9 +506,9 @@ export const taskHasCompletedHold = (task: Task) => {
   return task.status === TASK_STATUSES.on_hold;
 };
 
-export const taskIsActive = (task: Task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
+export const taskIsActive = (task) => ![TASK_STATUSES.completed, TASK_STATUSES.cancelled].includes(task.status);
 
-export const taskActionData = (props: Object) => {
+export const taskActionData = (props) => {
   if (!props.task) {
     return {};
   }

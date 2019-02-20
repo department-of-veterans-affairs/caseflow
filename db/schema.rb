@@ -504,6 +504,14 @@ ActiveRecord::Schema.define(version: 20190220201237) do
     t.string "zip_code"
   end
 
+  create_table "hearing_task_associations", force: :cascade do |t|
+    t.bigint "hearing_id", null: false
+    t.bigint "hearing_task_id", null: false
+    t.string "hearing_type", null: false
+    t.index ["hearing_task_id"], name: "index_hearing_task_associations_on_hearing_task_id"
+    t.index ["hearing_type", "hearing_id"], name: "index_hearing_task_associations_on_hearing_type_and_hearing_id"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -989,6 +997,14 @@ ActiveRecord::Schema.define(version: 20190220201237) do
     t.string "name_suffix"
     t.string "participant_id"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
+  end
+
+  create_table "vso_configs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ihp_dockets", array: true
+    t.integer "organization_id"
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_vso_configs_on_organization_id"
   end
 
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|
