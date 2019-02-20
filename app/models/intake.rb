@@ -112,12 +112,14 @@ class Intake < ApplicationRecord
     if validate_start
       self.class.close_expired_intakes!
 
-      update(
+      after_validated_pre_start!
+
+      update!(
         started_at: Time.zone.now,
         detail: find_or_build_initial_detail
       )
     else
-      update(
+      update!(
         started_at: Time.zone.now,
         completed_at: Time.zone.now,
         completion_status: :error
@@ -164,6 +166,10 @@ class Intake < ApplicationRecord
   # Optional step to load data into the Caseflow DB that will be used for the intake
   def preload_intake_data!
     nil
+  end
+
+  # Optional step called after the intake is validated and not-yet-marked as started
+  def after_validated_pre_start!
   end
 
   def start_completion!
