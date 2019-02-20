@@ -143,7 +143,8 @@ export default class AssignHearingsTabs extends React.Component {
     </span>;
   }
 
-  availableVeteransRows = (appeals, { tab }) => {
+  availableVeteransRows = (appeals) => {
+
     /*
       Sorting by docket number within each category of appeal:
       CAVC, AOD and normal. Prepended * and + to docket number for
