@@ -11,23 +11,14 @@ RSpec.feature "Attorney checkout flow" do
   let(:invalid_document_id) { "222333" }
 
   context "given a valid ama appeal" do
-    let(:issue_note) { "Test note" }
-    let(:issue_description) { "Tinnitus" }
-    let!(:appeal) do
-      FactoryBot.create(
-        :appeal,
-        number_of_claimants: 1,
-        request_issues: FactoryBot.build_list(
-          :request_issue, 4,
-          contested_issue_description: issue_description,
-          notes: issue_note
-        )
-      )
-    end
-
     before do
       root_task = FactoryBot.create(:root_task)
-      parent_task = FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeal, parent: root_task)
+      parent_task = FactoryBot.create(
+        :ama_judge_task,
+        assigned_to: judge_user,
+        appeal: appeal,
+        parent: root_task
+      )
 
       FactoryBot.create(
         :ama_attorney_task,
@@ -39,28 +30,167 @@ RSpec.feature "Attorney checkout flow" do
       )
 
       User.authenticate!(user: attorney_user)
+
+      # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
+      # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
+      OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+    end
+
+    let(:issue_note) { "Test note" }
+    let(:issue_description) { "Tinnitus" }
+    let(:decision_issue_text) { "This is a test decision issue" }
+    let(:updated_decision_issue_text) { "This is updated text" }
+
+    let(:other_issue_tex) { "This is a second issue" }
+    let(:allowed_issue_tex) { "This is an allowed issue" }
+
+    let(:decision_issue_disposition) { "Remanded" }
+    let(:benefit_type) { "Education" }
+    let(:diagnostic_code) { "5000" }
+    let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
+    let(:new_diagnostic_code) { "5003" }
+
+    let!(:appeal) do
+      FactoryBot.create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: FactoryBot.build_list(
+          :request_issue, 2,
+          contested_issue_description: issue_description,
+          notes: issue_note,
+          contested_rating_issue_diagnostic_code: diagnostic_code
+        )
+      )
     end
 
     scenario "submits draft decision" do
       visit "/queue"
       click_on "(#{appeal.veteran_file_number})"
 
-      expect(page).not_to have_content "Correct issues"
+      # Ensure the issue is on the case details screen
+      expect(page).to have_content(issue_description)
+      expect(page).to have_content(issue_note)
+      expect(page).to have_content("Diagnostic code: #{diagnostic_code}")
+      expect(page).to have_content "Correct issues"
 
       click_dropdown(index: 0)
 
-      expect(page).to have_content "Select disposition"
-      issue_dispositions = page.find_all(
-        ".Select-control",
-        text: "Select disposition",
-        count: appeal.request_issues.length
-      )
+      click_on "Continue"
 
-      issue_dispositions.each_with_index do |row, index|
-        disposition = (index == 0 || index == 1) ? "Remanded" : "Allowed"
-        row.click
-        page.find("div", class: "Select-option", text: disposition).click
-      end
+      # Ensure the issue is on the select disposition screen
+      expect(page).to have_content(issue_description)
+      expect(page).to have_content(issue_note)
+
+      expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
+
+      click_on "Continue"
+      expect(page).to have_content "You must add a decision before you continue."
+
+      # Add a first decision issue
+      all("button", text: "+ Add decision", count: 2)[0].click
+      expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+      click_on "Save"
+
+      expect(page).to have_content "This field is required"
+      fill_in "Text Box", with: decision_issue_text
+
+      find(".Select-control", text: "Select disposition").click
+      find("div", class: "Select-option", text: decision_issue_disposition).click
+
+      find(".Select-control", text: old_benefit_type).click
+      find("div", class: "Select-option", text: benefit_type).click
+
+      find(".Select-control", text: diagnostic_code).click
+      find("div", class: "Select-option", text: new_diagnostic_code).click
+
+      click_on "Save"
+
+      # Add a second decision issue
+      all("button", text: "+ Add decision", count: 2)[0].click
+      expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+      fill_in "Text Box", with: other_issue_tex
+
+      find(".Select-control", text: "Select disposition").click
+      find("div", class: "Select-option", text: decision_issue_disposition).click
+
+      find(".Select-control", text: old_benefit_type).click
+      find("div", class: "Select-option", text: benefit_type).click
+
+      click_on "Save"
+
+      # Add a third decision issue that's allowed
+      all("button", text: "+ Add decision", count: 2)[0].click
+      expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+      fill_in "Text Box", with: allowed_issue_tex
+
+      find(".Select-control", text: "Select disposition").click
+      find("div", class: "Select-option", text: "Allowed").click
+
+      find(".Select-control", text: old_benefit_type).click
+      find("div", class: "Select-option", text: benefit_type).click
+
+      find(".Select-control", text: "Select issues").click
+      find("div", class: "Select-option", text: "Tinnitus").click
+
+      click_on "Save"
+
+      expect(page).to have_content("Added to 2 issues")
+
+      # Test deleting a decision issue
+      all("button", text: "Delete")[2].click
+
+      expect(page).to have_content("Are you sure you want to delete this decision?")
+
+      all("button", text: "Yes, delete decision", count: 1)[0].click
+
+      expect(page.find_all(".decision-issue").count).to eq(2)
+
+      # Re add the third decision issue (that's allowed)
+      all("button", text: "+ Add decision", count: 2)[0].click
+      expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+      fill_in "Text Box", with: allowed_issue_tex
+
+      find(".Select-control", text: "Select disposition").click
+      find("div", class: "Select-option", text: "Allowed").click
+
+      find(".Select-control", text: old_benefit_type).click
+      find("div", class: "Select-option", text: benefit_type).click
+
+      find(".Select-control", text: "Select issues").click
+      find("div", class: "Select-option", text: "Tinnitus").click
+
+      click_on "Save"
+
+      expect(page).to have_content("Added to 2 issues")
+
+      # Test removing linked issue
+      all("button", text: "Edit", count: 4)[2].click
+
+      click_on "Remove"
+
+      click_on "Save"
+
+      expect(page).to_not have_content("Added to 2 issues")
+
+      # Re-add linked issue
+      all("button", text: "Edit", count: 3)[2].click
+
+      find(".Select-control", text: "Select issues").click
+      find("div", class: "Select-option", text: "Tinnitus").click
+
+      click_on "Save"
+
+      expect(page).to have_content("Added to 2 issues", count: 2)
+
+      # Ensure the decision issue is on the select disposition screen
+      expect(page).to have_content(decision_issue_text)
+      expect(page).to have_content(decision_issue_disposition)
+
+      expect(page).to have_content(other_issue_tex)
 
       click_on "Continue"
 
@@ -75,15 +205,12 @@ RSpec.feature "Attorney checkout flow" do
       all("label", text: "Medical examinations", visible: false, count: 2)[1].click
       all("label", text: "Pre AOJ", visible: false, count: 2)[1].click
 
-      all("label", text: "VA records", visible: false, count: 2)[1].click
-      all("label", text: "Post AOJ", visible: false, count: 3)[1].click
-
       click_on "Continue"
 
       expect(page).to have_content("Submit Draft Decision for Review")
 
-      fill_in "document_id", with: invalid_document_id
-      expect(page.find("#document_id").value.length).to eq 6
+      fill_in "document_id", with: valid_document_id
+      expect(page.find("#document_id").value.length).to eq 12
 
       fill_in "notes", with: "note"
 
@@ -91,291 +218,81 @@ RSpec.feature "Attorney checkout flow" do
       click_dropdown(index: 0)
 
       click_on "Continue"
+      expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
 
-      expect(page).to have_content "Record is invalid"
-      expect(page).to have_content "Document ID of type Draft Decision must be in one of these formats"
+      expect(page.current_path).to eq("/queue")
 
-      fill_in "document_id", with: valid_document_id
+      # Two request issues are merged into 1 decision issue
+      expect(appeal.decision_issues.count).to eq 3
+      expect(appeal.request_decision_issues.count).to eq(4)
+      expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
+      expect(appeal.decision_issues.first.diagnostic_code).to eq(new_diagnostic_code)
+      expect(appeal.decision_issues.first.disposition).to eq("remanded")
+      expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
+
+      remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
+        decision.remand_reasons.first.code
+      end
+
+      expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
+      expect(appeal.decision_issues.second.disposition).to eq("remanded")
+      expect(appeal.decision_issues.second.diagnostic_code).to eq(diagnostic_code)
+      expect(appeal.decision_issues.third.disposition).to eq("allowed")
+      expect(appeal.decision_issues.third.diagnostic_code).to eq(diagnostic_code)
+      expect(appeal.decision_issues.last.request_issues.count).to eq(2)
+
+      # Switch to the judge and ensure they can update decision issues
+      User.authenticate!(user: judge_user)
+      visit "/queue"
+
+      click_on "(#{appeal.veteran_file_number})"
+
+      expect(page).to have_content "Correct issues"
+      expect(page).to have_content("Added to 2 issues", count: 2)
+      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+
+      expect(page).to have_content(decision_issue_text)
+
+      # Update the decision issue
+      all("button", text: "Edit", count: 4)[0].click
+      fill_in "Text Box", with: updated_decision_issue_text
+      click_on "Save"
       click_on "Continue"
 
-      expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
-      expect(page.current_path).to eq("/queue")
-      expect(appeal.reload.request_issues.where(disposition: "remanded").count).to eq(2)
-      expect(appeal.request_issues.where(disposition: "allowed").count).to eq(2)
-      expect(appeal.request_issues.map(&:remand_reasons).flatten.size).to eq 3
-    end
+      expect(page).to have_content("Review Remand Reasons")
 
-    context "when ama issue feature toggle is turned on" do
-      before do
-        FeatureToggle.enable!(:ama_decision_issues, users: [attorney_user.css_id])
+      click_on "Continue"
+      expect(page).to have_content("Issue 2 of 2")
+      expect(find("input", id: "2-medical_examinations", visible: false).checked?).to eq(true)
+      # Again, hate to add a sleep, but for some reason clicking continue too soon doesn't go
+      # to the next page. I think it's related to how we're using continue to load the next
+      # section of the remand reason screen.
+      sleep 1
+
+      click_on "Continue"
+
+      expect(page).to have_content("Evaluate Decision")
+
+      find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+      find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
+      click_on "Continue"
+
+      expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+
+      # Two request issues are merged into 1 decision issue
+      expect(appeal.decision_issues.count).to eq 3
+      expect(appeal.request_decision_issues.count).to eq(4)
+      # The decision issue should have the new content the judge added
+      expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
+
+      remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
+        decision.remand_reasons.first.code
       end
 
-      after do
-        FeatureToggle.disable!(:ama_decision_issues, users: [attorney_user.css_id])
-      end
-
-      let(:decision_issue_text) { "This is a test decision issue" }
-      let(:updated_decision_issue_text) { "This is updated text" }
-
-      let(:other_issue_tex) { "This is a second issue" }
-      let(:allowed_issue_tex) { "This is an allowed issue" }
-
-      let(:decision_issue_disposition) { "Remanded" }
-      let(:benefit_type) { "Education" }
-      let(:diagnostic_code) { "5000" }
-      let(:old_benefit_type) { Constants::BENEFIT_TYPES[appeal.request_issues.first.benefit_type] }
-      let(:new_diagnostic_code) { "5003" }
-
-      let!(:appeal) do
-        FactoryBot.create(
-          :appeal,
-          number_of_claimants: 1,
-          request_issues: FactoryBot.build_list(
-            :request_issue, 2,
-            contested_issue_description: issue_description,
-            notes: issue_note,
-            contested_rating_issue_diagnostic_code: diagnostic_code
-          )
-        )
-      end
-
-      before do
-        # When a judge completes judge checkout we create either a QR or dispatch task. Make sure we have somebody in
-        # the BVA dispatch team so that the creation of that task (which round robin assigns org tasks) does not fail.
-        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
-      end
-
-      scenario "submits draft decision with new issue format" do
-        visit "/queue"
-        click_on "(#{appeal.veteran_file_number})"
-
-        # Ensure the issue is on the case details screen
-        expect(page).to have_content(issue_description)
-        expect(page).to have_content(issue_note)
-        expect(page).to have_content("Diagnostic code: #{diagnostic_code}")
-        expect(page).to have_content "Correct issues"
-
-        click_dropdown(index: 0)
-
-        click_on "Continue"
-
-        # Ensure the issue is on the select disposition screen
-        expect(page).to have_content(issue_description)
-        expect(page).to have_content(issue_note)
-
-        expect(page).to have_content COPY::DECISION_ISSUE_PAGE_TITLE
-
-        click_on "Continue"
-        expect(page).to have_content "You must add a decision before you continue."
-
-        # Add a first decision issue
-        all("button", text: "+ Add decision", count: 2)[0].click
-        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
-
-        click_on "Save"
-
-        expect(page).to have_content "This field is required"
-        fill_in "Text Box", with: decision_issue_text
-
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: decision_issue_disposition).click
-
-        find(".Select-control", text: old_benefit_type).click
-        find("div", class: "Select-option", text: benefit_type).click
-
-        find(".Select-control", text: diagnostic_code).click
-        find("div", class: "Select-option", text: new_diagnostic_code).click
-
-        click_on "Save"
-
-        # Add a second decision issue
-        all("button", text: "+ Add decision", count: 2)[0].click
-        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
-
-        fill_in "Text Box", with: other_issue_tex
-
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: decision_issue_disposition).click
-
-        find(".Select-control", text: old_benefit_type).click
-        find("div", class: "Select-option", text: benefit_type).click
-
-        click_on "Save"
-
-        # Add a third decision issue that's allowed
-        all("button", text: "+ Add decision", count: 2)[0].click
-        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
-
-        fill_in "Text Box", with: allowed_issue_tex
-
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Allowed").click
-
-        find(".Select-control", text: old_benefit_type).click
-        find("div", class: "Select-option", text: benefit_type).click
-
-        find(".Select-control", text: "Select issues").click
-        find("div", class: "Select-option", text: "Tinnitus").click
-
-        click_on "Save"
-
-        expect(page).to have_content("Added to 2 issues")
-
-        # Test deleting a decision issue
-        all("button", text: "Delete")[2].click
-
-        expect(page).to have_content("Are you sure you want to delete this decision?")
-
-        all("button", text: "Yes, delete decision", count: 1)[0].click
-
-        expect(page.find_all(".decision-issue").count).to eq(2)
-
-        # Re add the third decision issue (that's allowed)
-        all("button", text: "+ Add decision", count: 2)[0].click
-        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
-
-        fill_in "Text Box", with: allowed_issue_tex
-
-        find(".Select-control", text: "Select disposition").click
-        find("div", class: "Select-option", text: "Allowed").click
-
-        find(".Select-control", text: old_benefit_type).click
-        find("div", class: "Select-option", text: benefit_type).click
-
-        find(".Select-control", text: "Select issues").click
-        find("div", class: "Select-option", text: "Tinnitus").click
-
-        click_on "Save"
-
-        expect(page).to have_content("Added to 2 issues")
-
-        # Test removing linked issue
-        all("button", text: "Edit", count: 4)[2].click
-
-        click_on "Remove"
-
-        click_on "Save"
-
-        expect(page).to_not have_content("Added to 2 issues")
-
-        # Re-add linked issue
-        all("button", text: "Edit", count: 3)[2].click
-
-        find(".Select-control", text: "Select issues").click
-        find("div", class: "Select-option", text: "Tinnitus").click
-
-        click_on "Save"
-
-        expect(page).to have_content("Added to 2 issues", count: 2)
-
-        # Ensure the decision issue is on the select disposition screen
-        expect(page).to have_content(decision_issue_text)
-        expect(page).to have_content(decision_issue_disposition)
-
-        expect(page).to have_content(other_issue_tex)
-
-        click_on "Continue"
-
-        find_field("Service treatment records", visible: false).sibling("label").click
-        find_field("Post AOJ", visible: false).sibling("label").click
-
-        click_on "Continue"
-        # For some reason clicking too quickly on the next remand reason breaks the test.
-        # Adding sleeps is bad... but I'm not sure how else to get this to work.
-        sleep 1
-
-        all("label", text: "Medical examinations", visible: false, count: 2)[1].click
-        all("label", text: "Pre AOJ", visible: false, count: 2)[1].click
-
-        click_on "Continue"
-
-        expect(page).to have_content("Submit Draft Decision for Review")
-
-        fill_in "document_id", with: valid_document_id
-        expect(page.find("#document_id").value.length).to eq 12
-
-        fill_in "notes", with: "note"
-
-        safe_click "#select-judge"
-        click_dropdown(index: 0)
-
-        click_on "Continue"
-        expect(page).to have_content(COPY::NO_CASES_IN_QUEUE_MESSAGE)
-
-        expect(page.current_path).to eq("/queue")
-
-        # Two request issues are merged into 1 decision issue
-        expect(appeal.decision_issues.count).to eq 3
-        expect(appeal.request_decision_issues.count).to eq(4)
-        expect(appeal.decision_issues.first.description).to eq(decision_issue_text)
-        expect(appeal.decision_issues.first.diagnostic_code).to eq(new_diagnostic_code)
-        expect(appeal.decision_issues.first.disposition).to eq("remanded")
-        expect(appeal.decision_issues.first.benefit_type).to eq(benefit_type.downcase)
-
-        remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
-          decision.remand_reasons.first.code
-        end
-
-        expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
-        expect(appeal.decision_issues.second.disposition).to eq("remanded")
-        expect(appeal.decision_issues.second.diagnostic_code).to eq(diagnostic_code)
-        expect(appeal.decision_issues.third.disposition).to eq("allowed")
-        expect(appeal.decision_issues.third.diagnostic_code).to eq(diagnostic_code)
-        expect(appeal.decision_issues.last.request_issues.count).to eq(2)
-
-        # Switch to the judge and ensure they can update decision issues
-        User.authenticate!(user: judge_user)
-        visit "/queue"
-
-        click_on "(#{appeal.veteran_file_number})"
-
-        expect(page).to have_content "Correct issues"
-        expect(page).to have_content("Added to 2 issues", count: 2)
-        click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-
-        expect(page).to have_content(decision_issue_text)
-
-        # Update the decision issue
-        all("button", text: "Edit", count: 4)[0].click
-        fill_in "Text Box", with: updated_decision_issue_text
-        click_on "Save"
-        click_on "Continue"
-
-        expect(page).to have_content("Review Remand Reasons")
-
-        click_on "Continue"
-        expect(page).to have_content("Issue 2 of 2")
-        expect(find("input", id: "2-medical_examinations", visible: false).checked?).to eq(true)
-        # Again, hate to add a sleep, but for some reason clicking continue too soon doesn't go
-        # to the next page. I think it's related to how we're using continue to load the next
-        # section of the remand reason screen.
-        sleep 1
-
-        click_on "Continue"
-
-        expect(page).to have_content("Evaluate Decision")
-
-        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
-        find("label", text: "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}").click
-        click_on "Continue"
-
-        expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
-
-        # Two request issues are merged into 1 decision issue
-        expect(appeal.decision_issues.count).to eq 3
-        expect(appeal.request_decision_issues.count).to eq(4)
-        # The decision issue should have the new content the judge added
-        expect(appeal.decision_issues.first.description).to eq(updated_decision_issue_text)
-
-        remand_reasons = appeal.decision_issues.where(disposition: "remanded").map do |decision|
-          decision.remand_reasons.first.code
-        end
-
-        expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
-        expect(appeal.decision_issues.where(disposition: "remanded").count).to eq(2)
-        expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(1)
-        expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([3, 1])
-      end
+      expect(remand_reasons).to match_array(%w[service_treatment_records medical_examinations])
+      expect(appeal.decision_issues.where(disposition: "remanded").count).to eq(2)
+      expect(appeal.decision_issues.where(disposition: "allowed").count).to eq(1)
+      expect(appeal.request_issues.map { |issue| issue.decision_issues.count }).to match_array([3, 1])
     end
   end
 

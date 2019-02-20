@@ -33,6 +33,7 @@ class DecisionDocument < ApplicationRecord
   end
 
   def submit_for_processing!
+    update_decision_issue_decision_dates!
     return no_processing_required! unless upload_enabled?
 
     cache_file!
@@ -83,6 +84,14 @@ class DecisionDocument < ApplicationRecord
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
       end_product_establishment.commit!
+    end
+  end
+
+  def update_decision_issue_decision_dates!
+    transaction do
+      appeal.decision_issues.each do |di|
+        di.update!(caseflow_decision_date: decision_date) unless di.caseflow_decision_date
+      end
     end
   end
 

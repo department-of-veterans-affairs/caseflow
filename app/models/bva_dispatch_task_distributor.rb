@@ -1,5 +1,5 @@
 class BvaDispatchTaskDistributor < RoundRobinTaskDistributor
-  def initialize(list_of_assignees: BvaDispatch.singleton.users.order(:id).pluck(:css_id),
+  def initialize(assignee_pool: BvaDispatch.singleton.users.order(:id),
                  task_class: BvaDispatchTask)
     super
   end

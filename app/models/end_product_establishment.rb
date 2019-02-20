@@ -137,7 +137,7 @@ class EndProductEstablishment < ApplicationRecord
 
   # Find an end product that has the traits of the end product that should be created.
   def preexisting_end_product
-    @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
+    @preexisting_end_product ||= veteran.end_products.find { |ep| ep.active? && end_product_to_establish.matches?(ep) }
   end
 
   def cancel_unused_end_product!
