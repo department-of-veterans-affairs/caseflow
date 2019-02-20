@@ -24,6 +24,12 @@ const downloadButtonStyling = css({
   marginTop: '60px'
 });
 
+const formatVljName = (lastName, firstName) => {
+  if (lastName && firstName) {
+    return `${lastName}, ${firstName}`;
+  }
+};
+
 const inlineFormStyling = css({
   '> div': {
     ' & .cf-inline-form': {
