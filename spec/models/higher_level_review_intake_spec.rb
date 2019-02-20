@@ -24,7 +24,7 @@ describe HigherLevelReviewIntake do
   context "#start!" do
     subject { intake.start! }
 
-    let!(:existing_active_epe) do
+    let!(:active_epe) do
       create(
         :end_product_establishment,
         :active,
@@ -33,7 +33,7 @@ describe HigherLevelReviewIntake do
       )
     end
 
-    let!(:existing_canceled_epe) do
+    let!(:canceled_epe) do
       create(
         :end_product_establishment,
         :canceled,
@@ -44,7 +44,7 @@ describe HigherLevelReviewIntake do
 
     before do
       @synced = []
-      allow_any_instance_of(EndProductEstablishment).to receive(:sync!) do |epe|
+      allow_any_instance_of(EndProductEstablishment).to receive(:sync_source!) do |epe|
         @synced << epe.id
       end
     end
@@ -52,7 +52,7 @@ describe HigherLevelReviewIntake do
     it "syncs all active EPEs" do
       subject
 
-      expect(@synced).to eq [existing_active_epe.id]
+      expect(@synced).to eq [active_epe.id]
     end
   end
 
