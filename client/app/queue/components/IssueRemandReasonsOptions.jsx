@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -27,12 +26,6 @@ import {
   boldText
 } from '../constants';
 
-import type {
-  Appeal,
-  Issues,
-  Issue
-} from '../types/models';
-
 const smallLeftMargin = css({ marginLeft: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const errorNoTopMargin = css({
@@ -48,29 +41,8 @@ const flexColumn = css({
   width: '50%'
 });
 
-type State = {};
-
-type Props = {|
-  appealId: string,
-  issueId: string,
-  idx: number
-|};
-
-type Params = Props & {|
-  issue: Issue,
-  issues: Issues,
-  appeal: Appeal,
-  highlight: boolean,
-  amaDecisionIssues: boolean
-|};
-
-type RemandReasonOption = {|
-  checked: boolean,
-  post_aoj: ?string
-|};
-
-class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
-  elTopOfWarning: ?HTMLElement
+class IssueRemandReasonsOptions extends React.PureComponent {
+  elTopOfWarning;
 
   constructor(props) {
     super(props);
@@ -102,7 +74,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     };
   };
 
-  getChosenOptions = (): Array<RemandReasonOption> => _.filter(this.state, (val) => val.checked);
+  getChosenOptions = () => _.filter(this.state, (val) => val.checked);
 
   validate = () => {
     const chosenOptions = this.getChosenOptions();
@@ -343,5 +315,4 @@ const mapStateToProps = (state, ownProps) => {
 
 export default (connect(
   mapStateToProps, null, null, { withRef: true }
-)(IssueRemandReasonsOptions): React.ComponentType<Props, State>
-);
+)(IssueRemandReasonsOptions));
