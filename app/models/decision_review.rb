@@ -262,7 +262,7 @@ class DecisionReview < ApplicationRecord
   def api_alerts_show_decision_alert?
     # For Appeal and SC, want to show the decision alert once the decisions are available.
     # HLR has different logic and overrides this method
-    decision_issues.any?
+    decision_issues.any? && decision_event_date
   end
 
   def decision_date_for_api_alert
