@@ -238,8 +238,7 @@ class Veteran < ApplicationRecord
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
-      if sync_name && veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
-
+      if sync_name
         Rails.logger.warn(
           %(
           find_and_maybe_backfill_name sync_name:#{sync_name} current_user:#{RequestStore[:current_user].try(:css_id)}
@@ -247,12 +246,14 @@ class Veteran < ApplicationRecord
           )
         )
 
-        veteran.update!(
-          first_name: veteran.bgs_record[:first_name],
-          last_name: veteran.bgs_record[:last_name],
-          middle_name: veteran.bgs_record[:middle_name],
-          name_suffix: veteran.bgs_record[:name_suffix]
-        )
+        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
+          veteran.update!(
+            first_name: veteran.bgs_record[:first_name],
+            last_name: veteran.bgs_record[:last_name],
+            middle_name: veteran.bgs_record[:middle_name],
+            name_suffix: veteran.bgs_record[:name_suffix]
+          )
+        end
       end
       veteran
     end

@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
@@ -13,7 +12,6 @@ import { onReceiveQueue, receiveNewDocuments, errorFetchingDocumentCount, setApp
   from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
-import type { Task, BasicAppeal } from '../../../app/queue/types/models';
 
 describe('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
@@ -48,7 +46,7 @@ describe('ColocatedTaskListView', () => {
     }
   });
 
-  const getAmaTaskTemplate = (): Task => ({
+  const getAmaTaskTemplate = () => ({
     uniqueId: '1',
     type: 'GenericTask',
     isLegacy: false,
@@ -88,7 +86,7 @@ describe('ColocatedTaskListView', () => {
     closestRegionalOffice: ''
   });
 
-  const appealTemplate: BasicAppeal = {
+  const appealTemplate = {
     id: 5,
     type: 'Appeal',
     isLegacyAppeal: false,

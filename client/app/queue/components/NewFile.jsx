@@ -1,29 +1,12 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { NewFileIcon } from '../../components/RenderFunctions';
 import Tooltip from '../../components/Tooltip';
 import { bindActionCreators } from 'redux';
 import { getNewDocuments } from '../QueueActions';
-import type { State } from '../types/state';
 import COPY from '../../../COPY.json';
 
-type Params = {|
-  externalAppealId: string,
-  cached: ?boolean,
-  onHoldDate: string
-|};
-
-type Props = Params & {|
-  cached: ?boolean,
-  externalId: string,
-  docs: Array<Object>,
-  docsLoading: ?boolean,
-  error: string,
-  getNewDocuments: Function
-|};
-
-class NewFile extends React.Component<Props> {
+class NewFile extends React.Component {
   componentDidMount = () => {
     if (!this.props.docsLoading) {
       this.props.getNewDocuments(this.props.externalId, this.props.cached, this.props.onHoldDate);
@@ -41,7 +24,7 @@ class NewFile extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state, ownProps) => {
   const documentObject = state.queue.newDocsForAppeal[ownProps.externalAppealId];
 
   return {
@@ -57,4 +40,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getNewDocuments
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(NewFile): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(NewFile));
