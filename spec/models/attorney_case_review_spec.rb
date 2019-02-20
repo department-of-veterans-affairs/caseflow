@@ -5,7 +5,7 @@ describe AttorneyCaseReview do
   let(:judge) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID) }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
 
-  context "#delete_and_create_decision_issues!" do
+  context "#update_issue_dispositions_in_caseflow!" do
     let!(:appeal) { create(:appeal) }
     let(:task) { create(:ama_attorney_task, appeal: appeal) }
     let!(:request_issue1) { create(:request_issue, decision_review: appeal) }
@@ -28,7 +28,7 @@ describe AttorneyCaseReview do
       create(:request_issue, decision_review: appeal, decision_issues: [decision_issue3, decision_issue4])
     end
 
-    subject { AttorneyCaseReview.new(issues: issues, task_id: task.id).delete_and_create_decision_issues! }
+    subject { AttorneyCaseReview.new(issues: issues, task_id: task.id).update_issue_dispositions_in_caseflow! }
 
     context "when issue attributes are valid" do
       let(:issues) do
@@ -263,137 +263,6 @@ describe AttorneyCaseReview do
           attorney: attorney,
           issues: issues
         }
-      end
-
-      context "when ama" do
-        let(:document_type) { Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"] }
-        let(:work_product) { "Decision" }
-        let(:document_id) { "12345-12345678" }
-        let(:task) { create(:ama_attorney_task, assigned_by: judge, assigned_to: attorney) }
-        let(:task_id) { task.id }
-        let!(:request_issue1) do
-          create(:request_issue, decision_review: task.appeal, disposition: "remanded")
-        end
-        # should delete this remand reason since disposition will be changed to 'allowed'
-        let!(:remand_reason1) { create(:ama_remand_reason, request_issue: request_issue1) }
-
-        let!(:request_issue2) { create(:request_issue, decision_review: task.appeal) }
-
-        # For this issue, ensure we delete remand reasons that are not passed in the request
-        let!(:request_issue3) do
-          create(:request_issue, decision_review: task.appeal, disposition: "remanded")
-        end
-        let!(:remand_reasons) do
-          [
-            create(:ama_remand_reason, request_issue: request_issue3, code: "incorrect_notice_sent"),
-            create(:ama_remand_reason, request_issue: request_issue3, code: "va_records"),
-            create(:ama_remand_reason, request_issue: request_issue3, code: "other_government_records")
-          ]
-        end
-
-        context "when all isuses are sent" do
-          let(:issues) do
-            [
-              { disposition: "allowed",
-                id: request_issue1.id },
-              { disposition: "remanded",
-                id: request_issue2.id,
-                remand_reasons: [{ code: "incorrect_notice_sent", post_aoj: true }] },
-              { disposition: "remanded",
-                id: request_issue3.id,
-                remand_reasons: [
-                  { code: "incorrect_notice_sent", post_aoj: false },
-                  { code: "medical_opinions", post_aoj: false }
-                ] }
-            ]
-          end
-
-          it "should create a draft decision, update issues and remand_reasons" do
-            expect(request_issue1.remand_reasons.size).to eq 1
-            expect(request_issue3.remand_reasons.size).to eq 3
-            expect(subject.document_type).to eq Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
-            expect(subject.valid?).to eq true
-            expect(subject.work_product).to eq "Decision"
-            expect(subject.document_id).to eq document_id
-            expect(subject.note).to eq note
-            expect(subject.reviewing_judge).to eq judge
-            expect(subject.attorney).to eq attorney
-            expect(request_issue1.reload.disposition).to eq "allowed"
-            expect(request_issue1.remand_reasons.size).to eq 0
-            expect(request_issue2.reload.disposition).to eq "remanded"
-            expect(request_issue2.remand_reasons.size).to eq 1
-            expect(request_issue3.reload.remand_reasons.size).to eq 2
-            expect(request_issue3.remand_reasons.first.code).to eq "incorrect_notice_sent"
-            expect(request_issue3.remand_reasons.first.post_aoj).to eq false
-            expect(request_issue3.remand_reasons.second.code).to eq "medical_opinions"
-            expect(request_issue3.remand_reasons.second.post_aoj).to eq false
-          end
-        end
-
-        context "when not all issues have dispositions" do
-          let(:issues) do
-            [
-              { disposition: nil,
-                id: request_issue1.id },
-              { disposition: "remanded",
-                id: request_issue2.id,
-                remand_reasons: [{ code: "incorrect_notice_sent", post_aoj: true }] },
-              { disposition: "remanded",
-                id: request_issue3.id,
-                remand_reasons: [
-                  { code: "incorrect_notice_sent", post_aoj: false },
-                  { code: "medical_opinions", post_aoj: false }
-                ] }
-            ]
-          end
-
-          it "should not create draft decision record" do
-            expect { subject }.to raise_error(Caseflow::Error::AttorneyJudgeCheckoutError)
-            expect(AttorneyCaseReview.count).to eq 0
-          end
-        end
-
-        context "when missing remand reasons" do
-          let(:issues) do
-            [
-              { disposition: "allowed",
-                id: request_issue1.id },
-              { disposition: "remanded",
-                id: request_issue2.id },
-              { disposition: "remanded",
-                id: request_issue3.id,
-                remand_reasons: [
-                  { code: "incorrect_notice_sent", post_aoj: false },
-                  { code: "medical_opinions", post_aoj: false }
-                ] }
-            ]
-          end
-
-          it "should not create draft decision record" do
-            expect { subject }.to raise_error(Caseflow::Error::AttorneyJudgeCheckoutError)
-            expect(AttorneyCaseReview.count).to eq 0
-          end
-        end
-
-        context "when not all issues are sent" do
-          let(:issues) do
-            [
-              { disposition: "allowed",
-                id: request_issue1.id },
-              { disposition: "remanded",
-                id: request_issue3.id,
-                remand_reasons: [
-                  { code: "incorrect_notice_sent", post_aoj: false },
-                  { code: "medical_opinions", post_aoj: false }
-                ] }
-            ]
-          end
-
-          it "should not create draft decision record" do
-            expect { subject }.to raise_error(Caseflow::Error::AttorneyJudgeCheckoutError)
-            expect(AttorneyCaseReview.count).to eq 0
-          end
-        end
       end
 
       context "when legacy" do

@@ -27,10 +27,6 @@ class BvaDispatchTask < GenericTask
 
     private
 
-    def list_of_assignees
-      BvaDispatch.singleton.users.order(:id).pluck(:css_id)
-    end
-
     def create_decision_document!(params)
       DecisionDocument.create!(params).tap do |decision_document|
         decision_document.submit_for_processing!

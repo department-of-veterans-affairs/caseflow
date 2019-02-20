@@ -1,15 +1,10 @@
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import QueueSelectorDropdown from './QueueSelectorDropdown';
 import COPY from '../../../COPY.json';
 
-type Props = {|
-  userId: number
-|};
-
-export default class QueueJudgeAssignOrReviewDropdown extends React.Component<Props> {
+export default class QueueJudgeAssignOrReviewDropdown extends React.Component {
   render = () => {
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];

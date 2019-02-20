@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,17 +8,7 @@ import ApiUtil from '../util/ApiUtil';
 
 import { setSpecialIssues } from './QueueActions';
 
-type Params = {|
-  children: React.Node,
-  appealExternalId: number
-|};
-
-type Props = Params & {|
-  // Action creators
-  setSpecialIssues: typeof setSpecialIssues
-|};
-
-class SpecialIssueLoadingScreen extends React.PureComponent<Props> {
+class SpecialIssueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => ApiUtil.get(
     `/appeals/${this.props.appealExternalId}/special_issues`, { timeout: { response: 5 * 60 * 1000 } }).then(
     (response) => {
@@ -61,4 +50,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setSpecialIssues
 }, dispatch);
 
-export default (connect(null, mapDispatchToProps)(SpecialIssueLoadingScreen): React.ComponentType<Params>);
+export default (connect(null, mapDispatchToProps)(SpecialIssueLoadingScreen));
