@@ -64,9 +64,8 @@ class IssueRemandReasonsOptions extends React.PureComponent {
   }
 
   updateIssue = (remandReasons) => {
-    const { appeal, issueId, amaDecisionIssues } = this.props;
-    const useDecisionIssues = !appeal.isLegacyAppeal && amaDecisionIssues;
-    const issues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
+    const { appeal, issueId } = this.props;
+    const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
     return {
       ..._.find(issues, (issue) => issue.id === issueId),
@@ -299,8 +298,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const amaDecisionIssues = state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
-  const issues = (amaDecisionIssues && !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
+  const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
   return {
     appeal,
@@ -308,8 +306,7 @@ const mapStateToProps = (state, ownProps) => {
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
     ].includes(issue.disposition)),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
-    highlight: state.ui.highlightFormItems,
-    amaDecisionIssues
+    highlight: state.ui.highlightFormItems
   };
 };
 
