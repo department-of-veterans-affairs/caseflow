@@ -28,10 +28,19 @@ module PowerOfAttorneyMapper
     end
   end
 
-  def get_limited_poa_from_bgs(bgs_response)
+  def get_limited_poas_hash_from_bgs(bgs_response)
     return unless bgs_response
 
-    Array.wrap(bgs_response)
+    limited_poas_hash = {}
+
+    Array.wrap(multiplePoa).map do |lpoa|
+      limited_poas_hash[lpoa[:bnft_claim_id]] = {
+        limited_poa_code: lpoa[:poa_cd],
+        limited_poa_access: lpoa[:authzn_poa_access_ind]
+      }
+    end
+
+    limited_poas_hash
   end
 
   def get_rep_name_from_rep_record(rep_record)
