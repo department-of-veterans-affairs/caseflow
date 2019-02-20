@@ -49,7 +49,7 @@ class DecisionReviewIntake < Intake
 
   # run during start!
   def after_validated_pre_start!
-    epes = EndProductEstablishment.active.established.where(veteran_file_number: veteran.file_number)
+    epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
     epes.each do |epe|
       epe.veteran = veteran
       epe.sync!
