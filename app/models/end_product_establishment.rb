@@ -36,8 +36,6 @@ class EndProductEstablishment < ApplicationRecord
       active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
     end
 
-    private
-
     def established
       where.not("established_at IS NULL")
     end
