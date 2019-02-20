@@ -108,6 +108,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     if facility_ids.length == 1
       create_available_location_for_appeal(appeal, facility: ro[:facility])
     else
+      sleep 1
       VADotGovService.get_distance(lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids)
         .each do |alternate_hearing_location|
           create_available_location_for_appeal(appeal, facility: alternate_hearing_location)
