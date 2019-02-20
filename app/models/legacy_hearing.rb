@@ -157,6 +157,7 @@ class LegacyHearing < ApplicationRecord
     :docket_name,
     :veteran_closest_regional_office,
     :veteran_available_hearing_locations,
+    :claimant,
     to: :appeal, allow_nil: true
 
   delegate :external_id, to: :appeal, prefix: true
@@ -200,7 +201,8 @@ class LegacyHearing < ApplicationRecord
         :external_id,
         :veteran_file_number,
         :veteran_closest_regional_office,
-        :veteran_available_hearing_locations
+        :veteran_available_hearing_locations,
+        :claimant
       ],
       except: [:military_service, :vacols_id]
     ).merge(

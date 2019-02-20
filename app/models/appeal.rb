@@ -255,6 +255,26 @@ class Appeal < DecisionReview
     claimants.first
   end
 
+  def appellant_is_not_veteran
+    !!appellant.first_name
+  end
+
+  def claimant
+    if appellant_is_not_veteran
+      {
+        first_name: appellant.first_name,
+        middle_name: appellant.middle_name[0],
+        last_name: appellant.last_name
+      }
+    else
+      {
+        first_name: veteran.first_name,
+        middle_name: veteran.middle_name[0],
+        last_name: veteran.last_name
+      }
+    end
+  end
+
   delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
 
   def cavc

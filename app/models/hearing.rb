@@ -35,6 +35,7 @@ class Hearing < ApplicationRecord
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
+  delegate :claimant, to: :appeal
 
   after_create :update_fields_from_hearing_day
 
@@ -152,7 +153,8 @@ class Hearing < ApplicationRecord
         :location,
         :worksheet_issues,
         :veteran_closest_regional_office,
-        :veteran_available_hearing_locations
+        :veteran_available_hearing_locations,
+        :claimant
       ]
     )
   end
