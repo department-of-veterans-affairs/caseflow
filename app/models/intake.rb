@@ -170,6 +170,7 @@ class Intake < ApplicationRecord
 
   # Optional step called after the intake is validated and not-yet-marked as started
   def after_validated_pre_start!
+    nil
   end
 
   def start_completion!
