@@ -5,6 +5,7 @@ class Hearing < ApplicationRecord
   has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
+  has_one :hearing_task_association, as: :hearing
   has_many :hearing_issue_notes
 
   accepts_nested_attributes_for :hearing_issue_notes

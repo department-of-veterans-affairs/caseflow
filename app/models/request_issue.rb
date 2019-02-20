@@ -42,7 +42,10 @@ class RequestIssue < ApplicationRecord
   enum closed_status: {
     decided: "decided",
     removed: "removed",
-    end_product_canceled: "end_product_canceled"
+    end_product_canceled: "end_product_canceled",
+    withdrawn: "withdrawn",
+    dismissed_death: "dismissed_death",
+    stayed: "stayed"
   }
 
   before_save :set_contested_rating_issue_profile_date
