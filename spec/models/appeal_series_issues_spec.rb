@@ -22,8 +22,7 @@ describe AppealSeriesIssues do
     create(:legacy_appeal, vacols_case: create(
       :case,
       :type_post_remand,
-      :disposition_remanded,
-      bfddec: 6.months.ago,
+      bfmpro: "ACT",
       case_issues: post_remand_issues
     ))
   end
@@ -86,6 +85,26 @@ describe AppealSeriesIssues do
         expect(subject.last[:active]).to be_falsey
         expect(subject.last[:last_action]).to eq(:allowed)
         expect(subject.last[:date]).to eq(6.months.ago.to_date)
+      end
+
+      context "when there is a draft decision" do
+        let(:post_remand_issues) do
+          [create(:case_issue,
+                  :disposition_allowed,
+                  issdcls: 1.day.ago,
+                  issseq: 1,
+                  issprog: "02",
+                  isscode: "15",
+                  isslev1: "03",
+                  isslev2: "5252")]
+        end
+
+        it "does not show the draft disposition" do
+          expect(subject.length).to eq(2)
+          expect(subject.first[:active]).to be_truthy
+          expect(subject.first[:date]).to eq(6.months.ago.to_date)
+          expect(subject.first[:last_action]).to eq(:remand)
+        end
       end
     end
 

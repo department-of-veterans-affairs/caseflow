@@ -20,8 +20,7 @@ import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 
 import {
-  requestPatch,
-  requestSave
+  requestPatch
 } from './uiReducer/uiActions';
 
 const editButton = css({
@@ -164,7 +163,8 @@ export class CaseTitleDetails extends React.PureComponent {
               redirectUrl={redirectUrl}
               appeal={appeal}
               taskType={taskType}
-              docCountWithinLink />
+              docCountWithinLink
+              newDocsIcon />
           </div>
         </React.Fragment> }
 
@@ -251,7 +251,6 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
   requestPatch
 }, dispatch);
 

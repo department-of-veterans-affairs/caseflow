@@ -43,14 +43,14 @@ describe RootTask do
 
     context "when a direct docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       context "when it has no vso representation" do
         let(:appeal) do
-          create(:appeal, docket_type: "direct_docket", claimants: [
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
                    create(:claimant, participant_id: participant_id_with_no_vso)
                  ])
         end
@@ -68,7 +68,7 @@ describe RootTask do
 
       context "when it has an ihp-writing vso" do
         let(:appeal) do
-          create(:appeal, docket_type: "direct_docket", claimants: [
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
                    create(:claimant, participant_id: participant_id_with_pva),
                    create(:claimant, participant_id: participant_id_with_aml)
                  ])
@@ -94,10 +94,10 @@ describe RootTask do
 
     context "when an evidence submission docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "evidence_submission", claimants: [
@@ -114,10 +114,10 @@ describe RootTask do
 
     context "when a hearing docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "hearing", claimants: [
@@ -130,6 +130,40 @@ describe RootTask do
         expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
         expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("HearingTask")
         expect(ScheduleHearingTask.find_by(appeal: appeal).parent.parent.class.name).to eq("DistributionTask")
+      end
+
+      context "when VSO writes IHPs for hearing docket cases" do
+        let(:appeal) do
+          FactoryBot.create(
+            :appeal,
+            docket_type: Constants.AMA_DOCKETS.hearing,
+            claimants: [FactoryBot.create(:claimant, participant_id: participant_id_with_pva)]
+          )
+        end
+
+        before { allow_any_instance_of(Vso).to receive(:should_write_ihp?).with(anything).and_return(true) }
+
+        it "creates an IHP task" do
+          RootTask.create_root_and_sub_tasks!(appeal)
+          expect(InformalHearingPresentationTask.find_by(appeal: appeal).assigned_to).to eq(pva)
+        end
+      end
+
+      context "when VSO does not writes IHPs for hearing docket cases" do
+        let(:appeal) do
+          FactoryBot.create(
+            :appeal,
+            docket_type: Constants.AMA_DOCKETS.hearing,
+            claimants: [FactoryBot.create(:claimant, participant_id: participant_id_with_pva)]
+          )
+        end
+
+        before { allow_any_instance_of(Vso).to receive(:should_write_ihp?).with(anything).and_return(false) }
+
+        it "creates no IHP tasks" do
+          RootTask.create_root_and_sub_tasks!(appeal)
+          expect(InformalHearingPresentationTask.find_by(appeal: appeal)).to be_nil
+        end
       end
     end
 
@@ -150,6 +184,19 @@ describe RootTask do
         expect(InformalHearingPresentationTask.count).to eq(2)
         expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
         expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
+      end
+
+      it "does not create a task for a VSO if one already exists for that appeal" do
+        InformalHearingPresentationTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: vva
+        )
+        RootTask.create_root_and_sub_tasks!(appeal)
+
+        expect(InformalHearingPresentationTask.count).to eq(2)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(vva)
+        expect(InformalHearingPresentationTask.second.assigned_to).to eq(pva)
       end
 
       it "creates RootTask assigned to Bva organization" do

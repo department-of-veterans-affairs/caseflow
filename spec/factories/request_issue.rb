@@ -1,9 +1,8 @@
 FactoryBot.define do
   factory :request_issue do
-    review_request_type "Appeal"
+    association(:decision_review, factory: [:appeal, :with_tasks])
     benefit_type "compensation"
     contested_rating_issue_diagnostic_code "5008"
-    sequence(:review_request_id) { |n| "review#{n}" }
 
     factory :request_issue_with_epe do
       end_product_establishment { create(:end_product_establishment) }
@@ -31,15 +30,18 @@ FactoryBot.define do
       end
 
       after(:create) do |request_issue, evaluator|
-        decision_issue = create(:decision_issue,
-                                decision_review: request_issue.review_request,
-                                participant_id: evaluator.veteran_participant_id,
-                                rating_issue_reference_id: request_issue.contested_rating_issue_reference_id,
-                                profile_date: request_issue.contested_rating_issue_profile_date.to_date,
-                                end_product_last_action_date: request_issue.contested_rating_issue_profile_date.to_date,
-                                benefit_type: request_issue.review_request.benefit_type,
-                                decision_text: "a rating decision issue",
-                                request_issues: [request_issue])
+        decision_issue = create(
+          :decision_issue,
+          decision_review: request_issue.decision_review,
+          participant_id: evaluator.veteran_participant_id,
+          rating_issue_reference_id: request_issue.contested_rating_issue_reference_id,
+          profile_date: request_issue.contested_rating_issue_profile_date.to_date,
+          end_product_last_action_date: request_issue.contested_rating_issue_profile_date.to_date,
+          benefit_type: request_issue.decision_review.benefit_type,
+          decision_text: "a rating decision issue",
+          request_issues: [request_issue]
+        )
+
         request_issue.update!(
           contested_decision_issue_id: decision_issue.id,
           contested_issue_description: decision_issue.description
@@ -53,14 +55,17 @@ FactoryBot.define do
       end
 
       after(:create) do |request_issue, evaluator|
-        decision_issue = create(:decision_issue,
-                                decision_review: request_issue.review_request,
-                                participant_id: evaluator.veteran_participant_id,
-                                benefit_type: request_issue.review_request.benefit_type,
-                                decision_text: "nonrating decision issue",
-                                end_product_last_action_date: request_issue.decision_date,
-                                disposition: "nonrating decision issue dispositon",
-                                request_issues: [request_issue])
+        decision_issue = create(
+          :decision_issue,
+          decision_review: request_issue.decision_review,
+          participant_id: evaluator.veteran_participant_id,
+          benefit_type: request_issue.decision_review.benefit_type,
+          decision_text: "nonrating decision issue",
+          end_product_last_action_date: request_issue.decision_date,
+          disposition: "nonrating decision issue dispositon",
+          request_issues: [request_issue]
+        )
+
         request_issue.update!(
           contested_decision_issue_id: decision_issue.id,
           contested_issue_description: decision_issue.description
@@ -75,8 +80,9 @@ FactoryBot.define do
     after(:create) do |ri, evaluator|
       if evaluator.decision_issues.present?
         evaluator.decision_issues.each do |di|
-          di.decision_review = ri.review_request || create(ri.review_request_type.underscore.to_sym)
+          di.decision_review = ri.decision_review
         end
+
         ri.decision_issues << evaluator.decision_issues
         ri.save
       end
