@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-// @flow
 
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
@@ -10,7 +9,7 @@ import { ACTIONS } from './constants';
 
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
-import type { QueueState } from './types/state';
+
 import commonComponentsReducer from '../components/common/reducers';
 
 // TODO: Remove this when we move entirely over to the appeals search.
@@ -52,7 +51,7 @@ export const initialState = {
 };
 
 // eslint-disable-next-line max-statements
-export const workQueueReducer = (state: QueueState = initialState, action: Object = {}): QueueState => {
+export const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
