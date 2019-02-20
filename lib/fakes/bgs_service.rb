@@ -555,6 +555,17 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
+  def fetch_limited_poas_by_claim_ids(claim_ids)
+    result = {}
+    Array.wrap(claim_ids).each do |claim_id|
+      if claim_id.include? "HAS_LIMITED_POA"
+        result[claim_id] = { limited_poa_code: "OU3", limited_poa_access: "Y" }
+      end
+    end
+
+    result.empty? ? nil : result
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]

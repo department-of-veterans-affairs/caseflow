@@ -291,6 +291,7 @@ describe RequestIssuesUpdate do
           removed_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
           expect(removed_issue.decision_review).to_not be_nil
           expect(removed_issue.removed_at).to_not be_nil
+          expect(removed_issue.contention_removed_at).to_not be_nil
           expect(removed_issue).to be_closed
           expect(removed_issue).to be_removed
           expect(removed_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
