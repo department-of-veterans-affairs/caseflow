@@ -62,7 +62,6 @@ class ListSchedule extends React.Component {
     super(props);
 
     this.state = {
-      filteredByList: [],
       dateRangeKey: `${props.startDate}->${props.endDate}`
     };
   }

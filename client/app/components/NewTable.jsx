@@ -262,7 +262,12 @@ export default class NewTable extends React.PureComponent {
 
         // Only return the data point if it contains the value of the filter
         filteredData = filteredData.filter((row) => {
-          const rowValue = typeof _.get(row, columnName) === 'undefined' ? 'null' : _.get(row, columnName);
+          // Sometimes when the cell value is blank, the value is stored as
+          // `undefined`, `null`, or `'null'`. This converts all of these
+          // possible values to 'null' for consistent comparison to the
+          // `filteredByList`, which will always store it as 'null'.
+          let rowValue = typeof _.get(row, columnName) === 'undefined' ? 'null' : _.get(row, columnName);
+          rowValue = rowValue === null ? 'null' : rowValue;
 
           return filteredByList[columnName].includes(rowValue);
         });
@@ -316,12 +321,14 @@ export default class NewTable extends React.PureComponent {
     rowObjects = this.filterTableData(rowObjects);
     const totalCases = rowObjects.length;
 
-    // 3. Generate paginated data
-    const paginatedData = this.paginateData(rowObjects);
+    if (enablePagination) {
+      // 3. Generate paginated data
+      const paginatedData = this.paginateData(rowObjects);
 
-    // 4. Display only the data for the current page
-    rowObjects = rowObjects.length > 0 ? paginatedData[this.state.currentPage] : rowObjects;
-
+      // 4. Display only the data for the current page
+      rowObjects = rowObjects.length > 0 ? paginatedData[this.state.currentPage] : rowObjects;
+    }
+    
     let keyGetter = getKeyForRow;
 
     if (!getKeyForRow) {
