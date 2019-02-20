@@ -555,12 +555,15 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
-  def fetch_limited_poas_by_claim_id(claim_id)
-    {
-      authzn_poa_access_ind: "Y",
-      bnft_claim_id: claim_id,
-      poa_cd: "084"
-    }
+  def fetch_limited_poas_by_claim_ids(claim_ids)
+    result = {}
+    Array.wrap(claim_ids).each do |claim_id|
+      if claim_id.include? "HAS_LIMITED_POA"
+        result[claim_id] = { limited_poa_code: "OU3", limited_poa_access: "Y" }
+      end
+    end
+
+    result unless result.empty?
   end
 
   # TODO: add more test cases

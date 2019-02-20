@@ -33,7 +33,7 @@ module PowerOfAttorneyMapper
 
     limited_poas_hash = {}
 
-    Array.wrap(multiplePoa).map do |lpoa|
+    Array.wrap(bgs_response).map do |lpoa|
       limited_poas_hash[lpoa[:bnft_claim_id]] = {
         limited_poa_code: lpoa[:poa_cd],
         limited_poa_access: lpoa[:authzn_poa_access_ind]
