@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,47 +23,9 @@ import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
 
-import type {
-  AttorneysOfJudge, State
-} from '../types/state';
-import type {
-  Task, Attorneys
-} from '../types/models';
-
 const OTHER = 'OTHER';
 
-type Params = {|
-  userId?: string,
-  showRequestCasesButton?: boolean,
-  previousAssigneeId: string,
-  onTaskAssignment: Function,
-  selectedTasks: Array<Task>,
-  isModal?: boolean,
-  assignedVerb?: string
-|};
-
-type Props = Params & {|
-  // From state
-  attorneysOfJudge: AttorneysOfJudge,
-  selectedAssignee: string,
-  selectedAssigneeSecondary: string,
-  attorneys: Attorneys,
-  savePending: boolean,
-  featureToggles: Object,
-  distributionLoading: boolean,
-  // Action creators
-  setSelectedAssignee: typeof setSelectedAssignee,
-  setSelectedAssigneeSecondary: typeof setSelectedAssigneeSecondary,
-  showErrorMessage: typeof showErrorMessage,
-  resetErrorMessages: typeof resetErrorMessages,
-  showSuccessMessage: typeof showSuccessMessage,
-  resetSuccessMessages: typeof resetSuccessMessages,
-  setSavePending: typeof setSavePending,
-  resetSaveState: typeof resetSaveState,
-  requestDistribution: typeof requestDistribution
-|};
-
-class AssignWidget extends React.PureComponent<Props> {
+class AssignWidget extends React.PureComponent {
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
@@ -102,7 +63,7 @@ class AssignWidget extends React.PureComponent<Props> {
     return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
   }
 
-  assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
+  assignTasks = (selectedTasks, assigneeId) => {
     const {
       previousAssigneeId,
       userId
@@ -231,7 +192,7 @@ class AssignWidget extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = (state: State) => {
+const mapStateToProps = (state) => {
   const { attorneysOfJudge, attorneys, pendingDistribution } = state.queue;
   const { selectedAssignee, selectedAssigneeSecondary, featureToggles } = state.ui;
   const { savePending } = state.ui.saveState;
@@ -262,10 +223,10 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(AssignWidget): React.ComponentType<Params>);
+)(AssignWidget));
 
 export const AssignWidgetModal = (connect(
   mapStateToProps,
   mapDispatchToProps
-)(editModalBase(AssignWidget, { title: COPY.ASSIGN_WIDGET_MODAL_TITLE })): React.ComponentType<Params>);
+)(editModalBase(AssignWidget, { title: COPY.ASSIGN_WIDGET_MODAL_TITLE })));
 
