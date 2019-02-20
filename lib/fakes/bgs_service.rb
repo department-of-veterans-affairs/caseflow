@@ -563,7 +563,7 @@ class Fakes::BGSService
       end
     end
 
-    result unless result.empty?
+    result.empty? ? nil : result
   end
 
   # TODO: add more test cases
