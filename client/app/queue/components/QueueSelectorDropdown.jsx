@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
@@ -23,16 +22,8 @@ const styles = {
   })
 };
 
-type Props = {|
-  items: Array<Object>
-|};
-
-type ComponentState = {|
-  menu: boolean
-|};
-
-export default class QueueSelectorDropdown extends React.Component<Props, ComponentState> {
-  constructor(props: Props) {
+export default class QueueSelectorDropdown extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       menu: false

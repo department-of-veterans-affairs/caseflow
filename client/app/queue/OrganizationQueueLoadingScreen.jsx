@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,18 +15,7 @@ import {
   setActiveOrganization
 } from './uiReducer/uiActions';
 
-type Params = {|
-  children: React.Node,
-  urlToLoad: string
-|};
-
-type Props = Params & {|
-  // Action creators
-  onReceiveQueue: typeof onReceiveQueue,
-  setActiveOrganization: typeof setActiveOrganization
-|};
-
-class OrganizationQueueLoadingScreen extends React.PureComponent<Props> {
+class OrganizationQueueLoadingScreen extends React.PureComponent {
   // TODO: Short-circuit this request if we already have the tasks for this organization's queue.
   createLoadPromise = () => ApiUtil.get(this.props.urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then(
     (response) => {
@@ -75,4 +63,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setActiveOrganization
 }, dispatch);
 
-export default (connect(null, mapDispatchToProps)(OrganizationQueueLoadingScreen): React.ComponentType<Params>);
+export default (connect(null, mapDispatchToProps)(OrganizationQueueLoadingScreen));
