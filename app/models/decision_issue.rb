@@ -117,7 +117,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def api_status_last_action_date
-    approx_decision_date.to_date
+    approx_decision_date.try(&:to_date)
   end
 
   def api_status_disposition
