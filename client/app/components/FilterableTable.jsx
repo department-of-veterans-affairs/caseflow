@@ -267,10 +267,6 @@ export default class FilterableTable extends React.PureComponent {
           // `undefined`, `null`, or `'null'`. This converts all of these
           // possible values to 'null' for consistent comparison to the
           // `filteredByList`, which will always store it as 'null'.
-          // let rowValue = typeof _.get(row, columnName) === 'undefined' ? 'null' : _.get(row, columnName);
-
-          // rowValue = rowValue === null ? 'null' : rowValue;
-
           const rowValue = consolidatedEmptyValuesFor(_.get(row, columnName));
 
           return filteredByList[columnName].includes(rowValue);
@@ -334,7 +330,7 @@ export default class FilterableTable extends React.PureComponent {
       // 4. Display only the data for the current page
       rowObjects = rowObjects.length > 0 ? paginatedData[this.state.currentPage] : rowObjects;
     }
-
+    
     let keyGetter = getKeyForRow;
 
     if (!getKeyForRow) {
