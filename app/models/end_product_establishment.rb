@@ -14,6 +14,9 @@ class EndProductEstablishment < ApplicationRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
 
+  # allow @veteran to be assigned to save upstream calls
+  attr_writer :veteran
+
   CANCELED_STATUS = "CAN".freeze
   CLEARED_STATUS = "CLR".freeze
 
@@ -32,8 +35,6 @@ class EndProductEstablishment < ApplicationRecord
     def order_by_sync_priority
       active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
     end
-
-    private
 
     def established
       where.not("established_at IS NULL")
@@ -137,7 +138,7 @@ class EndProductEstablishment < ApplicationRecord
 
   # Find an end product that has the traits of the end product that should be created.
   def preexisting_end_product
-    @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
+    @preexisting_end_product ||= veteran.end_products.find { |ep| ep.active? && end_product_to_establish.matches?(ep) }
   end
 
   def cancel_unused_end_product!

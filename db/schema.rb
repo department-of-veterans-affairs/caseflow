@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190219143859) do
+ActiveRecord::Schema.define(version: 20190220201237) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -504,6 +504,14 @@ ActiveRecord::Schema.define(version: 20190219143859) do
     t.string "zip_code"
   end
 
+  create_table "hearing_task_associations", force: :cascade do |t|
+    t.bigint "hearing_id", null: false
+    t.bigint "hearing_task_id", null: false
+    t.string "hearing_type", null: false
+    t.index ["hearing_task_id"], name: "index_hearing_task_associations_on_hearing_task_id"
+    t.index ["hearing_type", "hearing_id"], name: "index_hearing_task_associations_on_hearing_type_and_hearing_id"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -769,6 +777,7 @@ ActiveRecord::Schema.define(version: 20190219143859) do
     t.datetime "closed_at"
     t.string "closed_status"
     t.integer "contention_reference_id"
+    t.datetime "contention_removed_at"
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
     t.string "contested_rating_issue_diagnostic_code"
@@ -780,6 +789,7 @@ ActiveRecord::Schema.define(version: 20190219143859) do
     t.string "decision_review_type"
     t.datetime "decision_sync_attempted_at"
     t.string "decision_sync_error"
+    t.datetime "decision_sync_last_submitted_at"
     t.datetime "decision_sync_processed_at"
     t.datetime "decision_sync_submitted_at"
     t.string "disposition"

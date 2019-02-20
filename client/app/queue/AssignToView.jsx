@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -25,40 +24,13 @@ import {
 
 import { taskActionData } from './utils';
 
-import type { State } from './types/state';
-import type { Appeal, Task } from './types/models';
-
-type Params = {|
-  appealId: string,
-  taskId: string,
-  task: Task,
-  isReassignAction: boolean,
-  isTeamAssign: boolean,
-  returnToCaseDetails: boolean,
-  assigneeAlreadySelected: boolean,
-  history: Object
-|};
-
-type Props = Params & {|
-  appeal: Appeal,
-  highlightFormItems: boolean,
-  requestPatch: typeof requestPatch,
-  requestSave: typeof requestSave,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks
-|};
-
-type ViewState = {|
-  selectedValue: ?string,
-  instructions: ?string
-|};
-
 const selectedAction = (props) => {
   const actionData = taskActionData(props);
 
   return actionData.selected ? actionData.options.find((option) => option.value === actionData.selected.id) : null;
 };
 
-class AssignToView extends React.Component<Props, ViewState> {
+class AssignToView extends React.Component {
   constructor(props) {
     super(props);
 
@@ -195,7 +167,7 @@ class AssignToView extends React.Component<Props, ViewState> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state, ownProps) => {
   const {
     highlightFormItems
   } = state.ui;
@@ -231,4 +203,4 @@ const propsToText = (props) => {
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
   editModalBase(AssignToView, { propsToText })
-)): React.ComponentType<Params>);
+)));

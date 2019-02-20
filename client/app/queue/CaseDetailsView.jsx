@@ -70,11 +70,8 @@ class CaseDetailsView extends React.PureComponent {
       appealId,
       appeal,
       error,
-      success,
-      featureToggles
+      success
     } = this.props;
-
-    const amaIssueType = featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
 
     return <React.Fragment>
       {error && <div {...alertPaddingStyle}><Alert title={error.title} type="error">
@@ -96,10 +93,9 @@ class CaseDetailsView extends React.PureComponent {
         <hr {...horizontalRuleStyling} />
         <StickyNavContentArea>
           <CaseDetailsIssueList
-            amaIssueType={amaIssueType}
             title="Issues"
             isLegacyAppeal={appeal.isLegacyAppeal}
-            additionalHeaderContent={amaIssueType && appeal.canEditRequestIssues &&
+            additionalHeaderContent={appeal.canEditRequestIssues &&
               <span className="cf-push-right" {...anchorEditLinkStyling}>
                 <Link href={`/appeals/${appealId}/edit`}>{COPY.CORRECT_REQUEST_ISSUES_LINK}</Link>
               </span>}
@@ -125,12 +121,11 @@ CaseDetailsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const { success, error } = state.ui.messages;
-  const { veteranCaseListIsVisible, featureToggles } = state.ui;
+  const { veteranCaseListIsVisible } = state.ui;
 
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     success,
-    featureToggles,
     error,
     veteranCaseListIsVisible
   };
