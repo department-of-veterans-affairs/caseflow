@@ -144,28 +144,12 @@ export default class AssignHearingsTabs extends React.Component {
   }
 
   availableVeteransRows = (appeals, { tab }) => {
-    const filteredBy = this.state[tab].filteredBy;
-    const filtered = _.filter(appeals, (appeal) => {
-
-      if (filteredBy === null) {
-        return true;
-      }
-
-      if (_.isEmpty(appeal.attributes.availableHearingLocations) && filteredBy === 'null') {
-        return true;
-      } else if (_.isEmpty(appeal.attributes.availableHearingLocations)) {
-        return false;
-      }
-
-      return filteredBy === appeal.attributes.availableHearingLocations[0].facilityId;
-    });
-
     /*
       Sorting by docket number within each category of appeal:
       CAVC, AOD and normal. Prepended * and + to docket number for
       CAVC and AOD to group them first and second.
      */
-    const sortedByAodCavc = _.sortBy(filtered, (appeal) => {
+    const sortedByAodCavc = _.sortBy(appeals, (appeal) => {
       if (appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand) {
         return `*${appeal.attributes.docketNumber}`;
       } else if (appeal.attributes.aod) {
@@ -192,23 +176,7 @@ export default class AssignHearingsTabs extends React.Component {
   };
 
   upcomingHearingsRows = (hearings) => {
-    const filteredBy = this.state.upcomingHearings.filteredBy;
-    const filtered = _.filter(hearings, (hearing) => {
-
-      if (filteredBy === null) {
-        return true;
-      }
-
-      if (_.isEmpty(hearing.location) && filteredBy === 'null') {
-        return true;
-      } else if (_.isEmpty(hearing.location)) {
-        return false;
-      }
-
-      return filteredBy === hearing.location.facilityId;
-    });
-
-    return _.map(filtered, (hearing, index) => ({
+    return _.map(hearings, (hearing, index) => ({
       number: <span>{index + 1}.</span>,
       externalId: hearing.appealExternalId,
       caseDetails: this.appellantName(hearing),

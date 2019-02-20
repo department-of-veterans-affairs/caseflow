@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import COPY from '../../../COPY.json';
-import Table from '../../components/Table';
+import NewTable from '../../components/NewTable';
 import { formatDateStr } from '../../util/DateUtil';
 import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -143,7 +143,7 @@ export default class BuildSchedule extends React.Component {
         name="view-schedule"
         to="/schedule">
         {COPY.HEARING_SCHEDULE_BUILD_WELCOME_PAGE_SCHEDULE_LINK}</Link>
-      <Table
+      <NewTable
         columns={pastUploadsColumns}
         rowObjects={pastUploadsRows}
         summary="past-uploads"

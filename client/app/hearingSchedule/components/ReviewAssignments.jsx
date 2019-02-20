@@ -8,7 +8,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Alert from '../../components/Alert';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
-import Table from '../../components/Table';
+import NewTable from '../../components/NewTable';
 import StatusMessage from '../../components/StatusMessage';
 import { formatDateStr } from '../../util/DateUtil';
 import { SPREADSHEET_TYPES } from '../constants';
@@ -192,7 +192,7 @@ export default class ReviewAssignments extends React.Component {
         title={this.getAlertTitle()}
         message={<div>{this.getAlertMessage()}{this.getAlertButtons()}</div>}
       />
-      <Table
+      <NewTable
         styling={tableStyling}
         columns={hearingAssignmentColumns}
         rowObjects={hearingAssignmentRows}
