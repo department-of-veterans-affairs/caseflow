@@ -129,6 +129,14 @@ describe Veteran do
           expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
           expect(veteran.reload.last_name).to eq "Smith"
         end
+
+        it "no BGS method is called" do
+          BGSService.instance_methods(false).each do |method_name|
+            expect_any_instance_of(BGSService).not_to receive(method_name)
+          end
+
+          expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
+        end
       end
     end
   end
