@@ -121,12 +121,12 @@ describe PowerOfAttorneyMapper do
       it "returns a hash keyed by claim id" do
         limited_poas = poa_mapper.get_limited_poas_hash_from_bgs(bgs_response)
         expect(limited_poas).to eq(
-          "600130321": { limited_poa_code: "OU3", limited_poa_access: "Y" }
+          "600130321" => { limited_poa_code: "OU3", limited_poa_access: "Y" }
         )
       end
     end
 
-    context "when multiple limited poas are returned" do
+    context "when an array of multiple limited poas are returned" do
       let(:bgs_response) do
         [
           { authzn_poa_access_ind: "Y", bnft_claim_id: "600130321", poa_cd: "OU3" },
@@ -139,9 +139,9 @@ describe PowerOfAttorneyMapper do
         limited_poas = poa_mapper.get_limited_poas_hash_from_bgs(bgs_response)
 
         expect(limited_poas).to eq(
-          "600130321": { limited_poa_code: "OU3", limited_poa_access: "Y" },
-          "600137450": { limited_poa_code: "084", limited_poa_access: "Y" },
-          "600149269": { limited_poa_code: "007", limited_poa_access: "N" }
+          "600130321" => { limited_poa_code: "OU3", limited_poa_access: "Y" },
+          "600137450" => { limited_poa_code: "084", limited_poa_access: "Y" },
+          "600149269" => { limited_poa_code: "007", limited_poa_access: "N" }
         )
       end
     end
