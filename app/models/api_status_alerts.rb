@@ -22,7 +22,8 @@ class ApiStatusAlerts
     [
       post_decision,
       post_remand_decision,
-      post_effectuation
+      post_effectuation,
+      evidentiary_period
     ].flatten.compact.uniq
   end
 
@@ -73,6 +74,19 @@ class ApiStatusAlerts
         availableOptions: decision_review.available_review_options,
         dueDate: decision_review.decision_effectuation_event_date + 365.days,
         cavcDueDate: decision_review.decision_effectuation_event_date + 120.days
+      }
+    }
+  end
+
+  def evidentiary_period
+    return unless decision_review.evidence_submission_hold_pending?
+
+    task = decision_review.tasks.active.find_by(type: EvidenceSubmissionWindowTask.name)
+
+    {
+      type: "evidentiary_period",
+      details: {
+        due_date: task.timer_ends_at.to_date
       }
     }
   end
