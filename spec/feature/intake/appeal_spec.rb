@@ -961,64 +961,18 @@ feature "Appeal Intake" do
 
   context "has a chain of prior decision issues" do
     let(:start_date) { Time.zone.today - 300.days }
-    let!(:request_issue_chain) do
+    before do
       prior_appeal = create(:appeal, :outcoded, veteran: veteran)
       request_issue = create(:request_issue,
                              contested_rating_issue_reference_id: "old123",
                              contested_rating_issue_profile_date: untimely_rating.profile_date,
                              decision_review: prior_appeal)
-
-      # another alternate decision issue based on the same request issue
-      create(:decision_issue,
-             description: "alternate decision issue",
-             participant_id: veteran.participant_id,
-             disposition: "allowed",
-             decision_review: prior_appeal,
-             caseflow_decision_date: start_date + 4.days,
-             request_issues: [request_issue])
-
-      decision_issue = create(:decision_issue,
-                              description: "decision issue 0",
-                              participant_id: veteran.participant_id,
-                              disposition: "allowed",
-                              decision_review: prior_appeal,
-                              caseflow_decision_date: start_date,
-                              request_issues: [request_issue])
-
-      contesting_decision_issue_id = decision_issue.id
-      3.times do |index|
-        later_appeal = create(:appeal, :outcoded, veteran: veteran)
-        later_request_issue = create(:request_issue,
-                                     decision_review: later_appeal,
-                                     contested_decision_issue_id: contesting_decision_issue_id)
-        later_decision_issue = create(:decision_issue,
-                                      decision_review: later_appeal,
-                                      disposition: "allowed",
-                                      participant_id: veteran.participant_id,
-                                      description: "decision issue #{1 + index}",
-                                      caseflow_decision_date: start_date + (1 + index).days,
-                                      request_issues: [later_request_issue])
-        contesting_decision_issue_id = later_decision_issue.id
-      end
+      setup_prior_decision_issue_chain(prior_appeal, request_issue, veteran, start_date)
     end
 
     it "disables prior contestable issues" do
       start_appeal(veteran)
-      visit "/intake/add_issues"
-
-      click_intake_add_issue
-      last_decision_date = (start_date + 3.days).strftime("%m/%d/%Y")
-      alternate_last_decision_date = (start_date + 4.days).strftime("%m/%d/%Y")
-      text = "(Please select the most recent decision on "
-      datetext = "#{text} #{last_decision_date})"
-      multiple_datetext = "#{text} #{last_decision_date}, #{alternate_last_decision_date})"
-
-      expect(page).to have_content("Untimely rating issue 1 #{multiple_datetext}")
-      expect(page).to have_content("decision issue 0 #{datetext}")
-      expect(page).to have_content("decision issue 1 #{datetext}")
-      expect(page).to have_content("decision issue 2 #{datetext}")
-      expect(page).to have_content("alternate decision issue")
-      expect(page).to have_content("decision issue 3")
+      check_decision_issue_chain(start_date)
     end
   end
 end

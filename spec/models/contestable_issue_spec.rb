@@ -223,8 +223,8 @@ describe ContestableIssue do
 
         it "finds both latest contestable issues" do
           expect(subject.length).to eq(2)
-          expect(subject.map(&:decision_issue).map(&:id)).to
-          include(another_contestable_issue.decision_issue.id, future_contestable_issues.last.decision_issue.id)
+          expect(subject.map(&:decision_issue).map(&:id)).to include(another_contestable_issue.decision_issue.id,
+                                                                     future_contestable_issues.last.decision_issue.id)
         end
       end
     end
