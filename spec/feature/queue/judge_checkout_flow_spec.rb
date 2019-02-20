@@ -14,11 +14,11 @@ RSpec.feature "Judge checkout flow" do
         number_of_claimants: 1,
         request_issues: FactoryBot.build_list(
           :request_issue, 1,
-          contested_issue_description: "Tinnitus",
-          disposition: "allowed"
+          contested_issue_description: "Tinnitus"
         )
       )
     end
+    let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
 
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:parent_task) do
@@ -56,7 +56,7 @@ RSpec.feature "Judge checkout flow" do
       click_on "(#{appeal.veteran_file_number})"
 
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-      # Request Issues screen
+      # Decision Issues screen
       click_on "Continue"
       expect(page).to have_content("Evaluate Decision")
 
