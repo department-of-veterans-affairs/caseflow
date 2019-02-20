@@ -21,6 +21,44 @@ describe HigherLevelReviewIntake do
     )
   end
 
+  context "#start!" do
+    subject { intake.start! }
+
+    let!(:existing_active_epe) do
+      create(
+        :end_product_establishment,
+        :active,
+        veteran_file_number: veteran_file_number
+      )
+    end
+
+    let!(:existing_canceled_epe) do
+      create(
+        :end_product_establishment,
+        :canceled,
+        veteran_file_number: veteran_file_number
+      )
+    end
+
+    before do
+      allow(EndProductEstablishment).to receive(:find_by)
+        .with(reference_id: existing_active_epe.reference_id, veteran_file_number: veteran_file_number)
+        .and_return(existing_active_epe)
+      allow(EndProductEstablishment).to receive(:find_by)
+        .with(reference_id: existing_canceled_epe.reference_id, veteran_file_number: veteran_file_number)
+        .and_return(existing_canceled_epe)
+      allow(existing_active_epe).to receive(:sync!).and_call_original
+      allow(existing_canceled_epe).to receive(:sync!).and_call_original
+    end
+
+    it "syncs all active EPEs" do
+      subject
+
+      expect(existing_active_epe).to have_received(:sync!)
+      expect(existing_canceled_epe).to_not have_received(:sync!)
+    end
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 

@@ -168,11 +168,6 @@ class Intake < ApplicationRecord
     nil
   end
 
-  # Optional step called after the intake is validated and not-yet-marked as started
-  def after_validated_pre_start!
-    nil
-  end
-
   def start_completion!
     update!(completion_started_at: Time.zone.now)
   end
@@ -248,6 +243,11 @@ class Intake < ApplicationRecord
   end
 
   private
+
+  # Optional step called after the intake is validated and not-yet-marked as started
+  def after_validated_pre_start!
+    nil
+  end
 
   def update_person!
     # Update the person when a claimant is created

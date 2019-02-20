@@ -1,15 +1,6 @@
 class DecisionReviewIntake < Intake
   include RunAsyncable
 
-  # run during start!
-  def after_validated_pre_start!
-    veteran.end_products.each do |ep|
-      next unless ep.active? || ep.status_type_code.nil?
-      epe = EndProductEstablishment.find_by(reference_id: ep.claim_id, veteran_file_number: veteran.file_number)
-      epe.sync!
-    end
-  end
-
   def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
@@ -52,5 +43,16 @@ class DecisionReviewIntake < Intake
 
   def build_issues(request_issues_data)
     request_issues_data.map { |data| RequestIssue.from_intake_data(data, decision_review: detail) }
+  end
+
+  private
+
+  # run during start!
+  def after_validated_pre_start!
+    veteran.end_products.each do |ep|
+      next unless ep.active? || ep.status_type_code.nil?
+
+      EndProductEstablishment.find_by!(reference_id: ep.claim_id, veteran_file_number: veteran.file_number).sync!
+    end
   end
 end
