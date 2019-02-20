@@ -19,7 +19,7 @@ describe Colocated do
       it "should throw an error" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(Caseflow::Error::RoundRobinTaskDistributorError)
-          expect(error.message).to eq(COPY::TASK_DISTRIBUTOR_ASSIGNEE_POOL_EMPTY_MESSAGE)
+          expect(error.message).to eq("Assignee pool can't be blank")
         end
       end
     end
@@ -53,7 +53,7 @@ describe Colocated do
       it "should throw an error" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(Caseflow::Error::RoundRobinTaskDistributorError)
-          expect(error.message).to eq(COPY::TASK_DISTRIBUTOR_ASSIGNEE_POOL_EMPTY_MESSAGE)
+          expect(error.message).to eq("Assignee pool can't be blank")
         end
       end
     end

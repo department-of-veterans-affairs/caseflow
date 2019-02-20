@@ -40,18 +40,42 @@ describe RoundRobinTaskDistributor do
   end
 
   describe ".next_assignee" do
-    context "when the assignee_pool is an empty array" do
-      let(:round_robin_distributor) { RoundRobinTaskDistributor.new(assignee_pool: [], task_class: task_class) }
+    context "the distributor is invalid" do
+      context "the assignee_pool is empty" do
+        let!(:assignee_pool) { [] }
 
-      it "should raise an error" do
-        expect { round_robin_distributor.next_assignee }.to(raise_error) do |error|
-          expect(error).to be_a(Caseflow::Error::RoundRobinTaskDistributorError)
-          expect(error.message).to eq(COPY::TASK_DISTRIBUTOR_ASSIGNEE_POOL_EMPTY_MESSAGE)
+        it "raises an error" do
+          expect { round_robin_distributor.next_assignee }.to(raise_error) do |error|
+            expect(error).to be_a(Caseflow::Error::RoundRobinTaskDistributorError)
+            expect(error.message).to eq("Assignee pool can't be blank")
+          end
+        end
+      end
+
+      context "the task_class is blank" do
+        let(:task_class) { nil }
+
+        it "raises an error" do
+          expect { round_robin_distributor.next_assignee }.to(raise_error) do |error|
+            expect(error).to be_a(Caseflow::Error::RoundRobinTaskDistributorError)
+            expect(error.message).to eq("Task class can't be blank")
+          end
+        end
+      end
+
+      context "the assignee_pool contains items that aren't Users" do
+        let!(:assignee_pool) { FactoryBot.create_list(:user, assignee_pool_size).pluck(:css_id) }
+
+        it "raises an error" do
+          expect { round_robin_distributor.next_assignee }.to(raise_error) do |error|
+            expect(error).to be_a(Caseflow::Error::RoundRobinTaskDistributorError)
+            expect(error.message).to eq("Assignee pool #{COPY::TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE}")
+          end
         end
       end
     end
 
-    context "when the assignee_pool is a populated array" do
+    context "the assignee_pool is a populated array" do
       let(:iterations) { 4 }
       let(:total_distribution_count) { iterations * assignee_pool_size }
 

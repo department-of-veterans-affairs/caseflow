@@ -1,6 +1,9 @@
 class RoundRobinTaskDistributor
   include ActiveModel::Model
 
+  validates :task_class, :assignee_pool, presence: true
+  validate :assignee_pool_must_contain_only_users
+
   attr_accessor :assignee_pool, :task_class
 
   def latest_task
@@ -23,10 +26,18 @@ class RoundRobinTaskDistributor
   end
 
   def next_assignee(_options = {})
-    if assignee_pool.blank?
-      fail Caseflow::Error::RoundRobinTaskDistributorError, message: COPY::TASK_DISTRIBUTOR_ASSIGNEE_POOL_EMPTY_MESSAGE
+    unless valid?
+      fail Caseflow::Error::RoundRobinTaskDistributorError, message: errors.full_messages.join(", ")
     end
 
     assignee_pool[next_assignee_index]
+  end
+
+  private
+
+  def assignee_pool_must_contain_only_users
+    unless assignee_pool.all? { |a| a.is_a?(User) }
+      errors.add(:assignee_pool, COPY::TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE)
+    end
   end
 end
