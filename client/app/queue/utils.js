@@ -536,3 +536,11 @@ export const taskActionData = (props: Object) => {
 
   return null;
 };
+
+export const nullToFalse = (key, obj) => {
+  if (obj[key] === null) {
+    obj[key] = false;
+  }
+
+  return obj;
+};

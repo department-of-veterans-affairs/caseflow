@@ -7,7 +7,8 @@ import _ from 'lodash';
 import {
   getDecisionTypeDisplay,
   buildCaseReviewPayload,
-  validateWorkProductTypeAndId
+  validateWorkProductTypeAndId,
+  nullToFalse
 } from './utils';
 
 import {
@@ -46,7 +47,6 @@ const verticalLine = css(
 
 class SubmitDecisionView extends React.PureComponent {
   linkClicked = false;
-  imagePath = '~uswds/src/img';
   componentDidMount = () => {
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
@@ -75,15 +75,12 @@ class SubmitDecisionView extends React.PureComponent {
 
     extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
 
-    // TODO: create a frontend method that converts null to false, 
-    //  since these are required params in case_reviews_controller.rb
     if (extendedDecision.opts) {
-      if (extendedDecision.opts.overtime === null) {
-        extendedDecision.opts.overtime = false;
-      }
-      if (extendedDecision.opts.untimely_evidence === null) {
-        extendedDecision.opts.untimely_evidence = false;
-      }
+      const possibleNullKeys = ['overtime', 'untimely_evidence'];
+
+      possibleNullKeys.forEach((key) => {
+        extendedDecision.opts = nullToFalse(key, extendedDecision.opts);
+      });
     }
 
     return extendedDecision;
@@ -240,7 +237,7 @@ class SubmitDecisionView extends React.PureComponent {
         value={decisionOpts.untimely_evidence || false}
         styling={css(marginBottom(1), marginTop(1))}
       />
-      {/* TODO: componentize this once the style guide directives are in */}
+      {/* TODO: componentize this once the style guide directives are in, add in arrow to the left of link once provided by UX team */}
       <Button
         id="ineligible-evidence"
         linkStyling
