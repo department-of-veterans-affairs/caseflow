@@ -43,6 +43,50 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
                  find_appeals_ready_for_geomatching(Appeal))[0..QUERY_LIMIT]
   end
 
+  def self.get_appellant_address(appeal)
+    appeal.is_a?(LegacyAppeal) ? appeal.appellant[:address] : appeal.appellant.address
+  end
+
+  def self.validate_appellant_address(appeal)
+    address = get_appellant_address(appeal)
+
+    VADotGovService.validate_address(
+      address_line1: address[:address_line1],
+      address_line2: address[:address_line2],
+      address_line3: address[:address_line3],
+      city: address[:city],
+      state: address[:state],
+      country: address[:country],
+      zip_code: address[:zip_code]
+    )
+  end
+
+  def self.validate_zip_code(appeal, error:)
+    address = get_appellant_address(appeal)
+    if address[:zip].nil? || address[:state].nil? || address[:country].nil?
+      fail error
+    else
+      lat_lng = ZipCodeToLatLngMapper::MAPPING[address[:zip][0..4]]
+
+      if lat_lng.nil?
+        fail error
+      end
+
+      { lat: lat_lng[0], long: lat_lng[1], country_code: address[:country], state_code: address[:state] }
+    end
+  end
+
+  def self.validate_address_for_appeal(appeal)
+    begin
+      va_dot_gov_address = validate_appellant_address(appeal)
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      va_dot_gov_address = validate_zip_code(appeal, error: error)
+      return nil if va_dot_gov_address.nil?
+    end
+
+    va_dot_gov_address
+  end
+
   def fetch_and_update_ro_for_appeal(appeal, va_dot_gov_address:)
     state_code = get_state_code(va_dot_gov_address, appeal: appeal)
     facility_ids = ro_facility_ids_for_state(state_code)
@@ -64,6 +108,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     if facility_ids.length == 1
       create_available_location_for_appeal(appeal, facility: ro[:facility])
     else
+      sleep 1
       VADotGovService.get_distance(lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids)
         .each do |alternate_hearing_location|
           create_available_location_for_appeal(appeal, facility: alternate_hearing_location)
@@ -71,13 +116,9 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def create_schedule_hearing_tasks
-    AppealRepository.create_schedule_hearing_tasks
-  end
-
   def perform_once_for(appeal)
     begin
-      va_dot_gov_address = validate_appellant_address(appeal)
+      va_dot_gov_address = self.class.validate_appellant_address(appeal)
     rescue Caseflow::Error::VaDotGovLimitError
       return false
     rescue Caseflow::Error::VaDotGovAPIError => error
@@ -101,68 +142,20 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
     end
   end
 
-  def self.validate_address_for_appeal(appeal)
-    f = FetchHearingLocationsForVeteransJob.new
-    begin
-      va_dot_gov_address = f.validate_appellant_address(appeal)
-    rescue Caseflow::Error::VaDotGovAPIError => error
-      va_dot_gov_address = f.validate_zip_code(appeal, error: error)
-      return nil if va_dot_gov_address.nil?
-    end
+  private
 
-    va_dot_gov_address
-  end
-
-  def get_appellant_address(appeal)
-    appeal.is_a?(LegacyAppeal) ? appeal.appellant[:address] : appeal.appellant.address
-  end
-
-  def validate_appellant_address(appeal)
-    address = get_appellant_address(appeal)
-
-    VADotGovService.validate_address(
-      address_line1: address[:address_line1],
-      address_line2: address[:address_line2],
-      address_line3: address[:address_line3],
-      city: address[:city],
-      state: address[:state],
-      country: address[:country],
-      zip_code: address[:zip_code]
-    )
-  end
-
-  def validate_zip_code(appeal, error:)
-    address = get_appellant_address(appeal)
-    if address[:zip].nil? || address[:state].nil? || address[:country].nil?
-      fail error
-    else
-      lat_lng = ZipCodeToLatLngMapper::MAPPING[address[:zip][0..4]]
-
-      if lat_lng.nil?
-        fail error
-      end
-
-      { lat: lat_lng[0], long: lat_lng[1], country_code: address[:country], state_code: address[:state] }
-    end
+  def create_schedule_hearing_tasks
+    AppealRepository.create_schedule_hearing_tasks
   end
 
   def validate_zip_code_or_handle_error(appeal, error:)
-    address = get_appellant_address(appeal)
-    if address[:zip].nil? || address[:state].nil? || address[:country].nil?
+    begin
+      self.class.validate_zip_code(appeal, error: error)
+    rescue Caseflow::Error::VaDotGovAPIError
       handle_error(error, appeal)
-      nil
-    else
-      lat_lng = ZipCodeToLatLngMapper::MAPPING[address[:zip][0..4]]
-
-      if lat_lng.nil?
-        handle_error(error, appeal)
-        return nil
-      end
-      { lat: lat_lng[0], long: lat_lng[1], country_code: address[:country], state_code: address[:state] }
+      return nil
     end
   end
-
-  private
 
   def facility_ids_for_ro(regional_office_id)
     (RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
