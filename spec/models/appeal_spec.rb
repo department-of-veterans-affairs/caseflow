@@ -1071,7 +1071,6 @@ describe Appeal do
       it "status is still in progress since because no decision document" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:decision_in_progress)
-        expect(status[:type]).to eq(:decision_in_progress)
         expect(status[:details][:decision_timeliness]).to eq([1, 2])
       end
 
