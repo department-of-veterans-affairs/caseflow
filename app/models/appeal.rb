@@ -175,15 +175,15 @@ class Appeal < DecisionReview
   end
 
   def hearing_docket?
-    docket_type == "hearing"
+    docket_type == Constants.AMA_DOCKETS.hearing
   end
 
   def evidence_submission_docket?
-    docket_type == "evidence_submission"
+    docket_type == Constants.AMA_DOCKETS.evidence_submission
   end
 
   def direct_review_docket?
-    docket_type == "direct_review"
+    docket_type == Constants.AMA_DOCKETS.direct_review
   end
 
   def active?
@@ -437,7 +437,7 @@ class Appeal < DecisionReview
       }
     when :decision_in_progress
       {
-        decision_timeliness: AppealSeries::DECISION_TIMELINESS
+        decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
       }
     else
       {}

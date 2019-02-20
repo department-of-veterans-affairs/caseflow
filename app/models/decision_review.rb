@@ -232,7 +232,7 @@ class DecisionReview < ApplicationRecord
   def decision_event_date
     return unless decision_issues.any?
 
-    decision_issues.map(&:approx_decision_date).compact.min.to_date
+    decision_issues.map(&:approx_decision_date).compact.min.try(&:to_date)
   end
 
   def remand_decision_event_date
@@ -240,7 +240,7 @@ class DecisionReview < ApplicationRecord
     return unless remand_supplemental_claims.any?
     return if active_remanded_claims?
 
-    remand_supplemental_claims.map(&:decision_event_date).max.to_date
+    remand_supplemental_claims.map(&:decision_event_date).max.try(&:to_date)
   end
 
   def fetch_all_decision_issues
