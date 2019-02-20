@@ -52,7 +52,9 @@ class DecisionReviewIntake < Intake
     veteran.end_products.each do |ep|
       next unless ep.active? || ep.status_type_code.nil?
 
-      EndProductEstablishment.find_by!(reference_id: ep.claim_id, veteran_file_number: veteran.file_number).sync!
+      epe = EndProductEstablishment.find_by!(reference_id: ep.claim_id, veteran_file_number: veteran.file_number)
+      epe.veteran = veteran
+      epe.sync!
     end
   end
 end

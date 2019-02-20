@@ -14,6 +14,9 @@ class EndProductEstablishment < ApplicationRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
 
+  # allow @veteran to be assigned to save upstream calls
+  attr_writer :veteran
+
   CANCELED_STATUS = "CAN".freeze
   CLEARED_STATUS = "CLR".freeze
 
