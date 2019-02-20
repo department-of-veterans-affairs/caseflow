@@ -246,7 +246,7 @@ class SubmitDecisionView extends React.PureComponent {
         onClick={() => {
           this.linkClicked = !this.linkClicked;
           this.setState({ linkClicked: this.linkClicked,
-            buttonDirection: this.linkClicked ? 'down' : 'right' });
+            linkArrowDirection: this.linkClicked ? 'down' : 'right' });
         }}>
         {COPY.WHAT_IS_INELIGIBLE_EVIDENCE}
       </Button>
