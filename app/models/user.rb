@@ -298,17 +298,23 @@ class User < ApplicationRecord
 
       return nil if user.nil?
 
-      find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
-        u.full_name = user["name"]
-        u.email = user["email"]
-        u.roles = user["roles"]
-        u.regional_office = session[:regional_office]
-        u.save
-      end
+      # we ignore station_id since id should be globally unique.
+      css_id = user["id"]
+      existing_user = find_by_css_id(css_id)
+      return existing_user if existing_user
+
+      create!(
+        css_id: css_id.upcase,
+        station_id: user["station_id"],
+        full_name: user["name"],
+        email: user["email"],
+        roles: user["roles"],
+        regional_office: session[:regional_office]
+      )
     end
 
     def find_by_css_id_or_create_with_default_station_id(css_id)
-      find_by_css_id(css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
+      find_by_css_id(css_id) || User.create(css_id: css_id.upcase, station_id: BOARD_STATION_ID)
     end
 
     def list_hearing_coordinators
@@ -319,7 +325,7 @@ class User < ApplicationRecord
 
     # case-insensitive search
     def find_by_css_id(css_id)
-      find_by("LOWER(css_id)=LOWER(?)", css_id)
+      find_by("UPPER(css_id)=UPPER(?)", css_id)
     end
 
     def authentication_service
