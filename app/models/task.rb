@@ -262,7 +262,7 @@ class Task < ApplicationRecord
       modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
       modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
       message_title: format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name),
-      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by.full_name)
+      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by&.full_name || "the assigner")
     }
   end
 
