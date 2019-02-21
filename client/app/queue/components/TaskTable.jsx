@@ -214,7 +214,6 @@ export class TaskTableUnconnected extends React.PureComponent {
 
         return <React.Fragment>
           {daysWaiting} {pluralize('day', daysWaiting)}
-          { task.dueOn && <React.Fragment> | <DateString date={task.dueOn} /></React.Fragment> }
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
