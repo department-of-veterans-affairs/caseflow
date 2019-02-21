@@ -2097,9 +2097,9 @@ describe LegacyAppeal do
     context "when veteran is the appellant and addresses are included" do
       it "the veteran is returned with addresses" do
         expect(appeal.claimant).to eq(
-          first_name: "Bobby",
-          middle_name: "F",
-          last_name: "Veteran",
+          veteran_first_name: "Bobby",
+          veteran_middle_name: "F",
+          veteran_last_name: "Veteran",
           name_suffix: nil,
           address: {
             address_line_1: "123 K St. NW",
@@ -2138,9 +2138,9 @@ describe LegacyAppeal do
 
       it "the appellant is returned" do
         expect(appeal.claimant).to eq(
-          first_name: "Bobby",
-          middle_name: "F",
-          last_name: "Veteran",
+          veteran_first_name: "Bobby",
+          veteran_middle_name: "F",
+          veteran_last_name: "Veteran",
           name_suffix: nil,
           address: {
             address_line_1: "123 K St. NW",
@@ -2188,9 +2188,9 @@ describe LegacyAppeal do
 
       it "the appellant is returned" do
         expect(appeal.claimant).to eq(
-          first_name: "Tommy",
-          middle_name: "G",
-          last_name: "Claimant",
+          appellant_first_name: "Tommy",
+          appellant_middle_name: "G",
+          appellant_last_name: "Claimant",
           name_suffix: nil,
           address: {
             address_line_1: "123 K St. NW",

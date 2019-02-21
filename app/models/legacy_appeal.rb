@@ -337,7 +337,7 @@ class LegacyAppeal < ApplicationRecord
     if appellant_is_not_veteran
       {
         appellant_first_name: appellant_first_name,
-        applellant_middle_name: appellant_middle_initial,
+        appellant_middle_name: appellant_middle_initial,
         appellant_last_name: appellant_last_name,
         name_suffix: appellant_name_suffix,
         address: get_address_from_corres_entry(case_record.correspondent),
