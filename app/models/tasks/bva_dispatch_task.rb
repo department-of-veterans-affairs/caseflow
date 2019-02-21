@@ -33,7 +33,7 @@ class BvaDispatchTask < GenericTask
 
         # TODO: remove this unless statement when all decision documents require async processing
         unless decision_document.processed?
-          ProcessDecisionDocumentJob.perform_later(decision_document.id)
+          ProcessDecisionDocumentJob.perform_later(decision_document)
         end
       end
     end
