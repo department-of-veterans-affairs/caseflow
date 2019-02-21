@@ -524,7 +524,6 @@ describe EndProductEstablishment do
       subject
 
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
-      expect(for_object.removed_at).to eq(Time.zone.now)
       expect(for_object.contention_removed_at).to eq(Time.zone.now)
     end
 
@@ -535,7 +534,6 @@ describe EndProductEstablishment do
 
       it "does not remove contentions" do
         expect { subject }.to raise_error(vbms_error)
-        expect(for_object.removed_at).to be_nil
         expect(for_object.contention_removed_at).to be_nil
       end
     end
@@ -742,20 +740,20 @@ describe EndProductEstablishment do
 
   context "#cancel_unused_end_product!" do
     subject { end_product_establishment.cancel_unused_end_product! }
-    let(:removed_at) { nil }
+    let(:contention_removed_at) { nil }
     let!(:request_issues) do
       [
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           decision_review: source,
-          removed_at: removed_at
+          contention_removed_at: contention_removed_at
         )
       ]
     end
 
     context "when there are no active request issues" do
-      let(:removed_at) { 1.day.ago }
+      let(:contention_removed_at) { 1.day.ago }
       it "cancels the end product and closes request issues" do
         subject
         expect(end_product_establishment.reload.synced_status).to eq("CAN")
