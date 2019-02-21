@@ -414,7 +414,7 @@ class SeedDB
     end
   end
 
-  def create_legacy_case_with_open_schedule_hearing_task(ro_key)
+  def create_legacy_case_with_open_schedule_hearing_task(ro_key, index: 0)
     fname = Faker::Name.first_name
     lname = Faker::Name.last_name
     state = RegionalOffice::CITIES.find { |k, _v| k == ro_key }[1][:state]
@@ -447,6 +447,8 @@ class SeedDB
     appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_case.bfkey)
 
     create_hearing_schedule_task(appeal)
+
+    FetchHearingLocationsForVeteransJob.new.perform_once_for(vet) if index < 5
   end
 
   def create_anonymized_legacy_case_with_open_schedule_hearing_task(ro_key)
@@ -464,7 +466,7 @@ class SeedDB
     create_hearing_schedule_task(appeal)
   end
 
-  def create_ama_case_with_open_schedule_hearing_task(ro_key)
+  def create_ama_case_with_open_schedule_hearing_task(ro_key, index: 0)
     vet = Generators::Veteran.build(
       file_number: Faker::Number.number(9).to_s,
       first_name: Faker::Name.first_name,
@@ -485,20 +487,22 @@ class SeedDB
     )
 
     create_hearing_schedule_task(appeal)
+
+    FetchHearingLocationsForVeteransJob.new.perform_once_for(vet) if index < 5
   end
 
   def create_veterans_ready_for_hearing
     ros = %w[C RO45 RO17]
 
     ros.each do |ro_key|
-      50.times do
-        create_ama_case_with_open_schedule_hearing_task(ro_key)
+      50.times do |index|
+        create_ama_case_with_open_schedule_hearing_task(ro_key, index: index)
       end
 
       create_anonymized_legacy_case_with_open_schedule_hearing_task(ro_key)
 
-      100.times do
-        create_legacy_case_with_open_schedule_hearing_task(ro_key)
+      100.times do |index|
+        create_legacy_case_with_open_schedule_hearing_task(ro_key, index: index)
       end
     end
   end
@@ -928,19 +932,6 @@ class SeedDB
     Rails.logger.info("Taks prepare job skipped - tasks were already prepared...")
   end
 
-  def create_previously_held_hearing_data
-    user = User.find_by_css_id("BVAAABSHIRE")
-    appeal = LegacyAppeal.find_or_create_by(vacols_id: "3617215", vbms_id: "994806951S")
-
-    return if ([appeal.type] - ["Post Remand", "Original"]).empty? &&
-              appeal.hearings.map(&:disposition).include?(:held)
-
-    master_record = FactoryBot.create(:case_hearing, hearing_date: Time.zone.local(2018, 12, 20))
-
-    FactoryBot.create(:case_hearing,
-                      :disposition_held, user: user, folder_nr: appeal.vacols_id, vdkey: master_record.hearing_pkseq)
-  end
-
   def create_legacy_issues_eligible_for_opt_in
     # this vet number exists in local/vacols VBMS and BGS setup csv files.
     veteran_file_number_legacy_opt_in = "872958715S"
@@ -1024,7 +1015,6 @@ class SeedDB
     create_higher_level_review_tasks
 
     setup_dispatch
-    create_previously_held_hearing_data
     create_legacy_issues_eligible_for_opt_in
 
     create_higher_level_reviews_and_supplemental_claims
