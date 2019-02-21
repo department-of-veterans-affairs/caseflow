@@ -112,16 +112,13 @@ export default class AssignHearingsTabs extends React.Component {
   };
 
   appellantName = (hearingDay) => {
-    // let { claimant.appellantFirstName,
-    //       claimant.appellantLastName,
-    //       claimant.veteranFirstName,
-    //       claimant.veteranLastName,
-    //       veteranFileNumber } = hearingDay;
 
     if (hearingDay.claimant.appellantFirstName && hearingDay.claimant.appellantLastName) {
-      return `${hearingDay.claimant.appellantFirstName} ${hearingDay.claimant.appellantLastName} | ${hearingDay.veteranFileNumber}`;
+      return `${hearingDay.claimant.appellantFirstName}
+      ${hearingDay.claimant.appellantLastName} | ${hearingDay.veteranFileNumber}`;
     } else if (hearingDay.claimant.veteranFirstName && hearingDay.claimant.veteranLastName) {
-      return `${hearingDay.claimant.veteranFirstName} ${hearingDay.claimant.veteranLastName} | ${hearingDay.veteranFileNumber}`;
+      return `${hearingDay.claimant.veteranFirstName}
+      ${hearingDay.claimant.veteranLastName} | ${hearingDay.veteranFileNumber}`;
     }
 
     return `${hearingDay.veteranFileNumber}`;
