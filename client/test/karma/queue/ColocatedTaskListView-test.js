@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
@@ -13,7 +12,6 @@ import { onReceiveQueue, receiveNewDocuments, errorFetchingDocumentCount, setApp
   from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
-import type { Task, BasicAppeal } from '../../../app/queue/types/models';
 
 describe('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
@@ -48,7 +46,7 @@ describe('ColocatedTaskListView', () => {
     }
   });
 
-  const getAmaTaskTemplate = (): Task => ({
+  const getAmaTaskTemplate = () => ({
     uniqueId: '1',
     type: 'GenericTask',
     isLegacy: false,
@@ -87,7 +85,7 @@ describe('ColocatedTaskListView', () => {
     closestRegionalOffice: ''
   });
 
-  const appealTemplate: BasicAppeal = {
+  const appealTemplate = {
     id: 5,
     type: 'Appeal',
     isLegacyAppeal: false,
@@ -119,18 +117,28 @@ describe('ColocatedTaskListView', () => {
 
   const getStore = () => createStore(rootReducer, applyMiddleware(thunk));
 
-  describe('New tab', () => {
-    it('shows only new tasks', () => {
+  /* eslint-disable no-unused-expressions */
+  describe('Assigned tab', () => {
+    it('shows only new tasks and tasks with a completed hold', () => {
+      const daysOnHold = 31;
       const taskNewAssigned = amaTaskWith({ id: '1',
         cssIdAssignee: 'BVALSPORER' });
       const taskUnassigned = amaTaskWith({ id: '5',
         cssIdAssignee: 'NOTBVALSPORER' });
+      const completedHoldTask = amaTaskWith({
+        id: '6',
+        cssIdAssignee: 'BVALSPORER',
+        assignedOn: moment().subtract(daysOnHold + 0.5, 'days'),
+        placedOnHoldAt: moment().subtract(daysOnHold, 'days'),
+        onHoldDuration: daysOnHold - 1
+      });
       const appeal = appealTemplate;
 
       const tasks = {};
       const amaTasks = {
         [taskNewAssigned.id]: taskNewAssigned,
-        [taskUnassigned.id]: taskUnassigned
+        [taskUnassigned.id]: taskUnassigned,
+        [completedHoldTask.id]: completedHoldTask
       };
       const appeals = {
         [appeal.id]: appeal
@@ -147,10 +155,10 @@ describe('ColocatedTaskListView', () => {
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(7);
+      expect(cells).to.have.length(14);
       const wrappers = [];
 
-      for (let i = 0; i < cells.length; i++) {
+      for (let i = 0; i < cells.length / 2; i++) {
         wrappers.push(cells.at(i));
       }
       const [hearings, caseDetails, columnTasks, types, docketNumber, daysWaiting, documents] = wrappers;
@@ -178,80 +186,12 @@ describe('ColocatedTaskListView', () => {
       store.dispatch(setAppealDocCount(task.externalAppealId, 6, false));
       expect(wrapper.find('td').at(6).
         text()).to.include('6');
-    });
-  });
 
-  describe('Pending tab', () => {
-    it('shows only pending tasks', () => {
-      const task = amaTaskWith({
-        id: '1',
-        cssIdAssignee: 'BVALSPORER',
-        placedOnHoldAt: moment().subtract(30, 'days'),
-        onHoldDuration: 30
-      });
-      const taskWithNewDocs = amaTaskWith({
-        id: '4',
-        cssIdAssignee: 'BVALSPORER',
-        externalAppealId: '44',
-        placedOnHoldAt: moment().subtract(2, 'days'),
-        onHoldDuration: 30
-      });
-      const taskNotAssigned = amaTaskWith({
-        ...task,
-        id: '5',
-        cssIdAssignee: 'NOTBVALSPORER'
-      });
-      const taskNew = amaTaskWith({
-        id: '6',
-        cssIdAssignee: task.assignedTo.cssId
-      });
-      const appeal = appealTemplate;
-      const appealWithNewDocs = {
-        ...appeal,
-        id: '6',
-        externalId: taskWithNewDocs.externalAppealId
-      };
+      const onHoldDaysWaiting = cells.at(12);
 
-      const tasks = {};
-      const amaTasks = {
-        [task.id]: task,
-        [taskNotAssigned.id]: taskNotAssigned,
-        [taskWithNewDocs.id]: taskWithNewDocs,
-        [taskNew.id]: taskNew
-      };
-      const appeals = {
-        [appeal.id]: appeal,
-        [appealWithNewDocs.id]: appealWithNewDocs
-      };
-      const store = getStore();
-
-      store.dispatch(onReceiveQueue({ tasks,
-        amaTasks,
-        appeals }));
-      store.dispatch(setUserCssId(task.assignedTo.cssId));
-      store.dispatch(receiveNewDocuments({
-        appealId: appealWithNewDocs.externalId,
-        newDocuments: [{}]
-      }));
-
-      const wrapper = getWrapperColocatedTaskListView(store);
-
-      wrapper.find('[aria-label="Pending action (1) tab window"]').simulate('click');
-
-      const cells = wrapper.find('td');
-
-      expect(cells).to.have.length(7);
-      const wrappers = [];
-
-      for (let i = 0; i < cells.length; i++) {
-        wrappers.push(cells.at(i));
-      }
-      {
-        const [daysOnHold, documents] = wrappers.slice(5);
-
-        expect(daysOnHold.text()).to.equal('1 of 30');
-        expect(documents.html()).to.include(`/reader/appeal/${taskWithNewDocs.externalAppealId}/documents`);
-      }
+      expect(onHoldDaysWaiting.text()).to.equal(daysOnHold.toString());
+      expect(onHoldDaysWaiting.find('.cf-red-text')).to.exist;
+      expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning')).to.exist;
     });
   });
 
@@ -308,14 +248,16 @@ describe('ColocatedTaskListView', () => {
 
       const wrapper = getWrapperColocatedTaskListView(store);
 
-      wrapper.find('[aria-label="On hold (1) tab window"]').simulate('click');
+      wrapper.find('[aria-label="On hold (2) tab window"]').simulate('click');
+
+      expect(wrapper.find('[aria-label="On hold (2) tab window"] #NEW')).to.exist;
 
       const cells = wrapper.find('td');
 
-      expect(cells).to.have.length(7);
+      expect(cells).to.have.length(14);
       const wrappers = [];
 
-      for (let i = 0; i < cells.length; i++) {
+      for (let i = 0; i < cells.length / 2; i++) {
         wrappers.push(cells.at(i));
       }
       const [hearings, caseDetails, columnTasks, types, docketNumber, daysOnHold, documents] = wrappers;
@@ -327,7 +269,9 @@ describe('ColocatedTaskListView', () => {
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysOnHold.text()).to.equal('1 of 30');
+      expect(daysOnHold.find('.cf-continuous-progress-bar')).to.exist;
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
     });
   });
 });
+/* eslint-enable no-unused-expressions */

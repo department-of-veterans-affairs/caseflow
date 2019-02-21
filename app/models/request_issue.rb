@@ -1,5 +1,16 @@
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
+  # TODO: remove this eventually, used to protect caching from screwing up removed columns
+  self.ignored_columns = %w[
+    contested_rating_issue_disability_code
+    rating_issue_reference_id
+    rating_issue_profile_date
+    review_request_id
+    review_request_type
+    description
+    parent_request_issue_id
+  ]
+
   include Asyncable
   include HasBusinessLine
 
@@ -32,10 +43,16 @@ class RequestIssue < ApplicationRecord
   enum closed_status: {
     decided: "decided",
     removed: "removed",
-    end_product_canceled: "end_product_canceled"
+    end_product_canceled: "end_product_canceled",
+    withdrawn: "withdrawn",
+    dismissed_death: "dismissed_death",
+    stayed: "stayed"
   }
 
   before_save :set_contested_rating_issue_profile_date
+
+  # TODO: this is a temporary callback in order to synchronize columns. Remove after data is migrated
+  before_save :set_decision_sync_last_submitted_at
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -153,7 +170,7 @@ class RequestIssue < ApplicationRecord
     def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
       request_issue = unscoped.find_by(
         contested_rating_issue_reference_id: rating_issue_reference_id,
-        removed_at: nil,
+        contention_removed_at: nil,
         ineligible_reason: nil
       )
 
@@ -165,7 +182,7 @@ class RequestIssue < ApplicationRecord
     def find_active_by_contested_decision_id(contested_decision_issue_id)
       request_issue = unscoped.find_by(
         contested_decision_issue_id: contested_decision_issue_id,
-        removed_at: nil,
+        contention_removed_at: nil,
         ineligible_reason: nil
       )
 
@@ -189,9 +206,6 @@ class RequestIssue < ApplicationRecord
       contested_issue_present = data[:rating_issue_reference_id] || data[:contested_decision_issue_id]
 
       {
-        # TODO: these are going away in favor of `contested_rating_issue_*`
-        rating_issue_reference_id: data[:rating_issue_reference_id],
-        rating_issue_profile_date: data[:rating_issue_profile_date],
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
@@ -229,6 +243,10 @@ class RequestIssue < ApplicationRecord
   end
 
   def rating?
+    !!associated_rating_issue? || previous_rating_issue?
+  end
+
+  def associated_rating_issue?
     contested_rating_issue_reference_id
   end
 
@@ -463,6 +481,12 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
+  # But the request issue should still be added to a rating End Product
+  def previous_rating_issue?
+    contested_decision_issue&.associated_request_issue&.end_product_establishment&.rating?
+  end
 
   def fetch_diagnostic_code_status_description(diagnostic_code)
     if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
@@ -729,6 +753,10 @@ class RequestIssue < ApplicationRecord
 
   def appeal_active?
     decision_review.tasks.active.any?
+  end
+
+  def set_decision_sync_last_submitted_at
+    self.decision_sync_last_submitted_at = last_submitted_at
   end
 end
 # rubocop:enable Metrics/ClassLength

@@ -93,6 +93,7 @@ RSpec.feature "Intake Manager Page" do
       veteran_file_number = "1234"
       user1 = create(:user)
       user2 = create(:user)
+      user3 = create(:user)
       busy_day = 3.days.ago.beginning_of_day
 
       5.times do
@@ -126,6 +127,9 @@ RSpec.feature "Intake Manager Page" do
 
       select_user_stats(user2.css_id)
       expect(page).to have_content("#{(busy_day - 2.days).strftime('%F')} 3")
+
+      select_user_stats(user3.css_id)
+      expect(page).to have_content("No stats available.")
 
       select_user_stats("nosuchuser")
       expect(page).to have_content("Not found: nosuchuser")

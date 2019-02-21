@@ -1,10 +1,5 @@
-// @flow
 import * as React from 'react';
 import { css } from 'glamor';
-
-import type {
-  Address as AddressType
-} from '../types/models';
 
 const addressIndentStyling = css({
   display: 'inline-block',
@@ -16,11 +11,7 @@ const flexColumnStyling = css({
   flexDirection: 'column'
 });
 
-type Props = {|
-  address: AddressType
-|};
-
-export default class Address extends React.PureComponent<Props> {
+export default class Address extends React.PureComponent {
   render = () => {
     const {
       address_line_1: addressLine1,

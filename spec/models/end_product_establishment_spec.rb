@@ -388,6 +388,40 @@ describe EndProductEstablishment do
         )
       end
     end
+
+    context "request issue is rating but has no associated_rating_issue" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: nil,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contention_reference_id: contention_ref_id,
+            contested_decision_issue_id: decision_issue.id
+          )
+        ]
+      end
+      let(:original_request_issue) do
+        create(
+          :request_issue,
+          decision_review: previous_review,
+          end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+        )
+      end
+      let(:decision_issue) do
+        create(:decision_issue,
+               decision_review: previous_review,
+               request_issues: [original_request_issue])
+      end
+      let(:previous_review) { create(:higher_level_review) }
+
+      it "skips rating request issues with no associated rating issue" do
+        subject
+        expect(request_issues.first.rating?).to be true
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+      end
+    end
   end
 
   context "#generate_claimant_letter!" do
@@ -490,7 +524,7 @@ describe EndProductEstablishment do
       subject
 
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
-      expect(for_object.removed_at).to eq(Time.zone.now)
+      expect(for_object.contention_removed_at).to eq(Time.zone.now)
     end
 
     context "when VBMS throws an error" do
@@ -500,7 +534,7 @@ describe EndProductEstablishment do
 
       it "does not remove contentions" do
         expect { subject }.to raise_error(vbms_error)
-        expect(for_object.removed_at).to be_nil
+        expect(for_object.contention_removed_at).to be_nil
       end
     end
   end
@@ -529,6 +563,19 @@ describe EndProductEstablishment do
       let(:reference_id) { matching_ep.claim_id }
 
       it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
+    end
+  end
+
+  context "#rating?" do
+    subject { end_product_establishment.rating? }
+    context "when the end product code is a rating code" do
+      let(:code) { "030HLRRPMC" }
+      it { is_expected.to be true }
+    end
+
+    context "when the end product code is not rating code" do
+      let(:code) { "Something" }
+      it { is_expected.to be_falsey }
     end
   end
 
@@ -693,20 +740,20 @@ describe EndProductEstablishment do
 
   context "#cancel_unused_end_product!" do
     subject { end_product_establishment.cancel_unused_end_product! }
-    let(:removed_at) { nil }
+    let(:contention_removed_at) { nil }
     let!(:request_issues) do
       [
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           decision_review: source,
-          removed_at: removed_at
+          contention_removed_at: contention_removed_at
         )
       ]
     end
 
     context "when there are no active request issues" do
-      let(:removed_at) { 1.day.ago }
+      let(:contention_removed_at) { 1.day.ago }
       it "cancels the end product and closes request issues" do
         subject
         expect(end_product_establishment.reload.synced_status).to eq("CAN")

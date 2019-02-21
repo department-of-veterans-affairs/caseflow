@@ -44,4 +44,15 @@ class DecisionReviewIntake < Intake
   def build_issues(request_issues_data)
     request_issues_data.map { |data| RequestIssue.from_intake_data(data, decision_review: detail) }
   end
+
+  private
+
+  # run during start!
+  def after_validated_pre_start!
+    epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
+    epes.each do |epe|
+      epe.veteran = veteran
+      epe.sync!
+    end
+  end
 end

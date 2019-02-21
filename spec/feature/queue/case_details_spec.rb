@@ -5,8 +5,8 @@ RSpec.feature "Case details" do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
 
-  let(:attorney_first_name) { "Robby" }
-  let(:attorney_last_name) { "McDobby" }
+  let(:attorney_first_name) { "Chanel" }
+  let(:attorney_last_name) { "Afshari" }
   let!(:attorney_user) do
     FactoryBot.create(:user, full_name: "#{attorney_first_name} #{attorney_last_name}")
   end
@@ -20,8 +20,8 @@ RSpec.feature "Case details" do
     )
   end
 
-  let(:judge_first_name) { "Jane" }
-  let(:judge_last_name) { "Ricotta-Lotta" }
+  let(:judge_first_name) { "Eeva" }
+  let(:judge_last_name) { "Jovich" }
   let!(:judge_user) { FactoryBot.create(:user, full_name: "#{judge_first_name} #{judge_last_name}") }
   let!(:vacols_judge) do
     FactoryBot.create(
@@ -41,9 +41,13 @@ RSpec.feature "Case details" do
   end
 
   context "hearings pane on attorney task detail view" do
+    let(:veteran_first_name) { "Linda" }
+    let(:veteran_last_name) { "Verne" }
     let!(:veteran) do
       FactoryBot.create(
         :veteran,
+        first_name: veteran_first_name,
+        last_name: veteran_last_name,
         file_number: 123_456_789
       )
     end
@@ -129,11 +133,37 @@ RSpec.feature "Case details" do
         find_table_cell(appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
           .click_link
 
+        expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+        scroll_element_in_to_view("#hearings-section")
         worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
-        expect(worksheet_link.text).to eq("View VLJ Hearing Worksheet")
+        expect(worksheet_link.text).to eq(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
 
         details_link = page.find("a[href='/hearings/#{hearing.external_id}/details']")
-        expect(details_link.text).to eq("View Hearing Details")
+        expect(details_link.text).to eq(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
+      end
+
+      context "the user has a VSO role" do
+        let!(:vso) { FactoryBot.create(:vso, name: "VSO", role: "VSO", url: "vso-url", participant_id: "8054") }
+        let!(:vso_user) { FactoryBot.create(:user, :vso_role) }
+        let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso, appeal: appeal) }
+
+        before do
+          OrganizationsUser.add_user_to_organization(vso_user, vso)
+          allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+          User.authenticate!(user: vso_user)
+        end
+
+        scenario "worksheet and details links are not visible" do
+          visit vso.path
+          click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
+          scroll_element_in_to_view("#hearings-section")
+          expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
+          expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
+          expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
+          expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/details']")
+        end
       end
     end
 
@@ -309,18 +339,16 @@ RSpec.feature "Case details" do
   end
 
   context "when an appeal has an issue that is ineligible" do
-    let(:eligible_issue_cnt) { 5 }
-    let(:ineligible_issue_cnt) { 3 }
     let(:issues) do
       [
         build_list(
           :request_issue,
-          eligible_issue_cnt,
+          1,
           contested_issue_description: "Knee pain"
         ),
         build_list(
           :request_issue,
-          ineligible_issue_cnt,
+          1,
           contested_issue_description: "Sunburn",
           ineligible_reason: :untimely
         )
@@ -331,8 +359,8 @@ RSpec.feature "Case details" do
     scenario "only eligible issues should appear in case details page" do
       visit "/queue/appeals/#{appeal.uuid}"
 
-      expect(page).to have_content("Issue #{eligible_issue_cnt}")
-      expect(page).to_not have_content("Issue #{eligible_issue_cnt + 1}")
+      expect(page).to have_content("Knee pain")
+      expect(page).to_not have_content("Sunburn")
     end
   end
 
@@ -527,7 +555,8 @@ RSpec.feature "Case details" do
 
         it "should display sorted issues" do
           visit "/queue/appeals/#{appeal.uuid}"
-          expect(page).to have_content(issue_description + " Issue 2 DESCRIPTION " + issue_description2)
+          text = issue_description + " Diagnostic code: 5008 Issue Benefit type: Compensation " + issue_description2
+          expect(page).to have_content(text)
         end
       end
     end
@@ -578,7 +607,7 @@ RSpec.feature "Case details" do
     before { FeatureToggle.enable!(:ama_decision_issues) }
     after { FeatureToggle.disable!(:ama_decision_issues) }
 
-    let(:request_issue) { create(:request_issue, description: "knee pain", notes: notes) }
+    let(:request_issue) { create(:request_issue, contested_issue_description: "knee pain", notes: notes) }
     let(:appeal) { create(:appeal, number_of_claimants: 1, request_issues: [request_issue]) }
 
     context "when notes are nil" do
