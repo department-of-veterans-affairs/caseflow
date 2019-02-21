@@ -174,10 +174,6 @@ class QueueMapper
     decass_attrs[:overtime]
   end
 
-  def untimely_evidence
-    decass_attrs[:untimely_evidence]
-  end
-
   def complexity
     decass_attrs[:complexity]
   end
