@@ -130,11 +130,10 @@ class SubmitDecisionView extends React.PureComponent {
       checkoutFlow,
       decision,
       userRole,
-      judges,
-      amaDecisionIssues
+      judges
     } = this.props;
 
-    const issuesToPass = !isLegacyAppeal && amaDecisionIssues ? decisionIssues : issues;
+    const issuesToPass = isLegacyAppeal ? issues : decisionIssues;
     const payload = buildCaseReviewPayload(checkoutFlow, decision,
       userRole, issuesToPass, { isLegacyAppeal });
 
@@ -288,8 +287,7 @@ const mapStateToProps = (state, ownProps) => {
     decision,
     error,
     userRole,
-    highlightFormItems,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal && appeal.decisionIssues)
+    highlightFormItems
   };
 };
 

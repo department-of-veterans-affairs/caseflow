@@ -525,6 +525,7 @@ describe EndProductEstablishment do
 
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
       expect(for_object.removed_at).to eq(Time.zone.now)
+      expect(for_object.contention_removed_at).to eq(Time.zone.now)
     end
 
     context "when VBMS throws an error" do
@@ -535,6 +536,7 @@ describe EndProductEstablishment do
       it "does not remove contentions" do
         expect { subject }.to raise_error(vbms_error)
         expect(for_object.removed_at).to be_nil
+        expect(for_object.contention_removed_at).to be_nil
       end
     end
   end

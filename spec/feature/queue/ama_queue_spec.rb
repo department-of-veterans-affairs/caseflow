@@ -496,7 +496,7 @@ RSpec.feature "AmaQueue" do
 
       expect(page).not_to have_content("Select special issues (optional)")
 
-      expect(page).to have_content("Select Dispositions")
+      expect(page).to have_content("Add decisions")
 
       click_on "Continue"
 
@@ -623,9 +623,29 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_content("Select special issues (optional)")
 
-        expect(page).to have_content("Select Dispositions")
-        click_dropdown({ prompt: "Select disposition", text: "Allowed" }, find("#table-row-0"))
-        click_dropdown({ prompt: "Select disposition", text: "Remanded" }, find("#table-row-1"))
+        expect(page).to have_content("Add decisions")
+
+        # Add a first decision issue
+        all("button", text: "+ Add decision", count: 2)[0].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
+
+        click_on "Save"
+
+        # Add a second decision issue
+        all("button", text: "+ Add decision", count: 2)[1].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Remanded").click
+
+        click_on "Save"
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -670,9 +690,10 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_content("Select special issues (optional)")
 
-        expect(page).to have_content("Select Dispositions")
-        expect(dropdown_selected_value(find("#table-row-0"))).to eq "Allowed"
-        expect(dropdown_selected_value(find("#table-row-1"))).to eq "Remanded"
+        expect(page).to have_content("Add decisions")
+        expect(page).to have_content("Allowed")
+        expect(page).to have_content("Remanded")
+
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -729,9 +750,29 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_content("Select special issues (optional)")
 
-        expect(page).to have_content("Select Dispositions")
-        click_dropdown({ prompt: "Select disposition", text: "Allowed" }, find("#table-row-0"))
-        click_dropdown({ prompt: "Select disposition", text: "Remanded" }, find("#table-row-1"))
+        expect(page).to have_content("Add decisions")
+
+        # Add a first decision issue
+        all("button", text: "+ Add decision", count: 2)[0].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
+
+        click_on "Save"
+
+        # Add a second decision issue
+        all("button", text: "+ Add decision", count: 2)[1].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Remanded").click
+
+        click_on "Save"
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -777,9 +818,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_content("Select special issues (optional)")
 
-        expect(page).to have_content("Select Dispositions")
-        expect(dropdown_selected_value(find("#table-row-0"))).to eq "Allowed"
-        expect(dropdown_selected_value(find("#table-row-1"))).to eq "Remanded"
+        expect(page).to have_content("Add decisions")
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
