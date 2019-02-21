@@ -128,6 +128,19 @@ class EndProductEstablishment < ApplicationRecord
 
   delegate :contentions, to: :cached_result
 
+  # Check if there is a limited POA on the established end product
+  # Only necessary if a decision on that end product was remanded
+  def check_for_limited_power_of_attorney!
+    limited_poa = BGSService.new.fetch_limited_poas_by_claim_ids(reference_id)
+
+    return unless limited_poa
+
+    update!(
+      limited_poa_code: limited_poa[reference_id][:limited_poa_code],
+      limited_poa_access: limited_poa[reference_id][:limited_poa_access]
+    )
+  end
+
   def description
     reference_id && cached_result.description_with_routing
   end
@@ -419,7 +432,9 @@ class EndProductEstablishment < ApplicationRecord
       modifier: the_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
-      station_of_jurisdiction: station
+      station_of_jurisdiction: station,
+      limited_poa_code: limited_poa_code,
+      limited_poa_access: limited_poa_access
     )
   end
 

@@ -480,6 +480,18 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def limited_poa_code
+    return unless processed_in_vbms?
+
+    previous_request_issue&.end_product_establishment.limited_poa_code
+  end
+
+  def limited_poa_access
+    return unless processed_in_vbms?
+
+    previous_request_issue&.end_product_establishment.limited_poa_access
+  end
+
   private
 
   # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
