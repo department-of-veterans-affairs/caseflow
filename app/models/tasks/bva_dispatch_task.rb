@@ -19,6 +19,7 @@ class BvaDispatchTask < GenericTask
 
       task.update!(status: Constants.TASK_STATUSES.completed)
       task.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      appeal.request_issues.each(&:close_decided_issue!)
     rescue ActiveRecord::RecordInvalid => e
       raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
 
