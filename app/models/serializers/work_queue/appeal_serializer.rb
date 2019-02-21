@@ -155,8 +155,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :attorney_case_rewrite_details do
     {
       overtime: latest_attorney_case_review&.overtime,
-      note_from_attorney: latest_attorney_case_review&.note,
-      untimely_evidence: latest_attorney_case_review&.untimely_evidence
+      note_from_attorney: latest_attorney_case_review&.note
     }
   end
 

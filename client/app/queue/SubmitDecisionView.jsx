@@ -2,13 +2,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import Button from '../components/Button';
 import _ from 'lodash';
 import {
   getDecisionTypeDisplay,
   buildCaseReviewPayload,
-  validateWorkProductTypeAndId,
-  nullToFalse
+  validateWorkProductTypeAndId
 } from './utils';
 
 import {
@@ -37,16 +35,9 @@ import {
 } from './constants';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
-const verticalLine = css(
-  {
-    borderLeft: 'thick solid lightgrey',
-    marginLeft: '20px',
-    paddingLeft: '20px'
-  }
-);
 
 class SubmitDecisionView extends React.PureComponent {
-  linkClicked = false;
+
   componentDidMount = () => {
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
@@ -68,19 +59,13 @@ class SubmitDecisionView extends React.PureComponent {
     _.merge(decision.opts, { document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
       overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
-      untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false),
       reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
     });
     const extendedDecision = { ...decision };
 
     extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
-
-    if (extendedDecision.opts) {
-      const possibleNullKeys = ['overtime', 'untimely_evidence'];
-
-      possibleNullKeys.forEach((key) => {
-        extendedDecision.opts = nullToFalse(key, extendedDecision.opts);
-      });
+    if (extendedDecision.opts && extendedDecision.opts.overtime === null) {
+      extendedDecision.opts.overtime = false;
     }
 
     return extendedDecision;
@@ -200,6 +185,13 @@ class SubmitDecisionView extends React.PureComponent {
         options={OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES}
         errorMessage={(highlightFormItems && !decisionOpts.work_product) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
       />}
+      <Checkbox
+        name="overtime"
+        label="This work product is overtime"
+        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
+        value={decisionOpts.overtime || false}
+        styling={css(marginBottom(1), marginTop(1))}
+      />
       <TextField
         label="Document ID:"
         name="document_id"
@@ -222,40 +214,6 @@ class SubmitDecisionView extends React.PureComponent {
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
       />
-      <Checkbox
-        name="overtime"
-        label="This work product is overtime"
-        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-        value={decisionOpts.overtime || false}
-        styling={css(marginBottom(1), marginTop(1))}
-      />
-      <Checkbox
-        name="untimely_evidence"
-        label="The Veteran submitted evidence that is ineligible for review"
-        onChange={(untimelyEvidence) => this.props.setDecisionOptions({ untimely_evidence: untimelyEvidence })}
-        value={decisionOpts.untimely_evidence || false}
-        styling={css(marginBottom(1), marginTop(1))}
-      />
-      {/* TODO: 1. componentize this once the style guide directives are in 
-                2. add in arrow to the left of link once provided by UX team */}
-      <Button
-        id="ineligible-evidence"
-        linkStyling
-        willNeverBeLoading
-        onClick={() => {
-          this.linkClicked = !this.linkClicked;
-          this.setState({ linkClicked: this.linkClicked,
-            linkArrowDirection: this.linkClicked ? 'down' : 'right' });
-        }}>
-        {COPY.WHAT_IS_INELIGIBLE_EVIDENCE}
-      </Button>
-      {this.linkClicked && <div {...verticalLine}>
-        <div>{COPY.UNTIMELY_EVIDENCE_TITLE}</div>
-        <br />
-        <div>{COPY.UNTIMELY_EVIDENCE_BULLET_ONE}</div>
-        <div> {COPY.UNTIMELY_EVIDENCE_BULLET_TWO}</div>
-        <div> {COPY.UNTIMELY_EVIDENCE_BULLET_THREE}</div>
-      </div>}
     </React.Fragment>;
   };
 }
