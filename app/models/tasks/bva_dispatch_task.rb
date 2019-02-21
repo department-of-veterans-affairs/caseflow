@@ -29,7 +29,12 @@ class BvaDispatchTask < GenericTask
 
     def create_decision_document!(params)
       DecisionDocument.create!(params).tap do |decision_document|
-        decision_document.submit_for_processing!
+        delay = 0
+        decision_time = decision_document.decision_date.to_time(Time.zone)
+        if decision_time > Time.zone.now
+          delay = (decision_time - Time.zone.now).ceil
+        end
+        decision_document.submit_for_processing!(delay: delay)
 
         # TODO: remove this unless statement when all decision documents require async processing
         unless decision_document.processed?
