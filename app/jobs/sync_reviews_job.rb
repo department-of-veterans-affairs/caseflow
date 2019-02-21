@@ -56,7 +56,7 @@ class SyncReviewsJob < CaseflowJob
 
   def reprocess_decision_documents(limit)
     DecisionDocument.requires_processing.limit(limit).each do |decision_document|
-      ProcessDecisionDocumentJob.perform_later(decision_document)
+      ProcessDecisionDocumentJob.perform_later(decision_document.id)
     end
   end
 end

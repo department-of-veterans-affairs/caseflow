@@ -139,7 +139,7 @@ describe SyncReviewsJob do
       it "starts jobs to reprocess them" do
         expect do
           SyncReviewsJob.perform_now
-        end.to have_enqueued_job(ProcessDecisionDocumentJob).with(decision_document_needs_reprocessing).exactly(:once)
+        end.to have_enqueued_job(ProcessDecisionDocumentJob).with(decision_document_needs_reprocessing.id).exactly(:once)
       end
     end
   end
