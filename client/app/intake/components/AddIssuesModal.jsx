@@ -107,7 +107,7 @@ class AddIssuesModal extends React.Component {
           if (foundLatestIssueIds.length === 0) {
             hasLaterIssueInChain = true;
             let dates = _.uniq(issue.latestIssuesInChain.map((latestIssue) => {
-              return formatDateStr(latestIssue.date);
+              return formatDateStr(latestIssue.approxDecisionDate);
             })).join(', ');
 
             text = `${text} (Please select the most recent decision on ` +

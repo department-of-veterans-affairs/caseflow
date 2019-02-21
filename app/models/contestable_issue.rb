@@ -58,7 +58,7 @@ class ContestableIssue
   end
 
   def serialize_decision_id_and_date
-    { id: decision_issue&.id, date: approx_decision_date }
+    { id: decision_issue&.id, approxDecisionDate: approx_decision_date }
   end
 
   def source_review_type
@@ -89,14 +89,14 @@ class ContestableIssue
   end
 
   def serialize_latest_decision_issues
-    latest_contestable_issues.map(&:serialize_decision_id_and_date).sort_by { |issue| issue[:date] }
+    latest_contestable_issues.map(&:serialize_decision_id_and_date).sort_by { |issue| issue[:approxDecisionDate] }
   end
 
   def find_latest_contestable_issues
     return [self] if next_decision_issues.blank?
 
     next_decision_issues.map do |decision_issue|
-      ContestableIssue.from_decision_issue(decision_issue, decision_issue.decision_review).latest_contestable_issues
+      ContestableIssue.from_decision_issue(decision_issue, contesting_decision_review).latest_contestable_issues
     end.flatten
   end
 
