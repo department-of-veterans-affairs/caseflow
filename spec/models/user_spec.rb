@@ -29,6 +29,7 @@ describe User do
     subject { User.find_by_css_id_or_create_with_default_station_id(css_id) }
 
     it "forces the css id to UPCASE" do
+      expect(css_id.upcase).to_not eq(css_id)
       expect(subject.css_id).to eq(css_id.upcase)
     end
   end
