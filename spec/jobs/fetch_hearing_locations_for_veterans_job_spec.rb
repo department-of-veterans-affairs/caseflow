@@ -7,7 +7,9 @@ describe FetchHearingLocationsForVeteransJob do
   context "when there is a case in location 57 *without* an associated veteran" do
     let!(:bfcorlid) { "123456789S" }
     let!(:bfcorlid_file_number) { "123456789" }
-    let!(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S") }
+    let!(:vacols_case) do
+      create(:case, bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V")
+    end
     let!(:legacy_appeal) { create(:legacy_appeal, vbms_id: "123456789S", vacols_case: vacols_case) }
 
     before(:each) do
@@ -18,8 +20,12 @@ describe FetchHearingLocationsForVeteransJob do
       context "when veterans exist in location 57 or have schedule hearing tasks" do
         # Legacy appeal with schedule hearing task
         let!(:veteran_2) { create(:veteran, file_number: "999999999") }
-        let!(:vacols_case_2) { create(:case, bfcurloc: "CASEFLOW", bfregoff: "RO01", bfcorlid: "999999999S") }
-        let!(:legacy_appeal_2) { create(:legacy_appeal, vbms_id: "999999999S", vacols_case: vacols_case_2) }
+        let!(:vacols_case_2) do
+          create(:case, bfcurloc: "CASEFLOW", bfregoff: "RO01", bfcorlid: "999999999S", bfhr: "2", bfdocind: "V")
+        end
+        let!(:legacy_appeal_2) do
+          create(:legacy_appeal, vbms_id: "999999999S", vacols_case: vacols_case_2)
+        end
         let!(:task_1) do
           ScheduleHearingTask.create!(appeal: legacy_appeal_2, assigned_to: HearingsManagement.singleton)
         end
@@ -70,51 +76,15 @@ describe FetchHearingLocationsForVeteransJob do
 
           # legacy not in location 57
           create(:veteran, file_number: "111111111")
-          vac_case = create(:case, bfcurloc: "39", bfregoff: "RO01", bfcorlid: "111111111S")
+          vac_case = create(:case, bfcurloc: "39", bfregoff: "RO01", bfcorlid: "111111111S", bfhr: "2", bfdocind: "V")
           create(:legacy_appeal, vbms_id: "111111111", vacols_case: vac_case)
         end
 
         it "returns only appeals with scheduled hearings tasks without an admin action or who are in location 57" do
+          job.create_schedule_hearing_tasks
           expect(job.appeals.pluck(:id)).to contain_exactly(
             legacy_appeal.id, legacy_appeal_2.id, appeal.id, appeal_2.id
           )
-        end
-      end
-    end
-
-    describe "#validate_address_for_appeal" do
-      let(:distance_response) { HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11).to_json) }
-      let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body.to_json) }
-      before do
-        VADotGovService = ExternalApi::VADotGovService
-
-        allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
-        allow(HTTPI).to receive(:post).with(instance_of(HTTPI::Request)).and_return(validate_response)
-      end
-
-      it "returns correct zip code" do
-        address = FetchHearingLocationsForVeteransJob.validate_address_for_appeal(legacy_appeal)
-        expect(address[:lat]).to eq 38.768185
-      end
-
-      context "and no address is found" do
-        before do
-          message = {
-            "messages" => [
-              {
-                "key" => "AddressCouldNotBeFound"
-              }
-            ]
-          }
-
-          error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
-          allow(VADotGovService).to receive(:send_va_dot_gov_request)
-            .with(hash_including(endpoint: "address_validation/v1/validate")).and_raise(error)
-        end
-
-        it "return address from zip code" do
-          address = FetchHearingLocationsForVeteransJob.validate_address_for_appeal(legacy_appeal)
-          expect(address[:lat]).to eq 42.364031 # 01002 zipcode latitude
         end
       end
     end
@@ -209,7 +179,7 @@ describe FetchHearingLocationsForVeteransJob do
       context "when va_dot_gov_service throws an Address error" do
         let!(:vacols_case) do
           create(:case,
-                 bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S",
+                 bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V",
                  correspondent: create(:correspondent, saddrzip: "01002", saddrstt: "MA", saddrcnty: "USA"))
         end
         before do
@@ -239,7 +209,7 @@ describe FetchHearingLocationsForVeteransJob do
         context "and Veteran has no zipcode" do
           let!(:vacols_case) do
             create(:case,
-                   bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S",
+                   bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V",
                    correspondent: create(:correspondent, saddrzip: nil))
           end
           before do
@@ -296,7 +266,9 @@ describe FetchHearingLocationsForVeteransJob do
         end
         RegionalOffice::CITIES.keys[index]
       end
-      let(:vacols_case) { create(:case, bfcurloc: 57, bfregoff: nil, bfcorlid: bfcorlid) }
+      let(:vacols_case) do
+        create(:case, bfcurloc: 57, bfregoff: nil, bfcorlid: bfcorlid, bfhr: "2", bfdocind: "V")
+      end
       let(:body) do
         mock_distance_body(
           data: facility_ros.map { |ro| mock_data(id: ro[:facility_locator_id]) },

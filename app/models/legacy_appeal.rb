@@ -136,6 +136,10 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
+  def va_dot_gov_validator
+    @va_dot_gov_validator ||= VaDotGovValidator.new(appeal: self)
+  end
+
   delegate :documents, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
@@ -345,7 +349,7 @@ class LegacyAppeal < ApplicationRecord
         middle_name: veteran_middle_initial,
         last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
-        address: address_from_veteran_record_or_corres_entry(case_record.correspondent),
+        address: get_address_from_veteran_record(veteran) || get_address_from_corres_entry(case_record.correspondent),
         representative: representative_to_hash
       }
     end

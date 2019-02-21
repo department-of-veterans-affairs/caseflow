@@ -86,6 +86,10 @@ class Appeal < DecisionReview
     )
   end
 
+  def va_dot_gov_validator
+    @va_dot_gov_validator ||= VaDotGovValidator.new(appeal: self)
+  end
+
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :manifest_vva_fetched_at, to: :document_fetcher
 
