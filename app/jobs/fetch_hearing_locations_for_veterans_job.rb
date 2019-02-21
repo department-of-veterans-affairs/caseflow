@@ -62,7 +62,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def perform_once_for(appeal)
     begin
-      va_dot_gov_address = appeal.va_dot_gov_validator.validate
+      va_dot_gov_address = appeal.va_dot_gov_address_validator.validate
     rescue Caseflow::Error::VaDotGovLimitError
       return false
     rescue Caseflow::Error::VaDotGovAPIError => error

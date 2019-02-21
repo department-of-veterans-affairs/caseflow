@@ -1,4 +1,4 @@
-class VaDotGovValidator
+class VaDotGovAddressValidator
   attr_accessor :appeal
 
   def initialize(appeal:)
