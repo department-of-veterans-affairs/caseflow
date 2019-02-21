@@ -49,6 +49,7 @@ class CaseReviewsController < ApplicationController
                                    :document_id,
                                    :work_product,
                                    :overtime,
+                                   :untimely_evidence,
                                    :note,
                                    issues: issues_params)
       .merge(attorney: current_user, task_id: params[:task_id])

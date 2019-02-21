@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(version: 20190220225538) do
     t.string "document_type"
     t.text "note"
     t.boolean "overtime", default: false
+    t.boolean "untimely_evidence", default: false
     t.integer "reviewing_judge_id"
     t.string "task_id"
     t.datetime "updated_at", null: false
