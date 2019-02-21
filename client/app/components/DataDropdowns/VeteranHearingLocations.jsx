@@ -17,7 +17,7 @@ export const getFacilityType = (location) => {
   case 'va_health_facility':
     return '(VHA) ';
   case 'va_benefits_facility':
-    return location.classification.indexOf('Regional') === -1 ? '(VBA) ' : '(RO) ';
+    return location.classification.indexOf('Regional') === -1 ? '(BVA) ' : '(RO) ';
   default:
     return '';
   }
