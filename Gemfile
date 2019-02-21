@@ -105,6 +105,8 @@ group :test, :development, :demo do
 end
 
 group :development do
+  gem "bummr", "= 0.3.2", require: false
+  gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"

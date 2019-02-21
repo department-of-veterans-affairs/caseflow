@@ -172,7 +172,7 @@ feature "Higher Level Review Edit issues" do
         contention_reference_id: "123",
         benefit_type: "compensation",
         ineligible_reason: nil,
-        removed_at: nil
+        contention_removed_at: nil
       )
     end
 
@@ -1036,7 +1036,7 @@ feature "Higher Level Review Edit issues" do
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.decision_review_id).to_not be_nil
       expect(request_issue).to be_closed
-      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(request_issue.contention_removed_at).to eq(Time.zone.now)
       expect(request_issue.closed_at).to eq(Time.zone.now)
       expect(request_issue.closed_status).to eq("removed")
       expect(request_issue).to be_removed
