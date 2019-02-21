@@ -145,7 +145,10 @@ export class ListScheduleContainer extends React.Component {
           {this.getAlertMessage()}
         </Alert>}
         <AppSegment filledBackground>
-          <h1 className="cf-push-left">{COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}</h1>
+          <h1 className="cf-push-left">
+            {this.props.userRoleView ? COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_RO :
+              COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}
+          </h1>
           {this.props.userRoleBuild &&
             <span className="cf-push-right">
               <Link button="secondary" to="/schedule/build">Build Schedule</Link>
@@ -202,7 +205,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 ListScheduleContainer.propTypes = {
   userRoleAssign: PropTypes.bool,
-  userRoleBuild: PropTypes.bool
+  userRoleBuild: PropTypes.bool,
+  userRoleView: PropTypes.bool
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListScheduleContainer));
