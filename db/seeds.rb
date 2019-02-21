@@ -179,11 +179,10 @@ class SeedDB
 
     3.times do
       root = FactoryBot.create(:root_task)
-      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       FactoryBot.create_list(
         :request_issue,
         [3, 4, 5].sample,
-        contested_issue_description: description,
+        :nonrating,
         notes: "Pain disorder with 100\% evaluation per examination",
         decision_review: root.appeal
       )
@@ -470,7 +469,6 @@ class SeedDB
   end
 
   def create_ama_appeals
-    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
 
     @appeal_with_vso = FactoryBot.create(
@@ -481,7 +479,7 @@ class SeedDB
       ],
       veteran_file_number: "701305078",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
     es = "evidence_submission"
@@ -506,7 +504,7 @@ class SeedDB
         veteran_file_number: params[:veteran_file_number],
         docket_type: params[:docket_type],
         request_issues: FactoryBot.create_list(
-          :request_issue, params[:request_issue_count], contested_issue_description: description, notes: notes
+          :request_issue, params[:request_issue_count], :nonrating, notes: notes
         )
       )
     end

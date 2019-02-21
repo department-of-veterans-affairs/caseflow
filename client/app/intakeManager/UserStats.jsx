@@ -9,6 +9,7 @@ export default class UserStats extends React.PureComponent {
     this.state = {
       selectedUser: props.selectedUser,
       userStats: [],
+      userStatsFetched: false,
       isSwitching: false,
       error: false
     };
@@ -22,6 +23,7 @@ export default class UserStats extends React.PureComponent {
       this.setState({
         error: false,
         userStats: [],
+        userStatsFetched: false,
         isSwitching: false
       });
 
@@ -33,6 +35,7 @@ export default class UserStats extends React.PureComponent {
       this.setState({
         error: false,
         userStats: JSON.parse(response.text),
+        userStatsFetched: true,
         isSwitching: false
       });
     }).
@@ -41,6 +44,7 @@ export default class UserStats extends React.PureComponent {
         this.setState({
           isSwitching: false,
           userStats: [],
+          userStatsFetched: false,
           error: `Not found: ${userId}`
         });
       });
@@ -78,6 +82,8 @@ export default class UserStats extends React.PureComponent {
 
     if (this.state.userStats.length > 0) {
       tbl = <Table columns={columns} rowObjects={this.state.userStats} slowReRendersAreOk />;
+    } else if (this.state.userStatsFetched) {
+      tbl = <div>No stats available.</div>;
     }
 
     return <div className="cf-app-segment cf-app-segment--alt cf-manager-intakes">
