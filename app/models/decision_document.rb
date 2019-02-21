@@ -32,7 +32,7 @@ class DecisionDocument < ApplicationRecord
     output_location
   end
 
-  def submit_for_processing!
+  def submit_for_processing!(delay: 0)
     update_decision_issue_decision_dates!
     return no_processing_required! unless upload_enabled?
 
