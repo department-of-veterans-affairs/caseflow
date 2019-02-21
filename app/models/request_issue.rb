@@ -8,6 +8,7 @@ class RequestIssue < ApplicationRecord
     review_request_id
     review_request_type
     description
+    parent_request_issue_id
   ]
 
   include Asyncable
@@ -52,7 +53,6 @@ class RequestIssue < ApplicationRecord
 
   # TODO: this is a temporary callback in order to synchronize columns. Remove after data is migrated
   before_save :set_decision_sync_last_submitted_at
-  before_save :set_contention_removed_at
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -170,7 +170,7 @@ class RequestIssue < ApplicationRecord
     def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
       request_issue = unscoped.find_by(
         contested_rating_issue_reference_id: rating_issue_reference_id,
-        removed_at: nil,
+        contention_removed_at: nil,
         ineligible_reason: nil
       )
 
@@ -182,7 +182,7 @@ class RequestIssue < ApplicationRecord
     def find_active_by_contested_decision_id(contested_decision_issue_id)
       request_issue = unscoped.find_by(
         contested_decision_issue_id: contested_decision_issue_id,
-        removed_at: nil,
+        contention_removed_at: nil,
         ineligible_reason: nil
       )
 
@@ -765,10 +765,6 @@ class RequestIssue < ApplicationRecord
 
   def set_decision_sync_last_submitted_at
     self.decision_sync_last_submitted_at = last_submitted_at
-  end
-
-  def set_contention_removed_at
-    self.contention_removed_at = removed_at
   end
 end
 # rubocop:enable Metrics/ClassLength

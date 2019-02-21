@@ -45,10 +45,11 @@ describe BvaDispatchTask do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:citation_number) { "A18123456" }
     let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
+    let(:decision_date) { Date.new(1989, 12, 13).to_s }
     let(:params) do
       { appeal_id: root_task.appeal.external_id,
         citation_number: citation_number,
-        decision_date: Date.new(1989, 12, 13).to_s,
+        decision_date: decision_date,
         file: file,
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
@@ -86,7 +87,7 @@ describe BvaDispatchTask do
           expect(decision_document).to_not eq nil
           expect(decision_document.document_type).to eq "BVA Decision"
           expect(decision_document.source).to eq "BVA"
-          expect(decision_document.submitted_at).to_not be_nil
+          expect(decision_document.submitted_at).to eq(Time.zone.now)
         end
       end
 
@@ -97,6 +98,19 @@ describe BvaDispatchTask do
           expect do
             BvaDispatchTask.outcode(root_task.appeal, params, user)
           end.to_not have_enqueued_job(ProcessDecisionDocumentJob)
+        end
+      end
+
+      context "when decision_date is in the future" do
+        let(:decision_date) { Time.zone.today + 10.days }
+
+        it "sets a delay on the enqueued_job" do
+          expect do
+            BvaDispatchTask.outcode(root_task.appeal, params, user)
+          end.to have_enqueued_job(ProcessDecisionDocumentJob).exactly(:once)
+
+          decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
+          expect(decision_document.submitted_at).to be >= decision_date
         end
       end
     end

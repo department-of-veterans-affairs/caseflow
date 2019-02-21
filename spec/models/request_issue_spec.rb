@@ -423,7 +423,7 @@ describe RequestIssue do
           contested_rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
           end_product_establishment: active_epe,
-          removed_at: nil,
+          contention_removed_at: nil,
           ineligible_reason: nil
         )
       end
