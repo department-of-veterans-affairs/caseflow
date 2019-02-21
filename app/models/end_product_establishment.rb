@@ -14,6 +14,9 @@ class EndProductEstablishment < ApplicationRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
 
+  # allow @veteran to be assigned to save upstream calls
+  attr_writer :veteran
+
   CANCELED_STATUS = "CAN".freeze
   CLEARED_STATUS = "CLR".freeze
 
@@ -32,8 +35,6 @@ class EndProductEstablishment < ApplicationRecord
     def order_by_sync_priority
       active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
     end
-
-    private
 
     def established
       where.not("established_at IS NULL")
@@ -99,7 +100,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def remove_contention!(for_object)
     VBMSService.remove_contention!(contention_for_object(for_object))
-    for_object.update!(removed_at: Time.zone.now)
+    for_object.update!(contention_removed_at: Time.zone.now)
   end
 
   # Committing an end product establishment is a way to signify that any other actions performed
@@ -237,7 +238,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def active_request_issues
-    request_issues.select { |request_issue| request_issue.removed_at.nil? && request_issue.status_active? }
+    request_issues.select { |request_issue| request_issue.contention_removed_at.nil? && request_issue.status_active? }
   end
 
   def associated_rating

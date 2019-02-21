@@ -43,10 +43,15 @@ class RequestIssue < ApplicationRecord
     decided: "decided",
     removed: "removed",
     end_product_canceled: "end_product_canceled",
-    withdrawn: "withdrawn"
+    withdrawn: "withdrawn",
+    dismissed_death: "dismissed_death",
+    stayed: "stayed"
   }
 
   before_save :set_contested_rating_issue_profile_date
+
+  # TODO: this is a temporary callback in order to synchronize columns. Remove after data is migrated
+  before_save :set_decision_sync_last_submitted_at
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -164,7 +169,7 @@ class RequestIssue < ApplicationRecord
     def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
       request_issue = unscoped.find_by(
         contested_rating_issue_reference_id: rating_issue_reference_id,
-        removed_at: nil,
+        contention_removed_at: nil,
         ineligible_reason: nil
       )
 
@@ -176,7 +181,7 @@ class RequestIssue < ApplicationRecord
     def find_active_by_contested_decision_id(contested_decision_issue_id)
       request_issue = unscoped.find_by(
         contested_decision_issue_id: contested_decision_issue_id,
-        removed_at: nil,
+        contention_removed_at: nil,
         ineligible_reason: nil
       )
 
@@ -747,6 +752,10 @@ class RequestIssue < ApplicationRecord
 
   def appeal_active?
     decision_review.tasks.active.any?
+  end
+
+  def set_decision_sync_last_submitted_at
+    self.decision_sync_last_submitted_at = last_submitted_at
   end
 end
 # rubocop:enable Metrics/ClassLength

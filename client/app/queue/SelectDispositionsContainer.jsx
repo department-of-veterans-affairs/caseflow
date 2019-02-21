@@ -1,15 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import _ from 'lodash';
 
 import LegacySelectDispositionsView from './LegacySelectDispositionsView';
 import SelectDispositionsView from './SelectDispositionsView';
 
 class SelectDispositionsContainer extends React.PureComponent {
   render = () => {
-    const { appeal, featureToggles, ...otherProps } = this.props;
+    const { appeal, ...otherProps } = this.props;
 
-    if (!appeal.isLegacyAppeal && (featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues))) {
+    if (!appeal.isLegacyAppeal) {
       return <SelectDispositionsView {...otherProps} />;
     }
 
@@ -18,8 +17,7 @@ class SelectDispositionsContainer extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  appeal: state.queue.stagedChanges.appeals[ownProps.appealId],
-  featureToggles: state.ui.featureToggles
+  appeal: state.queue.stagedChanges.appeals[ownProps.appealId]
 });
 
 export default connect(mapStateToProps, null)(SelectDispositionsContainer);
