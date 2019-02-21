@@ -186,7 +186,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def appellant_is_not_veteran
-    !!appellant_first_name
+    !!appellant_first_name && !!appellant_last_name
   end
 
   def veteran_if_exists
@@ -336,18 +336,18 @@ class LegacyAppeal < ApplicationRecord
   def claimant
     if appellant_is_not_veteran
       {
-        first_name: appellant_first_name,
-        middle_name: appellant_middle_initial,
-        last_name: appellant_last_name,
+        appellant_first_name: appellant_first_name,
+        applellant_middle_name: appellant_middle_initial,
+        appellant_last_name: appellant_last_name,
         name_suffix: appellant_name_suffix,
         address: get_address_from_corres_entry(case_record.correspondent),
         representative: representative_to_hash
       }
     else
       {
-        first_name: veteran_first_name,
-        middle_name: veteran_middle_initial,
-        last_name: veteran_last_name,
+        veteran_first_name: veteran_first_name,
+        veteran_middle_name: veteran_middle_initial,
+        veteran_last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
         address: get_address_from_corres_entry(case_record.correspondent),
         representative: representative_to_hash
