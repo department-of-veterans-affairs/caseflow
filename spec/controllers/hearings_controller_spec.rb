@@ -141,7 +141,7 @@ RSpec.describe HearingsController, type: :controller do
       it "returns an address" do
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: appeal.uuid, appeal_type: "ama", regional_office: "RO13" }
+            params: { appeal_id: appeal.external_id, appeal_type: "ama", regional_office: "RO13" }
 
         expect(response.status).to eq 200
       end
@@ -154,7 +154,7 @@ RSpec.describe HearingsController, type: :controller do
       it "returns an address" do
         get :find_closest_hearing_locations,
             as: :json,
-            params: { appeal_id: legacy_appeal.id, appeal_type: "legacy", regional_office: "RO13" }
+            params: { appeal_id: legacy_appeal.external_id, appeal_type: "legacy", regional_office: "RO13" }
 
         expect(response.status).to eq 200
       end

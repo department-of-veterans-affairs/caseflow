@@ -352,7 +352,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
     const {
       selectedHearingDay, selectedRegionalOffice, appeal,
       selectedHearingTime, openHearing, selectedHearingLocation,
-      selectedOptionalTime, appealId
+      selectedOptionalTime
     } = this.props;
 
     const { invalid } = this.state;
@@ -385,8 +385,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           label="Suggested Hearing Location"
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
-          appealId={appealId}
-          appealType={appeal.docketName === 'legacy' ? 'legacy' : 'ama'}
+          appealId={appeal.externalId}
           dynamic={appeal.closestRegionalOffice !== currentRegionalOffice}
           staticHearingLocations={appeal.availableHearingLocations}
           onChange={this.props.onHearingLocationChange}

@@ -86,7 +86,7 @@ class AppealHearingLocationsDropdown extends React.Component {
   getLocations = () => {
     const {
       appealHearingLocations: { options, isFetching },
-      appealId, appealType, regionalOffice, dropdownName
+      appealId, regionalOffice, dropdownName
     } = this.props;
 
     if (options || isFetching) {
@@ -97,7 +97,7 @@ class AppealHearingLocationsDropdown extends React.Component {
 
     let url = '/hearings/find_closest_hearing_locations?regional_office=';
 
-    url += `${regionalOffice}&appeal_id=${appealId}&appeal_type=${appealType}`;
+    url += `${regionalOffice}&appeal_id=${appealId}`;
 
     ApiUtil.get(url).then((resp) => {
       const locationOptionsResp = _.values(ApiUtil.convertToCamelCase(resp.body).hearingLocations);
@@ -172,7 +172,6 @@ class AppealHearingLocationsDropdown extends React.Component {
 
 AppealHearingLocationsDropdown.propTypes = {
   appealId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  appealType: PropTypes.oneOf(['legacy', 'ama']).isRequired,
   staticHearingLocations: PropTypes.array,
   regionalOffice: PropTypes.string,
   name: PropTypes.string,

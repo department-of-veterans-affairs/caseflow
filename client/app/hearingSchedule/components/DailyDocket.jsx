@@ -215,8 +215,7 @@ export default class DailyDocket extends React.Component {
 
     return <AppealHearingLocationsDropdown
       readOnly={readOnly}
-      appealType={hearing.docketName === 'legacy' ? 'legacy' : 'ama'}
-      appealId={hearing.appealId}
+      appealId={hearing.appealExternalId}
       regionalOffice={currentRegionalOffice}
       staticHearingLocations={staticHearingLocations}
       dynamic={false}
