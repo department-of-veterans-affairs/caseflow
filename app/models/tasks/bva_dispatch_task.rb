@@ -30,7 +30,7 @@ class BvaDispatchTask < GenericTask
     def create_decision_document!(params)
       DecisionDocument.create!(params).tap do |decision_document|
         delay = 0
-        decision_time = decision_document.decision_date.to_time(Time.zone)
+        decision_time = decision_document.decision_date.to_time(:local)
         if decision_time > Time.zone.now
           delay = (decision_time - Time.zone.now).ceil
         end
