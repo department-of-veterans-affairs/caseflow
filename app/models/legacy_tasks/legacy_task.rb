@@ -2,7 +2,7 @@ class LegacyTask
   include ActiveModel::Model
   include ActiveModel::Serialization
 
-  ATTRS = [:id, :appeal_id, :assigned_to, :due_on, :assigned_at, :docket_name, :previous_task,
+  ATTRS = [:id, :appeal_id, :assigned_to, :assigned_at, :docket_name, :previous_task,
            :docket_date, :added_by, :task_id, :action, :document_id, :assigned_by, :work_product].freeze
 
   attr_accessor(*ATTRS)
@@ -93,7 +93,6 @@ class LegacyTask
   def self.from_vacols(record, appeal, user)
     new(
       id: record.vacols_id,
-      due_on: record.date_due,
       docket_name: "legacy",
       added_by: record.added_by,
       docket_date: record.docket_date.try(:to_date),

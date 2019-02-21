@@ -179,15 +179,15 @@ class Appeal < DecisionReview
   end
 
   def hearing_docket?
-    docket_type == "hearing"
+    docket_type == Constants.AMA_DOCKETS.hearing
   end
 
   def evidence_submission_docket?
-    docket_type == "evidence_submission"
+    docket_type == Constants.AMA_DOCKETS.evidence_submission
   end
 
   def direct_review_docket?
-    docket_type == "direct_review"
+    docket_type == Constants.AMA_DOCKETS.direct_review
   end
 
   def active?
@@ -355,6 +355,9 @@ class Appeal < DecisionReview
   end
 
   def active_status?
+    # For the appeal status api, and Appeal is considered open
+    # as long as there are active remand claim or effectuation
+    # tracked in VBMS.
     active? || active_effectuation_ep? || active_remanded_claims?
   end
 
@@ -406,7 +409,10 @@ class Appeal < DecisionReview
     elsif effectuation_ep? && !active_effectuation_ep?
       :bva_decision_effectuation
     elsif decision_issues.any?
-      :bva_decision
+      # there is a period of time where there are decision issues but no
+      # decision document and the decisions issues do not have decision date yet
+      # wait until the document is available before showing there is a decision
+      decision_document ? :bva_decision : :decision_in_progress
     elsif withdrawn?
       :withdrawn
     else
@@ -441,7 +447,7 @@ class Appeal < DecisionReview
       }
     when :decision_in_progress
       {
-        decision_timeliness: AppealSeries::DECISION_TIMELINESS
+        decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
       }
     else
       {}

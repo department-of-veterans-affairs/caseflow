@@ -21,6 +21,41 @@ describe HigherLevelReviewIntake do
     )
   end
 
+  context "#start!" do
+    subject { intake.start! }
+
+    let!(:active_epe) do
+      create(
+        :end_product_establishment,
+        :active,
+        veteran_file_number: veteran_file_number,
+        established_at: Time.zone.yesterday
+      )
+    end
+
+    let!(:canceled_epe) do
+      create(
+        :end_product_establishment,
+        :canceled,
+        veteran_file_number: veteran_file_number,
+        established_at: Time.zone.yesterday
+      )
+    end
+
+    before do
+      @synced = []
+      allow_any_instance_of(EndProductEstablishment).to receive(:sync_source!) do |epe|
+        @synced << epe.id
+      end
+    end
+
+    it "syncs all active EPEs" do
+      subject
+
+      expect(@synced).to eq [active_epe.id]
+    end
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 

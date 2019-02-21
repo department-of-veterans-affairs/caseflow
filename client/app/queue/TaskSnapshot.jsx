@@ -8,8 +8,6 @@ import {
 import AddNewTaskButton from './components/AddNewTaskButton';
 import TaskRows from './components/TaskRows';
 import COPY from '../../COPY.json';
-import type { Appeal } from './types/models';
-import type { State } from './types/state';
 import {
   sectionSegmentStyling,
   sectionHeadingStyling,
@@ -21,16 +19,7 @@ const tableStyling = css({
   marginTop: '0px'
 });
 
-type Params = {|
-  appealId: string,
-  hideDropdown?: boolean
-|};
-
-type Props = Params & {|
-  appeal: Appeal
-|};
-
-export class TaskSnapshot extends React.PureComponent<Props> {
+export class TaskSnapshot extends React.PureComponent {
 
   render = () => {
     const {
@@ -60,7 +49,7 @@ export class TaskSnapshot extends React.PureComponent<Props> {
   };
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state, ownProps) => {
   return {
     appeal: appealWithDetailSelector(state, { appealId: ownProps.appealId }),
     tasks: taskSnapshotTasksForAppeal(state, { appealId: ownProps.appealId })

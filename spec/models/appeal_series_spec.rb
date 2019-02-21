@@ -317,7 +317,7 @@ describe AppealSeries do
         expect(subject[:type]).to eq(:remand_ssoc)
         expect(subject[:details][:last_soc_date]).to eq(1.day.ago.to_date)
         expect(subject[:details][:return_timeliness]).to eq([1, 2])
-        expect(subject[:details][:remand_ssoc_timeliness]).to eq([3, 10])
+        expect(subject[:details][:remand_ssoc_timeliness]).to eq([3, 11])
       end
     end
 
@@ -332,7 +332,7 @@ describe AppealSeries do
 
       it "returns a details hash with the decided issues" do
         expect(subject[:type]).to eq(:remand)
-        expect(subject[:details][:remand_timeliness]).to eq([7, 17])
+        expect(subject[:details][:remand_timeliness]).to eq([16, 29])
         expect(subject[:details][:issues].length).to eq(2)
         expect(subject[:details][:issues].first[:disposition]).to eq(:allowed)
         expect(subject[:details][:issues].first[:description]).to eq(
@@ -356,8 +356,8 @@ describe AppealSeries do
 
       it "returns a details hash with the vso name" do
         expect(subject[:type]).to eq(:pending_form9)
-        expect(subject[:details][:certification_timeliness]).to eq([2, 12])
-        expect(subject[:details][:ssoc_timeliness]).to eq([7, 20])
+        expect(subject[:details][:certification_timeliness]).to eq([2, 8])
+        expect(subject[:details][:ssoc_timeliness]).to eq([5, 13])
       end
     end
   end
