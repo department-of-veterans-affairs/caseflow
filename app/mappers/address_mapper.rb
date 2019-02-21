@@ -26,8 +26,8 @@ module AddressMapper
     }
   end
 
-  def address_from_veteran_record_or_corres_entry(corres_entry)
-    return get_address_from_corres_entry(corres_entry) unless veteran
+  def get_address_from_veteran_record(veteran)
+    return nil unless veteran
 
     {
       address_line_1: veteran.address_line1,

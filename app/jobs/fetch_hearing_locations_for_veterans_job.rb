@@ -4,24 +4,14 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   QUERY_LIMIT = 500
 
-  def appeal_bfkeys
-    @appeal_bfkeys ||= VACOLS::Case.where(bfcurloc: 57).limit(QUERY_LIMIT).pluck(:bfkey)
-  end
-
-  def appeals_from_vacols
-    @appeals_from_vacols ||= LegacyAppeal.where(vacols_id: appeal_bfkeys)
-  end
-
-  def appeals_missing_from_vacols
-    @appeals_missing_from_vacols ||= (appeal_bfkeys - appeals_from_vacols.pluck(:vacols_id)).map do |bfkey|
-      LegacyAppeal.find_or_create_by_vacols_id(bfkey)
-    end
+  def create_schedule_hearing_tasks
+    AppealRepository.create_schedule_hearing_tasks
   end
 
   def find_appeals_ready_for_geomatching(appeal_type)
     # Appeals that have not had an available_hearing_locations updated in the last week
-    # and have an active ScheduleHearingTask
-    # that is not blocked by an VerifyAddress or ForeignVeteranCase admin action
+    # and where the appeal id is in a subquery of ScheduleHearingTasks
+    # that are not blocked by an VerifyAddress or ForeignVeteranCase admin action
     appeal_type.left_outer_joins(:available_hearing_locations)
       .where("#{appeal_type.table_name}.id IN (SELECT t.appeal_id FROM tasks t
           LEFT OUTER JOIN tasks admin_actions
@@ -37,54 +27,8 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def appeals
-    @appeals ||= (appeals_from_vacols +
-                 appeals_missing_from_vacols +
-                 find_appeals_ready_for_geomatching(LegacyAppeal) +
+    @appeals ||= (find_appeals_ready_for_geomatching(LegacyAppeal) +
                  find_appeals_ready_for_geomatching(Appeal))[0..QUERY_LIMIT]
-  end
-
-  def self.get_appellant_address(appeal)
-    appeal.is_a?(LegacyAppeal) ? appeal.appellant[:address] : appeal.appellant.address
-  end
-
-  def self.validate_appellant_address(appeal)
-    address = get_appellant_address(appeal)
-
-    VADotGovService.validate_address(
-      address_line1: address[:address_line1],
-      address_line2: address[:address_line2],
-      address_line3: address[:address_line3],
-      city: address[:city],
-      state: address[:state],
-      country: address[:country],
-      zip_code: address[:zip_code]
-    )
-  end
-
-  def self.validate_zip_code(appeal, error:)
-    address = get_appellant_address(appeal)
-    if address[:zip].nil? || address[:state].nil? || address[:country].nil?
-      fail error
-    else
-      lat_lng = ZipCodeToLatLngMapper::MAPPING[address[:zip][0..4]]
-
-      if lat_lng.nil?
-        fail error
-      end
-
-      { lat: lat_lng[0], long: lat_lng[1], country_code: address[:country], state_code: address[:state] }
-    end
-  end
-
-  def self.validate_address_for_appeal(appeal)
-    begin
-      va_dot_gov_address = validate_appellant_address(appeal)
-    rescue Caseflow::Error::VaDotGovAPIError => error
-      va_dot_gov_address = validate_zip_code(appeal, error: error)
-      return nil if va_dot_gov_address.nil?
-    end
-
-    va_dot_gov_address
   end
 
   def fetch_and_update_ro_for_appeal(appeal, va_dot_gov_address:)
@@ -118,12 +62,12 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def perform_once_for(appeal)
     begin
-      va_dot_gov_address = self.class.validate_appellant_address(appeal)
+      va_dot_gov_address = appeal.va_dot_gov_validator.validate
     rescue Caseflow::Error::VaDotGovLimitError
       return false
     rescue Caseflow::Error::VaDotGovAPIError => error
-      va_dot_gov_address = validate_zip_code_or_handle_error(appeal, error: error)
-      return nil if va_dot_gov_address.nil?
+      handle_error(error, appeal)
+      return nil
     end
 
     begin
@@ -143,19 +87,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   private
-
-  def create_schedule_hearing_tasks
-    AppealRepository.create_schedule_hearing_tasks
-  end
-
-  def validate_zip_code_or_handle_error(appeal, error:)
-    begin
-      self.class.validate_zip_code(appeal, error: error)
-    rescue Caseflow::Error::VaDotGovAPIError
-      handle_error(error, appeal)
-      return nil
-    end
-  end
 
   def facility_ids_for_ro(regional_office_id)
     (RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
@@ -178,7 +109,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def create_available_location_for_appeal(appeal, facility:)
     AvailableHearingLocations.create(
-      veteran_file_number: "null", # make migration backwards compatible
+      veteran_file_number: appeal.veteran_file_number || "",
       appeal: appeal,
       distance: facility[:distance],
       facility_id: facility[:facility_id],
@@ -233,6 +164,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
   def handle_error(error, appeal)
     error_key = get_error_key(error)
+
     case error_key
     when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress"
       create_admin_action_for_schedule_hearing_task(
@@ -253,7 +185,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   end
 
   def create_admin_action_for_schedule_hearing_task(appeal, instructions:, admin_action_type:)
-    task = ScheduleHearingTask.find_or_create_if_eligible(appeal)
+    task = ScheduleHearingTask.find_by(appeal: appeal)
 
     return if task.nil?
 

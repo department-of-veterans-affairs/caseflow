@@ -5,10 +5,17 @@ class ScheduleHearingTask < GenericTask
     def find_or_create_if_eligible(appeal)
       if appeal.is_a?(LegacyAppeal) && appeal.case_record&.bfcurloc == "57" &&
          appeal.hearings.all?(&:disposition)
+
+        parent = HearingTask.active.find_or_create_by!(appeal: appeal) do |task|
+          task.update(
+            assigned_to: Bva.singleton,
+            parent: RootTask.find_or_create_by!(appeal: appeal)
+          )
+        end
         ScheduleHearingTask.active.find_or_create_by!(appeal: appeal) do |task|
           task.update(
             assigned_to: HearingsManagement.singleton,
-            parent: RootTask.find_or_create_by!(appeal: appeal)
+            parent: parent
           )
         end
       elsif appeal.is_a?(Appeal)
