@@ -374,17 +374,17 @@ class SeedDB
           room: "1",
           judge: User.find_by_css_id("BVAAABSHIRE"),
           request_type: (ro_key == "C") ? "C" : "V",
-          scheduled_for: Time.zone.today + (index * 11).days,
+          scheduled_for: Time.zone.local(2019, 4, 1) + (index * 11).days,
           created_by: user,
           updated_by: user
         )
 
         case index
-        when 1
+        when 0
           create_ama_hearing(day)
-        when 2
+        when 1
           create_legacy_hearing(day, ro_key)
-        when 3
+        when 2
           create_legacy_hearing(day, ro_key)
           create_ama_hearing(day)
         end
@@ -392,7 +392,64 @@ class SeedDB
     end
   end
 
+  def create_hearing_schedule_task(appeal)
+    parent = RootTask.find_or_create_by(appeal: appeal)
+
+    hearing_task = HearingTask.active.find_or_create_by(
+      appeal: appeal
+    ) do |task|
+      task.update(
+        assigned_to: Bva.singleton,
+        parent: parent
+      )
+    end
+
+    ScheduleHearingTask.find_or_create_by!(
+      appeal: appeal
+    ) do |task|
+      task.update(
+        parent: hearing_task,
+        assigned_to: HearingsManagement.singleton
+      )
+    end
+  end
+
   def create_legacy_case_with_open_schedule_hearing_task(ro_key)
+    fname = Faker::Name.first_name
+    lname = Faker::Name.last_name
+    state = RegionalOffice::CITIES.find { |k, _v| k == ro_key }[1][:state]
+    address_line1 = Faker::Address.street_address
+    address_line2 = Faker::Address.secondary_address
+    city = Faker::Address.city
+    zip = ""
+
+    vacols_case = FactoryBot.create(
+      :case,
+      correspondent: FactoryBot.create(
+        :correspondent,
+        snamef: fname, snamel: lname, ssalut: "",
+        saddrstt: state, saddrzip: zip, saddrcnty: "USA",
+        saddrst1: address_line1, saddrst2: address_line2,
+        saddrcty: city
+      )
+    )
+    vet = Generators::Veteran.build(
+      first_name: fname,
+      last_name: lname,
+      state: state, city: city, address_line1: address_line1,
+      address_line2: address_line2, zip: zip
+    )
+
+    vet.file_number = LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
+    vet.closest_regional_office = ro_key
+    vet.save
+
+    appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_case.bfkey)
+
+    create_hearing_schedule_task(appeal)
+  end
+
+  def create_anonymized_legacy_case_with_open_schedule_hearing_task(ro_key)
     case ro_key
     when "RO17"
       vacols_id = "2668454"
@@ -404,18 +461,15 @@ class SeedDB
 
     appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
 
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
-    )
+    create_hearing_schedule_task(appeal)
   end
 
   def create_ama_case_with_open_schedule_hearing_task(ro_key)
     vet = Generators::Veteran.build(
       file_number: Faker::Number.number(9).to_s,
       first_name: Faker::Name.first_name,
-      last_name: Faker::Name.last_name
+      last_name: Faker::Name.last_name,
+      state: RegionalOffice::CITIES.find { |k, _v| k == ro_key }[1][:state]
     )
 
     vet.closest_regional_office = ro_key
@@ -424,22 +478,26 @@ class SeedDB
     appeal = FactoryBot.create(
       :appeal,
       :with_tasks,
-      number_of_claimants: 1,
       veteran_file_number: vet.file_number,
       docket_type: "hearing"
     )
 
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
-    )
+    create_hearing_schedule_task(appeal)
   end
 
   def create_veterans_ready_for_hearing
-    %w[C RO45 RO17].each do |ro_key|
-      create_legacy_case_with_open_schedule_hearing_task(ro_key)
-      create_ama_case_with_open_schedule_hearing_task(ro_key)
+    ros = %w[C RO45 RO17]
+
+    ros.each do |ro_key|
+      50.times do
+        create_ama_case_with_open_schedule_hearing_task(ro_key)
+      end
+
+      create_anonymized_legacy_case_with_open_schedule_hearing_task(ro_key)
+
+      100.times do
+        create_legacy_case_with_open_schedule_hearing_task(ro_key)
+      end
     end
   end
 
@@ -875,7 +933,10 @@ class SeedDB
     return if ([appeal.type] - ["Post Remand", "Original"]).empty? &&
               appeal.hearings.map(&:disposition).include?(:held)
 
-    FactoryBot.create(:case_hearing, :disposition_held, user: user, folder_nr: appeal.vacols_id)
+    master_record = FactoryBot.create(:case_hearing, hearing_date: Time.zone.local(2018, 12, 20))
+
+    FactoryBot.create(:case_hearing,
+                      :disposition_held, user: user, folder_nr: appeal.vacols_id, vdkey: master_record.hearing_pkseq)
   end
 
   def create_legacy_issues_eligible_for_opt_in
@@ -944,6 +1005,7 @@ class SeedDB
       created_by: user,
       updated_by: user
     )
+
     Veteran.where(file_number: %w[808415990 992190636]).update_all(closest_regional_office: "RO17")
   end
 
@@ -956,7 +1018,6 @@ class SeedDB
     create_ama_appeals
     create_users
     create_hearing_days
-    create_veterans_ready_for_hearing
     create_tasks
     create_higher_level_review_tasks
 
@@ -971,6 +1032,7 @@ class SeedDB
     create_veteran_record_request_tasks
 
     FetchHearingLocationsForVeteransJob.perform_now
+    create_veterans_ready_for_hearing
 
     return if Rails.env.development?
 
