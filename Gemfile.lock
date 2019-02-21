@@ -103,7 +103,7 @@ GEM
       activemodel (= 5.1.6.1)
       activesupport (= 5.1.6.1)
       arel (~> 8.0)
-    activerecord-import (0.22.0)
+    activerecord-import (1.0.0)
       activerecord (>= 3.2)
     activerecord-oracle_enhanced-adapter (1.8.2)
       activerecord (~> 5.1.0)
