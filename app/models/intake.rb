@@ -112,12 +112,14 @@ class Intake < ApplicationRecord
     if validate_start
       self.class.close_expired_intakes!
 
-      update(
+      after_validated_pre_start!
+
+      update!(
         started_at: Time.zone.now,
         detail: find_or_build_initial_detail
       )
     else
-      update(
+      update!(
         started_at: Time.zone.now,
         completed_at: Time.zone.now,
         completion_status: :error
@@ -241,6 +243,11 @@ class Intake < ApplicationRecord
   end
 
   private
+
+  # Optional step called after the intake is validated and not-yet-marked as started
+  def after_validated_pre_start!
+    nil
+  end
 
   def update_person!
     # Update the person when a claimant is created
