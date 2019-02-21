@@ -77,10 +77,12 @@ class ColocatedTask < Task
   end
 
   def update_location_in_vacols
-    if saved_change_to_status? &&
-       completed? &&
-       appeal_type == LegacyAppeal.name &&
-       all_tasks_completed_for_appeal?
+    is_closed_legacy_appeal = saved_change_to_status? &&
+                              !active? &&
+                              appeal_type == LegacyAppeal.name &&
+                              all_tasks_closed_for_appeal?
+
+    if is_closed_legacy_appeal
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
@@ -94,7 +96,7 @@ class ColocatedTask < Task
     end
   end
 
-  def all_tasks_completed_for_appeal?
+  def all_tasks_closed_for_appeal?
     appeal.tasks.active.where(type: ColocatedTask.name).none?
   end
 

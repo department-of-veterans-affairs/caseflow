@@ -2,8 +2,7 @@ class JudgeTask < Task
   def available_actions(user)
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      additional_available_actions(user),
-      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      additional_available_actions(user)
     ].flatten
   end
 
