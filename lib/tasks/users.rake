@@ -2,11 +2,11 @@ namespace :users do
   desc "find duplicates and suggest which one(s) to delete"
   task dedupe: :environment do
     users = User.all
-    css_ids = users.map(&:css_id)
+    css_ids = users.map(&:css_id).map(&:downcase)
     dupes = css_ids.select { |e| css_ids.count(e) > 1 }.uniq
     dupes.each do |css_id|
       puts "Duplicate: #{css_id}"
-      users = User.where(css_id: css_id)
+      users = User.where("LOWER(css_id)=LOWER(?)", css_id)
       users.each do |user|
         stats = Intake.user_stats(user)
         [
