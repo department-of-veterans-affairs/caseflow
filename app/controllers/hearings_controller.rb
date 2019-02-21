@@ -40,7 +40,7 @@ class HearingsController < ApplicationController
       facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
                      []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
 
-      va_dot_gov_address = appeal.va_dot_gov_validator.validate
+      va_dot_gov_address = appeal.va_dot_gov_address_validator.validate
 
       render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
                                                                      long: va_dot_gov_address[:long],
