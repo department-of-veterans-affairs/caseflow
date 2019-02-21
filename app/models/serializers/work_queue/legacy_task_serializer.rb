@@ -6,7 +6,6 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
     object.class.name
   end
   attribute :assigned_on
-  attribute :due_on
   attribute :docket_name
   attribute :docket_date
   attribute :appeal_id
