@@ -802,7 +802,6 @@ ActiveRecord::Schema.define(version: 20190221224644) do
     t.datetime "last_submitted_at"
     t.string "nonrating_issue_description"
     t.text "notes"
-    t.integer "parent_request_issue_id"
     t.string "ramp_claim_id"
     t.datetime "rating_issue_associated_at"
     t.datetime "removed_at"
@@ -818,7 +817,6 @@ ActiveRecord::Schema.define(version: 20190221224644) do
     t.index ["decision_review_type", "decision_review_id"], name: "index_request_issues_on_decision_review_columns"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
-    t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
   end
 
   create_table "request_issues_updates", force: :cascade do |t|

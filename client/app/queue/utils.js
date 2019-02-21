@@ -69,7 +69,6 @@ export const prepareTasksForStore = (tasks) =>
       closestRegionalOffice: task.attributes.veteran_closest_regional_office,
       createdAt: task.attributes.created_at,
       closedAt: task.attributes.closed_at,
-      dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         name: task.attributes.assigned_to.name,
@@ -145,7 +144,6 @@ export const prepareLegacyTasksForStore = (tasks) => {
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       closedAt: null,
-      dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         isOrganization: task.attributes.assigned_to.is_organization,
