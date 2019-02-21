@@ -298,9 +298,9 @@ class User < ApplicationRecord
 
       return nil if user.nil?
 
-      # we ignore station_id since id should be globally unique.
+      # TODO: ignore station_id since id should be globally unique.
       css_id = user["id"]
-      existing_user = find_by_css_id(css_id)
+      existing_user = find_by("UPPER(css_id)=UPPER(?) AND station_id=?", css_id, user["station_id"])
       return existing_user if existing_user
 
       create!(
