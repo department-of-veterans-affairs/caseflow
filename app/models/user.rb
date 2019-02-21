@@ -293,6 +293,10 @@ class User < ApplicationRecord
       )
     end
 
+    def become_system_user
+      RequestStore[:current_user] = system_user
+    end
+
     def from_session(session)
       user = session["user"] ||= authentication_service.default_user_session
 
