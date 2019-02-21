@@ -345,4 +345,24 @@ describe ColocatedTask do
       end
     end
   end
+
+  describe "colocated task is cancelled" do
+    let(:org) { Colocated.singleton }
+    let(:colocated_user) { FactoryBot.create(:user) }
+    let(:org_task) { FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: org) }
+    let(:colocated_task) { org_task.children.first }
+
+    before do
+      OrganizationsUser.add_user_to_organization(colocated_user, org)
+    end
+
+    it "assigns the parent task back to the organization" do
+      expect(org_task.status).to eq Constants.TASK_STATUSES.on_hold
+      colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      expect(org_task.status).to eq Constants.TASK_STATUSES.completed
+    end
+
+    it "for legacy appeals, changes the location correctly" do
+    end
+  end
 end
