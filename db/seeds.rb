@@ -420,7 +420,7 @@ class SeedDB
     state = RegionalOffice::CITIES.find { |k, _v| k == ro_key }[1][:state]
     address_line1 = Faker::Address.street_address
     address_line2 = Faker::Address.secondary_address
-    city = Faker::Address.city
+    city = Faker::Address.city[0..20]
     zip = ""
 
     vacols_case = FactoryBot.create(
@@ -474,7 +474,9 @@ class SeedDB
 
     vet.closest_regional_office = ro_key
     vet.save
-
+    # to add appellant other than vet,
+    # add attr
+    # claimants: [create(:claimant, ...)]
     appeal = FactoryBot.create(
       :appeal,
       :with_tasks,
