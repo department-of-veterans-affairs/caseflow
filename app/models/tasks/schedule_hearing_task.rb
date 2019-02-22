@@ -31,10 +31,10 @@ class ScheduleHearingTask < GenericTask
         Constants.TASK_STATUSES.in_progress.to_sym
       ).includes(:assigned_to, :assigned_by, :appeal, attorney_case_reviews: [:attorney])
 
-      appeal_tasks = incomplete_tasks.joins(:appeal)
+      appeal_tasks = incomplete_tasks.joins("INNER JOIN appeals ON appeals.id = appeal_id")
         .where("appeals.closest_regional_office = ?", regional_office)
 
-      legacy_appeal_tasks = incomplete_tasks.joins(:legacy_appeal)
+      legacy_appeal_tasks = incomplete_tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id")
         .where("legacy_appeals.closest_regional_office = ?", regional_office)
 
       appeal_tasks + legacy_appeal_tasks
