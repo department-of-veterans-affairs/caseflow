@@ -47,11 +47,7 @@ class AppealsController < ApplicationController
   end
 
   def new_documents
-    render json: { new_documents: appeal.new_documents_for_user(
-      user: current_user,
-      cached: params[:cached],
-      placed_on_hold_at: params[:placed_on_hold_date]
-    ) }
+    render json: { new_documents: appeal.new_documents }
   rescue StandardError => e
     handle_non_critical_error("new_documents", e)
   end

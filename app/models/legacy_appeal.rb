@@ -5,7 +5,6 @@ class LegacyAppeal < ApplicationRecord
   include CachedAttributes
   include AddressMapper
   include Taskable
-  include DocumentConcern
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -138,6 +137,13 @@ class LegacyAppeal < ApplicationRecord
 
   delegate :documents, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
+
+  def new_documents
+    @new_documents_for_user ||= NewDocumentsForUser.new(
+      appeal: self, user: RequestStore[:current_user], query_vbms: true, date_to_compare_with: Time.zone.at(0)
+    )
+    @new_documents_for_user.process!
+  end
 
   def number_of_documents_after_certification
     return 0 unless certification_date
