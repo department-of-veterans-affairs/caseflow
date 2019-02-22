@@ -95,6 +95,11 @@ class Appeal < DecisionReview
     @new_documents_for_user.process!
   end
 
+  def number_of_documents_from_caseflow
+    count = Document.where(file_number: veteran_file_number).size
+    (count != 0) ? count : number_of_documents
+  end
+
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
       find_by_uuid!(id)

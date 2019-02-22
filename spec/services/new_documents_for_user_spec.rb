@@ -32,7 +32,9 @@ describe NewDocumentsForUser do
         }
       end
 
-      let(:new_documents_for_user) { NewDocumentsForUser.new(appeal: appeal, user: user, query_vbms: true, date_to_compare_with: Time.zone.at(0)) }
+      let(:new_documents_for_user) do
+        NewDocumentsForUser.new(appeal: appeal, user: user, query_vbms: true, date_to_compare_with: Time.zone.at(0))
+      end
 
       subject { new_documents_for_user.process! }
 
@@ -78,7 +80,9 @@ describe NewDocumentsForUser do
       end
 
       context "when no alternative date is provided" do
-        let(:new_documents_for_user) { NewDocumentsForUser.new(appeal: appeal, user: user, query_vbms: false, date_to_compare_with: Time.zone.at(0)) }
+        let(:new_documents_for_user) do
+          NewDocumentsForUser.new(appeal: appeal, user: user, query_vbms: false, date_to_compare_with: Time.zone.at(0))
+        end
 
         subject { new_documents_for_user.process! }
 
@@ -112,7 +116,9 @@ describe NewDocumentsForUser do
       end
 
       context "when providing an on_hold date" do
-        let(:new_documents_for_user) { NewDocumentsForUser.new(appeal: appeal, user: user, query_vbms: false, date_to_compare_with: 4.days.ago) }
+        let(:new_documents_for_user) do
+          NewDocumentsForUser.new(appeal: appeal, user: user, query_vbms: false, date_to_compare_with: 4.days.ago)
+        end
 
         subject { new_documents_for_user.process! }
 
