@@ -301,9 +301,8 @@ class User < ApplicationRecord
       # TODO: ignore station_id since id should be globally unique.
       css_id = user["id"]
       existing_user = find_by("UPPER(css_id)=UPPER(?) AND station_id=?", css_id, user["station_id"])
-      return existing_user if existing_user
 
-      create!(
+      existing_user ||= create!(
         css_id: css_id.upcase,
         station_id: user["station_id"],
         full_name: user["name"],
@@ -311,6 +310,14 @@ class User < ApplicationRecord
         roles: user["roles"],
         regional_office: session[:regional_office]
       )
+      existing_user.tap do |u|
+        u.update!(
+          full_name: user["name"],
+          email: user["email"],
+          roles: user["roles"],
+          regional_office: session[:regional_office]
+        )
+      end
     end
 
     def find_by_css_id_or_create_with_default_station_id(css_id)
