@@ -194,7 +194,7 @@ class EndProduct
   end
 
   def limited_power_of_attorney
-    @limited_power_of_attorney ||= claim_id ? BGSService.new.fetch_limited_poas_by_claim_ids(claim_id)
+    @limited_power_of_attorney ||= fetch_limited_power_of_attorney
   end
 
   def ramp?
@@ -205,6 +205,13 @@ class EndProduct
 
   def label
     @label ||= CODES[claim_type_code]
+  end
+
+  def fetch_limited_power_of_attorney
+    return unless claim_id
+
+    limited_poa = BGSService.new.fetch_limited_poas_by_claim_ids(claim_id)
+    limited_poa ? limited_poa[claim_id] : nil
   end
 
   def near_decision_date_of?(appeal)

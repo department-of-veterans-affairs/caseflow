@@ -481,9 +481,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def limited_poa
-    return unless processed_in_vbms?
-
-    previous_request_issue&.end_product_establishment.limited_power_of_attorney_on_established_claim
+    previous_request_issue&.end_product_establishment&.limited_power_of_attorney_on_established_claim
   end
 
   private

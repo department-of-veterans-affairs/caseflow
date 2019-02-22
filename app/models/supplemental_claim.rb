@@ -85,7 +85,7 @@ class SupplementalClaim < ClaimReview
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
       payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
-      code: issue.ep_code,
+      code: issue.end_product_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
