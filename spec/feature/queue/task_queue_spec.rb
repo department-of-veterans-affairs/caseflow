@@ -39,7 +39,7 @@ RSpec.feature "Task queue" do
       let!(:documents) { ["NOD", "BVA Decision", "SSOC"].map { |t| FactoryBot.build(:document, type: t) } }
 
       before do
-        allow_any_instance_of(Appeal).to receive(:new_documents) { documents }
+        allow_any_instance_of(NewDocumentsForUser).to receive(:process!) { documents }
       end
 
       it "shows the correct number of tasks on hold" do
