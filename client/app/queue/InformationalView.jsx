@@ -9,7 +9,7 @@ const verticalLine = css(
   }
 );
 
-export default class InformationalView extends React.PureComponent {
+export default class InstructionalText extends React.PureComponent {
     linkClicked = false;
     render = () => {
       return <div><Button

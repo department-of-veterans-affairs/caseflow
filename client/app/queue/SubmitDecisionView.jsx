@@ -23,7 +23,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
 import JudgeSelectComponent from './JudgeSelectComponent';
-import InformationalView from './InformationalView';
+import InstructionalText from './InstructionalText';
 import { taskById } from './selectors';
 
 import {
@@ -230,7 +230,7 @@ class SubmitDecisionView extends React.PureComponent {
           value={decisionOpts.untimely_evidence || false}
           styling={css(marginBottom(1), marginTop(1))}
         />
-        <InformationalView
+        <InstructionalText
           informationalTitle={COPY.WHAT_IS_INELIGIBLE_EVIDENCE}
           informationHeader={COPY.UNTIMELY_EVIDENCE_TITLE}
           bulletOne={COPY.UNTIMELY_EVIDENCE_BULLET_ONE}
