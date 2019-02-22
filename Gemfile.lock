@@ -300,7 +300,7 @@ GEM
       sass (~> 3.4)
       thor (~> 0.19)
     nenv (0.3.0)
-    newrelic_rpm (4.7.1.340)
+    newrelic_rpm (6.0.0.351)
     nio4r (2.3.1)
     no_proxy_fix (0.1.2)
     nokogiri (1.8.5)
