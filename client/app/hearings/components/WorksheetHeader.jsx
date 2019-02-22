@@ -88,8 +88,8 @@ class WorksheetHeader extends React.PureComponent {
     let negativeDispositionOptions = ['no_show', 'postponed', 'cancelled'];
 
     const getAppellantName = () => {
-      if (worksheet.appellant_first_name && worksheet.appellant_last_name) {
-        return `${worksheet.appellant_last_name}, ${worksheet.appellant_first_name}`;
+      if (worksheet.claimant.first_name && worksheet.claimant.last_name) {
+        return `${worksheet.claimant.last_name}, ${worksheet.claimant.first_name}`;
       }
 
       return `${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`;
