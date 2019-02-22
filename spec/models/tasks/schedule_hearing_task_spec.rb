@@ -199,7 +199,7 @@ describe ScheduleHearingTask do
         end
       end
 
-      it "returns tasks for all relevant appeals in location 57 do
+      it "returns tasks for all relevant appeals in location 57" do
         tasks = ScheduleHearingTask.tasks_for_ro(regional_office)
 
         expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey) + [c_number_case.bfkey])
