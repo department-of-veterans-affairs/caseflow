@@ -21,6 +21,12 @@ const reducer = combineReducers({
 });
 
 class Intake extends React.PureComponent {
+  componentDidMount() {
+    if (window.Raven) {
+      window.Raven.caseflowAppName = 'intake';
+    }
+  }
+
   render() {
     const initialState = {
       intake: mapDataToInitialIntake(this.props),

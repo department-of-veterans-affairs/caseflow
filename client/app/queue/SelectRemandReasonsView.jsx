@@ -44,12 +44,11 @@ class SelectRemandReasonsView extends React.Component {
   goToPrevStep = () => _.each(this.state.renderedChildren, (child) => child.updateStoreIssue());
 
   goToNextStep = () => {
-    const { issues, appealId, appeal, amaDecisionIssues } = this.props;
+    const { issues, appealId, appeal } = this.props;
     const {
       issuesRendered,
       renderedChildren
     } = this.state;
-    const useDecisionIssues = !appeal.isLegacyAppeal && (amaDecisionIssues || !_.isEmpty(appeal.decisionIssues));
 
     if (issuesRendered < issues.length) {
       this.setState({ issuesRendered: Math.min(issuesRendered + 1, issues.length) });
@@ -59,7 +58,7 @@ class SelectRemandReasonsView extends React.Component {
 
     const updatedIssues = _.map(renderedChildren, (child) => child.updateStoreIssue());
 
-    const appealIssues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
+    const appealIssues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
     const mergedIssueUpdates = _.map(appealIssues, (issue) => {
       const updatedIssue = _.find(updatedIssues, { id: issue.id });
@@ -71,7 +70,7 @@ class SelectRemandReasonsView extends React.Component {
       return issue;
     });
 
-    const attributes = useDecisionIssues ? { decisionIssues: mergedIssueUpdates } : { issues: mergedIssueUpdates };
+    const attributes = appeal.isLegacyAppeal ? { issues: mergedIssueUpdates } : { decisionIssues: mergedIssueUpdates };
 
     this.props.editStagedAppeal(appealId, attributes);
 
@@ -128,16 +127,14 @@ SelectRemandReasonsView.propTypes = {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const issues = ((state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)) &&
-    !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
+  const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
   return {
     appeal,
     issues: _.filter(issues, (issue) => [
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
     ].includes(issue.disposition)),
-    ..._.pick(state.ui, 'userRole'),
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues
+    ..._.pick(state.ui, 'userRole')
   };
 };
 

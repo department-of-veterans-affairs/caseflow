@@ -111,7 +111,7 @@ class HearingDay < ApplicationRecord
       elsif regional_office == REQUEST_TYPES[:central]
         cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
                                 REQUEST_TYPES[:central], start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
+        video_and_co = []
       else
         cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
                                 regional_office, start_date, end_date)
@@ -131,17 +131,13 @@ class HearingDay < ApplicationRecord
       total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
 
       # fetching all the RO keys of the dockets
-      regional_office_keys = total_video_and_co.map(&:regional_office)
-      regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
       hearing_days_to_array_of_days_and_hearings(
         total_video_and_co, regional_office.nil? || regional_office == "C"
       ).map do |value|
         scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
 
-        total_slots = HearingDayRepository.fetch_hearing_day_slots(
-          regional_office_hash[value[:hearing_day].regional_office], value[:hearing_day]
-        )
+        total_slots = HearingDayRepository.fetch_hearing_day_slots(regional_office)
 
         if scheduled_hearings.length >= total_slots || value[:hearing_day][:lock]
           nil

@@ -104,29 +104,14 @@ describe Task do
 
     context "when user is an assignee" do
       let(:user) { create(:user) }
-      let(:task) { create(:task, type: "Task", assigned_to: user) }
-
-      it { is_expected.to be_truthy }
-    end
-
-    context "when user is a task parent assignee" do
-      let(:user) { create(:user) }
-      let(:parent) { create(:task, type: "Task", assigned_to: user) }
-      let(:task) { create(:task, type: "Task", parent: parent) }
-
-      it { is_expected.to be_truthy }
-    end
-
-    context "when user is any judge" do
-      let(:user) { create(:user, css_id: "BVABDANIEL") }
-      let(:task) { create(:task, type: "Task", assigned_to: user) }
+      let(:task) { create(:generic_task, assigned_to: user).becomes(GenericTask) }
 
       it { is_expected.to be_truthy }
     end
 
     context "when user does not have access" do
       let(:user) { create(:user) }
-      let(:task) { create(:task, type: "Task", assigned_to: create(:user)) }
+      let(:task) { create(:generic_task, assigned_to: create(:user)) }
 
       it { is_expected.to be(false) }
     end
@@ -598,6 +583,18 @@ describe Task do
         expect(task.closed_at).to eq(nil)
         task.update!(status: status)
         expect(task.closed_at).to_not eq(nil)
+      end
+    end
+  end
+
+  describe ".cancel_task_data" do
+    let(:task) { FactoryBot.create(:generic_task, assigned_by_id: assigner_id) }
+    subject { task.cancel_task_data }
+
+    context "when the task has no assigner" do
+      let(:assigner_id) { nil }
+      it "fills in the assigner name with placeholder text" do
+        expect(subject[:message_detail]).to eq(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, "the assigner"))
       end
     end
   end

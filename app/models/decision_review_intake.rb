@@ -28,7 +28,7 @@ class DecisionReviewIntake < Intake
     detail.errors.messages
   end
 
-  def complete!(request_params, &additional_transactions)
+  def complete!(request_params)
     return if complete? || pending?
 
     req_issues = request_params[:request_issues] || []
@@ -36,12 +36,23 @@ class DecisionReviewIntake < Intake
       start_completion!
       detail.request_issues.destroy_all unless detail.request_issues.empty?
       detail.create_issues!(build_issues(req_issues))
-      additional_transactions.call
+      yield
       complete_with_status!(:success)
     end
   end
 
   def build_issues(request_issues_data)
     request_issues_data.map { |data| RequestIssue.from_intake_data(data, decision_review: detail) }
+  end
+
+  private
+
+  # run during start!
+  def after_validated_pre_start!
+    epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
+    epes.each do |epe|
+      epe.veteran = veteran
+      epe.sync!
+    end
   end
 end

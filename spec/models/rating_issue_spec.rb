@@ -20,6 +20,7 @@ describe RatingIssue do
         profile_date: profile_date,
         promulgation_date: promulgation_date,
         decision_text: "This broadcast may not be reproduced",
+        diagnostic_code: "1234",
         associated_end_products: [],
         rba_contentions_data: [{}]
       )
@@ -34,6 +35,7 @@ describe RatingIssue do
         profile_date: profile_date,
         promulgation_date: promulgation_date,
         decision_text: "This broadcast may not be reproduced",
+        diagnostic_code: "1234",
         rba_contentions_data: [{}]
       )
     end
@@ -61,7 +63,8 @@ describe RatingIssue do
     let(:bgs_record) do
       {
         rba_issue_id: "NBA",
-        decn_txt: "This broadcast may not be reproduced"
+        decn_txt: "This broadcast may not be reproduced",
+        dgnstc_tc: "3001"
       }
     end
 
@@ -73,6 +76,7 @@ describe RatingIssue do
         decision_text: "This broadcast may not be reproduced",
         profile_date: profile_date,
         contention_reference_ids: [],
+        diagnostic_code: "3001",
         benefit_type: :pension
       )
     end
@@ -126,7 +130,7 @@ describe RatingIssue do
     end
 
     let(:reference_id) { "abc123" }
-    let(:review_request_type) { "SupplementalClaim" }
+    let(:decision_review_type) { "SupplementalClaim" }
     let(:inactive_end_product_establishment) { create(:end_product_establishment, :cleared) }
     let(:active_end_product_establishment) { create(:end_product_establishment, :active) }
 
@@ -135,7 +139,7 @@ describe RatingIssue do
         :request_issue,
         end_product_establishment: active_end_product_establishment,
         contested_rating_issue_reference_id: reference_id,
-        review_request_type: review_request_type
+        decision_review_type: decision_review_type
       )
     end
 
@@ -144,7 +148,7 @@ describe RatingIssue do
         :request_issue,
         end_product_establishment: inactive_end_product_establishment,
         contested_rating_issue_reference_id: reference_id,
-        review_request_type: review_request_type
+        decision_review_type: decision_review_type
       )
     end
 
@@ -156,7 +160,7 @@ describe RatingIssue do
     end
 
     context "removed issue" do
-      let(:review_request_type) { nil }
+      let(:decision_review_type) { nil }
 
       it "returns nil if the issue has been removed" do
         request_issue

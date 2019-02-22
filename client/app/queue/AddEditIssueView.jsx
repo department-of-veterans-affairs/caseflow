@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -47,41 +46,7 @@ const smallTopMargin = css({ marginTop: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
-import type {
-  Appeal,
-  Issue
-} from './types/models';
-import type { UiStateMessage } from './types/state';
-
-type Props = {|
-  action: "add" | "edit",
-  issueId: string,
-  appealId: string,
-  nextStep: string,
-  prevStep: string
-|};
-
-type Params = Props & {|
-  issue: Issue,
-  appeal: Appeal,
-  highlight: boolean,
-  error: ?UiStateMessage,
-  deleteIssueModal: boolean,
-  // dispatch
-  showModal: typeof showModal,
-  hideModal: typeof hideModal,
-  requestSave: typeof requestSave,
-  requestUpdate: typeof requestUpdate,
-  requestDelete: typeof requestDelete,
-  startEditingAppealIssue: Function,
-  saveEditedAppealIssue: typeof saveEditedAppealIssue,
-  cancelEditingAppealIssue: typeof cancelEditingAppealIssue,
-  deleteEditingAppealIssue: typeof deleteEditingAppealIssue,
-  updateEditingAppealIssue: typeof updateEditingAppealIssue,
-  highlightInvalidFormItems: typeof highlightInvalidFormItems
-|};
-
-class AddEditIssueView extends React.Component<Params> {
+class AddEditIssueView extends React.Component {
   componentDidMount = () => {
     const { issueId, appealId } = this.props;
 
@@ -159,7 +124,10 @@ class AddEditIssueView extends React.Component<Params> {
       );
     }
 
-    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text)));
+    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text))).
+      catch(() => {
+        // handle the error from the frontend
+      });
   };
 
   updateIssuesFromServer = (response) => {
@@ -211,7 +179,7 @@ class AddEditIssueView extends React.Component<Params> {
     value
   }));
 
-  renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value: string) => ({
+  renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
     value
   }));

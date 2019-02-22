@@ -5,6 +5,7 @@ class Hearing < ApplicationRecord
   has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
+  has_one :hearing_task_association, as: :hearing
   has_many :hearing_issue_notes
 
   accepts_nested_attributes_for :hearing_issue_notes
@@ -100,10 +101,13 @@ class Hearing < ApplicationRecord
 
   def slot_new_hearing(hearing_day_id, hearing_location_attrs: nil, **_args)
     # These fields are needed for the legacy hearing's version of this method
-    Hearing.create!(hearing_day_id: hearing_day_id,
-                    scheduled_time: scheduled_time,
-                    hearing_location_attributes: hearing_location_attrs,
-                    appeal: appeal)
+    hearing = Hearing.create!(
+      hearing_day_id: hearing_day_id,
+      scheduled_time: scheduled_time,
+      appeal: appeal
+    )
+
+    hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
   end
 
   def external_id

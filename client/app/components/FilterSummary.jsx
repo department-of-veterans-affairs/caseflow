@@ -38,7 +38,7 @@ const FilterSummary = ({ filteredByList, alternateColumnNames, clearFilteredByLi
       });
 
       filterSummary = (
-        <div>
+        <div className="cf-filter-summary">
           <strong>Filtering by:</strong>
           {filterListContent}
           <span>{clearAllFiltersLink}</span>

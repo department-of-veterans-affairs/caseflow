@@ -2,11 +2,14 @@
   <%= react_component("HearingSchedule", props: {
     feedbackUrl: feedback_url,
     userDisplayName: current_user.display_name,
-    userRoleAssign: current_user.can?('Assign HearSched'),
+    userRoleAssign: current_user.can?('Edit HearSched') || current_user.can?('Build HearSched'),
     userRoleBuild: current_user.can?('Build HearSched'),
-    userInHearingsOrganization: HearingsManagement.singleton.users.include?(current_user),
+    userRoleView: current_user.can?('RO ViewHearSched'),
+    userInHearingsOrganization: (HearingsManagement.singleton.users.include?(current_user) ||
+        TranscriptionTeam.singleton.users.include?(current_user)),
     userId: current_user.id,
     userCssId: current_user.css_id,
-    dropdownUrls: dropdown_urls
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls
   }) %>
 <% end %>

@@ -1,7 +1,8 @@
 require "rails_helper"
 
 describe User do
-  let(:session) { { "user" => { "id" => "123", "station_id" => "310", "name" => "Tom Brady" } } }
+  let(:css_id) { "TomBrady" }
+  let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
   let(:user) { User.from_session(session) }
 
   before(:all) do
@@ -14,6 +15,23 @@ describe User do
 
   before do
     Fakes::AuthenticationService.user_session = nil
+  end
+
+  context ".find_by_css_id" do
+    let!(:user) { create(:user, css_id: "FOOBAR") }
+
+    it "searches case insensitively" do
+      expect(User.find_by_css_id("fooBaR")).to eq(user)
+    end
+  end
+
+  context ".find_by_css_id_or_create_with_default_station_id" do
+    subject { User.find_by_css_id_or_create_with_default_station_id(css_id) }
+
+    it "forces the css id to UPCASE" do
+      expect(css_id.upcase).to_not eq(css_id)
+      expect(subject.css_id).to eq(css_id.upcase)
+    end
   end
 
   context "#regional_office" do
@@ -35,13 +53,13 @@ describe User do
 
     let(:result) do
       {
-        "id" => "123",
+        "id" => css_id.upcase,
         "station_id" => "310",
-        "css_id" => "123",
+        "css_id" => css_id.upcase,
         "email" => nil,
         "roles" => [],
         "selected_regional_office" => nil,
-        :display_name => "123",
+        :display_name => css_id.upcase,
         "name" => "Tom Brady"
       }
     end
@@ -108,12 +126,12 @@ describe User do
         session["user"]["id"] = "Shaner"
         user.regional_office = "RO77"
       end
-      it { is_expected.to eq("Shaner (RO77)") }
+      it { is_expected.to eq("SHANER (RO77)") }
     end
 
     context "when just username is set" do
       before { session["user"]["id"] = "Shaner" }
-      it { is_expected.to eq("Shaner") }
+      it { is_expected.to eq("SHANER") }
     end
   end
 
@@ -138,18 +156,18 @@ describe User do
 
     context "when roles don't contain the thing but user is granted the function" do
       before { session["user"]["roles"] = ["Do the other thing!"] }
-      before { Functions.grant!("Do the thing", users: ["123"]) }
+      before { Functions.grant!("Do the thing", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
 
     context "when roles contains the thing but user is denied" do
       before { session["user"]["roles"] = ["Do the thing"] }
-      before { Functions.deny!("Do the thing", users: ["123"]) }
+      before { Functions.deny!("Do the thing", users: [css_id.upcase]) }
       it { is_expected.to be_falsey }
     end
 
     context "when system admin and roles don't contain the thing" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: [css_id.upcase]) }
       before { session["user"]["roles"] = ["Do the other thing"] }
       it { is_expected.to be_truthy }
     end
@@ -170,7 +188,7 @@ describe User do
     end
 
     context "when user with roles that contain admin" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
   end
@@ -296,12 +314,12 @@ describe User do
     end
 
     context "when user with roles that contain admin" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
 
     context "when user with grant that contain Admin Intake" do
-      before { Functions.grant!("Admin Intake", users: ["123"]) }
+      before { Functions.grant!("Admin Intake", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
 
@@ -422,6 +440,7 @@ describe User do
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
         expect(subject.full_name).to eq("Anne Merica")
+        expect(subject.css_id).to eq("TOMBRADY")
       end
 
       it "persists user to DB" do
@@ -512,7 +531,7 @@ describe User do
         admin_orgs.each { |o| OrganizationsUser.make_user_admin(user, o) }
       end
       it "should return a list of all teams user is an admin for" do
-        expect(user.administered_teams).to eq(admin_orgs)
+        expect(user.administered_teams).to include(*admin_orgs)
       end
     end
   end

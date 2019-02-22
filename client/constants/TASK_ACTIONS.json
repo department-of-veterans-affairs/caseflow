@@ -5,6 +5,7 @@
     "ASSIGN_TO_PERSON": { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assign_to_user_data" },
     "ASSIGN_TO_PRIVACY_TEAM": { "label": "Assign to Privacy team", "value": "modal/assign_to_privacy_team", "func": "assign_to_privacy_team_data" },
     "ASSIGN_TO_TEAM": { "label": "Assign to team", "value": "modal/assign_to_team", "func": "assign_to_organization_data" },
+    "CANCEL_TASK": { "label": "Cancel task", "value": "modal/cancel_task", "func": "cancel_task_data" },
     "COLOCATED_RETURN_TO_ATTORNEY": { "label": "Send back to attorney", "value": "modal/mark_task_complete" },
     "COMPLETE_TRANSCRIPTION": { "label": "Mark as complete: Transcribed", "value": "modal/mark_task_complete" },
     "CREATE_MAIL_TASK": { "label": "Create mail task", "value": "modal/create_mail_task", "func": "mail_assign_to_organization_data" },
@@ -12,7 +13,6 @@
     "JUDGE_AMA_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/dispositions"  },
     "JUDGE_RETURN_TO_ATTORNEY": { "label": "Return to attorney", "value": "modal/return_to_attorney", "func": "return_to_attorney_data" },
     "MARK_COMPLETE": { "label": "Mark task complete", "value": "modal/mark_task_complete", "func": "complete_data" },
-    "WITHDRAW_HEARING": { "label": "Withdraw hearing", "value": "modal/cancel_task", "func": "withdraw_hearing_data" },
     "PLACE_HOLD": { "label": "Place hold", "value": "place_hold" },
     "REASSIGN_TO_PERSON": { "label": "Re-assign to person", "value": "modal/reassign_to_person", "func": "assign_to_user_data" },
     "RESCHEDULE_HEARING": { "label": "Mark as complete: Reschedule hearing", "value": "modal/cancel_task", "func": "assign_to_hearing_schedule_team_data" },
@@ -22,5 +22,6 @@
     "SCHEDULE_VETERAN": { "label": "Schedule Veteran", "value": "modal/schedule_veteran", "func": "schedule_veteran_data" },
     "SEND_TO_TEAM": { "label": "Send to team", "value": "modal/send_colocated_task" },
     "SEND_TO_TRANSLATION": { "label": "Assign to Translation team", "value": "modal/assign_to_translation_team", "func": "assign_to_translation_team_data" },
-    "SUBMIT_OMO_REQUEST_FOR_REVIEW": { "label": "Medical Request Ready for Review", "value": "omo_request/submit" }
+    "SUBMIT_OMO_REQUEST_FOR_REVIEW": { "label": "Medical Request Ready for Review", "value": "omo_request/submit" },
+    "WITHDRAW_HEARING": { "label": "Withdraw hearing", "value": "modal/cancel_task", "func": "withdraw_hearing_data" }
 }

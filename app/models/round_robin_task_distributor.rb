@@ -1,40 +1,43 @@
 class RoundRobinTaskDistributor
   include ActiveModel::Model
 
-  attr_accessor :list_of_assignees, :task_class
+  validates :task_class, :assignee_pool, presence: true
+  validate :assignee_pool_must_contain_only_users
 
-  def assignee_users
-    User.where(css_id: list_of_assignees)
-  end
+  attr_accessor :assignee_pool, :task_class
 
   def latest_task
-    task_class.where(assigned_to: assignee_users).max_by(&:created_at)
+    task_class.where(assigned_to: assignee_pool).max_by(&:created_at)
   end
 
-  def last_assignee_css_id
-    latest_task&.assigned_to&.css_id
+  def last_assignee
+    latest_task&.assigned_to
   end
 
   def last_assignee_index
-    list_of_assignees.index(last_assignee_css_id)
+    assignee_pool.index(last_assignee)
   end
 
   def next_assignee_index
-    return 0 unless last_assignee_css_id
+    return 0 unless last_assignee
     return 0 unless last_assignee_index
 
-    (last_assignee_index + 1) % list_of_assignees.length
-  end
-
-  def next_assignee_css_id
-    if list_of_assignees.blank?
-      fail Caseflow::Error::RoundRobinTaskDistributorError, message: "list_of_assignees cannot be empty"
-    end
-
-    list_of_assignees[next_assignee_index]
+    (last_assignee_index + 1) % assignee_pool.length
   end
 
   def next_assignee(_options = {})
-    User.find_by_css_id_or_create_with_default_station_id(next_assignee_css_id)
+    unless valid?
+      fail Caseflow::Error::RoundRobinTaskDistributorError, message: errors.full_messages.join(", ")
+    end
+
+    assignee_pool[next_assignee_index]
+  end
+
+  private
+
+  def assignee_pool_must_contain_only_users
+    unless assignee_pool.all? { |a| a.is_a?(User) }
+      errors.add(:assignee_pool, COPY::TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE)
+    end
   end
 end

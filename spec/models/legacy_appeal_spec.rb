@@ -459,7 +459,7 @@ describe LegacyAppeal do
     end
   end
 
-  context "#new_documents_from_caseflow" do
+  context "#new_documents_for_user" do
     before do
       documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
     end
@@ -476,7 +476,7 @@ describe LegacyAppeal do
     let!(:appeal) { Generators::LegacyAppeal.create }
     let!(:vacols_case) { create(:case, documents: documents) }
 
-    subject { appeal.new_documents_from_caseflow(user) }
+    subject { appeal.new_documents_for_user(user: user) }
 
     context "when appeal has no appeal view" do
       it "should return all documents" do
@@ -1627,7 +1627,7 @@ describe LegacyAppeal do
 
       it { expect(subject.length).to eq(4) }
       it { is_expected.to include("Foreign claim - compensation claims, dual claims, appeals") }
-      it { is_expected.to include("Vocational Rehab") }
+      it { is_expected.to include("Vocational Rehabilitation and Employment") }
       it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
       it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
     end

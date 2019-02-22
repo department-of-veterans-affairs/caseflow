@@ -263,17 +263,20 @@ describe EndProduct do
         date: 7.days.from_now.to_date,
         suppress_acknowledgement_letter: false,
         gulf_war_registry: true,
-        claimant_participant_id: "1234"
+        claimant_participant_id: "1234",
+        limited_poa_code: nil,
+        limited_poa_access: nil
       )
     end
   end
 
   context ".from_bgs_hash" do
     let(:result) { EndProduct.from_bgs_hash(bgs_hash) }
+    let(:claim_receive_date) { 10.days.from_now.to_formatted_s(:short_date) }
     let(:bgs_hash) do
       {
         benefit_claim_id: "2",
-        claim_receive_date: 10.days.from_now.to_formatted_s(:short_date),
+        claim_receive_date: claim_receive_date,
         claim_type_code: "170RMD",
         end_product_type_code: "170",
         status_type_code: "PEND",
@@ -290,6 +293,21 @@ describe EndProduct do
         status_type_code: "PEND",
         last_action_date: Date.new(2019, 1, 29)
       )
+    end
+
+    context "datetime returned in 8601 format" do
+      let(:claim_receive_date) { (Time.zone.now + 10.days).iso8601.to_s }
+
+      it "parses dates in ISO8601 format correctly" do
+        expect(result).to have_attributes(
+          claim_id: "2",
+          claim_date: 10.days.from_now.beginning_of_day,
+          claim_type_code: "170RMD",
+          modifier: "170",
+          status_type_code: "PEND",
+          last_action_date: Date.new(2019, 1, 29)
+        )
+      end
     end
   end
 

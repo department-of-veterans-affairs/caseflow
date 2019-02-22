@@ -7,6 +7,10 @@ class Claimant < ApplicationRecord
 
   bgs_attr_accessor :first_name, :last_name, :middle_name, :relationship
 
+  validates :participant_id,
+            uniqueness: { scope: [:review_request_id, :review_request_type],
+                          on: :create }
+
   def self.create_from_intake_data!(participant_id:, payee_code:)
     create!(
       participant_id: participant_id,

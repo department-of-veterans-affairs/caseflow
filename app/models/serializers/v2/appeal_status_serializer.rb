@@ -23,24 +23,14 @@ class V2::AppealStatusSerializer < ActiveModel::Serializer
   attribute :description
   attribute :advanced_on_docket, key: :aod
   attribute :location
-
-  attribute :aoj do
-    "other"
-  end
-
+  attribute :aoj
   attribute :program, key: :program_area
   attribute :status_hash, key: :status
   attribute :alerts
   attribute :docket_hash, key: :docket
   attribute :issues
   attribute :events
-
-  attribute :issues do
-    # to be implemented
-    # will need to override method used
-    # issues already exists in appeal
-    []
-  end
+  attribute :issues_hash, key: :issues
 
   # Stubbed attributes
   attribute :evidence do

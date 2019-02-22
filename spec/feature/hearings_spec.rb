@@ -66,7 +66,7 @@ RSpec.feature "Hearings" do
       expect(get_hearings(3)).to eql("2")
 
       # Validate help link
-      find("#menu-trigger").click
+      find("a", text: "DSUSER (DSUSER)").click
       find_link("Help").click
       expect(page).to have_content("Welcome to the Hearings Help page!")
     end
@@ -278,7 +278,7 @@ RSpec.feature "Hearings" do
 
     context "Worksheet for AMA hearings" do
       let(:ama_hearing) { create(:hearing, judge: current_user) }
-      let!(:request_issue) { create(:request_issue, review_request_id: ama_hearing.id) }
+      let!(:request_issue) { create(:request_issue, decision_review: ama_hearing.appeal) }
 
       scenario "Can save information for ama hearings" do
         visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"

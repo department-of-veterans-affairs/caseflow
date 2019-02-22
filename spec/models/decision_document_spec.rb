@@ -41,6 +41,7 @@ describe DecisionDocument do
     after { FeatureToggle.disable!(:decision_document_upload) }
 
     let(:expected_path) { "decisions/#{decision_document.appeal.external_id}.pdf" }
+    let!(:decision_issue) { create(:decision_issue, decision_review: appeal, caseflow_decision_date: nil) }
 
     context "when there is a file" do
       let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
@@ -49,6 +50,12 @@ describe DecisionDocument do
         expect(S3Service).to receive(:store_file).with(expected_path, /PDF/)
         subject
         expect(decision_document.submitted_at).to eq(Time.zone.now)
+      end
+
+      it "updates the decision date on decision issues" do
+        subject
+        expect(decision_issue.reload.caseflow_decision_date).to_not be_nil
+        expect(decision_issue.caseflow_decision_date).to eq(decision_document.decision_date)
       end
     end
 
@@ -69,6 +76,12 @@ describe DecisionDocument do
           expect(decision_document.submitted_at).to eq(Time.zone.now)
           expect(decision_document.attempted_at).to eq(Time.zone.now)
           expect(decision_document.processed_at).to eq(Time.zone.now)
+        end
+
+        it "updates the decision date on decision issues" do
+          subject
+          expect(decision_issue.reload.caseflow_decision_date).to_not be_nil
+          expect(decision_issue.caseflow_decision_date).to eq(decision_document.decision_date)
         end
       end
     end
@@ -253,7 +266,9 @@ describe DecisionDocument do
               end_product_code: "030BGR",
               gulf_war_registry: false,
               suppress_acknowledgement_letter: false,
-              claimant_participant_id: nil # decision_document.appeal.veteran.participant_id
+              claimant_participant_id: nil, # decision_document.appeal.veteran.participant_id
+              limited_poa_code: nil,
+              limited_poa_access: nil
             },
             veteran_hash: decision_document.appeal.veteran.to_vbms_hash,
             user: User.system_user

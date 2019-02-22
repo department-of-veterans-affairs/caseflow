@@ -82,6 +82,22 @@ class Intake < ApplicationRecord
       )
   end
 
+  def self.user_stats(user, n_days = 60)
+    stats = {}
+    Intake.select("intakes.*, date(completed_at) as day_completed")
+      .where(user: user)
+      .where("completed_at > ?", Time.zone.now.end_of_day - n_days.days)
+      .where(completion_status: "success")
+      .order("day_completed").each do |intake|
+      completed = intake[:day_completed].iso8601
+      type = intake.detail_type.underscore.to_sym
+      stats[completed] ||= { type => 0, date: completed }
+      stats[completed][type] ||= 0
+      stats[completed][type] += 1
+    end
+    stats.sort.map { |entry| entry[1] }.reverse
+  end
+
   def pending?
     !!completion_started_at && completion_started_at > COMPLETION_TIMEOUT.ago
   end
@@ -96,12 +112,14 @@ class Intake < ApplicationRecord
     if validate_start
       self.class.close_expired_intakes!
 
-      update(
+      after_validated_pre_start!
+
+      update!(
         started_at: Time.zone.now,
         detail: find_or_build_initial_detail
       )
     else
-      update(
+      update!(
         started_at: Time.zone.now,
         completed_at: Time.zone.now,
         completion_status: :error
@@ -225,6 +243,11 @@ class Intake < ApplicationRecord
   end
 
   private
+
+  # Optional step called after the intake is validated and not-yet-marked as started
+  def after_validated_pre_start!
+    nil
+  end
 
   def update_person!
     # Update the person when a claimant is created

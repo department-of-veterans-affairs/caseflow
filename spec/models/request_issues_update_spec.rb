@@ -43,7 +43,7 @@ describe RequestIssuesUpdate do
   let!(:existing_request_issues) do
     [
       RequestIssue.new(
-        review_request: review,
+        decision_review: review,
         contested_rating_issue_profile_date: Time.zone.local(2017, 4, 5),
         contested_rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
@@ -51,7 +51,7 @@ describe RequestIssuesUpdate do
         rating_issue_associated_at: 5.days.ago
       ),
       RequestIssue.new(
-        review_request: review,
+        decision_review: review,
         contested_rating_issue_profile_date: Time.zone.local(2017, 4, 6),
         contested_rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
@@ -289,8 +289,8 @@ describe RequestIssuesUpdate do
           )
 
           removed_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
-          expect(removed_issue.review_request).to_not be_nil
-          expect(removed_issue.removed_at).to_not be_nil
+          expect(removed_issue.decision_review).to_not be_nil
+          expect(removed_issue.contention_removed_at).to_not be_nil
           expect(removed_issue).to be_closed
           expect(removed_issue).to be_removed
           expect(removed_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
@@ -317,7 +317,7 @@ describe RequestIssuesUpdate do
         it "cancels end products with no request issues" do
           create(
             :request_issue,
-            review_request: review,
+            decision_review: review,
             end_product_establishment: nonrating_end_product_establishment,
             contention_reference_id: nonrating_request_issue_contention.id,
             nonrating_issue_description: nonrating_request_issue_contention.text,

@@ -5,6 +5,10 @@ class LegacyDocket
   # include NOD-stage appeals at a discount reflecting the likelihood that they will advance to a Form 9.
   NOD_ADJUSTMENT = 0.4
 
+  def docket_type
+    "legacy"
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity
   def count(priority: nil, ready: nil)
     counts_by_priority_and_readiness.inject(0) do |sum, row|
@@ -20,10 +24,14 @@ class LegacyDocket
     count(priority: false) + nod_count * NOD_ADJUSTMENT
   end
 
+  def age_of_n_oldest_priority_appeals(num)
+    LegacyAppeal.repository.age_of_n_oldest_priority_appeals(num)
+  end
+
   def distribute_priority_appeals(distribution, genpop: "any", limit: 1)
     LegacyAppeal.repository.distribute_priority_appeals(distribution.judge, genpop, limit).map do |record|
       distribution.distributed_cases.create(case_id: record["bfkey"],
-                                            docket: "legacy",
+                                            docket: docket_type,
                                             priority: true,
                                             ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
                                             genpop: record["vlj"].nil?,
@@ -34,12 +42,20 @@ class LegacyDocket
   def distribute_nonpriority_appeals(distribution, genpop: "any", range: nil, limit: 1)
     LegacyAppeal.repository.distribute_nonpriority_appeals(distribution.judge, genpop, range, limit).map do |record|
       distribution.distributed_cases.create(case_id: record["bfkey"],
-                                            docket: "legacy",
+                                            docket: docket_type,
                                             priority: false,
                                             ready_at: VacolsHelper.normalize_vacols_datetime(record["bfdloout"]),
                                             docket_index: record["docket_index"],
                                             genpop: record["vlj"].nil?,
                                             genpop_query: genpop)
+    end
+  end
+
+  def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1)
+    if priority
+      distribute_priority_appeals(distribution, genpop: genpop, limit: limit)
+    else
+      distribute_nonpriority_appeals(distribution, genpop: genpop, limit: limit)
     end
   end
 

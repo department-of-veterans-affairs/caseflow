@@ -19,7 +19,7 @@ class HearingDateDropdown extends React.Component {
     const { hearingDates: { options }, validateValueOnMount, onChange } = this.props;
 
     if (!_.isEqual(prevProps.hearingDates.options, options) && validateValueOnMount) {
-      const option = this.getSelectedOption();
+      const option = this.getSelectedOption() || {};
 
       onChange(option.value, option.label);
     }
@@ -66,6 +66,15 @@ class HearingDateDropdown extends React.Component {
       }
 
       hearingDateOptions.sort((d1, d2) => new Date(d1.value.hearingDate) - new Date(d2.value.hearingDate));
+
+      hearingDateOptions.unshift({
+        label: ' ',
+        value: {
+          hearingId: null,
+          hearingDate: null
+        }
+      });
+
       this.props.onReceiveDropdownData(name, hearingDateOptions);
     });
   }
@@ -73,15 +82,15 @@ class HearingDateDropdown extends React.Component {
   getSelectedOption = () => {
     const { value, hearingDates: { options } } = this.props;
 
+    if (!value) {
+      return options ? options[0] : {};
+    }
+
     const comparison = typeof (value) === 'string' ?
       (opt) => opt.value.hearingDate === formatDateStr(value, 'YYYY-MM-DD', 'YYYY-MM-DD') :
       (opt) => opt.value === value;
 
-    return _.find(options, comparison) ||
-      {
-        value: null,
-        label: null
-      };
+    return _.find(options, comparison);
   }
 
   render() {
@@ -94,7 +103,7 @@ class HearingDateDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value, option.label)}
+        onChange={(option) => onChange((option || {}).value, (option || {}).label)}
         options={this.props.hearingDates.options}
         errorMessage={errorMessage}
         placeholder={placeholder} />
