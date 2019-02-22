@@ -3,15 +3,37 @@ RSpec.feature "Colocated checkout flows" do
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
   let(:colocated_user) { FactoryBot.create(:user) }
   let!(:vacols_colocated) { FactoryBot.create(:staff, :colocated_role, sdomainid: colocated_user.css_id) }
+  let(:veteran1_first_name) { "Natasha" }
+  let(:veteran1_last_name) { "Vanbruggen" }
+  let!(:veteran1) do
+    FactoryBot.create(
+      :veteran,
+      first_name: veteran1_first_name,
+      last_name: veteran1_last_name,
+      file_number: 524_481_638
+    )
+  end
+
+  let(:veteran2_first_name) { "Safa" }
+  let(:veteran2_last_name) { "Vidal" }
+  let!(:veteran2) do
+    FactoryBot.create(
+      :veteran,
+      first_name: veteran2_first_name,
+      last_name: veteran2_last_name,
+      file_number: 267_990_255
+    )
+  end
 
   context "given a valid legacy appeal" do
     let!(:appeal) do
       FactoryBot.create(
         :legacy_appeal,
-        :with_veteran,
         vacols_case: FactoryBot.create(
           :case,
           :assigned,
+          correspondent: FactoryBot.create(:correspondent, snamef: veteran1_first_name, snamel: veteran1_last_name),
+          bfcorlid: veteran1.file_number,
           user: colocated_user,
           case_issues: FactoryBot.create_list(:case_issue, 1)
         )
@@ -20,10 +42,11 @@ RSpec.feature "Colocated checkout flows" do
     let!(:appeal_with_translation_task) do
       FactoryBot.create(
         :legacy_appeal,
-        :with_veteran,
         vacols_case: FactoryBot.create(
           :case,
           :assigned,
+          correspondent: FactoryBot.create(:correspondent, snamef: veteran2_first_name, snamel: veteran2_last_name),
+          bfcorlid: veteran2.file_number,
           user: colocated_user,
           case_issues: FactoryBot.create_list(:case_issue, 1)
         )

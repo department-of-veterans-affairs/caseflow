@@ -17,6 +17,10 @@ export const getFacilityType = (location) => {
   case 'va_health_facility':
     return '(VHA) ';
   case 'va_benefits_facility':
+    if (location.facilityId === 'vba_372') {
+      return '(BVA)';
+    }
+
     return location.classification.indexOf('Regional') === -1 ? '(VBA) ' : '(RO) ';
   default:
     return '';
