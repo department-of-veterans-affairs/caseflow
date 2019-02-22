@@ -148,9 +148,9 @@ export class DailyDocket extends React.PureComponent {
   });
 
  getAppellantInformation = (hearing) => {
-   if (hearing.claimant.appellant_first_name && hearing.claimant.appellant_last_name) {
+   if (hearing.claimant.first_name && hearing.claimant.last_name) {
      return <div>
-       <span><b>{`${hearing.claimant.appellant_first_name} ${hearing.claimant.appellant_last_name}`}</b><br />
+       <span><b>{`${hearing.claimant.first_name} ${hearing.claimant.last_name}`}</b><br />
          {`${hearing.veteran_first_name} ${hearing.veteran_last_name}`} (Veteran)</span><br />
        <NonRouterLink
          href={`/queue/appeals/${hearing.appeal_external_id}`}

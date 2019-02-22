@@ -133,11 +133,11 @@ export default class DailyDocket extends React.Component {
    }
 
   getAppellantName = (hearing) => {
-    if (hearing.claimant.appellantFirstName && hearing.claimant.appellantLastName) {
-      return `${hearing.claimant.appellantFirstName} ${hearing.claimant.appellantLastName}`;
+    if (hearing.claimant.firstName && hearing.claimant.lastName) {
+      return `${hearing.claimant.firstName} ${hearing.claimant.lastName}`;
     }
 
-    return `${hearing.claimant.veteranFirstName} ${hearing.claimant.veteranLastName}`;
+    return `${hearing.veteranFirstName} ${hearing.veteranLastName}`;
   };
 
   getAppellantInformation = (hearing) => {

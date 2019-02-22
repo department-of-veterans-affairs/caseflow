@@ -416,7 +416,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             expect(response_body["attributes"]["veteran_ssn"]).to eq appeal.veteran_ssn
             expect(response_body["attributes"]["file_number"]).to eq appeal.veteran_file_number
             expect(response_body["attributes"]["appellants"][0]["representative"]["name"]).to eq("Attorney McAttorney")
-            expect(response_body["attributes"]["appellants"][0]["appellant_first_name"]).to eq("Forrest")
+            expect(response_body["attributes"]["appellants"][0]["first_name"]).to eq("Forrest")
             expect(response_body["attributes"]["aod"]).to eq appeal.aod
             expect(response_body["attributes"]["cavc"]).to eq appeal.cavc
             expect(response_body["attributes"]["issues"]).to eq appeal.issues
