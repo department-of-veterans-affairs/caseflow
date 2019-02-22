@@ -255,22 +255,18 @@ class Appeal < DecisionReview
     claimants.first
   end
 
-  def appellant_is_not_veteran
-    !!appellant.first_name && !!appellant.last_name
-  end
-
   def claimant
-    if appellant_is_not_veteran
+    if !!appellant.first_name
       {
-        appellant_first_name: appellant.first_name,
-        applellant_middle_name: appellant.middle_name[0],
-        appellant_last_name: appellant.last_name
+        first_name: appellant.first_name,
+        middle_name: appellant.middle_name[0],
+        last_name: appellant.last_name
       }
     else
       {
-        veteran_first_name: veteran.first_name,
-        veteran_middle_name: veteran.middle_name[0],
-        veteran_last_name: veteran.last_name
+        first_name: veteran.first_name,
+        middle_name: veteran.middle_name[0],
+        last_name: veteran.last_name
       }
     end
   end
