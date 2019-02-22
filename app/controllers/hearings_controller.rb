@@ -35,12 +35,12 @@ class HearingsController < ApplicationController
     begin
       HearingDayMapper.validate_regional_office(params["regional_office"])
 
-      veteran = Veteran.find_by(file_number: params["veteran_file_number"])
+      appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params["appeal_id"])
 
       facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
                      []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
 
-      va_dot_gov_address = veteran.validate_address
+      va_dot_gov_address = appeal.va_dot_gov_address_validator.validate
 
       render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
                                                                      long: va_dot_gov_address[:long],
