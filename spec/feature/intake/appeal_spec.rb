@@ -958,4 +958,21 @@ feature "Appeal Intake" do
       expect(page).to have_content("dismissed issue")
     end
   end
+
+  context "has a chain of prior decision issues" do
+    let(:start_date) { Time.zone.today - 300.days }
+    before do
+      prior_appeal = create(:appeal, :outcoded, veteran: veteran)
+      request_issue = create(:request_issue,
+                             contested_rating_issue_reference_id: "old123",
+                             contested_rating_issue_profile_date: untimely_rating.profile_date,
+                             decision_review: prior_appeal)
+      setup_prior_decision_issue_chain(prior_appeal, request_issue, veteran, start_date)
+    end
+
+    it "disables prior contestable issues" do
+      start_appeal(veteran)
+      check_decision_issue_chain(start_date)
+    end
+  end
 end

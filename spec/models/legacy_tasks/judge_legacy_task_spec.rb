@@ -32,7 +32,6 @@ describe JudgeLegacyTask do
         it "sets all the fields correctly" do
           expect(subject.user_id).to eq("USER_ID")
           expect(subject.id).to eq("1111")
-          expect(subject.due_on).to eq 1.day.ago
           expect(subject.assigned_on).to eq 3.days.ago.to_date
           expect(subject.action).to eq "review"
           expect(subject.task_id).to eq "1111-2015-01-25"
@@ -50,7 +49,6 @@ describe JudgeLegacyTask do
         it "sets all the fields correctly" do
           expect(subject.user_id).to eq("USER_ID")
           expect(subject.id).to eq("1111")
-          expect(subject.due_on).to eq 1.day.ago
           expect(subject.assigned_on).to eq 3.days.ago.to_date
           expect(subject.action).to eq "assign"
           expect(subject.task_id).to eq "1111-2015-01-25"

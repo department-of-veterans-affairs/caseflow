@@ -53,6 +53,8 @@ describe BvaDispatchTask do
         file: file,
         redacted_document_location: "C://Windows/User/BLOBLAW/Documents/Decision.docx" }
     end
+    let!(:request_issue) { create(:request_issue, decision_review: root_task.appeal) }
+    let!(:di) { create(:decision_issue, decision_review: root_task.appeal, request_issues: [request_issue]) }
 
     before do
       OrganizationsUser.add_user_to_organization(user, BvaDispatch.singleton)
@@ -69,7 +71,7 @@ describe BvaDispatchTask do
       context "when :decision_document_upload feature is enabled" do
         it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
           expect do
-            BvaDispatchTask.outcode(root_task.appeal, params, user)
+            BvaDispatchTask.outcode(root_task.appeal.reload, params, user)
           end.to have_enqueued_job(ProcessDecisionDocumentJob).exactly(:once)
 
           tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
@@ -78,6 +80,8 @@ describe BvaDispatchTask do
           expect(task.status).to eq("completed")
           expect(task.parent.status).to eq("completed")
           expect(task.root_task.status).to eq("completed")
+          expect(request_issue.reload.closed_at).to eq(Time.zone.now)
+          expect(request_issue.closed_status).to eq("decided")
 
           decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
           expect(decision_document).to_not eq nil
