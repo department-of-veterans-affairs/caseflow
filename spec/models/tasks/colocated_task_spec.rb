@@ -349,12 +349,13 @@ describe ColocatedTask do
   describe "colocated task is cancelled" do
     let(:org) { Colocated.singleton }
     let(:colocated_user) { FactoryBot.create(:user) }
-    let(:org_task) { FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: org) }
-    let(:colocated_task) { org_task.children.first }
 
     before do
       OrganizationsUser.add_user_to_organization(colocated_user, org)
     end
+
+    let(:org_task) { FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: org) }
+    let(:colocated_task) { org_task.children.first }
 
     it "assigns the parent task back to the organization" do
       expect(org_task.status).to eq Constants.TASK_STATUSES.on_hold
@@ -362,7 +363,12 @@ describe ColocatedTask do
       expect(org_task.status).to eq Constants.TASK_STATUSES.completed
     end
 
-    it "for legacy appeals, changes the location correctly" do
+    let(:legacy_org_task) { FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: org) }
+    let(:legacy_colocated_task) { legacy_org_task.children.first }
+
+    it "for legacy appeals, the new assigned to location is set correctly" do
+      legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      expect(legacy_org_task.appeal.location_code).to eq attorney.vacols_uniq_id
     end
   end
 end
