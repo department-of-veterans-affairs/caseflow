@@ -135,14 +135,29 @@ RSpec.describe HearingsController, type: :controller do
   end
 
   describe "#find_closest_hearing_locations" do
-    let!(:veteran) { create(:veteran, file_number: "123456789") }
+    context "for AMA appeals" do
+      let!(:appeal) { create(:appeal) }
 
-    it "returns an address" do
-      get :find_closest_hearing_locations,
-          as: :json,
-          params: { veteran_file_number: "123456789", regional_office: "RO13" }
+      it "returns an address" do
+        get :find_closest_hearing_locations,
+            as: :json,
+            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
 
-      expect(response.status).to eq 200
+        expect(response.status).to eq 200
+      end
+    end
+
+    context "for legacy appeals" do
+      let!(:vacols_case) { create(:case) }
+      let!(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+      it "returns an address" do
+        get :find_closest_hearing_locations,
+            as: :json,
+            params: { appeal_id: legacy_appeal.external_id, regional_office: "RO13" }
+
+        expect(response.status).to eq 200
+      end
     end
   end
 end
