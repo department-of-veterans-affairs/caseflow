@@ -33,7 +33,6 @@ const serverData = {
           docket_name: 'Legacy',
           docket_number: '6182238',
           document_id: '12345-12345678',
-          due_on: '2018-08-11T00:00:00.000Z',
           external_appeal_id: '3625593',
           issue_count: 6,
           paper_case: false,
@@ -71,7 +70,6 @@ describe('QueueLoadingScreen', () => {
         externalAppealId: '3625593',
         assignedOn: '2018-08-02T17:37:03.000Z',
         closedAt: null,
-        dueOn: '2018-08-11T00:00:00.000Z',
         assignedTo: {
           cssId: 'BVANKUVALIS',
           name: 'name',
