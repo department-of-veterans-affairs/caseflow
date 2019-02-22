@@ -558,8 +558,10 @@ class Fakes::BGSService
   def fetch_limited_poas_by_claim_ids(claim_ids)
     result = {}
     Array.wrap(claim_ids).each do |claim_id|
-      if claim_id.include? "HAS_LIMITED_POA"
+      if claim_id.include? "HAS_LIMITED_POA_WITH_ACCESS"
         result[claim_id] = { limited_poa_code: "OU3", limited_poa_access: "Y" }
+      elsif claim_id.include? "HAS_LIMITED_POA_WITHOUT_ACCESS"
+        result[claim_id] = { limited_poa_code: "007", limited_poa_access: "N" }
       end
     end
 
