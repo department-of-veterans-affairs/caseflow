@@ -1,11 +1,8 @@
 require "rails_helper"
 
 RSpec.feature "Hearing Schedule Daily Docket" do
-  let!(:current_user) do
-    User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
-  end
-
   context "Daily docket with one legacy hearing" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
     let!(:hearing_day) do
       create(:hearing_day,
              request_type: HearingDay::REQUEST_TYPES[:video],
@@ -69,6 +66,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
   end
 
   context "Daily docket with one AMA hearing" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
     let!(:hearing) { create(:hearing) }
     let!(:postponed_hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 3)) }
 
@@ -88,6 +86,20 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       # For unknown reasons, in feature tests, the hearing time is displayed as 3:30am. I
       # created a ticket that we can look into after February.
       # expect(page).to have_content("8:30 am")
+    end
+  end
+
+  context "Daily docket for RO view user" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["RO ViewHearSched"]) }
+    let!(:hearing) { create(:hearing) }
+
+    scenario "User can only update notes" do
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to have_field("Transcript Requested", disabled: true, visible: false)
+      find(".dropdown-Disposition").find(".is-disabled")
+      fill_in "Notes", with: "This is a note about the hearing!"
+      click_button("Save")
+      expect(page).to have_content("This is a note about the hearing!")
     end
   end
 end

@@ -166,7 +166,7 @@ export class DailyDocketContainer extends React.Component {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
         hearing.transcriptRequested : hearing.editedTranscriptRequested,
-      notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
+      notes: _.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes,
       hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
         ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
       scheduled_time: this.getScheduledTime(hearing),
@@ -327,6 +327,7 @@ export class DailyDocketContainer extends React.Component {
         displayLockSuccessMessage={this.props.displayLockSuccessMessage}
         onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
         userRoleBuild={this.props.userRoleBuild}
+        userRoleView={this.props.userRoleView}
         dailyDocketServerError={this.props.dailyDocketServerError}
         onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
         notes={this.props.notes}
