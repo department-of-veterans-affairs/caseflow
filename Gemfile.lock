@@ -323,7 +323,7 @@ GEM
     pdf-forms (1.2.0)
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
-    pg (0.21.0)
+    pg (1.1.4)
     powerpack (0.1.2)
     prometheus-client (0.7.1)
       quantile (~> 0.2.0)
