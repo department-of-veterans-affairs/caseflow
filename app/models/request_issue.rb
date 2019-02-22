@@ -481,7 +481,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def limited_poa_code
-    limited_poa ? limited_poa[:limited_poa_code] : nil
+    return unless limited_poa
+
+    limited_poa[:limited_poa_code]
   end
 
   def limited_poa_access

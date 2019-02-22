@@ -221,9 +221,7 @@ describe RequestIssue do
     end
   end
 
-  context "#limited_poa" do
-    subject { rating_request_issue.limited_poa }
-
+  context "limited_poa" do
     let(:previous_dr) { create(:higher_level_review) }
     let(:previous_ri) { create(:request_issue, decision_review: previous_dr, end_product_establishment: previous_epe) }
     let(:previous_epe) { create(:end_product_establishment, reference_id: previous_claim_id) }
@@ -233,7 +231,8 @@ describe RequestIssue do
       let(:contested_decision_issue_id) { nil }
 
       it "returns nil" do
-        expect(subject).to be_nil
+        expect(rating_request_issue.limited_poa_code).to be_nil
+        expect(rating_request_issue.limited_poa_access).to be_nil
       end
     end
 
@@ -244,7 +243,8 @@ describe RequestIssue do
         let(:previous_epe) { nil }
 
         it "returns nil" do
-          expect(subject).to be_nil
+          expect(rating_request_issue.limited_poa_code).to be_nil
+          expect(rating_request_issue.limited_poa_access).to be_nil
         end
       end
 
@@ -252,15 +252,24 @@ describe RequestIssue do
         let(:previous_claim_id) { "NoLimitedPOA" }
 
         it "returns nil" do
-          expect(subject).to be_nil
+          expect(rating_request_issue.limited_poa_code).to be_nil
+          expect(rating_request_issue.limited_poa_access).to be_nil
         end
       end
 
-      context "when there is an limited POA" do
-        let(:previous_claim_id) { "HAS_LIMITED_POA" }
-        it "returns the established end product's limited POA" do
-          expect(subject).to_not be_nil
-          expect(subject).to eq(previous_epe.result.limited_power_of_attorney)
+      context "when there is an limited POA with access" do
+        let(:previous_claim_id) { "HAS_LIMITED_POA_WITH_ACCESS" }
+        it "returns the established end product's limited POA, changes Y to true" do
+          expect(rating_request_issue.limited_poa_code).to eq("OU3")
+          expect(rating_request_issue.limited_poa_access).to be true
+        end
+      end
+
+      context "when there is an limited POA without access" do
+        let(:previous_claim_id) { "HAS_LIMITED_POA_WITHOUT_ACCESS" }
+        it "returns the established end product's limited POA, with false for access" do
+          expect(rating_request_issue.limited_poa_code).to eq("007")
+          expect(rating_request_issue.limited_poa_access).to be false
         end
       end
     end

@@ -177,7 +177,7 @@ describe HigherLevelReview do
              reference_id: epe_ref_id)
     end
 
-    let(:epe_ref_id) { "HAS_LIMITED_POA" }
+    let(:epe_ref_id) { "HAS_LIMITED_POA_WITH_ACCESS" }
 
     context "when there are dta errors" do
       let!(:decision_issues) do
@@ -257,7 +257,7 @@ describe HigherLevelReview do
         expect(first_dta_request_issue).to_not be_nil
         expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDER")
         expect(first_dta_request_issue.end_product_establishment.limited_poa_code).to eq("OU3")
-        expect(first_dta_request_issue.end_product_establishment.limited_poa_access).to eq("Y")
+        expect(first_dta_request_issue.end_product_establishment.limited_poa_access).to be true
 
         second_dta_request_issue = RequestIssue.find_by(
           decision_review: supplemental_claim,
