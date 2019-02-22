@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190222172203) do
+ActiveRecord::Schema.define(version: 20190221004127) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,7 +106,6 @@ ActiveRecord::Schema.define(version: 20190222172203) do
     t.boolean "overtime", default: false
     t.integer "reviewing_judge_id"
     t.string "task_id"
-    t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
   end
@@ -215,7 +214,6 @@ ActiveRecord::Schema.define(version: 20190222172203) do
     t.string "payee_code"
     t.bigint "review_request_id", null: false
     t.string "review_request_type", null: false
-    t.index ["participant_id", "review_request_id", "review_request_type"], name: "uniq_index_on_participant_id_review_request", unique: true
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
