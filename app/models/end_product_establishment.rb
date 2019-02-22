@@ -128,17 +128,8 @@ class EndProductEstablishment < ApplicationRecord
 
   delegate :contentions, to: :cached_result
 
-  # Check if there is a limited POA on the established end product
-  # Only necessary if a decision on that end product was remanded
-  def check_for_limited_power_of_attorney!
-    limited_poa = BGSService.new.fetch_limited_poas_by_claim_ids(reference_id)
-
-    return unless limited_poa
-
-    update!(
-      limited_poa_code: limited_poa[reference_id][:limited_poa_code],
-      limited_poa_access: limited_poa[reference_id][:limited_poa_access]
-    )
+  def limited_power_of_attorney_on_established_claim
+    result&.limited_power_of_attorney
   end
 
   def description

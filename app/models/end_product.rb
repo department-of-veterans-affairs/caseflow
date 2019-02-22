@@ -193,6 +193,10 @@ class EndProduct
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
   end
 
+  def limited_power_of_attorney
+    @limited_power_of_attorney ||= claim_id ? BGSService.new.fetch_limited_poas_by_claim_ids(claim_id)
+  end
+
   def ramp?
     RAMP_CODES.key?(claim_type_code)
   end

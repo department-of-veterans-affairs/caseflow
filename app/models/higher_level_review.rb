@@ -20,9 +20,6 @@ class HigherLevelReview < ClaimReview
   end
 
   def on_decision_issues_sync_processed(end_product_establishment)
-    return unless decision_issues.remanded.uncontested
-
-    end_product_establishment.check_for_limited_power_of_attorney!
     create_remand_supplemental_claims!
   end
 
