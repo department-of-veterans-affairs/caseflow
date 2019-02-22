@@ -423,7 +423,7 @@ describe RequestIssue do
           contested_rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
           end_product_establishment: active_epe,
-          removed_at: nil,
+          contention_removed_at: nil,
           ineligible_reason: nil
         )
       end
@@ -1138,6 +1138,8 @@ describe RequestIssue do
               )
               expect(rating_request_issue.processed?).to eq(true)
               expect(rating_request_issue.decision_sync_error).to be_nil
+              expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+              expect(rating_request_issue.closed_status).to eq("decided")
             end
 
             context "when decision issue with disposition and rating issue already exists" do
@@ -1156,6 +1158,8 @@ describe RequestIssue do
                 expect(rating_request_issue.decision_issues.count).to eq(1)
                 expect(rating_request_issue.decision_issues.first).to eq(preexisting_decision_issue)
                 expect(rating_request_issue.processed?).to eq(true)
+                expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+                expect(rating_request_issue.closed_status).to eq("decided")
               end
             end
 
@@ -1193,6 +1197,8 @@ describe RequestIssue do
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
+              expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+              expect(rating_request_issue.closed_status).to eq("decided")
             end
           end
         end
@@ -1232,6 +1238,8 @@ describe RequestIssue do
             end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
           )
           expect(request_issue.processed?).to eq(true)
+          expect(request_issue.closed_at).to eq(Time.zone.now)
+          expect(request_issue.closed_status).to eq("decided")
         end
 
         context "when there is no disposition" do

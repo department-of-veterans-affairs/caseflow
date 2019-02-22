@@ -8,6 +8,7 @@ class RequestIssue < ApplicationRecord
     review_request_id
     review_request_type
     description
+    parent_request_issue_id
   ]
 
   include Asyncable
@@ -42,10 +43,16 @@ class RequestIssue < ApplicationRecord
   enum closed_status: {
     decided: "decided",
     removed: "removed",
-    end_product_canceled: "end_product_canceled"
+    end_product_canceled: "end_product_canceled",
+    withdrawn: "withdrawn",
+    dismissed_death: "dismissed_death",
+    stayed: "stayed"
   }
 
   before_save :set_contested_rating_issue_profile_date
+
+  # TODO: this is a temporary callback in order to synchronize columns. Remove after data is migrated
+  before_save :set_decision_sync_last_submitted_at
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -163,7 +170,7 @@ class RequestIssue < ApplicationRecord
     def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
       request_issue = unscoped.find_by(
         contested_rating_issue_reference_id: rating_issue_reference_id,
-        removed_at: nil,
+        contention_removed_at: nil,
         ineligible_reason: nil
       )
 
@@ -175,7 +182,7 @@ class RequestIssue < ApplicationRecord
     def find_active_by_contested_decision_id(contested_decision_issue_id)
       request_issue = unscoped.find_by(
         contested_decision_issue_id: contested_decision_issue_id,
-        removed_at: nil,
+        contention_removed_at: nil,
         ineligible_reason: nil
       )
 
@@ -366,6 +373,7 @@ class RequestIssue < ApplicationRecord
 
       end_product_establishment.on_decision_issue_sync_processed(self)
       clear_error!
+      close_decided_issue!
       processed!
     end
   end
@@ -394,6 +402,13 @@ class RequestIssue < ApplicationRecord
 
   def remove!
     update!(closed_at: Time.zone.now, closed_status: :removed)
+  end
+
+  def close_decided_issue!
+    return unless closed_at.nil?
+    return unless decision_issues.any?
+
+    update!(closed_at: Time.zone.now, closed_status: :decided)
   end
 
   def close_after_end_product_canceled!
@@ -746,6 +761,10 @@ class RequestIssue < ApplicationRecord
 
   def appeal_active?
     decision_review.tasks.active.any?
+  end
+
+  def set_decision_sync_last_submitted_at
+    self.decision_sync_last_submitted_at = last_submitted_at
   end
 end
 # rubocop:enable Metrics/ClassLength

@@ -325,7 +325,7 @@ describe Appeal do
 
     it "does not return Decision Issues in the future" do
       expect(subject.count).to eq(1)
-      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
+      expect(subject.first.decision_issue.id).to eq(past_decision_issue.id)
     end
   end
 
@@ -1056,7 +1056,7 @@ describe Appeal do
       end
     end
 
-    context "have a decision with no remands or effectuation" do
+    context "have a decision with no remands or effectuation, no decision document" do
       let(:judge_review_task_status) { "completed" }
       let!(:judge_review_task) do
         create(:ama_judge_decision_review_task,
@@ -1068,11 +1068,21 @@ describe Appeal do
                decision_review: appeal, disposition: "allowed")
       end
 
-      it "has a decision" do
+      it "status is still in progress since because no decision document" do
         status = appeal.status_hash
-        expect(status[:type]).to eq(:bva_decision)
-        expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
-        expect(status[:details][:issues].first[:disposition]).to eq("allowed")
+        expect(status[:type]).to eq(:decision_in_progress)
+        expect(status[:details][:decision_timeliness]).to eq([1, 2])
+      end
+
+      context "decision document created" do
+        let!(:decision_document) { create(:decision_document, appeal: appeal) }
+
+        it "status is bva_decision" do
+          status = appeal.status_hash
+          expect(status[:type]).to eq(:bva_decision)
+          expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
+          expect(status[:details][:issues].first[:disposition]).to eq("allowed")
+        end
       end
     end
 
