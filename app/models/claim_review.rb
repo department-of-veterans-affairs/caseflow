@@ -80,6 +80,8 @@ class ClaimReview < DecisionReview
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
   def establish!
+    return if processed?
+
     attempted!
 
     if processed_in_caseflow? && end_product_establishments.any?
