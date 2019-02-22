@@ -18,30 +18,39 @@ class TranscriptionTask < GenericTask
       verify_user_can_update!(current_user)
 
       if params[:status] == Constants.TASK_STATUSES.cancelled
-        withdraw_hearing
-        params[:status] = Constants.TASK_STATUSES.completed
+        recreate_hearing
+      else
+        super(params, current_user)
       end
-
-      super(params, current_user)
     end
-  end
 
-  def recreate_hearing
-    # We need to close the parent task and all the sibling tasks as well as open up a new
-    # ScheduleHearingTask assigned to the hearing branch
-    parent.update!(status: Constants.TASK_STATUSES.cancelled)
-    parent.chidren.update(status: Constants.TASK_STATUSES.cancelled)
-
-
+    [self]
   end
 
   def hearing_task
     return @hearing_task if @hearing_task
-    
+
     @hearing_task = parent
-    while @hearing_task.class != HearingTask
-      @hearing_task = @hearing_task.parent
-    end
+    @hearing_task = @hearing_task.parent while @hearing_task.class != HearingTask
     @hearing_task
+  end
+
+  private
+
+  def recreate_hearing
+    # We need to close the parent task and all the sibling tasks as well as open up a new
+    # ScheduleHearingTask assigned to the hearing branch
+    hearing_task.cancel_task_and_child_subtasks
+
+    new_hearing_task = HearingTask.create!(
+      appeal: appeal,
+      parent: hearing_task.parent,
+      assigned_to: Bva.singleton
+    )
+    ScheduleHearingTask.create!(
+      appeal: appeal,
+      parent: new_hearing_task,
+      assigned_to: HearingsManagement.singleton
+    )
   end
 end
