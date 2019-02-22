@@ -80,8 +80,6 @@ class ClaimReview < DecisionReview
   # If any external calls fail, it is safe to call this multiple times until
   # establishment_processed_at is successfully set.
   def establish!
-    return if processed?
-
     attempted!
 
     if processed_in_caseflow? && end_product_establishments.any?
@@ -102,7 +100,7 @@ class ClaimReview < DecisionReview
     process_legacy_issues!
 
     clear_error!
-    processed!
+    processed! # note this will be set only once even if re-attempted later via RequestIssuesUpdate.establish!
   end
 
   def invalid_modifiers
