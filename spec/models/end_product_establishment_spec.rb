@@ -31,7 +31,7 @@ describe EndProductEstablishment do
   let(:doc_reference_id) { nil }
   let(:development_item_reference_id) { nil }
   let(:limited_poa_code) { "ABC" }
-  let(:limited_poa_access) { "Y" }
+  let(:limited_poa_access) { true }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -122,7 +122,7 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             claimant_participant_id: "11223344",
             limited_poa_code: "ABC",
-            limited_poa_access: "Y"
+            limited_poa_access: true
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -152,7 +152,7 @@ describe EndProductEstablishment do
               gulf_war_registry: false,
               claimant_participant_id: "11223344",
               limited_poa_code: "ABC",
-              limited_poa_access: "Y"
+              limited_poa_access: true
             ),
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
@@ -224,7 +224,7 @@ describe EndProductEstablishment do
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             limited_poa_code: "ABC",
-            limited_poa_access: "Y"
+            limited_poa_access: true
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
