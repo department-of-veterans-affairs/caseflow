@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :staff, class: VACOLS::Staff do
     transient do
-      user nil
+      user { nil }
     end
 
     sequence(:sattyid)
@@ -15,49 +15,49 @@ FactoryBot.define do
       end
     end
 
-    sactive "A"
+    sactive { "A" }
 
     trait :attorney_role do
-      sactive "A"
+      sactive { "A" }
     end
 
     trait :hearing_judge do
-      stitle "D#{Random.rand(1..5)}"
-      svlj "A"
+      stitle { "D#{Random.rand(1..5)}" }
+      svlj { "A" }
     end
 
     trait :judge_role do
-      svlj "J"
-      sactive "A"
+      svlj { "J" }
+      sactive { "A" }
     end
 
     trait :hearing_coordinator do
-      sdept "HRG"
-      sactive "A"
+      sdept { "HRG" }
+      sactive { "A" }
       sequence(:snamel) { |n| "Smith#{n}" }
       sequence(:snamef) { |n| "John#{n}" }
-      snamemi ""
+      snamemi { "" }
     end
 
     trait :attorney_judge_role do
-      svlj "A"
-      sactive "A"
+      svlj { "A" }
+      sactive { "A" }
     end
 
     trait :colocated_role do
-      stitle %w[A1 A2].sample
-      sactive "A"
-      sattyid nil
+      stitle { %w[A1 A2].sample }
+      sactive { "A" }
+      sattyid { nil }
     end
 
     trait :dispatch_role do
-      sdept "DSP"
-      sactive "A"
-      sattyid nil
+      sdept { "DSP" }
+      sactive { "A" }
+      sattyid { nil }
     end
 
     trait :has_location_code do
-      slogid "55"
+      slogid { "55" }
     end
 
     after(:build) do |staff, evaluator|

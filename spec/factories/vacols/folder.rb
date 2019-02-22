@@ -4,8 +4,8 @@ FactoryBot.define do
     sequence(:tinum)
 
     trait :paper_case do
-      tivbms "N"
-      tisubj2 "N"
+      tivbms { "N" }
+      tisubj2 { "N" }
     end
   end
 end
