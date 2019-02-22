@@ -80,16 +80,18 @@ class SupplementalClaim < ClaimReview
     decision_review_remanded? ? "397" : super
   end
 
-  def new_end_product_establishment(ep_code)
+  def new_end_product_establishment(issue)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
       payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
-      code: ep_code,
+      code: issue.end_product_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
-      user: end_product_created_by
+      user: end_product_created_by,
+      limited_poa_code: issue.limited_poa_code,
+      limited_poa_access: issue.limited_poa_access
     )
   end
 

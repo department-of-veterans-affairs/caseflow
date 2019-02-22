@@ -355,6 +355,8 @@ ActiveRecord::Schema.define(version: 20190222185310) do
     t.string "doc_reference_id"
     t.datetime "established_at"
     t.datetime "last_synced_at"
+    t.boolean "limited_poa_access", comment: "Indicates whether the limited Power of Attorney has access to view documents"
+    t.string "limited_poa_code", comment: "The limited Power of Attorney code, which indicates whether the claim has a POA specifically for this claim, which can be different than the Veteran's POA"
     t.string "modifier"
     t.string "payee_code", null: false
     t.string "reference_id"

@@ -273,7 +273,9 @@ feature "Supplemental Claim Intake" do
         end_product_code: "040SCR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
-        claimant_participant_id: "5382910293"
+        claimant_participant_id: "5382910293",
+        limited_poa_code: nil,
+        limited_poa_access: nil
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
@@ -302,7 +304,9 @@ feature "Supplemental Claim Intake" do
         end_product_code: "040SCNR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
-        claimant_participant_id: "5382910293"
+        claimant_participant_id: "5382910293",
+        limited_poa_code: nil,
+        limited_poa_access: nil
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
