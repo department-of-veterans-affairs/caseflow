@@ -71,7 +71,10 @@ class RootTask < GenericTask
         TrackVeteranTask.create!(
           appeal: appeal,
           parent: parent,
-          assigned_to: vso_organization
+          assigned_to: vso_organization,
+
+          # Avoid permissions errors outlined in Github ticket #9389 by setting status here.
+          status: Constants.TASK_STATUSES.in_progress
         )
       end
     end
