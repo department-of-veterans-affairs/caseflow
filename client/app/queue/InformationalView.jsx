@@ -13,7 +13,7 @@ export default class InformationalView extends React.PureComponent {
     linkClicked = false;
     render = () => {
       return <div><Button
-        id="ineligible-evidence"
+        id="informational-button"
         linkStyling
         willNeverBeLoading
         onClick={() => {
