@@ -266,7 +266,9 @@ describe DecisionDocument do
               end_product_code: "030BGR",
               gulf_war_registry: false,
               suppress_acknowledgement_letter: false,
-              claimant_participant_id: nil # decision_document.appeal.veteran.participant_id
+              claimant_participant_id: nil, # decision_document.appeal.veteran.participant_id
+              limited_poa_code: nil,
+              limited_poa_access: nil
             },
             veteran_hash: decision_document.appeal.veteran.to_vbms_hash,
             user: User.system_user
