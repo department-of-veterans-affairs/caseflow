@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190221205756) do
+ActiveRecord::Schema.define(version: 20190222185310) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,6 +106,7 @@ ActiveRecord::Schema.define(version: 20190221205756) do
     t.boolean "overtime", default: false
     t.integer "reviewing_judge_id"
     t.string "task_id"
+    t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
   end
