@@ -373,6 +373,7 @@ class RequestIssue < ApplicationRecord
 
       end_product_establishment.on_decision_issue_sync_processed(self)
       clear_error!
+      close_decided_issue!
       processed!
     end
   end
@@ -401,6 +402,13 @@ class RequestIssue < ApplicationRecord
 
   def remove!
     update!(closed_at: Time.zone.now, closed_status: :removed)
+  end
+
+  def close_decided_issue!
+    return unless closed_at.nil?
+    return unless decision_issues.any?
+
+    update!(closed_at: Time.zone.now, closed_status: :decided)
   end
 
   def close_after_end_product_canceled!
