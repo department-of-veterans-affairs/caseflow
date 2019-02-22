@@ -7,6 +7,9 @@ class NewDocumentsForUser
     super(attributes)
   end
 
+  # Retrieves any documents that have been uploaded more recently than the user has viewed
+  # the appeal or an optional provided date. Try to load docs from caseflow if query_vbms is
+  # false, load from vbms otherwise
   def process!
     caseflow_documents = find_or_create_documents
     appeal_view = appeal.appeal_views.find_by(user: user)
