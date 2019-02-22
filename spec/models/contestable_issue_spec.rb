@@ -70,7 +70,7 @@ describe ContestableIssue do
         titleOfActiveReview: nil,
         sourceReviewType: nil,
         timely: true,
-        latestIssuesInChain: [{ id: nil, date: promulgation_date }]
+        latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }]
       )
     end
 
@@ -89,7 +89,7 @@ describe ContestableIssue do
           titleOfActiveReview: nil,
           sourceReviewType: nil,
           timely: false,
-          latestIssuesInChain: [{ id: nil, date: promulgation_date }]
+          latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }]
         )
       end
     end
@@ -122,7 +122,7 @@ describe ContestableIssue do
         titleOfActiveReview: nil,
         sourceReviewType: "Appeal",
         timely: true,
-        latestIssuesInChain: [{ id: decision_issue.id, date: caseflow_decision_date }]
+        latestIssuesInChain: [{ id: decision_issue.id, approxDecisionDate: caseflow_decision_date }]
       )
     end
 
@@ -141,7 +141,7 @@ describe ContestableIssue do
           titleOfActiveReview: nil,
           sourceReviewType: "Appeal",
           timely: false,
-          latestIssuesInChain: [{ id: decision_issue.id, date: caseflow_decision_date }]
+          latestIssuesInChain: [{ id: decision_issue.id, approxDecisionDate: caseflow_decision_date }]
         )
       end
     end
