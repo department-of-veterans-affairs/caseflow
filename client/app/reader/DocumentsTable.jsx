@@ -16,8 +16,9 @@ import CommentIndicator from './CommentIndicator';
 import DropdownFilter from '../components/DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
-import { setDocListScrollPosition, changeSortState, clearTagFilters, clearCategoryFilters,
-  setTagFilter, setCategoryFilter,
+import { setDocListScrollPosition, changeSortState,
+  // clearTagFilters, clearCategoryFilters,
+  // setTagFilter, setCategoryFilter,
   // toggleDropdownFilterVisibility
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
@@ -28,6 +29,7 @@ import DocTagPicker from './DocTagPicker';
 import FilterIcon from '../components/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
+import { getUpdatedFilteredResults } from './searchFilters';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -297,6 +299,7 @@ class DocumentsTable extends React.Component {
         tbodyId="documents-table-body"
         tbodyRef={this.getTbodyRef}
         getKeyForRow={this.getKeyForRow}
+        customFilterFunction={{}}
       />
     </div>;
   }
@@ -313,12 +316,12 @@ DocumentsTable.propTypes = {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDocListScrollPosition,
-  clearTagFilters,
-  clearCategoryFilters,
-  setTagFilter,
+  // clearTagFilters,
+  // clearCategoryFilters,
+  // setTagFilter,
   changeSortState,
   // toggleDropdownFilterVisibility,
-  setCategoryFilter
+  // setCategoryFilter
 }, dispatch);
 
 const mapStateToProps = (state) => ({

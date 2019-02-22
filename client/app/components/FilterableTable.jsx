@@ -310,7 +310,8 @@ export default class FilterableTable extends React.PureComponent {
       id,
       styling,
       bodyStyling,
-      enablePagination
+      enablePagination,
+      customFilterFunction
     } = this.props;
 
     // Steps to calculate table data to display:
@@ -318,7 +319,7 @@ export default class FilterableTable extends React.PureComponent {
     let rowObjects = this.sortRowObjects();
 
     // 2. Filter data
-    rowObjects = this.filterTableData(rowObjects);
+    rowObjects = customFilterFunction(rowObjects) || this.filterTableData(rowObjects);
     const totalCases = rowObjects.length;
 
     let paginatedData = rowObjects;
@@ -422,5 +423,6 @@ FilterableTable.propTypes = {
   }),
   alternateColumnNames: PropTypes.object,
   enablePagination: PropTypes.bool,
-  casesPerPage: PropTypes.number
+  casesPerPage: PropTypes.number,
+  customFilterFunction: PropTypes.func
 };
