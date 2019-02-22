@@ -6,7 +6,8 @@ import _ from 'lodash';
 import {
   getDecisionTypeDisplay,
   buildCaseReviewPayload,
-  validateWorkProductTypeAndId
+  validateWorkProductTypeAndId,
+  nullToFalse
 } from './utils';
 
 import {
@@ -22,6 +23,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
 import JudgeSelectComponent from './JudgeSelectComponent';
+import InstructionalText from './InstructionalText';
 import { taskById } from './selectors';
 
 import {
@@ -37,7 +39,6 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
 
 class SubmitDecisionView extends React.PureComponent {
-
   componentDidMount = () => {
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
@@ -59,13 +60,19 @@ class SubmitDecisionView extends React.PureComponent {
     _.merge(decision.opts, { document_id: _.get(this.props, 'appeal.documentID'),
       note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
       overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
+      untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false),
       reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
     });
     const extendedDecision = { ...decision };
 
     extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
-    if (extendedDecision.opts && extendedDecision.opts.overtime === null) {
-      extendedDecision.opts.overtime = false;
+
+    if (extendedDecision.opts) {
+      const possibleNullKeys = ['overtime', 'untimely_evidence'];
+
+      possibleNullKeys.forEach((key) => {
+        extendedDecision.opts = nullToFalse(key, extendedDecision.opts);
+      });
     }
 
     return extendedDecision;
@@ -185,13 +192,6 @@ class SubmitDecisionView extends React.PureComponent {
         options={OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES}
         errorMessage={(highlightFormItems && !decisionOpts.work_product) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
       />}
-      <Checkbox
-        name="overtime"
-        label="This work product is overtime"
-        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-        value={decisionOpts.overtime || false}
-        styling={css(marginBottom(1), marginTop(1))}
-      />
       <TextField
         label="Document ID:"
         name="document_id"
@@ -214,6 +214,31 @@ class SubmitDecisionView extends React.PureComponent {
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
       />
+      <Checkbox
+        name="overtime"
+        label="This work product is overtime"
+        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
+        value={decisionOpts.overtime || false}
+        styling={css(marginBottom(1), marginTop(1))}
+      />
+      {!this.props.appeal.isLegacyAppeal &&
+      <div>
+        <Checkbox
+          name="untimely_evidence"
+          label="The Veteran submitted evidence that is ineligible for review"
+          onChange={(untimelyEvidence) => this.props.setDecisionOptions({ untimely_evidence: untimelyEvidence })}
+          value={decisionOpts.untimely_evidence || false}
+          styling={css(marginBottom(1), marginTop(1))}
+        />
+        <InstructionalText
+          informationalTitle={COPY.WHAT_IS_INELIGIBLE_EVIDENCE}
+          informationHeader={COPY.UNTIMELY_EVIDENCE_TITLE}
+          bulletOne={COPY.UNTIMELY_EVIDENCE_BULLET_ONE}
+          bulletTwo={COPY.UNTIMELY_EVIDENCE_BULLET_TWO}
+          bulletThree={COPY.UNTIMELY_EVIDENCE_BULLET_THREE}
+        />
+      </div>
+      }
     </React.Fragment>;
   };
 }
