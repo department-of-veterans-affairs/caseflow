@@ -15,7 +15,7 @@
     "WITHDRAW_HEARING": { "label": "Withdraw hearing", "value": "modal/cancel_task", "func": "withdraw_hearing_data" },
     "PLACE_HOLD": { "label": "Place hold", "value": "place_hold" },
     "REASSIGN_TO_PERSON": { "label": "Re-assign to person", "value": "modal/reassign_to_person", "func": "assign_to_user_data" },
-    "RESCHEDULE_HEARING": { "label": "Mark as complete: Reschedule hearing", "value": "modal/reschedule_hearing", "func": "assign_to_hearing_schedule_team_data" },
+    "RESCHEDULE_HEARING": { "label": "Mark as complete: Reschedule hearing", "value": "modal/cancel_task", "func": "assign_to_hearing_schedule_team_data" },
     "RETURN_TO_JUDGE": { "label": "Return to judge", "value": "modal/assign_to_judge", "func": "assign_to_judge_data" },
     "REVIEW_LEGACY_DECISION": { "label": "Decision ready for review", "value": "draft_decision/special_issues"},
     "REVIEW_AMA_DECISION": { "label": "Decision ready for review", "value": "draft_decision/dispositions"},

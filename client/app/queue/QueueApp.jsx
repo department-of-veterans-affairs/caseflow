@@ -1,6 +1,4 @@
 /* eslint-disable max-lines */
-
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -60,33 +58,8 @@ import COPY from '../../COPY.json';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import type { State } from './types/state';
 
-type Props = {|
-  userDisplayName: string,
-  feedbackUrl: string,
-  userId: number,
-  userRole: string,
-  userCssId: string,
-  dropdownUrls: Array<string>,
-  buildDate?: string,
-  reviewActionType: string,
-  userIsVsoEmployee?: boolean,
-  caseSearchHomePage?: boolean,
-  canEditAod: Boolean,
-  featureToggles: Object,
-  organizations: Array<Object>,
-  // Action creators
-  setCanEditAod: typeof setCanEditAod,
-  setFeatureToggles: typeof setFeatureToggles,
-  setUserRole: typeof setUserRole,
-  setUserCssId: typeof setUserCssId,
-  setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
-  setFeedbackUrl: typeof setFeedbackUrl,
-  setOrganizations: typeof setOrganizations
-|};
-
-class QueueApp extends React.PureComponent<Props> {
+class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setFeatureToggles(this.props.featureToggles);
@@ -198,9 +171,6 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignToSingleTeam = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
-  routedReassignToSingleTeam = (props) =>
-    <AssignToView isTeamAssign assigneeAlreadySelected isReassignAction {...props.match.params} />;
-
   routedAssignToTeam = (props) => <AssignToView isTeamAssign {...props.match.params} />;
 
   routedCreateMailTask = (props) => <CreateMailTaskDialog {...props.match.params} />;
@@ -245,12 +215,13 @@ class QueueApp extends React.PureComponent<Props> {
       defaultUrl={this.props.caseSearchHomePage ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
+      applicationUrls={this.props.applicationUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
       rightNavElement={<CaseSearchLink />}
-      appName="">
+      appName="Queue">
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">
@@ -320,9 +291,6 @@ class QueueApp extends React.PureComponent<Props> {
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
             render={this.routedAssignToUser} />
-          <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RESCHEDULE_HEARING.value}`}
-            render={this.routedReassignToSingleTeam} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
@@ -399,8 +367,9 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.WITHDRAW_HEARING.value}`}
-            title="Withdraw Hearing | Caseflow"
+            path={'/queue/appeals/:appealId/tasks/:taskId/' +
+              `(${TASK_ACTIONS.WITHDRAW_HEARING.value}|${TASK_ACTIONS.CANCEL_TASK.value})`}
+            title="Cancel task | Caseflow"
             render={this.routedCancelTaskModal} />
           <PageRoute
             exact
@@ -443,7 +412,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state: State) => ({
+const mapStateToProps = (state) => ({
   reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 
@@ -458,5 +427,3 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(QueueApp);
-
-/* eslint-enable max-lines */
