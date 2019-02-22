@@ -452,6 +452,32 @@ describe User do
       before { session["user"] = nil }
       it { is_expected.to be_nil }
     end
+
+    context "2 users exist with different case css id" do
+      let(:station_id) { 123 }
+      let!(:user1) { create(:user, css_id: "foobar", station_id: station_id) }
+      let!(:user2) { create(:user, css_id: "FOOBAR", station_id: station_id) }
+
+      before do
+        session["user"]["station_id"] = station_id
+      end
+
+      context "css id is lower" do
+        before { session["user"]["id"] = user1.css_id }
+
+        it "prefers exact case match" do
+          expect(subject.css_id).to eq user1.css_id
+        end
+      end
+
+      context "css is UPPER" do
+        before { session["user"]["id"] = user2.css_id }
+
+        it "prefers exact case match" do
+          expect(subject.css_id).to eq user2.css_id
+        end
+      end
+    end
   end
 
   context ".current_task" do

@@ -300,7 +300,7 @@ class User < ApplicationRecord
 
       # TODO: ignore station_id since id should be globally unique.
       css_id = user["id"]
-      existing_user = find_by("UPPER(css_id)=UPPER(?) AND station_id=?", css_id, user["station_id"])
+      existing_user = find_by_css_id_and_station_id(css_id, user["station_id"])
 
       existing_user ||= create!(
         css_id: css_id.upcase,
@@ -318,6 +318,14 @@ class User < ApplicationRecord
           regional_office: session[:regional_office]
         )
       end
+    end
+
+    def find_by_css_id_and_station_id(css_id, station_id)
+      # prefer case match first
+      user = find_by(css_id: css_id, station_id: station_id)
+      return user if user
+
+      find_by("UPPER(css_id)=UPPER(?) AND station_id=?", css_id, station_id)
     end
 
     def find_by_css_id_or_create_with_default_station_id(css_id)
