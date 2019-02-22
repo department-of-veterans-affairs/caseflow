@@ -109,7 +109,8 @@ class TableFilter extends React.PureComponent {
       isDropdownFilterOpen,
       disableClearFiltersRow,
       label,
-      valueName
+      valueName,
+      customFilterOptions
     } = this.props;
 
     const iconStyle = css({
@@ -119,7 +120,7 @@ class TableFilter extends React.PureComponent {
       verticalAlign: 'middle'
     }, hover({ cursor: 'pointer' }));
 
-    const filterOptions = this.filterDropdownOptions(tableData, columnName);
+    const filterOptions = customFilterOptions || this.filterDropdownOptions(tableData, columnName);
 
     return (
       <span {...iconStyle}>
