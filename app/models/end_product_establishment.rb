@@ -128,8 +128,8 @@ class EndProductEstablishment < ApplicationRecord
 
   delegate :contentions, to: :cached_result
 
-  def limited_power_of_attorney_on_established_claim
-    result&.limited_power_of_attorney
+  def limited_poa_on_established_claim
+    result&.limited_poa
   end
 
   def description

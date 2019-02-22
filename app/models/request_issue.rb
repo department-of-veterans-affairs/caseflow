@@ -495,7 +495,7 @@ class RequestIssue < ApplicationRecord
   private
 
   def limited_poa
-    previous_request_issue&.end_product_establishment&.limited_power_of_attorney_on_established_claim
+    previous_request_issue&.end_product_establishment&.limited_poa_on_established_claim
   end
 
   # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
