@@ -90,8 +90,8 @@ class SupplementalClaim < ClaimReview
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
       user: end_product_created_by,
-      limited_poa_code: issue.limited_poa ? issue.limited_poa[:limited_poa_code] : nil,
-      limited_poa_access: issue.limited_poa ? issue.limited_poa[:limited_poa_access] : nil
+      limited_poa_code: issue.limited_poa_code,
+      limited_poa_access: issue.limited_poa_access
     )
   end
 
