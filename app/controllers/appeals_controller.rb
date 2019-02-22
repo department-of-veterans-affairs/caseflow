@@ -47,7 +47,10 @@ class AppealsController < ApplicationController
   end
 
   def new_documents
-    render json: { new_documents: appeal.new_documents }
+    @new_documents_for_user ||= NewDocumentsForUser.new(
+      appeal: appeal, user: current_user, query_vbms: true, date_to_compare_with: Time.zone.at(0)
+    )
+    render json: { new_documents: @new_documents_for_user.process! }
   rescue StandardError => e
     handle_non_critical_error("new_documents", e)
   end
