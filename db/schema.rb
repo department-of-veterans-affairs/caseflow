@@ -106,7 +106,6 @@ ActiveRecord::Schema.define(version: 20190222161423) do
     t.boolean "overtime", default: false
     t.integer "reviewing_judge_id"
     t.string "task_id"
-    t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
   end
