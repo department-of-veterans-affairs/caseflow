@@ -179,11 +179,10 @@ class SeedDB
 
     3.times do
       root = FactoryBot.create(:root_task)
-      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       FactoryBot.create_list(
         :request_issue,
         [3, 4, 5].sample,
-        contested_issue_description: description,
+        :nonrating,
         notes: "Pain disorder with 100\% evaluation per examination",
         decision_review: root.appeal
       )
@@ -474,7 +473,6 @@ class SeedDB
       state: RegionalOffice::CITIES.find { |k, _v| k == ro_key }[1][:state]
     )
 
-    vet.closest_regional_office = ro_key
     vet.save
     # to add appellant other than vet,
     # add attr
@@ -482,6 +480,8 @@ class SeedDB
     appeal = FactoryBot.create(
       :appeal,
       :with_tasks,
+      number_of_claimants: 1,
+      closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
       docket_type: "hearing"
     )
@@ -534,7 +534,6 @@ class SeedDB
   end
 
   def create_ama_appeals
-    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
 
     @appeal_with_vso = FactoryBot.create(
@@ -545,7 +544,7 @@ class SeedDB
       ],
       veteran_file_number: "701305078",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
     es = "evidence_submission"
@@ -570,7 +569,7 @@ class SeedDB
         veteran_file_number: params[:veteran_file_number],
         docket_type: params[:docket_type],
         request_issues: FactoryBot.create_list(
-          :request_issue, params[:request_issue_count], contested_issue_description: description, notes: notes
+          :request_issue, params[:request_issue_count], :nonrating, notes: notes
         )
       )
     end
@@ -974,6 +973,7 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
+      closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, contested_issue_description: description, notes: notes
       )
@@ -984,6 +984,7 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",
+      closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 8, contested_issue_description: description, notes: notes
       )
@@ -998,7 +999,6 @@ class SeedDB
       created_by: user,
       updated_by: user
     )
-
     Veteran.where(file_number: %w[808415990 992190636]).update_all(closest_regional_office: "RO17")
   end
 

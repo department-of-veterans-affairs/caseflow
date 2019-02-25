@@ -79,12 +79,12 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
-  attribute :veteran_closest_regional_office do
-    object.veteran_closest_regional_office
+  attribute :closest_regional_office do
+    object.closest_regional_office
   end
 
-  attribute :veteran_available_hearing_locations do
-    locations = object.veteran_available_hearing_locations || []
+  attribute :available_hearing_locations do
+    locations = object.available_hearing_locations || []
 
     locations.map do |ahl|
       {
@@ -155,7 +155,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :attorney_case_rewrite_details do
     {
       overtime: latest_attorney_case_review&.overtime,
-      note_from_attorney: latest_attorney_case_review&.note
+      note_from_attorney: latest_attorney_case_review&.note,
+      untimely_evidence: latest_attorney_case_review&.untimely_evidence
     }
   end
 

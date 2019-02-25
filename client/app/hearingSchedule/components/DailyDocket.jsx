@@ -23,7 +23,7 @@ import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/Render
 import {
   RegionalOfficeDropdown,
   HearingDateDropdown,
-  VeteranHearingLocationsDropdown
+  AppealHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 
 const tableRowStyling = css({
@@ -205,17 +205,17 @@ export default class DailyDocket extends React.Component {
 
   getHearingLocationDropdown = (hearing, readOnly) => {
     const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
-    let staticHearingLocations = hearing.veteranAvailableHearingLocations ?
-      _.values(hearing.veteranAvailableHearingLocations) : [];
+    let staticHearingLocations = hearing.availableHearingLocations ?
+      _.values(hearing.availableHearingLocations) : [];
 
     // always static for now
     if (staticHearingLocations.length === 0 && hearing.location) {
       staticHearingLocations = [hearing.location];
     }
 
-    return <VeteranHearingLocationsDropdown
+    return <AppealHearingLocationsDropdown
       readOnly={readOnly}
-      veteranFileNumber={hearing.veteranFileNumber}
+      appealId={hearing.appealExternalId}
       regionalOffice={currentRegionalOffice}
       staticHearingLocations={staticHearingLocations}
       dynamic={false}

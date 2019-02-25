@@ -241,8 +241,7 @@ class Veteran < ApplicationRecord
       if sync_name
         Rails.logger.warn(
           %(
-          find_and_maybe_backfill_name sync_name:#{sync_name} current_user:#{RequestStore[:current_user].try(:css_id)}
-          veteran:#{file_number} accessible:#{veteran.accessible?} is_a?Hash:#{veteran.bgs_record.is_a?(Hash)}
+          find_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
           )
         )
 
@@ -258,10 +257,16 @@ class Veteran < ApplicationRecord
       veteran
     end
 
+    # rubocop:disable Metrics/MethodLength
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
 
-      return nil unless veteran.found?
+      unless veteran.found?
+        Rails.logger.warn(
+          %(create_by_file_number file_number:#{file_number} found:false accessible:#{veteran.accessible?})
+        )
+        return nil
+      end
 
       Rails.logger.warn(
         %(create_by_file_number file_number:#{file_number} found:true accessible:#{veteran.accessible?})
@@ -284,6 +289,7 @@ class Veteran < ApplicationRecord
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
+    # rubocop:enable Metrics/MethodLength
 
     def before_create_veteran_by_file_number
       # noop - used to simulate race conditions

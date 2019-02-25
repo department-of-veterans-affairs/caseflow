@@ -273,7 +273,9 @@ feature "Supplemental Claim Intake" do
         end_product_code: "040SCR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
-        claimant_participant_id: "5382910293"
+        claimant_participant_id: "5382910293",
+        limited_poa_code: nil,
+        limited_poa_access: nil
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
@@ -302,7 +304,9 @@ feature "Supplemental Claim Intake" do
         end_product_code: "040SCNR",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
-        claimant_participant_id: "5382910293"
+        claimant_participant_id: "5382910293",
+        limited_poa_code: nil,
+        limited_poa_access: nil
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
@@ -987,6 +991,23 @@ feature "Supplemental Claim Intake" do
         add_intake_rating_issue("Left knee granted")
         expect(page).to have_content("Left knee granted")
       end
+    end
+  end
+
+  context "has a chain of prior decision issues" do
+    let(:start_date) { Time.zone.today - 300.days }
+    before do
+      prior_sc = create(:supplemental_claim, veteran_file_number: veteran.file_number)
+      request_issue = create(:request_issue,
+                             contested_rating_issue_reference_id: "old123",
+                             contested_rating_issue_profile_date: untimely_ratings.profile_date,
+                             decision_review: prior_sc)
+      setup_prior_decision_issue_chain(prior_sc, request_issue, veteran, start_date)
+    end
+
+    it "disables prior contestable issues" do
+      start_supplemental_claim(veteran)
+      check_decision_issue_chain(start_date)
     end
   end
 end
