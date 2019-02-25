@@ -54,4 +54,3 @@ end
 puts "Total HoldHearing and ScheduleHearing Tasks with RootTask as parent: #{legacy_sched_hear_tasks.size}"
 puts "Total groupings by appeal and date: #{tasks_grouped_by_appeal_and_date.size}"
 puts "Total HearingTasks created: #{total_hearing_tasks_created}"
-
