@@ -516,6 +516,8 @@ class Appeal < DecisionReview
   end
 
   def aoj
+    return if request_issues.empty?
+
     return "other" unless all_request_issues_same_aoj?
 
     request_issues.first.api_aoj_from_benefit_type
@@ -528,6 +530,8 @@ class Appeal < DecisionReview
   end
 
   def program
+    return if request_issues.empty?
+
     if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
       request_issues.first.benefit_type
     else
@@ -613,6 +617,8 @@ class Appeal < DecisionReview
 
   def issues_hash
     issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
+
+    return [] if issue_list.empty?
 
     fetch_issues_status(issue_list)
   end
