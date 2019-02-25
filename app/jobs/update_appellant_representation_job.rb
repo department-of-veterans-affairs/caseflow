@@ -37,10 +37,10 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     msg += " Fatal error: #{err.message}" if err
     Rails.logger.info(msg)
     Rails.logger.info(err.backtrace.join("\n")) if err
-    SlackService.new(url: url).send_notification(msg)
+    slack_service.send_notification(msg)
   end
 
-  def url
+  def slack_url
     # TODO: Where does this get set for Dispatch and how can we set it for the Queue channel?
     # ENV["SLACK_DISPATCH_ALERT_URL"]
     ENV["SLACK_QUEUE_ALERT_URL"]
