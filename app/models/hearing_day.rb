@@ -61,11 +61,11 @@ class HearingDay < ApplicationRecord
   end
 
   def open_vacols_hearings
-    vacols_hearings.select { |hearing| ![:postponed, :canceled].include?(hearing.disposition) }
+    vacols_hearings.reject { |hearing| [:postponed, :canceled].include?(hearing.disposition) }
   end
 
   def open_hearings
-    hearings.select { |hearing| ![:postponed, :canceled].include?(hearing.disposition) }
+    hearings.reject { |hearing| [:postponed, :canceled].include?(hearing.disposition) }
   end
 
   def to_hash

@@ -66,7 +66,7 @@ describe HearingDay do
   end
 
   context "update hearing" do
-    let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video]) }
+    let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO18") }
     let(:hearing_hash) do
       { request_type: HearingDay::REQUEST_TYPES[:video],
         scheduled_for: Date.new(2019, 12, 7),
@@ -181,7 +181,7 @@ describe HearingDay do
     context "get parent and children structure" do
       subject do
         HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                   hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+                                                        hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
       end
 
       it "returns nested hash structure" do
@@ -230,7 +230,7 @@ describe HearingDay do
 
     subject do
       HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                 hearing.hearing_date.beginning_of_day + 1.day, staff.stafkey)
+                                                      hearing.hearing_date.beginning_of_day + 1.day, staff.stafkey)
     end
 
     context "get video hearings neither postponed or cancelled" do
@@ -331,8 +331,8 @@ describe HearingDay do
     context "get parent and children structure" do
       subject do
         HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                   hearing.hearing_date.beginning_of_day + 10,
-                                                   HearingDay::REQUEST_TYPES[:central])
+                                                        hearing.hearing_date.beginning_of_day + 10,
+                                                        HearingDay::REQUEST_TYPES[:central])
       end
 
       it "returns nested hash structure" do
