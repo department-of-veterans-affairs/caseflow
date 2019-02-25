@@ -202,16 +202,14 @@ class Appeal < DecisionReview
     new_task_count = 0
     closed_task_count = 0
 
-    # Check if there are existing tracking tasks.
     active_tracking_tasks = tasks.active.where(type: TrackVeteranTask.name)
-
     cached_vsos = active_tracking_tasks.map(&:assigned_to)
     fresh_vsos = vsos
 
     # Create a TrackVeteranTask for each VSO that does not already have one.
     new_vsos = fresh_vsos - cached_vsos
     new_vsos.each do |new_vso|
-      TrackVeteranTask.create!(appeal: self, parent: parent, assigned_to: new_vso)
+      TrackVeteranTask.create!(appeal: self, parent: root_task, assigned_to: new_vso)
       new_task_count += 1
     end
 

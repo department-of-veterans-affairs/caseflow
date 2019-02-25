@@ -39,10 +39,4 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     Rails.logger.info(err.backtrace.join("\n")) if err
     slack_service.send_notification(msg)
   end
-
-  def slack_url
-    # TODO: Where does this get set for Dispatch and how can we set it for the Queue channel?
-    # ENV["SLACK_DISPATCH_ALERT_URL"]
-    ENV["SLACK_QUEUE_ALERT_URL"]
-  end
 end
