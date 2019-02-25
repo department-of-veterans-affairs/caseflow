@@ -15,6 +15,11 @@ namespace :users do
     end
   end
 
+  def models_with_user_id
+    @models_with_user_id ||= ActiveRecord::Base.descendants.reject(&:abstract_class?)
+      .select { |c| c.attribute_names.include?("user_id") }
+  end
+
   desc "find duplicates and suggest which one(s) to delete"
   task dedupe: :environment do
     users = User.all
@@ -24,24 +29,16 @@ namespace :users do
       puts "Duplicate: #{css_id}"
       users = User.where("UPPER(css_id)=UPPER(?)", css_id)
       users.each do |user|
-        stats = Intake.user_stats(user)
-        [
-          AdvanceOnDocketMotion,
-          Annotation,
-          AppealView,
-          Certification,
-          Dispatch::Task,
-          EndProductEstablishment,
-          RampElectionRollback,
-          SchedulePeriod
-        ].each do |cls|
+        has_related_records = false
+        models_with_user_id.each do |cls|
           num = cls.where(user_id: user.id).count
           if num > 0
             puts "#{user.id} has #{num} #{cls}"
+            has_related_records = true
           end
         end
-        if stats.empty?
-          puts "#{user.inspect} has zero intake stats and may be a candidate to merge/delete"
+        unless has_related_records
+          puts "#{user.inspect} has zero related records and may be a candidate to merge/delete"
         end
       end
     end
