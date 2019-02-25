@@ -17,12 +17,12 @@ describe UpdateAppellantRepresentationJob do
       end
 
       new_task_count.times do |_|
-        appeal, vso = create_appeal_root_and_vso
+        appeal, vso = create_appeal_and_vso
         vso_for_appeal[appeal.id] = [vso]
       end
 
       closed_task_count.times do |_|
-        appeal, vso = create_appeal_root_and_vso
+        appeal, vso = create_appeal_and_vso
         FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
         vso_for_appeal[appeal.id] = []
       end
@@ -43,7 +43,7 @@ describe UpdateAppellantRepresentationJob do
   end
 end
 
-def create_appeal_root_and_vso
+def create_appeal_and_vso
   appeal = FactoryBot.create(:appeal)
   FactoryBot.create(:root_task, appeal: appeal)
   vso = FactoryBot.create(:vso)
