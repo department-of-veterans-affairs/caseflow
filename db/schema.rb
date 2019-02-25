@@ -982,6 +982,20 @@ ActiveRecord::Schema.define(version: 20190222224704) do
     t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
   end
 
+  create_table "vbms_uploaded_documents", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.datetime "attempted_at"
+    t.datetime "created_at", null: false
+    t.string "document_type", null: false
+    t.string "error"
+    t.datetime "last_submitted_at"
+    t.datetime "processed_at"
+    t.datetime "submitted_at"
+    t.datetime "updated_at", null: false
+    t.datetime "uploaded_to_vbms_at"
+    t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
+  end
+
   create_table "versions", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.string "event", null: false
