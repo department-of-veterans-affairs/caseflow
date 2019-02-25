@@ -241,7 +241,9 @@ describe SupplementalClaimIntake do
           end_product_code: "040SCR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
-          claimant_participant_id: claimant.participant_id
+          claimant_participant_id: claimant.participant_id,
+          limited_poa_code: nil,
+          limited_poa_access: nil
         },
         veteran_hash: intake.veteran.to_vbms_hash,
         user: user

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190221004127) do
+ActiveRecord::Schema.define(version: 20190222224704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,6 +106,7 @@ ActiveRecord::Schema.define(version: 20190221004127) do
     t.boolean "overtime", default: false
     t.integer "reviewing_judge_id"
     t.string "task_id"
+    t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
   end
@@ -354,6 +355,8 @@ ActiveRecord::Schema.define(version: 20190221004127) do
     t.string "doc_reference_id"
     t.datetime "established_at"
     t.datetime "last_synced_at"
+    t.boolean "limited_poa_access", comment: "Indicates whether the limited Power of Attorney has access to view documents"
+    t.string "limited_poa_code", comment: "The limited Power of Attorney code, which indicates whether the claim has a POA specifically for this claim, which can be different than the Veteran's POA"
     t.string "modifier"
     t.string "payee_code", null: false
     t.string "reference_id"
@@ -967,13 +970,30 @@ ActiveRecord::Schema.define(version: 20190221004127) do
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
+    t.datetime "created_at"
     t.string "css_id", null: false
     t.string "email"
     t.string "full_name"
+    t.datetime "last_login_at"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
+    t.datetime "updated_at"
     t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
+  end
+
+  create_table "vbms_uploaded_documents", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.datetime "attempted_at"
+    t.datetime "created_at", null: false
+    t.string "document_type", null: false
+    t.string "error"
+    t.datetime "last_submitted_at"
+    t.datetime "processed_at"
+    t.datetime "submitted_at"
+    t.datetime "updated_at", null: false
+    t.datetime "uploaded_to_vbms_at"
+    t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|

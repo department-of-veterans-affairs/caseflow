@@ -69,7 +69,7 @@ RSpec.feature "AmaQueue" do
             bgs_veteran_record: { first_name: "Pal" },
             file_number: file_numbers[0]
           ),
-          documents: FactoryBot.create_list(:document, 5, file_number: file_numbers[0]),
+          documents: FactoryBot.create_list(:document, 5, file_number: file_numbers[0], upload_date: 3.days.ago),
           request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain")
         ),
         FactoryBot.create(
@@ -785,6 +785,7 @@ RSpec.feature "AmaQueue" do
         fill_in "Document ID:", with: valid_document_id
         expect(page).to have_content(judge_user.full_name)
         fill_in "notes", with: "all done"
+        click_label("untimely_evidence")
         click_on "Continue"
 
         expect(page).to have_content(
@@ -829,6 +830,7 @@ RSpec.feature "AmaQueue" do
         # info below should be preserved from attorney completing the task
         document_id_node = find("#document_id")
         notes_node = find("#notes")
+        expect(find_field("untimely_evidence", visible: false)).to be_checked
         expect(document_id_node.value).to eq valid_document_id
         expect(page).to have_content(judge_user.full_name)
         expect(notes_node.value).to eq "all done"

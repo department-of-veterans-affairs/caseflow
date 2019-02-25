@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :request_issue do
     association(:decision_review, factory: [:appeal, :with_tasks])
-    benefit_type "compensation"
-    contested_rating_issue_diagnostic_code "5008"
+    benefit_type { "compensation" }
+    contested_rating_issue_diagnostic_code { "5008" }
 
     factory :request_issue_with_epe do
       end_product_establishment { create(:end_product_establishment) }
@@ -14,19 +14,19 @@ FactoryBot.define do
     end
 
     trait :nonrating do
-      issue_category "Apportionment"
+      issue_category { "Apportionment" }
       decision_date { 2.months.ago }
-      nonrating_issue_description "nonrating issue description"
+      nonrating_issue_description { "nonrating issue description" }
     end
 
     trait :removed do
-      closed_at Time.zone.now
-      closed_status :removed
+      closed_at { Time.zone.now }
+      closed_status { :removed }
     end
 
     trait :with_rating_decision_issue do
       transient do
-        veteran_participant_id nil
+        veteran_participant_id { nil }
       end
 
       after(:create) do |request_issue, evaluator|
@@ -49,7 +49,7 @@ FactoryBot.define do
 
     trait :with_nonrating_decision_issue do
       transient do
-        veteran_participant_id nil
+        veteran_participant_id { nil }
       end
 
       after(:create) do |request_issue, evaluator|
@@ -71,7 +71,7 @@ FactoryBot.define do
     end
 
     transient do
-      decision_issues []
+      decision_issues { [] }
     end
 
     after(:create) do |ri, evaluator|
