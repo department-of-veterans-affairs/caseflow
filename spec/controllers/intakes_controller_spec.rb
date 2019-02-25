@@ -52,13 +52,10 @@ RSpec.describe IntakesController do
       end
     end
 
-    context "vetern in BGS and not accessible to user" do
+    context "veteran in BGS and not accessible to user" do
       before do
         Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = [file_number]
-      end
-      after do
-        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+        allow_any_instance_of(Veteran).to receive(:accessible?).and_return(false)
       end
 
       let(:file_number) { "999887777" }
