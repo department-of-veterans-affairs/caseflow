@@ -107,7 +107,53 @@ describe HearingDay do
     let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
 
     it "returns an error if there are children records" do
-      expect { hearing_day.confirm_no_children_records }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
+      expect { hearing_day.reload.confirm_no_children_records }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
+    end
+  end
+
+  context "hearing day full" do
+    context "the hearing day has 12 scheduled hearings" do
+      let!(:hearing_day) { create(:hearing_day) }
+
+      before do
+        6.times do
+          create(:hearing, hearing_day: hearing_day)
+          create(:case_hearing, vdkey: hearing_day.id)
+        end
+      end
+
+      subject { hearing_day.reload.hearing_day_full? }
+
+      it do
+        expect(subject).to eql(true)
+      end
+    end
+
+    context "the hearing day has 12 postponed hearings" do
+      let!(:hearing_day) { create(:hearing_day) }
+
+      before do
+        6.times do
+          create(:hearing, hearing_day: hearing_day, disposition: :postponed)
+          create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "P")
+        end
+      end
+
+      subject { hearing_day.reload.hearing_day_full? }
+
+      it do
+        expect(subject).to eql(false)
+      end
+    end
+
+    context "the hearing day is locked" do
+      let!(:hearing_day) { create(:hearing_day, lock: true) }
+
+      subject { hearing_day.reload.hearing_day_full? }
+
+      it do
+        expect(subject).to eql(true)
+      end
     end
   end
 
