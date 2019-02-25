@@ -33,6 +33,10 @@ class RootTask < GenericTask
     true
   end
 
+  def assigned_to_label
+    COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+  end
+
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
@@ -45,15 +49,13 @@ class RootTask < GenericTask
     end
 
     def create_ihp_tasks!(appeal, parent)
-      appeal.vsos.map do |vso_organization|
+      appeal.vsos.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
         # For some RAMP appeals, this method may run twice.
-        existing_tasks = InformalHearingPresentationTask.where(
+        existing_task = InformalHearingPresentationTask.find_by(
           appeal: appeal,
           assigned_to: vso_organization
         )
-        return existing_tasks.first unless existing_tasks.empty?
-
-        InformalHearingPresentationTask.create!(
+        existing_task || InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
           assigned_to: vso_organization
@@ -69,7 +71,10 @@ class RootTask < GenericTask
         TrackVeteranTask.create!(
           appeal: appeal,
           parent: parent,
-          assigned_to: vso_organization
+          assigned_to: vso_organization,
+
+          # Avoid permissions errors outlined in Github ticket #9389 by setting status here.
+          status: Constants.TASK_STATUSES.in_progress
         )
       end
     end
@@ -113,6 +118,7 @@ class RootTask < GenericTask
           create_evidence_submission_task!(appeal, distribution_task)
         elsif appeal.hearing_docket?
           create_hearing_schedule_task!(appeal, distribution_task)
+          create_ihp_tasks!(appeal, distribution_task)
         else
           vso_tasks = create_ihp_tasks!(appeal, distribution_task)
           # If the appeal is direct docket and there are no ihp tasks,

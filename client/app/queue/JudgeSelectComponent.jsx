@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -18,27 +17,7 @@ import COPY from '../../COPY.json';
 
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
-import type {
-  Judges
-} from './types/models';
-
-type Params = {|
-  assignedByCssId: ?string
-|};
-
-type Props = Params & {|
-  // state
-  judges: Judges,
-  decision: Object,
-  highlightFormItems: Boolean,
-  selectingJudge: Boolean,
-  // dispatch
-  fetchJudges: typeof fetchJudges,
-  setDecisionOptions: typeof setDecisionOptions,
-  setSelectingJudge: typeof setSelectingJudge,
-|};
-
-class JudgeSelectComponent extends React.PureComponent<Props> {
+class JudgeSelectComponent extends React.PureComponent {
   componentDidMount = () => {
     if (_.isEmpty(this.props.judges)) {
       this.props.fetchJudges();
@@ -48,7 +27,9 @@ class JudgeSelectComponent extends React.PureComponent<Props> {
   }
 
   setDefaultJudge = (judges) => {
-    const judge = _.find(judges, { css_id: this.props.assignedByCssId });
+    const judge =
+       _.find(judges, { css_id: this.props.judgeSelector }) ||
+       _.find(judges, { id: this.props.judgeSelector });
 
     if (judge) {
       this.props.setDecisionOptions({
@@ -155,4 +136,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(JudgeSelectComponent): React.ComponentType<Params>);
+)(JudgeSelectComponent));

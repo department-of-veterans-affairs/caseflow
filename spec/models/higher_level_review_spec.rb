@@ -169,32 +169,37 @@ describe HigherLevelReview do
   end
 
   context "#on_decision_issues_sync_processed" do
-    subject { higher_level_review.on_decision_issues_sync_processed(end_product_establishment) }
+    subject { higher_level_review.on_decision_issues_sync_processed(epe) }
 
-    let(:end_product_establishment) do
+    let(:epe) do
       create(:end_product_establishment,
-             source: higher_level_review)
+             source: higher_level_review,
+             reference_id: epe_ref_id)
     end
+
+    let(:epe_ref_id) { "HAS_LIMITED_POA_WITH_ACCESS" }
 
     context "when there are dta errors" do
       let!(:decision_issues) do
         [
           create(:decision_issue,
                  decision_review: higher_level_review,
-                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 disposition: DecisionIssue::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
                  profile_date: profile_date,
                  promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
-                 benefit_type: benefit_type),
+                 benefit_type: benefit_type,
+                 request_issues: [create(:request_issue, end_product_establishment: epe)]),
           create(:decision_issue,
                  decision_review: higher_level_review,
-                 disposition: HigherLevelReview::DTA_ERROR_FED_RECS,
+                 disposition: DecisionIssue::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
                  profile_date: profile_date,
                  promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
-                 benefit_type: benefit_type),
+                 benefit_type: benefit_type,
+                 request_issues: [create(:request_issue, end_product_establishment: epe)]),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  caseflow_decision_date: caseflow_decision_date,
@@ -239,7 +244,7 @@ describe HigherLevelReview do
         expect(supplemental_claim.request_issues.count).to eq(2)
 
         first_dta_request_issue = RequestIssue.find_by(
-          review_request: supplemental_claim,
+          decision_review: supplemental_claim,
           contested_decision_issue_id: decision_issues.first.id,
           contested_rating_issue_reference_id: "rating1",
           contested_rating_issue_profile_date: decision_issues.first.profile_date.to_s,
@@ -251,13 +256,15 @@ describe HigherLevelReview do
 
         expect(first_dta_request_issue).to_not be_nil
         expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDER")
+        expect(first_dta_request_issue.end_product_establishment.limited_poa_code).to eq("OU3")
+        expect(first_dta_request_issue.end_product_establishment.limited_poa_access).to be true
 
         second_dta_request_issue = RequestIssue.find_by(
-          review_request: supplemental_claim,
+          decision_review: supplemental_claim,
           contested_decision_issue_id: decision_issues.second.id,
           contested_rating_issue_reference_id: "rating2",
           contested_rating_issue_profile_date: decision_issues.second.profile_date.to_s,
-          contested_issue_description: decision_issues.first.description,
+          contested_issue_description: decision_issues.second.description,
           issue_category: decision_issues.second.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.second.approx_decision_date
@@ -299,68 +306,6 @@ describe HigherLevelReview do
     end
   end
 
-  context "#active" do
-    let(:synced_status) { "CLR" }
-    let(:dta_ep_sync_status) { "PEND" }
-    let(:veteran_file_number) { "123456789" }
-    let!(:hlr_with_dta_error) { create(:higher_level_review, veteran_file_number: veteran_file_number) }
-    let!(:hlr_end_product) do
-      create(:end_product_establishment,
-             source: hlr_with_dta_error,
-             synced_status: synced_status)
-    end
-
-    let!(:dta_sc) do
-      create(:supplemental_claim,
-             veteran_file_number: veteran_file_number,
-             decision_review_remanded: hlr_with_dta_error)
-    end
-
-    let!(:dta_ep) do
-      create(:end_product_establishment,
-             source: dta_sc,
-             synced_status: dta_ep_sync_status)
-    end
-
-    let(:veteran_file_number2) { "111223333" }
-    let!(:hlr_no_dta_error) { create(:higher_level_review, veteran_file_number: veteran_file_number2) }
-    let!(:hlr_ep) do
-      create(:end_product_establishment,
-             source: hlr_no_dta_error,
-             synced_status: synced_status)
-    end
-
-    context "there is a dta error" do
-      it "hlr active, has active dta error ep" do
-        expect(hlr_with_dta_error.active?).to eq(true)
-      end
-    end
-
-    context "dta error ep cleared" do
-      let(:dta_ep_sync_status) { "CLR" }
-
-      it "hlr is not active" do
-        expect(hlr_with_dta_error.active?).to eq(false)
-      end
-    end
-
-    context "there is no dta error" do
-      let(:synced_status) { "PEND" }
-
-      it "has active ep" do
-        expect(hlr_no_dta_error.active?).to eq(true)
-      end
-    end
-
-    context "ep is cleared" do
-      let(:synced_status) { "CLR" }
-
-      it "has cleared ep" do
-        expect(hlr_no_dta_error.active?).to eq(false)
-      end
-    end
-  end
-
   context "#events" do
     let(:veteran_file_number) { "123456789" }
     let(:promulgation_date) { receipt_date + 130.days }
@@ -376,6 +321,7 @@ describe HigherLevelReview do
         create(:decision_issue,
                decision_review: hlr,
                disposition: "not a dta error",
+               profile_date: promulgation_date,
                promulgation_date: promulgation_date)
       end
 
@@ -422,14 +368,14 @@ describe HigherLevelReview do
                receipt_date: receipt_date)
       end
 
-      let!(:hlr_end_product) do
+      let!(:hlr_epe) do
         create(:end_product_establishment, :cleared, source: hlr_with_dta_error)
       end
 
       let!(:hlr_decision_issue_with_dta_error) do
         create(:decision_issue,
                decision_review: hlr_with_dta_error,
-               disposition: HigherLevelReview::DTA_ERROR_PMR,
+               disposition: DecisionIssue::DTA_ERROR_PMR,
                rating_issue_reference_id: "rating1",
                benefit_type: benefit_type,
                end_product_last_action_date: hlr_ep_clr_date)
@@ -480,14 +426,14 @@ describe HigherLevelReview do
 
     let!(:request_issue1) do
       create(:request_issue,
-             review_request: hlr,
+             decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: "9999")
     end
 
     let!(:request_issue2) do
       create(:request_issue,
-             review_request: hlr,
+             decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: "8877")
     end
@@ -526,7 +472,7 @@ describe HigherLevelReview do
       let!(:hlr_decision_issue_with_dta_error) do
         create(:decision_issue,
                decision_review: hlr,
-               disposition: HigherLevelReview::DTA_ERROR_PMR,
+               disposition: DecisionIssue::DTA_ERROR_PMR,
                benefit_type: benefit_type,
                end_product_last_action_date: receipt_date + 30.days,
                diagnostic_code: "9999")
@@ -556,7 +502,7 @@ describe HigherLevelReview do
 
       let!(:dta_request_issue) do
         create(:request_issue,
-               review_request: dta_sc,
+               decision_review: dta_sc,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "9999")
       end
@@ -576,8 +522,8 @@ describe HigherLevelReview do
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(true)
-        expect(issue2[:last_action]).to be_nil
-        expect(issue2[:date]).to be_nil
+        expect(issue[:last_action]).to be_nil
+        expect(issue[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
     end
@@ -589,7 +535,7 @@ describe HigherLevelReview do
       let!(:hlr_decision_issue_with_dta_error) do
         create(:decision_issue,
                decision_review: hlr,
-               disposition: HigherLevelReview::DTA_ERROR_PMR,
+               disposition: DecisionIssue::DTA_ERROR_PMR,
                benefit_type: benefit_type,
                end_product_last_action_date: hlr_decision_date,
                diagnostic_code: "9999")
@@ -618,7 +564,7 @@ describe HigherLevelReview do
 
       let!(:dta_request_issue) do
         create(:request_issue,
-               review_request: dta_sc,
+               decision_review: dta_sc,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "9999")
       end
@@ -669,7 +615,7 @@ describe HigherLevelReview do
     context "has a decision" do
       let!(:request_issue1) do
         create(:request_issue,
-               review_request: hlr,
+               decision_review: hlr,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "8877")
       end
@@ -709,10 +655,11 @@ describe HigherLevelReview do
       end
 
       let(:hlr_decision_date) { receipt_date + 30.days }
+
       let!(:hlr_decision_issue_with_dta_error) do
         create(:decision_issue,
                decision_review: hlr,
-               disposition: HigherLevelReview::DTA_ERROR_PMR,
+               disposition: DecisionIssue::DTA_ERROR_PMR,
                benefit_type: benefit_type,
                end_product_last_action_date: hlr_decision_date,
                diagnostic_code: "9999")
@@ -732,12 +679,13 @@ describe HigherLevelReview do
 
       let!(:dta_request_issue) do
         create(:request_issue,
-               review_request: dta_sc,
+               decision_review: dta_sc,
                benefit_type: benefit_type,
                contested_rating_issue_diagnostic_code: "9999")
       end
 
       let(:dta_sc_decision_date) { receipt_date + 60.days }
+
       let!(:dta_sc_decision_issue) do
         create(:decision_issue,
                decision_review: dta_sc,
@@ -753,6 +701,67 @@ describe HigherLevelReview do
         expect(status[:type]).to eq(:hlr_decision)
         expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
         expect(status[:details][:issues].first[:disposition]).to eq("allowed")
+      end
+    end
+  end
+
+  context "#alerts" do
+    let(:receipt_date) { Time.new("2018", "03", "01").utc }
+    let(:benefit_type) { "compensation" }
+
+    let!(:hlr) do
+      create(:higher_level_review,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             benefit_type: benefit_type)
+    end
+
+    context "there is a dta error" do
+      let(:hlr_decision_date) { receipt_date + 100.days }
+      let!(:hlr_ep) do
+        create(:end_product_establishment,
+               :cleared,
+               source: hlr,
+               last_synced_at: hlr_decision_date)
+      end
+
+      let!(:hlr_decision_issue_with_dta_error) do
+        create(:decision_issue,
+               decision_review: hlr,
+               disposition: DecisionIssue::DTA_ERROR_PMR,
+               benefit_type: benefit_type,
+               end_product_last_action_date: hlr_decision_date,
+               diagnostic_code: "9999")
+      end
+
+      let!(:dta_sc) do
+        create(:supplemental_claim,
+               veteran_file_number: veteran_file_number,
+               decision_review_remanded: hlr)
+      end
+
+      let!(:dta_ep) { create(:end_product_establishment, :cleared, source: dta_sc) }
+
+      let(:dta_sc_decision_date) { receipt_date + 150.days }
+      let!(:dta_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: dta_sc,
+               disposition: "allowed",
+               benefit_type: benefit_type,
+               end_product_last_action_date: dta_sc_decision_date)
+      end
+
+      it "has alert with dta sc decision date" do
+        alerts = hlr.alerts
+
+        expect(alerts.empty?).to be(false)
+        expect(alerts.first[:type]).to eq("ama_post_decision")
+        expect(alerts.first[:details][:decisionDate]).to eq(dta_sc_decision_date)
+        expect(alerts.first[:details][:dueDate]).to eq(dta_sc_decision_date + 365.days)
+        expect(alerts.first[:details][:cavcDueDate]).to be_nil
+
+        available_options = %w[supplemental_claim appeal]
+        expect(alerts.first[:details][:availableOptions]).to eq(available_options)
       end
     end
   end

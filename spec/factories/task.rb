@@ -19,6 +19,13 @@ FactoryBot.define do
       on_hold_duration [30, 60, 90].sample
     end
 
+    trait :completed_hold do
+      status Constants.TASK_STATUSES.on_hold
+      started_at { rand(25..30).days.ago }
+      placed_on_hold_at { rand(15..25).days.ago }
+      on_hold_duration 10
+    end
+
     trait :completed do
       status Constants.TASK_STATUSES.completed
       started_at { rand(20..30).days.ago }
@@ -99,6 +106,18 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :hearing_task, class: HearingTask do
+      type HearingTask.name
+      appeal { create(:appeal) }
+    end
+
+    factory :schedule_hearing_task, class: ScheduleHearingTask do
+      type ScheduleHearingTask.name
+      appeal { create(:appeal) }
+      assigned_to { HearingsManagement.singleton }
+      parent { create(:hearing_task, appeal: appeal) }
+    end
+
     factory :ama_attorney_task do
       type AttorneyTask.name
       appeal { create(:appeal) }
@@ -127,12 +146,6 @@ FactoryBot.define do
 
     factory :bva_dispatch_task do
       type BvaDispatchTask.name
-      appeal { create(:appeal) }
-      assigned_by nil
-    end
-
-    factory :schedule_hearing_task, class: ScheduleHearingTask do
-      type ScheduleHearingTask.name
       appeal { create(:appeal) }
       assigned_by nil
     end

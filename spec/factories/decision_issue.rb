@@ -19,11 +19,11 @@ FactoryBot.define do
     end
 
     trait :nonrating do
-      request_issues { [create(:request_issue, :nonrating, review_request: decision_review)] }
+      request_issues { [create(:request_issue, :nonrating, decision_review: decision_review)] }
     end
 
     trait :rating do
-      request_issues { [create(:request_issue, :rating, review_request: decision_review)] }
+      request_issues { [create(:request_issue, :rating, decision_review: decision_review)] }
     end
 
     trait :imo do

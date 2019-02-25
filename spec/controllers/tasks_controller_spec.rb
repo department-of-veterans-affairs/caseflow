@@ -147,7 +147,7 @@ RSpec.describe TasksController, type: :controller do
           )
         end
         let!(:legacy_appeal) do
-          create(:legacy_appeal, vacols_case: vacols_case)
+          create(:legacy_appeal, vacols_case: vacols_case, closest_regional_office: "RO04")
         end
         let!(:task) do
           create(:generic_task, assigned_to: user, appeal: legacy_appeal)
@@ -194,7 +194,7 @@ RSpec.describe TasksController, type: :controller do
 
             task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
 
             # org count minus one since we can't assign to ourselves.
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
@@ -221,7 +221,7 @@ RSpec.describe TasksController, type: :controller do
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(3)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
 
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
               action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
@@ -740,23 +740,23 @@ RSpec.describe TasksController, type: :controller do
       end
       let(:closest_regional_office) { "RO10" }
       let(:address) { "Fake Address" }
-      let!(:veteran) { create(:veteran, closest_regional_office: closest_regional_office) }
-      let!(:hearing_location) do
-        create(
-          :available_hearing_locations,
-          veteran_file_number: veteran.file_number,
-          address: address,
-          distance: 0,
-          facility_type: "va_health_facility"
-        )
-      end
+      let!(:veteran) { create(:veteran) }
 
       it "gets veterans ready for hearing schedule" do
         BGSService.instance_methods(false).each do |method_name|
           expect_any_instance_of(BGSService).not_to receive(method_name)
         end
 
-        AppealRepository.create_schedule_hearing_tasks
+        AppealRepository.create_schedule_hearing_tasks.each do |appeal|
+          appeal.update(closest_regional_office: closest_regional_office)
+
+          AvailableHearingLocations.create(
+            appeal: appeal,
+            address: address,
+            distance: 0,
+            facility_type: "va_health_facility"
+          )
+        end
 
         get :ready_for_hearing_schedule, params: { ro: closest_regional_office }
         expect(response).to have_http_status(:success)
@@ -764,7 +764,7 @@ RSpec.describe TasksController, type: :controller do
 
         expect(data.size).to be(1)
         expect(data.first["attributes"]["closest_regional_office"]).to eq(closest_regional_office)
-        expect(data.first["attributes"]["veteran_available_hearing_locations"].first["address"]).to eq(
+        expect(data.first["attributes"]["available_hearing_locations"].first["address"]).to eq(
           address
         )
       end

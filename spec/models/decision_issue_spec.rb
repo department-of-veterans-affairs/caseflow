@@ -1,4 +1,3 @@
-require "rails_helper"
 require "support/intake_helpers"
 
 describe DecisionIssue do
@@ -38,8 +37,49 @@ describe DecisionIssue do
   let(:decision_date) { 10.days.ago }
   let(:decision_review) { create(:supplemental_claim, benefit_type: benefit_type) }
 
+  context "scopes" do
+    let!(:ri_contesting_decision_issue) { create(:request_issue, contested_decision_issue_id: decision_issue.id) }
+    let!(:uncontested_di) { create(:decision_issue, disposition: "other") }
+    let!(:uncontested_remand_di) { create(:decision_issue, id: 55, disposition: "remanded") }
+    let!(:uncontested_dta_di) { create(:decision_issue, id: 56, disposition: "DTA Error - Fed Recs") }
+    let!(:granted_di) { create(:decision_issue, id: 57, disposition: "DTA Error - Fed Recs") }
+
+    context ".contested" do
+      it "matches decision issue that has been contested" do
+        expect(DecisionIssue.contested).to eq([decision_issue])
+        expect(DecisionIssue.contested).to_not include(uncontested_di)
+      end
+    end
+
+    context ".uncontested" do
+      it "matches decision issues that has not been contested" do
+        expect(DecisionIssue.uncontested).to include(uncontested_di, uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.uncontested).to_not include(decision_issue)
+      end
+    end
+
+    context ".remanded" do
+      it "includes decision issues with remand and dta error dispositions" do
+        expect(DecisionIssue.remanded).to include(uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.remanded).to_not include(decision_issue, uncontested_di)
+      end
+    end
+
+    context ".not_remanded" do
+      it "includes decision issues with remand and dta error dispositions" do
+        expect(DecisionIssue.not_remanded).to include(decision_issue, uncontested_di)
+        expect(DecisionIssue.not_remanded).to_not include(uncontested_remand_di, uncontested_dta_di)
+      end
+    end
+  end
+
   context "#save" do
     subject { decision_issue.save }
+
+    it "sets created at" do
+      subject
+      expect(decision_issue).to have_attributes(created_at: Time.zone.now)
+    end
 
     context "when description is not set" do
       let(:description) { nil }

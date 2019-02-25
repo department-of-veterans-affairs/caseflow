@@ -298,23 +298,49 @@ class User < ApplicationRecord
 
       return nil if user.nil?
 
-      find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
-        u.full_name = user["name"]
-        u.email = user["email"]
-        u.roles = user["roles"]
-        u.regional_office = session[:regional_office]
-        u.save
+      # TODO: ignore station_id since id should be globally unique.
+      css_id = user["id"]
+      existing_user = find_by_css_id_and_station_id(css_id, user["station_id"])
+
+      existing_user ||= create!(
+        css_id: css_id.upcase,
+        station_id: user["station_id"],
+        full_name: user["name"],
+        email: user["email"],
+        roles: user["roles"],
+        regional_office: session[:regional_office]
+      )
+      existing_user.tap do |u|
+        u.update!(
+          full_name: user["name"],
+          email: user["email"],
+          roles: user["roles"],
+          regional_office: session[:regional_office]
+        )
       end
     end
 
+    def find_by_css_id_and_station_id(css_id, station_id)
+      # prefer case match first
+      user = find_by(css_id: css_id, station_id: station_id)
+      return user if user
+
+      find_by("UPPER(css_id)=UPPER(?) AND station_id=?", css_id, station_id)
+    end
+
     def find_by_css_id_or_create_with_default_station_id(css_id)
-      User.find_by(css_id: css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
+      find_by_css_id(css_id) || User.create(css_id: css_id.upcase, station_id: BOARD_STATION_ID)
     end
 
     def list_hearing_coordinators
       Rails.cache.fetch("#{Rails.env}_list_of_hearing_coordinators_from_vacols") do
         user_repository.find_all_hearing_coordinators
       end
+    end
+
+    # case-insensitive search
+    def find_by_css_id(css_id)
+      find_by("UPPER(css_id)=UPPER(?)", css_id)
     end
 
     def authentication_service

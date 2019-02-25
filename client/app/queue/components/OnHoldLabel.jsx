@@ -1,12 +1,9 @@
-// @flow
 import moment from 'moment';
-import type { Task } from '../types/models';
 
-export const numDaysOnHold = (task: Task) => moment().startOf('day').
+export const numDaysOnHold = (task) => moment().startOf('day').
   diff(task.placedOnHoldAt, 'days');
 
-type Props = { task: Task };
-const OnHoldLabel = (props: Props) => `${numDaysOnHold(props.task)}${props.task.onHoldDuration ? ` of ${
+const OnHoldLabel = (props) => `${numDaysOnHold(props.task)}${props.task.onHoldDuration ? ` of ${
   props.task.onHoldDuration}` : ''}`;
 
 export default OnHoldLabel;

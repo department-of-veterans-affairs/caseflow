@@ -179,13 +179,12 @@ class SeedDB
 
     3.times do
       root = FactoryBot.create(:root_task)
-      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       FactoryBot.create_list(
         :request_issue,
         [3, 4, 5].sample,
-        contested_issue_description: description,
+        :nonrating,
         notes: "Pain disorder with 100\% evaluation per examination",
-        review_request: root.appeal
+        decision_review: root.appeal
       )
       parent = FactoryBot.create(
         :bva_dispatch_task,
@@ -418,13 +417,13 @@ class SeedDB
       last_name: Faker::Name.last_name
     )
 
-    vet.closest_regional_office = ro_key
     vet.save
 
     appeal = FactoryBot.create(
       :appeal,
       :with_tasks,
       number_of_claimants: 1,
+      closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
       docket_type: "hearing"
     )
@@ -461,7 +460,7 @@ class SeedDB
                           :nonrating,
                           end_product_establishment: epe,
                           veteran_participant_id: veteran.participant_id,
-                          review_request: higher_level_review)
+                          decision_review: higher_level_review)
       end
       FactoryBot.create(:higher_level_review_task,
                         assigned_to: Organization.find_by(name: "National Cemetery Association"),
@@ -470,7 +469,6 @@ class SeedDB
   end
 
   def create_ama_appeals
-    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
 
     @appeal_with_vso = FactoryBot.create(
@@ -481,7 +479,7 @@ class SeedDB
       ],
       veteran_file_number: "701305078",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
     es = "evidence_submission"
@@ -506,7 +504,7 @@ class SeedDB
         veteran_file_number: params[:veteran_file_number],
         docket_type: params[:docket_type],
         request_issues: FactoryBot.create_list(
-          :request_issue, params[:request_issue_count], contested_issue_description: description, notes: notes
+          :request_issue, params[:request_issue_count], :nonrating, notes: notes
         )
       )
     end
@@ -515,6 +513,7 @@ class SeedDB
     LegacyAppeal.create(vacols_id: "2226048", vbms_id: "213912991S")
     LegacyAppeal.create(vacols_id: "2249056", vbms_id: "608428712S")
     LegacyAppeal.create(vacols_id: "2306397", vbms_id: "779309925S")
+    LegacyAppeal.create(vacols_id: "2657227", vbms_id: "169397130S")
   end
 
   def create_higher_level_reviews_and_supplemental_claims
@@ -615,7 +614,7 @@ class SeedDB
     )
 
     eligible_request_issue = RequestIssue.create!(
-      review_request: higher_level_review,
+      decision_review: higher_level_review,
       issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
@@ -625,7 +624,7 @@ class SeedDB
     )
 
     untimely_request_issue = RequestIssue.create!(
-      review_request: higher_level_review,
+      decision_review: higher_level_review,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "12345",
@@ -706,7 +705,8 @@ class SeedDB
       { vacols_id: "2096907", trait: nil, additional: { action: "schedule_hearing" } },
       { vacols_id: "2226048", trait: nil, additional: { action: "translation" } },
       { vacols_id: "2249056", trait: :in_progress },
-      { vacols_id: "2306397", trait: :on_hold }
+      { vacols_id: "2306397", trait: :on_hold },
+      { vacols_id: "2657227", trait: :completed_hold }
     ].each do |attrs|
       org_task_args = { appeal: LegacyAppeal.find_by(vacols_id: attrs[:vacols_id]),
                         assigned_by: attorney,
@@ -813,10 +813,10 @@ class SeedDB
 
       request_issues = FactoryBot.create_list(:request_issue, 3,
                                               :nonrating,
-                                              description: "#{index} #{description}",
+                                              contested_issue_description: "#{index} #{description}",
                                               notes: "#{index} #{notes}",
                                               benefit_type: nca.url,
-                                              review_request: board_grant_task.appeal)
+                                              decision_review: board_grant_task.appeal)
 
       request_issues.each do |request_issue|
         # create matching decision issue
@@ -918,7 +918,10 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
-      request_issues: FactoryBot.create_list(:request_issue, 1, description: description, notes: notes)
+      closest_regional_office: "RO17",
+      request_issues: FactoryBot.create_list(
+        :request_issue, 1, contested_issue_description: description, notes: notes
+      )
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
@@ -926,7 +929,10 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",
-      request_issues: FactoryBot.create_list(:request_issue, 8, description: description, notes: notes)
+      closest_regional_office: "RO17",
+      request_issues: FactoryBot.create_list(
+        :request_issue, 8, contested_issue_description: description, notes: notes
+      )
     )
 
     user = User.find_by(css_id: "BVATWARNER")
@@ -938,7 +944,6 @@ class SeedDB
       created_by: user,
       updated_by: user
     )
-    Veteran.where(file_number: %w[808415990 992190636]).update_all(closest_regional_office: "RO17")
   end
 
   def seed

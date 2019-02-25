@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
@@ -6,11 +5,7 @@ import { sprintf } from 'sprintf-js';
 import QueueSelectorDropdown from './QueueSelectorDropdown';
 import COPY from '../../../COPY.json';
 
-type Props = {|
-  organizations: Array<Object>
-|};
-
-export default class QueueOrganizationDropdown extends React.Component<Props> {
+export default class QueueOrganizationDropdown extends React.Component {
   render = () => {
     const { organizations } = this.props;
     const url = window.location.pathname.split('/');

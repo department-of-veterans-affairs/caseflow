@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -30,30 +29,7 @@ import {
   COLOCATED_HOLD_DURATIONS
 } from './constants';
 
-import type { State, UiStateMessage } from './types/state';
-import type { Task, Appeal } from './types/models';
-
-type ViewState = {|
-  hold: string,
-  customHold: ?number,
-  instructions: string
-|};
-
-type Params = {|
-  taskId: string,
-  appealId: string
-|};
-
-type Props = Params & {|
-  task: Task,
-  appeal: Appeal,
-  error: ?UiStateMessage,
-  highlightFormItems: boolean,
-  requestPatch: typeof requestPatch,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks
-|};
-
-class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
+class ColocatedPlaceHoldView extends React.Component {
   constructor(props) {
     super(props);
 
@@ -176,7 +152,7 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state, ownProps) => {
   const {
     highlightFormItems,
     messages: { error }
@@ -202,4 +178,4 @@ const WrappedComponent = decisionViewBase(ColocatedPlaceHoldView, {
 
 export default (withRouter(
   connect(mapStateToProps, mapDispatchToProps)(WrappedComponent)
-): React.ComponentType<Params>);
+));

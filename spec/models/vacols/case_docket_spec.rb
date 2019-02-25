@@ -1,7 +1,6 @@
 describe VACOLS::CaseDocket do
   before do
     FeatureToggle.enable!(:test_facols)
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
   after do
@@ -129,7 +128,7 @@ describe VACOLS::CaseDocket do
         create(:case_hearing,
                :disposition_held,
                folder_nr: original.bfkey,
-               hearing_date: 5.days.ago,
+               hearing_date: 5.days.ago.to_date,
                board_member: judge.vacols_attorney_id)
       end
 
@@ -143,17 +142,42 @@ describe VACOLS::CaseDocket do
     subject { VACOLS::CaseDocket.nonpriority_decisions_per_year }
 
     before do
-      10.times do
+      4.times do
         create(:case,
                bfddec: 6.months.ago,
                bfac: "1",
                bfdc: "1")
       end
 
+      4.times do
+        create(:case,
+               bfddec: 6.months.ago,
+               bfac: "1",
+               bfdc: "3")
+      end
+
+      2.times do
+        create(:case,
+               bfddec: 6.months.ago,
+               bfac: "1",
+               bfdc: "4")
+      end
+
       create(:case,
              bfddec: 13.months.ago,
              bfac: "1",
              bfdc: "1")
+
+      create(:case,
+             bfddec: 6.months.ago,
+             bfac: "7",
+             bfdc: "5")
+
+      create(:case,
+             :aod,
+             bfddec: 6.months.ago,
+             bfac: "1",
+             bfdc: "3")
     end
 
     it "counts decisions in the last year" do
@@ -213,7 +237,7 @@ describe VACOLS::CaseDocket do
         create(:case_hearing,
                :disposition_held,
                folder_nr: original.bfkey,
-               hearing_date: 5.days.ago,
+               hearing_date: 5.days.ago.to_date,
                board_member: hearing_judge)
       end
 
@@ -221,7 +245,7 @@ describe VACOLS::CaseDocket do
         create(:case_hearing,
                :disposition_held,
                folder_nr: another_nonpriority_ready_case.bfkey,
-               hearing_date: 5.days.ago,
+               hearing_date: 5.days.ago.to_date,
                board_member: another_judge.vacols_attorney_id)
       end
 
@@ -355,7 +379,7 @@ describe VACOLS::CaseDocket do
         create(:case_hearing,
                :disposition_held,
                folder_nr: original.bfkey,
-               hearing_date: 5.days.ago,
+               hearing_date: 5.days.ago.to_date,
                board_member: hearing_judge)
       end
 
@@ -363,7 +387,7 @@ describe VACOLS::CaseDocket do
         create(:case_hearing,
                :disposition_held,
                folder_nr: postcavc_ready_case.bfkey,
-               hearing_date: 5.days.ago,
+               hearing_date: 5.days.ago.to_date,
                board_member: another_judge.vacols_attorney_id)
       end
 

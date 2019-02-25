@@ -1,11 +1,8 @@
-// @flow
-
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import {
-  resetSaveState,
   resetErrorMessages,
   showErrorMessage,
   showSuccessMessage,
@@ -24,16 +21,12 @@ import editModalBase from './EditModalBase';
 import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
-import type {
-  State
-} from '../types/state';
-
 import { withRouter } from 'react-router-dom';
 import RadioField from '../../components/RadioField';
 import {
   HearingDateDropdown,
   RegionalOfficeDropdown,
-  VeteranHearingLocationsDropdown
+  AppealHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
@@ -43,52 +36,9 @@ import {
 import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import { prepareAppealForStore } from '../utils';
 import _ from 'lodash';
-import type { Appeal, Task } from '../types/models';
 import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING, TIME_OPTIONS } from '../../hearings/constants/constants';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import moment from 'moment';
-
-type Params = {|
-  task: Task,
-  taskId: string,
-  appeal: Appeal,
-  appealId: string,
-  userId: string
-|};
-
-type Props = Params & {|
-  // From state
-  savePending: boolean,
-  selectedRegionalOffice: string,
-  scheduleHearingTask: Object,
-  openHearing: Object,
-  history: Object,
-  hearingDay: Object,
-  selectedHearingDay: Object,
-  selectedHearingTime: string,
-  selectedOptionalTime: Object,
-  selectedHearingLocation: Object,
-  // Action creators
-  showErrorMessage: typeof showErrorMessage,
-  resetErrorMessages: typeof resetErrorMessages,
-  showSuccessMessage: typeof showSuccessMessage,
-  resetSuccessMessages: typeof resetSuccessMessages,
-  resetSaveState: typeof resetSaveState,
-  onRegionalOfficeChange: typeof onRegionalOfficeChange,
-  requestPatch: typeof requestPatch,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks,
-  onHearingDayChange: typeof onHearingDayChange,
-  onHearingTimeChange: typeof onHearingTimeChange,
-  onHearingLocationChange: typeof onHearingLocationChange,
-  onReceiveAppealDetails: typeof onReceiveAppealDetails,
-  onHearingOptionalTime: typeof onHearingOptionalTime,
-  // Inherited from EditModalBase
-  setLoading: Function,
-|};
-
-type LocalState = {|
-  invalid: Object
-|}
 
 const formStyling = css({
   '& .cf-form-radio-option:not(:last-child)': {
@@ -98,7 +48,7 @@ const formStyling = css({
   marginBottom: 0
 });
 
-class AssignHearingModal extends React.PureComponent<Props, LocalState> {
+class AssignHearingModal extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -125,8 +75,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       return;
     }
 
-    if (appeal.veteranAvailableHearingLocations) {
-      const location = appeal.veteranAvailableHearingLocations[0];
+    if (appeal.availableHearingLocations) {
+      const location = appeal.availableHearingLocations[0];
 
       if (location) {
         this.props.onHearingLocationChange({
@@ -196,8 +146,8 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
       selectedHearingLocation
     } = this.props;
 
-    const veteranHearingLocations = appeal.veteranAvailableHearingLocations || [];
-    const hearingLocation = selectedHearingLocation || veteranHearingLocations[0];
+    const appealHearingLocations = appeal.availableHearingLocations || [];
+    const hearingLocation = selectedHearingLocation || appealHearingLocations[0];
 
     const payload = {
       data: {
@@ -380,14 +330,14 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
           value={selectedRegionalOffice || initVals.regionalOffice}
           validateValueOnMount />
 
-        {selectedRegionalOffice && <VeteranHearingLocationsDropdown
+        {selectedRegionalOffice && <AppealHearingLocationsDropdown
           errorMessage={invalid.location}
           label="Suggested Hearing Location"
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
-          veteranFileNumber={appeal.veteranFileNumber}
-          dynamic={appeal.veteranClosestRegionalOffice !== currentRegionalOffice}
-          staticHearingLocations={appeal.veteranAvailableHearingLocations}
+          appealId={appeal.externalId}
+          dynamic={appeal.closestRegionalOffice !== currentRegionalOffice}
+          staticHearingLocations={appeal.availableHearingLocations}
           onChange={this.props.onHearingLocationChange}
           value={selectedHearingLocation}
         />}
@@ -423,7 +373,7 @@ class AssignHearingModal extends React.PureComponent<Props, LocalState> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => ({
+const mapStateToProps = (state, ownProps) => ({
   scheduleHearingTask: _.find(
     actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
     (task) => task.type === 'ScheduleHearingTask' && task.status !== 'completed'
@@ -463,4 +413,4 @@ export default (withRouter(
     AssignHearingModal, { title: 'Schedule Veteran',
       button: 'Schedule' }
   ))
-): React.ComponentType<Params>);
+));

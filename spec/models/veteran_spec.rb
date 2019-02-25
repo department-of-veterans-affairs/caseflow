@@ -7,6 +7,8 @@ describe Veteran do
     Timecop.freeze(Time.utc(2022, 1, 15, 12, 0, 0))
 
     Fakes::BGSService.veteran_records = { "44556677" => veteran_record }
+
+    RequestStore[:current_user] = create(:user)
   end
 
   let(:veteran_record) do
@@ -126,6 +128,14 @@ describe Veteran do
           expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
           expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
           expect(veteran.reload.last_name).to eq "Smith"
+        end
+
+        it "no BGS method is called" do
+          BGSService.instance_methods(false).each do |method_name|
+            expect_any_instance_of(BGSService).not_to receive(method_name)
+          end
+
+          expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
         end
       end
     end
@@ -397,7 +407,6 @@ describe Veteran do
 
     before do
       BGSService = ExternalApi::BGSService
-      RequestStore[:current_user] = create(:user)
 
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
         .with(array_including(participant_ids)).and_return(poas)

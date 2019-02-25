@@ -58,6 +58,14 @@ export const BOOLEAN_RADIO_OPTIONS = [
     displayText: 'Yes' }
 ];
 
+export const BOOLEAN_RADIO_OPTIONS_DISABLED_FALSE = [
+  { value: 'false',
+    displayText: 'No',
+    disabled: true },
+  { value: 'true',
+    displayText: 'Yes' }
+];
+
 export const REQUEST_STATE = {
   NOT_STARTED: 'NOT_STARTED',
   IN_PROGRESS: 'IN_PROGRESS',
