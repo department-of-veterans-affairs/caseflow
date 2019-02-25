@@ -1,6 +1,16 @@
 class TranscriptionTask < GenericTask
-  def available_actions(_user)
-    [Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h, Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h]
+  def available_actions(user)
+    if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
+      return [Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h, Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h]
+    end
+
+    []
+  end
+
+  def complete_transcription_data(_user)
+    {
+      modal_body: COPY::COMPLETE_TRANSCRIPTION_BODY
+    }
   end
 
   def assign_to_hearing_schedule_team_data(_user)

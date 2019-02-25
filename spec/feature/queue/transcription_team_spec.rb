@@ -9,9 +9,12 @@ RSpec.feature "TranscriptionTeam" do
   end
 
   describe "transcription team members should be able to complete transcription tasks" do
-    let!(:transcription_task) { FactoryBot.create(:transcription_task) }
+    let(:appeal) { FactoryBot.create(:appeal) }
+    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:transcription_task) { FactoryBot.create(:transcription_task, parent: hearing_task, appeal: appeal) }
 
-    it "completes the task" do
+    scenario "completes the task" do
       visit("/organizations/transcription")
       click_on "Bob Smith"
       click_dropdown(text: Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h[:label])
@@ -21,18 +24,21 @@ RSpec.feature "TranscriptionTeam" do
       expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
     end
 
-    it "completes the task and sends appeal to hearings management" do
+    scenario "cancels the task and sends appeal to hearings management" do
       visit("/organizations/transcription")
       click_on "Bob Smith"
       click_dropdown(text: Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h[:label])
-      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Recording error")
       click_on "Submit"
 
-      expect(page).to have_content("Task reassigned to Hearings Management")
-      expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-      expect(ScheduleHearingTask.count).to eq(1)
-      expect(ScheduleHearingTask.first.appeal).to eq(transcription_task.appeal)
-      expect(ScheduleHearingTask.first.parent).to eq(transcription_task.parent)
+      expect(page).to have_content(
+        format(COPY::RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_TITLE, appeal.veteran_full_name)
+      )
+
+      expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      expect(root_task.children.where(type: HearingTask.name).count).to eq(2)
+      open_hearing_task = root_task.children.find_by(type: HearingTask.name, status: Constants.TASK_STATUSES.on_hold)
+      expect(open_hearing_task.children.first.type).to eq(ScheduleHearingTask.name)
+      expect(open_hearing_task.children.first.assigned_to).to eq(HearingsManagement.singleton)
     end
   end
 end
