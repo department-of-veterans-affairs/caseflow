@@ -67,7 +67,7 @@ RSpec.describe AppealsController, type: :controller do
       let(:appeal) { create(:appeal, veteran_file_number: file_number) }
 
       it "should return document count" do
-        get :document_count, params: { appeal_id: appeal.uuid, cached: true }
+        get :document_count, params: { appeal_id: appeal.uuid, cached: nil }
 
         response_body = JSON.parse(response.body)
         expect(response_body["document_count"]).to eq 2
