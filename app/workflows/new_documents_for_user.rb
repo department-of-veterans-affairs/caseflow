@@ -3,10 +3,6 @@ class NewDocumentsForUser
 
   attr_accessor :appeal, :user, :query_vbms, :date_to_compare_with
 
-  def initialize(attributes)
-    super(attributes)
-  end
-
   # Retrieves any documents that have been uploaded more recently than the user has viewed
   # the appeal or an optional provided date. Try to load docs from caseflow if query_vbms is
   # false, load from vbms otherwise
@@ -20,6 +16,8 @@ class NewDocumentsForUser
 
     filter_docs_by_date(caseflow_documents, compare_date)
   end
+
+  private
 
   def filter_docs_by_date(documents, date)
     documents.select do |doc|
