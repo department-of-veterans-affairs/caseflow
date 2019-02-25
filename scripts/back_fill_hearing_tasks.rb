@@ -13,13 +13,20 @@ legacy_sched_hear_tasks = Task
   .select do |task|
   task.parent.type == "RootTask"
 end
-puts "Total HoldHearing or ScheduleHearing Tasks with RootTask as parent: #{legacy_sched_hear_tasks.size}"
 
 tasks_grouped_by_appeal_and_date = legacy_sched_hear_tasks.group_by do |task|
-  "#{task.appeal.id}-#{task.created_at.strftime('%Y-%m-%d')}"
+  if (task.type = "ScheduleHearingTask")
+    if task.closed_at.nil?
+      "#{task.appeal.id}-#{task.created_at.strftime('%Y-%m-%d')}"
+    else
+      "#{task.appeal.id}-#{task.closed_at.strftime('%Y-%m-%d')}"
+    end
+  else
+    "#{task.appeal.id}-#{task.created_at.strftime('%Y-%m-%d')}"
+  end
 end
 
-puts tasks_grouped_by_appeal_and_date.inspect
+total_hearing_tasks_created = 0
 
 tasks_grouped_by_appeal_and_date.each do |grouping, tasks|
   puts "Processing grouping #{grouping}"
@@ -31,6 +38,8 @@ tasks_grouped_by_appeal_and_date.each do |grouping, tasks|
                                      assigned_to: Bva.singleton,
                                      status: hearing_task_status)
 
+  total_hearing_tasks_created += 1
+
   tasks.each do |task|
     hearing_task_status = "on_hold" if task.status != "completed"
     task.parent = hearing_task
@@ -41,3 +50,8 @@ tasks_grouped_by_appeal_and_date.each do |grouping, tasks|
   hearing_task.status = hearing_task_status
   hearing_task.save!
 end
+
+puts "Total HoldHearing and ScheduleHearing Tasks with RootTask as parent: #{legacy_sched_hear_tasks.size}"
+puts "Total groupings by appeal and date: #{tasks_grouped_by_appeal_and_date.size}"
+puts "Total HearingTasks created: #{total_hearing_tasks_created}"
+
