@@ -33,7 +33,6 @@ class BvaDispatchTask < GenericTask
         delay = decision_document.decision_date.future? ? decision_document.decision_date : 0
         decision_document.submit_for_processing!(delay: delay)
 
-        # TODO: remove this unless statement when all decision documents require async processing
         unless decision_document.processed?
           ProcessDecisionDocumentJob.perform_later(decision_document.id)
         end
