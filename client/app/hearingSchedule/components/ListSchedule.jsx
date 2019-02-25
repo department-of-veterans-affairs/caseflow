@@ -5,7 +5,7 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import { css } from 'glamor';
 import moment from 'moment';
 
-import NewTable from '../../components/NewTable';
+import FilterableTable from '../../components/FilterableTable';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
 import PropTypes from 'prop-types';
@@ -188,7 +188,7 @@ class ListSchedule extends React.Component {
                 }
               </div>
             </div>
-            <NewTable
+            <FilterableTable
               columns={hearingScheduleColumns}
               rowObjects={hearingScheduleRows}
               summary="hearing-schedule"

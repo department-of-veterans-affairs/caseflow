@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import NewTable from '../../components/NewTable';
+import FilterableTable from '../../components/FilterableTable';
 import Checkbox from '../../components/Checkbox';
 import HearingTime from './modalForms/HearingTime';
 import SearchableDropdown from '../../components/SearchableDropdown';
@@ -172,7 +172,7 @@ export default class DailyDocket extends React.Component {
         Room number: {this.props.dailyDocket.room}
       </span>
       <div {...noMarginStyling}>
-        { !_.isEmpty(dailyDocketRows) && <NewTable
+        { !_.isEmpty(dailyDocketRows) && <FilterableTable
           columns={dailyDocketColumns}
           rowObjects={dailyDocketRows}
           summary="dailyDocket"
@@ -186,7 +186,7 @@ export default class DailyDocket extends React.Component {
       { !_.isEmpty(this.previouslyScheduledHearings(this.props.hearings)) && <div>
         <h1>Previously Scheduled</h1>
         <div {...noMarginStyling}>
-          <NewTable
+          <FilterableTable
             columns={dailyDocketColumns}
             rowObjects={this.getDailyDocketRows(this.previouslyScheduledHearings(), true)}
             summary="dailyDocket"

@@ -2,10 +2,10 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 
-import NewTable from '../../../app/components/NewTable';
+import FilterableTable from '../../../app/components/FilterableTable';
 import { createTask } from '../../factory';
 
-describe('NewTable', () => {
+describe('FilterableTable', () => {
   let columns;
   let rowObjects;
   let wrapper;
@@ -26,7 +26,7 @@ describe('NewTable', () => {
   context('renders', () => {
     it('works', () => {
       wrapper = mount(
-        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <FilterableTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       let headerCount = 3;
@@ -51,7 +51,7 @@ describe('NewTable', () => {
 
       rowObjects = rowObjects.concat(additionalRows);
       wrapper = mount(
-        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <FilterableTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       wrapper.instance().updateFilteredByList({ type: ['AttorneyLegacyTask'] });
@@ -65,7 +65,7 @@ describe('NewTable', () => {
 
       rowObjects = rowObjects.concat(additionalRows);
       wrapper = mount(
-        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <FilterableTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       wrapper.instance().updateFilteredByList({ type: ['AttorneyLegacyTask'] });
@@ -76,7 +76,7 @@ describe('NewTable', () => {
 
     it('updates current page', () => {
       wrapper = mount(
-        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <FilterableTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       wrapper.instance().updateCurrentPage(1);
@@ -87,7 +87,7 @@ describe('NewTable', () => {
 
     it('paginates table data', () => {
       wrapper = mount(
-        <NewTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
+        <FilterableTable columns={columns} rowObjects={rowObjects} summary="test table" slowReRendersAreOk />
       );
 
       const paginatedData = wrapper.instance().paginateData(rowObjects);

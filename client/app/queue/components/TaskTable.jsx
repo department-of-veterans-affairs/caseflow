@@ -12,7 +12,7 @@ import moment from 'moment';
 import pluralize from 'pluralize';
 import { bindActionCreators } from 'redux';
 
-import NewTable from '../../components/NewTable';
+import FilterableTable from '../../components/FilterableTable';
 import Checkbox from '../../components/Checkbox';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
@@ -354,7 +354,7 @@ export class TaskTableUnconnected extends React.PureComponent {
 
     return (
       <div>
-        <NewTable
+        <FilterableTable
           columns={this.getQueueColumns}
           rowObjects={tasks}
           getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
