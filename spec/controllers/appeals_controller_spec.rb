@@ -39,6 +39,10 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET appeals/appeal_id/document_count" do
     context "when a legacy appeal has documents" do
+      before do
+        expect_any_instance_of(DocumentFetcher).to receive(:number_of_documents) { documents.length }
+      end
+
       let(:documents) do
         [
           create(:document, type: "SSOC", received_at: 6.days.ago),
@@ -47,15 +51,19 @@ RSpec.describe AppealsController, type: :controller do
       end
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
-      it "should return document count" do
+      it "should return document count and not call vbms" do
         get :document_count, params: { appeal_id: appeal.vacols_id }
 
         response_body = JSON.parse(response.body)
-        expect(response_body["document_count"]).to eq 2
+        expect(response_body["document_count"]).to eq documents.length
       end
     end
 
     context "when an ama appeal has documents" do
+      before do
+        expect_any_instance_of(DocumentFetcher).not_to receive(:number_of_documents) { documents.length }
+      end
+
       let(:file_number) { Random.rand(999_999_999).to_s }
 
       let!(:documents) do
