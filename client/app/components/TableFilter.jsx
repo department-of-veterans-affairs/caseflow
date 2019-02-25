@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 import { css, hover } from 'glamor';
+import { consolidatedEmptyValuesFor } from './common/utils';
 import FilterIcon from './FilterIcon';
 import FilterableDropdown from './FilterableDropdown';
 import FilterOption from './FilterOption';
@@ -43,7 +44,7 @@ class TableFilter extends React.PureComponent {
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
       let displayText = `<<blank>> (${countByColumnName[key]})`;
-      const keyValue = key === 'undefined' || key === 'null' ? 'null' : key;
+      const keyValue = consolidatedEmptyValuesFor(key);
       const checked = filtersForColumn ? filtersForColumn.includes(keyValue) : false;
 
       if (key && key !== 'null' && key !== 'undefined') {

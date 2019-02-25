@@ -11,6 +11,7 @@ import TableFilter from './TableFilter';
 import FilterSummary from './FilterSummary';
 import TablePagination from './TablePagination';
 import { COLORS } from '../constants/AppConstants';
+import { consolidatedEmptyValuesFor } from './common/utils';
 
 /**
  * This component can be used to easily build tables.
@@ -266,9 +267,11 @@ export default class FilterableTable extends React.PureComponent {
           // `undefined`, `null`, or `'null'`. This converts all of these
           // possible values to 'null' for consistent comparison to the
           // `filteredByList`, which will always store it as 'null'.
-          let rowValue = typeof _.get(row, columnName) === 'undefined' ? 'null' : _.get(row, columnName);
+          // let rowValue = typeof _.get(row, columnName) === 'undefined' ? 'null' : _.get(row, columnName);
 
-          rowValue = rowValue === null ? 'null' : rowValue;
+          // rowValue = rowValue === null ? 'null' : rowValue;
+
+          const rowValue = consolidatedEmptyValuesFor(_.get(row, columnName));
 
           return filteredByList[columnName].includes(rowValue);
         });
