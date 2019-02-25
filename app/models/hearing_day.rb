@@ -9,7 +9,6 @@ class HearingDay < ApplicationRecord
   validates :regional_office, absence: true, if: :central_office?
 
   class HearingDayHasChildrenRecords < StandardError; end
-  class HearingDayFull < StandardError; end
 
   REQUEST_TYPES = {
     video: "V",
@@ -61,6 +60,14 @@ class HearingDay < ApplicationRecord
     HearingRepository.fetch_hearings_for_parent(id)
   end
 
+  def open_vacols_hearings
+    vacols_hearings.select { |hearing| ![:postponed, :canceled].include?(hearing.disposition) }
+  end
+
+  def open_hearings
+    hearings.select { |hearing| ![:postponed, :canceled].include?(hearing.disposition) }
+  end
+
   def to_hash
     as_json.each_with_object({}) do |(k, v), result|
       result[k.to_sym] = v
@@ -69,7 +76,7 @@ class HearingDay < ApplicationRecord
   end
 
   def hearing_day_full?
-    fail HearingDayFull if lock || hearings.count + vacols_hearings.count >= total_slots
+    lock || open_hearings.count + open_vacols_hearings.count >= total_slots
   end
 
   def total_slots
@@ -155,7 +162,7 @@ class HearingDay < ApplicationRecord
       }
     end
 
-    def hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
+    def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
       hearing_days = load_days(start_date, end_date, regional_office)
       total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
 
@@ -183,8 +190,6 @@ class HearingDay < ApplicationRecord
       hearings.select do |hearing|
         if hearing.is_a?(Hearing)
           ![:postponed, :canceled].include?(hearing.disposition)
-        elsif hearing.request_type == REQUEST_TYPES[:central]
-          !hearing.vacols_record.folder_nr.nil?
         else
           hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
         end

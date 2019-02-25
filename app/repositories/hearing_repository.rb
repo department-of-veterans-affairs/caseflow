@@ -1,7 +1,6 @@
 # Hearing Prep repository.
 class HearingRepository
-  class NoOpenSlots < StandardError; end
-  class LockedHearingDay < StandardError; end
+  class HearingDayFull < StandardError; end
 
   class << self
     # :nocov:
@@ -95,7 +94,7 @@ class HearingRepository
     def create_child_co_hearing(hearing_date_str, appeal, hearing_location_attrs: nil)
       hearing_day = HearingDay.find_by(request_type: HearingDay::REQUEST_TYPES[:central],
                                        scheduled_for: hearing_date_str.to_date)
-      hearing_day.hearing_day_full?
+      fail HearingDayFull if hearing_day.hearing_day_full?
 
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
 
@@ -148,7 +147,7 @@ class HearingRepository
 
     def create_caseflow_child_video_hearing(id, hearing_date, appeal, hearing_location_attrs: nil)
       hearing_day = HearingDay.find(id)
-      hearing_day.hearing_day_full?
+      fail HearingDayFull if hearing_day.hearing_day_full?
 
       if appeal.is_a?(LegacyAppeal)
         VACOLS::CaseHearing.create_child_hearing!(

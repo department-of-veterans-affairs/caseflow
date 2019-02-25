@@ -32,7 +32,7 @@ class HearingDayRepository
     end
 
     def fetch_hearing_day_slots(regional_office)
-      HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
+      HearingDay::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
     end
 
     def to_hash(hearing_day)
