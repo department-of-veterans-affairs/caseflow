@@ -574,7 +574,7 @@ class RegionalOffice
     city: "Wilmington",
     state: "DE",
     timezone: "America/New_York",
-    hold_hearings: false,
+    hold_hearings: true,
     facility_locator_id: "vba_460",
     alternate_locations: nil },
     "RO61" =>

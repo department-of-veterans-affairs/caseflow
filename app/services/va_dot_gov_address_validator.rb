@@ -22,6 +22,14 @@ class VaDotGovAddressValidator
     valid_address
   end
 
+  def get_distance_to_facilities(facility_ids:)
+    va_dot_gov_address = validate
+
+    VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
+                                 long: va_dot_gov_address[:long],
+                                 ids: facility_ids)
+  end
+
   def create_available_hearing_locations(va_dot_gov_address:)
     ro = fetch_and_update_ro(va_dot_gov_address: va_dot_gov_address)
     facility_ids = facility_ids_for_ro(ro[:closest_regional_office])
@@ -35,6 +43,23 @@ class VaDotGovAddressValidator
         .each do |alternate_hearing_location|
           create_available_hearing_location(facility: alternate_hearing_location)
         end
+    end
+  end
+
+  def update_closest_ro_and_ahls
+    begin
+      va_dot_gov_address = validate
+    rescue Caseflow::Error::VaDotGovLimitError => error
+      raise error
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      handle_error(error)
+      return nil
+    end
+
+    begin
+      create_available_hearing_locations(va_dot_gov_address: va_dot_gov_address)
+    rescue Caseflow::Error::VaDotGovValidatorError => error
+      handle_error(error)
     end
   end
 
@@ -138,6 +163,53 @@ class VaDotGovAddressValidator
     return state_code if valid_states.include?(state_code)
 
     fail Caseflow::Error::VaDotGovValidatorError, code: 500, message: "ForeignVeteranCase"
+  end
+
+  def error_instructions_map
+    { "DualAddressError" => "The appellant's address in VBMS is ambiguous.",
+      "AddressCouldNotBeFound" => "The appellant's address in VBMS could not be found on a map.",
+      "InvalidRequestStreetAddress" => "The appellant's address in VBMS does not exist or is invalid.",
+      "ForeignVeteranCase" => "This appellant's address in VBMS is outside of US territories." }
+  end
+
+  def get_error_key(error)
+    if error.message.is_a?(String)
+      error.message
+    elsif error.message["messages"] && error.message["messages"][0]
+      error.message["messages"][0]["key"]
+    end
+  end
+
+  def handle_error(error)
+    error_key = get_error_key(error)
+
+    case error_key
+    when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress"
+      create_admin_action_for_schedule_hearing_task(
+        instructions: error_instructions_map[error_key],
+        admin_action_type: HearingAdminActionVerifyAddressTask
+      )
+    when "ForeignVeteranCase"
+      create_admin_action_for_schedule_hearing_task(
+        instructions: error_instructions_map[error_key],
+        admin_action_type: HearingAdminActionForeignVeteranCaseTask
+      )
+    else
+      fail error
+    end
+  end
+
+  def create_admin_action_for_schedule_hearing_task(instructions:, admin_action_type:)
+    task = ScheduleHearingTask.find_by(appeal: appeal)
+
+    return if task.nil?
+
+    admin_action_type.create!(
+      appeal: appeal,
+      instructions: [instructions],
+      assigned_to: HearingsManagement.singleton,
+      parent: task
+    )
   end
 
   def except_delaware(closest_regional_office)
