@@ -35,8 +35,10 @@ class Hearing < ApplicationRecord
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
+  delegate :hearing_day_full?, to: :hearing_day
 
   after_create :update_fields_from_hearing_day
+  before_create :hearing_day_full?
 
   HEARING_TYPES = {
     V: "Video",

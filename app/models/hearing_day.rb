@@ -9,11 +9,28 @@ class HearingDay < ApplicationRecord
   validates :regional_office, absence: true, if: :central_office?
 
   class HearingDayHasChildrenRecords < StandardError; end
+  class HearingDayFull < StandardError; end
 
   REQUEST_TYPES = {
     video: "V",
     travel: "T",
     central: "C"
+  }.freeze
+
+  SLOTS_BY_REQUEST_TYPE = { REQUEST_TYPES[:central] => 12 }.freeze
+
+  SLOTS_BY_TIMEZONE = {
+    "America/New_York" => 12,
+    "America/Chicago" => 10,
+    "America/Indiana/Indianapolis" => 12,
+    "America/Kentucky/Louisville" => 12,
+    "America/Denver" => 10,
+    "America/Los_Angeles" => 8,
+    "America/Boise" => 10,
+    "America/Puerto_Rico" => 12,
+    "Asia/Manila" => 8,
+    "Pacific/Honolulu" => 8,
+    "America/Anchorage" => 8
   }.freeze
 
   # rubocop:disable Style/SymbolProc
@@ -25,7 +42,7 @@ class HearingDay < ApplicationRecord
   end
 
   def update_children_records
-    vacols_children_records.each do |hearing|
+    vacols_hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
         room: room,
         bva_poc: bva_poc,
@@ -37,10 +54,10 @@ class HearingDay < ApplicationRecord
   end
 
   def confirm_no_children_records
-    fail HearingDayHasChildrenRecords if !vacols_children_records.empty? || !hearings.empty?
+    fail HearingDayHasChildrenRecords if !vacols_hearings.empty? || !hearings.empty?
   end
 
-  def vacols_children_records
+  def vacols_hearings
     HearingRepository.fetch_hearings_for_parent(id)
   end
 
@@ -49,6 +66,18 @@ class HearingDay < ApplicationRecord
       result[k.to_sym] = v
     end.merge(judge_first_name: judge ? judge.full_name.split(" ").first : nil,
               judge_last_name: judge ? judge.full_name.split(" ").last : nil)
+  end
+
+  def hearing_day_full?
+    fail HearingDayFull if lock || hearings.count + vacols_hearings.count >= total_slots
+  end
+
+  def total_slots
+    if request_type == REQUEST_TYPES[:central]
+      return SLOTS_BY_REQUEST_TYPE[request_type]
+    end
+
+    SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
   end
 
   # These dates indicate the date in which we pull parent records into Caseflow. For
