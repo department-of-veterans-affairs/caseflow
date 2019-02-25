@@ -243,7 +243,7 @@ class Veteran < ApplicationRecord
           %(
           find_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
           )
-
+        )
         if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
           veteran.update!(
             first_name: veteran.bgs_record[:first_name],
@@ -270,8 +270,6 @@ class Veteran < ApplicationRecord
       Rails.logger.warn(
         %(create_by_file_number file_number:#{file_number} found:true accessible:#{veteran.accessible?})
       )
-
-      binding.pry
 
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
