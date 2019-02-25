@@ -47,9 +47,8 @@ class AppealsController < ApplicationController
   end
 
   def new_documents
-    alt_date = params[:placed_on_hold_date] ? DateTime.strptime(params[:placed_on_hold_date], "%s") : Time.zone.at(0)
     new_documents_for_user = NewDocumentsForUser.new(
-      appeal: appeal, user: current_user, query_vbms: !params.key?(:cached), date_to_compare_with: alt_date
+      appeal: appeal, user: current_user, query_vbms: true, date_to_compare_with: Time.zone.at(0)
     )
     render json: { new_documents: new_documents_for_user.process! }
   rescue StandardError => e
