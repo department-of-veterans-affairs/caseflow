@@ -18,7 +18,7 @@ const dropdownFilterViewListItemStyle = css(
   }
 );
 
-class NewDropdownFilter extends React.PureComponent {
+class FilterableDropdown extends React.PureComponent {
   constructor() {
     super();
     this.state = {
@@ -79,11 +79,11 @@ class NewDropdownFilter extends React.PureComponent {
   }
 }
 
-NewDropdownFilter.propTypes = {
+FilterableDropdown.propTypes = {
   children: PropTypes.node,
   disableClearFilters: PropTypes.bool,
   clearFilters: PropTypes.func,
   handleClose: PropTypes.func
 };
 
-export default NewDropdownFilter;
+export default FilterableDropdown;

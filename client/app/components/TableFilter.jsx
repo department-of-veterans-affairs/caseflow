@@ -4,7 +4,7 @@ import _ from 'lodash';
 
 import { css, hover } from 'glamor';
 import FilterIcon from './FilterIcon';
-import NewDropdownFilter from './NewDropdownFilter';
+import FilterableDropdown from './FilterableDropdown';
 import FilterOption from './FilterOption';
 
 /**
@@ -131,7 +131,7 @@ class TableFilter extends React.PureComponent {
           handleActivate={() => toggleDropdownFilterVisibility(columnName)} />
 
         {isDropdownFilterOpen && filterOptions.length > 0 &&
-          <NewDropdownFilter
+          <FilterableDropdown
             disableClearFilters={disableClearFiltersRow}
             clearFilters={() => this.clearFilteredByList(columnName)}
             name={valueName}
@@ -139,7 +139,7 @@ class TableFilter extends React.PureComponent {
             <FilterOption
               options={filterOptions}
               setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
-          </NewDropdownFilter>
+          </FilterableDropdown>
         }
       </span>
     );

@@ -188,7 +188,7 @@ class FooterRow extends React.PureComponent {
   }
 }
 
-export default class NewTable extends React.PureComponent {
+export default class FilterableTable extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -337,7 +337,7 @@ export default class NewTable extends React.PureComponent {
     if (!getKeyForRow) {
       keyGetter = _.identity;
       if (!slowReRendersAreOk) {
-        console.warn('<NewTable> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
+        console.warn('<FilterableTable> props: one of `getKeyForRow` or `slowReRendersAreOk` props must be passed. ' +
           'To learn more about keys, see https://facebook.github.io/react/docs/lists-and-keys.html#keys');
       }
     }
@@ -401,7 +401,7 @@ export default class NewTable extends React.PureComponent {
   }
 }
 
-NewTable.propTypes = {
+FilterableTable.propTypes = {
   tbodyId: PropTypes.string,
   tbodyRef: PropTypes.func,
   columns: PropTypes.oneOfType([

@@ -37,7 +37,7 @@ describe('TableFilter', () => {
           isDropdownFilterOpen />
       );
 
-      expect(wrapper.find('NewDropdownFilter')).to.have.length(1);
+      expect(wrapper.find('FilterableDropdown')).to.have.length(1);
     });
 
     it('does not display filter dropdown when isDropdownFilterOpen is false', () => {
@@ -47,7 +47,7 @@ describe('TableFilter', () => {
           isDropdownFilterOpen={false} />
       );
 
-      expect(wrapper.find('NewDropdownFilter')).to.have.length(0);
+      expect(wrapper.find('FilterableDropdown')).to.have.length(0);
     });
 
     it('generates the correct list of unique filter options', () => {
