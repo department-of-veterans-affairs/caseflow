@@ -4,20 +4,20 @@ FactoryBot.define do
     sequence(:url) { |n| "org_queue_#{n}" }
 
     factory :vso, class: Vso do
-      type Vso.name
+      type { Vso.name }
     end
 
     factory :bva do
-      type "Bva"
+      type { "Bva" }
     end
 
     factory :business_line, class: BusinessLine do
-      type "BusinessLine"
+      type { "BusinessLine" }
     end
 
     factory :hearings_management do
-      type "HearingsManagement"
-      name "Hearing Management"
+      type { "HearingsManagement" }
+      name { "Hearing Management" }
     end
   end
 end
