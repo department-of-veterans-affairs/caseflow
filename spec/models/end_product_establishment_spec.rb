@@ -30,6 +30,8 @@ describe EndProductEstablishment do
   let(:benefit_type_code) { "2" }
   let(:doc_reference_id) { nil }
   let(:development_item_reference_id) { nil }
+  let(:limited_poa_code) { "ABC" }
+  let(:limited_poa_access) { true }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -47,7 +49,9 @@ describe EndProductEstablishment do
       doc_reference_id: doc_reference_id,
       development_item_reference_id: development_item_reference_id,
       established_at: 30.days.ago,
-      user: current_user
+      user: current_user,
+      limited_poa_code: limited_poa_code,
+      limited_poa_access: limited_poa_access
     )
   end
 
@@ -116,7 +120,9 @@ describe EndProductEstablishment do
             date: 2.days.ago.to_date,
             suppress_acknowledgement_letter: false,
             gulf_war_registry: false,
-            claimant_participant_id: "11223344"
+            claimant_participant_id: "11223344",
+            limited_poa_code: "ABC",
+            limited_poa_access: true
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -132,7 +138,7 @@ describe EndProductEstablishment do
         it "creates an ep with the next valid modifier" do
           subject
           expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-            claim_hash: {
+            claim_hash: hash_including(
               benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
               payee_code: "00",
               predischarge: false,
@@ -144,8 +150,10 @@ describe EndProductEstablishment do
               date: 2.days.ago.to_date,
               suppress_acknowledgement_letter: false,
               gulf_war_registry: false,
-              claimant_participant_id: "11223344"
-            },
+              claimant_participant_id: "11223344",
+              limited_poa_code: "ABC",
+              limited_poa_access: true
+            ),
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
           )
@@ -214,7 +222,9 @@ describe EndProductEstablishment do
             end_product_label: "Higher-Level Review Rating",
             end_product_code: "030HLRR",
             gulf_war_registry: false,
-            suppress_acknowledgement_letter: false
+            suppress_acknowledgement_letter: false,
+            limited_poa_code: "ABC",
+            limited_poa_access: true
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -524,7 +534,6 @@ describe EndProductEstablishment do
       subject
 
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
-      expect(for_object.removed_at).to eq(Time.zone.now)
       expect(for_object.contention_removed_at).to eq(Time.zone.now)
     end
 
@@ -535,7 +544,6 @@ describe EndProductEstablishment do
 
       it "does not remove contentions" do
         expect { subject }.to raise_error(vbms_error)
-        expect(for_object.removed_at).to be_nil
         expect(for_object.contention_removed_at).to be_nil
       end
     end
@@ -742,20 +750,20 @@ describe EndProductEstablishment do
 
   context "#cancel_unused_end_product!" do
     subject { end_product_establishment.cancel_unused_end_product! }
-    let(:removed_at) { nil }
+    let(:contention_removed_at) { nil }
     let!(:request_issues) do
       [
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           decision_review: source,
-          removed_at: removed_at
+          contention_removed_at: contention_removed_at
         )
       ]
     end
 
     context "when there are no active request issues" do
-      let(:removed_at) { 1.day.ago }
+      let(:contention_removed_at) { 1.day.ago }
       it "cancels the end product and closes request issues" do
         subject
         expect(end_product_establishment.reload.synced_status).to eq("CAN")

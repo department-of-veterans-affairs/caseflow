@@ -417,7 +417,8 @@ feature "Supplemental Claim Edit issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "supplemental_claims/#{rating_ep_claim_id}/edit",
           supplemental_claim,
-          decision_request_issue.decision_issues + nonrating_decision_request_issue.decision_issues
+          DecisionIssue.where(id: [decision_request_issue.contested_decision_issue_id,
+                                   nonrating_decision_request_issue.contested_decision_issue_id])
         )
       end
     end
@@ -498,7 +499,6 @@ feature "Supplemental Claim Edit issues" do
       new_request_issue = supplemental_claim.reload.open_request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.decision_review).to_not be_nil
-      expect(request_issue.removed_at).to eq(Time.zone.now)
       expect(request_issue.contention_removed_at).to eq(Time.zone.now)
       expect(request_issue.closed_at).to eq(Time.zone.now)
       expect(request_issue).to be_closed

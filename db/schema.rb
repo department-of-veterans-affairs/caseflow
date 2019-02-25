@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190220225538) do
+ActiveRecord::Schema.define(version: 20190222185310) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -106,6 +106,7 @@ ActiveRecord::Schema.define(version: 20190220225538) do
     t.boolean "overtime", default: false
     t.integer "reviewing_judge_id"
     t.string "task_id"
+    t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
   end
@@ -354,6 +355,8 @@ ActiveRecord::Schema.define(version: 20190220225538) do
     t.string "doc_reference_id"
     t.datetime "established_at"
     t.datetime "last_synced_at"
+    t.boolean "limited_poa_access", comment: "Indicates whether the limited Power of Attorney has access to view documents"
+    t.string "limited_poa_code", comment: "The limited Power of Attorney code, which indicates whether the claim has a POA specifically for this claim, which can be different than the Veteran's POA"
     t.string "modifier"
     t.string "payee_code", null: false
     t.string "reference_id"
@@ -801,7 +804,6 @@ ActiveRecord::Schema.define(version: 20190220225538) do
     t.datetime "last_submitted_at"
     t.string "nonrating_issue_description"
     t.text "notes"
-    t.integer "parent_request_issue_id"
     t.string "ramp_claim_id"
     t.datetime "rating_issue_associated_at"
     t.datetime "removed_at"
@@ -817,7 +819,6 @@ ActiveRecord::Schema.define(version: 20190220225538) do
     t.index ["decision_review_type", "decision_review_id"], name: "index_request_issues_on_decision_review_columns"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
-    t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
   end
 
   create_table "request_issues_updates", force: :cascade do |t|

@@ -100,7 +100,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def remove_contention!(for_object)
     VBMSService.remove_contention!(contention_for_object(for_object))
-    for_object.update!(removed_at: Time.zone.now)
+    for_object.update!(contention_removed_at: Time.zone.now)
   end
 
   # Committing an end product establishment is a way to signify that any other actions performed
@@ -127,6 +127,10 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   delegate :contentions, to: :cached_result
+
+  def limited_poa_on_established_claim
+    result&.limited_poa
+  end
 
   def description
     reference_id && cached_result.description_with_routing
@@ -238,7 +242,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def active_request_issues
-    request_issues.select { |request_issue| request_issue.removed_at.nil? && request_issue.status_active? }
+    request_issues.select { |request_issue| request_issue.contention_removed_at.nil? && request_issue.status_active? }
   end
 
   def associated_rating
@@ -419,7 +423,9 @@ class EndProductEstablishment < ApplicationRecord
       modifier: the_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
-      station_of_jurisdiction: station
+      station_of_jurisdiction: station,
+      limited_poa_code: limited_poa_code,
+      limited_poa_access: limited_poa_access
     )
   end
 

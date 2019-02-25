@@ -250,7 +250,7 @@ describe Appeal do
 
     it "does not return Decision Issues in the future" do
       expect(subject.count).to eq(1)
-      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
+      expect(subject.first.decision_issue.id).to eq(past_decision_issue.id)
     end
   end
 

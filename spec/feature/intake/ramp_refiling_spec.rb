@@ -402,7 +402,9 @@ RSpec.feature "RAMP Refiling Intake" do
           end_product_code: "683SCRRRAMP",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
-          claimant_participant_id: veteran.participant_id
+          claimant_participant_id: veteran.participant_id,
+          limited_poa_code: nil,
+          limited_poa_access: nil
         },
         veteran_hash: intake.veteran.to_vbms_hash,
         user: current_user
