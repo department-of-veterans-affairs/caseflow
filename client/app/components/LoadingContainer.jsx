@@ -12,7 +12,7 @@ export default class LoadingContainer extends React.Component {
       <div className="loadingContainer-positioning">
         <div className="loadingContainer-table">
           <div className="loadingContainer-table-cell">
-            {loadingSymbolHtml('', '50%', color)}
+            {loadingSymbolHtml('', '150px', color)}
           </div>
         </div>
       </div>

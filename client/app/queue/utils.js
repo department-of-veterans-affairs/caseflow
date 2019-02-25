@@ -66,10 +66,9 @@ export const prepareTasksForStore = (tasks) =>
       appealId: task.attributes.appeal_id,
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_at,
-      closestRegionalOffice: task.attributes.veteran_closest_regional_office,
+      closestRegionalOffice: task.attributes.closest_regional_office,
       createdAt: task.attributes.created_at,
       closedAt: task.attributes.closed_at,
-      dueOn: null,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         name: task.attributes.assigned_to.name,
@@ -145,7 +144,6 @@ export const prepareLegacyTasksForStore = (tasks) => {
       externalAppealId: task.attributes.external_appeal_id,
       assignedOn: task.attributes.assigned_on,
       closedAt: null,
-      dueOn: task.attributes.due_on,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         isOrganization: task.attributes.assigned_to.is_organization,
@@ -230,8 +228,8 @@ export const prepareAppealHearingsForStore = (appeal) => appeal.attributes.heari
     disposition: hearing.disposition
   }));
 
-const prepareAppealAvailableHearingLocationsForStore = (appeal) => appeal.attributes.
-  veteran_available_hearing_locations.map((ahl) => ({
+const prepareAppealAvailableHearingLocationsForStore = (appeal: { attributes: Object }) => appeal.attributes.
+  available_hearing_locations.map((ahl) => ({
     name: ahl.name,
     address: ahl.address,
     city: ahl.city,
@@ -286,8 +284,8 @@ export const prepareAppealForStore =
         veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
         veteranAddress: appeal.attributes.veteran_address,
-        veteranClosestRegionalOffice: appeal.attributes.veteran_closest_regional_office,
-        veteranAvailableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
+        closestRegionalOffice: appeal.attributes.closest_regional_office,
+        availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(appeal),
         externalId: appeal.attributes.external_id,
         status: appeal.attributes.status,
         decisionDate: appeal.attributes.decision_date,

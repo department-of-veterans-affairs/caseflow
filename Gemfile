@@ -69,7 +69,7 @@ group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
   # set require: 'oci8' here because bootsnap creates a warning: https://github.com/rails/rails/issues/32811#issuecomment-386541855
-  gem "ruby-oci8", require: "oci8"
+  gem "ruby-oci8", "~> 2.2.5.1", require: "oci8"
 end
 
 group :test, :development, :demo do
@@ -105,6 +105,8 @@ group :test, :development, :demo do
 end
 
 group :development do
+  gem "bummr", "= 0.3.2", require: false
+  gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"

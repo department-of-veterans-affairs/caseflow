@@ -169,12 +169,15 @@ describe HigherLevelReview do
   end
 
   context "#on_decision_issues_sync_processed" do
-    subject { higher_level_review.on_decision_issues_sync_processed(end_product_establishment) }
+    subject { higher_level_review.on_decision_issues_sync_processed(epe) }
 
-    let(:end_product_establishment) do
+    let(:epe) do
       create(:end_product_establishment,
-             source: higher_level_review)
+             source: higher_level_review,
+             reference_id: epe_ref_id)
     end
+
+    let(:epe_ref_id) { "HAS_LIMITED_POA_WITH_ACCESS" }
 
     context "when there are dta errors" do
       let!(:decision_issues) do
@@ -186,7 +189,8 @@ describe HigherLevelReview do
                  profile_date: profile_date,
                  promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
-                 benefit_type: benefit_type),
+                 benefit_type: benefit_type,
+                 request_issues: [create(:request_issue, end_product_establishment: epe)]),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  disposition: DecisionIssue::DTA_ERROR_FED_RECS,
@@ -194,7 +198,8 @@ describe HigherLevelReview do
                  profile_date: profile_date,
                  promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
-                 benefit_type: benefit_type),
+                 benefit_type: benefit_type,
+                 request_issues: [create(:request_issue, end_product_establishment: epe)]),
           create(:decision_issue,
                  decision_review: higher_level_review,
                  caseflow_decision_date: caseflow_decision_date,
@@ -251,13 +256,15 @@ describe HigherLevelReview do
 
         expect(first_dta_request_issue).to_not be_nil
         expect(first_dta_request_issue.end_product_establishment.code).to eq("040HDER")
+        expect(first_dta_request_issue.end_product_establishment.limited_poa_code).to eq("OU3")
+        expect(first_dta_request_issue.end_product_establishment.limited_poa_access).to be true
 
         second_dta_request_issue = RequestIssue.find_by(
           decision_review: supplemental_claim,
           contested_decision_issue_id: decision_issues.second.id,
           contested_rating_issue_reference_id: "rating2",
           contested_rating_issue_profile_date: decision_issues.second.profile_date.to_s,
-          contested_issue_description: decision_issues.first.description,
+          contested_issue_description: decision_issues.second.description,
           issue_category: decision_issues.second.issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.second.approx_decision_date
@@ -361,7 +368,7 @@ describe HigherLevelReview do
                receipt_date: receipt_date)
       end
 
-      let!(:hlr_end_product) do
+      let!(:hlr_epe) do
         create(:end_product_establishment, :cleared, source: hlr_with_dta_error)
       end
 

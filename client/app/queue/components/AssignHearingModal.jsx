@@ -26,7 +26,7 @@ import RadioField from '../../components/RadioField';
 import {
   HearingDateDropdown,
   RegionalOfficeDropdown,
-  VeteranHearingLocationsDropdown
+  AppealHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
@@ -75,8 +75,8 @@ class AssignHearingModal extends React.PureComponent {
       return;
     }
 
-    if (appeal.veteranAvailableHearingLocations) {
-      const location = appeal.veteranAvailableHearingLocations[0];
+    if (appeal.availableHearingLocations) {
+      const location = appeal.availableHearingLocations[0];
 
       if (location) {
         this.props.onHearingLocationChange({
@@ -146,8 +146,8 @@ class AssignHearingModal extends React.PureComponent {
       selectedHearingLocation
     } = this.props;
 
-    const veteranHearingLocations = appeal.veteranAvailableHearingLocations || [];
-    const hearingLocation = selectedHearingLocation || veteranHearingLocations[0];
+    const appealHearingLocations = appeal.availableHearingLocations || [];
+    const hearingLocation = selectedHearingLocation || appealHearingLocations[0];
 
     const payload = {
       data: {
@@ -330,14 +330,14 @@ class AssignHearingModal extends React.PureComponent {
           value={selectedRegionalOffice || initVals.regionalOffice}
           validateValueOnMount />
 
-        {selectedRegionalOffice && <VeteranHearingLocationsDropdown
+        {selectedRegionalOffice && <AppealHearingLocationsDropdown
           errorMessage={invalid.location}
           label="Suggested Hearing Location"
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
-          veteranFileNumber={appeal.veteranFileNumber}
-          dynamic={appeal.veteranClosestRegionalOffice !== currentRegionalOffice}
-          staticHearingLocations={appeal.veteranAvailableHearingLocations}
+          appealId={appeal.externalId}
+          dynamic={appeal.closestRegionalOffice !== currentRegionalOffice}
+          staticHearingLocations={appeal.availableHearingLocations}
           onChange={this.props.onHearingLocationChange}
           value={selectedHearingLocation}
         />}

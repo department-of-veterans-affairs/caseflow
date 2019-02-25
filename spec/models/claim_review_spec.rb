@@ -472,7 +472,9 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: veteran_participant_id
+            claimant_participant_id: veteran_participant_id,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -739,7 +741,9 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: veteran_participant_id
+            claimant_participant_id: veteran_participant_id,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -772,7 +776,9 @@ describe ClaimReview do
             end_product_code: "030HLRNR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: veteran_participant_id
+            claimant_participant_id: veteran_participant_id,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user

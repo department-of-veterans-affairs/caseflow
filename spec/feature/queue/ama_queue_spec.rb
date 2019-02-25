@@ -69,7 +69,7 @@ RSpec.feature "AmaQueue" do
             bgs_veteran_record: { first_name: "Pal" },
             file_number: file_numbers[0]
           ),
-          documents: FactoryBot.create_list(:document, 5, file_number: file_numbers[0]),
+          documents: FactoryBot.create_list(:document, 5, file_number: file_numbers[0], upload_date: 3.days.ago),
           request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain")
         ),
         FactoryBot.create(

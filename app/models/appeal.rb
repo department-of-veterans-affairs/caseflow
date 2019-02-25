@@ -10,6 +10,7 @@ class Appeal < DecisionReview
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+  has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
@@ -84,6 +85,10 @@ class Appeal < DecisionReview
     @document_fetcher ||= DocumentFetcher.new(
       appeal: self, use_efolder: true
     )
+  end
+
+  def va_dot_gov_address_validator
+    @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
   end
 
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
@@ -220,6 +225,7 @@ class Appeal < DecisionReview
            :gender,
            :date_of_birth,
            :age,
+           :available_hearing_locations,
            :country, to: :veteran, prefix: true
 
   def veteran_if_exists
@@ -245,8 +251,7 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :closest_regional_office,
-           :first_name,
+  delegate :first_name,
            :last_name,
            :name_suffix,
            :ssn, to: :veteran, prefix: true, allow_nil: true

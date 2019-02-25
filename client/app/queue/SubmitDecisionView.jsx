@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import Button from '../components/Button';
 import _ from 'lodash';
 import {
   getDecisionTypeDisplay,
@@ -24,6 +23,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
 import JudgeSelectComponent from './JudgeSelectComponent';
+import InstructionalText from './InstructionalText';
 import { taskById } from './selectors';
 
 import {
@@ -37,16 +37,8 @@ import {
 } from './constants';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
-const verticalLine = css(
-  {
-    borderLeft: 'thick solid lightgrey',
-    marginLeft: '20px',
-    paddingLeft: '20px'
-  }
-);
 
 class SubmitDecisionView extends React.PureComponent {
-  linkClicked = false;
   componentDidMount = () => {
     this.extendedDecision = this.setInitialDecisionOptions(
       this.props.decision,
@@ -229,33 +221,24 @@ class SubmitDecisionView extends React.PureComponent {
         value={decisionOpts.overtime || false}
         styling={css(marginBottom(1), marginTop(1))}
       />
-      <Checkbox
-        name="untimely_evidence"
-        label="The Veteran submitted evidence that is ineligible for review"
-        onChange={(untimelyEvidence) => this.props.setDecisionOptions({ untimely_evidence: untimelyEvidence })}
-        value={decisionOpts.untimely_evidence || false}
-        styling={css(marginBottom(1), marginTop(1))}
-      />
-      {/* TODO: 1. componentize this once the style guide directives are in 
-                2. add in arrow to the left of link once provided by UX team */}
-      <Button
-        id="ineligible-evidence"
-        linkStyling
-        willNeverBeLoading
-        onClick={() => {
-          this.linkClicked = !this.linkClicked;
-          this.setState({ linkClicked: this.linkClicked,
-            linkArrowDirection: this.linkClicked ? 'down' : 'right' });
-        }}>
-        {COPY.WHAT_IS_INELIGIBLE_EVIDENCE}
-      </Button>
-      {this.linkClicked && <div {...verticalLine}>
-        <div>{COPY.UNTIMELY_EVIDENCE_TITLE}</div>
-        <br />
-        <div>{COPY.UNTIMELY_EVIDENCE_BULLET_ONE}</div>
-        <div> {COPY.UNTIMELY_EVIDENCE_BULLET_TWO}</div>
-        <div> {COPY.UNTIMELY_EVIDENCE_BULLET_THREE}</div>
-      </div>}
+      {!this.props.appeal.isLegacyAppeal &&
+      <div>
+        <Checkbox
+          name="untimely_evidence"
+          label="The Veteran submitted evidence that is ineligible for review"
+          onChange={(untimelyEvidence) => this.props.setDecisionOptions({ untimely_evidence: untimelyEvidence })}
+          value={decisionOpts.untimely_evidence || false}
+          styling={css(marginBottom(1), marginTop(1))}
+        />
+        <InstructionalText
+          informationalTitle={COPY.WHAT_IS_INELIGIBLE_EVIDENCE}
+          informationHeader={COPY.UNTIMELY_EVIDENCE_TITLE}
+          bulletOne={COPY.UNTIMELY_EVIDENCE_BULLET_ONE}
+          bulletTwo={COPY.UNTIMELY_EVIDENCE_BULLET_TWO}
+          bulletThree={COPY.UNTIMELY_EVIDENCE_BULLET_THREE}
+        />
+      </div>
+      }
     </React.Fragment>;
   };
 }
