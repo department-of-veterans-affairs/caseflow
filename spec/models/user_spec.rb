@@ -433,6 +433,11 @@ describe User do
         session["user"]["roles"] = ["Do the thing"]
         session[:regional_office] = "283"
         session["user"]["name"] = "Anne Merica"
+        Timecop.freeze(Time.zone.now)
+      end
+
+      after do
+        Timecop.return
       end
 
       it do
@@ -441,6 +446,7 @@ describe User do
         expect(subject.regional_office).to eq("283")
         expect(subject.full_name).to eq("Anne Merica")
         expect(subject.css_id).to eq("TOMBRADY")
+        expect(subject.last_login_at).to eq(Time.zone.now)
       end
 
       it "persists user to DB" do

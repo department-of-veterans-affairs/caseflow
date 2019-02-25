@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :claimant do
     sequence(:review_request_id)
     sequence(:participant_id)
-    review_request_type "Appeal"
+    review_request_type { "Appeal" }
 
     trait :advanced_on_docket_due_to_age do
       after(:create) do |claimant, _evaluator|

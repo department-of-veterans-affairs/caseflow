@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :legacy_appeal do
     transient do
-      vacols_case nil
+      vacols_case { nil }
     end
 
     vacols_id { vacols_case.bfkey }
