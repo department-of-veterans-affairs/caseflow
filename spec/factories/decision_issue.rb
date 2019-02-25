@@ -1,9 +1,9 @@
 FactoryBot.define do
   factory :decision_issue do
     sequence(:participant_id, 500_000_000)
-    disposition "allowed"
-    benefit_type "compensation"
-    diagnostic_code "9999"
+    disposition { "allowed" }
+    benefit_type { "compensation" }
+    diagnostic_code { "9999" }
     end_product_last_action_date { decision_review.is_a?(Appeal) ? nil : 5.days.ago.to_date }
     caseflow_decision_date { decision_review.is_a?(Appeal) ? 5.days.ago.to_date : nil }
     decision_review { create(:higher_level_review) }
@@ -11,11 +11,11 @@ FactoryBot.define do
     description { decision_review.is_a?(Appeal) ? "description" : nil }
 
     transient do
-      request_issues []
+      request_issues { [] }
     end
 
     transient do
-      remand_reasons []
+      remand_reasons { [] }
     end
 
     trait :nonrating do

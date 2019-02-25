@@ -86,6 +86,10 @@ class Appeal < DecisionReview
     )
   end
 
+  def va_dot_gov_address_validator
+    @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
+  end
+
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :manifest_vva_fetched_at, to: :document_fetcher
 
@@ -220,6 +224,7 @@ class Appeal < DecisionReview
            :gender,
            :date_of_birth,
            :age,
+           :available_hearing_locations,
            :country, to: :veteran, prefix: true
 
   def veteran_if_exists
@@ -245,8 +250,7 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :closest_regional_office,
-           :first_name,
+  delegate :first_name,
            :last_name,
            :name_suffix,
            :ssn, to: :veteran, prefix: true, allow_nil: true
