@@ -6,10 +6,6 @@ module UploadableDocument
   end
 
   # :nocov:
-  def upload_date
-    Time.zone.now
-  end
-
   def source
     fail "#{self.class} is missing source"
   end

@@ -3,20 +3,20 @@ FactoryBot.define do
     sequence(:veteran_file_number, &:to_s)
     sequence(:reference_id, &:to_s)
     source { create(:ramp_election, veteran_file_number: veteran_file_number) }
-    code "030HLRR"
-    modifier "030"
-    payee_code EndProduct::DEFAULT_PAYEE_CODE
+    code { "030HLRR" }
+    modifier { "030" }
+    payee_code { EndProduct::DEFAULT_PAYEE_CODE }
 
     trait :cleared do
-      synced_status "CLR"
+      synced_status { "CLR" }
     end
 
     trait :canceled do
-      synced_status "CAN"
+      synced_status { "CAN" }
     end
 
     trait :active do
-      synced_status "PEND"
+      synced_status { "PEND" }
     end
 
     after(:build) do |end_product_establishment, _evaluator|

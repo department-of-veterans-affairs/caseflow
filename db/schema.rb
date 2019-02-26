@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190222185310) do
+ActiveRecord::Schema.define(version: 20190222224704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -970,13 +970,30 @@ ActiveRecord::Schema.define(version: 20190222185310) do
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
+    t.datetime "created_at"
     t.string "css_id", null: false
     t.string "email"
     t.string "full_name"
+    t.datetime "last_login_at"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
+    t.datetime "updated_at"
     t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
+  end
+
+  create_table "vbms_uploaded_documents", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.datetime "attempted_at"
+    t.datetime "created_at", null: false
+    t.string "document_type", null: false
+    t.string "error"
+    t.datetime "last_submitted_at"
+    t.datetime "processed_at"
+    t.datetime "submitted_at"
+    t.datetime "updated_at", null: false
+    t.datetime "uploaded_to_vbms_at"
+    t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|

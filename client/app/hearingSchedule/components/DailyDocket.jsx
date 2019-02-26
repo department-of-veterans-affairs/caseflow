@@ -326,7 +326,7 @@ export default class DailyDocket extends React.Component {
     </div>;
   };
 
-  getTranscriptRequested = (hearing) => {
+  getTranscriptRequested = (hearing, readOnly) => {
     return <div>
       <b>Copy Requested by Appellant/Rep</b>
       <Checkbox
@@ -335,6 +335,7 @@ export default class DailyDocket extends React.Component {
         value={_.isUndefined(hearing.editedTranscriptRequested) ?
           hearing.transcriptRequested || false : hearing.editedTranscriptRequested}
         onChange={this.onTranscriptRequestedUpdate(hearing.id)}
+        disabled={readOnly}
       /></div>;
   };
 
@@ -404,7 +405,7 @@ export default class DailyDocket extends React.Component {
     return <div {...twoCol}>
       <div>
         {this.getDispositionDropdown(hearing, readOnly)}
-        {this.getTranscriptRequested(hearing)}
+        {this.getTranscriptRequested(hearing, readOnly)}
         {this.getHearingDetailsLink(hearing)}
         {this.getNotesField(hearing)}
       </div>
@@ -470,7 +471,8 @@ export default class DailyDocket extends React.Component {
       }
     ];
 
-    const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings), false);
+    const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings),
+      this.props.userRoleView);
     const cancelButton = <Button linkStyling onClick={this.props.onCancelRemoveHearingDay}>Go back</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.props.deleteHearingDay}>
       Confirm
