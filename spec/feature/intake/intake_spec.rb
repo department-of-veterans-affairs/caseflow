@@ -88,6 +88,7 @@ RSpec.feature "Intake" do
         find("label", text: "RAMP Selection (VA Form 21-4138)").click
       end
       safe_click ".cf-submit.usa-button"
+      expect(page).to have_css(".cf-submit[disabled]")
 
       fill_in search_bar_title, with: "5678"
       click_on "Search"

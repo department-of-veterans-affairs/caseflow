@@ -171,7 +171,8 @@ class Search extends React.PureComponent {
       searchErrorCode,
       searchErrorData,
       intakeStatus,
-      formType
+      formType,
+      fileNumberSearchInput
     } = this.props;
 
     if (!formType) {
@@ -197,9 +198,10 @@ class Search extends React.PureComponent {
         size="small"
         title="Enter the Veteran's ID or SSN"
         onSubmit={this.handleSearchSubmit}
+        searchDisabled={_.isEmpty(fileNumberSearchInput)}
         onChange={this.props.setFileNumberSearch}
         onClearSearch={this.clearSearch}
-        value={this.props.fileNumberSearchInput}
+        value={fileNumberSearchInput}
         loading={this.props.fileNumberSearchRequestStatus === REQUEST_STATE.IN_PROGRESS}
         submitUsingEnterKey
       />
