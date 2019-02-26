@@ -10,13 +10,13 @@ import { formatDateStr } from '../util/DateUtil';
 import Comment from './Comment';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import TagTableColumn from './TagTableColumn';
+// import FilterableDropdown from '../components/FilterableDropdown';
 import FilterableTable from '../components/FilterableTable';
 import Button from '../components/Button';
 import CommentIndicator from './CommentIndicator';
-import DropdownFilter from '../components/DropdownFilter';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
-import { setDocListScrollPosition, changeSortState,
+import { setDocListScrollPosition, changeSortState
   // clearTagFilters, clearCategoryFilters,
   // setTagFilter, setCategoryFilter,
   // toggleDropdownFilterVisibility
@@ -24,12 +24,12 @@ import { setDocListScrollPosition, changeSortState,
 import { getAnnotationsPerDocument } from './selectors';
 import {
   SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
-import DocCategoryPicker from './DocCategoryPicker';
-import DocTagPicker from './DocTagPicker';
-import FilterIcon from '../components/FilterIcon';
+// import DocCategoryPicker from './DocCategoryPicker';
+// import DocTagPicker from './DocTagPicker';
+// import FilterIcon from '../components/FilterIcon';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
-import { getUpdatedFilteredResults } from './searchFilters';
+// import { getUpdatedFilteredResults } from './searchFilters';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -111,7 +111,7 @@ class DocumentsTable extends React.Component {
             <span {...categoryNameStyling}>{category.humanName}</span>
           </div>,
           checked: false
-        }
+        };
       }).
       value();
   }
@@ -319,7 +319,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   // clearTagFilters,
   // clearCategoryFilters,
   // setTagFilter,
-  changeSortState,
+  changeSortState
   // toggleDropdownFilterVisibility,
   // setCategoryFilter
 }, dispatch);

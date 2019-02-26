@@ -31,15 +31,6 @@ const formatVljName = (lastName, firstName) => {
   }
 };
 
-const judgeNameToIdMap = (hearings) => {
-  let nameToIdMap = {};
-
-  _.forEach(hearings, (hearingDay) => nameToIdMap[formatVljName(hearingDay.judgeLastName,
-    hearingDay.judgeFirstName)] = hearingDay.judgeId);
-
-  return nameToIdMap;
-};
-
 const inlineFormStyling = css({
   '> div': {
     ' & .cf-inline-form': {

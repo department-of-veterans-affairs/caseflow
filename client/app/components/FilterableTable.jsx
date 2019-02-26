@@ -331,7 +331,7 @@ export default class FilterableTable extends React.PureComponent {
       // 4. Display only the data for the current page
       rowObjects = rowObjects.length > 0 ? paginatedData[this.state.currentPage] : rowObjects;
     }
-    
+
     let keyGetter = getKeyForRow;
 
     if (!getKeyForRow) {
