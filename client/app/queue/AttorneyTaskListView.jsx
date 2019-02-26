@@ -86,7 +86,7 @@ class AttorneyTaskListView extends React.PureComponent {
           includeNewDocsIcon
           useOnHoldDate
         />,
-        indicator: <NewFileAll tasks={this.props.onHoldTasks} useOnHoldDate />
+        indicator: <NewFileAll tasks={this.props.onHoldTasks} />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
