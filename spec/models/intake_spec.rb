@@ -44,7 +44,11 @@ describe Intake do
   let(:completion_started_at) { nil }
 
   context ".build" do
-    subject { Intake.build(form_type: form_type, veteran: veteran, user: user) }
+    let(:form_type) { "higher_level_review" }
+
+    subject do
+      Intake.build(form_type: form_type, veteran: veteran, veteran_file_number: veteran_file_number, user: user)
+    end
 
     context "when form_type is supported" do
       let(:form_type) { "ramp_election" }
@@ -58,6 +62,23 @@ describe Intake do
 
       it "raises error" do
         expect { subject }.to raise_error(Intake::FormTypeNotSupported)
+      end
+    end
+
+    context "when veteran is nil" do
+      let(:veteran) { nil }
+
+      it "falls back to veteran_file_number" do
+        expect(subject.veteran.file_number).to eq(veteran_file_number)
+      end
+    end
+
+    context "when veteran_file_number is nil" do
+      let(:veteran) { Generators::Veteran.build(file_number: "64205050", country: country) }
+      let(:veteran_file_number) { nil }
+
+      it "falls back to veteran" do
+        expect(subject.veteran.file_number).to eq("64205050")
       end
     end
   end
