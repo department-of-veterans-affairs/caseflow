@@ -3,7 +3,13 @@ RSpec.describe IntakesController do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:intake)
     User.authenticate!(roles: ["Mail Intake"])
+
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
+    allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
+    allow(bgs).to receive(:fetch_veteran_info).and_call_original
   end
+
+  let(:bgs) { BGSService.new }
 
   describe "#create" do
     let(:file_number) { "123456789" }
@@ -33,6 +39,7 @@ RSpec.describe IntakesController do
         expect(vet).to_not be_nil
         expect(vet.first_name).to eq "Ed"
         expect(vet.last_name).to eq "Merica"
+        expect(bgs).to have_received(:fetch_veteran_info).exactly(2).times
       end
     end
 
@@ -49,6 +56,7 @@ RSpec.describe IntakesController do
         expect(vet).to_not be_nil
         expect(vet.first_name).to eq "Ed"
         expect(vet.last_name).to eq "Merica"
+        expect(bgs).to have_received(:fetch_veteran_info).exactly(1).times
       end
     end
 
@@ -69,6 +77,7 @@ RSpec.describe IntakesController do
         expect(controller.send(:new_intake).error_code).to eq("veteran_not_accessible")
         expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
         expect(Intake.find_by(veteran_file_number: file_number)).to_not be_nil
+        expect(bgs).to_not have_received(:fetch_veteran_info)
       end
     end
   end
