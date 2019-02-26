@@ -129,13 +129,13 @@ describe HearingDay do
       end
     end
 
-    context "the hearing day has 12 postponed hearings" do
+    context "the hearing day has 12 closed hearings" do
       let!(:hearing_day) { create(:hearing_day) }
 
       before do
         6.times do
           create(:hearing, hearing_day: hearing_day, disposition: :postponed)
-          create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "P")
+          create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
         end
       end
 
