@@ -285,7 +285,7 @@ export class TaskTableUnconnected extends React.PureComponent {
           redirectUrl={window.location.pathname}
           appeal={task.appeal}
           newDocsIcon={this.props.includeNewDocsIcon}
-          onHoldDate={this.props.useOnHoldDate ? task.placedOnHoldAt : null}
+          task={task}
           cached
           docCountBelowLink />;
       }
