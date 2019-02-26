@@ -67,6 +67,7 @@ RSpec.describe IntakesController do
         expect(response.status).to eq(422)
         expect(controller.send(:new_intake).error_code).to eq("veteran_not_accessible")
         expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
+        expect(Intake.find_by(veteran_file_number: file_number)).to_not be_nil
       end
     end
   end

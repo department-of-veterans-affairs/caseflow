@@ -48,7 +48,7 @@ class Intake < ApplicationRecord
 
     intake_classname.constantize.new(
       veteran: veteran,
-      veteran_file_number: veteran.try(:file_number),
+      veteran_file_number: veteran.file_number,
       user: user
     )
   end
