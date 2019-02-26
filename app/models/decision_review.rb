@@ -411,6 +411,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def fetch_issues_status(issues_list)
+    return {} if issues_list.empty?
+
     issues_list.map do |issue|
       {
         active: issue.api_status_active?,
