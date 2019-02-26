@@ -8,6 +8,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import TextField from '../components/TextField';
+import PropTypes from 'prop-types';
 
 export default class TeamManagement extends React.PureComponent {
   constructor(props) {
@@ -63,7 +64,7 @@ export default class TeamManagement extends React.PureComponent {
             <OrgList orgs={this.state.judgeTeams} />
 
             <OrgHeader>VSOs</OrgHeader>
-            <OrgList orgs={this.state.vsos} />
+            <OrgList orgs={this.state.vsos} showBgsParticipantId />
 
             <OrgHeader>Other teams</OrgHeader>
             <OrgList orgs={this.state.otherOrgs} />
@@ -79,22 +80,25 @@ export default class TeamManagement extends React.PureComponent {
 const tableStyling = css({
   width: '100%',
   '& td': { border: 'none' },
-  '& input': { margin: 0 },
+  '& input': { margin: 0 }
 });
 
 const labelRowStyling = css({
   '& td': { fontWeight: 'bold' }
 });
 
-const sectionStyling = css({
-  colspan: 5,
+const sectionHeadingStyling = css({
   fontSize: '3rem',
   fontWeight: 'bold'
 });
 
+const skinnyCellStyling = css({
+  width: '3rem'
+})
+
 class OrgHeader extends React.PureComponent {
   render = () => {
-    return <tr><td {...sectionStyling}>{this.props.children}</td></tr>;
+    return <tr><td {...sectionHeadingStyling} colspan='6'>{this.props.children}</td></tr>;
   }
 }
 
@@ -102,17 +106,27 @@ class OrgList extends React.PureComponent {
   render = () => {
     return <React.Fragment>
       <tr {...labelRowStyling}>
-        <td>ID</td>
+        <td {...skinnyCellStyling}>ID</td>
         <td>Name</td>
         <td>URL</td>
-        <td>BGS Participant ID</td>
+        <td>{ this.props.showBgsParticipantId && `BGS Participant ID`}</td>
         <td></td>
       </tr>
       <tbody>
-        { this.props.orgs.map( (org) => <OrgRow {...org} />) }
+        { this.props.orgs.map( (org) => 
+          <OrgRow {...org} showBgsParticipantId={this.props.showBgsParticipantId} />
+        ) }
       </tbody>
     </React.Fragment>;
   }
+}
+
+OrgList.defaultProps = {
+  showBgsParticipantId: false
+};
+
+OrgList.propTypes = {
+  showBgsParticipantId: PropTypes.bool
 }
 
 class OrgRow extends React.PureComponent {
@@ -133,7 +147,7 @@ class OrgRow extends React.PureComponent {
 
   render = () => {
     return <tr key={this.props.id}>
-      <td>{ this.props.id }</td>
+      <td {...skinnyCellStyling}>{ this.props.id }</td>
       <td>
         <TextField
           value={this.state.name}
@@ -147,14 +161,24 @@ class OrgRow extends React.PureComponent {
           />
       </td>
       <td>
-        <TextField
-          value={this.state.participant_id}
-          onChange={this.changeParticipantId}
-          />
+        { this.props.showBgsParticipantId &&
+          <TextField
+            value={this.state.participant_id}
+            onChange={this.changeParticipantId}
+            />
+        }
       </td>
       <td>
-        
+        SUBMIT
       </td>
     </tr>;
   }
+}
+
+OrgRow.defaultProps = {
+  showBgsParticipantId: false
+};
+
+OrgRow.propTypes = {
+  showBgsParticipantId: PropTypes.bool
 }
