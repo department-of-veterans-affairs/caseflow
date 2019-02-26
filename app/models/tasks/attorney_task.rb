@@ -1,3 +1,9 @@
+##
+# Task tracking work done by attorneys at BVA. Attorneys are assigned tasks by judges.
+# Attorney tasks include:
+#   - reviewing judge decisions
+#   - adding admin actions (like translating documents)
+
 class AttorneyTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?

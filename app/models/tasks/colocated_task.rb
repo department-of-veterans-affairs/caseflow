@@ -1,3 +1,8 @@
+##
+# Any task assigned to a colocated team at the BVA, which is any team that handles admin actions at BVA.
+# Colocated teams perform actions like:
+#  - translating documents
+
 class ColocatedTask < Task
   validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validates :assigned_by, presence: true

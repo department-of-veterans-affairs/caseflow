@@ -1,3 +1,8 @@
+##
+# Task assigned to the BvaOrganization after a hearing is scheduled.
+# Created after the ScheduleHearingTask is completed and the hearing is scheduled.
+# Marked complete when the hearing is held.
+
 class HoldHearingTask < GenericTask
   class << self
     def create_hold_hearing_task!(appeal, parent, hearing)

@@ -1,3 +1,6 @@
+##
+# A task created when the Quality Review team returns a task to the assigning judge.
+
 class JudgeQualityReviewTask < JudgeTask
   def additional_available_actions(_user)
     [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h, Constants.TASK_ACTIONS.MARK_COMPLETE.to_h]

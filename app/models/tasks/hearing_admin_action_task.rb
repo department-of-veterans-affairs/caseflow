@@ -1,3 +1,6 @@
+##
+# Task for a hearing coordinator to schedule a Veteran for a hearing.
+
 class HearingAdminActionTask < GenericTask
   validates :parent, presence: true
   validate :on_hold_duration_is_set, on: :update

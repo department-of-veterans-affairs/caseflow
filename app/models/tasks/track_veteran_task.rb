@@ -1,3 +1,6 @@
+##
+# Task created when creating RootTasks for appeals represented by VSOs.
+
 class TrackVeteranTask < GenericTask
   def available_actions(_user)
     []

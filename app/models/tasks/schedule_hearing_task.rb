@@ -1,3 +1,6 @@
+##
+# Task to track when a hearing should be scheduled for a veteran making a claim.
+
 class ScheduleHearingTask < GenericTask
   after_update :update_location_in_vacols
 
