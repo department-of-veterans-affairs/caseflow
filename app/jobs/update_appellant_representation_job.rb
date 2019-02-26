@@ -22,7 +22,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
       # TODO: Add an alert if we've been running for longer than x number of minutes?
     rescue StandardError => e
       # Rescue from errors when looping over appeals so that we attempt to sync tracking tasks for each appeal.
-      Raven.capture_exception(e, extra: { appeal_id: appeal.id })
+      Raven.capture_exception(e, extra: { appeal_id: a.id })
       error_count += 1
     end
 
