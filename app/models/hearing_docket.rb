@@ -7,20 +7,6 @@ class HearingDocket
   attr_accessor :scheduled_for, :readable_request_type, :request_type, :regional_office_names, :hearings, :user
   attr_accessor :master_record, :hearings_count, :regional_office_key
 
-  SLOTS_BY_TIMEZONE = {
-    "America/New_York" => 12,
-    "America/Chicago" => 10,
-    "America/Indiana/Indianapolis" => 12,
-    "America/Kentucky/Louisville" => 12,
-    "America/Denver" => 10,
-    "America/Los_Angeles" => 8,
-    "America/Boise" => 10,
-    "America/Puerto_Rico" => 12,
-    "Asia/Manila" => 8,
-    "Pacific/Honolulu" => 8,
-    "America/Anchorage" => 8
-  }.freeze
-
   def to_hash
     serializable_hash(
       methods: [:regional_office_names, :slots]
@@ -28,7 +14,7 @@ class HearingDocket
   end
 
   def slots
-    @slots ||= SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
+    @slots ||= HearingDay::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office_key)]
   end
 
   def attributes
