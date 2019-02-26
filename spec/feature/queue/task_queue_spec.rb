@@ -57,7 +57,7 @@ RSpec.feature "Task queue" do
 
       it "shows a new documents icon next to the on hold task" do
         page.find(:button, format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1)).click
-        expect(find_all("tbody td #NEW").length).to eq(1)
+        expect(find("tbody td #NEW")).to have_content("NEW")
       end
     end
 
