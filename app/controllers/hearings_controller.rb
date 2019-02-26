@@ -9,7 +9,7 @@ class HearingsController < ApplicationController
   end
 
   def update
-    slot_new_hearing if postponed?
+    slot_new_hearing if postponed? # remove this logic
 
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(update_params_legacy)
@@ -29,6 +29,25 @@ class HearingsController < ApplicationController
 
   def logo_path
     hearings_dockets_path
+  end
+
+  def postpone
+    # close existing HT and DT
+    # create new HT
+    # update hearing disposition to "postponed"
+  end
+
+  def schedule
+    # slot new hearing
+    # create DT
+  end
+
+  def add_admin_action
+    # add admin action
+  end
+
+  def add_schedule_hearing_task
+    # add SHT
   end
 
   def find_closest_hearing_locations
