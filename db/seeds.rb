@@ -58,6 +58,8 @@ class SeedDB
     create_org_queue_users
     create_qr_user
     create_aod_user
+    create_privacy_user
+    create_lit_support_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -166,6 +168,16 @@ class SeedDB
   def create_aod_user
     u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
     OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
+  end
+
+  def create_privacy_user
+    u = User.create!(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Privacy and FOIA team member")
+    OrganizationsUser.add_user_to_organization(u, PrivacyTeam.singleton)
+  end
+
+  def create_lit_support_user
+    u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Litigation Support team member")
+    OrganizationsUser.add_user_to_organization(u, LitigationSupport.singleton)
   end
 
   def create_mail_team_user
