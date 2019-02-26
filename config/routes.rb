@@ -138,7 +138,6 @@ Rails.application.routes.draw do
   get 'hearings/:id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/:id/postpone', to: "hearings#postpone"
   post 'hearings/:id/schedule', to: "hearings#schedule"
-  post 'hearings/:id/add_admin_action', to: "hearings#add_admin_action"
   post 'hearings/:id/add_schedule_hearing_task', to: "hearings#add_schedule_hearing_task"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"

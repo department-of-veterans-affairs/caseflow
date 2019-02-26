@@ -48,6 +48,8 @@ class HearingsController < ApplicationController
 
   def add_schedule_hearing_task
     # add SHT
+    # if :with_admin_action exists on params
+    #   add_admin_action(:with_admin_action)
   end
 
   def find_closest_hearing_locations
