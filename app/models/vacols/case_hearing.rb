@@ -104,7 +104,6 @@ class VACOLS::CaseHearing < VACOLS::Record
       hear_date = attrs[:hearing_date]
       converted_date = hear_date.is_a?(Date) ? hear_date : Time.zone.parse(hear_date).to_datetime
       attrs[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(converted_date)
-      binding.pry
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
@@ -116,9 +115,9 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def create_child_hearing!(hearing_info)
-      MetricsService.record("VACOLS: create_hearing!",
+      MetricsService.record("VACOLS: create_child_hearing!",
                             service: :vacols,
-                            name: "create_hearing") do
+                            name: "create_child_hearing") do
         create!(hearing_info.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                                    adduser: current_user_slogid))
       end
@@ -184,7 +183,6 @@ class VACOLS::CaseHearing < VACOLS::Record
 
   def update_hearing!(hearing_info)
     attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
-    binding.pry
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do

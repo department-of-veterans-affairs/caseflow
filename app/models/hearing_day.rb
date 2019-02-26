@@ -119,7 +119,6 @@ class HearingDay < ApplicationRecord
                         else
                           CASEFLOW_V_PARENT_DATE
                         end
-      binding.pry
       if scheduled_for > comparison_date
         hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
         create(hearing_hash).to_hash

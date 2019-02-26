@@ -91,16 +91,19 @@ RSpec.describe HearingsController, type: :controller do
             id: legacy_hearing.external_id, hearing: params, master_record_updated: master_record_params
           }
           expect(response.status).to eq 200
-
-          binding.pry
-
           expect(LegacyHearing.last.location.facility_id).to eq "vba_301"
 
-          # this is failing because the VACOLS insert writes assuming UTC but with a ET value.
-          # e.g. "2019-04-02 10:00:00"
-          expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
-            Time.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)")
-          )
+          # VACOLS thinks it is UTC, but the values written to it are Eastern.
+          # Rails converts those "UTC" times to Time.zone, which really is Eastern,
+          # so all our DateTime objects are offset to UTC-Eastern.
+          # This is like a double-encoding bug with HTML or UTF-8.
+          expect(Time.zone.name).to eq("America/New_York")
+
+          ten_am_eastern = Time.new(2019, 4, 2, 10).in_time_zone.asctime
+          hearing = VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id])
+
+          # we convert "back" to UTC in order to get the original Eastern time value as it was written.
+          expect(hearing.hearing_date.in_time_zone("UTC").asctime).to eq(ten_am_eastern)
         end
       end
 
