@@ -17,10 +17,6 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
     render(json: { message: e.message }, status: :bad_request)
   end
 
-  rescue_from Caseflow::Error::DocumentUploadFailedInVBMS do |e|
-    render(e.serialize_response)
-  end
-
   rescue_from ActiveRecord::RecordNotFound do |_e|
     render(json: { message: "Record not found" }, status: :not_found)
   end

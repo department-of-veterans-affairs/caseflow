@@ -8,7 +8,8 @@ RSpec.feature "Task queue" do
       FactoryBot.create(
         :ama_attorney_task,
         :on_hold,
-        assigned_to: attorney_user
+        assigned_to: attorney_user,
+        placed_on_hold_at: 4.days.ago
       )
     end
 
@@ -36,14 +37,27 @@ RSpec.feature "Task queue" do
     end
 
     context "the on-hold task is attached to an appeal with documents" do
-      let!(:documents) { ["NOD", "BVA Decision", "SSOC"].map { |t| FactoryBot.build(:document, type: t) } }
+      let!(:documents) do
+        ["NOD", "BVA Decision", "SSOC"].map do |t|
+          FactoryBot.build(:document, type: t, upload_date: 3.days.ago, file_number: paper_appeal.veteran_file_number)
+        end
+      end
 
       before do
-        allow_any_instance_of(Appeal).to receive(:new_documents_for_user) { documents }
+        allow_any_instance_of(NewDocumentsForUser).to receive(:process!) { documents }
       end
 
       it "shows the correct number of tasks on hold" do
         expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
+      end
+
+      it "shows a new documents icon in the on hold tab" do
+        expect(page).to have_content("NEW")
+      end
+
+      it "shows a new documents icon next to the on hold task" do
+        page.find(:button, format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1)).click
+        expect(find("tbody td #NEW")).to have_content("NEW")
       end
     end
 
