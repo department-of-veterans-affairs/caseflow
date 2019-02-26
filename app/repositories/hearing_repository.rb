@@ -70,7 +70,7 @@ class HearingRepository
       end
     end
 
-    def create_vacols_hearing(hearing_day, appeal, hearing_datetime)
+    def create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
       VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_datetime),
@@ -100,7 +100,7 @@ class HearingRepository
       )
 
       hearing = if appeal.is_a?(LegacyAppeal)
-                  create_vacols_hearing(hearing_day, appeal, hearing_datetime)
+                  create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
                 else
                   Hearing.create!(
                     appeal: appeal,

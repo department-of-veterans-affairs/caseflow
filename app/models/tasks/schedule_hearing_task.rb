@@ -91,10 +91,9 @@ class ScheduleHearingTask < GenericTask
 
         hearing_time = task_payloads[:values][:hearing_time]
         hearing_day_id = task_payloads[:values][:hearing_pkseq]
-        hearing_type = task_payloads[:values][:hearing_type]
         hearing_location = task_payloads[:values][:hearing_location]
 
-        hearing = slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+        hearing = slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
         HoldHearingTask.create_hold_hearing_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
@@ -159,9 +158,8 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  def slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+  def slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
     hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                 hearing_type: (hearing_type == LegacyHearing::CO_HEARING) ? "C" : "V",
                                                  appeal: appeal,
                                                  hearing_location_attrs: hearing_location&.to_hash,
                                                  scheduled_time: hearing_time&.stringify_keys)
