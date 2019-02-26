@@ -14,6 +14,7 @@ hearing_tasks = Task.where(type: "HoldHearingTask", appeal_type: "LegacyAppeal")
 
 task_association_exists = 0
 nbr_of_task_associations_created = 0
+nbr_of_vacols_records_older_than_today = 0
 nbr_of_vacols_recods_not_found = 0
 
 hearing_tasks.each do |task|
@@ -33,8 +34,12 @@ hearing_tasks.each do |task|
   hearings.each do |hearing|
     vacols_hearing = VACOLS::CaseHearing.find(hearing.vacols_id)
     if vacols_hearing.hearing_disp.nil?
-      HearingTaskAssociation.create!(hearing: hearing, hearing_task: task)
-      nbr_of_task_associations_created += 1
+      if vacols_hearing.hearing_date >= Time.zone.today.beginning_of_day
+        HearingTaskAssociation.create!(hearing: hearing, hearing_task: task)
+        nbr_of_task_associations_created += 1
+      else
+        nbr_of_vacols_records_older_than_today += 1
+      end
     end
   rescue ActiveRecord::RecordNotFound
     puts "No VACOLS hearing found for legacy hearing #{hearing.vacols_id}"
@@ -44,5 +49,6 @@ end
 
 puts "Number of HearingTasks: #{hearing_tasks.size}"
 puts "Nbr of Hearing Tasks already associated to Hearing: #{task_association_exists}"
+puts "Nbr of VACOLS Hearings older than today's date: #{nbr_of_vacols_records_older_than_today}"
 puts "Total task associations created: #{nbr_of_task_associations_created}"
 puts "Legacy Hearings with no VACOLS hearing: #{nbr_of_vacols_recods_not_found}"
