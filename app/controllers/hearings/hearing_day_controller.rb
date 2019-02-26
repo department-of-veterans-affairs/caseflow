@@ -29,7 +29,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
     hearings, regional_office = fetch_hearings(hearing_day_hash, params[:id]).values_at(:hearings, :regional_office)
 
-    hearing_day_options = HearingDay.hearing_days_with_hearings_hash(
+    hearing_day_options = HearingDay.open_hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 365.days,
       regional_office
@@ -50,7 +50,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearing_days_with_hearings = HearingDay.hearing_days_with_hearings_hash(
+    hearing_days_with_hearings = HearingDay.open_hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
       regional_office,
