@@ -117,13 +117,17 @@ class Veteran < ApplicationRecord
     Raven.capture_exception(error)
 
     # Set the veteran as inaccessible if a sensitivity error is thrown
-    raise error unless error.message.match?(/Sensitive File/)
-
+    @access_error = error.message
+    raise error unless error.message.match?(/Sensitive File/) || access_error.match?(/was configured to have a unique result/)
     @accessible = false
   end
 
   def accessible?
     bgs.can_access?(file_number)
+  end
+
+  def access_error
+    @access_error
   end
 
   def relationships
@@ -260,7 +264,7 @@ class Veteran < ApplicationRecord
     # rubocop:disable Metrics/MethodLength
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
-
+binding.pry
       unless veteran.found?
         Rails.logger.warn(
           %(create_by_file_number file_number:#{file_number} found:false accessible:#{veteran.accessible?})

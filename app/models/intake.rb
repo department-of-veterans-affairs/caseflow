@@ -17,6 +17,7 @@ class Intake < ApplicationRecord
   ERROR_CODES = {
     invalid_file_number: "invalid_file_number",
     veteran_not_found: "veteran_not_found",
+    veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_valid: "veteran_not_valid",
     duplicate_intake_in_progress: "duplicate_intake_in_progress"
@@ -189,6 +190,9 @@ class Intake < ApplicationRecord
 
     elsif !veteran
       self.error_code = :veteran_not_found
+
+    elsif veteran.access_error&.match?(/was configured to have a unique result/)
+      self.error_code = :veteran_has_multiple_phone_numbers
 
     elsif !veteran.accessible?
       self.error_code = :veteran_not_accessible
