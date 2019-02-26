@@ -8,7 +8,7 @@ import { ENDPOINT_NAMES } from './analytics';
 import ApiUtil from '../util/ApiUtil';
 import { setSearch, clearSearch, clearAllFilters } from '../reader/DocumentList/DocumentListActions';
 import DocumentsCommentsButton from './DocumentsCommentsButton';
-import HeaderFilterMessage from './HeaderFilterMessage';
+// import HeaderFilterMessage from './HeaderFilterMessage';
 import SearchBar from '../components/SearchBar';
 
 class DocumentListHeader extends React.Component {
@@ -44,10 +44,11 @@ class DocumentListHeader extends React.Component {
         </div>
         <DocumentsCommentsButton />
       </div>
-      <HeaderFilterMessage docFilterCriteria={props.docFilterCriteria} />
     </div>;
   }
 }
+
+// <HeaderFilterMessage docFilterCriteria={props.docFilterCriteria} />
 
 DocumentListHeader.propTypes = {
   setSearch: PropTypes.func.isRequired,
