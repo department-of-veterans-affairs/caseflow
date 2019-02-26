@@ -107,7 +107,7 @@ describe BvaDispatchTask do
         it "sets a delay on the enqueued_job" do
           expect do
             BvaDispatchTask.outcode(root_task.appeal, params, user)
-          end.to have_enqueued_job(ProcessDecisionDocumentJob).exactly(:once)
+          end.to_not have_enqueued_job(ProcessDecisionDocumentJob)
 
           decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
           expect(decision_document.submitted_at).to be >= decision_date
