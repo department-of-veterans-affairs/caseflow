@@ -1,4 +1,8 @@
+require "action_view"
+
 class UpdateAppellantRepresentationJob < CaseflowJob
+  # For time_ago_in_words()
+  include ActionView::Helpers::DateHelper
   queue_as :low_priority
 
   def perform
@@ -28,7 +32,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   end
 
   def log_info(start_time, new_task_count, closed_task_count, error_count, err = nil)
-    duration = helper.time_ago_in_words(start_time)
+    duration = time_ago_in_words(start_time)
     result = err ? "failed" : "completed"
     msg = "UpdateAppellantRepresentationJob #{result} after running for #{duration}." \
           " Created #{new_task_count} new tracking tasks and closed #{closed_task_count} existing tracking tasks." \

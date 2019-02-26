@@ -40,6 +40,18 @@ describe UpdateAppellantRepresentationJob do
 
       UpdateAppellantRepresentationJob.perform_now
     end
+
+    it "sends the correct message to Slack" do
+      slack_msg = ""
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+      UpdateAppellantRepresentationJob.perform_now
+
+      expected_msg = "UpdateAppellantRepresentationJob completed after running for .*." \
+          " Created #{new_task_count} new tracking tasks and closed #{closed_task_count} existing tracking tasks." \
+          " Encountered errors for #{error_count} individual appeals."
+      expect(slack_msg).to match(/#{expected_msg}/)
+    end
   end
 end
 
