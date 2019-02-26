@@ -128,6 +128,10 @@ class EndProductEstablishment < ApplicationRecord
 
   delegate :contentions, to: :cached_result
 
+  def limited_poa_on_established_claim
+    result&.limited_poa
+  end
+
   def description
     reference_id && cached_result.description_with_routing
   end
@@ -419,7 +423,9 @@ class EndProductEstablishment < ApplicationRecord
       modifier: the_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
-      station_of_jurisdiction: station
+      station_of_jurisdiction: station,
+      limited_poa_code: limited_poa_code,
+      limited_poa_access: limited_poa_access
     )
   end
 

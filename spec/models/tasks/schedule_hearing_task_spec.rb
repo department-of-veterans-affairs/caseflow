@@ -156,7 +156,7 @@ describe ScheduleHearingTask do
     end
   end
 
-  context ".legacy_tasks_for_ro" do
+  context ".tasks_for_ro" do
     let(:regional_office) { "RO17" }
     let(:number_of_cases) { 10 }
 
@@ -184,7 +184,6 @@ describe ScheduleHearingTask do
         VACOLS::Case.all.map do |vacols_case|
           create(
             :veteran,
-            closest_regional_office: regional_office,
             file_number: LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
           )
         end
@@ -194,9 +193,13 @@ describe ScheduleHearingTask do
         create_list(:case, number_of_cases)
       end
 
-      it "returns tasks for all relevant appeals in location 57" do
-        AppealRepository.create_schedule_hearing_tasks
+      before do
+        AppealRepository.create_schedule_hearing_tasks.each do |appeal|
+          appeal.update(closest_regional_office: regional_office)
+        end
+      end
 
+      it "returns tasks for all relevant appeals in location 57" do
         tasks = ScheduleHearingTask.tasks_for_ro(regional_office)
 
         expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey) + [c_number_case.bfkey])
@@ -224,15 +227,18 @@ describe ScheduleHearingTask do
         VACOLS::Case.all.map do |vacols_case|
           create(
             :veteran,
-            closest_regional_office: regional_office,
             file_number: LegacyAppeal.veteran_file_number_from_bfcorlid(vacols_case.bfcorlid)
           )
         end
       end
 
-      it "returns tasks for all CO hearings in location 57" do
-        AppealRepository.create_schedule_hearing_tasks
+      before do
+        AppealRepository.create_schedule_hearing_tasks.each do |appeal|
+          appeal.update(closest_regional_office: regional_office)
+        end
+      end
 
+      it "returns tasks for all CO hearings in location 57" do
         tasks = ScheduleHearingTask.tasks_for_ro("C")
 
         expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(cases.pluck(:bfkey))
@@ -246,18 +252,18 @@ describe ScheduleHearingTask do
         expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(video_cases.pluck(:bfkey))
       end
     end
-  end
-
-  context ".tasks_for_ro" do
-    let(:regional_office) { "RO17" }
 
     context "when there are AMA ScheduleHearingTasks" do
-      let(:veteran_at_ro) { create(:veteran, closest_regional_office: regional_office) }
-      let(:appeal_for_veteran_at_ro) { create(:appeal, veteran: veteran_at_ro) }
+      let(:veteran_at_ro) { create(:veteran) }
+      let(:appeal_for_veteran_at_ro) do
+        create(:appeal, veteran: veteran_at_ro, closest_regional_office: regional_office)
+      end
       let!(:hearing_task) { create(:schedule_hearing_task, appeal: appeal_for_veteran_at_ro) }
 
-      let(:veteran_at_different_ro) { create(:veteran, closest_regional_office: "RO04") }
-      let(:appeal_for_veteran_at_different_ro) { create(:appeal, veteran: veteran_at_different_ro) }
+      let(:veteran_at_different_ro) { create(:veteran) }
+      let(:appeal_for_veteran_at_different_ro) do
+        create(:appeal, veteran: veteran_at_different_ro, closest_regional_office: "RO04")
+      end
       let!(:hearing_task_for_other_veteran) do
         create(:schedule_hearing_task, appeal: appeal_for_veteran_at_different_ro)
       end

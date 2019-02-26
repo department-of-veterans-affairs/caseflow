@@ -263,7 +263,9 @@ describe EndProduct do
         date: 7.days.from_now.to_date,
         suppress_acknowledgement_letter: false,
         gulf_war_registry: true,
-        claimant_participant_id: "1234"
+        claimant_participant_id: "1234",
+        limited_poa_code: nil,
+        limited_poa_access: nil
       )
     end
   end

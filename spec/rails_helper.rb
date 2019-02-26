@@ -11,13 +11,6 @@ require "spec_helper"
 require "fake_date_helper"
 require "rspec/rails"
 require "react_on_rails"
-require_relative "support/fake_pdf_service"
-require_relative "support/sauce_driver"
-require_relative "support/database_cleaner"
-require_relative "support/download_helper"
-require_relative "support/clear_cache"
-require_relative "support/feature_helper"
-require_relative "support/date_time_helper"
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -35,7 +28,7 @@ require "timeout"
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.

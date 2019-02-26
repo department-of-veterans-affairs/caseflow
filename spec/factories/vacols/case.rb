@@ -7,15 +7,15 @@ FactoryBot.define do
     association :correspondent, factory: :correspondent
     association :folder, factory: :folder, ticknum: :bfkey
 
-    bfregoff "RO18"
+    bfregoff { "RO18" }
 
     trait :assigned do
       transient do
-        decass_count 1
-        user nil
-        assigner nil
-        work_product nil
-        document_id nil
+        decass_count { 1 }
+        user { nil }
+        assigner { nil }
+        work_product { nil }
+        document_id { nil }
       end
 
       after(:create) do |vacols_case, evaluator|
@@ -47,7 +47,7 @@ FactoryBot.define do
 
     transient do
       # Pass an array of built (not created) case_hearings to associate with this appeal
-      case_hearings []
+      case_hearings { [] }
 
       after(:create) do |vacols_case, evaluator|
         evaluator.case_hearings.each do |case_hearing|
@@ -57,7 +57,7 @@ FactoryBot.define do
     end
 
     transient do
-      case_issues []
+      case_issues { [] }
 
       after(:create) do |vacols_case, evaluator|
         evaluator.case_issues.each do |case_issue|
@@ -69,12 +69,12 @@ FactoryBot.define do
     end
 
     transient do
-      documents []
-      nod_document []
-      soc_document []
-      form9_document []
-      ssoc_documents []
-      decision_document []
+      documents { [] }
+      nod_document { [] }
+      soc_document { [] }
+      form9_document { [] }
+      ssoc_documents { [] }
+      decision_document { [] }
     end
 
     factory :case_with_rep_table_record do
@@ -108,7 +108,7 @@ FactoryBot.define do
 
             factory :case_with_ssoc do
               transient do
-                number_of_ssoc 2
+                number_of_ssoc { 2 }
               end
               transient do
                 ssoc_documents do
@@ -156,24 +156,24 @@ FactoryBot.define do
     end
 
     trait :type_original do
-      bfac "1"
+      bfac { "1" }
     end
 
     trait :type_post_remand do
-      bfac "3"
+      bfac { "3" }
     end
 
     trait :type_reconsideration do
-      bfac "4"
+      bfac { "4" }
     end
 
     trait :type_cavc_remand do
-      bfac "7"
+      bfac { "7" }
     end
 
     trait :certified do
       transient do
-        certification_date 1.day.ago
+        certification_date { 1.day.ago }
       end
 
       bfdcertool { certification_date }
@@ -181,71 +181,71 @@ FactoryBot.define do
     end
 
     trait :status_active do
-      bfmpro "ACT"
+      bfmpro { "ACT" }
     end
 
     trait :status_remand do
-      bfmpro "REM"
-      bfdc "3"
+      bfmpro { "REM" }
+      bfdc { "3" }
     end
 
     trait :status_complete do
-      bfmpro "HIS"
+      bfmpro { "HIS" }
     end
 
     trait :status_advance do
-      bfmpro "ADV"
+      bfmpro { "ADV" }
     end
 
     trait :disposition_allowed do
-      bfdc "1"
+      bfdc { "1" }
     end
 
     trait :disposition_remanded do
-      bfdc "3"
+      bfdc { "3" }
     end
 
     trait :disposition_vacated do
-      bfdc "5"
+      bfdc { "5" }
     end
 
     trait :disposition_granted_by_aoj do
-      bfdc "B"
+      bfdc { "B" }
     end
 
     trait :disposition_merged do
-      bfdc "M"
+      bfdc { "M" }
     end
 
     trait :disposition_ramp do
-      bfdc "P"
+      bfdc { "P" }
     end
 
     trait :representative_american_legion do
-      bfso "A"
+      bfso { "A" }
     end
 
     trait :video_hearing_requested do
-      bfdocind "V"
-      bfcurloc "57"
-      bfhr "2"
-      bfac "7"
+      bfdocind { "V" }
+      bfcurloc { "57" }
+      bfhr { "2" }
+      bfac { "7" }
     end
 
     trait :central_office_hearing do
-      bfhr "1"
-      bfcurloc "57"
-      bfac "7"
+      bfhr { "1" }
+      bfcurloc { "57" }
+      bfac { "7" }
     end
 
     trait :travel_board_hearing do
-      bfhr "2"
+      bfhr { "2" }
     end
 
     trait :reopenable do
-      bfmpro "HIS"
-      bfcurloc "99"
-      bfboard "00"
+      bfmpro { "HIS" }
+      bfcurloc { "99" }
+      bfboard { "00" }
 
       after(:create) do |vacols_case, _evaluator|
         create(:priorloc,
@@ -282,7 +282,7 @@ FactoryBot.define do
     end
 
     transient do
-      remand_return_date nil
+      remand_return_date { nil }
 
       after(:create) do |vacols_case, evaluator|
         if evaluator.remand_return_date
@@ -292,7 +292,7 @@ FactoryBot.define do
     end
 
     transient do
-      staff nil
+      staff { nil }
     end
 
     after(:build) do |vacols_case, evaluator|

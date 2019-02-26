@@ -58,8 +58,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.veteran_file_number
   end
 
-  attribute :veteran_closest_regional_office do
-    object.appeal.veteran_closest_regional_office
+  attribute :closest_regional_office do
+    object.appeal.closest_regional_office
   end
 
   attribute :external_appeal_id do
@@ -74,12 +74,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.number_of_issues
   end
 
-  attribute :closest_regional_office do
-    object.appeal.veteran_closest_regional_office
-  end
-
-  attribute :veteran_available_hearing_locations do
-    object.appeal.veteran_available_hearing_locations
+  attribute :available_hearing_locations do
+    object.appeal.available_hearing_locations
   end
 
   attribute :previous_task do

@@ -487,7 +487,23 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def limited_poa_code
+    return unless limited_poa
+
+    limited_poa[:limited_poa_code]
+  end
+
+  def limited_poa_access
+    return unless limited_poa
+
+    limited_poa[:limited_poa_access] == "Y"
+  end
+
   private
+
+  def limited_poa
+    previous_request_issue&.end_product_establishment&.limited_poa_on_established_claim
+  end
 
   # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
   # But the request issue should still be added to a rating End Product
