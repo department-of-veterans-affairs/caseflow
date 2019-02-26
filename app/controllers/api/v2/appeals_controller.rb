@@ -42,15 +42,16 @@ class Api::V2::AppealsController < Api::ApplicationController
   end
 
   def hlrs
-    @hlrs ||= HigherLevelReview.where(veteran_file_number: veteran_file_number)
+    @hlrs ||= HigherLevelReview.where(veteran_file_number: veteran_file_number).select { |hlr| hlr.request_issues.any? }
   end
 
   def supplemental_claims
     @supplemental_claims ||= SupplementalClaim.where(veteran_file_number: veteran_file_number)
+      .select { |sc| sc.request_issues.any? }
   end
 
   def appeals
-    @appeals ||= Appeal.where(veteran_file_number: veteran_file_number)
+    @appeals ||= Appeal.where(veteran_file_number: veteran_file_number).select { |a| a.request_issues.any? }
   end
 
   # rubocop:disable Metrics/MethodLength
