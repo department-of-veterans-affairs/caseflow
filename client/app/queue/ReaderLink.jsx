@@ -81,5 +81,6 @@ ReaderLink.propTypes = {
 
 ReaderLink.defaultProps = {
   docCountWithinLink: false,
-  docCountBelowLink: false
+  docCountBelowLink: false,
+  task: null
 };
