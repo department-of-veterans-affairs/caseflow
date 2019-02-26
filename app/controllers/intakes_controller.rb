@@ -127,7 +127,6 @@ class IntakesController < ApplicationController
   end
 
   def veteran
-    # param could be file number or SSN. Make sure we return file number.
     @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(params[:file_number], sync_name: true)
   end
 
