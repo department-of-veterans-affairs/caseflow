@@ -112,7 +112,7 @@ class VaDotGovAddressValidator
   end
 
   def ro_facility_ids_for_state(state_code)
-    filter_states = if %w[VA MD].include? state_code
+    filter_states = if %w[VA MD].include?(state_code) && !appeal.is_a?(LegacyAppeal)
                       ["DC", state_code]
                     else
                       [state_code]
