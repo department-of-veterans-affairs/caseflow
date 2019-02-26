@@ -118,7 +118,8 @@ class Veteran < ApplicationRecord
 
     # Set the veteran as inaccessible if a sensitivity error is thrown
     @access_error = error.message
-    raise error unless error.message.match?(/Sensitive File/) || access_error.match?(/was configured to have a unique result/)
+    raise error unless error.message.match?(/Sensitive File/)
+
     @accessible = false
   end
 
@@ -126,8 +127,14 @@ class Veteran < ApplicationRecord
     bgs.can_access?(file_number)
   end
 
+  def multiple_phone_numbers?
+    access_error&.include?("NonUniqueResultException")
+  end
+
   def access_error
-    @access_error
+    @access_error ||= nil if bgs_record.is_a?(Hash)
+  rescue BGS::ShareError => error
+    error.message
   end
 
   def relationships
@@ -264,7 +271,7 @@ class Veteran < ApplicationRecord
     # rubocop:disable Metrics/MethodLength
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
-binding.pry
+
       unless veteran.found?
         Rails.logger.warn(
           %(create_by_file_number file_number:#{file_number} found:false accessible:#{veteran.accessible?})

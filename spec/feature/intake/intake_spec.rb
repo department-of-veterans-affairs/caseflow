@@ -144,9 +144,8 @@ RSpec.feature "Intake" do
     context "Veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
       before do
         Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
-        message="was configured to have a unique result, but more than one instance matched the query."
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
-          .and_raise(BGS::ShareError, message: message)
+          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
       end
 
       scenario "Search for a veteran with multiple active phone numbers" do
@@ -161,7 +160,6 @@ RSpec.feature "Intake" do
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
-        # binding.pry
         expect(page).to have_content("The Veteran has multiple active phone numbers")
       end
     end
