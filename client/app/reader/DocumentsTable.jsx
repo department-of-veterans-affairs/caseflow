@@ -10,7 +10,7 @@ import { formatDateStr } from '../util/DateUtil';
 import Comment from './Comment';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import TagTableColumn from './TagTableColumn';
-import NewTable from '../components/NewTable';
+import FilterableTable from '../components/FilterableTable';
 import Button from '../components/Button';
 import CommentIndicator from './CommentIndicator';
 import DropdownFilter from '../components/DropdownFilter';
@@ -288,7 +288,7 @@ class DocumentsTable extends React.Component {
     );
 
     return <div>
-      <NewTable
+      <FilterableTable
         columns={this.getDocumentColumns}
         rowObjects={rowObjects}
         summary="Document list"
