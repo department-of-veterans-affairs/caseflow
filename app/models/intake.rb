@@ -47,7 +47,7 @@ class Intake < ApplicationRecord
     fail FormTypeNotSupported unless intake_classname
 
     veteran = veteran_or_file_number.is_a?(Veteran) ? veteran_or_file_number : nil
-    veteran_file_number = veteran.nil? ? veteran_or_file_number : veteran.file_number
+    veteran_file_number = veteran ? veteran.file_number : veteran_or_file_number
 
     intake_classname.constantize.new(
       veteran: veteran,
