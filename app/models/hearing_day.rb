@@ -87,11 +87,6 @@ class HearingDay < ApplicationRecord
     SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
   end
 
-  # These dates indicate the date in which we pull parent records into Caseflow. For
-  # legacy appeals, the children hearings will continue to be stored in VACOLS.
-  CASEFLOW_V_PARENT_DATE = Date.new(2019, 3, 31).freeze
-  CASEFLOW_CO_PARENT_DATE = Date.new(2018, 12, 31).freeze
-
   class << self
     def to_hash(hearing_day)
       if hearing_day.is_a?(HearingDay)
