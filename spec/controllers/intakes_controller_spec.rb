@@ -63,6 +63,7 @@ RSpec.describe IntakesController do
 
       it "does not create Veteran db record in Caseflow" do
         expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
+        expect(Intake.find_by(veteran_file_number: file_number)).to be_nil
         post :create, params: { file_number: file_number, form_type: "higher_level_review" }
         expect(response.status).to eq(422)
         expect(controller.send(:new_intake).error_code).to eq("veteran_not_accessible")
