@@ -200,7 +200,7 @@ class VaDotGovAddressValidator
   end
 
   def create_admin_action_for_schedule_hearing_task(instructions:, admin_action_type:)
-    task = ScheduleHearingTask.find_by(appeal: appeal)
+    task = ScheduleHearingTask.active.find_by(appeal: appeal)
 
     return if task.nil?
 
