@@ -1,6 +1,5 @@
 class Intake < ApplicationRecord
   class FormTypeNotSupported < StandardError; end
-  class VeteranOrFileNumberRequired < StandardError; end
 
   belongs_to :user
   belongs_to :detail, polymorphic: true
@@ -42,16 +41,17 @@ class Intake < ApplicationRecord
     where(completed_at: nil).where(started_at: Time.zone.at(0)...IN_PROGRESS_EXPIRES_AFTER.ago)
   end
 
-  def self.build(form_type:, veteran: nil, veteran_file_number: nil, user:)
+  def self.build(form_type:, veteran_or_file_number:, user:)
     intake_classname = FORM_TYPES[form_type.to_sym]
 
     fail FormTypeNotSupported unless intake_classname
 
-    fail VeteranOrFileNumberRequired unless veteran || veteran_file_number
+    veteran = veteran_or_file_number.is_a?(Veteran) ? veteran_or_file_number : nil
+    veteran_file_number = veteran.nil? ? veteran_or_file_number : veteran.file_number
 
     intake_classname.constantize.new(
-      veteran: veteran || Veteran.find_or_create_by_file_number(veteran_file_number),
-      veteran_file_number: veteran_file_number || veteran.file_number,
+      veteran: veteran,
+      veteran_file_number: veteran_file_number,
       user: user
     )
   end

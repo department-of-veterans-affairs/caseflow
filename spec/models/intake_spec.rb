@@ -47,7 +47,7 @@ describe Intake do
     let(:form_type) { "higher_level_review" }
 
     subject do
-      Intake.build(form_type: form_type, veteran: veteran, veteran_file_number: veteran_file_number, user: user)
+      Intake.build(form_type: form_type, veteran_or_file_number: veteran || veteran_file_number, user: user)
     end
 
     context "when form_type is supported" do

@@ -117,8 +117,7 @@ class IntakesController < ApplicationController
   def new_intake
     @new_intake ||= Intake.build(
       user: current_user,
-      veteran: veteran,
-      veteran_file_number: params[:file_number],
+      veteran_or_file_number: veteran || params[:file_number],
       form_type: params[:form_type]
     )
   end
