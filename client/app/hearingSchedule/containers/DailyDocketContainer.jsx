@@ -186,6 +186,8 @@ export class DailyDocketContainer extends React.Component {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
         this.props.onReceiveSavedHearing(resp);
+      }, (err) => {
+        this.props.handleDailyDocketServerError(err);
       });
   };
 

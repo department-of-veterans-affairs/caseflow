@@ -16,6 +16,22 @@ class HearingDay < ApplicationRecord
     central: "C"
   }.freeze
 
+  SLOTS_BY_REQUEST_TYPE = { REQUEST_TYPES[:central] => 12 }.freeze
+
+  SLOTS_BY_TIMEZONE = {
+    "America/New_York" => 12,
+    "America/Chicago" => 10,
+    "America/Indiana/Indianapolis" => 12,
+    "America/Kentucky/Louisville" => 12,
+    "America/Denver" => 10,
+    "America/Los_Angeles" => 8,
+    "America/Boise" => 10,
+    "America/Puerto_Rico" => 12,
+    "Asia/Manila" => 8,
+    "Pacific/Honolulu" => 8,
+    "America/Anchorage" => 8
+  }.freeze
+
   # rubocop:disable Style/SymbolProc
   after_update { |hearing_day| hearing_day.update_children_records }
   # rubocop:enable Style/SymbolProc
@@ -25,7 +41,7 @@ class HearingDay < ApplicationRecord
   end
 
   def update_children_records
-    vacols_children_records.each do |hearing|
+    vacols_hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
         room: room,
         bva_poc: bva_poc,
@@ -37,11 +53,19 @@ class HearingDay < ApplicationRecord
   end
 
   def confirm_no_children_records
-    fail HearingDayHasChildrenRecords if !vacols_children_records.empty? || !hearings.empty?
+    fail HearingDayHasChildrenRecords if !vacols_hearings.empty? || !hearings.empty?
   end
 
-  def vacols_children_records
+  def vacols_hearings
     HearingRepository.fetch_hearings_for_parent(id)
+  end
+
+  def open_vacols_hearings
+    vacols_hearings.reject { |hearing| [:postponed, :cancelled].include?(hearing.disposition) }
+  end
+
+  def open_hearings
+    hearings.reject { |hearing| [:postponed, :cancelled].include?(hearing.disposition) }
   end
 
   def to_hash
@@ -49,6 +73,18 @@ class HearingDay < ApplicationRecord
       result[k.to_sym] = v
     end.merge(judge_first_name: judge ? judge.full_name.split(" ").first : nil,
               judge_last_name: judge ? judge.full_name.split(" ").last : nil)
+  end
+
+  def hearing_day_full?
+    lock || open_hearings.count + open_vacols_hearings.count >= total_slots
+  end
+
+  def total_slots
+    if request_type == REQUEST_TYPES[:central]
+      return SLOTS_BY_REQUEST_TYPE[request_type]
+    end
+
+    SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
   end
 
   # These dates indicate the date in which we pull parent records into Caseflow. For
@@ -126,7 +162,7 @@ class HearingDay < ApplicationRecord
       }
     end
 
-    def hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
+    def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
       hearing_days = load_days(start_date, end_date, regional_office)
       total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
 
@@ -154,8 +190,6 @@ class HearingDay < ApplicationRecord
       hearings.select do |hearing|
         if hearing.is_a?(Hearing)
           ![:postponed, :canceled].include?(hearing.disposition)
-        elsif hearing.request_type == REQUEST_TYPES[:central]
-          !hearing.vacols_record.folder_nr.nil?
         else
           hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
         end

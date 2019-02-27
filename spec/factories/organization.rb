@@ -3,8 +3,8 @@ FactoryBot.define do
     sequence(:name) { |n| "ORG_#{n}" }
     sequence(:url) { |n| "org_queue_#{n}" }
 
-    factory :vso do
-      type { "Vso" }
+    factory :vso, class: Vso do
+      type { Vso.name }
     end
 
     factory :bva do
