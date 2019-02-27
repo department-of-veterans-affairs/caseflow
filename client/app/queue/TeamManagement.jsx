@@ -1,3 +1,4 @@
+import Alert from '../components/Alert';
 import ApiUtil from '../util/ApiUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../components/Button';
@@ -6,8 +7,11 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import React from 'react';
 import TextField from '../components/TextField';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import { css } from 'glamor';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import { onReceiveTeamList } from './teamManagement/actions';
 import { withRouter } from 'react-router-dom';
 
 const tableStyling = css({
@@ -17,46 +21,18 @@ const tableStyling = css({
 });
 
 class TeamManagement extends React.PureComponent {
-  constructor(props) {
-    super(props);
+  loadingPromise = () => ApiUtil.get('/team_management').then((resp) => this.props.onReceiveTeamList(resp.body));
 
-    this.state = {
-      judgeTeams: [],
-      vsos: [],
-      otherOrgs: [],
-      loading: true,
-      error: null
-    };
-  }
-
-  loadingPromise = () => {
-    return ApiUtil.get('/team_management').then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.setState({
-        judgeTeams: resp.judge_teams,
-        vsos: resp.vsos,
-        otherOrgs: resp.other_orgs,
-        loading: false
-      });
-    }, (error) => {
-      this.setState({
-        loading: false,
-        error: {
-          title: 'Failed to load users',
-          body: error.message
-        }
-      });
-    });
-  };
-
-  // TODO: We don't show the new judge team in the table after we've created it in the modal.
-  // Can fix this by moving all this state to the global redux store.
   addJudgeTeam = () => this.props.history.push('/team_management/add_judge_team');
 
   addIhpWritingVso = () => this.props.history.push('/team_management/add_national_vso');
 
   render = () => {
+    const {
+      success,
+      error
+    } = this.props;
+
     return <LoadingDataDisplay
       createLoadPromise={this.loadingPromise}
       loadingComponentProps={{
@@ -66,25 +42,27 @@ class TeamManagement extends React.PureComponent {
       failStatusMessageProps={{
         title: 'Unable to load Caseflow teams'
       }}>
-      {/* TODO: Add errors */}
       <AppSegment filledBackground>
         <div>
           <h1>Caseflow Team Management</h1>
+
+          { success && <Alert type="success" title={success.title} message={success.detail} /> }
+          { error && <Alert type="error" title={error.title} message={error.detail} /> }
 
           <table {...tableStyling}>
             <tbody>
               <OrgHeader>
                 Judge teams <Button name="+ Add Judge Team" onClick={this.addJudgeTeam} />
               </OrgHeader>
-              <OrgList orgs={this.state.judgeTeams} />
+              <OrgList orgs={this.props.judgeTeams} />
 
               <OrgHeader>
                 VSOs <Button name="+ Add IHP-writing VSO" onClick={this.addIhpWritingVso} />
               </OrgHeader>
-              <OrgList orgs={this.state.vsos} showBgsParticipantId />
+              <OrgList orgs={this.props.vsos} showBgsParticipantId />
 
               <OrgHeader>Other teams</OrgHeader>
-              <OrgList orgs={this.state.otherOrgs} />
+              <OrgList orgs={this.props.otherOrgs} />
             </tbody>
           </table>
 
@@ -94,7 +72,30 @@ class TeamManagement extends React.PureComponent {
   };
 }
 
-export default withRouter(TeamManagement);
+const mapStateToProps = (state) => {
+  const {
+    success,
+    error
+  } = state.ui.messages;
+
+  const {
+    judgeTeams,
+    vsos,
+    otherOrgs
+  } = state.teamManagement;
+
+  return {
+    judgeTeams,
+    vsos,
+    otherOrgs,
+    success,
+    error
+  };
+};
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({ onReceiveTeamList }, dispatch);
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(TeamManagement));
 
 const sectionHeadingStyling = css({
   fontSize: '3rem',
