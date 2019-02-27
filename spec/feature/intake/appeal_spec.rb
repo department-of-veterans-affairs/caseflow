@@ -47,7 +47,7 @@ feature "Appeal Intake" do
 
   let(:untimely_days) { 372.days }
 
-  let(:profile_date) { (post_ramp_start_date - 35.days).to_date }
+  let(:profile_date) { (post_ramp_start_date - 35.days).to_datetime }
 
   let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
 

@@ -31,7 +31,7 @@ feature "Appeal Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20.days }
-  let(:profile_date) { receipt_date - 30.days }
+  let(:profile_date) { (receipt_date - 30.days).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(

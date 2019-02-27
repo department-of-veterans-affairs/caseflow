@@ -55,7 +55,7 @@ feature "Higher-Level Review" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { receipt_date - 8.days }
+  let(:profile_date) { (receipt_date - 8.days).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(

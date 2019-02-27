@@ -58,7 +58,7 @@ feature "Supplemental Claim Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { receipt_date - 15.days }
+  let(:profile_date) { (receipt_date - 15.days).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(

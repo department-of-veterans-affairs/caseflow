@@ -31,7 +31,7 @@ feature "Supplemental Claim Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
-  let(:profile_date) { Time.zone.today - 60 }
+  let(:profile_date) { (Time.zone.today - 60).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
