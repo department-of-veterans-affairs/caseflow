@@ -1,3 +1,8 @@
+##
+# Tasks that block scheduling a Veteran for a hearing.
+# A hearing coordinator must resolve these before scheduling a Veteran.
+# Subclasses of various admin actions are defined below.
+
 class HearingAdminActionTask < GenericTask
   validates :parent, presence: true
   validate :on_hold_duration_is_set, on: :update
