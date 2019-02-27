@@ -92,10 +92,10 @@ RSpec.feature "Intake" do
 
       # try to hit enter key on empty search bar
       fill_in search_bar_title, with: ""
-      find('.cf-search-input-with-close').native.send_keys(:return)
+      find(".cf-search-input-with-close").native.send_keys(:return)
 
-      #check error message doesn't exist
-      expect(page).to have_no_css('.usa-alert-heading')
+      # check error message doesn't exist
+      expect(page).to have_no_css(".usa-alert-heading")
 
       fill_in search_bar_title, with: "5678"
       click_on "Search"
