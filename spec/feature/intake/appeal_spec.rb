@@ -44,19 +44,22 @@ feature "Appeal Intake" do
 
   let(:future_date) { Time.zone.now + 30.days }
 
-  let(:receipt_date) { post_ramp_start_date - 30.days }
+  let(:receipt_date) { (post_ramp_start_date - 30.days).to_date }
 
   let(:untimely_days) { 372.days }
 
-  let(:profile_date) { post_ramp_start_date.to_datetime - 35.days }
+  # let(:profile_date) {(post_ramp_start_date - 35.days).utc}
+  let(:post_ramp_start_date_utc) { Time.new(2017, 12, 8).utc }
+  # let(:profile_date) { post_ramp_start_date_utc.to_datetime - 35.days }
+  let(:profile_date) { Time.new(2017, 11, 2, 19).utc }
 
   let(:untimely_date) { receipt_date - untimely_days - 1.day }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
-      profile_date: profile_date,
+      promulgation_date: receipt_date - 5.days, # change to utc
+      profile_date: profile_date, # change to just date
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
         { reference_id: "def456", decision_text: "PTSD denied" }
@@ -114,7 +117,7 @@ feature "Appeal Intake" do
     expect(page).to have_content("Which form are you processing?")
   end
 
-  it "Creates an appeal" do
+  it "Creates an appeal", focus:true do
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
     visit "/intake"
@@ -177,6 +180,7 @@ feature "Appeal Intake" do
     expect(page).to have_current_path("/intake/add_issues")
 
     click_intake_add_issue
+    binding.pry
     add_intake_rating_issue("PTSD denied")
     expect(page).to have_content("1 issue")
 

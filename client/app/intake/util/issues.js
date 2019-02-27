@@ -320,10 +320,10 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         throw new Error('no decision date');
       }
       const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
-
       return {
         referenceId: issue.id,
         text: issue.description,
+        // formatDatStr without converting to Date time
         date: formatDateStr(decisionDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
