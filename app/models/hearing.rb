@@ -90,19 +90,17 @@ class Hearing < ApplicationRecord
     end
   end
 
-  #:nocov:
-  # This is all fake data that will be refactored in a future PR.
   def regional_office_name
-    RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
+    hearing_location.city unless hearing_location.nil?
   end
 
   def regional_office_timezone
-    RegionalOffice::CITIES[regional_office_key][:timezone] unless regional_office_key.nil?
+    RegionalOffice::CITIES[appeal.closest_regional_office][:timezone] unless appeal.closest_regional_office.nil?
     "America/New_York"
   end
 
   def current_issue_count
-    1
+    request_issues.size
   end
   #:nocov:
 
