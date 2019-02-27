@@ -91,7 +91,7 @@ class Hearing < ApplicationRecord
   end
 
   def regional_office_name
-    hearing_location.city unless hearing_location.nil?
+    hearing_location&.city
   end
 
   def regional_office_timezone
