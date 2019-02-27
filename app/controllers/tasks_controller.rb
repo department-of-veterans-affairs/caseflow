@@ -128,8 +128,14 @@ class TasksController < ApplicationController
   end
 
   def new_documents
+    # For attorneys, the tasks in their on hold tab are all colocated tasks that they have assigned (see
+    # attorney_queue.rb). Because these tasks use the assigned_at date as their placed_on_hold_at, use assigned_at if
+    # placed_on_hold_at is null.
     new_documents_for_user = NewDocumentsForUser.new(
-      appeal: task.appeal, user: current_user, query_vbms: false, date_to_compare_with: task.placed_on_hold_at
+      appeal: task.appeal,
+      user: current_user,
+      query_vbms: false,
+      date_to_compare_with: task.placed_on_hold_at || task.assigned_at || Time.zone.at(0)
     )
     render json: { new_documents: new_documents_for_user.process! }
   rescue StandardError => e
