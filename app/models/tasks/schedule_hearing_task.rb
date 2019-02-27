@@ -138,8 +138,6 @@ class ScheduleHearingTask < GenericTask
     }
   end
 
-  private
-
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
       location = if appeal.vsos.empty?
