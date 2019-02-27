@@ -20,6 +20,8 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
     ama_user_tasks = Task.active.where(assigned_to: reader_user.user)
     ama_appeals = ama_user_tasks.map(&:appeal).uniq
 
+    # Attorney Legacy Tasks are not yet stored in Caseflow Tasks. However, we can grab
+    # the ones "on hold" by looking for colocated tasks they have assigned
     attorney_user_tasks = []
     if reader_user.user.attorney_in_vacols?
       attorney_user_tasks = ColocatedTask.active.where(assigned_by: reader_user.user)
