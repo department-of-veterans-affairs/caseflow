@@ -1,8 +1,27 @@
+##
+# Task to track when the mail team receives any appeal-related mail from an appellant.
+# Mail is processed by a mail team member, and then a corresponding task is then assigned to an organization.
+# Tasks are assigned to organizations, including VLJ Support, AOD team, Privacy team, and Lit Support, and include:
+#   - add Evidence or Argument
+#   - changing Power of Attorney
+#   - advance a case on docket (AOD)
+#   - withdrawing an appeal
+
 class MailTask < GenericTask
   # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
   def verify_org_task_unique; end
 
   class << self
+    def blocking?
+      # Some open mail tasks should block distribution of an appeal to judges.
+      # Define this method in subclasses for blocking task types.
+      false
+    end
+
+    def blocking_subclasses
+      MailTask.subclasses.select(&:blocking?).map(&:name)
+    end
+
     def subclass_routing_options
       MailTask.subclasses.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
     end
@@ -59,7 +78,7 @@ class AddressChangeMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -96,6 +115,10 @@ class ClearAndUnmistakeableErrorMailTask < MailTask
 end
 
 class CongressionalInterestMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL
   end
@@ -133,13 +156,17 @@ class EvidenceOrArgumentMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
 end
 
 class ExtensionRequestMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::EXTENSION_REQUEST_MAIL_TASK_LABEL
   end
@@ -152,6 +179,10 @@ class ExtensionRequestMailTask < MailTask
 end
 
 class FoiaRequestMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::FOIA_REQUEST_MAIL_TASK_LABEL
   end
@@ -162,6 +193,10 @@ class FoiaRequestMailTask < MailTask
 end
 
 class HearingRelatedMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::HEARING_RELATED_MAIL_TASK_LABEL
   end
@@ -169,7 +204,7 @@ class HearingRelatedMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
@@ -186,6 +221,10 @@ class OtherMotionMailTask < MailTask
 end
 
 class PowerOfAttorneyRelatedMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::POWER_OF_ATTORNEY_MAIL_TASK_LABEL
   end
@@ -193,13 +232,17 @@ class PowerOfAttorneyRelatedMailTask < MailTask
   def self.child_task_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
 
     Colocated.singleton
   end
 end
 
 class PrivacyActRequestMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::PRIVACY_ACT_REQUEST_MAIL_TASK_LABEL
   end
@@ -210,6 +253,10 @@ class PrivacyActRequestMailTask < MailTask
 end
 
 class PrivacyComplaintMailTask < MailTask
+  def self.blocking?
+    true
+  end
+
   def self.label
     COPY::PRIVACY_COMPLAINT_MAIL_TASK_LABEL
   end
@@ -226,7 +273,7 @@ class ReturnedUndeliverableCorrespondenceMailTask < MailTask
 
   def self.child_task_assignee(parent, _params)
     return BvaDispatch.singleton if !case_active?(parent)
-    return HearingsManagement.singleton if pending_hearing_task?(parent)
+    return HearingAdmin.singleton if pending_hearing_task?(parent)
     return most_recent_active_task_assignee(parent) if most_recent_active_task_assignee(parent)
 
     fail Caseflow::Error::MailRoutingError

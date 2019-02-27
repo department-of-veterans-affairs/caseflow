@@ -19,6 +19,7 @@ class LegacyHearing < ApplicationRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
+  has_one :hearing_task_association, as: :hearing
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location
@@ -155,8 +156,7 @@ class LegacyHearing < ApplicationRecord
     :veteran,  \
     :veteran_file_number, \
     :docket_name,
-    :veteran_closest_regional_office,
-    :veteran_available_hearing_locations,
+    :available_hearing_locations,
     to: :appeal, allow_nil: true
 
   delegate :external_id, to: :appeal, prefix: true
@@ -199,8 +199,7 @@ class LegacyHearing < ApplicationRecord
         :appeal_external_id,
         :external_id,
         :veteran_file_number,
-        :veteran_closest_regional_office,
-        :veteran_available_hearing_locations
+        :available_hearing_locations
       ],
       except: [:military_service, :vacols_id]
     ).merge(

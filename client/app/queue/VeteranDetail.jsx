@@ -12,31 +12,13 @@ import { getAppealValue } from './QueueActions';
 import { appealWithDetailSelector } from './selectors';
 import COPY from '../../COPY.json';
 
-import type {
-  Appeal,
-  VeteranInfo
-} from './types/models';
-
 const detailListStyling = css({
   paddingLeft: 0,
   listStyle: 'none',
   marginBottom: '3rem'
 });
 
-type Params = {|
-  appeal: Appeal
-|};
-
-type Props = Params & {|
-  // state
-  veteranInfo: VeteranInfo,
-  loading: boolean,
-  error: Object,
-  // dispatch
-  getAppealValue: typeof getAppealValue
-|};
-
-export class VeteranDetail extends React.PureComponent<Props> {
+export class VeteranDetail extends React.PureComponent {
   componentDidMount = () => {
     this.props.getAppealValue(
       this.props.appeal.externalId,
@@ -141,5 +123,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getAppealValue
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(VeteranDetail): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(VeteranDetail));
 

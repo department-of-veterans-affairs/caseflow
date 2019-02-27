@@ -131,9 +131,25 @@ describe Distribution do
       end
     end
 
+    context "when the judge has an empty team" do
+      let(:judge_wo_attorneys) { FactoryBot.create(:user) }
+      let!(:vacols_judge_wo_attorneys) { create(:staff, :judge_role, sdomainid: judge_wo_attorneys.css_id) }
+
+      subject { Distribution.create(judge: judge_wo_attorneys) }
+
+      it "uses the alternative batch size" do
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.status).to eq("completed")
+        expect(subject.statistics["batch_size"]).to eq(15)
+        expect(subject.distributed_cases.count).to eq(15)
+      end
+    end
+
     context "when ama cases are in the mix" do
       before do
         FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
 
         allow_any_instance_of(DirectReviewDocket)
           .to receive(:nonpriority_receipts_per_year)
@@ -154,6 +170,7 @@ describe Distribution do
 
       after do
         FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
 
       let!(:due_direct_review_cases) do

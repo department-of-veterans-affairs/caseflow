@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -59,34 +58,8 @@ import COPY from '../../COPY.json';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import type { State } from './types/state';
 
-type Props = {|
-  userDisplayName: string,
-  feedbackUrl: string,
-  userId: number,
-  userRole: string,
-  userCssId: string,
-  dropdownUrls: Array<string>,
-  applicationUrls: Array<Object>,
-  buildDate?: string,
-  reviewActionType: string,
-  userIsVsoEmployee?: boolean,
-  caseSearchHomePage?: boolean,
-  canEditAod: Boolean,
-  featureToggles: Object,
-  organizations: Array<Object>,
-  // Action creators
-  setCanEditAod: typeof setCanEditAod,
-  setFeatureToggles: typeof setFeatureToggles,
-  setUserRole: typeof setUserRole,
-  setUserCssId: typeof setUserCssId,
-  setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
-  setFeedbackUrl: typeof setFeedbackUrl,
-  setOrganizations: typeof setOrganizations
-|};
-
-class QueueApp extends React.PureComponent<Props> {
+class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setFeatureToggles(this.props.featureToggles);
@@ -394,8 +367,9 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.WITHDRAW_HEARING.value}`}
-            title="Withdraw Hearing | Caseflow"
+            path={'/queue/appeals/:appealId/tasks/:taskId/' +
+              `(${TASK_ACTIONS.WITHDRAW_HEARING.value}|${TASK_ACTIONS.CANCEL_TASK.value})`}
+            title="Cancel task | Caseflow"
             render={this.routedCancelTaskModal} />
           <PageRoute
             exact
@@ -438,7 +412,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state: State) => ({
+const mapStateToProps = (state) => ({
   reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 

@@ -11,7 +11,7 @@ import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { renderAppealType } from '../../queue/utils';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import StatusMessage from '../../components/StatusMessage';
-import { getFacilityType } from '../../components/DataDropdowns/VeteranHearingLocations';
+import { getFacilityType } from '../../components/DataDropdowns/AppealHearingLocations';
 
 const veteranNotAssignedStyle = css({ fontSize: '3rem' });
 const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
@@ -39,6 +39,8 @@ const tableNumberStyling = css({
 });
 
 const AvailableVeteransTable = ({ rows, columns }) => {
+  let removeTimeColumn = _.slice(columns, 0, -1);
+
   if (_.isEmpty(rows)) {
     return <div>
       <StatusMessage
@@ -51,7 +53,7 @@ const AvailableVeteransTable = ({ rows, columns }) => {
   }
 
   return <Table
-    columns={columns}
+    columns={removeTimeColumn}
     rowObjects={rows}
     summary="scheduled-hearings-table"
     slowReRendersAreOk
@@ -169,23 +171,28 @@ export default class AssignHearingsTabs extends React.Component {
         return true;
       }
 
-      if (_.isEmpty(appeal.attributes.veteranAvailableHearingLocations) && filteredBy === 'null') {
+      if (_.isEmpty(appeal.attributes.availableHearingLocations) && filteredBy === 'null') {
         return true;
-      } else if (_.isEmpty(appeal.attributes.veteranAvailableHearingLocations)) {
+      } else if (_.isEmpty(appeal.attributes.availableHearingLocations)) {
         return false;
       }
 
-      return filteredBy === appeal.attributes.veteranAvailableHearingLocations[0].facilityId;
+      return filteredBy === appeal.attributes.availableHearingLocations[0].facilityId;
     });
 
+    /*
+      Sorting by docket number within each category of appeal:
+      CAVC, AOD and normal. Prepended * and + to docket number for
+      CAVC and AOD to group them first and second.
+     */
     const sortedByAodCavc = _.sortBy(filtered, (appeal) => {
       if (appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand) {
-        return 0;
+        return `*${appeal.attributes.docketNumber}`;
       } else if (appeal.attributes.aod) {
-        return 1;
+        return `+${appeal.attributes.docketNumber}`;
       }
 
-      return 2;
+      return appeal.attributes.docketNumber;
     });
 
     return _.map(sortedByAodCavc, (appeal, index) => ({
@@ -197,7 +204,7 @@ export default class AssignHearingsTabs extends React.Component {
       }),
       docketNumber: this.getAppealDocketTag(appeal),
       suggestedLocation: this.getSuggestedHearingLocation(
-        (appeal.attributes.veteranAvailableHearingLocations || [])[0]
+        (appeal.attributes.availableHearingLocations || [])[0]
       ),
       time: null,
       externalId: appeal.attributes.externalAppealId
@@ -237,7 +244,7 @@ export default class AssignHearingsTabs extends React.Component {
 
   getLocationFilterValues = (data, tab) => {
     const getLocation = (row) => tab === 'upcomingHearings' ? row.location :
-      (row.attributes.veteranAvailableHearingLocations || [])[0];
+      (row.attributes.availableHearingLocations || [])[0];
 
     const locations = data.map((row) => {
       const location = getLocation(row);
@@ -319,8 +326,8 @@ export default class AssignHearingsTabs extends React.Component {
       getFilterValues: locationFilterValues,
       isDropdownFilterOpen: state.dropdownIsOpen,
       label: 'Filter by location',
-      anyFiltersAreSet: true,
-      toggleDropdownFilterVisiblity: () => this.setState({
+      anyFiltersAreSet: false,
+      toggleDropdownFilterVisibility: () => this.setState({
         [tab]: {
           ...state,
           dropdownIsOpen: !state.dropdownIsOpen

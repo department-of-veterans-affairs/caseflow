@@ -1,3 +1,7 @@
+##
+# Root task that tracks an appeal all the way through the appeal lifecycle.
+# This task is closed when an appeal has been completely resolved.
+
 class RootTask < GenericTask
   # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
   after_initialize :set_assignee, if: -> { assigned_to_id.nil? }
@@ -33,11 +37,15 @@ class RootTask < GenericTask
     true
   end
 
+  def assigned_to_label
+    COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+  end
+
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
       create_vso_tracking_tasks(appeal, root_task)
-      if FeatureToggle.enabled?(:ama_auto_case_distribution)
+      if FeatureToggle.enabled?(:ama_acd_tasks)
         create_subtasks!(appeal, root_task)
       else
         create_ihp_tasks!(appeal, root_task)
@@ -45,8 +53,13 @@ class RootTask < GenericTask
     end
 
     def create_ihp_tasks!(appeal, parent)
-      appeal.vsos.map do |vso_organization|
-        InformalHearingPresentationTask.create!(
+      appeal.vsos.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
+        # For some RAMP appeals, this method may run twice.
+        existing_task = InformalHearingPresentationTask.find_by(
+          appeal: appeal,
+          assigned_to: vso_organization
+        )
+        existing_task || InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
           assigned_to: vso_organization
@@ -54,14 +67,18 @@ class RootTask < GenericTask
       end
     end
 
-    private
+    # TODO: make this private again after RAMPs are refilled
+    # private
 
     def create_vso_tracking_tasks(appeal, parent)
       appeal.vsos.map do |vso_organization|
         TrackVeteranTask.create!(
           appeal: appeal,
           parent: parent,
-          assigned_to: vso_organization
+          assigned_to: vso_organization,
+
+          # Avoid permissions errors outlined in Github ticket #9389 by setting status here.
+          status: Constants.TASK_STATUSES.in_progress
         )
       end
     end
@@ -105,6 +122,7 @@ class RootTask < GenericTask
           create_evidence_submission_task!(appeal, distribution_task)
         elsif appeal.hearing_docket?
           create_hearing_schedule_task!(appeal, distribution_task)
+          create_ihp_tasks!(appeal, distribution_task)
         else
           vso_tasks = create_ihp_tasks!(appeal, distribution_task)
           # If the appeal is direct docket and there are no ihp tasks,

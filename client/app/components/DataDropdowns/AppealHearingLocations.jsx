@@ -20,6 +20,10 @@ export const getFacilityType = (location) => {
   case 'va_health_facility':
     return '(VHA) ';
   case 'va_benefits_facility':
+    if (location.facilityId === 'vba_372') {
+      return '(BVA)';
+    }
+
     return location.classification.indexOf('Regional') === -1 ? '(VBA) ' : '(RO) ';
   default:
     return '';
@@ -43,7 +47,16 @@ const generateHearingLocationOptions = (hearingLocations) => (
   }))
 );
 
-class VeteranHearingLocationsDropdown extends React.Component {
+class AppealHearingLocationsDropdown extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      errorMsg: false
+    };
+  }
+
   componentDidMount() {
     const { dropdownName, dynamic, staticHearingLocations } = this.props;
 
@@ -67,8 +80,8 @@ class VeteranHearingLocationsDropdown extends React.Component {
 
   getLocations = () => {
     const {
-      veteranHearingLocations: { options, isFetching },
-      veteranFileNumber, regionalOffice, dropdownName
+      appealHearingLocations: { options, isFetching },
+      appealId, regionalOffice, dropdownName
     } = this.props;
 
     if (options || isFetching) {
@@ -79,7 +92,7 @@ class VeteranHearingLocationsDropdown extends React.Component {
 
     let url = '/hearings/find_closest_hearing_locations?regional_office=';
 
-    url += `${regionalOffice}&veteran_file_number=${veteranFileNumber}`;
+    url += `${regionalOffice}&appeal_id=${appealId}`;
 
     ApiUtil.get(url).then((resp) => {
       const locationOptionsResp = _.values(ApiUtil.convertToCamelCase(resp.body).hearingLocations);
@@ -115,7 +128,7 @@ class VeteranHearingLocationsDropdown extends React.Component {
   }
 
   getSelectedOption = () => {
-    const { value, veteranHearingLocations: { options } } = this.props;
+    const { value, appealHearingLocations: { options } } = this.props;
 
     const facilityId = typeof (value) === 'string' ? value : (value || {}).facilityId;
 
@@ -130,7 +143,7 @@ class VeteranHearingLocationsDropdown extends React.Component {
   render() {
     const {
       name, label, onChange, readOnly, errorMessage, placeholder,
-      veteranHearingLocations: { isFetching, errorMsg } } = this.props;
+      appealHearingLocations: { isFetching, options } } = this.props;
 
     return (
       <SearchableDropdown
@@ -140,15 +153,15 @@ class VeteranHearingLocationsDropdown extends React.Component {
         readOnly={readOnly}
         value={this.getSelectedOption()}
         onChange={(option) => onChange(option.value, option.label)}
-        options={this.props.veteranHearingLocations.options}
-        errorMessage={errorMsg || errorMessage}
+        options={options}
+        errorMessage={this.state.errorMsg || errorMessage}
         placeholder={placeholder} />
     );
   }
 }
 
-VeteranHearingLocationsDropdown.propTypes = {
-  veteranFileNumber: PropTypes.string.isRequired,
+AppealHearingLocationsDropdown.propTypes = {
+  appealId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   staticHearingLocations: PropTypes.array,
   regionalOffice: PropTypes.string,
   name: PropTypes.string,
@@ -164,18 +177,18 @@ VeteranHearingLocationsDropdown.propTypes = {
   errorMessage: PropTypes.string
 };
 
-VeteranHearingLocationsDropdown.defaultProps = {
-  name: 'veteranHearingLocation',
+AppealHearingLocationsDropdown.defaultProps = {
+  name: 'appealHearingLocation',
   label: 'Hearing Location'
 };
 
 const mapStateToProps = (state, props) => {
-  const { regionalOffice, veteranFileNumber } = props;
-  const name = `hearingLocationsFor${veteranFileNumber}At${regionalOffice}`;
+  const { regionalOffice, appealId } = props;
+  const name = `hearingLocationsFor${appealId}At${regionalOffice}`;
 
   return {
     dropdownName: name,
-    veteranHearingLocations: state.components.dropdowns[name] ? {
+    appealHearingLocations: state.components.dropdowns[name] ? {
       options: state.components.dropdowns[name].options,
       isFetching: state.components.dropdowns[name].isFetching,
       errorMsg: state.components.dropdowns[name].errorMsg
@@ -192,4 +205,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(VeteranHearingLocationsDropdown);
+)(AppealHearingLocationsDropdown);

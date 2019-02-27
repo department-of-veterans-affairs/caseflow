@@ -9,7 +9,7 @@ describe DecisionReviewsController, type: :controller do
     FeatureToggle.disable!(:decision_reviews)
   end
 
-  let(:non_comp_org) { create(:business_line, name: "National Cemetery Association", url: "nca") }
+  let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
   let(:user) { create(:default_user) }
 
   describe "#index" do
@@ -119,8 +119,8 @@ describe DecisionReviewsController, type: :controller do
 
       let!(:request_issues) do
         [
-          create(:request_issue, :rating, review_request: task.appeal, benefit_type: non_comp_org.url),
-          create(:request_issue, :nonrating, review_request: task.appeal, benefit_type: non_comp_org.url)
+          create(:request_issue, :rating, decision_review: task.appeal, benefit_type: non_comp_org.url),
+          create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
         ]
       end
 

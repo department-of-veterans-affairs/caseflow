@@ -23,7 +23,7 @@ import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/Render
 import {
   RegionalOfficeDropdown,
   HearingDateDropdown,
-  VeteranHearingLocationsDropdown
+  AppealHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 
 const tableRowStyling = css({
@@ -205,12 +205,17 @@ export default class DailyDocket extends React.Component {
 
   getHearingLocationDropdown = (hearing, readOnly) => {
     const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
-    let staticHearingLocations = _.isEmpty(hearing.veteranAvailableHearingLocations) ? null :
-      _.values(hearing.veteranAvailableHearingLocations);
+    let staticHearingLocations = hearing.availableHearingLocations ?
+      _.values(hearing.availableHearingLocations) : [];
 
-    return <VeteranHearingLocationsDropdown
+    // always static for now
+    if (staticHearingLocations.length === 0 && hearing.location) {
+      staticHearingLocations = [hearing.location];
+    }
+
+    return <AppealHearingLocationsDropdown
       readOnly={readOnly}
-      veteranFileNumber={hearing.veteranFileNumber}
+      appealId={hearing.appealExternalId}
       regionalOffice={currentRegionalOffice}
       staticHearingLocations={staticHearingLocations}
       dynamic={staticHearingLocations === null || currentRegionalOffice !== hearing.veteranClosestRegionalOffice}
@@ -321,7 +326,7 @@ export default class DailyDocket extends React.Component {
     </div>;
   };
 
-  getTranscriptRequested = (hearing) => {
+  getTranscriptRequested = (hearing, readOnly) => {
     return <div>
       <b>Copy Requested by Appellant/Rep</b>
       <Checkbox
@@ -330,6 +335,7 @@ export default class DailyDocket extends React.Component {
         value={_.isUndefined(hearing.editedTranscriptRequested) ?
           hearing.transcriptRequested || false : hearing.editedTranscriptRequested}
         onChange={this.onTranscriptRequestedUpdate(hearing.id)}
+        disabled={readOnly}
       /></div>;
   };
 
@@ -399,7 +405,7 @@ export default class DailyDocket extends React.Component {
     return <div {...twoCol}>
       <div>
         {this.getDispositionDropdown(hearing, readOnly)}
-        {this.getTranscriptRequested(hearing)}
+        {this.getTranscriptRequested(hearing, readOnly)}
         {this.getHearingDetailsLink(hearing)}
         {this.getNotesField(hearing)}
       </div>
@@ -465,7 +471,8 @@ export default class DailyDocket extends React.Component {
       }
     ];
 
-    const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings), false);
+    const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings),
+      this.props.userRoleView);
     const cancelButton = <Button linkStyling onClick={this.props.onCancelRemoveHearingDay}>Go back</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.props.deleteHearingDay}>
       Confirm
@@ -516,9 +523,8 @@ export default class DailyDocket extends React.Component {
       { this.props.dailyDocketServerError && <Alert
         type="error"
         styling={alertStyling}
-        title={` Unable to delete Hearing Day
-                ${moment(this.props.dailyDocket.scheduledFor).format('M/DD/YYYY')} in Caseflow.`}
-        message="Please delete the hearing day through VACOLS" />}
+        title=" This save was unsuccessful."
+        message="Please refresh the page and try again." />}
 
       { this.props.onErrorHearingDayLock && <Alert
         type="error"

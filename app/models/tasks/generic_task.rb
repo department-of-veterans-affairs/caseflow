@@ -1,3 +1,9 @@
+##
+# Model for tasks in generic organizational task queues. Supports common actions like:
+#   - marking tasks complete
+#   - assigning a task to a team
+#   - assigning a task to an individual
+
 class GenericTask < Task
   before_create :verify_org_task_unique
 
@@ -24,6 +30,7 @@ class GenericTask < Task
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
       ]
     end

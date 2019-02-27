@@ -1,3 +1,8 @@
+##
+# Tasks that block scheduling a Veteran for a hearing.
+# A hearing coordinator must resolve these before scheduling a Veteran.
+# Subclasses of various admin actions are defined below.
+
 class HearingAdminActionTask < GenericTask
   validates :parent, presence: true
   validate :on_hold_duration_is_set, on: :update
@@ -6,7 +11,7 @@ class HearingAdminActionTask < GenericTask
     if params[:assigned_to_type] && params[:assigned_to_id]
       super(parent, params)
     else
-      HearingsManagement.singleton
+      HearingAdmin.singleton
     end
   end
 
@@ -38,7 +43,7 @@ class HearingAdminActionTask < GenericTask
 
   def assign_to_user_data(user = nil)
     super(user).merge(
-      redirect_after: "/organizations/#{HearingsManagement.singleton.url}",
+      redirect_after: "/organizations/#{HearingAdmin.singleton.url}",
       message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
     )
   end
@@ -74,15 +79,14 @@ class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
   end
 end
 class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
-  after_update :fetch_closest_ro_and_ahls, if: :status_changed_to_completed?
+  after_update :fetch_closest_ro_and_ahls, if: :task_just_closed?
 
   def self.label
     "Verify Address"
   end
 
   def fetch_closest_ro_and_ahls
-    veteran = appeal.veteran
-    FetchHearingLocationsForVeteransJob.new.perform_once_for(veteran) unless veteran.nil?
+    FetchHearingLocationsForVeteransJob.new.perform_once_for(appeal)
   end
 end
 class HearingAdminActionMissingFormsTask < HearingAdminActionTask

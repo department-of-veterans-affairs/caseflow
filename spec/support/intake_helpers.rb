@@ -358,7 +358,7 @@ module IntakeHelpers
     create(:request_issue,
            :with_nonrating_decision_issue,
            nonrating_issue_description: "Test nonrating decision issue",
-           review_request: decision_review,
+           decision_review: decision_review,
            decision_date: decision_review.receipt_date - 1.day,
            issue_category: issue_category,
            veteran_participant_id: veteran.participant_id)
@@ -370,7 +370,7 @@ module IntakeHelpers
            contested_rating_issue_reference_id: contested_rating_issue_reference_id,
            contested_rating_issue_profile_date: decision_review.receipt_date - 1.day,
            contested_issue_description: "Test rating decision issue",
-           review_request: decision_review,
+           decision_review: decision_review,
            veteran_participant_id: veteran.participant_id)
   end
 
@@ -382,7 +382,8 @@ module IntakeHelpers
     nonrating_request_issue = setup_request_issue_with_nonrating_decision_issue(supplemental_claim_with_decision_issues)
     rating_request_issue = setup_request_issue_with_rating_decision_issue(supplemental_claim_with_decision_issues)
 
-    rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
+    DecisionIssue.where(id: [nonrating_request_issue.contested_decision_issue_id,
+                             rating_request_issue.contested_decision_issue_id])
   end
 
   def setup_prior_claim_with_payee_code(appeal, veteran, prior_payee_code = "10")
@@ -411,6 +412,62 @@ module IntakeHelpers
 
     prior_supplemental_claim
   end
+
+  def setup_prior_decision_issue_chain(decision_review, request_issue, veteran, initial_date)
+    create(:decision_issue,
+           description: "alternate decision issue",
+           participant_id: veteran.participant_id,
+           disposition: "allowed",
+           decision_review: decision_review,
+           caseflow_decision_date: initial_date + 4.days,
+           end_product_last_action_date: decision_review.is_a?(Appeal) ? nil : initial_date + 4.days,
+           request_issues: [request_issue])
+
+    decision_issue = create(:decision_issue,
+                            description: "decision issue 0",
+                            participant_id: veteran.participant_id,
+                            disposition: "allowed",
+                            decision_review: decision_review,
+                            caseflow_decision_date: initial_date,
+                            end_product_last_action_date: decision_review.is_a?(Appeal) ? nil : initial_date,
+                            request_issues: [request_issue])
+
+    contesting_decision_issue_id = decision_issue.id
+    3.times do |index|
+      later_appeal = create(:appeal, :outcoded, veteran: veteran)
+      later_request_issue = create(:request_issue,
+                                   decision_review: later_appeal,
+                                   contested_decision_issue_id: contesting_decision_issue_id)
+      later_decision_issue = create(:decision_issue,
+                                    decision_review: later_appeal,
+                                    disposition: "allowed",
+                                    participant_id: veteran.participant_id,
+                                    description: "decision issue #{1 + index}",
+                                    caseflow_decision_date: initial_date + (1 + index).days,
+                                    request_issues: [later_request_issue])
+      contesting_decision_issue_id = later_decision_issue.id
+    end
+  end
+
+  # rubocop:disable Metrics/AbcSize
+  def check_decision_issue_chain(initial_date)
+    visit "/intake/add_issues"
+
+    click_intake_add_issue
+    last_decision_date = (initial_date + 3.days).strftime("%m/%d/%Y")
+    alternate_last_decision_date = (initial_date + 4.days).strftime("%m/%d/%Y")
+    text = "(Please select the most recent decision on "
+    datetext = "#{text} #{last_decision_date})"
+    multiple_datetext = "#{text} #{last_decision_date}, #{alternate_last_decision_date})"
+
+    expect(page).to have_content("Untimely rating issue 1 #{multiple_datetext}")
+    expect(page).to have_content("decision issue 0 #{datetext}")
+    expect(page).to have_content("decision issue 1 #{datetext}")
+    expect(page).to have_content("decision issue 2 #{datetext}")
+    expect(page).to have_content("alternate decision issue")
+    expect(page).to have_content("decision issue 3")
+  end
+  # rubocop:enable Metrics/AbcSize
 
   def check_row(label, text)
     row = find("tr", text: label)
@@ -494,10 +551,16 @@ module IntakeHelpers
     ).to_not be_nil
   end
 
+  def check_deceased_veteran_claimant(intake)
+    intake.start!
+    visit "/intake"
+    expect(page).to have_css("input[disabled][id=different-claimant-option_false]", visible: false)
+  end
+
   # rubocop:disable Metrics/AbcSize
   def verify_decision_issues_can_be_added_and_removed(page_url,
                                                       original_request_issue,
-                                                      review_request,
+                                                      decision_review,
                                                       contested_decision_issues)
     visit page_url
     expect(page).to have_content("currently contesting decision issue")
@@ -505,6 +568,8 @@ module IntakeHelpers
 
     # check that we cannot add the same issue again
     click_intake_add_issue
+    decision_date = contested_decision_issues.first.end_product_last_action_date.strftime("%m/%d/%Y")
+    expect(page).to have_content("Past decisions from #{decision_date}")
     expect(page).to have_css("input[disabled]", visible: false)
     expect(page).to have_content("PTSD denied (already selected for")
 
@@ -548,11 +613,11 @@ module IntakeHelpers
 
     # check that decision_request_issue is closed
     updated_request_issue = RequestIssue.find_by(id: original_request_issue.id)
-    expect(updated_request_issue.review_request).to_not be_nil
+    expect(updated_request_issue.decision_review).to_not be_nil
     expect(updated_request_issue).to be_closed
 
     # check that new request issue is created contesting the decision issue
-    request_issues = review_request.reload.open_request_issues
+    request_issues = decision_review.reload.open_request_issues
     first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
     second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
 
@@ -591,12 +656,12 @@ module IntakeHelpers
     expect(page).to have_content("has been processed")
 
     first_not_modified_request_issue = RequestIssue.find_by(
-      review_request: decision_review,
+      decision_review: decision_review,
       contested_decision_issue_id: contested_decision_issues.first.id
     )
 
     second_not_modified_request_issue = RequestIssue.find_by(
-      review_request: decision_review,
+      decision_review: decision_review,
       contested_decision_issue_id: contested_decision_issues.second.id
     )
 

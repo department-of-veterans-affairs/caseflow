@@ -6,13 +6,13 @@ FactoryBot.define do
 
     issseq { VACOLS::CaseIssue.generate_sequence_id(isskey) }
 
-    issprog "01"
-    isscode "02"
-    issaduser "user"
+    issprog { "01" }
+    isscode { "02" }
+    issaduser { "user" }
     issadtime { Time.zone.now }
 
     transient do
-      remand_reasons []
+      remand_reasons { [] }
 
       after(:create) do |issue, evaluator|
         evaluator.remand_reasons.each do |remand_reason|
@@ -23,67 +23,75 @@ FactoryBot.define do
       end
     end
 
+    transient do
+      with_notes { false }
+    end
+
+    after(:create) do |issue, evaluator|
+      issue.issdesc = "note for issue with id #{issue.id}" if evaluator.with_notes
+    end
+
     trait :compensation do
-      issprog "02"
-      isscode "15"
-      isslev1 "04"
-      isslev2 "5252"
+      issprog { "02" }
+      isscode { "15" }
+      isslev1 { "04" }
+      isslev2 { "5252" }
     end
 
     Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.each_key do |diag_code|
       trait_name = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diag_code]["status_description"]
       trait trait_name.parameterize.underscore.to_sym do
-        issprog "02"
-        isscode "15"
-        isslev1 "03"
-        isslev2 diag_code
+        issprog { "02" }
+        isscode { "15" }
+        isslev1 { "03" }
+        isslev2 { diag_code }
       end
     end
 
     trait :education do
-      issprog "03"
-      isscode "02"
-      isslev1 "01"
+      issprog { "03" }
+      isscode { "02" }
+      isslev1 { "01" }
     end
 
     trait :disposition_remanded do
-      issdc "3"
+      issdc { "3" }
     end
 
     trait :disposition_manlincon_remand do
-      issdc "L"
+      issdc { "L" }
     end
 
     trait :disposition_vacated do
-      issdc "5"
+      issdc { "5" }
     end
 
     trait :disposition_merged do
-      issdc "M"
+      issdc { "M" }
     end
 
     trait :disposition_denied do
-      issdc "4"
+      issdc { "4" }
     end
 
     trait :disposition_allowed do
-      issdc "1"
+      issdc { "1" }
     end
 
     trait :disposition_advance_failure_to_respond do
-      issdc "G"
+      issdc { "G" }
     end
 
     trait :disposition_remand_failure_to_respond do
-      issdc "X"
+      issdc { "X" }
     end
 
     trait :disposition_granted_by_aoj do
-      issdc "B"
+      issdc { "B" }
     end
 
     trait :disposition_opted_in do
-      issdc "O"
+      issdc { "O" }
     end
   end
 end

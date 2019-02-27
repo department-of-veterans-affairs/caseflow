@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190212142949) do
+ActiveRecord::Schema.define(version: 20190227003709) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
   end
 
   create_table "appeals", force: :cascade do |t|
+    t.string "closest_regional_office"
     t.string "docket_type"
     t.datetime "established_at"
     t.datetime "establishment_attempted_at"
@@ -105,12 +106,15 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.boolean "overtime", default: false
     t.integer "reviewing_judge_id"
     t.string "task_id"
+    t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
   end
 
   create_table "available_hearing_locations", force: :cascade do |t|
     t.string "address"
+    t.integer "appeal_id"
+    t.string "appeal_type"
     t.string "city"
     t.string "classification"
     t.datetime "created_at", null: false
@@ -120,7 +124,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "name"
     t.string "state"
     t.datetime "updated_at", null: false
-    t.string "veteran_file_number", null: false
+    t.string "veteran_file_number"
     t.string "zip_code"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
@@ -242,6 +246,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
   create_table "decision_issues", force: :cascade do |t|
     t.string "benefit_type"
     t.date "caseflow_decision_date"
+    t.datetime "created_at"
     t.integer "decision_review_id"
     t.string "decision_review_type"
     t.string "decision_text"
@@ -350,6 +355,8 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "doc_reference_id"
     t.datetime "established_at"
     t.datetime "last_synced_at"
+    t.boolean "limited_poa_access", comment: "Indicates whether the limited Power of Attorney has access to view documents"
+    t.string "limited_poa_code", comment: "The limited Power of Attorney code, which indicates whether the claim has a POA specifically for this claim, which can be different than the Veteran's POA"
     t.string "modifier"
     t.string "payee_code", null: false
     t.string "reference_id"
@@ -500,6 +507,14 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "zip_code"
   end
 
+  create_table "hearing_task_associations", force: :cascade do |t|
+    t.bigint "hearing_id", null: false
+    t.bigint "hearing_task_id", null: false
+    t.string "hearing_type", null: false
+    t.index ["hearing_task_id"], name: "index_hearing_task_associations_on_hearing_task_id"
+    t.index ["hearing_type", "hearing_id"], name: "index_hearing_task_associations_on_hearing_type_and_hearing_id"
+  end
+
   create_table "hearing_views", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.integer "hearing_id", null: false
@@ -583,6 +598,7 @@ ActiveRecord::Schema.define(version: 20190212142949) do
 
   create_table "legacy_appeals", force: :cascade do |t|
     t.bigint "appeal_series_id"
+    t.string "closest_regional_office"
     t.boolean "contaminated_water_at_camp_lejeune", default: false
     t.boolean "dic_death_or_accrued_benefits_united_states", default: false
     t.string "dispatched_to_station"
@@ -626,16 +642,16 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "witness"
   end
 
-  create_table "legacy_issue_optins", force: :cascade do |t|
-    t.datetime "created_at", null: false
+  create_table "legacy_issue_optins", force: :cascade, comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review." do |t|
+    t.datetime "created_at", null: false, comment: "When a Request Issue is connected to a VACOLS issue on a legacy appeal, and the Veteran has agreed to withdraw their legacy appeals, a legacy_issue_optin is created at the time the Decision Review is successfully intaken. This is used to indicate that the legacy issue should subsequently be opted into AMA in VACOLS. "
     t.string "error"
-    t.datetime "optin_processed_at"
-    t.string "original_disposition_code"
-    t.date "original_disposition_date"
-    t.bigint "request_issue_id", null: false
-    t.datetime "rollback_created_at"
-    t.datetime "rollback_processed_at"
-    t.datetime "updated_at", null: false
+    t.datetime "optin_processed_at", comment: "The timestamp for when the opt-in was successfully processed, meaning it was updated in VACOLS as opted into AMA."
+    t.string "original_disposition_code", comment: "The original disposition code of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
+    t.date "original_disposition_date", comment: "The original disposition date of the VACOLS issue being opted in. Stored in case the opt-in is rolled back."
+    t.bigint "request_issue_id", null: false, comment: "The request issue connected to the legacy VACOLS issue that has been opted in."
+    t.datetime "rollback_created_at", comment: "Timestamp for when the connected request issue is removed from a Decision Review during edit, indicating that the opt-in needs to be rolled back."
+    t.datetime "rollback_processed_at", comment: "Timestamp for when a rolled back opt-in has successfully finished being rolled back."
+    t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
     t.index ["request_issue_id"], name: "index_legacy_issue_optins_on_request_issue_id"
   end
 
@@ -674,12 +690,12 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
-    t.datetime "closed_on"
-    t.date "nod_date"
-    t.string "partial_closure_issue_sequence_ids", array: true
-    t.integer "ramp_election_id"
-    t.string "vacols_id", null: false
+  create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|
+    t.datetime "closed_on", comment: "The date that the legacy appeal was closed in VACOLS and opted into RAMP."
+    t.date "nod_date", comment: "The date when the Veteran filed a notice of disagreement for the original claims decision in the legacy system - the step before a Veteran receives a Statement of the Case and before they file a Form 9."
+    t.string "partial_closure_issue_sequence_ids", comment: "If the entire legacy appeal could not be closed and moved to the RAMP Election, the VACOLS sequence IDs of issues on the legacy appeal which were closed are stored here, indicating that it was a partial closure.", array: true
+    t.integer "ramp_election_id", comment: "The ID of the RAMP election that closed the legacy appeal."
+    t.string "vacols_id", null: false, comment: "The VACOLS ID of the legacy appeal that has been closed and opted into RAMP."
   end
 
   create_table "ramp_election_rollbacks", force: :cascade do |t|
@@ -764,10 +780,10 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.datetime "closed_at"
     t.string "closed_status"
     t.integer "contention_reference_id"
+    t.datetime "contention_removed_at"
     t.integer "contested_decision_issue_id"
     t.string "contested_issue_description"
     t.string "contested_rating_issue_diagnostic_code"
-    t.string "contested_rating_issue_disability_code"
     t.string "contested_rating_issue_profile_date"
     t.string "contested_rating_issue_reference_id"
     t.datetime "created_at"
@@ -776,9 +792,9 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "decision_review_type"
     t.datetime "decision_sync_attempted_at"
     t.string "decision_sync_error"
+    t.datetime "decision_sync_last_submitted_at"
     t.datetime "decision_sync_processed_at"
     t.datetime "decision_sync_submitted_at"
-    t.string "description"
     t.string "disposition"
     t.integer "end_product_establishment_id"
     t.bigint "ineligible_due_to_id"
@@ -788,14 +804,9 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.datetime "last_submitted_at"
     t.string "nonrating_issue_description"
     t.text "notes"
-    t.integer "parent_request_issue_id"
     t.string "ramp_claim_id"
     t.datetime "rating_issue_associated_at"
-    t.datetime "rating_issue_profile_date"
-    t.string "rating_issue_reference_id"
     t.datetime "removed_at"
-    t.bigint "review_request_id"
-    t.string "review_request_type"
     t.string "unidentified_issue_text"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
@@ -808,9 +819,6 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.index ["decision_review_type", "decision_review_id"], name: "index_request_issues_on_decision_review_columns"
     t.index ["end_product_establishment_id"], name: "index_request_issues_on_end_product_establishment_id"
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
-    t.index ["parent_request_issue_id"], name: "index_request_issues_on_parent_request_issue_id"
-    t.index ["rating_issue_reference_id"], name: "index_request_issues_on_rating_issue_reference_id"
-    t.index ["review_request_type", "review_request_id"], name: "index_request_issues_on_review_request"
   end
 
   create_table "request_issues_updates", force: :cascade do |t|
@@ -962,13 +970,30 @@ ActiveRecord::Schema.define(version: 20190212142949) do
   end
 
   create_table "users", id: :serial, force: :cascade do |t|
+    t.datetime "created_at"
     t.string "css_id", null: false
     t.string "email"
     t.string "full_name"
+    t.datetime "last_login_at"
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
+    t.datetime "updated_at"
     t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
+  end
+
+  create_table "vbms_uploaded_documents", force: :cascade do |t|
+    t.bigint "appeal_id", null: false
+    t.datetime "attempted_at"
+    t.datetime "created_at", null: false
+    t.string "document_type", null: false
+    t.string "error"
+    t.datetime "last_submitted_at"
+    t.datetime "processed_at"
+    t.datetime "submitted_at"
+    t.datetime "updated_at", null: false
+    t.datetime "uploaded_to_vbms_at"
+    t.index ["appeal_id"], name: "index_vbms_uploaded_documents_on_appeal_id"
   end
 
   create_table "versions", id: :serial, force: :cascade do |t|
@@ -990,6 +1015,14 @@ ActiveRecord::Schema.define(version: 20190212142949) do
     t.string "name_suffix"
     t.string "participant_id"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
+  end
+
+  create_table "vso_configs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ihp_dockets", array: true
+    t.integer "organization_id"
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_vso_configs_on_organization_id"
   end
 
   create_table "worksheet_issues", id: :serial, force: :cascade do |t|

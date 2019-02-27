@@ -8,7 +8,7 @@ class DecisionReview < ApplicationRecord
 
   attr_reader :saving_review
 
-  has_many :request_issues, as: :review_request
+  has_many :request_issues, as: :decision_review
   has_many :claimants, as: :review_request
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review
@@ -213,6 +213,66 @@ class DecisionReview < ApplicationRecord
     end
   end
 
+  def create_remand_supplemental_claims!
+    decision_issues.remanded.uncontested.each(&:find_or_create_remand_supplemental_claim!)
+    remand_supplemental_claims.each(&:create_remand_issues!)
+    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
+    remand_supplemental_claims.each(&:submit_for_processing!)
+    remand_supplemental_claims.each(&:start_processing_job!)
+  end
+
+  def active_remanded_claims
+    remand_supplemental_claims&.select(&:active?)
+  end
+
+  def active_remanded_claims?
+    active_remanded_claims&.any?
+  end
+
+  def decision_event_date
+    return unless decision_issues.any?
+
+    decision_issues.map(&:approx_decision_date).compact.min.try(&:to_date)
+  end
+
+  def remand_decision_event_date
+    return if active?
+    return unless remand_supplemental_claims.any?
+    return if active_remanded_claims?
+
+    remand_supplemental_claims.map(&:decision_event_date).max.try(&:to_date)
+  end
+
+  def fetch_all_decision_issues
+    # if there were remanded issues and there is a decision available
+    # for them, include the decisions from the remanded SC and do not
+    # include the original remanded decision
+    di_list = decision_issues.not_remanded
+
+    remand_sc_decisions = []
+    remand_supplemental_claims.each do |sc|
+      sc.decision_issues.each do |di|
+        remand_sc_decisions << di
+      end
+    end
+
+    (di_list + remand_sc_decisions).uniq
+  end
+
+  def api_alerts_show_decision_alert?
+    # For Appeal and SC, want to show the decision alert once the decisions are available.
+    # HLR has different logic and overrides this method
+    decision_issues.any? && decision_event_date
+  end
+
+  def decision_date_for_api_alert
+    decision_event_date
+  end
+
+  def due_date_to_appeal_decision
+    decision_event_date + 365.days if decision_event_date
+  end
+
   private
 
   def can_contest_rating_issues?
@@ -351,6 +411,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def fetch_issues_status(issues_list)
+    return {} if issues_list.empty?
+
     issues_list.map do |issue|
       {
         active: issue.api_status_active?,

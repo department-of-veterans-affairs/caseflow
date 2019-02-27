@@ -14,6 +14,7 @@ class LegacyAppeal < ApplicationRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_one :special_issue_list, as: :appeal
+  has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -108,14 +109,12 @@ class LegacyAppeal < ApplicationRecord
   }.freeze
   # rubocop:enable Metrics/LineLength
 
-  # TODO: the type code should be the base value, and should be
-  #       converted to be human readable, not vis-versa
-  # TODO: integrate with Constants::LEGACY_APPEAL_TYPES_BY_ID
+  # Codes for Appeals Status API
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
     "Reconsideration" => "reconsideration",
-    "Court Remand" => "cavc_remand",
+    "Court Remand" => "post_cavc_remand",
     "Clear and Unmistakable Error" => "cue"
   }.freeze
 
@@ -137,7 +136,11 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
-  delegate :documents, :new_documents_for_user, :number_of_documents,
+  def va_dot_gov_address_validator
+    @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
+  end
+
+  delegate :documents, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification
@@ -186,20 +189,16 @@ class LegacyAppeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
+  def appellant
+    claimant
+  end
+
   def appellant_is_not_veteran
     !!appellant_first_name
   end
 
   def veteran_if_exists
     @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
-  end
-
-  def veteran_closest_regional_office
-    veteran_if_exists&.closest_regional_office
-  end
-
-  def veteran_available_hearing_locations
-    veteran_if_exists&.available_hearing_locations
   end
 
   def veteran
@@ -350,7 +349,7 @@ class LegacyAppeal < ApplicationRecord
         middle_name: veteran_middle_initial,
         last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
-        address: get_address_from_corres_entry(case_record.correspondent),
+        address: get_address_from_veteran_record(veteran) || get_address_from_corres_entry(case_record.correspondent),
         representative: representative_to_hash
       }
     end

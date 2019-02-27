@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -15,27 +14,9 @@ import {
 } from '../uiReducer/uiActions';
 import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
-import type { State } from '../types/state';
-import type { Task, Appeal } from '../types/models';
-
-type Params = {|
-  task: Task,
-  taskId: string,
-  appeal: Appeal,
-  appealId: string,
-  modalType: string,
-|};
-
-type Props = Params & {|
-  saveState: boolean,
-  history: Object,
-  hearingDay: Object,
-  requestPatch: typeof requestPatch,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks
-|};
-
-class CancelTaskModal extends React.Component<Props> {
+class CancelTaskModal extends React.Component {
   submit = () => {
     const {
       task,
@@ -44,7 +25,7 @@ class CancelTaskModal extends React.Component<Props> {
     const payload = {
       data: {
         task: {
-          status: 'canceled'
+          status: TASK_STATUSES.cancelled
         }
       }
     };
@@ -72,7 +53,7 @@ class CancelTaskModal extends React.Component<Props> {
   };
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => ({
+const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
@@ -98,4 +79,4 @@ export default (withRouter(
   connect(mapStateToProps, mapDispatchToProps)(editModalBase(
     CancelTaskModal, { propsToText }
   ))
-): React.ComponentType<Params>);
+));

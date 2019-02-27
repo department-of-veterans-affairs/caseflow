@@ -8,7 +8,7 @@ gem "active_model_serializers", "~> 0.10.0"
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "1af709bbcf61931420db621237f90cb8e21f3c1c"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "54955cfc95e528394bf1975285edc6bc23cfaf7d"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
@@ -69,7 +69,7 @@ group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
   # set require: 'oci8' here because bootsnap creates a warning: https://github.com/rails/rails/issues/32811#issuecomment-386541855
-  gem "ruby-oci8", require: "oci8"
+  gem "ruby-oci8", "~> 2.2.5.1", require: "oci8"
 end
 
 group :test, :development, :demo do
@@ -105,6 +105,8 @@ group :test, :development, :demo do
 end
 
 group :development do
+  gem "bummr", "= 0.3.2", require: false
+  gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"

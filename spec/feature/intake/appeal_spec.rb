@@ -24,12 +24,14 @@ feature "Appeal Intake" do
 
   let(:veteran_file_number) { "223344555" }
 
+  let(:date_of_death) { nil }
   let!(:veteran) do
     Generators::Veteran.build(
       file_number: veteran_file_number,
       first_name: "Ed",
       last_name: "Merica",
-      participant_id: "55443322"
+      participant_id: "55443322",
+      date_of_death: date_of_death
     )
   end
 
@@ -86,6 +88,17 @@ feature "Appeal Intake" do
   end
 
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
+
+  context "veteran is deceased" do
+    let(:date_of_death) { Time.zone.today - 1.day }
+
+    scenario "veteran cannot be claimant" do
+      # save the veteran first, otherwise creating an appeal will create a new veteran
+      veteran.save!
+      create(:appeal, veteran_file_number: veteran.file_number)
+      check_deceased_veteran_claimant(AppealIntake.new(veteran_file_number: veteran.file_number, user: current_user))
+    end
+  end
 
   it "cancels an intake in progress when there is a NilRatingProfileListError" do
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range).and_raise(no_ratings_err)
@@ -360,9 +373,12 @@ feature "Appeal Intake" do
   scenario "Add / Remove Issues page" do
     duplicate_reference_id = "xyz789"
     old_reference_id = "old1234"
+    promulgation_date = receipt_date - 40.days
+    rating_date = promulgation_date.strftime("%m/%d/%Y")
+
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 40.days,
+      promulgation_date: promulgation_date,
       profile_date: receipt_date - 50.days,
       issues: [
         { reference_id: "xyz123", decision_text: "Left knee granted 2" },
@@ -407,6 +423,7 @@ feature "Appeal Intake" do
 
     # clicking the add issues button should bring up the modal
     click_intake_add_issue
+    expect(page).to have_content("Past decisions from #{rating_date}")
     expect(page).to have_content("Add issue 1")
     expect(page).to have_content("Does issue 1 match any of these issues")
     expect(page).to have_content("Left knee granted 2")
@@ -555,21 +572,21 @@ feature "Appeal Intake" do
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_rating_issue_reference_id: "xyz123",
              contested_issue_description: "Left knee granted 2",
              notes: "I am an issue note"
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_issue_description: "Really old injury",
              untimely_exemption: false,
              untimely_exemption_notes: "I am an exemption note"
            )).to_not be_nil
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
-      review_request: appeal,
+      decision_review: appeal,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       decision_date: profile_date
@@ -578,8 +595,8 @@ feature "Appeal Intake" do
     expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
 
     another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
-      review_request_type: "Appeal",
-      review_request_id: appeal.id,
+      decision_review_type: "Appeal",
+      decision_review_id: appeal.id,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Another Description for Active Duty Adjustments"
     )
@@ -589,33 +606,33 @@ feature "Appeal Intake" do
     expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              unidentified_issue_text: "This is an unidentified issue",
              is_unidentified: true
            )).to_not be_nil
 
     # Issues before AMA
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_issue_description: "Non-RAMP Issue before AMA Activation",
              ineligible_reason: :before_ama
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_issue_description: "Issue before AMA Activation from RAMP",
              ineligible_reason: nil,
              ramp_claim_id: "ramp_claim_id"
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              nonrating_issue_description: "A nonrating issue before AMA",
              ineligible_reason: :before_ama
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              nonrating_issue_description: "A nonrating issue before AMA",
              decision_date: pre_ramp_start_date
            )).to_not be_nil
@@ -636,7 +653,7 @@ feature "Appeal Intake" do
     let!(:previous_appeal_request_issue) do
       create(
         :request_issue,
-        review_request: previous_appeal,
+        decision_review: previous_appeal,
         contested_rating_issue_reference_id: appeal_reference_id
       )
     end
@@ -939,6 +956,23 @@ feature "Appeal Intake" do
       expect(page).to have_content(decision_issue_date.strftime("%m/%d/%Y"))
       expect(page).to have_content("granted issue")
       expect(page).to have_content("dismissed issue")
+    end
+  end
+
+  context "has a chain of prior decision issues" do
+    let(:start_date) { Time.zone.today - 300.days }
+    before do
+      prior_appeal = create(:appeal, :outcoded, veteran: veteran)
+      request_issue = create(:request_issue,
+                             contested_rating_issue_reference_id: "old123",
+                             contested_rating_issue_profile_date: untimely_rating.profile_date,
+                             decision_review: prior_appeal)
+      setup_prior_decision_issue_chain(prior_appeal, request_issue, veteran, start_date)
+    end
+
+    it "disables prior contestable issues" do
+      start_appeal(veteran)
+      check_decision_issue_chain(start_date)
     end
   end
 end

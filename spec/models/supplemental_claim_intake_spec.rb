@@ -42,7 +42,7 @@ describe SupplementalClaimIntake do
 
     let!(:request_issue) do
       RequestIssue.new(
-        review_request: detail,
+        decision_review: detail,
         contested_rating_issue_reference_id: "issue1",
         contested_rating_issue_profile_date: Time.zone.local(2018, 4, 5),
         contested_issue_description: "description",
@@ -133,7 +133,7 @@ describe SupplementalClaimIntake do
 
       context "And payee code is nil" do
         let(:payee_code) { nil }
-        # Check that the review_request validations still work
+        # Check that the decision_review validations still work
         let(:receipt_date) { 3.days.from_now }
 
         context "And benefit type is compensation" do
@@ -241,7 +241,9 @@ describe SupplementalClaimIntake do
           end_product_code: "040SCR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
-          claimant_participant_id: claimant.participant_id
+          claimant_participant_id: claimant.participant_id,
+          limited_poa_code: nil,
+          limited_poa_access: nil
         },
         veteran_hash: intake.veteran.to_vbms_hash,
         user: user

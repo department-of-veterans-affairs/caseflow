@@ -1,7 +1,6 @@
 # Hearing Prep repository.
 class HearingRepository
-  class NoOpenSlots < StandardError; end
-  class LockedHearingDay < StandardError; end
+  class HearingDayFull < StandardError; end
 
   class << self
     # :nocov:
@@ -81,19 +80,21 @@ class HearingRepository
         offset: scheduled_time["offset"]
       )
 
-      if (hearing_type || hearing_day_hash[:request_type]) == HearingDay::REQUEST_TYPES[:central]
-        create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
-      else
-        create_child_video_hearing(
-          parent_record_id, hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs
-        )
-      end
+      hearing = if (hearing_type || hearing_day_hash[:request_type]) == HearingDay::REQUEST_TYPES[:central]
+                  create_child_co_hearing(hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs)
+                else
+                  create_child_video_hearing(
+                    parent_record_id, hearing_datetime, appeal, hearing_location_attrs: hearing_location_attrs
+                  )
+                end
+
+      hearing
     end
 
     def create_child_co_hearing(hearing_date_str, appeal, hearing_location_attrs: nil)
       hearing_day = HearingDay.find_by(request_type: HearingDay::REQUEST_TYPES[:central],
                                        scheduled_for: hearing_date_str.to_date)
-      fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
+      fail HearingDayFull if hearing_day.hearing_day_full?
 
       attorney_id = hearing_day.judge ? hearing_day.judge.vacols_attorney_id : nil
 
@@ -111,6 +112,8 @@ class HearingRepository
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
       hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
+
+      hearing
     end
 
     def create_child_video_hearing(hearing_pkseq, hearing_date, appeal, hearing_location_attrs: nil)
@@ -136,13 +139,15 @@ class HearingRepository
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
       hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
+
+      hearing
     end
 
     # rubocop:disable Metrics/MethodLength
 
     def create_caseflow_child_video_hearing(id, hearing_date, appeal, hearing_location_attrs: nil)
       hearing_day = HearingDay.find(id)
-      fail LockedHearingDay, message: "Locked hearing day" if hearing_day.lock
+      fail HearingDayFull if hearing_day.hearing_day_full?
 
       if appeal.is_a?(LegacyAppeal)
         VACOLS::CaseHearing.create_child_hearing!(
@@ -160,13 +165,15 @@ class HearingRepository
 
         hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
       else
-        Hearing.create!(
+        hearing = Hearing.create!(
           appeal: appeal,
           hearing_day_id: hearing_day.id,
           hearing_location_attributes: hearing_location_attrs || {},
           scheduled_time: hearing_date
         )
       end
+
+      hearing
     end
     # rubocop:enable Metrics/MethodLength
 

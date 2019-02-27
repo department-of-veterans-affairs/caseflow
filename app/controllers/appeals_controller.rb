@@ -37,7 +37,9 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    if params[:cached]
+    # Boolean params come in as present/not present (the former with a value of nil) rather than true or false,
+    # so we only need to check if the cached param exists
+    if params.key?(:cached)
       render json: { document_count: appeal.number_of_documents_from_caseflow }
       return
     end
@@ -47,11 +49,10 @@ class AppealsController < ApplicationController
   end
 
   def new_documents
-    if params[:cached]
-      render json: { new_documents: appeal.new_documents_from_caseflow(current_user) }
-      return
-    end
-    render json: { new_documents: appeal.new_documents_for_user(current_user) }
+    new_documents_for_user = NewDocumentsForUser.new(
+      appeal: appeal, user: current_user, query_vbms: true, date_to_compare_with: Time.zone.at(0)
+    )
+    render json: { new_documents: new_documents_for_user.process! }
   rescue StandardError => e
     handle_non_critical_error("new_documents", e)
   end
@@ -64,8 +65,9 @@ class AppealsController < ApplicationController
     }
   end
 
-  # :nocov:
   def hearings
+    log_hearings_request
+
     most_recently_held_hearing = appeal.hearings
       .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
       .max_by(&:scheduled_for)
@@ -84,7 +86,6 @@ class AppealsController < ApplicationController
         {}
       end
   end
-  # :nocov:
 
   # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
@@ -133,6 +134,16 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  def log_hearings_request
+    # Log requests to this endpoint to try to investigate cause addressed by this rollback:
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/9271
+    DataDogService.increment_counter(
+      metric_group: "request_counter",
+      metric_name: "hearings_for_appeal",
+      app_name: RequestStore[:application]
+    )
+  end
 
   def request_issues_update
     @request_issues_update ||= RequestIssuesUpdate.new(

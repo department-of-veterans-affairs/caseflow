@@ -8,6 +8,6 @@
 FactoryBot.define do
   factory :representative, class: VACOLS::Representative do
     sequence(:repkey)
-    reptype "A"
+    reptype { "A" }
   end
 end

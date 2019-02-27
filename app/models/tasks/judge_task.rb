@@ -1,3 +1,7 @@
+##
+# Parent class for all tasks to be completed by judges, including
+# JudgeQualityReviewTasks, JudgeDecisionReviewTasks, and JudgeAssignTasks.
+
 class JudgeTask < Task
   def available_actions(user)
     additional_available_actions(user).unshift(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
@@ -22,67 +26,52 @@ class JudgeTask < Task
   end
 
   #:nocov:
-  # rubocop:disable Metrics/AbcSize
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
-  # This function to be manually run in production when we need to fetch all RAMP
-  # appeals that are eligible for assignment to judges, and assign them. This and related methods
-  # can be removed after AMA day.
-  def self.assign_ramp_judge_tasks(dry_run: true, batch_size: 10)
-    # Find all unassigned tasks, sort them by the NOD date, and take the first N.
-    tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }[0..batch_size - 1]
+  def self.backfill_ramp_appeals_with_tasks(dry_run: true)
+    # Find all unassigned tasks and sort them by the NOD date
+    tasks = unassigned_ramp_tasks.sort_by { |task| task.appeal.receipt_date }
 
     if dry_run
-      Rails.logger.info("Dry run. Found #{unassigned_ramp_tasks.length} tasks to assign.")
-      evidence_count = unassigned_ramp_tasks.select { |task| task.appeal.evidence_submission_docket? }.count
-      direct_review_count = unassigned_ramp_tasks.select { |task| task.appeal.direct_review_docket? }.count
+      Rails.logger.info("Dry run. Found #{tasks.length} tasks to assign.")
+      evidence_count = tasks.select { |task| task.appeal.evidence_submission_docket? }.count
+      direct_review_count = tasks.select { |task| task.appeal.direct_review_docket? }.count
+      hearing_count = tasks.select { |task| task.appeal.hearing_docket? }.count
       Rails.logger.info("Found #{evidence_count} eligible evidence submission tasks.")
       Rails.logger.info("Found #{direct_review_count} direct review tasks.")
-      Rails.logger.info("Would assign #{tasks.length}, batch size is #{batch_size}.")
-      Rails.logger.info("First assignee would be #{JudgeAssignTaskDistributor.new.next_assignee.css_id}")
+      Rails.logger.info("Found #{hearing_count} hearing tasks.")
+      Rails.logger.info("Would assign #{tasks.length}.")
       return
     end
 
-    create_many_from_root_tasks(tasks)
+    backfill_tasks(tasks)
   end
 
-  def self.create_many_from_root_tasks(root_tasks)
-    root_tasks.each do |root_task|
-      Rails.logger.info("Assigning judge task for appeal #{root_task.appeal.id}")
-
-      task = JudgeAssignTask.create!(
-        appeal: root_task.appeal,
-        parent: root_task,
-        appeal_type: Appeal.name,
-        assigned_at: Time.zone.now,
-        assigned_to: JudgeAssignTaskDistributor.new.next_assignee
-      )
-      Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
+  def self.backfill_tasks(root_tasks)
+    transaction do
+      root_tasks.each do |root_task|
+        Rails.logger.info("Creating subtasks for appeal #{root_task.appeal.id}")
+        RootTask.create_subtasks!(root_task.appeal, root_task)
+        distribution_task = DistributionTask.find_by(parent: root_task)
+        # Update any open IHP tasks if they exist so that they block distribution.
+        ihp_task = InformalHearingPresentationTask.active.find_by(appeal: root_task.appeal)
+        ihp_task&.update!(parent: distribution_task)
+        # Ensure direct review appeals have their decision date set.
+        root_task.appeal.set_target_decision_date!
+      end
     end
   end
 
   def self.unassigned_ramp_tasks
-    RootTask.includes(:appeal).all.select { |task| eligible_for_assignment?(task) }
+    RootTask.includes(:appeal).all.select { |task| eligible_for_backfill?(task) }
   end
 
-  def self.eligible_for_assignment?(task)
+  def self.eligible_for_backfill?(task)
+    # All RAMP appeals have completed RootTasks.
     return false if !task.active?
     return false if task.appeal.nil?
-    return false if task.appeal.class == LegacyAppeal
+    return false if task.appeal.class != Appeal
     return false if task.appeal.docket_name.nil?
-    # Hearing cases will not be processed until February 2019
-    return false if task.appeal.hearing_docket?
 
-    # If it's an evidence submission case, we need to wait until the
-    # evidence submission window is over
-    if task.appeal.evidence_submission_docket?
-      return false if task.appeal.receipt_date > 90.days.ago
-    end
-
-    task.children.all? { |t| !t.is_a?(JudgeTask) && !t.active? }
+    task.children.all? { |t| !t.is_a?(JudgeTask) }
   end
   #:nocov:
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 end

@@ -238,39 +238,56 @@ class Veteran < ApplicationRecord
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
-      if sync_name && veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
-        veteran.update!(
-          first_name: veteran.bgs_record[:first_name],
-          last_name: veteran.bgs_record[:last_name],
-          middle_name: veteran.bgs_record[:middle_name],
-          name_suffix: veteran.bgs_record[:name_suffix]
+      if sync_name
+        Rails.logger.warn(
+          %(
+          find_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
+          )
         )
+
+        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
+          veteran.update!(
+            first_name: veteran.bgs_record[:first_name],
+            last_name: veteran.bgs_record[:last_name],
+            middle_name: veteran.bgs_record[:middle_name],
+            name_suffix: veteran.bgs_record[:name_suffix]
+          )
+        end
       end
       veteran
     end
 
+    # rubocop:disable Metrics/MethodLength
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
 
-      return nil unless veteran.found?
+      unless veteran.found?
+        Rails.logger.warn(
+          %(create_by_file_number file_number:#{file_number} found:false accessible:#{veteran.accessible?})
+        )
+        return nil
+      end
+
+      Rails.logger.warn(
+        %(create_by_file_number file_number:#{file_number} found:true accessible:#{veteran.accessible?})
+      )
+
+      return veteran unless veteran.accessible?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
-        v.update!(participant_id: v.ptcpnt_id)
-        # Check to see if veteran is accessible to make sure
-        # bgs_record is a hash and not :not_found
-        if v.accessible?
-          v.update!(
-            first_name: v.bgs_record[:first_name],
-            last_name: v.bgs_record[:last_name],
-            middle_name: v.bgs_record[:middle_name],
-            name_suffix: v.bgs_record[:name_suffix]
-          )
-        end
+        v.update!(
+          participant_id: v.ptcpnt_id,
+          first_name: v.bgs_record[:first_name],
+          last_name: v.bgs_record[:last_name],
+          middle_name: v.bgs_record[:middle_name],
+          name_suffix: v.bgs_record[:name_suffix]
+        )
       end
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
+    # rubocop:enable Metrics/MethodLength
 
     def before_create_veteran_by_file_number
       # noop - used to simulate race conditions

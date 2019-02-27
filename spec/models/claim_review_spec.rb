@@ -30,7 +30,7 @@ describe ClaimReview do
   let(:rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "decision text",
@@ -42,7 +42,7 @@ describe ClaimReview do
   let(:second_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id2",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "another decision text",
@@ -53,7 +53,7 @@ describe ClaimReview do
   let(:non_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       nonrating_issue_description: "Issue text",
       issue_category: "surgery",
       decision_date: 4.days.ago.to_date,
@@ -65,7 +65,7 @@ describe ClaimReview do
   let(:second_non_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       nonrating_issue_description: "some other issue",
       issue_category: "something",
       decision_date: 3.days.ago.to_date,
@@ -159,6 +159,50 @@ describe ClaimReview do
     context ".expired_without_processing" do
       it "matches reviews unfinished but outside the retry window" do
         expect(HigherLevelReview.expired_without_processing).to eq([claim_review_attempts_ended])
+      end
+    end
+  end
+
+  context "#active?" do
+    subject { claim_review.active? }
+
+    context "when it is processed in Caseflow and has completed tasks" do
+      let(:benefit_type) { "nca" }
+      let!(:completed_task) { create(:task, :completed, appeal: claim_review) }
+
+      it { is_expected.to be false }
+
+      context "when there are any incomplete tasks" do
+        let!(:in_progress_task) { create(:task, :in_progress, appeal: claim_review) }
+
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+    end
+
+    context "when it is processed in VBMS and has a cleared EPE" do
+      let(:benefit_type) { "compensation" }
+      let!(:cleared_epe) do
+        create(:end_product_establishment,
+               :cleared,
+               code: rating_request_issue.end_product_code,
+               source: claim_review,
+               veteran_file_number: claim_review.veteran.file_number)
+      end
+
+      it { is_expected.to be false }
+
+      context "when there is at least one active end product establishment" do
+        let!(:active_epe) do
+          create(:end_product_establishment,
+                 :active,
+                 code: rating_request_issue.end_product_code,
+                 source: claim_review,
+                 veteran_file_number: claim_review.veteran.file_number)
+        end
+
+        it { is_expected.to be true }
       end
     end
   end
@@ -428,7 +472,9 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: veteran_participant_id
+            claimant_participant_id: veteran_participant_id,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -695,7 +741,9 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: veteran_participant_id
+            claimant_participant_id: veteran_participant_id,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -728,7 +776,9 @@ describe ClaimReview do
             end_product_code: "030HLRNR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: veteran_participant_id
+            claimant_participant_id: veteran_participant_id,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user

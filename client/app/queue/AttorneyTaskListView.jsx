@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -12,6 +11,7 @@ import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
+import NewFileAll from './components/NewFileAll';
 
 import {
   completeTasksByAssigneeCssIdSelector,
@@ -30,29 +30,11 @@ import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 
-import type { TaskWithAppeal } from './types/models';
-
-type Params = {||};
-
 const containerStyles = css({
   position: 'relative'
 });
 
-type Props = Params & {|
-  tasks: Array<TaskWithAppeal>,
-  workableTasks: Array<TaskWithAppeal>,
-  onHoldTasks: Array<TaskWithAppeal>,
-  completedTasks: Array<TaskWithAppeal>,
-  organizations: Array<Object>,
-  messages: Object,
-  resetSaveState: typeof resetSaveState,
-  resetSuccessMessages: typeof resetSuccessMessages,
-  resetErrorMessages: typeof resetErrorMessages,
-  clearCaseSelectSearch: typeof clearCaseSelectSearch,
-  showErrorMessage: typeof showErrorMessage,
-|};
-
-class AttorneyTaskListView extends React.PureComponent<Props> {
+class AttorneyTaskListView extends React.PureComponent {
   componentWillUnmount = () => {
     this.props.resetSaveState();
     this.props.resetSuccessMessages();
@@ -90,6 +72,8 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         page: <TaskTableTab
           description={COPY.ATTORNEY_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION}
           tasks={this.props.workableTasks}
+          includeNewDocsIcon={false}
+          useOnHoldDate={false}
         />
       },
       {
@@ -99,13 +83,18 @@ class AttorneyTaskListView extends React.PureComponent<Props> {
         page: <TaskTableTab
           description={COPY.ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}
           tasks={this.props.onHoldTasks}
-        />
+          includeNewDocsIcon
+          useOnHoldDate
+        />,
+        indicator: <NewFileAll tasks={this.props.onHoldTasks} />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
         page: <TaskTableTab
           description={COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}
           tasks={this.props.completedTasks}
+          includeNewDocsIcon={false}
+          useOnHoldDate={false}
         />
       }
     ];
@@ -158,11 +147,12 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(AttorneyTaskListView));
 
-const TaskTableTab = ({ description, tasks }) => <React.Fragment>
+const TaskTableTab = ({ description, tasks, includeNewDocsIcon, useOnHoldDate }) => <React.Fragment>
   <p className="cf-margin-top-0" >{description}</p>
   <TaskTable
+    includeHearingBadge
     includeDetailsLink
     includeType
     includeDocketNumber
@@ -171,5 +161,7 @@ const TaskTableTab = ({ description, tasks }) => <React.Fragment>
     includeReaderLink
     requireDasRecord
     tasks={tasks}
+    includeNewDocsIcon={includeNewDocsIcon}
+    useOnHoldDate={useOnHoldDate}
   />
 </React.Fragment>;

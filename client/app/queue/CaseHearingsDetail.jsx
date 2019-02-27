@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -29,22 +28,9 @@ const noTopBottomMargin = css({
   marginBottom: '1rem'
 });
 
-import type {
-  Appeal,
-  Hearing
-} from './types/models';
-
-type Props = {|
-  appeal: Appeal,
-|};
-
-type Params = Props & {|
-  showVeteranCaseList: typeof showVeteranCaseList
-|}
-
-class CaseHearingsDetail extends React.PureComponent<Params> {
-  getHearingAttrs = (hearing: Hearing): Array<Object> => {
-    return [{
+class CaseHearingsDetail extends React.PureComponent {
+  getHearingAttrs = (hearing, userIsVsoEmployee) => {
+    const hearingAttrs = [{
       label: 'Type',
       value: hearing.type
     },
@@ -52,7 +38,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
       label: 'Disposition',
       value: <React.Fragment>
         {hearing.disposition && StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
-        {hearing.viewedByJudge &&
+        {hearing.viewedByJudge && !userIsVsoEmployee &&
         <Tooltip id="hearing-worksheet-tip" text={COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP}>
           <Link rel="noopener" target="_blank" href={`/hearings/${hearing.externalId}/worksheet/print?keep_open=true`}>
             {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
@@ -66,18 +52,26 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
     }, {
       label: 'Judge',
       value: hearing.heldBy
-    }, {
-      label: '',
-      value: <Link href={`/hearings/${hearing.externalId}/details`}>
-        {COPY.CASE_DETAILS_HEARING_DETAILS_LINK_COPY}
-      </Link>
+    }];
+
+    if (!userIsVsoEmployee) {
+      hearingAttrs.push(
+        {
+          label: '',
+          value: <Link href={`/hearings/${hearing.externalId}/details`}>
+            {COPY.CASE_DETAILS_HEARING_DETAILS_LINK_COPY}
+          </Link>
+        }
+      );
     }
-    ];
+
+    return hearingAttrs;
   }
 
   getHearingInfo = () => {
     const {
-      appeal: { hearings }
+      appeal: { hearings },
+      userIsVsoEmployee
     } = this.props;
     const orderedHearings = _.orderBy(hearings, 'date', 'asc');
     const uniqueOrderedHearings = _.uniqWith(orderedHearings, _.isEqual);
@@ -99,7 +93,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
       <BareList compact
         listStyle={css(marginLeft, noTopBottomMargin)}
         ListElementComponent="ul"
-        items={this.getHearingAttrs(hearing).map(this.getDetailField)} />
+        items={this.getHearingAttrs(hearing, userIsVsoEmployee).map(this.getDetailField)} />
     </div>);
 
     return <React.Fragment>
@@ -109,7 +103,7 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
   }
 
   getDetailField = (
-    { label, valueFunction, value }: { label: string, valueFunction: Function, value?: string}
+    { label, valueFunction, value }
   ) => () => <React.Fragment>
     {label && <span {...boldText}>{label}:</span>} {typeof value === 'undefined' ? valueFunction() : value}
   </React.Fragment>;
@@ -160,8 +154,12 @@ class CaseHearingsDetail extends React.PureComponent<Params> {
   };
 }
 
+const mapStateToProps = (state) => {
+  return { userIsVsoEmployee: state.ui.userIsVsoEmployee };
+};
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   showVeteranCaseList
 }, dispatch);
 
-export default (connect(null, mapDispatchToProps)(CaseHearingsDetail): React.ComponentType<Props>);
+export default (connect(mapStateToProps, mapDispatchToProps)(CaseHearingsDetail));

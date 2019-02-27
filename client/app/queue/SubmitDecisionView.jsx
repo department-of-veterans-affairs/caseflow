@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -7,7 +6,8 @@ import _ from 'lodash';
 import {
   getDecisionTypeDisplay,
   buildCaseReviewPayload,
-  validateWorkProductTypeAndId
+  validateWorkProductTypeAndId,
+  nullToFalse
 } from './utils';
 
 import {
@@ -23,6 +23,7 @@ import TextField from '../components/TextField';
 import TextareaField from '../components/TextareaField';
 import Alert from '../components/Alert';
 import JudgeSelectComponent from './JudgeSelectComponent';
+import InstructionalText from './InstructionalText';
 import { taskById } from './selectors';
 
 import {
@@ -37,46 +38,56 @@ import {
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
 
-import type {
-  Task,
-  Appeal,
-  Judges
-} from './types/models';
-import type { UiStateMessage } from './types/state';
+class SubmitDecisionView extends React.PureComponent {
+  componentDidMount = () => {
+    this.extendedDecision = this.setInitialDecisionOptions(
+      this.props.decision,
+      this.props.appeal && this.props.appeal.attorneyCaseRewriteDetails);
 
-type Params = {|
-  appealId: string,
-  taskId: string,
-  checkoutFlow: string,
-  nextStep: string
-|};
+    _.each(this.extendedDecision.opts, (value, key) => {
+      this.props.setDecisionOptions({
+        [key]: value
+      });
+    });
+  }
 
-type Props = Params & {|
-  // state
-  appeal: Appeal,
-  judges: Judges,
-  decision: Object,
-  task: Task,
-  highlightFormItems: Boolean,
-  amaDecisionIssues: Boolean,
-  userRole: string,
-  error: ?UiStateMessage,
-  // dispatch
-  setDecisionOptions: typeof setDecisionOptions,
-  requestSave: typeof requestSave,
-  deleteAppeal: typeof deleteAppeal
-|};
+  // this handles the case where there is no document_id on this.props.decision.opts
+  // and it comes from this.props.appeal.attorneyCaseRewriteDetails instead
+  // if you don't do this you will get validation errors and a 400 for a missing document_id
+  // this is also needed to keep the onChange values in sync
+  setInitialDecisionOptions = (decision, attorneyCaseRewriteDetails) => {
+    const decisionOptsWithAttorneyCheckoutInfo =
+    _.merge(decision.opts, { document_id: _.get(this.props, 'appeal.documentID'),
+      note: _.get(attorneyCaseRewriteDetails, 'note_from_attorney'),
+      overtime: _.get(attorneyCaseRewriteDetails, 'overtime', false),
+      untimely_evidence: _.get(attorneyCaseRewriteDetails, 'untimely_evidence', false),
+      reviewing_judge_id: _.get(this.props, 'task.assignedBy.pgId')
+    });
+    const extendedDecision = { ...decision };
 
-class SubmitDecisionView extends React.PureComponent<Props> {
+    extendedDecision.opts = decisionOptsWithAttorneyCheckoutInfo;
+
+    if (extendedDecision.opts) {
+      const possibleNullKeys = ['overtime', 'untimely_evidence'];
+
+      possibleNullKeys.forEach((key) => {
+        extendedDecision.opts = nullToFalse(key, extendedDecision.opts);
+      });
+    }
+
+    return extendedDecision;
+  }
   validateForm = () => {
     const {
       opts: decisionOpts
     } = this.props.decision;
-    const requiredParams = ['document_id', 'reviewing_judge_id', 'work_product'];
 
+    const requiredParams = ['document_id', 'reviewing_judge_id', 'work_product'];
     const missingParams = _.filter(requiredParams, (param) => !_.has(decisionOpts, param) || !decisionOpts[param]);
 
-    return !missingParams.length;
+    const isValid = !missingParams.length;
+
+    return isValid;
   };
 
   getPrevStepUrl = () => {
@@ -111,12 +122,12 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       checkoutFlow,
       decision,
       userRole,
-      judges,
-      amaDecisionIssues
+      judges
     } = this.props;
 
-    const issuesToPass = !isLegacyAppeal && amaDecisionIssues ? decisionIssues : issues;
-    const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issuesToPass, { isLegacyAppeal });
+    const issuesToPass = isLegacyAppeal ? issues : decisionIssues;
+    const payload = buildCaseReviewPayload(checkoutFlow, decision,
+      userRole, issuesToPass, { isLegacyAppeal });
 
     const fields = {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
@@ -136,6 +147,12 @@ class SubmitDecisionView extends React.PureComponent<Props> {
       });
   };
 
+  getDefaultJudgeSelector = () => {
+    return this.props.task && this.props.task.isLegacy ?
+      this.props.task.addedByCssId :
+      this.props.task && this.props.task.assignedBy.pgId;
+  }
+
   render = () => {
     const {
       highlightFormItems,
@@ -145,6 +162,7 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         opts: decisionOpts
       }
     } = this.props;
+
     const decisionTypeDisplay = getDecisionTypeDisplay(checkoutFlow);
     let documentIdErrorMessage = '';
 
@@ -174,13 +192,6 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         options={OMO_ATTORNEY_CASE_REVIEW_WORK_PRODUCT_TYPES}
         errorMessage={(highlightFormItems && !decisionOpts.work_product) ? COPY.FORM_ERROR_FIELD_REQUIRED : ''}
       />}
-      <Checkbox
-        name="overtime"
-        label="This work product is overtime"
-        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
-        value={decisionOpts.overtime || false}
-        styling={css(marginBottom(1), marginTop(1))}
-      />
       <TextField
         label="Document ID:"
         name="document_id"
@@ -190,17 +201,44 @@ class SubmitDecisionView extends React.PureComponent<Props> {
         maxLength={DOCUMENT_ID_MAX_LENGTH}
         autoComplete="off"
       />
-      <JudgeSelectComponent assignedByCssId={
-        (this.props.task && this.props.task.addedByCssId) || '' /* not compatible with AMA tasks */
-      } />
+      <JudgeSelectComponent
+        judgeSelector={
+          this.getDefaultJudgeSelector()
+        }
+      />
       <TextareaField
         label="Notes:"
         name="notes"
-        value={decisionOpts.note}
+        value={decisionOpts.note || ''}
         onChange={(note) => this.props.setDecisionOptions({ note })}
         styling={marginTop(4)}
         maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
       />
+      <Checkbox
+        name="overtime"
+        label="This work product is overtime"
+        onChange={(overtime) => this.props.setDecisionOptions({ overtime })}
+        value={decisionOpts.overtime || false}
+        styling={css(marginBottom(1), marginTop(1))}
+      />
+      {!this.props.appeal.isLegacyAppeal &&
+      <div>
+        <Checkbox
+          name="untimely_evidence"
+          label="The Veteran submitted evidence that is ineligible for review"
+          onChange={(untimelyEvidence) => this.props.setDecisionOptions({ untimely_evidence: untimelyEvidence })}
+          value={decisionOpts.untimely_evidence || false}
+          styling={css(marginBottom(1), marginTop(1))}
+        />
+        <InstructionalText
+          informationalTitle={COPY.WHAT_IS_INELIGIBLE_EVIDENCE}
+          informationHeader={COPY.UNTIMELY_EVIDENCE_TITLE}
+          bulletOne={COPY.UNTIMELY_EVIDENCE_BULLET_ONE}
+          bulletTwo={COPY.UNTIMELY_EVIDENCE_BULLET_TWO}
+          bulletThree={COPY.UNTIMELY_EVIDENCE_BULLET_THREE}
+        />
+      </div>
+      }
     </React.Fragment>;
   };
 }
@@ -232,8 +270,7 @@ const mapStateToProps = (state, ownProps) => {
     decision,
     error,
     userRole,
-    highlightFormItems,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)
+    highlightFormItems
   };
 };
 
@@ -248,5 +285,5 @@ export default (connect(
   mapDispatchToProps
 )(
   decisionViewBase(SubmitDecisionView)
-): React.ComponentType<Params>
+)
 );

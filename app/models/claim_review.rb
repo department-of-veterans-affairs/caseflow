@@ -127,6 +127,14 @@ class ClaimReview < DecisionReview
     end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
+  def active?
+    processed_in_vbms? ? end_product_establishments.any? { |ep| ep.status_active?(sync: false) } : incomplete_tasks?
+  end
+
+  def active_status?
+    active?
+  end
+
   def search_table_ui_hash
     {
       caseflow_veteran_id: claim_veteran&.id,
@@ -170,21 +178,24 @@ class ClaimReview < DecisionReview
   end
 
   def aoj
-    case benefit_type
-    when "compensation", "pension", "fiduciary", "insurance", "education", "voc_rehab", "loan_guaranty"
-      "vba"
-    else
-      benefit_type
-    end
+    return if request_issues.empty?
+
+    request_issues.first.api_aoj_from_benefit_type
   end
 
   def issues_hash
-    issue_list = active? ? request_issues.open : fetch_all_decision_issues_for_api_status
+    issue_list = active_status? ? request_issues.open : fetch_all_decision_issues
+
+    return [] if issue_list.empty?
 
     fetch_issues_status(issue_list)
   end
 
   private
+
+  def incomplete_tasks?
+    tasks.reject(&:completed?).any?
+  end
 
   def can_contest_rating_issues?
     processed_in_vbms?
@@ -209,7 +220,7 @@ class ClaimReview < DecisionReview
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
       EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue.end_product_code)
+    ) || new_end_product_establishment(issue)
   end
 
   def matching_request_issue(contention_id)
