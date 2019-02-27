@@ -1,4 +1,7 @@
 namespace :tasks do
+  class InvalidTaskType < StandardError; end
+  class NoTasksToChange < StandardError; end
+
   # usage:
   # Change all HoldHearingTasks to DispositionTasks (dry run)
   #   $ bundle exec rake tasks:change_type[HoldHearingTask,DispositionTask]"
@@ -26,11 +29,7 @@ namespace :tasks do
     to_class = Object.const_get(args.to_type)
     [from_class, to_class].each do |check_class|
       unless Task.descendants.include?(check_class)
-        abort "#{check_class.name} is not a valid Task type!"
-      end
-
-      if check_class.descendants.count > 0
-        puts "*WARNING* #{check_class.name} has #{check_class.descendants.count} descendants"
+        fail InvalidTaskType, "#{check_class.name} is not a valid Task type!"
       end
     end
 
@@ -41,7 +40,7 @@ namespace :tasks do
                    end
 
     if target_tasks.count == 0
-      abort "There aren't any #{from_class.name}s available to change."
+      fail NoTasksToChange, "There aren't any #{from_class.name}s available to change."
     end
 
     ids = target_tasks.map(&:id)

@@ -130,19 +130,7 @@ describe "task rake tasks" do
       it "tells the caller that there are no tasks to change" do
         expected_output = "There aren't any #{from_task_name}s available to change."
         expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
-        expect { subject }.to raise_error(SystemExit).with_message(expected_output)
-      end
-
-      context "a task class with descendants is passed" do
-        let(:from_task) { JudgeTask }
-
-        it "warns about passing a task class with descendants" do
-          expected_warning = "*WARNING* #{from_task_name} has #{from_task.descendants.count} descendants"
-          expected_output = "There aren't any #{from_task_name}s available to change."
-          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
-          expect { subject }.to output("#{expected_warning}\n#{expected_output}").to_stdout
-          expect { subject }.to raise_error(SystemExit).with_message(expected_output)
-        end
+        expect { subject }.to raise_error(NoTasksToChange).with_message(expected_output)
       end
     end
 
@@ -153,7 +141,7 @@ describe "task rake tasks" do
       it "warns about passing a class that's not a task" do
         expected_output = "#{from_task_name} is not a valid Task type!"
         expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
-        expect { subject }.to raise_error(SystemExit).with_message(expected_output)
+        expect { subject }.to raise_error(InvalidTaskType).with_message(expected_output)
       end
     end
   end
