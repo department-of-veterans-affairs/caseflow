@@ -690,12 +690,12 @@ ActiveRecord::Schema.define(version: 20190227003709) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
-    t.datetime "closed_on"
-    t.date "nod_date"
-    t.string "partial_closure_issue_sequence_ids", array: true
-    t.integer "ramp_election_id"
-    t.string "vacols_id", null: false
+  create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|
+    t.datetime "closed_on", comment: "The date that the legacy appeal was closed in VACOLS and opted into RAMP."
+    t.date "nod_date", comment: "The date when the Veteran filed a notice of disagreement for the original claims decision in the legacy system - the step before a Veteran receives a Statement of the Case and before they file a Form 9."
+    t.string "partial_closure_issue_sequence_ids", comment: "If the entire legacy appeal could not be closed and moved to the RAMP Election, the VACOLS sequence IDs of issues on the legacy appeal which were closed are stored here, indicating that it was a partial closure.", array: true
+    t.integer "ramp_election_id", comment: "The ID of the RAMP election that closed the legacy appeal."
+    t.string "vacols_id", null: false, comment: "The VACOLS ID of the legacy appeal that has been closed and opted into RAMP."
   end
 
   create_table "ramp_election_rollbacks", force: :cascade do |t|
