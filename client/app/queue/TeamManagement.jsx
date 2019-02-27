@@ -2,6 +2,7 @@ import Alert from '../components/Alert';
 import ApiUtil from '../util/ApiUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../components/Button';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -46,6 +47,7 @@ class TeamManagement extends React.PureComponent {
   };
 
   // TODO: We don't show the new judge team in the table after we've created it in the modal.
+  // Can fix this by moving all this state to the global redux store.
   addJudgeTeam = () => this.props.history.push('/team_management/add_judge_team');
 
   render = () => {
@@ -104,7 +106,7 @@ const sectionHeadingStyling = css({
 
 class OrgHeader extends React.PureComponent {
   render = () => {
-    return <tr><td {...sectionHeadingStyling} colSpan='6'>{this.props.children}</td></tr>;
+    return <tr><td {...sectionHeadingStyling} colSpan='7'>{this.props.children}</td></tr>;
   }
 }
 
@@ -116,6 +118,7 @@ class OrgList extends React.PureComponent {
         <td>Name</td>
         <td>URL</td>
         <td>{ this.props.showBgsParticipantId && `BGS Participant ID`}</td>
+        <td></td>
         <td></td>
       </tr>
       { this.props.orgs.map( (org) => 
@@ -141,7 +144,8 @@ class OrgRow extends React.PureComponent {
       id: props.id,
       name: props.name,
       url: props.url,
-      participant_id: props.participant_id
+      participant_id: props.participant_id,
+      user_admin_path: props.user_admin_path
     };
   }
 
@@ -212,6 +216,9 @@ class OrgRow extends React.PureComponent {
           classNames={['usa-button-secondary']}
           onClick={this.submitUpdate}
           />
+      </td>
+      <td>
+        { this.state.url && <Link to={this.state.user_admin_path}>Org admin page</Link> }
       </td>
     </tr>;
   }

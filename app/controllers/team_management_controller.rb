@@ -53,7 +53,8 @@ class TeamManagementController < ApplicationController
       name: org.name,
       participant_id: org.participant_id,
       type: org.type,
-      url: org.url
+      url: org.url,
+      user_admin_path: org.user_admin_path
     }
   end
 end
