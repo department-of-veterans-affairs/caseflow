@@ -39,6 +39,7 @@ import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
+import AddNationalVso from './AddNationalVso';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -200,6 +201,8 @@ class QueueApp extends React.PureComponent {
   routedTeamManagement =  (props) => <TeamManagement {...props.match.params} />;
 
   routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
+
+  routedAddNationalVso = (props) => <AddNationalVso {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
@@ -400,6 +403,9 @@ class QueueApp extends React.PureComponent {
           <Route
             path="/team_management/add_judge_team"
             render={this.routedAddJudgeTeam} />
+          <Route
+            path="/team_management/add_national_vso"
+            render={this.routedAddNationalVso} />
           <PageRoute
             path="/team_management"
             title="Team Management | Caseflow"

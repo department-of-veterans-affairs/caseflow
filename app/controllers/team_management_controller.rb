@@ -37,6 +37,12 @@ class TeamManagementController < ApplicationController
     render json: { org: serialize_org(org) }, status: :ok
   end
 
+  def create_national_vso
+    org = Vso.create!(update_params)
+
+    render json: { org: serialize_org(org) }, status: :ok
+  end
+
   def deny_non_global_admins
     redirect_to "/unauthorized" if current_user&.global_admin?
   end

@@ -50,6 +50,8 @@ class TeamManagement extends React.PureComponent {
   // Can fix this by moving all this state to the global redux store.
   addJudgeTeam = () => this.props.history.push('/team_management/add_judge_team');
 
+  addIhpWritingVso = () => this.props.history.push('/team_management/add_national_vso');
+
   render = () => {
     return <LoadingDataDisplay
       createLoadPromise={this.loadingPromise}
@@ -72,7 +74,9 @@ class TeamManagement extends React.PureComponent {
               </OrgHeader>
               <OrgList orgs={this.state.judgeTeams} />
 
-              <OrgHeader>VSOs</OrgHeader>
+              <OrgHeader>
+                VSOs <Button name="+ Add IHP-writing VSO" onClick={this.addIhpWritingVso} />
+              </OrgHeader>
               <OrgList orgs={this.state.vsos} showBgsParticipantId />
 
               <OrgHeader>Other teams</OrgHeader>
