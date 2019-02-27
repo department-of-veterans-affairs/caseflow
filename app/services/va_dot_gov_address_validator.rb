@@ -71,13 +71,13 @@ class VaDotGovAddressValidator
 
   def validate_appellant_address
     VADotGovService.validate_address(
-      address_line1: address[:address_line1],
-      address_line2: address[:address_line2],
-      address_line3: address[:address_line3],
+      address_line1: address[:address_line_1],
+      address_line2: address[:address_line_2],
+      address_line3: address[:address_line_3],
       city: address[:city],
       state: address[:state],
       country: address[:country],
-      zip_code: address[:zip_code]
+      zip_code: address[:zip]
     )
   end
 
