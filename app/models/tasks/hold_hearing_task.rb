@@ -17,7 +17,7 @@ class HoldHearingTask < GenericTask
     parent
   end
 
-  def update_with_params(params, user)
+  def update_with_params(params, _user)
     disposition_params = params.delete(:business_payloads)[:values]
     if params[:status] == Constants.TASK_STATUSES.completed
       case disposition_params[:disposition]
@@ -25,22 +25,30 @@ class HoldHearingTask < GenericTask
         after_disposition_update = disposition_params[:after_disposition_update]
         postponed(after_disposition_update: after_disposition_update)
       when "held"
-        held()
+        held
       when "no_show"
-        no_show()
-      when ""
+        no_show
+      end
     end
   end
 
   def reschedule(hearing_pkseq:, hearing_type:, hearing_time:, hearing_location: nil)
+    new_hearing_task = hearing_task.cancel_and_recreate
+
     new_hearing = slot_new_hearing(
       hearing_pkseq, hearing_type, hearing_time, hearing_location
     )
-    create_hold_hearing_task(appeal, parent, new_hearing)
+    create_hold_hearing_task(appeal, new_hearing_task, new_hearing)
   end
 
   def schedule_later(with_admin_action_klass: nil)
-    schedule_task = ScheduleHearingTask.find_or_create_if_eligible(appeal)
+    new_hearing_task = hearing_task.cancel_and_recreate
+
+    schedule_task = ScheduleHearingTask.create!(
+      parent: new_hearing_task,
+      appeal: appeal,
+      assigned_to: HearingsManagement.singleton
+    )
     if with_admin_action_klass.present?
       with_admin_action_klass.constantize.create!(
         parent: schedule_task,
@@ -51,8 +59,9 @@ class HoldHearingTask < GenericTask
   end
 
   def postponed(after_disposition_update:)
-    hearing = parent.hearing_task_association.hearing
+    hearing = hearing_task.hearing_task_association.hearing
     hearing.update(status: "postponed")
+
     case after_disposition_update[:action]
     when "reschedule"
       new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
