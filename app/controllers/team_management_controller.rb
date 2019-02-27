@@ -19,24 +19,24 @@ class TeamManagementController < ApplicationController
   def update
     # TODO: Add validation here.
     # TODO: Log every update request.
-    # TODO: Make sure url stays lower-case
+    # TODO: Make sure url stays lower-case (do this in Organization model?)
     org = Organization.find(params[:id])
-    org.update!(
-      name: update_params[:name],
-      participant_id: update_params[:participant_id],
-      url: update_params[:url]
-    )
+    org.update!(update_params)
 
     render json: { org: serialize_org(org) }, status: :ok
   end
 
+  # TODO: Log these creation operations
   def create_judge_team
     user = User.find(params[:user_id])
     org = JudgeTeam.create_for_judge(user)
 
+    # TODO: Make sure user does not already have a judge team.
+
     render json: { org: serialize_org(org) }, status: :ok
   end
 
+  # TODO: Log these creation operations
   def create_national_vso
     org = Vso.create!(update_params)
 
