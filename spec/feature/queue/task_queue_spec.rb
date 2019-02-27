@@ -56,7 +56,7 @@ RSpec.feature "Task queue" do
 
     let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
     let(:attorney_on_hold_tasks) do
-      Task.where(status: :on_hold, assigned_to: attorney_user)
+      Task.where(status: :on_hold, assigned_to: attorney_user) + ColocatedTask.where(assigned_by: attorney_user)
     end
 
     before do
