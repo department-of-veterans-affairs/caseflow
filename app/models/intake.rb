@@ -192,7 +192,7 @@ class Intake < ApplicationRecord
       self.error_code = :veteran_not_found
 
     elsif !veteran.accessible?
-      veteran_accessible_error
+      set_veteran_accessible_error
 
     elsif !veteran.valid?(:bgs)
       self.error_code = :veteran_not_valid
@@ -245,7 +245,7 @@ class Intake < ApplicationRecord
 
   private
 
-  def veteran_accessible_error
+  def set_veteran_accessible_error
     return unless !veteran.accessible?
 
     self.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
