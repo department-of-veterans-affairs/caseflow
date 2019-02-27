@@ -205,6 +205,7 @@ Rails.application.routes.draw do
   end
 
   resources :team_management, only: [:index, :update]
+  post '/team_management/judge_team/:user_id', to: 'team_management#create_judge_team'
 
   get '/search', to: 'queue#index'
 

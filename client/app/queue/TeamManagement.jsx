@@ -9,8 +9,9 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import { css } from 'glamor';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import { withRouter } from 'react-router-dom';
 
-export default class TeamManagement extends React.PureComponent {
+class TeamManagement extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -44,6 +45,9 @@ export default class TeamManagement extends React.PureComponent {
     });
   };
 
+  // TODO: We don't show the new judge team in the table after we've created it in the modal.
+  addJudgeTeam = () => this.props.history.push('/team_management/add_judge_team');
+
   render = () => {
     return <LoadingDataDisplay
       createLoadPromise={this.loadingPromise}
@@ -60,14 +64,18 @@ export default class TeamManagement extends React.PureComponent {
           <h1>Caseflow Team Management</h1>
 
           <table {...tableStyling}>
-            <OrgHeader>Judge teams</OrgHeader>
-            <OrgList orgs={this.state.judgeTeams} />
+            <tbody>
+              <OrgHeader>
+                Judge teams <Button name="+ Add Judge Team" onClick={this.addJudgeTeam} />
+              </OrgHeader>
+              <OrgList orgs={this.state.judgeTeams} />
 
-            <OrgHeader>VSOs</OrgHeader>
-            <OrgList orgs={this.state.vsos} showBgsParticipantId />
+              <OrgHeader>VSOs</OrgHeader>
+              <OrgList orgs={this.state.vsos} showBgsParticipantId />
 
-            <OrgHeader>Other teams</OrgHeader>
-            <OrgList orgs={this.state.otherOrgs} />
+              <OrgHeader>Other teams</OrgHeader>
+              <OrgList orgs={this.state.otherOrgs} />
+            </tbody>
           </table>
           
 
@@ -76,6 +84,8 @@ export default class TeamManagement extends React.PureComponent {
     </LoadingDataDisplay>;
   };
 }
+
+export default withRouter(TeamManagement);
 
 const tableStyling = css({
   width: '100%',
@@ -92,13 +102,9 @@ const sectionHeadingStyling = css({
   fontWeight: 'bold'
 });
 
-const skinnyCellStyling = css({
-  width: '3rem'
-})
-
 class OrgHeader extends React.PureComponent {
   render = () => {
-    return <tr><td {...sectionHeadingStyling} colspan='6'>{this.props.children}</td></tr>;
+    return <tr><td {...sectionHeadingStyling} colSpan='6'>{this.props.children}</td></tr>;
   }
 }
 
@@ -106,17 +112,15 @@ class OrgList extends React.PureComponent {
   render = () => {
     return <React.Fragment>
       <tr {...labelRowStyling}>
-        <td {...skinnyCellStyling}>ID</td>
+        <td>ID</td>
         <td>Name</td>
         <td>URL</td>
         <td>{ this.props.showBgsParticipantId && `BGS Participant ID`}</td>
         <td></td>
       </tr>
-      <tbody>
-        { this.props.orgs.map( (org) => 
-          <OrgRow {...org} showBgsParticipantId={this.props.showBgsParticipantId} />
-        ) }
-      </tbody>
+      { this.props.orgs.map( (org) => 
+        <OrgRow {...org} key={org.id} showBgsParticipantId={this.props.showBgsParticipantId} />
+      ) }
     </React.Fragment>;
   }
 }
@@ -171,17 +175,23 @@ class OrgRow extends React.PureComponent {
       });
   }
 
+  // TODO: Indicate that changes have been made to the row by enabling the submit changes button. Default to disabled.
+
   render = () => {
-    return <tr key={this.props.id}>
-      <td {...skinnyCellStyling}>{ this.props.id }</td>
+    return <tr>
+      <td>{ this.props.id }</td>
       <td>
         <TextField
+          name="Name"
+          label={false}
           value={this.state.name}
           onChange={this.changeName}
           />
       </td>
       <td>
         <TextField
+          name="URL"
+          label={false}
           value={this.state.url}
           onChange={this.changeUrl}
           />
@@ -189,6 +199,8 @@ class OrgRow extends React.PureComponent {
       <td>
         { this.props.showBgsParticipantId &&
           <TextField
+            name="BGS Participant ID"
+            label={false}
             value={this.state.participant_id}
             onChange={this.changeParticipantId}
             />
@@ -198,7 +210,8 @@ class OrgRow extends React.PureComponent {
         <Button
           name="Update"
           classNames={['usa-button-secondary']}
-          onClick={this.submitUpdate} />
+          onClick={this.submitUpdate}
+          />
       </td>
     </tr>;
   }

@@ -30,6 +30,13 @@ class TeamManagementController < ApplicationController
     render json: { org: serialize_org(org) }, status: :ok
   end
 
+  def create_judge_team
+    user = User.find(params[:user_id])
+    org = JudgeTeam.create_for_judge(user)
+
+    render json: { org: serialize_org(org) }, status: :ok
+  end
+
   def deny_non_global_admins
     redirect_to "/unauthorized" if current_user&.global_admin?
   end

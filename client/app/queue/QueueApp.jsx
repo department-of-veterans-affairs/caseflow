@@ -38,6 +38,7 @@ import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
+import AddJudgeTeamModal from './AddJudgeTeamModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -197,6 +198,8 @@ class QueueApp extends React.PureComponent {
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
   routedTeamManagement =  (props) => <TeamManagement {...props.match.params} />;
+
+  routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
@@ -394,8 +397,10 @@ class QueueApp extends React.PureComponent {
             path="/organizations/:organization/users"
             title="Organization Users | Caseflow"
             render={this.routedOrganizationUsers} />
+          <Route
+            path="/team_management/add_judge_team"
+            render={this.routedAddJudgeTeam} />
           <PageRoute
-            exact
             path="/team_management"
             title="Team Management | Caseflow"
             render={this.routedTeamManagement} />
