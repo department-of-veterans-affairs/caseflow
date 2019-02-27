@@ -145,6 +145,12 @@ class ApplicationController < ApplicationBaseController
       urls.concat(manage_teams_menu_items)
     end
 
+    # byebug
+
+    if current_user.global_admin?
+      urls.append(title: "Caseflow team management", link: url_for(controller: "/team_management", action: "index"))
+    end
+
     if ApplicationController.dependencies_faked?
       urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
     end

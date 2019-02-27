@@ -44,7 +44,7 @@ class TeamManagementController < ApplicationController
   end
 
   def deny_non_global_admins
-    redirect_to "/unauthorized" if current_user&.global_admin?
+    redirect_to "/unauthorized" unless current_user&.global_admin?
   end
 
   private

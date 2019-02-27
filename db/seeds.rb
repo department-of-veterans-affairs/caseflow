@@ -71,6 +71,7 @@ class SeedDB
   def create_global_admin
     u = User.create(css_id: "GLOBAL_ADMIN", station_id: 101, full_name: "Global admin")
     Functions.grant!("System Admin", users: [u.css_id])
+    Functions.grant!("Global Admin", users: [u.css_id])
   end
 
   def create_judge_teams
