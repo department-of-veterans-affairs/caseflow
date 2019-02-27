@@ -32,12 +32,7 @@ class HearingDayRepository
     end
 
     def fetch_hearing_day_slots(regional_office)
-      HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
-    end
-
-    def ro_staff_hash(regional_office_keys)
-      ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
-      ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
+      HearingDay::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
     end
 
     def to_hash(hearing_day)

@@ -207,7 +207,11 @@ Rails.application.routes.draw do
   get '/search', to: 'queue#index'
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create, :update]
+  resources :tasks, only: [:index, :create, :update] do
+    member do
+      get :new_documents
+    end
+  end
 
   resources :distributions, only: [:new, :show]
 

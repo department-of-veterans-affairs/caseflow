@@ -272,19 +272,17 @@ class Veteran < ApplicationRecord
         %(create_by_file_number file_number:#{file_number} found:true accessible:#{veteran.accessible?})
       )
 
+      return veteran unless veteran.accessible?
+
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
-        v.update!(participant_id: v.ptcpnt_id)
-        # Check to see if veteran is accessible to make sure
-        # bgs_record is a hash and not :not_found
-        if v.accessible?
-          v.update!(
-            first_name: v.bgs_record[:first_name],
-            last_name: v.bgs_record[:last_name],
-            middle_name: v.bgs_record[:middle_name],
-            name_suffix: v.bgs_record[:name_suffix]
-          )
-        end
+        v.update!(
+          participant_id: v.ptcpnt_id,
+          first_name: v.bgs_record[:first_name],
+          last_name: v.bgs_record[:last_name],
+          middle_name: v.bgs_record[:middle_name],
+          name_suffix: v.bgs_record[:name_suffix]
+        )
       end
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
