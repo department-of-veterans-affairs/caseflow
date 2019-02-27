@@ -46,7 +46,11 @@ describe ScheduleHearingTask do
 
   context "#update_from_params" do
     context "AMA appeal" do
-      let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video]) }
+      let(:hearing_day) do
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               regional_office: "RO18")
+      end
       let(:schedule_hearing_task) { create(:schedule_hearing_task) }
       let(:update_params) do
         {
@@ -156,7 +160,7 @@ describe ScheduleHearingTask do
     end
   end
 
-  context ".legacy_tasks_for_ro" do
+  context ".tasks_for_ro" do
     let(:regional_office) { "RO17" }
     let(:number_of_cases) { 10 }
 
@@ -234,11 +238,7 @@ describe ScheduleHearingTask do
 
       before do
         AppealRepository.create_schedule_hearing_tasks.each do |appeal|
-          if appeal.hearing_request_type == :central_office
-            appeal.update(closest_regional_office: "C")
-          else
-            appeal.update(closest_regional_office: regional_office)
-          end
+          appeal.update(closest_regional_office: regional_office)
         end
       end
 
@@ -256,10 +256,6 @@ describe ScheduleHearingTask do
         expect(tasks.map { |task| task.appeal.vacols_id }).to match_array(video_cases.pluck(:bfkey))
       end
     end
-  end
-
-  context ".tasks_for_ro" do
-    let(:regional_office) { "RO17" }
 
     context "when there are AMA ScheduleHearingTasks" do
       let(:veteran_at_ro) { create(:veteran) }

@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
   include Errors
 
+  before_action :set_application, only: [:new_documents]
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
@@ -124,6 +125,15 @@ class TasksController < ApplicationController
         exclude_extra_fields: true
       ).as_json[:data]
     }
+  end
+
+  def new_documents
+    new_documents_for_user = NewDocumentsForUser.new(
+      appeal: task.appeal, user: current_user, query_vbms: false, date_to_compare_with: task.placed_on_hold_at
+    )
+    render json: { new_documents: new_documents_for_user.process! }
+  rescue StandardError => e
+    handle_non_critical_error("new_documents", e)
   end
 
   private
