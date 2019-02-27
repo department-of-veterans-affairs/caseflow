@@ -1,5 +1,5 @@
 class TeamManagementController < ApplicationController
-  before_action :deny_non_global_admins
+  before_action :deny_non_bva_admins
 
   def index
     respond_to do |format|
@@ -43,8 +43,8 @@ class TeamManagementController < ApplicationController
     render json: { org: serialize_org(org) }, status: :ok
   end
 
-  def deny_non_global_admins
-    redirect_to "/unauthorized" unless current_user&.global_admin?
+  def deny_non_bva_admins
+    redirect_to "/unauthorized" unless Bva.singleton.user_has_access?(current_user)
   end
 
   private

@@ -134,9 +134,11 @@ class ApplicationController < ApplicationBaseController
       { title: "Send Feedback", link: feedback_url, target: "_blank" }
     ]
 
-    urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
+    if current_user&.administered_teams&.any?
+      urls.concat(manage_teams_menu_items)
+    end
 
-    if current_user.global_admin?
+    if Bva.singleton.user_has_access?(current_user)
       urls.append(title: "Caseflow team management", link: url_for(controller: "/team_management", action: "index"))
     end
 

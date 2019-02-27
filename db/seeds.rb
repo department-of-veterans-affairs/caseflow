@@ -53,7 +53,7 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
-    create_global_admin
+    create_team_admin
     create_colocated_users
     create_vso_users_and_tasks
     create_org_queue_users
@@ -68,10 +68,10 @@ class SeedDB
     create_hearings_team
   end
 
-  def create_global_admin
+  def create_team_admin
     u = User.create(css_id: "GLOBAL_ADMIN", station_id: 101, full_name: "Global admin")
     Functions.grant!("System Admin", users: [u.css_id])
-    Functions.grant!("Global Admin", users: [u.css_id])
+    OrganizationsUser.add_user_to_organization(u, Bva.singleton)
   end
 
   def create_judge_teams
