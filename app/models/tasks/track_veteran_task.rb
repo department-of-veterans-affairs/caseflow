@@ -1,5 +1,8 @@
 ##
-# Task created when creating RootTasks for appeals represented by VSOs.
+# Task created for appellant representatives to track appeals that have been received by the Board.
+# Created either when:
+#   - a RootTask is created for an appeal represented by a VSO
+#   - the power of attorney changes on an appeal
 
 class TrackVeteranTask < GenericTask
   def available_actions(_user)
