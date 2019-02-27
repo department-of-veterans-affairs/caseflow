@@ -6,12 +6,28 @@ class TeamManagementController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         render json: {
-          judge_teams: JudgeTeam.all.map { |jt| serialize_org(jt) },
-          vsos: Vso.all.map { |vso| serialize_org(vso) },
-          other_orgs: Organization.all.reject { |o| o.is_a?(JudgeTeam) || o.is_a?(Vso) }.map { |o| serialize_org(o) }
+          judge_teams: JudgeTeam.all.order(:id).map { |jt| serialize_org(jt) },
+          vsos: Vso.all.order(:id).map { |vso| serialize_org(vso) },
+          other_orgs: Organization.all.order(:id).reject { |o| o.is_a?(JudgeTeam) || o.is_a?(Vso) }.map do |o|
+            serialize_org(o)
+          end
         }
       end
     end
+  end
+
+  def update
+    # TODO: Add validation here.
+    # TODO: Log every update request.
+    # TODO: Make sure url stays lower-case
+    org = Organization.find(params[:id])
+    org.update!(
+      name: update_params[:name],
+      participant_id: update_params[:participant_id],
+      url: update_params[:url]
+    )
+
+    render json: { org: serialize_org(org) }, status: :ok
   end
 
   def deny_non_global_admins
@@ -19,6 +35,10 @@ class TeamManagementController < ApplicationController
   end
 
   private
+
+  def update_params
+    params.require(:organization).permit(:name, :participant_id, :url)
+  end
 
   def serialize_org(org)
     {

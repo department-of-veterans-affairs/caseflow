@@ -204,7 +204,7 @@ Rails.application.routes.draw do
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
-  resources :team_management, only: [:index]
+  resources :team_management, only: [:index, :update]
 
   get '/search', to: 'queue#index'
 

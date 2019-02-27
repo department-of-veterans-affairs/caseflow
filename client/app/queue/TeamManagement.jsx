@@ -1,14 +1,14 @@
-import { css } from 'glamor';
-import React from 'react';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import ApiUtil from '../util/ApiUtil';
 import Alert from '../components/Alert';
+import ApiUtil from '../util/ApiUtil';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../components/Button';
-import SearchableDropdown from '../components/SearchableDropdown';
-import { LOGO_COLORS } from '../constants/AppConstants';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
-import TextField from '../components/TextField';
 import PropTypes from 'prop-types';
+import React from 'react';
+import SearchableDropdown from '../components/SearchableDropdown';
+import TextField from '../components/TextField';
+import { css } from 'glamor';
+import { LOGO_COLORS } from '../constants/AppConstants';
 
 export default class TeamManagement extends React.PureComponent {
   constructor(props) {
@@ -145,6 +145,32 @@ class OrgRow extends React.PureComponent {
   changeUrl = (value) => this.setState({ url: value });
   changeParticipantId = (value) => this.setState({ participant_id: value });
 
+  // TODO: Add feedback around whether this request was successful or not.
+  submitUpdate = () => {
+    const options = { 
+      data: {
+        organization: {
+          name: this.state.name,
+          url: this.state.url,
+          participant_id: this.state.participant_id
+        } 
+      }
+    };
+
+  return ApiUtil.patch(`/team_management/${this.props.id}`, options).
+      then((resp) => {
+        // TODO: Handle the success
+
+        // const response = JSON.parse(resp.text);/
+
+        // this.props.onReceiveAmaTasks(response.tasks.data);
+      }).
+      catch(() => {
+        // TODO: Handle the error.
+        // handle the error from the frontend
+      });
+  }
+
   render = () => {
     return <tr key={this.props.id}>
       <td {...skinnyCellStyling}>{ this.props.id }</td>
@@ -169,7 +195,10 @@ class OrgRow extends React.PureComponent {
         }
       </td>
       <td>
-        SUBMIT
+        <Button
+          name="Update"
+          classNames={['usa-button-secondary']}
+          onClick={this.submitUpdate} />
       </td>
     </tr>;
   }
