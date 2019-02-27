@@ -9,7 +9,35 @@ RSpec.feature "Task queue" do
         :ama_attorney_task,
         :on_hold,
         assigned_to: attorney_user,
-        placed_on_hold_at: 4.days.ago
+        placed_on_hold_at: 2.days.ago
+      )
+    end
+
+    let!(:attorney_task_new_docs) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        :on_hold,
+        assigned_to: attorney_user,
+        placed_on_hold_at: 4.days.ago,
+        appeal: attorney_task.appeal
+      )
+    end
+
+    let!(:colocated_task) do
+      FactoryBot.create(
+        :ama_colocated_task,
+        assigned_by: attorney_user,
+        assigned_at: 2.days.ago,
+        appeal: create(:appeal)
+      )
+    end
+
+    let!(:colocated_task_new_docs) do
+      FactoryBot.create(
+        :ama_colocated_task,
+        assigned_by: attorney_user,
+        assigned_at: 4.days.ago,
+        appeal: attorney_task.appeal
       )
     end
 
@@ -39,16 +67,28 @@ RSpec.feature "Task queue" do
     context "the on-hold task is attached to an appeal with documents" do
       let!(:documents) do
         ["NOD", "BVA Decision", "SSOC"].map do |t|
-          FactoryBot.build(:document, type: t, upload_date: 3.days.ago, file_number: paper_appeal.veteran_file_number)
+          FactoryBot.create(
+            :document,
+            type: t,
+            upload_date: 3.days.ago,
+            file_number: attorney_task.appeal.veteran_file_number
+          )
         end
       end
 
-      before do
-        allow_any_instance_of(NewDocumentsForUser).to receive(:process!) { documents }
+      let!(:more_documents) do
+        ["NOD", "BVA Decision", "SSOC"].map do |t|
+          FactoryBot.create(
+            :document,
+            type: t,
+            upload_date: 3.days.ago,
+            file_number: colocated_task.appeal.veteran_file_number
+          )
+        end
       end
 
       it "shows the correct number of tasks on hold" do
-        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4))
       end
 
       it "shows a new documents icon in the on hold tab" do
@@ -56,8 +96,9 @@ RSpec.feature "Task queue" do
       end
 
       it "shows a new documents icon next to the on hold task" do
-        page.find(:button, format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1)).click
-        expect(find("tbody td #NEW")).to have_content("NEW")
+        page.find(:button, format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4)).click
+        expect(first("tbody td #NEW")).to have_content("NEW")
+        expect(find_all("tbody td #NEW").length).to eq(2)
       end
     end
 
