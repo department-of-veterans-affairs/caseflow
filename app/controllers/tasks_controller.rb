@@ -135,7 +135,7 @@ class TasksController < ApplicationController
       appeal: task.appeal,
       user: current_user,
       query_vbms: false,
-      date_to_compare_with: task.placed_on_hold_at || task.assigned_at || Time.zone.at(0)
+      date_to_compare_with: task.placed_on_hold_at || task.assigned_at
     )
     render json: { new_documents: new_documents_for_user.process! }
   rescue StandardError => e
