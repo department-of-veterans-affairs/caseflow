@@ -1,6 +1,5 @@
 import querystring from 'querystring';
 import * as Constants from './actionTypes';
-import _ from 'lodash';
 import { update } from '../../util/ReducerUtil';
 
 const updateLastReadDoc = (state, docId) => update(state, {
@@ -76,14 +75,6 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.CLEAR_CATEGORY_FILTER:
-    return update(state, {
-      docFilterCriteria: {
-        category: {
-          $set: {}
-        }
-      }
-    });
 
   case Constants.SET_CATEGORY_FILTER:
     return update(state, {
@@ -95,22 +86,6 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.TOGGLE_FILTER_DROPDOWN:
-    return (() => {
-      const originalValue = _.get(state, [
-        'pdfList', 'dropdowns', action.payload.filterName
-      ], false);
-
-      return update(state, {
-        pdfList: {
-          dropdowns: {
-            [action.payload.filterName]: {
-              $set: !originalValue
-            }
-          }
-        }
-      });
-    })();
 
     // Tag Filters
   case Constants.SET_TAG_FILTER:
@@ -123,14 +98,7 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case Constants.CLEAR_TAG_FILTER:
-    return update(state, {
-      docFilterCriteria: {
-        tag: {
-          $set: {}
-        }
-      }
-    });
+
     // Scrolling
   case Constants.SET_DOC_LIST_SCROLL_POSITION:
     return update(state, {
@@ -161,20 +129,6 @@ const documentListReducer = (state = initialState, action = {}) => {
         searchQuery: {
           $set: ''
         }
-      }
-    });
-  case Constants.CLEAR_ALL_FILTERS:
-    return update(state, {
-      docFilterCriteria: {
-        category: {
-          $set: {}
-        },
-        tag: {
-          $set: {}
-        }
-      },
-      viewingDocumentsOrComments: {
-        $set: Constants.DOCUMENTS_OR_COMMENTS_ENUM.DOCUMENTS
       }
     });
   case Constants.RECEIVE_MANIFESTS:

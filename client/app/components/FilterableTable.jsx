@@ -249,7 +249,7 @@ export default class FilterableTable extends React.PureComponent {
 
     // Some components need access to the `filteredByList`
     // If so, pass this info back up to the parent component
-    this.props.onFilterChange && this.props.onFilterChange(newList);
+    this.props.onFilterChange(newList);
   };
 
   filterTableData = (data: Array<Object>) => {
@@ -322,7 +322,8 @@ export default class FilterableTable extends React.PureComponent {
     let rowObjects = this.sortRowObjects();
 
     // 2. Filter data
-    rowObjects = this.filterTableData(rowObjects);
+    rowObjects = this.props.disableInternalDataFiltering ? rowObjects :
+      this.filterTableData(rowObjects);
     const totalCases = rowObjects.length;
 
     let paginatedData = rowObjects;

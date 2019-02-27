@@ -10,26 +10,25 @@ import { formatDateStr } from '../util/DateUtil';
 import Comment from './Comment';
 import DocumentCategoryIcons from './DocumentCategoryIcons';
 import TagTableColumn from './TagTableColumn';
-// import FilterableDropdown from '../components/FilterableDropdown';
 import FilterableTable from '../components/FilterableTable';
 import Button from '../components/Button';
 import CommentIndicator from './CommentIndicator';
 import { bindActionCreators } from 'redux';
 import Highlight from '../components/Highlight';
-import { setDocListScrollPosition, changeSortState,
-  clearTagFilters, clearCategoryFilters,
-  setTagFilter, setCategoryFilter,
-  // toggleDropdownFilterVisibility
+import {
+  setDocListScrollPosition,
+  changeSortState,
+  setTagFilter,
+  setCategoryFilter
 } from '../reader/DocumentList/DocumentListActions';
 import { getAnnotationsPerDocument } from './selectors';
 import {
-  SortArrowUp, SortArrowDown, DoubleArrow } from '../components/RenderFunctions';
-// import DocCategoryPicker from './DocCategoryPicker';
-// import DocTagPicker from './DocTagPicker';
-// import FilterIcon from '../components/FilterIcon';
+  SortArrowUp,
+  SortArrowDown,
+  DoubleArrow
+} from '../components/RenderFunctions';
 import LastReadIndicator from './LastReadIndicator';
 import DocTypeColumn from './DocTypeColumn';
-// import { getUpdatedFilteredResults } from './searchFilters';
 
 const NUMBER_OF_COLUMNS = 6;
 
@@ -89,16 +88,13 @@ class DocumentsTable extends React.Component {
 
   getTbodyRef = (elem) => this.tbodyElem = elem
   getLastReadIndicatorRef = (elem) => this.lastReadIndicatorElem = elem
-  // getCategoryFilterIconRef = (categoryFilterIcon) => this.categoryFilterIcon = categoryFilterIcon
-  // getTagFilterIconRef = (tagFilterIcon) => this.tagFilterIcon = tagFilterIcon
-  // toggleCategoryDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('category')
-  // toggleTagDropdownFilterVisiblity = () => this.props.toggleDropdownFilterVisibility('tag')
-
   getKeyForRow = (index, { isComment, id }) => {
     return isComment ? `${id}-comment` : id;
   }
 
-  getCustomFilterOptions = (filterNames) => {
+  getCustomCategoryFilterOptions = () => {
+    const activeFilters = this.props.docFilterCriteria.category;
+
     return _(Constants.documentCategories).
       toPairs().
       // eslint-disable-next-line no-unused-vars
@@ -110,23 +106,51 @@ class DocumentsTable extends React.Component {
             {category.svg}
             <span {...categoryNameStyling}>{category.humanName}</span>
           </div>,
-          checked: false
+          checked: activeFilters[categoryName] ? activeFilters[categoryName] : false
         };
       }).
       value();
+  }
+
+  getCustomTagFilterOptions = () => {
+    const rowObjects = getRowObjects(
+      this.props.documents,
+      this.props.annotationsPerDocument
+    );
+    const activeFilters = this.props.docFilterCriteria.tag;
+    let tagFilters = [];
+    let uniqueOptions = [];
+
+    // Generate the unique possible tags in the data
+    rowObjects.forEach((row) => {
+      row.tags.forEach((tag) => {
+        tagFilters.push(tag.text);
+      });
+    });
+    tagFilters = _.uniq(tagFilters);
+
+    // Create filter option for each tag
+    uniqueOptions = tagFilters.map((filter) => {
+      return {
+        value: filter,
+        displayText: _.capitalize(filter),
+        checked: !!activeFilters[filter]
+      };
+    });
+
+    uniqueOptions.push({
+      value: 'null',
+      displayText: '<<blank>>',
+      checked: !!activeFilters['null']
+    });
+
+    return uniqueOptions;
   }
 
   // eslint-disable-next-line max-statements
   getDocumentColumns = (row) => {
     const sortArrowIcon = this.props.docFilterCriteria.sort.sortAscending ? <SortArrowUp /> : <SortArrowDown />;
     const notSortedIcon = <DoubleArrow />;
-
-    const anyFiltersSet = (filterType) => (
-      Boolean(_.some(this.props.docFilterCriteria[filterType]))
-    );
-
-    const anyCategoryFiltersAreSet = anyFiltersSet('category');
-    const anyTagFiltersAreSet = anyFiltersSet('tag');
 
     // We have blank headers for the comment indicator and label indicator columns.
     // We use onMouseUp instead of onClick for filename event handler since OnMouseUp
@@ -158,12 +182,6 @@ class DocumentsTable extends React.Component {
       }];
     }
 
-    // const isCategoryDropdownFilterOpen =
-    //   _.get(this.props.pdfList, ['dropdowns', 'category']);
-
-    // const isTagDropdownFilterOpen =
-    //   _.get(this.props.pdfList, ['dropdowns', 'tag']);
-
     return [
       {
         cellClass: 'last-read-column',
@@ -179,30 +197,7 @@ class DocumentsTable extends React.Component {
         ),
         columnName: 'category',
         label: 'Filter by category',
-        customFilterOptions: this.getCustomFilterOptions(Constants.documentCategories),
-        // header: <div
-        //   id="categories-header">
-        //   Categories <FilterIcon
-        //     label="Filter by category"
-        //     idPrefix="category"
-        //     getRef={this.getCategoryFilterIconRef}
-        //     selected={isCategoryDropdownFilterOpen || anyCategoryFiltersAreSet}
-        //     handleActivate={this.toggleCategoryDropdownFilterVisiblity} />
-
-        //   {isCategoryDropdownFilterOpen &&
-        //     <DropdownFilter
-        //       clearFilters={this.props.clearCategoryFilters}
-        //       name="category"
-        //       isClearEnabled={anyCategoryFiltersAreSet}
-        //       handleClose={this.toggleCategoryDropdownFilterVisiblity}
-        //       addClearFiltersRow>
-        //       <DocCategoryPicker
-        //         categoryToggleStates={this.props.docFilterCriteria.category}
-        //         handleCategoryToggle={this.props.setCategoryFilter} />
-        //     </DropdownFilter>
-        //   }
-
-        // </div>,
+        customFilterOptions: this.getCustomCategoryFilterOptions(),
         valueFunction: (doc) => <DocumentCategoryIcons doc={doc} />
       },
       {
@@ -241,30 +236,7 @@ class DocumentsTable extends React.Component {
         ),
         columnName: 'tags',
         label: 'Filter by issue tags',
-
-        // header: <div id="tags-header"
-        //   className="document-list-header-issue-tags">
-        //   Issue Tags <FilterIcon
-        //     label="Filter by tag"
-        //     idPrefix="tag"
-        //     getRef={this.getTagFilterIconRef}
-        //     selected={isTagDropdownFilterOpen || anyTagFiltersAreSet}
-        //     handleActivate={this.toggleTagDropdownFilterVisiblity}
-        //   />
-        //   {isTagDropdownFilterOpen &&
-        //     <DropdownFilter
-        //       clearFilters={this.props.clearTagFilters}
-        //       name="tag"
-        //       isClearEnabled={anyTagFiltersAreSet}
-        //       handleClose={this.toggleTagDropdownFilterVisiblity}
-        //       addClearFiltersRow>
-        //       <DocTagPicker
-        //         tags={this.props.tagOptions}
-        //         tagToggleStates={this.props.docFilterCriteria.tag}
-        //         handleTagToggle={this.props.setTagFilter} />
-        //     </DropdownFilter>
-        //   }
-        // </div>,
+        customFilterOptions: this.getCustomTagFilterOptions(),
         valueFunction: (doc) => {
           return <TagTableColumn tags={doc.tags} />;
         }
@@ -282,21 +254,26 @@ class DocumentsTable extends React.Component {
   }
 
   updateFilters = (filteredByList) => {
-    if (filteredByList['category']) {
-      filteredByList['category'].map((filter) => {
-        this.props.setCategoryFilter(filter, true);
-      });
-    } else {
-      this.props.clearCategoryFilters();
-    }
+    const categoryFilters = _.keys(Constants.documentCategories);
+    const tagFilters = this.getCustomTagFilterOptions().map((filterOption) => {
+      return filterOption.value;
+    });
 
-    if (filteredByList['tag']) {
-      filteredByList['tag'].map((filter) => {
+    categoryFilters.forEach((filter) => {
+      if (filteredByList.category && filteredByList.category.includes(filter)) {
+        this.props.setCategoryFilter(filter, true);
+      } else {
+        this.props.setCategoryFilter(filter, false);
+      }
+    });
+
+    tagFilters.forEach((filter) => {
+      if (filteredByList.tags && filteredByList.tags.includes(filter)) {
         this.props.setTagFilter(filter, true);
-      });
-    } else {
-      this.props.clearTagFilters();
-    }
+      } else {
+        this.props.setTagFilter(filter, false);
+      }
+    });
   }
 
   render() {
@@ -318,6 +295,7 @@ class DocumentsTable extends React.Component {
         tbodyRef={this.getTbodyRef}
         getKeyForRow={this.getKeyForRow}
         onFilterChange={this.updateFilters}
+        disableInternalDataFiltering
       />
     </div>;
   }
@@ -334,11 +312,8 @@ DocumentsTable.propTypes = {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDocListScrollPosition,
-  clearTagFilters,
-  clearCategoryFilters,
   setTagFilter,
   changeSortState,
-  // toggleDropdownFilterVisibility,
   setCategoryFilter
 }, dispatch);
 

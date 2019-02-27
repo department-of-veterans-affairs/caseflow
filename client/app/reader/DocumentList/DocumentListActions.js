@@ -37,19 +37,6 @@ export const changeSortState = (sortBy) => (dispatch) => {
 
 // Category filters
 
-export const clearCategoryFilters = () => (dispatch) => {
-  dispatch({
-    type: Constants.CLEAR_CATEGORY_FILTER,
-    meta: {
-      analytics: {
-        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-        action: 'clear-category-filters'
-      }
-    }
-  });
-  dispatch(updateFilteredIdsAndDocs());
-};
-
 export const setCategoryFilter = (categoryName, checked) => (dispatch) => {
   dispatch({
     type: Constants.SET_CATEGORY_FILTER,
@@ -68,20 +55,6 @@ export const setCategoryFilter = (categoryName, checked) => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
-export const toggleDropdownFilterVisibility = (filterName) => ({
-  type: Constants.TOGGLE_FILTER_DROPDOWN,
-  payload: {
-    filterName
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-      action: 'toggle-dropdown-filter',
-      label: filterName
-    }
-  }
-});
-
 // Tag filters
 
 export const setTagFilter = (text, checked, tagId) => (dispatch) => {
@@ -96,19 +69,6 @@ export const setTagFilter = (text, checked, tagId) => (dispatch) => {
         category: CATEGORIES.CLAIMS_FOLDER_PAGE,
         action: `${checked ? 'set' : 'unset'}-tag-filter`,
         label: tagId
-      }
-    }
-  });
-  dispatch(updateFilteredIdsAndDocs());
-};
-
-export const clearTagFilters = () => (dispatch) => {
-  dispatch({
-    type: Constants.CLEAR_TAG_FILTER,
-    meta: {
-      analytics: {
-        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-        action: 'clear-tag-filters'
       }
     }
   });
@@ -156,18 +116,6 @@ export const clearSearch = () => (dispatch) => {
   dispatch(updateFilteredIdsAndDocs());
 };
 
-export const clearAllFilters = () => (dispatch) => {
-  dispatch({
-    type: Constants.CLEAR_ALL_FILTERS,
-    meta: {
-      analytics: {
-        category: CATEGORIES.CLAIMS_FOLDER_PAGE,
-        action: 'clear-all-filters'
-      }
-    }
-  });
-  dispatch(updateFilteredIdsAndDocs());
-};
 export const setViewingDocumentsOrComments = (documentsOrComments) => ({
   type: Constants.SET_VIEWING_DOCUMENTS_OR_COMMENTS,
   payload: {
