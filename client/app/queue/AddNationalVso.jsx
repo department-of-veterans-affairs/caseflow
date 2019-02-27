@@ -1,6 +1,12 @@
 import * as React from 'react';
-import ApiUtil from '../util/ApiUtil';
 import editModalBase from './components/EditModalBase';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { onReceiveNewVso } from './teamManagement/actions';
+import {
+  requestSave,
+  showErrorMessage
+} from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import { withRouter } from 'react-router-dom';
 
@@ -26,9 +32,10 @@ class AddNationalVso extends React.Component {
       }
     };
 
-    return ApiUtil.post('/team_management/national_vso', options).then(() => {
-      // TODO: Do something with this response.
-    });
+    return this.props.requestSave('/team_management/national_vso', options).
+      then((resp) => this.props.onReceiveNewVso(resp.body)).
+      catch((err) => this.props.showErrorMessage({ title: 'Error',
+        detail: err }));
   }
 
   changeName = (value) => this.setState({ name: value });
@@ -56,5 +63,15 @@ class AddNationalVso extends React.Component {
   };
 }
 
-export default withRouter(editModalBase(AddNationalVso, { title: 'Create IHP-writing VSO',
-  pathAfterSubmit: '/team_management' }));
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  onReceiveNewVso,
+  requestSave,
+  showErrorMessage
+}, dispatch);
+
+const modalOptions = { title: 'Create IHP-writing VSO',
+  pathAfterSubmit: '/team_management' };
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(editModalBase(AddNationalVso, modalOptions)));
