@@ -424,10 +424,6 @@ class Task < ApplicationRecord
     end
   end
 
-  def task_just_cancelled?
-    saved_change_to_attribute?("status") && status == Constants.TASK_STATUSES.cancelled
-  end
-
   def update_status_if_children_tasks_are_complete
     if children.any? && children.select(&:active?).empty?
       return update!(status: Constants.TASK_STATUSES.completed) if assigned_to.is_a?(Organization)
