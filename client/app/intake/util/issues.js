@@ -324,7 +324,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         referenceId: issue.id,
         text: issue.description,
         // formatDatStr without converting to Date time
-        date: formatDateStr(decisionDate),
+        date: formatDateStr(issue.decisionDate || issue.approxDecisionDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,
         sourceReviewType: issue.sourceReviewType,
