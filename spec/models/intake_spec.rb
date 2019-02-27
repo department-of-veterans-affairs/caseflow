@@ -446,6 +446,18 @@ describe Intake do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("veteran_not_accessible")
       end
+
+      context "Veteran has multiple phone numbers" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+            .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+        end
+
+        it "adds veteran_has_multiple_phone_numbers and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_has_multiple_phone_numbers")
+        end
+      end
     end
 
     context "veteran address is too long" do
