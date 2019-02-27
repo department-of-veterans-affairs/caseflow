@@ -13,6 +13,14 @@ class HoldHearingTask < GenericTask
     end
   end
 
+  def available_actions(user)
+    if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
+      return [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+    end
+
+    []
+  end
+
   def hearing_task
     parent
   end
