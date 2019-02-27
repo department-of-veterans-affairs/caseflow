@@ -3,8 +3,6 @@ import ApiUtil from '../util/ApiUtil';
 import editModalBase from './components/EditModalBase';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SearchableDropdown from '../components/SearchableDropdown';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { withRouter } from 'react-router-dom';
 
@@ -20,7 +18,7 @@ class AddJudgeTaskModal extends React.Component {
 
   loadingPromise = () => {
     return ApiUtil.get('/users?role=non_judges').then((resp) => {
-      return this.setState({ nonJudges: resp.body.non_judges.data })
+      return this.setState({ nonJudges: resp.body.non_judges.data });
     });
   }
 
@@ -29,13 +27,16 @@ class AddJudgeTaskModal extends React.Component {
   formatName = (user) => `${user.attributes.full_name} (${user.attributes.css_id})`;
 
   dropdownOptions = () => {
-    return this.state.nonJudges.map((user) => { return { label: this.formatName(user), value: user } });
+    return this.state.nonJudges.map((user) => {
+      return { label: this.formatName(user),
+        value: user };
+    });
   }
 
   submit = () => {
-    return ApiUtil.post(`/team_management/judge_team/${this.state.selectedJudge.value.id}`).then((resp) => {
+    return ApiUtil.post(`/team_management/judge_team/${this.state.selectedJudge.value.id}`).then(() => {
       // TODO: Do something with this response.
-      });
+    });
   }
 
   render = () => {
@@ -58,4 +59,5 @@ class AddJudgeTaskModal extends React.Component {
   };
 }
 
-export default withRouter(editModalBase(AddJudgeTaskModal, { title: "Create JudgeTeam", pathAfterSubmit: '/team_management' }));
+export default withRouter(editModalBase(AddJudgeTaskModal, { title: 'Create JudgeTeam',
+  pathAfterSubmit: '/team_management' }));

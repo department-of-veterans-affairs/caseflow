@@ -1,4 +1,3 @@
-import Alert from '../components/Alert';
 import ApiUtil from '../util/ApiUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../components/Button';
@@ -6,11 +5,16 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
 import React from 'react';
-import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import { css } from 'glamor';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { withRouter } from 'react-router-dom';
+
+const tableStyling = css({
+  width: '100%',
+  '& td': { border: 'none' },
+  '& input': { margin: 0 }
+});
 
 class TeamManagement extends React.PureComponent {
   constructor(props) {
@@ -21,7 +25,7 @@ class TeamManagement extends React.PureComponent {
       vsos: [],
       otherOrgs: [],
       loading: true,
-      error: null,
+      error: null
     };
   }
 
@@ -83,7 +87,6 @@ class TeamManagement extends React.PureComponent {
               <OrgList orgs={this.state.otherOrgs} />
             </tbody>
           </table>
-          
 
         </div>
       </AppSegment>
@@ -93,16 +96,6 @@ class TeamManagement extends React.PureComponent {
 
 export default withRouter(TeamManagement);
 
-const tableStyling = css({
-  width: '100%',
-  '& td': { border: 'none' },
-  '& input': { margin: 0 }
-});
-
-const labelRowStyling = css({
-  '& td': { fontWeight: 'bold' }
-});
-
 const sectionHeadingStyling = css({
   fontSize: '3rem',
   fontWeight: 'bold'
@@ -110,9 +103,13 @@ const sectionHeadingStyling = css({
 
 class OrgHeader extends React.PureComponent {
   render = () => {
-    return <tr><td {...sectionHeadingStyling} colSpan='7'>{this.props.children}</td></tr>;
+    return <tr><td {...sectionHeadingStyling} colSpan="7">{this.props.children}</td></tr>;
   }
 }
+
+const labelRowStyling = css({
+  '& td': { fontWeight: 'bold' }
+});
 
 class OrgList extends React.PureComponent {
   render = () => {
@@ -121,11 +118,11 @@ class OrgList extends React.PureComponent {
         <td>ID</td>
         <td>Name</td>
         <td>URL</td>
-        <td>{ this.props.showBgsParticipantId && `BGS Participant ID`}</td>
+        <td>{ this.props.showBgsParticipantId && 'BGS Participant ID'}</td>
         <td></td>
         <td></td>
       </tr>
-      { this.props.orgs.map( (org) => 
+      { this.props.orgs.map((org) =>
         <OrgRow {...org} key={org.id} showBgsParticipantId={this.props.showBgsParticipantId} />
       ) }
     </React.Fragment>;
@@ -138,7 +135,7 @@ OrgList.defaultProps = {
 
 OrgList.propTypes = {
   showBgsParticipantId: PropTypes.bool
-}
+};
 
 class OrgRow extends React.PureComponent {
   constructor(props) {
@@ -159,18 +156,18 @@ class OrgRow extends React.PureComponent {
 
   // TODO: Add feedback around whether this request was successful or not.
   submitUpdate = () => {
-    const options = { 
+    const options = {
       data: {
         organization: {
           name: this.state.name,
           url: this.state.url,
           participant_id: this.state.participant_id
-        } 
+        }
       }
     };
 
-  return ApiUtil.patch(`/team_management/${this.props.id}`, options).
-      then((resp) => {
+    return ApiUtil.patch(`/team_management/${this.props.id}`, options).
+      then(() => {
         // TODO: Handle the success
 
         // const response = JSON.parse(resp.text);/
@@ -194,7 +191,7 @@ class OrgRow extends React.PureComponent {
           label={false}
           value={this.state.name}
           onChange={this.changeName}
-          />
+        />
       </td>
       <td>
         <TextField
@@ -202,7 +199,7 @@ class OrgRow extends React.PureComponent {
           label={false}
           value={this.state.url}
           onChange={this.changeUrl}
-          />
+        />
       </td>
       <td>
         { this.props.showBgsParticipantId &&
@@ -211,7 +208,7 @@ class OrgRow extends React.PureComponent {
             label={false}
             value={this.state.participant_id}
             onChange={this.changeParticipantId}
-            />
+          />
         }
       </td>
       <td>
@@ -219,7 +216,7 @@ class OrgRow extends React.PureComponent {
           name="Update"
           classNames={['usa-button-secondary']}
           onClick={this.submitUpdate}
-          />
+        />
       </td>
       <td>
         { this.state.url && <Link to={this.state.user_admin_path}>Org admin page</Link> }
@@ -234,4 +231,4 @@ OrgRow.defaultProps = {
 
 OrgRow.propTypes = {
   showBgsParticipantId: PropTypes.bool
-}
+};

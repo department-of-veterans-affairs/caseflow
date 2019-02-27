@@ -198,7 +198,7 @@ class QueueApp extends React.PureComponent {
 
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
-  routedTeamManagement =  (props) => <TeamManagement {...props.match.params} />;
+  routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
 
   routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
 
