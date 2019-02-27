@@ -142,7 +142,7 @@ class SeedDB
   end
 
   def create_org_queue_users
-    nca = BusinessLine.create!(name: "National Cemetery Association", url: "nca")
+    nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{n}", full_name: "NCA team member #{n}")
       OrganizationsUser.add_user_to_organization(u, nca)
@@ -475,7 +475,7 @@ class SeedDB
                           decision_review: higher_level_review)
       end
       FactoryBot.create(:higher_level_review_task,
-                        assigned_to: Organization.find_by(name: "National Cemetery Association"),
+                        assigned_to: Organization.find_by(name: "National Cemetery Administration"),
                         appeal: higher_level_review)
     end
   end
@@ -814,7 +814,7 @@ class SeedDB
   end
 
   def create_board_grant_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
     description = "Service connection for pain disorder is granted with an evaluation of 50\% effective May 1 2011"
     notes = "Pain disorder with 80\% evaluation per examination"
 
@@ -846,7 +846,7 @@ class SeedDB
   end
 
   def create_veteran_record_request_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
 
     3.times do |_index|
       FactoryBot.create(:veteran_record_request_task,
