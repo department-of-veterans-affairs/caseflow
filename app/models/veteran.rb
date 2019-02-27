@@ -136,7 +136,7 @@ class Veteran < ApplicationRecord
   # When two Veteran records get merged for data clean up, it can lead to multiple active phone numbers
   # This causes an error fetching the BGS record and needs to be fixed in SHARE
   def multiple_phone_numbers?
-    access_error&.include?("NonUniqueResultException")
+    !!access_error&.include?("NonUniqueResultException")
   end
 
   def relationships

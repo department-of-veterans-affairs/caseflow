@@ -184,8 +184,6 @@ class Intake < ApplicationRecord
     )
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def validate_start
     if !file_number_valid?
       self.error_code = :invalid_file_number
@@ -194,7 +192,7 @@ class Intake < ApplicationRecord
       self.error_code = :veteran_not_found
 
     elsif !veteran.accessible?
-      self.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+      veteran_accessible_error
 
     elsif !veteran.valid?(:bgs)
       self.error_code = :veteran_not_valid
@@ -211,8 +209,6 @@ class Intake < ApplicationRecord
 
     !error_code
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def duplicate_intake_in_progress
     @duplicate_intake_in_progress ||=
@@ -248,6 +244,12 @@ class Intake < ApplicationRecord
   end
 
   private
+
+  def veteran_accessible_error
+    return unless !veteran.accessible?
+
+    self.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+  end
 
   # Optional step called after the intake is validated and not-yet-marked as started
   def after_validated_pre_start!
