@@ -1,5 +1,5 @@
 ##
-# A task created when the Quality Review team returns a task to the assigning judge.
+# Task for to complete a case or assign it to an attorney after it's returned to the judge by the quality review team.
 
 class JudgeQualityReviewTask < JudgeTask
   def additional_available_actions(_user)

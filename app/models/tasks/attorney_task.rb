@@ -1,7 +1,7 @@
 ##
 # Task tracking work done by attorneys at BVA. Attorneys are assigned tasks by judges.
 # Attorney tasks include:
-#   - reviewing judge decisions
+#   - writing draft decisions for judges
 #   - adding admin actions (like translating documents)
 
 class AttorneyTask < Task

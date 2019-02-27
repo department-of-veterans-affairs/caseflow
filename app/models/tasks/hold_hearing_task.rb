@@ -1,7 +1,8 @@
 ##
-# Task assigned to the BvaOrganization after a hearing is scheduled.
-# Created after the ScheduleHearingTask is completed and the hearing is scheduled.
-# Marked complete when the hearing is held.
+# Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask is completed.
+# When the associated hearing's disposition is set, the appropriate tasks are set as children
+#   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
+# The task is marked complete when these children tasks are completed.
 
 class HoldHearingTask < GenericTask
   class << self

@@ -1,5 +1,7 @@
 ##
-# Task to track when a hearing should be scheduled for a veteran making a claim.
+# Task to schedule a hearing for a veteran making a claim.
+# Created by the intake process for any appeal electing to have a hearing.
+# Once completed, a HoldHearingTask is created.
 
 class ScheduleHearingTask < GenericTask
   after_update :update_location_in_vacols

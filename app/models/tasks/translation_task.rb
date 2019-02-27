@@ -1,5 +1,6 @@
 ##
-# Task to track when documents are submitted that need to be translated.
+# Task automatically assigned after intake to the Translation organization when a case originates
+# from an RO in Puerto Rico or the Phillipines.
 
 class TranslationTask < GenericTask
   def self.create_from_root_task(root_task)
