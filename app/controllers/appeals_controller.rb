@@ -37,6 +37,8 @@ class AppealsController < ApplicationController
   end
 
   def document_count
+    # Boolean params come in as present/not present (the former with a value of nil) rather than true or false,
+    # so we only need to check if the cached param exists
     if params.key?(:cached)
       render json: { document_count: appeal.number_of_documents_from_caseflow }
       return
@@ -47,9 +49,8 @@ class AppealsController < ApplicationController
   end
 
   def new_documents
-    alt_date = params[:placed_on_hold_date] ? DateTime.strptime(params[:placed_on_hold_date], "%s") : Time.zone.at(0)
     new_documents_for_user = NewDocumentsForUser.new(
-      appeal: appeal, user: current_user, query_vbms: !params.key?(:cached), date_to_compare_with: alt_date
+      appeal: appeal, user: current_user, query_vbms: true, date_to_compare_with: Time.zone.at(0)
     )
     render json: { new_documents: new_documents_for_user.process! }
   rescue StandardError => e

@@ -519,17 +519,34 @@ describe Veteran do
   describe ".find_or_create_by_file_number_or_ssn" do
     let(:file_number) { "123456789" }
     let(:ssn) { file_number.to_s.reverse } # our fakes do this
-    let!(:veteran) { create(:veteran, file_number: file_number) }
 
-    it "fetches based on file_number" do
-      expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
+    context "veteran exists in Caseflow" do
+      let!(:veteran) { create(:veteran, file_number: file_number) }
+
+      it "fetches based on file_number" do
+        expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
+      end
+
+      it "fetches based on SSN" do
+        expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
+      end
     end
 
-    it "fetches based on SSN" do
-      expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
+    context "does not exist in BGS" do
+      let(:file_number) { "999990000" }
+
+      subject { described_class.find_or_create_by_file_number_or_ssn(file_number) }
+
+      it "returns nil" do
+        subject
+        expect(described_class.find_by(file_number: file_number)).to be_nil
+        expect(subject).to be_nil
+      end
     end
 
     context "does not exist in Caseflow" do
+      let!(:veteran) { create(:veteran, file_number: file_number) }
+
       before do
         veteran.destroy! # leaves it in BGS
       end
@@ -550,6 +567,8 @@ describe Veteran do
     end
 
     context "exists in BGS with different name than in Caseflow" do
+      let!(:veteran) { create(:veteran, file_number: file_number) }
+
       before do
         Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
       end
