@@ -326,8 +326,8 @@ export default class AssignHearingsTabs extends React.Component {
       getFilterValues: locationFilterValues,
       isDropdownFilterOpen: state.dropdownIsOpen,
       label: 'Filter by location',
-      anyFiltersAreSet: true,
-      toggleDropdownFilterVisiblity: () => this.setState({
+      anyFiltersAreSet: false,
+      toggleDropdownFilterVisibility: () => this.setState({
         [tab]: {
           ...state,
           dropdownIsOpen: !state.dropdownIsOpen

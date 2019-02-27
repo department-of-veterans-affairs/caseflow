@@ -48,7 +48,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     bva_poc: :vdbvapoc
   }.freeze
 
-  after_update :update_hearing_action, if: :hearing_disp_changed?
+  after_update :update_hearing_action, if: :saved_change_to_hearing_disp?
   after_update :create_or_update_diaries
 
   # :nocov:
@@ -193,8 +193,8 @@ class VACOLS::CaseHearing < VACOLS::Record
   end
 
   def create_or_update_diaries
-    create_or_update_extension_diary if holddays_changed?
-    create_or_update_aod_diary if aod_changed?
+    create_or_update_extension_diary if saved_change_to_holddays?
+    create_or_update_aod_diary if saved_change_to_aod?
   end
 
   def case_id
