@@ -1,6 +1,6 @@
 ##
-# A task assigned to VSOs representing Veterans who have elected not to have a hearing.
-# VSOs will submit an IHP on behalf of a veteran and is a chance for final arguments before a case is sent to the Board.
+# Task assigned to VSOs to submit an Informal Hearing Presentation for Veterans who have elected not to have a hearing.
+# IHPs are a chance for VSOs to make final arguments before a case is sent to the Board.
 # BVA typically (but not always) waits for an IHP to be submitted before making a decision.
 
 class InformalHearingPresentationTask < GenericTask
