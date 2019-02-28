@@ -48,7 +48,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     bva_poc: :vdbvapoc
   }.freeze
 
-  after_update :update_hearing_action, if: :hearing_disp_changed?
+  after_update :update_hearing_action, if: :saved_change_to_hearing_disp?
   after_update :create_or_update_diaries
 
   # :nocov:
@@ -65,7 +65,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def hearings_for_hearing_days(hearing_day_ids)
-      select_hearings.where(vdkey: hearing_day_ids)
+      select_hearings.where(vdkey: hearing_day_ids).where("hearing_date > ?", Date.new(2019, 1, 1))
     end
 
     def for_appeal(appeal_vacols_id)
@@ -95,23 +95,6 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
                                  "VIDEO #{regional_office}", VacolsHelper.day_only_str(start_date),
                                  VacolsHelper.day_only_str(end_date)).order(:hearing_date)
-    end
-
-    def create_hearing!(hearing_info)
-      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
-      attrs.except!(nil)
-      # Store time value in UTC to VACOLS
-      hear_date = attrs[:hearing_date]
-      converted_date = hear_date.is_a?(Date) ? hear_date : Time.zone.parse(hear_date).to_datetime
-      attrs[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(converted_date)
-      MetricsService.record("VACOLS: create_hearing!",
-                            service: :vacols,
-                            name: "create_hearing") do
-        create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
-                           adduser: current_user_slogid,
-                           folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil,
-                           hearing_type: HearingDay::REQUEST_TYPES[:central]))
-      end
     end
 
     def create_child_hearing!(hearing_info)
@@ -210,8 +193,8 @@ class VACOLS::CaseHearing < VACOLS::Record
   end
 
   def create_or_update_diaries
-    create_or_update_extension_diary if holddays_changed?
-    create_or_update_aod_diary if aod_changed?
+    create_or_update_extension_diary if saved_change_to_holddays?
+    create_or_update_aod_diary if saved_change_to_aod?
   end
 
   def case_id

@@ -1,3 +1,8 @@
+##
+# Task to schedule a hearing for a veteran making a claim.
+# Created by the intake process for any appeal electing to have a hearing.
+# Once completed, a DispositionTask is created.
+
 class ScheduleHearingTask < GenericTask
   after_update :update_location_in_vacols
 
@@ -31,8 +36,9 @@ class ScheduleHearingTask < GenericTask
         Constants.TASK_STATUSES.in_progress.to_sym
       ).includes(:assigned_to, :assigned_by, :appeal, attorney_case_reviews: [:attorney])
 
-      appeal_tasks = incomplete_tasks.joins("INNER JOIN appeals ON appeals.id = appeal_id")
-        .where("appeals.closest_regional_office = ?", regional_office)
+      appeal_tasks = incomplete_tasks.joins(
+        "INNER JOIN appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
+      ).where("appeals.closest_regional_office = ?", regional_office)
 
       appeal_tasks + legacy_appeal_tasks(regional_office, incomplete_tasks)
     end
@@ -40,7 +46,9 @@ class ScheduleHearingTask < GenericTask
     private
 
     def legacy_appeal_tasks(regional_office, incomplete_tasks)
-      joined_incomplete_tasks = incomplete_tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id")
+      joined_incomplete_tasks = incomplete_tasks.joins(
+        "INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id AND tasks.appeal_type = 'LegacyAppeal'"
+      )
 
       central_office_ids = VACOLS::Case.where(bfhr: 1, bfcurloc: "CASEFLOW").pluck(:bfkey)
       central_office_legacy_appeal_ids = LegacyAppeal.where(vacols_id: central_office_ids).pluck(:id)
@@ -91,11 +99,10 @@ class ScheduleHearingTask < GenericTask
 
         hearing_time = task_payloads[:values][:hearing_time]
         hearing_day_id = task_payloads[:values][:hearing_pkseq]
-        hearing_type = task_payloads[:values][:hearing_type]
         hearing_location = task_payloads[:values][:hearing_location]
 
-        hearing = slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
-        HoldHearingTask.create_hold_hearing_task!(appeal, parent, hearing)
+        hearing = slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
+        DispositionTask.create_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
       end
@@ -159,9 +166,8 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  def slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+  def slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
     hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                 hearing_type: (hearing_type == LegacyHearing::CO_HEARING) ? "C" : "V",
                                                  appeal: appeal,
                                                  hearing_location_attrs: hearing_location&.to_hash,
                                                  scheduled_time: hearing_time&.stringify_keys)
