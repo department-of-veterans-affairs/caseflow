@@ -2327,63 +2327,75 @@ describe LegacyAppeal do
   end
 
   context "#assigned_to_location" do
-    context "if the RootTask status is completed" do
-      let!(:vacols_case) { create(:case, :status_complete) }
+    # context "if the case is complete" do
+    #   let!(:vacols_case) { create(:case, :status_complete) }
 
-      it "returns Post-decision" do
-        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
+    #   it "returns Post-decision" do
+    #     expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
+    #   end
+    # end
+
+    context "if the case has not been worked in caseflow" do
+      let(:location_code) { "96" }
+      let!(:vacols_case) { create(:case, bfcurloc: location_code) }
+
+      it "returns the location code" do
+        expect(appeal.assigned_to_location).to eq(location_code)
       end
     end
 
-    context "if there are no active tasks" do
-      let(:appeal) { create(:appeal) }
-      it "returns 'other close'" do
-        expect(appeal.assigned_to_location).to eq(:other_close.to_s.titleize)
-      end
-    end
+    context "if the case has been worked in caseflow" do
+      # context "if there are no active tasks" do
+      #   let!(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
 
-    context "if the only active case is a RootTask" do
-      let(:appeal) { create(:appeal) }
+      #   it "returns 'other close'" do
+      #     expect(appeal.assigned_to_location).to eq(:other_close.to_s.titleize)
+      #   end
+      # end
 
-      before do
-        create(:root_task, appeal: appeal, status: :in_progress)
-      end
+      # context "if the only active case is a RootTask" do
+      #   let(:appeal) { create(:appeal) }
 
-      it "returns Case storage" do
-        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
-      end
-    end
+      #   before do
+      #     create(:root_task, appeal: appeal, status: :in_progress)
+      #   end
 
-    context "if there is an assignee" do
-      let(:organization) { create(:organization) }
-      let(:appeal_organization) { create(:appeal) }
-      let(:user) { create(:user) }
-      let(:appeal_user) { create(:appeal) }
-      let(:appeal_on_hold) { create(:appeal) }
-      let(:today) { Time.zone.today }
+      #   it "returns Case storage" do
+      #     expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      #   end
+      # end
 
-      before do
-        organization_root_task = create(:root_task, appeal: appeal_organization)
-        create(:generic_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
+      # context "if there is an assignee" do
+      #   let(:organization) { create(:organization) }
+      #   let(:appeal_organization) { create(:appeal) }
+      #   let(:user) { create(:user) }
+      #   let(:appeal_user) { create(:legacy_appeal) }
+      #   let(:appeal_on_hold) { create(:legacy_appeal) }
+      #   let(:today) { Time.zone.today }
 
-        user_root_task = create(:root_task, appeal: appeal_user)
-        create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+      #   before do
+      #     organization_root_task = create(:root_task, appeal: appeal_organization)
+      #     create(:generic_task, assigned_to: organization, appeal: appeal_organization, parent: organization_root_task)
 
-        on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
-        create(:generic_task, status: :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
-      end
+      #     user_root_task = create(:root_task, appeal: appeal_user)
+      #     create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
 
-      it "if the most recent assignee is an organization it returns the organization name" do
-        expect(appeal_organization.assigned_to_location).to eq(organization.name)
-      end
+      #     on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
+      #     create(:generic_task, status: :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
+      #   end
 
-      it "if the most recent assignee is not an organization it returns the id" do
-        expect(appeal_user.assigned_to_location).to eq(user.css_id)
-      end
+      #   it "if the most recent assignee is an organization it returns the organization name" do
+      #     expect(appeal_organization.assigned_to_location).to eq(organization.name)
+      #   end
 
-      it "if the task is on hold but there isn't an assignee it returns something" do
-        expect(appeal_on_hold.assigned_to_location).not_to eq(nil)
-      end
+      #   it "if the most recent assignee is not an organization it returns the id" do
+      #     expect(appeal_user.assigned_to_location).to eq(user.css_id)
+      #   end
+
+      #   it "if the task is on hold but there isn't an assignee it returns something" do
+      #     expect(appeal_on_hold.assigned_to_location).not_to eq(nil)
+      #   end
+      # end
     end
   end
 end

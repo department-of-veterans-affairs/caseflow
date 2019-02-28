@@ -722,6 +722,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def assigned_to_location
+    byebug
     return location_code unless LOCATION_CODES[:caseflow] == location_code
 
     active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
