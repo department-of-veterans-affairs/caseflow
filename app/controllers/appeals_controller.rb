@@ -54,7 +54,8 @@ class AppealsController < ApplicationController
     )
     render json: { new_documents: new_documents_for_user.process! }
   rescue StandardError => e
-    handle_non_critical_error("new_documents", e)
+    Raven.capture_exception(e)
+    handle_non_critical_error("appeals_new_documents", e)
   end
 
   def power_of_attorney

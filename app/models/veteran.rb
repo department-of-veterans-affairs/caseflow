@@ -115,6 +115,7 @@ class Veteran < ApplicationRecord
     # Now that we are always checking find_flashes for access control before we fetch the
     # veteran, we should never see this error. Reporting it to sentry if it happens
     Raven.capture_exception(error)
+    @access_error = error.message
 
     # Set the veteran as inaccessible if a sensitivity error is thrown
     raise error unless error.message.match?(/Sensitive File/)
@@ -124,6 +125,18 @@ class Veteran < ApplicationRecord
 
   def accessible?
     bgs.can_access?(file_number)
+  end
+
+  def access_error
+    @access_error ||= nil if bgs_record.is_a?(Hash)
+  rescue BGS::ShareError => error
+    error.message
+  end
+
+  # When two Veteran records get merged for data clean up, it can lead to multiple active phone numbers
+  # This causes an error fetching the BGS record and needs to be fixed in SHARE
+  def multiple_phone_numbers?
+    !!access_error&.include?("NonUniqueResultException")
   end
 
   def relationships

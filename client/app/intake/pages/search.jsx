@@ -97,6 +97,10 @@ class Search extends React.PureComponent {
         title: 'Veteran not found',
         body: veteranNotFoundInstructions
       },
+      veteran_has_multiple_phone_numbers: {
+        title: 'The Veteran has multiple active phone numbers',
+        body: 'Please edit the Veteran\'s contact information in SHARE to have only one active phone number.'
+      },
       veteran_not_accessible: {
         title: 'You don\'t have permission to view this Veteran\'s information​',
         body: 'It looks like you do not have the necessary level of access to view this information.' +

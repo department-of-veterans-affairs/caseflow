@@ -51,7 +51,7 @@ RSpec.describe HearingsController, type: :controller do
     end
 
     context "when setting disposition as postponed" do
-      let!(:scheduled_for) { Date.new(2019, 4, 2) }
+      let!(:scheduled_for) { Date.new(2019, 4, 2).in_time_zone.to_s }
       let!(:hearing_day) do
         HearingDay.create_hearing_day(
           request_type: HearingDay::REQUEST_TYPES[:central],
@@ -85,19 +85,25 @@ RSpec.describe HearingsController, type: :controller do
         }
       end
 
-      before { Time.zone = "America/New_York" }
-
       context "for a legacy hearing" do
         it "should create a new VACOLS hearing and LegacyHearing" do
           patch :update, as: :json, params: {
             id: legacy_hearing.external_id, hearing: params, master_record_updated: master_record_params
           }
           expect(response.status).to eq 200
-
           expect(LegacyHearing.last.location.facility_id).to eq "vba_301"
-          expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
-            Time.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)")
-          )
+
+          # VACOLS thinks it is UTC, but the values written to it are Eastern.
+          # Rails converts those "UTC" times to Time.zone, which really is Eastern,
+          # so all our DateTime objects are offset to UTC-Eastern.
+          # This is like a double-encoding bug with HTML or UTF-8.
+          expect(Time.zone.name).to eq("America/New_York")
+
+          ten_am_eastern = Time.new(2019, 4, 2, 10).in_time_zone.asctime
+          hearing = VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id])
+
+          # we convert "back" to UTC in order to get the original Eastern time value as it was written.
+          expect(hearing.hearing_date.in_time_zone("UTC").asctime).to eq(ten_am_eastern)
         end
       end
 
