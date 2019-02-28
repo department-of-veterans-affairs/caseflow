@@ -3,7 +3,8 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { sprintf } from 'sprintf-js';
-
+import TextareaField from '../../components/TextareaField';
+import { ATTORNEY_COMMENTS_MAX_LENGTH, marginTop } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
@@ -11,13 +12,26 @@ import {
   taskById,
   appealWithDetailSelector
 } from '../selectors';
-import { onReceiveAmaTasks } from '../QueueActions';
+import { onReceiveAmaTasks, setDecisionOptions } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
 import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
+const renderInstructionsFieldForColocatedTask = (props) => {
+  if (props.task.type === 'ColocatedTask' && !props.task.isLegacy) {
+    return <TextareaField
+      label="Instructions:"
+      name="instructions"
+      value={(props.decision.opts && props.decision.opts.instructions) || ''}
+      onChange={(instructions) => props.setDecisionOptions({ instructions })}
+      styling={marginTop(4)}
+      maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+    />;
+  }
 
+  return null;
+};
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal, { assignerName }) => ({
@@ -25,9 +39,17 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
       detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assignerName)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
-    getContent: ({ props }) => <React.Fragment>
-      {taskActionData(props) && taskActionData(props).modal_body}
-    </React.Fragment>,
+    getContent: ({ props }) => {
+      return <React.Fragment>
+        {
+          taskActionData(props) && taskActionData(props).modal_body
+        }
+        {
+          renderInstructionsFieldForColocatedTask(props)
+        }
+      </React.Fragment>
+      ;
+    },
     buttonText: COPY.MARK_TASK_COMPLETE_BUTTON
   },
   send_colocated_task: {
@@ -59,7 +81,6 @@ class CompleteTaskModal extends React.Component {
 
     return `${String.fromCodePoint(assignedBy.firstName.codePointAt(0))}. ${assignedBy.lastName}`;
   };
-
   getContentArgs = () => ({
     assignerName: this.getTaskAssignerName(),
     teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.label],
@@ -70,12 +91,14 @@ class CompleteTaskModal extends React.Component {
   submit = () => {
     const {
       task,
-      appeal
+      appeal,
+      decision
     } = this.props;
     const payload = {
       data: {
         task: {
-          status: 'completed'
+          status: 'completed',
+          ...decision.opts
         }
       }
     };
@@ -96,15 +119,27 @@ class CompleteTaskModal extends React.Component {
   };
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  task: taskById(state, { taskId: ownProps.taskId }),
-  appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending
-});
+const mapStateToProps = (state, ownProps) => {
+  const {
+    queue: {
+      stagedChanges: {
+        taskDecision: decision
+      }
+    }
+  } = state;
+
+  return {
+    task: taskById(state, { taskId: ownProps.taskId }),
+    appeal: appealWithDetailSelector(state, ownProps),
+    saveState: state.ui.saveState.savePending,
+    decision
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  onReceiveAmaTasks
+  onReceiveAmaTasks,
+  setDecisionOptions
 }, dispatch);
 
 const propsToText = (props) => {

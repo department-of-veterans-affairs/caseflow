@@ -50,6 +50,7 @@ RSpec.feature "ColocatedTask" do
       # Return case to attorney.
       find(".Select-control", text: "Select an action…").click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
+      fill_in("instructions", with: "INSTRUCTIONS FROM VLJ");
       find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
       # Redirected to personal queue page. Return to attorney succeeds.
@@ -63,6 +64,13 @@ RSpec.feature "ColocatedTask" do
 
       # Click into case details page. Expect to see draft decision option.
       click_on(appeal.veteran.name.formatted(:readable_full))
+      #verify that the instructions from the VLJ appear on the case timeline
+      sleep 1  
+      page.find_all("button", text: "View task instructions")[1].click
+      sleep 1
+      expect(page).to have_content(
+        "INSTRUCTIONS FROM VLJ"
+      )
       find(".Select-control", text: "Select an action…").click
       expect(page).to have_content(Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label])
 
