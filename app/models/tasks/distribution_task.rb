@@ -1,3 +1,6 @@
+##
+# Task that signals that an appeal is ready for distribution to a judge, including for auto case distribution.
+
 class DistributionTask < GenericTask
   # Prevent this task from being marked complete
   # when a child task (e.g. evidence submission)
