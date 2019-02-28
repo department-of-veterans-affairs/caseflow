@@ -1,3 +1,9 @@
+##
+# An appeal that a Veteran or appellant for VA decisions on claims for benefits,
+# filed before the Veterans Appeals Improvement and Modernization Act (AMA) went into effect on Feb 19 2019.
+# The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
+# Legacy appeals have VACOLS and BGS as dependencies.
+
 # rubocop:disable Metrics/ClassLength
 class LegacyAppeal < ApplicationRecord
   include AppealConcern
@@ -731,8 +737,8 @@ class LegacyAppeal < ApplicationRecord
 
   private
 
-  def most_recently_assigned_to_label(tasks)
-    tasks.order(:updated_at).last.assigned_to_label
+  def most_recently_assigned_to_label(tasks_for_appeal)
+    tasks_for_appeal.order(:updated_at).last.assigned_to_label
   end
 
   def use_representative_info_from_bgs?

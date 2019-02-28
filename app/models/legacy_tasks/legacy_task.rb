@@ -41,7 +41,7 @@ class LegacyTask
   end
 
   def assigned_to_label
-    assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
+    assigned_to&.css_id
   end
 
   ### Serializer Methods Start
