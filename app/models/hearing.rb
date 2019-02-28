@@ -95,7 +95,7 @@ class Hearing < ApplicationRecord
   end
 
   def regional_office_timezone
-    RegionalOffice::CITIES[appeal.closest_regional_office][:timezone] unless appeal.closest_regional_office.nil?
+    RegionalOffice::CITIES[hearing_day.regional_office][:timezone] unless hearing_day.regional_office.nil?
     "America/New_York"
   end
 
