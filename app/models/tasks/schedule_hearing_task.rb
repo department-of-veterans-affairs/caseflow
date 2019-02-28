@@ -4,6 +4,7 @@
 # Once completed, a DispositionTask is created.
 
 class ScheduleHearingTask < GenericTask
+  before_create :check_parent_type
   after_update :update_location_in_vacols
 
   class << self
@@ -52,6 +53,16 @@ class ScheduleHearingTask < GenericTask
 
   def label
     "Schedule hearing"
+  end
+
+  def check_parent_type
+    if parent.type != "HearingTask"
+      fail(
+        Caseflow::Error::InvalidParentTask,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
+    end
   end
 
   def update_location_in_vacols

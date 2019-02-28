@@ -4,6 +4,8 @@
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
+  before_create :check_parent_type
+
   class << self
     def create_disposition_task!(appeal, parent, hearing)
       DispositionTask.create!(
@@ -13,6 +15,16 @@ class DispositionTask < GenericTask
       )
 
       HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
+    end
+  end
+
+  def check_parent_type
+    if parent.type != "HearingTask"
+      fail(
+        Caseflow::Error::InvalidParentTask,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
     end
   end
 end
