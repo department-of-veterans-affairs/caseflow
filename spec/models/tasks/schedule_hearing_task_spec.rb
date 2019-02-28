@@ -21,29 +21,6 @@ describe ScheduleHearingTask do
     end
   end
 
-  describe "Add a schedule hearing task" do
-    let(:root_task) { FactoryBot.create(:root_task, appeal_type: root_task_appeal_type, appeal: appeal) }
-    let(:root_task_appeal_type) { LegacyAppeal.name }
-    let(:params) do
-      {
-        type: ScheduleHearingTask.name,
-        action: "Assign Hearing",
-        appeal: appeal,
-        assigned_to_type: "User",
-        assigned_to_id: hearings_user.id,
-        parent_id: root_task.id
-      }
-    end
-
-    subject { ScheduleHearingTask.find_or_create_if_eligible(appeal) }
-
-    it "should create a task of type ScheduleHearingTask" do
-      expect(subject.type).to eq(ScheduleHearingTask.name)
-      expect(subject.appeal_type).to eq(LegacyAppeal.name)
-      expect(subject.status).to eq("assigned")
-    end
-  end
-
   context "#update_from_params" do
     context "AMA appeal" do
       let(:hearing_day) do

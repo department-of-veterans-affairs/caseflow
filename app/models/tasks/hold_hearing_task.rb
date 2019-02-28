@@ -12,10 +12,7 @@ class HoldHearingTask < GenericTask
         parent: parent,
         assigned_to: Bva.singleton
       )
-
-      if parent.is_a? HearingTask
-        HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
-      end
+      HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
     end
   end
 end
