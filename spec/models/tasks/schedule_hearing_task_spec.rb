@@ -46,7 +46,11 @@ describe ScheduleHearingTask do
 
   context "#update_from_params" do
     context "AMA appeal" do
-      let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video]) }
+      let(:hearing_day) do
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               regional_office: "RO18")
+      end
       let(:schedule_hearing_task) { create(:schedule_hearing_task) }
       let(:update_params) do
         {
@@ -75,11 +79,11 @@ describe ScheduleHearingTask do
         expect(Hearing.first.appeal).to eq(schedule_hearing_task.appeal)
       end
 
-      it "creates a HoldHearingTask and associated object" do
+      it "creates a DispositionTask and associated object" do
         schedule_hearing_task.update_from_params(update_params, hearings_user)
 
-        expect(HoldHearingTask.count).to eq(1)
-        expect(HoldHearingTask.first.appeal).to eq(schedule_hearing_task.appeal)
+        expect(DispositionTask.count).to eq(1)
+        expect(DispositionTask.first.appeal).to eq(schedule_hearing_task.appeal)
         expect(HearingTaskAssociation.count).to eq(1)
         expect(HearingTaskAssociation.first.hearing).to eq(Hearing.first)
         expect(HearingTaskAssociation.first.hearing_task).to eq(HearingTask.first)

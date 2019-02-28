@@ -8,7 +8,7 @@ import moment from 'moment';
 import thunk from 'redux-thunk';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import rootReducer from '../../../app/queue/reducers';
-import { onReceiveQueue, receiveNewDocuments, errorFetchingDocumentCount, setAppealDocCount }
+import { onReceiveQueue, receiveNewDocumentsForTask, errorFetchingDocumentCount, setAppealDocCount }
   from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
@@ -241,8 +241,8 @@ describe('ColocatedTaskListView', () => {
         amaTasks,
         appeals }));
       store.dispatch(setUserCssId(task.assignedTo.cssId));
-      store.dispatch(receiveNewDocuments({
-        appealId: appealWithNewDocs.externalId,
+      store.dispatch(receiveNewDocumentsForTask({
+        taskId: taskWithNewDocs.taskId,
         newDocuments: [{}]
       }));
 

@@ -8,7 +8,7 @@ feature "Asyncable Jobs index" do
   end
 
   let(:now) { post_ramp_start_date }
-  let(:six_days_ago) { 6.days.ago.utc.strftime(date_format) }
+  let(:six_days_ago) { 6.days.ago.strftime(date_format) }
 
   let!(:current_user) do
     User.authenticate!(roles: ["Admin Intake"])
@@ -64,12 +64,12 @@ feature "Asyncable Jobs index" do
 
       expect(page).to have_content("oops!")
       expect(page).to have_content("wrong!")
-      expect(page).to have_content(hlr.establishment_last_submitted_at.utc.strftime(date_format))
+      expect(page).to have_content(hlr.establishment_last_submitted_at.strftime(date_format))
 
       safe_click "#job-HigherLevelReview-#{hlr.id}"
 
       expect(page).to have_content("Restarted")
-      expect(page).to_not have_content(hlr.establishment_last_submitted_at.utc.strftime(date_format))
+      expect(page).to_not have_content(hlr.establishment_last_submitted_at.strftime(date_format))
       expect(page).to_not have_content("oops!")
 
       expect(hlr.reload.establishment_last_submitted_at).to be_within(1.second).of Time.zone.now

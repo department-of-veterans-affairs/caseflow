@@ -12,8 +12,7 @@ import {
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
-  fetchAmaTasksOfUser,
-  getNewDocuments
+  fetchAmaTasksOfUser
 } from './QueueActions';
 import { setUserId } from './uiReducer/uiActions';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
@@ -126,8 +125,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAttorneysOfJudge,
   fetchAllAttorneys,
   fetchAmaTasksOfUser,
-  setUserId,
-  getNewDocuments
+  setUserId
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen));

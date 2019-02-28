@@ -26,6 +26,7 @@ export const initialState = {
   docCountForAppeal: {},
   mostRecentlyHeldHearingForAppeal: {},
   newDocsForAppeal: {},
+  newDocsForTask: {},
   specialIssues: {},
 
   /**
@@ -123,7 +124,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.RECEIVE_NEW_FILES:
+  case ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL:
     return update(state, {
       newDocsForAppeal: {
         [action.payload.appealId]: {
@@ -134,7 +135,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES:
+  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL:
     return update(state, {
       newDocsForAppeal: {
         [action.payload.appealId]: {
@@ -145,12 +146,44 @@ export const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.STARTED_LOADING_DOCUMENTS:
+  case ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_APPEAL:
     return {
       ...state,
       newDocsForAppeal: {
         ...state.newDocsForAppeal,
         [action.payload.appealId]: {
+          loading: true
+        }
+      }
+    };
+  case ACTIONS.RECEIVE_NEW_FILES_FOR_TASK:
+    return update(state, {
+      newDocsForTask: {
+        [action.payload.taskId]: {
+          $set: {
+            docs: action.payload.newDocuments,
+            loading: false
+          }
+        }
+      }
+    });
+  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_TASK:
+    return update(state, {
+      newDocsForTask: {
+        [action.payload.taskId]: {
+          $set: {
+            error: action.payload.error,
+            loading: false
+          }
+        }
+      }
+    });
+  case ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_TASK:
+    return {
+      ...state,
+      newDocsForTask: {
+        ...state.newDocsForTask,
+        [action.payload.taskId]: {
           loading: true
         }
       }
