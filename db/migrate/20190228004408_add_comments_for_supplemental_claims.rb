@@ -22,7 +22,7 @@ class AddCommentsForSupplementalClaims < ActiveRecord::Migration[5.1]
 
     change_column_comment(:supplemental_claims, :receipt_date, "The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews.")
 
-    change_column_comment(:supplemental_claims, :uuid, "The universally unique identifier for the Supplemental Claim.")
+    change_column_comment(:supplemental_claims, :uuid, "The universally unique identifier for the Supplemental Claim. Can be used to link to the claim after it is completed.")
 
     change_column_comment(:supplemental_claims, :veteran_file_number, "The file number of the Veteran that the Supplemental Claim is for.")
 
