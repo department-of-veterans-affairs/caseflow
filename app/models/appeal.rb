@@ -555,6 +555,12 @@ class Appeal < DecisionReview
     end
   end
 
+  def sanitized_hearing_request_type
+    return :central if closest_regional_office == "C"
+
+    :video
+  end
+
   def program
     return if request_issues.empty?
 
