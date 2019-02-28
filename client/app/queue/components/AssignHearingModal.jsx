@@ -199,7 +199,7 @@ class AssignHearingModal extends React.PureComponent {
   getTimeOptions = () => {
     const { selectedRegionalOffice } = this.props;
 
-    if ( selectedRegionalOffice === 'C') {
+    if (selectedRegionalOffice === 'C') {
       return [
         { displayText: '9:00 am',
           value: '9:00' },
