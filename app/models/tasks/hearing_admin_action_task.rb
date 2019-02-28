@@ -86,7 +86,7 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
   end
 
   def fetch_closest_ro_and_ahls
-    FetchHearingLocationsForVeteransJob.new.perform_once_for(appeal)
+    appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
   end
 end
 class HearingAdminActionMissingFormsTask < HearingAdminActionTask
