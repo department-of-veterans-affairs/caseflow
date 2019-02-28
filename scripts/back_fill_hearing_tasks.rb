@@ -1,4 +1,4 @@
-# Backfill a HearingTask as parent of a ScheduleHearingTask and HoldHearingTask
+# Backfill a HearingTask as parent of a ScheduleHearingTask and DispositionTask
 # for Legacy Appeals.
 #
 # If an appeal has multiple ScheduleHearingTasks we group them by created_at and create
@@ -9,7 +9,7 @@
 #
 
 legacy_sched_hear_tasks = Task
-  .where("(type='ScheduleHearingTask' OR type='HoldHearingTask') AND appeal_type='LegacyAppeal'")
+  .where("(type='ScheduleHearingTask' OR type='DispositionTask') AND appeal_type='LegacyAppeal'")
   .select do |task|
   task.parent.type == "RootTask"
 end

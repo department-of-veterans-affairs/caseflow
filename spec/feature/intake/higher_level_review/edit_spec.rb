@@ -506,7 +506,7 @@ feature "Higher Level Review Edit issues" do
 
       click_intake_add_issue
 
-      rating_date = promulgation_date.strftime("%m/%d/%Y")
+      rating_date = promulgation_date.mdY
       expect(page).to have_content("Past decisions from #{rating_date}")
 
       click_intake_no_matching_issues
