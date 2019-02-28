@@ -128,7 +128,9 @@ export class DailyDocketContainer extends React.Component {
         scheduledTime = hearing.editedTime;
       }
     } else {
-      scheduledTime = hearing.scheduledTime;
+      scheduledTime = moment(hearing.scheduledFor).
+        tz(hearing.regionalOfficeTimezone).
+        format('hh:mm');
     }
 
     return scheduledTime;
@@ -145,7 +147,7 @@ export class DailyDocketContainer extends React.Component {
         scheduledFor = moment(hearing.scheduledFor).set(this.getTime(hearing));
       }
     } else {
-      scheduledFor = hearing.scheduledFor;
+      scheduledFor = moment(hearing.scheduledFor).tz(hearing.regionalOfficeTimezone);
     }
 
     return scheduledFor;
