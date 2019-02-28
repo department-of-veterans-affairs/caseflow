@@ -1,7 +1,7 @@
 ##
 # Task to schedule a hearing for a veteran making a claim.
 # Created by the intake process for any appeal electing to have a hearing.
-# Once completed, a HoldHearingTask is created.
+# Once completed, a DispositionTask is created.
 
 class ScheduleHearingTask < GenericTask
   after_update :update_location_in_vacols
@@ -103,7 +103,7 @@ class ScheduleHearingTask < GenericTask
         hearing_location = task_payloads[:values][:hearing_location]
 
         hearing = slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
-        HoldHearingTask.create_hold_hearing_task!(appeal, parent, hearing)
+        DispositionTask.create_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
       end
