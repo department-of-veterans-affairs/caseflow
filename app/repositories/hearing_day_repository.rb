@@ -2,11 +2,6 @@
 # master records in VACOLS for Video, TB and CO hearings.
 class HearingDayRepository
   class << self
-    def create_vacols_hearing!(hearing_hash)
-      hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
-      HearingDayRepository.to_hash(VACOLS::CaseHearing.create_hearing!(hearing_hash)) if hearing_hash.present?
-    end
-
     # Query Operations
     def find_hearing_day(request_type, hearing_key)
       if request_type.nil? || request_type == HearingDay::REQUEST_TYPES[:central] ||
