@@ -344,7 +344,7 @@ class AssignHearingModal extends React.PureComponent {
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
           appealId={appeal.externalId}
-          dynamic={roIsDifferent}
+          dynamic={staticHearingLocations === null || roIsDifferent}
           staticHearingLocations={staticHearingLocations}
           onChange={this.props.onHearingLocationChange}
           value={selectedHearingLocation}
