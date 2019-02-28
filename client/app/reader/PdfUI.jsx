@@ -95,8 +95,10 @@ export class PdfUI extends React.Component {
     const zoomDirection = delta > 0 ? 'in' : 'out';
 
     window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, `zoom ${zoomDirection}`, nextScale);
-
-    this.props.setZoomLevel(nextScale);
+    // restricting zoom for larger documents due to buggy behavior
+    if (this.props.numPages < 500 || nextScale <= 1.6) {
+      this.props.setZoomLevel(nextScale);
+    }
   }
 
   openDownloadLink = () => {
