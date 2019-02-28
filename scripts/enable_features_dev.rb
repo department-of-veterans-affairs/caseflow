@@ -55,6 +55,10 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
+          feature: "use_ama_activation_date",
+          enable_all: true
+        },
+        {
           feature: "ama_auto_case_distribution",
           enable_all: true
         },
