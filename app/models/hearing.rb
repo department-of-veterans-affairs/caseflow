@@ -91,18 +91,17 @@ class Hearing < ApplicationRecord
   end
 
   def regional_office_name
-    hearing_location&.city
+    RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
   end
 
   def regional_office_timezone
-    RegionalOffice::CITIES[hearing_day.regional_office][:timezone] unless hearing_day.regional_office.nil?
+    RegionalOffice::CITIES[regional_office_key][:timezone] unless regional_office_key.nil?
     "America/New_York"
   end
 
   def current_issue_count
     request_issues.size
   end
-  #:nocov:
 
   def slot_new_hearing(hearing_day_id, hearing_location_attrs: nil, **_args)
     # These fields are needed for the legacy hearing's version of this method
