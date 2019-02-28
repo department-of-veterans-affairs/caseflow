@@ -79,11 +79,11 @@ describe ScheduleHearingTask do
         expect(Hearing.first.appeal).to eq(schedule_hearing_task.appeal)
       end
 
-      it "creates a HoldHearingTask and associated object" do
+      it "creates a DispositionTask and associated object" do
         schedule_hearing_task.update_from_params(update_params, hearings_user)
 
-        expect(HoldHearingTask.count).to eq(1)
-        expect(HoldHearingTask.first.appeal).to eq(schedule_hearing_task.appeal)
+        expect(DispositionTask.count).to eq(1)
+        expect(DispositionTask.first.appeal).to eq(schedule_hearing_task.appeal)
         expect(HearingTaskAssociation.count).to eq(1)
         expect(HearingTaskAssociation.first.hearing).to eq(Hearing.first)
         expect(HearingTaskAssociation.first.hearing_task).to eq(HearingTask.first)
