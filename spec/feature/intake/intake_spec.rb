@@ -88,6 +88,14 @@ RSpec.feature "Intake" do
         find("label", text: "RAMP Selection (VA Form 21-4138)").click
       end
       safe_click ".cf-submit.usa-button"
+      expect(page).to have_css(".cf-submit[disabled]")
+
+      # try to hit enter key on empty search bar
+      fill_in search_bar_title, with: ""
+      find(".cf-search-input-with-close").native.send_keys(:return)
+
+      # check error message doesn't exist
+      expect(page).to have_no_css(".usa-alert-heading")
 
       fill_in search_bar_title, with: "5678"
       click_on "Search"
