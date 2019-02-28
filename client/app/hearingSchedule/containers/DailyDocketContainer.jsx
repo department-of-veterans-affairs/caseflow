@@ -96,14 +96,14 @@ export class DailyDocketContainer extends React.Component {
       return this.formatTime(hearing.scheduledFor, hearing.editedTime);
     }
 
-    const timeObject = moment(hearing.scheduledFor);
+    const timeObject = moment(hearing.scheduledFor).tz(hearing.regionalOfficeTimezone);
 
     return {
       // eslint-disable-next-line id-length
       h: timeObject.hours(),
       // eslint-disable-next-line id-length
       m: timeObject.minutes(),
-      offset: timeObject.format('Z')
+      offset: timeObject.tz('America/New_York').format('Z')
     };
 
   };
