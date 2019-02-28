@@ -90,8 +90,6 @@ class Hearing < ApplicationRecord
     end
   end
 
-  #:nocov:
-  # This is all fake data that will be refactored in a future PR.
   def regional_office_name
     RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
   end
@@ -102,9 +100,8 @@ class Hearing < ApplicationRecord
   end
 
   def current_issue_count
-    1
+    request_issues.size
   end
-  #:nocov:
 
   def slot_new_hearing(hearing_day_id, hearing_location_attrs: nil, **_args)
     # These fields are needed for the legacy hearing's version of this method

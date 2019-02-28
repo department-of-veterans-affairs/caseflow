@@ -244,96 +244,116 @@ describe FetchHearingLocationsForVeteransJob do
           end
         end
       end
-    end
 
-    describe "#fetch_and_update_ro_for_appeal" do
-      let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
-      let(:veteran_state) { "NH" }
-      let(:mock_va_dot_gov_address) do
-        {
-          lat: 0.0,
-          long: 0.0,
-          state_code: veteran_state,
-          country_code: "US"
-        }
-      end
-      let(:facility_ros) do
-        RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || ro[:state] != veteran_state }
-      end
-      let(:expected_ro) do
-        index = RegionalOffice::CITIES.values.find_index do |ro|
-          !ro[:facility_locator_id].nil? && ro[:state] == veteran_state
+      context "when veterans' states or country vary" do
+        let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
+        let(:veteran_state) { "NH" }
+        let(:validate_response) do
+          HTTPI::Response.new(200, [], mock_validate_body(
+            lat: 0.0, long: 0.0, state: veteran_state, country_code: "US"
+          ).to_json)
         end
-        RegionalOffice::CITIES.keys[index]
-      end
-      let(:vacols_case) do
-        create(:case, bfcurloc: 57, bfregoff: nil, bfcorlid: bfcorlid, bfhr: "2", bfdocind: "V")
-      end
-      let(:body) do
-        mock_distance_body(
-          data: facility_ros.map { |ro| mock_data(id: ro[:facility_locator_id]) },
-          distances: facility_ros.map.with_index do |ro, index|
-            mock_distance(distance: index, id: ro[:facility_locator_id])
+        let(:facility_ids) do
+          facility_ids = []
+          ros = RegionalOffice::CITIES.values.reject do |ro|
+            ro[:facility_locator_id].nil? || ro[:state] != veteran_state
           end
-        )
-      end
 
-      before do
-        VADotGovService = ExternalApi::VADotGovService
-        Fakes::BGSService.veteran_records = {
-          "123456789": veteran_record(file_number: "123456789S", state: veteran_state)
-        }
+          ros.each do |ro|
+            facility_ids << ro[:facility_locator_id]
+            facility_ids += ro[:alternate_locations] unless ro[:alternate_locations].nil?
+          end
 
-        distance_response = HTTPI::Response.new(200, [], body.to_json)
-        allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
-      end
-
-      it "updates veteran closest_regional_office with fetched RO within veteran's state" do
-        job.fetch_and_update_ro_for_appeal(legacy_appeal, va_dot_gov_address: mock_va_dot_gov_address)
-        expect(LegacyAppeal.first.closest_regional_office).to eq expected_ro
-      end
-
-      context "when ROs are not found in facility locator" do
+          facility_ids
+        end
+        let(:expected_ro) do
+          RegionalOffice::CITIES.find do |_k, v|
+            !v[:facility_locator_id].nil? && v[:state] == veteran_state
+          end[0]
+        end
+        let(:vacols_case) do
+          create(:case, bfcurloc: 57, bfregoff: nil, bfcorlid: bfcorlid, bfhr: "2", bfdocind: "V")
+        end
         let(:body) do
           mock_distance_body(
-            data: [],
-            distances: []
+            data: facility_ids.map { |id| mock_data(id: id) },
+            distances: facility_ids.map.with_index do |id, index|
+              mock_distance(distance: index, id: id)
+            end
           )
         end
+        let(:distance_response) { HTTPI::Response.new(200, [], body.to_json) }
 
-        it "raises VADotGovServiceError" do
-          expect { job.fetch_and_update_ro_for_appeal(legacy_appeal, va_dot_gov_address: mock_va_dot_gov_address) }
-            .to raise_error(Caseflow::Error::VaDotGovAPIError)
+        before do
+          Fakes::BGSService.veteran_records = {
+            "123456789": veteran_record(file_number: "123456789S", state: veteran_state)
+          }
         end
-      end
 
-      [:GQ, :RP, :VQ].each do |country_code|
-        context "when veteran country is in a US territory with country code #{country_code}" do
-          let(:mock_va_dot_gov_address) do
-            {
-              lat: 0.0,
-              long: 0.0,
-              state_code: veteran_state,
-              country_code: country_code.to_s
-            }
+        it "updates veteran closest_regional_office with fetched RO within veteran's state" do
+          FetchHearingLocationsForVeteransJob.perform_now
+          expect(LegacyAppeal.first.closest_regional_office).to eq expected_ro
+        end
+
+        context "but ROs for state are not found in facility locator" do
+          let(:body) do
+            mock_distance_body(
+              data: [],
+              distances: []
+            )
           end
 
-          let(:expected_state) do
-            {
-              GQ: "HI",
-              RP: "PI",
-              VQ: "PR"
-            }[country_code]
+          it "raises VADotGovServiceError" do
+            expect { FetchHearingLocationsForVeteransJob.perform_now }
+              .to raise_error(Caseflow::Error::VaDotGovAPIError)
           end
+        end
 
-          let(:facility_ros) do
-            RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || ro[:state] != expected_state }
-          end
+        [:GQ, :RP, :VQ].each do |country_code|
+          context "when veteran country is in a US territory with country code #{country_code}" do
+            let(:validate_response) do
+              HTTPI::Response.new(200, [], mock_validate_body(
+                lat: 0.0, long: 0.0, state: veteran_state, country_code: country_code.to_s
+              ).to_json)
+            end
 
-          it "closest_regional_office is in appropriate state" do
-            job.fetch_and_update_ro_for_appeal(legacy_appeal, va_dot_gov_address: mock_va_dot_gov_address)
-            index = RegionalOffice::CITIES.values.find_index { |ro| ro[:state] == expected_state }
-            expect(LegacyAppeal.first.closest_regional_office).to eq RegionalOffice::CITIES.keys[index]
+            let(:expected_state) do
+              {
+                GQ: "HI",
+                RP: "PI",
+                VQ: "PR"
+              }[country_code]
+            end
+
+            let(:facility_ids) do
+              facility_ids = []
+              ros = RegionalOffice::CITIES.values.reject do |ro|
+                ro[:facility_locator_id].nil? || ro[:state] != expected_state
+              end
+
+              ros.each do |ro|
+                facility_ids << ro[:facility_locator_id]
+                facility_ids += ro[:alternate_locations] unless ro[:alternate_locations].nil?
+              end
+
+              facility_ids
+            end
+
+            let(:body) do
+              mock_distance_body(
+                data: facility_ids.map { |id| mock_data(id: id) },
+                distances: facility_ids.map.with_index do |id, index|
+                  mock_distance(distance: index, id: id)
+                end
+              )
+            end
+            let(:distance_response) { HTTPI::Response.new(200, [], body.to_json) }
+
+            it "closest_regional_office is in appropriate state" do
+              FetchHearingLocationsForVeteransJob.perform_now
+              index = RegionalOffice::CITIES.values.find_index { |ro| ro[:state] == expected_state }
+              expect(LegacyAppeal.first.closest_regional_office).to eq RegionalOffice::CITIES.keys[index]
+            end
           end
         end
       end
