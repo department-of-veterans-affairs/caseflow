@@ -141,6 +141,29 @@ RSpec.feature "Intake" do
       end
     end
 
+    context "Veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+      end
+
+      scenario "Search for a veteran with multiple active phone numbers" do
+        visit "/intake"
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("The Veteran has multiple active phone numbers")
+      end
+    end
+
     context "Veteran has invalid information" do
       let(:veteran) do
         Generators::Veteran.build(

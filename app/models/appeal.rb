@@ -517,7 +517,7 @@ class Appeal < DecisionReview
 
   def hearing_pending?
     # This isn't available yet.
-    # tasks.active.where(type: HoldHearingTask.name).any?
+    # tasks.active.where(type: DispositionTask.name).any?
   end
 
   def evidence_submission_hold_pending?
