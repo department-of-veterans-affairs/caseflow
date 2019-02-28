@@ -26,7 +26,7 @@ describe "task rake tasks" do
       context "no dry run variable is passed" do
         let(:args) { [from_task_name, to_task_name] }
 
-        it "only describes what changes will be made" do
+        xit "only describes what changes will be made" do
           count = from_task.count
           ids = from_task.all.map(&:id)
           expected_output = <<~OUTPUT
@@ -46,7 +46,7 @@ describe "task rake tasks" do
       context "dry run is set to false" do
         let(:args) { [from_task_name, to_task_name, "false"] }
 
-        it "makes the requested changes" do
+        xit "makes the requested changes" do
           count = from_task.count
           ids = from_task.all.map(&:id)
           expected_output = <<~OUTPUT
@@ -72,7 +72,7 @@ describe "task rake tasks" do
           context "all the id numbers match existing tasks" do
             let(:change_ids) { hold_hearing_tasks.map(&:id)[0..subset_count - 1] }
 
-            it "makes the requested changes" do
+            xit "makes the requested changes" do
               count = change_ids.count
               expected_output = <<~OUTPUT
                 Changing #{count} #{from_task_name}s with ids #{change_ids.join(', ')} into #{to_task_name}s
@@ -105,7 +105,7 @@ describe "task rake tasks" do
           let(:args) { [from_task_name, to_task_name, *change_ids] }
           let(:change_ids) { hold_hearing_tasks.map(&:id)[0..subset_count - 1] }
 
-          it "correctly describes what changes will be made" do
+          xit "correctly describes what changes will be made" do
             count = change_ids.count
             joined = change_ids.join(",")
             expected_output = <<~OUTPUT
