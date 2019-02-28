@@ -1,3 +1,6 @@
+##
+# Task to track when an appeal has been randomly selected to be quality reviewed by the Quality Review team.
+
 class QualityReviewTask < GenericTask
   def available_actions(user)
     return super if assigned_to != user
