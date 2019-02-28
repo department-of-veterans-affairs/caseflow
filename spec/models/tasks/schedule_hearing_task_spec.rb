@@ -21,6 +21,15 @@ describe ScheduleHearingTask do
     end
   end
 
+  context "Create a ScheduleHearingTas with parent other than HearingTask type." do
+    let(:root_parent) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:schedule_hearing) { create(:schedule_hearing_task, parent: root_parent) }
+
+    it "should throw an error" do
+      expect { schedule_hearing }.to raise_error(Caseflow::Error::InvalidParentTask)
+    end
+  end
+
   context "#update_from_params" do
     context "AMA appeal" do
       let(:hearing_day) do

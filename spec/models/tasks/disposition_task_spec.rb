@@ -24,5 +24,13 @@ describe DispositionTask do
         expect(HearingTaskAssociation.first.hearing_task).to eq parent
       end
     end
+
+    context "parent is a RootTask" do
+      let(:parent) { FactoryBot.create(:root_task, appeal: appeal) }
+
+      it "should throw an error" do
+        expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
+      end
+    end
   end
 end
