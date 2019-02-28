@@ -116,10 +116,10 @@ export class PdfFile extends React.PureComponent {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
       const zoomFactor = nextProps.scale / this.props.scale;
-      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.rowStartIndex).scrollTop);
+      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.currentPage).scrollTop);
 
       this.scrollLocation = {
-        page: this.rowStartIndex,
+        page: this.currentPage,
         locationOnPage: nonZoomedLocation * zoomFactor
       };
     }
@@ -233,7 +233,6 @@ export class PdfFile extends React.PureComponent {
   scrollWhenFinishedZooming = () => {
     if (this.scrollLocation.page) {
       this.scrollToPosition(this.scrollLocation.page, this.scrollLocation.locationOnPage);
-
       this.scrollLocation = {};
     }
   }
