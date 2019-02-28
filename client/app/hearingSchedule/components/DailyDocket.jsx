@@ -174,6 +174,12 @@ export default class DailyDocket extends React.Component {
     </div>;
   };
 
+  getDocketRegionalOffice = () => {
+    const { requestType, regionalOfficeKey } = this.props.dailyDocket;
+
+    return requestType === 'Central' ? 'C' : regionalOfficeKey;
+  }
+
   getDispositionDropdown = (hearing, readOnly) => {
     return <SearchableDropdown
       name="Disposition"
@@ -204,13 +210,14 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingLocationDropdown = (hearing, readOnly) => {
-    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
-    let staticHearingLocations = hearing.availableHearingLocations ?
-      _.values(hearing.availableHearingLocations) : [];
+    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey ||
+      this.getDocketRegionalOffice();
+    const roIsDifferent = currentRegionalOffice !== hearing.closestRegionalOffice;
+    let staticHearingLocations = _.isEmpty(hearing.availableHearingLocations) ?
+      [hearing.location] : _.values(hearing.availableHearingLocations);
 
-    // always static for now
-    if (staticHearingLocations.length === 0 && hearing.location) {
-      staticHearingLocations = [hearing.location];
+    if (roIsDifferent) {
+      staticHearingLocations = null;
     }
 
     return <AppealHearingLocationsDropdown
@@ -218,7 +225,7 @@ export default class DailyDocket extends React.Component {
       appealId={hearing.appealExternalId}
       regionalOffice={currentRegionalOffice}
       staticHearingLocations={staticHearingLocations}
-      dynamic={staticHearingLocations === null || currentRegionalOffice !== hearing.veteranClosestRegionalOffice}
+      dynamic={_.isEmpty(hearing.availableHearingLocations) || roIsDifferent}
       value={hearing.editedLocation || (hearing.location ? hearing.location.facilityId : null)}
       onChange={this.onHearingLocationUpdate(hearing.id)}
     />;
