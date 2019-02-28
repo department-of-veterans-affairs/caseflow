@@ -1,10 +1,10 @@
 class AddCommentsForSupplementalClaims < ActiveRecord::Migration[5.1]
   def change
     change_table_comment(:supplemental_claims, "Intake data for Supplemental Claims.")
-    
+
     change_column_comment(:supplemental_claims, :benefit_type, "The benefit type selected by the Veteran on their form, also known as a Line of Business.")
 
-    change_column_comment(:supplemental_claims, :decision_review_remanded_id, "If an AMA decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated like this, then the ID of the original Decision Review with the remanded decision is stored here.")
+    change_column_comment(:supplemental_claims, :decision_review_remanded_id, "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here.")
 
     change_column_comment(:supplemental_claims, :decision_review_remanded_type, "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review.")
 
