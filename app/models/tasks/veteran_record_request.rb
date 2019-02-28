@@ -1,3 +1,6 @@
+##
+# Created whenever an Appeal request issue has a benefit_type that is not compensation or pension.
+
 class VeteranRecordRequest < GenericTask
   include BusinessLineTask
 
