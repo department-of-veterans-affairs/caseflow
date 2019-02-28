@@ -8,8 +8,7 @@ feature "Supplemental Claim Edit issues" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
@@ -32,7 +31,7 @@ feature "Supplemental Claim Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
-  let(:profile_date) { "2017-11-02T07:00:00.000Z" }
+  let(:profile_date) { (Time.zone.today - 60).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -187,7 +186,7 @@ feature "Supplemental Claim Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "A description!",
-        date: "04/25/2018"
+        date: profile_date.mdY
       )
 
       safe_click("#button-submit-update")
@@ -301,7 +300,7 @@ feature "Supplemental Claim Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/25/2018"
+        date: profile_date.mdY
       )
       expect(page).to have_content("3 issues")
 
@@ -417,7 +416,8 @@ feature "Supplemental Claim Edit issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "supplemental_claims/#{rating_ep_claim_id}/edit",
           supplemental_claim,
-          decision_request_issue.decision_issues + nonrating_decision_request_issue.decision_issues
+          DecisionIssue.where(id: [decision_request_issue.contested_decision_issue_id,
+                                   nonrating_decision_request_issue.contested_decision_issue_id])
         )
       end
     end
@@ -498,7 +498,7 @@ feature "Supplemental Claim Edit issues" do
       new_request_issue = supplemental_claim.reload.open_request_issues.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.decision_review).to_not be_nil
-      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(request_issue.contention_removed_at).to eq(Time.zone.now)
       expect(request_issue.closed_at).to eq(Time.zone.now)
       expect(request_issue).to be_closed
       expect(request_issue).to be_removed

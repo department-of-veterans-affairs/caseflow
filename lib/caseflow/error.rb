@@ -26,8 +26,7 @@ module Caseflow::Error
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
-
-  class FetchHearingLocationsJobError < SerializableError; end
+  class VaDotGovValidatorError < VaDotGovAPIError; end
 
   class FetchHearingLocationsJobError < SerializableError; end
 
@@ -126,13 +125,6 @@ module Caseflow::Error
   class OutcodeValidationFailure < SerializableError
     def initialize(args)
       @code = args[:code] || 400
-      @message = args[:message]
-    end
-  end
-
-  class DocumentUploadFailedInVBMS < SerializableError
-    def initialize(args)
-      @code = args[:code] || 502
       @message = args[:message]
     end
   end

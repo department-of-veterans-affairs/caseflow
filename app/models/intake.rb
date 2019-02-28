@@ -17,6 +17,7 @@ class Intake < ApplicationRecord
   ERROR_CODES = {
     invalid_file_number: "invalid_file_number",
     veteran_not_found: "veteran_not_found",
+    veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_valid: "veteran_not_valid",
     duplicate_intake_in_progress: "duplicate_intake_in_progress"
@@ -112,12 +113,14 @@ class Intake < ApplicationRecord
     if validate_start
       self.class.close_expired_intakes!
 
-      update(
+      after_validated_pre_start!
+
+      update!(
         started_at: Time.zone.now,
         detail: find_or_build_initial_detail
       )
     else
-      update(
+      update!(
         started_at: Time.zone.now,
         completed_at: Time.zone.now,
         completion_status: :error
@@ -189,7 +192,7 @@ class Intake < ApplicationRecord
       self.error_code = :veteran_not_found
 
     elsif !veteran.accessible?
-      self.error_code = :veteran_not_accessible
+      set_veteran_accessible_error
 
     elsif !veteran.valid?(:bgs)
       self.error_code = :veteran_not_valid
@@ -241,6 +244,17 @@ class Intake < ApplicationRecord
   end
 
   private
+
+  def set_veteran_accessible_error
+    return unless !veteran.accessible?
+
+    self.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+  end
+
+  # Optional step called after the intake is validated and not-yet-marked as started
+  def after_validated_pre_start!
+    nil
+  end
 
   def update_person!
     # Update the person when a claimant is created

@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { css } from 'glamor';
 
@@ -24,18 +23,7 @@ const bottomBorder = (singleIssue) => css({
   borderBottom: singleIssue ? 'none !important' : ''
 });
 
-import type {
-  Issue
-} from '../types/models';
-
-type Props = {
-  appeal: { issues: Array<Issue>, isLegacyAppeal: boolean },
-  idxToDisplay?: number,
-  issuesOnly?: boolean,
-  stretchToFullWidth?: boolean
-};
-
-export default class IssueList extends React.PureComponent<Props> {
+export default class IssueList extends React.PureComponent {
   getIssues = () => {
     const {
       appeal: {

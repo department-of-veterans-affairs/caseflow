@@ -1,32 +1,19 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { NewFileIcon } from '../../components/RenderFunctions';
 import Tooltip from '../../components/Tooltip';
 import { bindActionCreators } from 'redux';
-import { getNewDocuments } from '../QueueActions';
-import type { State } from '../types/state';
+import { getNewDocumentsForAppeal, getNewDocumentsForTask } from '../QueueActions';
 import COPY from '../../../COPY.json';
 
-type Params = {|
-  externalAppealId: string,
-  cached: ?boolean,
-  onHoldDate: string
-|};
-
-type Props = Params & {|
-  cached: ?boolean,
-  externalId: string,
-  docs: Array<Object>,
-  docsLoading: ?boolean,
-  error: string,
-  getNewDocuments: Function
-|};
-
-class NewFile extends React.Component<Props> {
+class NewFile extends React.Component {
   componentDidMount = () => {
-    if (!this.props.docsLoading) {
-      this.props.getNewDocuments(this.props.externalId, this.props.cached, this.props.onHoldDate);
+    if (!this.props.docsLoading && !this.props.docs) {
+      if (this.props.isForTask) {
+        this.props.getNewDocumentsForTask(this.props.externalId);
+      } else {
+        this.props.getNewDocumentsForAppeal(this.props.externalId);
+      }
     }
   }
 
@@ -41,12 +28,13 @@ class NewFile extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
-  const documentObject = state.queue.newDocsForAppeal[ownProps.externalAppealId];
+const mapStateToProps = (state, ownProps) => {
+  const documentObject = ownProps.isForTask ?
+    state.queue.newDocsForTask[ownProps.externalId] : state.queue.newDocsForAppeal[ownProps.externalId];
 
   return {
-    cached: ownProps.cached,
-    externalId: ownProps.externalAppealId,
+    isForTask: ownProps.isForTask,
+    externalId: ownProps.externalId,
     docs: documentObject ? documentObject.docs : null,
     docsLoading: documentObject ? documentObject.loading : false,
     error: documentObject ? documentObject.error : null
@@ -54,7 +42,8 @@ const mapStateToProps = (state: State, ownProps: Params) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  getNewDocuments
+  getNewDocumentsForAppeal,
+  getNewDocumentsForTask
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(NewFile): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(NewFile));

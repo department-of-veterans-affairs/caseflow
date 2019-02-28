@@ -69,7 +69,7 @@ RSpec.feature "AmaQueue" do
             bgs_veteran_record: { first_name: "Pal" },
             file_number: file_numbers[0]
           ),
-          documents: FactoryBot.create_list(:document, 5, file_number: file_numbers[0]),
+          documents: FactoryBot.create_list(:document, 5, file_number: file_numbers[0], upload_date: 3.days.ago),
           request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain")
         ),
         FactoryBot.create(
@@ -496,7 +496,7 @@ RSpec.feature "AmaQueue" do
 
       expect(page).not_to have_content("Select special issues (optional)")
 
-      expect(page).to have_content("Select Dispositions")
+      expect(page).to have_content("Add decisions")
 
       click_on "Continue"
 
@@ -623,9 +623,29 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_content("Select special issues (optional)")
 
-        expect(page).to have_content("Select Dispositions")
-        click_dropdown({ prompt: "Select disposition", text: "Allowed" }, find("#table-row-0"))
-        click_dropdown({ prompt: "Select disposition", text: "Remanded" }, find("#table-row-1"))
+        expect(page).to have_content("Add decisions")
+
+        # Add a first decision issue
+        all("button", text: "+ Add decision", count: 2)[0].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
+
+        click_on "Save"
+
+        # Add a second decision issue
+        all("button", text: "+ Add decision", count: 2)[1].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Remanded").click
+
+        click_on "Save"
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -670,9 +690,10 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_content("Select special issues (optional)")
 
-        expect(page).to have_content("Select Dispositions")
-        expect(dropdown_selected_value(find("#table-row-0"))).to eq "Allowed"
-        expect(dropdown_selected_value(find("#table-row-1"))).to eq "Remanded"
+        expect(page).to have_content("Add decisions")
+        expect(page).to have_content("Allowed")
+        expect(page).to have_content("Remanded")
+
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -729,9 +750,29 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_content("Select special issues (optional)")
 
-        expect(page).to have_content("Select Dispositions")
-        click_dropdown({ prompt: "Select disposition", text: "Allowed" }, find("#table-row-0"))
-        click_dropdown({ prompt: "Select disposition", text: "Remanded" }, find("#table-row-1"))
+        expect(page).to have_content("Add decisions")
+
+        # Add a first decision issue
+        all("button", text: "+ Add decision", count: 2)[0].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
+
+        click_on "Save"
+
+        # Add a second decision issue
+        all("button", text: "+ Add decision", count: 2)[1].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Remanded").click
+
+        click_on "Save"
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -744,6 +785,7 @@ RSpec.feature "AmaQueue" do
         fill_in "Document ID:", with: valid_document_id
         expect(page).to have_content(judge_user.full_name)
         fill_in "notes", with: "all done"
+        click_label("untimely_evidence")
         click_on "Continue"
 
         expect(page).to have_content(
@@ -776,9 +818,7 @@ RSpec.feature "AmaQueue" do
 
         expect(page).not_to have_content("Select special issues (optional)")
 
-        expect(page).to have_content("Select Dispositions")
-        expect(dropdown_selected_value(find("#table-row-0"))).to eq "Allowed"
-        expect(dropdown_selected_value(find("#table-row-1"))).to eq "Remanded"
+        expect(page).to have_content("Add decisions")
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
@@ -790,6 +830,7 @@ RSpec.feature "AmaQueue" do
         # info below should be preserved from attorney completing the task
         document_id_node = find("#document_id")
         notes_node = find("#notes")
+        expect(find_field("untimely_evidence", visible: false)).to be_checked
         expect(document_id_node.value).to eq valid_document_id
         expect(page).to have_content(judge_user.full_name)
         expect(notes_node.value).to eq "all done"

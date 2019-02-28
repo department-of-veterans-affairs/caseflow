@@ -12,7 +12,7 @@ describe ColocatedTaskDistributor do
   describe ".next_assignee" do
     let(:iterations) { 6 }
 
-    context "when the list_of_assignees is a populated array" do
+    context "when the assignee_pool is a populated array" do
       let(:total_distribution_count) { iterations * assignee_pool_size }
 
       before do

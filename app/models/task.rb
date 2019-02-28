@@ -1,8 +1,12 @@
+##
+# Base model for all tasks in Caseflow.
+# Tasks represent work to be done by judges, attorneys, VSOs, and anyone else who touches a Veteran's appeal.
+
 class Task < ApplicationRecord
   acts_as_tree
 
   belongs_to :assigned_to, polymorphic: true
-  belongs_to :assigned_by, class_name: User.name
+  belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
 

@@ -172,7 +172,7 @@ feature "Higher Level Review Edit issues" do
         contention_reference_id: "123",
         benefit_type: "compensation",
         ineligible_reason: nil,
-        removed_at: nil
+        contention_removed_at: nil
       )
     end
 
@@ -506,7 +506,7 @@ feature "Higher Level Review Edit issues" do
 
       click_intake_add_issue
 
-      rating_date = promulgation_date.strftime("%m/%d/%Y")
+      rating_date = promulgation_date.mdY
       expect(page).to have_content("Past decisions from #{rating_date}")
 
       click_intake_no_matching_issues
@@ -769,7 +769,8 @@ feature "Higher Level Review Edit issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "higher_level_reviews/#{rating_ep_claim_id}/edit",
           higher_level_review,
-          decision_request_issue.decision_issues + nonrating_decision_request_issue.decision_issues
+          DecisionIssue.where(id: [decision_request_issue.contested_decision_issue_id,
+                                   nonrating_decision_request_issue.contested_decision_issue_id])
         )
       end
     end
@@ -1035,7 +1036,7 @@ feature "Higher Level Review Edit issues" do
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.decision_review_id).to_not be_nil
       expect(request_issue).to be_closed
-      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(request_issue.contention_removed_at).to eq(Time.zone.now)
       expect(request_issue.closed_at).to eq(Time.zone.now)
       expect(request_issue.closed_status).to eq("removed")
       expect(request_issue).to be_removed

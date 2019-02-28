@@ -8,6 +8,8 @@ class Hearing < ApplicationRecord
   has_one :hearing_task_association, as: :hearing
   has_many :hearing_issue_notes
 
+  class HearingDayFull < StandardError; end
+
   accepts_nested_attributes_for :hearing_issue_notes
   accepts_nested_attributes_for :transcription
   accepts_nested_attributes_for :hearing_location
@@ -31,19 +33,24 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :veteran_available_hearing_locations, to: :appeal
-  delegate :veteran_closest_regional_office, to: :appeal
+  delegate :available_hearing_locations, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
+  delegate :hearing_day_full?, to: :hearing_day
 
   after_create :update_fields_from_hearing_day
+  before_create :check_available_slots
 
   HEARING_TYPES = {
     V: "Video",
     T: "Travel",
     C: "Central"
   }.freeze
+
+  def check_available_slots
+    fail HearingDayFull if hearing_day_full?
+  end
 
   def update_fields_from_hearing_day
     update!(judge: hearing_day.judge, room: hearing_day.room, bva_poc: hearing_day.bva_poc)
@@ -83,8 +90,6 @@ class Hearing < ApplicationRecord
     end
   end
 
-  #:nocov:
-  # This is all fake data that will be refactored in a future PR.
   def regional_office_name
     RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
   end
@@ -95,9 +100,8 @@ class Hearing < ApplicationRecord
   end
 
   def current_issue_count
-    1
+    request_issues.size
   end
-  #:nocov:
 
   def slot_new_hearing(hearing_day_id, hearing_location_attrs: nil, **_args)
     # These fields are needed for the legacy hearing's version of this method
@@ -152,8 +156,7 @@ class Hearing < ApplicationRecord
         :appeal_representative_name,
         :location,
         :worksheet_issues,
-        :veteran_closest_regional_office,
-        :veteran_available_hearing_locations
+        :available_hearing_locations
       ]
     )
   end

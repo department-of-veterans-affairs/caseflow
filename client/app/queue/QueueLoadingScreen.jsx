@@ -1,4 +1,3 @@
-// @flow
 import _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -13,39 +12,12 @@ import {
   onReceiveQueue,
   setAttorneysOfJudge,
   fetchAllAttorneys,
-  fetchAmaTasksOfUser,
-  getNewDocuments
+  fetchAmaTasksOfUser
 } from './QueueActions';
 import { setUserId } from './uiReducer/uiActions';
-import type { BasicAppeals, Tasks } from './types/models';
-import type { State, UsersById } from './types/state';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 
-type Params = {|
-  userId: number,
-  userRole: string,
-  appealId?: string,
-  children: React.Node,
-  urlToLoad?: string
-|};
-
-type Props = Params & {|
-  // From state
-  tasks: Tasks,
-  appeals: BasicAppeals,
-  amaTasks: Tasks,
-  loadedUserId: number,
-  judges: UsersById,
-  // Action creators
-  onReceiveQueue: typeof onReceiveQueue,
-  setAttorneysOfJudge: typeof setAttorneysOfJudge,
-  fetchAllAttorneys: typeof fetchAllAttorneys,
-  fetchAmaTasksOfUser: (number, string) => Promise<{ payload: { amaTasks: Tasks, appeals: BasicAppeals } }>,
-  setUserId: typeof setUserId,
-  getNewDocuments: typeof getNewDocuments
-|};
-
-class QueueLoadingScreen extends React.PureComponent<Props> {
+class QueueLoadingScreen extends React.PureComponent {
   maybeLoadAmaQueue = () => {
     const {
       userId,
@@ -137,7 +109,7 @@ class QueueLoadingScreen extends React.PureComponent<Props> {
   };
 }
 
-const mapStateToProps = (state: State) => {
+const mapStateToProps = (state) => {
   const { tasks, amaTasks, appeals } = state.queue;
 
   return {
@@ -153,8 +125,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAttorneysOfJudge,
   fetchAllAttorneys,
   fetchAmaTasksOfUser,
-  setUserId,
-  getNewDocuments
+  setUserId
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(QueueLoadingScreen));

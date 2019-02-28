@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -27,12 +26,6 @@ import {
   boldText
 } from '../constants';
 
-import type {
-  Appeal,
-  Issues,
-  Issue
-} from '../types/models';
-
 const smallLeftMargin = css({ marginLeft: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const errorNoTopMargin = css({
@@ -48,29 +41,8 @@ const flexColumn = css({
   width: '50%'
 });
 
-type State = {};
-
-type Props = {|
-  appealId: string,
-  issueId: string,
-  idx: number
-|};
-
-type Params = Props & {|
-  issue: Issue,
-  issues: Issues,
-  appeal: Appeal,
-  highlight: boolean,
-  amaDecisionIssues: boolean
-|};
-
-type RemandReasonOption = {|
-  checked: boolean,
-  post_aoj: ?string
-|};
-
-class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
-  elTopOfWarning: ?HTMLElement
+class IssueRemandReasonsOptions extends React.PureComponent {
+  elTopOfWarning;
 
   constructor(props) {
     super(props);
@@ -92,9 +64,8 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
   }
 
   updateIssue = (remandReasons) => {
-    const { appeal, issueId, amaDecisionIssues } = this.props;
-    const useDecisionIssues = !appeal.isLegacyAppeal && amaDecisionIssues;
-    const issues = useDecisionIssues ? appeal.decisionIssues : appeal.issues;
+    const { appeal, issueId } = this.props;
+    const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
     return {
       ..._.find(issues, (issue) => issue.id === issueId),
@@ -102,7 +73,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
     };
   };
 
-  getChosenOptions = (): Array<RemandReasonOption> => _.filter(this.state, (val) => val.checked);
+  getChosenOptions = () => _.filter(this.state, (val) => val.checked);
 
   validate = () => {
     const chosenOptions = this.getChosenOptions();
@@ -327,8 +298,7 @@ class IssueRemandReasonsOptions extends React.PureComponent<Params, State> {
 
 const mapStateToProps = (state, ownProps) => {
   const appeal = state.queue.stagedChanges.appeals[ownProps.appealId];
-  const amaDecisionIssues = state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues);
-  const issues = (amaDecisionIssues && !appeal.isLegacyAppeal) ? appeal.decisionIssues : appeal.issues;
+  const issues = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
 
   return {
     appeal,
@@ -336,12 +306,10 @@ const mapStateToProps = (state, ownProps) => {
       VACOLS_DISPOSITIONS.REMANDED, ISSUE_DISPOSITIONS.REMANDED
     ].includes(issue.disposition)),
     issue: _.find(issues, (issue) => issue.id === ownProps.issueId),
-    highlight: state.ui.highlightFormItems,
-    amaDecisionIssues
+    highlight: state.ui.highlightFormItems
   };
 };
 
 export default (connect(
   mapStateToProps, null, null, { withRef: true }
-)(IssueRemandReasonsOptions): React.ComponentType<Props, State>
-);
+)(IssueRemandReasonsOptions));

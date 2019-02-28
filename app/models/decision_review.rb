@@ -262,7 +262,7 @@ class DecisionReview < ApplicationRecord
   def api_alerts_show_decision_alert?
     # For Appeal and SC, want to show the decision alert once the decisions are available.
     # HLR has different logic and overrides this method
-    decision_issues.any?
+    decision_issues.any? && decision_event_date
   end
 
   def decision_date_for_api_alert
@@ -411,6 +411,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def fetch_issues_status(issues_list)
+    return {} if issues_list.empty?
+
     issues_list.map do |issue|
       {
         active: issue.api_status_active?,

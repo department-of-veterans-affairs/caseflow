@@ -1,3 +1,7 @@
+##
+# Parent class for all tasks to be completed by judges, including
+# JudgeQualityReviewTasks, JudgeDecisionReviewTasks, and JudgeAssignTasks.
+
 class JudgeTask < Task
   def available_actions(user)
     [

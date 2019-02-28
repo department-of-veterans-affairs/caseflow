@@ -178,11 +178,15 @@ class ClaimReview < DecisionReview
   end
 
   def aoj
+    return if request_issues.empty?
+
     request_issues.first.api_aoj_from_benefit_type
   end
 
   def issues_hash
     issue_list = active_status? ? request_issues.open : fetch_all_decision_issues
+
+    return [] if issue_list.empty?
 
     fetch_issues_status(issue_list)
   end
@@ -216,7 +220,7 @@ class ClaimReview < DecisionReview
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
       EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue.end_product_code)
+    ) || new_end_product_establishment(issue)
   end
 
   def matching_request_issue(contention_id)

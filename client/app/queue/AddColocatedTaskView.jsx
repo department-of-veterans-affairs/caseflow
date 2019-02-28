@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
@@ -29,37 +28,6 @@ import Button from '../components/Button';
 
 import { taskActionData } from './utils';
 
-import type { Appeal, Task } from './types/models';
-import type { UiStateMessage } from './types/state';
-
-type AdminActionType = {|
-  actionLabel: ?string,
-  instructions: string,
-  key: string
-|};
-
-type ComponentState = {|
-  adminActions: Array<AdminActionType>
-|};
-
-type Params = {|
-  appealId: string,
-  taskId: string
-|};
-
-type Props = Params & {|
-  // store
-  highlightFormItems: boolean,
-  error: ?UiStateMessage,
-  appeal: Appeal,
-  task: Task,
-  // dispatch
-  highlightInvalidFormItems: typeof highlightInvalidFormItems,
-  requestSave: typeof requestSave,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks,
-  setAppealAttrs: typeof setAppealAttrs
-|};
-
 const adminActionTemplate = () => {
   return {
     actionLabel: null,
@@ -68,7 +36,7 @@ const adminActionTemplate = () => {
   };
 };
 
-class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
+class AddColocatedTaskView extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -238,4 +206,4 @@ const WrappedComponent = decisionViewBase(AddColocatedTaskView, {
   continueBtnText: COPY.ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
 });
 
-export default (connect(mapStateToProps, mapDispatchToProps)(WrappedComponent): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(WrappedComponent));

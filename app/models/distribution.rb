@@ -18,7 +18,7 @@ class Distribution < ApplicationRecord
   after_commit :enqueue_distribution_job, on: :create
 
   CASES_PER_ATTORNEY = 3
-  ALTERNATIVE_BATCH_SIZE = 5
+  ALTERNATIVE_BATCH_SIZE = 15
 
   def distribute!
     return unless %w[pending error].include? status
@@ -115,10 +115,14 @@ class Distribution < ApplicationRecord
   end
 
   def batch_size
-    JudgeTeam.for_judge(judge)
+    team_batch_size = JudgeTeam.for_judge(judge)
       .try(:non_admins)
       .try(:count)
-      .try(:*, CASES_PER_ATTORNEY) || ALTERNATIVE_BATCH_SIZE
+      .try(:*, CASES_PER_ATTORNEY)
+
+    return team_batch_size unless team_batch_size.nil? || team_batch_size == 0
+
+    ALTERNATIVE_BATCH_SIZE
   end
 
   def total_batch_size
