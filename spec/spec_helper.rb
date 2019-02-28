@@ -93,7 +93,4 @@ RSpec.configure do |config|
   #   # test failures related to randomization by passing the same `--seed` value
   #   # as the one that triggered the failure.
   #   Kernel.srand config.seed
-  #  set timezone to est so that the spawned chrome window also uses est time as default
-  #  otherwise the chrome window uses utc convention
-   ENV['TZ'] = 'EST'
 end
