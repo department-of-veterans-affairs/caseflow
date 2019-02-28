@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190227003709) do
+ActiveRecord::Schema.define(version: 20190228004408) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -879,20 +879,20 @@ ActiveRecord::Schema.define(version: 20190227003709) do
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
   end
 
-  create_table "supplemental_claims", force: :cascade do |t|
-    t.string "benefit_type"
-    t.bigint "decision_review_remanded_id"
-    t.string "decision_review_remanded_type"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
-    t.datetime "establishment_last_submitted_at"
-    t.datetime "establishment_processed_at"
-    t.datetime "establishment_submitted_at"
-    t.boolean "legacy_opt_in_approved"
-    t.date "receipt_date"
-    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.string "veteran_file_number", null: false
-    t.boolean "veteran_is_not_claimant"
+  create_table "supplemental_claims", force: :cascade, comment: "Intake data for Supplemental Claims." do |t|
+    t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
+    t.bigint "decision_review_remanded_id", comment: "If an AMA decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated like this, then the ID of the original Decision Review with the remanded decision is stored here."
+    t.string "decision_review_remanded_type", comment: "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review."
+    t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
+    t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
+    t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
+    t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
+    t.datetime "establishment_submitted_at", comment: "Timestamp for when the Supplemental Claim was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
+    t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
+    t.date "receipt_date", comment: "The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Supplemental Claim."
+    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Supplemental Claim is for."
+    t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
