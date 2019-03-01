@@ -723,18 +723,17 @@ class LegacyAppeal < ApplicationRecord
 
   def assigned_to_location
     return location_code unless location_code_is_caseflow?
-
     return active_tasks.most_recently_assigned.assigned_to_label if active_tasks.any?
     return on_hold_tasks.most_recently_assigned.assigned_to_label if on_hold_tasks.any?
-    return tasks.most_recently_assigned.assigned_to_label if tasks.any?
-
-    # return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
-    # return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
     # shouldn't happen because if all tasks are closed the task returns to the assigning attorney
-    # return most_recently_assigned_to_label(tasks) if tasks.any?
+    if tasks.any?
+      Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but is open and only has only closed tasks")
+      return tasks.most_recently_assigned.assigned_to_label 
+    end
 
     # shouldn't happen because setting location to "CASEFLOW" only happens when a task is created
+    Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but is open and has no tasks")
     location_code
   end
 
