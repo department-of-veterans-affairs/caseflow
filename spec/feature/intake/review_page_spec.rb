@@ -38,7 +38,7 @@ feature "Intake Review Page" do
 
     context "when veteran is deceased" do
       let(:veteran) do
-        Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))
+        Generators::Veteran.build(file_number: "123121234", date_of_death: 2.years.ago)
       end
 
       context "higher level review" do
