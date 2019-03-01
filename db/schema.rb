@@ -691,11 +691,11 @@ ActiveRecord::Schema.define(version: 20190228004408) do
   end
 
   create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|
-    t.datetime "closed_on", comment: "The datetime that the legacy appeal was closed in VACOLS and opted into RAMP."
-    t.date "nod_date", comment: "The date when the Veteran filed a Notice of Disagreement for the original claims decision in the legacy system."
+    t.datetime "closed_on", comment: "The date that the legacy appeal was closed in VACOLS and opted into RAMP."
+    t.date "nod_date", comment: "The date when the Veteran filed a notice of disagreement for the original claims decision in the legacy system - the step before a Veteran receives a Statement of the Case and before they file a Form 9."
     t.string "partial_closure_issue_sequence_ids", comment: "If the entire legacy appeal could not be closed and moved to the RAMP Election, the VACOLS sequence IDs of issues on the legacy appeal which were closed are stored here, indicating that it was a partial closure.", array: true
     t.integer "ramp_election_id", comment: "The ID of the RAMP election that closed the legacy appeal."
-    t.string "vacols_id", null: false, comment: "The VACOLS BFKEY of the legacy appeal that has been closed and opted into RAMP."
+    t.string "vacols_id", null: false, comment: "The VACOLS ID of the legacy appeal that has been closed and opted into RAMP."
   end
 
   create_table "ramp_election_rollbacks", force: :cascade do |t|
@@ -881,7 +881,7 @@ ActiveRecord::Schema.define(version: 20190228004408) do
 
   create_table "supplemental_claims", force: :cascade, comment: "Intake data for Supplemental Claims." do |t|
     t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
-    t.bigint "decision_review_remanded_id", comment: "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here."
+    t.bigint "decision_review_remanded_id", comment: "If an AMA decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated like this, then the ID of the original Decision Review with the remanded decision is stored here."
     t.string "decision_review_remanded_type", comment: "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review."
     t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
     t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
@@ -890,7 +890,7 @@ ActiveRecord::Schema.define(version: 20190228004408) do
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the Supplemental Claim was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
     t.date "receipt_date", comment: "The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews."
-    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Supplemental Claim. Can be used to link to the claim after it is completed."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Supplemental Claim."
     t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Supplemental Claim is for."
     t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
