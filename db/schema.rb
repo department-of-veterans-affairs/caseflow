@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190228004408) do
+ActiveRecord::Schema.define(version: 20190228185229) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -211,10 +211,13 @@ ActiveRecord::Schema.define(version: 20190228004408) do
   end
 
   create_table "claimants", force: :cascade do |t|
+    t.bigint "decision_review_id"
+    t.string "decision_review_type"
     t.string "participant_id", null: false
     t.string "payee_code"
     t.bigint "review_request_id", null: false
     t.string "review_request_type", null: false
+    t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
