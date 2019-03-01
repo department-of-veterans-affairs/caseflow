@@ -122,7 +122,6 @@ module IntakeHelpers
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
     Timecop.freeze(Time.zone.today)
 
     # skip the sync call since all edit requests require resyncing

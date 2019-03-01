@@ -59,6 +59,8 @@ class SeedDB
     create_org_queue_users
     create_qr_user
     create_aod_user
+    create_privacy_user
+    create_lit_support_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -146,7 +148,7 @@ class SeedDB
   end
 
   def create_org_queue_users
-    nca = BusinessLine.create!(name: "National Cemetery Association", url: "nca")
+    nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{n}", full_name: "NCA team member #{n}")
       OrganizationsUser.add_user_to_organization(u, nca)
@@ -172,6 +174,16 @@ class SeedDB
   def create_aod_user
     u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
     OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
+  end
+
+  def create_privacy_user
+    u = User.create!(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Privacy and FOIA team member")
+    OrganizationsUser.add_user_to_organization(u, PrivacyTeam.singleton)
+  end
+
+  def create_lit_support_user
+    u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Litigation Support team member")
+    OrganizationsUser.add_user_to_organization(u, LitigationSupport.singleton)
   end
 
   def create_mail_team_user
@@ -423,13 +435,13 @@ class SeedDB
       last_name: Faker::Name.last_name
     )
 
-    vet.closest_regional_office = ro_key
     vet.save
 
     appeal = FactoryBot.create(
       :appeal,
       :with_tasks,
       number_of_claimants: 1,
+      closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
       docket_type: "hearing"
     )
@@ -469,7 +481,7 @@ class SeedDB
                           decision_review: higher_level_review)
       end
       FactoryBot.create(:higher_level_review_task,
-                        assigned_to: Organization.find_by(name: "National Cemetery Association"),
+                        assigned_to: Organization.find_by(name: "National Cemetery Administration"),
                         appeal: higher_level_review)
     end
   end
@@ -808,7 +820,7 @@ class SeedDB
   end
 
   def create_board_grant_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
     description = "Service connection for pain disorder is granted with an evaluation of 50\% effective May 1 2011"
     notes = "Pain disorder with 80\% evaluation per examination"
 
@@ -840,7 +852,7 @@ class SeedDB
   end
 
   def create_veteran_record_request_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
 
     3.times do |_index|
       FactoryBot.create(:veteran_record_request_task,
@@ -924,6 +936,7 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
+      closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, contested_issue_description: description, notes: notes
       )
@@ -934,6 +947,7 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",
+      closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 8, contested_issue_description: description, notes: notes
       )
@@ -948,7 +962,6 @@ class SeedDB
       created_by: user,
       updated_by: user
     )
-    Veteran.where(file_number: %w[808415990 992190636]).update_all(closest_regional_office: "RO17")
   end
 
   def seed

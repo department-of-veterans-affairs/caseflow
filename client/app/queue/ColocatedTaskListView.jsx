@@ -88,7 +88,7 @@ export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListVi
 
 const NewFileIcon = connect(
   (state) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
-  (props) => <NewFileAll tasks={props.tasks} useOnHoldDate />);
+  (props) => <NewFileAll tasks={props.tasks} />);
 
 const NewTasksTab = connect(
   (state) => ({

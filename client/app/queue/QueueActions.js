@@ -9,7 +9,6 @@ import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiRedu
 import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import moment from 'moment';
 
 export const onReceiveQueue = (
   { tasks, amaTasks, appeals }
@@ -72,17 +71,17 @@ export const fetchJudges = () => (dispatch) => {
   });
 };
 
-export const receiveNewDocuments = ({ appealId, newDocuments }) => ({
-  type: ACTIONS.RECEIVE_NEW_FILES,
+export const receiveNewDocumentsForAppeal = ({ appealId, newDocuments }) => ({
+  type: ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL,
   payload: {
     appealId,
     newDocuments
   }
 });
 
-export const getNewDocuments = (appealId, cached, onHoldDate) => (dispatch) => {
+export const getNewDocumentsForAppeal = (appealId) => (dispatch) => {
   dispatch({
-    type: ACTIONS.STARTED_LOADING_DOCUMENTS,
+    type: ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_APPEAL,
     payload: {
       appealId
     }
@@ -91,26 +90,55 @@ export const getNewDocuments = (appealId, cached, onHoldDate) => (dispatch) => {
     timeout: { response: 5 * 60 * 1000 }
   };
 
-  let query = cached ? 'cached' : '';
-
-  if (onHoldDate) {
-    const timestamp = moment(onHoldDate).unix();
-
-    query += query ? `&placed_on_hold_date=${timestamp}` : `placed_on_hold_date=${timestamp}`;
-  }
-
-  ApiUtil.get(`/appeals/${appealId}/new_documents${query ? `?${query}` : ''}`, requestOptions).then((response) => {
+  ApiUtil.get(`/appeals/${appealId}/new_documents`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
-    dispatch(receiveNewDocuments({
+    dispatch(receiveNewDocumentsForAppeal({
       appealId,
       newDocuments: resp.new_documents
     }));
   }, (error) => {
     dispatch({
-      type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES,
+      type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL,
       payload: {
         appealId,
+        error
+      }
+    });
+  });
+};
+
+export const receiveNewDocumentsForTask = ({ taskId, newDocuments }) => ({
+  type: ACTIONS.RECEIVE_NEW_FILES_FOR_TASK,
+  payload: {
+    taskId,
+    newDocuments
+  }
+});
+
+export const getNewDocumentsForTask = (taskId) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_TASK,
+    payload: {
+      taskId
+    }
+  });
+  const requestOptions = {
+    timeout: { response: 5 * 60 * 1000 }
+  };
+
+  ApiUtil.get(`/tasks/${taskId}/new_documents`, requestOptions).then((response) => {
+    const resp = JSON.parse(response.text);
+
+    dispatch(receiveNewDocumentsForTask({
+      taskId,
+      newDocuments: resp.new_documents
+    }));
+  }, (error) => {
+    dispatch({
+      type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_TASK,
+      payload: {
+        taskId,
         error
       }
     });

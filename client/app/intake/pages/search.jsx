@@ -97,6 +97,10 @@ class Search extends React.PureComponent {
         title: 'Veteran not found',
         body: veteranNotFoundInstructions
       },
+      veteran_has_multiple_phone_numbers: {
+        title: 'The Veteran has multiple active phone numbers',
+        body: 'Please edit the Veteran\'s contact information in SHARE to have only one active phone number.'
+      },
       veteran_not_accessible: {
         title: 'You don\'t have permission to view this Veteran\'s information​',
         body: 'It looks like you do not have the necessary level of access to view this information.' +
@@ -171,7 +175,8 @@ class Search extends React.PureComponent {
       searchErrorCode,
       searchErrorData,
       intakeStatus,
-      formType
+      formType,
+      fileNumberSearchInput
     } = this.props;
 
     if (!formType) {
@@ -197,9 +202,10 @@ class Search extends React.PureComponent {
         size="small"
         title="Enter the Veteran's ID or SSN"
         onSubmit={this.handleSearchSubmit}
+        searchDisabled={_.isEmpty(fileNumberSearchInput)}
         onChange={this.props.setFileNumberSearch}
         onClearSearch={this.clearSearch}
-        value={this.props.fileNumberSearchInput}
+        value={fileNumberSearchInput}
         loading={this.props.fileNumberSearchRequestStatus === REQUEST_STATE.IN_PROGRESS}
         submitUsingEnterKey
       />

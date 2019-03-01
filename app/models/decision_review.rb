@@ -197,7 +197,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def open_request_issues
-    request_issues.open
+    request_issues.includes(:decision_review, :contested_decision_issue).open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
@@ -411,6 +411,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def fetch_issues_status(issues_list)
+    return {} if issues_list.empty?
+
     issues_list.map do |issue|
       {
         active: issue.api_status_active?,
