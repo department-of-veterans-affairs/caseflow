@@ -34,7 +34,7 @@ class ScheduleHearingTask < GenericTask
         "status = ? OR status = ?",
         Constants.TASK_STATUSES.assigned.to_sym,
         Constants.TASK_STATUSES.in_progress.to_sym
-      ).includes(:assigned_to, :assigned_by, :appeal, attorney_case_reviews: [:attorney])
+      ).includes(:assigned_to, :assigned_by, appeal: [:available_hearing_locations], attorney_case_reviews: [:attorney])
 
       appeal_tasks = incomplete_tasks.joins(
         "INNER JOIN appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
@@ -99,10 +99,9 @@ class ScheduleHearingTask < GenericTask
 
         hearing_time = task_payloads[:values][:hearing_time]
         hearing_day_id = task_payloads[:values][:hearing_pkseq]
-        hearing_type = task_payloads[:values][:hearing_type]
         hearing_location = task_payloads[:values][:hearing_location]
 
-        hearing = slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+        hearing = slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
         DispositionTask.create_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
@@ -167,9 +166,8 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  def slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+  def slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
     hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                 hearing_type: (hearing_type == LegacyHearing::CO_HEARING) ? "C" : "V",
                                                  appeal: appeal,
                                                  hearing_location_attrs: hearing_location&.to_hash,
                                                  scheduled_time: hearing_time&.stringify_keys)
