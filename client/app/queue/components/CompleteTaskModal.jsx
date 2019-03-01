@@ -34,7 +34,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
         {
           <TextareaField
             label="Instructions:"
-            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            name="instructions"
             id="completeTaskInstructions"
             onChange={(value) => setState({ instructions: value })}
             value={state.instructions}
