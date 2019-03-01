@@ -52,7 +52,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       # expect(page).to have_content("8:30 am")
     end
 
-    scenario "User can postpone a hearing", skip: "flakey test" do
+    scenario "User can postpone a hearing", skip: "Flakey test" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
       click_dropdown(name: "Disposition", text: "Postponed")
