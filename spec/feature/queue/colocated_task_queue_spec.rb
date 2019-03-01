@@ -65,9 +65,9 @@ RSpec.feature "ColocatedTask" do
       # Click into case details page. Expect to see draft decision option.
       click_on(appeal.veteran.name.formatted(:readable_full))
       # verify that the instructions from the VLJ appear on the case timeline
-      sleep 1
-      page.find_all("button", text: "View task instructions")[1].click
-      sleep 1
+      scroll_element_in_to_view("#case_timeline-section")
+      view_text = COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+      page.find_all("table#case-timeline-table button", text: view_text).each(&:click)
       expect(page).to have_content(
         "INSTRUCTIONS FROM VLJ"
       )

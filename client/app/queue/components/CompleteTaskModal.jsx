@@ -18,19 +18,15 @@ import {
 } from '../uiReducer/uiActions';
 import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
-const renderInstructionsFieldForColocatedTask = (props) => {
-  if (props.task.type === 'ColocatedTask' && !props.task.isLegacy) {
-    return <TextareaField
-      label="Instructions:"
-      name="instructions"
-      value={(props.decision.opts && props.decision.opts.instructions) || ''}
-      onChange={(instructions) => props.setDecisionOptions({ instructions })}
-      styling={marginTop(4)}
-      maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-    />;
-  }
-
-  return null;
+const renderInstructionsField = (props) => {
+  return <TextareaField
+    label="Instructions:"
+    name="instructions"
+    value={(props.decision.opts && props.decision.opts.instructions) || ''}
+    onChange={(instructions) => props.setDecisionOptions({ instructions })}
+    styling={marginTop(4)}
+    maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+  />;
 };
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
   mark_task_complete: {
@@ -45,7 +41,7 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
           taskActionData(props) && taskActionData(props).modal_body
         }
         {
-          renderInstructionsFieldForColocatedTask(props)
+          renderInstructionsField(props)
         }
       </React.Fragment>
       ;
