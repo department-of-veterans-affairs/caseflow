@@ -39,6 +39,7 @@ class ApplicationController < ApplicationBaseController
   end
 
   def handle_non_critical_error(endpoint, err)
+    error_type = err.class.name
     if !err.class.method_defined? :serialize_response
       code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
       err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
@@ -49,7 +50,9 @@ class ApplicationController < ApplicationBaseController
       metric_name: "non_critical",
       app_name: RequestStore[:application],
       attrs: {
-        endpoint: endpoint
+        endpoint: endpoint,
+        error_type: error_type,
+        error_code: err.code
       }
     )
 
