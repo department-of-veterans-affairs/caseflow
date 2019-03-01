@@ -26,13 +26,16 @@ RSpec.feature "Intake Stats Dashboard" do
     ramp_election.issues.create!(description: "another issue")
     ramp_election.issues.create!(description: "yet another issue")
 
-    create(:ramp_election,
-           veteran_file_number: "77776663",
-           notice_date: 5.days.ago,
-           receipt_date: 45.minutes.ago,
-           option_selected: :higher_level_review,
-           established_at: Time.zone.now,
-           end_product_status: "HELLA_ACTIVE").issues.create!(description: "this is the only issue here")
+    let(:active_ramp_election) do
+      create(:ramp_election,
+             veteran_file_number: "77776663",
+             notice_date: 5.days.ago,
+             receipt_date: 45.minutes.ago,
+             option_selected: :higher_level_review,
+             established_at: Time.zone.now).issues.create!(description: "this is the only issue here")
+    end
+
+    create(:end_product_establishment, :active, source: active_ramp_election)
 
     election_for_closed_appeals = create(
       :ramp_election,
