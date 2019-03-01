@@ -2,8 +2,6 @@ require "rails_helper"
 
 RSpec.feature "Hearings" do
   before do
-    # Set the time zone to the current user's time zone for proper date conversion
-    Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2017, 12, 1, 13))
   end
 

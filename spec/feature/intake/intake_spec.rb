@@ -7,8 +7,7 @@ RSpec.feature "Intake" do
   before do
     FeatureToggle.enable!(:intake)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 12, 8))
+    Timecop.freeze(post_ama_start_date)
 
     Fakes::BGSService.inaccessible_appeal_vbms_ids = []
 
@@ -204,7 +203,7 @@ RSpec.feature "Intake" do
     end
 
     scenario "Search for a veteran whose form is already being processed" do
-      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: 6.months.ago)
 
       RampElectionIntake.new(
         veteran_file_number: "12341234",
@@ -226,7 +225,7 @@ RSpec.feature "Intake" do
     end
 
     scenario "Cancel an intake" do
-      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: 6.months.ago)
 
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
