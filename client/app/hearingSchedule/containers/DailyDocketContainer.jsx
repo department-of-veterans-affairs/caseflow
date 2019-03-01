@@ -105,7 +105,9 @@ export class DailyDocketContainer extends React.Component {
       h: timeObject.hours(),
       // eslint-disable-next-line id-length
       m: timeObject.minutes(),
-      offset: moment(dateForTimezoneCalculation).tz(hearing.regionalOfficeTimezone).tz('America/New_York').format('Z')
+      offset: moment(dateForTimezoneCalculation).tz(hearing.regionalOfficeTimezone).
+        tz('America/New_York').
+        format('Z')
     };
 
   };
