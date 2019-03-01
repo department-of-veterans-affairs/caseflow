@@ -87,7 +87,7 @@ describe ScheduleHearingTask do
         let(:vacols_case) { create(:case) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:schedule_hearing_task) do
-          ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
+          create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user)
         end
 
         context "with no VSO" do
@@ -133,7 +133,7 @@ describe ScheduleHearingTask do
       context "AMA appeal" do
         let(:appeal) { create(:appeal) }
         let(:schedule_hearing_task) do
-          ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
+          create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user)
         end
 
         it "completes the task and creates an EvidenceSubmissionWindowTask" do
