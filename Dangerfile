@@ -12,7 +12,16 @@ if `git diff #{github.base_commit} spec/ | grep -E '(:focus => true)|(focus: tru
   fail("focus: true is left in test")
 end
 
-# We must take care of our VACOLS models.  Remind developers to test this thoroughly
+# We must take care of our VACOLS models. Remind developers to test this thoroughly
 if !git.modified_files.grep(/app\/models\/vacols/).empty?
-  warn("This PR changes VACOLS models.  Please ensure this is tested against a UAT VACOLS instance")
+  warn("This PR changes VACOLS models. Please ensure this is tested against a UAT VACOLS instance")
+end
+
+# We should not disable Rubocop rules unless there's a very good reason
+if `git diff #{github.base_commit} | grep -E 'rubocop:disable'`.length > 1
+  warn(
+    "This PR disables one or more Rubocop rules. " \
+    "If there is a valid reason, please provide it in your commit message. " \
+    "Otherwise, consider refactoring the code."
+  )
 end

@@ -7,6 +7,10 @@ FactoryBot.define do
       type { Vso.name }
     end
 
+    factory :field_vso, class: FieldVso do
+      type { FieldVso.name }
+    end
+
     factory :bva do
       type { "Bva" }
     end
