@@ -6,6 +6,7 @@ describe RequestIssue do
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:profile_date) { Time.zone.now.to_s }
   let(:contention_reference_id) { "1234" }
+  let(:nonrating_contention_reference_id) { "5678" }
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
@@ -82,7 +83,7 @@ describe RequestIssue do
       decision_date: 1.day.ago,
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
-      contention_reference_id: contention_reference_id,
+      contention_reference_id: nonrating_contention_reference_id,
       benefit_type: benefit_type
     )
   end
@@ -760,6 +761,7 @@ describe RequestIssue do
     let(:old_reference_id) { "old123" }
     let(:active_epe) { create(:end_product_establishment, :active) }
     let(:receipt_date) { review.receipt_date }
+    let(:previous_contention_reference_id) { "8888" }
 
     let(:previous_review) { create(:higher_level_review) }
     let!(:previous_request_issue) do
@@ -767,7 +769,7 @@ describe RequestIssue do
         :request_issue,
         decision_review: previous_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
-        contention_reference_id: contention_reference_id
+        contention_reference_id: previous_contention_reference_id
       )
     end
 
@@ -796,7 +798,7 @@ describe RequestIssue do
           {
             reference_id: higher_level_review_reference_id,
             decision_text: "Already reviewed injury",
-            contention_reference_id: contention_reference_id
+            contention_reference_id: previous_contention_reference_id
           }
         ]
       )
@@ -1274,7 +1276,7 @@ describe RequestIssue do
 
         let!(:contention) do
           Generators::Contention.build(
-            id: contention_reference_id,
+            id: nonrating_contention_reference_id,
             claim_id: end_product_establishment.reference_id,
             disposition: "allowed"
           )
