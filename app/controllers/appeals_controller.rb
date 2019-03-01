@@ -53,6 +53,8 @@ class AppealsController < ApplicationController
       appeal: appeal, user: current_user, query_vbms: true, date_to_compare_with: Time.zone.at(0)
     )
     render json: { new_documents: new_documents_for_user.process! }
+  rescue Caseflow::Error::EfolderAccessForbidden => e
+    render(e.serialize_response)
   rescue StandardError => e
     Raven.capture_exception(e)
     handle_non_critical_error("appeals_new_documents", e)
