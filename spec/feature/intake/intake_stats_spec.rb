@@ -1,5 +1,3 @@
-require "rails_helper"
-
 RSpec.feature "Intake Stats Dashboard" do
   before do
     Timecop.freeze(Time.utc(2020, 1, 7, 17, 55, 0, rand(1000)))
@@ -26,16 +24,12 @@ RSpec.feature "Intake Stats Dashboard" do
     ramp_election.issues.create!(description: "another issue")
     ramp_election.issues.create!(description: "yet another issue")
 
-    let(:active_ramp_election) do
-      create(:ramp_election,
-             veteran_file_number: "77776663",
-             notice_date: 5.days.ago,
-             receipt_date: 45.minutes.ago,
-             option_selected: :higher_level_review,
-             established_at: Time.zone.now).issues.create!(description: "this is the only issue here")
-    end
-
-    create(:end_product_establishment, :active, source: active_ramp_election)
+    create(:ramp_election,
+           veteran_file_number: "77776663",
+           notice_date: 5.days.ago,
+           receipt_date: 45.minutes.ago,
+           option_selected: :higher_level_review,
+           established_at: Time.zone.now).issues.create!(description: "this is the only issue here")
 
     election_for_closed_appeals = create(
       :ramp_election,
