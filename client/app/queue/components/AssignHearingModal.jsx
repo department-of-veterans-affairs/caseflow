@@ -18,7 +18,7 @@ import {
 } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
-import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
 import { withRouter } from 'react-router-dom';
