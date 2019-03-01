@@ -54,7 +54,9 @@ class SeedDB
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
     create_colocated_users
+    create_transcription_team
     create_vso_users_and_tasks
+    create_field_vso_and_users
     create_org_queue_users
     create_qr_user
     create_aod_user
@@ -75,6 +77,11 @@ class SeedDB
         OrganizationsUser.add_user_to_organization(User.find_or_create_by(css_id: css_id, station_id: 101), judge_team)
       end
     end
+  end
+
+  def create_transcription_team
+    transcription_member = User.find_or_create_by(css_id: "TRANSCRIPTION_USER", station_id: 101)
+    OrganizationsUser.add_user_to_organization(transcription_member, TranscriptionTeam.singleton)
   end
 
   def create_hearings_team
@@ -99,7 +106,6 @@ class SeedDB
   def create_vso_users_and_tasks
     vso = Vso.create(
       name: "VSO",
-      role: "VSO",
       url: "veterans-service-organization",
       participant_id: "2452415"
     )
@@ -138,6 +144,29 @@ class SeedDB
                                                                   assigned_to_type: User.name
                                                                 }], u)
       end
+    end
+  end
+
+  def create_field_vso_and_users
+    vso = FactoryBot.create(:field_vso, name: "Field VSO", url: "field-vso")
+
+    %w[MANDY NICHOLAS ELIJAH].each do |name|
+      u = User.create(
+        css_id: "#{name}_VSO",
+        station_id: 101,
+        full_name: "#{name} - VSO user",
+        roles: %w[VSO]
+      )
+      OrganizationsUser.add_user_to_organization(u, vso)
+
+      a = FactoryBot.create(:appeal)
+      root_task = FactoryBot.create(:root_task, appeal: a)
+      FactoryBot.create(
+        :track_veteran_task,
+        parent: root_task,
+        appeal: a,
+        assigned_to: vso
+      )
     end
   end
 
