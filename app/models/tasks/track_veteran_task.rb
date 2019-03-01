@@ -8,10 +8,6 @@ class TrackVeteranTask < GenericTask
   # Avoid permissions errors outlined in Github ticket #9389 by setting status here.
   after_initialize :set_in_progress_status
 
-  def set_in_progress_status
-    self.status = Constants.TASK_STATUSES.in_progress
-  end
-
   # Skip unique verification for tracking tasks since multiple VSOs may each have a tracking task and they will be
   # identified as the same organization because they both have the organization type "Vso".
   def verify_org_task_unique; end
@@ -30,5 +26,11 @@ class TrackVeteranTask < GenericTask
 
   def hide_from_task_snapshot
     true
+  end
+
+  private
+
+  def set_in_progress_status
+    self.status = Constants.TASK_STATUSES.in_progress
   end
 end
