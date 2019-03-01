@@ -86,11 +86,6 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :ama_hold_hearing_task, class: HoldHearingTask do
-      type { HoldHearingTask.name }
-      appeal { create(:appeal) }
-    end
-
     factory :ama_disposition_task, class: DispositionTask do
       type { DispositionTask.name }
       appeal { create(:appeal) }
