@@ -12,22 +12,13 @@ import {
   taskById,
   appealWithDetailSelector
 } from '../selectors';
-import { onReceiveAmaTasks, setDecisionOptions } from '../QueueActions';
+import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
 import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
-const renderInstructionsField = (props) => {
-  return <TextareaField
-    label="Instructions:"
-    name="instructions"
-    value={(props.decision.opts && props.decision.opts.instructions) || ''}
-    onChange={(instructions) => props.setDecisionOptions({ instructions })}
-    styling={marginTop(4)}
-    maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
-  />;
-};
+
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
   mark_task_complete: {
     buildSuccessMsg: (appeal, { assignerName }) => ({
@@ -35,13 +26,21 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
       detail: sprintf(COPY.MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assignerName)
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
-    getContent: ({ props }) => {
+    getContent: ({ props, state, setState }) => {
       return <React.Fragment>
         {
           taskActionData(props) && taskActionData(props).modal_body
         }
         {
-          renderInstructionsField(props)
+          <TextareaField
+            label="Instructions:"
+            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            id="completeTaskInstructions"
+            onChange={(value) => setState({ instructions: value })}
+            value={state.instructions}
+            styling={marginTop(4)}
+            maxlength={ATTORNEY_COMMENTS_MAX_LENGTH}
+          />
         }
       </React.Fragment>
       ;
@@ -65,6 +64,12 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
 };
 
 class CompleteTaskModal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      instructions: ''
+    };
+  }
   getTaskAssignerName = () => {
     const { task: { assignedBy } } = this.props;
 
@@ -81,20 +86,21 @@ class CompleteTaskModal extends React.Component {
     assignerName: this.getTaskAssignerName(),
     teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.label],
     appeal: this.props.appeal,
-    props: this.props
+    props: this.props,
+    state: this.state,
+    setState: this.setState.bind(this)
   });
 
   submit = () => {
     const {
       task,
-      appeal,
-      decision
+      appeal
     } = this.props;
     const payload = {
       data: {
         task: {
           status: 'completed',
-          ...decision.opts
+          instructions: this.state.instructions
         }
       }
     };
@@ -116,26 +122,17 @@ class CompleteTaskModal extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const {
-    queue: {
-      stagedChanges: {
-        taskDecision: decision
-      }
-    }
-  } = state;
 
   return {
     task: taskById(state, { taskId: ownProps.taskId }),
     appeal: appealWithDetailSelector(state, ownProps),
-    saveState: state.ui.saveState.savePending,
-    decision
+    saveState: state.ui.saveState.savePending
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  onReceiveAmaTasks,
-  setDecisionOptions
+  onReceiveAmaTasks
 }, dispatch);
 
 const propsToText = (props) => {
