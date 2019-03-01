@@ -141,7 +141,7 @@ class HearingRepository
     end
 
     def hearings_for(case_hearings)
-      vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
+      vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact.uniq
 
       fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids).includes(:appeal, :user)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
@@ -153,7 +153,7 @@ class HearingRepository
           .assign_or_create_from_vacols_record(vacols_record,
                                                legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
         set_vacols_values(hearing, vacols_record)
-      end.flatten
+      end.flatten.uniq
     end
 
     private
