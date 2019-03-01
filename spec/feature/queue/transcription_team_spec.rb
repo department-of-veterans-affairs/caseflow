@@ -12,7 +12,8 @@ RSpec.feature "TranscriptionTeam" do
     let(:appeal) { FactoryBot.create(:appeal) }
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:transcription_task) { FactoryBot.create(:transcription_task, parent: hearing_task, appeal: appeal) }
+    let!(:disposition_task) { FactoryBot.create(:ama_disposition_task, parent: hearing_task, appeal: appeal) }
+    let!(:transcription_task) { FactoryBot.create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
     scenario "completes the task" do
       visit("/organizations/transcription")

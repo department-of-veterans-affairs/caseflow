@@ -1,4 +1,12 @@
 class TranscriptionTask < GenericTask
+  before_create :check_parent_type
+
+  class NonDispositionTaskParent < StandardError; end
+
+  def check_parent_type
+    fail NonDispositionTaskParent unless parent.is_a? DispositionTask
+  end
+
   def available_actions(user)
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       return [Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h, Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h]
@@ -38,11 +46,7 @@ class TranscriptionTask < GenericTask
   end
 
   def hearing_task
-    return @hearing_task if @hearing_task
-
-    @hearing_task = parent
-    @hearing_task = @hearing_task.parent while @hearing_task.class != HearingTask
-    @hearing_task
+    parent.parent
   end
 
   private

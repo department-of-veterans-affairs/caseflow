@@ -18,15 +18,15 @@ describe TranscriptionTask do
       let!(:root_task) { create(:root_task, appeal: appeal) }
       let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-      let!(:set_disposition_task) { create(:task, parent: hearing_task, appeal: appeal) }
-      let!(:transcription_task) { create(:transcription_task, parent: set_disposition_task, appeal: appeal) }
+      let!(:disposition_task) { create(:ama_disposition_task, parent: hearing_task, appeal: appeal) }
+      let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
       it "cancels all tasks in the hierarchy and creates a new schedule_hearing_task" do
         transcription_task.update_from_params(update_params, transcription_user)
 
         expect(hearing_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         expect(schedule_hearing_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-        expect(set_disposition_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(disposition_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         expect(root_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
@@ -50,8 +50,8 @@ describe TranscriptionTask do
       let!(:root_task) { create(:root_task, appeal: appeal) }
       let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-      let!(:set_disposition_task) { create(:task, parent: hearing_task, appeal: appeal) }
-      let!(:transcription_task) { create(:transcription_task, parent: set_disposition_task, appeal: appeal) }
+      let!(:disposition_task) { create(:ama_disposition_task, parent: hearing_task, appeal: appeal) }
+      let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
       it "completes the task" do
         transcription_task.update_from_params(update_params, transcription_user)
@@ -66,8 +66,8 @@ describe TranscriptionTask do
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
     let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-    let!(:set_disposition_task) { create(:task, parent: hearing_task, appeal: appeal) }
-    let!(:transcription_task) { create(:transcription_task, parent: set_disposition_task, appeal: appeal) }
+    let!(:disposition_task) { create(:ama_disposition_task, parent: hearing_task, appeal: appeal) }
+    let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
     it "returns the hearing task" do
       expect(transcription_task.hearing_task).to eq(hearing_task)
