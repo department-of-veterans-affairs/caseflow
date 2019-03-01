@@ -722,16 +722,17 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def assigned_to_location
-    return location_code unless LOCATION_CODES[:caseflow] == location_code
+    return location_code unless location_code_is_caseflow?
 
-    active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
-    return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
+    return active_tasks.most_recently_assigned.assigned_to_label if active_tasks.any?
+    return on_hold_tasks.most_recently_assigned.assigned_to_label if on_hold_tasks.any?
+    return tasks.most_recently_assigned.assigned_to_label if tasks.any?
 
-    on_hold_tasks = tasks.where(status: Constants.TASK_STATUSES.on_hold)
-    return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
+    # return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
+    # return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
     # shouldn't happen because if all tasks are closed the task returns to the assigning attorney
-    return most_recently_assigned_to_label(tasks) if tasks.any?
+    # return most_recently_assigned_to_label(tasks) if tasks.any?
 
     # shouldn't happen because setting location to "CASEFLOW" only happens when a task is created
     location_code
@@ -739,8 +740,16 @@ class LegacyAppeal < ApplicationRecord
 
   private
 
-  def most_recently_assigned_to_label(tasks_for_appeal)
-    tasks_for_appeal.order(:updated_at).last.assigned_to_label
+  def active_tasks
+    tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+  end
+
+  def on_hold_tasks
+    tasks.where(status: Constants.TASK_STATUSES.on_hold)
+  end
+
+  def location_code_is_caseflow?
+    location_code == LOCATION_CODES[:caseflow]
   end
 
   def use_representative_info_from_bgs?
