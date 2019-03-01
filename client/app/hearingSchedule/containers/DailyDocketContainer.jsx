@@ -92,17 +92,20 @@ export class DailyDocketContainer extends React.Component {
   };
 
   getTime = (hearing) => {
+    const date = (hearing.editedDate && hearing.editedDate.scheduledFor) || hearing.scheduledFor;
+
     if (hearing.editedTime) {
-      return this.formatTime(hearing.scheduledFor, hearing.editedTime);
+      return this.formatTime(date, hearing.editedTime);
     }
 
-    const timeObject = moment(hearing.scheduledFor).tz(hearing.regionalOfficeTimezone);
+    const scheduledForObject = moment(hearing.scheduledFor);
+    const timeObject = moment(date).tz(hearing.regionalOfficeTimezone);
 
     return {
       // eslint-disable-next-line id-length
-      h: timeObject.hours(),
+      h: scheduledForObject.hours(),
       // eslint-disable-next-line id-length
-      m: timeObject.minutes(),
+      m: scheduledForObject.minutes(),
       offset: timeObject.tz('America/New_York').format('Z')
     };
 
@@ -128,7 +131,7 @@ export class DailyDocketContainer extends React.Component {
         scheduledTime = hearing.editedTime;
       }
     } else {
-      scheduledTime = hearing.scheduledTime;
+      scheduledTime = this.getTime(hearing);
     }
 
     return scheduledTime;
