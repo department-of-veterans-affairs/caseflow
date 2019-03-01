@@ -157,7 +157,7 @@ class AssignHearingModal extends React.PureComponent {
             description: 'Update Task',
             values: {
               regional_office_value: selectedRegionalOffice,
-              hearing_pkseq: selectedHearingDay.hearingId,
+              hearing_day_id: selectedHearingDay.hearingId,
               hearing_time: this.getHearingTime(),
               hearing_location: ApiUtil.convertToSnakeCase(hearingLocation)
             }
@@ -257,12 +257,6 @@ class AssignHearingModal extends React.PureComponent {
     return { title,
       detail };
   }
-
-  formatDateString = (dateToFormat) => {
-    const formattedDate = formatDateStr(dateToFormat);
-
-    return formatDateStringForApi(formattedDate);
-  };
 
   getHearingTime = () => {
     const { selectedHearingTime, selectedOptionalTime, selectedHearingDay } = this.props;
