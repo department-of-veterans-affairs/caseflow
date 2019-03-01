@@ -121,14 +121,11 @@ class CompleteTaskModal extends React.Component {
   };
 }
 
-const mapStateToProps = (state, ownProps) => {
-
-  return {
-    task: taskById(state, { taskId: ownProps.taskId }),
-    appeal: appealWithDetailSelector(state, ownProps),
-    saveState: state.ui.saveState.savePending
-  };
-};
+const mapStateToProps = (state, ownProps) => ({
+  task: taskById(state, { taskId: ownProps.taskId }),
+  appeal: appealWithDetailSelector(state, ownProps),
+  saveState: state.ui.saveState.savePending
+});
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
