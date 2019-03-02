@@ -103,17 +103,6 @@ class Hearing < ApplicationRecord
     request_issues.size
   end
 
-  def slot_new_hearing(hearing_day_id, time:, hearing_location_attrs: nil)
-    # These fields are needed for the legacy hearing's version of this method
-    hearing = Hearing.create!(
-      hearing_day_id: hearing_day_id,
-      scheduled_time: time,
-      appeal: appeal
-    )
-
-    hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
-  end
-
   def external_id
     uuid
   end
