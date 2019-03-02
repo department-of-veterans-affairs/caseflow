@@ -12,11 +12,11 @@ class AddCommentsToHigherLevelReviews < ActiveRecord::Migration[5.1]
 
     change_column_comment(:higher_level_reviews, :establishment_processed_at, "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing.")
 
-    change_column_comment(:higher_level_reviews, :establishment_submitted_at, "Timestamp for when the Supplemental Claim was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously.")
+    change_column_comment(:higher_level_reviews, :establishment_submitted_at, "Timestamp for when the Higher Level Review was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously.")
 
     change_column_comment(:higher_level_reviews, :informal_conference, "Indicates whether a Veteran selected on their Higher Level Review form to have an informal conference. This creates a claimant letter and a tracked item in BGS.")
 
-    change_column_comment(:higher_level_reviews, :legacy_opt_in_approved, "Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it.")
+    change_column_comment(:higher_level_reviews, :legacy_opt_in_approved, "Indicates whether a Veteran opted to withdraw their Higher Level Review request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it.")
 
     change_column_comment(:higher_level_reviews, :receipt_date, "The date that the Higher Level Review form was received by central mail. This is used to determine which issues are eligible to be appealed based on timeliness.  Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established.")
 
@@ -26,6 +26,6 @@ class AddCommentsToHigherLevelReviews < ActiveRecord::Migration[5.1]
 
     change_column_comment(:higher_level_reviews, :veteran_file_number, "The file number of the Veteran that the Higher Level Review is for.")
 
-    change_column_comment(:higher_level_reviews, :veteran_is_not_claimant, "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased.")
+    change_column_comment(:higher_level_reviews, :veteran_is_not_claimant, "Indicates whether the Veteran is the claimant on the Higher Level Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased.")
   end
 end
