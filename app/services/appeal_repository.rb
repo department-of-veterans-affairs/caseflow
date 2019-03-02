@@ -74,7 +74,7 @@ class AppealRepository
     cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
                                   service: :vacols,
                                   name: "appeals_by_vbms_id") do
-      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives)
+      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives, :case_issues)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }

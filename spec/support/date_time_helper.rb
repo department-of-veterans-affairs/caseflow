@@ -7,6 +7,10 @@ module DateTimeHelper
     DecisionReview.ama_activation_date.in_time_zone
   end
 
+  def pre_ama_start_date
+    ama_start_date - 2.days
+  end
+
   def pre_ramp_start_date
     Time.new(2016, 12, 8).in_time_zone
   end
