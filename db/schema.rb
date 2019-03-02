@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190228185229) do
+ActiveRecord::Schema.define(version: 20190302000509) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -547,20 +547,20 @@ ActiveRecord::Schema.define(version: 20190228185229) do
     t.string "witness"
   end
 
-  create_table "higher_level_reviews", force: :cascade do |t|
-    t.string "benefit_type"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
-    t.datetime "establishment_last_submitted_at"
-    t.datetime "establishment_processed_at"
-    t.datetime "establishment_submitted_at"
-    t.boolean "informal_conference"
-    t.boolean "legacy_opt_in_approved"
-    t.date "receipt_date"
-    t.boolean "same_office"
-    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.string "veteran_file_number", null: false
-    t.boolean "veteran_is_not_claimant"
+  create_table "higher_level_reviews", force: :cascade, comment: "Intake data for Higher Level Reviews." do |t|
+    t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
+    t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
+    t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
+    t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
+    t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
+    t.datetime "establishment_submitted_at", comment: "Timestamp for when the Supplemental Claim was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
+    t.boolean "informal_conference", comment: "Indicates whether a Veteran selected on their Higher Level Review form to have an informal conference. This creates a claimant letter and a tracked item in BGS."
+    t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
+    t.date "receipt_date", comment: "The date that the Higher Level Review form was received by central mail. This is used to determine which issues are eligible to be appealed based on timeliness.  Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established."
+    t.boolean "same_office", comment: "Whether the Veteran wants their issues to be reviewed by the same office where they were previously reviewed. This creates a special issue on all of the contentions created on this Higher Level Review."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Higher Level Review. Can be used to link to the claim after it is completed."
+    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Higher Level Review is for."
+    t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -713,14 +713,7 @@ ActiveRecord::Schema.define(version: 20190228185229) do
   end
 
   create_table "ramp_elections", id: :serial, force: :cascade do |t|
-    t.string "end_product_reference_id"
-    t.string "end_product_status"
-    t.datetime "end_product_status_last_synced_at"
     t.datetime "established_at"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
-    t.datetime "establishment_processed_at"
-    t.datetime "establishment_submitted_at"
     t.date "notice_date"
     t.string "option_selected"
     t.date "receipt_date"
@@ -739,10 +732,7 @@ ActiveRecord::Schema.define(version: 20190228185229) do
 
   create_table "ramp_refilings", id: :serial, force: :cascade do |t|
     t.string "appeal_docket"
-    t.string "end_product_reference_id"
     t.datetime "established_at"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
     t.boolean "has_ineligible_issue"
