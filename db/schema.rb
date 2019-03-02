@@ -211,10 +211,13 @@ ActiveRecord::Schema.define(version: 20190301001506) do
   end
 
   create_table "claimants", force: :cascade do |t|
+    t.bigint "decision_review_id"
+    t.string "decision_review_type"
     t.string "participant_id", null: false
     t.string "payee_code"
     t.bigint "review_request_id", null: false
     t.string "review_request_type", null: false
+    t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
