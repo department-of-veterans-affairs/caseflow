@@ -94,6 +94,13 @@ describe TeamManagementController, type: :controller do
     end
 
     context "for a user who does not yet have a JudgeTeam" do
+      it "properly creates new organization" do
+        post(:create_judge_team, params: params, format: :json)
+        expect(response.status).to eq(200)
+        response_body = JSON.parse(response.body)
+        org = JudgeTeam.find(response_body["org"]["id"])
+        expect(org.judge.id).to eq(judge.id)
+      end
     end
   end
 
@@ -103,7 +110,7 @@ describe TeamManagementController, type: :controller do
     let(:participant_id) { "123456" }
     let(:params) { { organization: { name: org_name, url: url, participant_id: participant_id } } }
 
-    it "properly returns the list of organizations" do
+    it "properly returns newly created organization" do
       post(:create_national_vso, params: params, format: :json)
 
       expect(response.status).to eq(200)
@@ -112,6 +119,27 @@ describe TeamManagementController, type: :controller do
       expect(response_body["org"]["name"]).to eq(org_name)
       expect(response_body["org"]["url"]).to eq(url)
       expect(response_body["org"]["participant_id"]).to eq(participant_id)
+
+      org = Vso.find(response_body["org"]["id"])
+      expect(org.name).to eq(org_name)
     end
   end
+
+  # describe "POST /team_management/field_vso" do
+  #   let(:org_name) { "New Field VSO" }
+  #   let(:url) { "field-vso-url" }
+  #   let(:participant_id) { "123456" }
+  #   let(:params) { { organization: { name: org_name, url: url, participant_id: participant_id } } }
+
+  #   it "properly returns the list of organizations" do
+  #     post(:create_national_vso, params: params, format: :json)
+
+  #     expect(response.status).to eq(200)
+
+  #     response_body = JSON.parse(response.body)
+  #     expect(response_body["org"]["name"]).to eq(org_name)
+  #     expect(response_body["org"]["url"]).to eq(url)
+  #     expect(response_body["org"]["participant_id"]).to eq(participant_id)
+  #   end
+  # end
 end

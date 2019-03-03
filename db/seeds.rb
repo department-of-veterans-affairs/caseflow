@@ -72,6 +72,7 @@ class SeedDB
 
   def create_team_admin
     u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
+    Functions.grant!("System Admin", users: [u.css_id])
     OrganizationsUser.add_user_to_organization(u, Bva.singleton)
   end
 
