@@ -142,7 +142,10 @@ class ApplicationController < ApplicationBaseController
     end
 
     if Bva.singleton.user_has_access?(current_user)
-      urls.append(title: "Caseflow team management", link: url_for(controller: "/team_management", action: "index"))
+      urls.append(
+        title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
+        link: url_for(controller: "/team_management", action: "index")
+      )
     end
 
     if ApplicationController.dependencies_faked?

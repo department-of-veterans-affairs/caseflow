@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ApiUtil from '../util/ApiUtil';
+import COPY from '../../COPY.json';
 import editModalBase from './components/EditModalBase';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -51,10 +52,10 @@ class AddJudgeTaskModal extends React.Component {
       }}
       failStatusMessageProps={{ title: 'Unable to load users' }}>
       <SearchableDropdown
-        name="Select judge"
+        name={COPY.TEAM_MANAGEMENT_SELECT_JUDGE_LABEL}
         hideLabel
         searchable
-        placeholder="Select judge"
+        placeholder={COPY.TEAM_MANAGEMENT_SELECT_JUDGE_LABEL}
         value={this.state.selectedJudge}
         onChange={this.selectJudge}
         options={this.dropdownOptions()} />
@@ -70,7 +71,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage
 }, dispatch);
 
-const modalOptions = { title: 'Create JudgeTeam',
+const modalOptions = { title: COPY.TEAM_MANAGEMENT_ADD_JUDGE_TEAM_MODAL_TITLE,
   pathAfterSubmit: '/team_management' };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(editModalBase(AddJudgeTaskModal, modalOptions)));

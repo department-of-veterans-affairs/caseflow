@@ -323,6 +323,21 @@
   "DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES": " Deleting this decision will also remove it from other issues you've added it to.",
   "DECISION_ISSUE_CONFIRM_DELETE": "Are you sure you want to delete this decision?",
 
+  "TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow team management",
+  "TEAM_MANAGEMENT_PAGE_HEADER": "Caseflow Team Management",
+  "TEAM_MANAGEMENT_ID_COLUMN_HEADING": "ID",
+  "TEAM_MANAGEMENT_NAME_COLUMN_HEADING": "Name",
+  "TEAM_MANAGEMENT_URL_COLUMN_HEADING": "URL",
+  "TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING": "BGS Participant ID",
+  "TEAM_MANAGEMENT_UPDATE_ROW_BUTTON": "Update",
+  "TEAM_MANAGEMENT_ADD_JUDGE_BUTTON": "+ Add Judge Team",
+  "TEAM_MANAGEMENT_ADD_VSO_BUTTON": "+ Add VSO",
+  "TEAM_MANAGEMENT_ADD_JUDGE_TEAM_MODAL_TITLE": "Create JudgeTeam",
+  "TEAM_MANAGEMENT_SELECT_JUDGE_LABEL": "Select judge",
+  "TEAM_MANAGEMENT_ADD_VSO_MODAL_TITLE": "Create VSO",
+  "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
+  "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
+
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
 
   "JUDGE_ASSIGN_TASK_LABEL": "assign",

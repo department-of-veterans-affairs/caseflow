@@ -1,4 +1,5 @@
 import * as React from 'react';
+import COPY from '../../COPY.json';
 import editModalBase from './components/EditModalBase';
 import RadioField from '../components/RadioField';
 import { bindActionCreators } from 'redux';
@@ -17,9 +18,9 @@ const VSO_CLASS = {
 };
 
 const configForVsoClasses = {
-  [VSO_CLASS.national]: { displayText: 'IHP-writing VSO',
+  [VSO_CLASS.national]: { displayText: COPY.TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION,
     endpoint: 'national_vso' },
-  [VSO_CLASS.field]: { displayText: 'Field VSO',
+  [VSO_CLASS.field]: { displayText: COPY.TEAM_MANAGEMENT_FIELD_VSO_OPTION,
     endpoint: 'field_vso' }
 };
 
@@ -62,17 +63,17 @@ class AddVsoModal extends React.Component {
   render = () => {
     return <React.Fragment>
       <TextField
-        name="Name"
+        name={COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}
         value={this.state.name}
         onChange={this.changeName}
       />
       <TextField
-        name="URL"
+        name={COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}
         value={this.state.url}
         onChange={this.changeUrl}
       />
       <TextField
-        name="BGS Participant ID"
+        name={COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}
         value={this.state.participant_id}
         onChange={this.changeParticipantId}
       />
@@ -97,7 +98,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage
 }, dispatch);
 
-const modalOptions = { title: 'Create VSO',
+const modalOptions = { title: COPY.TEAM_MANAGEMENT_ADD_VSO_MODAL_TITLE,
   pathAfterSubmit: '/team_management' };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(editModalBase(AddVsoModal, modalOptions)));

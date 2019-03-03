@@ -2,6 +2,7 @@ import Alert from '../components/Alert';
 import ApiUtil from '../util/ApiUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Button from '../components/Button';
+import COPY from '../../COPY.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import PropTypes from 'prop-types';
@@ -44,7 +45,7 @@ class TeamManagement extends React.PureComponent {
       }}>
       <AppSegment filledBackground>
         <div>
-          <h1>Caseflow Team Management</h1>
+          <h1>{COPY.TEAM_MANAGEMENT_PAGE_HEADER}</h1>
 
           { success && <Alert type="success" title={success.title} message={success.detail} /> }
           { error && <Alert type="error" title={error.title} message={error.detail} /> }
@@ -52,12 +53,12 @@ class TeamManagement extends React.PureComponent {
           <table {...tableStyling}>
             <tbody>
               <OrgHeader>
-                Judge teams <Button name="+ Add Judge Team" onClick={this.addJudgeTeam} />
+                Judge teams <Button name={COPY.TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={this.addJudgeTeam} />
               </OrgHeader>
               <OrgList orgs={this.props.judgeTeams} />
 
               <OrgHeader>
-                VSOs <Button name="+ Add VSO" onClick={this.addIhpWritingVso} />
+                VSOs <Button name={COPY.TEAM_MANAGEMENT_ADD_VSO_BUTTON} onClick={this.addIhpWritingVso} />
               </OrgHeader>
               <OrgList orgs={this.props.vsos} showBgsParticipantId />
 
@@ -116,10 +117,10 @@ class OrgList extends React.PureComponent {
   render = () => {
     return <React.Fragment>
       <tr {...labelRowStyling}>
-        <td>ID</td>
-        <td>Name</td>
-        <td>URL</td>
-        <td>{ this.props.showBgsParticipantId && 'BGS Participant ID'}</td>
+        <td>{COPY.TEAM_MANAGEMENT_ID_COLUMN_HEADING}</td>
+        <td>{COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}</td>
+        <td>{COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}</td>
+        <td>{ this.props.showBgsParticipantId && COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}</td>
         <td></td>
         <td></td>
       </tr>
@@ -214,7 +215,7 @@ class OrgRow extends React.PureComponent {
       </td>
       <td>
         <Button
-          name="Update"
+          name={COPY.TEAM_MANAGEMENT_UPDATE_ROW_BUTTON}
           classNames={['usa-button-secondary']}
           onClick={this.submitUpdate}
         />
