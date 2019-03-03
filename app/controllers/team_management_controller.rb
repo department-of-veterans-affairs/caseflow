@@ -17,27 +17,31 @@ class TeamManagementController < ApplicationController
   end
 
   def update
-    # TODO: Add validation here.
-    # TODO: Log every update request.
     org = Organization.find(params[:id])
+
+    Rails.logger.info("Updating existing record: #{org.inspect} with parameters: #{update_params.inspect}")
+
     org.update!(update_params)
 
     render json: { org: serialize_org(org) }, status: :ok
   end
 
-  # TODO: Log these creation operations
   def create_judge_team
     user = User.find(params[:user_id])
-    org = JudgeTeam.create_for_judge(user)
 
-    # TODO: Make sure user does not already have a judge team.
+    fail(Caseflow::Error::DuplicateJudgeTeam, user_id: user.id) if JudgeTeam.for_judge(user)
+
+    Rails.logger.info("Creating JudgeTeam for user: #{user.inspect}")
+
+    org = JudgeTeam.create_for_judge(user)
 
     render json: { org: serialize_org(org) }, status: :ok
   end
 
-  # TODO: Log these creation operations
   def create_national_vso
     org = Vso.create!(update_params)
+
+    Rails.logger.info("Creating Vso with parameters: #{update_params.inspect}")
 
     render json: { org: serialize_org(org) }, status: :ok
   end
