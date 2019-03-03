@@ -46,6 +46,14 @@ class TeamManagementController < ApplicationController
     render json: { org: serialize_org(org) }, status: :ok
   end
 
+  def create_field_vso
+    org = FieldVso.create!(update_params)
+
+    Rails.logger.info("Creating FieldVso with parameters: #{update_params.inspect}")
+
+    render json: { org: serialize_org(org) }, status: :ok
+  end
+
   def deny_non_bva_admins
     redirect_to "/unauthorized" unless Bva.singleton.user_has_access?(current_user)
   end

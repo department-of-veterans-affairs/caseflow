@@ -25,7 +25,7 @@ class TeamManagement extends React.PureComponent {
 
   addJudgeTeam = () => this.props.history.push('/team_management/add_judge_team');
 
-  addIhpWritingVso = () => this.props.history.push('/team_management/add_national_vso');
+  addIhpWritingVso = () => this.props.history.push('/team_management/add_vso');
 
   render = () => {
     const {
@@ -57,7 +57,7 @@ class TeamManagement extends React.PureComponent {
               <OrgList orgs={this.props.judgeTeams} />
 
               <OrgHeader>
-                VSOs <Button name="+ Add IHP-writing VSO" onClick={this.addIhpWritingVso} />
+                VSOs <Button name="+ Add VSO" onClick={this.addIhpWritingVso} />
               </OrgHeader>
               <OrgList orgs={this.props.vsos} showBgsParticipantId />
 
