@@ -19,7 +19,6 @@ class TeamManagementController < ApplicationController
   def update
     # TODO: Add validation here.
     # TODO: Log every update request.
-    # TODO: Make sure url stays lower-case (do this in Organization model?)
     org = Organization.find(params[:id])
     org.update!(update_params)
 

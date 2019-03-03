@@ -4,6 +4,8 @@ class Organization < ApplicationRecord
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
 
+  before_save :clean_url
+
   def admins
     organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
@@ -49,5 +51,11 @@ class Organization < ApplicationRecord
 
   def user_admin_path
     "#{path}/users"
+  end
+
+  private
+
+  def clean_url
+    self.url = url&.parameterize&.dasherize
   end
 end
