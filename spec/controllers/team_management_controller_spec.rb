@@ -125,21 +125,25 @@ describe TeamManagementController, type: :controller do
     end
   end
 
-  # describe "POST /team_management/field_vso" do
-  #   let(:org_name) { "New Field VSO" }
-  #   let(:url) { "field-vso-url" }
-  #   let(:participant_id) { "123456" }
-  #   let(:params) { { organization: { name: org_name, url: url, participant_id: participant_id } } }
+  describe "POST /team_management/field_vso" do
+    let(:org_name) { "New Field VSO" }
+    let(:url) { "field-vso-url" }
+    let(:participant_id) { "123456" }
+    let(:params) { { organization: { name: org_name, url: url, participant_id: participant_id } } }
 
-  #   it "properly returns the list of organizations" do
-  #     post(:create_national_vso, params: params, format: :json)
+    it "properly returns newly created organization" do
+      post(:create_field_vso, params: params, format: :json)
 
-  #     expect(response.status).to eq(200)
+      expect(response.status).to eq(200)
 
-  #     response_body = JSON.parse(response.body)
-  #     expect(response_body["org"]["name"]).to eq(org_name)
-  #     expect(response_body["org"]["url"]).to eq(url)
-  #     expect(response_body["org"]["participant_id"]).to eq(participant_id)
-  #   end
-  # end
+      response_body = JSON.parse(response.body)
+      expect(response_body["org"]["name"]).to eq(org_name)
+      expect(response_body["org"]["url"]).to eq(url)
+      expect(response_body["org"]["participant_id"]).to eq(participant_id)
+
+      org = FieldVso.find(response_body["org"]["id"])
+      expect(org.name).to eq(org_name)
+      expect(org.vso_config).to_not be_nil
+    end
+  end
 end
