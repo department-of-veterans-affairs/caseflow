@@ -444,10 +444,16 @@ class SeedDB
 
     appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
 
+    hearing_task = HearingTask.create!(
+      appeal: appeal,
+      assigned_to: Bva.singleton,
+      parent: RootTask.find_or_create_by!(appeal: appeal)
+    )
+
     ScheduleHearingTask.create!(
       appeal: appeal,
       assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
+      parent: hearing_task
     )
   end
 
@@ -469,10 +475,16 @@ class SeedDB
       docket_type: "hearing"
     )
 
+    hearing_task = HearingTask.create!(
+      appeal: appeal,
+      assigned_to: Bva.singleton,
+      parent: RootTask.find_or_create_by!(appeal: appeal)
+    )
+
     ScheduleHearingTask.create!(
       appeal: appeal,
       assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
+      parent: hearing_task
     )
   end
 
