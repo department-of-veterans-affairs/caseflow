@@ -139,7 +139,7 @@ export default class AssignHearingsTabs extends React.Component {
       </div>;
     }
 
-  }
+  };
 
   getAppealDocketTag = (appeal) => {
     if (appeal.attributes.docketNumber) {
@@ -148,12 +148,18 @@ export default class AssignHearingsTabs extends React.Component {
         {appeal.attributes.docketNumber}
       </div>;
     }
-  }
+  };
 
-  getSuggestedHearingLocation = (location) => {
-    if (!location) {
+  getSuggestedHearingLocation = (locations) => {
+    if (!locations || locations.length === 0) {
       return '';
     }
+
+    /* Sort available locations before selecting top one. */
+    const sortedLocations = _.orderBy(locations, ['distance'], ['asc']);
+
+    /* Select first entry which should be shortest distance. */
+    const location = sortedLocations[0];
 
     const { city, state, distance } = location;
 
@@ -161,7 +167,7 @@ export default class AssignHearingsTabs extends React.Component {
       <div>{`${city}, ${state} ${getFacilityType(location)}`}</div>
       <div>{`Distance: ${distance} miles away`}</div>
     </span>;
-  }
+  };
 
   availableVeteransRows = (appeals, { tab }) => {
     const filteredBy = this.state[tab].filteredBy;
@@ -203,9 +209,7 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: appeal.attributes.aod
       }),
       docketNumber: this.getAppealDocketTag(appeal),
-      suggestedLocation: this.getSuggestedHearingLocation(
-        (appeal.attributes.availableHearingLocations || [])[0]
-      ),
+      suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.availableHearingLocations),
       time: null,
       externalId: appeal.attributes.externalAppealId
     }));
