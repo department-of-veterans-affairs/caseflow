@@ -21,26 +21,12 @@ describe ScheduleHearingTask do
     end
   end
 
-  describe "Add a schedule hearing task" do
-    let(:root_task) { FactoryBot.create(:root_task, appeal_type: root_task_appeal_type, appeal: appeal) }
-    let(:root_task_appeal_type) { LegacyAppeal.name }
-    let(:params) do
-      {
-        type: ScheduleHearingTask.name,
-        action: "Assign Hearing",
-        appeal: appeal,
-        assigned_to_type: "User",
-        assigned_to_id: hearings_user.id,
-        parent_id: root_task.id
-      }
-    end
+  context "Create a ScheduleHearingTas with parent other than HearingTask type." do
+    let(:root_parent) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:schedule_hearing) { create(:schedule_hearing_task, parent: root_parent) }
 
-    subject { ScheduleHearingTask.find_or_create_if_eligible(appeal) }
-
-    it "should create a task of type ScheduleHearingTask" do
-      expect(subject.type).to eq(ScheduleHearingTask.name)
-      expect(subject.appeal_type).to eq(LegacyAppeal.name)
-      expect(subject.status).to eq("assigned")
+    it "should throw an error" do
+      expect { schedule_hearing }.to raise_error(Caseflow::Error::InvalidParentTask)
     end
   end
 
@@ -101,7 +87,7 @@ describe ScheduleHearingTask do
         let(:vacols_case) { create(:case) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:schedule_hearing_task) do
-          ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
+          create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user)
         end
 
         context "with no VSO" do
@@ -147,7 +133,7 @@ describe ScheduleHearingTask do
       context "AMA appeal" do
         let(:appeal) { create(:appeal) }
         let(:schedule_hearing_task) do
-          ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user)
+          create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user)
         end
 
         it "completes the task and creates an EvidenceSubmissionWindowTask" do
