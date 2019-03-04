@@ -46,7 +46,7 @@ class PostponeHearingModal extends React.Component {
   }
 
   validateRescheduleValues = () => {
-    const { errorMessags: { hasErrorMessages } } = this.props.assignHearing;
+    const { errorMessages: { hasErrorMessages } } = this.props.assignHearing;
 
     this.setState({ showErrorMessages: hasErrorMessages });
 
@@ -54,7 +54,7 @@ class PostponeHearingModal extends React.Component {
   }
 
   validateScheduleLaterValues = () => {
-    const { errorMessags: { hasErrorMessages } } = this.props.scheduleHearingLaterWithAdminAction;
+    const { errorMessages: { hasErrorMessages } } = this.props.scheduleHearingLaterWithAdminAction;
 
     this.setState({ showErrorMessages: hasErrorMessages });
 
