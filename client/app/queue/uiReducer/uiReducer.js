@@ -31,19 +31,6 @@ export const initialState = {
   selectedAssigneeSecondary: null,
   veteranCaseListIsVisible: false,
   canEditAod: false,
-  assignHearing: {
-    hearingDay: null,
-    hearingTime: null,
-    hearingLocation: null,
-    regionalOffice: null,
-    errorMessages: {
-      hasErrorMessages: false,
-      hearingDay: false,
-      hearingTime: false,
-      hearingLocation: false
-    },
-    apiFormattedValues: {}
-  },
   hearingDay: {
     hearingDate: null,
     hearingTime: null,
