@@ -612,7 +612,7 @@ describe Appeal do
     end
   end
 
-  context "#location_code" do
+  context "#assigned_to_location" do
     context "if the RootTask status is completed" do
       let(:appeal) { create(:appeal) }
 
@@ -621,14 +621,14 @@ describe Appeal do
       end
 
       it "returns Post-decision" do
-        expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
       end
     end
 
     context "if there are no active tasks" do
       let(:appeal) { create(:appeal) }
       it "returns 'other close'" do
-        expect(appeal.location_code).to eq(:other_close.to_s.titleize)
+        expect(appeal.assigned_to_location).to eq(:other_close.to_s.titleize)
       end
     end
 
@@ -640,7 +640,7 @@ describe Appeal do
       end
 
       it "returns Case storage" do
-        expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
       end
     end
 
@@ -664,15 +664,15 @@ describe Appeal do
       end
 
       it "if the most recent assignee is an organization it returns the organization name" do
-        expect(appeal_organization.location_code).to eq(organization.name)
+        expect(appeal_organization.assigned_to_location).to eq(organization.name)
       end
 
       it "if the most recent assignee is not an organization it returns the id" do
-        expect(appeal_user.location_code).to eq(user.css_id)
+        expect(appeal_user.assigned_to_location).to eq(user.css_id)
       end
 
       it "if the task is on hold but there isn't an assignee it returns something" do
-        expect(appeal_on_hold.location_code).not_to eq(nil)
+        expect(appeal_on_hold.assigned_to_location).not_to eq(nil)
       end
     end
   end
@@ -925,7 +925,7 @@ describe Appeal do
     context "hearing to be scheduled" do
       let(:schedule_hearing_status) { "in_progress" }
       let!(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
       end
 
       it "is waiting for hearing to be scheduled" do
@@ -938,7 +938,7 @@ describe Appeal do
     context "in an evidence submission window" do
       let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
       end
       let(:evidence_hold_task_status) { "in_progress" }
       let!(:evidence_submission_task) do
@@ -961,7 +961,7 @@ describe Appeal do
     context "assigned to judge" do
       let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
       end
       let(:evidence_hold_task_status) { "completed" }
       let!(:evidence_submission_task) do

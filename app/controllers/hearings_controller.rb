@@ -51,7 +51,7 @@ class HearingsController < ApplicationController
   private
 
   def slot_new_hearing
-    hearing.slot_new_hearing(
+    HearingRepository.slot_new_hearing(
       master_record_params["id"],
       scheduled_time: master_record_params["time"]&.stringify_keys,
       appeal: hearing.appeal,
