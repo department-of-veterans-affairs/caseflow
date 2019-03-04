@@ -161,7 +161,7 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingTime = (hearing) => {
-    if (hearing.requestType === 'Central') {
+    if (hearing.readableRequestType === 'Central') {
       return <div>{getTime(hearing.scheduledFor)} <br />
         {hearing.regionalOfficeName}
       </div>;
