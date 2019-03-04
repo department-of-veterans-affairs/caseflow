@@ -133,19 +133,19 @@ class ApplicationController < ApplicationBaseController
 
   def dropdown_urls
     urls = [
-      {
-        title: "Help",
-        link: help_url
-      },
-      {
-        title: "Send Feedback",
-        link: feedback_url,
-        target: "_blank"
-      }
+      { title: "Help", link: help_url },
+      { title: "Send Feedback", link: feedback_url, target: "_blank" }
     ]
 
     if current_user&.administered_teams&.any?
       urls.concat(manage_teams_menu_items)
+    end
+
+    if Bva.singleton.user_has_access?(current_user)
+      urls.append(
+        title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
+        link: url_for(controller: "/team_management", action: "index")
+      )
     end
 
     if ApplicationController.dependencies_faked?
