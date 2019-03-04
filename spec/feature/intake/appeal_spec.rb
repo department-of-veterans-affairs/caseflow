@@ -49,6 +49,8 @@ feature "Appeal Intake" do
 
   let(:profile_date) { (post_ramp_start_date - 35.days).to_datetime }
 
+  let(:nonrating_date) { Time.zone.yesterday }
+
   let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
 
   let!(:rating) do
@@ -184,7 +186,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: profile_date.mdY
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("2 issues")
@@ -222,7 +224,7 @@ feature "Appeal Intake" do
       nonrating_issue_description: "Description for Active Duty Adjustments",
       benefit_type: "compensation"
     )
-    expect(nonrating_request_issue.decision_date.to_date).to eq(profile_date.to_date)
+    expect(nonrating_request_issue.decision_date.to_date).to eq(nonrating_date)
   end
 
   it "Shows a review error when something goes wrong" do
@@ -288,7 +290,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("1 issue")
@@ -310,7 +312,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: nonrating_date.mdY
     )
 
     click_intake_finish
@@ -360,7 +362,7 @@ feature "Appeal Intake" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/19/2018"
+        date: nonrating_date.mdY
       )
 
       expect(page).to have_content("1 issue")
@@ -464,7 +466,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: profile_date.mdY
+      date: nonrating_date.mdY
     )
     expect(page).to have_content("2 issues")
 
@@ -588,7 +590,7 @@ feature "Appeal Intake" do
       decision_review: appeal,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
-      decision_date: profile_date
+      decision_date: nonrating_date
     )
 
     expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
@@ -754,7 +756,7 @@ feature "Appeal Intake" do
       benefit_type: "Education",
       category: "Accrued",
       description: "Description for Accrued",
-      date: profile_date.mdY
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("Description for Accrued")
@@ -765,7 +767,7 @@ feature "Appeal Intake" do
       benefit_type: "Vocational Rehabilitation and Employment",
       category: "Basic Eligibility",
       description: "Description for basic eligibility",
-      date: profile_date.mdY
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("Description for basic eligibility")
@@ -823,7 +825,7 @@ feature "Appeal Intake" do
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",
-          date: profile_date.mdY,
+          date: nonrating_date.mdY,
           legacy_issues: true
         )
 
