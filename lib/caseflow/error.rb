@@ -159,6 +159,14 @@ module Caseflow::Error
     end
   end
 
+  class DuplicateJudgeTeam < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "User #{@user_id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
+    end
+  end
+
   class MultipleAppealsByVBMSID < StandardError; end
   class CertificationMissingData < StandardError; end
   class InvalidSSN < StandardError; end
