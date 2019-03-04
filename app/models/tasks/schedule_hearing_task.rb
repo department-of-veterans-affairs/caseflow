@@ -88,7 +88,7 @@ class ScheduleHearingTask < GenericTask
         task_payloads = params.delete(:business_payloads)
 
         hearing_time = task_payloads[:values][:hearing_time]
-        hearing_day_id = task_payloads[:values][:hearing_pkseq]
+        hearing_day_id = task_payloads[:values][:hearing_day_id]
         hearing_location = task_payloads[:values][:hearing_location]
 
         hearing = slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
