@@ -96,24 +96,17 @@ class PostponeHearingModal extends React.Component {
     };
   }
 
-  getAfterDispositionUpdatePayload = () => {
+  getPayload = () => {
     const { afterDispositionUpdateAction } = this.state;
 
-    if (afterDispositionUpdateAction.value === 'reschedule') {
-      return this.getReschedulePayload();
-    }
-
-    return this.getScheduleLaterPayload();
-  }
-
-  getPayload = () => {
     return {
       data: {
         status: TASK_STATUSES.cancelled,
         business_payloads: {
           values: {
             disposition: 'postponed',
-            after_disposition_update: this.getAfterDispositionUpdatePayload()
+            after_disposition_update: afterDispositionUpdateAction === 'reschedule' ?
+              this.getReschedulePayload() : this.getScheduleLaterPayload()
           }
         }
       }
