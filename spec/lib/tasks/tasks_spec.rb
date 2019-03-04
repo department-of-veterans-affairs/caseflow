@@ -8,7 +8,7 @@ describe "task rake tasks" do
   end
 
   describe "tasks:change_type" do
-    let(:from_task) { HoldHearingTask }
+    let(:from_task) { ScheduleHearingTask }
     let(:from_task_name) { from_task.name }
     let(:to_task) { DispositionTask }
     let(:to_task_name) { to_task.name }
@@ -21,7 +21,7 @@ describe "task rake tasks" do
     context "there are tasks to change" do
       let(:task_count) { 10 }
       let(:subset_count) { 6 }
-      let!(:hold_hearing_tasks) { FactoryBot.create_list(:ama_hold_hearing_task, task_count) }
+      let!(:hold_hearing_tasks) { FactoryBot.create_list(:schedule_hearing_task, task_count) }
 
       context "no dry run variable is passed" do
         let(:args) { [from_task_name, to_task_name] }
