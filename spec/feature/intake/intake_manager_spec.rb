@@ -10,6 +10,8 @@ RSpec.feature "Intake Manager Page" do
       User.authenticate!(roles: ["Admin Intake"])
     end
 
+    let(:date_mdY) { Time.zone.yesterday.mdY }
+
     scenario "Has access to intake manager page" do
       visit "/intake/manager"
       expect(page).to have_content("Claims for manager review")
@@ -67,13 +69,13 @@ RSpec.feature "Intake Manager Page" do
       expect(find("#table-row-4")).to_not have_content(":")
 
       expect(find("#table-row-3")).to have_content("1110")
-      expect(find("#table-row-3")).to have_content("12/07/2017")
+      expect(find("#table-row-3")).to have_content(date_mdY)
       expect(find("#table-row-3")).to have_content(current_user.full_name)
       expect(find("#table-row-3")).to have_content("RAMP Opt-In Election Form")
       expect(find("#table-row-3")).to have_content("Error: sensitivity")
 
       expect(find("#table-row-2")).to have_content("1111")
-      expect(find("#table-row-2")).to have_content("12/07/2017")
+      expect(find("#table-row-2")).to have_content(date_mdY)
       expect(find("#table-row-2")).to have_content(current_user.full_name)
       expect(find("#table-row-2")).to have_content("21-4138 RAMP Selection Form")
       expect(find("#table-row-2")).to have_content("Error: sensitivity")

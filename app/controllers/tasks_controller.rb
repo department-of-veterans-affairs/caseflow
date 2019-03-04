@@ -139,7 +139,8 @@ class TasksController < ApplicationController
     )
     render json: { new_documents: new_documents_for_user.process! }
   rescue StandardError => e
-    handle_non_critical_error("new_documents_for_task", e)
+    Raven.capture_exception(e)
+    handle_non_critical_error("tasks_new_documents", e)
   end
 
   private

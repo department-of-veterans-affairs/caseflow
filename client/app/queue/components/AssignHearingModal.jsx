@@ -158,7 +158,6 @@ class AssignHearingModal extends React.PureComponent {
             values: {
               regional_office_value: selectedRegionalOffice,
               hearing_pkseq: selectedHearingDay.hearingId,
-              hearing_type: this.getHearingType(),
               hearing_time: this.getHearingTime(),
               hearing_location: ApiUtil.convertToSnakeCase(hearingLocation)
             }
@@ -198,38 +197,33 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   getTimeOptions = () => {
-    const { appeal: { sanitizedHearingRequestType } } = this.props;
+    const { selectedRegionalOffice } = this.props;
 
-    if (sanitizedHearingRequestType === 'video') {
+    if (selectedRegionalOffice === 'C') {
       return [
-        { displayText: '8:30 am',
-          value: '8:30' },
-        { displayText: '12:30 pm',
-          value: '12:30' },
+        { displayText: '9:00 am',
+          value: '9:00' },
+        { displayText: '1:00 pm',
+          value: '13:00' },
         { displayText: 'Other',
           value: 'other' }
-
       ];
     }
 
     return [
-      { displayText: '9:00 am',
-        value: '9:00' },
-      { displayText: '1:00 pm',
-        value: '13:00' },
+      { displayText: '8:30 am',
+        value: '8:30' },
+      { displayText: '12:30 pm',
+        value: '12:30' },
       { displayText: 'Other',
         value: 'other' }
     ];
-
-  }
+  };
 
   getRO = () => {
     const { appeal, hearingDay } = this.props;
-    const { sanitizedHearingRequestType } = appeal;
 
-    if (sanitizedHearingRequestType === 'central_office') {
-      return 'C';
-    } else if (hearingDay.regionalOffice) {
+    if (hearingDay.regionalOffice) {
       return hearingDay.regionalOffice;
     } else if (appeal.regionalOffice) {
       return appeal.regionalOffice.key;
@@ -239,9 +233,9 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   getHearingType = () => {
-    const { appeal: { sanitizedHearingRequestType } } = this.props;
+    const { selectedRegionalOffice } = this.props;
 
-    return sanitizedHearingRequestType === 'central_office' ? CENTRAL_OFFICE_HEARING : VIDEO_HEARING;
+    return selectedRegionalOffice === 'C' ? CENTRAL_OFFICE_HEARING : VIDEO_HEARING;
   }
 
   getSuccessMsg = () => {
