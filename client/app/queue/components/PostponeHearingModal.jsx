@@ -21,26 +21,27 @@ import AssignHearingForm from '../../hearingSchedule/components/modalForms/Assig
 import ScheduleHearingLaterWithAdminActionForm from
   '../../hearingSchedule/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
 
+const AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS = [
+  {
+    displayText: 'Reschedule immediately',
+    value: 'reschedule'
+  },
+  {
+    displayText: 'Send to Schedule Veteran list',
+    value: 'schedule_later'
+  },
+  {
+    displayText: 'Apply admin action',
+    value: 'schedule_later_with_admin_action'
+  }
+];
+
 class PostponeHearingModal extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       afterDispositionUpdateAction: '',
-      afterDispositionUpdateActionOptions: [
-        {
-          displayText: 'Reschedule immediately',
-          value: 'reschedule'
-        },
-        {
-          displayText: 'Send to Schedule Veteran list',
-          value: 'schedule_later'
-        },
-        {
-          displayText: 'Apply admin action',
-          value: 'schedule_later_with_admin_action'
-        }
-      ],
       showErrorMessages: false
     };
   }
@@ -150,8 +151,7 @@ class PostponeHearingModal extends React.Component {
 
   render = () => {
     const { appeal } = this.props;
-    const { afterDispositionUpdateAction, afterDispositionUpdateActionOptions,
-      showErrorMessages } = this.state;
+    const { afterDispositionUpdateAction, showErrorMessages } = this.state;
     const taskData = taskActionData(this.props);
 
     return (
@@ -160,7 +160,7 @@ class PostponeHearingModal extends React.Component {
           name="postponeAfterDispositionUpdateAction"
           hideLabel
           strongLabel
-          options={afterDispositionUpdateActionOptions}
+          options={AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS}
           onChange={(option) => this.setState({ afterDispositionUpdateAction: option })}
           value={afterDispositionUpdateAction}
         />
