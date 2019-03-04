@@ -578,13 +578,25 @@ class RequestIssue < ApplicationRecord
         participant_id: decision_review.veteran.participant_id,
         disposition: contention_disposition.disposition,
         description: "#{contention_disposition.disposition}: #{description}",
-        profile_date: end_product_establishment.associated_rating&.profile_date,
-        promulgation_date: end_product_establishment.associated_rating&.promulgation_date,
+        profile_date: end_product_establishment_associated_rating_profile_date,
+        promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
       )
     end
+  end
+
+  def end_product_establishment_associated_rating_profile_date
+    return unless rating?
+
+    end_product_establishment.associated_rating&.profile_date
+  end
+
+  def end_product_establishment_associated_rating_promulgation_date
+    return unless rating?
+
+    end_product_establishment.associated_rating&.promulgation_date
   end
 
   def contention_disposition

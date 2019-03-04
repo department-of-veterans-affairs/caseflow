@@ -1282,6 +1282,11 @@ describe RequestIssue do
           )
         end
 
+        before do
+          # mimic what BGS will do when syncing a nonrating request issue
+          allow(Rating).to receive(:fetch_in_range).and_raise(Rating::NilRatingProfileListError)
+        end
+
         it "creates decision issues based on contention disposition" do
           subject
           expect(request_issue.decision_issues.count).to eq(1)
