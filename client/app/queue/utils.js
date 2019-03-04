@@ -279,7 +279,7 @@ export const prepareAppealForStore =
         appellantFullName: appeal.attributes.appellant_full_name,
         appellantAddress: appeal.attributes.appellant_address,
         appellantRelationship: appeal.attributes.appellant_relationship,
-        locationCode: appeal.attributes.location_code,
+        assignedToLocation: appeal.attributes.assigned_to_location,
         veteranDateOfBirth: appeal.attributes.veteran_date_of_birth,
         veteranDateOfDeath: appeal.attributes.veteran_date_of_death,
         veteranGender: appeal.attributes.veteran_gender,
