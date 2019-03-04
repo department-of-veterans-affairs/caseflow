@@ -197,7 +197,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def open_request_issues
-    request_issues.open
+    request_issues.includes(:decision_review, :contested_decision_issue).open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
@@ -232,7 +232,7 @@ class DecisionReview < ApplicationRecord
   def decision_event_date
     return unless decision_issues.any?
 
-    decision_issues.map(&:approx_decision_date).compact.min
+    decision_issues.map(&:approx_decision_date).compact.min.try(&:to_date)
   end
 
   def remand_decision_event_date
@@ -240,7 +240,7 @@ class DecisionReview < ApplicationRecord
     return unless remand_supplemental_claims.any?
     return if active_remanded_claims?
 
-    remand_supplemental_claims.map(&:decision_event_date).max
+    remand_supplemental_claims.map(&:decision_event_date).max.try(&:to_date)
   end
 
   def fetch_all_decision_issues
@@ -262,7 +262,7 @@ class DecisionReview < ApplicationRecord
   def api_alerts_show_decision_alert?
     # For Appeal and SC, want to show the decision alert once the decisions are available.
     # HLR has different logic and overrides this method
-    decision_issues.any?
+    decision_issues.any? && decision_event_date
   end
 
   def decision_date_for_api_alert
@@ -411,6 +411,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def fetch_issues_status(issues_list)
+    return {} if issues_list.empty?
+
     issues_list.map do |issue|
       {
         active: issue.api_status_active?,

@@ -2,9 +2,7 @@ require "rails_helper"
 
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
-    # Set the time zone to the current user's time zone for proper date conversion
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 1, 1))
+    Timecop.freeze(pre_ramp_start_date)
 
     Fakes::BGSService.inaccessible_appeal_vbms_ids ||= []
     Fakes::BGSService.inaccessible_appeal_vbms_ids << inaccessible_appeal.veteran_file_number
@@ -699,7 +697,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             end_product_code: "070RMBVAGARC",
             gulf_war_registry: true,
             suppress_acknowledgement_letter: true,
-            claimant_participant_id: nil
+            claimant_participant_id: nil,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash
         )
@@ -789,7 +789,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
             end_product_code: "070RMNDBVAG",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: true,
-            claimant_participant_id: nil
+            claimant_participant_id: nil,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: task.appeal.veteran.to_vbms_hash,
           user: RequestStore[:current_user]
@@ -868,7 +870,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
               station_of_jurisdiction: "397",
               gulf_war_registry: false,
               suppress_acknowledgement_letter: true,
-              claimant_participant_id: nil
+              claimant_participant_id: nil,
+              limited_poa_code: nil,
+              limited_poa_access: nil
             },
             veteran_hash: task.appeal.veteran.to_vbms_hash,
             user: RequestStore[:current_user]

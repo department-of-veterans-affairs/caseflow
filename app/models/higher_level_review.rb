@@ -55,7 +55,7 @@ class HigherLevelReview < ClaimReview
     return if active?
     return unless remand_supplemental_claims.any?
 
-    decision_issues.remanded.first.approx_decision_date
+    decision_issues.remanded.first.approx_decision_date.to_date
   end
 
   def other_close_event_date
@@ -63,7 +63,7 @@ class HigherLevelReview < ClaimReview
     return unless decision_issues.empty?
     return unless end_product_establishments.any?
 
-    end_product_establishments.first.last_synced_at
+    end_product_establishments.first.last_synced_at.to_date
   end
 
   def events
@@ -101,12 +101,12 @@ class HigherLevelReview < ClaimReview
     informal_conference
   end
 
-  def new_end_product_establishment(ep_code)
+  def new_end_product_establishment(issue)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
       payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
-      code: ep_code,
+      code: issue.end_product_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,

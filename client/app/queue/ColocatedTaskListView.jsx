@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -25,28 +24,11 @@ import {
 import Alert from '../components/Alert';
 import TabWindow from '../components/TabWindow';
 import NewFileAll from './components/NewFileAll';
-
-import type { TaskWithAppeal } from './types/models';
-import type { State, UiStateMessage } from './types/state';
-
-type Params = {||};
-
 const containerStyles = css({
   position: 'relative'
 });
 
-type Props = Params & {|
-  // store
-  success: UiStateMessage,
-  organizations: Array<Object>,
-  numNewTasks: number,
-  numOnHoldTasks: number,
-  // Action creators
-  clearCaseSelectSearch: typeof clearCaseSelectSearch,
-  hideSuccessMessage: typeof hideSuccessMessage
-|};
-
-class ColocatedTaskListView extends React.PureComponent<Props> {
+class ColocatedTaskListView extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   };
@@ -102,18 +84,18 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   hideSuccessMessage
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView));
 
 const NewFileIcon = connect(
-  (state: State) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
-  (props: { tasks: Array<TaskWithAppeal> }) => <NewFileAll tasks={props.tasks} useOnHoldDate />);
+  (state) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
+  (props) => <NewFileAll tasks={props.tasks} />);
 
 const NewTasksTab = connect(
-  (state: State) => ({
+  (state) => ({
     tasks: newTasksByAssigneeCssIdSelector(state),
     belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
-  (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
+  (props) => {
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION}</p>
       <TaskTable
@@ -131,11 +113,11 @@ const NewTasksTab = connect(
   });
 
 const OnHoldTasksTab = connect(
-  (state: State) => ({
+  (state) => ({
     tasks: onHoldTasksByAssigneeCssIdSelector(state),
     belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
-  (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
+  (props) => {
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.COLOCATED_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION}</p>
       <TaskTable
@@ -155,11 +137,11 @@ const OnHoldTasksTab = connect(
   });
 
 const CompleteTasksTab = connect(
-  (state: State) => ({
+  (state) => ({
     tasks: completeTasksByAssigneeCssIdSelector(state),
     belongsToHearingSchedule: state.ui.organizations.find((org) => org.name === 'Hearing Management')
   }))(
-  (props: { tasks: Array<TaskWithAppeal>, belongsToHearingSchedule: boolean }) => {
+  (props) => {
     return <React.Fragment>
       <p className="cf-margin-top-0">{COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION}</p>
       <TaskTable

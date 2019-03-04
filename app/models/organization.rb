@@ -1,4 +1,5 @@
 class Organization < ApplicationRecord
+  has_one :vso_config, dependent: :destroy
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users

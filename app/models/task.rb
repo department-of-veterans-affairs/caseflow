@@ -1,8 +1,12 @@
+##
+# Base model for all tasks in Caseflow.
+# Tasks represent work to be done by judges, attorneys, VSOs, and anyone else who touches a Veteran's appeal.
+
 class Task < ApplicationRecord
   acts_as_tree
 
   belongs_to :assigned_to, polymorphic: true
-  belongs_to :assigned_by, class_name: User.name
+  belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
 
@@ -33,7 +37,7 @@ class Task < ApplicationRecord
   end
 
   def label
-    action
+    self.class.name
   end
 
   def self.inactive_statuses
@@ -242,6 +246,12 @@ class Task < ApplicationRecord
     nil
   end
 
+  def cancel_task_and_child_subtasks
+    update!(status: Constants.TASK_STATUSES.cancelled) if active?
+
+    children.each(&:cancel_task_and_child_subtasks)
+  end
+
   def assign_to_organization_data(_user = nil)
     organizations = Organization.assignable(self).map do |organization|
       {
@@ -266,7 +276,7 @@ class Task < ApplicationRecord
       modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
       modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
       message_title: format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name),
-      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by.full_name)
+      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by&.full_name || "the assigner")
     }
   end
 

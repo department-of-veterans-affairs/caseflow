@@ -15,6 +15,7 @@ class Appeal < DecisionReview
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+  has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
@@ -89,6 +90,10 @@ class Appeal < DecisionReview
     @document_fetcher ||= DocumentFetcher.new(
       appeal: self, use_efolder: true
     )
+  end
+
+  def va_dot_gov_address_validator
+    @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
   end
 
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
@@ -180,15 +185,15 @@ class Appeal < DecisionReview
   end
 
   def hearing_docket?
-    docket_type == "hearing"
+    docket_type == Constants.AMA_DOCKETS.hearing
   end
 
   def evidence_submission_docket?
-    docket_type == "evidence_submission"
+    docket_type == Constants.AMA_DOCKETS.evidence_submission
   end
 
   def direct_review_docket?
-    docket_type == "direct_review"
+    docket_type == Constants.AMA_DOCKETS.direct_review
   end
 
   def active?
@@ -197,6 +202,31 @@ class Appeal < DecisionReview
 
   def ready_for_distribution_at
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
+  end
+
+  def sync_tracking_tasks
+    new_task_count = 0
+    closed_task_count = 0
+
+    active_tracking_tasks = tasks.active.where(type: TrackVeteranTask.name)
+    cached_vsos = active_tracking_tasks.map(&:assigned_to)
+    fresh_vsos = vsos
+
+    # Create a TrackVeteranTask for each VSO that does not already have one.
+    new_vsos = fresh_vsos - cached_vsos
+    new_vsos.each do |new_vso|
+      TrackVeteranTask.create!(appeal: self, parent: root_task, assigned_to: new_vso)
+      new_task_count += 1
+    end
+
+    # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
+    outdated_vsos = cached_vsos - fresh_vsos
+    active_tracking_tasks.select { |t| outdated_vsos.include?(t.assigned_to) }.each do |task|
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      closed_task_count += 1
+    end
+
+    [new_task_count, closed_task_count]
   end
 
   def veteran_name
@@ -225,9 +255,20 @@ class Appeal < DecisionReview
            :gender,
            :date_of_birth,
            :age,
-           :closest_regional_office,
            :available_hearing_locations,
            :country, to: :veteran, prefix: true
+
+  def veteran_if_exists
+    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
+  end
+
+  def veteran_closest_regional_office
+    veteran_if_exists&.closest_regional_office
+  end
+
+  def veteran_available_hearing_locations
+    veteran_if_exists&.available_hearing_locations
+  end
 
   delegate :city,
            :state, to: :appellant, prefix: true
@@ -240,8 +281,7 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :closest_regional_office,
-           :first_name,
+  delegate :first_name,
            :last_name,
            :name_suffix,
            :ssn, to: :veteran, prefix: true, allow_nil: true
@@ -346,6 +386,9 @@ class Appeal < DecisionReview
   end
 
   def active_status?
+    # For the appeal status api, and Appeal is considered open
+    # as long as there are active remand claim or effectuation
+    # tracked in VBMS.
     active? || active_effectuation_ep? || active_remanded_claims?
   end
 
@@ -397,7 +440,10 @@ class Appeal < DecisionReview
     elsif effectuation_ep? && !active_effectuation_ep?
       :bva_decision_effectuation
     elsif decision_issues.any?
-      :bva_decision
+      # there is a period of time where there are decision issues but no
+      # decision document and the decisions issues do not have decision date yet
+      # wait until the document is available before showing there is a decision
+      decision_document ? :bva_decision : :decision_in_progress
     elsif withdrawn?
       :withdrawn
     else
@@ -432,7 +478,7 @@ class Appeal < DecisionReview
       }
     when :decision_in_progress
       {
-        decision_timeliness: AppealSeries::DECISION_TIMELINESS
+        decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
       }
     else
       {}
@@ -476,7 +522,7 @@ class Appeal < DecisionReview
 
   def hearing_pending?
     # This isn't available yet.
-    # tasks.active.where(type: HoldHearingTask.name).any?
+    # tasks.active.where(type: DispositionTask.name).any?
   end
 
   def evidence_submission_hold_pending?
@@ -501,6 +547,8 @@ class Appeal < DecisionReview
   end
 
   def aoj
+    return if request_issues.empty?
+
     return "other" unless all_request_issues_same_aoj?
 
     request_issues.first.api_aoj_from_benefit_type
@@ -513,6 +561,8 @@ class Appeal < DecisionReview
   end
 
   def program
+    return if request_issues.empty?
+
     if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
       request_issues.first.benefit_type
     else
@@ -571,7 +621,7 @@ class Appeal < DecisionReview
     judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
     return unless judge_tasks.any?
 
-    judge_tasks.min_by(&:created_at).created_at
+    judge_tasks.min_by(&:created_at).created_at.to_date
   end
 
   def effectuation_ep?
@@ -589,7 +639,7 @@ class Appeal < DecisionReview
     return if active_status?
     return if decision_issues.any?
 
-    root_task.closed_at
+    root_task.closed_at.to_date
   end
 
   def events
@@ -598,6 +648,8 @@ class Appeal < DecisionReview
 
   def issues_hash
     issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
+
+    return [] if issue_list.empty?
 
     fetch_issues_status(issue_list)
   end
@@ -660,7 +712,7 @@ class Appeal < DecisionReview
   def contestable_decision_issues
     return [] unless receipt_date
 
-    DecisionIssue.where(participant_id: veteran.participant_id)
+    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
       .select(&:finalized?)
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date

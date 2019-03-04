@@ -129,6 +129,14 @@ describe Veteran do
           expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
           expect(veteran.reload.last_name).to eq "Smith"
         end
+
+        it "no BGS method is called" do
+          BGSService.instance_methods(false).each do |method_name|
+            expect_any_instance_of(BGSService).not_to receive(method_name)
+          end
+
+          expect(described_class.find_or_create_by_file_number(file_number, sync_name: sync_name)).to eq(veteran)
+        end
       end
     end
   end
@@ -291,6 +299,54 @@ describe Veteran do
       end
 
       it { is_expected.to eq(true) }
+    end
+  end
+
+  context "#access_error" do
+    subject { veteran.access_error }
+
+    it "returns nil when the BGS record is successfully returned" do
+      expect(subject).to be_nil
+    end
+
+    context "when an error is returned" do
+      let(:bgs_error) { BGS::ShareError.new("No BGS record for you!") }
+
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_raise(bgs_error)
+      end
+
+      it "returns the BGS error message" do
+        expect(subject).to eq(bgs_error.message)
+      end
+    end
+  end
+
+  context "#multiple_phone_numbers?" do
+    subject { veteran.multiple_phone_numbers? }
+
+    it "returns false when the BGS record is successfully returned" do
+      expect(subject).to be false
+    end
+
+    context "when an error is returned" do
+      let(:bgs_error) { BGS::ShareError.new("Something went wrong") }
+
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_raise(bgs_error)
+      end
+
+      it "returns false for an unrelated error" do
+        expect(subject).to be false
+      end
+
+      context "when the error is the multiple phone number error" do
+        let(:bgs_error) { BGS::ShareError.new("NonUniqueResultException The query on candidate type...") }
+
+        it { is_expected.to be true }
+      end
     end
   end
 
@@ -511,17 +567,34 @@ describe Veteran do
   describe ".find_or_create_by_file_number_or_ssn" do
     let(:file_number) { "123456789" }
     let(:ssn) { file_number.to_s.reverse } # our fakes do this
-    let!(:veteran) { create(:veteran, file_number: file_number) }
 
-    it "fetches based on file_number" do
-      expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
+    context "veteran exists in Caseflow" do
+      let!(:veteran) { create(:veteran, file_number: file_number) }
+
+      it "fetches based on file_number" do
+        expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
+      end
+
+      it "fetches based on SSN" do
+        expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
+      end
     end
 
-    it "fetches based on SSN" do
-      expect(described_class.find_or_create_by_file_number_or_ssn(ssn)).to eq(veteran)
+    context "does not exist in BGS" do
+      let(:file_number) { "999990000" }
+
+      subject { described_class.find_or_create_by_file_number_or_ssn(file_number) }
+
+      it "returns nil" do
+        subject
+        expect(described_class.find_by(file_number: file_number)).to be_nil
+        expect(subject).to be_nil
+      end
     end
 
     context "does not exist in Caseflow" do
+      let!(:veteran) { create(:veteran, file_number: file_number) }
+
       before do
         veteran.destroy! # leaves it in BGS
       end
@@ -542,6 +615,8 @@ describe Veteran do
     end
 
     context "exists in BGS with different name than in Caseflow" do
+      let!(:veteran) { create(:veteran, file_number: file_number) }
+
       before do
         Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
       end

@@ -2,11 +2,6 @@
 # master records in VACOLS for Video, TB and CO hearings.
 class HearingDayRepository
   class << self
-    def create_vacols_hearing!(hearing_hash)
-      hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
-      HearingDayRepository.to_hash(VACOLS::CaseHearing.create_hearing!(hearing_hash)) if hearing_hash.present?
-    end
-
     # Query Operations
     def find_hearing_day(request_type, hearing_key)
       if request_type.nil? || request_type == HearingDay::REQUEST_TYPES[:central] ||
@@ -31,32 +26,8 @@ class HearingDayRepository
       [video_and_co, travel_board]
     end
 
-    # STAFF.STC2 is the Travel Board limit for Mon and Fri
-    # STAFF.STC3 is the Travel Board limit for Tue, Wed, Thur
-    # STAFF.STC4 is the Video limit
-    def slots_based_on_type(staff:, type:, date:)
-      case type
-      when HearingDay::REQUEST_TYPES[:central]
-        11
-      when HearingDay::REQUEST_TYPES[:video]
-        staff.stc4
-      when HearingDay::REQUEST_TYPES[:travel]
-        (date.monday? || date.friday?) ? staff.stc2 : staff.stc3
-      end
-    end
-
-    def fetch_hearing_day_slots(regional_office_record, hearing_day)
-      # returns the total slots for the hearing day's regional office.
-      slots_from_vacols = slots_based_on_type(staff: regional_office_record,
-                                              type: hearing_day.request_type,
-                                              date: hearing_day.scheduled_for)
-
-      slots_from_vacols || HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(hearing_day.regional_office)]
-    end
-
-    def ro_staff_hash(regional_office_keys)
-      ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
-      ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
+    def fetch_hearing_day_slots(regional_office)
+      HearingDay::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
     end
 
     def to_hash(hearing_day)

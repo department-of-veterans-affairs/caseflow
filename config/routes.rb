@@ -39,6 +39,7 @@ Rails.application.routes.draw do
         get 'appeals', to: 'appeals#list'
         get 'appeals/:appeal_id', to: 'appeals#details'
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
+        post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
       end
@@ -206,7 +207,11 @@ Rails.application.routes.draw do
   get '/search', to: 'queue#index'
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create, :update]
+  resources :tasks, only: [:index, :create, :update] do
+    member do
+      get :new_documents
+    end
+  end
 
   resources :distributions, only: [:new, :show]
 

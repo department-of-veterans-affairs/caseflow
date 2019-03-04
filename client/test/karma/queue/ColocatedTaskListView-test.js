@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
@@ -9,11 +8,10 @@ import moment from 'moment';
 import thunk from 'redux-thunk';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import rootReducer from '../../../app/queue/reducers';
-import { onReceiveQueue, receiveNewDocuments, errorFetchingDocumentCount, setAppealDocCount }
+import { onReceiveQueue, receiveNewDocumentsForTask, errorFetchingDocumentCount, setAppealDocCount }
   from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
-import type { Task, BasicAppeal } from '../../../app/queue/types/models';
 
 describe('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
@@ -48,7 +46,7 @@ describe('ColocatedTaskListView', () => {
     }
   });
 
-  const getAmaTaskTemplate = (): Task => ({
+  const getAmaTaskTemplate = () => ({
     uniqueId: '1',
     type: 'GenericTask',
     isLegacy: false,
@@ -59,7 +57,6 @@ describe('ColocatedTaskListView', () => {
     assignedOn: moment().subtract(47, 'hours').
       format(),
     closedAt: null,
-    dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
       name: 'Judge with cases',
@@ -88,7 +85,7 @@ describe('ColocatedTaskListView', () => {
     closestRegionalOffice: ''
   });
 
-  const appealTemplate: BasicAppeal = {
+  const appealTemplate = {
     id: 5,
     type: 'Appeal',
     isLegacyAppeal: false,
@@ -244,8 +241,8 @@ describe('ColocatedTaskListView', () => {
         amaTasks,
         appeals }));
       store.dispatch(setUserCssId(task.assignedTo.cssId));
-      store.dispatch(receiveNewDocuments({
-        appealId: appealWithNewDocs.externalId,
+      store.dispatch(receiveNewDocumentsForTask({
+        taskId: taskWithNewDocs.taskId,
         newDocuments: [{}]
       }));
 

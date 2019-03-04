@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,29 +13,8 @@ import {
   resetSuccessMessages
 } from './uiReducer/uiActions';
 import Alert from '../components/Alert';
-import type { Task, TaskWithAppeal, Appeals } from './types/models';
-import type { AttorneysOfJudge, AttorneyAppealsLoadingState, UiStateMessage, State } from './types/state';
 
-type Params = {|
-  match: Object
-|};
-
-type Props = Params & {|
-  // From state
-  attorneysOfJudge: AttorneysOfJudge,
-  appealsOfAttorney: Appeals,
-  selectedTasks: Array<Task>,
-  tasksOfAttorney: Array<TaskWithAppeal>,
-  attorneyAppealsLoadingState: AttorneyAppealsLoadingState,
-  success: ?UiStateMessage,
-  error: ?UiStateMessage,
-  // Action creators
-  resetSuccessMessages: typeof resetSuccessMessages,
-  resetErrorMessages: typeof resetErrorMessages,
-  reassignTasksToUser: typeof reassignTasksToUser
-|};
-
-class AssignedCasesPage extends React.Component<Props> {
+class AssignedCasesPage extends React.Component {
   componentDidMount = () => {
     this.props.resetSuccessMessages();
     this.props.resetErrorMessages();
@@ -99,7 +77,7 @@ class AssignedCasesPage extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state, ownProps) => {
   const { attorneyAppealsLoadingState, attorneysOfJudge } = state.queue;
   const {
     messages: {
@@ -125,4 +103,4 @@ export default (connect(
     reassignTasksToUser,
     resetErrorMessages,
     resetSuccessMessages
-  }, dispatch)))(AssignedCasesPage): React.ComponentType<Params>);
+  }, dispatch)))(AssignedCasesPage));

@@ -10,6 +10,8 @@ RSpec.feature "Intake Manager Page" do
       User.authenticate!(roles: ["Admin Intake"])
     end
 
+    let(:date_mdY) { Time.zone.yesterday.mdY }
+
     scenario "Has access to intake manager page" do
       visit "/intake/manager"
       expect(page).to have_content("Claims for manager review")
@@ -67,13 +69,13 @@ RSpec.feature "Intake Manager Page" do
       expect(find("#table-row-4")).to_not have_content(":")
 
       expect(find("#table-row-3")).to have_content("1110")
-      expect(find("#table-row-3")).to have_content("12/07/2017")
+      expect(find("#table-row-3")).to have_content(date_mdY)
       expect(find("#table-row-3")).to have_content(current_user.full_name)
       expect(find("#table-row-3")).to have_content("RAMP Opt-In Election Form")
       expect(find("#table-row-3")).to have_content("Error: sensitivity")
 
       expect(find("#table-row-2")).to have_content("1111")
-      expect(find("#table-row-2")).to have_content("12/07/2017")
+      expect(find("#table-row-2")).to have_content(date_mdY)
       expect(find("#table-row-2")).to have_content(current_user.full_name)
       expect(find("#table-row-2")).to have_content("21-4138 RAMP Selection Form")
       expect(find("#table-row-2")).to have_content("Error: sensitivity")
@@ -93,6 +95,7 @@ RSpec.feature "Intake Manager Page" do
       veteran_file_number = "1234"
       user1 = create(:user)
       user2 = create(:user)
+      user3 = create(:user)
       busy_day = 3.days.ago.beginning_of_day
 
       5.times do
@@ -126,6 +129,9 @@ RSpec.feature "Intake Manager Page" do
 
       select_user_stats(user2.css_id)
       expect(page).to have_content("#{(busy_day - 2.days).strftime('%F')} 3")
+
+      select_user_stats(user3.css_id)
+      expect(page).to have_content("No stats available.")
 
       select_user_stats("nosuchuser")
       expect(page).to have_content("Not found: nosuchuser")

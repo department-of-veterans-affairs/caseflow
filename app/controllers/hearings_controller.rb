@@ -35,16 +35,14 @@ class HearingsController < ApplicationController
     begin
       HearingDayMapper.validate_regional_office(params["regional_office"])
 
-      veteran = Veteran.find_by(file_number: params["veteran_file_number"])
+      appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params["appeal_id"])
 
       facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
                      []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
 
-      va_dot_gov_address = veteran.validate_address
+      locations = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
 
-      render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
-                                                                     long: va_dot_gov_address[:long],
-                                                                     ids: facility_ids) }
+      render json: { hearing_locations: locations }
     rescue Caseflow::Error::VaDotGovAPIError => e
       render json: { message: e.message, status: "ERROR" }
     end
@@ -53,7 +51,7 @@ class HearingsController < ApplicationController
   private
 
   def slot_new_hearing
-    hearing.slot_new_hearing(
+    HearingRepository.slot_new_hearing(
       master_record_params["id"],
       scheduled_time: master_record_params["time"]&.stringify_keys,
       appeal: hearing.appeal,

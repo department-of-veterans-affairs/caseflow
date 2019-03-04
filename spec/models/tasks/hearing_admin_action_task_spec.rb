@@ -2,11 +2,9 @@ describe HearingAdminActionTask do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
   let!(:schedule_hearing_task) do
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      parent: RootTask.find_or_create_by!(appeal: appeal),
-      assigned_to: HearingsManagement.singleton
-    )
+    create(:schedule_hearing_task,
+           appeal: appeal,
+           assigned_to: HearingsManagement.singleton)
   end
 
   describe "VerifyAddressTask after update" do
@@ -22,8 +20,8 @@ describe HearingAdminActionTask do
       VADotGovService = Fakes::VADotGovService
       verify_address_task.update!(status: "completed")
 
-      expect(Veteran.first.closest_regional_office).to eq "RO17"
-      expect(Veteran.first.available_hearing_locations.count).to eq 2
+      expect(Appeal.first.closest_regional_office).to eq "RO17"
+      expect(Appeal.first.available_hearing_locations.count).to eq 2
     end
   end
 end

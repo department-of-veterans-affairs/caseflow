@@ -142,6 +142,10 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
+  def va_dot_gov_address_validator
+    @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
+  end
+
   delegate :documents, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
@@ -191,20 +195,16 @@ class LegacyAppeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
+  def appellant
+    claimant
+  end
+
   def appellant_is_not_veteran
     !!appellant_first_name
   end
 
   def veteran_if_exists
     @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
-  end
-
-  def veteran_closest_regional_office
-    veteran_if_exists&.closest_regional_office
-  end
-
-  def veteran_available_hearing_locations
-    veteran_if_exists&.available_hearing_locations
   end
 
   def veteran
@@ -355,7 +355,7 @@ class LegacyAppeal < ApplicationRecord
         middle_name: veteran_middle_initial,
         last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
-        address: get_address_from_corres_entry(case_record.correspondent),
+        address: get_address_from_veteran_record(veteran) || get_address_from_corres_entry(case_record.correspondent),
         representative: representative_to_hash
       }
     end

@@ -246,6 +246,21 @@ describe Task do
     end
   end
 
+  describe "#cancel_task_and_child_subtasks" do
+    let(:appeal) { create(:appeal) }
+    let!(:top_level_task) { create(:task, appeal: appeal) }
+    let!(:second_level_tasks) { create_list(:task, 2, appeal: appeal, parent: top_level_task) }
+    let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
+
+    it "cancels all tasks and child subtasks" do
+      top_level_task.cancel_task_and_child_subtasks
+
+      [top_level_task, *second_level_tasks, *third_level_task].each do |task|
+        expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+    end
+  end
+
   describe ".root_task" do
     context "when sub-sub-sub...task has a root task" do
       let(:root_task) { FactoryBot.create(:root_task) }
@@ -583,6 +598,18 @@ describe Task do
         expect(task.closed_at).to eq(nil)
         task.update!(status: status)
         expect(task.closed_at).to_not eq(nil)
+      end
+    end
+  end
+
+  describe ".cancel_task_data" do
+    let(:task) { FactoryBot.create(:generic_task, assigned_by_id: assigner_id) }
+    subject { task.cancel_task_data }
+
+    context "when the task has no assigner" do
+      let(:assigner_id) { nil }
+      it "fills in the assigner name with placeholder text" do
+        expect(subject[:message_detail]).to eq(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, "the assigner"))
       end
     end
   end

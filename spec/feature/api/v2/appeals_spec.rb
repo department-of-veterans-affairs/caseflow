@@ -20,7 +20,7 @@ describe "Appeals API v2", type: :request do
 
   let(:api_key) { ApiKey.create!(consumer_name: "Testington Roboterson") }
 
-  context "Appeal list" do
+  context "Legacy Appeal list" do
     before do
       DocketSnapshot.create
     end
@@ -349,7 +349,6 @@ describe "Appeals API v2", type: :request do
   end
 
   context "All HLR, SC and Appeals" do
-    Time.zone = "America/New_York"
     before do
       Timecop.freeze(Time.utc(2018, 11, 28))
     end
@@ -562,6 +561,64 @@ describe "Appeals API v2", type: :request do
       event_type = json["data"][2]["attributes"]["events"].first
       expect(event_type["type"]).to eq("ama_nod")
       expect(event_type["date"]).to eq(receipt_date.to_s)
+    end
+  end
+
+  context "HLR, SC and Appeal get filter out" do
+    before do
+      Timecop.freeze(Time.utc(2018, 11, 28))
+    end
+
+    let(:veteran_file_number) { "111223333" }
+    let(:receipt_date) { Date.new(2018, 9, 20) }
+
+    let!(:hlr) do
+      create(:higher_level_review,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             benefit_type: "compensation")
+    end
+
+    let!(:supplemental_claim_review) do
+      create(:supplemental_claim,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             benefit_type: "pension")
+    end
+
+    let!(:appeal) do
+      create(:appeal,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             docket_type: "evidence_submission")
+    end
+
+    before do
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
+        veteran_file_number
+      end
+
+      FeatureToggle.enable!(:api_appeal_status_v3)
+    end
+
+    after do
+      FeatureToggle.disable!(:api_appeal_status_v3)
+    end
+
+    it "will filter out claims and appeal because no request issues" do
+      headers = {
+        "ssn": veteran_file_number,
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v2/appeals", headers: headers
+
+      json = JSON.parse(response.body)
+
+      # test for the 200 status-code
+      expect(response).to be_success
+      # check to make sure the right amount of appeals are returned
+      expect(json["data"].length).to eq(0)
     end
   end
 end
