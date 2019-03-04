@@ -37,7 +37,7 @@ class Task < ApplicationRecord
   end
 
   def label
-    action
+    self.class.name
   end
 
   def self.inactive_statuses
@@ -228,6 +228,10 @@ class Task < ApplicationRecord
   def self.child_assigned_by_id(parent, current_user)
     return current_user.id if current_user
     return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
+  end
+
+  def self.most_recently_assigned
+    order(:updated_at).last
   end
 
   def root_task(task_id = nil)

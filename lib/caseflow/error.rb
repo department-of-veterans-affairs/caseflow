@@ -45,6 +45,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidParentTask < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 500
+      @message = args[:message] || "Invalid parent type for task #{@task_type}"
+    end
+  end
+
   class DuplicateTaskActionPaths < SerializableError
     attr_accessor :task_id, :user_id, :labels
 
