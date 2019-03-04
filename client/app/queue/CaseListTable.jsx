@@ -21,18 +21,18 @@ const currentAssigneeStyling = css({
   color: COLORS.GREEN
 });
 
-const labelForLocation = (locationCode, userId) => {
-  if (!locationCode) {
+const labelForLocation = (assignedToLocation, userId) => {
+  if (!assignedToLocation) {
     return '';
   }
 
-  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)?${locationCode}\\b`);
+  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)?${assignedToLocation}\\b`);
 
   if (userId.match(regex) !== null) {
     return <span {...currentAssigneeStyling}>{COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}</span>;
   }
 
-  return locationCode;
+  return assignedToLocation;
 };
 
 class CaseListTable extends React.PureComponent {
@@ -74,7 +74,7 @@ class CaseListTable extends React.PureComponent {
       },
       {
         header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-        valueFunction: (appeal) => labelForLocation(appeal.locationCode, this.props.userCssId)
+        valueFunction: (appeal) => labelForLocation(appeal.assignedToLocation, this.props.userCssId)
       }
     ];
 
