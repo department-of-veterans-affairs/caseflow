@@ -87,12 +87,14 @@ class PostponeHearingModal extends React.Component {
   }
 
   getScheduleLaterPayload = () => {
-    const { withAdminActionKlass, adminActionInstructions } = this.props.scheduleHearingLaterWithAdminAction;
+    const {
+      apiFormattedValues: { with_admin_action_klass, admin_action_instructions }
+    } = this.props.scheduleHearingLaterWithAdminAction;
 
     return {
       action: 'schedule_later',
-      with_admin_action_klass: withAdminActionKlass,
-      admin_action_instructions: adminActionInstructions
+      with_admin_action_klass,
+      admin_action_instructions
     };
   }
 
