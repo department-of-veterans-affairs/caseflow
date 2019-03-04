@@ -161,6 +161,10 @@ export default class AssignHearingsTabs extends React.Component {
     /* Select first entry which should be shortest distance. */
     const location = sortedLocations[0];
 
+    if (!location) {
+      return '';
+    }
+
     const { city, state, distance } = location;
 
     return <span>
