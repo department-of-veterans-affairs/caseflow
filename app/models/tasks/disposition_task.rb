@@ -22,15 +22,15 @@ class DispositionTask < GenericTask
     end
   end
 
-  def available_actions(user)
-    if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
-      return [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
-    end
-
-    []
+  def hearing_task
+    parent
   end
 
-  def add_schedule_hearing_task_admin_actions_data
+  def available_actions(_user)
+    [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+  end
+
+  def add_schedule_hearing_task_admin_actions_data(_user)
     {
       redirect_after: "/queue/appeals/#{appeal.external_id}",
       message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
@@ -41,11 +41,7 @@ class DispositionTask < GenericTask
     }
   end
 
-  def hearing_task
-    parent
-  end
-
-  def update_with_params(params, _user)
+  def update_with_params(params, user)
     disposition_params = params.delete(:business_payloads)[:values]
 
     if params[:status] == Constants.TASK_STATUSES.cancelled
@@ -59,6 +55,8 @@ class DispositionTask < GenericTask
         no_show
       end
     end
+
+    super(params, user)
   end
 
   def check_parent_type
