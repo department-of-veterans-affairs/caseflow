@@ -3,7 +3,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
-import _ from 'lodash';
 // import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import TextareaField from '../../components/TextareaField';
 
@@ -190,9 +189,10 @@ class AssignHearing extends React.Component {
   }
 }
 
-const ScheduleLaterWithAdminAction = ({ reasons, value, set }) => (
+const ScheduleLaterWithAdminAction = ({ reasons, value, set, errorMessages }) => (
   <div>
     <SearchableDropdown
+      errorMessage={errorMessages.withAdminActionKlass}
       label="Select Reason"
       strongLabel
       name="postponementReason"
@@ -230,12 +230,12 @@ class PostponeHearingModal extends React.Component {
           value: 'schedule_later_with_admin_action'
         }
       ],
-      invalidRescheduleValues: {
+      rescheduleErrorMessages: {
         hearingDay: false,
         hearingLocation: false,
         hearingTime: false
       },
-      invalidScheduleLaterValues: {
+      scheduleLaterErrorMessages: {
         withAdminActionKlass: false
       }
     };
@@ -244,18 +244,18 @@ class PostponeHearingModal extends React.Component {
   validateRescheduleValues = () => {
     const assignHearing = this.props.assignHearing || {};
 
-    const invalidRescheduleValues = {
+    const rescheduleErrorMessages = {
       hearingDay: assignHearing.hearingDay && assignHearing.hearingDay.hearingId ?
         false : 'Please select a hearing date',
       hearingLocation: assignHearing.hearingLocation ? false : 'Please select a hearing location',
       hearingTime: assignHearing.hearingTime ? false : 'Please select a hearing time'
     };
 
-    this.setState({ invalidRescheduleValues });
+    this.setState({ rescheduleErrorMessages });
 
-    if (invalidRescheduleValues.hearingDay ||
-      invalidRescheduleValues.hearingLocation ||
-      invalidRescheduleValues.hearingTime) {
+    if (rescheduleErrorMessages.hearingDay ||
+      rescheduleErrorMessages.hearingLocation ||
+      rescheduleErrorMessages.hearingTime) {
       return false;
     }
 
@@ -266,7 +266,7 @@ class PostponeHearingModal extends React.Component {
     const scheduleLater = this.props.scheduleLater || {};
 
     this.setState({
-      invalidScheduleLaterValues: {
+      scheduleLaterErrorMessages: {
         withAdminActionKlass: scheduleLater.withAdminActionKlass ? false : 'Please select an action'
       }
     });
@@ -281,7 +281,6 @@ class PostponeHearingModal extends React.Component {
   validateForm = () => {
 
     if (this.state.afterDispositionUpdateAction === 'reschedule') {
-
       return this.validateRescheduleValues();
     } else if (this.state.afterDispositionUpdateAction === 'schedule_later_with_admin_action') {
       return this.validateScheduleLaterValues();
@@ -380,7 +379,7 @@ class PostponeHearingModal extends React.Component {
   render = () => {
     const { appeal, scheduleLater } = this.props;
     const { afterDispositionUpdateAction, afterDispositionUpdateActionOptions,
-      invalidRescheduleValues, invalidScheduleLaterValues } = this.state;
+      rescheduleErrorMessages, scheduleLaterErrorMessages } = this.state;
     const adminActionOptions = taskActionData(this.props).options;
 
     return (
@@ -396,13 +395,13 @@ class PostponeHearingModal extends React.Component {
 
         {afterDispositionUpdateAction === 'reschedule' &&
         <AssignHearing
-          errorMessages={invalidRescheduleValues}
+          errorMessages={rescheduleErrorMessages}
           appeal={appeal}
           onChange={this.onAssignHearingChange}
         />
         }{afterDispositionUpdateAction === 'schedule_later_with_admin_action' &&
         <ScheduleLaterWithAdminAction
-          errorMessages={invalidScheduleLaterValues}
+          errorMessages={scheduleLaterErrorMessages}
           reasons={adminActionOptions}
           value={scheduleLater}
           set={this.onScheduleLaterChange}
