@@ -174,12 +174,6 @@ export default class DailyDocket extends React.Component {
     </div>;
   };
 
-  getDocketRegionalOffice = () => {
-    const { requestType, regionalOfficeKey } = this.props.dailyDocket;
-
-    return requestType === 'Central' ? 'C' : regionalOfficeKey;
-  }
-
   getDispositionDropdown = (hearing, readOnly) => {
     return <SearchableDropdown
       name="Disposition"
@@ -210,8 +204,8 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingLocationDropdown = (hearing, readOnly) => {
-    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey ||
-      this.getDocketRegionalOffice();
+    const currentRegionalOffice = hearing.editedRegionalOffice || this.getRegionalOffice();
+
     const roIsDifferent = currentRegionalOffice !== hearing.closestRegionalOffice;
     let staticHearingLocations = _.isEmpty(hearing.availableHearingLocations) ?
       [hearing.location] : _.values(hearing.availableHearingLocations);
