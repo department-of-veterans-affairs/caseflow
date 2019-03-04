@@ -12,7 +12,6 @@ import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
-import { onChangeFormData } from '../../components/common/actions';
 import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
