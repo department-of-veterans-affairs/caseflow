@@ -31,6 +31,19 @@ export const initialState = {
   selectedAssigneeSecondary: null,
   veteranCaseListIsVisible: false,
   canEditAod: false,
+  assignHearing: {
+    hearingDay: null,
+    hearingTime: null,
+    hearingLocation: null,
+    regionalOffice: null,
+    errorMessages: {
+      hasErrorMessages: false,
+      hearingDay: false,
+      hearingTime: false,
+      hearingLocation: false
+    },
+    apiFormattedValues: {}
+  },
   hearingDay: {
     hearingDate: null,
     hearingTime: null,
@@ -198,24 +211,6 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       hearingDay: {
         $set: action.payload
-      }
-    });
-  case ACTIONS.SET_ASSIGN_HEARING:
-    return update(state, {
-      assignHearing: {
-        $set: {
-          ...(state.assignHearing || {}),
-          ...action.payload
-        }
-      }
-    });
-  case ACTIONS.SET_SCHEDULE_HEARING_LATER:
-    return update(state, {
-      scheduleHearingLater: {
-        $set: {
-          ...(state.scheduleHearingLater || {}),
-          ...action.payload
-        }
       }
     });
   default:

@@ -200,22 +200,3 @@ export const setHearingDay = (hearingDay) => ({
   type: ACTIONS.SET_HEARING_DAY,
   payload: hearingDay
 });
-
-export const onAssignHearingChange = (
-  assignHearing = {
-    hearingLocation: null,
-    hearingTime: null,
-    hearingDay: null }
-) => ({
-  type: ACTIONS.SET_ASSIGN_HEARING,
-  payload: assignHearing
-});
-
-export const onScheduleHearingLaterChange = (
-  scheduleLater = {
-    withAdminActionKlass: null,
-    adminActionInstructions: null
-  }) => ({
-  type: ACTIONS.SET_SCHEDULE_HEARING_LATER,
-  payload: scheduleLater
-});

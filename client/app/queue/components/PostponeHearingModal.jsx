@@ -1,10 +1,8 @@
 import * as React from 'react';
+import { formatDateStr } from '../../util/DateUtil';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import moment from 'moment';
-// import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import TextareaField from '../../components/TextareaField';
 
 import {
   taskById,
@@ -12,203 +10,17 @@ import {
 } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
 import {
-  requestPatch, onAssignHearingChange,
-  onScheduleHearingLaterChange
+  requestPatch
 } from '../uiReducer/uiActions';
+import { onChangeFormData } from '../../components/common/actions';
 import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
-import {
-  RegionalOfficeDropdown,
-  AppealHearingLocationsDropdown,
-  HearingDateDropdown
-} from '../../components/DataDropdowns';
 import RadioField from '../../components/RadioField';
-import SearchableDropdown from '../../components/SearchableDropdown';
-
-import { TIME_OPTIONS } from '../../hearings/constants/constants';
-import { css } from 'glamor';
-
-const formStyling = css({
-  '& .cf-form-radio-option:not(:last-child)': {
-    display: 'inline-block',
-    marginRight: '25px'
-  },
-  marginBottom: 0
-});
-
-class HearingTime extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isOther: false
-    };
-  }
-
-  getTimeOptions = () => {
-    const { regionalOffice } = this.props;
-
-    if (regionalOffice === 'C') {
-      return [
-        { displayText: '9:00 am',
-          value: '9:00' },
-        { displayText: '1:00 pm',
-          value: '13:00' },
-        { displayText: 'Other',
-          value: 'other' }
-      ];
-    }
-
-    return [
-      { displayText: '8:30 am',
-        value: '8:30' },
-      { displayText: '12:30 pm',
-        value: '12:30' },
-      { displayText: 'Other',
-        value: 'other' }
-    ];
-  }
-
-  onRadioChange = (value) => {
-    if (value === 'other') {
-      this.setState({ isOther: true });
-      this.props.onChange(null);
-    } else {
-      this.setState({ isOther: false });
-      this.props.onChange(value);
-    }
-  }
-
-  render() {
-    const { errorMessage, value } = this.props;
-
-    return (
-      <React.Fragment>
-        <span {...formStyling}>
-          <RadioField
-            errorMessage={errorMessage}
-            name="time"
-            label="Time"
-            strongLabel
-            options={this.getTimeOptions()}
-            onChange={this.onRadioChange}
-            value={this.state.isOther ? 'other' : value} />
-        </span>
-        {this.state.isOther && <SearchableDropdown
-          name="optionalTime"
-          placeholder="Select a time"
-          options={TIME_OPTIONS}
-          value={value}
-          onChange={this.props.onChange}
-          hideLabel />}
-      </React.Fragment>
-    );
-  }
-}
-
-class AssignHearing extends React.Component {
-
-  /*
-    This duplicates a lot of the logic from AssignHearingModal.jsx
-    TODO: refactor so both of these modals use the same components
-  */
-  constructor (props) {
-    super(props);
-
-    const { initialRegionalOffice, initialHearingDate, initialHearingTime } = props;
-
-    this.state = {
-      regionalOffice: initialRegionalOffice || null,
-      hearingLocation: null,
-      hearingTime: initialHearingTime || null,
-      hearingDay: initialHearingDate || null
-    };
-  }
-
-  afterStateChange = () => {
-    this.props.onChange(this.state);
-  }
-
-  onRegionalOfficeChange = (regionalOffice) => {
-    this.setState({
-      regionalOffice,
-      hearingLocation: null,
-      hearingTime: null,
-      hearingDay: null
-    });
-  }
-
-  onChange = (key, value) => {
-    this.setState(
-      { [key]: value },
-      this.afterStateChange
-    );
-  }
-
-  render() {
-
-    const { appeal, errorMessages } = this.props;
-    const { regionalOffice, hearingLocation, hearingDay, hearingTime } = this.state;
-
-    return (
-      <div>
-        <RegionalOfficeDropdown
-          value={regionalOffice}
-          onChange={this.onRegionalOfficeChange}
-          validateValueOnMount
-        />
-        {regionalOffice && <React.Fragment>
-          <AppealHearingLocationsDropdown
-            errorMessage={errorMessages.hearingLocation}
-            key={`hearingLocation__${regionalOffice}`}
-            regionalOffice={regionalOffice}
-            appealId={appeal.externalId}
-            value={hearingLocation}
-            onChange={(value) => this.onChange('hearingLocation', value)}
-          />
-          <HearingDateDropdown
-            errorMessage={errorMessages.hearingDay}
-            key={`hearingDate__${regionalOffice}`}
-            regionalOffice={regionalOffice}
-            value={hearingDay}
-            onChange={(value) => this.onChange('hearingDay', value)}
-            validateValueOnMount
-          />
-          <HearingTime
-            errorMessage={errorMessages.hearingTime}
-            key={`hearingTime__${regionalOffice}`}
-            regionalOffice={regionalOffice}
-            value={hearingTime}
-            onChange={(value) => this.onChange('hearingTime', value)}
-          />
-        </React.Fragment>}
-      </div>
-    );
-  }
-}
-
-const ScheduleLaterWithAdminAction = ({ reasons, value, set, errorMessages }) => (
-  <div>
-    <SearchableDropdown
-      errorMessage={errorMessages.withAdminActionKlass}
-      label="Select Reason"
-      strongLabel
-      name="postponementReason"
-      options={reasons}
-      value={value ? value.withAdminActionKlass : null}
-      onChange={(val) => set('withAdminActionKlass', val)}
-    />
-    <TextareaField
-      label="Instructions"
-      strongLabel
-      name="adminActionInstructions"
-      value={value ? value.adminActionInstructions : ''}
-      onChange={(val) => set('adminActionInstructions', val)}
-    />
-  </div>
-);
+import AssignHearingForm from '../../hearingSchedule/components/modalForms/AssignHearingForm';
+import ScheduleHearingLaterWithAdminActionForm from
+  '../../hearingSchedule/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
 
 class PostponeHearingModal extends React.Component {
   constructor(props) {
@@ -230,32 +42,16 @@ class PostponeHearingModal extends React.Component {
           value: 'schedule_later_with_admin_action'
         }
       ],
-      rescheduleErrorMessages: {
-        hearingDay: false,
-        hearingLocation: false,
-        hearingTime: false
-      },
-      scheduleLaterErrorMessages: {
-        withAdminActionKlass: false
-      }
+      showErrorMessages: false
     };
   }
 
   validateRescheduleValues = () => {
     const assignHearing = this.props.assignHearing || {};
 
-    const rescheduleErrorMessages = {
-      hearingDay: assignHearing.hearingDay && assignHearing.hearingDay.hearingId ?
-        false : 'Please select a hearing date',
-      hearingLocation: assignHearing.hearingLocation ? false : 'Please select a hearing location',
-      hearingTime: assignHearing.hearingTime ? false : 'Please select a hearing time'
-    };
+    if (!assignHearing.errorMessages || assignHearing.errorMessages.hasErrorMessages) {
+      this.setState({ showErrorMessages: true });
 
-    this.setState({ rescheduleErrorMessages });
-
-    if (rescheduleErrorMessages.hearingDay ||
-      rescheduleErrorMessages.hearingLocation ||
-      rescheduleErrorMessages.hearingTime) {
       return false;
     }
 
@@ -263,15 +59,11 @@ class PostponeHearingModal extends React.Component {
   }
 
   validateScheduleLaterValues = () => {
-    const scheduleLater = this.props.scheduleLater || {};
+    const scheduleLater = this.props.scheduleHearingLaterWithAdminAction || {};
 
-    this.setState({
-      scheduleLaterErrorMessages: {
-        withAdminActionKlass: scheduleLater.withAdminActionKlass ? false : 'Please select an action'
-      }
-    });
+    if (!scheduleLater.errorMessages || scheduleLater.errorMessages.hasErrorMessages) {
+      this.setState({ showErrorMessages: true });
 
-    if (!scheduleLater.withAdminActionKlass) {
       return false;
     }
 
@@ -289,32 +81,21 @@ class PostponeHearingModal extends React.Component {
     return true;
   }
 
-  getAssignHearingTime = (time, day) => {
-
-    return {
-      // eslint-disable-next-line id-length
-      h: time.split(':')[0],
-      // eslint-disable-next-line id-length
-      m: time.split(':')[1],
-      offset: moment.tz(day.hearingDate, day.timezone || 'America/New_York').format('Z')
-    };
-  }
-
   getReschedulePayload = () => {
-    const { assignHearing: { hearingTime, hearingDay, hearingLocation } } = this.props;
+    const { apiFormattedValues: { hearing_time, hearing_day_id, hearing_location } } = this.props.assignHearing;
 
     return {
       action: 'reschedule',
       new_hearing_attrs: {
-        hearing_time: this.getAssignHearingTime(hearingTime, hearingDay),
-        hearing_pkseq: hearingDay.hearingId,
-        hearing_location: hearingLocation
+        hearing_time,
+        hearing_pkseq: hearing_day_id,
+        hearing_location
       }
     };
   }
 
   getScheduleLaterPayload = () => {
-    const { withAdminActionKlass, adminActionInstructions } = this.props.scheduleLater || {};
+    const { withAdminActionKlass, adminActionInstructions } = this.props.scheduleHearingLaterWithAdminAction;
 
     return {
       action: 'schedule_later',
@@ -333,7 +114,7 @@ class PostponeHearingModal extends React.Component {
     return this.getScheduleLaterPayload();
   }
 
-  payload = () => {
+  getPayload = () => {
     return {
       data: {
         status: TASK_STATUSES.cancelled,
@@ -347,28 +128,28 @@ class PostponeHearingModal extends React.Component {
     };
   }
 
-  onAssignHearingChange = (assignHearingAttrs) => {
-    const { hearingLocation, hearingDay, hearingTime } = assignHearingAttrs;
+  getSuccessMsg = () => {
+    const { afterDispositionUpdateAction } = this.state;
+    const { assignHearing: { hearingDay }, appeal } = this.props;
 
-    this.props.onAssignHearingChange({
-      hearingLocation,
-      hearingDay,
-      hearingTime
-    });
-  }
+    if (afterDispositionUpdateAction === 'reschedule') {
+      const hearingDateStr = formatDateStr(hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
+      const title = `You have successfully assigned ${appeal.veteranFullName} ` +
+                    `to a hearing on ${hearingDateStr}.`;
 
-  onScheduleLaterChange = (key, value) => {
-    this.props.onScheduleHearingLaterChange({ [key]: value });
+      return { title };
+    }
+
+    return {
+      title: `${appeal.veteranFullName} was successfully added back to the schedule veteran list.`
+    };
   }
 
   submit = () => {
     const { task } = this.props;
-    const payload = this.payload();
-    const successMsg = {
-      title: taskActionData(this.props).message_title
-    };
+    const payload = this.getPayload();
 
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, this.getSuccessMsg()).
       then((resp) => {
         const response = JSON.parse(resp.text);
 
@@ -377,9 +158,9 @@ class PostponeHearingModal extends React.Component {
   }
 
   render = () => {
-    const { appeal, scheduleLater } = this.props;
+    const { appeal } = this.props;
     const { afterDispositionUpdateAction, afterDispositionUpdateActionOptions,
-      rescheduleErrorMessages, scheduleLaterErrorMessages } = this.state;
+      showErrorMessages } = this.state;
     const taskData = taskActionData(this.props);
 
     return (
@@ -394,17 +175,14 @@ class PostponeHearingModal extends React.Component {
         />
 
         {afterDispositionUpdateAction === 'reschedule' &&
-        <AssignHearing
-          errorMessages={rescheduleErrorMessages}
+        <AssignHearingForm
+          showErrorMessages={showErrorMessages}
           appeal={appeal}
-          onChange={this.onAssignHearingChange}
         />
         }{afterDispositionUpdateAction === 'schedule_later_with_admin_action' &&
-        <ScheduleLaterWithAdminAction
-          errorMessages={scheduleLaterErrorMessages}
-          reasons={taskData ? taskData.options : []}
-          value={scheduleLater}
-          set={this.onScheduleLaterChange}
+        <ScheduleHearingLaterWithAdminActionForm
+          showErrorMessages={showErrorMessages}
+          adminActionOptions={taskData ? taskData.options : []}
         />
         }
       </div>
@@ -417,16 +195,13 @@ const mapStateToProps = (state, ownProps) => ({
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
   hearingDay: state.ui.hearingDay,
-  scheduleLater: state.ui.scheduleHearingLater,
-  assignHearing: state.ui.assignHearing,
-  adminActionOptions: taskActionData(ownProps).options
+  scheduleHearingLaterWithAdminAction: state.components.forms.scheduleHearingLaterWithAdminAction || {},
+  assignHearing: state.components.forms.assignHearing || {}
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  onReceiveAmaTasks,
-  onAssignHearingChange,
-  onScheduleHearingLaterChange
+  onReceiveAmaTasks
 }, dispatch);
 
 const propsToText = (props) => {
