@@ -925,7 +925,7 @@ describe Appeal do
     context "hearing to be scheduled" do
       let(:schedule_hearing_status) { "in_progress" }
       let!(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
       end
 
       it "is waiting for hearing to be scheduled" do
@@ -938,7 +938,7 @@ describe Appeal do
     context "in an evidence submission window" do
       let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
       end
       let(:evidence_hold_task_status) { "in_progress" }
       let!(:evidence_submission_task) do
@@ -961,7 +961,7 @@ describe Appeal do
     context "assigned to judge" do
       let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
       end
       let(:evidence_hold_task_status) { "completed" }
       let!(:evidence_submission_task) do

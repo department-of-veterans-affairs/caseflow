@@ -7,8 +7,7 @@ RSpec.feature "Intake" do
   before do
     FeatureToggle.enable!(:intake)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 12, 8))
+    Timecop.freeze(post_ama_start_date)
 
     Fakes::BGSService.inaccessible_appeal_vbms_ids = []
 
@@ -88,6 +87,14 @@ RSpec.feature "Intake" do
         find("label", text: "RAMP Selection (VA Form 21-4138)").click
       end
       safe_click ".cf-submit.usa-button"
+      expect(page).to have_css(".cf-submit[disabled]")
+
+      # try to hit enter key on empty search bar
+      fill_in search_bar_title, with: ""
+      find(".cf-search-input-with-close").native.send_keys(:return)
+
+      # check error message doesn't exist
+      expect(page).to have_no_css(".usa-alert-heading")
 
       fill_in search_bar_title, with: "5678"
       click_on "Search"
@@ -196,7 +203,7 @@ RSpec.feature "Intake" do
     end
 
     scenario "Search for a veteran whose form is already being processed" do
-      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: 6.months.ago)
 
       RampElectionIntake.new(
         veteran_file_number: "12341234",
@@ -218,7 +225,7 @@ RSpec.feature "Intake" do
     end
 
     scenario "Cancel an intake" do
-      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: 6.months.ago)
 
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
