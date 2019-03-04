@@ -8,8 +8,7 @@ feature "Higher Level Review Edit issues" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
@@ -33,7 +32,7 @@ feature "Higher Level Review Edit issues" do
 
   let(:receipt_date) { Time.zone.today - 20 }
   let(:promulgation_date) { receipt_date - 1 }
-  let(:profile_date) { "2017-11-02T07:00:00.000Z" }
+  let(:profile_date) { (receipt_date - 2.days).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -148,7 +147,7 @@ feature "Higher Level Review Edit issues" do
         contention_reference_id: "1234",
         ineligible_reason: nil,
         benefit_type: "compensation",
-        decision_date: Date.new(2018, 5, 1)
+        decision_date: Time.zone.today
       )
     end
 
@@ -314,7 +313,7 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
+        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: #{Time.zone.today.mdY}")
         expect(page).to have_content(
           "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
@@ -513,7 +512,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "A description!",
-        date: "04/26/2018"
+        date: profile_date.mdY
       )
 
       click_intake_add_issue
@@ -521,7 +520,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
-        date: "10/25/2017"
+        date: pre_ama_start_date.to_date.mdY
       )
 
       safe_click("#button-submit-update")
@@ -653,7 +652,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/19/2018"
+        date: profile_date.mdY
       )
 
       expect(page).to have_content("2 issues")
@@ -828,7 +827,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/25/2018"
+        date: profile_date.mdY
       )
       expect(page).to have_content("3 issues")
 
@@ -882,7 +881,7 @@ feature "Higher Level Review Edit issues" do
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
         decision_review: higher_level_review,
         issue_category: "Active Duty Adjustments",
-        decision_date: 1.month.ago,
+        decision_date: profile_date,
         nonrating_issue_description: "Description for Active Duty Adjustments"
       )
 

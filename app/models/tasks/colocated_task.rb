@@ -42,6 +42,10 @@ class ColocatedTask < Task
     end
   end
 
+  def label
+    action
+  end
+
   def available_actions(user)
     if assigned_to != user
       if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)

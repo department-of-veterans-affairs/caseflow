@@ -37,7 +37,7 @@ class Task < ApplicationRecord
   end
 
   def label
-    action
+    self.class.name
   end
 
   def self.inactive_statuses
@@ -240,6 +240,12 @@ class Task < ApplicationRecord
 
   def previous_task
     nil
+  end
+
+  def cancel_task_and_child_subtasks
+    update!(status: Constants.TASK_STATUSES.cancelled) if active?
+
+    children.each(&:cancel_task_and_child_subtasks)
   end
 
   def assign_to_organization_data(_user = nil)
