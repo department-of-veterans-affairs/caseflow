@@ -2,7 +2,9 @@ import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import moment from 'moment';
+// import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import TextareaField from '../../components/TextareaField';
 
 import {
   taskById,
@@ -10,7 +12,8 @@ import {
 } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
 import {
-  requestPatch
+  requestPatch, onAssignHearingChange,
+  onScheduleHearingLaterChange
 } from '../uiReducer/uiActions';
 import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
@@ -45,9 +48,9 @@ class HearingTime extends React.Component {
   }
 
   getTimeOptions = () => {
-    const { selectedRegionalOffice } = this.props;
+    const { regionalOffice } = this.props;
 
-    if (selectedRegionalOffice === 'C') {
+    if (regionalOffice === 'C') {
       return [
         { displayText: '9:00 am',
           value: '9:00' },
@@ -105,59 +108,146 @@ class HearingTime extends React.Component {
   }
 }
 
-class ScheduleLater extends React.Component {
+class AssignHearing extends React.Component {
+
+  /*
+    This duplicates a lot of the logic from AssignHearingModal.jsx
+    TODO: refactor so both of these modals use the same components
+  */
   constructor (props) {
     super(props);
 
+    const { initialRegionalOffice, initialHearingDate, initialHearingTime } = props;
+
     this.state = {
-      regionalOffice: props.initialRegionalOffice || ''
+      regionalOffice: initialRegionalOffice || null,
+      hearingLocation: null,
+      hearingTime: initialHearingTime || null,
+      hearingDay: initialHearingDate || null
     };
+  }
+
+  afterStateChange = () => {
+    this.props.onChange(this.state);
+  }
+
+  onRegionalOfficeChange = (regionalOffice) => {
+    this.setState({
+      regionalOffice,
+      hearingLocation: null,
+      hearingTime: null,
+      hearingDay: null
+    });
+  }
+
+  onChange = (key, value) => {
+    this.setState(
+      { [key]: value },
+      this.afterStateChange
+    );
   }
 
   render() {
 
-    const {
-      initialHearingDate, initialHearingTime
-      onNewHearingChange, appeal,
-      newHearing: { hearingTime, hearingDayId, hearingLocation }
-    } = this.props;
+    const { appeal } = this.props;
+    const { regionalOffice, hearingLocation, hearingDay, hearingTime } = this.state;
 
     return (
       <div>
         <RegionalOfficeDropdown
-          value={this.state.regionalOffice}
-          onChange={(value) => this.setState({ regionalOffice: value })}
+          value={regionalOffice}
+          onChange={this.onRegionalOfficeChange}
           validateValueOnMount
         />
-        <AppealHearingLocationsDropdown
-          appealId={appeal.externalId}
-          value={hearingLocation}
-          onChange={(value) => onNewHearingChange('hearingLocation', value)}
-        />
-        <HearingDateDropdown
-          value={hearingDayId}
-          onChange={(value) => onNewHearingChange('hearingDayId', value)}
-        />
-        {hearingDayId &&
+        {regionalOffice && <React.Fragment>
+          <AppealHearingLocationsDropdown
+            key={`hearingLocation__${regionalOffice}`}
+            regionalOffice={regionalOffice}
+            appealId={appeal.externalId}
+            value={hearingLocation}
+            onChange={(value) => this.onChange('hearingLocation', value)}
+          />
+          <HearingDateDropdown
+            key={`hearingDate__${regionalOffice}`}
+            regionalOffice={regionalOffice}
+            value={hearingDay}
+            onChange={(value) => this.onChange('hearingDay', value)}
+            validateValueOnMount
+          />
           <HearingTime
-            regionalOffice={this.state.regionalOffice}
+            key={`hearingTime__${regionalOffice}`}
+            regionalOffice={regionalOffice}
             value={hearingTime}
-            onChange={(value) => onNewHearingChange('hearingTime', value)}
-          />}
+            onChange={(value) => this.onChange('hearingTime', value)}
+          />
+        </React.Fragment>}
       </div>
     );
   }
 }
 
+const ScheduleLaterWithAdminAction = ({ reasons, value, set }) => (
+  <div>
+    <SearchableDropdown
+      label="Select Reason"
+      strongLabel
+      name="postponementReason"
+      options={reasons}
+      value={value ? value.withAdminActionKlass : null}
+      onChange={(val) => set('withAdminActionKlass', val)}
+    />
+    <TextareaField
+      label="Instructions"
+      strongLabel
+      name="adminActionInstructions"
+      value={value ? value.adminActionInstructions : ''}
+      onChange={(val) => set('adminActionInstructions', val)}
+    />
+  </div>
+);
+
 class PostponeHearingModal extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      afterDispositionUpdateAction: '',
+      afterDispositionUpdateActionOptions: [
+        {
+          displayText: 'Reschedule immediately',
+          value: 'reschedule'
+        },
+        {
+          displayText: 'Send to Schedule Veteran list',
+          value: 'schedule_later'
+        },
+        {
+          displayText: 'Apply admin action',
+          value: 'schedule_later_with_admin_action'
+        }
+      ]
+    };
+  }
+
+  getAssignHearingTime = (time, day) => {
+
+    return {
+      // eslint-disable-next-line id-length
+      h: time.split(':')[0],
+      // eslint-disable-next-line id-length
+      m: time.split(':')[1],
+      offset: moment.tz(day.hearingDate, day.timezone || 'America/New_York').format('Z')
+    };
+  }
+
   getReschedulePayload = () => {
-    const { newHearing: { hearingTime, hearingDayId, hearingLocation } } = this.props.reschedule;
+    const { assignHearing: { hearingTime, hearingDay, hearingLocation } } = this.props;
 
     return {
       action: 'reschedule',
       new_hearing_attrs: {
-        hearing_time: hearingTime,
-        hearing_pkseq: hearingDayId,
+        hearing_time: this.getAssignHearingTime(hearingTime, hearingDay),
+        hearing_pkseq: hearingDay.hearingId,
         hearing_location: hearingLocation
       }
     };
@@ -173,10 +263,10 @@ class PostponeHearingModal extends React.Component {
     };
   }
 
-  getAfterDispositionUpdate = () => {
-    const { scheduleLater } = this.props;
+  getAfterDispositionUpdatePayload = () => {
+    const { afterDispositionUpdateAction } = this.state;
 
-    if (scheduleLater) {
+    if (afterDispositionUpdateAction.value === 'reschedule') {
       return this.getReschedulePayload();
     }
 
@@ -199,25 +289,25 @@ class PostponeHearingModal extends React.Component {
     };
   }
 
+  onAssignHearingChange = (assignHearingAttrs) => {
+    const { hearingLocation, hearingDay, hearingTime } = assignHearingAttrs;
+
+    this.props.onAssignHearingChange({
+      hearingLocation,
+      hearingDay,
+      hearingTime
+    });
+  }
+
+  onScheduleLaterChange = (key, value) => {
+    this.props.onScheduleHearingLaterChange({ [key]: value });
+  }
+
   submit = () => {
-    const {
-      task,
-      hearingDay
-    } = this.props;
-    const payload = {
-      data: {
-        task: {
-          status: TASK_STATUSES.cancelled
-        }
-      }
-    };
-    const hearingScheduleLink = taskActionData(this.props).back_to_hearing_schedule ?
-      <p>
-        <Link href={`/hearings/schedule/assign?roValue=${hearingDay.regionalOffice}`}>Back to Hearing Schedule </Link>
-      </p> : null;
+    const { task } = this.props;
+    const payload = this.payload();
     const successMsg = {
-      title: taskActionData(this.props).message_title,
-      detail: <span><span>{taskActionData(this.props).message_detail}</span>{hearingScheduleLink}</span>
+      title: taskActionData(this.props).message_title
     };
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
@@ -229,9 +319,35 @@ class PostponeHearingModal extends React.Component {
   }
 
   render = () => {
-    const taskData = taskActionData(this.props);
+    const { appeal, scheduleLater } = this.props;
+    const { afterDispositionUpdateAction } = this.state;
+    const adminActionOptions = taskActionData(this.props).options;
 
-    return <div>{taskData && taskData.modal_body}</div>;
+    return (
+      <div>
+        <RadioField
+          name="postponeAfterDispositionUpdateAction"
+          hideLabel
+          strongLabel
+          options={this.state.afterDispositionUpdateActionOptions}
+          onChange={(option) => this.setState({ afterDispositionUpdateAction: option })}
+          value={afterDispositionUpdateAction}
+        />
+
+        {afterDispositionUpdateAction === 'reschedule' &&
+        <AssignHearing
+          appeal={appeal}
+          onChange={this.onAssignHearingChange}
+        />
+        }{afterDispositionUpdateAction === 'schedule_later_with_admin_action' &&
+        <ScheduleLaterWithAdminAction
+          reasons={adminActionOptions}
+          value={scheduleLater}
+          set={this.onScheduleLaterChange}
+        />
+        }
+      </div>
+    );
   };
 }
 
@@ -239,20 +355,26 @@ const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
-  hearingDay: state.ui.hearingDay
+  hearingDay: state.ui.hearingDay,
+  scheduleLater: state.ui.scheduleHearingLater,
+  assighHearing: state.ui.assignHearing,
+  adminActionOptions: taskActionData(ownProps).options
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  onReceiveAmaTasks
+  onReceiveAmaTasks,
+  onAssignHearingChange,
+  onScheduleHearingLaterChange
 }, dispatch);
 
 const propsToText = (props) => {
   const taskData = taskActionData(props);
+
   const pathAfterSubmit = (taskData && taskData.redirect_after) || '/queue';
 
   return {
-    title: taskData ? taskData.modal_title : '',
+    title: 'Postpone Hearing',
     pathAfterSubmit
   };
 };

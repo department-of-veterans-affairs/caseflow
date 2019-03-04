@@ -200,6 +200,24 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
         $set: action.payload
       }
     });
+  case ACTIONS.SET_ASSIGN_HEARING:
+    return update(state, {
+      assignHearing: {
+        $set: {
+          ...(state.assignHearing || {}),
+          ...action.payload
+        }
+      }
+    });
+  case ACTIONS.SET_SCHEDULE_HEARING_LATER:
+    return update(state, {
+      scheduleHearingLater: {
+        $set: {
+          ...(state.scheduleHearingLater || {}),
+          ...action.payload
+        }
+      }
+    });
   default:
     return state;
   }

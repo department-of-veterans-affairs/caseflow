@@ -19,15 +19,11 @@ class DispositionTask < GenericTask
     parent
   end
 
-  def available_actions(user)
-    if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
-      return [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
-    end
-
-    []
+  def available_actions(_user)
+    [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
   end
 
-  def add_schedule_hearing_task_admin_actions_data
+  def add_schedule_hearing_task_admin_actions_data(_user)
     {
       redirect_after: "/queue/appeals/#{appeal.external_id}",
       message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
