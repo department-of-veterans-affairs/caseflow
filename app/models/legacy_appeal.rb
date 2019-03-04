@@ -1,6 +1,6 @@
 ##
-# An appeal that a Veteran or appellant for VA decisions on claims for benefits,
-# filed before the Veterans Appeals Improvement and Modernization Act (AMA) went into effect on Feb 19 2019.
+# An appeal that a Veteran or appellant for VA decisions on claims for benefits, filed under the laws and policies 
+# guiding appeals before the Veterans Appeals Improvement and Modernization Act (AMA).
 # The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
 # Legacy appeals have VACOLS and BGS as dependencies.
 

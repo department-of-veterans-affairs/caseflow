@@ -1,5 +1,5 @@
 ##
-# An appeal that a Veteran or appellant for VA decisions on claims for benefits.
+# An appeal filed by a Veteran or appellant to the Board of Veterans' Appeals for VA decisions on claims for benefits.
 # This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
 # which went into effect Feb 19, 2019.
 
