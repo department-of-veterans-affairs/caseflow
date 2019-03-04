@@ -4,30 +4,10 @@
 # Once completed, a DispositionTask is created.
 
 class ScheduleHearingTask < GenericTask
+  before_create :check_parent_type
   after_update :update_location_in_vacols
 
   class << self
-    def find_or_create_if_eligible(appeal)
-      if appeal.is_a?(LegacyAppeal) && appeal.case_record&.bfcurloc == "57" &&
-         appeal.hearings.all?(&:disposition)
-
-        parent = HearingTask.active.find_or_create_by!(appeal: appeal) do |task|
-          task.update(
-            assigned_to: Bva.singleton,
-            parent: RootTask.find_or_create_by!(appeal: appeal)
-          )
-        end
-        ScheduleHearingTask.active.find_or_create_by!(appeal: appeal) do |task|
-          task.update(
-            assigned_to: HearingsManagement.singleton,
-            parent: parent
-          )
-        end
-      elsif appeal.is_a?(Appeal)
-        ScheduleHearingTask.active.find_by(appeal: appeal)
-      end
-    end
-
     def tasks_for_ro(regional_office)
       # Get all tasks associated with AMA appeals and the regional_office
       incomplete_tasks = ScheduleHearingTask.where(
@@ -73,6 +53,16 @@ class ScheduleHearingTask < GenericTask
 
   def label
     "Schedule hearing"
+  end
+
+  def check_parent_type
+    if parent.type != "HearingTask"
+      fail(
+        Caseflow::Error::InvalidParentTask,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
+    end
   end
 
   def update_location_in_vacols
