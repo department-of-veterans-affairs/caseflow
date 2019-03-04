@@ -1,5 +1,5 @@
 ##
-# An appeal that a Veteran or appellant for VA decisions on claims for benefits, filed under the laws and policies 
+# An appeal that a Veteran or appellant for VA decisions on claims for benefits, filed under the laws and policies
 # guiding appeals before the Veterans Appeals Improvement and Modernization Act (AMA).
 # The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
 # Legacy appeals have VACOLS and BGS as dependencies.
@@ -728,8 +728,8 @@ class LegacyAppeal < ApplicationRecord
 
     # shouldn't happen because if all tasks are closed the task returns to the assigning attorney
     if tasks.any?
-      Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but is open and only has only closed tasks")
-      return tasks.most_recently_assigned.assigned_to_label 
+      Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but has only closed tasks")
+      return tasks.most_recently_assigned.assigned_to_label
     end
 
     # shouldn't happen because setting location to "CASEFLOW" only happens when a task is created
