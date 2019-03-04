@@ -63,8 +63,8 @@ class AssignHearingForm extends React.Component {
 
     return {
       ...errorMessages,
-      hasErrorMessages: errorMessages.hearingDay || errorMessages.hearingLocation ||
-        errorMessages.hearingTime
+      hasErrorMessages: (errorMessages.hearingDay || errorMessages.hearingLocation ||
+        errorMessages.hearingTime) !== false
     };
   }
 
