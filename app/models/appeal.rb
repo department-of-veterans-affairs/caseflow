@@ -1,3 +1,8 @@
+##
+# An appeal filed by a Veteran or appellant to the Board of Veterans' Appeals for VA decisions on claims for benefits.
+# This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
+# which went into effect Feb 19, 2019.
+
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
@@ -128,7 +133,7 @@ class Appeal < DecisionReview
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
-  def location_code
+  def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
     active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
@@ -707,7 +712,7 @@ class Appeal < DecisionReview
   def contestable_decision_issues
     return [] unless receipt_date
 
-    DecisionIssue.where(participant_id: veteran.participant_id)
+    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
       .select(&:finalized?)
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date

@@ -29,8 +29,6 @@ RSpec.feature "AmaQueue" do
     end
 
     before do
-      Time.zone = "America/New_York"
-
       Fakes::Initializer.load!
       FeatureToggle.enable!(:queue_beaam_appeals)
 
