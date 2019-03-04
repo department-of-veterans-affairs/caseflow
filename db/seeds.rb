@@ -443,18 +443,6 @@ class SeedDB
     end
 
     appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
-
-    hearing_task = HearingTask.create!(
-      appeal: appeal,
-      assigned_to: Bva.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
-    )
-
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
-      parent: hearing_task
-    )
   end
 
   def create_ama_case_with_open_schedule_hearing_task(ro_key)
@@ -475,16 +463,10 @@ class SeedDB
       docket_type: "hearing"
     )
 
-    hearing_task = HearingTask.create!(
-      appeal: appeal,
-      assigned_to: Bva.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
-    )
-
     ScheduleHearingTask.create!(
       appeal: appeal,
       assigned_to: HearingsManagement.singleton,
-      parent: hearing_task
+      parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     )
   end
 
