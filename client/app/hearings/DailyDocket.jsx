@@ -187,7 +187,7 @@ export class DailyDocket extends React.PureComponent {
  };
 
   getRoTime = (hearing) => {
-    if (hearing.request_type === 'Central') {
+    if (hearing.readable_request_type === 'Central') {
       return <div>{getTime(hearing.scheduled_for)} <br />
         {hearing.regional_office_name}
       </div>;
