@@ -2277,4 +2277,82 @@ describe LegacyAppeal do
       end
     end
   end
+
+  context "#assigned_to_location" do
+    context "if the case is complete" do
+      let!(:vacols_case) { create(:case, :status_complete) }
+
+      it "returns nil" do
+        expect(appeal.assigned_to_location).to eq(nil)
+      end
+    end
+
+    context "if the case has not been worked in caseflow" do
+      let(:location_code) { "96" }
+      let!(:vacols_case) { create(:case, bfcurloc: location_code) }
+
+      it "returns the location code" do
+        expect(appeal.assigned_to_location).to eq(location_code)
+      end
+    end
+
+    context "if the case has been worked in caseflow" do
+      let!(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
+
+      it "if there are no active tasks it returns 'CASEFLOW' (fallback case)" do
+        expect(appeal.assigned_to_location).to eq("CASEFLOW")
+      end
+
+      context "if the only active case is a RootTask" do
+        before do
+          create(:root_task, appeal: appeal)
+        end
+
+        it "returns Case storage" do
+          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        end
+      end
+
+      context "if there is an assignee" do
+        context "if the most recent assignee is an organization" do
+          let(:organization) { create(:organization) }
+
+          before do
+            organization_root_task = create(:root_task, appeal: appeal)
+            create(:generic_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
+          end
+
+          it "it returns the organization name" do
+            expect(appeal.assigned_to_location).to eq(organization.name)
+          end
+        end
+
+        context "if the most recent assignee is not an organization" do
+          let(:user) { create(:user) }
+
+          before do
+            user_root_task = create(:root_task, appeal: appeal)
+            create(:generic_task, assigned_to: user, appeal: appeal, parent: user_root_task)
+          end
+
+          it "it returns the id" do
+            expect(appeal.assigned_to_location).to eq(user.css_id)
+          end
+        end
+
+        context "if the task is on hold but there isn't an assignee" do
+          let(:pre_ama) { Date.new(2018, 1, 1) }
+
+          before do
+            on_hold_root = create(:root_task, appeal: appeal, updated_at: pre_ama - 1)
+            create(:generic_task, status: :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
+          end
+
+          it "it returns something" do
+            expect(appeal.assigned_to_location).not_to eq(nil)
+          end
+        end
+      end
+    end
+  end
 end
