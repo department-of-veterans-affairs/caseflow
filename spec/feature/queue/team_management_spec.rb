@@ -15,7 +15,7 @@ RSpec.feature "Team management page" do
 
       scenario "link does not appear in dropdown menu" do
         visit("/queue")
-        click_on(non_bva_user.css_id)
+        click_on("#{non_bva_user.css_id} (VACO)")
         expect(page).to_not have_content(COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK)
       end
 
@@ -30,7 +30,7 @@ RSpec.feature "Team management page" do
       scenario "link appears in dropdown menu" do
         visit("/queue")
 
-        click_on(user.css_id)
+        click_on("#{user.css_id} (VACO)")
         expect(page).to have_content(COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK)
       end
     end
