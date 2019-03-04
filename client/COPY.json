@@ -233,6 +233,9 @@
   "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
+  "MODAL_SUBMIT_BUTTON": "Submit",
+  "MODAL_CANCEL_BUTTON": "Cancel",
+
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to the assigner",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",

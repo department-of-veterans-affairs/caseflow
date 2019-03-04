@@ -183,22 +183,23 @@ class OrgRow extends React.PureComponent {
   }
 
   // TODO: Indicate that changes have been made to the row by enabling the submit changes button. Default to disabled.
-
   render = () => {
     return <tr>
       <td>{ this.props.id }</td>
       <td>
         <TextField
-          name="Name"
+          name={`${COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}-${this.props.id}`}
           label={false}
+          useAriaLabel
           value={this.state.name}
           onChange={this.changeName}
         />
       </td>
       <td>
         <TextField
-          name="URL"
+          name={`${COPY.TEAM_MANAGEMENT_URL_COLUMN_HEADING}-${this.props.id}`}
           label={false}
+          useAriaLabel
           value={this.state.url}
           onChange={this.changeUrl}
         />
@@ -206,8 +207,9 @@ class OrgRow extends React.PureComponent {
       <td>
         { this.props.showBgsParticipantId &&
           <TextField
-            name="BGS Participant ID"
+            name={`${COPY.TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING}-${this.props.id}`}
             label={false}
+            useAriaLabel
             value={this.state.participant_id}
             onChange={this.changeParticipantId}
           />
@@ -216,6 +218,7 @@ class OrgRow extends React.PureComponent {
       <td>
         <Button
           name={COPY.TEAM_MANAGEMENT_UPDATE_ROW_BUTTON}
+          id={`${this.props.id}`}
           classNames={['usa-button-secondary']}
           onClick={this.submitUpdate}
         />
