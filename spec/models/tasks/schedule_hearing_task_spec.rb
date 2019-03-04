@@ -45,7 +45,7 @@ describe ScheduleHearingTask do
             description: "Update",
             values: {
               "regional_office_value": hearing_day.regional_office,
-              "hearing_pkseq": hearing_day.id,
+              "hearing_day_id": hearing_day.id,
               "hearing_time": {
                 "h": "09",
                 "m": "00",
