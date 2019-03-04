@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import moment from 'moment';
+import _ from 'lodash';
 // import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import TextareaField from '../../components/TextareaField';
 
@@ -149,7 +150,7 @@ class AssignHearing extends React.Component {
 
   render() {
 
-    const { appeal } = this.props;
+    const { appeal, errorMessages } = this.props;
     const { regionalOffice, hearingLocation, hearingDay, hearingTime } = this.state;
 
     return (
@@ -161,6 +162,7 @@ class AssignHearing extends React.Component {
         />
         {regionalOffice && <React.Fragment>
           <AppealHearingLocationsDropdown
+            errorMessage={errorMessages.hearingLocation}
             key={`hearingLocation__${regionalOffice}`}
             regionalOffice={regionalOffice}
             appealId={appeal.externalId}
@@ -168,6 +170,7 @@ class AssignHearing extends React.Component {
             onChange={(value) => this.onChange('hearingLocation', value)}
           />
           <HearingDateDropdown
+            errorMessage={errorMessages.hearingDay}
             key={`hearingDate__${regionalOffice}`}
             regionalOffice={regionalOffice}
             value={hearingDay}
@@ -175,6 +178,7 @@ class AssignHearing extends React.Component {
             validateValueOnMount
           />
           <HearingTime
+            errorMessage={errorMessages.hearingTime}
             key={`hearingTime__${regionalOffice}`}
             regionalOffice={regionalOffice}
             value={hearingTime}
@@ -225,8 +229,65 @@ class PostponeHearingModal extends React.Component {
           displayText: 'Apply admin action',
           value: 'schedule_later_with_admin_action'
         }
-      ]
+      ],
+      invalidRescheduleValues: {
+        hearingDay: false,
+        hearingLocation: false,
+        hearingTime: false
+      },
+      invalidScheduleLaterValues: {
+        withAdminActionKlass: false
+      }
     };
+  }
+
+  validateRescheduleValues = () => {
+    const assignHearing = this.props.assignHearing || {};
+
+    const invalidRescheduleValues = {
+      hearingDay: assignHearing.hearingDay && assignHearing.hearingDay.hearingId ?
+        false : 'Please select a hearing date',
+      hearingLocation: assignHearing.hearingLocation ? false : 'Please select a hearing location',
+      hearingTime: assignHearing.hearingTime ? false : 'Please select a hearing time'
+    };
+
+    this.setState({ invalidRescheduleValues });
+
+    if (invalidRescheduleValues.hearingDay ||
+      invalidRescheduleValues.hearingLocation ||
+      invalidRescheduleValues.hearingTime) {
+      return false;
+    }
+
+    return true;
+  }
+
+  validateScheduleLaterValues = () => {
+    const scheduleLater = this.props.scheduleLater || {};
+
+    this.setState({
+      invalidScheduleLaterValues: {
+        withAdminActionKlass: scheduleLater.withAdminActionKlass ? false : 'Please select an action'
+      }
+    });
+
+    if (!scheduleLater.withAdminActionKlass) {
+      return false;
+    }
+
+    return true;
+  }
+
+  validateForm = () => {
+
+    if (this.state.afterDispositionUpdateAction === 'reschedule') {
+
+      return this.validateRescheduleValues();
+    } else if (this.state.afterDispositionUpdateAction === 'schedule_later_with_admin_action') {
+      return this.validateScheduleLaterValues();
+    }
+
+    return true;
   }
 
   getAssignHearingTime = (time, day) => {
@@ -254,7 +315,7 @@ class PostponeHearingModal extends React.Component {
   }
 
   getScheduleLaterPayload = () => {
-    const { withAdminActionKlass, adminActionInstructions } = this.props.scheduleLater;
+    const { withAdminActionKlass, adminActionInstructions } = this.props.scheduleLater || {};
 
     return {
       action: 'schedule_later',
@@ -276,13 +337,11 @@ class PostponeHearingModal extends React.Component {
   payload = () => {
     return {
       data: {
-        task: {
-          status: TASK_STATUSES.cancelled,
-          business_payloads: {
-            values: {
-              disposition: 'postponed',
-              after_disposition_update: this.getAfterDispositionUpdatePayload()
-            }
+        status: TASK_STATUSES.cancelled,
+        business_payloads: {
+          values: {
+            disposition: 'postponed',
+            after_disposition_update: this.getAfterDispositionUpdatePayload()
           }
         }
       }
@@ -320,7 +379,8 @@ class PostponeHearingModal extends React.Component {
 
   render = () => {
     const { appeal, scheduleLater } = this.props;
-    const { afterDispositionUpdateAction } = this.state;
+    const { afterDispositionUpdateAction, afterDispositionUpdateActionOptions,
+      invalidRescheduleValues, invalidScheduleLaterValues } = this.state;
     const adminActionOptions = taskActionData(this.props).options;
 
     return (
@@ -329,18 +389,20 @@ class PostponeHearingModal extends React.Component {
           name="postponeAfterDispositionUpdateAction"
           hideLabel
           strongLabel
-          options={this.state.afterDispositionUpdateActionOptions}
+          options={afterDispositionUpdateActionOptions}
           onChange={(option) => this.setState({ afterDispositionUpdateAction: option })}
           value={afterDispositionUpdateAction}
         />
 
         {afterDispositionUpdateAction === 'reschedule' &&
         <AssignHearing
+          errorMessages={invalidRescheduleValues}
           appeal={appeal}
           onChange={this.onAssignHearingChange}
         />
         }{afterDispositionUpdateAction === 'schedule_later_with_admin_action' &&
         <ScheduleLaterWithAdminAction
+          errorMessages={invalidScheduleLaterValues}
           reasons={adminActionOptions}
           value={scheduleLater}
           set={this.onScheduleLaterChange}
@@ -357,7 +419,7 @@ const mapStateToProps = (state, ownProps) => ({
   saveState: state.ui.saveState.savePending,
   hearingDay: state.ui.hearingDay,
   scheduleLater: state.ui.scheduleHearingLater,
-  assighHearing: state.ui.assignHearing,
+  assignHearing: state.ui.assignHearing,
   adminActionOptions: taskActionData(ownProps).options
 });
 
