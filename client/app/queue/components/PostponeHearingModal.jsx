@@ -46,27 +46,19 @@ class PostponeHearingModal extends React.Component {
   }
 
   validateRescheduleValues = () => {
-    const assignHearing = this.props.assignHearing || {};
+    const { errorMessags: { hasErrorMessages } } = this.props.assignHearing;
 
-    if (!assignHearing.errorMessages || assignHearing.errorMessages.hasErrorMessages) {
-      this.setState({ showErrorMessages: true });
+    this.setState({ showErrorMessages: hasErrorMessages });
 
-      return false;
-    }
-
-    return true;
+    return hasErrorMessages;
   }
 
   validateScheduleLaterValues = () => {
-    const scheduleLater = this.props.scheduleHearingLaterWithAdminAction || {};
+    const { errorMessags: { hasErrorMessages } } = this.props.scheduleHearingLaterWithAdminAction;
 
-    if (!scheduleLater.errorMessages || scheduleLater.errorMessages.hasErrorMessages) {
-      this.setState({ showErrorMessages: true });
+    this.setState({ showErrorMessages: hasErrorMessages });
 
-      return false;
-    }
-
-    return true;
+    return hasErrorMessages;
   }
 
   validateForm = () => {
