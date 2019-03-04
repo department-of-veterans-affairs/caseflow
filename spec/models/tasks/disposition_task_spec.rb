@@ -27,7 +27,7 @@ describe DispositionTask do
       end
 
       it "creates a new HearingTask and ScheduleHearingTask" do
-        disposition_task.update_with_params(params, nil)
+        disposition_task.update_from_params(params, nil)
 
         expect(Hearing.first.disposition).to eq "postponed"
         expect(HearingTask.count).to eq 2
@@ -49,7 +49,7 @@ describe DispositionTask do
       end
 
       it "creates a new HearingTask and ScheduleHearingTask with admin action" do
-        disposition_task.update_with_params(params, nil)
+        disposition_task.update_from_params(params, nil)
 
         expect(Hearing.first.disposition).to eq "postponed"
         expect(HearingTask.count).to eq 2
@@ -75,7 +75,7 @@ describe DispositionTask do
       end
 
       it "creates a new hearing with a new DispositionTask" do
-        disposition_task.update_with_params(params, nil)
+        disposition_task.update_from_params(params, nil)
 
         expect(Hearing.count).to eq 2
         expect(Hearing.first.disposition).to eq "postponed"
