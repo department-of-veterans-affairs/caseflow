@@ -15,6 +15,10 @@ class DispositionTask < GenericTask
     end
   end
 
+  def hearing_task
+    parent
+  end
+
   def available_actions(user)
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       return [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
@@ -32,10 +36,6 @@ class DispositionTask < GenericTask
         { value: subclass.name, label: subclass.label }
       end
     }
-  end
-
-  def hearing_task
-    parent
   end
 
   def update_with_params(params, _user)
