@@ -341,15 +341,13 @@ class AppealRepository
 
     # Create the schedule hearing tasks
     LegacyAppeal.where(vacols_id: ids.map(&:first) - vacols_ids_with_schedule_tasks).each do |appeal|
-      parent = HearingTask.find_or_create_by!(
+      parent = HearingTask.create!(
         appeal: appeal,
         parent: RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
       ) { |task| task.assigned_to = Bva.singleton }
-      if ScheduleHearingTask.where(appeal: appeal).where.not(status: Constants.TASK_STATUSES.completed).empty?
-        ScheduleHearingTask.create!(appeal: appeal) do |task|
-          task.assigned_to = HearingsManagement.singleton
-          task.parent = parent
-        end
+      ScheduleHearingTask.create!(appeal: appeal) do |task|
+        task.assigned_to = HearingsManagement.singleton
+        task.parent = parent
       end
 
       update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])

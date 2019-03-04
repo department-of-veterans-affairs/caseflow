@@ -2,11 +2,9 @@ describe HearingAdminActionTask do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
   let!(:schedule_hearing_task) do
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      parent: RootTask.find_or_create_by!(appeal: appeal),
-      assigned_to: HearingsManagement.singleton
-    )
+    create(:schedule_hearing_task,
+           appeal: appeal,
+           assigned_to: HearingsManagement.singleton)
   end
 
   describe "VerifyAddressTask after update" do
