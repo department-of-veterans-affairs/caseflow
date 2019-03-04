@@ -41,7 +41,7 @@ class DispositionTask < GenericTask
     }
   end
 
-  def update_with_params(params, user)
+  def update_from_params(params, user)
     disposition_params = params.delete(:business_payloads)[:values]
 
     if params[:status] == Constants.TASK_STATUSES.cancelled
