@@ -19,7 +19,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
   end
 
   context "When creating Caseflow Central hearings" do
-    let!(:hearing_day) { create(:hearing_day) }
+    let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 30.days) }
     let!(:vacols_case) do
       create(
         :case, :central_office_hearing,
@@ -306,7 +306,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
   end
 
   context "When list of veterans displays in Legacy Veterans Waiting" do
-    let!(:hearing_day) { create(:hearing_day) }
+    let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 30) }
     let!(:schedule_hearing_task1) do
       create(
         :schedule_hearing_task, appeal: create(
@@ -420,7 +420,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: "Central")
       click_button("Legacy Veterans Waiting")
       table_row = page.find("tr", id: "table-row-0")
-      expect(table_row).to have_content("1545678")
+      expect(table_row).to have_content("1545678", wait: 30)
       table_row = page.find("tr", id: "table-row-1")
       expect(table_row).to have_content("1645621")
       table_row = page.find("tr", id: "table-row-2")
