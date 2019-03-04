@@ -29,6 +29,13 @@ describe Vso do
     ]
   end
 
+  describe ".create!" do
+    it "sets the role to VSO" do
+      vso = Vso.create!(name: "Veterans' Service Org")
+      expect(vso.role).to eq("VSO")
+    end
+  end
+
   context "#user_has_access?" do
     before do
       BGSService = ExternalApi::BGSService
