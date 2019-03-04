@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
   include Errors
 
+  before_action :set_application, only: [:new_documents]
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
@@ -89,11 +90,6 @@ class TasksController < ApplicationController
     no_cache
     RootTask.find_or_create_by!(appeal: appeal)
 
-    # This is a temporary solution for legacy hearings. We need them to exist on the case details
-    # page, but have no good way to create them before a page load. So we need to check here if we
-    # need to create a hearing task and if so, create it.
-    ScheduleHearingTask.find_or_create_if_eligible(appeal)
-
     # VSO users should only get tasks assigned to them or their organization.
     if current_user.vso_employee?
       return json_vso_tasks
@@ -124,6 +120,22 @@ class TasksController < ApplicationController
         exclude_extra_fields: true
       ).as_json[:data]
     }
+  end
+
+  def new_documents
+    # For attorneys, the tasks in their on hold tab are all colocated tasks that they have assigned (see
+    # attorney_queue.rb). Because these tasks use the assigned_at date as their placed_on_hold_at, use assigned_at if
+    # placed_on_hold_at is null.
+    new_documents_for_user = NewDocumentsForUser.new(
+      appeal: task.appeal,
+      user: current_user,
+      query_vbms: false,
+      date_to_compare_with: task.placed_on_hold_at || task.assigned_at
+    )
+    render json: { new_documents: new_documents_for_user.process! }
+  rescue StandardError => e
+    Raven.capture_exception(e)
+    handle_non_critical_error("tasks_new_documents", e)
   end
 
   private
