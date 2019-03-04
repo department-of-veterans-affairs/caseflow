@@ -37,7 +37,7 @@ class Task < ApplicationRecord
   end
 
   def label
-    action
+    self.class.name
   end
 
   def self.inactive_statuses
