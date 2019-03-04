@@ -16,6 +16,22 @@ feature "Intake Review Page" do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
 
+  describe "Validating receipt date not before ama" do
+    before { FeatureToggle.enable!(:use_ama_activation_date) }
+
+    it "shows correct error with AMA date" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      expect(page).to have_current_path("/intake/review_request")
+      fill_in "What is the Receipt Date of this form?", with: "01/01/2019"
+      click_intake_continue
+
+      expect(page).to have_content(
+        "Receipt Date cannot be prior to 02/19/2019."
+      )
+    end
+  end
+
   describe "Selecting a claimant" do
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
