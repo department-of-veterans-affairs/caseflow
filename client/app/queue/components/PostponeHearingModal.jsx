@@ -184,8 +184,6 @@ class PostponeHearingModal extends React.Component {
 const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending,
-  hearingDay: state.ui.hearingDay,
   scheduleHearingLaterWithAdminAction: state.components.forms.scheduleHearingLaterWithAdminAction || {},
   assignHearing: state.components.forms.assignHearing || {}
 });
