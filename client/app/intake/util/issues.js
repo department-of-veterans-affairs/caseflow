@@ -319,7 +319,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         console.warn(issue);
         throw new Error('no decision date');
       }
-      const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
+      const decisionDate = issue.decisionDate || issue.approxDecisionDate;
+
       return {
         referenceId: issue.id,
         text: issue.description,

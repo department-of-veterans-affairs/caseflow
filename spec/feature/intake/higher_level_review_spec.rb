@@ -754,7 +754,7 @@ feature "Higher-Level Review" do
       expect(page).to have_content("Past decisions from #{rating_date}")
     end
 
-    scenario "HLR comp" do
+    scenario "HLR comp", focus: true do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
         first_name: "BOB",
         last_name: "VANCE",
@@ -826,35 +826,48 @@ feature "Higher-Level Review" do
         "Description for Active Duty Adjustments #{ineligible_constants.untimely}"
       )
 
+      # add third issue
+      # rating_date = promulgation_date.mdY
+      # expect(page).to have_content("Past decisions from #{rating_date}" )
+
+      click_intake_add_issue
+      expect(page).to have_content("Add issue 3")
+      expect(page).to have_content("Does issue 3 match any of these issues")
+      expect(page).to have_content("Left knee granted 2 (already selected for issue 1)")
+      expect(page).to have_css("input[disabled]", visible: false)
+
+      add_intake_rating_issue("PTSD denied")
+      expect(page).to have_content("3. PTSD denied")
+
       # add unidentified issue
       click_intake_add_issue
       add_intake_unidentified_issue("This is an unidentified issue")
-      expect(page).to have_content("3 issues")
+      expect(page).to have_content("4 issues")
       expect(page).to have_content("This is an unidentified issue")
 
       # add ineligible issue
       click_intake_add_issue
       add_intake_rating_issue("Old injury")
-      expect(page).to have_content("4 issues")
-      expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
+      expect(page).to have_content("5 issues")
+      expect(page).to have_content("5. Old injury is ineligible because it's already under review as a Appeal")
 
       # add untimely rating request issue
       click_intake_add_issue
       add_intake_rating_issue("Really old injury")
       add_untimely_exemption_response("Yes")
 
-      expect(page).to have_content("5 issues")
+      expect(page).to have_content("6 issues")
       expect(page).to have_content("I am an exemption note")
-      expect(page).to_not have_content("5. Really old injury #{ineligible_constants.untimely}")
+      expect(page).to_not have_content("6. Really old injury #{ineligible_constants.untimely}")
 
       # remove and re-add with different answer to exemption
-      click_remove_intake_issue("5")
+      click_remove_intake_issue("6")
       click_intake_add_issue
       add_intake_rating_issue("Really old injury")
       add_untimely_exemption_response("No")
-      expect(page).to have_content("5 issues")
+      expect(page).to have_content("6 issues")
       expect(page).to have_content("I am an exemption note")
-      expect(page).to have_content("5. Really old injury #{ineligible_constants.untimely}")
+      expect(page).to have_content("6. Really old injury #{ineligible_constants.untimely}")
 
       # add untimely nonrating request issue
       click_intake_add_issue
@@ -865,7 +878,7 @@ feature "Higher-Level Review" do
         date: "04/19/2016"
       )
       add_untimely_exemption_response("No", "I am a nonrating exemption note")
-      expect(page).to have_content("6 issues")
+      expect(page).to have_content("7 issues")
       expect(page).to have_content("I am a nonrating exemption note")
       expect(page).to have_content(
         "Another Description for Active Duty Adjustments #{ineligible_constants.untimely}"
@@ -874,29 +887,29 @@ feature "Higher-Level Review" do
       # add prior reviewed issue
       click_intake_add_issue
       add_intake_rating_issue("Already reviewed injury")
-      expect(page).to have_content("7 issues")
+      expect(page).to have_content("8 issues")
       expect(page).to have_content(
-        "7. Already reviewed injury #{ineligible_constants.higher_level_review_to_higher_level_review}"
+        "8. Already reviewed injury #{ineligible_constants.higher_level_review_to_higher_level_review}"
       )
 
       # add before_ama ratings
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
       expect(page).to have_content(
-        "8. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
+        "9. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
       )
 
       # Eligible because it comes from a RAMP decision
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
-        "9. Issue before AMA Activation from RAMP Decision date:"
+        "10. Issue before AMA Activation from RAMP Decision date:"
       )
 
       # Add decision issue
       click_intake_add_issue
       add_intake_rating_issue("supplemental claim decision issue", "decision issue with note")
-      expect(page).to have_content("10. supplemental claim decision issue")
+      expect(page).to have_content("11. supplemental claim decision issue")
 
       click_intake_add_issue
       click_intake_no_matching_issues
