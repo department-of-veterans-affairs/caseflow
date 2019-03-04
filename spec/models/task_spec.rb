@@ -246,6 +246,21 @@ describe Task do
     end
   end
 
+  describe "#cancel_task_and_child_subtasks" do
+    let(:appeal) { create(:appeal) }
+    let!(:top_level_task) { create(:task, appeal: appeal) }
+    let!(:second_level_tasks) { create_list(:task, 2, appeal: appeal, parent: top_level_task) }
+    let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
+
+    it "cancels all tasks and child subtasks" do
+      top_level_task.cancel_task_and_child_subtasks
+
+      [top_level_task, *second_level_tasks, *third_level_task].each do |task|
+        expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+    end
+  end
+
   describe ".root_task" do
     context "when sub-sub-sub...task has a root task" do
       let(:root_task) { FactoryBot.create(:root_task) }

@@ -169,7 +169,8 @@ class VaDotGovAddressValidator
     { "DualAddressError" => "The appellant's address in VBMS is ambiguous.",
       "AddressCouldNotBeFound" => "The appellant's address in VBMS could not be found on a map.",
       "InvalidRequestStreetAddress" => "The appellant's address in VBMS does not exist or is invalid.",
-      "ForeignVeteranCase" => "This appellant's address in VBMS is outside of US territories." }
+      "ForeignVeteranCase" => "The appellant's address in VBMS is outside of US territories.",
+      "InvalidRequestNonStreetAddress" => "The appellant's address in VBMS is incomplete." }
   end
 
   def get_error_key(error)
@@ -184,7 +185,7 @@ class VaDotGovAddressValidator
     error_key = get_error_key(error)
 
     case error_key
-    when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress"
+    when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress", "InvalidRequestNonStreetAddress"
       create_admin_action_for_schedule_hearing_task(
         instructions: error_instructions_map[error_key],
         admin_action_type: HearingAdminActionVerifyAddressTask
