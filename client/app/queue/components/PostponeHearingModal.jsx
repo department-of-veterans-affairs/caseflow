@@ -380,7 +380,7 @@ class PostponeHearingModal extends React.Component {
     const { appeal, scheduleLater } = this.props;
     const { afterDispositionUpdateAction, afterDispositionUpdateActionOptions,
       rescheduleErrorMessages, scheduleLaterErrorMessages } = this.state;
-    const adminActionOptions = taskActionData(this.props).options;
+    const taskData = taskActionData(this.props);
 
     return (
       <div>
@@ -402,7 +402,7 @@ class PostponeHearingModal extends React.Component {
         }{afterDispositionUpdateAction === 'schedule_later_with_admin_action' &&
         <ScheduleLaterWithAdminAction
           errorMessages={scheduleLaterErrorMessages}
-          reasons={adminActionOptions}
+          reasons={taskData ? taskData.options : []}
           value={scheduleLater}
           set={this.onScheduleLaterChange}
         />

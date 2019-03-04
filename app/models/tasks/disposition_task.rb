@@ -34,7 +34,7 @@ class DispositionTask < GenericTask
     }
   end
 
-  def update_with_params(params, _user)
+  def update_with_params(params, user)
     disposition_params = params.delete(:business_payloads)[:values]
 
     if params[:status] == Constants.TASK_STATUSES.cancelled
@@ -48,6 +48,8 @@ class DispositionTask < GenericTask
         no_show
       end
     end
+
+    super(params, user)
   end
 
   def reschedule(hearing_pkseq:, hearing_time:, hearing_location: nil)
