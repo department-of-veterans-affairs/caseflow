@@ -49,6 +49,8 @@ feature "Appeal Intake" do
 
   let(:profile_date) { (post_ramp_start_date - 35.days).to_datetime }
 
+  let(:nonrating_date) { Time.zone.yesterday }
+
   let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
 
   let!(:rating) do
@@ -184,7 +186,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: profile_date.mdY
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("2 issues")
@@ -222,7 +224,7 @@ feature "Appeal Intake" do
       nonrating_issue_description: "Description for Active Duty Adjustments",
       benefit_type: "compensation"
     )
-    expect(nonrating_request_issue.decision_date.to_date).to eq(profile_date.to_date)
+    expect(nonrating_request_issue.decision_date.to_date).to eq(nonrating_date)
   end
 
   it "Shows a review error when something goes wrong" do
@@ -288,7 +290,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("1 issue")
@@ -310,7 +312,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: nonrating_date.mdY
     )
 
     click_intake_finish
@@ -360,7 +362,7 @@ feature "Appeal Intake" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/19/2018"
+        date: nonrating_date.mdY
       )
 
       expect(page).to have_content("1 issue")
@@ -464,7 +466,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: profile_date.mdY
+      date: nonrating_date.mdY
     )
     expect(page).to have_content("2 issues")
 
@@ -473,51 +475,40 @@ feature "Appeal Intake" do
       "Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
 
-    # add third issue
-    click_intake_add_issue
-    expect(page).to have_content("Add issue 3")
-    expect(page).to have_content("Does issue 3 match any of these issues")
-    expect(page).to have_content("Left knee granted 2 (already selected for issue 1)")
-    expect(page).to have_css("input[disabled]", visible: false)
-
-    add_intake_rating_issue("PTSD denied")
-    expect(page).to have_content("3. PTSD denied")
-    expect(profile_date.mdY).to eq("11/03/2017")
-
     # add unidentified issue
     expect(page).to_not have_css(".issue-unidentified")
     click_intake_add_issue
     add_intake_unidentified_issue("This is an unidentified issue")
-    expect(page).to have_content("4 issues")
+    expect(page).to have_content("3 issues")
     expect(page).to have_content("This is an unidentified issue")
-    expect(find_intake_issue_by_number(4)).to have_css(".issue-unidentified")
-    expect_ineligible_issue(4)
+    expect(find_intake_issue_by_number(3)).to have_css(".issue-unidentified")
+    expect_ineligible_issue(3)
 
     # add ineligible issue
     click_intake_add_issue
     add_intake_rating_issue("Old injury in review")
-    expect(page).to have_content("5 issues")
-    expect(page).to have_content("5. Old injury in review is ineligible because it's already under review as a Appeal")
-    expect_ineligible_issue(5)
+    expect(page).to have_content("4 issues")
+    expect(page).to have_content("4. Old injury in review is ineligible because it's already under review as a Appeal")
+    expect_ineligible_issue(4)
 
     # add untimely rating request issue
     click_intake_add_issue
     add_intake_rating_issue("Really old injury")
     add_untimely_exemption_response("Yes")
-    expect(page).to have_content("6 issues")
+    expect(page).to have_content("5 issues")
     expect(page).to have_content("I am an exemption note")
-    expect(page).to_not have_content("6. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
-    expect_ineligible_issue(6)
+    expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+    expect_ineligible_issue(5)
 
     # remove and re-add with different answer to exemption
-    click_remove_intake_issue("6")
+    click_remove_intake_issue("5")
     click_intake_add_issue
     add_intake_rating_issue("Really old injury")
     add_untimely_exemption_response("No")
-    expect(page).to have_content("6 issues")
+    expect(page).to have_content("5 issues")
     expect(page).to have_content("I am an exemption note")
-    expect(page).to have_content("6. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
-    expect_ineligible_issue(6)
+    expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
+    expect_ineligible_issue(5)
 
     # add untimely nonrating request issue
     click_intake_add_issue
@@ -528,25 +519,25 @@ feature "Appeal Intake" do
       date: untimely_date.mdY
     )
     add_untimely_exemption_response("No", "I am an untimely exemption")
-    expect(page).to have_content("7 issues")
+    expect(page).to have_content("6 issues")
     expect(page).to have_content("I am an untimely exemption")
     expect(page).to have_content(
       "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
-    expect_ineligible_issue(7)
+    expect_ineligible_issue(6)
 
     # add before_ama ratings
     click_intake_add_issue
     add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
     expect(page).to have_content(
-      "8. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
+      "7. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
     )
-    expect_ineligible_issue(8)
+    expect_ineligible_issue(7)
 
     # Eligible because it comes from a RAMP decision
     click_intake_add_issue
     add_intake_rating_issue("Issue before AMA Activation from RAMP")
-    expect(page).to have_content("9. Issue before AMA Activation from RAMP Decision date:")
+    expect(page).to have_content("8. Issue before AMA Activation from RAMP Decision date:")
 
     # nonrating before_ama
     click_intake_add_issue
@@ -559,7 +550,7 @@ feature "Appeal Intake" do
     expect(page).to have_content(
       "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
     )
-    expect_ineligible_issue(10)
+    expect_ineligible_issue(9)
 
     click_intake_finish
 
@@ -599,7 +590,7 @@ feature "Appeal Intake" do
       decision_review: appeal,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
-      decision_date: profile_date
+      decision_date: nonrating_date
     )
 
     expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
@@ -765,7 +756,7 @@ feature "Appeal Intake" do
       benefit_type: "Education",
       category: "Accrued",
       description: "Description for Accrued",
-      date: profile_date.mdY
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("Description for Accrued")
@@ -776,7 +767,7 @@ feature "Appeal Intake" do
       benefit_type: "Vocational Rehabilitation and Employment",
       category: "Basic Eligibility",
       description: "Description for basic eligibility",
-      date: profile_date.mdY
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("Description for basic eligibility")
@@ -834,7 +825,7 @@ feature "Appeal Intake" do
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",
-          date: profile_date.mdY,
+          date: nonrating_date.mdY,
           legacy_issues: true
         )
 
