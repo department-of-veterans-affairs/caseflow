@@ -230,6 +230,10 @@ class Task < ApplicationRecord
     return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
   end
 
+  def self.most_recently_assigned
+    order(:updated_at).last
+  end
+
   def root_task(task_id = nil)
     task_id = id if task_id.nil?
     return parent.root_task(task_id) if parent
