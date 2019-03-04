@@ -754,7 +754,7 @@ feature "Higher-Level Review" do
       expect(page).to have_content("Past decisions from #{rating_date}")
     end
 
-    scenario "HLR comp", focus: true do
+    scenario "HLR comp" do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
         first_name: "BOB",
         last_name: "VANCE",
@@ -827,9 +827,6 @@ feature "Higher-Level Review" do
       )
 
       # add third issue
-      # rating_date = promulgation_date.mdY
-      # expect(page).to have_content("Past decisions from #{rating_date}" )
-
       click_intake_add_issue
       expect(page).to have_content("Add issue 3")
       expect(page).to have_content("Does issue 3 match any of these issues")
@@ -838,6 +835,7 @@ feature "Higher-Level Review" do
 
       add_intake_rating_issue("PTSD denied")
       expect(page).to have_content("3. PTSD denied")
+      expect(profile_date.mdY).to eq("11/25/2017")
 
       # add unidentified issue
       click_intake_add_issue

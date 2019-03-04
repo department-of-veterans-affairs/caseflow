@@ -589,37 +589,47 @@ feature "Supplemental Claim Intake" do
       # SC is always timely
       expect(page).to_not have_content("Description for Active Duty Adjustments is ineligible because it has a prior")
 
+      # add third rating
+      click_intake_add_issue
+      expect(page).to have_content("Add issue 3")
+      expect(page).to have_content("Does issue 3 match any of these issues")
+      expect(page).to have_content("Left knee granted 2 (already selected for issue 1)")
+      expect(page).to have_css("input[disabled]", visible: false)
+
+      add_intake_rating_issue("PTSD denied")
+      expect(page).to have_content("3. PTSD denied")
+
       # add unidentified issue
       click_intake_add_issue
       add_intake_unidentified_issue("This is an unidentified issue")
-      expect(page).to have_content("3 issues")
+      expect(page).to have_content("4 issues")
       expect(page).to have_content("This is an unidentified issue")
 
       # add ineligible issue
       click_intake_add_issue
       add_intake_rating_issue("Old injury")
-      expect(page).to have_content("4 issues")
-      expect(page).to have_content("4. Old injury is ineligible because it's already under review as a Appeal")
+      expect(page).to have_content("5 issues")
+      expect(page).to have_content("5. Old injury is ineligible because it's already under review as a Appeal")
 
       # add untimely issue (OK on Supplemental Claim)
       click_intake_add_issue
       add_intake_rating_issue("Really old injury")
-      expect(page).to have_content("5 issues")
-      expect(page).to have_content("5. Really old injury")
-      expect(page).to_not have_content("5. Really old injury #{ineligible_constants.untimely}")
+      expect(page).to have_content("6 issues")
+      expect(page).to have_content("6. Really old injury")
+      expect(page).to_not have_content("6. Really old injury #{ineligible_constants.untimely}")
 
       # add before_ama ratings
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
       expect(page).to have_content(
-        "6. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
+        "7. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
       )
 
       # Eligible because it comes from a RAMP decision
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
-        "7. Issue before AMA Activation from RAMP Decision date:"
+        "8. Issue before AMA Activation from RAMP Decision date:"
       )
 
       click_intake_add_issue
