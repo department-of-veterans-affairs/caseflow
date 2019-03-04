@@ -125,8 +125,8 @@ class AssignHearingForm extends React.Component {
             regionalOffice={regionalOffice}
             appealId={appeal.externalId}
             dynamic={regionalOffice !== appeal.closestRegionalOffice ||
-              _.isEmpty(appeal.staticHearingLocations)}
-            staticHearingLocations={appeal.staticHearingLocations}
+              _.isEmpty(appeal.availableHearingLocations)}
+            staticHearingLocations={appeal.availableHearingLocations}
             value={hearingLocation}
             onChange={(value) => this.onChange('hearingLocation', value)}
           />
