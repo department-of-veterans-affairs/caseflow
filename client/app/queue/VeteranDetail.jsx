@@ -89,7 +89,16 @@ export class VeteranDetail extends React.PureComponent {
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
 
+  getDataSourceInfo = (legacyDataSource, amaDataSource) => {
+    return <p><em>{COPY.CASE_DETAILS_INCORRECT_VETERAN_ADDRESS_LINE1}
+      {this.props.isLegacyAppeal ? legacyDataSource : amaDataSource}
+      {COPY.CASE_DETAILS_INCORRECT_VETERAN_ADDRESS_LINE2}</em></p>;
+  }
+
   render = () => {
+    const legacyDataSource = 'VACOLS';
+    const amaDataSource = 'BGS';
+
     if (!this.props.veteranInfo) {
       if (this.props.loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
@@ -105,15 +114,18 @@ export class VeteranDetail extends React.PureComponent {
 
     return <ul {...detailListStyling}>
       {this.getDetails()}
+      {this.getDataSourceInfo(legacyDataSource, amaDataSource)}
     </ul>;
   };
 }
 
 const mapStateToProps = (state, ownProps) => {
   const loadingVeteranInfo = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
+  const appeal = appealWithDetailSelector(state, { appealId: ownProps.appeal.externalId });
 
   return {
-    veteranInfo: appealWithDetailSelector(state, { appealId: ownProps.appeal.externalId }).veteranInfo,
+    veteranInfo: appeal.veteranInfo,
+    isLegacyAppeal: appeal.isLegacyAppeal,
     loading: loadingVeteranInfo ? loadingVeteranInfo.loading : null,
     error: loadingVeteranInfo ? loadingVeteranInfo.error : null
   };
