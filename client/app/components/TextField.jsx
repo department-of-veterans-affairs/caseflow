@@ -25,7 +25,8 @@ export default class TextField extends React.Component {
       strongLabel,
       maxLength,
       max,
-      autoComplete
+      autoComplete,
+      useAriaLabel
     } = this.props;
 
     let textInputClass = className.concat(
@@ -49,6 +50,8 @@ export default class TextField extends React.Component {
         {required && <span className="cf-required">Required</span>}
         {optional && <span className="cf-optional">Optional</span>}
       </span>;
+
+    const ariaLabelObj = useAriaLabel ? { 'aria-label': name } : {};
 
     return <div className={textInputClass.join(' ')}>
       {label !== false &&
@@ -77,6 +80,7 @@ export default class TextField extends React.Component {
           maxLength={maxLength}
           max={max}
           autoComplete={autoComplete}
+          {...ariaLabelObj}
         />
       }
 
@@ -92,6 +96,7 @@ export default class TextField extends React.Component {
 TextField.defaultProps = {
   required: false,
   optional: false,
+  useAriaLabel: false,
   type: 'text',
   className: ['cf-form-textinput']
 };
@@ -104,6 +109,7 @@ TextField.propTypes = {
     PropTypes.string,
     PropTypes.bool
   ]),
+  useAriaLabel: PropTypes.bool,
   name: PropTypes.string.isRequired,
   onChange(props) {
     if (!props.readOnly) {
