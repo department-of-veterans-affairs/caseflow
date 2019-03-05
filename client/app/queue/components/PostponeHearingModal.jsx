@@ -80,7 +80,7 @@ class PostponeHearingModal extends React.Component {
       action: 'reschedule',
       new_hearing_attrs: {
         hearing_time,
-        hearing_pkseq: hearing_day_id,
+        hearing_day_id,
         hearing_location
       }
     };
