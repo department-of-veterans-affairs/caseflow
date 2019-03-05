@@ -14,7 +14,7 @@ class Veteran < ApplicationRecord
                     :military_postal_type_code, :military_post_office_type_code,
                     :service, :date_of_birth, :date_of_death
 
-  validates :ssn, :sex, :first_name, :last_name, presence: true, on: :bgs
+  validates :ssn, :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
