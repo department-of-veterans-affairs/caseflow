@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from '../../components/Modal';
+import COPY from '../../../COPY.json';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
@@ -38,7 +39,7 @@ export default function editModalBase(ComponentToWrap, { title, button, pathAfte
 
     title = () => title || (propsToText && propsToText(this.props).title);
 
-    button = () => button || (propsToText && propsToText(this.props).button) || 'Submit';
+    button = () => button || (propsToText && propsToText(this.props).button) || COPY.MODAL_SUBMIT_BUTTON;
 
     setLoading = (loading) => this.setState({ loading });
 
@@ -71,7 +72,7 @@ export default function editModalBase(ComponentToWrap, { title, button, pathAfte
         title={this.title()}
         buttons={[{
           classNames: ['usa-button', 'cf-btn-link'],
-          name: 'Cancel',
+          name: COPY.MODAL_CANCEL_BUTTON,
           onClick: this.cancelHandler
         }, {
           classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
