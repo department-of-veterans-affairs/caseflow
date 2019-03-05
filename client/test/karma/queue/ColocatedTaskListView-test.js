@@ -190,8 +190,8 @@ describe('ColocatedTaskListView', () => {
       const onHoldDaysWaiting = cells.at(12);
 
       expect(onHoldDaysWaiting.text()).to.equal(daysOnHold.toString());
-      expect(onHoldDaysWaiting.find('.cf-red-text')).to.exist;
-      expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning')).to.exist;
+      expect(onHoldDaysWaiting.find('.cf-red-text')).to.have.lengthOf(1);
+      expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning')).to.have.lengthOf(1);
     });
   });
 
@@ -250,7 +250,7 @@ describe('ColocatedTaskListView', () => {
 
       wrapper.find('[aria-label="On hold (2) tab window"]').simulate('click');
 
-      expect(wrapper.find('[aria-label="On hold (2) tab window"] #NEW')).to.exist;
+      expect(wrapper.find('[aria-label="On hold (2) tab window"] #NEW')).to.have.lengthOf(1);
 
       const cells = wrapper.find('td');
 
@@ -269,7 +269,7 @@ describe('ColocatedTaskListView', () => {
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysOnHold.text()).to.equal('1 of 30');
-      expect(daysOnHold.find('.cf-continuous-progress-bar')).to.exist;
+      expect(daysOnHold.find('.cf-continuous-progress-bar')).to.have.lengthOf(1);
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
     });
   });
