@@ -132,23 +132,6 @@ describe RootTask do
         expect(ScheduleHearingTask.find_by(appeal: appeal).parent.parent.class.name).to eq("DistributionTask")
       end
 
-      context "when VSO writes IHPs for hearing docket cases" do
-        let(:appeal) do
-          FactoryBot.create(
-            :appeal,
-            docket_type: Constants.AMA_DOCKETS.hearing,
-            claimants: [FactoryBot.create(:claimant, participant_id: participant_id_with_pva)]
-          )
-        end
-
-        before { allow_any_instance_of(Vso).to receive(:should_write_ihp?).with(anything).and_return(true) }
-
-        it "creates an IHP task" do
-          RootTask.create_root_and_sub_tasks!(appeal)
-          expect(InformalHearingPresentationTask.find_by(appeal: appeal).assigned_to).to eq(pva)
-        end
-      end
-
       context "when VSO does not writes IHPs for hearing docket cases" do
         let(:appeal) do
           FactoryBot.create(
