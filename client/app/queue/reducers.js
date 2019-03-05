@@ -160,7 +160,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.RECEIVE_NEW_FILES_FOR_TASK:
     return update(state, {
       newDocsForTask: {
-        [action.payload.taskId]: {
+        [action.payload.uniqueId]: {
           $set: {
             docs: action.payload.newDocuments,
             loading: false
@@ -171,7 +171,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_TASK:
     return update(state, {
       newDocsForTask: {
-        [action.payload.taskId]: {
+        [action.payload.uniqueId]: {
           $set: {
             error: action.payload.error,
             loading: false
@@ -184,7 +184,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
       ...state,
       newDocsForTask: {
         ...state.newDocsForTask,
-        [action.payload.taskId]: {
+        [action.payload.uniqueId]: {
           loading: true
         }
       }
@@ -398,7 +398,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.SET_SELECTION_OF_TASK_OF_USER: {
     const isTaskSelected = update(state.isTaskAssignedToUserSelected[action.payload.userId] || {}, {
-      [action.payload.taskId]: {
+      [action.payload.uniqueId]: {
         $set: action.payload.selected
       }
     });

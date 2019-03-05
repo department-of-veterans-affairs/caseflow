@@ -242,7 +242,7 @@ describe('ColocatedTaskListView', () => {
         appeals }));
       store.dispatch(setUserCssId(task.assignedTo.cssId));
       store.dispatch(receiveNewDocumentsForTask({
-        taskId: taskWithNewDocs.taskId,
+        uniqueId: taskWithNewDocs.uniqueId,
         newDocuments: [{}]
       }));
 

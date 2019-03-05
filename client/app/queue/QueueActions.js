@@ -108,37 +108,37 @@ export const getNewDocumentsForAppeal = (appealId) => (dispatch) => {
   });
 };
 
-export const receiveNewDocumentsForTask = ({ taskId, newDocuments }) => ({
+export const receiveNewDocumentsForTask = ({ uniqueId, newDocuments }) => ({
   type: ACTIONS.RECEIVE_NEW_FILES_FOR_TASK,
   payload: {
-    taskId,
+    uniqueId,
     newDocuments
   }
 });
 
-export const getNewDocumentsForTask = (taskId) => (dispatch) => {
+export const getNewDocumentsForTask = (uniqueId) => (dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_TASK,
     payload: {
-      taskId
+      uniqueId
     }
   });
   const requestOptions = {
     timeout: { response: 5 * 60 * 1000 }
   };
 
-  ApiUtil.get(`/tasks/${taskId}/new_documents`, requestOptions).then((response) => {
+  ApiUtil.get(`/tasks/${uniqueId}/new_documents`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
     dispatch(receiveNewDocumentsForTask({
-      taskId,
+      uniqueId,
       newDocuments: resp.new_documents
     }));
   }, (error) => {
     dispatch({
       type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_TASK,
       payload: {
-        taskId,
+        uniqueId,
         error
       }
     });
@@ -365,11 +365,11 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId, params) => (dispatch)
 };
 
 export const setSelectionOfTaskOfUser =
-  ({ userId, taskId, selected }) => ({
+  ({ userId, uniqueId, selected }) => ({
     type: ACTIONS.SET_SELECTION_OF_TASK_OF_USER,
     payload: {
       userId,
-      taskId,
+      uniqueId,
       selected
     }
   });
@@ -386,7 +386,7 @@ export const initialAssignTasksToUser = ({
         tasks: [{
           type: 'AttorneyTask',
           external_id: oldTask.externalAppealId,
-          parent_id: oldTask.taskId,
+          parent_id: oldTask.uniqueId,
           assigned_to_id: assigneeId
         }]
       }
@@ -425,7 +425,7 @@ export const initialAssignTasksToUser = ({
 
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
-        taskId: oldTask.uniqueId,
+        uniqueId: oldTask.uniqueId,
         selected: false
       }));
     });
@@ -437,7 +437,7 @@ export const reassignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = `/tasks/${oldTask.taskId}`;
+    url = `/tasks/${oldTask.uniqueId}`;
     params = {
       data: {
         task: {
@@ -447,7 +447,7 @@ export const reassignTasksToUser = ({
       }
     };
   } else {
-    url = `/legacy_tasks/${oldTask.taskId}`;
+    url = `/legacy_tasks/${oldTask.uniqueId}`;
     params = {
       data: {
         tasks: {
@@ -480,7 +480,7 @@ export const reassignTasksToUser = ({
 
       dispatch(setSelectionOfTaskOfUser({
         userId: previousAssigneeId,
-        taskId: oldTask.uniqueId,
+        uniqueId: oldTask.uniqueId,
         selected: false
       }));
     });
