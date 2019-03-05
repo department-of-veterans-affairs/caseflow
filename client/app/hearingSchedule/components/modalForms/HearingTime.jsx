@@ -1,8 +1,20 @@
 import React from 'react';
-import { TIME_OPTIONS } from '../../../hearings/constants/constants';
+import moment from 'moment';
 import { css } from 'glamor';
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
+import { TIME_OPTIONS } from '../../../hearings/constants/constants';
+
+export const getAssignHearingTime = (time, day) => {
+
+  return {
+    // eslint-disable-next-line id-length
+    h: time.split(':')[0],
+    // eslint-disable-next-line id-length
+    m: time.split(':')[1],
+    offset: moment.tz(day.hearingDate, day.timezone || 'America/New_York').format('Z')
+  };
+};
 
 const formStyling = css({
   '& .cf-form-radio-option:not(:last-child)': {
