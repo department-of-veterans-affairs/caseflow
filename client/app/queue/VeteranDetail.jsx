@@ -1,6 +1,7 @@
 import React from 'react';
 import { css } from 'glamor';
 import _ from 'lodash';
+import { sprintf } from 'sprintf-js';
 
 import BareList from '../components/BareList';
 import Address from './components/Address';
@@ -90,9 +91,11 @@ export class VeteranDetail extends React.PureComponent {
   };
 
   getDataSourceInfo = (legacyDataSource, amaDataSource) => {
-    return <p><em>{COPY.CASE_DETAILS_INCORRECT_VETERAN_ADDRESS_LINE1}
-      {this.props.isLegacyAppeal ? legacyDataSource : amaDataSource}
-      {COPY.CASE_DETAILS_INCORRECT_VETERAN_ADDRESS_LINE2}</em></p>;
+
+    return <p><em>{
+      sprintf(COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE,
+        this.props.isLegacyAppeal ? legacyDataSource : amaDataSource)}
+    </em></p>;
   }
 
   render = () => {
