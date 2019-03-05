@@ -3,6 +3,8 @@ import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import ApiUtil from '../../../util/ApiUtil';
+
 import {
   RegionalOfficeDropdown,
   AppealHearingLocationsDropdown,
@@ -66,7 +68,7 @@ class AssignHearingForm extends React.Component {
       hearing_time: values.hearingDay && values.hearingTime ?
         getAssignHearingTime(values.hearingTime, values.hearingDay) : null,
       hearing_day_id: values.hearingDay ? values.hearingDay.hearingId : null,
-      hearing_location: values.hearingLocation
+      hearing_location: values.hearingLocation ? ApiUtil.convertToSnakeCase(values.hearingLocation) : null
     };
   }
 
