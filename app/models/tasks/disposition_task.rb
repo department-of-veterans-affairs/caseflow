@@ -18,6 +18,10 @@ class DispositionTask < GenericTask
     end
   end
 
+  def label
+    "Hearing disposition to be selected"
+  end
+
   def check_parent_type
     if parent.type != "HearingTask"
       fail(

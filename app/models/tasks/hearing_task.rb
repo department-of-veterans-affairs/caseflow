@@ -5,4 +5,8 @@
 
 class HearingTask < GenericTask
   has_one :hearing_task_association
+
+  def label
+    "All hearing-related tasks"
+  end
 end

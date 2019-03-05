@@ -3,6 +3,10 @@ class TranscriptionTask < GenericTask
 
   class NonDispositionTaskParent < StandardError; end
 
+  def label
+    "Transcription"
+  end
+
   def check_parent_type
     fail NonDispositionTaskParent unless parent.is_a? DispositionTask
   end
