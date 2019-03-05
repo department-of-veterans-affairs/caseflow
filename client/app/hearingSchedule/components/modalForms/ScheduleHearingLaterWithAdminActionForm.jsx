@@ -53,7 +53,7 @@ class ScheduleHearingLaterWithAdminActionForm extends React.Component {
           name="postponementReason"
           options={adminActionOptions}
           value={values.withAdminActionKlass}
-          onChange={(val) => this.onChange({ withAdminActionKlass: val })}
+          onChange={(val) => this.onChange({ withAdminActionKlass: val ? val.value : null })}
         />
         <TextareaField
           label="Instructions"
