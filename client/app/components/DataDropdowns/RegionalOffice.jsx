@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
+import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
 
@@ -62,12 +63,15 @@ class RegionalOfficeDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange, regionalOffices: { options }, readOnly, errorMessage, placeholder } = this.props;
+    const {
+      name, label, onChange,
+      regionalOffices: { options, isFetching },
+      readOnly, errorMessage, placeholder } = this.props;
 
     return (
       <SearchableDropdown
         name={name}
-        label={label}
+        label={isFetching ? <LoadingLabel text="Loading regional offices..." /> : label}
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
