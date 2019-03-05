@@ -207,6 +207,7 @@ class VaDotGovAddressValidator
 
     admin_action_type.find_or_create_by(
       appeal: appeal,
+      status: Task.statuses[:assigned],
       instructions: [instructions],
       assigned_to: HearingsManagement.singleton,
       parent: task
