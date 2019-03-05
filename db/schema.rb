@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190228185229) do
+ActiveRecord::Schema.define(version: 20190301001506) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -713,14 +713,7 @@ ActiveRecord::Schema.define(version: 20190228185229) do
   end
 
   create_table "ramp_elections", id: :serial, force: :cascade do |t|
-    t.string "end_product_reference_id"
-    t.string "end_product_status"
-    t.datetime "end_product_status_last_synced_at"
     t.datetime "established_at"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
-    t.datetime "establishment_processed_at"
-    t.datetime "establishment_submitted_at"
     t.date "notice_date"
     t.string "option_selected"
     t.date "receipt_date"
@@ -739,10 +732,7 @@ ActiveRecord::Schema.define(version: 20190228185229) do
 
   create_table "ramp_refilings", id: :serial, force: :cascade do |t|
     t.string "appeal_docket"
-    t.string "end_product_reference_id"
     t.datetime "established_at"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
     t.boolean "has_ineligible_issue"
