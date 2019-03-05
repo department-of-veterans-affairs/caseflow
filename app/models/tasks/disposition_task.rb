@@ -98,7 +98,11 @@ class DispositionTask < GenericTask
   def release() end
 
   def mark_hearing_postponed(after_disposition_update:)
-    hearing.update(disposition: "postponed")
+    if hearing.is_a?(LegacyHearing)
+      hearing.update_caseflow_and_vacols(disposition: "postponed")
+    else
+      hearing.update(disposition: "postponed")
+    end
 
     case after_disposition_update[:action]
     when "reschedule"
