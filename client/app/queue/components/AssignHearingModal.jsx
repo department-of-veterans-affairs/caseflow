@@ -116,7 +116,7 @@ class AssignHearingModal extends React.PureComponent {
     const invalid = {
       day: selectedHearingDay ? null : 'Please select a hearing day',
       regionalOffice: selectedRegionalOffice ? null : 'Please select a regional office',
-      time: this.getHearingTime() ? null : 'Please pick a hearing time'
+      time: selectedHearingDay && this.getHearingTime() ? null : 'Please pick a hearing time'
       // location: selectedHearingLocation ? null : 'Please select a hearing location'
     };
 
