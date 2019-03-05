@@ -56,7 +56,7 @@ export default class ReaderLink extends React.PureComponent {
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
           View { docCountWithinLink && <AppealDocumentCount appeal={appeal} cached={cached} /> } docs
         { newDocsIcon && <span {...newFileIconStyling}>
-          <NewFile externalId={task ? task.taskId : appeal.externalId} isForTask={task !== null} /></span> }</Link>
+          <NewFile externalId={task ? task.uniqueId : appeal.externalId} isForTask={task !== null} /></span> }</Link>
       { docCountBelowLink &&
             <div {...documentCountSizeStyling}>
               <AppealDocumentCount loadingText appeal={appeal} cached={cached} />

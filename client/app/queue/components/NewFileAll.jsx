@@ -16,9 +16,9 @@ class NewFileAll extends React.Component {
     } = this.props;
 
     tasks.forEach((task) => {
-      if (!documentObjects[task.taskId] ||
-        (!documentObjects[task.taskId].loading && !documentObjects[task.taskId].docs)) {
-        this.props.getNewDocumentsForTask(task.taskId);
+      if (!documentObjects[task.uniqueId] ||
+        (!documentObjects[task.uniqueId].loading && !documentObjects[task.uniqueId].docs)) {
+        this.props.getNewDocumentsForTask(task.uniqueId);
       }
     });
   }
@@ -40,8 +40,8 @@ class NewFileAll extends React.Component {
 
 const mapStateToProps = (state, ownProps) => {
   // Get only the document objects for the give appeal IDs
-  const taskIds = _.map(ownProps.tasks, 'taskId');
-  const documentObjects = _.pick(state.queue.newDocsForTask, taskIds) || {};
+  const uniqueIds = _.map(ownProps.tasks, 'uniqueId');
+  const documentObjects = _.pick(state.queue.newDocsForTask, uniqueIds) || {};
 
   return { documentObjects };
 };
