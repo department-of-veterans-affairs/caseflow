@@ -52,8 +52,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
-      radio_link = find(".cf-form-radio-option", match: :first)
-      radio_link.click
+      find("label", text: "9:00 am").click
       click_button("Schedule")
       find_link("Back to Schedule Veterans").click
       expect(page).to have_content("Schedule Veterans")
@@ -110,8 +109,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Currently active tasks", wait: 30)
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
-      radio_link = find(".cf-form-radio-option", match: :first)
-      radio_link.click
+      find("label", text: "8:30 am").click
       expect(page).not_to have_content("Could not find hearing locations for this veteran", wait: 30)
       click_button("Schedule")
       find_link("Back to Schedule Veterans").click
