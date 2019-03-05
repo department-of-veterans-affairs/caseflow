@@ -67,7 +67,7 @@ describe DispositionTask do
         {
           action: "reschedule",
           new_hearing_attrs: {
-            hearing_pkseq: HearingDay.first.id,
+            hearing_day_id: HearingDay.first.id,
             hearing_location: { facility_id: "vba_370", distance: 10 },
             hearing_time: { h: "12", m: "30", offset: "-05:00" }
           }
