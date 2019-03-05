@@ -11,7 +11,6 @@ describe RampElection do
   let(:option_selected) { nil }
   let(:end_product_reference_id) { nil }
   let(:established_at) { nil }
-  let(:end_product_status) { nil }
 
   let(:ramp_election) do
     build(:ramp_election,
@@ -19,8 +18,7 @@ describe RampElection do
           notice_date: notice_date,
           option_selected: option_selected,
           receipt_date: receipt_date,
-          established_at: established_at,
-          end_product_status: end_product_status)
+          established_at: established_at)
   end
 
   context "#on_sync" do
@@ -174,7 +172,7 @@ describe RampElection do
           expect(subject).to eq(:connected)
 
           expect(ramp_election.reload.established_at).to eq(Time.zone.now)
-          expect(ramp_election.end_product_reference_id).to eq(matching_ep.claim_id)
+          expect(ramp_election.end_product_establishment.reference_id).to eq(matching_ep.claim_id)
         end
       end
 
@@ -417,10 +415,7 @@ describe RampElection do
              notice_date: 31.days.ago,
              option_selected: "higher_level_review",
              receipt_date: 5.days.ago,
-             end_product_reference_id: "1234",
-             established_at: 3.days.ago,
-             end_product_status: "CAN",
-             end_product_status_last_synced_at: Time.zone.now)
+             established_at: 3.days.ago)
     end
 
     let!(:ramp_closed_appeals) do
@@ -437,10 +432,7 @@ describe RampElection do
         notice_date: 31.days.ago.to_date,
         option_selected: nil,
         receipt_date: nil,
-        end_product_reference_id: nil,
-        established_at: nil,
-        end_product_status: nil,
-        end_product_status_last_synced_at: nil
+        established_at: nil
       )
 
       expect(ramp_closed_appeals.first).to_not be_persisted
