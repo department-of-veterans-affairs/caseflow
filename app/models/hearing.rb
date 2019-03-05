@@ -33,7 +33,7 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :available_hearing_locations, to: :appeal
+  delegate :available_hearing_locations, :closest_regional_office, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
@@ -90,8 +90,6 @@ class Hearing < ApplicationRecord
     end
   end
 
-  #:nocov:
-  # This is all fake data that will be refactored in a future PR.
   def regional_office_name
     RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
   end
@@ -102,19 +100,7 @@ class Hearing < ApplicationRecord
   end
 
   def current_issue_count
-    1
-  end
-  #:nocov:
-
-  def slot_new_hearing(hearing_day_id, hearing_location_attrs: nil, **_args)
-    # These fields are needed for the legacy hearing's version of this method
-    hearing = Hearing.create!(
-      hearing_day_id: hearing_day_id,
-      scheduled_time: scheduled_time,
-      appeal: appeal
-    )
-
-    hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
+    request_issues.size
   end
 
   def external_id
@@ -159,6 +145,7 @@ class Hearing < ApplicationRecord
         :appeal_representative_name,
         :location,
         :worksheet_issues,
+        :closest_regional_office,
         :available_hearing_locations
       ]
     )

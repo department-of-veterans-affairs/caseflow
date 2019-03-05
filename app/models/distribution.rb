@@ -18,7 +18,7 @@ class Distribution < ApplicationRecord
   after_commit :enqueue_distribution_job, on: :create
 
   CASES_PER_ATTORNEY = 3
-  ALTERNATIVE_BATCH_SIZE = 5
+  ALTERNATIVE_BATCH_SIZE = 15
 
   def distribute!
     return unless %w[pending error].include? status

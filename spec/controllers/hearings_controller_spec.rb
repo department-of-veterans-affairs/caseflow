@@ -51,7 +51,7 @@ RSpec.describe HearingsController, type: :controller do
     end
 
     context "when setting disposition as postponed" do
-      let!(:scheduled_for) { Date.new(2019, 4, 2) }
+      let!(:scheduled_for) { Date.new(2019, 4, 2).in_time_zone.to_s }
       let!(:hearing_day) do
         HearingDay.create_hearing_day(
           request_type: HearingDay::REQUEST_TYPES[:central],
@@ -85,19 +85,25 @@ RSpec.describe HearingsController, type: :controller do
         }
       end
 
-      before { Time.zone = "America/New_York" }
-
       context "for a legacy hearing" do
         it "should create a new VACOLS hearing and LegacyHearing" do
           patch :update, as: :json, params: {
             id: legacy_hearing.external_id, hearing: params, master_record_updated: master_record_params
           }
           expect(response.status).to eq 200
-
           expect(LegacyHearing.last.location.facility_id).to eq "vba_301"
-          expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
-            Time.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)")
-          )
+
+          # VACOLS thinks it is UTC, but the values written to it are Eastern.
+          # Rails converts those "UTC" times to Time.zone, which really is Eastern,
+          # so all our DateTime objects are offset to UTC-Eastern.
+          # This is like a double-encoding bug with HTML or UTF-8.
+          expect(Time.zone.name).to eq("America/New_York")
+
+          ten_am_eastern = Time.new(2019, 4, 2, 10).in_time_zone.asctime
+          hearing = VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id])
+
+          # we convert "back" to UTC in order to get the original Eastern time value as it was written.
+          expect(hearing.hearing_date.in_time_zone("UTC").asctime).to eq(ten_am_eastern)
         end
       end
 
@@ -135,6 +141,10 @@ RSpec.describe HearingsController, type: :controller do
   end
 
   describe "#find_closest_hearing_locations" do
+    before do
+      VADotGovService = Fakes::VADotGovService
+    end
+
     context "for AMA appeals" do
       let!(:appeal) { create(:appeal) }
 
@@ -157,6 +167,33 @@ RSpec.describe HearingsController, type: :controller do
             params: { appeal_id: legacy_appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 200
+      end
+    end
+
+    context "when an address cannot be found" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        message = {
+          "messages" => [
+            {
+              "key" => "AddressCouldNotBeFound"
+            }
+          ]
+        }
+
+        error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
+
+        allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+      end
+
+      it "returns an error" do
+        get :find_closest_hearing_locations,
+            as: :json,
+            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
+
+        expect(response.status).to eq 400
+        expect(JSON.parse(response.body)["message"]).to eq "AddressCouldNotBeFound"
       end
     end
   end

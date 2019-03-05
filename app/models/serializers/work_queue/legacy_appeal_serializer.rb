@@ -45,7 +45,7 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   end
 
   attribute :appellant_relationship
-  attribute :location_code
+  attribute :assigned_to_location
   attribute :vbms_id do
     object.sanitized_vbms_id
   end

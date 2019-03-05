@@ -53,8 +53,11 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
+    create_team_admin
     create_colocated_users
+    create_transcription_team
     create_vso_users_and_tasks
+    create_field_vso_and_users
     create_org_queue_users
     create_qr_user
     create_aod_user
@@ -67,6 +70,12 @@ class SeedDB
     create_hearings_team
   end
 
+  def create_team_admin
+    u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
+    Functions.grant!("System Admin", users: [u.css_id])
+    OrganizationsUser.add_user_to_organization(u, Bva.singleton)
+  end
+
   def create_judge_teams
     DEVELOPMENT_JUDGE_TEAMS.each_pair do |judge_css_id, h|
       judge = User.find_or_create_by(css_id: judge_css_id, station_id: 101)
@@ -75,6 +84,11 @@ class SeedDB
         OrganizationsUser.add_user_to_organization(User.find_or_create_by(css_id: css_id, station_id: 101), judge_team)
       end
     end
+  end
+
+  def create_transcription_team
+    transcription_member = User.find_or_create_by(css_id: "TRANSCRIPTION_USER", station_id: 101)
+    OrganizationsUser.add_user_to_organization(transcription_member, TranscriptionTeam.singleton)
   end
 
   def create_hearings_team
@@ -99,7 +113,6 @@ class SeedDB
   def create_vso_users_and_tasks
     vso = Vso.create(
       name: "VSO",
-      role: "VSO",
       url: "veterans-service-organization",
       participant_id: "2452415"
     )
@@ -141,8 +154,31 @@ class SeedDB
     end
   end
 
+  def create_field_vso_and_users
+    vso = FactoryBot.create(:field_vso, name: "Field VSO", url: "field-vso")
+
+    %w[MANDY NICHOLAS ELIJAH].each do |name|
+      u = User.create(
+        css_id: "#{name}_VSO",
+        station_id: 101,
+        full_name: "#{name} - VSO user",
+        roles: %w[VSO]
+      )
+      OrganizationsUser.add_user_to_organization(u, vso)
+
+      a = FactoryBot.create(:appeal)
+      root_task = FactoryBot.create(:root_task, appeal: a)
+      FactoryBot.create(
+        :track_veteran_task,
+        parent: root_task,
+        appeal: a,
+        assigned_to: vso
+      )
+    end
+  end
+
   def create_org_queue_users
-    nca = BusinessLine.create!(name: "National Cemetery Association", url: "nca")
+    nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{n}", full_name: "NCA team member #{n}")
       OrganizationsUser.add_user_to_organization(u, nca)
@@ -413,13 +449,7 @@ class SeedDB
       vacols_id = "3019752"
     end
 
-    appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
-
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
-    )
+    LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 
   def create_ama_case_with_open_schedule_hearing_task(ro_key)
@@ -443,7 +473,7 @@ class SeedDB
     ScheduleHearingTask.create!(
       appeal: appeal,
       assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
+      parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     )
   end
 
@@ -475,7 +505,7 @@ class SeedDB
                           decision_review: higher_level_review)
       end
       FactoryBot.create(:higher_level_review_task,
-                        assigned_to: Organization.find_by(name: "National Cemetery Association"),
+                        assigned_to: Organization.find_by(name: "National Cemetery Administration"),
                         appeal: higher_level_review)
     end
   end
@@ -814,7 +844,7 @@ class SeedDB
   end
 
   def create_board_grant_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
     description = "Service connection for pain disorder is granted with an evaluation of 50\% effective May 1 2011"
     notes = "Pain disorder with 80\% evaluation per examination"
 
@@ -846,7 +876,7 @@ class SeedDB
   end
 
   def create_veteran_record_request_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
 
     3.times do |_index|
       FactoryBot.create(:veteran_record_request_task,

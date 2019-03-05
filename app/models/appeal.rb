@@ -1,3 +1,8 @@
+##
+# An appeal filed by a Veteran or appellant to the Board of Veterans' Appeals for VA decisions on claims for benefits.
+# This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
+# which went into effect Feb 19, 2019.
+
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
@@ -128,7 +133,7 @@ class Appeal < DecisionReview
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
-  def location_code
+  def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
     active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
@@ -197,6 +202,31 @@ class Appeal < DecisionReview
 
   def ready_for_distribution_at
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
+  end
+
+  def sync_tracking_tasks
+    new_task_count = 0
+    closed_task_count = 0
+
+    active_tracking_tasks = tasks.active.where(type: TrackVeteranTask.name)
+    cached_vsos = active_tracking_tasks.map(&:assigned_to)
+    fresh_vsos = vsos
+
+    # Create a TrackVeteranTask for each VSO that does not already have one.
+    new_vsos = fresh_vsos - cached_vsos
+    new_vsos.each do |new_vso|
+      TrackVeteranTask.create!(appeal: self, parent: root_task, assigned_to: new_vso)
+      new_task_count += 1
+    end
+
+    # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
+    outdated_vsos = cached_vsos - fresh_vsos
+    active_tracking_tasks.select { |t| outdated_vsos.include?(t.assigned_to) }.each do |task|
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      closed_task_count += 1
+    end
+
+    [new_task_count, closed_task_count]
   end
 
   def veteran_name
@@ -492,7 +522,7 @@ class Appeal < DecisionReview
 
   def hearing_pending?
     # This isn't available yet.
-    # tasks.active.where(type: HoldHearingTask.name).any?
+    # tasks.active.where(type: DispositionTask.name).any?
   end
 
   def evidence_submission_hold_pending?
@@ -682,7 +712,7 @@ class Appeal < DecisionReview
   def contestable_decision_issues
     return [] unless receipt_date
 
-    DecisionIssue.where(participant_id: veteran.participant_id)
+    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
       .select(&:finalized?)
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date

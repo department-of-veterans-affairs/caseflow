@@ -141,8 +141,8 @@ describe Distribution do
         subject.distribute!
         expect(subject.valid?).to eq(true)
         expect(subject.status).to eq("completed")
-        expect(subject.statistics["batch_size"]).to eq(5)
-        expect(subject.distributed_cases.count).to eq(5)
+        expect(subject.statistics["batch_size"]).to eq(15)
+        expect(subject.distributed_cases.count).to eq(15)
       end
     end
 

@@ -39,6 +39,7 @@ class ApplicationController < ApplicationBaseController
   end
 
   def handle_non_critical_error(endpoint, err)
+    error_type = err.class.name
     if !err.class.method_defined? :serialize_response
       code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
       err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
@@ -49,7 +50,9 @@ class ApplicationController < ApplicationBaseController
       metric_name: "non_critical",
       app_name: RequestStore[:application],
       attrs: {
-        endpoint: endpoint
+        endpoint: endpoint,
+        error_type: error_type,
+        error_code: err.code
       }
     )
 
@@ -130,19 +133,19 @@ class ApplicationController < ApplicationBaseController
 
   def dropdown_urls
     urls = [
-      {
-        title: "Help",
-        link: help_url
-      },
-      {
-        title: "Send Feedback",
-        link: feedback_url,
-        target: "_blank"
-      }
+      { title: "Help", link: help_url },
+      { title: "Send Feedback", link: feedback_url, target: "_blank" }
     ]
 
     if current_user&.administered_teams&.any?
       urls.concat(manage_teams_menu_items)
+    end
+
+    if Bva.singleton.user_has_access?(current_user)
+      urls.append(
+        title: COPY::TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK,
+        link: url_for(controller: "/team_management", action: "index")
+      )
     end
 
     if ApplicationController.dependencies_faked?

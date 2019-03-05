@@ -30,7 +30,7 @@ feature "NonComp Dispositions Task Page" do
   end
 
   context "with an existing organization" do
-    let!(:non_comp_org) { create(:business_line, name: "National Cemetery Association", url: "nca") }
+    let!(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
 
     let(:user) { create(:default_user) }
 
@@ -83,7 +83,7 @@ feature "NonComp Dispositions Task Page" do
       scenario "does not offer DTA Error as a disposition choice" do
         visit dispositions_url
 
-        expect(page).to have_content("National Cemetery Association")
+        expect(page).to have_content("National Cemetery Administration")
 
         expect do
           click_dropdown name: "disposition-issue-1", text: "DTA Error", wait: 1
@@ -97,9 +97,9 @@ feature "NonComp Dispositions Task Page" do
       visit dispositions_url
 
       within("header") do
-        expect(page).to have_css("h2", text: "National Cemetery Association")
+        expect(page).to have_css("h2", text: "National Cemetery Administration")
       end
-      expect(page).to have_content("National Cemetery Association")
+      expect(page).to have_content("National Cemetery Administration")
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(
