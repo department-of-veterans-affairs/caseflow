@@ -1,3 +1,7 @@
+##
+# Task assigned to BVA Dispatch team members whenever a judge completes a case review.
+# This indicates that an appeal is decided and the appellant is about to be notified of the decision.
+
 class BvaDispatchTask < GenericTask
   class << self
     def create_from_root_task(root_task)
@@ -33,8 +37,7 @@ class BvaDispatchTask < GenericTask
         delay = decision_document.decision_date.future? ? decision_document.decision_date : 0
         decision_document.submit_for_processing!(delay: delay)
 
-        # TODO: remove this unless statement when all decision documents require async processing
-        unless decision_document.processed?
+        unless decision_document.processed? || decision_document.decision_date.future?
           ProcessDecisionDocumentJob.perform_later(decision_document.id)
         end
       end

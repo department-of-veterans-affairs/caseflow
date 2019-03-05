@@ -139,7 +139,7 @@ export default class AssignHearingsTabs extends React.Component {
       </div>;
     }
 
-  }
+  };
 
   getAppealDocketTag = (appeal) => {
     if (appeal.attributes.docketNumber) {
@@ -148,9 +148,19 @@ export default class AssignHearingsTabs extends React.Component {
         {appeal.attributes.docketNumber}
       </div>;
     }
-  }
+  };
 
-  getSuggestedHearingLocation = (location) => {
+  getSuggestedHearingLocation = (locations) => {
+    if (!locations || locations.length === 0) {
+      return '';
+    }
+
+    /* Sort available locations before selecting top one. */
+    const sortedLocations = _.orderBy(locations, ['distance'], ['asc']);
+
+    /* Select first entry which should be shortest distance. */
+    const location = sortedLocations[0];
+
     if (!location) {
       return '';
     }
@@ -161,7 +171,7 @@ export default class AssignHearingsTabs extends React.Component {
       <div>{`${city}, ${state} ${getFacilityType(location)}`}</div>
       <div>{`Distance: ${distance} miles away`}</div>
     </span>;
-  }
+  };
 
   availableVeteransRows = (appeals, { tab }) => {
     const filteredBy = this.state[tab].filteredBy;
@@ -203,9 +213,7 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: appeal.attributes.aod
       }),
       docketNumber: this.getAppealDocketTag(appeal),
-      suggestedLocation: this.getSuggestedHearingLocation(
-        (appeal.attributes.availableHearingLocations || [])[0]
-      ),
+      suggestedLocation: this.getSuggestedHearingLocation(appeal.attributes.availableHearingLocations),
       time: null,
       externalId: appeal.attributes.externalAppealId
     }));
@@ -326,8 +334,8 @@ export default class AssignHearingsTabs extends React.Component {
       getFilterValues: locationFilterValues,
       isDropdownFilterOpen: state.dropdownIsOpen,
       label: 'Filter by location',
-      anyFiltersAreSet: true,
-      toggleDropdownFilterVisiblity: () => this.setState({
+      anyFiltersAreSet: false,
+      toggleDropdownFilterVisibility: () => this.setState({
         [tab]: {
           ...state,
           dropdownIsOpen: !state.dropdownIsOpen

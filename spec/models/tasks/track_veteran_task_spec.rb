@@ -10,6 +10,13 @@ describe TrackVeteranTask do
     )
   end
 
+  describe ".create!" do
+    it "sets the status of the task to in_progress" do
+      task = TrackVeteranTask.create(parent: root_task, appeal: root_task.appeal, assigned_to: vso)
+      expect(task.status).to eq(Constants.TASK_STATUSES.in_progress)
+    end
+  end
+
   describe ".available_actions" do
     it "should never have available_actions" do
       expect(tracking_task.available_actions(vso)).to eq([])

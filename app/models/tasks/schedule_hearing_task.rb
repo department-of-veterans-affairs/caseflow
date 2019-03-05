@@ -1,48 +1,68 @@
+##
+# Task to schedule a hearing for a veteran making a claim.
+# Created by the intake process for any appeal electing to have a hearing.
+# Once completed, a DispositionTask is created.
+
 class ScheduleHearingTask < GenericTask
+  before_create :check_parent_type
   after_update :update_location_in_vacols
 
   class << self
-    def find_or_create_if_eligible(appeal)
-      if appeal.is_a?(LegacyAppeal) && appeal.case_record&.bfcurloc == "57" &&
-         appeal.hearings.all?(&:disposition)
-
-        parent = HearingTask.active.find_or_create_by!(appeal: appeal) do |task|
-          task.update(
-            assigned_to: Bva.singleton,
-            parent: RootTask.find_or_create_by!(appeal: appeal)
-          )
-        end
-        ScheduleHearingTask.active.find_or_create_by!(appeal: appeal) do |task|
-          task.update(
-            assigned_to: HearingsManagement.singleton,
-            parent: parent
-          )
-        end
-      elsif appeal.is_a?(Appeal)
-        ScheduleHearingTask.active.find_by(appeal: appeal)
-      end
-    end
-
     def tasks_for_ro(regional_office)
       # Get all tasks associated with AMA appeals and the regional_office
       incomplete_tasks = ScheduleHearingTask.where(
         "status = ? OR status = ?",
         Constants.TASK_STATUSES.assigned.to_sym,
         Constants.TASK_STATUSES.in_progress.to_sym
-      ).includes(:assigned_to, :assigned_by, :appeal, attorney_case_reviews: [:attorney])
+      ).includes(:assigned_to, :assigned_by, appeal: [:available_hearing_locations], attorney_case_reviews: [:attorney])
 
-      appeal_tasks = incomplete_tasks.joins("INNER JOIN appeals ON appeals.id = appeal_id")
-        .where("appeals.closest_regional_office = ?", regional_office)
+      appeal_tasks = incomplete_tasks.joins(
+        "INNER JOIN appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
+      ).where("appeals.closest_regional_office = ?", regional_office)
 
-      legacy_appeal_tasks = incomplete_tasks.joins("INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id")
-        .where("legacy_appeals.closest_regional_office = ?", regional_office)
+      appeal_tasks + legacy_appeal_tasks(regional_office, incomplete_tasks)
+    end
 
-      appeal_tasks + legacy_appeal_tasks
+    private
+
+    def legacy_appeal_tasks(regional_office, incomplete_tasks)
+      joined_incomplete_tasks = incomplete_tasks.joins(
+        "INNER JOIN legacy_appeals ON legacy_appeals.id = appeal_id AND tasks.appeal_type = 'LegacyAppeal'"
+      )
+
+      central_office_ids = VACOLS::Case.where(bfhr: 1, bfcurloc: "CASEFLOW").pluck(:bfkey)
+      central_office_legacy_appeal_ids = LegacyAppeal.where(vacols_id: central_office_ids).pluck(:id)
+
+      # For legacy appeals, we need to only provide a central office hearing if they explicitly
+      # chose one. Likewise, we can't use DC if it's the closest regional office unless they
+      # chose a central office hearing.
+      if regional_office == "C"
+        joined_incomplete_tasks.where("legacy_appeals.id IN (?)", central_office_legacy_appeal_ids)
+      else
+        tasks_by_ro = joined_incomplete_tasks.where("legacy_appeals.closest_regional_office = ?", regional_office)
+
+        # For context: https://github.com/rails/rails/issues/778#issuecomment-432603568
+        if central_office_legacy_appeal_ids.empty?
+          tasks_by_ro
+        else
+          tasks_by_ro.where("legacy_appeals.id NOT IN (?)", central_office_legacy_appeal_ids)
+        end
+      end
     end
   end
 
   def label
     "Schedule hearing"
+  end
+
+  def check_parent_type
+    if parent.type != "HearingTask"
+      fail(
+        Caseflow::Error::InvalidParentTask,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
+    end
   end
 
   def update_location_in_vacols
@@ -68,12 +88,11 @@ class ScheduleHearingTask < GenericTask
         task_payloads = params.delete(:business_payloads)
 
         hearing_time = task_payloads[:values][:hearing_time]
-        hearing_day_id = task_payloads[:values][:hearing_pkseq]
-        hearing_type = task_payloads[:values][:hearing_type]
+        hearing_day_id = task_payloads[:values][:hearing_day_id]
         hearing_location = task_payloads[:values][:hearing_location]
 
-        hearing = slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
-        HoldHearingTask.create_hold_hearing_task!(appeal, parent, hearing)
+        hearing = slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
+        DispositionTask.create_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
       end
@@ -137,9 +156,8 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  def slot_new_hearing(hearing_day_id, hearing_type, hearing_time, hearing_location)
+  def slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
     hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                 hearing_type: (hearing_type == LegacyHearing::CO_HEARING) ? "C" : "V",
                                                  appeal: appeal,
                                                  hearing_location_attrs: hearing_location&.to_hash,
                                                  scheduled_time: hearing_time&.stringify_keys)

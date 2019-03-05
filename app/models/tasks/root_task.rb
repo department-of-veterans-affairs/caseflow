@@ -1,3 +1,7 @@
+##
+# Root task that tracks an appeal all the way through the appeal lifecycle.
+# This task is closed when an appeal has been completely resolved.
+
 class RootTask < GenericTask
   # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
   after_initialize :set_assignee, if: -> { assigned_to_id.nil? }
@@ -71,10 +75,7 @@ class RootTask < GenericTask
         TrackVeteranTask.create!(
           appeal: appeal,
           parent: parent,
-          assigned_to: vso_organization,
-
-          # Avoid permissions errors outlined in Github ticket #9389 by setting status here.
-          status: Constants.TASK_STATUSES.in_progress
+          assigned_to: vso_organization
         )
       end
     end

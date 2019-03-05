@@ -39,6 +39,10 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET appeals/appeal_id/document_count" do
     context "when a legacy appeal has documents" do
+      before do
+        expect_any_instance_of(DocumentFetcher).to receive(:number_of_documents) { documents.length }
+      end
+
       let(:documents) do
         [
           create(:document, type: "SSOC", received_at: 6.days.ago),
@@ -47,15 +51,19 @@ RSpec.describe AppealsController, type: :controller do
       end
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
-      it "should return document count" do
+      it "should return document count and not call vbms" do
         get :document_count, params: { appeal_id: appeal.vacols_id }
 
         response_body = JSON.parse(response.body)
-        expect(response_body["document_count"]).to eq 2
+        expect(response_body["document_count"]).to eq documents.length
       end
     end
 
     context "when an ama appeal has documents" do
+      before do
+        expect_any_instance_of(DocumentFetcher).not_to receive(:number_of_documents) { documents.length }
+      end
+
       let(:file_number) { Random.rand(999_999_999).to_s }
 
       let!(:documents) do
@@ -67,7 +75,7 @@ RSpec.describe AppealsController, type: :controller do
       let(:appeal) { create(:appeal, veteran_file_number: file_number) }
 
       it "should return document count" do
-        get :document_count, params: { appeal_id: appeal.uuid, cached: true }
+        get :document_count, params: { appeal_id: appeal.uuid, cached: nil }
 
         response_body = JSON.parse(response.body)
         expect(response_body["document_count"]).to eq 2
@@ -78,6 +86,90 @@ RSpec.describe AppealsController, type: :controller do
       it "should return status 404" do
         get :document_count, params: { appeal_id: "123456" }
         expect(response.status).to eq 404
+      end
+    end
+  end
+
+  describe "GET appeals/:id/new_documents" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+
+    context "when efolder returns an access forbidden error" do
+      let(:err_code) { 403 }
+      let(:err_msg) do
+        "This efolder contains sensitive information you do not have permission to view." \
+          " Please contact your supervisor."
+      end
+
+      before do
+        allow_any_instance_of(NewDocumentsForUser).to receive(:process!) do
+          fail Caseflow::Error::EfolderAccessForbidden, code: err_code, message: err_msg
+        end
+      end
+
+      it "responds with a 4xx and error message" do
+        get :new_documents, params: { appeal_id: appeal.external_id }
+        response_body = JSON.parse(response.body)
+
+        expect(response.status).to eq(err_code)
+        expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"][0]["title"]).to eq(err_msg)
+      end
+    end
+
+    context "when application encounters a generic error" do
+      let(:err_msg) { "Some application error" }
+
+      before { allow_any_instance_of(NewDocumentsForUser).to receive(:process!) { fail err_msg } }
+
+      it "responds with a 500 and error message" do
+        get :new_documents, params: { appeal_id: appeal.external_id }
+        response_body = JSON.parse(response.body)
+
+        expect(response.status).to eq(500)
+        expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"][0]["title"]).to eq(err_msg)
+      end
+    end
+  end
+
+  describe "GET appeals/:id/document_count" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+
+    context "when efolder returns an access forbidden error" do
+      let(:err_code) { 403 }
+      let(:err_msg) do
+        "This efolder contains sensitive information you do not have permission to view." \
+          " Please contact your supervisor."
+      end
+
+      before do
+        allow_any_instance_of(Appeal).to receive(:number_of_documents) do
+          fail Caseflow::Error::EfolderAccessForbidden, code: err_code, message: err_msg
+        end
+      end
+
+      it "responds with a 4xx and error message" do
+        get :document_count, params: { appeal_id: appeal.external_id }
+        response_body = JSON.parse(response.body)
+
+        expect(response.status).to eq(err_code)
+        expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"][0]["title"]).to eq(err_msg)
+      end
+    end
+
+    context "when application encounters a generic error" do
+      let(:err_msg) { "Some application error" }
+
+      before { allow_any_instance_of(Appeal).to receive(:number_of_documents) { fail err_msg } }
+
+      it "responds with a 500 and error message" do
+        get :document_count, params: { appeal_id: appeal.external_id }
+        response_body = JSON.parse(response.body)
+
+        expect(response.status).to eq(500)
+        expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"][0]["title"]).to eq(err_msg)
       end
     end
   end
