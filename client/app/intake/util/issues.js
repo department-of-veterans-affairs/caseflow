@@ -319,12 +319,12 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         console.warn(issue);
         throw new Error('no decision date');
       }
-      const decisionDate = issue.decisionDate || issue.approxDecisionDate;
+      const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 
       return {
         referenceId: issue.id,
         text: issue.description,
-        // formatDatStr without converting to Date time
+        // formatDatStr converts to local time instead of UTC
         date: formatDateStr(issue.decisionDate || issue.approxDecisionDate),
         notes: issue.notes,
         titleOfActiveReview: issue.titleOfActiveReview,

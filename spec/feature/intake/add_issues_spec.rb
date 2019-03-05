@@ -30,7 +30,7 @@ feature "Intake Add Issues Page" do
     )
   end
 
-  context "check has correct time zone" do
+  context "check for correct time zone" do
     scenario "when rating is added" do
       start_higher_level_review(veteran)
       visit "/intake"
