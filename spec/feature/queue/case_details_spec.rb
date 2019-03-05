@@ -233,6 +233,19 @@ RSpec.feature "Case details" do
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")
         expect(page).to have_content(appeal.regional_office.city)
+        expect(page).to have_content(format(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE, "VACOLS"))
+      end
+    end
+    context "when veteran is in BGS" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :appeal
+        )
+      end
+      scenario "details view informs us that the Veteran data source is BGS" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(format(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE, "BGS"))
       end
     end
 
@@ -265,6 +278,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
+        expect(page).to have_content(format(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE, "VACOLS"))
       end
     end
 
