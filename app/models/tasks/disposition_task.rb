@@ -5,6 +5,7 @@
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
   before_create :check_parent_type
+  delegate :hearing, to: :hearing_task, allow_nil: true
 
   class << self
     def create_disposition_task!(appeal, parent, hearing)
@@ -14,16 +15,14 @@ class DispositionTask < GenericTask
         assigned_to: Bva.singleton
       )
 
-      if parent.is_a? HearingTask
-        HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
-      end
+      HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
 
       disposition_task
     end
   end
 
   def hearing_task
-    parent
+    @hearing_task ||= parent
   end
 
   def available_actions(_user)
@@ -48,11 +47,11 @@ class DispositionTask < GenericTask
       case disposition_params[:disposition]
       when "postponed"
         after_disposition_update = disposition_params[:after_disposition_update]
-        postponed(after_disposition_update: after_disposition_update)
+        mark_hearing_postponed(after_disposition_update: after_disposition_update)
       when "held"
-        held
+        mark_hearing_held
       when "no_show"
-        no_show
+        mark_hearing_no_show
       end
     end
 
@@ -69,11 +68,11 @@ class DispositionTask < GenericTask
     end
   end
 
-  def reschedule(hearing_pkseq:, hearing_time:, hearing_location: nil)
+  def reschedule(hearing_day_id:, hearing_time:, hearing_location: nil)
     new_hearing_task = hearing_task.cancel_and_recreate
 
     new_hearing = slot_new_hearing(
-      hearing_pkseq, hearing_time, hearing_location
+      hearing_day_id, hearing_time, hearing_location
     )
     self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
   end
@@ -98,15 +97,14 @@ class DispositionTask < GenericTask
 
   def release() end
 
-  def postponed(after_disposition_update:)
-    hearing = hearing_task.hearing_task_association.hearing
+  def mark_hearing_postponed(after_disposition_update:)
     hearing.update(disposition: "postponed")
 
     case after_disposition_update[:action]
     when "reschedule"
       new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
       reschedule(
-        hearing_pkseq: new_hearing_attrs[:hearing_pkseq], hearing_time: new_hearing_attrs[:hearing_time],
+        hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
         hearing_location: new_hearing_attrs[:hearing_location]
       )
     when "schedule_later"
@@ -117,11 +115,11 @@ class DispositionTask < GenericTask
     end
   end
 
-  def no_show() end
+  def mark_hearing_no_show() end
 
-  def cancelled() end
+  def mark_hearing_cancelled() end
 
-  def held() end
+  def mark_hearing_held() end
 
   private
 
