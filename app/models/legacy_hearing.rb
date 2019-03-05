@@ -46,7 +46,7 @@ class LegacyHearing < ApplicationRecord
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
-    else
+    elsif venue
       venue[:label]
     end
   end
@@ -156,6 +156,7 @@ class LegacyHearing < ApplicationRecord
     :veteran,  \
     :veteran_file_number, \
     :docket_name,
+    :closest_regional_office,
     :available_hearing_locations,
     to: :appeal, allow_nil: true
 
@@ -199,6 +200,7 @@ class LegacyHearing < ApplicationRecord
         :appeal_external_id,
         :external_id,
         :veteran_file_number,
+        :closest_regional_office,
         :available_hearing_locations
       ],
       except: [:military_service, :vacols_id]

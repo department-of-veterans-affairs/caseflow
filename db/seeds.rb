@@ -53,6 +53,7 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
+    create_team_admin
     create_colocated_users
     create_transcription_team
     create_vso_users_and_tasks
@@ -67,6 +68,12 @@ class SeedDB
     create_case_search_only_user
     create_judge_teams
     create_hearings_team
+  end
+
+  def create_team_admin
+    u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
+    Functions.grant!("System Admin", users: [u.css_id])
+    OrganizationsUser.add_user_to_organization(u, Bva.singleton)
   end
 
   def create_judge_teams
@@ -442,13 +449,7 @@ class SeedDB
       vacols_id = "3019752"
     end
 
-    appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
-
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
-    )
+    LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 
   def create_ama_case_with_open_schedule_hearing_task(ro_key)
@@ -472,7 +473,7 @@ class SeedDB
     ScheduleHearingTask.create!(
       appeal: appeal,
       assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
+      parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     )
   end
 
