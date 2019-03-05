@@ -21,18 +21,24 @@ import AssignHearingForm from '../../hearingSchedule/components/modalForms/Assig
 import ScheduleHearingLaterWithAdminActionForm from
   '../../hearingSchedule/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
 
+const ACTIONS = {
+  RESCHEDULE: 'reschedule',
+  SCHEDULE_LATER: 'schedule_later',
+  SCHEDULE_LATER_WITH_ADMIN_ACTION: 'schedule_later_with_admin_action'
+};
+
 const AFTER_DISPOSITION_UPDATE_ACTION_OPTIONS = [
   {
     displayText: 'Reschedule immediately',
-    value: 'reschedule'
+    value: ACTIONS.RESCHEDULE
   },
   {
     displayText: 'Send to Schedule Veteran list',
-    value: 'schedule_later'
+    value: ACTIONS.SCHEDULE_LATER
   },
   {
     displayText: 'Apply admin action',
-    value: 'schedule_later_with_admin_action'
+    value: ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION
   }
 ];
 
@@ -51,7 +57,7 @@ class PostponeHearingModal extends React.Component {
 
     this.setState({ showErrorMessages: hasErrorMessages });
 
-    return hasErrorMessages;
+    return !hasErrorMessages;
   }
 
   validateScheduleLaterValues = () => {
@@ -59,14 +65,13 @@ class PostponeHearingModal extends React.Component {
 
     this.setState({ showErrorMessages: hasErrorMessages });
 
-    return hasErrorMessages;
+    return !hasErrorMessages;
   }
 
   validateForm = () => {
-
-    if (this.state.afterDispositionUpdateAction === 'reschedule') {
+    if (this.state.afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
       return this.validateRescheduleValues();
-    } else if (this.state.afterDispositionUpdateAction === 'schedule_later_with_admin_action') {
+    } else if (this.state.afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
       return this.validateScheduleLaterValues();
     }
 
@@ -77,7 +82,7 @@ class PostponeHearingModal extends React.Component {
     const { apiFormattedValues: { hearing_time, hearing_day_id, hearing_location } } = this.props.assignHearing;
 
     return {
-      action: 'reschedule',
+      action: ACTIONS.RESCHEDULE,
       new_hearing_attrs: {
         hearing_time,
         hearing_day_id,
@@ -87,14 +92,22 @@ class PostponeHearingModal extends React.Component {
   }
 
   getScheduleLaterPayload = () => {
-    const {
-      apiFormattedValues: { with_admin_action_klass, admin_action_instructions }
-    } = this.props.scheduleHearingLaterWithAdminAction;
+    const { afterDispositionUpdateAction } = this.state;
+
+    if (afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
+      const {
+        apiFormattedValues: { with_admin_action_klass, admin_action_instructions }
+      } = this.props.scheduleHearingLaterWithAdminAction;
+
+      return {
+        action: ACTIONS.SCHEDULE_LATER,
+        with_admin_action_klass,
+        admin_action_instructions
+      };
+    }
 
     return {
-      action: 'schedule_later',
-      with_admin_action_klass,
-      admin_action_instructions
+      action: ACTIONS.SCHEDULE_LATER
     };
   }
 
@@ -103,12 +116,14 @@ class PostponeHearingModal extends React.Component {
 
     return {
       data: {
-        status: TASK_STATUSES.cancelled,
-        business_payloads: {
-          values: {
-            disposition: 'postponed',
-            after_disposition_update: afterDispositionUpdateAction === 'reschedule' ?
-              this.getReschedulePayload() : this.getScheduleLaterPayload()
+        task: {
+          status: TASK_STATUSES.cancelled,
+          business_payloads: {
+            values: {
+              disposition: 'postponed',
+              after_disposition_update: afterDispositionUpdateAction === ACTIONS.RESCHEDULE ?
+                this.getReschedulePayload() : this.getScheduleLaterPayload()
+            }
           }
         }
       }
@@ -119,7 +134,7 @@ class PostponeHearingModal extends React.Component {
     const { afterDispositionUpdateAction } = this.state;
     const { assignHearing: { hearingDay }, appeal } = this.props;
 
-    if (afterDispositionUpdateAction === 'reschedule') {
+    if (afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
       const hearingDateStr = formatDateStr(hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
       const title = `You have successfully assigned ${appeal.veteranFullName} ` +
                     `to a hearing on ${hearingDateStr}.`;
@@ -160,12 +175,12 @@ class PostponeHearingModal extends React.Component {
           value={afterDispositionUpdateAction}
         />
 
-        {afterDispositionUpdateAction === 'reschedule' &&
+        {afterDispositionUpdateAction === ACTIONS.RESCHEDULE &&
         <AssignHearingForm
           showErrorMessages={showErrorMessages}
           appeal={appeal}
         />
-        }{afterDispositionUpdateAction === 'schedule_later_with_admin_action' &&
+        }{afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION &&
         <ScheduleHearingLaterWithAdminActionForm
           showErrorMessages={showErrorMessages}
           adminActionOptions={taskData ? taskData.options : []}
