@@ -1,7 +1,8 @@
 describe InformalHearingPresentationTask do
+  let(:user) { create(:user, roles: ["VSO"]) }
+
   describe ".available_actions" do
     subject { task.available_actions(user) }
-    let(:user) { create(:user, roles: ["VSO"]) }
 
     context "when task is assigned to user" do
       let(:task) do
@@ -50,6 +51,24 @@ describe InformalHearingPresentationTask do
       it "should return team assign, person reassign, and mark complete actions" do
         expect(subject).to eq(expected_actions)
       end
+    end
+  end
+
+  describe "when an IHP task is cancelled" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:task) do
+      InformalHearingPresentationTask.find(create(:informal_hearing_presentation_task, assigned_to: user).id)
+    end
+
+    before do
+      FeatureToggle.enable!(:ama_acd_tasks)
+      RootTask.create_root_and_sub_tasks!(appeal)
+    end
+
+    it "should create a DistributionTask" do
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      expect(appeal.root_task.reload.children.select { |t| t.type == DistributionTask.name }.count).to eq(1)
     end
   end
 end
