@@ -46,7 +46,7 @@ class LegacyHearing < ApplicationRecord
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
-    else
+    elsif venue
       venue[:label]
     end
   end
@@ -156,6 +156,7 @@ class LegacyHearing < ApplicationRecord
     :veteran,  \
     :veteran_file_number, \
     :docket_name,
+    :closest_regional_office,
     :available_hearing_locations,
     to: :appeal, allow_nil: true
 
@@ -199,6 +200,7 @@ class LegacyHearing < ApplicationRecord
         :appeal_external_id,
         :external_id,
         :veteran_file_number,
+        :closest_regional_office,
         :available_hearing_locations
       ],
       except: [:military_service, :vacols_id]
@@ -235,13 +237,6 @@ class LegacyHearing < ApplicationRecord
       veteran_gender: fetch_veteran_gender,
       veteran_age: fetch_veteran_age
     )
-  end
-
-  def slot_new_hearing(parent_record_id, scheduled_time:, appeal:, hearing_location_attrs: nil)
-    HearingRepository.slot_new_hearing(parent_record_id,
-                                       scheduled_time: scheduled_time,
-                                       hearing_location_attrs: hearing_location_attrs,
-                                       appeal: appeal)
   end
 
   def appeals_ready_for_hearing

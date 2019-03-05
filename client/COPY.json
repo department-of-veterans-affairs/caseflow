@@ -234,6 +234,9 @@
   "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
+  "MODAL_SUBMIT_BUTTON": "Submit",
+  "MODAL_CANCEL_BUTTON": "Cancel",
+
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to the assigner",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
@@ -324,6 +327,21 @@
   "DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES": " Deleting this decision will also remove it from other issues you've added it to.",
   "DECISION_ISSUE_CONFIRM_DELETE": "Are you sure you want to delete this decision?",
 
+  "TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow team management",
+  "TEAM_MANAGEMENT_PAGE_HEADER": "Caseflow Team Management",
+  "TEAM_MANAGEMENT_ID_COLUMN_HEADING": "ID",
+  "TEAM_MANAGEMENT_NAME_COLUMN_HEADING": "Name",
+  "TEAM_MANAGEMENT_URL_COLUMN_HEADING": "URL",
+  "TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING": "BGS Participant ID",
+  "TEAM_MANAGEMENT_UPDATE_ROW_BUTTON": "Update",
+  "TEAM_MANAGEMENT_ADD_JUDGE_BUTTON": "+ Add Judge Team",
+  "TEAM_MANAGEMENT_ADD_VSO_BUTTON": "+ Add VSO",
+  "TEAM_MANAGEMENT_ADD_JUDGE_TEAM_MODAL_TITLE": "Create JudgeTeam",
+  "TEAM_MANAGEMENT_SELECT_JUDGE_LABEL": "Select judge",
+  "TEAM_MANAGEMENT_ADD_VSO_MODAL_TITLE": "Create VSO",
+  "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
+  "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
+
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
 
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
@@ -359,9 +377,17 @@
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
 
   "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
-  "WITHDRAW_HEARING_MODAL_BODY": "Withdrawing this hearing request will remove this veteran from the hearing pool.",
+  "WITHDRAW_HEARING_MODAL_BODY": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled.",
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE": "You have successfully withdrawn %s's hearing request",
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY": "%s has been removed from the hearing schedule and has been sent to the next appropriate location",
+
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_TITLE": "Schedule new hearing",
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY": "Withdrawing this hearing request will remove this veteran from the hearing pool.",
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_TITLE": "You have successfully completed this case",
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_BODY": "%s case has been removed from the transcription queue and has been sent to the next hearing management branch.",
+
+  "COMPLETE_TRANSCRIPTION_BODY": "Mark transcription as completed and send appeal to the next team.",
+
   "UNTIMELY_EVIDENCE_TITLE": "AMA requires that VA capture how frequently a Veteran submits evidence that can't be considered.  This includes when the Veteran:",
   "UNTIMELY_EVIDENCE_BULLET_ONE": "1. Requested a Direct Review appeal option and submitted evidence",
   "UNTIMELY_EVIDENCE_BULLET_TWO": "2. Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD",

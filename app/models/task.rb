@@ -37,7 +37,7 @@ class Task < ApplicationRecord
   end
 
   def label
-    action
+    self.class.name
   end
 
   def self.inactive_statuses
@@ -230,6 +230,10 @@ class Task < ApplicationRecord
     return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
   end
 
+  def self.most_recently_assigned
+    order(:updated_at).last
+  end
+
   def root_task(task_id = nil)
     task_id = id if task_id.nil?
     return parent.root_task(task_id) if parent
@@ -240,6 +244,12 @@ class Task < ApplicationRecord
 
   def previous_task
     nil
+  end
+
+  def cancel_task_and_child_subtasks
+    update!(status: Constants.TASK_STATUSES.cancelled) if active?
+
+    children.each(&:cancel_task_and_child_subtasks)
   end
 
   def assign_to_organization_data(_user = nil)

@@ -18,7 +18,7 @@ import {
 } from '../../components/common/actions';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
-import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
+import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
 import { withRouter } from 'react-router-dom';
@@ -157,8 +157,7 @@ class AssignHearingModal extends React.PureComponent {
             description: 'Update Task',
             values: {
               regional_office_value: selectedRegionalOffice,
-              hearing_pkseq: selectedHearingDay.hearingId,
-              hearing_type: this.getHearingType(),
+              hearing_day_id: selectedHearingDay.hearingId,
               hearing_time: this.getHearingTime(),
               hearing_location: ApiUtil.convertToSnakeCase(hearingLocation)
             }
@@ -198,38 +197,33 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   getTimeOptions = () => {
-    const { appeal: { sanitizedHearingRequestType } } = this.props;
+    const { selectedRegionalOffice } = this.props;
 
-    if (sanitizedHearingRequestType === 'video') {
+    if (selectedRegionalOffice === 'C') {
       return [
-        { displayText: '8:30 am',
-          value: '8:30' },
-        { displayText: '12:30 pm',
-          value: '12:30' },
+        { displayText: '9:00 am',
+          value: '9:00' },
+        { displayText: '1:00 pm',
+          value: '13:00' },
         { displayText: 'Other',
           value: 'other' }
-
       ];
     }
 
     return [
-      { displayText: '9:00 am',
-        value: '9:00' },
-      { displayText: '1:00 pm',
-        value: '13:00' },
+      { displayText: '8:30 am',
+        value: '8:30' },
+      { displayText: '12:30 pm',
+        value: '12:30' },
       { displayText: 'Other',
         value: 'other' }
     ];
-
-  }
+  };
 
   getRO = () => {
     const { appeal, hearingDay } = this.props;
-    const { sanitizedHearingRequestType } = appeal;
 
-    if (sanitizedHearingRequestType === 'central_office') {
-      return 'C';
-    } else if (hearingDay.regionalOffice) {
+    if (hearingDay.regionalOffice) {
       return hearingDay.regionalOffice;
     } else if (appeal.regionalOffice) {
       return appeal.regionalOffice.key;
@@ -239,9 +233,9 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   getHearingType = () => {
-    const { appeal: { sanitizedHearingRequestType } } = this.props;
+    const { selectedRegionalOffice } = this.props;
 
-    return sanitizedHearingRequestType === 'central_office' ? CENTRAL_OFFICE_HEARING : VIDEO_HEARING;
+    return selectedRegionalOffice === 'C' ? CENTRAL_OFFICE_HEARING : VIDEO_HEARING;
   }
 
   getSuccessMsg = () => {
@@ -263,12 +257,6 @@ class AssignHearingModal extends React.PureComponent {
     return { title,
       detail };
   }
-
-  formatDateString = (dateToFormat) => {
-    const formattedDate = formatDateStr(dateToFormat);
-
-    return formatDateStringForApi(formattedDate);
-  };
 
   getHearingTime = () => {
     const { selectedHearingTime, selectedOptionalTime, selectedHearingDay } = this.props;
@@ -309,8 +297,16 @@ class AssignHearingModal extends React.PureComponent {
 
     const initVals = this.getInitialValues();
     const timeOptions = this.getTimeOptions();
-    const currentRegionalOffice = selectedRegionalOffice || initVals.regionalOffice;
     const { address_line_1, city, state, zip } = appeal.appellantAddress || {};
+
+    const currentRegionalOffice = selectedRegionalOffice || initVals.regionalOffice;
+    const roIsDifferent = appeal.closestRegionalOffice !== currentRegionalOffice;
+    let staticHearingLocations = _.isEmpty(appeal.availableHearingLocations) ?
+      null : appeal.availableHearingLocations;
+
+    if (roIsDifferent) {
+      staticHearingLocations = null;
+    }
 
     if (openHearing) {
       return null;
@@ -336,8 +332,8 @@ class AssignHearingModal extends React.PureComponent {
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
           appealId={appeal.externalId}
-          dynamic={appeal.closestRegionalOffice !== currentRegionalOffice}
-          staticHearingLocations={appeal.availableHearingLocations}
+          dynamic={staticHearingLocations === null || roIsDifferent}
+          staticHearingLocations={staticHearingLocations}
           onChange={this.props.onHearingLocationChange}
           value={selectedHearingLocation}
         />}

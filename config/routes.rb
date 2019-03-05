@@ -204,6 +204,12 @@ Rails.application.routes.draw do
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
+  resources :team_management, only: [:index, :update]
+  get '/team_management(*rest)', to: 'team_management#index'
+  post '/team_management/judge_team/:user_id', to: 'team_management#create_judge_team'
+  post '/team_management/national_vso', to: 'team_management#create_national_vso'
+  post '/team_management/field_vso', to: 'team_management#create_field_vso'
+
   get '/search', to: 'queue#index'
 
   resources :legacy_tasks, only: [:create, :update]

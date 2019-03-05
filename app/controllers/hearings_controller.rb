@@ -40,20 +40,18 @@ class HearingsController < ApplicationController
       facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
                      []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
 
-      va_dot_gov_address = appeal.va_dot_gov_address_validator.validate
+      locations = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
 
-      render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
-                                                                     long: va_dot_gov_address[:long],
-                                                                     ids: facility_ids) }
+      render json: { hearing_locations: locations }
     rescue Caseflow::Error::VaDotGovAPIError => e
-      render json: { message: e.message, status: "ERROR" }
+      render json: { message: e.message["messages"][0]["key"] }, status: :bad_request
     end
   end
 
   private
 
   def slot_new_hearing
-    hearing.slot_new_hearing(
+    HearingRepository.slot_new_hearing(
       master_record_params["id"],
       scheduled_time: master_record_params["time"]&.stringify_keys,
       appeal: hearing.appeal,
