@@ -205,7 +205,7 @@ class VaDotGovAddressValidator
 
     return if task.nil?
 
-    admin_action_type.create!(
+    admin_action_type.find_or_create_by(
       appeal: appeal,
       instructions: [instructions],
       assigned_to: HearingsManagement.singleton,
