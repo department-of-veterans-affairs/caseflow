@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import _ from 'lodash';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -9,20 +8,9 @@ import {
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../../components/DataDropdowns';
-import HearingTime from './HearingTime';
+import HearingTime, { getAssignHearingTime } from './HearingTime';
 
 import { onChangeFormData } from '../../../components/common/actions';
-
-export const getAssignHearingTime = (time, day) => {
-
-  return {
-    // eslint-disable-next-line id-length
-    h: time.split(':')[0],
-    // eslint-disable-next-line id-length
-    m: time.split(':')[1],
-    offset: moment.tz(day.hearingDate, day.timezone || 'America/New_York').format('Z')
-  };
-};
 
 class AssignHearingForm extends React.Component {
 
@@ -82,6 +70,14 @@ class AssignHearingForm extends React.Component {
     };
   }
 
+  onChange = (newValues) => {
+    this.props.onChange({
+      ...newValues,
+      errorMessages: this.getErrorMessages(newValues),
+      apiFormattedValues: this.getApiFormattedValues(newValues)
+    });
+  }
+
   onRegionalOfficeChange = (regionalOffice) => {
     const newValues = {
       regionalOffice,
@@ -90,21 +86,7 @@ class AssignHearingForm extends React.Component {
       hearingDay: null
     };
 
-    this.props.onChange({
-      ...newValues,
-      errorMessages: this.getErrorMessages(newValues),
-      apiFormattedValues: this.getApiFormattedValues(newValues)
-    });
-  }
-
-  onChange = (key, value) => {
-    const newValues = { [key]: value };
-
-    this.props.onChange({
-      ...newValues,
-      errorMessages: this.getErrorMessages(newValues),
-      apiFormattedValues: this.getApiFormattedValues(newValues)
-    });
+    this.onChange(newValues);
   }
 
   render() {
@@ -128,14 +110,14 @@ class AssignHearingForm extends React.Component {
               _.isEmpty(appeal.availableHearingLocations)}
             staticHearingLocations={appeal.availableHearingLocations}
             value={hearingLocation}
-            onChange={(value) => this.onChange('hearingLocation', value)}
+            onChange={(value) => this.onChange({ hearingLocation: value })}
           />
           <HearingDateDropdown
             errorMessage={showErrorMessages ? errorMessages.hearingDay : ''}
             key={`hearingDate__${regionalOffice}`}
             regionalOffice={regionalOffice}
             value={hearingDay}
-            onChange={(value) => this.onChange('hearingDay', value)}
+            onChange={(value) => this.onChange({ hearingDay: value })}
             validateValueOnMount
           />
           <HearingTime
@@ -143,7 +125,7 @@ class AssignHearingForm extends React.Component {
             key={`hearingTime__${regionalOffice}`}
             regionalOffice={regionalOffice}
             value={hearingTime}
-            onChange={(value) => this.onChange('hearingTime', value)}
+            onChange={(value) => this.onChange({ hearingTime: value })}
           />
         </React.Fragment>}
       </div>
