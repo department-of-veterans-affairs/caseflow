@@ -940,6 +940,10 @@ describe EndProductEstablishment do
       create(:request_issue, decision_review: source, decision_sync_processed_at: Time.zone.now)
     end
 
+    let!(:closed_request_issue) do
+      create(:request_issue, :removed, decision_review: source)
+    end
+
     context "when decision issues are all synced" do
       context "when source is a higher level review" do
         let!(:claimant) do

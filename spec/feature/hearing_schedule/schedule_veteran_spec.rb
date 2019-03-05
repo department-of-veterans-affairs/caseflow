@@ -19,7 +19,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
   end
 
   context "When creating Caseflow Central hearings" do
-    let!(:hearing_day) { create(:hearing_day) }
+    let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 30.days) }
     let!(:vacols_case) do
       create(
         :case, :central_office_hearing,
@@ -40,7 +40,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     let!(:veteran) { create(:veteran, file_number: "123454787") }
 
-    scenario "Schedule Veteran for central hearing", skip: "failing consistently" do
+    scenario "Schedule Veteran for central hearing" do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Central")
@@ -52,8 +52,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
-      radio_link = find(".cf-form-radio-option", match: :first)
-      radio_link.click
+      find("label", text: "9:00 am").click
       click_button("Schedule")
       find_link("Back to Schedule Veterans").click
       expect(page).to have_content("Schedule Veterans")
@@ -110,8 +109,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Currently active tasks", wait: 30)
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
-      radio_link = find(".cf-form-radio-option", match: :first)
-      radio_link.click
+      find("label", text: "8:30 am").click
       expect(page).not_to have_content("Could not find hearing locations for this veteran", wait: 30)
       click_button("Schedule")
       find_link("Back to Schedule Veterans").click
@@ -306,7 +304,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
   end
 
   context "When list of veterans displays in Legacy Veterans Waiting" do
-    let!(:hearing_day) { create(:hearing_day) }
+    let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 30) }
     let!(:schedule_hearing_task1) do
       create(
         :schedule_hearing_task, appeal: create(
@@ -414,13 +412,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
     let!(:veteran5) { create(:veteran, file_number: "523454787") }
 
-    scenario "Verify docket order is CVAC, AOD, then regular.", skip: "failing consistently" do
+    scenario "Verify docket order is CVAC, AOD, then regular." do
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Central")
       click_button("Legacy Veterans Waiting")
       table_row = page.find("tr", id: "table-row-0")
-      expect(table_row).to have_content("1545678")
+      expect(table_row).to have_content("1545678", wait: 30)
       table_row = page.find("tr", id: "table-row-1")
       expect(table_row).to have_content("1645621")
       table_row = page.find("tr", id: "table-row-2")
