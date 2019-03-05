@@ -322,7 +322,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def decision_issues_sync_complete?(processing_request_issue)
     other_request_issues = request_issues.reject { |i| i.id == processing_request_issue.id }
-    other_request_issues.all?(&:processed?)
+    other_request_issues.all? { |i| i.closed? || i.processed? }
   end
 
   def potential_decision_ratings
