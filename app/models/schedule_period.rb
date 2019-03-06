@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SchedulePeriod < ApplicationRecord
   validate :validate_schedule_period, on: :create
 
@@ -32,7 +34,7 @@ class SchedulePeriod < ApplicationRecord
     submitting_to_vacols
   end
 
-  S3_SUB_BUCKET = "hearing_schedule".freeze
+  S3_SUB_BUCKET = "hearing_schedule"
 
   def validate_schedule_period
     errors[:base] << OverlappingSchedulePeriods if dates_finalized_or_being_finalized?

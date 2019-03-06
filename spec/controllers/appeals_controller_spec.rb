@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe AppealsController, type: :controller do
   before { User.authenticate!(roles: ["System Admin"]) }
 

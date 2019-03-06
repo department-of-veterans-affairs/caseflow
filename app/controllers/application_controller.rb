@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ApplicationBaseController
   before_action :set_application
   before_action :set_timezone,

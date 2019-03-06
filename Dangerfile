@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # These are rules to help us codify our engineering norms for PRs.
 # Please refer to the documentation here: http://danger.systems/ruby/
 

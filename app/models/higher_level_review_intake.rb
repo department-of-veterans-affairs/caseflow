@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HigherLevelReviewIntake < ClaimReviewIntake
   enum error_code: Intake::ERROR_CODES
 

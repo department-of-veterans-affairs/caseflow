@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RampRefiling < RampReview
   class ContentionCreationFailed < StandardError; end
 

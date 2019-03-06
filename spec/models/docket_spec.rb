@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Docket do
   before do
     FeatureToggle.enable!(:ama_auto_case_distribution)

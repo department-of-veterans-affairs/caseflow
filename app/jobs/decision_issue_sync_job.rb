@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # We must do this async because an EndProductEstablishment may be cleared
 # some indefinite period of time before the Rating Issue(s) are posted.
 class DecisionIssueSyncJob < CaseflowJob

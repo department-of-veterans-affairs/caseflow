@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DispositionTask do
   describe ".create_disposition_task!" do
     let(:appeal) { FactoryBot.create(:appeal) }

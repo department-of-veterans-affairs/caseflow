@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe JudgeNonAvailability do
   let(:judge_schedule_period) { create(:judge_schedule_period) }
 

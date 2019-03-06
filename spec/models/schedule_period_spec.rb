@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SchedulePeriod do
   let!(:schedule_period) { create(:ro_schedule_period) }
 

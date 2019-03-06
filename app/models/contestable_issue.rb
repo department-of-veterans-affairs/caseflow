@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Container class representing any type of issue that can be contested by a decision review
 class ContestableIssue
   include ActiveModel::Model

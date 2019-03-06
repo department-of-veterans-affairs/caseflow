@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Our external dependencies are slow and unreliable. If an external dependency takes a long
 # time to respond we end up holding on to DB connections for an unreasonable amount of time.
 # This enables us to release connections before making an external call.

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # ephemeral class used for caching Rating Issues for client,
 # and for creating DecisionIssues when a Rating Issue has contention_reference_ids
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe AdvanceOnDocketMotionsController, type: :controller do
   describe "POST aod_team" do
     context "request to create as aod" do
