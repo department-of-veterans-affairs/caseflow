@@ -18,7 +18,7 @@ class User < ApplicationRecord
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
                "Reader", "Hearing Prep", "Mail Intake", "Admin Intake",
-               "Hearing Schedule", "Caseflow Case Details"].freeze
+               "Hearing Schedule", "Case Details"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {

@@ -271,8 +271,9 @@ class ApplicationController < ApplicationBaseController
 
   # Verifies that the user has any of the roles passed
   def verify_authorized_roles(*roles)
-    binding.pry
-    return true if current_user && roles.any? { |r| current_user.can?(r) }
+    current_user.roles = current_user.roles.concat(["Case Details"])
+
+    return true if current_user && roles.any? { |r| current_user.can?(r) } && (!(request.original_url.include? "queue") && !(current_.user.roles.include? "Case Details"))
 
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")
