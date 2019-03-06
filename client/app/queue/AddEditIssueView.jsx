@@ -132,25 +132,11 @@ class AddEditIssueView extends React.Component {
 
   updateIssuesFromServer = (response) => {
     const { appeal } = this.props;
-    const serverIssues = response.issues;
-
-    const issues = _.map(serverIssues, (issue) => {
-      // preserve locally-updated dispositions
-      const disposition = _.get(
-        _.find(appeal.issues, (iss) => iss.id === (issue.id || issue.vacols_sequence_id)),
-        'disposition'
-      );
-
-      return {
-        ...issue,
-        disposition
-      };
-    });
 
     this.props.saveEditedAppealIssue(this.props.appealId, {
       issues: prepareAppealIssuesForStore({
         attributes: {
-          issues,
+          issues: response.issues,
           docket_name: appeal.docketName
         }
       })
