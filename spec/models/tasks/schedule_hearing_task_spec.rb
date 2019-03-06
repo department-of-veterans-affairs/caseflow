@@ -23,7 +23,7 @@ describe ScheduleHearingTask do
     end
   end
 
-  context "Create a ScheduleHearingTas with parent other than HearingTask type." do
+  context "Create a ScheduleHearingTask with parent other than HearingTask type." do
     let(:root_parent) { FactoryBot.create(:root_task, appeal: appeal) }
     let(:schedule_hearing) { create(:schedule_hearing_task, parent: root_parent) }
 

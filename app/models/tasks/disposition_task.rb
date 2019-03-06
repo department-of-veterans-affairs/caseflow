@@ -38,5 +38,16 @@ class DispositionTask < GenericTask
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
+
+    if appeal.is_a?(LegacyAppeal)
+      location = if appeal.vsos.empty?
+                   LegacyAppeal::LOCATION_CODES[:case_storage]
+                 else
+                   LegacyAppeal::LOCATION_CODES[:service_organization]
+                 end
+
+      AppealRepository.withdraw_hearing!(appeal)
+      AppealRepository.update_location!(appeal, location)
+    end
   end
 end
