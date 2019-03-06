@@ -45,14 +45,11 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "and current user does not have high enough BGS sensitivity level" do
-        # TODO: May need to mock other instances of BGSService
         before { allow_any_instance_of(BGSService).to receive(:can_access?).and_return(false) }
 
         it "should return an error" do
           get(:index, params: options)
           expect(response.status).to eq(403)
-          # response_body = JSON.parse(response.body)
-          # expect(response_body["appeals"].size).to eq 0
         end
       end
     end
