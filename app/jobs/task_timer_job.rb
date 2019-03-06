@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TaskTimerJob < CaseflowJob
   queue_as :low_priority
   application_attr :queue

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttorneyRepository
   def self.find_all_attorneys
     records = VACOLS::Staff.where(sactive: "A").where.not(sattyid: nil)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AsyncableJobsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
 

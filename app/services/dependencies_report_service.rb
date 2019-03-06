@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DependenciesReportService
   class << self
     ALL_DEPENDENCIES =

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class V2::AppealStatusSerializer < ActiveModel::Serializer
   type :appeal
 

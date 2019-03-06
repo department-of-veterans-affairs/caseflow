@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::V1::JobsController < Api::ApplicationController
   # available jobs supported by this endpoint
   SUPPORTED_JOBS = {

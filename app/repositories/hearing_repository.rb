@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Hearing Prep repository.
 class HearingRepository
   class HearingDayFull < StandardError; end

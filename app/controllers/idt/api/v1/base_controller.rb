@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Idt::Api::V1::BaseController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :validate_token

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DocketCoordinator
   # MINIMUM_LEGACY_PROPORTION + MAXIMUM_DIRECT_REVIEW_PROPORTION cannot exceed 1.
   MINIMUM_LEGACY_PROPORTION = 0.1

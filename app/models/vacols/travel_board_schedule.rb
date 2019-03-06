@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Travel Board master schedule is in a table called TBSCHED
 class VACOLS::TravelBoardSchedule < VACOLS::Record
   self.table_name = "vacols.tbsched"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NewDocumentsForUser
   include ActiveModel::Model
 

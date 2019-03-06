@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe VACOLS::CaseDocket do
   before do
     FeatureToggle.enable!(:test_facols)

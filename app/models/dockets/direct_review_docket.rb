@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DirectReviewDocket < Docket
   DAYS_TO_DECISION_GOAL = 365
   DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION = 60

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :remand_reason, class: VACOLS::RemandReason do
     rmdkey { "123456" }

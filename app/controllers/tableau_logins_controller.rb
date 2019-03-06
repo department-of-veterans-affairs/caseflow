@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TableauLoginsController < ApplicationController
   def login
     token = ExternalApi::TableauService.authenticate(current_user.username)
