@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Vso < Organization
   after_initialize :set_role
 

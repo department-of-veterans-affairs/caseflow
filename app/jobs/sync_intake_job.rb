@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job will fetch the number of contentions for every
 # EP known to Intake
 class SyncIntakeJob < CaseflowJob

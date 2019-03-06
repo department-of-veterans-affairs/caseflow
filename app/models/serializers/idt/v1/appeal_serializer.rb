@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Idt::V1::AppealSerializer < ActiveModel::Serializer
   def id
     object.is_a?(LegacyAppeal) ? object.vacols_id : object.uuid

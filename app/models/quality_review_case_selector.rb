@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class QualityReviewCaseSelector
   QUALITY_REVIEW_SELECTION_PROBABILITY = 0.04
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task to track when an appeal has been randomly selected to be quality reviewed by the Quality Review team.
 

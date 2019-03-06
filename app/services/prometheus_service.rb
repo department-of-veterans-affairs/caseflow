@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "prometheus/client"
 require "prometheus/client/push"
 
@@ -236,7 +238,7 @@ end
 # and a summary. This class provides a simple `.set()` interface
 # for updating both at the same time
 class PrometheusGaugeSummary
-  LAST_SUMMARY_OBSERVATION_REDIS_KEY_PREFIX = "prometheus_last_summary_observation".freeze
+  LAST_SUMMARY_OBSERVATION_REDIS_KEY_PREFIX = "prometheus_last_summary_observation"
   SUMMARY_OBSERVATION_THRESHOLD = 1.minute
 
   attr_accessor :gauge, :summary

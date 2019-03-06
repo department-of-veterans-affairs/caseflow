@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RampElection < RampReview
   has_many :intakes, as: :detail, class_name: "RampElectionIntake"
   has_many :ramp_closed_appeals

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SupplementalClaim < ClaimReview
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 

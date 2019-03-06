@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class ClaimantValidator < ActiveModel::Validator
-  PAYEE_CODE_REQUIRED = "payee_code may not be blank".freeze
-  CLAIMANT_REQUIRED = "participant_id may not be blank".freeze
-  BLANK = "blank".freeze
+  PAYEE_CODE_REQUIRED = "payee_code may not be blank"
+  CLAIMANT_REQUIRED = "participant_id may not be blank"
+  BLANK = "blank"
   BENEFIT_TYPE_REQUIRES_PAYEE_CODE = %w[compensation pension].freeze
 
   def validate(claimant)

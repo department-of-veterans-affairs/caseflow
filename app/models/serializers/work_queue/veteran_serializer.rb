@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::VeteranSerializer < ActiveModel::Serializer
   attribute :full_name do
     object.veteran_full_name

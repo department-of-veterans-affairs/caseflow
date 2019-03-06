@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OrganizationsController < ApplicationController
   before_action :verify_organization_access
   before_action :verify_role_access

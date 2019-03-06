@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :local do
   desc "build local development environment"
   task :build do

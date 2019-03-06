@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Tasks that block scheduling a Veteran for a hearing.
 # A hearing coordinator must resolve these before scheduling a Veteran.

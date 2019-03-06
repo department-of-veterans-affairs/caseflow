@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Model for tasks in generic organizational task queues. Supports common actions like:
 #   - marking tasks complete

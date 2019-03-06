@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StartDistributionJob < ApplicationJob
   queue_as :high_priority
   application_attr :queue

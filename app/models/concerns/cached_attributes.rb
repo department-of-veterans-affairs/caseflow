@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Allows models to cache immutable attributes in order to
 # save time consuming calls to dependencies like VACOLS and VBMS.
 #

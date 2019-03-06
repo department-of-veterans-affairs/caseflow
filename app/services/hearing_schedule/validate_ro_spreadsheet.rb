@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 class HearingSchedule::ValidateRoSpreadsheet
-  RO_NON_AVAILABILITY_TITLE = "Regional Office Non-Availability Dates in Date Range".freeze
+  RO_NON_AVAILABILITY_TITLE = "Regional Office Non-Availability Dates in Date Range"
   RO_NON_AVAILABILITY_EXAMPLE_ROW = ["Example", "RO00", "Ithaca, NY", Date.parse("2019/01/01"),
                                      Date.parse("2019/02/01"), Date.parse("2019/03/16"), Date.parse("2019/04/21"),
                                      Date.parse("2019/05/19")].freeze
   RO_NON_AVAILABILITY_EMPTY_COLUMN = [nil].freeze
 
-  CO_SPREADSHEET_TITLE = "Board Non-Availability Dates and Holidays in Date Range".freeze
+  CO_SPREADSHEET_TITLE = "Board Non-Availability Dates and Holidays in Date Range"
   CO_SPREADSHEET_EXAMPLE_ROW = ["Example", Date.parse("2018/10/31")].freeze
   CO_SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 
-  HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings".freeze
+  HEARING_ALLOCATION_SHEET_TITLE = "Allocation of Regional Office Video Hearings"
   HEARING_ALLOCATION_SHEET_EXAMPLE_ROW = ["Example", "Ithaca, NY", "RO00", 10].freeze
   HEARING_ALLOCATION_SHEET_EMPTY_COLUMN = [nil].freeze
 

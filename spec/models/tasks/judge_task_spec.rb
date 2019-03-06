@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe JudgeTask do
   let(:judge) { FactoryBot.create(:user) }
   let(:judge2) { FactoryBot.create(:user) }

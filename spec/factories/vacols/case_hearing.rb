@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :case_hearing, class: VACOLS::CaseHearing do
     hearing_type { HearingDay::REQUEST_TYPES[:video] }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AppealConcern
   extend ActiveSupport::Concern
 
@@ -39,7 +41,7 @@ module AppealConcern
     # returns appellant name in format <last>, <first> <middle_initial>.
     if appellant_first_name
       name = "#{appellant_last_name}, #{appellant_first_name}"
-      name.concat " #{appellant_middle_initial}." if appellant_middle_initial
+      "#{name} #{appellant_middle_initial}." if appellant_middle_initial
     end
   end
 

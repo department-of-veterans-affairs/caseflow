@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe MasterRecordHelper, type: :helper do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))

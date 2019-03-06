@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task assigned to VSOs to submit an Informal Hearing Presentation for Veterans who have elected not to have a hearing.
 # IHPs are a chance for VSOs to make final arguments before a case is sent to the Board.

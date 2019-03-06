@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SpecialIssuesController < ApplicationController
   before_action :validate_access_to_appeal
 

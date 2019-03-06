@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe QualityReviewTask do
   before do
     OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)

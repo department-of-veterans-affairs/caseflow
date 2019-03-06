@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe InformalHearingPresentationTask do
   let(:user) { create(:user, roles: ["VSO"]) }
 
