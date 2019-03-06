@@ -39,11 +39,23 @@ describe DispositionTask do
   describe ".cancel!" do
     let(:disposition) { nil }
     let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
     let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal, disposition: disposition) }
     let!(:disposition_task) do
-      create(:ama_disposition_task, parent: hearing_task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress)
+      FactoryBot.create(
+        :ama_disposition_task,
+        parent: hearing_task,
+        appeal: appeal,
+        status: Constants.TASK_STATUSES.in_progress
+      )
+    end
+    let!(:hearing_task_association) do
+      FactoryBot.create(
+        :hearing_task_association,
+        hearing: hearing,
+        hearing_task: hearing_task
+      )
     end
 
     subject { disposition_task.cancel! }
@@ -54,7 +66,17 @@ describe DispositionTask do
       it "cancels the disposition task" do
         expect(disposition_task.status).to_not eq Constants.TASK_STATUSES.cancelled
         expect { subject }.to_not raise_error
-        expect(disposition_task.status).to eq Constants.TASK_STATUSES.cancelled
+        expect(disposition_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      end
+    end
+
+    context "the task's hearing's disposition is not cancelled" do
+      let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+
+      it "raises an error" do
+        expect(disposition_task.status).to_not eq Constants.TASK_STATUSES.cancelled
+        expect { subject }.to raise_error(DispositionTask::HearingDispositionNotCanceled)
+        expect(disposition_task.reload.status).to_not eq Constants.TASK_STATUSES.cancelled
       end
     end
   end

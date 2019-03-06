@@ -8,6 +8,8 @@
 class DispositionTask < GenericTask
   before_create :check_parent_type
 
+  class HearingDispositionNotCanceled < StandardError; end
+
   class << self
     def create_disposition_task!(appeal, parent, hearing)
       DispositionTask.create!(
@@ -28,5 +30,13 @@ class DispositionTask < GenericTask
         assignee_type: assigned_to.class.name
       )
     end
+  end
+
+  def cancel!
+    if parent&.hearing_task_association&.hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
+      fail HearingDispositionNotCanceled
+    end
+
+    update!(status: Constants.TASK_STATUSES.cancelled)
   end
 end
