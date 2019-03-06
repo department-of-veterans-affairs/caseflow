@@ -2,6 +2,7 @@
 
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
+  # , :verify_access
   skip_before_action :deny_vso_access
 
   def set_application
@@ -15,4 +16,8 @@ class QueueController < ApplicationController
   def check_queue_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("queue_out_of_service")
   end
+
+  # def verify_access
+  #   verify_authorized_roles("Reader", "Caseflow Case Details")
+  # end
 end
