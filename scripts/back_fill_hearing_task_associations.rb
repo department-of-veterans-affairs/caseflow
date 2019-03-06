@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Script to backfill HearingTaskAssociation data in production.
 #
 # Identify all DispositionTasks

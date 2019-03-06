@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :reports do
   desc "Run the frontend seam report"
   task seam: [:environment] do

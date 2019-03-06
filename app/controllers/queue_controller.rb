@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
   skip_before_action :deny_vso_access

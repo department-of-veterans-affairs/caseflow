@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FetchHearingLocationsForVeteransJob < ApplicationJob
   queue_as :low_priority
   application_attr :hearing_schedule

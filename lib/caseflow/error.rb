@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Caseflow::Error
   module ErrorSerializer
     extend ActiveSupport::Concern

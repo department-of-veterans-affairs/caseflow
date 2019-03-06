@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents the action where a Caseflow user updates the request issues on
 # a review, typically to make a correction.
 

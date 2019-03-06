@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe BeaamAppealsController, type: :controller do
   before do
     User.authenticate!(roles: ["System Admin"])

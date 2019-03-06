@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AttorneyQueue do
   context "#tasks" do
     let(:user) { create(:user) }

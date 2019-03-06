@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Claimant do
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }

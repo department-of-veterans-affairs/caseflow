@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Generators::User
   extend Generators::Base
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :users do
   desc "coerce all user css_id values to UPCASE where possible"
   task upcase: :environment do

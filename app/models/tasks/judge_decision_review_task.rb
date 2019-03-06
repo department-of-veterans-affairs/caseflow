@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task for a judge to review decisions.
 

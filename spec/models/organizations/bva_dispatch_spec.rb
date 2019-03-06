@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe BvaDispatch do
   let(:bva_dispatch_org) { BvaDispatch.singleton }
 

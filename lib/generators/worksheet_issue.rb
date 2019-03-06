@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Generators::WorksheetIssue
   extend Generators::Base
 

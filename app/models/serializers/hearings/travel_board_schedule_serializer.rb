@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::TravelBoardScheduleSerializer < ActiveModel::Serializer
   attribute :tbyear
   attribute :tbtrip

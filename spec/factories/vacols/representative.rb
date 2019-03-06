@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Warning: VACOLS has a uniqueness constraint on repaddtime + repkey,
 # and VACOLS/FACOLS DB both appear to have after insert hooks that
 # set repaddtime to the current system date, so using FactoryBot

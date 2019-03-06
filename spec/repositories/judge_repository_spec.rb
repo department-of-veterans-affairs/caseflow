@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe JudgeRepository do
   let(:judge_name) { "Sojudgey" }
 

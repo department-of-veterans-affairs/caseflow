@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingScheduleController < ApplicationController
   before_action :react_routed, :check_hearing_schedule_out_of_service
   before_action :verify_build_hearing_schedule_access, only: [:build_schedule_index]

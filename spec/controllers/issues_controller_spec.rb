@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe IssuesController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let(:case_issue) { nil }

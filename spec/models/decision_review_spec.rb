@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DecisionReview do
   before do
     Time.zone = "UTC"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Root task that tracks an appeal all the way through the appeal lifecycle.
 # This task is closed when an appeal has been completely resolved.

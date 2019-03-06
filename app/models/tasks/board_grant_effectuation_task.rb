@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # A task to track when the Board grants a benefit that is not compensation or pension,
 # like education or a loan guaranty, otherwise known as an "effectuation task".

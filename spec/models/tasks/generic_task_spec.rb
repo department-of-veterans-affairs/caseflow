@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe GenericTask do
   describe ".available_actions" do
     let(:task) { nil }

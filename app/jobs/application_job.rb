@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationJob < ActiveJob::Base
   class << self
     def application_attr(app_name)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module HearingMapper
   class InvalidHoldOpenError < StandardError; end
   class InvalidAodError < StandardError; end

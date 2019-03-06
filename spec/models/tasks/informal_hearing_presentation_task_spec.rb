@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe InformalHearingPresentationTask do
   describe ".available_actions" do
     subject { task.available_actions(user) }

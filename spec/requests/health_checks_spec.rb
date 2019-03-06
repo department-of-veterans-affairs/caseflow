@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe "Health Check API" do
   context "mock" do
     before do

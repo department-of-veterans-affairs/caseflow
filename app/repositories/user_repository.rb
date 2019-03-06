@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserRepository
   class << self
     def user_info_from_vacols(css_id)
