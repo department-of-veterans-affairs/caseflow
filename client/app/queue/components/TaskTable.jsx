@@ -1,3 +1,10 @@
+/**
+ * Base class for all task tables in Caseflow. Used primarily throughout Queue but also used
+ * in a few other places. Task tables can:
+ *   - be filtered by column
+ *   - be placed inside tabs
+ */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -154,6 +161,11 @@ export class TaskTableUnconnected extends React.PureComponent {
   caseAssignedToColumn = () => {
     return this.props.includeAssignedTo ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'assignedTo.name',
+      anyFiltersAreSet: true,
+      label: 'Filter by assignee',
       valueFunction: (task) => task.assignedTo.name,
       getSortValue: (task) => task.assignedTo.name
     } : null;
