@@ -2,10 +2,11 @@ import React, { Fragment } from 'react';
 import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS, FORM_TYPES } from '../constants';
+import { PAGE_PATHS } from '../constants';
 import _ from 'lodash';
 import Alert from '../../components/Alert';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
+import { getFormTypeByKey } from '../util/';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -45,7 +46,7 @@ const getEndProductUpdate = ({
   issuesBefore,
   issuesAfter
 }) => {
-  const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
+  const claimReviewName = getFormTypeByKey(formType).shortName;
   const epType = isRating ? 'Rating' : 'Nonrating';
   const issueFilter = isRating ?
     (i) => !i.ineligibleReason && (i.isRating || i.isUnidentified) :
@@ -116,7 +117,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
 
-    const selectedForm = _.find(FORM_TYPES, { key: formType });
+    const selectedForm = getFormTypeByKey(formType);
     const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
 
     return <div>

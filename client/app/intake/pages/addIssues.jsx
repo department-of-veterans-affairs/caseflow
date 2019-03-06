@@ -13,7 +13,7 @@ import LegacyOptInModal from '../components/LegacyOptInModal';
 import Button from '../../components/Button';
 import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
-import { REQUEST_STATE, FORM_TYPES, PAGE_PATHS } from '../constants';
+import { REQUEST_STATE, PAGE_PATHS } from '../constants';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import {
@@ -30,17 +30,10 @@ export class AddIssuesPage extends React.Component {
   constructor(props) {
     super(props);
 
-    const formName = this.getFormName(this.props.formType);
-
     this.state = {
-      formName,
       originalIssueIds: (this.props.intakeForms[formName].addedIssues || []).map((issue) => issue.id),
       issueRemoveIndex: 0
     };
-  }
-
-  getFormName = (formType) => {
-    return _.find(FORM_TYPES, { key: formType }).key;
   }
 
   haveIssuesChanged = (currentIssues) => {
@@ -89,7 +82,7 @@ export class AddIssuesPage extends React.Component {
     }
 
     const { useAmaActivationDate } = featureToggles;
-    const intakeData = intakeForms[this.state.formName];
+    const intakeData = intakeForms[formType];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
 
@@ -152,7 +145,7 @@ export class AddIssuesPage extends React.Component {
       return <p>When you finish making changes, click "Save" to continue.</p>;
     };
 
-    let fieldsForFormType = getAddIssuesFields(this.state.formName, veteran, intakeData);
+    let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
     let issueChangeClassname = () => {
       // no-op unless the issue banner needs to be displayed
     };
