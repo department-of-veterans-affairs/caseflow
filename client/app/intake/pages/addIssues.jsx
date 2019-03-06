@@ -158,7 +158,7 @@ export class AddIssuesPage extends React.Component {
     };
 
     if (this.props.editPage && this.haveIssuesChanged(intakeData.addedIssues)) {
-      // flash a save message if user is on the edit page & number of issues have changed
+      // flash a save message if user is on the edit page & issues have changed
       fieldsForFormType = fieldsForFormType.concat(
         { field: '',
           content: issuesChangedBanner() });
