@@ -64,9 +64,11 @@ describe DispositionTask do
       let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
 
       it "cancels the disposition task" do
-        expect(disposition_task.status).to_not eq Constants.TASK_STATUSES.cancelled
+        expect(disposition_task.cancelled?).to be_falsey
+        expect(hearing_task.on_hold?).to be_truthy
         expect { subject }.to_not raise_error
-        expect(disposition_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+        expect(disposition_task.cancelled?).to be_truthy
+        expect(hearing_task.cancelled?).to be_truthy
       end
     end
 
@@ -74,9 +76,9 @@ describe DispositionTask do
       let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
 
       it "raises an error" do
-        expect(disposition_task.status).to_not eq Constants.TASK_STATUSES.cancelled
+        expect(disposition_task.cancelled?).to be_falsey
         expect { subject }.to raise_error(DispositionTask::HearingDispositionNotCanceled)
-        expect(disposition_task.reload.status).to_not eq Constants.TASK_STATUSES.cancelled
+        expect(disposition_task.cancelled?).to be_falsey
       end
     end
   end
