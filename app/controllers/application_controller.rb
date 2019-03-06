@@ -105,7 +105,7 @@ class ApplicationController < ApplicationBaseController
 
   # Link used when clicking logo
   def logo_path
-    root_path
+    "root_path"
   end
   helper_method :logo_path
 
@@ -188,6 +188,17 @@ class ApplicationController < ApplicationBaseController
     false
   end
   helper_method :case_search_home_page
+
+  def user_is_restricted_from_queue
+    current_user.roles = current_user.roles.concat(["Case Details"])
+    binding.pry
+    if current_user.roles.include? "Case Details"
+      return true
+    end
+
+    false
+  end
+  # helper_method :user_is_restricted_from_queue
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/CyclomaticComplexity
 
@@ -271,15 +282,22 @@ class ApplicationController < ApplicationBaseController
 
   # Verifies that the user has any of the roles passed
   def verify_authorized_roles(*roles)
+    # TODO: override method in queue_controller instead with this logic?
+    # how can the front end get access to the roles?
     current_user.roles = current_user.roles.concat(["Case Details"])
+    if (request.original_url.include? "queue") && (current_user.roles.include? "Case Details")
+      Rails.logger.info("redirecting user with case details from queue to search")
+      session["return_to"] = request.original_url
+      redirect_to "/search"
+    elsif current_user && roles.any? { |r| current_user.can?(r) }
+      return true
+    else
+      Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
+        "couldn't access #{request.original_url}")
 
-    return true if current_user && roles.any? { |r| current_user.can?(r) } && (!(request.original_url.include? "queue") && !(current_.user.roles.include? "Case Details"))
-
-    Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\
-      "couldn't access #{request.original_url}")
-
-    session["return_to"] = request.original_url
-    redirect_to "/unauthorized"
+      session["return_to"] = request.original_url
+      redirect_to "/unauthorized"
+    end
   end
 
   # Verifies the passed user matches the current user
