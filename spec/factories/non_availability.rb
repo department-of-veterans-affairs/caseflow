@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :non_availability do
     date { Date.parse("2018-04-01") }

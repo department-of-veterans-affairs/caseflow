@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SupplementalClaim do
   before do
     FeatureToggle.enable!(:intake_legacy_opt_in)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FormResponse
   def initialize(success:, errors:, extra: {})
     @success = success

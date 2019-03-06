@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HigherLevelReviewIntake do
   before do
     Time.zone = "Eastern Time (US & Canada)"

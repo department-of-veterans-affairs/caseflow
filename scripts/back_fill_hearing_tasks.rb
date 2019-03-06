@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Backfill a HearingTask as parent of a ScheduleHearingTask and DispositionTask
 # for Legacy Appeals.
 #

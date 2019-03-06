@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task created for appellant representatives to track appeals that have been received by the Board.
 # Created either when:

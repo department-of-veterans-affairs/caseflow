@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IntakesController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application, :check_intake_out_of_service
 

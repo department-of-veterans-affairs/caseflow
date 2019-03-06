@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Generators::Vacols::Correspondent
   class << self
     def generate_pkseq

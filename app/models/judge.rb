@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Judge
   attr_reader :user
   def initialize(user)

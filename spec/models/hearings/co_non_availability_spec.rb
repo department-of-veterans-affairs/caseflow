@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe CoNonAvailability do
   let(:ro_schedule_period) { create(:ro_schedule_period) }
 

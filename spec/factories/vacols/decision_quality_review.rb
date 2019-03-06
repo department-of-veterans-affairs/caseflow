@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :decision_quality_review, class: VACOLS::DecisionQualityReview do
     qryymm { "1802" }

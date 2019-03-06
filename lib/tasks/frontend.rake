@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rainbow"
 
 desc "Runs the frontend React mocha tests"

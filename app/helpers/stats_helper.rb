@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module StatsHelper
   def json
     @stats.map { |d| { key: d.range_start.to_f, value: d.values } }.to_json

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe BusinessMetrics do
   context ".record" do
     subject { BusinessMetrics.record(service: :queue, name: "test") }

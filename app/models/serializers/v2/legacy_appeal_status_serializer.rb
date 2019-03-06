@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class V2::LegacyAppealStatusSerializer < ActiveModel::Serializer
   type :legacy_appeal
 

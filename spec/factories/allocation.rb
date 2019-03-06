@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :allocation do
     schedule_period { create(:ro_schedule_period) }

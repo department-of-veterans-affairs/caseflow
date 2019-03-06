@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LegacyHearing < ApplicationRecord
   include CachedAttributes
   include AssociatedVacolsModel
@@ -28,8 +30,8 @@ class LegacyHearing < ApplicationRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
-  CO_HEARING = "Central".freeze
-  VIDEO_HEARING = "Video".freeze
+  CO_HEARING = "Central"
+  VIDEO_HEARING = "Video"
 
   def judge
     user

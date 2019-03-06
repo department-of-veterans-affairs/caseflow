@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LegacyTask
   include ActiveModel::Model
   include ActiveModel::Serialization

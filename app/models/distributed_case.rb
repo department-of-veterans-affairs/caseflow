@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DistributedCase < ApplicationRecord
   belongs_to :distribution
   belongs_to :task

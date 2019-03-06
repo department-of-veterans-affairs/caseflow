@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe UserRepository do
   let(:css_id) { "TEST1" }
 
