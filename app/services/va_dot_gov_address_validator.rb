@@ -205,9 +205,9 @@ class VaDotGovAddressValidator
 
     return if task.nil?
 
-    admin_action_type.find_or_create_by(
+    # Create only if another admin task is not in an active status.
+    admin_action_type.active.find_or_create_by(
       appeal: appeal,
-      status: Task.statuses[:assigned],
       instructions: [instructions],
       assigned_to: HearingsManagement.singleton,
       parent: task
