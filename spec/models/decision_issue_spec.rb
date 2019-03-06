@@ -385,7 +385,7 @@ describe DecisionIssue do
             expect(subject.claimants.first).to have_attributes(
               participant_id: decision_review.claimant_participant_id,
               payee_code: prior_payee_code,
-              decision_review: decision_review
+              decision_review: subject
             )
           end
         end
