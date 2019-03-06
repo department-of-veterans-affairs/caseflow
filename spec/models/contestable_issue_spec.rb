@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe ContestableIssue do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))

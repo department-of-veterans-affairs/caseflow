@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingSchedule::GetSpreadsheetData
   JUDGE_NON_AVAILABILITY_SHEET = 0
   RO_NON_AVAILABILITY_SHEET = 0

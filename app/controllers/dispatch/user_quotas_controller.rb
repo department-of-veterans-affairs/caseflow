@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Dispatch::UserQuotasController < ApplicationController
   before_action :verify_manager_access
   before_action :set_application

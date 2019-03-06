@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Dispatch::EstablishClaimsController < Dispatch::TasksController
   before_action :verify_access
   before_action :verify_assigned_to_current_user, only: [:show, :pdf, :cancel, :perform]

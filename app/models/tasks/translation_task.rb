@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task automatically assigned after intake to the Translation organization when a case originates
 # from an RO in Puerto Rico or the Phillipines.

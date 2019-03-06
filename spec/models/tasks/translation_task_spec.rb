@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe TranslationTask do
   describe ".create_from_root_task" do
     let(:appeal) { FactoryBot.create(:appeal) }

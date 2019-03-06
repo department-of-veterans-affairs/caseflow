@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :hearing_day do
     scheduled_for { Date.tomorrow }

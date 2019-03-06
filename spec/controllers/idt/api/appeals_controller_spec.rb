@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   describe "GET /idt/api/v1/appeals" do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }

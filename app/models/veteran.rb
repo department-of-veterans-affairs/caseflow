@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents a veteran with values fetched from BGS
 #
 # TODO: How do we deal with differences between the BGS vet values and the
@@ -14,7 +16,7 @@ class Veteran < ApplicationRecord
                     :military_postal_type_code, :military_post_office_type_code,
                     :service, :date_of_birth, :date_of_death
 
-  validates :ssn, :sex, :first_name, :last_name, presence: true, on: :bgs
+  validates :ssn, :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
@@ -38,8 +40,8 @@ class Veteran < ApplicationRecord
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
   # C&P Live = '1', C&P Death = '2'
-  BENEFIT_TYPE_CODE_LIVE = "1".freeze
-  BENEFIT_TYPE_CODE_DEATH = "2".freeze
+  BENEFIT_TYPE_CODE_LIVE = "1"
+  BENEFIT_TYPE_CODE_DEATH = "2"
 
   # TODO: get middle initial from BGS
   def name

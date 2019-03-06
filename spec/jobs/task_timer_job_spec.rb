@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe TaskTimerJob do
   class TimedTask < GenericTask
     include TimeableTask

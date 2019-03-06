@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StartCertificationJob < ApplicationJob
   queue_as :high_priority
   attr_accessor :certification

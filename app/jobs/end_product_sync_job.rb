@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job syncs an EndProductEstablishment (end product manager) with up to date BGS and VBMS data
 class EndProductSyncJob < CaseflowJob
   queue_as :low_priority

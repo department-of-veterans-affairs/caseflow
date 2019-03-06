@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe VeteranRecordRequest do
   let(:task) { create(:veteran_record_request_task) }
 

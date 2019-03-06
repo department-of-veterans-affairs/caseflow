@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearing < ApplicationRecord
   belongs_to :hearing_day
   belongs_to :appeal

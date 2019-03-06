@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A HearingDocket is a grouping of hearings by a date, type and regional_office_key
 class HearingDocket
   include ActiveModel::Model

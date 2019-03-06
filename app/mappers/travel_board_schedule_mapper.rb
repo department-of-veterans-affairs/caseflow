@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TravelBoardScheduleMapper
   class << self
     def convert_from_vacols_format(travel_board_schedule)

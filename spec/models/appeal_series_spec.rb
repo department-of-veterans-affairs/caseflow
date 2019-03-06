@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AppealSeries do
   before do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))

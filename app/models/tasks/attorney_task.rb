@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task tracking work done by attorneys at BVA. Attorneys are assigned tasks by judges.
 # Attorney tasks include:

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :end_product_establishment do
     sequence(:veteran_file_number, &:to_s)

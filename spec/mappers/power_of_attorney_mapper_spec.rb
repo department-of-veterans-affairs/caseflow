@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe PowerOfAttorneyMapper do
   let(:poa_mapper) { Class.new { include PowerOfAttorneyMapper } }
 

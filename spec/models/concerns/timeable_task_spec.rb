@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe TimeableTask do
   class SomeTimedTask < GenericTask
     include TimeableTask

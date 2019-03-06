@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 shared_examples "IDT access verification" do |http_method, action, params|
   describe "access verification before_action" do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
