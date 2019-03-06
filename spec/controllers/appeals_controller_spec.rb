@@ -35,6 +35,25 @@ RSpec.describe AppealsController, type: :controller do
         expect(response_body["appeals"].size).to eq 0
       end
     end
+
+    context "when current user is a VSO employee" do
+      before do
+        request.headers["HTTP_VETERAN_ID"] = veteran_id
+        allow_any_instance_of(User).to receive(:vso_employee?).and_return(true)
+      end
+
+      context "and current user does not have high enough BGS sensitivity level" do
+        # TODO: May need to mock other instances of BGSService
+        before { allow_any_instance_of(BGSService).to receive(:can_access?).and_return(false) }
+
+        it "should return an error" do
+          get(:index, params: options)
+          expect(response.status).to eq(403)
+          # response_body = JSON.parse(response.body)
+          # expect(response_body["appeals"].size).to eq 0
+        end
+      end
+    end
   end
 
   describe "GET appeals/appeal_id/document_count" do

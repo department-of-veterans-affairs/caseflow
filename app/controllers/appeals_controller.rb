@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppealsController < ApplicationController
   include Errors
 
@@ -11,20 +13,12 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         veteran_file_number = request.headers["HTTP_VETERAN_ID"]
+        file_number_not_found_error && return unless veteran_file_number
 
-        if veteran_file_number
-          render json: {
-            appeals: get_appeals_for_file_number(veteran_file_number),
-            claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
-          }
-        else
-          render json: {
-            "errors": [
-              "title": "Must include Veteran ID",
-              "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
-            ]
-          }, status: :bad_request
-        end
+        render json: {
+          appeals: get_appeals_for_file_number(veteran_file_number),
+          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
+        }
       end
     end
   end
@@ -190,7 +184,10 @@ class AppealsController < ApplicationController
   end
 
   def get_vso_appeals_for_file_number(file_number)
-    return file_access_prohibited_error if !BGSService.new.can_access?(file_number)
+    if !BGSService.new.can_access?(file_number)
+      msg = "User is prohibited from accessing files associated with provided Veteran ID"
+      fail(Caseflow::Error::ActionForbiddenError, message: msg)
+    end
 
     MetricsService.record("VACOLS: Get vso appeals information for file_number #{file_number}",
                           service: :queue,
@@ -209,13 +206,13 @@ class AppealsController < ApplicationController
     end
   end
 
-  def file_access_prohibited_error
+  def file_number_not_found_error
     render json: {
       "errors": [
-        "title": "Access to Veteran file prohibited",
-        "detail": "User is prohibited from accessing files associated with provided Veteran ID"
+        "title": "Must include Veteran ID",
+        "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
       ]
-    }, status: :forbidden
+    }, status: :bad_request
   end
 
   def json_appeals(appeals)
