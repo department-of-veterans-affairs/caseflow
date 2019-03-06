@@ -137,7 +137,8 @@ describe HigherLevelReviewIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: intake.veteran.participant_id,
-          payee_code: nil
+          payee_code: nil,
+          decision_review: intake.detail
         )
       end
     end
@@ -153,7 +154,8 @@ describe HigherLevelReviewIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: "1234",
-          payee_code: "10"
+          payee_code: "10",
+          decision_review: intake.detail
         )
       end
 
@@ -206,7 +208,8 @@ describe HigherLevelReviewIntake do
           expect(intake.detail.claimants.count).to eq 1
           expect(intake.detail.claimants.first).to have_attributes(
             participant_id: "1234",
-            payee_code: nil
+            payee_code: nil,
+            decision_review: intake.detail
           )
         end
       end
