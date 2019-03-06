@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RemandReasonMapper
   class << self
     def convert_to_vacols_format(vacols_user_id, remand_reasons)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VACOLS::Representative < VACOLS::Record
   include AddressMapper
 

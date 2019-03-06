@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # The result of a decision on an *issue* at the higher court, CAVC (Court of Appeals for Veteran Claims)
 # This is relevant mostly for appeals that are remanded from CAVC.
 class CAVCDecision

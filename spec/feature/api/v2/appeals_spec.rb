@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe "Appeals API v2", type: :request do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))

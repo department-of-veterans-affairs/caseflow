@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Certification is responsible for aggregating the information
 # and providing methods used to assist the certification of an

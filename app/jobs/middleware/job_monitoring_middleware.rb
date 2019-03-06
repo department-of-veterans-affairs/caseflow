@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This middleware adds tracking for job status such as start & end time
 class JobMonitoringMiddleware
   def call(_worker, _queue, _msg, body)

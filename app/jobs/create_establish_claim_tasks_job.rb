@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateEstablishClaimTasksJob < ApplicationJob
   queue_as :low_priority
   application_attr :dispatch

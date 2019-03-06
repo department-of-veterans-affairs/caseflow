@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :case_issue, class: VACOLS::CaseIssue do
     # we prefeace the key with ISSUE to distinguish issues created on their own from

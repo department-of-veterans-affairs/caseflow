@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class JudgeLegacyTask < LegacyTask
   def review_action
     if Constants::DECASS_WORK_PRODUCT_TYPES["OMO_REQUEST"].include?(work_product)

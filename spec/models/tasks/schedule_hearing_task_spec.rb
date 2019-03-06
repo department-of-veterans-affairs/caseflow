@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe ScheduleHearingTask do
   before do
     Time.zone = "Eastern Time (US & Canada)"

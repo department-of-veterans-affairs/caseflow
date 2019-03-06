@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Hearing Schedule Repository to help build and edit hearing
 # master records in VACOLS for Video, TB and CO hearings.
 class HearingDayRepository

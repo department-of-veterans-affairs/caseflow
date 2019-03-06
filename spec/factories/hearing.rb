@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :hearing do
     appeal { create(:appeal, :hearing_docket) }

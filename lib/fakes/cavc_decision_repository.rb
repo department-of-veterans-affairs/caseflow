@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Fakes::CAVCDecisionRepository
   class << self
     attr_accessor :cavc_decision_records

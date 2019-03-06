@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class JudgeRepository
   def self.find_all_judges
     judge_records.select(&:sdomainid).map do |record|

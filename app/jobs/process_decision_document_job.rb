@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProcessDecisionDocumentJob < CaseflowJob
   queue_as :low_priority
   application_attr :intake

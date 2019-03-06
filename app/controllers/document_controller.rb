@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "paper_trail"
 
 class DocumentController < ApplicationController

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RegionalOfficeEmail
   include ActiveModel::Model
   attr_accessor :recipient, :ro_id

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class Fakes::EndProductStore
-  REDIS_NS ||= "end_product_records_#{Rails.env}".freeze
+  REDIS_NS ||= "end_product_records_#{Rails.env}"
 
   def self.cache_store
     @cache_store ||= begin

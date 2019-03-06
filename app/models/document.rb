@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Document < ApplicationRecord
   has_many :annotations
   has_many :document_views
@@ -7,7 +9,7 @@ class Document < ApplicationRecord
 
   self.inheritance_column = nil
 
-  S3_BUCKET_NAME = "documents".freeze
+  S3_BUCKET_NAME = "documents"
 
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb

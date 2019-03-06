@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :board_grant_effectuation do
     granted_decision_issue do

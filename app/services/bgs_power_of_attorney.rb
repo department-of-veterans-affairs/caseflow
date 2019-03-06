@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BgsPowerOfAttorney
   include ActiveModel::Model
   include AssociatedBgsRecord

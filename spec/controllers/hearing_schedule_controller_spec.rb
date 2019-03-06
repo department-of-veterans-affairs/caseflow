@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe HearingScheduleController, type: :controller do
   context "when user is not authenticated" do
     it "redirects" do

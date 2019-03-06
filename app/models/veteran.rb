@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents a veteran with values fetched from BGS
 #
 # TODO: How do we deal with differences between the BGS vet values and the
@@ -38,8 +40,8 @@ class Veteran < ApplicationRecord
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
   # C&P Live = '1', C&P Death = '2'
-  BENEFIT_TYPE_CODE_LIVE = "1".freeze
-  BENEFIT_TYPE_CODE_DEATH = "2".freeze
+  BENEFIT_TYPE_CODE_LIVE = "1"
+  BENEFIT_TYPE_CODE_DEATH = "2"
 
   # TODO: get middle initial from BGS
   def name

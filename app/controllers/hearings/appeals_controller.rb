@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::AppealsController < HearingsController
   def update
     appeal.update!(appeal_params)

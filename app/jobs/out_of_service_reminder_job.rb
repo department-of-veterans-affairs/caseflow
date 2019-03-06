@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class OutOfServiceReminderJob < ApplicationJob
   queue_as :low_priority
 

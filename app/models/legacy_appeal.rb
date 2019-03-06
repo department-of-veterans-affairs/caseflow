@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # An appeal that a Veteran or appellant for VA decisions on claims for benefits, filed under the laws and policies
 # guiding appeals before the Veterans Appeals Improvement and Modernization Act (AMA).

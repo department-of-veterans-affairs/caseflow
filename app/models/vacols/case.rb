@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VACOLS::Case < VACOLS::Record
   self.table_name = "vacols.brieff"
   self.sequence_name = "vacols.bfkeyseq"
@@ -121,7 +123,7 @@ class VACOLS::Case < VACOLS::Record
       group by ISSKEY
     )
     on ISSKEY = BFKEY
-  ".freeze
+  "
 
   JOIN_AOD = "
     left join (
@@ -146,7 +148,7 @@ class VACOLS::Case < VACOLS::Record
       on AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
     )
     on AODKEY = BFKEY
-  ".freeze
+  "
 
   JOIN_SPECIALTY_CASE_TEAM_ISSUES = "
     left join (
@@ -211,7 +213,7 @@ class VACOLS::Case < VACOLS::Record
       from ISSUES
       group by ISSKEY
     ) SCT on SCT.ISSKEY = BRIEFF.BFKEY
-  ".freeze
+  "
 
   JOIN_REMAND_RETURN = "
     left join (
@@ -223,7 +225,7 @@ class VACOLS::Case < VACOLS::Record
       group by BRIEFF.BFKEY
     )
     on REM_RETURN_KEY = BFKEY
-  ".freeze
+  "
 
   WHERE_PAPERLESS_REMAND_LOC97 = "
     BFMPRO = 'REM'
@@ -234,7 +236,7 @@ class VACOLS::Case < VACOLS::Record
 
     and TIVBMS = 'Y'
     -- Only include VBMS cases.
-  ".freeze
+  "
 
   WHERE_PAPERLESS_FULLGRANT_AFTER_DATE = %{
     BFMPRO = 'HIS'
@@ -250,7 +252,7 @@ class VACOLS::Case < VACOLS::Record
 
     and ISSUE_CNT_REMAND = 0
     -- Check that there are no remanded issues. Denials can be included.
-  }.freeze
+  }
 
   # These scopes query VACOLS and cannot be covered by automated tests.
   # :nocov:

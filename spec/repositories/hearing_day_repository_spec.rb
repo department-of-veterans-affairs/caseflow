@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDayRepository do
   context ".fetch_hearing_day_slots" do
     subject { HearingDayRepository.fetch_hearing_day_slots(regional_office) }
