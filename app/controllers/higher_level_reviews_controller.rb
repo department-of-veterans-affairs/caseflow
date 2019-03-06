@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class HigherLevelReviewsController < ClaimReviewController
-  SOURCE_TYPE = "HigherLevelReview".freeze
+  SOURCE_TYPE = "HigherLevelReview"
 
   private
 

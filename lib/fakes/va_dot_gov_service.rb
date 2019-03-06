@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Fakes::VADotGovService < ExternalApi::VADotGovService
   def self.send_va_dot_gov_request(endpoint:, query: {}, **_args)
     if endpoint == facilities_endpoint

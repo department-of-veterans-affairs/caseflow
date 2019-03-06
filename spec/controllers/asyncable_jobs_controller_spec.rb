@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AsyncableJobsController, type: :controller do
   before do
     User.stub = user

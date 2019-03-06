@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Organization < ApplicationRecord
   has_one :vso_config, dependent: :destroy
   has_many :tasks, as: :assigned_to

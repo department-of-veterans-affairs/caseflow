@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SyncIntakeJob do
   context ".perform" do
     before do

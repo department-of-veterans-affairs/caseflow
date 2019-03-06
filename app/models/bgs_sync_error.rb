@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Many BGS calls fail in off-hours because BGS has maintenance time, so it's useful to classify
 # these transient errors and ignore the in our reporting tools. These are marked transient because
 # they're self-resolving and a request can be retried (this typically happens during jobs)

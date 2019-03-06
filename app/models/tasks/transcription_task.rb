@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TranscriptionTask < GenericTask
   before_create :check_parent_type
 

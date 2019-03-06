@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # These are rules to help us codify our engineering norms for PRs.
 # Please refer to the documentation here: http://danger.systems/ruby/
 
@@ -18,10 +20,26 @@ if !git.modified_files.grep(/app\/models\/vacols/).empty?
 end
 
 # We should not disable Rubocop rules unless there's a very good reason
-if `git diff #{github.base_commit} | grep -E 'rubocop:disable'`.length > 1
+result = git.diff.flat_map do |chunk|
+  chunk.patch.lines.grep(/^\+\s*\w/).select { |added_line| added_line.match?(/rubocop:disable/) }
+end
+
+if !result.empty?
   warn(
     "This PR disables one or more Rubocop rules. " \
     "If there is a valid reason, please provide it in your commit message. " \
     "Otherwise, consider refactoring the code."
+  )
+end
+
+# Make sure DB changes don't affect `rake db:seed`
+result = git.diff.flat_map do |chunk|
+  chunk.patch.lines.grep(/^\+\s*\w/).select { |added_line| added_line.match?(/remove_column|rename_column|drop_table/) }
+end
+
+if !result.empty?
+  warn(
+    "This PR makes DB changes that might affect the local seeds. " \
+    "Please make sure `rake db:seed` still runs without issues."
   )
 end

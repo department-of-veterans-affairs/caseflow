@@ -46,7 +46,7 @@ const veteranNotFoundInstructions = <div>
     Database to continue processing this intake. If you do not
     have access, please
     <b>
-      <a href="mailto:VACaseflowOps@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"> email </a>
+      <a href="mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"> email </a>
     </b>
     for assistance.
   </p>

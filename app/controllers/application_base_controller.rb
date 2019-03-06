@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationBaseController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.

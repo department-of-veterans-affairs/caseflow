@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask is completed.
 # When the associated hearing's disposition is set, the appropriate tasks are set as children

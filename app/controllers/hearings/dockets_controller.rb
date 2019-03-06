@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::DocketsController < HearingsController
   before_action :verify_access
 

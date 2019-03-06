@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 require "bgs"
 require "fakes/end_product_store"
@@ -709,8 +711,8 @@ class Fakes::BGSService
 
   private
 
-  VSO_PARTICIPANT_ID = "4623321".freeze
-  DEFAULT_PARTICIPANT_ID = "781162".freeze
+  VSO_PARTICIPANT_ID = "4623321"
+  DEFAULT_PARTICIPANT_ID = "781162"
 
   def default_claimant_info
     {

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionReview < ApplicationRecord
   include CachedAttributes
   include Asyncable

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Fakes::Initializer
   class << self
     def load!

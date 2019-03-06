@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Dispatch::Task < ApplicationRecord
   self.table_name = "dispatch_tasks"
 
