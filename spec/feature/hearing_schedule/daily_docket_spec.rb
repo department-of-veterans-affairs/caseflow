@@ -82,9 +82,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       expect(page).to have_content("No Show")
       expect(page).to have_content("This is a note about the hearing!")
       expect(find_field("Transcript Requested", visible: false)).to be_checked
-      # For unknown reasons, in feature tests, the hearing time is displayed as 3:30am. I
-      # created a ticket that we can look into after February.
-      # expect(page).to have_content("8:30 am")
+      expect(find_field("9:00", visible: false)).to be_checked
     end
   end
 
