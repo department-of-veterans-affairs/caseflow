@@ -14,8 +14,8 @@ describe NewDocumentsForUser do
 
       let!(:documents) do
         [
-          create(:document, upload_date: 5.days.ago),
-          create(:document, upload_date: 5.days.ago)
+          create(:document, upload_date: Time.parse("2019-03-01 12:00:00 -0500")),
+          create(:document, upload_date: Time.parse("2019-03-01 12:00:00 -0500"))
         ]
       end
 
@@ -60,7 +60,7 @@ describe NewDocumentsForUser do
 
         context "when one document is newer than the appeal view date" do
           it "should return the newer document" do
-            documents[0].update(upload_date: -2.days.ago)
+            documents[0].update(upload_date: Time.parse("2019-03-07 12:00:00 -0500"))
             expect(subject).to eq([documents[0]])
           end
         end
@@ -74,8 +74,8 @@ describe NewDocumentsForUser do
 
       let!(:documents) do
         [
-          Generators::Document.create(upload_date: 5.days.ago),
-          Generators::Document.create(upload_date: 5.days.ago)
+          Generators::Document.create(upload_date: Time.parse("2019-03-01 12:00:00 -0500")),
+          Generators::Document.create(upload_date: Time.parse("2019-03-01 12:00:00 -0500"))
         ]
       end
 
@@ -108,7 +108,7 @@ describe NewDocumentsForUser do
 
           context "when one document is newer than the appeal view date" do
             it "should return the newer document" do
-              documents[0].update(upload_date: -2.days.ago)
+              documents[0].update(upload_date: Time.parse("2019-03-07 12:00:00 -0500"))
               expect(subject).to eq([documents[0]])
             end
           end
@@ -117,20 +117,20 @@ describe NewDocumentsForUser do
 
       context "when providing an on_hold date" do
         let(:new_documents_for_user) do
-          NewDocumentsForUser.new(appeal: appeal, user: user, query_vbms: false, date_to_compare_with: 4.days.ago)
+          NewDocumentsForUser.new(appeal: appeal, user: user, query_vbms: false, date_to_compare_with: Time.parse("2019-03-02 12:00:00 -0500"))
         end
 
         subject { new_documents_for_user.process! }
 
         context "When one document's upload date is after on hold date" do
           it "should return only the newest document" do
-            documents[0].update(upload_date: 3.days.ago)
+            documents[0].update(upload_date: Time.parse("2019-03-03 12:00:00 -0500"))
             expect(subject).to eq([documents[0]])
           end
         end
 
         context "when appeal has an appeal view newer than the on hold date" do
-          let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: 2.days.ago) }
+          let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.parse("2019-03-04 12:00:00 -0500")) }
 
           it "should return no documents" do
             expect(subject).to eq([])
@@ -138,7 +138,7 @@ describe NewDocumentsForUser do
 
           context "when one document's upload date is after the last viewed date" do
             it "should return the document uploaded after the view, but not the one after the hold date" do
-              documents[1].update(upload_date: 1.day.ago)
+              documents[1].update(upload_date: Time.parse("2019-03-05 12:00:00 -0500"))
               expect(subject).to eq([documents[1]])
             end
           end
