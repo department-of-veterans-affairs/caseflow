@@ -176,6 +176,25 @@ feature "Appeal Edit issues" do
     expect(page).to have_button("Save", disabled: false)
   end
 
+
+  fcontext "with remove decision review enable" do
+    before do
+      FeatureToggle.enable!(:remove_decision_review)
+    end
+
+   scenario "allows all request issues to be removed" do
+     visit "appeals/#{appeal.uuid}/edit/"
+     #remove all issues
+     
+     click_remove_intake_issue(1)
+     click_remove_issue_confirmation
+     click_remove_intake_issue(2)
+    click_remove_issue_confirmation
+     binding.pry
+     expect(page).to have_button("Save", disabled: false)
+   end
+  end
+
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date - 1.day }
     let(:disability_profile_date) { receipt_date - 10.days }
