@@ -30,9 +30,30 @@ export class AddIssuesPage extends React.Component {
   constructor(props) {
     super(props);
 
+    const formName = this.getFormName(this.props.formType);
+
     this.state = {
+      formName,
+      originalIssueIds: (this.props.intakeForms[formName].addedIssues || []).map((issue) => issue.id),
       issueRemoveIndex: 0
     };
+  }
+
+  getFormName = (formType) => {
+    return _.find(FORM_TYPES, { key: formType }).key;
+  }
+
+  haveIssuesChanged = (currentIssues) => {
+    if (currentIssues.length !== this.state.originalIssueIds.length) {
+      return true;
+    }
+
+    // if any issues do not have ids, it means the issue was just added
+    if (currentIssues.filter((currentIssue) => currentIssue.id === null).length > 0) {
+      return true;
+    }
+
+    return false;
   }
 
   onRemoveClick = (index) => {
@@ -67,9 +88,8 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
 
-    const selectedForm = _.find(FORM_TYPES, { key: formType });
     const { useAmaActivationDate } = featureToggles;
-    const intakeData = intakeForms[selectedForm.key];
+    const intakeData = intakeForms[this.state.formName];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
 
@@ -128,11 +148,26 @@ export class AddIssuesPage extends React.Component {
       { valueName: 'content' }
     ];
 
-    let fieldsForFormType = getAddIssuesFields(selectedForm.key, veteran, intakeData);
+    const issuesChangedBanner = () => {
+      return <p>When you finish making changes, click "Save" to continue.</p>;
+    };
+
+    let fieldsForFormType = getAddIssuesFields(this.state.formName, veteran, intakeData);
+    let issueChangeClassname = () => {
+      // no-op unless the issue banner needs to be displayed
+    };
+
+    if (this.props.editPage && this.haveIssuesChanged(intakeData.addedIssues)) {
+      // flash a save message if user is on the edit page & number of issues have changed
+      fieldsForFormType = fieldsForFormType.concat(
+        { field: '',
+          content: issuesChangedBanner() });
+      issueChangeClassname = (rowObj) => rowObj.field === '' ? 'intake-issue-flash' : '';
+    }
+
     let rowObjects = fieldsForFormType.concat(
       { field: 'Requested issues',
-        content: issuesComponent() }
-    );
+        content: issuesComponent() });
 
     return <div className="cf-intake-edit">
       { intakeData.addIssuesModalVisible && <AddIssuesModal
@@ -171,6 +206,7 @@ export class AddIssuesPage extends React.Component {
       <Table
         columns={columns}
         rowObjects={rowObjects}
+        rowClassNames={issueChangeClassname}
         slowReRendersAreOk />
     </div>;
   }
@@ -206,7 +242,8 @@ export const EditAddIssuesPage = connect(
     },
     formType: state.formType,
     veteran: state.veteran,
-    featureToggles: state.featureToggles
+    featureToggles: state.featureToggles,
+    editPage: true
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
