@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A model that centralizes all information
 # about the appellant's legal representation.
 #

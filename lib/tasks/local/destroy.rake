@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :local do
   desc "destroy local development environment to have a clean slate when rebuilding"
   task :destroy do

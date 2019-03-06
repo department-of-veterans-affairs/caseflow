@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Task do
   describe ".when_child_task_completed" do
     context "when on_hold task is assigned to a person" do

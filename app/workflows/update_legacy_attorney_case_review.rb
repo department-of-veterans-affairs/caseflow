@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UpdateLegacyAttorneyCaseReview
   include ActiveModel::Model
 

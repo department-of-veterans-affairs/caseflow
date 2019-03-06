@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe UsersController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let!(:staff) { create(:staff, :attorney_judge_role, user: user) }

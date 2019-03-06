@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RemandReasonRepository
   def self.create_remand_reasons!(vacols_id, vacols_sequence_id, remand_reasons)
     BusinessMetrics.record(service: :queue, name: "create_remand_reasons")

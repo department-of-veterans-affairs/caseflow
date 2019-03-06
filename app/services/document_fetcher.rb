@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DocumentFetcher
   include ActiveModel::Model
 

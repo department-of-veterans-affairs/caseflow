@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Reader::ClaimsFolderSearchesController < Reader::ApplicationController
   def create
     ClaimsFolderSearch.create(

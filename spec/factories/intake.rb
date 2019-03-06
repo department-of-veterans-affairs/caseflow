@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :intake do
     veteran_file_number { create(:veteran).file_number }

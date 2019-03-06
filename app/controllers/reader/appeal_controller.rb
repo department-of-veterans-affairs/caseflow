@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Reader::AppealController < Reader::ApplicationController
   def index
     redirect_to "/queue"

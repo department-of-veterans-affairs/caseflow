@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EndProduct
   include ActiveModel::Model
   include ActiveModel::Validations
@@ -81,7 +83,7 @@ class EndProduct
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  DEFAULT_PAYEE_CODE = "00".freeze
+  DEFAULT_PAYEE_CODE = "00"
 
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter, :payee_code,

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job will call establish! on a DecisionReview
 # or anything that acts like a DecisionReview
 class DecisionReviewProcessJob < CaseflowJob

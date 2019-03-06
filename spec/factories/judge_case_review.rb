@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :judge_case_review do
     location { JudgeCaseReview.location.keys.sample }

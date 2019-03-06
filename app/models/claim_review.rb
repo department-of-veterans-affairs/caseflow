@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A claim review is a short hand term to refer to either a supplemental claim or
 # higher level review as defined in the Appeals Modernization Act of 2017
 

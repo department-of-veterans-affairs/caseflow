@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AmaDocumentIdPolicy
   def initialize(user:, case_review:)
     @user = user

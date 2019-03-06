@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LegacyWorkQueue
   include ActiveModel::Model
   class << self

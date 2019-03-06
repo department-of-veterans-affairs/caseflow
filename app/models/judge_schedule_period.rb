@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class JudgeSchedulePeriod < SchedulePeriod
   validate :validate_spreadsheet, on: :create
   after_create :import_spreadsheet

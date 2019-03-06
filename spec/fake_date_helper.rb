@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module FakeDateHelper
   # rubocop:disable Metrics/CyclomaticComplexity
   def get_unique_dates_between(start_date, end_date, num_of_dates,

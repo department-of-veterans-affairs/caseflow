@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FullName
   attr_accessor :first_name, :middle_initial, :last_name
 

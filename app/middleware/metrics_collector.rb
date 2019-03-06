@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Simple middleware that collects gauge metrics whenever
 # a GET /metrics request is made. This ensures we regularly
 # get a snapshot of instance information

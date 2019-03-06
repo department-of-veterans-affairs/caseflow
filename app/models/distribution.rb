@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Distribution < ApplicationRecord
   include ActiveModel::Serializers::JSON
   include LegacyCaseDistribution
@@ -72,7 +74,7 @@ class Distribution < ApplicationRecord
   end
 
   def validate_days_waiting_of_unassigned_cases
-    errors.add(:judge, :unassigned_cases_waiting_too_long) if judge_cases_waiting_longer_than_two_weeks
+    errors.add(:judge, :unassigned_cases_waiting_too_long) if judge_cases_waiting_longer_than_thirty_days
   end
 
   def validate_judge_has_no_pending_distributions
@@ -95,16 +97,16 @@ class Distribution < ApplicationRecord
     judge_tasks.length + judge_legacy_tasks.length <= 8
   end
 
-  def judge_cases_waiting_longer_than_two_weeks
-    return true if judge_tasks.any? { |task| longer_than_two_weeks_ago(task.assigned_at) }
+  def judge_cases_waiting_longer_than_thirty_days
+    return true if judge_tasks.any? { |task| longer_than_thirty_days_ago(task.assigned_at) }
 
-    judge_legacy_tasks.any? { |task| longer_than_two_weeks_ago(task.assigned_to_location_date.try(:to_date)) }
+    judge_legacy_tasks.any? { |task| longer_than_thirty_days_ago(task.assigned_to_location_date.try(:to_date)) }
   end
 
-  def longer_than_two_weeks_ago(date)
+  def longer_than_thirty_days_ago(date)
     return false if date.nil?
 
-    date.beginning_of_day < 14.days.ago.beginning_of_day
+    date.beginning_of_day < 30.days.ago.beginning_of_day
   end
 
   def assigned_tasks

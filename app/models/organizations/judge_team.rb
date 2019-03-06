@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class JudgeTeam < Organization
   def self.for_judge(user)
     user.administered_teams.detect { |team| team.is_a?(JudgeTeam) }
