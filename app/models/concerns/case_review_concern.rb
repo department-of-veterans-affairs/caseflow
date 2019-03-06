@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module CaseReviewConcern
   extend ActiveSupport::Concern
 

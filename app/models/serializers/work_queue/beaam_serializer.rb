@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::BeaamSerializer < ActiveModel::Serializer
   attribute :previous_task do
     {

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe TeamManagementController, type: :controller do
   let(:user) { FactoryBot.create(:user) }
 

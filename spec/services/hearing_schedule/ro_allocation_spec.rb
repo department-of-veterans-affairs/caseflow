@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingSchedule::RoAllocation do
   let(:ro_allocation) do
     Class.new { include HearingSchedule::RoAllocation }

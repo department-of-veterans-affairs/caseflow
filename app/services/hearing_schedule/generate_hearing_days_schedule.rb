@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # GenerateHearingDaysSchedule is used to generate the dates available for RO
 # video hearings in a specified date range after filtering out weekends,
 # holidays, and board non-availability dates

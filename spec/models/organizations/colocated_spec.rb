@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Colocated do
   let(:colocated_org) { Colocated.singleton }
   let(:appeal) { nil }

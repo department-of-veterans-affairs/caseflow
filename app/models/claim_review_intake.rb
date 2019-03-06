@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ClaimReviewIntake < DecisionReviewIntake
   attr_reader :request_params
 

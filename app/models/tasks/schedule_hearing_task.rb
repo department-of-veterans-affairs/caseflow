@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task to schedule a hearing for a veteran making a claim.
 # Created by the intake process for any appeal electing to have a hearing.

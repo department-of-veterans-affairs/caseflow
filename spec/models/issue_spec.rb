@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Issue do
   let(:vacols_id) { "12345678" }
   let(:disposition) { :allowed }

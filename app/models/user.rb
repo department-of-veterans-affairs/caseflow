@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
@@ -9,7 +11,7 @@ class User < ApplicationRecord
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
 
-  BOARD_STATION_ID = "101".freeze
+  BOARD_STATION_ID = "101"
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office

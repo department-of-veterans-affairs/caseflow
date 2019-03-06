@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def complete_params(judge:, attorney:, location:, vacols_issue1:, vacols_issue2:)
   {
     location: location,

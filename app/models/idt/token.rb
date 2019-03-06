@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 class Idt::Token
-  VALID_TOKENS_KEY = "valid_tokens_key".freeze
-  ONE_TIME_KEYS_KEY = "one_time_keys_key".freeze
+  VALID_TOKENS_KEY = "valid_tokens_key"
+  ONE_TIME_KEYS_KEY = "one_time_keys_key"
   # 7 day validity window.
   TOKEN_VALIDITY_IN_SECONDS = 60 * 60 * 24 * 7
 

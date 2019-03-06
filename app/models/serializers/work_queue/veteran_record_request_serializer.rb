@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::VeteranRecordRequestSerializer < ActiveModel::Serializer
   def task
     object

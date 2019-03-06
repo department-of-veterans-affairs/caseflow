@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe RegionalOfficesController, type: :controller do
   let!(:user) { User.authenticate! }
 

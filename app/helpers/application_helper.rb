@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module ApplicationHelper
   def current_ga_path
     full_path = request.env["PATH_INFO"]

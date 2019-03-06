@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Extends a Hash where the values are intended to represent parts of a whole.
 #
 # {

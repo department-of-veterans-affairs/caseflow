@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe NewDocumentsForUser do
   let(:appeal) { Generators::LegacyAppeal.build }
   let(:user) { create(:user) }

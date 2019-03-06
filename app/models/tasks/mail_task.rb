@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task to track when the mail team receives any appeal-related mail from an appellant.
 # Mail is processed by a mail team member, and then a corresponding task is then assigned to an organization.

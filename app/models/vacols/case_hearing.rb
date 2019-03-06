@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VACOLS::CaseHearing < VACOLS::Record
   self.table_name = "vacols.hearsched"
   self.primary_key = "hearing_pkseq"

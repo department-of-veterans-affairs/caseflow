@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Class to coordinate interactions between controller
 # and repository class. Eventually may persist data to
 # Caseflow DB. For now all schedule data is sent to the
