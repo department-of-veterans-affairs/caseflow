@@ -9,6 +9,7 @@ class DispositionTask < GenericTask
   before_create :check_parent_type
 
   class HearingDispositionNotCanceled < StandardError; end
+  class HearingDispositionNotNoShow < StandardError; end
 
   class << self
     def create_disposition_task!(appeal, parent, hearing)
@@ -50,5 +51,22 @@ class DispositionTask < GenericTask
     else
       RootTask.create_ihp_tasks!(appeal, parent)
     end
+  end
+
+  def mark_no_show!
+    if parent&.hearing_task_association&.hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
+      fail HearingDispositionNotNoShow
+    end
+
+    no_show_hearing_task = NoShowHearingTask.create!(
+      parent: self,
+      appeal: appeal,
+      assigned_to: HearingAdmin.singleton
+    )
+
+    no_show_hearing_task.update!(
+      status: Constants.TASK_STATUSES.on_hold,
+      on_hold_duration: 25.days
+    )
   end
 end
