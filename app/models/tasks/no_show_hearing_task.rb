@@ -6,8 +6,10 @@ class NoShowHearingTask < GenericTask
   before_validation :set_assignee
 
   def reschedule_hearing
-    update!(status: Constants.TASK_STATUSES.completed)
-    RootTask.create_hearing_schedule_task!(appeal, root_task)
+    multi_transaction do
+      update!(status: Constants.TASK_STATUSES.completed)
+      RootTask.create_hearing_schedule_task!(appeal, root_task)
+    end
   end
 
   private

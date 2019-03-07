@@ -20,18 +20,33 @@ describe NoShowHearingTask do
       FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
     end
 
-    it "closes existing tasks and creates new HearingTask and ScheduleHearingTask" do
-      expect { no_show_hearing_task.reschedule_hearing }.to_not raise_error
+    context "when all operations succeed" do
+      it "closes existing tasks and creates new HearingTask and ScheduleHearingTask" do
+        expect { no_show_hearing_task.reschedule_hearing }.to_not raise_error
 
-      expect(parent_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
-      expect(disposition_task.status).to eq(Constants.TASK_STATUSES.completed)
-      expect(no_show_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(parent_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(disposition_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(no_show_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
 
-      expect(root_task.children.count).to eq(2)
-      expect(root_task.children.active.count).to eq(1)
+        expect(root_task.children.count).to eq(2)
+        expect(root_task.children.active.count).to eq(1)
 
-      expect(root_task.children.active.first.type).to eq(HearingTask.name)
-      expect(root_task.children.active.first.children.first.type).to eq(ScheduleHearingTask.name)
+        expect(root_task.children.active.first.type).to eq(HearingTask.name)
+        expect(root_task.children.active.first.children.first.type).to eq(ScheduleHearingTask.name)
+      end
+    end
+
+    context "when an operation fails" do
+      before { allow(RootTask).to receive(:create_hearing_schedule_task!).and_raise(StandardError) }
+      it "does not commit any changes to the database" do
+        expect { no_show_hearing_task.reschedule_hearing }.to raise_error
+
+        expect(parent_hearing_task.reload.active?).to eq(true)
+        expect(disposition_task.reload.active?).to eq(true)
+        expect(no_show_hearing_task.reload.active?).to eq(true)
+
+        expect(root_task.children.count).to eq(1)
+      end
     end
   end
 end
