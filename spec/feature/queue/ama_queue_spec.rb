@@ -8,7 +8,6 @@ RSpec.feature "AmaQueue" do
   end
   context "user with case details role " do
     let(:no_queue_user) { FactoryBot.create(:user, roles: ["Case Details"]) }
-    end
     it "should not be able to access queue" do
       step "case details role tries to access queue" do
         User.authenticate!(user: no_queue_user)
