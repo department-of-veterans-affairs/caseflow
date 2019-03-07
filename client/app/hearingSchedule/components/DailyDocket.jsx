@@ -15,6 +15,7 @@ import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import Modal from '../../components/Modal';
+import DispositionModal from './DailyDocketDispositionModal';
 import StatusMessage from '../../components/StatusMessage';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, formatDateStr } from '../../util/DateUtil';
@@ -80,6 +81,16 @@ const notesTitleStyling = css({
 });
 
 export default class DailyDocket extends React.Component {
+
+  constructor (props) {
+    super(props);
+
+    this.state = {
+      editedDispositionModalProps: null
+    };
+  }
+
+  closeEditedDispositionModal = () => this.setState({ editedDispositionModalProps: null });
 
   onHearingNotesUpdate = (hearingId) => (notes) => this.props.onHearingNotesUpdate(hearingId, notes);
 
@@ -173,8 +184,17 @@ export default class DailyDocket extends React.Component {
       onChange={(option) => {
         if (option === 'postponed') {
           this.cancelHearingUpdate(hearing)();
+          this.setState({ editedDispositionModalProps: {
+            hearing,
+            disposition: option,
+            onCancel: this.closeEditedDispositionModal,
+            onConfirm: () => {
+              this.onHearingDispositionUpdate(hearing.id)(option);
+              this.validateAndSaveHearing(hearing)();
+              this.closeEditedDispositionModal();
+            }
+          } });
         }
-        this.onHearingDispositionUpdate(hearing.id)(option);
       }}
       readOnly={readOnly || !_.isUndefined(hearing.editedDate)}
     />;
@@ -288,11 +308,6 @@ export default class DailyDocket extends React.Component {
 
   validateAndSaveHearing = (hearing) => {
     return () => {
-      if (hearing.editedDisposition === 'postponed' &&
-        (!hearing.editedDate ||
-          formatDateStr(hearing.editedDate.scheduledFor) === formatDateStr(hearing.scheduledFor))) {
-        return this.onInvalidForm(hearing.id)({ hearingDate: 'Please select a new hearing date.' });
-      }
 
       this.saveHearing(hearing)();
       this.onInvalidForm(hearing.id)({
@@ -428,7 +443,10 @@ export default class DailyDocket extends React.Component {
       'but you can edit existing entries' : 'You can now add more veterans to this hearing day';
 
     return <AppSegment filledBackground>
-      {this.props.displayRemoveHearingDayModal && <div>
+      {this.props.editedDispositionModalProps &&
+        <DispositionModal
+          {...this.props.editedDispositionModalProps} />
+      }{this.props.displayRemoveHearingDayModal && <div>
         <Modal
           title="Remove Hearing Day"
           closeHandler={this.props.onCancelRemoveHearingDay}
