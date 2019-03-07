@@ -161,6 +161,11 @@ export default class AssignHearingsTabs extends React.Component {
     /* Select first entry which should be shortest distance. */
     const location = sortedLocations[0];
 
+    return this.formatSuggestedHearingLocation(location);
+
+  };
+
+  formatSuggestedHearingLocation = (location) => {
     if (!location) {
       return '';
     }
@@ -171,7 +176,7 @@ export default class AssignHearingsTabs extends React.Component {
       <div>{`${city}, ${state} ${getFacilityType(location)}`}</div>
       <div>{`Distance: ${distance} miles away`}</div>
     </span>;
-  };
+  }
 
   availableVeteransRows = (appeals, { tab }) => {
     const filteredBy = this.state[tab].filteredBy;
@@ -245,7 +250,7 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: hearing.aod
       }),
       docketNumber: this.getHearingDocketTag(hearing),
-      suggestedLocation: this.getSuggestedHearingLocation(hearing.location),
+      suggestedLocation: this.formatSuggestedHearingLocation(hearing.location),
       time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
     }));
   };
