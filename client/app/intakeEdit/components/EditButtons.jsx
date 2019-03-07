@@ -90,9 +90,10 @@ class SaveButtonUnconnected extends React.Component {
     } = this.props;
 
     let disableDueToIssueCount = false;
+
     if (issueCount === 0 && !removeDecisionReviews) {
       disableDueToIssueCount = true;
-    } 
+    }
 
     const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount;
 
