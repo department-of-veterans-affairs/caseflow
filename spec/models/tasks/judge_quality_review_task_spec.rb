@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe JudgeQualityReviewTask do
   let(:judge) { FactoryBot.create(:user) }
   let(:judge_task) { FactoryBot.create(:ama_judge_task, parent: FactoryBot.create(:root_task), assigned_to: judge) }
