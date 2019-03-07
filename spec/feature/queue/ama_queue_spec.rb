@@ -571,7 +571,12 @@ RSpec.feature "AmaQueue" do
         number_of_claimants: 1,
         request_issues: [
           FactoryBot.create(:request_issue, contested_issue_description: "Tinnitus", notes: "Tinnitus note"),
-          FactoryBot.create(:request_issue, contested_issue_description: "Knee pain", notes: "Knee pain note")
+          FactoryBot.create(
+            :request_issue,
+            contested_issue_description: "Knee pain",
+            notes: "Knee pain note",
+            contested_rating_issue_diagnostic_code: nil
+          )
         ]
       )
     end
@@ -639,6 +644,7 @@ RSpec.feature "AmaQueue" do
         # Add a second decision issue
         all("button", text: "+ Add decision", count: 2)[1].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+        expect(page.find(".dropdown-Diagnostic.code")).to have_content("Diagnostic code")
 
         fill_in "Text Box", with: "test"
 
@@ -646,6 +652,7 @@ RSpec.feature "AmaQueue" do
         find("div", class: "Select-option", text: "Remanded").click
 
         click_on "Save"
+        expect(page).not_to have_content("This field is required")
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
