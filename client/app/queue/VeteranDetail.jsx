@@ -1,7 +1,6 @@
 import React from 'react';
 import { css } from 'glamor';
 import _ from 'lodash';
-import { sprintf } from 'sprintf-js';
 
 import BareList from '../components/BareList';
 import Address from './components/Address';
@@ -90,18 +89,12 @@ export class VeteranDetail extends React.PureComponent {
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
 
-  getDataSourceInfo = (legacyDataSource, amaDataSource) => {
-
-    return <p><em>{
-      sprintf(COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE,
-        this.props.isLegacyAppeal ? legacyDataSource : amaDataSource)}
+  getDataSourceInfo = () => {
+    return <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}
     </em></p>;
   }
 
   render = () => {
-    const legacyDataSource = 'VACOLS';
-    const amaDataSource = 'BGS';
-
     if (!this.props.veteranInfo) {
       if (this.props.loading) {
         return <React.Fragment>{COPY.CASE_DETAILS_LOADING}</React.Fragment>;
@@ -117,7 +110,7 @@ export class VeteranDetail extends React.PureComponent {
 
     return <ul {...detailListStyling}>
       {this.getDetails()}
-      {this.getDataSourceInfo(legacyDataSource, amaDataSource)}
+      {this.getDataSourceInfo()}
     </ul>;
   };
 }
@@ -128,7 +121,6 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     veteranInfo: appeal.veteranInfo,
-    isLegacyAppeal: appeal.isLegacyAppeal,
     loading: loadingVeteranInfo ? loadingVeteranInfo.loading : null,
     error: loadingVeteranInfo ? loadingVeteranInfo.error : null
   };
