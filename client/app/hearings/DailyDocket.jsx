@@ -21,8 +21,6 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { DISPOSITION_OPTIONS } from './constants/constants';
-import Button from '../components/Button';
-import Alert from '../components/Alert';
 import Checkbox from '../components/Checkbox';
 import ViewableItemLink from '../components/ViewableItemLink';
 import Textarea from 'react-textarea-autosize';
@@ -84,10 +82,6 @@ const issueCountStyling = css({
   display: 'block',
   paddingTop: '5px',
   paddingBottom: '5px'
-});
-
-const alertStyling = css({
-  marginBottom: '30px'
 });
 
 const holdOption = (days, hearingDate) => ({
@@ -311,21 +305,7 @@ export class DailyDocket extends React.PureComponent {
       {hearing.appeal_representative_name ? hearing.appeal_representative_name : hearing.representative}<br />
       {hearing.representative_name}
     </span>;
-  };
-
-  getSaveButton = (hearing) => {
-    return hearing.edited ? <div {...css({
-      content: ' ',
-      clear: 'both',
-      display: 'block'
-    })}>
-      <Button
-        styling={css({ float: 'right' })}
-        onClick={this.props.saveHearing(hearing)}>
-        Save
-      </Button>
-    </div> : null;
-  };
+  }
 
   getDailyDocketRow = (hearing, count) => {
     return [{
@@ -346,7 +326,7 @@ export class DailyDocket extends React.PureComponent {
       representative: null,
       disposition: this.getTranscriptRequested(hearing),
       hearingHoldOpen: null,
-      aod: this.getSaveButton(hearing)
+      aod: null
     }];
   };
 
@@ -418,18 +398,6 @@ export class DailyDocket extends React.PureComponent {
 
     return <div>
       <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
-        { this.props.saveHearingSuccess && <Alert
-          type="success"
-          styling={alertStyling}
-          title="You have successfully updated this hearing."
-        />
-        }
-        { this.props.saveHearingError && <Alert
-          type="error"
-          styling={alertStyling}
-          title=" This save was unsuccessful."
-          message="Please refresh the page and try again." />}
-
         <div className="cf-title-meta-right">
           <div className="title cf-hearings-title-and-judge">
             <h1>Daily Docket ({moment(this.props.date).format('ddd l')})</h1>
