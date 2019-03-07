@@ -12,7 +12,7 @@
     applicationUrls: application_urls,
     feedbackUrl: feedback_url,
     buildDate: build_date,
-    roles: current_user.roles.concat(["Case Details"]),
+    roles: current_user.roles,
     featureToggles: {
       judge_case_review_checkout: FeatureToggle.enabled?(:judge_case_review_checkout, user: current_user),
       automatic_case_distribution: FeatureToggle.enabled?(:automatic_case_distribution, user: current_user),
