@@ -16,8 +16,11 @@ class QueueController < ApplicationController
     render "out_of_service", layout: "application" if Rails.cache.read("queue_out_of_service")
   end
 
+  # TODO: add tests
   def verify_access
-    if (request.original_url.include? "queue") && (current_user.roles.include? "Case Details")
+    restricted_roles = ["Case Details"]
+    current_user_has_restricted_role = !(restricted_roles & current_user.roles).empty?
+    if current_user_has_restricted_role
       Rails.logger.info("redirecting user with case details from queue to search")
       session["return_to"] = request.original_url
       redirect_to "/search"
