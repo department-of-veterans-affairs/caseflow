@@ -74,10 +74,6 @@ class Hearing < ApplicationRecord
     false
   end
 
-  def hearing_task?
-    true
-  end
-
   def disposition_task
     hearing_task_association.hearing_task.children.detect { |child| child.type == DispositionTask.name }
   end
