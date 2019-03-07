@@ -90,8 +90,7 @@ export class VeteranDetail extends React.PureComponent {
   };
 
   getDataSourceInfo = () => {
-    return <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}
-    </em></p>;
+    return <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>;
   }
 
   render = () => {
