@@ -154,6 +154,7 @@ export class CaseTitleDetails extends React.PureComponent {
       </React.Fragment>
 
       { !userIsVsoEmployee &&
+      !this.props.roles.includes('Case Details') &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
           <div>

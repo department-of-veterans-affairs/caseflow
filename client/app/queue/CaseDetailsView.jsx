@@ -82,7 +82,7 @@ class CaseDetailsView extends React.PureComponent {
       </Alert></div>}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
-        <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} />
+        <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} roles={this.props.roles} />
         { this.props.veteranCaseListIsVisible &&
           <VeteranCasesView
             caseflowVeteranId={appeal.caseflowVeteranId}
@@ -116,7 +116,8 @@ class CaseDetailsView extends React.PureComponent {
 }
 
 CaseDetailsView.propTypes = {
-  appealId: PropTypes.string.isRequired
+  appealId: PropTypes.string.isRequired,
+  roles: PropTypes.array
 };
 
 const mapStateToProps = (state, ownProps) => {
