@@ -60,25 +60,63 @@ describe DispositionTask do
 
     subject { disposition_task.cancel! }
 
-    context "the task's hearing's disposition is cancelled" do
-      let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+    context "the appeal is an AMA appeal" do
+      context "the task's hearing's disposition is cancelled" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
 
-      it "cancels the disposition task" do
-        expect(disposition_task.cancelled?).to be_falsey
-        expect(hearing_task.on_hold?).to be_truthy
-        expect { subject }.to_not raise_error
-        expect(disposition_task.cancelled?).to be_truthy
-        expect(hearing_task.cancelled?).to be_truthy
+        it "cancels the disposition task" do
+          expect(disposition_task.cancelled?).to be_falsey
+          expect(hearing_task.on_hold?).to be_truthy
+
+          expect { subject }.to_not raise_error
+
+          expect(disposition_task.cancelled?).to be_truthy
+          expect(hearing_task.cancelled?).to be_truthy
+          expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
+        end
+
+        context "the appeal has a VSO" do
+          let(:participant_id_with_pva) { "000000" }
+          let!(:appeal) do
+            create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_pva)])
+          end
+
+          before do
+            Vso.create(
+              name: "Paralyzed Veterans Of America",
+              role: "VSO",
+              url: "paralyzed-veterans-of-america",
+              participant_id: "2452383"
+            )
+
+            allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+              .with([participant_id_with_pva]).and_return(
+                participant_id_with_pva => {
+                  representative_name: "PARALYZED VETERANS OF AMERICA, INC.",
+                  representative_type: "POA National Organization",
+                  participant_id: "2452383"
+                }
+              )
+          end
+
+          it "creates an IHP task" do
+            expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
+
+            subject
+
+            expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 1
+          end
+        end
       end
-    end
 
-    context "the task's hearing's disposition is not cancelled" do
-      let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+      context "the task's hearing's disposition is not cancelled" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
 
-      it "raises an error" do
-        expect(disposition_task.cancelled?).to be_falsey
-        expect { subject }.to raise_error(DispositionTask::HearingDispositionNotCanceled)
-        expect(disposition_task.cancelled?).to be_falsey
+        it "raises an error" do
+          expect(disposition_task.cancelled?).to be_falsey
+          expect { subject }.to raise_error(DispositionTask::HearingDispositionNotCanceled)
+          expect(disposition_task.cancelled?).to be_falsey
+        end
       end
     end
 
@@ -124,10 +162,6 @@ describe DispositionTask do
           expect(vacols_case.bfhr).to eq("5")
         end
       end
-    end
-
-    context "the appeal is an AMA appeal" do
-      # an IHP task is created
     end
   end
 end
