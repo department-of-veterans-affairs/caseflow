@@ -6,7 +6,19 @@ RSpec.feature "AmaQueue" do
   def valid_document_id
     "12345-12345678"
   end
-
+  context "user with case details role " do
+    let(:no_queue_user) { FactoryBot.create(:user, roles: ["Case Details"]) }
+    let!(:attorney_user) do
+      FactoryBot.create(:user, roles: ["Reader"])
+    end
+    it "should not be able to access queue" do
+      step "case details role tries to access queue" do
+        User.authenticate!(user: no_queue_user)
+        visit "/queue"
+        expect(page).to_not have_content("Queue")
+      end
+    end
+  end
   context "loads appellant detail view" do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
