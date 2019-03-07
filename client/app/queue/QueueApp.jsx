@@ -425,7 +425,6 @@ class QueueApp extends React.PureComponent {
         buildDate={this.props.buildDate} />
     </NavigationBar>
   </BrowserRouter>;
-
 }
 
 QueueApp.propTypes = {
