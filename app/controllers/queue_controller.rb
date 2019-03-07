@@ -17,7 +17,6 @@ class QueueController < ApplicationController
   end
 
   def verify_access
-    # verify_authorized_roles("Case Details")
     current_user.roles = current_user.roles.concat(["Case Details"])
     if (request.original_url.include? "queue") && (current_user.roles.include? "Case Details")
       Rails.logger.info("redirecting user with case details from queue to search")
@@ -25,5 +24,5 @@ class QueueController < ApplicationController
       redirect_to "/search"
     end
     nil
- end
+  end
 end

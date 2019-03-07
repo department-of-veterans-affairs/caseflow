@@ -174,6 +174,8 @@ class ApplicationController < ApplicationBaseController
     # :nocov:
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def case_search_home_page
     if feature_enabled?(:case_search_home_page)
       return false if current_user.admin?
@@ -186,6 +188,8 @@ class ApplicationController < ApplicationBaseController
     false
   end
   helper_method :case_search_home_page
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def deny_vso_access
     redirect_to "/unauthorized" if current_user&.vso_employee?

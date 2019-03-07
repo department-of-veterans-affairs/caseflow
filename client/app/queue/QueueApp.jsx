@@ -358,7 +358,8 @@ class QueueApp extends React.PureComponent {
               render={this.routedSelectDispositions} />
             <PageRoute
               exact
-              path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
+              path=
+                "/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
               title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
               render={this.routedSelectSpecialIssues} />
             <PageRoute
