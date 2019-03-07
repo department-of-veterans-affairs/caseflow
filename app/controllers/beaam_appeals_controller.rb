@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BeaamAppealsController < ApplicationController
   before_action :verify_beaam_access
 

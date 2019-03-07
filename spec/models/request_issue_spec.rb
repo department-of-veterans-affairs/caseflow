@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe RequestIssue do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -1280,6 +1282,11 @@ describe RequestIssue do
             claim_id: end_product_establishment.reference_id,
             disposition: "allowed"
           )
+        end
+
+        before do
+          # mimic what BGS will do when syncing a nonrating request issue
+          allow(Rating).to receive(:fetch_in_range).and_raise(Rating::NilRatingProfileListError)
         end
 
         it "creates decision issues based on contention disposition" do

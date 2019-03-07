@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe IssueRepository do
   context ".perform_actions_if_disposition_changes" do
     subject { IssueRepository.perform_actions_if_disposition_changes(record, issue_attrs) }

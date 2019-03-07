@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UnpreparedDenialsReport < Report
   def self.output_filename
     "unprepared_denials"
@@ -46,7 +48,7 @@ class UnpreparedDenialsReport < Report
       group by ISSKEY
     )
     on ISSKEY = BFKEY
-  ".freeze
+  "
 
   def find_records
     VACOLS::Case.joins(:folder, :correspondent, JOIN_ISSUE_COUNT).where(%{

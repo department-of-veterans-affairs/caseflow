@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge

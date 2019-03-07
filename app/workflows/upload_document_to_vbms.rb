@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class UploadDocumentToVbms
-  S3_SUB_BUCKET = "idt-uploaded-documents".freeze
+  S3_SUB_BUCKET = "idt-uploaded-documents"
 
   delegate :document_type, to: :document
 

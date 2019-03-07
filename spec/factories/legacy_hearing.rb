@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :legacy_hearing do
     scheduled_for { Time.zone.today }

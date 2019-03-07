@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DocketTracer < ApplicationRecord
   belongs_to :docket_snapshot
 

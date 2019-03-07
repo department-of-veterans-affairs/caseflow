@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DecisionReviewsController, type: :controller do
   before do
     FeatureToggle.enable!(:decision_reviews)

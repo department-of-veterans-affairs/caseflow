@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Person < ApplicationRecord
   has_many :advance_on_docket_motions
   has_many :claimants, primary_key: :participant_id, foreign_key: :participant_id

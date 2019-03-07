@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TeamManagementController < ApplicationController
   before_action :deny_non_bva_admins
 

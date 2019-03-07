@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ColocatedTaskDistributor < RoundRobinTaskDistributor
   def initialize(assignee_pool: Colocated.singleton.non_admins.sort_by(&:id),
                  task_class: Task)

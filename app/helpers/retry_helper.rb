@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RetryHelper
   def retry_when(error_klass, limit: 3, &_block)
     retry_count ||= 0

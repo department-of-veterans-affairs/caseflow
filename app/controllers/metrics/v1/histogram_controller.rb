@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Metrics::V1::HistogramController < ApplicationController
   def create
     histograms.each do |metric|

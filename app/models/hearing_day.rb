@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Class to coordinate interactions between controller
 # and repository class. Eventually may persist data to
 # Caseflow DB. For now all schedule data is sent to the
@@ -65,7 +67,7 @@ class HearingDay < ApplicationRecord
   end
 
   def open_hearings
-    hearings.reject { |hearing| [:postponed, :cancelled].include?(hearing.disposition) }
+    hearings.reject { |hearing| %w[postponed cancelled].include?(hearing.disposition) }
   end
 
   def to_hash
@@ -169,7 +171,7 @@ class HearingDay < ApplicationRecord
     def filter_non_scheduled_hearings(hearings)
       hearings.select do |hearing|
         if hearing.is_a?(Hearing)
-          ![:postponed, :canceled].include?(hearing.disposition)
+          !%w[postponed cancelled].include?(hearing.disposition)
         else
           hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
         end

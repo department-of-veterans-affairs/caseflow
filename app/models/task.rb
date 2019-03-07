@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Base model for all tasks in Caseflow.
 # Tasks represent work to be done by judges, attorneys, VSOs, and anyone else who touches a Veteran's appeal.

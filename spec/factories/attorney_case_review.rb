@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :attorney_case_review do
     task_id { "123456-2017-08-07" }

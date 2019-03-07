@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Hash do
   context "#find_all_values_for" do
     let(:nested_hash) do

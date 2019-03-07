@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VACOLS::RemandReason < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.rmdrea"

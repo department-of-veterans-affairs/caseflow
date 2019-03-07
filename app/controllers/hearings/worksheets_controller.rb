@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::WorksheetsController < HearingsController
   rescue_from ActiveRecord::RecordNotFound do |e|
     Rails.logger.debug "Worksheets Controller failed: #{e.message}"

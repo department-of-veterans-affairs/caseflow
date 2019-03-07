@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DispatchStats < Caseflow::Stats
   # since this is a heavy calculation, only run this at most once an hour
   THROTTLE_RECALCULATION_PERIOD = 1.hour

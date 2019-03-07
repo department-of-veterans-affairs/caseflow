@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :decision_issue do
     sequence(:participant_id, 500_000_000)

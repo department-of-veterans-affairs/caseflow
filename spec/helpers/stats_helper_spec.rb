@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe StatsHelper, type: :helper do
   describe "#format_time_duration_stat" do
     it "returns ?? when seconds is undefined" do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::LegacyIssueSerializer < ActiveModel::Serializer
   attribute :levels
   attribute(:program) { object.codes[0] }

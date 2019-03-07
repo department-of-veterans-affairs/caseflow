@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BusinessMetrics
   def self.record(service: nil, name: "unknown")
     app_name = RequestStore[:application] || "other"

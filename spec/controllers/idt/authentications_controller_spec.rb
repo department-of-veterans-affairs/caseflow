@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Idt::AuthenticationsController, type: :controller do
   describe "GET /idt/auth" do
     let(:one_time_key) do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDay do
   context "#create" do
     let(:hearing) do
@@ -134,7 +136,7 @@ describe HearingDay do
 
       before do
         6.times do
-          create(:hearing, hearing_day: hearing_day, disposition: :postponed)
+          create(:hearing, hearing_day: hearing_day, disposition: "postponed")
           create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
         end
       end
