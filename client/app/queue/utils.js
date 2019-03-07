@@ -528,3 +528,9 @@ export const nullToFalse = (key, obj) => {
 
   return obj;
 };
+
+export const hasRestrictedQueueRole = (roles) => {
+  const restrictedRoles = ['Case Details'];
+
+  return _.intersection(restrictedRoles, roles).length > 0;
+};

@@ -17,7 +17,7 @@ import { pencilSymbol } from '../components/RenderFunctions';
 
 import COPY from '../../COPY.json';
 import { COLORS } from '../constants/AppConstants';
-import { renderLegacyAppealType } from './utils';
+import { renderLegacyAppealType, hasRestrictedQueueRole } from './utils';
 
 import {
   requestPatch
@@ -154,7 +154,7 @@ export class CaseTitleDetails extends React.PureComponent {
       </React.Fragment>
 
       { !userIsVsoEmployee &&
-      !this.props.roles.includes('Case Details') &&
+      !hasRestrictedQueueRole(this.props.roles) &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
           <div>

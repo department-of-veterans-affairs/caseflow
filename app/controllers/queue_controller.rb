@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 class QueueController < ApplicationController
-  before_action :react_routed, :check_queue_out_of_service
-  # TODO: uncomment
-  # , :verify_access
+  before_action :react_routed, :check_queue_out_of_service, :verify_access
   skip_before_action :deny_vso_access
 
   def set_application
@@ -19,6 +17,13 @@ class QueueController < ApplicationController
   end
 
   def verify_access
-    verify_authorized_roles("Case Details")
+    # verify_authorized_roles("Case Details")
+    current_user.roles = current_user.roles.concat(["Case Details"])
+    if (request.original_url.include? "queue") && (current_user.roles.include? "Case Details")
+      Rails.logger.info("redirecting user with case details from queue to search")
+      session["return_to"] = request.original_url
+      redirect_to "/search"
+    end
+    nil
  end
 end
