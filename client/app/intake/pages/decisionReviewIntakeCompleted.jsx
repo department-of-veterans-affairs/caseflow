@@ -5,7 +5,6 @@ import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, FORM_TYPES, INTAKE_STATES } from '../constants';
 import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
 import { getIntakeStatus } from '../selectors';
-import _ from 'lodash';
 import Alert from '../../components/Alert';
 import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';

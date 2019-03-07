@@ -31,13 +31,13 @@ export class AddIssuesPage extends React.Component {
     super(props);
 
     this.state = {
-      originalIssueIds: (this.props.intakeForms[formName].addedIssues || []).map((issue) => issue.id),
+      originalIssueLength: (this.props.intakeForms[this.props.formType].addedIssues || []).length,
       issueRemoveIndex: 0
     };
   }
 
   haveIssuesChanged = (currentIssues) => {
-    if (currentIssues.length !== this.state.originalIssueIds.length) {
+    if (currentIssues.length !== this.state.originalIssueLength) {
       return true;
     }
 

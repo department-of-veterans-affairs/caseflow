@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
-import _ from 'lodash';
 
 import { PAGE_PATHS, REQUEST_STATE } from '../constants';
 import RampElectionPage from './rampElection/review';
