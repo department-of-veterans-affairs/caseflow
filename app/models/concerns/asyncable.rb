@@ -137,6 +137,8 @@ module Asyncable
   end
 
   def expired?
+    return false if processed?
+
     last_submitted = self[self.class.last_submitted_at_column]
     return false unless last_submitted
 
