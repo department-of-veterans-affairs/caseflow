@@ -61,7 +61,7 @@ describe DispositionTask do
     subject { disposition_task.cancel! }
 
     context "the appeal is an AMA appeal" do
-      context "the task's hearing's disposition is cancelled" do
+      context "the task's hearing's disposition is canceled" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
 
         it "cancels the disposition task" do
@@ -109,7 +109,7 @@ describe DispositionTask do
         end
       end
 
-      context "the task's hearing's disposition is not cancelled" do
+      context "the task's hearing's disposition is not canceled" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
 
         it "raises an error" do
@@ -131,8 +131,6 @@ describe DispositionTask do
           subject
 
           expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
-          expect(vacols_case.bfha).to eq("5")
-          expect(vacols_case.bfhr).to eq("5")
         end
       end
 
@@ -158,8 +156,6 @@ describe DispositionTask do
           subject
 
           expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:service_organization])
-          expect(vacols_case.bfha).to eq("5")
-          expect(vacols_case.bfhr).to eq("5")
         end
       end
     end

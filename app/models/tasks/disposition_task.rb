@@ -46,7 +46,6 @@ class DispositionTask < GenericTask
                    LegacyAppeal::LOCATION_CODES[:service_organization]
                  end
 
-      AppealRepository.withdraw_hearing!(appeal)
       AppealRepository.update_location!(appeal, location)
     else
       RootTask.create_ihp_tasks!(appeal, parent)
