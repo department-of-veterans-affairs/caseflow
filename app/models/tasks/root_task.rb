@@ -70,15 +70,7 @@ class RootTask < GenericTask
     end
 
     def create_hearing_schedule_task!(appeal, parent)
-      hearing_task = HearingTask.create!(
-        appeal: appeal,
-        parent: parent
-      )
-
-      ScheduleHearingTask.create!(
-        appeal: appeal,
-        parent: hearing_task
-      )
+      ScheduleHearingTask.create!(appeal: appeal, parent: parent)
     end
 
     # TODO: make this private again after RAMPs are refilled
