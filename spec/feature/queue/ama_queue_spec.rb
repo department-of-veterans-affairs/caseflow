@@ -13,6 +13,7 @@ RSpec.feature "AmaQueue" do
         User.authenticate!(user: no_queue_user)
         visit "/queue"
         expect(page).to_not have_content("Queue")
+        expect(current_path).to eq "/search"
       end
     end
   end
