@@ -162,7 +162,7 @@ class SelectDispositionsView extends React.PureComponent {
     const { decisionIssue } = this.state;
 
     return decisionIssue.benefit_type && decisionIssue.disposition &&
-      decisionIssue.description && decisionIssue.diagnostic_code;
+      decisionIssue.description;
   }
 
   saveDecision = () => {
@@ -345,7 +345,6 @@ class SelectDispositionsView extends React.PureComponent {
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}</h3>
         <SearchableDropdown
-          errorMessage={highlightModal && !decisionIssue.diagnostic_code ? 'This field is required' : null}
           name="Diagnostic code"
           placeholder={COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}
           hideLabel

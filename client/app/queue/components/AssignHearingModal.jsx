@@ -76,7 +76,8 @@ class AssignHearingModal extends React.PureComponent {
     }
 
     if (appeal.availableHearingLocations) {
-      const location = appeal.availableHearingLocations[0];
+      const sortedLocations = _.orderBy(appeal.availableHearingLocations, ['distance'], ['asc']);
+      const location = sortedLocations[0];
 
       if (location) {
         this.props.onHearingLocationChange({
