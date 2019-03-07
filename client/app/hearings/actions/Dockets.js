@@ -90,10 +90,6 @@ export const resetSaveHearingSuccess = () => ({
   type: Constants.RESET_SAVE_HEARING_SUCCESS
 });
 
-export const resetSaveHearingError = () => ({
-  type: Constants.RESET_SAVE_HEARING_ERROR
-});
-
 export const onRepNameChange = (repName) => ({
   type: Constants.SET_REPNAME,
   payload: {

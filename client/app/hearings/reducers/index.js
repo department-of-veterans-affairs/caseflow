@@ -142,7 +142,8 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
           }
         }
       },
-      saveHearingSuccess: { $set: action.payload.hearing }
+      saveHearingSuccess: { $set: action.payload.hearing },
+      $unset: ['saveHearingError']
     });
 
   case Constants.HANDLE_SAVE_HEARING_ERROR:
@@ -153,11 +154,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.RESET_SAVE_HEARING_SUCCESS:
     return update(state, {
       $unset: ['saveHearingSuccess']
-    });
-
-  case Constants.RESET_SAVE_HEARING_ERROR:
-    return update(state, {
-      $unset: ['saveHearingError']
     });
 
   case Constants.SET_REPNAME:

@@ -6,8 +6,7 @@ import _ from 'lodash';
 import { getDailyDocket,
   handleSaveHearingSuccess,
   handleSaveHearingError,
-  resetSaveHearingSuccess,
-  resetSaveHearingError
+  resetSaveHearingSuccess
 } from '../actions/Dockets';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingContainer from '../../components/LoadingContainer';
@@ -32,10 +31,6 @@ export class DailyDocketContainer extends React.Component {
     if (!((_.isNil(prevProps.saveHearingSuccess) && this.props.saveHearingSuccess) ||
       _.isNil(this.props.saveHearingSuccess))) {
       this.props.resetSaveHearingSuccess();
-    }
-    if (!((_.isNil(prevProps.saveHearingError) && this.props.saveHearingError) ||
-      _.isNil(this.props.saveHearingError))) {
-      this.props.resetSaveHearingError();
     }
   };
 
@@ -103,8 +98,7 @@ const mapDispatchToProps = (dispatch) => ({
     getDailyDocket,
     handleSaveHearingSuccess,
     handleSaveHearingError,
-    resetSaveHearingSuccess,
-    resetSaveHearingError
+    resetSaveHearingSuccess
   }, dispatch)
 });
 
