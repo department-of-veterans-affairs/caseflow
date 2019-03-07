@@ -9,14 +9,14 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
-import RadioField from '../../components/RadioField';
+import HearingTime from './modalForms/HearingTime';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import Modal from '../../components/Modal';
 import StatusMessage from '../../components/StatusMessage';
-import { DISPOSITION_OPTIONS, TIME_OPTIONS } from '../../hearings/constants/constants';
+import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, formatDateStr } from '../../util/DateUtil';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
@@ -77,16 +77,6 @@ const topMarginStyling = css({
 
 const notesTitleStyling = css({
   marginTop: '15px'
-});
-
-const radioButtonStyling = css({ marginTop: '25px' });
-
-const formStyling = css({
-  '& .cf-form-radio-option:not(:last-child)': {
-    display: 'inline-block',
-    marginRight: '25px'
-  },
-  marginBottom: 0
 });
 
 export default class DailyDocket extends React.Component {
@@ -225,46 +215,6 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingTimeOptions = (hearing, readOnly) => {
-    if (hearing.readableRequestType === 'Central') {
-      return [
-        {
-          displayText: '9:00',
-          value: '9:00',
-          disabled: readOnly
-        },
-        {
-          displayText: '1:00',
-          value: '13:00',
-          disabled: readOnly
-        },
-        {
-          displayText: 'Other',
-          value: 'other',
-          disabled: readOnly
-        }
-      ];
-    }
-
-    return [
-      {
-        displayText: '8:30',
-        value: '8:30',
-        disabled: readOnly
-      },
-      {
-        displayText: '12:30',
-        value: '12:30',
-        disabled: readOnly
-      },
-      {
-        displayText: 'Other',
-        value: 'other',
-        disabled: readOnly
-      }
-    ];
-  };
-
   getHearingDayDropdown = (hearing, readOnly) => {
     const regionalOffice = this.getRegionalOffice();
     const currentRegionalOffice = hearing.editedRegionalOffice || regionalOffice;
@@ -292,27 +242,13 @@ export default class DailyDocket extends React.Component {
 
   getTimeRadioButtons = (hearing, readOnly) => {
     const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+    const value = hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
 
-    return <div {...radioButtonStyling}>
-      <span {...formStyling}>
-        <RadioField
-          label="Time"
-          name={`hearingTime${hearing.id}`}
-          options={this.getHearingTimeOptions(hearing, readOnly)}
-          value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
-          onChange={this.onHearingTimeUpdate(hearing.id)}
-          strongLabel />
-      </span>
-      {hearing.editedTime === 'other' && <SearchableDropdown
-        name="optionalTime"
-        placeholder="Select a time"
-        options={TIME_OPTIONS}
-        value={hearing.editedOptionalTime ? hearing.editedOptionalTime :
-          getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
-        onChange={this.onHearingOptionalTime(hearing.id)}
-        hideLabel />}
-    </div>
-    ;
+    return <HearingTime
+      regionalOffice={this.getRegionalOffice}
+      value={value}
+      readOnly={readOnly}
+      onChange={this.onHearingOptionalTime(hearing.id)} />;
   };
 
   getHearingDetailsLink = (hearing) => {
