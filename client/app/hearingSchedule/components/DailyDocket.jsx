@@ -171,10 +171,10 @@ export default class DailyDocket extends React.Component {
       options={DISPOSITION_OPTIONS}
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={(option) => {
-        this.onHearingDispositionUpdate(hearing.id)(option);
-        if (option.value === 'postponed') {
-          this.onHearingDateUpdate(hearing.id)(null);
+        if (option === 'postponed') {
+          this.cancelHearingUpdate(hearing)();
         }
+        this.onHearingDispositionUpdate(hearing.id)(option);
       }}
       readOnly={readOnly || !_.isUndefined(hearing.editedDate)}
     />;

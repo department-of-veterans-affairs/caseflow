@@ -11,8 +11,6 @@ class HearingsController < ApplicationController
   end
 
   def update
-    slot_new_hearing if postponed?
-
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(update_params_legacy)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
@@ -51,19 +49,6 @@ class HearingsController < ApplicationController
   end
 
   private
-
-  def slot_new_hearing
-    HearingRepository.slot_new_hearing(
-      master_record_params["id"],
-      scheduled_time: master_record_params["time"]&.stringify_keys,
-      appeal: hearing.appeal,
-      hearing_location_attrs: master_record_params["hearing_location_attributes"]&.to_hash
-    )
-  end
-
-  def postponed?
-    params["master_record_updated"].present?
-  end
 
   def check_hearing_prep_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("hearing_prep_out_of_service")
