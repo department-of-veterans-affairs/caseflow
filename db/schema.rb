@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190302004820) do
+ActiveRecord::Schema.define(version: 20190306224527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -788,7 +788,6 @@ ActiveRecord::Schema.define(version: 20190302004820) do
     t.datetime "decision_sync_last_submitted_at"
     t.datetime "decision_sync_processed_at"
     t.datetime "decision_sync_submitted_at"
-    t.string "disposition"
     t.integer "end_product_establishment_id"
     t.bigint "ineligible_due_to_id"
     t.string "ineligible_reason"

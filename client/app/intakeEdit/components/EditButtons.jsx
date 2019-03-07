@@ -85,10 +85,17 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues,
       originalIssues,
       issueCount,
-      requestStatus
+      requestStatus,
+      removeDecisionReviews
     } = this.props;
 
-    const saveDisabled = _.isEqual(addedIssues, originalIssues) || issueCount === 0;
+    let disableDueToIssueCount = false;
+
+    if (issueCount === 0 && !removeDecisionReviews) {
+      disableDueToIssueCount = true;
+    }
+
+    const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount;
 
     return <span>
       { this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
@@ -137,6 +144,7 @@ const SaveButton = connect(
     originalIssues: state.originalIssues,
     requestStatus: state.requestStatus,
     issueCount: issueCountSelector(state),
+    removeDecisionReviews: state.featureToggles.removeDecisionReviews,
     state
   }),
   (dispatch) => bindActionCreators({
