@@ -23,6 +23,7 @@ class Appeal < DecisionReview
   has_one :special_issue_list
 
   with_options on: :intake_review do
+    validate :validate_receipt_date
     validates :receipt_date, :docket_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
