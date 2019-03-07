@@ -89,6 +89,10 @@ export class VeteranDetail extends React.PureComponent {
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
 
+  getDataSourceInfo = () => {
+    return <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>;
+  }
+
   render = () => {
     if (!this.props.veteranInfo) {
       if (this.props.loading) {
@@ -105,15 +109,17 @@ export class VeteranDetail extends React.PureComponent {
 
     return <ul {...detailListStyling}>
       {this.getDetails()}
+      {this.getDataSourceInfo()}
     </ul>;
   };
 }
 
 const mapStateToProps = (state, ownProps) => {
   const loadingVeteranInfo = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
+  const appeal = appealWithDetailSelector(state, { appealId: ownProps.appeal.externalId });
 
   return {
-    veteranInfo: appealWithDetailSelector(state, { appealId: ownProps.appeal.externalId }).veteranInfo,
+    veteranInfo: appeal.veteranInfo,
     loading: loadingVeteranInfo ? loadingVeteranInfo.loading : null,
     error: loadingVeteranInfo ? loadingVeteranInfo.error : null
   };

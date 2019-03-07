@@ -8,7 +8,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.eligible_request_issues.map do |issue|
       {
         id: issue.id,
-        disposition: issue.disposition,
         program: issue.benefit_type,
         description: issue.description,
         notes: issue.notes,
