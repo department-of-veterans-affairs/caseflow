@@ -136,6 +136,15 @@ module Asyncable
     !!self[self.class.submitted_at_column]
   end
 
+  def expired_without_processing?
+    return false if processed?
+
+    last_submitted = self[self.class.last_submitted_at_column]
+    return false unless last_submitted
+
+    last_submitted < REQUIRES_PROCESSING_WINDOW_DAYS.days.ago
+  end
+
   def submitted_and_ready?
     !!self[self.class.submitted_at_column] && self[self.class.submitted_at_column] <= Time.zone.now
   end
