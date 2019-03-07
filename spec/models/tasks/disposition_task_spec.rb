@@ -40,21 +40,30 @@ describe DispositionTask do
     let(:disposition) { nil }
     let(:appeal) { FactoryBot.create(:appeal) }
     let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal, disposition: disposition) }
+    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, disposition: disposition) }
+    let!(:hearing_task_association) do
+      FactoryBot.create(
+        :hearing_task_association,
+        hearing: hearing,
+        hearing_task: hearing_task
+      )
+    end
+    let!(:schedule_hearing_task) do
+      FactoryBot.create(
+        :schedule_hearing_task,
+        parent: hearing_task,
+        appeal: appeal,
+        assigned_to: HearingsManagement.singleton,
+        status: Constants.TASK_STATUSES.completed
+      )
+    end
     let!(:disposition_task) do
       FactoryBot.create(
         :ama_disposition_task,
         parent: hearing_task,
         appeal: appeal,
         status: Constants.TASK_STATUSES.in_progress
-      )
-    end
-    let!(:hearing_task_association) do
-      FactoryBot.create(
-        :hearing_task_association,
-        hearing: hearing,
-        hearing_task: hearing_task
       )
     end
 
@@ -64,7 +73,7 @@ describe DispositionTask do
       context "the task's hearing's disposition is canceled" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
 
-        it "cancels the disposition task" do
+        it "cancels the disposition task and its parent hearing task" do
           expect(disposition_task.cancelled?).to be_falsey
           expect(hearing_task.on_hold?).to be_truthy
 
@@ -77,7 +86,7 @@ describe DispositionTask do
 
         context "the appeal has a VSO" do
           let(:participant_id_with_pva) { "000000" }
-          let!(:appeal) do
+          let(:appeal) do
             create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_pva)])
           end
 
