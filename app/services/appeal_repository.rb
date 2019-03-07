@@ -346,11 +346,8 @@ class AppealRepository
       parent = HearingTask.create!(
         appeal: appeal,
         parent: RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-      ) { |task| task.assigned_to = Bva.singleton }
-      ScheduleHearingTask.create!(appeal: appeal) do |task|
-        task.assigned_to = HearingsManagement.singleton
-        task.parent = parent
-      end
+      )
+      ScheduleHearingTask.create!(appeal: appeal, parent: parent)
 
       update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end

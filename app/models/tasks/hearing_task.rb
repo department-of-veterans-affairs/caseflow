@@ -7,4 +7,11 @@
 
 class HearingTask < GenericTask
   has_one :hearing_task_association
+  before_validation :set_assignee
+
+  private
+
+  def set_assignee
+    self.assigned_to = Bva.singleton
+  end
 end
