@@ -18,4 +18,27 @@ describe Hearing do
       end.to raise_error(Hearing::HearingDayFull)
     end
   end
+
+  context "disposition_editable?" do
+    let!(:hearing) { create(:hearing) }
+    subject { hearing.disposition_editable? }
+
+    context "when the hearing has an open disposition task" do
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the hearing has a cancelled disposition task" do
+      before do
+        hearing.disposition_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when the hearing has a disposition task with children" do
+      let!(:transcription_task) { create(:transcription_task, parent: hearing.disposition_task) }
+
+      it { is_expected.to eq(false) }
+    end
+  end
 end
