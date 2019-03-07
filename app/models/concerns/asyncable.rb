@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # History of this class is in docs/asyncable-models.md
 #
 # Mixin module to apply to an ActiveRecord class, to make it easier to process via

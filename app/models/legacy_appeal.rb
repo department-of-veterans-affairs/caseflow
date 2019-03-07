@@ -1,3 +1,11 @@
+# frozen_string_literal: true
+
+##
+# An appeal that a Veteran or appellant for VA decisions on claims for benefits, filed under the laws and policies
+# guiding appeals before the Veterans Appeals Improvement and Modernization Act (AMA).
+# The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
+# Legacy appeals have VACOLS and BGS as dependencies.
+
 # rubocop:disable Metrics/ClassLength
 class LegacyAppeal < ApplicationRecord
   include AppealConcern
@@ -715,7 +723,35 @@ class LegacyAppeal < ApplicationRecord
     vacols_id
   end
 
+  def assigned_to_location
+    return location_code unless location_code_is_caseflow?
+    return active_tasks.most_recently_assigned.assigned_to_label if active_tasks.any?
+    return on_hold_tasks.most_recently_assigned.assigned_to_label if on_hold_tasks.any?
+
+    # shouldn't happen because if all tasks are closed the task returns to the assigning attorney
+    if tasks.any?
+      Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but has only closed tasks")
+      return tasks.most_recently_assigned.assigned_to_label
+    end
+
+    # shouldn't happen because setting location to "CASEFLOW" only happens when a task is created
+    Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but is open and has no tasks")
+    location_code
+  end
+
   private
+
+  def active_tasks
+    tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+  end
+
+  def on_hold_tasks
+    tasks.where(status: Constants.TASK_STATUSES.on_hold)
+  end
+
+  def location_code_is_caseflow?
+    location_code == LOCATION_CODES[:caseflow]
+  end
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&

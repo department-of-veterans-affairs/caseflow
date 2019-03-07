@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VACOLS::CaseHearing < VACOLS::Record
   self.table_name = "vacols.hearsched"
   self.primary_key = "hearing_pkseq"
@@ -65,7 +67,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def hearings_for_hearing_days(hearing_day_ids)
-      select_hearings.where(vdkey: hearing_day_ids)
+      select_hearings.where(vdkey: hearing_day_ids).where("hearing_date > ?", Date.new(2019, 1, 1))
     end
 
     def for_appeal(appeal_vacols_id)
@@ -97,27 +99,10 @@ class VACOLS::CaseHearing < VACOLS::Record
                                  VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
-    def create_hearing!(hearing_info)
-      attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
-      attrs.except!(nil)
-      # Store time value in UTC to VACOLS
-      hear_date = attrs[:hearing_date]
-      converted_date = hear_date.is_a?(Date) ? hear_date : Time.zone.parse(hear_date).to_datetime
-      attrs[:hearing_date] = VacolsHelper.format_datetime_with_utc_timezone(converted_date)
-      MetricsService.record("VACOLS: create_hearing!",
-                            service: :vacols,
-                            name: "create_hearing") do
-        create(attrs.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
-                           adduser: current_user_slogid,
-                           folder_nr: hearing_info[:regional_office] ? "VIDEO #{hearing_info[:regional_office]}" : nil,
-                           hearing_type: HearingDay::REQUEST_TYPES[:central]))
-      end
-    end
-
     def create_child_hearing!(hearing_info)
-      MetricsService.record("VACOLS: create_hearing!",
+      MetricsService.record("VACOLS: create_child_hearing!",
                             service: :vacols,
-                            name: "create_hearing") do
+                            name: "create_child_hearing") do
         create!(hearing_info.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
                                    adduser: current_user_slogid))
       end

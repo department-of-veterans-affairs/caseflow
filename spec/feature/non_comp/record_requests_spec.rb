@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 feature "NonComp Record Request Page" do
   before do
     FeatureToggle.enable!(:decision_reviews)
-    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+    Timecop.freeze(post_ama_start_date)
   end
 
   after do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
@@ -49,8 +51,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     end
   end
 
-  attribute :location_code do
-    object.location_code
+  attribute :assigned_to_location do
+    object.assigned_to_location
   end
 
   attribute :completed_hearing_on_previous_appeal? do

@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+
+##
+# Parent class for all tasks to be completed by judges, including
+# JudgeQualityReviewTasks, JudgeDecisionReviewTasks, and JudgeAssignTasks.
+
 class JudgeTask < Task
   def available_actions(user)
     additional_available_actions(user).unshift(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)

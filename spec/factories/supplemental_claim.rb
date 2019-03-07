@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :supplemental_claim do
     sequence(:veteran_file_number, &:to_s)

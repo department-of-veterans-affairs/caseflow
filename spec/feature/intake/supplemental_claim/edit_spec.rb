@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Supplemental Claim Edit issues" do
@@ -8,8 +10,7 @@ feature "Supplemental Claim Edit issues" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
@@ -32,7 +33,7 @@ feature "Supplemental Claim Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
-  let(:profile_date) { "2017-11-02T07:00:00.000Z" }
+  let(:profile_date) { (Time.zone.today - 60).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -187,7 +188,7 @@ feature "Supplemental Claim Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "A description!",
-        date: "04/25/2018"
+        date: profile_date.mdY
       )
 
       safe_click("#button-submit-update")
@@ -301,7 +302,7 @@ feature "Supplemental Claim Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/25/2018"
+        date: profile_date.mdY
       )
       expect(page).to have_content("3 issues")
 

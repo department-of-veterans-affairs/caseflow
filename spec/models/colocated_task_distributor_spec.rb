@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe ColocatedTaskDistributor do
   let(:assignee_pool_size) { 6 }
   let(:colocated_org) { Colocated.singleton }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # We must do this async because an EndProductEstablishment may be cleared
 # some indefinite period of time before the Rating Issue(s) are posted.
 class DecisionIssueSyncJob < CaseflowJob
@@ -10,7 +12,7 @@ class DecisionIssueSyncJob < CaseflowJob
     begin
       request_issue_or_effectuation.sync_decision_issues!
     rescue Rating::NilRatingProfileListError, Rating::LockedRatingError, Rating::BackfilledRatingError => err
-      request_issue_or_effectuation.update_error!(err.to_s)
+      request_issue_or_effectuation.update_error!(err.class.to_s)
       # no Raven report, just noise. This just means nothing new has happened.
     rescue StandardError => err
       request_issue_or_effectuation.update_error!(err.to_s)

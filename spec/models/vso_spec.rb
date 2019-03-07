@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Vso do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
@@ -27,6 +29,13 @@ describe Vso do
         ptcpnt_id: "2452383"
       }
     ]
+  end
+
+  describe ".create!" do
+    it "sets the role to VSO" do
+      vso = Vso.create!(name: "Veterans' Service Org")
+      expect(vso.role).to eq("VSO")
+    end
   end
 
   context "#user_has_access?" do

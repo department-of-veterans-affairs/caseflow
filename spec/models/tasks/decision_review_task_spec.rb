@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DecisionReviewTask do
   let(:benefit_type) { "education" }
 

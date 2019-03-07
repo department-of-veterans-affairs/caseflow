@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe JudgeTeam do
   let(:judge) { FactoryBot.create(:user) }
 
@@ -12,7 +14,7 @@ describe JudgeTeam do
         expect(judge.organizations.length).to eq(1)
         expect(judge.administered_teams.length).to eq(1)
         expect(judge.administered_teams.first.class).to eq(JudgeTeam)
-        expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase)
+        expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase.parameterize.dasherize)
       end
     end
   end

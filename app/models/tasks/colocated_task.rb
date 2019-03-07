@@ -1,3 +1,13 @@
+# frozen_string_literal: true
+
+##
+# Any task assigned to a colocated team at the BVA, which is any team that handles admin actions at BVA.
+# Colocated teams perform actions like:
+#  - translating documents
+#  - scheduling hearings
+#  - handling FOIA requests
+# Note: Full list of colocated tasks in /client/constants/CO_LOCATED_ADMIN_ACTIONS.json
+
 class ColocatedTask < Task
   validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validates :assigned_by, presence: true
@@ -32,6 +42,10 @@ class ColocatedTask < Task
         fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
       end
     end
+  end
+
+  def label
+    action
   end
 
   def available_actions(user)

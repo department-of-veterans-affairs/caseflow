@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Intake Review Page" do
@@ -14,6 +16,22 @@ feature "Intake Review Page" do
   let(:veteran_file_number) { "123412345" }
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
+  end
+
+  describe "Validating receipt date not before ama" do
+    before { FeatureToggle.enable!(:use_ama_activation_date) }
+
+    it "shows correct error with AMA date" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      expect(page).to have_current_path("/intake/review_request")
+      fill_in "What is the Receipt Date of this form?", with: "01/01/2019"
+      click_intake_continue
+
+      expect(page).to have_content(
+        "Receipt Date cannot be prior to 02/19/2019."
+      )
+    end
   end
 
   describe "Selecting a claimant" do
@@ -38,7 +56,7 @@ feature "Intake Review Page" do
 
     context "when veteran is deceased" do
       let(:veteran) do
-        Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))
+        Generators::Veteran.build(file_number: "123121234", date_of_death: 2.years.ago)
       end
 
       context "higher level review" do
@@ -182,7 +200,7 @@ def check_pension_and_compensation_payee_code
     find("label", text: "Compensation", match: :prefer_exact).click
   end
 
-  fill_in "What is the Receipt Date of this form?", with: "04/20/2025"
+  fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
   find("label", text: "Blake Vance, Other", match: :prefer_exact).click
   click_intake_continue
 
@@ -192,7 +210,7 @@ def check_pension_and_compensation_payee_code
   )
   expect(page).to have_content("Please select an option.")
 
-  fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+  fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
 
   within_fieldset("What is the Benefit Type?") do
     find("label", text: "Pension", match: :prefer_exact).click

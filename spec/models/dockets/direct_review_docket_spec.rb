@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DirectReviewDocket do
   before do
     FeatureToggle.enable!(:ama_acd_tasks)

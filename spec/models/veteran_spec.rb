@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe Veteran do
@@ -299,6 +301,54 @@ describe Veteran do
       end
 
       it { is_expected.to eq(true) }
+    end
+  end
+
+  context "#access_error" do
+    subject { veteran.access_error }
+
+    it "returns nil when the BGS record is successfully returned" do
+      expect(subject).to be_nil
+    end
+
+    context "when an error is returned" do
+      let(:bgs_error) { BGS::ShareError.new("No BGS record for you!") }
+
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_raise(bgs_error)
+      end
+
+      it "returns the BGS error message" do
+        expect(subject).to eq(bgs_error.message)
+      end
+    end
+  end
+
+  context "#multiple_phone_numbers?" do
+    subject { veteran.multiple_phone_numbers? }
+
+    it "returns false when the BGS record is successfully returned" do
+      expect(subject).to be false
+    end
+
+    context "when an error is returned" do
+      let(:bgs_error) { BGS::ShareError.new("Something went wrong") }
+
+      before do
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_raise(bgs_error)
+      end
+
+      it "returns false for an unrelated error" do
+        expect(subject).to be false
+      end
+
+      context "when the error is the multiple phone number error" do
+        let(:bgs_error) { BGS::ShareError.new("NonUniqueResultException The query on candidate type...") }
+
+        it { is_expected.to be true }
+      end
     end
   end
 

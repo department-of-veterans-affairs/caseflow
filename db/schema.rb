@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190222224704) do
+ActiveRecord::Schema.define(version: 20190302004820) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -211,10 +211,13 @@ ActiveRecord::Schema.define(version: 20190222224704) do
   end
 
   create_table "claimants", force: :cascade do |t|
+    t.bigint "decision_review_id"
+    t.string "decision_review_type"
     t.string "participant_id", null: false
     t.string "payee_code"
     t.bigint "review_request_id", null: false
     t.string "review_request_type", null: false
+    t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
     t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
@@ -544,20 +547,20 @@ ActiveRecord::Schema.define(version: 20190222224704) do
     t.string "witness"
   end
 
-  create_table "higher_level_reviews", force: :cascade do |t|
-    t.string "benefit_type"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
-    t.datetime "establishment_last_submitted_at"
-    t.datetime "establishment_processed_at"
-    t.datetime "establishment_submitted_at"
-    t.boolean "informal_conference"
-    t.boolean "legacy_opt_in_approved"
-    t.date "receipt_date"
-    t.boolean "same_office"
-    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.string "veteran_file_number", null: false
-    t.boolean "veteran_is_not_claimant"
+  create_table "higher_level_reviews", force: :cascade, comment: "Intake data for Higher Level Reviews." do |t|
+    t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
+    t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
+    t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
+    t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
+    t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
+    t.datetime "establishment_submitted_at", comment: "Timestamp for when the Higher Level Review was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
+    t.boolean "informal_conference", comment: "Indicates whether a Veteran selected on their Higher Level Review form to have an informal conference. This creates a claimant letter and a tracked item in BGS."
+    t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Higher Level Review request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
+    t.date "receipt_date", comment: "The date that the Higher Level Review form was received by central mail. This is used to determine which issues are eligible to be appealed based on timeliness.  Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established."
+    t.boolean "same_office", comment: "Whether the Veteran wants their issues to be reviewed by the same office where they were previously reviewed. This creates a special issue on all of the contentions created on this Higher Level Review."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Higher Level Review. Can be used to link to the claim after it is completed."
+    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Higher Level Review is for."
+    t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Higher Level Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -690,34 +693,27 @@ ActiveRecord::Schema.define(version: 20190222224704) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "ramp_closed_appeals", id: :serial, force: :cascade do |t|
-    t.datetime "closed_on"
-    t.date "nod_date"
-    t.string "partial_closure_issue_sequence_ids", array: true
-    t.integer "ramp_election_id"
-    t.string "vacols_id", null: false
+  create_table "ramp_closed_appeals", id: :serial, force: :cascade, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed." do |t|
+    t.datetime "closed_on", comment: "The datetime that the legacy appeal was closed in VACOLS and opted into RAMP."
+    t.date "nod_date", comment: "The date when the Veteran filed a Notice of Disagreement for the original claims decision in the legacy system."
+    t.string "partial_closure_issue_sequence_ids", comment: "If the entire legacy appeal could not be closed and moved to the RAMP Election, the VACOLS sequence IDs of issues on the legacy appeal which were closed are stored here, indicating that it was a partial closure.", array: true
+    t.integer "ramp_election_id", comment: "The ID of the RAMP election that closed the legacy appeal."
+    t.string "vacols_id", null: false, comment: "The VACOLS BFKEY of the legacy appeal that has been closed and opted into RAMP."
   end
 
-  create_table "ramp_election_rollbacks", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.bigint "ramp_election_id"
-    t.string "reason"
-    t.string "reopened_vacols_ids", array: true
-    t.datetime "updated_at", null: false
-    t.bigint "user_id"
+  create_table "ramp_election_rollbacks", force: :cascade, comment: "If a RAMP election needs to get rolled back, for example if the EP is canceled, it is tracked here. Also any VACOLS issues that were closed in the legacy system and opted into RAMP are re-opened in the legacy system." do |t|
+    t.datetime "created_at", null: false, comment: "Timestamp for when the rollback was created."
+    t.bigint "ramp_election_id", comment: "The ID of the RAMP Election being rolled back."
+    t.string "reason", comment: "The reason for rolling back the RAMP Election. Rollbacks happen automatically for canceled RAMP Election End Products, but can also happen for other reason such as by request."
+    t.string "reopened_vacols_ids", comment: "The IDs of any legacy appeals which were reopened as a result of rolling back the RAMP Election, corresponding to the VACOLS BFKEY.", array: true
+    t.datetime "updated_at", null: false, comment: "Timestamp for when the rollback was last updated."
+    t.bigint "user_id", comment: "The user who created the RAMP Election rollback, typically a system user."
     t.index ["ramp_election_id"], name: "index_ramp_election_rollbacks_on_ramp_election_id"
     t.index ["user_id"], name: "index_ramp_election_rollbacks_on_user_id"
   end
 
   create_table "ramp_elections", id: :serial, force: :cascade do |t|
-    t.string "end_product_reference_id"
-    t.string "end_product_status"
-    t.datetime "end_product_status_last_synced_at"
     t.datetime "established_at"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
-    t.datetime "establishment_processed_at"
-    t.datetime "establishment_submitted_at"
     t.date "notice_date"
     t.string "option_selected"
     t.date "receipt_date"
@@ -736,10 +732,7 @@ ActiveRecord::Schema.define(version: 20190222224704) do
 
   create_table "ramp_refilings", id: :serial, force: :cascade do |t|
     t.string "appeal_docket"
-    t.string "end_product_reference_id"
     t.datetime "established_at"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
     t.datetime "establishment_processed_at"
     t.datetime "establishment_submitted_at"
     t.boolean "has_ineligible_issue"
@@ -879,20 +872,20 @@ ActiveRecord::Schema.define(version: 20190222224704) do
     t.index ["appeal_type", "appeal_id"], name: "index_special_issue_lists_on_appeal_type_and_appeal_id"
   end
 
-  create_table "supplemental_claims", force: :cascade do |t|
-    t.string "benefit_type"
-    t.bigint "decision_review_remanded_id"
-    t.string "decision_review_remanded_type"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
-    t.datetime "establishment_last_submitted_at"
-    t.datetime "establishment_processed_at"
-    t.datetime "establishment_submitted_at"
-    t.boolean "legacy_opt_in_approved"
-    t.date "receipt_date"
-    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.string "veteran_file_number", null: false
-    t.boolean "veteran_is_not_claimant"
+  create_table "supplemental_claims", force: :cascade, comment: "Intake data for Supplemental Claims." do |t|
+    t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
+    t.bigint "decision_review_remanded_id", comment: "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here."
+    t.string "decision_review_remanded_type", comment: "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review."
+    t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
+    t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
+    t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
+    t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
+    t.datetime "establishment_submitted_at", comment: "Timestamp for when the Supplemental Claim was submitted by a Claims Assistant. This adds the End Product Establishment to a job to finish processing asynchronously."
+    t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw their Supplemental Claim request issues from the legacy system if a matching issue is found. If there is a matching legacy issue and it is not withdrawn, then that issue is ineligible to be a new request issue and a contention will not be created for it."
+    t.date "receipt_date", comment: "The date that the Supplemental Claim form was received by central mail. Only issues decided prior to the receipt date will show up as contestable issues.  It is also the claim date for any associated end products that are established. Supplemental Claims do not have the same timeliness restriction on contestable issues as Appeals and Higher Level Reviews."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Supplemental Claim. Can be used to link to the claim after it is completed."
+    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Supplemental Claim is for."
+    t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end

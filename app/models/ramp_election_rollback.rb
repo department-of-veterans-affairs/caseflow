@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Used to perform and record instances where we need to rollback a RampElection
 # Currently this is only used to perform rollbacks manually from the command line
 #

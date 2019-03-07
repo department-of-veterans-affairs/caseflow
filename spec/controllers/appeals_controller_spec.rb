@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe AppealsController, type: :controller do
   before { User.authenticate!(roles: ["System Admin"]) }
 
@@ -86,6 +88,90 @@ RSpec.describe AppealsController, type: :controller do
       it "should return status 404" do
         get :document_count, params: { appeal_id: "123456" }
         expect(response.status).to eq 404
+      end
+    end
+  end
+
+  describe "GET appeals/:id/new_documents" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+
+    context "when efolder returns an access forbidden error" do
+      let(:err_code) { 403 }
+      let(:err_msg) do
+        "This efolder contains sensitive information you do not have permission to view." \
+          " Please contact your supervisor."
+      end
+
+      before do
+        allow_any_instance_of(NewDocumentsForUser).to receive(:process!) do
+          fail Caseflow::Error::EfolderAccessForbidden, code: err_code, message: err_msg
+        end
+      end
+
+      it "responds with a 4xx and error message" do
+        get :new_documents, params: { appeal_id: appeal.external_id }
+        response_body = JSON.parse(response.body)
+
+        expect(response.status).to eq(err_code)
+        expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"][0]["title"]).to eq(err_msg)
+      end
+    end
+
+    context "when application encounters a generic error" do
+      let(:err_msg) { "Some application error" }
+
+      before { allow_any_instance_of(NewDocumentsForUser).to receive(:process!) { fail err_msg } }
+
+      it "responds with a 500 and error message" do
+        get :new_documents, params: { appeal_id: appeal.external_id }
+        response_body = JSON.parse(response.body)
+
+        expect(response.status).to eq(500)
+        expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"][0]["title"]).to eq(err_msg)
+      end
+    end
+  end
+
+  describe "GET appeals/:id/document_count" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+
+    context "when efolder returns an access forbidden error" do
+      let(:err_code) { 403 }
+      let(:err_msg) do
+        "This efolder contains sensitive information you do not have permission to view." \
+          " Please contact your supervisor."
+      end
+
+      before do
+        allow_any_instance_of(Appeal).to receive(:number_of_documents) do
+          fail Caseflow::Error::EfolderAccessForbidden, code: err_code, message: err_msg
+        end
+      end
+
+      it "responds with a 4xx and error message" do
+        get :document_count, params: { appeal_id: appeal.external_id }
+        response_body = JSON.parse(response.body)
+
+        expect(response.status).to eq(err_code)
+        expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"][0]["title"]).to eq(err_msg)
+      end
+    end
+
+    context "when application encounters a generic error" do
+      let(:err_msg) { "Some application error" }
+
+      before { allow_any_instance_of(Appeal).to receive(:number_of_documents) { fail err_msg } }
+
+      it "responds with a 500 and error message" do
+        get :document_count, params: { appeal_id: appeal.external_id }
+        response_body = JSON.parse(response.body)
+
+        expect(response.status).to eq(500)
+        expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"][0]["title"]).to eq(err_msg)
       end
     end
   end

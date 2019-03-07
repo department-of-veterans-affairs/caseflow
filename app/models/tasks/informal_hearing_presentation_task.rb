@@ -1,3 +1,10 @@
+# frozen_string_literal: true
+
+##
+# Task assigned to VSOs to submit an Informal Hearing Presentation for Veterans who have elected not to have a hearing.
+# IHPs are a chance for VSOs to make final arguments before a case is sent to the Board.
+# BVA typically (but not always) waits for an IHP to be submitted before making a decision.
+
 class InformalHearingPresentationTask < GenericTask
   # TODO: figure out how long IHP tasks will take to expire,
   # then make them timeable

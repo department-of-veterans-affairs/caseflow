@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Generators::Vacols::TravelBoardSchedule
   class << self
     # rubocop:disable Metrics/MethodLength

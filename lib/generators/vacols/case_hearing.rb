@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Generators::Vacols::CaseHearing
   class << self
     # rubocop:disable Metrics/MethodLength
@@ -42,13 +44,9 @@ class Generators::Vacols::CaseHearing
     # rubocop:enable Metrics/MethodLength
 
     def create(attrs = [{}])
-      if attrs.is_a?(Array)
-        attrs = attrs.map { |hearing| case_hearing_attrs.merge(hearing) }
-        attrs.collect { |attr| VACOLS::CaseHearing.create_hearing!(attr) }
-      else
-        case_hearing_attrs.merge(attrs)
-        VACOLS::CaseHearing.create_hearing!(attrs)
-      end
+      attrs = attrs.map { |hearing| case_hearing_attrs.merge(hearing) }
+
+      VACOLS::CaseHearing.create(attrs)
     end
   end
 end

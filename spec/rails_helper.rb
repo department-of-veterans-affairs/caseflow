@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
 require "simplecov"
@@ -49,7 +51,13 @@ else
   Dir.mkdir cache_directory
 end
 
-ENV["TZ"] ||= "America/New York"
+# The TZ variable controls the timezone of the browser in capybara tests, so we always define it.
+# By default (esp for CI) we use Eastern time, so that it doesn't matter where the developer happens to sit.
+ENV["TZ"] ||= "America/New_York"
+
+# Assume the browser and the server are in the same timezone for now. Eventually we should
+# use something like https://github.com/alindeman/zonebie to exercise browsers in different timezones.
+Time.zone = ENV["TZ"]
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options = ::Selenium::WebDriver::Chrome::Options.new

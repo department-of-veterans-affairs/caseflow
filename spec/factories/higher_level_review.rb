@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :higher_level_review do
     sequence(:veteran_file_number, &:to_s)

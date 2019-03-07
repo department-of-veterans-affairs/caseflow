@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Task do
   describe ".when_child_task_completed" do
     context "when on_hold task is assigned to a person" do
@@ -242,6 +244,21 @@ describe Task do
         judge_team.non_admins.each do |team_attorney|
           expect(subject[:options]).to include(label: team_attorney.full_name, value: team_attorney.id)
         end
+      end
+    end
+  end
+
+  describe "#cancel_task_and_child_subtasks" do
+    let(:appeal) { create(:appeal) }
+    let!(:top_level_task) { create(:task, appeal: appeal) }
+    let!(:second_level_tasks) { create_list(:task, 2, appeal: appeal, parent: top_level_task) }
+    let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
+
+    it "cancels all tasks and child subtasks" do
+      top_level_task.cancel_task_and_child_subtasks
+
+      [top_level_task, *second_level_tasks, *third_level_task].each do |task|
+        expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
     end
   end

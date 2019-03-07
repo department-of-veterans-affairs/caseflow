@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDay do
   context "#create" do
     let(:hearing) do
@@ -134,7 +136,7 @@ describe HearingDay do
 
       before do
         6.times do
-          create(:hearing, hearing_day: hearing_day, disposition: :postponed)
+          create(:hearing, hearing_day: hearing_day, disposition: "postponed")
           create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
         end
       end
@@ -169,10 +171,10 @@ describe HearingDay do
         HearingDay.create_schedule(schedule_period.algorithm_assignments)
       end
 
-      subject { VACOLS::CaseHearing.load_days_for_range(schedule_period.start_date, schedule_period.end_date) }
+      subject { HearingDay.load_days(schedule_period.start_date, schedule_period.end_date) }
 
       it do
-        expect(subject.size).to eql(358)
+        expect(subject[:caseflow_hearings].size).to eql(442)
       end
     end
   end

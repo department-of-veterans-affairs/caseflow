@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # EndProductEstablishment represents an end product that Caseflow has either established or attempted to
 # establish (if the establishment was successful `established_at` will be set). The purpose of the
 # end product is determined by the `source`.
@@ -17,8 +19,8 @@ class EndProductEstablishment < ApplicationRecord
   # allow @veteran to be assigned to save upstream calls
   attr_writer :veteran
 
-  CANCELED_STATUS = "CAN".freeze
-  CLEARED_STATUS = "CLR".freeze
+  CANCELED_STATUS = "CAN"
+  CLEARED_STATUS = "CLR"
 
   # benefit_type_code => program_type_code
   PROGRAM_TYPE_CODES = {
@@ -322,7 +324,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def decision_issues_sync_complete?(processing_request_issue)
     other_request_issues = request_issues.reject { |i| i.id == processing_request_issue.id }
-    other_request_issues.all?(&:processed?)
+    other_request_issues.all? { |i| i.closed? || i.processed? }
   end
 
   def potential_decision_ratings

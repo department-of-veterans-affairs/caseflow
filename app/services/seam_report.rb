@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SeamReport < Report
   def self.output_filename
     "seam"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class NewDocumentsForUser
   include ActiveModel::Model
 
@@ -12,6 +14,7 @@ class NewDocumentsForUser
 
     return caseflow_documents if !appeal_view && !date_to_compare_with
 
+    @date_to_compare_with ||= Time.zone.at(0)
     compare_date = appeal_view ? [date_to_compare_with, appeal_view.last_viewed_at].max : date_to_compare_with
 
     filter_docs_by_date(caseflow_documents, compare_date)

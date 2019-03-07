@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :task do
     assigned_at { rand(30..35).days.ago }
@@ -86,6 +88,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :ama_disposition_task, class: DispositionTask do
+      type { DispositionTask.name }
+      appeal { create(:appeal) }
+    end
+
     factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
       type { JudgeDecisionReviewTask.name }
       appeal { create(:appeal) }
@@ -122,6 +129,13 @@ FactoryBot.define do
       type { AttorneyTask.name }
       appeal { create(:appeal) }
       parent { create(:ama_judge_task) }
+    end
+
+    factory :transcription_task, class: TranscriptionTask do
+      type { TranscriptionTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
+      assigned_to { TranscriptionTeam.singleton }
     end
 
     factory :ama_vso_task do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 require "faker"
 
@@ -48,6 +50,37 @@ describe FetchDocumentsForReaderUserJob do
           :ama_attorney_task,
           :in_progress,
           assigned_to: user,
+          appeal: ama_appeal
+        )
+      end
+      it "retrieves the appeal document and updates the fetched at time" do
+        expect(EFolderService).to receive(:fetch_documents_for).with(ama_appeal, anything).and_return(doc_struct).once
+
+        expect(reader_user.documents_fetched_at).to be_nil
+        FetchDocumentsForReaderUserJob.perform_now(reader_user)
+        expect(reader_user.documents_fetched_at).to_not be_nil
+      end
+    end
+
+    context "when an attorney with a colocated task is provided" do
+      let!(:vacols_atty) do
+        FactoryBot.create(
+          :staff,
+          :attorney_role,
+          sdomainid: user.css_id
+        )
+      end
+      let(:ama_appeal) do
+        create(
+          :appeal,
+          documents: [document]
+        )
+      end
+      let!(:task) do
+        create(
+          :colocated_task,
+          assigned_to: create(:user),
+          assigned_by: user,
           appeal: ama_appeal
         )
       end

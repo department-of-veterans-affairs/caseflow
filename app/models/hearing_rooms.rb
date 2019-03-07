@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingRooms
   ROOMS = Constants::HEARING_ROOMS_LIST.freeze
 

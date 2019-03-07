@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DistributionTask do
   describe "ready_for_distribution" do
     before do

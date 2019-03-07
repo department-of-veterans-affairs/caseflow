@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IntakeStats < Caseflow::Stats
   INTERVALS = [:daily, :weekly, :monthly, :fiscal_yearly].freeze
 

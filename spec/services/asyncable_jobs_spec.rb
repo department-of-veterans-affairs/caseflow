@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AsyncableJobs do
   describe "#jobs" do
     let(:veteran) { create(:veteran) }

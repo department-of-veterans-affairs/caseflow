@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :decass, class: VACOLS::Decass do
     sequence(:defolder)

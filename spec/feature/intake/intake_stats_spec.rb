@@ -1,4 +1,4 @@
-require "rails_helper"
+# frozen_string_literal: true
 
 RSpec.feature "Intake Stats Dashboard" do
   before do
@@ -31,8 +31,7 @@ RSpec.feature "Intake Stats Dashboard" do
            notice_date: 5.days.ago,
            receipt_date: 45.minutes.ago,
            option_selected: :higher_level_review,
-           established_at: Time.zone.now,
-           end_product_status: "HELLA_ACTIVE").issues.create!(description: "this is the only issue here")
+           established_at: Time.zone.now).issues.create!(description: "this is the only issue here")
 
     election_for_closed_appeals = create(
       :ramp_election,

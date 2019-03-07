@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe "Appeals API v2", type: :request do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -349,7 +351,6 @@ describe "Appeals API v2", type: :request do
   end
 
   context "All HLR, SC and Appeals" do
-    Time.zone = "America/New_York"
     before do
       Timecop.freeze(Time.utc(2018, 11, 28))
     end
@@ -566,7 +567,6 @@ describe "Appeals API v2", type: :request do
   end
 
   context "HLR, SC and Appeal get filter out" do
-    Time.zone = "America/New_York"
     before do
       Timecop.freeze(Time.utc(2018, 11, 28))
     end

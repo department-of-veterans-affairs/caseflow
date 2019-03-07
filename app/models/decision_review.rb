@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionReview < ApplicationRecord
   include CachedAttributes
   include Asyncable
@@ -197,7 +199,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def open_request_issues
-    request_issues.open
+    request_issues.includes(:decision_review, :contested_decision_issue).open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.

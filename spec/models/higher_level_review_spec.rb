@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HigherLevelReview do
   before do
     FeatureToggle.enable!(:intake_legacy_opt_in)
@@ -756,8 +758,8 @@ describe HigherLevelReview do
 
         expect(alerts.empty?).to be(false)
         expect(alerts.first[:type]).to eq("ama_post_decision")
-        expect(alerts.first[:details][:decisionDate]).to eq(dta_sc_decision_date)
-        expect(alerts.first[:details][:dueDate]).to eq(dta_sc_decision_date + 365.days)
+        expect(alerts.first[:details][:decisionDate]).to eq(dta_sc_decision_date.to_date)
+        expect(alerts.first[:details][:dueDate]).to eq((dta_sc_decision_date + 365.days).to_date)
         expect(alerts.first[:details][:cavcDueDate]).to be_nil
 
         available_options = %w[supplemental_claim appeal]

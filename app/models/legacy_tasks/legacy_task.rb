@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LegacyTask
   include ActiveModel::Model
   include ActiveModel::Serialization
@@ -38,6 +40,10 @@ class LegacyTask
       options: nil,
       type: AttorneyLegacyTask.name
     }
+  end
+
+  def assigned_to_label
+    assigned_to&.css_id
   end
 
   ### Serializer Methods Start

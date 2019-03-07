@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CoNonAvailability < NonAvailability
   class << self
     def import_co_non_availability(schedule_period)
