@@ -47,6 +47,10 @@ describe AsyncableJobs do
     it "sorts by the submited_at column, descending order" do
       expect(subject.jobs).to eq([sc_not_attempted_expired, hlr, sc, sc_not_attempted, sc_not_submitted])
     end
+
+    it "includes both expired and non-expired jobs" do
+      expect(subject.jobs.select(&:expired?).count).to eq(3)
+    end
   end
 
   describe "#find_by_error" do
