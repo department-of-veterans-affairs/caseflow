@@ -189,7 +189,7 @@ const mapStateToProps = (state, props) => {
   return {
     dropdownName: name,
     appealHearingLocations: state.components.dropdowns[name] ? {
-      options: state.components.dropdowns[name].options,
+      options: _.orderBy(state.components.dropdowns[name].options, ['value.distance'], ['asc']),
       isFetching: state.components.dropdowns[name].isFetching,
       errorMsg: state.components.dropdowns[name].errorMsg
     } : {}
