@@ -132,6 +132,7 @@ describe AppealIntake do
     end
 
     context "Claimant is different than Veteran" do
+      before {}
       let(:claimant) { "1234" }
       let(:payee_code) { "10" }
       let(:veteran_is_not_claimant) { true }
