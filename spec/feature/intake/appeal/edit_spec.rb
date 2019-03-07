@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Appeal Edit issues" do
@@ -172,6 +174,22 @@ feature "Appeal Edit issues" do
 
     # issue note was added
     expect(page).to have_button("Save", disabled: false)
+  end
+
+  context "with remove decision review enabled" do
+    before do
+      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
+    end
+
+    scenario "allows all request issues to be removed and saved" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      # remove all issues
+      click_remove_intake_issue(1)
+      click_remove_issue_confirmation
+      click_remove_intake_issue(1)
+      click_remove_issue_confirmation
+      expect(page).to have_button("Save", disabled: false)
+    end
   end
 
   context "ratings with disabiliity codes" do

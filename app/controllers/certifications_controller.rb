@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CertificationsController < ApplicationController
   before_action :verify_access, :check_certification_out_of_service
 

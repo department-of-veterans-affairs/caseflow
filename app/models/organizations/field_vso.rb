@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FieldVso < Vso
   after_create :add_vso_config
 

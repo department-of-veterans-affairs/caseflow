@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Case details" do
@@ -235,6 +237,18 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.regional_office.city)
       end
     end
+    context "when veteran is in BGS" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :appeal
+        )
+      end
+      scenario "details view informs us that the Veteran data source is BGS" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
+      end
+    end
 
     context "when Veteran is not the appellant" do
       let!(:appeal) do
@@ -265,6 +279,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
+        expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
       end
     end
 

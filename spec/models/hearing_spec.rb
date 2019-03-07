@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Hearing do
   context "create" do
     let!(:hearing_day) { create(:hearing_day) }

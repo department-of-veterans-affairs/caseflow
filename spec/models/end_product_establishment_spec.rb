@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe EndProductEstablishment do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -938,6 +940,10 @@ describe EndProductEstablishment do
 
     let!(:processed_request_issue) do
       create(:request_issue, decision_review: source, decision_sync_processed_at: Time.zone.now)
+    end
+
+    let!(:closed_request_issue) do
+      create(:request_issue, :removed, decision_review: source)
     end
 
     context "when decision issues are all synced" do

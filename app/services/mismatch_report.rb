@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class MismatchReport < Report
   def self.output_filename
     "mismatch"

@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 ##
 # Task to schedule a hearing for a veteran making a claim.
 # Created by the intake process for any appeal electing to have a hearing.
 # Once completed, a DispositionTask is created.
 
 class ScheduleHearingTask < GenericTask
-  before_create :check_parent_type
+  before_create :create_parent_hearing_task
   after_update :update_location_in_vacols
 
   class << self
@@ -55,13 +57,9 @@ class ScheduleHearingTask < GenericTask
     "Schedule hearing"
   end
 
-  def check_parent_type
-    if parent.type != "HearingTask"
-      fail(
-        Caseflow::Error::InvalidParentTask,
-        task_type: self.class.name,
-        assignee_type: assigned_to.class.name
-      )
+  def create_parent_hearing_task
+    if parent.type != HearingTask.name
+      self.parent = HearingTask.create(appeal: appeal, parent: parent, assigned_to: Bva.singleton)
     end
   end
 

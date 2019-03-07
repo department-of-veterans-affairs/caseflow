@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe HearingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
@@ -141,6 +143,10 @@ RSpec.describe HearingsController, type: :controller do
   end
 
   describe "#find_closest_hearing_locations" do
+    before do
+      VADotGovService = Fakes::VADotGovService
+    end
+
     context "for AMA appeals" do
       let!(:appeal) { create(:appeal) }
 
@@ -163,6 +169,33 @@ RSpec.describe HearingsController, type: :controller do
             params: { appeal_id: legacy_appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 200
+      end
+    end
+
+    context "when an address cannot be found" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        message = {
+          "messages" => [
+            {
+              "key" => "AddressCouldNotBeFound"
+            }
+          ]
+        }
+
+        error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
+
+        allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+      end
+
+      it "returns an error" do
+        get :find_closest_hearing_locations,
+            as: :json,
+            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
+
+        expect(response.status).to eq 400
+        expect(JSON.parse(response.body)["message"]).to eq "AddressCouldNotBeFound"
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RampElection < RampReview
   has_many :intakes, as: :detail, class_name: "RampElectionIntake"
   has_many :ramp_closed_appeals
@@ -46,10 +48,7 @@ class RampElection < RampReview
       update!(
         established_at: nil,
         receipt_date: nil,
-        option_selected: nil,
-        end_product_reference_id: nil,
-        end_product_status: nil,
-        end_product_status_last_synced_at: nil
+        option_selected: nil
       )
 
       # End product should already be cancelled, so we don't need to pay attention to the establishment that we already

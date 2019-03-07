@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class JudgeNonAvailability < NonAvailability
   class << self
     def import_judge_non_availability(schedule_period)

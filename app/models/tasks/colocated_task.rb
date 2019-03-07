@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Any task assigned to a colocated team at the BVA, which is any team that handles admin actions at BVA.
 # Colocated teams perform actions like:

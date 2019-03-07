@@ -7,7 +7,8 @@
     serverIntake: appeal.ui_hash,
     claimId: url_appeal_uuid,
     featureToggles: {
-      useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
+      useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
+      removeDecisionReviews: FeatureToggle.enabled?(:remove_decision_reviews, user: current_user)
     }
   }) %>
 <% end %>

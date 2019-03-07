@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask is completed.
 # When the associated hearing's disposition is set, the appropriate tasks are set as children
@@ -6,6 +8,8 @@
 class DispositionTask < GenericTask
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
+
+  class HearingDispositionNotNoShow < StandardError; end
 
   class << self
     def create_disposition_task!(appeal, parent, hearing)
@@ -47,11 +51,11 @@ class DispositionTask < GenericTask
       case disposition_params[:disposition]
       when "postponed"
         after_disposition_update = disposition_params[:after_disposition_update]
-        mark_hearing_postponed(after_disposition_update: after_disposition_update)
+        mark_postponed(after_disposition_update: after_disposition_update)
       when "held"
-        mark_hearing_held
+        mark_held
       when "no_show"
-        mark_hearing_no_show
+        mark_no_show
       end
     end
 
@@ -95,9 +99,9 @@ class DispositionTask < GenericTask
     end
   end
 
-  def release() end
+  private
 
-  def mark_hearing_postponed(after_disposition_update:)
+  def mark_postponed(after_disposition_update:)
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: "postponed")
     else
@@ -119,13 +123,9 @@ class DispositionTask < GenericTask
     end
   end
 
-  def mark_hearing_no_show() end
+  def mark_cancelled() end
 
-  def mark_hearing_cancelled() end
-
-  def mark_hearing_held() end
-
-  private
+  def mark_held() end
 
   def slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
     hearing = HearingRepository.slot_new_hearing(hearing_day_id,
@@ -137,5 +137,22 @@ class DispositionTask < GenericTask
     end
 
     hearing
+  end
+
+  def mark_no_show!
+    if parent&.hearing_task_association&.hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
+      fail HearingDispositionNotNoShow
+    end
+
+    no_show_hearing_task = NoShowHearingTask.create!(
+      parent: self,
+      appeal: appeal,
+      assigned_to: HearingAdmin.singleton
+    )
+
+    no_show_hearing_task.update!(
+      status: Constants.TASK_STATUSES.on_hold,
+      on_hold_duration: 25.days
+    )
   end
 end

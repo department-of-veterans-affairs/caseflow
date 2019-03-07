@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class V1::HearingSerializer < ActiveModel::Serializer
   attribute :type
 

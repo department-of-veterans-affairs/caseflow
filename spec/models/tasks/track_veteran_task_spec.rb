@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe TrackVeteranTask do
   let(:vso) { FactoryBot.create(:vso) }
   let(:root_task) { FactoryBot.create(:root_task) }

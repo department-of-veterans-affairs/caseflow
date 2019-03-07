@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :is_legacy do
     false

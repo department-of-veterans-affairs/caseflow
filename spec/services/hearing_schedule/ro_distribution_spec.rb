@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingSchedule::RoDistribution do
   let(:ro_distribution) do
     Class.new { include HearingSchedule::RoDistribution }

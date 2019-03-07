@@ -23,8 +23,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 0d56a6c6a2ec314f97bce863f6aeffe837d75a13
-  ref: 0d56a6c6a2ec314f97bce863f6aeffe837d75a13
+  revision: 40162a748932e0a5aa736b63bb7212928c6df345
+  ref: 40162a748932e0a5aa736b63bb7212928c6df345
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)
@@ -433,7 +433,7 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.4.0)
-    ruby-oci8 (2.2.5.1)
+    ruby-oci8 (2.2.7)
     ruby-plsql (0.6.0)
     ruby-progressbar (1.10.0)
     ruby_dep (1.5.0)
@@ -585,7 +585,7 @@ DEPENDENCIES
   rspec-rails
   rspec_junit_formatter
   rubocop (~> 0.52)
-  ruby-oci8 (~> 2.2.5.1)
+  ruby-oci8 (~> 2.2)
   sass-rails (~> 5.0)
   scss_lint
   sentry-raven

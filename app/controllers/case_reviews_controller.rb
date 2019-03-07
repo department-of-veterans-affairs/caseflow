@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CaseReviewsController < ApplicationController
   rescue_from Caseflow::Error::UserRepositoryError do |e|
     handle_non_critical_error("case_reviews", e)

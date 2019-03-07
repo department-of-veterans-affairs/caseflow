@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingsController < ApplicationController
   before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
@@ -44,7 +46,7 @@ class HearingsController < ApplicationController
 
       render json: { hearing_locations: locations }
     rescue Caseflow::Error::VaDotGovAPIError => e
-      render json: { message: e.message, status: "ERROR" }
+      render json: { message: e.message["messages"][0]["key"] }, status: :bad_request
     end
   end
 

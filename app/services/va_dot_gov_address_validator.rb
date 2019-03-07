@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VaDotGovAddressValidator
   attr_accessor :appeal
 
@@ -205,7 +207,8 @@ class VaDotGovAddressValidator
 
     return if task.nil?
 
-    admin_action_type.create!(
+    # Create only if another admin task is not in an active status.
+    admin_action_type.active.find_or_create_by(
       appeal: appeal,
       instructions: [instructions],
       assigned_to: HearingsManagement.singleton,

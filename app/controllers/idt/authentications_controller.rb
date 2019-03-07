@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Idt::AuthenticationsController < ApplicationController
   protect_from_forgery with: :exception
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Note: The vacols_sequence_id column maps to the ISSUE table ISSSEQ column in VACOLS
 # Using this and the appeal's vacols_id, we can directly map a Caseflow issue back to its
 # VACOLS' equivalent

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Caseflow::Error
   module ErrorSerializer
     extend ActiveSupport::Concern
@@ -156,6 +158,14 @@ module Caseflow::Error
     def initialize
       @code = 500
       @message = "Appeal is not active at the Board. Send mail to appropriate Regional Office in mail portal"
+    end
+  end
+
+  class DuplicateJudgeTeam < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "User #{@user_id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
     end
   end
 

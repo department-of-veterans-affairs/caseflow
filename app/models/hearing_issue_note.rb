@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingIssueNote < ApplicationRecord
   belongs_to :request_issue
   belongs_to :hearing

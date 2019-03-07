@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
@@ -53,6 +55,7 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
+    create_team_admin
     create_colocated_users
     create_transcription_team
     create_vso_users_and_tasks
@@ -67,6 +70,12 @@ class SeedDB
     create_case_search_only_user
     create_judge_teams
     create_hearings_team
+  end
+
+  def create_team_admin
+    u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
+    Functions.grant!("System Admin", users: [u.css_id])
+    OrganizationsUser.add_user_to_organization(u, Bva.singleton)
   end
 
   def create_judge_teams

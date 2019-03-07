@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TasksController < ApplicationController
   include Errors
 
@@ -133,6 +135,8 @@ class TasksController < ApplicationController
       date_to_compare_with: task.placed_on_hold_at || task.assigned_at
     )
     render json: { new_documents: new_documents_for_user.process! }
+  rescue Caseflow::Error::EfolderAccessForbidden => e
+    render(e.serialize_response)
   rescue StandardError => e
     Raven.capture_exception(e)
     handle_non_critical_error("tasks_new_documents", e)

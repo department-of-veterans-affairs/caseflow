@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Hearings::MasterRecord do
   context "#to_hash" do
     subject { master_record.to_hash }

@@ -76,7 +76,8 @@ class AssignHearingModal extends React.PureComponent {
     }
 
     if (appeal.availableHearingLocations) {
-      const location = appeal.availableHearingLocations[0];
+      const sortedLocations = _.orderBy(appeal.availableHearingLocations, ['distance'], ['asc']);
+      const location = sortedLocations[0];
 
       if (location) {
         this.props.onHearingLocationChange({
@@ -109,14 +110,19 @@ class AssignHearingModal extends React.PureComponent {
   validateForm = () => {
     const {
       selectedHearingDay,
-      selectedRegionalOffice
+      selectedRegionalOffice,
+      selectedHearingTime,
+      selectedOptionalTime
       // selectedHearingLocation
     } = this.props;
 
+    const validTime = (selectedHearingTime === 'other' && selectedOptionalTime) ||
+      (selectedHearingTime !== 'other' && Boolean(selectedHearingTime));
+
     const invalid = {
-      day: selectedHearingDay ? null : 'Please select a hearing day',
+      day: selectedHearingDay && selectedHearingDay.hearingId ? null : 'Please select a hearing day',
       regionalOffice: selectedRegionalOffice ? null : 'Please select a regional office',
-      time: this.getHearingTime() ? null : 'Please pick a hearing time'
+      time: validTime ? null : 'Please pick a hearing time'
       // location: selectedHearingLocation ? null : 'Please select a hearing location'
     };
 
@@ -297,8 +303,16 @@ class AssignHearingModal extends React.PureComponent {
 
     const initVals = this.getInitialValues();
     const timeOptions = this.getTimeOptions();
-    const currentRegionalOffice = selectedRegionalOffice || initVals.regionalOffice;
     const { address_line_1, city, state, zip } = appeal.appellantAddress || {};
+
+    const currentRegionalOffice = selectedRegionalOffice || initVals.regionalOffice;
+    const roIsDifferent = appeal.closestRegionalOffice !== currentRegionalOffice;
+    let staticHearingLocations = _.isEmpty(appeal.availableHearingLocations) ?
+      null : appeal.availableHearingLocations;
+
+    if (roIsDifferent) {
+      staticHearingLocations = null;
+    }
 
     if (openHearing) {
       return null;
@@ -324,8 +338,8 @@ class AssignHearingModal extends React.PureComponent {
           key={`ahl-dropdown__${currentRegionalOffice || ''}`}
           regionalOffice={currentRegionalOffice}
           appealId={appeal.externalId}
-          dynamic={appeal.closestRegionalOffice !== currentRegionalOffice}
-          staticHearingLocations={appeal.availableHearingLocations}
+          dynamic={staticHearingLocations === null || roIsDifferent}
+          staticHearingLocations={staticHearingLocations}
           onChange={this.props.onHearingLocationChange}
           value={selectedHearingLocation}
         />}

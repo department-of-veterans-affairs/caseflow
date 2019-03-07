@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # Parent class for all tasks to be completed by judges, including
 # JudgeQualityReviewTasks, JudgeDecisionReviewTasks, and JudgeAssignTasks.

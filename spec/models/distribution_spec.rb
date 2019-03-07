@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Distribution do
   let(:judge) { FactoryBot.create(:user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
@@ -286,8 +288,8 @@ describe Distribution do
       end
     end
 
-    context "when the judge has an appeal that has waited more than 14 days" do
-      let!(:task) { create(:ama_judge_task, assigned_to: judge, assigned_at: 15.days.ago) }
+    context "when the judge has an appeal that has waited more than 30 days" do
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, assigned_at: 31.days.ago) }
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
@@ -295,8 +297,8 @@ describe Distribution do
       end
     end
 
-    context "when the judge has a legacy appeal that has waited more than 14 days" do
-      let!(:task) { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: 15.days.ago) }
+    context "when the judge has a legacy appeal that has waited more than 30 days" do
+      let!(:task) { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: 31.days.ago) }
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)

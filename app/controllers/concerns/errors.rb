@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Errors
   extend ActiveSupport::Concern
   def invalid_role_error

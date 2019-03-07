@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # LegacyOptInManager processes opt-ins and rollbacks in a batch per DecisionReview
 # because whether a legacy_appeal needs closed depends on the state of all issues after processing
 class LegacyOptinManager

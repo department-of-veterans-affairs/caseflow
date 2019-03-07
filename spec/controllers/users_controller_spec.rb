@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe UsersController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["System Admin"]) }
   let!(:staff) { create(:staff, :attorney_judge_role, user: user) }
@@ -88,6 +90,26 @@ RSpec.describe UsersController, type: :controller do
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["judges"].size).to eq 3
+      end
+    end
+  end
+
+  describe "GET /users?role=non_judges" do
+    before { judge_team_count.times { JudgeTeam.create_for_judge(FactoryBot.create(:user)) } }
+
+    context "when there are no judge teams" do
+      let!(:users) { FactoryBot.create_list(:user, 8) }
+      let(:judge_team_count) { 0 }
+
+      # Add one for the current user who was created outside the scope of this test.
+      let(:user_count) { users.count + 1 }
+
+      it "returns all of the users in the database" do
+        get(:index, params: { role: "non_judges" })
+
+        expect(response.status).to eq(200)
+        response_body = JSON.parse(response.body)
+        expect(response_body["non_judges"]["data"].size).to eq(user_count)
       end
     end
   end

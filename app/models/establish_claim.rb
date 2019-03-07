@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class EstablishClaim < Dispatch::Task
   include CachedAttributes
 
-  ADMIN_FUNCTION = "Manage Claim Establishment".freeze
+  ADMIN_FUNCTION = "Manage Claim Establishment"
 
   class InvalidEndProductError < StandardError; end
 

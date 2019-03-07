@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::HearingDayController < HearingScheduleController
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
 

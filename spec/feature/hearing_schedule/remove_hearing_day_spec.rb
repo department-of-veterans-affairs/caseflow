@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.feature "Remove a Hearing Day" do
   let!(:current_user) do
     OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)

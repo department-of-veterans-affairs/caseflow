@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Hearings::DocketsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:staff) { create(:staff, user: user) }

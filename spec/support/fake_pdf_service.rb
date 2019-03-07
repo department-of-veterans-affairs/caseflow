@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FakePdfService
   def self.save_pdf_for!(form8)
     @saved_form8 = form8
