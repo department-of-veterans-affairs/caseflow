@@ -1089,4 +1089,107 @@ feature "Higher Level Review Edit issues" do
       end
     end
   end
+
+  context "when remove decision reviews is enabled" do
+    before do
+      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
+      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+    end
+
+    let(:today) { Time.zone.now }
+    let(:last_week) { Time.zone.now - 7.days }
+    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+    let!(:completed_tasks) do
+      [create(:higher_level_review_task,
+              :completed,
+              appeal: higher_level_review,
+              assigned_to: non_comp_org,
+              closed_at: last_week)]
+    end
+
+    context "when review has multiple active tasks" do
+      let!(:in_progress_tasks) do
+        [create(:higher_level_review_task,
+                :in_progress,
+                appeal: higher_level_review,
+                assigned_to: non_comp_org,
+                assigned_at: last_week),
+         create(:higher_level_review_task,
+                :in_progress,
+                appeal: higher_level_review,
+                assigned_to: non_comp_org,
+                assigned_at: today)]
+      end
+
+      scenario "Cancel all active tasks when all request issues are removed" do
+        visit "higher_level_reviews/#{ep_claim_id}/edit"
+        # remove all request issues
+        higher_level_review.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+        safe_click("#button-submit-update")
+        safe_click ".confirm"
+        expect(
+          Task.find_by(
+            id: in_progress_tasks.first.id,
+            status: Constants.TASK_STATUSES.cancelled
+          )
+        ).to_not be_nil
+        expect(
+          Task.find_by(
+            id: in_progress_tasks.second.id,
+            status: Constants.TASK_STATUSES.cancelled
+          )
+        ).to_not be_nil
+        expect(
+          Task.find_by(
+            id: completed_tasks.first.id,
+            status: Constants.TASK_STATUSES.completed
+          )
+        ).to_not be_nil
+      end
+
+      scenario "no active tasks cancelled when request issues remain" do
+        visit "higher_level_reviews/#{ep_claim_id}/edit"
+        click_remove_intake_issue(1)
+        click_remove_issue_confirmation
+        safe_click("#button-submit-update")
+        safe_click ".confirm"
+        expect(
+          Task.find_by(
+            id: in_progress_tasks.first.id,
+            status: Constants.TASK_STATUSES.in_progress
+          )
+        ).to_not be_nil
+        expect(
+          Task.find_by(
+            id: in_progress_tasks.second.id,
+            status: Constants.TASK_STATUSES.in_progress
+          )
+        ).to_not be_nil
+        expect(
+          Task.find_by(
+            id: completed_tasks.first.id,
+            status: Constants.TASK_STATUSES.completed
+          )
+        ).to_not be_nil
+      end
+    end
+    context "when review has no active tasks" do
+      scenario "no tasks are cancelled when all request issues are removed" do
+        visit "higher_level_reviews/#{ep_claim_id}/edit"
+        click_remove_intake_issue(1)
+        click_remove_issue_confirmation
+        safe_click("#button-submit-update")
+        safe_click ".confirm"
+        expect(
+          Task.find_by(
+            id: completed_tasks.first.id,
+            status: Constants.TASK_STATUSES.completed
+          )
+        ).to_not be_nil
+      end
+    end
+  end
 end
