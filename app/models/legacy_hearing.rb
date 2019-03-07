@@ -34,7 +34,7 @@ class LegacyHearing < ApplicationRecord
   VIDEO_HEARING = "Video"
 
   def hearing_task?
-    hearing_task_association.exists?
+    !hearing_task_association.nil?
   end
 
   def disposition_task
@@ -44,7 +44,11 @@ class LegacyHearing < ApplicationRecord
   end
 
   def disposition_task_in_progress
-    disposition_task ? disposition_task.active? && disposition_task.children.empty? : false
+    disposition_task ? disposition_task.active_with_no_children? : false
+  end
+
+  def disposition_editable?
+    disposition_task_in_progress || !hearing_task?
   end
 
   def judge
@@ -181,8 +185,7 @@ class LegacyHearing < ApplicationRecord
   def to_hash(current_user_id)
     serializable_hash(
       methods: [
-        :hearing_task?,
-        :disposition_task_in_progress,
+        :disposition_editable?,
         :scheduled_for,
         :readable_request_type,
         :disposition,
