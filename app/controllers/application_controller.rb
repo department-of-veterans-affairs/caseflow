@@ -283,7 +283,6 @@ class ApplicationController < ApplicationBaseController
   # Verifies that the user has any of the roles passed
   def verify_authorized_roles(*roles)
     # TODO: override method in queue_controller instead with this logic?
-    # how can the front end get access to the roles?
     current_user.roles = current_user.roles.concat(["Case Details"])
     if (request.original_url.include? "queue") && (current_user.roles.include? "Case Details")
       Rails.logger.info("redirecting user with case details from queue to search")

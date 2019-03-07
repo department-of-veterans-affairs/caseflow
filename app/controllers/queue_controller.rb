@@ -2,6 +2,7 @@
 
 class QueueController < ApplicationController
   before_action :react_routed, :check_queue_out_of_service
+  # TODO: uncomment
   # , :verify_access
   skip_before_action :deny_vso_access
 
