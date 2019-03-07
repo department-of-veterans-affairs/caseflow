@@ -105,7 +105,7 @@ class ApplicationController < ApplicationBaseController
 
   # Link used when clicking logo
   def logo_path
-    "root_path"
+    root_path
   end
   helper_method :logo_path
 
