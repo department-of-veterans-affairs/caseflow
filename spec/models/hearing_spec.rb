@@ -20,7 +20,7 @@ describe Hearing do
   end
 
   context "disposition_editable?" do
-    let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
     subject { hearing.disposition_editable? }
 
     context "when the hearing has an open disposition task" do
