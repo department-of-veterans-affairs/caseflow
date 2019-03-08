@@ -62,7 +62,7 @@ describe "task rake tasks" do
           )
           expect { subject }.to output(expected_output).to_stdout
           expect(to_task.count).to eq task_count
-          expect(to_task.all.map(&:id)).to eq ids
+          expect(to_task.all.map(&:id).sort).to eq(ids.sort)
           expect(from_task.any?).to be_falsey
         end
       end
