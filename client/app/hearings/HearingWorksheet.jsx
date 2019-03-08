@@ -26,7 +26,8 @@ import {
   toggleWorksheetSaving,
   setWorksheetTimeSaved,
   setWorksheetSaveFailedStatus,
-  saveWorksheet
+  saveWorksheet,
+  saveDocket
 } from './actions/Dockets';
 
 import { saveIssues } from './actions/Issue';
@@ -238,7 +239,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setWorksheetTimeSaved,
   saveWorksheet,
   setWorksheetSaveFailedStatus,
-  saveIssues
+  saveIssues,
+  saveDocket
 }, dispatch);
 
 export default connect(

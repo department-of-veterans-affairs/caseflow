@@ -2,18 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { getDailyDocket, saveDocket } from '../actions/Dockets';
 import _ from 'lodash';
-import { getDailyDocket,
-  handleSaveHearingSuccess,
-  handleSaveHearingError,
-  resetSaveHearingSuccess
-} from '../actions/Dockets';
-import ApiUtil from '../../util/ApiUtil';
 import LoadingContainer from '../../components/LoadingContainer';
 import StatusMessage from '../../components/StatusMessage';
 import { LOGO_COLORS } from '../../constants/AppConstants';
+import AutoSave from '../../components/AutoSave';
 import DailyDocket from '../DailyDocket';
-import { getDate } from '../util/DateUtil';
+import { getDate, now } from '../util/DateUtil';
 import { css } from 'glamor';
 
 const alertStyling = css({
@@ -26,24 +22,6 @@ export class DailyDocketContainer extends React.Component {
     this.props.getDailyDocket(null, this.props.date);
     document.title += ` ${getDate(this.props.date)}`;
   }
-
-  componentDidUpdate = (prevProps) => {
-    if (!((_.isNil(prevProps.saveHearingSuccess) && this.props.saveHearingSuccess) ||
-      _.isNil(this.props.saveHearingSuccess))) {
-      this.props.resetSaveHearingSuccess();
-    }
-  };
-
-  saveHearing = (hearing) => () => {
-    ApiUtil.patch(`/hearings/${hearing.external_id}`, { data: {
-      hearing
-    } }).
-      then((response) => {
-        this.props.handleSaveHearingSuccess(JSON.parse(response.text), this.props.date);
-      }, (err) => {
-        this.props.handleSaveHearingError(err);
-      });
-  };
 
   render() {
 
@@ -69,16 +47,25 @@ export class DailyDocketContainer extends React.Component {
       </div>;
     }
 
+    if (_.isEmpty(dailyDocket)) {
+      return <div>You have no hearings on this date.</div>;
+    }
+
     return <div>
+
+      <AutoSave
+        save={this.props.saveDocket(_.values(dailyDocket), this.props.date)}
+        spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
+        isSaving={this.props.docketIsSaving}
+        timeSaved={this.props.docketTimeSaved || now()}
+        saveFailed={this.props.saveDocketFailed}
+      />
       <div className="cf-hearings-daily-docket-container" {...alertStyling}>
         <DailyDocket
           veteran_law_judge={this.props.veteran_law_judge}
           date={this.props.date}
           docket={dailyDocket}
           hearingDay={this.props.hearingDay}
-          saveHearing={this.saveHearing}
-          saveHearingSuccess={this.props.saveHearingSuccess}
-          saveHearingError={this.props.saveHearingError}
         />
       </div>
     </div>;
@@ -89,16 +76,15 @@ const mapStateToProps = (state) => ({
   dailyDocket: state.dailyDocket,
   hearingDay: state.hearingDay,
   docketServerError: state.docketServerError,
-  saveHearingSuccess: state.saveHearingSuccess,
-  saveHearingError: state.saveHearingError
+  docketIsSaving: state.docketIsSaving,
+  docketTimeSaved: state.docketTimeSaved,
+  saveDocketFailed: state.saveDocketFailed
 });
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
     getDailyDocket,
-    handleSaveHearingSuccess,
-    handleSaveHearingError,
-    resetSaveHearingSuccess
+    saveDocket
   }, dispatch)
 });
 
