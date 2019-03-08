@@ -105,7 +105,8 @@ class QueueApp extends React.PureComponent {
       <JudgeDecisionReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} hasCaseDetailsRole={this.props.hasCaseDetailsRole} />;
+  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId}
+    hasCaseDetailsRole={this.props.hasCaseDetailsRole} />;
 
   routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}

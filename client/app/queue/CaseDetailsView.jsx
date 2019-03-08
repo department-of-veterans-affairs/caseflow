@@ -82,7 +82,8 @@ class CaseDetailsView extends React.PureComponent {
       </Alert></div>}
       <AppSegment filledBackground>
         <CaseTitle appeal={appeal} />
-        <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname} hasCaseDetailsRole={this.props.hasCaseDetailsRole} />
+        <CaseTitleDetails appealId={appealId} redirectUrl={window.location.pathname}
+          hasCaseDetailsRole={this.props.hasCaseDetailsRole} />
         { this.props.veteranCaseListIsVisible &&
           <VeteranCasesView
             caseflowVeteranId={appeal.caseflowVeteranId}
