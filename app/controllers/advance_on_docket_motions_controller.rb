@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AdvanceOnDocketMotionsController < ApplicationController
   before_action :verify_aod_access
 

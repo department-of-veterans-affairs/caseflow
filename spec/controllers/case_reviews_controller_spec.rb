@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe CaseReviewsController, type: :controller do
   before do
     Fakes::Initializer.load!
@@ -122,9 +124,6 @@ RSpec.describe CaseReviewsController, type: :controller do
               expect(response_body["task"]["overtime"]).to eq true
               expect(response_body["task"]["note"]).to eq "something"
               expect(response_body.keys).to include "issues"
-              expect(request_issue1.reload.disposition).to eq nil
-              expect(request_issue2.reload.disposition).to eq nil
-              expect(request_issue3.reload.disposition).to eq nil
 
               expect(DecisionIssue.count).to eq 2
               expect(request_issue1.decision_issues.first.disposition).to eq "allowed"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
   def task
     object

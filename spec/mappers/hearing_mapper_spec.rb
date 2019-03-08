@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingMapper do
   context ".bfha_vacols_code" do
     let(:hearing) do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Vso do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }

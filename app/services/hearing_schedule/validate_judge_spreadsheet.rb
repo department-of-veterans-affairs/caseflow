@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class HearingSchedule::ValidateJudgeSpreadsheet
-  SPREADSHEET_TITLE = "Judge Non-Availability Dates".freeze
+  SPREADSHEET_TITLE = "Judge Non-Availability Dates"
   SPREADSHEET_HEADERS = [nil, "Judge Name", "VLJ #", "Date"].freeze
   SPREADSHEET_EMPTY_COLUMN = [nil].freeze
 

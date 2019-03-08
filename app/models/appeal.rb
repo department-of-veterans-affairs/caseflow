@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # An appeal filed by a Veteran or appellant to the Board of Veterans' Appeals for VA decisions on claims for benefits.
 # This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
@@ -148,7 +150,7 @@ class Appeal < DecisionReview
   end
 
   def attorney_case_reviews
-    tasks.map(&:attorney_case_reviews).flatten
+    tasks.includes(:attorney_case_reviews).flat_map(&:attorney_case_reviews)
   end
 
   def every_request_issue_has_decision?

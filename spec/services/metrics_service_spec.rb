@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe MetricsService do
   context ".timer" do
     before do

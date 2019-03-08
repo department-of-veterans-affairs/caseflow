@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe FullName do
   let(:first) { "Charles" }
   let(:middle) { "E" }

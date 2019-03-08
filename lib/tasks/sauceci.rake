@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 desc "convenience task used to run sauce browser tests only on the master travis branch"
 task :sauceci do
   sauce_result = true

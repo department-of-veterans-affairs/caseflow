@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::DecisionReviewSerializer < ActiveModel::Serializer
   attribute :issues do
     object.request_issues.open.map do |issue|

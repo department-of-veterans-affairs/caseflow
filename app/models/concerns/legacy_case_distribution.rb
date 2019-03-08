@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module LegacyCaseDistribution
   extend ActiveSupport::Concern
 

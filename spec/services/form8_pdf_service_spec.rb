@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Form8PdfService do
   let(:form8) do
     Form8.new(

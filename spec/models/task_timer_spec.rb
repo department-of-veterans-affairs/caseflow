@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe TaskTimer do
   describe "processing" do
     it "becomes eligible to attempt in the future" do

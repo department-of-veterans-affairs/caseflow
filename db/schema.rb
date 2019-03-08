@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190302000509) do
+ActiveRecord::Schema.define(version: 20190307194302) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,6 +126,7 @@ ActiveRecord::Schema.define(version: 20190302000509) do
     t.datetime "updated_at", null: false
     t.string "veteran_file_number"
     t.string "zip_code"
+    t.index ["appeal_type", "appeal_id"], name: "index_available_hearing_locations_on_appeal_type_and_appeal_id"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
@@ -701,13 +702,13 @@ ActiveRecord::Schema.define(version: 20190302000509) do
     t.string "vacols_id", null: false, comment: "The VACOLS BFKEY of the legacy appeal that has been closed and opted into RAMP."
   end
 
-  create_table "ramp_election_rollbacks", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.bigint "ramp_election_id"
-    t.string "reason"
-    t.string "reopened_vacols_ids", array: true
-    t.datetime "updated_at", null: false
-    t.bigint "user_id"
+  create_table "ramp_election_rollbacks", force: :cascade, comment: "If a RAMP election needs to get rolled back, for example if the EP is canceled, it is tracked here. Also any VACOLS issues that were closed in the legacy system and opted into RAMP are re-opened in the legacy system." do |t|
+    t.datetime "created_at", null: false, comment: "Timestamp for when the rollback was created."
+    t.bigint "ramp_election_id", comment: "The ID of the RAMP Election being rolled back."
+    t.string "reason", comment: "The reason for rolling back the RAMP Election. Rollbacks happen automatically for canceled RAMP Election End Products, but can also happen for other reason such as by request."
+    t.string "reopened_vacols_ids", comment: "The IDs of any legacy appeals which were reopened as a result of rolling back the RAMP Election, corresponding to the VACOLS BFKEY.", array: true
+    t.datetime "updated_at", null: false, comment: "Timestamp for when the rollback was last updated."
+    t.bigint "user_id", comment: "The user who created the RAMP Election rollback, typically a system user."
     t.index ["ramp_election_id"], name: "index_ramp_election_rollbacks_on_ramp_election_id"
     t.index ["user_id"], name: "index_ramp_election_rollbacks_on_user_id"
   end
@@ -788,7 +789,6 @@ ActiveRecord::Schema.define(version: 20190302000509) do
     t.datetime "decision_sync_last_submitted_at"
     t.datetime "decision_sync_processed_at"
     t.datetime "decision_sync_submitted_at"
-    t.string "disposition"
     t.integer "end_product_establishment_id"
     t.bigint "ineligible_due_to_id"
     t.string "ineligible_reason"

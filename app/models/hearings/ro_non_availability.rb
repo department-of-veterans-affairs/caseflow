@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RoNonAvailability < NonAvailability
   class << self
     def import_ro_non_availability(schedule_period)

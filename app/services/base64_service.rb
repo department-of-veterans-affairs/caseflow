@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Base64Service
   def self.to_file(base64_string, file_name)
     start_regex = /(?<=;base64,).*/

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe LegacyWorkQueue do
   context ".tasks_for_user" do
     let!(:user) { FactoryBot.create(:user) }

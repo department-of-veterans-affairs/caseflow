@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
@@ -341,14 +343,8 @@ class AppealRepository
 
     # Create the schedule hearing tasks
     LegacyAppeal.where(vacols_id: ids.map(&:first) - vacols_ids_with_schedule_tasks).each do |appeal|
-      parent = HearingTask.create!(
-        appeal: appeal,
-        parent: RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
-      ) { |task| task.assigned_to = Bva.singleton }
-      ScheduleHearingTask.create!(appeal: appeal) do |task|
-        task.assigned_to = HearingsManagement.singleton
-        task.parent = parent
-      end
+      root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+      ScheduleHearingTask.create!(appeal: appeal, parent: root_task, assigned_to: HearingsManagement.singleton)
 
       update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AppealConcern do
   class TestThing
     include ActiveModel::Model

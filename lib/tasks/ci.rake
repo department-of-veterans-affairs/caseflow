@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rainbow"
 
 CODE_COVERAGE_THRESHOLD = 90

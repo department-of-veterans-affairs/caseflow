@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PrepareEstablishClaimTasksJob < ApplicationJob
   queue_as :low_priority
   application_attr :dispatch
@@ -24,8 +26,8 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
   end
 
   def count_unfinished_jobs
-    jobs = AsyncableJobs.new.jobs
-    msg = "Jobs: #{jobs.count} unfinished asyncable jobs exist in the queue"
+    jobs = AsyncableJobs.new.jobs.select(&:expired_without_processing?)
+    msg = "Expired Jobs: #{jobs.count} expired unfinished asyncable jobs exist in the queue @sierra"
     Rails.logger.info msg
     SlackService.new(url: url).send_notification(msg)
   end

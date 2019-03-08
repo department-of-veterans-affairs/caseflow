@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Organizations::UsersController, type: :controller do
   let(:non_admin_user) do
     User.authenticate!(roles: ["VSO"])

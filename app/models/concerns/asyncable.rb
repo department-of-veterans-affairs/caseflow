@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # History of this class is in docs/asyncable-models.md
 #
 # Mixin module to apply to an ActiveRecord class, to make it easier to process via
@@ -132,6 +134,15 @@ module Asyncable
 
   def submitted?
     !!self[self.class.submitted_at_column]
+  end
+
+  def expired_without_processing?
+    return false if processed?
+
+    last_submitted = self[self.class.last_submitted_at_column]
+    return false unless last_submitted
+
+    last_submitted < REQUIRES_PROCESSING_WINDOW_DAYS.days.ago
   end
 
   def submitted_and_ready?

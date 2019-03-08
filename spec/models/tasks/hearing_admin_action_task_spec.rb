@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingAdminActionTask do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }

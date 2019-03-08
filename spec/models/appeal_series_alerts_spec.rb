@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AppealSeriesAlerts do
   before do
     FeatureToggle.enable!(:api_appeal_status_v3)

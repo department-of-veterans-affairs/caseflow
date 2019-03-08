@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IntakeManagerController < ApplicationController
   before_action :verify_authentication
   before_action :verify_access

@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class SupplementalClaimsController < ClaimReviewController
-  SOURCE_TYPE = "SupplementalClaim".freeze
+  SOURCE_TYPE = "SupplementalClaim"
 
   private
 

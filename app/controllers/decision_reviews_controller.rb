@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
 

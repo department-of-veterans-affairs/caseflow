@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "bgs"
 
 # Thin interface to all things BGS

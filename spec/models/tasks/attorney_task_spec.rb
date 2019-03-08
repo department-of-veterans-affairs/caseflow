@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AttorneyTask do
   let!(:attorney) { create(:user) }
   let!(:judge) { create(:user) }

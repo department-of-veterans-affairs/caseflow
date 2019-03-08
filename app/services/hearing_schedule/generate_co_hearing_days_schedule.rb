@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Utility to create Central Office Hearings in production
 # for a specific date range.
 # Before running this job verify the parameters with
