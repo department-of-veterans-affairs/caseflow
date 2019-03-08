@@ -1139,18 +1139,10 @@ feature "Higher Level Review Edit issues" do
         safe_click("#button-submit-update")
         safe_click ".confirm"
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        expect(
-          Task.find_by(
-            id: completed_task.id,
-            status: Constants.TASK_STATUSES.completed
-          )
-        ).to_not be_nil
-        expect(
-          Task.find_by(
-            id: in_progress_task.id,
-            status: Constants.TASK_STATUSES.cancelled
-          )
-        ).to_not be_nil
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        # todo: for some reason this test is flaky, seems like it takes some time
+        # to run the job even though job should be processed sync
+        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         # going back to the edit page does not show any requested issues
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
@@ -1167,18 +1159,8 @@ feature "Higher Level Review Edit issues" do
         safe_click ".confirm"
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        expect(
-          Task.find_by(
-            id: in_progress_task.id,
-            status: Constants.TASK_STATUSES.in_progress
-          )
-        ).to_not be_nil
-        expect(
-          Task.find_by(
-            id: completed_task.id,
-            status: Constants.TASK_STATUSES.completed
-          )
-        ).to_not be_nil
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
       end
     end
 
@@ -1191,12 +1173,7 @@ feature "Higher Level Review Edit issues" do
         safe_click ".confirm"
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        expect(
-          Task.find_by(
-            id: completed_task.id,
-            status: Constants.TASK_STATUSES.completed
-          )
-        ).to_not be_nil
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       end
     end
   end
