@@ -90,7 +90,6 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
       object.request_issues.open.map do |issue|
         {
           id: issue.id,
-          disposition: issue.disposition,
           program: Constants::BENEFIT_TYPES[issue.benefit_type],
           description: issue.description
         }
