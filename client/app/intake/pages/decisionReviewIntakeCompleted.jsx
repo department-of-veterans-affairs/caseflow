@@ -2,15 +2,15 @@ import React, { Fragment } from 'react';
 import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { PAGE_PATHS, FORM_TYPES, INTAKE_STATES } from '../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
 import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
 import { getIntakeStatus } from '../selectors';
+import _ from 'lodash';
 import Alert from '../../components/Alert';
 import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-import { getFormTypeByKey } from '../util/';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -57,7 +57,7 @@ const getChecklistItems = (formType, requestIssues, isInformalConferenceRequeste
   const checklist = [];
   const eligibleRatingRequestIssues = eligibleRequestIssues.filter((ri) => ri.isRating || ri.isUnidentified);
   const eligibleNonratingRequestIssues = eligibleRequestIssues.filter((ri) => ri.isRating === false);
-  const claimReviewName = getFormTypeByKey(formType).shortName;
+  const claimReviewName = _.find(FORM_TYPES, { key: formType }).shortName;
 
   if (eligibleRatingRequestIssues.length > 0) {
     checklist.push(<Fragment>
@@ -110,7 +110,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       formType,
       intakeStatus
     } = this.props;
-    const selectedForm = getFormTypeByKey(formType);
+    const selectedForm = _.find(FORM_TYPES, { key: formType });
     const completedReview = this.props.decisionReviews[selectedForm.key];
     const {
       requestIssues,

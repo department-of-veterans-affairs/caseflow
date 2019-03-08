@@ -30,8 +30,14 @@ export class AddIssuesPage extends React.Component {
   constructor(props) {
     super(props);
 
+    let originalIssueLength = 0;
+
+    if (this.props.intakeForms && this.props.formType) {
+      originalIssueLength = (this.props.intakeForms[this.props.formType].addedIssues || []).length;
+    }
+
     this.state = {
-      originalIssueLength: (this.props.intakeForms[this.props.formType].addedIssues || []).length,
+      originalIssueLength,
       issueRemoveIndex: 0
     };
   }
@@ -141,10 +147,6 @@ export class AddIssuesPage extends React.Component {
       { valueName: 'content' }
     ];
 
-    const issuesChangedBanner = () => {
-      return <p>When you finish making changes, click "Save" to continue.</p>;
-    };
-
     let fieldsForFormType = getAddIssuesFields(formType, veteran, intakeData);
     let issueChangeClassname = () => {
       // no-op unless the issue banner needs to be displayed
@@ -152,9 +154,11 @@ export class AddIssuesPage extends React.Component {
 
     if (this.props.editPage && this.haveIssuesChanged(intakeData.addedIssues)) {
       // flash a save message if user is on the edit page & issues have changed
+      const issuesChangedBanner = <p>When you finish making changes, click "Save" to continue.</p>;
+
       fieldsForFormType = fieldsForFormType.concat(
         { field: '',
-          content: issuesChangedBanner() });
+          content: issuesChangedBanner });
       issueChangeClassname = (rowObj) => rowObj.field === '' ? 'intake-issue-flash' : '';
     }
 

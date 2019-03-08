@@ -2,8 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
+import _ from 'lodash';
 
-import { PAGE_PATHS, REQUEST_STATE } from '../constants';
+import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE } from '../constants';
 import RampElectionPage from './rampElection/review';
 import RampRefilingPage from './rampRefiling/review';
 import SupplementalClaimPage from './supplementalClaim/review';
@@ -15,7 +16,7 @@ import CancelButton from '../components/CancelButton';
 import { submitReview as submitRampElection } from '../actions/rampElection';
 import { submitReview as submitDecisionReview } from '../actions/decisionReview';
 import { submitReview as submitRampRefiling } from '../actions/rampRefiling';
-import { getFormTypeByKey, toggleIneligibleError } from '../util';
+import { toggleIneligibleError } from '../util';
 
 import SwitchOnForm from '../components/SwitchOnForm';
 
@@ -72,7 +73,7 @@ class ReviewNextButton extends React.PureComponent {
 
     // selected form might be null or empty if the review has been canceled
     // in that case, just use null as data types since page will be redirected
-    const selectedForm = getFormTypeByKey(formType);
+    const selectedForm = _.find(FORM_TYPES, { key: formType });
     const intakeData = selectedForm ? intakeForms[selectedForm.key] : null;
     const needsRelationships = intakeData && intakeData.veteranIsNotClaimant && intakeData.relationships.length === 0;
 
