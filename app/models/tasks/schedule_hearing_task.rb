@@ -137,7 +137,7 @@ class ScheduleHearingTask < GenericTask
   private
 
   def set_assignee
-    self.assigned_to = HearingsManagement.singleton
+    self.assigned_to = assigned_to.nil? ? HearingsManagement.singleton : assigned_to
   end
 
   def withdraw_hearing
