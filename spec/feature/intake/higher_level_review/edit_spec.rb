@@ -1096,96 +1096,104 @@ feature "Higher Level Review Edit issues" do
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
     end
 
+    after do
+      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
+    end
+
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
+    let(:higher_level_review) do
+      # reload to get uuid
+      create(:higher_level_review, :with_end_product_establishment, veteran_file_number: veteran.file_number).reload
+    end
+    let!(:existing_request_issues) do
+      [create(:request_issue, :nonrating, decision_review: higher_level_review),
+       create(:request_issue, :nonrating, decision_review: higher_level_review)]
+    end
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
-    let!(:completed_tasks) do
-      [create(:higher_level_review_task,
-              :completed,
-              appeal: higher_level_review,
-              assigned_to: non_comp_org,
-              closed_at: last_week)]
+    let!(:completed_task) do
+      create(:higher_level_review_task,
+             :completed,
+             appeal: higher_level_review,
+             assigned_to: non_comp_org,
+             closed_at: last_week)
     end
 
     context "when review has multiple active tasks" do
-      let!(:in_progress_tasks) do
-        [create(:higher_level_review_task,
-                :in_progress,
-                appeal: higher_level_review,
-                assigned_to: non_comp_org,
-                assigned_at: last_week),
-         create(:higher_level_review_task,
-                :in_progress,
-                appeal: higher_level_review,
-                assigned_to: non_comp_org,
-                assigned_at: today)]
+      let!(:in_progress_task) do
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: higher_level_review,
+               assigned_to: non_comp_org,
+               assigned_at: last_week)
       end
 
-      scenario "Cancel all active tasks when all request issues are removed" do
-        visit "higher_level_reviews/#{ep_claim_id}/edit"
+      scenario "cancel all active tasks when all request issues are removed" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
         higher_level_review.request_issues.length.times do
           click_remove_intake_issue(1)
           click_remove_issue_confirmation
         end
+
         safe_click("#button-submit-update")
         safe_click ".confirm"
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         expect(
           Task.find_by(
-            id: in_progress_tasks.first.id,
-            status: Constants.TASK_STATUSES.cancelled
-          )
-        ).to_not be_nil
-        expect(
-          Task.find_by(
-            id: in_progress_tasks.second.id,
-            status: Constants.TASK_STATUSES.cancelled
-          )
-        ).to_not be_nil
-        expect(
-          Task.find_by(
-            id: completed_tasks.first.id,
+            id: completed_task.id,
             status: Constants.TASK_STATUSES.completed
           )
         ).to_not be_nil
+        expect(
+          Task.find_by(
+            id: in_progress_task.id,
+            status: Constants.TASK_STATUSES.cancelled
+          )
+        ).to_not be_nil
+
+        # going back to the edit page does not show any requested issues
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        expect(page).not_to have_content(existing_request_issues.first.description)
+        expect(page).not_to have_content(existing_request_issues.second.description)
       end
 
       scenario "no active tasks cancelled when request issues remain" do
-        visit "higher_level_reviews/#{ep_claim_id}/edit"
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        # only cancel 1 of the 2 request issues
         click_remove_intake_issue(1)
         click_remove_issue_confirmation
         safe_click("#button-submit-update")
         safe_click ".confirm"
+
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         expect(
           Task.find_by(
-            id: in_progress_tasks.first.id,
+            id: in_progress_task.id,
             status: Constants.TASK_STATUSES.in_progress
           )
         ).to_not be_nil
         expect(
           Task.find_by(
-            id: in_progress_tasks.second.id,
-            status: Constants.TASK_STATUSES.in_progress
-          )
-        ).to_not be_nil
-        expect(
-          Task.find_by(
-            id: completed_tasks.first.id,
+            id: completed_task.id,
             status: Constants.TASK_STATUSES.completed
           )
         ).to_not be_nil
       end
     end
+
     context "when review has no active tasks" do
       scenario "no tasks are cancelled when all request issues are removed" do
-        visit "higher_level_reviews/#{ep_claim_id}/edit"
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         click_remove_intake_issue(1)
         click_remove_issue_confirmation
         safe_click("#button-submit-update")
         safe_click ".confirm"
+
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         expect(
           Task.find_by(
-            id: completed_tasks.first.id,
+            id: completed_task.id,
             status: Constants.TASK_STATUSES.completed
           )
         ).to_not be_nil

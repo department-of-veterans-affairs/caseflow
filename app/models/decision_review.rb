@@ -186,7 +186,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def cancel_active_tasks!
-    tasks.active.update_all!(status: Constants.TASK_STATUSES.cancelled)
+    tasks.active.update_all(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def contestable_issues
