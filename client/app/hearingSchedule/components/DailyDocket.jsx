@@ -104,7 +104,7 @@ export default class DailyDocket extends React.Component {
 
   onHearingDateUpdate = (hearingId) => (hearingDay) => this.props.onHearingDateUpdate(hearingId, hearingDay);
 
-  onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
+  onHearingTimeUpdate = (hearingId) => (time) => { console.log(hearingId); this.props.onHearingTimeUpdate(hearingId, time); };
 
   onHearingLocationUpdate = (hearingId) => (location) => this.props.onHearingLocationUpdate(hearingId, location);
 
@@ -128,10 +128,6 @@ export default class DailyDocket extends React.Component {
   dailyDocketHearings = () => {
     return _.filter(this.props.hearings, (hearing) => !this.previouslyScheduled(hearing));
   };
-
-   onHearingOptionalTime = (hearingId) => (optionalTime) => {
-     this.props.onHearingOptionalTime(hearingId, optionalTime.value);
-   }
 
   getAppellantName = (hearing) => {
     let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName } = hearing;
@@ -183,17 +179,19 @@ export default class DailyDocket extends React.Component {
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={(option) => {
         if (option.value === 'postponed') {
-          this.cancelHearingUpdate(hearing)();
           this.setState({ editedDispositionModalProps: {
             hearing,
             disposition: option.value,
             onCancel: this.closeEditedDispositionModal,
             onConfirm: () => {
+              this.cancelHearingUpdate(hearing)();
               this.onHearingDispositionUpdate(hearing.id)(option);
+              this.closeEditedDispositionModal();
               // give redux some time to update.
               setTimeout(() => {
-                this.validateAndSaveHearing(hearing)();
-                this.closeEditedDispositionModal();
+                const updatedHearing = this.props.hearings[hearing.id];
+
+                this.validateAndSaveHearing(updatedHearing)();
               }, 0);
             }
           } });
@@ -270,10 +268,11 @@ export default class DailyDocket extends React.Component {
     const value = hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
 
     return <HearingTime
-      regionalOffice={this.getRegionalOffice}
+      regionalOffice={this.getRegionalOffice()}
       value={value}
+      hearingId={hearing.id}
       readOnly={readOnly}
-      onChange={this.onHearingOptionalTime(hearing.id)} />;
+      onChange={this.onHearingTimeUpdate(hearing.id)} />;
   };
 
   getHearingDetailsLink = (hearing) => {
@@ -315,9 +314,6 @@ export default class DailyDocket extends React.Component {
     return () => {
 
       this.saveHearing(hearing)();
-      this.onInvalidForm(hearing.id)({
-        hearingDate: null
-      });
     };
   }
 

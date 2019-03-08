@@ -36,11 +36,11 @@ import {
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
   onResetLockHearingAfterError,
-  onHearingOptionalTime,
   onInvalidForm
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
+import { getAssignHearingTime } from '../components/modalForms/HearingTime';
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
@@ -91,68 +91,41 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  getTime = (hearing) => {
-    const dateForTimezoneCalculation = (hearing.editedDate && hearing.editedDate.scheduledFor) || hearing.scheduledFor;
-
-    if (hearing.editedTime) {
-      return this.formatTime(dateForTimezoneCalculation, hearing.editedTime);
+  getHearingDay = (hearing) => {
+    if (hearing.editedDate) {
+      return hearing.editedDate;
     }
 
-    const timeObject = moment(hearing.scheduledFor).tz(hearing.regionalOfficeTimezone);
-
     return {
-      // eslint-disable-next-line id-length
-      h: timeObject.hours(),
-      // eslint-disable-next-line id-length
-      m: timeObject.minutes(),
-      offset: moment(dateForTimezoneCalculation).tz(hearing.regionalOfficeTimezone).
-        tz('America/New_York').
-        format('Z')
+      timezone: hearing.regionalOfficeTimezone,
+      scheduledFor: hearing.scheduledFor
     };
+  }
 
-  };
+  getHearingTime = (hearing) => {
+    if (hearing.editedTime) {
+      return hearing.editedTime;
+    }
 
-  formatTime = (hearingDate, hearingTime) => {
-    return {
-      // eslint-disable-next-line id-length
-      h: hearingTime.split(':')[0],
-      // eslint-disable-next-line id-length
-      m: hearingTime.split(':')[1],
-      offset: moment.tz(hearingDate, 'America/New_York').format('Z')
-    };
-  };
+    return moment(hearing.scheduledFor).tz(hearing.regionalOfficeTimezone).
+      format('HH:mm');
+  }
 
   getScheduledTime = (hearing) => {
-    let scheduledTime = null;
+    const hearingTime = this.getHearingTime(hearing);
+    const hearingDay = this.getHearingDay(hearing);
 
-    if (hearing.editedTime) {
-      if (hearing.editedTime === 'other') {
-        scheduledTime = hearing.editedOptionalTime;
-      } else {
-        scheduledTime = hearing.editedTime;
-      }
-    } else {
-      scheduledTime = this.getTime(hearing);
-    }
-
-    return scheduledTime;
+    return getAssignHearingTime(hearingTime, hearingDay);
   };
 
   getScheduledFor = (hearing) => {
-    let scheduledFor = null;
-
     if (hearing.editedTime) {
-      if (hearing.editedTime === 'other') {
-        scheduledFor = moment(hearing.scheduledFor).
-          set(this.formatTime(hearing.scheduledFor, hearing.editedOptionalTime));
-      } else {
-        scheduledFor = moment(hearing.scheduledFor).set(this.getTime(hearing));
-      }
-    } else {
-      scheduledFor = hearing.scheduledFor;
+      const scheduledTime = this.getScheduledTime(hearing);
+
+      return moment(hearing.scheduledFor).set(scheduledTime);
     }
 
-    return scheduledFor;
+    return hearing.scheduledFor;
   };
 
   formatHearing = (hearing) => {
@@ -299,7 +272,6 @@ export class DailyDocketContainer extends React.Component {
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
-        onHearingOptionalTime={this.props.onHearingOptionalTime}
         onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
         onHearingLocationUpdate={this.props.onHearingLocationUpdate}
         onHearingRegionalOfficeUpdate={this.props.onHearingRegionalOfficeUpdate}
@@ -383,8 +355,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError,
-  onHearingOptionalTime
+  onResetLockHearingAfterError
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

@@ -12,7 +12,7 @@ export const getAssignHearingTime = (time, day) => {
     h: time.split(':')[0],
     // eslint-disable-next-line id-length
     m: time.split(':')[1],
-    offset: moment.tz(day.hearingDate, day.timezone || 'America/New_York').format('Z')
+    offset: moment.tz(day.hearingDate || day.scheduledFor, day.timezone || 'America/New_York').format('Z')
   };
 };
 
@@ -87,7 +87,7 @@ export default class HearingTime extends React.Component {
           placeholder="Select a time"
           options={TIME_OPTIONS}
           value={value}
-          onChange={this.props.onChange}
+          onChange={(option) => this.props.onChange(option ? option.value : null)}
           hideLabel />}
       </React.Fragment>
     );
