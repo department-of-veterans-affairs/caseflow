@@ -41,7 +41,31 @@ feature "Intake Add Issues Page" do
 
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
+      expect(page).not_to have_content("When you finish making changes, click \"Save\" to continue")
       expect(page).to have_content("1. Left knee granted Decision date: #{promulgation_date.mdY}")
+    end
+  end
+
+  context "check that none of these match works for VACOLS issue" do
+    before do
+      setup_legacy_opt_in_appeals(veteran.file_number)
+    end
+
+    scenario "User selects a vacols issue, then changes to none of these match" do
+      start_appeal(veteran, legacy_opt_in_approved: true)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+
+      expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
+      find("label", text: "intervertebral disc syndrome").click
+      find("label", text: "None of these match").click
+      safe_click ".add-issue"
+
+      expect(page).to have_content("Left knee granted Decision date")
+      expect(page).to_not have_content(
+        "Left knee granted is ineligible because the same issue is under review as a Legacy Appeal"
+      )
     end
   end
 end
