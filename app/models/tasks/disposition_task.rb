@@ -78,9 +78,10 @@ class DispositionTask < GenericTask
   def reschedule(hearing_day_id:, hearing_time:, hearing_location: nil)
     new_hearing_task = hearing_task.cancel_and_recreate
 
-    new_hearing = slot_new_hearing(
-      hearing_day_id, hearing_time, hearing_location
-    )
+    new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+                                                     appeal: appeal,
+                                                     hearing_location_attrs: hearing_location&.to_hash,
+                                                     scheduled_time: hearing_time.stringify_keys)
     self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
   end
 
@@ -130,18 +131,6 @@ class DispositionTask < GenericTask
 
   def mark_held() end
 
-  def slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
-    hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                 appeal: appeal,
-                                                 hearing_location_attrs: hearing_location&.to_hash,
-                                                 scheduled_time: hearing_time&.stringify_keys)
-    if appeal.is_a?(LegacyAppeal)
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-    end
-
-    hearing
-  end
-
   def cancel!
     if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
       fail HearingDispositionNotCanceled
@@ -166,8 +155,6 @@ class DispositionTask < GenericTask
       on_hold_duration: 25.days
     )
   end
-
-  private
 
   def task_just_canceled?
     saved_change_to_attribute?("status") && cancelled?
