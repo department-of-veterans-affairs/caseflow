@@ -29,18 +29,26 @@ class LegacyOptInModal extends React.Component {
   radioOnChange = (value) => {
     // legacy opt in are keyed off of a combo of both vacolsId & vacolsSequenceId
     // NO_MATCH_TEXT does not have a vacolsSequenceId
-    const legacyValues = value.split('-');
-    const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : false;
-    const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id === legacyValues[0]);
-
-    if (vacolsSequenceId) {
-      let vacolsIssue = _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) });
-
+    if (value === NO_MATCH_TEXT) {
       this.setState({
-        vacolsId: legacyValues[0],
-        eligibleForSocOptIn: (legacyAppeal.eligible_for_soc_opt_in && vacolsIssue.eligible_for_soc_opt_in),
-        vacolsSequenceId
+        vacolsId: null,
+        eligibleForSocOptIn: null,
+        vacolsSequenceId: null
       });
+    } else {
+      const legacyValues = value.split('-');
+      const vacolsSequenceId = legacyValues.length > 1 ? legacyValues[1] : false;
+      const legacyAppeal = this.props.intakeData.legacyAppeals.find((appeal) => appeal.vacols_id === legacyValues[0]);
+
+      if (vacolsSequenceId) {
+        let vacolsIssue = _.find(legacyAppeal.issues, { vacols_sequence_id: parseInt(vacolsSequenceId, 10) });
+
+        this.setState({
+          vacolsId: legacyValues[0],
+          eligibleForSocOptIn: (legacyAppeal.eligible_for_soc_opt_in && vacolsIssue.eligible_for_soc_opt_in),
+          vacolsSequenceId
+        });
+      }
     }
 
     this.setState({
