@@ -7,17 +7,7 @@ RSpec.feature "AmaQueue" do
     "12345-12345678"
   end
   context "user with case details role " do
-    let!(:user) { FactoryBot.create(:user) }
     let!(:appeal) { FactoryBot.create(:appeal) }
-    let!(:appeal2) { FactoryBot.create(:appeal) }
-    let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-    let!(:attorney_task) do
-      create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
-                                 closed_at: Time.zone.now - 4.days)
-    end
-    let!(:attorney_user) do
-      FactoryBot.create(:user, roles: ["Reader"])
-    end
     let(:no_queue_user) { FactoryBot.create(:user, roles: ["Case Details"]) }
 
     it "should not be able to access queue and redirect to search" do
