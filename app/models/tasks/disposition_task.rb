@@ -8,7 +8,10 @@
 class DispositionTask < GenericTask
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
+  after_update :update_appeal_location_after_cancel, if: :task_just_canceled_and_has_legacy_appeal?
+  after_update :create_ihp_tasks_after_cancel, if: :task_just_canceled_and_has_ama_appeal?
 
+  class HearingDispositionNotCanceled < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
 
   class << self
@@ -139,8 +142,16 @@ class DispositionTask < GenericTask
     hearing
   end
 
+  def cancel!
+    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
+      fail HearingDispositionNotCanceled
+    end
+
+    update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
   def mark_no_show!
-    if parent&.hearing_task_association&.hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
+    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
       fail HearingDispositionNotNoShow
     end
 
@@ -154,5 +165,37 @@ class DispositionTask < GenericTask
       status: Constants.TASK_STATUSES.on_hold,
       on_hold_duration: 25.days
     )
+  end
+
+  private
+
+  def task_just_canceled?
+    saved_change_to_attribute?("status") && cancelled?
+  end
+
+  def task_just_canceled_and_has_legacy_appeal?
+    task_just_canceled? && appeal.is_a?(LegacyAppeal)
+  end
+
+  def task_just_canceled_and_has_ama_appeal?
+    task_just_canceled? && appeal.is_a?(Appeal)
+  end
+
+  def create_ihp_tasks_after_cancel
+    RootTask.create_ihp_tasks!(appeal, parent)
+  end
+
+  def update_appeal_location_after_cancel
+    location = if appeal.vsos.empty?
+                 LegacyAppeal::LOCATION_CODES[:case_storage]
+               else
+                 LegacyAppeal::LOCATION_CODES[:service_organization]
+               end
+
+    AppealRepository.update_location!(appeal, location)
+  end
+
+  def hearing_disposition
+    parent&.hearing_task_association&.hearing&.disposition
   end
 end

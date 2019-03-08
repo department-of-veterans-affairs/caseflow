@@ -18,4 +18,14 @@ class HearingTask < GenericTask
       assigned_to: Bva.singleton
     )
   end
+
+  private
+
+  def update_status_if_children_tasks_are_complete
+    if children.select(&:active?).empty?
+      return update!(status: :cancelled) if children.select { |c| c.type == DispositionTask.name && c.cancelled? }.any?
+    end
+
+    super
+  end
 end

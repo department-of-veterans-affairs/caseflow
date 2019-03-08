@@ -133,29 +133,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       docketServerError: { $set: action.payload.err }
     });
 
-  case Constants.HANDLE_SAVE_HEARING_SUCCESS:
-    return update(state, {
-      dailyDocket: {
-        [action.payload.date]: {
-          [action.payload.hearing.id]: {
-            $set: action.payload.hearing
-          }
-        }
-      },
-      saveHearingSuccess: { $set: action.payload.hearing },
-      $unset: ['saveHearingError']
-    });
-
-  case Constants.HANDLE_SAVE_HEARING_ERROR:
-    return update(state, {
-      saveHearingError: { $set: action.payload.err }
-    });
-
-  case Constants.RESET_SAVE_HEARING_SUCCESS:
-    return update(state, {
-      $unset: ['saveHearingSuccess']
-    });
-
   case Constants.SET_REPNAME:
     return newHearingWorksheetState(state, action, { representative_name: { $set: action.payload.repName } });
 
@@ -248,6 +225,10 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   case Constants.DELETE_ISSUE:
     return newHearingIssueState(state, action, { _destroy: { $set: true } });
 
+  case Constants.TOGGLE_DOCKET_SAVING:
+    return update(state, { docketIsSaving: { $set: action.payload.saving }
+    });
+
   case Constants.TOGGLE_WORKSHEET_SAVING:
     return update(state, { worksheetIsSaving: { $set: action.payload.saving }
     });
@@ -256,9 +237,27 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     return update(state, { worksheetTimeSaved: { $set: action.payload.timeSaved }
     });
 
+  case Constants.SET_DOCKET_TIME_SAVED:
+    return update(state, { docketTimeSaved: { $set: action.payload.timeSaved }
+    });
+
+  case Constants.SET_DOCKET_SAVE_FAILED:
+    return update(state, {
+      saveDocketFailed: { $set: action.payload.saveFailed }
+    });
+
   case Constants.SET_WORKSHEET_SAVE_FAILED_STATUS:
     return update(state, {
       saveWorksheetFailed: { $set: action.payload.saveFailed }
+    });
+
+  case Constants.SET_EDITED_FLAG_TO_FALSE:
+    return update(state, {
+      dailyDocket: {
+        [action.payload.date]: {
+          [action.payload.hearingId]: { edited: { $set: false } }
+        }
+      }
     });
 
   case Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE:
