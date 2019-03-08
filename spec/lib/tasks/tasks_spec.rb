@@ -41,7 +41,7 @@ describe "task rake tasks" do
           expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect { subject }.to output(expected_output).to_stdout
           expect(from_task.count).to eq task_count
-          expect(from_task.all.map(&:id)).to eq ids
+          expect(from_task.all.map(&:id).sort).to eq ids.sort
           expect(to_task.any?).to be_falsey
         end
       end
@@ -62,7 +62,7 @@ describe "task rake tasks" do
           )
           expect { subject }.to output(expected_output).to_stdout
           expect(to_task.count).to eq task_count
-          expect(to_task.all.map(&:id).sort).to eq(ids.sort)
+          expect(to_task.all.map(&:id).sort).to eq ids.sort
           expect(from_task.any?).to be_falsey
         end
       end
@@ -87,7 +87,7 @@ describe "task rake tasks" do
               )
               expect { subject }.to output(expected_output).to_stdout
               expect(to_task.count).to eq count
-              expect(to_task.all.map(&:id)).to eq change_ids
+              expect(to_task.all.map(&:id).sort).to eq change_ids.sort
               expect(from_task.count).to eq task_count - subset_count
             end
           end
