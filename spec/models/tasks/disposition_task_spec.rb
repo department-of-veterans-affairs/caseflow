@@ -60,7 +60,7 @@ describe DispositionTask do
     end
     let!(:disposition_task) do
       FactoryBot.create(
-        :ama_disposition_task,
+        :disposition_task,
         parent: hearing_task,
         appeal: appeal,
         status: Constants.TASK_STATUSES.in_progress
