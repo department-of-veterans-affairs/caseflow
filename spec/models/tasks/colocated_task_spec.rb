@@ -364,12 +364,37 @@ describe ColocatedTask do
       expect(org_task.status).to eq Constants.TASK_STATUSES.completed
     end
 
-    let(:legacy_org_task) { FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: org) }
-    let(:legacy_colocated_task) { legacy_org_task.children.first }
+    context "for legacy appeals, the new assigned to location is set correctly" do
+      let(:legacy_org_translation_task) do
+        FactoryBot.create(
+          :colocated_task,
+          assigned_by: attorney,
+          assigned_to: org,
+          action: :translation
+        )
+      end
+      let(:legacy_colocated_task) { legacy_org_translation_task.children.first }
+      let(:translation_location_code) { LegacyAppeal::LOCATION_CODES[:translation] }
 
-    it "for legacy appeals, the new assigned to location is set correctly" do
-      legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
-      expect(legacy_org_task.appeal.location_code).to eq attorney.vacols_uniq_id
+      it "for translation and schedule hearing tasks, it assigns back to those locations" do
+        legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
+        expect(legacy_org_translation_task.appeal.location_code).to eq translation_location_code
+      end
+
+      let(:legacy_org_task) do
+        FactoryBot.create(
+          :colocated_task,
+          assigned_by: attorney,
+          assigned_to: org,
+          action: :aoj
+        )
+      end
+      let(:legacy_colocated_task_2) { legacy_org_task.children.first }
+
+      it "for all other org tasks, it assigns back to the assigner" do
+        legacy_colocated_task_2.update!(status: Constants.TASK_STATUSES.cancelled)
+        expect(legacy_org_task.appeal.location_code).to eq attorney.vacols_uniq_id
+      end
     end
   end
 end
