@@ -22,8 +22,8 @@ const COPY = {
   }
 };
 
-export default class DispositionModal {
-  modalCancelButton = () => {
+export default class DispositionModal extends React.Component {
+  cancelButton = () => {
     return <Button linkStyling onClick={this.props.onCancel}>Go back</Button>;
   };
 

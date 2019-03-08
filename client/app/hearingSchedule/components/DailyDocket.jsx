@@ -182,18 +182,23 @@ export default class DailyDocket extends React.Component {
       options={DISPOSITION_OPTIONS}
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={(option) => {
-        if (option === 'postponed') {
+        if (option.value === 'postponed') {
           this.cancelHearingUpdate(hearing)();
           this.setState({ editedDispositionModalProps: {
             hearing,
-            disposition: option,
+            disposition: option.value,
             onCancel: this.closeEditedDispositionModal,
             onConfirm: () => {
               this.onHearingDispositionUpdate(hearing.id)(option);
-              this.validateAndSaveHearing(hearing)();
-              this.closeEditedDispositionModal();
+              // give redux some time to update.
+              setTimeout(() => {
+                this.validateAndSaveHearing(hearing)();
+                this.closeEditedDispositionModal();
+              }, 0);
             }
           } });
+        } else {
+          this.onHearingDispositionUpdate(hearing.id)(option);
         }
       }}
       readOnly={readOnly || !_.isUndefined(hearing.editedDate)}
@@ -443,9 +448,9 @@ export default class DailyDocket extends React.Component {
       'but you can edit existing entries' : 'You can now add more veterans to this hearing day';
 
     return <AppSegment filledBackground>
-      {this.props.editedDispositionModalProps &&
+      {this.state.editedDispositionModalProps &&
         <DispositionModal
-          {...this.props.editedDispositionModalProps} />
+          {...this.state.editedDispositionModalProps} />
       }{this.props.displayRemoveHearingDayModal && <div>
         <Modal
           title="Remove Hearing Day"
