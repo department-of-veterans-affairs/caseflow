@@ -300,6 +300,32 @@ describe Task do
     end
   end
 
+  describe ".descendants" do
+    let(:parent_task) { FactoryBot.create(:generic_task) }
+
+    subject { parent_task.descendants }
+
+    context "when a task has some descendants" do
+      let(:children_count) { 6 }
+      let(:grandkids_per_child) { 4 }
+      let(:children) { FactoryBot.create_list(:generic_task, children_count, parent: parent_task) }
+
+      before { children.each { |t| FactoryBot.create_list(:generic_task, grandkids_per_child, parent: t) } }
+
+      it "returns a list of all descendants and itself" do
+        total_grandkid_count = children_count * grandkids_per_child
+        total_descendant_count = 1 + children_count + total_grandkid_count
+        expect(subject.length).to eq(total_descendant_count)
+      end
+    end
+
+    context "when a task has no descendants" do
+      it "returns only itself" do
+        expect(subject.length).to eq(1)
+      end
+    end
+  end
+
   describe ".available_actions_unwrapper" do
     context "when task/user combination result in multiple available actions with same path" do
       let(:user) { FactoryBot.create(:user) }
