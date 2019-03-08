@@ -26,6 +26,23 @@ class ScheduleHearingTask < GenericTask
       appeal_tasks + legacy_appeal_tasks(regional_office, incomplete_tasks)
     end
 
+    def create_from_params(params, user)
+      parent_task = parent_task_from_params(params)
+      close_open_hearing_task_branch(parent_task&.root_task)
+      super
+    end
+
+    def modify_params(params)
+      # ScheduleHearingTasks will be created from actions on NoShowHearingTasks but should be created as a new branch
+      # on the task tree, so we replace the parent with the RootTask to start that branch.
+      parent_task = parent_task_from_params(params)
+      super.merge(parent_id: parent_task&.root_task&.id)
+    end
+
+    def close_open_hearing_task_branch(root_task)
+      root_task&.children&.active&.where(type: HearingTask.name)&.each(&:cancel_task_and_child_subtasks)
+    end
+
     private
 
     def legacy_appeal_tasks(regional_office, incomplete_tasks)

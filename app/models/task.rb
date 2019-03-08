@@ -107,11 +107,13 @@ class Task < ApplicationRecord
   end
 
   def self.create_many_from_params(params_array, current_user)
-    params_array.map { |params| create_from_params(params, current_user) }
+    multi_transaction do
+      params_array.map { |params| create_from_params(params, current_user) }
+    end
   end
 
   def self.create_from_params(params, user)
-    parent_task = params[:parent_id] ? Task.find(params[:parent_id]) : nil
+    parent_task = parent_task_from_params(params)
     verify_user_can_create!(user, parent_task)
     params = modify_params(params)
     create!(params)
@@ -122,6 +124,10 @@ class Task < ApplicationRecord
       params[:instructions] = [params[:instructions]]
     end
     params
+  end
+
+  def self.parent_task_from_params(params)
+    params[:parent_id] ? Task.find(params[:parent_id]) : nil
   end
 
   def update_from_params(params, current_user)

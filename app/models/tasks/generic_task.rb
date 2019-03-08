@@ -63,7 +63,7 @@ class GenericTask < Task
 
   class << self
     def create_from_params(params, user)
-      parent_task = Task.find(params[:parent_id])
+      parent_task = parent_task_from_params(params)
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_task.assigned_to_id == params[:assigned_to_id] &&
                                                            parent_task.assigned_to_type == params[:assigned_to_type]
 

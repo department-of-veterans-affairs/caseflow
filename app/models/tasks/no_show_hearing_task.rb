@@ -5,10 +5,14 @@
 class NoShowHearingTask < GenericTask
   before_validation :set_assignee
 
-  def reschedule_hearing
-    multi_transaction do
-      update!(status: Constants.TASK_STATUSES.completed)
-      RootTask.create_hearing_schedule_task!(appeal, root_task)
+  def available_actions(user)
+    if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
+      # TODO: Should these also be assignable to people?
+      [
+        Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h
+      ]
+    else
+      []
     end
   end
 

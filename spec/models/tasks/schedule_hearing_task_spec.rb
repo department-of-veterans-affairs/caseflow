@@ -36,6 +36,37 @@ describe ScheduleHearingTask do
     end
   end
 
+  describe ".create_from_params" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:appeal) { root_task.appeal }
+    let(:hearing_task) { FactoryBot.create(:hearing_task, appeal: appeal, parent: root_task) }
+    let(:disposition_task) { FactoryBot.create(:disposition_task, appeal: appeal, parent: hearing_task) }
+    let(:no_show_hearing_task) { FactoryBot.create(:no_show_hearing_task, appeal: appeal, parent: disposition_task) }
+    let(:params) { { appeal: appeal, parent_id: parent_id } }
+
+    subject { ScheduleHearingTask.create_from_params(params, user) }
+
+    context "when input parent is not a NoShowHearingTask" do
+      let(:parent_id) { root_task.id }
+      it "raises an error" do
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+      end
+    end
+
+    context "when input parent is a NoShowHearingTask" do
+      let(:parent_id) { no_show_hearing_task.id }
+      it "creates the new ScheduleHearingTask and closes the previous HearingTask branch" do
+        expect(HearingTask.count).to eq(1)
+        expect(ScheduleHearingTask.count).to eq(0)
+        expect { subject }.to raise_error(Caseflow::Error::ActionForbiddenError)
+        expect(HearingTask.count).to eq(2)
+        expect(HearingTask.active.count).to eq(1)
+        expect(ScheduleHearingTask.count).to eq(1)
+      end
+    end
+  end
+
   context "#update_from_params" do
     context "AMA appeal" do
       let(:hearing_day) do

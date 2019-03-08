@@ -29,9 +29,8 @@ class MailTask < GenericTask
     end
 
     def create_from_params(params, user)
-      verify_user_can_create!(user, Task.find(params[:parent_id]))
-
-      root_task = RootTask.find(params[:parent_id])
+      root_task = parent_task_from_params(params)
+      verify_user_can_create!(user, root_task)
 
       # Do not create the parent mail task if we fail to create any of the children tasks.
       transaction do
