@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
-import { hasRestrictedQueueRole } from './utils';
 
 import {
   setCanEditAod,
@@ -72,7 +71,7 @@ class QueueApp extends React.PureComponent {
     this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
-    if (hasRestrictedQueueRole(this.props.roles) &&
+    if (this.props.hasCaseDetailsRole &&
     document.getElementById('page-title').innerHTML === 'Queue') {
       document.getElementById('page-title').innerHTML = 'Search';
     }
@@ -106,7 +105,7 @@ class QueueApp extends React.PureComponent {
       <JudgeDecisionReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} roles={this.props.roles} />;
+  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} hasCaseDetailsRole={this.props.hasCaseDetailsRole} />;
 
   routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}
@@ -226,7 +225,7 @@ class QueueApp extends React.PureComponent {
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.caseSearchHomePage || hasRestrictedQueueRole(this.props.roles) ? '/search' : '/queue'}
+      defaultUrl={this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       applicationUrls={this.props.applicationUrls}
