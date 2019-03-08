@@ -12,7 +12,7 @@ RSpec.feature "AmaQueue" do
       step "case details role tries to access queue" do
         User.authenticate!(user: no_queue_user)
         visit "/queue"
-        expect(page).to_not have_content("Queue")
+        expect(page).to have_content("Search")
         expect(current_path).to eq "/search"
       end
     end

@@ -18,10 +18,13 @@ class QueueController < ApplicationController
 
   def verify_access
     restricted_roles = ["Case Details"]
+    # current_user.roles = current_user.roles.concat(["Case Details"])
     current_user_has_restricted_role = !(restricted_roles & current_user.roles).empty?
-    if current_user_has_restricted_role
+    if current_user_has_restricted_role && request.env["PATH_INFO"] === "/queue"
       Rails.logger.info("redirecting user with Case Details role from queue to search")
+      Rails.logger.info(request.env["PATH_INFO"])
       session["return_to"] = request.original_url
+      request.original_fullpath
       redirect_to "/search"
     end
     nil
