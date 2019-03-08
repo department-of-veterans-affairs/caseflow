@@ -151,7 +151,7 @@ class Appeal < DecisionReview
   end
 
   def attorney_case_reviews
-    tasks.map(&:attorney_case_reviews).flatten
+    tasks.includes(:attorney_case_reviews).flat_map(&:attorney_case_reviews)
   end
 
   def every_request_issue_has_decision?
