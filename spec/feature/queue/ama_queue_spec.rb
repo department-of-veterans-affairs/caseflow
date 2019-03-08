@@ -7,13 +7,37 @@ RSpec.feature "AmaQueue" do
     "12345-12345678"
   end
   context "user with case details role " do
+    let!(:user) { FactoryBot.create(:user) }
+    let!(:appeal) { FactoryBot.create(:appeal) }
+    let!(:appeal2) { FactoryBot.create(:appeal) }
+    let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
+    let!(:attorney_task) do
+      create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
+                                 closed_at: Time.zone.now - 4.days)
+    end
+    let!(:attorney_user) do
+      FactoryBot.create(:user, roles: ["Reader"])
+    end
     let(:no_queue_user) { FactoryBot.create(:user, roles: ["Case Details"]) }
-    it "should not be able to access queue" do
+
+    it "should not be able to access queue and redirect to search" do
       step "case details role tries to access queue" do
         User.authenticate!(user: no_queue_user)
         visit "/queue"
         expect(page).to have_content("Search")
         expect(current_path).to eq "/search"
+      end
+    end
+    it "should be able to search for a case" do
+      step "by veteran file number" do
+        User.authenticate!(user: no_queue_user)
+        visit "/queue"
+        expect(page).to have_content("Search")
+        expect(current_path).to eq "/search"
+        fill_in("searchBarEmptyList", with: appeal.veteran_file_number)
+        click_on("submit-search-searchBarEmptyList")
+        click_on(appeal.docket_number)
+        expect(page).to_not have_content("Veteran Documents")
       end
     end
   end
