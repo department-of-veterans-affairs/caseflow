@@ -34,6 +34,19 @@ describe DecisionReviewsController, type: :controller do
 
         expect(response.status).to eq 200
       end
+
+      context "user has an unknown station_id" do
+        before do
+          user.station_id = "xxx"
+        end
+
+        it "redirects to /login" do
+          get :index, params: { business_line_slug: non_comp_org.url }
+
+          expect(response.status).to eq 302
+          expect(response.body).to match(/login/)
+        end
+      end
     end
 
     context "business-line-slug is not found" do
