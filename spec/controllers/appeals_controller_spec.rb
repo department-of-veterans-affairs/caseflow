@@ -63,7 +63,7 @@ RSpec.describe AppealsController, type: :controller do
 
     context "when an ama appeal has documents" do
       before do
-        expect_any_instance_of(DocumentFetcher).not_to receive(:number_of_documents) { documents.length }
+        expect_any_instance_of(DocumentFetcher).to receive(:number_of_documents) { documents.length }
       end
 
       let(:file_number) { Random.rand(999_999_999).to_s }
