@@ -10,6 +10,7 @@ class RequestIssue < ApplicationRecord
     review_request_id
     review_request_type
     description
+    disposition
   ]
 
   include Asyncable
