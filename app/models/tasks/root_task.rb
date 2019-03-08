@@ -69,10 +69,6 @@ class RootTask < GenericTask
       end
     end
 
-    def create_hearing_schedule_task!(appeal, parent)
-      ScheduleHearingTask.create!(appeal: appeal, parent: parent)
-    end
-
     # TODO: make this private again after RAMPs are refilled
     # private
 
@@ -101,6 +97,10 @@ class RootTask < GenericTask
         assigned_to: Bva.singleton,
         status: "on_hold"
       )
+    end
+
+    def create_hearing_schedule_task!(appeal, parent)
+      ScheduleHearingTask.create!(appeal: appeal, parent: parent)
     end
 
     def create_subtasks!(appeal, parent)

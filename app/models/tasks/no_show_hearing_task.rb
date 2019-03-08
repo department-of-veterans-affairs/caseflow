@@ -19,6 +19,6 @@ class NoShowHearingTask < GenericTask
   private
 
   def set_assignee
-    self.assigned_to = HearingAdmin.singleton
+    self.assigned_to = assigned_to.nil? ? HearingAdmin.singleton : assigned_to
   end
 end
