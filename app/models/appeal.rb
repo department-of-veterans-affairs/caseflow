@@ -8,7 +8,6 @@
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
-  include DocumentConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
