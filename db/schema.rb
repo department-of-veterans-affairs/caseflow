@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190307194302) do
+ActiveRecord::Schema.define(version: 20190306224527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,7 +126,6 @@ ActiveRecord::Schema.define(version: 20190307194302) do
     t.datetime "updated_at", null: false
     t.string "veteran_file_number"
     t.string "zip_code"
-    t.index ["appeal_type", "appeal_id"], name: "index_available_hearing_locations_on_appeal_type_and_appeal_id"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
