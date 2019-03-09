@@ -31,7 +31,7 @@ describe "task rake tasks" do
 
         it "only describes what changes will be made" do
           count = from_task.count
-          ids = from_task.all.map(&:id)
+          ids = from_task.all.pluck(:id)
           expected_output = <<~OUTPUT
             *** DRY RUN
             *** pass 'false' as the third argument to execute
@@ -41,7 +41,7 @@ describe "task rake tasks" do
           expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
           expect { subject }.to output(expected_output).to_stdout
           expect(from_task.count).to eq task_count
-          expect(from_task.all.map(&:id).sort).to eq ids.sort
+          expect(from_task.all.pluck(:id)).to match_array ids
           expect(to_task.any?).to be_falsey
         end
       end
@@ -51,7 +51,7 @@ describe "task rake tasks" do
 
         it "makes the requested changes" do
           count = from_task.count
-          ids = from_task.all.map(&:id)
+          ids = from_task.all.pluck(:id)
           expected_output = <<~OUTPUT
             Changing #{count} #{from_task_name}s with ids #{ids.join(', ')} into #{to_task_name}s
             Revert with: bundle exec rake tasks:change_type[#{to_task_name},#{from_task_name},#{ids.join(',')}]
@@ -62,7 +62,7 @@ describe "task rake tasks" do
           )
           expect { subject }.to output(expected_output).to_stdout
           expect(to_task.count).to eq task_count
-          expect(to_task.all.map(&:id).sort).to eq ids.sort
+          expect(to_task.all.pluck(:id)).to match_array ids
           expect(from_task.any?).to be_falsey
         end
       end
@@ -73,7 +73,7 @@ describe "task rake tasks" do
           let(:change_ids) { [] }
 
           context "all the id numbers match existing tasks" do
-            let(:change_ids) { hold_hearing_tasks.map(&:id)[0..subset_count - 1] }
+            let(:change_ids) { hold_hearing_tasks.pluck(:id)[0..subset_count - 1] }
 
             it "makes the requested changes" do
               count = change_ids.count
@@ -87,14 +87,14 @@ describe "task rake tasks" do
               )
               expect { subject }.to output(expected_output).to_stdout
               expect(to_task.count).to eq count
-              expect(to_task.all.map(&:id).sort).to eq change_ids.sort
+              expect(to_task.all.pluck(:id)).to match_array change_ids
               expect(from_task.count).to eq task_count - subset_count
             end
           end
 
           context "some of the id numbers do not match existing tasks" do
             let!(:other_task) { FactoryBot.create(:ama_judge_decision_review_task) }
-            let(:change_ids) { hold_hearing_tasks.map(&:id)[0..subset_count - 1] + [other_task.id] }
+            let(:change_ids) { hold_hearing_tasks.pluck(:id)[0..subset_count - 1] + [other_task.id] }
 
             it "raises an error" do
               message_pattern = /Couldn't find all #{from_task_name}s with 'id'/
@@ -106,7 +106,7 @@ describe "task rake tasks" do
 
         context "no dry run variable is passed" do
           let(:args) { [from_task_name, to_task_name, *change_ids] }
-          let(:change_ids) { hold_hearing_tasks.map(&:id)[0..subset_count - 1] }
+          let(:change_ids) { hold_hearing_tasks.pluck(:id)[0..subset_count - 1] }
 
           it "correctly describes what changes will be made" do
             count = change_ids.count
