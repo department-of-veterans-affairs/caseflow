@@ -103,8 +103,6 @@ class DispositionTask < GenericTask
     end
   end
 
-  private
-
   def mark_postponed(after_disposition_update:)
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: "postponed")
@@ -155,6 +153,8 @@ class DispositionTask < GenericTask
       on_hold_duration: 25.days
     )
   end
+
+  private
 
   def task_just_canceled?
     saved_change_to_attribute?("status") && cancelled?
