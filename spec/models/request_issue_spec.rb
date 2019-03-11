@@ -169,61 +169,6 @@ describe RequestIssue do
     end
   end
 
-  context ".find_active_by_contested_rating_issue_reference_id" do
-    let(:active_rating_request_issue) do
-      rating_request_issue.tap do |ri|
-        ri.update!(end_product_establishment: create(:end_product_establishment, :active))
-      end
-    end
-
-    context "EPE is active" do
-      let(:rating_issue) do
-        RatingIssue.new(reference_id: active_rating_request_issue.contested_rating_issue_reference_id)
-      end
-
-      it "filters by reference_id" do
-        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
-        expect(in_review).to eq(rating_request_issue)
-      end
-
-      it "ignores request issues that are already ineligible" do
-        create(
-          :request_issue,
-          contested_rating_issue_reference_id: rating_request_issue.contested_rating_issue_reference_id,
-          ineligible_reason: :duplicate_of_rating_issue_in_active_review
-        )
-
-        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
-        expect(in_review).to eq(rating_request_issue)
-      end
-    end
-
-    context "EPE is not active" do
-      let(:rating_issue) { RatingIssue.new(reference_id: rating_request_issue.contested_rating_issue_reference_id) }
-
-      it "ignores request issues" do
-        expect(RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)).to be_nil
-      end
-    end
-
-    context "EPE does not yet have a synced status" do
-      let(:active_rating_request_issue) do
-        rating_request_issue.tap do |ri|
-          ri.update!(end_product_establishment: create(:end_product_establishment))
-        end
-      end
-
-      let(:rating_issue) do
-        RatingIssue.new(reference_id: active_rating_request_issue.contested_rating_issue_reference_id)
-      end
-
-      it "treats EPE as active" do
-        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
-        expect(in_review).to eq(rating_request_issue)
-      end
-    end
-  end
-
   context "limited_poa" do
     let(:previous_dr) { create(:higher_level_review) }
     let(:previous_ri) { create(:request_issue, decision_review: previous_dr, end_product_establishment: previous_epe) }
