@@ -37,7 +37,7 @@ describe NoShowHearingTask do
     end
 
     context "when an operation fails" do
-      before { allow(RootTask).to receive(:create_hearing_schedule_task!).and_raise(StandardError) }
+      before { allow(ScheduleHearingTask).to receive(:create!).and_raise(StandardError) }
       it "does not commit any changes to the database" do
         expect { no_show_hearing_task.reschedule_hearing }.to raise_error
 

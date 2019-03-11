@@ -216,6 +216,7 @@ Rails.application.routes.draw do
   resources :tasks, only: [:index, :create, :update] do
     member do
       get :new_documents
+      post :reschedule
     end
   end
 

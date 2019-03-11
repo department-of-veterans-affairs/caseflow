@@ -7,12 +7,16 @@ class NoShowHearingTask < GenericTask
 
   def available_actions(user)
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
-      # TODO: Should these also be assignable to people?
-      [
-        Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h
-      ]
+      [Constants.TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.to_h]
     else
       []
+    end
+  end
+
+  def reschedule_hearing
+    multi_transaction do
+      update!(status: Constants.TASK_STATUSES.completed)
+      ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
     end
   end
 

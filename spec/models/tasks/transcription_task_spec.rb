@@ -26,13 +26,13 @@ describe TranscriptionTask do
       it "cancels all tasks in the hierarchy and creates a new schedule_hearing_task" do
         transcription_task.update_from_params(update_params, transcription_user)
 
-        expect(hearing_task.reload.active?).to eq(false)
-        expect(schedule_hearing_task.reload.active?).to eq(false)
-        expect(disposition_task.reload.active?).to eq(false)
-        expect(transcription_task.reload.active?).to eq(false)
+        expect(hearing_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(schedule_hearing_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(disposition_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         expect(root_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
-        new_hearing_task = root_task.children.active.first
+        new_hearing_task = root_task.children.where.not(status: Constants.TASK_STATUSES.cancelled).first
         new_schedule_hearing_task = new_hearing_task.children.first
 
         expect(new_hearing_task.active?).to eq(true)
