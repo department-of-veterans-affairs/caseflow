@@ -1,4 +1,4 @@
-require "rails_helper"
+require "rails_helper" # frozen_string_literal: true
 
 RSpec.feature "Postpone hearing" do
   let!(:current_user) do

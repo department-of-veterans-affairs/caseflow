@@ -87,7 +87,7 @@ export default class HearingTime extends React.Component {
           placeholder="Select a time"
           options={TIME_OPTIONS}
           value={value}
-          onChange={this.props.onChange}
+          onChange={(option) => this.props.onChange(option ? option.value : null)}
           hideLabel />}
       </React.Fragment>
     );
