@@ -4,6 +4,7 @@ import { css } from 'glamor';
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import { TIME_OPTIONS } from '../../../hearings/constants/constants';
+import _ from 'lodash';
 
 export const getAssignHearingTime = (time, day) => {
 
@@ -31,9 +32,23 @@ export default class HearingTime extends React.Component {
     super(props);
 
     this.state = {
-      isOther: false,
+      isOther: this.getIsOther(),
       index: index += 1
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!_.isEqual(this.props.value, prevProps.value)) {
+      this.setState({
+        isOther: this.getIsOther()
+      });
+    }
+  }
+
+  getIsOther = () => {
+    const selectedOption = _.find(this.getTimeOptions(), (opt) => opt.value === this.props.value);
+
+    return _.isUndefined(selectedOption);
   }
 
   getTimeOptions = () => {
@@ -71,12 +86,13 @@ export default class HearingTime extends React.Component {
   }
 
   render() {
-    const { errorMessage, value } = this.props;
+    const { errorMessage, value, readOnly } = this.props;
 
     return (
       <React.Fragment>
         <span {...formStyling}>
           <RadioField
+            disabled={readOnly}
             errorMessage={errorMessage}
             name={`hearingTime${this.state.index}`}
             label="Time"
@@ -86,6 +102,7 @@ export default class HearingTime extends React.Component {
             value={this.state.isOther ? 'other' : value} />
         </span>
         {this.state.isOther && <SearchableDropdown
+          readOnly={readOnly}
           name={`optionalHearingTime${this.state.index}`}
           placeholder="Select a time"
           options={TIME_OPTIONS}
