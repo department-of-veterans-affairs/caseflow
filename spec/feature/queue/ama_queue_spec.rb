@@ -6,7 +6,31 @@ RSpec.feature "AmaQueue" do
   def valid_document_id
     "12345-12345678"
   end
+  context "user with case details role " do
+    let!(:appeal) { FactoryBot.create(:appeal) }
+    let(:no_queue_user) { FactoryBot.create(:user, roles: ["Case Details"]) }
 
+    it "should not be able to access queue and redirect to search" do
+      step "case details role tries to access queue" do
+        User.authenticate!(user: no_queue_user)
+        visit "/queue"
+        expect(page).to have_content("Search")
+        expect(current_path).to eq "/search"
+      end
+    end
+    it "should be able to search for a case" do
+      step "by veteran file number" do
+        User.authenticate!(user: no_queue_user)
+        visit "/queue"
+        expect(page).to have_content("Search")
+        expect(current_path).to eq "/search"
+        fill_in("searchBarEmptyList", with: appeal.veteran_file_number)
+        click_on("submit-search-searchBarEmptyList")
+        click_on(appeal.docket_number)
+        expect(page).to_not have_content("Veteran Documents")
+      end
+    end
+  end
   context "loads appellant detail view" do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
@@ -571,7 +595,12 @@ RSpec.feature "AmaQueue" do
         number_of_claimants: 1,
         request_issues: [
           FactoryBot.create(:request_issue, contested_issue_description: "Tinnitus", notes: "Tinnitus note"),
-          FactoryBot.create(:request_issue, contested_issue_description: "Knee pain", notes: "Knee pain note")
+          FactoryBot.create(
+            :request_issue,
+            contested_issue_description: "Knee pain",
+            notes: "Knee pain note",
+            contested_rating_issue_diagnostic_code: nil
+          )
         ]
       )
     end
@@ -639,6 +668,7 @@ RSpec.feature "AmaQueue" do
         # Add a second decision issue
         all("button", text: "+ Add decision", count: 2)[1].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+        expect(page.find(".dropdown-Diagnostic.code")).to have_content("Diagnostic code")
 
         fill_in "Text Box", with: "test"
 
@@ -646,6 +676,7 @@ RSpec.feature "AmaQueue" do
         find("div", class: "Select-option", text: "Remanded").click
 
         click_on "Save"
+        expect(page).not_to have_content("This field is required")
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")

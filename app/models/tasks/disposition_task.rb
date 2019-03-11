@@ -8,6 +8,11 @@
 class DispositionTask < GenericTask
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
+  after_update :update_appeal_location_after_cancel, if: :task_just_canceled_and_has_legacy_appeal?
+  after_update :create_ihp_tasks_after_cancel, if: :task_just_canceled_and_has_ama_appeal?
+
+  class HearingDispositionNotCanceled < StandardError; end
+  class HearingDispositionNotNoShow < StandardError; end
 
   class << self
     def create_disposition_task!(appeal, parent, hearing)
@@ -49,11 +54,11 @@ class DispositionTask < GenericTask
       case disposition_params[:disposition]
       when "postponed"
         after_disposition_update = disposition_params[:after_disposition_update]
-        mark_hearing_postponed(after_disposition_update: after_disposition_update)
+        mark_postponed(after_disposition_update: after_disposition_update)
       when "held"
-        mark_hearing_held
+        mark_held
       when "no_show"
-        mark_hearing_no_show
+        mark_no_show
       end
     end
 
@@ -73,9 +78,10 @@ class DispositionTask < GenericTask
   def reschedule(hearing_day_id:, hearing_time:, hearing_location: nil)
     new_hearing_task = hearing_task.cancel_and_recreate
 
-    new_hearing = slot_new_hearing(
-      hearing_day_id, hearing_time, hearing_location
-    )
+    new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+                                                     appeal: appeal,
+                                                     hearing_location_attrs: hearing_location&.to_hash,
+                                                     scheduled_time: hearing_time.stringify_keys)
     self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
   end
 
@@ -97,9 +103,7 @@ class DispositionTask < GenericTask
     end
   end
 
-  def release() end
-
-  def mark_hearing_postponed(after_disposition_update:)
+  def mark_postponed(after_disposition_update:)
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(disposition: "postponed")
     else
@@ -121,23 +125,54 @@ class DispositionTask < GenericTask
     end
   end
 
-  def mark_hearing_no_show() end
+  def mark_cancelled() end
 
-  def mark_hearing_cancelled() end
+  def mark_held() end
 
-  def mark_hearing_held() end
+  def cancel!
+    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
+      fail HearingDispositionNotCanceled
+    end
+
+    update!(status: Constants.TASK_STATUSES.cancelled)
+
+    if appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
+    else
+      RootTask.create_ihp_tasks!(appeal, parent)
+    end
+  end
+
+  def mark_no_show!
+    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
+      fail HearingDispositionNotNoShow
+    end
+
+    no_show_hearing_task = NoShowHearingTask.create!(
+      parent: self,
+      appeal: appeal,
+      assigned_to: HearingAdmin.singleton
+    )
+
+    no_show_hearing_task.update!(
+      status: Constants.TASK_STATUSES.on_hold,
+      on_hold_duration: 25.days
+    )
+  end
 
   private
 
-  def slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
-    hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                 appeal: appeal,
-                                                 hearing_location_attrs: hearing_location&.to_hash,
-                                                 scheduled_time: hearing_time&.stringify_keys)
-    if appeal.is_a?(LegacyAppeal)
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-    end
+  def update_legacy_appeal_location
+    location = if appeal.vsos.empty?
+                 LegacyAppeal::LOCATION_CODES[:case_storage]
+               else
+                 LegacyAppeal::LOCATION_CODES[:service_organization]
+               end
 
-    hearing
+    AppealRepository.update_location!(appeal, location)
+  end
+
+  def hearing_disposition
+    parent&.hearing_task_association&.hearing&.disposition
   end
 end

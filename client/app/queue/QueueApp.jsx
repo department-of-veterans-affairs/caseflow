@@ -34,6 +34,7 @@ import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
+import PostponeHearingModal from './components/PostponeHearingModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
@@ -71,6 +72,10 @@ class QueueApp extends React.PureComponent {
     this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
+    if (this.props.hasCaseDetailsRole &&
+    document.getElementById('page-title').innerHTML === 'Queue') {
+      document.getElementById('page-title').innerHTML = 'Search';
+    }
   }
 
   routedSearchResults = (props) => <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />;
@@ -101,7 +106,8 @@ class QueueApp extends React.PureComponent {
       <JudgeDecisionReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} />;
+  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId}
+    hasCaseDetailsRole={this.props.hasCaseDetailsRole} />;
 
   routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}
@@ -188,6 +194,8 @@ class QueueApp extends React.PureComponent {
 
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
+  routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
+
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
 
@@ -221,7 +229,7 @@ class QueueApp extends React.PureComponent {
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.caseSearchHomePage ? '/search' : '/queue'}
+      defaultUrl={this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       applicationUrls={this.props.applicationUrls}
@@ -351,7 +359,8 @@ class QueueApp extends React.PureComponent {
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
+            path=
+              "/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
             title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
             render={this.routedSelectSpecialIssues} />
           <PageRoute
@@ -385,6 +394,11 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
             title="Assign Hearing | Caseflow"
             render={this.routedAssignHearingModal} />
+          <PageRoute
+            exact
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.POSTPONE_HEARING.value}`}
+            title="Postpone Hearing | Caseflow"
+            render={this.routedPostponeHearingModal} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId/tasks/:taskId/modal/send_colocated_task"

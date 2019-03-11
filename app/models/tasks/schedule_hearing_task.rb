@@ -6,7 +6,8 @@
 # Once completed, a DispositionTask is created.
 
 class ScheduleHearingTask < GenericTask
-  before_create :check_parent_type
+  before_validation :set_assignee
+  before_create :create_parent_hearing_task
   after_update :update_location_in_vacols
 
   class << self
@@ -57,13 +58,9 @@ class ScheduleHearingTask < GenericTask
     "Schedule hearing"
   end
 
-  def check_parent_type
-    if parent.type != "HearingTask"
-      fail(
-        Caseflow::Error::InvalidParentTask,
-        task_type: self.class.name,
-        assignee_type: assigned_to.class.name
-      )
+  def create_parent_hearing_task
+    if parent.type != HearingTask.name
+      self.parent = HearingTask.create(appeal: appeal, parent: parent)
     end
   end
 
@@ -93,7 +90,10 @@ class ScheduleHearingTask < GenericTask
         hearing_day_id = task_payloads[:values][:hearing_day_id]
         hearing_location = task_payloads[:values][:hearing_location]
 
-        hearing = slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
+        hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+                                                     appeal: appeal,
+                                                     hearing_location_attrs: hearing_location&.to_hash,
+                                                     scheduled_time: hearing_time&.stringify_keys)
         DispositionTask.create_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
@@ -139,6 +139,10 @@ class ScheduleHearingTask < GenericTask
 
   private
 
+  def set_assignee
+    self.assigned_to = assigned_to.nil? ? HearingsManagement.singleton : assigned_to
+  end
+
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
       location = if appeal.vsos.empty?
@@ -156,17 +160,5 @@ class ScheduleHearingTask < GenericTask
         assigned_to: MailTeam.singleton
       )
     end
-  end
-
-  def slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
-    hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                 appeal: appeal,
-                                                 hearing_location_attrs: hearing_location&.to_hash,
-                                                 scheduled_time: hearing_time&.stringify_keys)
-    if appeal.is_a?(LegacyAppeal)
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-    end
-
-    hearing
   end
 end

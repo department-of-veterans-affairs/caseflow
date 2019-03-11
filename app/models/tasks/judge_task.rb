@@ -6,7 +6,10 @@
 
 class JudgeTask < Task
   def available_actions(user)
-    additional_available_actions(user).unshift(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
+    [
+      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+      additional_available_actions(user)
+    ].flatten
   end
 
   def actions_available?(user)

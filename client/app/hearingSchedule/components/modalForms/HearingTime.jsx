@@ -24,12 +24,15 @@ const formStyling = css({
   marginBottom: 0
 });
 
+let index = 0;
+
 export default class HearingTime extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isOther: false
+      isOther: false,
+      index: index += 1
     };
   }
 
@@ -75,7 +78,7 @@ export default class HearingTime extends React.Component {
         <span {...formStyling}>
           <RadioField
             errorMessage={errorMessage}
-            name="time"
+            name={`hearingTime${this.state.index}`}
             label="Time"
             strongLabel
             options={this.getTimeOptions()}
@@ -83,7 +86,7 @@ export default class HearingTime extends React.Component {
             value={this.state.isOther ? 'other' : value} />
         </span>
         {this.state.isOther && <SearchableDropdown
-          name="optionalTime"
+          name={`optionalHearingTime${this.state.index}`}
           placeholder="Select a time"
           options={TIME_OPTIONS}
           value={value}

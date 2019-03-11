@@ -65,7 +65,7 @@ class AssignHearingForm extends React.Component {
     };
 
     return {
-      hearing_time: values.hearingDay && values.hearingTime ?
+      hearing_time: (values.hearingDay && values.hearingDay.hearingDate) && values.hearingTime ?
         getAssignHearingTime(values.hearingTime, values.hearingDay) : null,
       hearing_day_id: values.hearingDay ? values.hearingDay.hearingId : null,
       hearing_location: values.hearingLocation ? ApiUtil.convertToSnakeCase(values.hearingLocation) : null
