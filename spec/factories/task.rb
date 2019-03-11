@@ -88,7 +88,7 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :ama_disposition_task, class: DispositionTask do
+    factory :disposition_task, class: DispositionTask do
       type { DispositionTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
