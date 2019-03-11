@@ -90,6 +90,7 @@ FactoryBot.define do
 
     factory :disposition_task, class: DispositionTask do
       type { DispositionTask.name }
+      assigned_to { Bva.singleton }
       appeal { create(:appeal) }
     end
 
@@ -115,6 +116,7 @@ FactoryBot.define do
 
     factory :hearing_task, class: HearingTask do
       type { HearingTask.name }
+      assigned_to { Bva.singleton }
       appeal { create(:appeal) }
     end
 
@@ -123,6 +125,13 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_to { HearingsManagement.singleton }
       parent { create(:hearing_task, appeal: appeal) }
+    end
+
+    factory :no_show_hearing_task, class: NoShowHearingTask do
+      type { NoShowHearingTask.name }
+      appeal { create(:appeal) }
+      assigned_to { HearingAdmin.singleton }
+      parent { create(:ama_disposition_task, appeal: appeal) }
     end
 
     factory :ama_attorney_task do

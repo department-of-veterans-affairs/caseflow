@@ -7,8 +7,6 @@
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
   before_create :check_parent_type
-  after_update :update_appeal_location_after_cancel, if: :task_just_canceled_and_has_legacy_appeal?
-  after_update :create_ihp_tasks_after_cancel, if: :task_just_canceled_and_has_ama_appeal?
 
   class HearingDispositionNotCanceled < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
@@ -41,6 +39,12 @@ class DispositionTask < GenericTask
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
+
+    if appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
+    else
+      RootTask.create_ihp_tasks!(appeal, parent)
+    end
   end
 
   def mark_no_show!
@@ -62,23 +66,7 @@ class DispositionTask < GenericTask
 
   private
 
-  def task_just_canceled?
-    saved_change_to_attribute?("status") && cancelled?
-  end
-
-  def task_just_canceled_and_has_legacy_appeal?
-    task_just_canceled? && appeal.is_a?(LegacyAppeal)
-  end
-
-  def task_just_canceled_and_has_ama_appeal?
-    task_just_canceled? && appeal.is_a?(Appeal)
-  end
-
-  def create_ihp_tasks_after_cancel
-    RootTask.create_ihp_tasks!(appeal, parent)
-  end
-
-  def update_appeal_location_after_cancel
+  def update_legacy_appeal_location
     location = if appeal.vsos.empty?
                  LegacyAppeal::LOCATION_CODES[:case_storage]
                else

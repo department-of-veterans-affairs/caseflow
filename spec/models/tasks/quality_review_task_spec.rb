@@ -56,4 +56,15 @@ describe QualityReviewTask do
       end
     end
   end
+
+  describe ".update!(status: Constants.TASK_STATUSES.cancelled)" do
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let!(:qr_task) { QualityReviewTask.create_from_root_task(root_task) }
+
+    it "should create a task for BVA dispatch" do
+      qr_task.update!(status: Constants.TASK_STATUSES.cancelled)
+      expect(qr_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      expect(root_task.reload.children.select { |t| t.type == BvaDispatchTask.name }.count).to eq(1)
+    end
+  end
 end

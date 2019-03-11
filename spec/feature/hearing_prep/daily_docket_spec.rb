@@ -37,8 +37,9 @@ RSpec.feature "Hearing prep" do
       find(".dropdown-#{legacy_hearing.id}-hold_open").click
       find("#react-select-4--option-2").click
       find("label", text: "Transcript Requested").click
+      click_button("Save")
 
-      visit "/hearings/dockets/" + 25.days.from_now.to_date.to_s
+      expect(page).to have_content("You have successfully updated this hearing.")
       expect(page).to have_content("This is a note about the hearing!")
       expect(page).to have_content("No Show")
       expect(page).to have_content("60 days")
@@ -55,8 +56,9 @@ RSpec.feature "Hearing prep" do
       find(".dropdown-#{hearing.id}-disposition").click
       find("#react-select-2--option-1").click
       find("label", text: "Yes, Waive 90 Day Hold").click
+      click_button("Save")
 
-      visit "/hearings/dockets/" + Hearing.first.scheduled_for.to_date.to_s
+      expect(page).to have_content("You have successfully updated this hearing.")
       expect(page).to have_content("This is a note about the hearing!")
       expect(page).to have_content("No Show")
       expect(find_field("#{hearing.id}.evidence_window_waived", visible: false)).to be_checked
