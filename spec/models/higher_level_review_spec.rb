@@ -440,6 +440,13 @@ describe HigherLevelReview do
              contested_rating_issue_diagnostic_code: "8877")
     end
 
+    let!(:request_issue3) do
+      create(:request_issue,
+             decision_review: hlr,
+             benefit_type: benefit_type,
+             ineligible_reason: :untimely)
+    end
+
     let!(:hlr) do
       create(:higher_level_review,
              veteran_file_number: veteran_file_number,
@@ -451,10 +458,11 @@ describe HigherLevelReview do
       it "gets status for the request issues" do
         issue_statuses = hlr.issues_hash
 
-        expect(issue_statuses.empty?).to eq(false)
+        expect(issue_statuses.count).to eq(2)
 
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
         expect(issue).to_not be_nil
+
         expect(issue[:active]).to eq(true)
         expect(issue[:last_action]).to be_nil
         expect(issue[:date]).to be_nil

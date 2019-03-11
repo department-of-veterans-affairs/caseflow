@@ -186,7 +186,7 @@ class ClaimReview < DecisionReview
   end
 
   def issues_hash
-    issue_list = active_status? ? request_issues.open : fetch_all_decision_issues
+    issue_list = active_status? ? request_issues.open.select(&:eligible?) : fetch_all_decision_issues
 
     return [] if issue_list.empty?
 
