@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
@@ -53,16 +55,27 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
+    create_team_admin
     create_colocated_users
+    create_transcription_team
     create_vso_users_and_tasks
+    create_field_vso_and_users
     create_org_queue_users
     create_qr_user
     create_aod_user
+    create_privacy_user
+    create_lit_support_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
     create_judge_teams
     create_hearings_team
+  end
+
+  def create_team_admin
+    u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
+    Functions.grant!("System Admin", users: [u.css_id])
+    OrganizationsUser.add_user_to_organization(u, Bva.singleton)
   end
 
   def create_judge_teams
@@ -73,6 +86,11 @@ class SeedDB
         OrganizationsUser.add_user_to_organization(User.find_or_create_by(css_id: css_id, station_id: 101), judge_team)
       end
     end
+  end
+
+  def create_transcription_team
+    transcription_member = User.find_or_create_by(css_id: "TRANSCRIPTION_USER", station_id: 101)
+    OrganizationsUser.add_user_to_organization(transcription_member, TranscriptionTeam.singleton)
   end
 
   def create_hearings_team
@@ -97,7 +115,6 @@ class SeedDB
   def create_vso_users_and_tasks
     vso = Vso.create(
       name: "VSO",
-      role: "VSO",
       url: "veterans-service-organization",
       participant_id: "2452415"
     )
@@ -139,8 +156,31 @@ class SeedDB
     end
   end
 
+  def create_field_vso_and_users
+    vso = FactoryBot.create(:field_vso, name: "Field VSO", url: "field-vso")
+
+    %w[MANDY NICHOLAS ELIJAH].each do |name|
+      u = User.create(
+        css_id: "#{name}_VSO",
+        station_id: 101,
+        full_name: "#{name} - VSO user",
+        roles: %w[VSO]
+      )
+      OrganizationsUser.add_user_to_organization(u, vso)
+
+      a = FactoryBot.create(:appeal)
+      root_task = FactoryBot.create(:root_task, appeal: a)
+      FactoryBot.create(
+        :track_veteran_task,
+        parent: root_task,
+        appeal: a,
+        assigned_to: vso
+      )
+    end
+  end
+
   def create_org_queue_users
-    nca = BusinessLine.create!(name: "National Cemetery Association", url: "nca")
+    nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{n}", full_name: "NCA team member #{n}")
       OrganizationsUser.add_user_to_organization(u, nca)
@@ -168,6 +208,16 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
   end
 
+  def create_privacy_user
+    u = User.create!(station_id: 101, css_id: "PRIVACY_TEAM_USER", full_name: "Privacy and FOIA team member")
+    OrganizationsUser.add_user_to_organization(u, PrivacyTeam.singleton)
+  end
+
+  def create_lit_support_user
+    u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Litigation Support team member")
+    OrganizationsUser.add_user_to_organization(u, LitigationSupport.singleton)
+  end
+
   def create_mail_team_user
     u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Mail team member")
     OrganizationsUser.add_user_to_organization(u, MailTeam.singleton)
@@ -179,11 +229,10 @@ class SeedDB
 
     3.times do
       root = FactoryBot.create(:root_task)
-      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
       FactoryBot.create_list(
         :request_issue,
         [3, 4, 5].sample,
-        contested_issue_description: description,
+        :nonrating,
         notes: "Pain disorder with 100\% evaluation per examination",
         decision_review: root.appeal
       )
@@ -402,13 +451,7 @@ class SeedDB
       vacols_id = "3019752"
     end
 
-    appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
-
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
-    )
+    LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 
   def create_ama_case_with_open_schedule_hearing_task(ro_key)
@@ -418,13 +461,13 @@ class SeedDB
       last_name: Faker::Name.last_name
     )
 
-    vet.closest_regional_office = ro_key
     vet.save
 
     appeal = FactoryBot.create(
       :appeal,
       :with_tasks,
       number_of_claimants: 1,
+      closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
       docket_type: "hearing"
     )
@@ -432,7 +475,7 @@ class SeedDB
     ScheduleHearingTask.create!(
       appeal: appeal,
       assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
+      parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     )
   end
 
@@ -464,13 +507,12 @@ class SeedDB
                           decision_review: higher_level_review)
       end
       FactoryBot.create(:higher_level_review_task,
-                        assigned_to: Organization.find_by(name: "National Cemetery Association"),
+                        assigned_to: Organization.find_by(name: "National Cemetery Administration"),
                         appeal: higher_level_review)
     end
   end
 
   def create_ama_appeals
-    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
 
     @appeal_with_vso = FactoryBot.create(
@@ -481,7 +523,7 @@ class SeedDB
       ],
       veteran_file_number: "701305078",
       docket_type: "direct_review",
-      request_issues: FactoryBot.create_list(:request_issue, 3, contested_issue_description: description, notes: notes)
+      request_issues: FactoryBot.create_list(:request_issue, 3, :nonrating, notes: notes)
     )
 
     es = "evidence_submission"
@@ -506,7 +548,7 @@ class SeedDB
         veteran_file_number: params[:veteran_file_number],
         docket_type: params[:docket_type],
         request_issues: FactoryBot.create_list(
-          :request_issue, params[:request_issue_count], contested_issue_description: description, notes: notes
+          :request_issue, params[:request_issue_count], :nonrating, notes: notes
         )
       )
     end
@@ -804,7 +846,7 @@ class SeedDB
   end
 
   def create_board_grant_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
     description = "Service connection for pain disorder is granted with an evaluation of 50\% effective May 1 2011"
     notes = "Pain disorder with 80\% evaluation per examination"
 
@@ -836,7 +878,7 @@ class SeedDB
   end
 
   def create_veteran_record_request_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
 
     3.times do |_index|
       FactoryBot.create(:veteran_record_request_task,
@@ -920,6 +962,7 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
+      closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 1, contested_issue_description: description, notes: notes
       )
@@ -930,6 +973,7 @@ class SeedDB
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",
+      closest_regional_office: "RO17",
       request_issues: FactoryBot.create_list(
         :request_issue, 8, contested_issue_description: description, notes: notes
       )
@@ -944,7 +988,6 @@ class SeedDB
       created_by: user,
       updated_by: user
     )
-    Veteran.where(file_number: %w[808415990 992190636]).update_all(closest_regional_office: "RO17")
   end
 
   def seed

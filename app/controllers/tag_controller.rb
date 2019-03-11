@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TagController < ApplicationController
   before_action :verify_access
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job runs at 6pm ET and checks that mission critical jobs have started
 # and completed. This will alert us if a job has not run due to
 # sidekiq-cron being unreliable
@@ -11,7 +13,7 @@ class MonitorBusinessCriticalJobsJob < CaseflowJob
 
   DEFAULT_ALERT_THRESHOLD_IN_HOURS = 5 # in hours
 
-  MESSAGE_BASE = "Business critical job monitor results:\n".freeze
+  MESSAGE_BASE = "Business critical job monitor results:\n"
 
   def perform(alert_threshold: nil)
     @alert_threshold = alert_threshold

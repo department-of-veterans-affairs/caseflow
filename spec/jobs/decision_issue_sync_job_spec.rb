@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe DecisionIssueSyncJob do
@@ -18,7 +20,7 @@ describe DecisionIssueSyncJob do
 
     subject
 
-    expect(request_issue.decision_sync_error).to eq("none!")
+    expect(request_issue.decision_sync_error).to eq("Rating::NilRatingProfileListError")
     expect(@raven_called).to eq(false)
   end
 

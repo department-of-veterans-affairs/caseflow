@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Generators::Vacols::Folder
   class << self
     # rubocop:disable Metrics/MethodLength

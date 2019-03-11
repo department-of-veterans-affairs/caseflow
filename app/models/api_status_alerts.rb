@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApiStatusAlerts
   include ActiveModel::Model
 
@@ -29,7 +31,7 @@ class ApiStatusAlerts
 
   def post_decision
     return unless decision_review.api_alerts_show_decision_alert?
-    return unless Time.zone.today < decision_review.due_date_to_appeal_decision
+    return unless Time.zone.today <= decision_review.due_date_to_appeal_decision
     return if decision_review.is_a?(Appeal) && Time.zone.today > decision_review.cavc_due_date
 
     {
@@ -46,7 +48,8 @@ class ApiStatusAlerts
 
   def post_remand_decision
     return unless decision_review.remand_decision_event_date
-    return unless Time.zone.today < decision_review.remand_decision_event_date + 365.days
+    return unless decision_review.decision_event_date
+    return unless Time.zone.today <= decision_review.remand_decision_event_date + 365.days
 
     decision_review.remand_supplemental_claims.map do |remand_sc|
       {

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::V2::AppealsController < Api::ApplicationController
   def index
     api_key.api_views.create(vbms_id: vbms_id, source: source)
@@ -42,15 +44,16 @@ class Api::V2::AppealsController < Api::ApplicationController
   end
 
   def hlrs
-    @hlrs ||= HigherLevelReview.where(veteran_file_number: veteran_file_number)
+    @hlrs ||= HigherLevelReview.where(veteran_file_number: veteran_file_number).select { |hlr| hlr.request_issues.any? }
   end
 
   def supplemental_claims
     @supplemental_claims ||= SupplementalClaim.where(veteran_file_number: veteran_file_number)
+      .select { |sc| sc.request_issues.any? }
   end
 
   def appeals
-    @appeals ||= Appeal.where(veteran_file_number: veteran_file_number)
+    @appeals ||= Appeal.where(veteran_file_number: veteran_file_number).select { |a| a.request_issues.any? }
   end
 
   # rubocop:disable Metrics/MethodLength

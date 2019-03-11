@@ -1,8 +1,14 @@
+# frozen_string_literal: true
+
+##
+# Base model for all tasks in Caseflow.
+# Tasks represent work to be done by judges, attorneys, VSOs, and anyone else who touches a Veteran's appeal.
+
 class Task < ApplicationRecord
   acts_as_tree
 
   belongs_to :assigned_to, polymorphic: true
-  belongs_to :assigned_by, class_name: User.name
+  belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
 
@@ -33,7 +39,7 @@ class Task < ApplicationRecord
   end
 
   def label
-    action
+    self.class.name
   end
 
   def self.inactive_statuses
@@ -44,6 +50,10 @@ class Task < ApplicationRecord
   # properties of the task will not change.
   def active?
     !self.class.inactive_statuses.include?(status)
+  end
+
+  def active_with_no_children?
+    active? && children.empty?
   end
 
   # available_actions() returns an array of options from selected by the subclass
@@ -226,6 +236,10 @@ class Task < ApplicationRecord
     return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
   end
 
+  def self.most_recently_assigned
+    order(:updated_at).last
+  end
+
   def root_task(task_id = nil)
     task_id = id if task_id.nil?
     return parent.root_task(task_id) if parent
@@ -234,8 +248,18 @@ class Task < ApplicationRecord
     fail Caseflow::Error::NoRootTask, task_id: task_id
   end
 
+  def descendants
+    [self, children.map(&:descendants)].flatten
+  end
+
   def previous_task
     nil
+  end
+
+  def cancel_task_and_child_subtasks
+    # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
+    descendant_ids = descendants.pluck(:id)
+    Task.active.where(id: descendant_ids).update_all(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def assign_to_organization_data(_user = nil)
@@ -262,7 +286,7 @@ class Task < ApplicationRecord
       modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
       modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
       message_title: format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name),
-      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by.full_name)
+      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by&.full_name || "the assigner")
     }
   end
 

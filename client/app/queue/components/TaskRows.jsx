@@ -108,11 +108,6 @@ class TaskRows extends React.PureComponent {
       <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
-  dueDateListItem = (task) => {
-    return task.dueOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-      <dd><DateString date={task.dueOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
-  }
-
   daysWaitingListItem = (task) => {
     if (task.closedAt) {
       return null;
@@ -229,7 +224,6 @@ class TaskRows extends React.PureComponent {
             <CaseDetailsDescriptionList>
               { this.assignedOnListItem(task) }
               { this.closedAtListItem(task) }
-              { this.dueDateListItem(task) }
               { !task.closedAt && this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>

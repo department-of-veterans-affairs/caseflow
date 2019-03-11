@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # bundle exec rails runner scripts/enable_features_dev.rb
 
 json_config = <<EOS.strip_heredoc
@@ -51,11 +53,11 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "ama_decision_issues",
+          feature: "use_representative_info_from_bgs",
           enable_all: true
         },
         {
-          feature: "use_representative_info_from_bgs",
+          feature: "use_ama_activation_date",
           enable_all: true
         },
         {

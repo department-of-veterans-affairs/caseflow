@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Service object used by Caseflow System Admins
 # to manually create Establish Claims tasks
 class CreateEstablishClaim

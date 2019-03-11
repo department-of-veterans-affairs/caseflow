@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # :nocov:
 class VBMSCaseflowLogger
   def log(event, data)
@@ -84,7 +86,7 @@ class ExternalApi::VBMSService
       content_hash: content_hash,
       filename: filename,
       file_number: appeal.veteran_file_number,
-      va_receive_date: uploadable_document.upload_date,
+      va_receive_date: Time.zone.now,
       doc_type: uploadable_document.document_type_id,
       source: uploadable_document.source,
       subject: uploadable_document.document_type,

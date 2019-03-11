@@ -1,3 +1,11 @@
+# frozen_string_literal: true
+
+##
+# Task tracking work done by attorneys at BVA. Attorneys are assigned tasks by judges.
+# Attorney tasks include:
+#   - writing draft decisions for judges
+#   - adding admin actions (like translating documents)
+
 class AttorneyTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
@@ -18,7 +26,10 @@ class AttorneyTask < Task
                             else
                               Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
                             end
-    [review_decision_label, Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
+    [
+      review_decision_label,
+      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
+    ]
   end
 
   def timeline_title

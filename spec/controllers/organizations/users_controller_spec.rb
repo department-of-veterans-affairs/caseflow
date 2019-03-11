@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Organizations::UsersController, type: :controller do
   let(:non_admin_user) do
     User.authenticate!(roles: ["VSO"])
@@ -10,7 +12,7 @@ describe Organizations::UsersController, type: :controller do
   describe "GET /organizations/:business_line/users" do
     subject { get :index, params: { organization_url: non_comp_org.url }, format: :json }
 
-    let(:non_comp_org) { create(:business_line, name: "National Cemetery Association", url: "nca") }
+    let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
 
     context "non-admin user" do
       before { User.stub = non_admin_user }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UpdateAttorneyCaseReview
   include ActiveModel::Model
   include ::AmaAttorneyCaseReviewDocumentIdValidator

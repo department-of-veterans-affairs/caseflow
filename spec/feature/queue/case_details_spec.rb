@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Case details" do
@@ -235,6 +237,18 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.regional_office.city)
       end
     end
+    context "when veteran is in BGS" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :appeal
+        )
+      end
+      scenario "details view informs us that the Veteran data source is BGS" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        expect(page).to have_content("About the Veteran")
+        expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
+      end
+    end
 
     context "when Veteran is not the appellant" do
       let!(:appeal) do
@@ -265,6 +279,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.appellant_name)
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
+        expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
       end
     end
 
@@ -339,18 +354,16 @@ RSpec.feature "Case details" do
   end
 
   context "when an appeal has an issue that is ineligible" do
-    let(:eligible_issue_cnt) { 5 }
-    let(:ineligible_issue_cnt) { 3 }
     let(:issues) do
       [
         build_list(
           :request_issue,
-          eligible_issue_cnt,
+          1,
           contested_issue_description: "Knee pain"
         ),
         build_list(
           :request_issue,
-          ineligible_issue_cnt,
+          1,
           contested_issue_description: "Sunburn",
           ineligible_reason: :untimely
         )
@@ -361,8 +374,8 @@ RSpec.feature "Case details" do
     scenario "only eligible issues should appear in case details page" do
       visit "/queue/appeals/#{appeal.uuid}"
 
-      expect(page).to have_content("Issue #{eligible_issue_cnt}")
-      expect(page).to_not have_content("Issue #{eligible_issue_cnt + 1}")
+      expect(page).to have_content("Knee pain")
+      expect(page).to_not have_content("Sunburn")
     end
   end
 
@@ -557,7 +570,8 @@ RSpec.feature "Case details" do
 
         it "should display sorted issues" do
           visit "/queue/appeals/#{appeal.uuid}"
-          expect(page).to have_content(issue_description + " Issue 2 DESCRIPTION " + issue_description2)
+          text = issue_description + " Diagnostic code: 5008 Issue Benefit type: Compensation " + issue_description2
+          expect(page).to have_content(text)
         end
       end
     end

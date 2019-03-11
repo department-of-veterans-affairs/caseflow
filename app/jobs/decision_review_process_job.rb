@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job will call establish! on a DecisionReview
 # or anything that acts like a DecisionReview
 class DecisionReviewProcessJob < CaseflowJob
@@ -10,6 +12,8 @@ class DecisionReviewProcessJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
 
     return_value = nil
+
+    Raven.extra_context(class: decision_review.class.to_s, id: decision_review.id)
 
     begin
       return_value = decision_review.establish!

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Colocated do
   let(:colocated_org) { Colocated.singleton }
   let(:appeal) { nil }
@@ -19,7 +21,7 @@ describe Colocated do
       it "should throw an error" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(Caseflow::Error::RoundRobinTaskDistributorError)
-          expect(error.message).to eq("list_of_assignees cannot be empty")
+          expect(error.message).to eq("Assignee pool can't be blank")
         end
       end
     end
@@ -53,7 +55,7 @@ describe Colocated do
       it "should throw an error" do
         expect { subject }.to raise_error do |error|
           expect(error).to be_a(Caseflow::Error::RoundRobinTaskDistributorError)
-          expect(error.message).to eq("list_of_assignees cannot be empty")
+          expect(error.message).to eq("Assignee pool can't be blank")
         end
       end
     end

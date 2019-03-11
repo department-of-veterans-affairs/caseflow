@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -39,6 +38,8 @@ import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
+import AddJudgeTeamModal from './AddJudgeTeamModal';
+import AddVsoModal from './AddVsoModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -52,6 +53,7 @@ import BeaamAppealListView from './BeaamAppealListView';
 import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
+import TeamManagement from './TeamManagement';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -59,34 +61,8 @@ import COPY from '../../COPY.json';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import type { State } from './types/state';
 
-type Props = {|
-  userDisplayName: string,
-  feedbackUrl: string,
-  userId: number,
-  userRole: string,
-  userCssId: string,
-  dropdownUrls: Array<string>,
-  applicationUrls: Array<Object>,
-  buildDate?: string,
-  reviewActionType: string,
-  userIsVsoEmployee?: boolean,
-  caseSearchHomePage?: boolean,
-  canEditAod: Boolean,
-  featureToggles: Object,
-  organizations: Array<Object>,
-  // Action creators
-  setCanEditAod: typeof setCanEditAod,
-  setFeatureToggles: typeof setFeatureToggles,
-  setUserRole: typeof setUserRole,
-  setUserCssId: typeof setUserCssId,
-  setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
-  setFeedbackUrl: typeof setFeedbackUrl,
-  setOrganizations: typeof setOrganizations
-|};
-
-class QueueApp extends React.PureComponent<Props> {
+class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setFeatureToggles(this.props.featureToggles);
@@ -95,6 +71,10 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
+    if (this.props.hasCaseDetailsRole &&
+    document.getElementById('page-title').innerHTML === 'Queue') {
+      document.getElementById('page-title').innerHTML = 'Search';
+    }
   }
 
   routedSearchResults = (props) => <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />;
@@ -125,7 +105,8 @@ class QueueApp extends React.PureComponent<Props> {
       <JudgeDecisionReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} />;
+  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId}
+    hasCaseDetailsRole={this.props.hasCaseDetailsRole} />;
 
   routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}
@@ -222,6 +203,12 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
 
+  routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
+
+  routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
+
+  routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
+
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
   propsForQueueLoadingScreen = () => {
@@ -239,7 +226,7 @@ class QueueApp extends React.PureComponent<Props> {
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.caseSearchHomePage ? '/search' : '/queue'}
+      defaultUrl={this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       applicationUrls={this.props.applicationUrls}
@@ -369,7 +356,8 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
+            path=
+              "/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
             title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
             render={this.routedSelectSpecialIssues} />
           <PageRoute
@@ -418,6 +406,16 @@ class QueueApp extends React.PureComponent<Props> {
             path="/organizations/:organization/users"
             title="Organization Users | Caseflow"
             render={this.routedOrganizationUsers} />
+          <Route
+            path="/team_management/add_judge_team"
+            render={this.routedAddJudgeTeam} />
+          <Route
+            path="/team_management/add_vso"
+            render={this.routedAddVsoModal} />
+          <PageRoute
+            path="/team_management"
+            title="Team Management | Caseflow"
+            render={this.routedTeamManagement} />
         </div>
       </AppFrame>
       <Footer
@@ -439,7 +437,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state: State) => ({
+const mapStateToProps = (state) => ({
   reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 

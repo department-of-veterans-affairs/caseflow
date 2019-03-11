@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RampReview < ApplicationRecord
   belongs_to :user
   has_one :intake, as: :detail
@@ -113,7 +115,6 @@ class RampReview < ApplicationRecord
   def new_end_product_establishment
     @new_end_product_establishment ||= EndProductEstablishment.new(
       veteran_file_number: veteran_file_number,
-      reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: end_product_code,
       payee_code: payee_code,
@@ -131,8 +132,9 @@ class RampReview < ApplicationRecord
   end
 
   def connect_end_product!
+    end_product_establishment.update!(reference_id: end_product_establishment.preexisting_end_product.claim_id)
+
     update!(
-      end_product_reference_id: end_product_establishment.preexisting_end_product.claim_id,
       established_at: Time.zone.now
     ) && :connected
   end

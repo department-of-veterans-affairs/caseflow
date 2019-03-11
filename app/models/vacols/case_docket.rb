@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.brieff"
@@ -8,7 +10,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     select BFCURLOC from BRIEFF
     where BRIEFF.BFMPRO = 'ACT' and BRIEFF.BFCURLOC in ('81', '83')
     for update
-  ".freeze
+  "
 
   # Distribution should be blocked by pending mail, with the exception of:
   #
@@ -32,7 +34,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       on MAIL.MLFOLDER = BRIEFF.BFKEY
     )
     on MAILKEY = BFKEY
-  ".freeze
+  "
 
   # Distribution should be blocked by a pending diary of one of the following types:
   #
@@ -55,7 +57,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       on DIARIES.TSKTKNM = BRIEFF.BFKEY
     )
     on DIARYKEY = BFKEY
-  ".freeze
+  "
 
   SELECT_READY_APPEALS = "
     select BFKEY, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
@@ -69,7 +71,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       and BRIEFF.BFBOX is null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
-  ".freeze
+  "
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
 
@@ -84,7 +86,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       on VLJ_HEARINGS.VLJ not in ('000', '888', '999')
         and VLJ_HEARINGS.TITRNUM = BRIEFF.TITRNUM
         and (VLJ_HEARINGS.TINUM is null or VLJ_HEARINGS.TINUM = BRIEFF.TINUM)
-  ".freeze
+  "
 
   JOIN_ASSOCIATED_VLJS_BY_PRIOR_DECISIONS = "
     left join (
@@ -98,7 +100,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         and VLJ_HEARINGS.VLJ is null
         and VLJ_PRIORDEC.TITRNUM = BRIEFF.TITRNUM
         and (VLJ_PRIORDEC.TINUM is null or VLJ_PRIORDEC.TINUM = BRIEFF.TINUM)
-  ".freeze
+  "
 
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness

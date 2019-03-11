@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Judge
   attr_reader :user
   def initialize(user)
@@ -11,7 +13,7 @@ class Judge
 
     # assign number of slots to its corresponding docket
     @upcoming_dockets.map do |date, hearing_docket|
-      hearing_docket.slots = HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper
+      hearing_docket.slots = HearingDay::SLOTS_BY_TIMEZONE[HearingMapper
         .timezone(hearing_docket.regional_office_key)]
       [date, hearing_docket]
     end.to_h

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TasksController < ApplicationController
   include Errors
 
@@ -88,11 +90,6 @@ class TasksController < ApplicationController
   def for_appeal
     no_cache
     RootTask.find_or_create_by!(appeal: appeal)
-
-    # This is a temporary solution for legacy hearings. We need them to exist on the case details
-    # page, but have no good way to create them before a page load. So we need to check here if we
-    # need to create a hearing task and if so, create it.
-    ScheduleHearingTask.find_or_create_if_eligible(appeal)
 
     # VSO users should only get tasks assigned to them or their organization.
     if current_user.vso_employee?

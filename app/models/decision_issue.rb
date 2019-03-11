@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionIssue < ApplicationRecord
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
   validates :disposition, presence: true
@@ -21,11 +23,11 @@ class DecisionIssue < ApplicationRecord
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
   # The characters an encoding is precise so don't change these unless you know they match VBMS values.
-  DTA_ERROR_PMR = "DTA Error - PMRs".freeze
-  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs".freeze
-  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs".freeze
-  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
-  REMAND = "remanded".freeze
+  DTA_ERROR_PMR = "DTA Error - PMRs"
+  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs"
+  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs"
+  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO"
+  REMAND = "remanded"
   REMAND_DISPOSITIONS = [REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
   class AppealDTAPayeeCodeError < StandardError

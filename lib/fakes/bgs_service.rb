@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 require "bgs"
 require "fakes/end_product_store"
@@ -555,6 +557,19 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
+  def fetch_limited_poas_by_claim_ids(claim_ids)
+    result = {}
+    Array.wrap(claim_ids).each do |claim_id|
+      if claim_id.include? "HAS_LIMITED_POA_WITH_ACCESS"
+        result[claim_id] = { limited_poa_code: "OU3", limited_poa_access: "Y" }
+      elsif claim_id.include? "HAS_LIMITED_POA_WITHOUT_ACCESS"
+        result[claim_id] = { limited_poa_code: "007", limited_poa_access: "N" }
+      end
+    end
+
+    result.empty? ? nil : result
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -696,8 +711,8 @@ class Fakes::BGSService
 
   private
 
-  VSO_PARTICIPANT_ID = "4623321".freeze
-  DEFAULT_PARTICIPANT_ID = "781162".freeze
+  VSO_PARTICIPANT_ID = "4623321"
+  DEFAULT_PARTICIPANT_ID = "781162"
 
   def default_claimant_info
     {

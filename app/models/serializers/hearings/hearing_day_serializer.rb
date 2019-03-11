@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::HearingDaySerializer < ActiveModel::Serializer
   attributes :hearing_pkseq,
              :request_type,

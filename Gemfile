@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
@@ -8,12 +10,12 @@ gem "active_model_serializers", "~> 0.10.0"
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "1af709bbcf61931420db621237f90cb8e21f3c1c"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "54955cfc95e528394bf1975285edc6bc23cfaf7d"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "0d56a6c6a2ec314f97bce863f6aeffe837d75a13"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "40162a748932e0a5aa736b63bb7212928c6df345"
 gem "dogstatsd-ruby"
 gem "holidays", "~> 6.4"
 # Use jquery as the JavaScript library
@@ -68,8 +70,7 @@ gem "uglifier", ">= 1.3.0"
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
-  # set require: 'oci8' here because bootsnap creates a warning: https://github.com/rails/rails/issues/32811#issuecomment-386541855
-  gem "ruby-oci8", require: "oci8"
+  gem "ruby-oci8", "~> 2.2"
 end
 
 group :test, :development, :demo do
@@ -105,6 +106,8 @@ group :test, :development, :demo do
 end
 
 group :development do
+  gem "bummr", "= 0.3.2", require: false
+  gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"

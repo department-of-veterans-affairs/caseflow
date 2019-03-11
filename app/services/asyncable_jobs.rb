@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AsyncableJobs
   attr_accessor :jobs
 
@@ -10,6 +12,11 @@ class AsyncableJobs
     @models ||= ActiveRecord::Base.descendants
       .select { |c| c.included_modules.include?(Asyncable) }
       .reject(&:abstract_class?)
+  end
+
+  def find_by_error(msg)
+    msg_regex = msg.is_a?(Regexp) ? msg : /#{msg}/
+    jobs.select { |j| msg_regex.match?(j[j.class.error_column]) }
   end
 
   private

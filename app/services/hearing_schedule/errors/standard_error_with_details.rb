@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingSchedule::Errors::StandardErrorWithDetails < StandardError
   attr_accessor :details
 

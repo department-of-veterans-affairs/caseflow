@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VACOLS::CaseAssignment < VACOLS::Record
   # :nocov:
   self.table_name = "vacols.brieff"

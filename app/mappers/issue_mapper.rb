@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module IssueMapper
   COLUMN_NAMES = {
     program: :issprog,

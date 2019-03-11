@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe RequestIssue do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -6,6 +8,7 @@ describe RequestIssue do
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:profile_date) { Time.zone.now.to_s }
   let(:contention_reference_id) { "1234" }
+  let(:nonrating_contention_reference_id) { "5678" }
   let(:ramp_claim_id) { nil }
   let(:higher_level_review_reference_id) { "hlr123" }
   let(:legacy_opt_in_approved) { false }
@@ -82,7 +85,7 @@ describe RequestIssue do
       decision_date: 1.day.ago,
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
-      contention_reference_id: contention_reference_id,
+      contention_reference_id: nonrating_contention_reference_id,
       benefit_type: benefit_type
     )
   end
@@ -217,6 +220,60 @@ describe RequestIssue do
       it "treats EPE as active" do
         in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
         expect(in_review).to eq(rating_request_issue)
+      end
+    end
+  end
+
+  context "limited_poa" do
+    let(:previous_dr) { create(:higher_level_review) }
+    let(:previous_ri) { create(:request_issue, decision_review: previous_dr, end_product_establishment: previous_epe) }
+    let(:previous_epe) { create(:end_product_establishment, reference_id: previous_claim_id) }
+    let(:decision_issue) { create(:decision_issue, decision_review: previous_dr, request_issues: [previous_ri]) }
+
+    context "when there is no previous request issue" do
+      let(:contested_decision_issue_id) { nil }
+
+      it "returns nil" do
+        expect(rating_request_issue.limited_poa_code).to be_nil
+        expect(rating_request_issue.limited_poa_access).to be_nil
+      end
+    end
+
+    context "when there is a previous request issue" do
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      context "when the previous request issue does not have an EPE" do
+        let(:previous_epe) { nil }
+
+        it "returns nil" do
+          expect(rating_request_issue.limited_poa_code).to be_nil
+          expect(rating_request_issue.limited_poa_access).to be_nil
+        end
+      end
+
+      context "when the epe's result does not have a limited poa" do
+        let(:previous_claim_id) { "NoLimitedPOA" }
+
+        it "returns nil" do
+          expect(rating_request_issue.limited_poa_code).to be_nil
+          expect(rating_request_issue.limited_poa_access).to be_nil
+        end
+      end
+
+      context "when there is an limited POA with access" do
+        let(:previous_claim_id) { "HAS_LIMITED_POA_WITH_ACCESS" }
+        it "returns the established end product's limited POA, changes Y to true" do
+          expect(rating_request_issue.limited_poa_code).to eq("OU3")
+          expect(rating_request_issue.limited_poa_access).to be true
+        end
+      end
+
+      context "when there is an limited POA without access" do
+        let(:previous_claim_id) { "HAS_LIMITED_POA_WITHOUT_ACCESS" }
+        it "returns the established end product's limited POA, with false for access" do
+          expect(rating_request_issue.limited_poa_code).to eq("007")
+          expect(rating_request_issue.limited_poa_access).to be false
+        end
       end
     end
   end
@@ -423,7 +480,7 @@ describe RequestIssue do
           contested_rating_issue_reference_id: higher_level_review_reference_id,
           contention_reference_id: contention_reference_id,
           end_product_establishment: active_epe,
-          removed_at: nil,
+          contention_removed_at: nil,
           ineligible_reason: nil
         )
       end
@@ -706,6 +763,7 @@ describe RequestIssue do
     let(:old_reference_id) { "old123" }
     let(:active_epe) { create(:end_product_establishment, :active) }
     let(:receipt_date) { review.receipt_date }
+    let(:previous_contention_reference_id) { "8888" }
 
     let(:previous_review) { create(:higher_level_review) }
     let!(:previous_request_issue) do
@@ -713,7 +771,7 @@ describe RequestIssue do
         :request_issue,
         decision_review: previous_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
-        contention_reference_id: contention_reference_id
+        contention_reference_id: previous_contention_reference_id
       )
     end
 
@@ -742,7 +800,7 @@ describe RequestIssue do
           {
             reference_id: higher_level_review_reference_id,
             decision_text: "Already reviewed injury",
-            contention_reference_id: contention_reference_id
+            contention_reference_id: previous_contention_reference_id
           }
         ]
       )
@@ -1138,6 +1196,8 @@ describe RequestIssue do
               )
               expect(rating_request_issue.processed?).to eq(true)
               expect(rating_request_issue.decision_sync_error).to be_nil
+              expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+              expect(rating_request_issue.closed_status).to eq("decided")
             end
 
             context "when decision issue with disposition and rating issue already exists" do
@@ -1156,6 +1216,8 @@ describe RequestIssue do
                 expect(rating_request_issue.decision_issues.count).to eq(1)
                 expect(rating_request_issue.decision_issues.first).to eq(preexisting_decision_issue)
                 expect(rating_request_issue.processed?).to eq(true)
+                expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+                expect(rating_request_issue.closed_status).to eq("decided")
               end
             end
 
@@ -1193,6 +1255,8 @@ describe RequestIssue do
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
               )
               expect(rating_request_issue.processed?).to eq(true)
+              expect(rating_request_issue.closed_at).to eq(Time.zone.now)
+              expect(rating_request_issue.closed_status).to eq("decided")
             end
           end
         end
@@ -1214,10 +1278,15 @@ describe RequestIssue do
 
         let!(:contention) do
           Generators::Contention.build(
-            id: contention_reference_id,
+            id: nonrating_contention_reference_id,
             claim_id: end_product_establishment.reference_id,
             disposition: "allowed"
           )
+        end
+
+        before do
+          # mimic what BGS will do when syncing a nonrating request issue
+          allow(Rating).to receive(:fetch_in_range).and_raise(Rating::NilRatingProfileListError)
         end
 
         it "creates decision issues based on contention disposition" do
@@ -1232,6 +1301,8 @@ describe RequestIssue do
             end_product_last_action_date: end_product_establishment.result.last_action_date.to_date
           )
           expect(request_issue.processed?).to eq(true)
+          expect(request_issue.closed_at).to eq(Time.zone.now)
+          expect(request_issue.closed_status).to eq("decided")
         end
 
         context "when there is no disposition" do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
@@ -15,10 +17,6 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   rescue_from ActionController::ParameterMissing do |e|
     render(json: { message: e.message }, status: :bad_request)
-  end
-
-  rescue_from Caseflow::Error::DocumentUploadFailedInVBMS do |e|
-    render(e.serialize_response)
   end
 
   rescue_from ActiveRecord::RecordNotFound do |_e|

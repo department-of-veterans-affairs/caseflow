@@ -12,31 +12,13 @@ import { getAppealValue } from './QueueActions';
 import { appealWithDetailSelector } from './selectors';
 import COPY from '../../COPY.json';
 
-import type {
-  Appeal,
-  VeteranInfo
-} from './types/models';
-
 const detailListStyling = css({
   paddingLeft: 0,
   listStyle: 'none',
   marginBottom: '3rem'
 });
 
-type Params = {|
-  appeal: Appeal
-|};
-
-type Props = Params & {|
-  // state
-  veteranInfo: VeteranInfo,
-  loading: boolean,
-  error: Object,
-  // dispatch
-  getAppealValue: typeof getAppealValue
-|};
-
-export class VeteranDetail extends React.PureComponent<Props> {
+export class VeteranDetail extends React.PureComponent {
   componentDidMount = () => {
     this.props.getAppealValue(
       this.props.appeal.externalId,
@@ -107,6 +89,10 @@ export class VeteranDetail extends React.PureComponent<Props> {
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
 
+  getDataSourceInfo = () => {
+    return <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>;
+  }
+
   render = () => {
     if (!this.props.veteranInfo) {
       if (this.props.loading) {
@@ -123,15 +109,17 @@ export class VeteranDetail extends React.PureComponent<Props> {
 
     return <ul {...detailListStyling}>
       {this.getDetails()}
+      {this.getDataSourceInfo()}
     </ul>;
   };
 }
 
 const mapStateToProps = (state, ownProps) => {
   const loadingVeteranInfo = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
+  const appeal = appealWithDetailSelector(state, { appealId: ownProps.appeal.externalId });
 
   return {
-    veteranInfo: appealWithDetailSelector(state, { appealId: ownProps.appeal.externalId }).veteranInfo,
+    veteranInfo: appeal.veteranInfo,
     loading: loadingVeteranInfo ? loadingVeteranInfo.loading : null,
     error: loadingVeteranInfo ? loadingVeteranInfo.error : null
   };
@@ -141,5 +129,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   getAppealValue
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(VeteranDetail): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(VeteranDetail));
 

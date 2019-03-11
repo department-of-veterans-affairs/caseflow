@@ -92,18 +92,22 @@ export class DailyDocketContainer extends React.Component {
   };
 
   getTime = (hearing) => {
+    const dateForTimezoneCalculation = (hearing.editedDate && hearing.editedDate.scheduledFor) || hearing.scheduledFor;
+
     if (hearing.editedTime) {
-      return this.formatTime(hearing.scheduledFor, hearing.editedTime);
+      return this.formatTime(dateForTimezoneCalculation, hearing.editedTime);
     }
 
-    const timeObject = moment(hearing.scheduledFor);
+    const timeObject = moment(hearing.scheduledFor).tz(hearing.regionalOfficeTimezone);
 
     return {
       // eslint-disable-next-line id-length
       h: timeObject.hours(),
       // eslint-disable-next-line id-length
       m: timeObject.minutes(),
-      offset: timeObject.format('Z')
+      offset: moment(dateForTimezoneCalculation).tz(hearing.regionalOfficeTimezone).
+        tz('America/New_York').
+        format('Z')
     };
 
   };
@@ -128,7 +132,7 @@ export class DailyDocketContainer extends React.Component {
         scheduledTime = hearing.editedTime;
       }
     } else {
-      scheduledTime = hearing.scheduledTime;
+      scheduledTime = this.getTime(hearing);
     }
 
     return scheduledTime;
@@ -166,7 +170,7 @@ export class DailyDocketContainer extends React.Component {
       disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
       transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
         hearing.transcriptRequested : hearing.editedTranscriptRequested,
-      notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
+      notes: _.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes,
       hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
         ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
       scheduled_time: this.getScheduledTime(hearing),
@@ -186,6 +190,8 @@ export class DailyDocketContainer extends React.Component {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
         this.props.onReceiveSavedHearing(resp);
+      }, (err) => {
+        this.props.handleDailyDocketServerError(err);
       });
   };
 
@@ -327,6 +333,7 @@ export class DailyDocketContainer extends React.Component {
         displayLockSuccessMessage={this.props.displayLockSuccessMessage}
         onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
         userRoleBuild={this.props.userRoleBuild}
+        userRoleView={this.props.userRoleView}
         dailyDocketServerError={this.props.dailyDocketServerError}
         onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
         notes={this.props.notes}

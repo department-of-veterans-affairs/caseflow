@@ -1,8 +1,8 @@
+# frozen_string_literal: true
+
 class DecisionReview < ApplicationRecord
   include CachedAttributes
   include Asyncable
-
-  validate :validate_receipt_date
 
   self.abstract_class = true
 
@@ -197,7 +197,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def open_request_issues
-    request_issues.open
+    request_issues.includes(:decision_review, :contested_decision_issue).open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
@@ -215,10 +215,18 @@ class DecisionReview < ApplicationRecord
 
   def create_remand_supplemental_claims!
     decision_issues.remanded.uncontested.each(&:find_or_create_remand_supplemental_claim!)
-    remand_supplemental_claims.each(&:create_remand_issues!)
-    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
-    remand_supplemental_claims.each(&:submit_for_processing!)
-    remand_supplemental_claims.each(&:start_processing_job!)
+
+    remand_supplemental_claims.each do |rsc|
+      rsc.create_remand_issues!
+      rsc.create_decision_review_task_if_required!
+
+      delay = rsc.receipt_date.future? ? rsc.receipt_date : 0
+      rsc.submit_for_processing!(delay: delay)
+
+      unless rsc.processed? || rsc.receipt_date.future?
+        rsc.start_processing_job!
+      end
+    end
   end
 
   def active_remanded_claims
@@ -262,7 +270,7 @@ class DecisionReview < ApplicationRecord
   def api_alerts_show_decision_alert?
     # For Appeal and SC, want to show the decision alert once the decisions are available.
     # HLR has different logic and overrides this method
-    decision_issues.any?
+    decision_issues.any? && decision_event_date
   end
 
   def decision_date_for_api_alert
@@ -411,6 +419,8 @@ class DecisionReview < ApplicationRecord
   end
 
   def fetch_issues_status(issues_list)
+    return {} if issues_list.empty?
+
     issues_list.map do |issue|
       {
         active: issue.api_status_active?,

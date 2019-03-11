@@ -2,11 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
+import {
+  onReceiveDropdownData,
+  onFetchDropdownData,
+  onDropdownError
+} from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
-import { css } from 'glamor';
 import _ from 'lodash';
-import { loadingSymbolHtml } from '../RenderFunctions';
+import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
 
@@ -17,23 +20,15 @@ export const getFacilityType = (location) => {
   case 'va_health_facility':
     return '(VHA) ';
   case 'va_benefits_facility':
+    if (location.facilityId === 'vba_372') {
+      return '(BVA)';
+    }
+
     return location.classification.indexOf('Regional') === -1 ? '(VBA) ' : '(RO) ';
   default:
     return '';
   }
 };
-
-const LoadingLabel = () => (
-  <span {...css({
-    '& > *': {
-      display: 'inline-block',
-      marginRight: '10px'
-    }
-  })}>
-    {loadingSymbolHtml('', '15px')}
-    {'Finding hearing locations for veteran ...'}
-  </span>
-);
 
 const generateHearingLocationOptions = (hearingLocations) => (
   hearingLocations.map((location) => ({
@@ -52,7 +47,7 @@ const generateHearingLocationOptions = (hearingLocations) => (
   }))
 );
 
-class VeteranHearingLocationsDropdown extends React.Component {
+class AppealHearingLocationsDropdown extends React.Component {
 
   constructor(props) {
     super(props);
@@ -65,9 +60,9 @@ class VeteranHearingLocationsDropdown extends React.Component {
   componentDidMount() {
     const { dropdownName, dynamic, staticHearingLocations } = this.props;
 
-    if (dynamic || !staticHearingLocations) {
+    if (dynamic) {
       setTimeout(this.getLocations, 0);
-    } else {
+    } else if (staticHearingLocations) {
       this.props.onReceiveDropdownData(
         dropdownName,
         generateHearingLocationOptions(staticHearingLocations)
@@ -85,8 +80,8 @@ class VeteranHearingLocationsDropdown extends React.Component {
 
   getLocations = () => {
     const {
-      veteranHearingLocations: { options, isFetching },
-      veteranFileNumber, regionalOffice, dropdownName
+      appealHearingLocations: { options, isFetching },
+      appealId, regionalOffice, dropdownName
     } = this.props;
 
     if (options || isFetching) {
@@ -97,7 +92,7 @@ class VeteranHearingLocationsDropdown extends React.Component {
 
     let url = '/hearings/find_closest_hearing_locations?regional_office=';
 
-    url += `${regionalOffice}&veteran_file_number=${veteranFileNumber}`;
+    url += `${regionalOffice}&appeal_id=${appealId}`;
 
     ApiUtil.get(url).then((resp) => {
       const locationOptionsResp = _.values(ApiUtil.convertToCamelCase(resp.body).hearingLocations);
@@ -106,39 +101,34 @@ class VeteranHearingLocationsDropdown extends React.Component {
       locationOptions.sort((first, second) => (first.distance - second.distance));
 
       this.props.onReceiveDropdownData(dropdownName, locationOptions);
-      this.setState({ errorMsg: false });
+      this.props.onDropdownError(dropdownName, null);
     }).
       catch((error) => {
-
         let errorReason = '.';
 
-        if (error.body.message.messages && error.body.message.messages[0]) {
-          switch (error.body.message.messages[0].key) {
-          case 'InvalidRequestStreetAddress':
-            errorReason = ' because their address does not exist in VBMS.';
-            break;
-          case 'AddressCouldNotBeFound':
-            errorReason = ' because their address from VBMS could not be found on a map.';
-            break;
-          case 'DualAddressError':
-            errorReason = ' because their address from VBMS is ambiguous.';
-            break;
-          default:
-            errorReason = '.';
-          }
+        switch (error.response.body.message) {
+        case 'InvalidRequestStreetAddress':
+          errorReason = ' because their address does not exist in VBMS.';
+          break;
+        case 'AddressCouldNotBeFound':
+          errorReason = ' because their address from VBMS could not be found on a map.';
+          break;
+        case 'DualAddressError':
+          errorReason = ' because their address from VBMS is ambiguous.';
+          break;
+        default:
+          errorReason = '.';
         }
 
-        const errorMsg = `
-          Could not find hearing locations for this veteran${errorReason}
-        `;
+        const errorMsg = `Could not find hearing locations for this appellant${errorReason}`;
 
         this.props.onReceiveDropdownData(dropdownName, []);
-        this.setState({ errorMsg });
+        this.props.onDropdownError(dropdownName, errorMsg);
       });
   }
 
   getSelectedOption = () => {
-    const { value, veteranHearingLocations: { options } } = this.props;
+    const { value, appealHearingLocations: { options } } = this.props;
 
     const facilityId = typeof (value) === 'string' ? value : (value || {}).facilityId;
 
@@ -153,25 +143,25 @@ class VeteranHearingLocationsDropdown extends React.Component {
   render() {
     const {
       name, label, onChange, readOnly, errorMessage, placeholder,
-      veteranHearingLocations: { isFetching } } = this.props;
+      appealHearingLocations: { isFetching, options } } = this.props;
 
     return (
       <SearchableDropdown
         name={name}
-        label={isFetching ? <LoadingLabel /> : label}
+        label={isFetching ? <LoadingLabel text="Finding hearing locations for veteran ..." /> : label}
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
         onChange={(option) => onChange(option.value, option.label)}
-        options={this.props.veteranHearingLocations.options}
+        options={options}
         errorMessage={this.state.errorMsg || errorMessage}
         placeholder={placeholder} />
     );
   }
 }
 
-VeteranHearingLocationsDropdown.propTypes = {
-  veteranFileNumber: PropTypes.string.isRequired,
+AppealHearingLocationsDropdown.propTypes = {
+  appealId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   staticHearingLocations: PropTypes.array,
   regionalOffice: PropTypes.string,
   name: PropTypes.string,
@@ -187,30 +177,32 @@ VeteranHearingLocationsDropdown.propTypes = {
   errorMessage: PropTypes.string
 };
 
-VeteranHearingLocationsDropdown.defaultProps = {
-  name: 'veteranHearingLocation',
+AppealHearingLocationsDropdown.defaultProps = {
+  name: 'appealHearingLocation',
   label: 'Hearing Location'
 };
 
 const mapStateToProps = (state, props) => {
-  const { regionalOffice, veteranFileNumber } = props;
-  const name = `hearingLocationsFor${veteranFileNumber}At${regionalOffice}`;
+  const { regionalOffice, appealId } = props;
+  const name = `hearingLocationsFor${appealId}At${regionalOffice}`;
 
   return {
     dropdownName: name,
-    veteranHearingLocations: state.components.dropdowns[name] ? {
-      options: state.components.dropdowns[name].options,
-      isFetching: state.components.dropdowns[name].isFetching
+    appealHearingLocations: state.components.dropdowns[name] ? {
+      options: _.orderBy(state.components.dropdowns[name].options, ['value.distance'], ['asc']),
+      isFetching: state.components.dropdowns[name].isFetching,
+      errorMsg: state.components.dropdowns[name].errorMsg
     } : {}
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onFetchDropdownData,
-  onReceiveDropdownData
+  onReceiveDropdownData,
+  onDropdownError
 }, dispatch);
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(VeteranHearingLocationsDropdown);
+)(AppealHearingLocationsDropdown);

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DecisionReview do
   before do
     Time.zone = "UTC"
@@ -97,7 +99,8 @@ describe DecisionReview do
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
-        timely: true
+        timely: true,
+        latestIssuesInChain: [{ id: decision_issues.first.id, approxDecisionDate: promulgation_date }]
       )
 
       expect(find_serialized_issue(serialized_contestable_issues, "456")).to eq(
@@ -110,7 +113,8 @@ describe DecisionReview do
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: nil,
-        timely: true
+        timely: true,
+        latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }]
       )
 
       expect(find_serialized_issue(serialized_contestable_issues, "789")).to eq(
@@ -123,7 +127,8 @@ describe DecisionReview do
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
-        timely: true
+        timely: true,
+        latestIssuesInChain: [{ id: decision_issues.second.id, approxDecisionDate: promulgation_date + 1.day }]
       )
 
       expect(find_serialized_issue(serialized_contestable_issues, nil)).to eq(
@@ -136,7 +141,8 @@ describe DecisionReview do
         rampClaimId: nil,
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
-        timely: true
+        timely: true,
+        latestIssuesInChain: [{ id: decision_issues.third.id, approxDecisionDate: promulgation_date + 2.days }]
       )
     end
 

@@ -6,16 +6,11 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import { TASK_ACTIONS } from './constants';
 
-import NewFile from './components/NewFile';
 import AppealDocumentCount from './AppealDocumentCount';
 import { css } from 'glamor';
 
 const documentCountSizeStyling = css({
   fontSize: '.9em'
-});
-
-const newFileIconStyling = css({
-  paddingLeft: '.75rem'
 });
 
 export default class ReaderLink extends React.PureComponent {
@@ -31,9 +26,7 @@ export default class ReaderLink extends React.PureComponent {
       appeal,
       docCountWithinLink,
       docCountBelowLink,
-      cached,
-      newDocsIcon,
-      onHoldDate
+      cached
     } = this.props;
     const linkProps = {};
 
@@ -54,9 +47,7 @@ export default class ReaderLink extends React.PureComponent {
 
     return <React.Fragment>
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
-          View { docCountWithinLink && <AppealDocumentCount appeal={appeal} cached={cached} /> } docs
-        { newDocsIcon && <span {...newFileIconStyling}>
-          <NewFile externalAppealId={appeal.externalId} cached={cached} onHoldDate={onHoldDate} /></span> }</Link>
+          View { docCountWithinLink && <AppealDocumentCount appeal={appeal} cached={cached} /> } docs</Link>
       { docCountBelowLink &&
             <div {...documentCountSizeStyling}>
               <AppealDocumentCount loadingText appeal={appeal} cached={cached} />
@@ -69,6 +60,7 @@ export default class ReaderLink extends React.PureComponent {
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
   appeal: PropTypes.object.isRequired,
+  task: PropTypes.object,
   docCountWithinLink: PropTypes.bool,
   docCountBelowLink: PropTypes.bool,
   redirectUrl: PropTypes.string,
@@ -80,5 +72,6 @@ ReaderLink.propTypes = {
 
 ReaderLink.defaultProps = {
   docCountWithinLink: false,
-  docCountBelowLink: false
+  docCountBelowLink: false,
+  task: null
 };

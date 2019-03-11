@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ModuleLength
 module PowerOfAttorneyMapper
   include AddressMapper
@@ -26,6 +28,21 @@ module PowerOfAttorneyMapper
     [bgs_resp].flatten.each_with_object({}) do |poa, hsh|
       hsh[poa[:ptcpnt_id]] = get_poa_from_bgs_poa(poa[:power_of_attorney])
     end
+  end
+
+  def get_limited_poas_hash_from_bgs(bgs_response)
+    return unless bgs_response
+
+    limited_poas_hash = {}
+
+    Array.wrap(bgs_response).map do |lpoa|
+      limited_poas_hash[lpoa[:bnft_claim_id]] = {
+        limited_poa_code: lpoa[:poa_cd],
+        limited_poa_access: lpoa[:authzn_poa_access_ind]
+      }
+    end
+
+    limited_poas_hash
   end
 
   def get_rep_name_from_rep_record(rep_record)

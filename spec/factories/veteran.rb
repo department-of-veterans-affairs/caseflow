@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :veteran do
-    first_name "Bob"
-    last_name "Smith"
-    name_suffix "II"
+    first_name { "Bob" }
+    last_name { "Smith" }
+    name_suffix { "II" }
 
     transient do
       bgs_veteran_record do

@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class AppealsController < ApplicationController
   include Errors
 
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :new_documents]
+  before_action :set_application, only: [:document_count]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
@@ -37,23 +39,11 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    if params[:cached]
-      render json: { document_count: appeal.number_of_documents_from_caseflow }
-      return
-    end
     render json: { document_count: appeal.number_of_documents }
+  rescue Caseflow::Error::EfolderAccessForbidden => e
+    render(e.serialize_response)
   rescue StandardError => e
     handle_non_critical_error("document_count", e)
-  end
-
-  def new_documents
-    render json: { new_documents: appeal.new_documents_for_user(
-      user: current_user,
-      cached: params[:cached],
-      placed_on_hold_at: params[:placed_on_hold_date]
-    ) }
-  rescue StandardError => e
-    handle_non_critical_error("new_documents", e)
   end
 
   def power_of_attorney

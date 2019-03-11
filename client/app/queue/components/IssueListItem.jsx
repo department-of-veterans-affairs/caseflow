@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { css } from 'glamor';
 
@@ -8,14 +7,7 @@ const leftAlignTd = css({
   paddingRight: 0
 });
 
-import type { Issue } from '../types/models';
-
-type Props = {
-  issue: Issue,
-  idx: number
-};
-
-const IssueListItem = (props: Props) => <React.Fragment>
+const IssueListItem = (props) => <React.Fragment>
   <td {...leftAlignTd} width="10px">
     {props.idx}
   </td>

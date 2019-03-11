@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
@@ -9,11 +8,10 @@ import moment from 'moment';
 import thunk from 'redux-thunk';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import rootReducer from '../../../app/queue/reducers';
-import { onReceiveQueue, receiveNewDocuments, errorFetchingDocumentCount, setAppealDocCount }
+import { onReceiveQueue, receiveNewDocumentsForTask, errorFetchingDocumentCount, setAppealDocCount }
   from '../../../app/queue/QueueActions';
 import { setUserCssId } from '../../../app/queue/uiReducer/uiActions';
 import { BrowserRouter } from 'react-router-dom';
-import type { Task, BasicAppeal } from '../../../app/queue/types/models';
 
 describe('ColocatedTaskListView', () => {
   let wrapperColocatedTaskListView = null;
@@ -48,7 +46,7 @@ describe('ColocatedTaskListView', () => {
     }
   });
 
-  const getAmaTaskTemplate = (): Task => ({
+  const getAmaTaskTemplate = () => ({
     uniqueId: '1',
     type: 'GenericTask',
     isLegacy: false,
@@ -59,7 +57,6 @@ describe('ColocatedTaskListView', () => {
     assignedOn: moment().subtract(47, 'hours').
       format(),
     closedAt: null,
-    dueOn: null,
     assignedTo: {
       cssId: 'BVALSPORER',
       name: 'Judge with cases',
@@ -88,7 +85,7 @@ describe('ColocatedTaskListView', () => {
     closestRegionalOffice: ''
   });
 
-  const appealTemplate: BasicAppeal = {
+  const appealTemplate = {
     id: 5,
     type: 'Appeal',
     isLegacyAppeal: false,
@@ -193,8 +190,8 @@ describe('ColocatedTaskListView', () => {
       const onHoldDaysWaiting = cells.at(12);
 
       expect(onHoldDaysWaiting.text()).to.equal(daysOnHold.toString());
-      expect(onHoldDaysWaiting.find('.cf-red-text')).to.exist;
-      expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning')).to.exist;
+      expect(onHoldDaysWaiting.find('.cf-red-text').length).to.eq(1);
+      expect(onHoldDaysWaiting.find('.cf-continuous-progress-bar-warning').length).to.eq(1);
     });
   });
 
@@ -244,8 +241,8 @@ describe('ColocatedTaskListView', () => {
         amaTasks,
         appeals }));
       store.dispatch(setUserCssId(task.assignedTo.cssId));
-      store.dispatch(receiveNewDocuments({
-        appealId: appealWithNewDocs.externalId,
+      store.dispatch(receiveNewDocumentsForTask({
+        taskId: taskWithNewDocs.taskId,
         newDocuments: [{}]
       }));
 
@@ -253,7 +250,7 @@ describe('ColocatedTaskListView', () => {
 
       wrapper.find('[aria-label="On hold (2) tab window"]').simulate('click');
 
-      expect(wrapper.find('[aria-label="On hold (2) tab window"] #NEW')).to.exist;
+      expect(wrapper.find('[aria-label="On hold (2) tab window"] #NEW').length).to.eq(0);
 
       const cells = wrapper.find('td');
 
@@ -272,7 +269,7 @@ describe('ColocatedTaskListView', () => {
       expect(types.text()).to.include(appeal.caseType);
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysOnHold.text()).to.equal('1 of 30');
-      expect(daysOnHold.find('.cf-continuous-progress-bar')).to.exist;
+      expect(daysOnHold.find('.cf-continuous-progress-bar').length).to.eq(1);
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
     });
   });

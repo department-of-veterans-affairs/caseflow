@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+
+##
+# Root task that tracks an appeal all the way through the appeal lifecycle.
+# This task is closed when an appeal has been completely resolved.
+
 class RootTask < GenericTask
   # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
   after_initialize :set_assignee, if: -> { assigned_to_id.nil? }
@@ -94,17 +100,7 @@ class RootTask < GenericTask
     end
 
     def create_hearing_schedule_task!(appeal, parent)
-      hearing_task = HearingTask.create!(
-        appeal: appeal,
-        assigned_to: Bva.singleton,
-        parent: parent
-      )
-
-      ScheduleHearingTask.create!(
-        appeal: appeal,
-        parent: hearing_task,
-        assigned_to: HearingsManagement.singleton
-      )
+      ScheduleHearingTask.create!(appeal: appeal, parent: parent)
     end
 
     def create_subtasks!(appeal, parent)
@@ -115,7 +111,6 @@ class RootTask < GenericTask
           create_evidence_submission_task!(appeal, distribution_task)
         elsif appeal.hearing_docket?
           create_hearing_schedule_task!(appeal, distribution_task)
-          create_ihp_tasks!(appeal, distribution_task)
         else
           vso_tasks = create_ihp_tasks!(appeal, distribution_task)
           # If the appeal is direct docket and there are no ihp tasks,

@@ -1,7 +1,13 @@
+# frozen_string_literal: true
+
+##
+# An appeal filed by a Veteran or appellant to the Board of Veterans' Appeals for VA decisions on claims for benefits.
+# This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
+# which went into effect Feb 19, 2019.
+
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
-  include DocumentConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -10,10 +16,12 @@ class Appeal < DecisionReview
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents
+  has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
 
+  validate :validate_receipt_date
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
@@ -86,6 +94,10 @@ class Appeal < DecisionReview
     )
   end
 
+  def va_dot_gov_address_validator
+    @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
+  end
+
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
            :manifest_vva_fetched_at, to: :document_fetcher
 
@@ -123,7 +135,7 @@ class Appeal < DecisionReview
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
-  def location_code
+  def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
     active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
@@ -138,7 +150,7 @@ class Appeal < DecisionReview
   end
 
   def attorney_case_reviews
-    tasks.map(&:attorney_case_reviews).flatten
+    tasks.includes(:attorney_case_reviews).flat_map(&:attorney_case_reviews)
   end
 
   def every_request_issue_has_decision?
@@ -194,6 +206,31 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
+  def sync_tracking_tasks
+    new_task_count = 0
+    closed_task_count = 0
+
+    active_tracking_tasks = tasks.active.where(type: TrackVeteranTask.name)
+    cached_vsos = active_tracking_tasks.map(&:assigned_to)
+    fresh_vsos = vsos
+
+    # Create a TrackVeteranTask for each VSO that does not already have one.
+    new_vsos = fresh_vsos - cached_vsos
+    new_vsos.each do |new_vso|
+      TrackVeteranTask.create!(appeal: self, parent: root_task, assigned_to: new_vso)
+      new_task_count += 1
+    end
+
+    # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
+    outdated_vsos = cached_vsos - fresh_vsos
+    active_tracking_tasks.select { |t| outdated_vsos.include?(t.assigned_to) }.each do |task|
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      closed_task_count += 1
+    end
+
+    [new_task_count, closed_task_count]
+  end
+
   def veteran_name
     # For consistency with LegacyAppeal.veteran_name
     veteran&.name&.formatted(:form)
@@ -220,6 +257,7 @@ class Appeal < DecisionReview
            :gender,
            :date_of_birth,
            :age,
+           :available_hearing_locations,
            :country, to: :veteran, prefix: true
 
   def veteran_if_exists
@@ -245,8 +283,7 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :closest_regional_office,
-           :first_name,
+  delegate :first_name,
            :last_name,
            :name_suffix,
            :ssn, to: :veteran, prefix: true, allow_nil: true
@@ -351,6 +388,9 @@ class Appeal < DecisionReview
   end
 
   def active_status?
+    # For the appeal status api, and Appeal is considered open
+    # as long as there are active remand claim or effectuation
+    # tracked in VBMS.
     active? || active_effectuation_ep? || active_remanded_claims?
   end
 
@@ -402,7 +442,10 @@ class Appeal < DecisionReview
     elsif effectuation_ep? && !active_effectuation_ep?
       :bva_decision_effectuation
     elsif decision_issues.any?
-      :bva_decision
+      # there is a period of time where there are decision issues but no
+      # decision document and the decisions issues do not have decision date yet
+      # wait until the document is available before showing there is a decision
+      decision_document ? :bva_decision : :decision_in_progress
     elsif withdrawn?
       :withdrawn
     else
@@ -458,8 +501,7 @@ class Appeal < DecisionReview
   end
 
   def api_issues_for_status_details_issues(issue_list)
-    issue_list.map do |issue|
-      {
+    issue_list.mc-status-attr-pending-hearing-details
         description: issue.api_status_description,
         disposition: issue.api_status_disposition
       }
@@ -532,6 +574,8 @@ class Appeal < DecisionReview
   end
 
   def aoj
+    return if request_issues.empty?
+
     return "other" unless all_request_issues_same_aoj?
 
     request_issues.first.api_aoj_from_benefit_type
@@ -544,6 +588,8 @@ class Appeal < DecisionReview
   end
 
   def program
+    return if request_issues.empty?
+
     if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
       request_issues.first.benefit_type
     else
@@ -630,6 +676,8 @@ class Appeal < DecisionReview
   def issues_hash
     issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
 
+    return [] if issue_list.empty?
+
     fetch_issues_status(issue_list)
   end
 
@@ -691,7 +739,7 @@ class Appeal < DecisionReview
   def contestable_decision_issues
     return [] unless receipt_date
 
-    DecisionIssue.where(participant_id: veteran.participant_id)
+    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
       .select(&:finalized?)
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date

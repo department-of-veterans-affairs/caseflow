@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A claim review is a short hand term to refer to either a supplemental claim or
 # higher level review as defined in the Appeals Modernization Act of 2017
 
@@ -8,6 +10,7 @@ class ClaimReview < DecisionReview
   has_one :intake, as: :detail
 
   with_options if: :saving_review do
+    validate :validate_receipt_date
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
@@ -178,11 +181,15 @@ class ClaimReview < DecisionReview
   end
 
   def aoj
+    return if request_issues.empty?
+
     request_issues.first.api_aoj_from_benefit_type
   end
 
   def issues_hash
     issue_list = active_status? ? request_issues.open : fetch_all_decision_issues
+
+    return [] if issue_list.empty?
 
     fetch_issues_status(issue_list)
   end
@@ -216,7 +223,7 @@ class ClaimReview < DecisionReview
       "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
       issue.end_product_code,
       EndProduct::INACTIVE_STATUSES
-    ) || new_end_product_establishment(issue.end_product_code)
+    ) || new_end_product_establishment(issue)
   end
 
   def matching_request_issue(contention_id)

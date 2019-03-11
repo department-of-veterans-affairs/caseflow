@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HigherLevelReviewIntake do
   before do
     Time.zone = "Eastern Time (US & Canada)"
@@ -19,6 +21,41 @@ describe HigherLevelReviewIntake do
       completed_at: completed_at,
       completion_started_at: completion_started_at
     )
+  end
+
+  context "#start!" do
+    subject { intake.start! }
+
+    let!(:active_epe) do
+      create(
+        :end_product_establishment,
+        :active,
+        veteran_file_number: veteran_file_number,
+        established_at: Time.zone.yesterday
+      )
+    end
+
+    let!(:canceled_epe) do
+      create(
+        :end_product_establishment,
+        :canceled,
+        veteran_file_number: veteran_file_number,
+        established_at: Time.zone.yesterday
+      )
+    end
+
+    before do
+      @synced = []
+      allow_any_instance_of(EndProductEstablishment).to receive(:sync_source!) do |epe|
+        @synced << epe.id
+      end
+    end
+
+    it "syncs all active EPEs" do
+      subject
+
+      expect(@synced).to eq [active_epe.id]
+    end
   end
 
   context "#cancel!" do
@@ -100,7 +137,8 @@ describe HigherLevelReviewIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: intake.veteran.participant_id,
-          payee_code: nil
+          payee_code: nil,
+          decision_review: intake.detail
         )
       end
     end
@@ -116,7 +154,8 @@ describe HigherLevelReviewIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: "1234",
-          payee_code: "10"
+          payee_code: "10",
+          decision_review: intake.detail
         )
       end
 
@@ -169,7 +208,8 @@ describe HigherLevelReviewIntake do
           expect(intake.detail.claimants.count).to eq 1
           expect(intake.detail.claimants.first).to have_attributes(
             participant_id: "1234",
-            payee_code: nil
+            payee_code: nil,
+            decision_review: intake.detail
           )
         end
       end

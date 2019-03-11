@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DirectReviewDocket do
   before do
     FeatureToggle.enable!(:ama_acd_tasks)
@@ -30,20 +32,30 @@ describe DirectReviewDocket do
   context "#time_until_due_of_oldest_appeal" do
     subject { DirectReviewDocket.new.time_until_due_of_oldest_appeal }
 
-    before do
-      Timecop.freeze(Date.new(2020, 2, 19))
+    context "there are ready direct reviews" do
+      before do
+        Timecop.freeze(Date.new(2020, 2, 19))
 
-      (102..105).each do |i|
-        appeal = create(:appeal,
-                        :with_tasks,
-                        docket_type: "direct_review",
-                        receipt_date: i.days.ago)
-        appeal.set_target_decision_date!
+        (102..105).each do |i|
+          appeal = create(:appeal,
+                          :with_tasks,
+                          docket_type: "direct_review",
+                          receipt_date: i.days.ago)
+          appeal.set_target_decision_date!
+        end
+      end
+
+      it "returns the time until due" do
+        expect(subject).to eq(200)
       end
     end
 
-    it "returns the time until due" do
-      expect(subject).to eq(200)
+    context "there are no ready direct reviews" do
+      it "returns the default time until due" do
+        expect(subject).to eq(
+          DirectReviewDocket::DAYS_TO_DECISION_GOAL - DirectReviewDocket::DAYS_BEFORE_GOAL_DUE_FOR_DISTRIBUTION
+        )
+      end
     end
   end
 

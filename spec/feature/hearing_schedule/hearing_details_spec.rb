@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Hearing Schedule Daily Docket" do
   context "Hearing details is not editable for a non-hearings management user" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
-    let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
 
     scenario "Fields are not editable" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -16,7 +18,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       OrganizationsUser.add_user_to_organization(create(:hearings_management), HearingsManagement.singleton)
       User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
     end
-    let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
 
     before do
       create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG")

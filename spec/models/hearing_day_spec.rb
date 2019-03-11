@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDay do
   context "#create" do
     let(:hearing) do
@@ -66,7 +68,7 @@ describe HearingDay do
   end
 
   context "update hearing" do
-    let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video]) }
+    let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO18") }
     let(:hearing_hash) do
       { request_type: HearingDay::REQUEST_TYPES[:video],
         scheduled_for: Date.new(2019, 12, 7),
@@ -107,7 +109,53 @@ describe HearingDay do
     let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
 
     it "returns an error if there are children records" do
-      expect { hearing_day.confirm_no_children_records }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
+      expect { hearing_day.reload.confirm_no_children_records }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
+    end
+  end
+
+  context "hearing day full" do
+    context "the hearing day has 12 scheduled hearings" do
+      let!(:hearing_day) { create(:hearing_day) }
+
+      before do
+        6.times do
+          create(:hearing, hearing_day: hearing_day)
+          create(:case_hearing, vdkey: hearing_day.id)
+        end
+      end
+
+      subject { hearing_day.reload.hearing_day_full? }
+
+      it do
+        expect(subject).to eql(true)
+      end
+    end
+
+    context "the hearing day has 12 closed hearings" do
+      let!(:hearing_day) { create(:hearing_day) }
+
+      before do
+        6.times do
+          create(:hearing, hearing_day: hearing_day, disposition: "postponed")
+          create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
+        end
+      end
+
+      subject { hearing_day.reload.hearing_day_full? }
+
+      it do
+        expect(subject).to eql(false)
+      end
+    end
+
+    context "the hearing day is locked" do
+      let!(:hearing_day) { create(:hearing_day, lock: true) }
+
+      subject { hearing_day.reload.hearing_day_full? }
+
+      it do
+        expect(subject).to eql(true)
+      end
     end
   end
 
@@ -123,10 +171,10 @@ describe HearingDay do
         HearingDay.create_schedule(schedule_period.algorithm_assignments)
       end
 
-      subject { VACOLS::CaseHearing.load_days_for_range(schedule_period.start_date, schedule_period.end_date) }
+      subject { HearingDay.load_days(schedule_period.start_date, schedule_period.end_date) }
 
       it do
-        expect(subject.size).to eql(358)
+        expect(subject[:caseflow_hearings].size).to eql(442)
       end
     end
   end
@@ -180,8 +228,8 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                   hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+        HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                        hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
       end
 
       it "returns nested hash structure" do
@@ -229,8 +277,8 @@ describe HearingDay do
     end
 
     subject do
-      HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                 hearing.hearing_date.beginning_of_day + 1.day, staff.stafkey)
+      HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                      hearing.hearing_date.beginning_of_day + 1.day, staff.stafkey)
     end
 
     context "get video hearings neither postponed or cancelled" do
@@ -269,7 +317,7 @@ describe HearingDay do
                regional_office: staff.stafkey)
       end
       let!(:ama_appeal) { create(:appeal) }
-      let!(:ama_hearing) { create(:hearing, hearing_day: ama_hearing_day, appeal: ama_appeal) }
+      let!(:ama_hearing) { create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal) }
 
       it "returns hearings are mapped to days" do
         expect(subject.size).to eq 3
@@ -330,9 +378,9 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                   hearing.hearing_date.beginning_of_day + 10,
-                                                   HearingDay::REQUEST_TYPES[:central])
+        HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                        hearing.hearing_date.beginning_of_day + 10,
+                                                        HearingDay::REQUEST_TYPES[:central])
       end
 
       it "returns nested hash structure" do

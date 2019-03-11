@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
@@ -122,7 +124,6 @@ module IntakeHelpers
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
     Timecop.freeze(Time.zone.today)
 
     # skip the sync call since all edit requests require resyncing
@@ -382,7 +383,8 @@ module IntakeHelpers
     nonrating_request_issue = setup_request_issue_with_nonrating_decision_issue(supplemental_claim_with_decision_issues)
     rating_request_issue = setup_request_issue_with_rating_decision_issue(supplemental_claim_with_decision_issues)
 
-    rating_request_issue.decision_issues + nonrating_request_issue.decision_issues
+    DecisionIssue.where(id: [nonrating_request_issue.contested_decision_issue_id,
+                             rating_request_issue.contested_decision_issue_id])
   end
 
   def setup_prior_claim_with_payee_code(appeal, veteran, prior_payee_code = "10")
@@ -411,6 +413,62 @@ module IntakeHelpers
 
     prior_supplemental_claim
   end
+
+  def setup_prior_decision_issue_chain(decision_review, request_issue, veteran, initial_date)
+    create(:decision_issue,
+           description: "alternate decision issue",
+           participant_id: veteran.participant_id,
+           disposition: "allowed",
+           decision_review: decision_review,
+           caseflow_decision_date: initial_date + 4.days,
+           end_product_last_action_date: decision_review.is_a?(Appeal) ? nil : initial_date + 4.days,
+           request_issues: [request_issue])
+
+    decision_issue = create(:decision_issue,
+                            description: "decision issue 0",
+                            participant_id: veteran.participant_id,
+                            disposition: "allowed",
+                            decision_review: decision_review,
+                            caseflow_decision_date: initial_date,
+                            end_product_last_action_date: decision_review.is_a?(Appeal) ? nil : initial_date,
+                            request_issues: [request_issue])
+
+    contesting_decision_issue_id = decision_issue.id
+    3.times do |index|
+      later_appeal = create(:appeal, :outcoded, veteran: veteran)
+      later_request_issue = create(:request_issue,
+                                   decision_review: later_appeal,
+                                   contested_decision_issue_id: contesting_decision_issue_id)
+      later_decision_issue = create(:decision_issue,
+                                    decision_review: later_appeal,
+                                    disposition: "allowed",
+                                    participant_id: veteran.participant_id,
+                                    description: "decision issue #{1 + index}",
+                                    caseflow_decision_date: initial_date + (1 + index).days,
+                                    request_issues: [later_request_issue])
+      contesting_decision_issue_id = later_decision_issue.id
+    end
+  end
+
+  # rubocop:disable Metrics/AbcSize
+  def check_decision_issue_chain(initial_date)
+    visit "/intake/add_issues"
+
+    click_intake_add_issue
+    last_decision_date = (initial_date + 3.days).strftime("%m/%d/%Y")
+    alternate_last_decision_date = (initial_date + 4.days).strftime("%m/%d/%Y")
+    text = "(Please select the most recent decision on "
+    datetext = "#{text} #{last_decision_date})"
+    multiple_datetext = "#{text} #{last_decision_date}, #{alternate_last_decision_date})"
+
+    expect(page).to have_content("Untimely rating issue 1 #{multiple_datetext}")
+    expect(page).to have_content("decision issue 0 #{datetext}")
+    expect(page).to have_content("decision issue 1 #{datetext}")
+    expect(page).to have_content("decision issue 2 #{datetext}")
+    expect(page).to have_content("alternate decision issue")
+    expect(page).to have_content("decision issue 3")
+  end
+  # rubocop:enable Metrics/AbcSize
 
   def check_row(label, text)
     row = find("tr", text: label)

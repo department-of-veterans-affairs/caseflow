@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
@@ -6,7 +8,6 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.eligible_request_issues.map do |issue|
       {
         id: issue.id,
-        disposition: issue.disposition,
         program: issue.benefit_type,
         description: issue.description,
         notes: issue.notes,
@@ -49,8 +50,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     end
   end
 
-  attribute :location_code do
-    object.location_code
+  attribute :assigned_to_location do
+    object.assigned_to_location
   end
 
   attribute :completed_hearing_on_previous_appeal? do
@@ -79,12 +80,12 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
-  attribute :veteran_closest_regional_office do
-    object.veteran_closest_regional_office
+  attribute :closest_regional_office do
+    object.closest_regional_office
   end
 
-  attribute :veteran_available_hearing_locations do
-    locations = object.veteran_available_hearing_locations || []
+  attribute :available_hearing_locations do
+    locations = object.available_hearing_locations || []
 
     locations.map do |ahl|
       {
@@ -155,7 +156,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :attorney_case_rewrite_details do
     {
       overtime: latest_attorney_case_review&.overtime,
-      note_from_attorney: latest_attorney_case_review&.note
+      note_from_attorney: latest_attorney_case_review&.note,
+      untimely_evidence: latest_attorney_case_review&.untimely_evidence
     }
   end
 

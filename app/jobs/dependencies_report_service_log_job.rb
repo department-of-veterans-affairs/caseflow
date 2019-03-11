@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DependenciesReportServiceLogJob < ApplicationJob
   queue_as :low_priority
 

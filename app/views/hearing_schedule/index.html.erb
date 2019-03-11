@@ -4,6 +4,8 @@
     userDisplayName: current_user.display_name,
     userRoleAssign: current_user.can?('Edit HearSched') || current_user.can?('Build HearSched'),
     userRoleBuild: current_user.can?('Build HearSched'),
+    userRoleView: current_user.can?('RO ViewHearSched') &&
+        !current_user.can?('Build HearSched') && !current_user.can?('Edit HearSched'),
     userInHearingsOrganization: (HearingsManagement.singleton.users.include?(current_user) ||
         TranscriptionTeam.singleton.users.include?(current_user)),
     userId: current_user.id,

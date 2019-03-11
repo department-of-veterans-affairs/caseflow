@@ -17,7 +17,8 @@ const dropdownsReducer = (state = {}, action = {}) => {
       [action.payload.dropdownName]: {
         $set: {
           options: null,
-          isFetching: true
+          isFetching: true,
+          errorMsg: null
         }
       }
     });
@@ -26,7 +27,16 @@ const dropdownsReducer = (state = {}, action = {}) => {
       [action.payload.dropdownName]: {
         $set: {
           options: action.payload.data,
-          isFetching: false
+          isFetching: false,
+          errorMsg: null
+        }
+      }
+    });
+  case ACTIONS.DROPDOWN_ERROR:
+    return update(state, {
+      [action.payload.dropdownName]: {
+        errorMsg: {
+          $set: action.payload.errorMsg
         }
       }
     });
@@ -99,6 +109,7 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.FETCH_DROPDOWN_DATA:
   case ACTIONS.RECEIVE_DROPDOWN_DATA:
+  case ACTIONS.DROPDOWN_ERROR:
     return update(state, {
       dropdowns: {
         $set: dropdownsReducer(state.dropdowns, action)

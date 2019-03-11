@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe JudgeTask do
   let(:judge) { FactoryBot.create(:user) }
   let(:judge2) { FactoryBot.create(:user) }
@@ -43,7 +45,8 @@ describe JudgeTask do
               [
                 Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
                 Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
-                Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+                Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+                Constants.TASK_ACTIONS.CANCEL_TASK.to_h
               ].map { |action| subject_task.build_action_hash(action, judge) }
             )
           end

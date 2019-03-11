@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module FeatureHelper
   def find_table_cell(vacols_id, row_header)
     header = find(:xpath, "//thead/tr/th", text: row_header)

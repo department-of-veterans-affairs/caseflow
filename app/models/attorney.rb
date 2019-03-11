@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Attorney
   class << self
     def list_all

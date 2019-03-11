@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDayRepository do
   context ".fetch_hearing_day_slots" do
     subject { HearingDayRepository.fetch_hearing_day_slots(regional_office) }
@@ -21,15 +23,14 @@ describe HearingDayRepository do
     end
   end
 
-  context ".ro staff hash" do
-    subject { HearingDayRepository.ro_staff_hash(%w[RO13 RO18]) }
-    let!(:staff_rows) do
-      create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4)
-      create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4)
-    end
+  context ".find_hearing_day" do
+    let!(:hearing_day) { create(:travel_board_schedule) }
 
-    it {
-      expect(subject.size).to eq(2)
-    }
+    it "finds VACOLS travel board hearing days" do
+      expect(HearingDay.find_hearing_day("T",
+                                         [hearing_day[:tbyear],
+                                          hearing_day[:tbtrip].to_s,
+                                          hearing_day[:tbleg].to_s].join("-"))[:tbstdate]).to eq(hearing_day[:tbstdate])
+    end
   end
 end

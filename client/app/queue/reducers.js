@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-// @flow
 
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
@@ -10,7 +9,8 @@ import { ACTIONS } from './constants';
 
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
-import type { QueueState } from './types/state';
+import teamManagementReducer from './teamManagement/reducers';
+
 import commonComponentsReducer from '../components/common/reducers';
 
 // TODO: Remove this when we move entirely over to the appeals search.
@@ -27,6 +27,7 @@ export const initialState = {
   docCountForAppeal: {},
   mostRecentlyHeldHearingForAppeal: {},
   newDocsForAppeal: {},
+  newDocsForTask: {},
   specialIssues: {},
 
   /**
@@ -52,7 +53,7 @@ export const initialState = {
 };
 
 // eslint-disable-next-line max-statements
-export const workQueueReducer = (state: QueueState = initialState, action: Object = {}): QueueState => {
+export const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
@@ -124,7 +125,7 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     });
-  case ACTIONS.RECEIVE_NEW_FILES:
+  case ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL:
     return update(state, {
       newDocsForAppeal: {
         [action.payload.appealId]: {
@@ -135,7 +136,7 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     });
-  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES:
+  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL:
     return update(state, {
       newDocsForAppeal: {
         [action.payload.appealId]: {
@@ -146,12 +147,44 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     });
-  case ACTIONS.STARTED_LOADING_DOCUMENTS:
+  case ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_APPEAL:
     return {
       ...state,
       newDocsForAppeal: {
         ...state.newDocsForAppeal,
         [action.payload.appealId]: {
+          loading: true
+        }
+      }
+    };
+  case ACTIONS.RECEIVE_NEW_FILES_FOR_TASK:
+    return update(state, {
+      newDocsForTask: {
+        [action.payload.taskId]: {
+          $set: {
+            docs: action.payload.newDocuments,
+            loading: false
+          }
+        }
+      }
+    });
+  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_TASK:
+    return update(state, {
+      newDocsForTask: {
+        [action.payload.taskId]: {
+          $set: {
+            error: action.payload.error,
+            loading: false
+          }
+        }
+      }
+    });
+  case ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_TASK:
+    return {
+      ...state,
+      newDocsForTask: {
+        ...state.newDocsForTask,
+        [action.payload.taskId]: {
           loading: true
         }
       }
@@ -499,6 +532,7 @@ const rootReducer = combineReducers({
   caseList: caseListReducer,
   caseSelect: caseSelectReducer,
   queue: workQueueReducer,
+  teamManagement: teamManagementReducer,
   ui: uiReducer,
   components: commonComponentsReducer
 });

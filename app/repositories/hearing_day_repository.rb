@@ -1,12 +1,9 @@
+# frozen_string_literal: true
+
 # Hearing Schedule Repository to help build and edit hearing
 # master records in VACOLS for Video, TB and CO hearings.
 class HearingDayRepository
   class << self
-    def create_vacols_hearing!(hearing_hash)
-      hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
-      HearingDayRepository.to_hash(VACOLS::CaseHearing.create_hearing!(hearing_hash)) if hearing_hash.present?
-    end
-
     # Query Operations
     def find_hearing_day(request_type, hearing_key)
       if request_type.nil? || request_type == HearingDay::REQUEST_TYPES[:central] ||
@@ -32,12 +29,7 @@ class HearingDayRepository
     end
 
     def fetch_hearing_day_slots(regional_office)
-      HearingDocket::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
-    end
-
-    def ro_staff_hash(regional_office_keys)
-      ro_staff = VACOLS::Staff.where(stafkey: regional_office_keys)
-      ro_staff.reduce({}) { |acc, record| acc.merge(record.stafkey => record) }
+      HearingDay::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
     end
 
     def to_hash(hearing_day)

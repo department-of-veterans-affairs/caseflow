@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HigherLevelReview < ClaimReview
   with_options if: :saving_review do
     validates :informal_conference, :same_office, inclusion: { in: [true, false], message: "blank" }
@@ -101,12 +103,12 @@ class HigherLevelReview < ClaimReview
     informal_conference
   end
 
-  def new_end_product_establishment(ep_code)
+  def new_end_product_establishment(issue)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
       payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
-      code: ep_code,
+      code: issue.end_product_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,

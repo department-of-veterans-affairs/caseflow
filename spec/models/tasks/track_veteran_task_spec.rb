@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe TrackVeteranTask do
   let(:vso) { FactoryBot.create(:vso) }
   let(:root_task) { FactoryBot.create(:root_task) }
@@ -8,6 +10,13 @@ describe TrackVeteranTask do
       appeal: root_task.appeal,
       assigned_to: vso
     )
+  end
+
+  describe ".create!" do
+    it "sets the status of the task to in_progress" do
+      task = TrackVeteranTask.create(parent: root_task, appeal: root_task.appeal, assigned_to: vso)
+      expect(task.status).to eq(Constants.TASK_STATUSES.in_progress)
+    end
   end
 
   describe ".available_actions" do

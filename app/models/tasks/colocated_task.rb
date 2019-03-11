@@ -1,3 +1,13 @@
+# frozen_string_literal: true
+
+##
+# Any task assigned to a colocated team at the BVA, which is any team that handles admin actions at BVA.
+# Colocated teams perform actions like:
+#  - translating documents
+#  - scheduling hearings
+#  - handling FOIA requests
+# Note: Full list of colocated tasks in /client/constants/CO_LOCATED_ADMIN_ACTIONS.json
+
 class ColocatedTask < Task
   validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validates :assigned_by, presence: true
@@ -34,6 +44,10 @@ class ColocatedTask < Task
     end
   end
 
+  def label
+    action
+  end
+
   def available_actions(user)
     if assigned_to != user
       if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
@@ -45,7 +59,8 @@ class ColocatedTask < Task
 
     available_actions_with_conditions([
                                         Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
-                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
+                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+                                        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
                                       ])
   end
 
@@ -76,10 +91,12 @@ class ColocatedTask < Task
   end
 
   def update_location_in_vacols
-    if saved_change_to_status? &&
-       completed? &&
-       appeal_type == LegacyAppeal.name &&
-       all_tasks_completed_for_appeal?
+    all_colocated_tasks_for_legacy_appeal_complete = saved_change_to_status? &&
+                                                     !active? &&
+                                                     appeal_type == LegacyAppeal.name &&
+                                                     all_tasks_closed_for_appeal?
+
+    if all_colocated_tasks_for_legacy_appeal_complete
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
@@ -93,7 +110,7 @@ class ColocatedTask < Task
     end
   end
 
-  def all_tasks_completed_for_appeal?
+  def all_tasks_closed_for_appeal?
     appeal.tasks.active.where(type: ColocatedTask.name).none?
   end
 

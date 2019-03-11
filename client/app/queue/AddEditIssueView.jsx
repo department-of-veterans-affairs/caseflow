@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -47,41 +46,7 @@ const smallTopMargin = css({ marginTop: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
-import type {
-  Appeal,
-  Issue
-} from './types/models';
-import type { UiStateMessage } from './types/state';
-
-type Props = {|
-  action: "add" | "edit",
-  issueId: string,
-  appealId: string,
-  nextStep: string,
-  prevStep: string
-|};
-
-type Params = Props & {|
-  issue: Issue,
-  appeal: Appeal,
-  highlight: boolean,
-  error: ?UiStateMessage,
-  deleteIssueModal: boolean,
-  // dispatch
-  showModal: typeof showModal,
-  hideModal: typeof hideModal,
-  requestSave: typeof requestSave,
-  requestUpdate: typeof requestUpdate,
-  requestDelete: typeof requestDelete,
-  startEditingAppealIssue: Function,
-  saveEditedAppealIssue: typeof saveEditedAppealIssue,
-  cancelEditingAppealIssue: typeof cancelEditingAppealIssue,
-  deleteEditingAppealIssue: typeof deleteEditingAppealIssue,
-  updateEditingAppealIssue: typeof updateEditingAppealIssue,
-  highlightInvalidFormItems: typeof highlightInvalidFormItems
-|};
-
-class AddEditIssueView extends React.Component<Params> {
+class AddEditIssueView extends React.Component {
   componentDidMount = () => {
     const { issueId, appealId } = this.props;
 
@@ -167,25 +132,11 @@ class AddEditIssueView extends React.Component<Params> {
 
   updateIssuesFromServer = (response) => {
     const { appeal } = this.props;
-    const serverIssues = response.issues;
-
-    const issues = _.map(serverIssues, (issue) => {
-      // preserve locally-updated dispositions
-      const disposition = _.get(
-        _.find(appeal.issues, (iss) => iss.id === (issue.id || issue.vacols_sequence_id)),
-        'disposition'
-      );
-
-      return {
-        ...issue,
-        disposition
-      };
-    });
 
     this.props.saveEditedAppealIssue(this.props.appealId, {
       issues: prepareAppealIssuesForStore({
         attributes: {
-          issues,
+          issues: response.issues,
           docket_name: appeal.docketName
         }
       })
@@ -214,7 +165,7 @@ class AddEditIssueView extends React.Component<Params> {
     value
   }));
 
-  renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value: string) => ({
+  renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
     value
   }));
