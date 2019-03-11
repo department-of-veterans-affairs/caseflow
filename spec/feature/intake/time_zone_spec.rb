@@ -79,7 +79,7 @@ feature "Appeal time zone" do
       expect(intake.started_at).to eq(now_localtime)
     end
 
-    it "browser time zone is the same as server (tests only)" do
+    xit "browser time zone is the same as server (tests only)" do
       browser_utc_offset = evaluate_script("(new Date()).getTimezoneOffset()/60")
       expect(browser_utc_offset).to eq((Time.zone.utc_offset / 3600) * -1)
     end
@@ -104,7 +104,7 @@ feature "Appeal time zone" do
         expect(intake.started_at).to eq(now_localtime)
       end
 
-      it "browser time zone is EST, server is UTC" do
+      xit "browser time zone is EST, server is UTC" do
         browser_utc_offset = evaluate_script("(new Date()).getTimezoneOffset()/60")
         expect(browser_utc_offset).to eq 5
         expect(Time.zone.utc_offset).to eq 0
