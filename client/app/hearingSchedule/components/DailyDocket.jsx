@@ -104,7 +104,7 @@ export default class DailyDocket extends React.Component {
 
   onHearingDateUpdate = (hearingId) => (hearingDay) => this.props.onHearingDateUpdate(hearingId, hearingDay);
 
-  onHearingTimeUpdate = (hearingId) => (time) => { console.log(hearingId); this.props.onHearingTimeUpdate(hearingId, time); };
+  onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
 
   onHearingLocationUpdate = (hearingId) => (location) => this.props.onHearingLocationUpdate(hearingId, location);
 
@@ -270,7 +270,6 @@ export default class DailyDocket extends React.Component {
     return <HearingTime
       regionalOffice={this.getRegionalOffice()}
       value={value}
-      hearingId={hearing.id}
       readOnly={readOnly}
       onChange={this.onHearingTimeUpdate(hearing.id)} />;
   };
