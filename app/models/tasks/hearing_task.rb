@@ -7,6 +7,7 @@
 
 class HearingTask < GenericTask
   has_one :hearing_task_association
+  delegate :hearing, to: :hearing_task_association, allow_nil: true
 
   def cancel_and_recreate
     cancel_task_and_child_subtasks

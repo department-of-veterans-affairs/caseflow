@@ -7,6 +7,7 @@
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
   before_create :check_parent_type
+  delegate :hearing, to: :hearing_task, allow_nil: true
   after_update :update_appeal_location_after_cancel, if: :task_just_canceled_and_has_legacy_appeal?
   after_update :create_ihp_tasks_after_cancel, if: :task_just_canceled_and_has_ama_appeal?
 
@@ -29,10 +30,6 @@ class DispositionTask < GenericTask
 
   def hearing_task
     @hearing_task ||= parent
-  end
-
-  def hearing
-    @hearing ||= hearing_task.hearing_task_association&.hearing
   end
 
   def available_actions(_user)
