@@ -73,7 +73,7 @@ export class VeteranDetail extends React.PureComponent {
       });
     }
 
-    if (regionalOffice) {
+    if (regionalOffice && !this.props.appeal.isLegacyAppeal) {
       const { city, key } = regionalOffice;
 
       details.push({
