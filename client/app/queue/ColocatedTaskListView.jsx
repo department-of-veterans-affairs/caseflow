@@ -23,7 +23,7 @@ import {
 
 import Alert from '../components/Alert';
 import TabWindow from '../components/TabWindow';
-import NewFileAll from './components/NewFileAll';
+
 const containerStyles = css({
   position: 'relative'
 });
@@ -50,8 +50,7 @@ class ColocatedTaskListView extends React.PureComponent {
       },
       {
         label: sprintf(COPY.QUEUE_PAGE_ON_HOLD_TAB_TITLE, numOnHoldTasks),
-        page: <OnHoldTasksTab />,
-        indicator: <NewFileIcon />
+        page: <OnHoldTasksTab />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
@@ -85,10 +84,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView));
-
-const NewFileIcon = connect(
-  (state) => ({ tasks: onHoldTasksByAssigneeCssIdSelector(state) }))(
-  (props) => <NewFileAll tasks={props.tasks} />);
 
 const NewTasksTab = connect(
   (state) => ({
