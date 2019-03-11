@@ -706,7 +706,7 @@ describe RequestIssue do
     let(:duplicate_reference_id) { "xyz789" }
     let(:duplicate_appeal_reference_id) { "xyz555" }
     let(:old_reference_id) { "old123" }
-    let(:active_epe) { create(:end_product_establishment, :active) }
+    let(:closed_at) { nil }
     let(:receipt_date) { review.receipt_date }
     let(:previous_contention_reference_id) { "8888" }
 
@@ -716,7 +716,8 @@ describe RequestIssue do
         :request_issue,
         decision_review: previous_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
-        contention_reference_id: previous_contention_reference_id
+        contention_reference_id: previous_contention_reference_id,
+        closed_at: 2.months.ago
       )
     end
 
@@ -773,9 +774,9 @@ describe RequestIssue do
     let!(:request_issue_in_progress) do
       create(
         :request_issue,
-        end_product_establishment: active_epe,
         contested_rating_issue_reference_id: duplicate_reference_id,
-        contested_issue_description: "Old injury"
+        contested_issue_description: "Old injury",
+        closed_at: closed_at
       )
     end
 

@@ -161,6 +161,10 @@ class RequestIssue < ApplicationRecord
       eligible.where(closed_at: nil)
     end
 
+    def open_and_ineligible
+      where(closed_at: nil)
+    end
+
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
