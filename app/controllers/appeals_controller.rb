@@ -39,12 +39,6 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    # Boolean params come in as present/not present (the former with a value of nil) rather than true or false,
-    # so we only need to check if the cached param exists
-    if params.key?(:cached)
-      render json: { document_count: appeal.number_of_documents_from_caseflow }
-      return
-    end
     render json: { document_count: appeal.number_of_documents }
   rescue Caseflow::Error::EfolderAccessForbidden => e
     render(e.serialize_response)

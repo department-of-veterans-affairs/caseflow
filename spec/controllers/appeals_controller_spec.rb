@@ -63,7 +63,7 @@ RSpec.describe AppealsController, type: :controller do
 
     context "when an ama appeal has documents" do
       before do
-        expect_any_instance_of(DocumentFetcher).not_to receive(:number_of_documents) { documents.length }
+        expect_any_instance_of(DocumentFetcher).to receive(:number_of_documents) { documents.length }
       end
 
       let(:file_number) { Random.rand(999_999_999).to_s }
@@ -77,7 +77,7 @@ RSpec.describe AppealsController, type: :controller do
       let(:appeal) { create(:appeal, veteran_file_number: file_number) }
 
       it "should return document count" do
-        get :document_count, params: { appeal_id: appeal.uuid, cached: nil }
+        get :document_count, params: { appeal_id: appeal.uuid }
 
         response_body = JSON.parse(response.body)
         expect(response_body["document_count"]).to eq 2
