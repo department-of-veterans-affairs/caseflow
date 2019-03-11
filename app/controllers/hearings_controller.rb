@@ -94,17 +94,6 @@ class HearingsController < ApplicationController
                                      ])
   end
 
-  def master_record_params
-    params.require("master_record_updated").permit(:id,
-                                                   time: [:h, :m, :offset],
-                                                   hearing_location_attributes: [
-                                                     :city, :state, :address,
-                                                     :facility_id, :facility_type,
-                                                     :classification, :name, :distance,
-                                                     :zip_code
-                                                   ])
-  end
-
   # rubocop:disable Metrics/MethodLength
   def update_params
     params.require("hearing").permit(:notes,
