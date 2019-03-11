@@ -16,6 +16,9 @@ class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
 
+  # how many days before we give up trying to sync decisions
+  REQUIRES_PROCESSING_WINDOW_DAYS = 14
+
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment
   has_many :request_decision_issues
