@@ -22,6 +22,13 @@ const COPY = {
   }
 };
 
+const dispositionMap = {
+  postponed: 'Postponed',
+  no_show: 'No show',
+  held: 'Held',
+  cancelled: 'Canceled'
+};
+
 export default class DispositionModal extends React.Component {
   cancelButton = () => {
     return <Button linkStyling onClick={this.props.onCancel}>Go back</Button>;
@@ -42,7 +49,7 @@ export default class DispositionModal extends React.Component {
   render () {
     const { hearing, disposition, onCancel } = this.props;
     const hearingType = hearing.docketName === 'Legacy' &&
-      new Date(hearing.scheduledFor) < new Date(4, 1, 2019) ? 'VACOLS' : 'CASEFLOW';
+      !hearing.dispositionEditable ? 'VACOLS' : 'CASEFLOW';
 
     return (
       <AppSegment filledBackground>
@@ -53,8 +60,8 @@ export default class DispositionModal extends React.Component {
             cancelButton={this.cancelButton()}
             title={COPY[hearingType].title}>
             <div>
-              <p>Previous Disposition: {hearing.disposition}</p>
-              <p>New Disposition: {disposition}</p>
+              <p>Previous Disposition: <strong>{hearing.disposition || 'None'}</strong></p>
+              <p>New Disposition: <strong>{dispositionMap[disposition]}</strong></p>
             </div>
             {COPY[hearingType].body}
           </Modal>

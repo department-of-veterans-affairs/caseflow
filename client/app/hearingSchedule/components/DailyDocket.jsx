@@ -199,7 +199,7 @@ export default class DailyDocket extends React.Component {
           this.onHearingDispositionUpdate(hearing.id)(option);
         }
       }}
-      readOnly={readOnly || !_.isUndefined(hearing.editedDate) || !hearing.dispositionEditable}
+      readOnly={readOnly || !hearing.dispositionEditable}
     />;
   };
 
