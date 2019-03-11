@@ -60,7 +60,11 @@ export default class DispositionModal extends React.Component {
             cancelButton={this.cancelButton()}
             title={COPY[hearingType].title}>
             <div>
-              <p>Previous Disposition: <strong>{hearing.disposition || 'None'}</strong></p>
+              <p>
+                Previous Disposition: <strong>
+                  {hearing.disposition ? dispositionMap[hearing.disposition] : 'None'}
+                </strong>
+              </p>
               <p>New Disposition: <strong>{dispositionMap[disposition]}</strong></p>
             </div>
             {COPY[hearingType].body}
