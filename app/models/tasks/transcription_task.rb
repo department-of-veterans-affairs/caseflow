@@ -58,6 +58,6 @@ class TranscriptionTask < GenericTask
     # ScheduleHearingTask assigned to the hearing branch
     hearing_task.cancel_task_and_child_subtasks
 
-    ScheduleHearingTask.create!(appeal: appeal, parent: hearing_task.parent, assigned_to: HearingsManagement.singleton)
+    ScheduleHearingTask.create!(appeal: appeal, parent: hearing_task.parent)
   end
 end
