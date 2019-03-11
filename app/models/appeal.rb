@@ -501,7 +501,8 @@ class Appeal < DecisionReview
   end
 
   def api_issues_for_status_details_issues(issue_list)
-    issue_list.mc-status-attr-pending-hearing-details
+    issue_list.map do |issue|
+      {
         description: issue.api_status_description,
         disposition: issue.api_status_disposition
       }
