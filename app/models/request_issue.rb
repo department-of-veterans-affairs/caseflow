@@ -161,7 +161,7 @@ class RequestIssue < ApplicationRecord
       eligible.where(closed_at: nil)
     end
 
-    def open_and_ineligible
+    def open_or_ineligible
       where(closed_at: nil)
     end
 

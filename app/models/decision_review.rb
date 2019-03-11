@@ -197,7 +197,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def open_request_issues
-    request_issues.includes(:decision_review, :contested_decision_issue).open_and_ineligible
+    request_issues.includes(:decision_review, :contested_decision_issue).open_or_ineligible
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
