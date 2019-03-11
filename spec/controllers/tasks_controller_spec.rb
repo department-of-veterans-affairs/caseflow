@@ -773,48 +773,6 @@ RSpec.describe TasksController, type: :controller do
     end
   end
 
-  describe "GET tasks/:id/new_documents" do
-    let(:task) { FactoryBot.create(:task) }
-
-    context "when efolder returns an access forbidden error" do
-      let(:err_code) { 403 }
-      let(:err_msg) do
-        "This efolder contains sensitive information you do not have permission to view." \
-          " Please contact your supervisor."
-      end
-
-      before do
-        allow_any_instance_of(NewDocumentsForUser).to receive(:process!) do
-          fail Caseflow::Error::EfolderAccessForbidden, code: err_code, message: err_msg
-        end
-      end
-
-      it "responds with a 4xx and error message" do
-        get :new_documents, params: { id: task.id }
-        response_body = JSON.parse(response.body)
-
-        expect(response.status).to eq(err_code)
-        expect(response_body["errors"].length).to eq(1)
-        expect(response_body["errors"][0]["title"]).to eq(err_msg)
-      end
-    end
-
-    context "when application encounters a generic error" do
-      let(:err_msg) { "Some application error" }
-
-      before { allow_any_instance_of(NewDocumentsForUser).to receive(:process!) { fail err_msg } }
-
-      it "responds with a 500 and error message" do
-        get :new_documents, params: { id: task.id }
-        response_body = JSON.parse(response.body)
-
-        expect(response.status).to eq(500)
-        expect(response_body["errors"].length).to eq(1)
-        expect(response_body["errors"][0]["title"]).to eq(err_msg)
-      end
-    end
-  end
-
   describe "POST tasks/:id/reschedule" do
     context "when the task is not a NoShowHearingTask" do
       let(:task) { FactoryBot.create(:task) }
