@@ -46,7 +46,7 @@ RSpec.feature "Login" do
       before do
         Fakes::AuthenticationService.user_session = {
           "id" => user.css_id,
-          "roles" => ["Certify Appeal"],
+          "roles" => ["VSO"],
           "station_id" => user.station_id,
           "email" => "world@example.com"
         }
@@ -70,7 +70,7 @@ RSpec.feature "Login" do
       before do
         Fakes::AuthenticationService.user_session = {
           "id" => user.css_id,
-          "roles" => ["Certify Appeal"],
+          "roles" => ["VSO"],
           "station_id" => user.station_id,
           "email" => "world@example.com"
         }
