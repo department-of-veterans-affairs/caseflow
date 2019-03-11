@@ -1313,6 +1313,13 @@ describe Appeal do
              benefit_type: "pension", contested_rating_issue_diagnostic_code: nil)
     end
 
+    let(:request_issue3) do
+      create(:request_issue,
+             benefit_type: "pension",
+             contested_rating_issue_diagnostic_code: nil,
+             ineligible_reason: :untimely)
+    end
+
     let!(:appeal) do
       create(:appeal, receipt_date: receipt_date,
                       request_issues: [request_issue1, request_issue2])
@@ -1324,7 +1331,7 @@ describe Appeal do
       it "is status of the request issues" do
         issue_statuses = appeal.issues_hash
 
-        expect(issue_statuses.empty?).to eq(false)
+        expect(issue_statuses.count).to eq(2)
 
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
         expect(issue).to_not be_nil
