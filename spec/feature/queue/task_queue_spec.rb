@@ -92,18 +92,6 @@ RSpec.feature "Task queue" do
       it "shows the correct number of tasks on hold" do
         expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4))
       end
-
-      # disabled because flakey in CI
-      xit "shows a new documents icon in the on hold tab" do
-        expect(page).to have_content("NEW")
-      end
-
-      # disabled because flakey in CI
-      xit "shows a new documents icon next to the on hold task" do
-        page.find(:button, format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4)).click
-        expect(first("tbody td #NEW")).to have_content("NEW")
-        expect(find_all("tbody td #NEW").length).to eq(2)
-      end
     end
 
     it "displays a table with a row for each case assigned to the attorney" do
