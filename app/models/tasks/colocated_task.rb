@@ -59,7 +59,8 @@ class ColocatedTask < Task
 
     available_actions_with_conditions([
                                         Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
-                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h
+                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+                                        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
                                       ])
   end
 
@@ -90,10 +91,12 @@ class ColocatedTask < Task
   end
 
   def update_location_in_vacols
-    if saved_change_to_status? &&
-       completed? &&
-       appeal_type == LegacyAppeal.name &&
-       all_tasks_completed_for_appeal?
+    all_colocated_tasks_for_legacy_appeal_complete = saved_change_to_status? &&
+                                                     !active? &&
+                                                     appeal_type == LegacyAppeal.name &&
+                                                     all_tasks_closed_for_appeal?
+
+    if all_colocated_tasks_for_legacy_appeal_complete
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
@@ -107,7 +110,7 @@ class ColocatedTask < Task
     end
   end
 
-  def all_tasks_completed_for_appeal?
+  def all_tasks_closed_for_appeal?
     appeal.tasks.active.where(type: ColocatedTask.name).none?
   end
 

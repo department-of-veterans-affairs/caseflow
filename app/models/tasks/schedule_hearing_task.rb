@@ -6,6 +6,7 @@
 # Once completed, a DispositionTask is created.
 
 class ScheduleHearingTask < GenericTask
+  before_validation :set_assignee
   before_create :create_parent_hearing_task
   after_update :update_location_in_vacols
 
@@ -59,7 +60,7 @@ class ScheduleHearingTask < GenericTask
 
   def create_parent_hearing_task
     if parent.type != HearingTask.name
-      self.parent = HearingTask.create(appeal: appeal, parent: parent, assigned_to: Bva.singleton)
+      self.parent = HearingTask.create(appeal: appeal, parent: parent)
     end
   end
 
@@ -137,6 +138,10 @@ class ScheduleHearingTask < GenericTask
   end
 
   private
+
+  def set_assignee
+    self.assigned_to = assigned_to.nil? ? HearingsManagement.singleton : assigned_to
+  end
 
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
