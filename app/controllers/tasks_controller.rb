@@ -125,7 +125,9 @@ class TasksController < ApplicationController
   end
 
   def reschedule
-    fail "WRONG TASK TYPE" unless task.is_a?(NoShowHearingTask)
+    if !task.is_a?(NoShowHearingTask)
+      fail(Caseflow::Error::ActionForbiddenError, message: "Can only reschedule NoShowHearingTasks")
+    end
 
     task.reschedule_hearing
 
