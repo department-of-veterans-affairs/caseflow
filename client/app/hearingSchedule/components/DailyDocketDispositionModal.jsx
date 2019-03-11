@@ -8,15 +8,15 @@ const COPY = {
     body: <span>
       <p>You are changing the hearing disposition for this case.
         Changing the disposition will change where the case is sent next</p>
-      <p>The Daily Docket will be locekd the day after the hearing date and will
+      <p>The Daily Docket will be locked the day after the hearing date and will
         require administrative access to change after that time.</p>
     </span>,
     title: 'Change hearing disposition'
   },
   VACOLS: {
     body: <span>
-      <p>You are changing the disposition of a VACOLS hearing.
-      Use VACOLS to track this hearing and move the case location in VACOLS if necessary.</p>
+      <p>You are changing the disposition of a hearing being tracked in VACOLS.
+        Please move the location in VACOLS if necessary.</p>
     </span>,
     title: 'VACOLS hearing disposition'
   }
