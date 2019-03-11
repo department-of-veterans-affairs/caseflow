@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe DispositionTask do
-  describe "postponement" do
+  describe "postponement for AMA appeal" do
     let(:appeal) { FactoryBot.create(:appeal) }
     let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal) }
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
@@ -32,6 +32,7 @@ describe DispositionTask do
         disposition_task.update_from_params(params, nil)
 
         expect(Hearing.first.disposition).to eq "postponed"
+        expect(Hearing.count).to eq 1
         expect(HearingTask.count).to eq 2
         expect(HearingTask.first.status).to eq "cancelled"
         expect(DispositionTask.first.status).to eq "cancelled"
@@ -54,6 +55,7 @@ describe DispositionTask do
         disposition_task.update_from_params(params, nil)
 
         expect(Hearing.first.disposition).to eq "postponed"
+        expect(Hearing.count).to eq 1
         expect(HearingTask.count).to eq 2
         expect(HearingTask.first.status).to eq "cancelled"
         expect(DispositionTask.first.status).to eq "cancelled"
