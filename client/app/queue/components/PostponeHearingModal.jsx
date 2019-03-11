@@ -8,18 +8,19 @@ import {
   taskById,
   appealWithDetailSelector
 } from '../selectors';
-import { onReceiveAmaTasks } from '../QueueActions';
+import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
 import editModalBase from './EditModalBase';
-import { taskActionData } from '../utils';
+import { taskActionData, prepareAppealForStore } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
 import RadioField from '../../components/RadioField';
 import AssignHearingForm from '../../hearingSchedule/components/modalForms/AssignHearingForm';
 import ScheduleHearingLaterWithAdminActionForm from
   '../../hearingSchedule/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
+import ApiUtil from '../../util/ApiUtil';
 
 const ACTIONS = {
   RESCHEDULE: 'reschedule',
@@ -159,6 +160,14 @@ class PostponeHearingModal extends React.Component {
       });
   }
 
+  resetAppealDetails = () => {
+    const { appeal } = this.props;
+
+    ApiUtil.get(`/appeals/${appeal.externalId}`).then((response) => {
+      this.props.onReceiveAppealDetails(prepareAppealForStore([response.body.appeal]));
+    });
+  }
+
   render = () => {
     const { appeal } = this.props;
     const { afterDispositionUpdateAction, showErrorMessages } = this.state;
@@ -200,7 +209,8 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  onReceiveAmaTasks
+  onReceiveAmaTasks,
+  onReceiveAppealDetails
 }, dispatch);
 
 const propsToText = (props) => {
