@@ -196,7 +196,7 @@ RSpec.describe TasksController, type: :controller do
 
             task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(5)
 
             # org count minus one since we can't assign to ourselves.
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
@@ -223,7 +223,7 @@ RSpec.describe TasksController, type: :controller do
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(5)
 
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
               action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
