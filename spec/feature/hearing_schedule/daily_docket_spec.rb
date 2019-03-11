@@ -55,7 +55,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
   context "Daily docket with one AMA hearing" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
-    let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
     let!(:postponed_hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 3)) }
 
     scenario "User can update fields" do
@@ -75,9 +75,28 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     end
   end
 
+  context "Daily docket with an uneditable dispositon" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
+    let!(:hearing) { create(:hearing) }
+    let!(:hearing_task_association) do
+      create(:hearing_task_association, hearing: hearing, hearing_task: create(:hearing_task, appeal: hearing.appeal))
+    end
+    let!(:disposition_task) do
+      create(:disposition_task,
+             parent: hearing_task_association.hearing_task,
+             appeal: hearing.appeal,
+             status: Constants.TASK_STATUSES.completed)
+    end
+
+    scenario "User cannot update disposition" do
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      find(".dropdown-Disposition").find(".is-disabled")
+    end
+  end
+
   context "Daily docket for RO view user" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["RO ViewHearSched"]) }
-    let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
 
     scenario "User can only update notes" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s

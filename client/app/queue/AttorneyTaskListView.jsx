@@ -11,7 +11,6 @@ import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
-import NewFileAll from './components/NewFileAll';
 
 import {
   completeTasksByAssigneeCssIdSelector,
@@ -85,8 +84,7 @@ class AttorneyTaskListView extends React.PureComponent {
           tasks={this.props.onHoldTasks}
           includeNewDocsIcon
           useOnHoldDate
-        />,
-        indicator: <NewFileAll tasks={this.props.onHoldTasks} />
+        />
       },
       {
         label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
