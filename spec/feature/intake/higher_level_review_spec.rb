@@ -698,7 +698,8 @@ feature "Higher-Level Review" do
         :request_issue,
         decision_review: previous_higher_level_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
-        contention_reference_id: contention_reference_id
+        contention_reference_id: contention_reference_id,
+        closed_at: 2.months.ago
       )
     end
 
@@ -1082,7 +1083,8 @@ feature "Higher-Level Review" do
         create(
           :request_issue,
           decision_review: previous_appeal,
-          contested_rating_issue_reference_id: appeal_reference_id
+          contested_rating_issue_reference_id: appeal_reference_id,
+          closed_at: 2.months.ago
         )
       end
       let!(:previous_appeal_decision_issue) do
