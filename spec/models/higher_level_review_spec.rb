@@ -43,26 +43,26 @@ describe HigherLevelReview do
         it { is_expected.to be true }
       end
 
-      context "when it is after today" do
-        let(:receipt_date) { 1.day.from_now }
-
-        it "adds an error to receipt_date" do
-          is_expected.to be false
-          expect(higher_level_review.errors[:receipt_date]).to include("in_future")
-        end
-      end
-
-      context "when it is before AMA begin date" do
-        let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
-
-        it "adds an error to receipt_date" do
-          is_expected.to be false
-          expect(higher_level_review.errors[:receipt_date]).to include("before_ama")
-        end
-      end
-
-      context "when saving receipt" do
+      context "when saving review" do
         before { higher_level_review.start_review! }
+
+        context "when it is after today" do
+          let(:receipt_date) { 1.day.from_now }
+
+          it "adds an error to receipt_date" do
+            is_expected.to be false
+            expect(higher_level_review.errors[:receipt_date]).to include("in_future")
+          end
+        end
+
+        context "when it is before AMA begin date" do
+          let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
+
+          it "adds an error to receipt_date" do
+            is_expected.to be false
+            expect(higher_level_review.errors[:receipt_date]).to include("before_ama")
+          end
+        end
 
         context "when it is nil" do
           let(:receipt_date) { nil }
@@ -294,6 +294,22 @@ describe HigherLevelReview do
 
         it "creates DecisionReviewTask" do
           expect { subject }.to change(DecisionReviewTask, :count).by(1)
+        end
+
+        context "when decision date is in the future" do
+          let(:caseflow_decision_date) { 1.day.from_now }
+          it "creates a DTA Supplemental claim, but does not start processing until the claim_date" do
+            subject
+            dta_sc = SupplementalClaim.find_by(
+              receipt_date: caseflow_decision_date,
+              decision_review_remanded: higher_level_review
+            )
+            expect(dta_sc).to_not be_nil
+            expect(dta_sc.establishment_submitted_at).to eq(caseflow_decision_date.to_date.to_datetime + 1.minute)
+            expect do
+              subject
+            end.to_not have_enqueued_job(DecisionReviewProcessJob)
+          end
         end
       end
     end
