@@ -21,6 +21,7 @@ class Appeal < DecisionReview
 
   has_one :special_issue_list
 
+  validate :validate_receipt_date
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
