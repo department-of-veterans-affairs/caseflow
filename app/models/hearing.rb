@@ -88,7 +88,7 @@ class Hearing < ApplicationRecord
     disposition_task ? disposition_task.active_with_no_children? : false
   end
 
-  def disposition_editable?
+  def disposition_editable
     disposition_task_in_progress || !hearing_task?
   end
 
@@ -167,7 +167,7 @@ class Hearing < ApplicationRecord
         :worksheet_issues,
         :closest_regional_office,
         :available_hearing_locations,
-        :disposition_editable?
+        :disposition_editable
       ]
     )
   end

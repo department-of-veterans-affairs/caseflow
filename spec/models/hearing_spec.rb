@@ -19,9 +19,9 @@ describe Hearing do
     end
   end
 
-  context "disposition_editable?" do
+  context "disposition_editable" do
     let!(:hearing) { create(:hearing, :with_tasks) }
-    subject { hearing.disposition_editable? }
+    subject { hearing.disposition_editable }
 
     context "when the hearing has an open disposition task" do
       it { is_expected.to eq(true) }

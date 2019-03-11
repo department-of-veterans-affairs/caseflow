@@ -47,7 +47,7 @@ class LegacyHearing < ApplicationRecord
     disposition_task ? disposition_task.active_with_no_children? : false
   end
 
-  def disposition_editable?
+  def disposition_editable
     disposition_task_in_progress || !hearing_task?
   end
 
@@ -185,7 +185,7 @@ class LegacyHearing < ApplicationRecord
   def to_hash(current_user_id)
     serializable_hash(
       methods: [
-        :disposition_editable?,
+        :disposition_editable,
         :scheduled_for,
         :readable_request_type,
         :disposition,

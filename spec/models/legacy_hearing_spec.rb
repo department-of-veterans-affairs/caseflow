@@ -42,8 +42,8 @@ describe LegacyHearing do
     end
   end
 
-  context "#disposition_editable?" do
-    subject { hearing.disposition_editable? }
+  context "#disposition_editable" do
+    subject { hearing.disposition_editable }
 
     context "when the hearing does not have a hearing_task_association" do
       it { is_expected.to eq(true) }
