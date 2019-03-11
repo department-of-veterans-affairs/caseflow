@@ -30,7 +30,7 @@ module Asyncable
       self::DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
     end
 
-    def requires_processing_window_at
+    def requires_processing_until
       self::REQUIRES_PROCESSING_WINDOW_DAYS.days.ago
     end
 
@@ -55,7 +55,7 @@ module Asyncable
     end
 
     def unexpired
-      where(arel_table[last_submitted_at_column].gt(requires_processing_window_at))
+      where(arel_table[last_submitted_at_column].gt(requires_processing_until))
     end
 
     def processable
@@ -84,7 +84,7 @@ module Asyncable
 
     def expired_without_processing
       where(processed_at_column => nil)
-        .where(arel_table[last_submitted_at_column].lteq(requires_processing_window_at))
+        .where(arel_table[last_submitted_at_column].lteq(requires_processing_until))
     end
 
     def attempted_without_being_submitted
@@ -146,7 +146,7 @@ module Asyncable
     last_submitted = self[self.class.last_submitted_at_column]
     return false unless last_submitted
 
-    last_submitted < self.class.requires_processing_window_at
+    last_submitted < self.class.requires_processing_until
   end
 
   def submitted_and_ready?
