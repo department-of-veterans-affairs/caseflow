@@ -698,7 +698,8 @@ feature "Higher-Level Review" do
         :request_issue,
         decision_review: previous_higher_level_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
-        contention_reference_id: contention_reference_id
+        contention_reference_id: contention_reference_id,
+        closed_at: 2.months.ago
       )
     end
 
@@ -721,7 +722,7 @@ feature "Higher-Level Review" do
       create(:decision_issue,
              decision_review: previous_supplemental_claim,
              request_issues: [previous_sc_request_issue],
-             rating_issue_reference_id: supplemental_claim_reference_id,
+             rating_issue_reference_id: "resultingscissue123",
              participant_id: veteran.participant_id,
              promulgation_date: another_promulgation_date,
              decision_text: "supplemental claim decision issue",
@@ -925,13 +926,15 @@ feature "Higher-Level Review" do
       expect(ineligible_checklist).to have_content("Another Description for Active Duty Adjustments is ineligible")
 
       # make sure that database is populated
-      expect(HigherLevelReview.find_by(
-               id: higher_level_review.id,
-               veteran_file_number: veteran.file_number,
-               establishment_submitted_at: Time.zone.now,
-               establishment_processed_at: Time.zone.now,
-               establishment_error: nil
-             )).to_not be_nil
+      expect(
+        HigherLevelReview.find_by(
+          id: higher_level_review.id,
+          veteran_file_number: veteran.file_number,
+          establishment_submitted_at: Time.zone.now,
+          establishment_processed_at: Time.zone.now,
+          establishment_error: nil
+        )
+      ).to_not be_nil
 
       end_product_establishment = EndProductEstablishment.find_by(
         source: higher_level_review,
@@ -955,33 +958,39 @@ feature "Higher-Level Review" do
       expect(non_rating_end_product_establishment).to_not be_nil
 
       # make sure request issue is contesting decision issue
-      expect(RequestIssue.find_by(
-               decision_review: higher_level_review,
-               contested_decision_issue_id: decision_issue.id,
-               contested_issue_description: "supplemental claim decision issue",
-               end_product_establishment_id: end_product_establishment.id,
-               notes: "decision issue with note",
-               benefit_type: "compensation"
-             )).to_not be_nil
+      expect(
+        RequestIssue.find_by(
+          decision_review: higher_level_review,
+          contested_decision_issue_id: decision_issue.id,
+          contested_issue_description: "supplemental claim decision issue",
+          end_product_establishment_id: end_product_establishment.id,
+          notes: "decision issue with note",
+          benefit_type: "compensation"
+        )
+      ).to_not be_nil
 
-      expect(RequestIssue.find_by(
-               decision_review: higher_level_review,
-               contested_rating_issue_reference_id: "xyz123",
-               contested_issue_description: "Left knee granted 2",
-               end_product_establishment_id: end_product_establishment.id,
-               notes: "I am an issue note",
-               benefit_type: "compensation"
-             )).to_not be_nil
+      expect(
+        RequestIssue.find_by(
+          decision_review: higher_level_review,
+          contested_rating_issue_reference_id: "xyz123",
+          contested_issue_description: "Left knee granted 2",
+          end_product_establishment_id: end_product_establishment.id,
+          notes: "I am an issue note",
+          benefit_type: "compensation"
+        )
+      ).to_not be_nil
 
-      expect(RequestIssue.find_by(
-               decision_review: higher_level_review,
-               contested_issue_description: "Really old injury",
-               end_product_establishment_id: nil,
-               untimely_exemption: false,
-               untimely_exemption_notes: "I am an exemption note",
-               benefit_type: "compensation",
-               ineligible_reason: "untimely"
-             )).to_not be_nil
+      expect(
+        RequestIssue.find_by(
+          decision_review: higher_level_review,
+          contested_issue_description: "Really old injury",
+          end_product_establishment_id: nil,
+          untimely_exemption: false,
+          untimely_exemption_notes: "I am an exemption note",
+          benefit_type: "compensation",
+          ineligible_reason: "untimely"
+        )
+      ).to_not be_nil
 
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
         decision_review: higher_level_review,
@@ -1082,7 +1091,8 @@ feature "Higher-Level Review" do
         create(
           :request_issue,
           decision_review: previous_appeal,
-          contested_rating_issue_reference_id: appeal_reference_id
+          contested_rating_issue_reference_id: appeal_reference_id,
+          closed_at: 2.months.ago
         )
       end
       let!(:previous_appeal_decision_issue) do
