@@ -96,7 +96,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
       end
 
-      scenario "Post remanded appeal shows indication of earlier appeal hearing" do
+      scenario "post remanded appeal shows indication of earlier appeal hearing" do
         visit "/queue"
 
         find_table_cell(post_remanded_appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
@@ -378,6 +378,32 @@ RSpec.feature "Case details" do
 
       expect(page).to have_content("Knee pain")
       expect(page).to_not have_content("Sunburn")
+    end
+  end
+
+  context "when an appeal has an issue that is decided" do
+    let(:issues) do
+      [
+        build_list(
+          :request_issue,
+          1,
+          contested_issue_description: "Knee pain"
+        ),
+        build_list(
+          :request_issue,
+          1,
+          contested_issue_description: "Sunburn",
+          closed_status: :decided
+        )
+      ].flatten
+    end
+    let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
+
+    scenario "decided issues should appear in case details page" do
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      expect(page).to have_content("Knee pain")
+      expect(page).to have_content("Sunburn")
     end
   end
 
