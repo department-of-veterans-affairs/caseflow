@@ -113,7 +113,7 @@ RSpec.feature "Hearing prep" do
     end
 
     context "Worksheet for AMA hearings" do
-      let(:ama_hearing) { create(:hearing, judge: current_user) }
+      let(:ama_hearing) { create(:hearing, :with_tasks, judge: current_user) }
       let!(:request_issue) { create(:request_issue, decision_review: ama_hearing.appeal) }
 
       scenario "Can save information for ama hearings" do
