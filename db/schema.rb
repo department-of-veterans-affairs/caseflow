@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190306224527) do
+ActiveRecord::Schema.define(version: 20190307210920) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,6 +109,7 @@ ActiveRecord::Schema.define(version: 20190306224527) do
     t.boolean "untimely_evidence", default: false
     t.datetime "updated_at", null: false
     t.string "work_product"
+    t.index ["task_id"], name: "index_attorney_case_reviews_on_task_id"
   end
 
   create_table "available_hearing_locations", force: :cascade do |t|

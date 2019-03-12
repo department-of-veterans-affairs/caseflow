@@ -29,7 +29,7 @@ RSpec.describe HearingsController, type: :controller do
     end
 
     context "when updating an ama hearing" do
-      let!(:hearing) { create(:hearing) }
+      let!(:hearing) { create(:hearing, :with_tasks) }
 
       it "should update an ama hearing" do
         params = { notes: "Test",
@@ -110,7 +110,7 @@ RSpec.describe HearingsController, type: :controller do
       end
 
       context "for an AMA hearing" do
-        let(:hearing) { create(:hearing, scheduled_time: Time.zone.now) }
+        let(:hearing) { create(:hearing, :with_tasks, scheduled_time: Time.zone.now) }
         let!(:params) do
           { notes: "Test",
             disposition: :postponed }
@@ -133,7 +133,7 @@ RSpec.describe HearingsController, type: :controller do
   end
 
   describe "#show" do
-    let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
 
     it "returns hearing details" do
       get :show, as: :json, params: { id: hearing.external_id }

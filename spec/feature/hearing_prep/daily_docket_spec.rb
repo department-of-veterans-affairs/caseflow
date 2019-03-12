@@ -17,7 +17,9 @@ RSpec.feature "Hearing prep" do
     end
 
     let!(:hearing) do
-      create(:hearing, hearing_day: create(:hearing_day, judge: current_user, scheduled_for: 1.year.from_now))
+      create(:hearing,
+             :with_tasks,
+             hearing_day: create(:hearing_day, judge: current_user, scheduled_for: 1.year.from_now))
     end
 
     scenario "Legacy daily docket saves to the backend" do
