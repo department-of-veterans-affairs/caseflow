@@ -5,7 +5,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_judge
 
   attribute :issues do
-    eligible_or_decided_request_issues.map do |issue|
+    object.eligible_or_decided_request_issues.map do |issue|
       {
         id: issue.id,
         program: issue.benefit_type,
@@ -171,9 +171,5 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   def latest_attorney_case_review
     @latest_attorney_case_review ||=
       AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last
-  end
-
-  def eligible_or_decided_request_issues
-    (object.eligible_request_issues + object.decided_request_issues).sort_by(&:id)
   end
 end
