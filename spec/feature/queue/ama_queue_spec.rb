@@ -172,7 +172,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(poa_address)
 
         expect(page.text).to match(/View (\d+) docs/)
-        expect(page).to have_selector("text", id: "NEW")
+        expect(page).not_to have_selector("text", id: "NEW")
         expect(page).to have_content("5 docs")
 
         find("a", text: /View (\d+) docs/).click

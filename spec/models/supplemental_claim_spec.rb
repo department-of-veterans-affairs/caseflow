@@ -64,26 +64,26 @@ describe SupplementalClaim do
         it { is_expected.to be true }
       end
 
-      context "when it is after today" do
-        let(:receipt_date) { 1.day.from_now }
-
-        it "adds an error to receipt_date" do
-          is_expected.to be false
-          expect(supplemental_claim.errors[:receipt_date]).to include("in_future")
-        end
-      end
-
-      context "when it is before AMA begin date" do
-        let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
-
-        it "adds an error to receipt_date" do
-          is_expected.to be false
-          expect(supplemental_claim.errors[:receipt_date]).to include("before_ama")
-        end
-      end
-
-      context "when saving receipt" do
+      context "when saving review" do
         before { supplemental_claim.start_review! }
+
+        context "when it is after today" do
+          let(:receipt_date) { 1.day.from_now }
+
+          it "adds an error to receipt_date" do
+            is_expected.to be false
+            expect(supplemental_claim.errors[:receipt_date]).to include("in_future")
+          end
+        end
+
+        context "when it is before AMA begin date" do
+          let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
+
+          it "adds an error to receipt_date" do
+            is_expected.to be false
+            expect(supplemental_claim.errors[:receipt_date]).to include("before_ama")
+          end
+        end
 
         context "when it is nil" do
           let(:receipt_date) { nil }
