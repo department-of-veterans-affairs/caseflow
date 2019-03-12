@@ -102,13 +102,17 @@ class UntimelyExemptionModal extends React.Component {
           onChange={this.radioOnChange}
           value={this.state.untimelyExemption === null ? null : this.state.untimelyExemption.toString()}
         />
-        <TextField
-          name="Notes"
-          optional
-          strongLabel
-          value={this.state.untimelyExemptionNotes}
-          onChange={this.untimelyExemptionNotesOnChange}
-        />
+
+        {
+          this.state.untimelyExemption === true && <TextField
+            name="Notes"
+            optional
+            strongLabel
+            value={this.state.untimelyExemptionNotes}
+            onChange={this.untimelyExemptionNotesOnChange}
+          />
+        }
+
       </Modal>
     </div>;
   }
