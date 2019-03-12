@@ -20,7 +20,8 @@ class SaveButtonUnconnected extends React.Component {
       originalIssueNumber: this.props.state.addedIssues.length,
       showModals: {
         issueChangeModal: false,
-        unidentifiedIssueModal: false
+        unidentifiedIssueModal: false,
+        reviewRemovedModal: false
       }
     };
   }
@@ -29,11 +30,16 @@ class SaveButtonUnconnected extends React.Component {
     // do validation and show modals
     let showModals = {
       issueChangeModal: false,
-      unidentifiedIssueModal: false
+      unidentifiedIssueModal: false,
+      reviewRemovedModal: false
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      showModals.issueChangeModal = true;
+      if (this.props.state.addedIssues === 0) {
+        showModals.reviewRemovedModal = true;
+      } else {
+        showModals.issueChangeModal = true;
+      }
     }
 
     if (this.props.state.addedIssues.filter((i) => i.isUnidentified).length > 0) {
@@ -107,6 +113,18 @@ class SaveButtonUnconnected extends React.Component {
           { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
         </p>
         <p>Please check that this is the correct number.</p>
+      </SaveAlertConfirmModal>}
+
+      { this.state.showModals.reviewRemovedModal && <SaveAlertConfirmModal
+        title="Remove review?"
+        buttonText= "Yes, remove"
+        onClose={() => this.closeModal('reviewRemovedModal')}
+        onConfirm={() => this.confirmModal('reviewRemovedModal')}>
+        <p>
+          The review originally had {this.state.originalIssueNumber}&nbsp;
+          { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
+        </p>
+        <p>This will remove the review and cancel all the End Products associated with it.</p>
       </SaveAlertConfirmModal>}
 
       { this.state.showModals.unidentifiedIssueModal && <SaveAlertConfirmModal
