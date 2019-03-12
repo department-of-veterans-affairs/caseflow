@@ -127,7 +127,6 @@ ActiveRecord::Schema.define(version: 20190312154538) do
     t.datetime "updated_at", null: false
     t.string "veteran_file_number"
     t.string "zip_code"
-    t.index ["appeal_type", "appeal_id"], name: "index_available_hearing_locations_on_appeal_type_and_appeal_id"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
