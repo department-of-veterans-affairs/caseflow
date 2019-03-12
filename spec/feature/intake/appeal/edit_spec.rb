@@ -257,6 +257,7 @@ feature "Appeal Edit issues" do
 
     context "with legacy_opt_in_approved" do
       let(:legacy_opt_in_approved) { true }
+
       scenario "adding issues" do
         visit "appeals/#{appeal.uuid}/edit/"
 
