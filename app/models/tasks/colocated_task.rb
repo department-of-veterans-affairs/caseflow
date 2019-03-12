@@ -71,22 +71,22 @@ class ColocatedTask < Task
       send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
       return core_actions.unshift(send_to_team)
     end
-
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
 
     if action == "schedule_hearing"
-      core_actions.push(Constants.TASK_ACTIONS.HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h)
-      core_actions.push(Constants.TASK_ACTIONS.HEARING_SEND_TO_TEAM.to_h)
-      return core_actions
+      core_actions.shift
+      core_actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h)
+      core_actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
     end
+
     if action == "translation" && appeal.is_a?(Appeal)
       core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
     end
 
     core_actions
   end
-  # rubocop:enable Metrics/AbcSize
 
+  # rubocop:enable Metrics/AbcSize
   def actions_available?(_user)
     active?
   end
