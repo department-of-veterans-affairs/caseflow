@@ -220,6 +220,8 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.string "participant_id", null: false, comment: "The participant ID of the claimant."
     t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
+    t.index ["participant_id", "review_request_id", "review_request_type"], name: "uniq_index_on_participant_id_review_request", unique: true
+    t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
   create_table "claims_folder_searches", id: :serial, force: :cascade do |t|

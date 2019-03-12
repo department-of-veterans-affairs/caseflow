@@ -96,6 +96,7 @@ class SeedDB
 
   def create_hearings_user_and_tasks
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
+    # OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
 

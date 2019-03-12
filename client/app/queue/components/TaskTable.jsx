@@ -14,6 +14,10 @@ import { bindActionCreators } from 'redux';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
+import Button from '../../components/Button';
+import BulkAssignModal from './BulkAssignModal';
+// import Modal from '../../components/Modal';
+// import Dropdown from '../../components/Dropdown';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
@@ -35,6 +39,22 @@ import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 export class TaskTableUnconnected extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    const state = {
+      showModal: false,
+      modal: {
+        assignedAttorney: undefined,
+        regionalOffice: undefined,
+        taskType: undefined,
+        numberOfTasks: undefined
+      }
+    };
+
+    this.state = state;
+  }
+
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
   isTaskSelected = (uniqueId) => {
@@ -352,11 +372,45 @@ export class TaskTableUnconnected extends React.PureComponent {
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
+  incompleteModalFields = () => {
+    return _.keys(_.pick(this.state.modal, ['undefined']));
+  }  
+
+
+  bulkAssignTasks = () => {
+    const requiredFields = ['assignedAttorney', 'taskType', 'numberOfTasks'];
+
+    if (this.incompleteModalFields().length > 0) {
+      
+    }
+  }
+
+  handleModalToggle = () => {
+    const modalStatus = this.state.showModal;
+
+    this.setState({ showModal: !modalStatus });
+  }
+
   render = () => {
     const { tasks } = this.props;
+    console.log(this.props.state);
+    const bulkAssignButton = <Button onClick={this.handleModalToggle}>Assign Tasks</Button>;
 
     return (
       <div>
+        {this.state.showModal &&
+          <BulkAssignModal
+            modal={this.state.modal}
+            // attorneys={this.props.attorneys}
+            attorneys={[{value: null, displayText: ''}, {value: 'First', displayText: 'First'}, {value: 'Second', displayText: 'Second'}, {value: 'Third', displayText: 'Third'}]}
+            regionalOffices={[]}
+            taskTypes={[]}
+            numberOfTasks={[]}
+            errors={[]}
+            handleFieldChange={(value, field) => { this.setState({ modal: { [field]: value } }) }}
+            handleModalToggle={this.handleModalToggle} />
+        }
+        {bulkAssignButton}
         <QueueTable
           columns={this.getQueueColumns}
           rowObjects={tasks}
@@ -374,7 +428,9 @@ export class TaskTableUnconnected extends React.PureComponent {
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
-  userRole: state.ui.userRole
+  userRole: state.ui.userRole,
+  attorneys: state.queue.attorneys,
+  state
 });
 
 const mapDispatchToProps = (dispatch) => (
@@ -384,3 +440,8 @@ const mapDispatchToProps = (dispatch) => (
 );
 
 export default (connect(mapStateToProps, mapDispatchToProps)(TaskTableUnconnected));
+
+
+
+// assignedTo:
+// cssId: "BVASCASPER1"
