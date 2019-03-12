@@ -39,12 +39,6 @@ class DispositionTask < GenericTask
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
-
-    if appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
-    else
-      RootTask.create_ihp_tasks!(appeal, parent)
-    end
   end
 
   def mark_no_show!
@@ -62,6 +56,17 @@ class DispositionTask < GenericTask
       status: Constants.TASK_STATUSES.on_hold,
       on_hold_duration: 25.days
     )
+  end
+
+  def update_parent_status
+    # Create the child IHP tasks before running DistributionTask's update_status_if_children_tasks_are_complete method.
+    if appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
+    else
+      RootTask.create_ihp_tasks!(appeal, parent)
+    end
+
+    super
   end
 
   private
