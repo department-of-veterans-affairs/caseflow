@@ -1138,10 +1138,9 @@ feature "Higher Level Review Edit issues" do
 
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
 
-        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
-        sleep 1
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 
         # going back to the edit page does not show any requested issues
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
