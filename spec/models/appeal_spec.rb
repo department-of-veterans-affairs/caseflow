@@ -118,13 +118,15 @@ describe Appeal do
   end
 
   context "ready appeals sorted by date" do
-    let!(:first_appeal) { create(:appeal, :with_tasks) }
-    let!(:second_appeal) { create(:appeal, :with_tasks) }
+    it "returns appeals with distribution tasks ordered by when they became ready for distribution" do
+      first_appeal = create(:appeal, :with_tasks)
+      first_appeal.tasks.each { |task| task.update!(assigned_at: 2.days.ago, type: "DistributionTask") }
+      second_appeal = create(:appeal, :with_tasks)
+      second_appeal.tasks.each { |task| task.update!(assigned_at: 5.days.ago, type: "DistributionTask") }
 
-    subject { Appeal.ordered_by_distribution_ready_date }
+      sorted_appeals = Appeal.ordered_by_distribution_ready_date
 
-    it "returns appeals ordered by when they became ready for distribution" do
-      expect(subject.find_index(first_appeal) < subject.find_index(second_appeal)).to eq(true)
+      expect(sorted_appeals[0]).to eq second_appeal
     end
   end
 
@@ -1311,6 +1313,13 @@ describe Appeal do
              benefit_type: "pension", contested_rating_issue_diagnostic_code: nil)
     end
 
+    let(:request_issue3) do
+      create(:request_issue,
+             benefit_type: "pension",
+             contested_rating_issue_diagnostic_code: nil,
+             ineligible_reason: :untimely)
+    end
+
     let!(:appeal) do
       create(:appeal, receipt_date: receipt_date,
                       request_issues: [request_issue1, request_issue2])
@@ -1322,7 +1331,7 @@ describe Appeal do
       it "is status of the request issues" do
         issue_statuses = appeal.issues_hash
 
-        expect(issue_statuses.empty?).to eq(false)
+        expect(issue_statuses.count).to eq(2)
 
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
         expect(issue).to_not be_nil
