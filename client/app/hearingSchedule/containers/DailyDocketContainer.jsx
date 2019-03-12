@@ -8,6 +8,7 @@ import DailyDocket from '../components/DailyDocket';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
+import { getTimeWithoutTimeZone } from '../../util/DateUtil';
 import {
   onReceiveDailyDocket,
   onReceiveSavedHearing,
@@ -97,32 +98,34 @@ export class DailyDocketContainer extends React.Component {
     }
 
     return {
-      timezone: hearing.regionalOfficeTimezone,
+      timezone: hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone,
       scheduledFor: hearing.scheduledFor
     };
   }
 
-  getHearingTime = (hearing) => {
+  getTimezoneOffsetScheduledTimeObject = (hearing) => {
+    const hearingTime = this.getScheduledTime(hearing);
+    const hearingDay = this.getHearingDay(hearing);
+
+    return getAssignHearingTime(hearingTime, hearingDay);
+  }
+
+  getScheduledTime = (hearing) => {
     if (hearing.editedTime) {
       return hearing.editedTime;
     }
 
-    return moment(hearing.scheduledFor).tz(hearing.regionalOfficeTimezone).
-      format('HH:mm');
+    const timezone = this.getHearingDay(hearing).timezone;
+
+    return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
   }
-
-  getScheduledTime = (hearing) => {
-    const hearingTime = this.getHearingTime(hearing);
-    const hearingDay = this.getHearingDay(hearing);
-
-    return getAssignHearingTime(hearingTime, hearingDay);
-  };
 
   getScheduledFor = (hearing) => {
     if (hearing.editedTime) {
-      const scheduledTime = this.getScheduledTime(hearing);
+      const scheduledTimeObj = this.getTimezoneOffsetScheduledTimeObject(hearing);
 
-      return moment(hearing.scheduledFor).set(scheduledTime);
+      return moment(hearing.scheduledFor).set(scheduledTimeObj).
+        format();
     }
 
     return hearing.scheduledFor;
