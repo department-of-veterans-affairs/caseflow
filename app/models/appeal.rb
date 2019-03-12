@@ -168,10 +168,6 @@ class Appeal < DecisionReview
     request_issues.active.all.sort_by(&:id)
   end
 
-  def decided_request_issues
-    request_issues.select(&:decided?)
-  end
-
   def issues
     { decision_issues: decision_issues, request_issues: request_issues }
   end
