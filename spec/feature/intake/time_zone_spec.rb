@@ -63,6 +63,10 @@ feature "Appeal time zone" do
   # rubocop:enable Metrics/AbcSize
 
   describe "browser to server" do
+    def browser_utc_offset
+      evaluate_script("(new Date()).getTimezoneOffset()/60").to_s
+    end
+
     it "writes all times in UTC" do
       expect(now_localtime.iso8601).to_not eq(now_utc.iso8601)
       expect(now_localtime.to_date).to eq(now_utc.to_date)
@@ -79,9 +83,12 @@ feature "Appeal time zone" do
       expect(intake.started_at).to eq(now_localtime)
     end
 
-    xit "browser time zone is the same as server (tests only)" do
-      browser_utc_offset = evaluate_script("(new Date()).getTimezoneOffset()/60")
-      expect(browser_utc_offset).to eq((Time.zone.utc_offset / 3600) * -1)
+    it "browser time zone is the same as server (tests only)" do
+      # we can freeze the time on the server side, but not the browser side,
+      # so the actual real time zone on the browser will shift between standard and daylight savings.
+      expect((Time.zone.utc_offset / 3600) * -1).to eq(5)
+
+      expect(browser_utc_offset).to match(/[45]/)
     end
 
     # Honolulu is as far from New York as New York is from UTC
@@ -93,7 +100,7 @@ feature "Appeal time zone" do
         Time.zone = "UTC"
       end
 
-      it "treats browser input dates as if they were in EST" do
+      it "treats browser input dates as if they were in Eastern" do
         initiate_appeal_intake
 
         appeal = Appeal.last
@@ -104,9 +111,8 @@ feature "Appeal time zone" do
         expect(intake.started_at).to eq(now_localtime)
       end
 
-      xit "browser time zone is EST, server is UTC" do
-        browser_utc_offset = evaluate_script("(new Date()).getTimezoneOffset()/60")
-        expect(browser_utc_offset).to eq 5
+      it "browser time zone is Eastern, server is UTC" do
+        expect(browser_utc_offset).to match(/[45]/)
         expect(Time.zone.utc_offset).to eq 0
       end
     end
