@@ -57,6 +57,8 @@ class RequestIssue < ApplicationRecord
     stayed: "stayed"
   }
 
+  scope :active_or_decided, -> { active.or(decided) }
+
   before_save :set_contested_rating_issue_profile_date
 
   class ErrorCreatingDecisionIssue < StandardError
@@ -395,10 +397,6 @@ class RequestIssue < ApplicationRecord
     return unless decision_issues.any?
 
     update!(closed_at: Time.zone.now, closed_status: :decided)
-  end
-
-  def decided?
-    closed_status == :decided
   end
 
   def close_after_end_product_canceled!

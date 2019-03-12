@@ -393,7 +393,8 @@ RSpec.feature "Case details" do
           :request_issue,
           1,
           contested_issue_description: "Sunburn",
-          closed_status: :decided
+          closed_status: :decided,
+          closed_at: 2.days.ago
         )
       ].flatten
     end

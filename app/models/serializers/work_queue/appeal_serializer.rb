@@ -5,7 +5,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_judge
 
   attribute :issues do
-    object.eligible_or_decided_request_issues.map do |issue|
+    object.request_issues.active_or_decided.map do |issue|
       {
         id: issue.id,
         program: issue.benefit_type,

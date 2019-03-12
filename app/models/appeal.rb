@@ -598,10 +598,6 @@ class Appeal < DecisionReview
     api_values[docket_name]
   end
 
-  def eligible_or_decided_request_issues
-    (eligible_request_issues + decided_request_issues).sort_by(&:id)
-  end
-
   def docket_switch_deadline
     return unless receipt_date
     return unless request_issues.active_or_ineligible.any?
