@@ -196,10 +196,6 @@ class Intake < ApplicationRecord
     elsif !veteran.accessible?
       set_veteran_accessible_error
 
-    elsif !veteran.valid?(:bgs)
-      self.error_code = :veteran_not_valid
-      @error_data = veteran_invalid_fields
-
     elsif duplicate_intake_in_progress
       self.error_code = :duplicate_intake_in_progress
       @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
