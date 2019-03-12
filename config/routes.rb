@@ -100,7 +100,6 @@ Rails.application.routes.draw do
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
       get :document_count
-      get :new_documents
       get :veteran
       get :power_of_attorney
       get :hearings
@@ -213,11 +212,7 @@ Rails.application.routes.draw do
   get '/search', to: 'queue#index'
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create, :update] do
-    member do
-      get :new_documents
-    end
-  end
+  resources :tasks, only: [:index, :create, :update]
 
   resources :distributions, only: [:new, :show]
 

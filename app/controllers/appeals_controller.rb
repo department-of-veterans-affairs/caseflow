@@ -4,7 +4,7 @@ class AppealsController < ApplicationController
   include Errors
 
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :new_documents]
+  before_action :set_application, only: [:document_count]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
@@ -39,29 +39,11 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    # Boolean params come in as present/not present (the former with a value of nil) rather than true or false,
-    # so we only need to check if the cached param exists
-    if params.key?(:cached)
-      render json: { document_count: appeal.number_of_documents_from_caseflow }
-      return
-    end
     render json: { document_count: appeal.number_of_documents }
   rescue Caseflow::Error::EfolderAccessForbidden => e
     render(e.serialize_response)
   rescue StandardError => e
     handle_non_critical_error("document_count", e)
-  end
-
-  def new_documents
-    new_documents_for_user = NewDocumentsForUser.new(
-      appeal: appeal, user: current_user, query_vbms: true, date_to_compare_with: Time.zone.at(0)
-    )
-    render json: { new_documents: new_documents_for_user.process! }
-  rescue Caseflow::Error::EfolderAccessForbidden => e
-    render(e.serialize_response)
-  rescue StandardError => e
-    Raven.capture_exception(e)
-    handle_non_critical_error("appeals_new_documents", e)
   end
 
   def power_of_attorney
