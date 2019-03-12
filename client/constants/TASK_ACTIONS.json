@@ -9,6 +9,8 @@
     "COLOCATED_RETURN_TO_ATTORNEY": { "label": "Send back to attorney", "value": "modal/mark_task_complete" },
     "COMPLETE_TRANSCRIPTION": { "label": "Mark as complete: Transcribed", "value": "modal/mark_task_complete", "func": "complete_transcription_data" },
     "CREATE_MAIL_TASK": { "label": "Create mail task", "value": "modal/create_mail_task", "func": "mail_assign_to_organization_data" },
+    "HEARING_COLOCATED_RETURN_TO_ATTORNEY": { "label": "Hearing does not need to be scheduled, send back to attorney", "value": "modal/mark_task_complete" },
+    "HEARING_SEND_TO_TEAM": { "label": "Hearing does need to be scheduled, send to hearing branch", "value": "modal/send_colocated_task" },
     "JUDGE_LEGACY_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/special_issues"  },
     "JUDGE_AMA_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/dispositions"  },
     "JUDGE_RETURN_TO_ATTORNEY": { "label": "Return to attorney", "value": "modal/return_to_attorney", "func": "return_to_attorney_data" },

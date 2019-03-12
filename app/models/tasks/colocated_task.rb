@@ -72,11 +72,14 @@ class ColocatedTask < Task
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
-
+    if action == "schedule_hearing"
+      core_actions.push(Constants.TASK_ACTIONS.HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h)
+      core_actions.push(Constants.TASK_ACTIONS.HEARING_SEND_TO_TEAM.to_h)
+      return core_actions
+    end
     if action == "translation" && appeal.is_a?(Appeal)
       core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
     end
-
     core_actions
   end
 
