@@ -42,14 +42,17 @@ RSpec.feature "Login" do
     let(:user) { create(:user, css_id: "ANNE MERICA", station_id: "351") }
     let(:organization) { create(:organization) }
 
+    before do
+      Fakes::AuthenticationService.user_session = {
+        "id" => user.css_id,
+        "roles" => ["VSO"],
+        "station_id" => user.station_id,
+        "email" => "world@example.com"
+      }
+    end
+
     context "User is in the Org they are trying to view" do
       before do
-        Fakes::AuthenticationService.user_session = {
-          "id" => user.css_id,
-          "roles" => ["VSO"],
-          "station_id" => user.station_id,
-          "email" => "world@example.com"
-        }
         OrganizationsUser.add_user_to_organization(user, organization)
       end
 
@@ -67,15 +70,6 @@ RSpec.feature "Login" do
     end
 
     context "User is not in the Org they are trying to view" do
-      before do
-        Fakes::AuthenticationService.user_session = {
-          "id" => user.css_id,
-          "roles" => ["VSO"],
-          "station_id" => user.station_id,
-          "email" => "world@example.com"
-        }
-      end
-
       scenario "user is presented with RO selection page and gets 403 /unauthorized error" do
         visit "organizations/#{organization.url}"
 
