@@ -68,18 +68,11 @@ class RatingIssue
       promulgation_date: promulgation_date,
       profile_date: profile_date,
       ramp_claim_id: ramp_claim_id,
-      title_of_active_review: title_of_active_review,
       rba_contentions_data: rba_contentions_data,
       associated_end_products: associated_end_products.map(&:serialize),
       diagnostic_code: diagnostic_code,
       benefit_type: benefit_type
     }
-  end
-
-  def title_of_active_review
-    return unless reference_id
-
-    RequestIssue.open.find_by(contested_rating_issue_reference_id: reference_id)&.review_title
   end
 
   def decision_issue

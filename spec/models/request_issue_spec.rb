@@ -149,18 +149,8 @@ describe RequestIssue do
     end
   end
 
-  context ".not_deleted" do
-    subject { RequestIssue.not_deleted }
-
-    let!(:deleted_request_issue) { create(:request_issue, decision_review: nil) }
-
-    it "filters by whether it is associated with a decision_review" do
-      expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
-    end
-  end
-
-  context ".open" do
-    subject { RequestIssue.open }
+  context ".active" do
+    subject { RequestIssue.active }
 
     let!(:closed_request_issue) { create(:request_issue, :removed) }
 

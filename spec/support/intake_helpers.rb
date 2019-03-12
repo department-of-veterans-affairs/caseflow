@@ -618,7 +618,7 @@ module IntakeHelpers
     expect(updated_request_issue).to be_closed
 
     # check that new request issue is created contesting the decision issue
-    request_issues = decision_review.reload.open_request_issues
+    request_issues = decision_review.reload.request_issues.active
     first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
     second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
 
