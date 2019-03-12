@@ -752,25 +752,24 @@ describe EndProductEstablishment do
 
   context "#cancel_unused_end_product!" do
     subject { end_product_establishment.cancel_unused_end_product! }
-    let(:contention_removed_at) { nil }
+    let(:closed_at) { nil }
     let!(:request_issues) do
       [
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
           decision_review: source,
-          contention_removed_at: contention_removed_at
+          closed_at: closed_at
         )
       ]
     end
 
     context "when there are no active request issues" do
-      let(:contention_removed_at) { 1.day.ago }
-      it "cancels the end product and closes request issues" do
+      let(:closed_at) { 1.day.ago }
+
+      it "cancels the end product" do
         subject
         expect(end_product_establishment.reload.synced_status).to eq("CAN")
-        expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
-        expect(request_issues.first.closed_status).to eq("end_product_canceled")
       end
     end
 

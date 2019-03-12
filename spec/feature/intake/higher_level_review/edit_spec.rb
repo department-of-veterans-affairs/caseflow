@@ -927,7 +927,7 @@ feature "Higher Level Review Edit issues" do
       expect(nonrating_epe).to_not be_nil
 
       # expect the remove/re-add to create a new RequestIssue for same RatingIssue
-      expect(higher_level_review.reload.open_request_issues).to_not include(request_issue)
+      expect(higher_level_review.reload.request_issues.active).to_not include(request_issue)
 
       new_version_of_request_issue = higher_level_review.request_issues.find do |ri|
         ri.description == request_issue.description
@@ -1034,7 +1034,7 @@ feature "Higher Level Review Edit issues" do
       expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
-      new_request_issue = higher_level_review.reload.open_request_issues.first
+      new_request_issue = higher_level_review.reload.request_issues.active.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.decision_review_id).to_not be_nil
       expect(request_issue).to be_closed
