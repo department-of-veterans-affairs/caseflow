@@ -546,9 +546,7 @@ describe Task do
       end
 
       it "should not throw an error" do
-        expect { AttorneyTask.verify_user_can_create!(user, task) }.to_not raise_error(
-          Caseflow::Error::ActionForbiddenError
-        )
+        expect { AttorneyTask.verify_user_can_create!(user, task) }.to_not raise_error
       end
 
       context "when task is completed" do

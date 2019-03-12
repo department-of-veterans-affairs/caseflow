@@ -156,7 +156,15 @@ class RequestIssue < ApplicationRecord
       where.not(decision_review_id: nil)
     end
 
+    def eligible
+      where(ineligible_reason: nil)
+    end
+
     def open
+      eligible.where(closed_at: nil)
+    end
+
+    def open_or_ineligible
       where(closed_at: nil)
     end
 
@@ -170,30 +178,6 @@ class RequestIssue < ApplicationRecord
     def find_or_build_from_intake_data(data)
       # request issues on edit have ids but newly added issues do not
       data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
-    end
-
-    def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
-      request_issue = unscoped.find_by(
-        contested_rating_issue_reference_id: rating_issue_reference_id,
-        contention_removed_at: nil,
-        ineligible_reason: nil
-      )
-
-      return unless request_issue&.status_active?
-
-      request_issue
-    end
-
-    def find_active_by_contested_decision_id(contested_decision_issue_id)
-      request_issue = unscoped.find_by(
-        contested_decision_issue_id: contested_decision_issue_id,
-        contention_removed_at: nil,
-        ineligible_reason: nil
-      )
-
-      return unless request_issue&.status_active?
-
-      request_issue
     end
 
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
@@ -726,14 +710,16 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     add_duplicate_issue_error(
-      self.class.find_active_by_contested_rating_issue_reference_id(contested_rating_issue_reference_id)
+      RequestIssue.open.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
     )
   end
 
   def check_for_active_request_issue_by_decision_issue!
     return unless contested_decision_issue_id
 
-    add_duplicate_issue_error(self.class.find_active_by_contested_decision_id(contested_decision_issue_id))
+    add_duplicate_issue_error(
+      RequestIssue.open.find_by(contested_decision_issue_id: contested_decision_issue_id)
+    )
   end
 
   def original_end_product_code
