@@ -8,38 +8,32 @@ class VBMSError < RuntimeError
     end
   end
 
+  KNOWN_ERRORS = {
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/
+    "additional review due to an Incident Flash" => "VBMS::IncidentFlashError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/
+    "Retrieving Contention list failed. System error." => "VBMS::TransientError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3405/
+    "Unable to associate rated issue, rated issue does not exist" => "VBMS::RatedIssueMissingError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/
+    "Requested result set exceeds acceptable size." => "VBMS::DocumentTooBigError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3293/
+    "WssVerification Exception - Security Verification Exception" => "VBMS::SecurityError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3965/
+    "VBMS is currently unavailable due to maintenance." => "VBMS::DownForMaintenanceError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3274/
+    "The data value of the PostalCode did not satisfy" => "VBMS::BadPostalCodeError"
+  }.freeze
+
   class << self
-    KNOWN_ERRORS = {
-      # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/
-      "additional review due to an Incident Flash" => "VBMS::IncidentFlashError",
-
-      # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/
-      "Retrieving Contention list failed. System error." => "VBMS::TransientError",
-
-      # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3405/
-      "Unable to associate rated issue, rated issue does not exist" => "VBMS::RatedIssueMissingError",
-
-      # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/
-      "Requested result set exceeds acceptable size." => "VBMS::DocumentTooBigError",
-
-      # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3293/
-      "WssVerification Exception - Security Verification Exception" => "VBMS::SecurityError",
-
-      # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3965/
-      "VBMS is currently unavailable due to maintenance." => "VBMS::DownForMaintenanceError",
-
-      # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3274/
-      "The data value of the PostalCode did not satisfy" => "VBMS::BadPostalCodeError"
-    }.freeze
-
     def from_vbms_http_error(vbms_http_error)
-      error_message = if vbms_http_error.try(:body)
-                        # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3124/
-                        vbms_http_error.body.encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
-                      else
-                        vbms_http_error.message
-                      end
-
+      error_message = extract_error_message(vbms_http_error)
       new_error = nil
       KNOWN_ERRORS.each do |msg_str, error_class_name|
         next unless error_message =~ /#{msg_str}/
@@ -48,6 +42,17 @@ class VBMSError < RuntimeError
         break
       end
       new_error ||= new(vbms_http_error)
+    end
+
+    private
+
+    def extract_error_message(vbms_http_error)
+      if vbms_http_error.try(:body)
+        # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3124/
+        vbms_http_error.body.encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
+      else
+        vbms_http_error.message
+      end
     end
   end
 end
