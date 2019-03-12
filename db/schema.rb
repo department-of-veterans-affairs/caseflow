@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190307210920) do
+ActiveRecord::Schema.define(version: 20190312154538) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(version: 20190307210920) do
     t.datetime "updated_at", null: false
     t.string "veteran_file_number"
     t.string "zip_code"
+    t.index ["appeal_type", "appeal_id"], name: "index_available_hearing_locations_on_appeal_type_and_appeal_id"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
@@ -1035,9 +1036,24 @@ ActiveRecord::Schema.define(version: 20190307210920) do
     t.index ["deleted_at"], name: "index_worksheet_issues_on_deleted_at"
   end
 
+  add_foreign_key "advance_on_docket_motions", "users"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
+  add_foreign_key "appeal_views", "users"
   add_foreign_key "certifications", "users"
+  add_foreign_key "claims_folder_searches", "users"
+  add_foreign_key "dispatch_tasks", "users"
+  add_foreign_key "document_views", "users"
+  add_foreign_key "end_product_establishments", "users"
+  add_foreign_key "hearing_views", "users"
+  add_foreign_key "intakes", "users"
   add_foreign_key "legacy_appeals", "appeal_series"
+  add_foreign_key "legacy_hearings", "users"
+  add_foreign_key "organizations_users", "users"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
+  add_foreign_key "ramp_election_rollbacks", "users"
+  add_foreign_key "reader_users", "users"
+  add_foreign_key "request_issues_updates", "users"
+  add_foreign_key "schedule_periods", "users"
+  add_foreign_key "user_quotas", "users"
 end
