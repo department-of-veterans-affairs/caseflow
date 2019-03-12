@@ -376,9 +376,11 @@ describe RampElection do
   context "#successful_intake" do
     subject { ramp_election.successful_intake }
 
+    let(:user) { create(:user) }
+
     let!(:last_successful_intake) do
       RampElectionIntake.create!(
-        user_id: "123",
+        user: user,
         completion_status: "success",
         completed_at: 2.days.ago,
         detail: ramp_election
@@ -387,7 +389,7 @@ describe RampElection do
 
     let!(:penultimate_successful_intake) do
       RampElectionIntake.create!(
-        user_id: "123",
+        user: user,
         completion_status: "success",
         completed_at: 3.days.ago,
         detail: ramp_election
@@ -396,7 +398,7 @@ describe RampElection do
 
     let!(:unsuccessful_intake) do
       RampElectionIntake.create!(
-        user_id: "123",
+        user: user,
         completion_status: "error",
         completed_at: 1.day.ago,
         detail: ramp_election

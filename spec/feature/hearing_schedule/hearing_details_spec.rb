@@ -3,9 +3,11 @@
 require "rails_helper"
 
 RSpec.feature "Hearing Schedule Daily Docket" do
+  let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
+
   context "Hearing details is not editable for a non-hearings management user" do
-    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
-    let!(:hearing) { create(:hearing) }
+    let!(:current_user) { User.authenticate!(user: user) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
 
     scenario "Fields are not editable" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
@@ -15,10 +17,10 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
   context "Hearing details for AMA hearing" do
     let!(:current_user) do
-      OrganizationsUser.add_user_to_organization(create(:hearings_management), HearingsManagement.singleton)
-      User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
+      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      User.authenticate!(user: user)
     end
-    let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
 
     before do
       create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG")
@@ -55,8 +57,8 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
   context "Hearing details for Legacy hearing" do
     let!(:current_user) do
-      OrganizationsUser.add_user_to_organization(create(:hearings_management), HearingsManagement.singleton)
-      User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
+      OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      User.authenticate!(user: user)
     end
     let!(:legacy_hearing) { create(:legacy_hearing) }
 

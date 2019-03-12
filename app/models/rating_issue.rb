@@ -79,9 +79,7 @@ class RatingIssue
   def title_of_active_review
     return unless reference_id
 
-    request_issue = RequestIssue.find_active_by_contested_rating_issue_reference_id(reference_id)
-
-    request_issue&.review_title
+    RequestIssue.open.find_by(contested_rating_issue_reference_id: reference_id)&.review_title
   end
 
   def decision_issue

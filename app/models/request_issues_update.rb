@@ -79,7 +79,7 @@ class RequestIssuesUpdate < ApplicationRecord
   private
 
   def changes?
-    review.request_issues.open.count != @request_issues_data.count || !new_issues.empty?
+    review.request_issues.open_or_ineligible.count != @request_issues_data.count || !new_issues.empty?
   end
 
   def new_issues
@@ -91,12 +91,12 @@ class RequestIssuesUpdate < ApplicationRecord
     before_issues
 
     @request_issues_data.map do |issue_data|
-      review.request_issues.open.find_or_build_from_intake_data(issue_data)
+      review.request_issues.open_or_ineligible.find_or_build_from_intake_data(issue_data)
     end
   end
 
   def calculate_before_issues
-    review.request_issues.open.select(&:persisted?)
+    review.request_issues.open_or_ineligible.select(&:persisted?)
   end
 
   def validate_before_perform
