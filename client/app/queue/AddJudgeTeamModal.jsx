@@ -1,7 +1,6 @@
 import * as React from 'react';
 import ApiUtil from '../util/ApiUtil';
 import COPY from '../../COPY.json';
-import editModalBase from './components/EditModalBase';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import SearchableDropdown from '../components/SearchableDropdown';
 import { bindActionCreators } from 'redux';
@@ -13,6 +12,7 @@ import {
   showErrorMessage
 } from './uiReducer/uiActions';
 import { withRouter } from 'react-router-dom';
+import QueueFlowModal from './components/QueueFlowModal';
 
 class AddJudgeTaskModal extends React.Component {
   constructor(props) {
@@ -44,22 +44,28 @@ class AddJudgeTaskModal extends React.Component {
       detail: err }));
 
   render = () => {
-    return <LoadingDataDisplay
-      createLoadPromise={this.loadingPromise}
-      loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-        message: 'Loading users...'
-      }}
-      failStatusMessageProps={{ title: 'Unable to load users' }}>
-      <SearchableDropdown
-        name={COPY.TEAM_MANAGEMENT_SELECT_JUDGE_LABEL}
-        hideLabel
-        searchable
-        placeholder={COPY.TEAM_MANAGEMENT_SELECT_JUDGE_LABEL}
-        value={this.state.selectedJudge}
-        onChange={this.selectJudge}
-        options={this.dropdownOptions()} />
-    </LoadingDataDisplay>;
+    return <QueueFlowModal
+      title={COPY.TEAM_MANAGEMENT_ADD_JUDGE_TEAM_MODAL_TITLE}
+      pathAfterSubmit="/team_management"
+      submit={this.submit}
+    >
+      <LoadingDataDisplay
+        createLoadPromise={this.loadingPromise}
+        loadingComponentProps={{
+          spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
+          message: 'Loading users...'
+        }}
+        failStatusMessageProps={{ title: 'Unable to load users' }}>
+        <SearchableDropdown
+          name={COPY.TEAM_MANAGEMENT_SELECT_JUDGE_LABEL}
+          hideLabel
+          searchable
+          placeholder={COPY.TEAM_MANAGEMENT_SELECT_JUDGE_LABEL}
+          value={this.state.selectedJudge}
+          onChange={this.selectJudge}
+          options={this.dropdownOptions()} />
+      </LoadingDataDisplay>
+    </QueueFlowModal>;
   };
 }
 
@@ -71,8 +77,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage
 }, dispatch);
 
-const modalOptions = { title: COPY.TEAM_MANAGEMENT_ADD_JUDGE_TEAM_MODAL_TITLE,
-  pathAfterSubmit: '/team_management' };
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(editModalBase(AddJudgeTaskModal, modalOptions)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddJudgeTaskModal));
 
