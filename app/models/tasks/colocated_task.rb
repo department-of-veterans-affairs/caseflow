@@ -81,7 +81,7 @@ class ColocatedTask < Task
     if action == "translation" && appeal.is_a?(Appeal)
       core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
     end
-    
+
     core_actions
   end
 
