@@ -375,7 +375,7 @@ feature "Appeal Edit issues" do
     end
   end
 
-  context "when remove decision reviews is enabled" do
+  fcontext "when remove decision reviews is enabled" do
     before do
       FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
@@ -421,8 +421,7 @@ feature "Appeal Edit issues" do
           click_remove_issue_confirmation
         end
 
-        safe_click("#button-submit-update")
-        safe_click ".confirm"
+        click_edit_submit_and_confirm
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
         expect(RequestIssue.find_by(
@@ -440,8 +439,7 @@ feature "Appeal Edit issues" do
           visit "appeals/#{appeal.uuid}/edit"
           click_remove_intake_issue(1)
           click_remove_issue_confirmation
-          safe_click("#button-submit-update")
-          safe_click ".confirm"
+          click_edit_submit_and_confirm
         end
       end
     end

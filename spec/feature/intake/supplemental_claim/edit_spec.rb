@@ -600,13 +600,11 @@ feature "Supplemental Claim Edit issues" do
           click_remove_issue_confirmation
         end
 
-        safe_click("#button-submit-update")
-        safe_click ".confirm"
+        click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        # TODO: for some reason this test is flaky, seems like it takes some time
-        # to run the job even though job should be processed sync
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
+        sleep 1
 
         # going back to the edit page does not show any requested issues
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
@@ -619,8 +617,7 @@ feature "Supplemental Claim Edit issues" do
         # only cancel 1 of the 2 request issues
         click_remove_intake_issue(1)
         click_remove_issue_confirmation
-        safe_click("#button-submit-update")
-        safe_click ".confirm"
+        click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
@@ -632,8 +629,7 @@ feature "Supplemental Claim Edit issues" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
           click_remove_intake_issue(1)
           click_remove_issue_confirmation
-          safe_click("#button-submit-update")
-          safe_click ".confirm"
+          click_edit_submit_and_confirm
 
           expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
           expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
