@@ -197,7 +197,8 @@ feature "Higher Level Review Edit issues" do
         decision_review: another_higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Left knee granted",
-        contention_reference_id: 55
+        contention_reference_id: 55,
+        closed_at: 2.months.ago
       )
     end
 

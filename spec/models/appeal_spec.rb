@@ -118,13 +118,15 @@ describe Appeal do
   end
 
   context "ready appeals sorted by date" do
-    let!(:first_appeal) { create(:appeal, :with_tasks) }
-    let!(:second_appeal) { create(:appeal, :with_tasks) }
+    it "returns appeals with distribution tasks ordered by when they became ready for distribution" do
+      first_appeal = create(:appeal, :with_tasks)
+      first_appeal.tasks.each { |task| task.update!(assigned_at: 2.days.ago, type: "DistributionTask") }
+      second_appeal = create(:appeal, :with_tasks)
+      second_appeal.tasks.each { |task| task.update!(assigned_at: 5.days.ago, type: "DistributionTask") }
 
-    subject { Appeal.ordered_by_distribution_ready_date }
+      sorted_appeals = Appeal.ordered_by_distribution_ready_date
 
-    it "returns appeals ordered by when they became ready for distribution" do
-      expect(subject.find_index(first_appeal) < subject.find_index(second_appeal)).to eq(true)
+      expect(sorted_appeals[0]).to eq second_appeal
     end
   end
 
