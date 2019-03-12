@@ -204,7 +204,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
         expect(page).to have_content(appeal.veteran_address_line_1)
-        expect(page).to_not have_content(appeal.regional_office)
+        expect(page).to_not have_content("Regional Office")
       end
     end
 
@@ -234,7 +234,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")
-        expect(page).to_not have_content(appeal.regional_office)
+        expect(page).to_not have_content("Regional Office")
       end
     end
     context "when veteran is in BGS" do
@@ -247,7 +247,7 @@ RSpec.feature "Case details" do
         visit("/queue/appeals/#{appeal.external_id}")
         expect(page).to have_content("About the Veteran")
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
-        expect(page).to_not have_content(appeal.regional_office)
+        expect(page).to_not have_content("Regional Office")
       end
     end
 
@@ -281,7 +281,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
-        expect(page).to_not have_content(appeal.regional_office)
+        expect(page).to_not have_content("Regional Office")
       end
     end
 
