@@ -552,4 +552,94 @@ feature "Supplemental Claim Edit issues" do
       end
     end
   end
+
+  context "when remove decision reviews is enabled for supplemental_claim" do
+    before do
+      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
+      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+    end
+
+    after do
+      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
+    end
+
+    let(:today) { Time.zone.now }
+    let(:last_week) { Time.zone.now - 7.days }
+    let(:supplemental_claim) do
+      # binding.pry
+      # reload to get uuid
+      create(:supplemental_claim, veteran_file_number: veteran.file_number).reload
+    end
+    let!(:existing_request_issues) do
+      [create(:request_issue, :nonrating, decision_review: supplemental_claim),
+       create(:request_issue, :nonrating, decision_review: supplemental_claim)]
+    end
+    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+    let!(:completed_task) do
+      create(:higher_level_review_task,
+             :completed,
+             appeal: supplemental_claim,
+             assigned_to: non_comp_org,
+             closed_at: last_week)
+    end
+
+    context "when review has multiple active tasks" do
+      let!(:in_progress_task) do
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: supplemental_claim,
+               assigned_to: non_comp_org,
+               assigned_at: last_week)
+      end
+
+      scenario "cancel all active tasks when all request issues are removed" do
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+        binding.pry
+        # remove all request issues
+        supplemental_claim.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        safe_click("#button-submit-update")
+        safe_click ".confirm"
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        # todo: for some reason this test is flaky, seems like it takes some time
+        # to run the job even though job should be processed sync
+        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+
+        # going back to the edit page does not show any requested issues
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+        expect(page).not_to have_content(existing_request_issues.first.description)
+        expect(page).not_to have_content(existing_request_issues.second.description)
+      end
+
+      # scenario "no active tasks cancelled when request issues remain" do
+        # visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+        # only cancel 1 of the 2 request issues
+        # click_remove_intake_issue(1)
+        # click_remove_issue_confirmation
+        # safe_click("#button-submit-update")
+        # safe_click ".confirm"
+
+    #     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+    #     expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+    #     expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
+    #   end
+    # end
+
+    # context "when review has no active tasks" do
+    #   scenario "no tasks are cancelled when all request issues are removed" do
+    #     visit "supplemental_claims/#{rating_ep_claim_id}/edit"
+    #     click_remove_intake_issue(1)
+    #     click_remove_issue_confirmation
+    #     safe_click("#button-submit-update")
+    #     safe_click ".confirm"
+
+    #     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+    #     expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+    #   end
+    end
+  end
 end

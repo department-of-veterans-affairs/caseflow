@@ -1142,7 +1142,7 @@ feature "Higher Level Review Edit issues" do
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         # todo: for some reason this test is flaky, seems like it takes some time
         # to run the job even though job should be processed sync
-        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
 
         # going back to the edit page does not show any requested issues
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
