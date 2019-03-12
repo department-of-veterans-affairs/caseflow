@@ -582,8 +582,7 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              decision_review: appeal,
              contested_issue_description: "Really old injury",
-             untimely_exemption: false,
-             untimely_exemption_notes: "I am an exemption note"
+             untimely_exemption: false
            )).to_not be_nil
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(

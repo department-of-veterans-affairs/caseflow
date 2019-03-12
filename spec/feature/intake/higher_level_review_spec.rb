@@ -984,7 +984,6 @@ feature "Higher-Level Review" do
           contested_issue_description: "Really old injury",
           end_product_establishment_id: nil,
           untimely_exemption: false,
-          untimely_exemption_notes: "I am an exemption note",
           benefit_type: "compensation",
           ineligible_reason: "untimely"
         )
