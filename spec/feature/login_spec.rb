@@ -82,6 +82,29 @@ RSpec.feature "Login" do
         expect(current_path).to eq("/unauthorized")
       end
     end
+
+    context "User is in the BGS VSO org" do
+      let(:vso_participant_id) { "12345" }
+      let(:organization) { create(:vso, participant_id: vso_participant_id) }
+
+      before do
+        allow_any_instance_of(User).to receive(:vsos_user_represents).and_return(
+          [{ participant_id: vso_participant_id }]
+        )
+      end
+
+      scenario "user is presented with RO selection page and redirects to initial location" do
+        visit "organizations/#{organization.url}"
+
+        expect(current_path).to eq("/login")
+
+        select_ro_from_dropdown
+        click_on("Log in")
+
+        expect(page).to have_content(organization.name)
+        expect(current_path).to eq("/organizations/#{organization.url}")
+      end
+    end
   end
 
   # :nocov:
