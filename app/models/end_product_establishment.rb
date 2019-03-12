@@ -341,7 +341,7 @@ class EndProductEstablishment < ApplicationRecord
   def close_request_issues_if_canceled!
     return unless status_canceled?
 
-    request_issues.all.each(&:close_after_end_product_canceled!)
+    request_issues.all.find_each(&:close_after_end_product_canceled!)
   end
 
   def fetch_associated_rating
