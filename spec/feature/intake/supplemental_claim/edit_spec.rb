@@ -497,7 +497,7 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
-      new_request_issue = supplemental_claim.reload.open_request_issues.first
+      new_request_issue = supplemental_claim.reload.request_issues.active.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.decision_review).to_not be_nil
       expect(request_issue.contention_removed_at).to eq(Time.zone.now)
