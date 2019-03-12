@@ -71,6 +71,7 @@ class ColocatedTask < Task
       send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
       return core_actions.unshift(send_to_team)
     end
+    
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
 
     if action == "schedule_hearing"
