@@ -38,6 +38,52 @@ RSpec.feature "Login" do
     find("#react-select-2--option-0").click
   end
 
+  context "VSO user has multple RO values" do
+    let(:user) { create(:user, css_id: "ANNE MERICA", station_id: "351") }
+    let(:organization) { create(:organization) }
+
+    before do
+      Fakes::AuthenticationService.user_session = {
+        "id" => user.css_id,
+        "roles" => ["VSO"],
+        "station_id" => user.station_id,
+        "email" => "world@example.com"
+      }
+    end
+
+    context "User is in the Org they are trying to view" do
+      before do
+        OrganizationsUser.add_user_to_organization(user, organization)
+      end
+
+      scenario "user is presented with RO selection page and redirects to initial location" do
+        visit "organizations/#{organization.url}"
+
+        expect(current_path).to eq("/login")
+
+        select_ro_from_dropdown
+        click_on("Log in")
+
+        expect(page).to have_content(organization.name)
+        expect(current_path).to eq("/organizations/#{organization.url}")
+      end
+    end
+
+    context "User is not in the Org they are trying to view" do
+      scenario "user is presented with RO selection page and gets 403 /unauthorized error" do
+        visit "organizations/#{organization.url}"
+
+        expect(current_path).to eq("/login")
+
+        select_ro_from_dropdown
+        click_on("Log in")
+
+        expect(page).to have_content("Unauthorized")
+        expect(current_path).to eq("/unauthorized")
+      end
+    end
+  end
+
   # :nocov:
   # https://stackoverflow.com/questions/36472930/session-sometimes-not-persisting-in-capybara-selenium-test
   scenario "with valid credentials",
