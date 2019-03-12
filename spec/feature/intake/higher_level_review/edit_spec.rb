@@ -1140,7 +1140,7 @@ feature "Higher Level Review Edit issues" do
         safe_click ".confirm"
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
-        # todo: for some reason this test is flaky, seems like it takes some time
+        # TODO: for some reason this test is flaky, seems like it takes some time
         # to run the job even though job should be processed sync
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
 
