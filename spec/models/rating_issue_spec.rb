@@ -178,12 +178,5 @@ describe RatingIssue do
 
       expect(rating_issue.title_of_active_review).to be_nil
     end
-
-    it "returns nil if similar RequestIssue exists for inactive EPE" do
-      inactive_request_issue
-      rating_issue = RatingIssue.new(reference_id: reference_id)
-
-      expect(rating_issue.title_of_active_review).to be_nil
-    end
   end
 end

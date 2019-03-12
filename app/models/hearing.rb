@@ -74,6 +74,24 @@ class Hearing < ApplicationRecord
     false
   end
 
+  def hearing_task?
+    !hearing_task_association.nil?
+  end
+
+  def disposition_task
+    if hearing_task?
+      hearing_task_association.hearing_task.children.detect { |child| child.type == DispositionTask.name }
+    end
+  end
+
+  def disposition_task_in_progress
+    disposition_task ? disposition_task.active_with_no_children? : false
+  end
+
+  def disposition_editable
+    disposition_task_in_progress || !hearing_task?
+  end
+
   def scheduled_for
     DateTime.new.in_time_zone(regional_office_timezone).change(
       year: hearing_day.scheduled_for.year,
@@ -148,7 +166,8 @@ class Hearing < ApplicationRecord
         :location,
         :worksheet_issues,
         :closest_regional_office,
-        :available_hearing_locations
+        :available_hearing_locations,
+        :disposition_editable
       ]
     )
   end

@@ -6,7 +6,31 @@ RSpec.feature "AmaQueue" do
   def valid_document_id
     "12345-12345678"
   end
+  context "user with case details role " do
+    let!(:appeal) { FactoryBot.create(:appeal) }
+    let(:no_queue_user) { FactoryBot.create(:user, roles: ["Case Details"]) }
 
+    it "should not be able to access queue and redirect to search" do
+      step "case details role tries to access queue" do
+        User.authenticate!(user: no_queue_user)
+        visit "/queue"
+        expect(page).to have_content("Search")
+        expect(current_path).to eq "/search"
+      end
+    end
+    it "should be able to search for a case" do
+      step "by veteran file number" do
+        User.authenticate!(user: no_queue_user)
+        visit "/queue"
+        expect(page).to have_content("Search")
+        expect(current_path).to eq "/search"
+        fill_in("searchBarEmptyList", with: appeal.veteran_file_number)
+        click_on("submit-search-searchBarEmptyList")
+        click_on(appeal.docket_number)
+        expect(page).to_not have_content("Veteran Documents")
+      end
+    end
+  end
   context "loads appellant detail view" do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
@@ -148,7 +172,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(poa_address)
 
         expect(page.text).to match(/View (\d+) docs/)
-        expect(page).to have_selector("text", id: "NEW")
+        expect(page).not_to have_selector("text", id: "NEW")
         expect(page).to have_content("5 docs")
 
         find("a", text: /View (\d+) docs/).click
