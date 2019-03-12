@@ -519,9 +519,8 @@ feature "Appeal Intake" do
       description: "Another Description for Active Duty Adjustments",
       date: untimely_date.mdY
     )
-    add_untimely_exemption_response("No", "I am an untimely exemption")
+    add_untimely_exemption_response("No")
     expect(page).to have_content("6 issues")
-    expect(page).to have_content("I am an untimely exemption")
     expect(page).to have_content(
       "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )

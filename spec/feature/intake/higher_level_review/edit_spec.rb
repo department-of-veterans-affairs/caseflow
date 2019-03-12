@@ -424,7 +424,7 @@ feature "Higher Level Review Edit issues" do
         legacy_issues: true
       )
       add_intake_rating_issue("None of these match")
-      add_untimely_exemption_response("No", "I am a nonrating exemption note")
+      add_untimely_exemption_response("No")
 
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(

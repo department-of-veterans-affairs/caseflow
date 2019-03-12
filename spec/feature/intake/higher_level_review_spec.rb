@@ -866,9 +866,8 @@ feature "Higher-Level Review" do
         description: "Another Description for Active Duty Adjustments",
         date: "04/19/2016"
       )
-      add_untimely_exemption_response("No", "I am a nonrating exemption note")
+      add_untimely_exemption_response("No")
       expect(page).to have_content("6 issues")
-      expect(page).to have_content("I am a nonrating exemption note")
       expect(page).to have_content(
         "Another Description for Active Duty Adjustments #{ineligible_constants.untimely}"
       )
