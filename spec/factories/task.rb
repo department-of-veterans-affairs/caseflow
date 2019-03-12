@@ -43,6 +43,14 @@ FactoryBot.define do
       assigned_to { Bva.singleton }
     end
 
+    factory :distribution_task, class: DistributionTask do
+      type { DistributionTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+      assigned_to { Bva.singleton }
+      status { Constants.TASK_STATUSES.on_hold }
+    end
+
     factory :generic_task do
       type { GenericTask.name }
       appeal { create(:appeal) }

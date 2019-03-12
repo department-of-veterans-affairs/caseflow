@@ -3,6 +3,7 @@
 describe NoShowHearingTask do
   let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
   let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+  let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
 
   describe ".create!" do
     it "is automatically assigned to the HearingAdmin organization" do
@@ -11,7 +12,7 @@ describe NoShowHearingTask do
   end
 
   describe ".reschedule_hearing" do
-    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
     let!(:completed_scheduling_task) do
       FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     end
@@ -28,11 +29,13 @@ describe NoShowHearingTask do
         expect(disposition_task.status).to eq(Constants.TASK_STATUSES.completed)
         expect(no_show_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
 
-        expect(root_task.children.count).to eq(2)
-        expect(root_task.children.active.count).to eq(1)
+        expect(distribution_task.children.count).to eq(2)
+        expect(distribution_task.children.active.count).to eq(1)
 
-        expect(root_task.children.active.first.type).to eq(HearingTask.name)
-        expect(root_task.children.active.first.children.first.type).to eq(ScheduleHearingTask.name)
+        expect(distribution_task.children.active.first.type).to eq(HearingTask.name)
+        expect(distribution_task.children.active.first.children.first.type).to eq(ScheduleHearingTask.name)
+
+        expect(distribution_task.ready_for_distribution?).to eq(false)
       end
     end
 
@@ -45,7 +48,9 @@ describe NoShowHearingTask do
         expect(disposition_task.reload.active?).to eq(true)
         expect(no_show_hearing_task.reload.active?).to eq(true)
 
-        expect(root_task.children.count).to eq(1)
+        expect(distribution_task.children.count).to eq(1)
+
+        expect(distribution_task.reload.ready_for_distribution?).to eq(false)
       end
     end
   end

@@ -13,7 +13,8 @@ RSpec.feature "Hearings tasks workflows" do
   describe "Postponing a NoShowHearingTask" do
     let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
     let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
+    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
     let!(:completed_scheduling_task) do
       FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     end
@@ -23,8 +24,8 @@ RSpec.feature "Hearings tasks workflows" do
     end
 
     it "closes current branch of task tree and starts a new one" do
-      expect(root_task.children.count).to eq(1)
-      expect(root_task.children.active.count).to eq(1)
+      expect(distribution_task.children.count).to eq(1)
+      expect(distribution_task.children.active.count).to eq(1)
 
       visit("/queue/appeals/#{appeal.uuid}")
       click_dropdown(text: Constants.TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.label)
@@ -32,12 +33,14 @@ RSpec.feature "Hearings tasks workflows" do
 
       expect(page).to have_content("Success")
 
-      expect(root_task.children.count).to eq(2)
-      expect(root_task.children.active.count).to eq(1)
+      expect(distribution_task.children.count).to eq(2)
+      expect(distribution_task.children.active.count).to eq(1)
 
-      new_parent_hearing_task = root_task.children.active.first
+      new_parent_hearing_task = distribution_task.children.active.first
       expect(new_parent_hearing_task).to be_a(HearingTask)
       expect(new_parent_hearing_task.children.first).to be_a(ScheduleHearingTask)
+
+      expect(distribution_task.ready_for_distribution?).to eq(false)
     end
   end
 end

@@ -104,7 +104,8 @@ class SeedDB
   def create_no_show_hearings_task
     appeal = FactoryBot.create(:appeal, :hearing_docket)
     root_task = FactoryBot.create(:root_task, appeal: appeal)
-    parent_hearing_task = FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal)
+    distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
+    parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
     FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
     FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)

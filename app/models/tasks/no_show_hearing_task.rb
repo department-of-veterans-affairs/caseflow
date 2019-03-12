@@ -16,7 +16,8 @@ class NoShowHearingTask < GenericTask
   def reschedule_hearing
     multi_transaction do
       update!(status: Constants.TASK_STATUSES.completed)
-      ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+      # Attach the new task to the same parent as the previous HearingTask.
+      ScheduleHearingTask.create!(appeal: appeal, parent: ancestor_task_of_type(HearingTask)&.parent)
     end
   end
 
