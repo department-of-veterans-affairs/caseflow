@@ -649,7 +649,7 @@ class Appeal < DecisionReview
   end
 
   def issues_hash
-    issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
+    issue_list = decision_issues.empty? ? request_issues.open.select(&:eligible?) : fetch_all_decision_issues
 
     return [] if issue_list.empty?
 
