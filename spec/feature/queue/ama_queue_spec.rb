@@ -400,6 +400,116 @@ RSpec.feature "AmaQueue" do
       end
     end
   end
+  context "loads appellant detail view with no POA" do
+    let(:attorney_first_name) { "Robby" }
+    let(:attorney_last_name) { "McDobby" }
+    let!(:attorney_user) do
+      FactoryBot.create(:user, roles: ["Reader"], full_name: "#{attorney_first_name} #{attorney_last_name}")
+    end
+
+    let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
+
+    let!(:user) do
+      User.authenticate!(user: attorney_user)
+    end
+
+    before do
+      Fakes::Initializer.load!
+      FeatureToggle.enable!(:queue_beaam_appeals)
+
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return(
+        appeals.first.claimants.first.participant_id => {
+          representative_name: nil,
+          representative_type: nil,
+          participant_id: participant_id
+        }
+      )
+    end
+
+    after do
+      FeatureToggle.disable!(:queue_beaam_appeals)
+    end
+
+    let(:poa_address) { nil }
+    let(:participant_id) { "600153863" }
+    let!(:root_task) { FactoryBot.create(:root_task) }
+    let!(:parent_task) do
+      FactoryBot.create(:ama_judge_task, assigned_to: judge_user, appeal: appeals.first, parent: root_task)
+    end
+
+    let(:poa_name) { nil }
+    let(:veteran_participant_id) { "600085544" }
+    let(:file_numbers) { Array.new(3) { Random.rand(999_999_999).to_s } }
+    let!(:appeals) do
+      [
+        FactoryBot.create(
+          :appeal,
+          :advanced_on_docket_due_to_age,
+          veteran: FactoryBot.create(
+            :veteran,
+            participant_id: veteran_participant_id,
+            first_name: "Pal",
+            bgs_veteran_record: { first_name: "Pal" },
+            file_number: file_numbers[0]
+          ),
+          documents: FactoryBot.create_list(:document, 5, file_number: file_numbers[0], upload_date: 3.days.ago),
+          request_issues: build_list(:request_issue, 3, contested_issue_description: "Knee pain")
+        ),
+        FactoryBot.create(
+          :appeal,
+          veteran: FactoryBot.create(:veteran, file_number: file_numbers[1]),
+          documents: FactoryBot.create_list(:document, 4, file_number: file_numbers[1]),
+          request_issues: build_list(:request_issue, 2, contested_issue_description: "PTSD")
+        ),
+        FactoryBot.create(
+          :appeal,
+          number_of_claimants: 1,
+          veteran: FactoryBot.create(:veteran, file_number: file_numbers[2]),
+          documents: FactoryBot.create_list(:document, 3, file_number: file_numbers[2]),
+          request_issues: build_list(:request_issue, 1, contested_issue_description: "Tinnitus")
+        )
+      ]
+    end
+
+    context "when appeals have tasks" do
+      let!(:attorney_tasks) do
+        [
+          FactoryBot.create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            parent: parent_task,
+            appeal: appeals.first
+          ),
+          FactoryBot.create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.second
+          ),
+          FactoryBot.create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: appeals.third
+          )
+        ]
+      end
+
+      scenario "veteran is the appellant - no POA should appear and the appropriate UI message" do
+        visit "/queue"
+
+        click_on appeals.first.veteran.first_name
+        expect(page).to have_content("About the Veteran", wait: 10)
+        expect(page).to_not have_content("Test POA")
+        expect(page).to_not have_content("123 Poplar St.")
+        expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
+      end
+    end
+  end
 
   context "QR flow" do
     let(:veteran_first_name) { "Marissa" }
