@@ -856,7 +856,6 @@ feature "Higher-Level Review" do
       add_intake_rating_issue("Really old injury")
       add_untimely_exemption_response("No")
       expect(page).to have_content("5 issues")
-      expect(page).to have_content("I am an exemption note")
       expect(page).to have_content("5. Really old injury #{ineligible_constants.untimely}")
 
       # add untimely nonrating request issue

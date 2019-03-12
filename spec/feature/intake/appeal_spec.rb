@@ -508,7 +508,6 @@ feature "Appeal Intake" do
     add_intake_rating_issue("Really old injury")
     add_untimely_exemption_response("No")
     expect(page).to have_content("5 issues")
-    expect(page).to have_content("I am an exemption note")
     expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
     expect_ineligible_issue(5)
 
