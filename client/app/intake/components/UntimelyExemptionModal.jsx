@@ -104,7 +104,7 @@ class UntimelyExemptionModal extends React.Component {
         />
 
         {
-          this.state.untimelyExemption === true && <TextField
+          this.state.untimelyExemption === 'true' && <TextField
             name="Notes"
             optional
             strongLabel

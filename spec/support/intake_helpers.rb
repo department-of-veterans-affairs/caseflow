@@ -147,7 +147,7 @@ module IntakeHelpers
   def add_untimely_exemption_response(yes_or_no, note = "I am an exemption note")
     expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
     find_all("label", text: yes_or_no).first.click
-    fill_in "Notes", with: note
+    fill_in "Notes", with: note if yes_or_no == "Yes"
     safe_click ".add-issue"
   end
 
