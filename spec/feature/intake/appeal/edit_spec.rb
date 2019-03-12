@@ -375,7 +375,7 @@ feature "Appeal Edit issues" do
     end
   end
 
-  fcontext "when remove decision reviews is enabled" do
+  context "when remove decision reviews is enabled" do
     before do
       FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
