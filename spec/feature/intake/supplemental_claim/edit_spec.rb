@@ -592,7 +592,7 @@ feature "Supplemental Claim Edit issues" do
                assigned_at: last_week)
       end
 
-      scenario "cancel all active tasks when all request issues are removed" do
+      fscenario "cancel all active tasks when all request issues are removed" do
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
         # remove all request issues
         supplemental_claim.request_issues.length.times do
@@ -602,6 +602,8 @@ feature "Supplemental Claim Edit issues" do
 
         click_edit_submit_and_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+
+        sleep 1
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
 

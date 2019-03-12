@@ -432,6 +432,8 @@ feature "Appeal Edit issues" do
         visit "appeals/#{appeal.uuid}/edit"
         expect(page).not_to have_content(existing_request_issues.first.description)
         expect(page).not_to have_content(existing_request_issues.second.description)
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
 
       context "when review has no active tasks" do
@@ -440,6 +442,7 @@ feature "Appeal Edit issues" do
           click_remove_intake_issue(1)
           click_remove_issue_confirmation
           click_edit_submit_and_confirm
+          expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         end
       end
     end
