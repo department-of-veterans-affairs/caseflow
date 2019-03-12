@@ -13,7 +13,7 @@
     "JUDGE_AMA_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/dispositions"  },
     "JUDGE_RETURN_TO_ATTORNEY": { "label": "Return to attorney", "value": "modal/return_to_attorney", "func": "return_to_attorney_data" },
     "MARK_COMPLETE": { "label": "Mark task complete", "value": "modal/mark_task_complete", "func": "complete_data" },
-    "MARK_NO_SHOW_HEARING_COMPLETE": { "label": "Mark task complete", "value": "modal/mark_task_complete", "func": "complete_data" },
+    "MARK_NO_SHOW_HEARING_COMPLETE": { "label": "Mark task complete: Release case for review", "value": "modal/mark_task_complete", "func": "complete_data" },
     "PLACE_HOLD": { "label": "Place hold", "value": "place_hold" },
     "REASSIGN_TO_PERSON": { "label": "Re-assign to person", "value": "modal/reassign_to_person", "func": "assign_to_user_data" },
     "RESCHEDULE_HEARING": { "label": "Mark as complete: Reschedule hearing", "value": "modal/cancel_task", "func": "assign_to_hearing_schedule_team_data" },
