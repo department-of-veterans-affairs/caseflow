@@ -374,4 +374,76 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("This appeal has been outcoded and the issues are no longer editable.")
     end
   end
+
+  context "when remove decision reviews is enabled" do
+    before do
+      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
+      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+    end
+
+    after do
+      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
+    end
+
+    let(:today) { Time.zone.now }
+    let(:last_week) { Time.zone.now - 7.days }
+    let(:appeal) do
+      # reload to get uuid
+      create(:appeal, veteran_file_number: veteran.file_number).reload
+    end
+    let!(:existing_request_issues) do
+      [create(:request_issue, :nonrating, decision_review: appeal),
+       create(:request_issue, :nonrating, decision_review: appeal)]
+    end
+    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+    let!(:completed_task) do
+      create(:higher_level_review_task,
+             :completed,
+             appeal: appeal,
+             assigned_to: non_comp_org,
+             closed_at: last_week)
+    end
+
+    context "when review has multiple active tasks" do
+      let!(:in_progress_task) do
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: appeal,
+               assigned_to: non_comp_org,
+               assigned_at: last_week)
+      end
+
+      scenario "cancel all active tasks when all request issues are removed" do
+        visit "appeals/#{appeal.uuid}/edit"
+        # remove all request issues
+        appeal.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        safe_click("#button-submit-update")
+        safe_click ".confirm"
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+        expect(RequestIssue.find_by(
+                 benefit_type: "compensation",
+                 veteran_participant_id: nil
+               )).to_not be_nil
+
+        visit "appeals/#{appeal.uuid}/edit"
+        expect(page).not_to have_content(existing_request_issues.first.description)
+        expect(page).not_to have_content(existing_request_issues.second.description)
+      end
+
+      context "when review has no active tasks" do
+        scenario "no tasks are cancelled when all request issues are removed" do
+          visit "appeals/#{appeal.uuid}/edit"
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+          safe_click("#button-submit-update")
+          safe_click ".confirm"
+        end
+      end
+    end
+  end
 end
