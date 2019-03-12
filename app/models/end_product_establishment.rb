@@ -238,7 +238,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def request_issues
-    return ActiveRecord::NullRelation unless source.try(:request_issues)
+    return RequestIssue.none unless source.try(:request_issues)
 
     source.request_issues.where(end_product_establishment_id: id)
   end
