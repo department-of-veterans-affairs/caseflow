@@ -513,7 +513,7 @@ class Appeal < DecisionReview
     {
       type: api_scheduled_hearing_type,
       date: scheduled_hearing.scheduled_for.to_date,
-      location: scheduled_hearing.hearing_location.try(name)
+      location: scheduled_hearing.try(:hearing_location).try(&:name)
     }
   end
 
