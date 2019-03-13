@@ -57,8 +57,6 @@ class RequestIssue < ApplicationRecord
     stayed: "stayed"
   }
 
-  scope :active_or_decided, -> { active.or(decided) }
-
   before_save :set_contested_rating_issue_profile_date
 
   class ErrorCreatingDecisionIssue < StandardError
@@ -165,6 +163,10 @@ class RequestIssue < ApplicationRecord
 
     def active_or_ineligible
       where(closed_at: nil)
+    end
+
+    def active_or_decided
+      active.or(decided)
     end
 
     def unidentified
