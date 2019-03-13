@@ -36,8 +36,8 @@ describe VacolsHelper do
       end
       let(:required_keys) { [:foo, :grip] }
 
-      it "raises an error" do
-        expect { subject }.to_not raise_error(Caseflow::Error::MissingRequiredFieldError)
+      it "does not raise an error" do
+        expect { subject }.to_not raise_error
       end
     end
   end
