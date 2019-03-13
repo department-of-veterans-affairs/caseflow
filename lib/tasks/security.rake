@@ -2,7 +2,6 @@
 
 require "open3"
 require "rainbow"
-require "date"
 
 desc "shortcut to run all security tools, at the same time."
 task :security_caseflow do
@@ -18,11 +17,11 @@ task :security_caseflow do
   snoozed_cves = [
     # Example:
     # { cve_name: "CVE-2018-1000201", until: Time.zone.local(2018, 9, 10) }
-    { cve_name: "CVE-2019-5420", until: Date.new(2019, 03, 30) }
+    { cve_name: "CVE-2019-5420", until: Time.utc(2019, 3, 30) }
   ]
 
   alerting_cves = snoozed_cves
-    .select { |cve| cve[:until] >= Date.today }
+    .select { |cve| cve[:until] >= Time.now.utc }
     .map { |cve| cve[:cve_name] }
 
   audit_cmd = "bundle-audit check --ignore=#{alerting_cves.join(' ')}"
