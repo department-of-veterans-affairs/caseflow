@@ -17,9 +17,14 @@ namespace :users do
     end
   end
 
+  def load_all_models
+    ::Rails.application.eager_load!
+  end
+
   def models_with_user_id
+    load_all_models unless @models_with_user_id
     @models_with_user_id ||= ActiveRecord::Base.descendants.reject(&:abstract_class?)
-      .select { |c| c.attribute_names.include?("user_id") }
+      .select { |c| c.attribute_names.include?("user_id") }.uniq
   end
 
   def report_user_related_records(user)

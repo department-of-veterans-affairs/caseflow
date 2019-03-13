@@ -128,10 +128,13 @@ feature "Appeal Edit issues" do
     click_remove_intake_issue(nonrating_intake_num)
     click_remove_issue_confirmation
     expect(page).not_to have_content(nonrating_request_issue.description)
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # add a different issue
     click_intake_add_issue
     add_intake_rating_issue("Left knee granted")
+    # save flash should still occur because issues are different
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # save
     expect(page).to have_content("Left knee granted")
@@ -163,6 +166,7 @@ feature "Appeal Edit issues" do
     click_remove_intake_issue(issue_num)
     click_remove_issue_confirmation
     expect(page).not_to have_content(issue_description)
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # re-add
     click_intake_add_issue
@@ -171,9 +175,26 @@ feature "Appeal Edit issues" do
     expect(page).to_not have_content(
       Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
     )
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # issue note was added
     expect(page).to have_button("Save", disabled: false)
+  end
+
+  context "with remove decision review enabled" do
+    before do
+      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
+    end
+
+    scenario "allows all request issues to be removed and saved" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      # remove all issues
+      click_remove_intake_issue(1)
+      click_remove_issue_confirmation
+      click_remove_intake_issue(1)
+      click_remove_issue_confirmation
+      expect(page).to have_button("Save", disabled: false)
+    end
   end
 
   context "ratings with disabiliity codes" do
@@ -236,6 +257,7 @@ feature "Appeal Edit issues" do
 
     context "with legacy_opt_in_approved" do
       let(:legacy_opt_in_approved) { true }
+
       scenario "adding issues" do
         visit "appeals/#{appeal.uuid}/edit/"
 

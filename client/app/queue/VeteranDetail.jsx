@@ -33,8 +33,7 @@ export class VeteranDetail extends React.PureComponent {
       full_name,
       gender,
       date_of_birth: dob,
-      date_of_death: dod,
-      regional_office: regionalOffice
+      date_of_death: dod
     } = this.props.veteranInfo.veteran;
 
     const details = [{
@@ -73,21 +72,16 @@ export class VeteranDetail extends React.PureComponent {
       });
     }
 
-    if (regionalOffice) {
-      const { city, key } = regionalOffice;
-
-      details.push({
-        label: 'Regional Office',
-        value: `${city} (${key.replace('RO', '')})`
-      });
-    }
-
     const getDetailField = ({ label, value }) => () => <React.Fragment>
       <span {...boldText}>{label}:</span> {value}
     </React.Fragment>;
 
     return <BareList ListElementComponent="ul" items={details.map(getDetailField)} />;
   };
+
+  getDataSourceInfo = () => {
+    return <p><em>{COPY.CASE_DETAILS_VETERAN_ADDRESS_SOURCE}</em></p>;
+  }
 
   render = () => {
     if (!this.props.veteranInfo) {
@@ -105,15 +99,17 @@ export class VeteranDetail extends React.PureComponent {
 
     return <ul {...detailListStyling}>
       {this.getDetails()}
+      {this.getDataSourceInfo()}
     </ul>;
   };
 }
 
 const mapStateToProps = (state, ownProps) => {
   const loadingVeteranInfo = _.get(state.queue.loadingAppealDetail[ownProps.appealId], 'veteranInfo');
+  const appeal = appealWithDetailSelector(state, { appealId: ownProps.appeal.externalId });
 
   return {
-    veteranInfo: appealWithDetailSelector(state, { appealId: ownProps.appeal.externalId }).veteranInfo,
+    veteranInfo: appeal.veteranInfo,
     loading: loadingVeteranInfo ? loadingVeteranInfo.loading : null,
     error: loadingVeteranInfo ? loadingVeteranInfo.error : null
   };

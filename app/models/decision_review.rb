@@ -4,8 +4,6 @@ class DecisionReview < ApplicationRecord
   include CachedAttributes
   include Asyncable
 
-  validate :validate_receipt_date
-
   self.abstract_class = true
 
   attr_reader :saving_review
@@ -102,7 +100,7 @@ class DecisionReview < ApplicationRecord
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: open_request_issues.map(&:ui_hash),
+      requestIssues: request_issues_ui_hash,
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
@@ -192,14 +190,9 @@ class DecisionReview < ApplicationRecord
   end
 
   def active_nonrating_request_issues
-    @active_nonrating_request_issues ||= RequestIssue.nonrating.open
+    @active_nonrating_request_issues ||= RequestIssue.nonrating.active
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
-      .select(&:status_active?)
-  end
-
-  def open_request_issues
-    request_issues.includes(:decision_review, :contested_decision_issue).open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
@@ -217,10 +210,18 @@ class DecisionReview < ApplicationRecord
 
   def create_remand_supplemental_claims!
     decision_issues.remanded.uncontested.each(&:find_or_create_remand_supplemental_claim!)
-    remand_supplemental_claims.each(&:create_remand_issues!)
-    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
-    remand_supplemental_claims.each(&:submit_for_processing!)
-    remand_supplemental_claims.each(&:start_processing_job!)
+
+    remand_supplemental_claims.each do |rsc|
+      rsc.create_remand_issues!
+      rsc.create_decision_review_task_if_required!
+
+      delay = rsc.receipt_date.future? ? rsc.receipt_date : 0
+      rsc.submit_for_processing!(delay: delay)
+
+      unless rsc.processed? || rsc.receipt_date.future?
+        rsc.start_processing_job!
+      end
+    end
   end
 
   def active_remanded_claims
@@ -276,6 +277,10 @@ class DecisionReview < ApplicationRecord
   end
 
   private
+
+  def request_issues_ui_hash
+    request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible.map(&:ui_hash)
+  end
 
   def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass

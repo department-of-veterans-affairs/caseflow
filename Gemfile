@@ -70,8 +70,7 @@ gem "uglifier", ">= 1.3.0"
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
-  # set require: 'oci8' here because bootsnap creates a warning: https://github.com/rails/rails/issues/32811#issuecomment-386541855
-  gem "ruby-oci8", "~> 2.2.5.1", require: "oci8"
+  gem "ruby-oci8", "~> 2.2"
 end
 
 group :test, :development, :demo do

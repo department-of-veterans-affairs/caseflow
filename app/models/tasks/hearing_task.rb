@@ -7,4 +7,19 @@
 
 class HearingTask < GenericTask
   has_one :hearing_task_association
+  before_validation :set_assignee
+
+  private
+
+  def set_assignee
+    self.assigned_to = Bva.singleton
+  end
+
+  def update_status_if_children_tasks_are_complete
+    if children.select(&:active?).empty?
+      return update!(status: :cancelled) if children.select { |c| c.type == DispositionTask.name && c.cancelled? }.any?
+    end
+
+    super
+  end
 end

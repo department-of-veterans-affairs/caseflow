@@ -33,6 +33,24 @@ class LegacyHearing < ApplicationRecord
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
 
+  def hearing_task?
+    !hearing_task_association.nil?
+  end
+
+  def disposition_task
+    if hearing_task?
+      hearing_task_association.hearing_task.children.detect { |child| child.type == DispositionTask.name }
+    end
+  end
+
+  def disposition_task_in_progress
+    disposition_task ? disposition_task.active_with_no_children? : false
+  end
+
+  def disposition_editable
+    disposition_task_in_progress || !hearing_task?
+  end
+
   def judge
     user
   end
@@ -167,6 +185,7 @@ class LegacyHearing < ApplicationRecord
   def to_hash(current_user_id)
     serializable_hash(
       methods: [
+        :disposition_editable,
         :scheduled_for,
         :readable_request_type,
         :disposition,
@@ -212,6 +231,7 @@ class LegacyHearing < ApplicationRecord
       end
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   def fetch_veteran_age
     veteran_age
@@ -295,4 +315,3 @@ class LegacyHearing < ApplicationRecord
     end
   end
 end
-# rubocop:enable Metrics/MethodLength
