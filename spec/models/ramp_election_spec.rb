@@ -23,6 +23,54 @@ describe RampElection do
           established_at: established_at)
   end
 
+  context "#end_product_establishment" do
+    subject { ramp_election.end_product_establishment }
+
+    context "when there is a preexisting_end_product_establishment" do
+      let!(:preexisting_end_product_establishment) do
+        create(
+          :end_product_establishment,
+          veteran_file_number: veteran_file_number,
+          source: ramp_election,
+          modifier: "683"
+        )
+      end
+
+      it "returns the preexisting_end_product_establishment" do
+        expect(subject).to eq(preexisting_end_product_establishment)
+      end
+    end
+
+    context "when there is not a preexisting_end_product_establishment" do
+      let(:option_selected) { "supplemental_claim" }
+
+      context "when the new_end_product_establishment has a preexisting_end_product" do
+        let!(:end_product) do
+          Generators::EndProduct.build(
+            veteran_file_number: veteran_file_number,
+            bgs_attrs: {
+              claim_receive_date: receipt_date.to_formatted_s(:short_date),
+              end_product_type_code: "683",
+              claim_type_code: "683SCRRRAMP"
+            }
+          )
+        end
+
+        it "saves to the DB with the preexisting_end_product's claim_id" do
+          expect(subject.id).to_not be_nil
+          expect(subject.reference_id).to eq(end_product.claim_id)
+        end
+      end
+
+      context "when the new_end_product_establishment does not have a preexisting_end_product" do
+        it "does not save to the database" do
+          expect(subject.id).to be_nil
+          expect(subject.reference_id).to be_nil
+        end
+      end
+    end
+  end
+
   context "#on_sync" do
     before { ramp_election.save! }
     subject { ramp_election.on_sync(end_product_establishment) }

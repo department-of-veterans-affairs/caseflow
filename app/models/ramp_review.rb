@@ -125,7 +125,7 @@ class RampReview < ApplicationRecord
       benefit_type_code: veteran.benefit_type_code,
       user: intake_processed_by
     ).tap do |new_epe|
-      update!(reference_id: new_epe.preexisting_end_product.claim_id) if new_epe.preexisting_end_product
+      new_epe.update!(reference_id: new_epe.preexisting_end_product.claim_id) if new_epe.preexisting_end_product
     end
   end
 
