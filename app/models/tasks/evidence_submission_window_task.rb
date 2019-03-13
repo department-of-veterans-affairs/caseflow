@@ -1,16 +1,18 @@
+# frozen_string_literal: true
+
+##
+# Task that signals that a case now has a 90-day window for appellant to submit additional evidence.
+# The evidence window may be waived by an appellant.
+
 class EvidenceSubmissionWindowTask < GenericTask
   include TimeableTask
-  after_update :create_vso_subtask, if: :status_changed_to_completed_and_has_parent?
 
   def when_timer_ends
+    RootTask.create_ihp_tasks!(appeal, parent)
     update!(status: :completed)
   end
 
-  def create_vso_subtask
-    RootTask.create_vso_subtask!(appeal, parent)
-  end
-
-  def self.timer_delay
-    90.days
+  def timer_ends_at
+    appeal.receipt_date + 90.days
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::HearingDayController < HearingScheduleController
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
 
@@ -29,7 +31,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
     hearings, regional_office = fetch_hearings(hearing_day_hash, params[:id]).values_at(:hearings, :regional_office)
 
-    hearing_day_options = HearingDay.hearing_days_with_hearings_hash(
+    hearing_day_options = HearingDay.open_hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 365.days,
       regional_office
@@ -50,7 +52,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearing_days_with_hearings = HearingDay.hearing_days_with_hearings_hash(
+    hearing_days_with_hearings = HearingDay.open_hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
       regional_office,
@@ -94,22 +96,17 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def fetch_hearings(hearing_day, id)
-    if hearing_day[:request_type] == "V"
-      {
-        hearings: HearingRepository.fetch_video_hearings_for_parent(id),
-        regional_office: hearing_day[:regional_office]
-      }
-    elsif hearing_day[:request_type] == "C"
-      {
-        hearings: HearingRepository.fetch_co_hearings_for_date(hearing_day[:scheduled_for]),
-        regional_office: "C"
-      }
-    else
-      {
+    unless hearing_day[:request_type] == "V" || hearing_day[:request_type] == "C"
+      return {
         hearings: [],
         regional_office: nil
       }
     end
+
+    {
+      hearings: HearingRepository.fetch_hearings_for_parent(id),
+      regional_office: (hearing_day[:request_type] == "C") ? "C" : hearing_day[:regional_office]
+    }
   end
 
   def update_params
@@ -178,6 +175,7 @@ class Hearings::HearingDayController < HearingScheduleController
       converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
+                       converted["regional_office_key"] = v
                        HearingDayMapper.city_for_regional_office(v)
                      elsif k == "request_type"
                        HearingDayMapper.label_for_type(v)

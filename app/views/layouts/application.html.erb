@@ -63,7 +63,13 @@
     <script src="https://cdn.ravenjs.com/3.27.0/raven.min.js"></script>
     <script>
       Raven.config("<%= ENV["PUBLIC_SENTRY_DSN"] %>", {
-        release: "<%= Rails.application.config.build_version[:commit][0..6] %>"
+        release: "<%= Rails.application.config.build_version[:commit][0..6] %>",
+        dataCallback: function(data) {
+          if (Raven.caseflowAppName) {
+            data.fingerprint = ["{{ default }}", Raven.caseflowAppName]
+          }
+          return data;
+        }
       }).install();
       <% if current_user && current_user.authenticated? %>
         Raven.setUserContext({
@@ -190,7 +196,7 @@
     <div class="cf-app-width">
       <div class="cf-push-left">
         <span title="<%= build_date %>">Built</span> with <abbr title="love">&#9825;</abbr> by the
-        <a href="https://www.usds.gov/">Digital Service at the <abbr title="Department of Veterans Affairs">VA</abbr></a>
+        <a href="https://www.usds.gov/"> Digital Service at the <abbr title="Department of Veterans Affairs">VA</abbr></a>
       </div>
       <div class="cf-push-right">
         <a target="_blank" href="<%= feedback_url %>" onClick="ga('send', 'event', { eventCategory: 'Menu', eventAction: 'ClickFeedback', eventLabel: 'Feedback', eventValue: 1});">

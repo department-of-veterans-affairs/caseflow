@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "json"
 
 class ExternalApi::VADotGovService
@@ -13,7 +15,7 @@ class ExternalApi::VADotGovService
           query: { lat: lat, long: long, page: page, ids: remaining_ids.join(",") }
         )
 
-        remaining_ids -= results[:facilities].pluck(:id)
+        remaining_ids -= results[:facilities].pluck(:facility_id)
         facility_results += results[:facilities]
 
         break if !results[:has_next]
@@ -28,7 +30,7 @@ class ExternalApi::VADotGovService
       end
 
       track_pages(page)
-      facility_results
+      facility_results.sort_by { |res| res[:distance] }
     end
 
     # rubocop:disable Metrics/ParameterLists
@@ -123,7 +125,7 @@ class ExternalApi::VADotGovService
       dist = distance["distance"] || distance[:distance] if distance
 
       {
-        id: facility["id"],
+        facility_id: facility["id"],
         type: facility["type"],
         facility_type: attrs["facility_type"],
         name: attrs["name"],

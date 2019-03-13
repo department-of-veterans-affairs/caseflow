@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "ostruct"
 require "csv"
 
@@ -144,7 +146,7 @@ class Fakes::VBMSService
         benefit_claim_id: claim_id,
         claim_receive_date: claim_hash[:date].to_formatted_s(:short_date),
         end_product_type_code: claim_hash[:end_product_modifier],
-        end_product_code: claim_hash[:claim_type_code]
+        claim_type_code: claim_hash[:end_product_code]
       }
     )
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SyncReviewsJob do
   context ".perform" do
     let!(:end_product_establishment_more_recently_synced) do
@@ -139,7 +141,9 @@ describe SyncReviewsJob do
       it "starts jobs to reprocess them" do
         expect do
           SyncReviewsJob.perform_now
-        end.to have_enqueued_job(ProcessDecisionDocumentJob).with(decision_document_needs_reprocessing).exactly(:once)
+        end.to have_enqueued_job(
+          ProcessDecisionDocumentJob
+        ).with(decision_document_needs_reprocessing.id).exactly(:once)
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Distribution do
   let(:judge) { FactoryBot.create(:user) }
   let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
@@ -38,8 +40,10 @@ describe Distribution do
   context "#distribute!" do
     subject { Distribution.create(judge: judge) }
 
+    let(:legacy_priority_count) { 15 }
+
     let!(:priority_cases) do
-      (1..15).map do |i|
+      (1..legacy_priority_count).map do |i|
         create(:case,
                :aod,
                bfd19: 1.year.ago,
@@ -52,7 +56,7 @@ describe Distribution do
     end
 
     let!(:nonpriority_cases) do
-      (16..100).map do |i|
+      (15..100).map do |i|
         create(:case,
                bfd19: 1.year.ago,
                bfac: "1",
@@ -100,7 +104,7 @@ describe Distribution do
       expect(subject.completed_at).to eq(Time.zone.now)
       expect(subject.statistics["batch_size"]).to eq(15)
       expect(subject.statistics["total_batch_size"]).to eq(45)
-      expect(subject.statistics["priority_count"]).to eq(15)
+      expect(subject.statistics["priority_count"]).to eq(legacy_priority_count)
       expect(subject.distributed_cases.count).to eq(15)
       expect(subject.distributed_cases.first.docket).to eq("legacy")
       expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
@@ -128,6 +132,123 @@ describe Distribution do
         expect(subject.status).to eq("error")
       end
     end
+
+    context "when the judge has an empty team" do
+      let(:judge_wo_attorneys) { FactoryBot.create(:user) }
+      let!(:vacols_judge_wo_attorneys) { create(:staff, :judge_role, sdomainid: judge_wo_attorneys.css_id) }
+
+      subject { Distribution.create(judge: judge_wo_attorneys) }
+
+      it "uses the alternative batch size" do
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.status).to eq("completed")
+        expect(subject.statistics["batch_size"]).to eq(15)
+        expect(subject.distributed_cases.count).to eq(15)
+      end
+    end
+
+    context "when ama cases are in the mix" do
+      before do
+        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
+
+        allow_any_instance_of(DirectReviewDocket)
+          .to receive(:nonpriority_receipts_per_year)
+          .and_return(100)
+
+        allow(Appeal)
+          .to receive(:nonpriority_decisions_per_year)
+          .and_return(1000)
+
+        allow_any_instance_of(HearingRequestDocket)
+          .to receive(:age_of_n_oldest_priority_appeals)
+          .and_return([])
+
+        allow_any_instance_of(HearingRequestDocket)
+          .to receive(:distribute_appeals)
+          .and_return([])
+      end
+
+      after do
+        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
+      end
+
+      let!(:due_direct_review_cases) do
+        (0...6).map do
+          create(:appeal,
+                 :with_tasks,
+                 docket_type: "direct_review",
+                 receipt_date: 11.months.ago,
+                 target_decision_date: 1.month.from_now)
+        end
+      end
+
+      let!(:priority_direct_review_case) do
+        appeal = create(:appeal,
+                        :with_tasks,
+                        :advanced_on_docket_due_to_age,
+                        docket_type: "direct_review",
+                        receipt_date: 1.month.ago)
+        appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 1.month.ago)
+        appeal
+      end
+
+      let(:legacy_priority_count) { 14 }
+
+      let!(:other_direct_review_cases) do
+        (0...20).map do
+          create(:appeal,
+                 :with_tasks,
+                 docket_type: "direct_review",
+                 receipt_date: 61.days.ago,
+                 target_decision_date: 304.days.from_now)
+        end
+      end
+
+      let!(:evidence_submission_cases) do
+        (0...43).map do
+          create(:appeal, :with_tasks, docket_type: "evidence_submission")
+        end
+      end
+
+      let!(:hearing_cases) do
+        (0...43).map do
+          create(:appeal, :with_tasks, docket_type: "hearing")
+        end
+      end
+
+      it "correctly distributes cases" do
+        evidence_submission_cases[0...2].each do |appeal|
+          appeal.tasks
+            .find_by(type: EvidenceSubmissionWindowTask.name)
+            .update!(status: :completed)
+        end
+        subject.distribute!
+        expect(subject.valid?).to eq(true)
+        expect(subject.status).to eq("completed")
+        expect(subject.completed_at).to eq(Time.zone.now)
+        expect(subject.statistics["batch_size"]).to eq(15)
+        expect(subject.statistics["total_batch_size"]).to eq(45)
+        expect(subject.statistics["priority_count"]).to eq(15)
+        expect(subject.statistics["legacy_proportion"]).to eq(0.4)
+        expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
+        expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
+        expect(subject.statistics["hearing_proportion"]).to eq(0.2)
+        expect(subject.statistics["pacesetting_direct_review_proportion"]).to eq(0.1)
+        expect(subject.statistics["interpolated_minimum_direct_review_proportion"]).to eq(0.067)
+        expect(subject.statistics["nonpriority_iterations"]).to be_between(2, 3)
+        expect(subject.distributed_cases.count).to eq(15)
+        expect(subject.distributed_cases.first.docket).to eq("legacy")
+        expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
+        expect(subject.distributed_cases.where(priority: true).count).to eq(5)
+        expect(subject.distributed_cases.where(priority: true, docket: "direct_review").count).to eq(1)
+        expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
+        expect(subject.distributed_cases.where(docket: "direct_review").count).to be >= 3
+        expect(subject.distributed_cases.where(docket: "evidence_submission").count).to eq(2)
+      end
+    end
   end
 
   context "validations" do
@@ -135,7 +256,7 @@ describe Distribution do
 
     let(:user) { judge }
 
-    context "when the user is not a judge in VACOOLS" do
+    context "when the user is not a judge in VACOLS" do
       let(:user) { create(:user) }
 
       it "does not validate" do
@@ -144,21 +265,44 @@ describe Distribution do
       end
     end
 
-    context "when the judge has an unassigned legacy appeal" do
-      let!(:legacy_appeal) { create(:case, bfcurloc: vacols_judge.slogid) }
+    context "when the judge has 8 or fewer unassigned appeals" do
+      before do
+        5.times { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: Time.zone.today) }
+        3.times { create(:ama_judge_task, assigned_to: judge, assigned_at: Time.zone.today) }
+      end
 
-      it "does not validate" do
-        expect(subject.errors.details).to have_key(:judge)
-        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases)
+      it "validates" do
+        expect(subject.errors.details).not_to have_key(:judge)
       end
     end
 
-    context "when the judge has an unassigned AMA appeal" do
-      let!(:task) { create(:ama_judge_task, assigned_to: judge) }
+    context "when the judge has 8 or more unassigned appeals" do
+      before do
+        5.times { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: Time.zone.today) }
+        4.times { create(:ama_judge_task, assigned_to: judge, assigned_at: Time.zone.today) }
+      end
 
       it "does not validate" do
         expect(subject.errors.details).to have_key(:judge)
-        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases)
+        expect(subject.errors.details[:judge]).to include(error: :too_many_unassigned_cases)
+      end
+    end
+
+    context "when the judge has an appeal that has waited more than 30 days" do
+      let!(:task) { create(:ama_judge_task, assigned_to: judge, assigned_at: 31.days.ago) }
+
+      it "does not validate" do
+        expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
+      end
+    end
+
+    context "when the judge has a legacy appeal that has waited more than 30 days" do
+      let!(:task) { create(:case, bfcurloc: vacols_judge.slogid, bfdloout: 31.days.ago) }
+
+      it "does not validate" do
+        expect(subject.errors.details).to have_key(:judge)
+        expect(subject.errors.details[:judge]).to include(error: :unassigned_cases_waiting_too_long)
       end
     end
   end

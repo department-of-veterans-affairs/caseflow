@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "benchmark"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types

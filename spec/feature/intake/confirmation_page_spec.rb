@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Intake Confirmation Page" do
@@ -43,6 +45,14 @@ feature "Intake Confirmation Page" do
             expect(page).to have_content("If you need to edit this, go to VBMS claim details")
             expect(page).to have_content("Tracked Item") if claim_review_type == :higher_level_review
             expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
+          end
+
+          it "redirects you back if you manually visit /completed" do
+            start_claim_review(claim_review_type)
+
+            visit "/intake/completed"
+
+            expect(page).to have_current_path("/intake/add_issues")
           end
         end
       end

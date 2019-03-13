@@ -1,11 +1,19 @@
+# frozen_string_literal: true
+
 class DecisionIssue < ApplicationRecord
-  validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) },
-                          if: :appeal?
-  validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) },
-                           if: :appeal?
-  validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
-                              if: :appeal?, allow_nil: true
-  validates :description, presence: true, if: :appeal?
+  validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
+  validates :disposition, presence: true
+  validates :end_product_last_action_date, presence: true, unless: :processed_in_caseflow?
+
+  with_options if: :appeal? do
+    validates :disposition, inclusion: { in: Constants::ISSUE_DISPOSITIONS_BY_ID.keys.map(&:to_s) }
+    validates :diagnostic_code, inclusion: { in: Constants::DIAGNOSTIC_CODE_DESCRIPTIONS.keys.map(&:to_s) },
+                                allow_nil: true
+  end
+
+  # Attorneys will be entering in a description of the decision manually for appeals
+  before_save :calculate_and_set_description, unless: :appeal?
+
   has_many :request_decision_issues, dependent: :destroy
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
@@ -13,8 +21,20 @@ class DecisionIssue < ApplicationRecord
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_one :contesting_request_issue, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 
-  # Attorneys will be entering in a description of the decision manually for appeals
-  before_save :calculate_and_set_description, unless: :appeal?
+  # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
+  # The characters an encoding is precise so don't change these unless you know they match VBMS values.
+  DTA_ERROR_PMR = "DTA Error - PMRs"
+  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs"
+  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs"
+  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO"
+  REMAND = "remanded"
+  REMAND_DISPOSITIONS = [REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
+
+  class AppealDTAPayeeCodeError < StandardError
+    def initialize(appeal_id)
+      super("Can't create a SC DTA for appeal #{appeal_id} due to missing payee code")
+    end
+  end
 
   class << self
     # TODO: These scopes are based only off of Caseflow dispositions, not VBMS dispositions. We probably want
@@ -24,12 +44,25 @@ class DecisionIssue < ApplicationRecord
     end
 
     def remanded
-      where(disposition: "remanded")
+      where(disposition: REMAND_DISPOSITIONS)
+    end
+
+    def not_remanded
+      where.not(disposition: REMAND_DISPOSITIONS)
+    end
+
+    def contested
+      joins("INNER JOIN request_issues on request_issues.contested_decision_issue_id = decision_issues.id")
+    end
+
+    def uncontested
+      joins("LEFT JOIN request_issues on decision_issues.id = request_issues.contested_decision_issue_id")
+        .where("request_issues.contested_decision_issue_id IS NULL")
     end
   end
 
   def approx_decision_date
-    appeal? ? appeal_decision_date : claim_review_approx_decision_date
+    processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
   end
 
   def issue_category
@@ -57,7 +90,7 @@ class DecisionIssue < ApplicationRecord
       requestIssueId: request_issues&.first&.id,
       description: description,
       disposition: disposition,
-      promulgationDate: promulgation_date
+      approxDecisionDate: approx_decision_date
     }
   end
 
@@ -73,16 +106,62 @@ class DecisionIssue < ApplicationRecord
     Contention.new(description).text
   end
 
-  private
-
-  def appeal_decision_date
-    return unless appeal?
-
-    decision_review.decision_document&.decision_date
+  def api_status_active?
+    # this is still being worked on so for the purposes of communicating
+    # to the veteran, this decision issue is still considered active
+    disposition && REMAND_DISPOSITIONS.include?(disposition)
   end
 
-  def claim_review_approx_decision_date
-    profile_date ? profile_date.to_date : end_product_last_action_date
+  def api_status_last_action
+    return "remand" if disposition == "remanded"
+
+    disposition
+  end
+
+  def api_status_last_action_date
+    approx_decision_date.try(&:to_date)
+  end
+
+  def api_status_disposition
+    "remand" if disposition == "remanded"
+    disposition
+  end
+
+  def api_status_description
+    description = fetch_diagnostic_code_status_description(diagnostic_code)
+    return description if description
+
+    "#{benefit_type.capitalize} issue"
+  end
+
+  def associated_request_issue
+    return unless request_issues.any?
+
+    request_issues.first
+  end
+
+  private
+
+  def fetch_diagnostic_code_status_description(diagnostic_code)
+    if diagnostic_code && Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
+      description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]["status_description"]
+      description[0] = description[0].upcase
+      description
+    end
+  end
+
+  def processed_in_caseflow?
+    decision_review.processed_in_caseflow?
+  end
+
+  # the decision date is approximate but we need it for timeliness checks.
+  # see also ContestableIssue.approx_decision_date
+  def approx_processed_in_vbms_decision_date
+    if promulgation_date
+      promulgation_date.to_date
+    else
+      end_product_last_action_date
+    end
   end
 
   def calculate_and_set_description
@@ -96,18 +175,25 @@ class DecisionIssue < ApplicationRecord
     "#{disposition}: #{associated_request_issue.description}"
   end
 
-  def associated_request_issue
-    return unless request_issues.any?
-
-    request_issues.first
-  end
-
   def veteran_file_number
     decision_review.veteran_file_number
   end
 
   def appeal?
     decision_review_type == Appeal.to_s
+  end
+
+  def prior_payee_code
+    latest_ep = decision_review.veteran
+      .find_latest_end_product_by_claimant(decision_review.claimants.first)
+
+    if latest_ep.nil? || latest_ep.payee_code.nil?
+      # mark appeal as failed
+      decision_review.update_error!("DTA SC creation failed")
+      fail AppealDTAPayeeCodeError, decision_review.id
+    end
+
+    latest_ep.payee_code
   end
 
   def find_remand_supplemental_claim
@@ -122,21 +208,24 @@ class DecisionIssue < ApplicationRecord
     # Checking our assumption that approx_decision_date will always be populated for Decision Issues
     fail "approx_decision_date is required to create a DTA Supplemental Claim" unless approx_decision_date
 
-    SupplementalClaim.create!(
+    sc = SupplementalClaim.create!(
       veteran_file_number: veteran_file_number,
       decision_review_remanded: decision_review,
       benefit_type: benefit_type,
       legacy_opt_in_approved: decision_review.legacy_opt_in_approved,
       veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
       receipt_date: approx_decision_date
-    ).tap do |sc|
-      sc.create_claimants!(
-        participant_id: decision_review.claimant_participant_id,
+    )
 
-        # We have to make payee code "00" for now because intake assistants at
-        # the board do not enter payee codes for claimants :(
-        payee_code: "00"
-      )
-    end
+    sc.create_claimants!(
+      participant_id: decision_review.claimant_participant_id,
+      payee_code: decision_review.payee_code || prior_payee_code
+    )
+
+    sc
+  rescue AppealDTAPayeeCodeError
+    # mark SC as failed
+    sc.update_error!("No payee code")
+    raise
   end
 end

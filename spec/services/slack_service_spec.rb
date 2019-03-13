@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SlackService do
   it "posts to http" do
     slack_service = SlackService.new(url: "http://www.example.com")

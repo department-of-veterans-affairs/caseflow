@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LegacyHearing < ApplicationRecord
   include CachedAttributes
   include AssociatedVacolsModel
@@ -19,6 +21,7 @@ class LegacyHearing < ApplicationRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
+  has_one :hearing_task_association, as: :hearing
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location
@@ -27,8 +30,26 @@ class LegacyHearing < ApplicationRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
-  CO_HEARING = "Central".freeze
-  VIDEO_HEARING = "Video".freeze
+  CO_HEARING = "Central"
+  VIDEO_HEARING = "Video"
+
+  def hearing_task?
+    !hearing_task_association.nil?
+  end
+
+  def disposition_task
+    if hearing_task?
+      hearing_task_association.hearing_task.children.detect { |child| child.type == DispositionTask.name }
+    end
+  end
+
+  def disposition_task_in_progress
+    disposition_task ? disposition_task.active_with_no_children? : false
+  end
+
+  def disposition_editable
+    disposition_task_in_progress || !hearing_task?
+  end
 
   def judge
     user
@@ -43,7 +64,11 @@ class LegacyHearing < ApplicationRecord
   end
 
   def request_type_location
-    (request_type == "C") ? "Board of Veterans' Appeals in Washington, DC" : venue[:label]
+    if request_type == HearingDay::REQUEST_TYPES[:central]
+      "Board of Veterans' Appeals in Washington, DC"
+    elsif venue
+      venue[:label]
+    end
   end
 
   def closed?
@@ -151,8 +176,8 @@ class LegacyHearing < ApplicationRecord
     :veteran,  \
     :veteran_file_number, \
     :docket_name,
-    :veteran_closest_regional_office,
-    :veteran_available_hearing_locations,
+    :closest_regional_office,
+    :available_hearing_locations,
     to: :appeal, allow_nil: true
 
   delegate :external_id, to: :appeal, prefix: true
@@ -160,6 +185,7 @@ class LegacyHearing < ApplicationRecord
   def to_hash(current_user_id)
     serializable_hash(
       methods: [
+        :disposition_editable,
         :scheduled_for,
         :readable_request_type,
         :disposition,
@@ -195,8 +221,8 @@ class LegacyHearing < ApplicationRecord
         :appeal_external_id,
         :external_id,
         :veteran_file_number,
-        :veteran_closest_regional_office,
-        :veteran_available_hearing_locations
+        :closest_regional_office,
+        :available_hearing_locations
       ],
       except: [:military_service, :vacols_id]
     ).merge(
@@ -205,6 +231,7 @@ class LegacyHearing < ApplicationRecord
       end
     )
   end
+  # rubocop:enable Metrics/MethodLength
 
   def fetch_veteran_age
     veteran_age
@@ -232,13 +259,6 @@ class LegacyHearing < ApplicationRecord
       veteran_gender: fetch_veteran_gender,
       veteran_age: fetch_veteran_age
     )
-  end
-
-  def slot_new_hearing(parent_record_id, scheduled_time:, appeal:, hearing_location_attrs: nil)
-    HearingRepository.slot_new_hearing(parent_record_id,
-                                       scheduled_time: scheduled_time,
-                                       hearing_location_attrs: hearing_location_attrs,
-                                       appeal: appeal)
   end
 
   def appeals_ready_for_hearing
@@ -295,4 +315,3 @@ class LegacyHearing < ApplicationRecord
     end
   end
 end
-# rubocop:enable Metrics/MethodLength

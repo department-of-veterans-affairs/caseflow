@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+
+##
+# Task assigned to BVA Dispatch team members whenever a judge completes a case review.
+# This indicates that an appeal is decided and the appellant is about to be notified of the decision.
+
 class BvaDispatchTask < GenericTask
   class << self
     def create_from_root_task(root_task)
@@ -19,6 +25,7 @@ class BvaDispatchTask < GenericTask
 
       task.update!(status: Constants.TASK_STATUSES.completed)
       task.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      appeal.request_issues.each(&:close_decided_issue!)
     rescue ActiveRecord::RecordInvalid => e
       raise(Caseflow::Error::OutcodeValidationFailure, message: e.message) if e.message.match?(/^Validation failed:/)
 
@@ -27,17 +34,13 @@ class BvaDispatchTask < GenericTask
 
     private
 
-    def list_of_assignees
-      BvaDispatch.singleton.users.order(:id).pluck(:css_id)
-    end
-
     def create_decision_document!(params)
       DecisionDocument.create!(params).tap do |decision_document|
-        decision_document.submit_for_processing!
+        delay = decision_document.decision_date.future? ? decision_document.decision_date : 0
+        decision_document.submit_for_processing!(delay: delay)
 
-        # TODO: remove this unless statement when all decision documents require async processing
-        unless decision_document.processed?
-          ProcessDecisionDocumentJob.perform_later(decision_document)
+        unless decision_document.processed? || decision_document.decision_date.future?
+          ProcessDecisionDocumentJob.perform_later(decision_document.id)
         end
       end
     end

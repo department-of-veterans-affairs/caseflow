@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::VeteranRecordRequestSerializer < ActiveModel::Serializer
   def task
     object
@@ -33,7 +35,7 @@ class WorkQueue::VeteranRecordRequestSerializer < ActiveModel::Serializer
     {
       id: decision_review.external_id,
       isLegacyAppeal: false,
-      issueCount: decision_review.request_issues.count
+      issueCount: decision_review.request_issues.active_or_ineligible.count
     }
   end
 
@@ -53,8 +55,8 @@ class WorkQueue::VeteranRecordRequestSerializer < ActiveModel::Serializer
     task.assigned_at
   end
 
-  attribute :completed_at do
-    task.completed_at
+  attribute :closed_at do
+    task.closed_at
   end
 
   attribute :started_at do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A claim review is a short hand term to refer to either a supplemental claim or
 # higher level review as defined in the Appeals Modernization Act of 2017
 
@@ -8,6 +10,7 @@ class ClaimReview < DecisionReview
   has_one :intake, as: :detail
 
   with_options if: :saving_review do
+    validate :validate_receipt_date
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
@@ -52,7 +55,7 @@ class ClaimReview < DecisionReview
   # Create that end product establishment if it doesn't exist.
   def create_issues!(new_issues)
     new_issues.each do |issue|
-      if processed_in_caseflow?
+      if processed_in_caseflow? || !issue.eligible?
         issue.update!(benefit_type: benefit_type, veteran_participant_id: veteran.participant_id)
       else
         issue.update!(
@@ -68,6 +71,12 @@ class ClaimReview < DecisionReview
 
   def create_decision_review_task_if_required!
     create_decision_review_task! if processed_in_caseflow?
+  end
+
+  def add_user_to_business_line!
+    return unless processed_in_caseflow?
+
+    OrganizationsUser.add_user_to_organization(RequestStore.store[:current_user], business_line)
   end
 
   # Idempotent method to create all the artifacts for this claim.
@@ -121,6 +130,14 @@ class ClaimReview < DecisionReview
     end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
 
+  def active?
+    processed_in_vbms? ? end_product_establishments.any? { |ep| ep.status_active?(sync: false) } : incomplete_tasks?
+  end
+
+  def active_status?
+    active?
+  end
+
   def search_table_ui_hash
     {
       caseflow_veteran_id: claim_veteran&.id,
@@ -164,15 +181,24 @@ class ClaimReview < DecisionReview
   end
 
   def aoj
-    case benefit_type
-    when "compensation", "pension", "fiduciary", "insurance", "education", "voc_rehab", "loan_guaranty"
-      "vba"
-    else
-      benefit_type
-    end
+    return if request_issues.empty?
+
+    request_issues.first.api_aoj_from_benefit_type
+  end
+
+  def issues_hash
+    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
+
+    return [] if issue_list.empty?
+
+    fetch_issues_status(issue_list)
   end
 
   private
+
+  def incomplete_tasks?
+    tasks.reject(&:completed?).any?
+  end
 
   def can_contest_rating_issues?
     processed_in_vbms?
@@ -194,11 +220,17 @@ class ClaimReview < DecisionReview
 
   def end_product_establishment_for_issue(issue)
     end_product_establishments.find_by(
-      code: issue.end_product_code
-    ) || new_end_product_establishment(issue.end_product_code)
+      "(code = ?) AND (synced_status IS NULL OR synced_status NOT IN (?))",
+      issue.end_product_code,
+      EndProduct::INACTIVE_STATUSES
+    ) || new_end_product_establishment(issue)
   end
 
   def matching_request_issue(contention_id)
     RequestIssue.find_by!(contention_reference_id: contention_id)
+  end
+
+  def issue_active_status(_issue)
+    active?
   end
 end

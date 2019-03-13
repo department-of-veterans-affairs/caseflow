@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
@@ -45,7 +47,7 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   end
 
   attribute :appellant_relationship
-  attribute :location_code
+  attribute :assigned_to_location
   attribute :vbms_id do
     object.sanitized_vbms_id
   end
@@ -73,12 +75,12 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     object.veteran ? object.veteran.id : nil
   end
 
-  attribute :veteran_closest_regional_office do
-    object.veteran_closest_regional_office
+  attribute :closest_regional_office do
+    object.closest_regional_office
   end
 
-  attribute :veteran_available_hearing_locations do
-    locations = object.veteran_available_hearing_locations || []
+  attribute :available_hearing_locations do
+    locations = object.available_hearing_locations || []
 
     locations.map do |ahl|
       {

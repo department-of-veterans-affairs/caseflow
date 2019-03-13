@@ -57,6 +57,21 @@ export const onReceiveDropdownData = (dropdownName, data) => ({
   }
 });
 
+export const onDropdownError = (dropdownName, errorMsg) => ({
+  type: ACTIONS.DROPDOWN_ERROR,
+  payload: {
+    dropdownName,
+    errorMsg
+  }
+});
+
+export const onHearingOptionalTime = (optionalTime) => ({
+  type: ACTIONS.HEARING_OPTIONAL_TIME_CHANGE,
+  payload: {
+    optionalTime
+  }
+});
+
 export const onChangeFormData = (formName, formData) => ({
   type: ACTIONS.CHANGE_FORM_DATA,
   payload: {

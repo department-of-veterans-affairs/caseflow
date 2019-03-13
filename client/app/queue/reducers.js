@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-// @flow
 
 import { timeFunction } from '../util/PerfDebug';
 import { update } from '../util/ReducerUtil';
@@ -10,7 +9,8 @@ import { ACTIONS } from './constants';
 
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
-import type { QueueState } from './types/state';
+import teamManagementReducer from './teamManagement/reducers';
+
 import commonComponentsReducer from '../components/common/reducers';
 
 // TODO: Remove this when we move entirely over to the appeals search.
@@ -25,7 +25,9 @@ export const initialState = {
   claimReviews: {},
   editingIssue: {},
   docCountForAppeal: {},
+  mostRecentlyHeldHearingForAppeal: {},
   newDocsForAppeal: {},
+  newDocsForTask: {},
   specialIssues: {},
 
   /**
@@ -51,7 +53,7 @@ export const initialState = {
 };
 
 // eslint-disable-next-line max-statements
-export const workQueueReducer = (state: QueueState = initialState, action: Object = {}): QueueState => {
+export const workQueueReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_QUEUE_DETAILS:
     return update(state, {
@@ -123,7 +125,7 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     });
-  case ACTIONS.RECEIVE_NEW_FILES:
+  case ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL:
     return update(state, {
       newDocsForAppeal: {
         [action.payload.appealId]: {
@@ -134,7 +136,7 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     });
-  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES:
+  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL:
     return update(state, {
       newDocsForAppeal: {
         [action.payload.appealId]: {
@@ -145,7 +147,7 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     });
-  case ACTIONS.STARTED_LOADING_DOCUMENTS:
+  case ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_APPEAL:
     return {
       ...state,
       newDocsForAppeal: {
@@ -155,19 +157,78 @@ export const workQueueReducer = (state: QueueState = initialState, action: Objec
         }
       }
     };
-  case ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT:
+  case ACTIONS.RECEIVE_NEW_FILES_FOR_TASK:
     return update(state, {
-      docCountForAppeal: {
-        [action.payload.appealId]: {
-          $set: 'Failed to load'
+      newDocsForTask: {
+        [action.payload.taskId]: {
+          $set: {
+            docs: action.payload.newDocuments,
+            loading: false
+          }
         }
       }
     });
+  case ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_TASK:
+    return update(state, {
+      newDocsForTask: {
+        [action.payload.taskId]: {
+          $set: {
+            error: action.payload.error,
+            loading: false
+          }
+        }
+      }
+    });
+  case ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_TASK:
+    return {
+      ...state,
+      newDocsForTask: {
+        ...state.newDocsForTask,
+        [action.payload.taskId]: {
+          loading: true
+        }
+      }
+    };
+  case ACTIONS.STARTED_DOC_COUNT_REQUEST:
+    return {
+      ...state,
+      docCountForAppeal: {
+        ...state.docCountForAppeal,
+        [action.payload.appealId]: {
+          ...state.docCountForAppeal[action.payload.appealId],
+          error: null,
+          loading: true
+        }
+      }
+    };
+  case ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT:
+    return {
+      ...state,
+      docCountForAppeal: {
+        ...state.docCountForAppeal,
+        [action.payload.appealId]: {
+          ...state.docCountForAppeal[action.payload.appealId],
+          error: 'Failed to Load',
+          loading: false
+        }
+      }
+    };
   case ACTIONS.SET_APPEAL_DOC_COUNT:
     return update(state, {
       docCountForAppeal: {
         [action.payload.appealId]: {
-          $set: action.payload.docCount
+          $set: {
+            [action.payload.cached ? 'cached' : 'precise']: action.payload.docCount,
+            loading: false
+          }
+        }
+      }
+    });
+  case ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL:
+    return update(state, {
+      mostRecentlyHeldHearingForAppeal: {
+        [action.payload.appealId]: {
+          $set: action.payload.hearing
         }
       }
     });
@@ -471,6 +532,7 @@ const rootReducer = combineReducers({
   caseList: caseListReducer,
   caseSelect: caseSelectReducer,
   queue: workQueueReducer,
+  teamManagement: teamManagementReducer,
   ui: uiReducer,
   components: commonComponentsReducer
 });

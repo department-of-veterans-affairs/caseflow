@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
 require "simplecov"
@@ -11,13 +13,6 @@ require "spec_helper"
 require "fake_date_helper"
 require "rspec/rails"
 require "react_on_rails"
-require_relative "support/fake_pdf_service"
-require_relative "support/sauce_driver"
-require_relative "support/database_cleaner"
-require_relative "support/download_helper"
-require_relative "support/clear_cache"
-require_relative "support/feature_helper"
-require_relative "support/date_time_helper"
 require "timeout"
 
 # Add additional requires below this line. Rails is not loaded until this point!
@@ -35,7 +30,7 @@ require "timeout"
 # directory. Alternatively, in the individual `*_spec.rb` files, manually
 # require only the support files necessary.
 #
-# Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
+Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 # Checks for pending migration and applies them before tests are run.
 # If you are not using ActiveRecord, you can remove this line.
@@ -56,7 +51,13 @@ else
   Dir.mkdir cache_directory
 end
 
-ENV["TZ"] ||= "America/New York"
+# The TZ variable controls the timezone of the browser in capybara tests, so we always define it.
+# By default (esp for CI) we use Eastern time, so that it doesn't matter where the developer happens to sit.
+ENV["TZ"] ||= "America/New_York"
+
+# Assume the browser and the server are in the same timezone for now. Eventually we should
+# use something like https://github.com/alindeman/zonebie to exercise browsers in different timezones.
+Time.zone = ENV["TZ"]
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options = ::Selenium::WebDriver::Chrome::Options.new
@@ -114,14 +115,12 @@ ActiveJob::Base.queue_adapter = :test
 # Convenience methods for stubbing current user
 module StubbableUser
   module ClassMethods
+    attr_writer :stub
+
     def clear_stub!
       Functions.delete_all_keys!
       @stub = nil
       @system_user = nil
-    end
-
-    def stub=(user)
-      @stub = user
     end
 
     def authenticate!(css_id: nil, roles: nil, user: nil)

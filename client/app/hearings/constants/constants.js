@@ -1,7 +1,10 @@
 // actions
 //
 export const HANDLE_DOCKET_SERVER_ERROR = 'HANDLE_DOCKET_SERVER_ERROR';
+export const HANDLE_SAVE_HEARING_SUCCESS = 'HANDLE_SAVE_HEARING_SUCCESS';
+export const HANDLE_SAVE_HEARING_ERROR = 'HANDLE_SAVE_HEARING_ERROR';
 export const HANDLE_WORKSHEET_SERVER_ERROR = 'HANDLE_WORKSHEET_SERVER_ERROR';
+export const RESET_SAVE_HEARING_SUCCESS = 'RESET_SAVE_HEARING_SUCCESS';
 
 export const POPULATE_UPCOMING_HEARINGS = 'POPULATE_UPCOMING_HEARINGS';
 export const POPULATE_DAILY_DOCKET = 'POPULATE_DAILY_DOCKET';
@@ -41,18 +44,11 @@ export const TOGGLE_ISSUE_DELETE_MODAL = 'TOGGLE_ISSUE_DELETE_MODAL';
 export const SET_MILITARY_SERVICE = 'SET_MILITARY_SERVICE';
 export const SET_SUMMARY = 'SET_SUMMARY';
 
-export const TOGGLE_DOCKET_SAVING = 'TOGGLE_DOCKET_SAVING';
 export const TOGGLE_WORKSHEET_SAVING = 'TOGGLE_WORKSHEET_SAVING';
-
 export const SET_WORKSHEET_TIME_SAVED = 'SET_WORKSHEET_TIME_SAVED';
-export const SET_DOCKET_TIME_SAVED = 'SET_DOCKET_TIME_SAVED';
-
-export const SET_DOCKET_SAVE_FAILED = 'SET_DOCKET_SAVE_FAILED';
 export const SET_ISSUE_EDITED_FLAG_TO_FALSE = 'SET_ISSUE_EDITED_FLAG_TO_FALSE';
 export const SET_WORKSHEET_SAVE_FAILED_STATUS = 'SET_WORKSHEET_SAVE_FAILED_STATUS';
-
 export const SET_WORKSHEET_EDITED_FLAG_TO_FALSE = 'SET_WORKSHEET_EDITED_FLAG_TO_FALSE';
-export const SET_EDITED_FLAG_TO_FALSE = 'SET_EDITED_FLAG_TO_FALSE';
 
 export const DISPOSITION_OPTIONS = [{ value: 'held',
   label: 'Held' },
@@ -69,3 +65,40 @@ export const SERVER_ERROR_CODES = {
 
 export const VIDEO_HEARING = 'Video';
 export const CENTRAL_OFFICE_HEARING = 'Central';
+
+export const TIME_OPTIONS = [{
+  value: '8:30',
+  label: '8:30 am ' },
+{ value: '9:00',
+  label: '9:00 am ' },
+{ value: '9:30',
+  label: '9:30 am ' },
+{ value: '10:00',
+  label: '10:00 am ' },
+{ value: '10:30',
+  label: '10:30 am ' },
+{ value: '11:00',
+  label: '11:00 am ' },
+{ value: '11:30',
+  label: '11:30 am ' },
+{ value: '12:00',
+  label: '12:00 pm ' },
+{ value: '12:30',
+  label: '12:30 pm ' },
+{ value: '13:00',
+  label: '1:00 pm ' },
+{ value: '13:30',
+  label: '1:30 pm ' },
+{ value: '14:00',
+  label: '2:00 pm ' },
+{ value: '14:30',
+  label: '2:30 pm ' },
+{ value: '15:00',
+  label: '3:00 pm ' },
+{ value: '15:30',
+  label: '3:30 pm ' },
+{ value: '16:00',
+  label: '4:00 pm ' },
+{ value: '16:30',
+  label: '4:30 pm '
+}];

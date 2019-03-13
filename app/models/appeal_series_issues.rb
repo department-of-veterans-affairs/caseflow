@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppealSeriesIssues
   include ActiveModel::Model
 
@@ -59,6 +61,7 @@ class AppealSeriesIssues
       next [] unless ELIGIBLE_TYPES.include? appeal.type
 
       appeal.issues.reject(&:merged?).each do |issue|
+        issue.appeal = appeal
         issue.cavc_decisions = appeal.cavc_decisions.select do |cavc_decision|
           cavc_decision.issue_vacols_sequence_id == issue.vacols_sequence_id
         end
@@ -74,8 +77,11 @@ class AppealSeriesIssues
         type = last_action_type_from_disposition(issue.disposition)
 
         if type
-          memo[:date] = issue.close_date
-          memo[:type] = type
+          # Prevent draft decisions from being shared publicly
+          unless [:allowed, :denied, :remand].include?(type) && issue.appeal.activated?
+            memo[:date] = issue.close_date
+            memo[:type] = type
+          end
         end
       end
 

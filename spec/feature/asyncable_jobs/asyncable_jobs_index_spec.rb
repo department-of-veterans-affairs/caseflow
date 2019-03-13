@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 feature "Asyncable Jobs index" do
   before do
-    Timecop.freeze(now)
+    Timecop.freeze(Time.zone.now)
   end
 
   after do
@@ -72,8 +74,8 @@ feature "Asyncable Jobs index" do
       expect(page).to_not have_content(hlr.establishment_last_submitted_at.strftime(date_format))
       expect(page).to_not have_content("oops!")
 
-      expect(hlr.reload.establishment_last_submitted_at).to eq(now)
-      expect(hlr.establishment_submitted_at).to eq(8.days.ago)
+      expect(hlr.reload.establishment_last_submitted_at).to be_within(1.second).of Time.zone.now
+      expect(hlr.establishment_submitted_at).to be_within(1.second).of 8.days.ago
     end
 
     context "zero unprocessed jobs" do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppealSeriesAlerts
   include ActiveModel::Model
 
@@ -14,6 +16,7 @@ class AppealSeriesAlerts
       decision_soon,
       blocked_by_vso,
       ramp,
+      ama_opt_in_eligible,
       cavc_option
     ].compact
   end
@@ -124,6 +127,20 @@ class AppealSeriesAlerts
         details: {
           date: appeal_series.ramp_election.notice_date,
           due_date: appeal_series.ramp_election.due_date
+        }
+      }
+    end
+  end
+
+  def ama_opt_in_eligible
+    soc_opt_in_due_date = appeal_series.appeals.map(&:soc_opt_in_due_date).compact.max
+    return unless soc_opt_in_due_date
+
+    if FeatureToggle.enabled?(:api_appeal_status_v3) && appeal_series.active? && Time.zone.today <= soc_opt_in_due_date
+      {
+        type: :ama_opt_in_eligible,
+        details: {
+          due_date: soc_opt_in_due_date
         }
       }
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # CertificationStats is an interface to quickly access statistics for Caseflow Certification
 # it is responsible for aggregating and caching statistics.

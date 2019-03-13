@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DocumentFetcher do
   let(:appeal) { Generators::LegacyAppeal.build }
   let(:document_service) { DocumentFetcher.new(appeal: appeal, use_efolder: true) }
@@ -46,59 +48,6 @@ describe DocumentFetcher do
     end
   end
 
-  context "#new_documents_for_user" do
-    let!(:documents) do
-      [
-        create(:document, upload_date: 5.days.ago),
-        create(:document, upload_date: 5.days.ago)
-      ]
-    end
-
-    subject { document_service.new_documents_for_user(user) }
-
-    context "when appeal has no appeal view" do
-      it "should return all documents" do
-        expect(subject).to eq(documents)
-      end
-    end
-
-    context "when appeal has an appeal view newer than documents" do
-      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-
-      it "should return no documents" do
-        expect(subject).to eq([])
-      end
-
-      context "when one document is missing an upload_date" do
-        let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-        let!(:documents) do
-          [
-            create(:document, upload_date: nil),
-            create(:document, upload_date: 5.days.ago)
-          ]
-        end
-
-        it "should return no documents" do
-          expect(subject).to eq([])
-        end
-      end
-    end
-
-    context "when appeal has an appeal view newer than documents" do
-      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-      let!(:documents) do
-        [
-          create(:document, upload_date: -2.days.ago),
-          create(:document, upload_date: -2.days.ago)
-        ]
-      end
-
-      it "should return both documents" do
-        expect(subject).to eq(documents)
-      end
-    end
-  end
-
   context "#number_of_documents" do
     subject { document_service.number_of_documents }
 
@@ -138,6 +87,42 @@ describe DocumentFetcher do
         expect(Document.count).to eq(documents.count)
         expect(Document.first.type).to eq(documents[0].type)
         expect(Document.first.received_at).to eq(documents[0].received_at)
+      end
+    end
+
+    context "when the series id is nil" do
+      let(:series_id) { nil }
+      let!(:saved_documents) do
+        [
+          Generators::Document.create(type: "Form 9", series_id: series_id, category_procedural: true),
+          Generators::Document.create(type: "NOD", series_id: series_id, category_medical: true)
+        ]
+      end
+      let(:older_comment) { "OLD_TEST_COMMENT" }
+      let(:comment) { "TEST_COMMENT" }
+      let!(:existing_annotations) do
+        [
+          Generators::Annotation.create(
+            comment: older_comment,
+            x: 1,
+            y: 2,
+            document_id: saved_documents[0].id
+          ),
+          Generators::Annotation.create(
+            comment: comment,
+            x: 1,
+            y: 2,
+            document_id: saved_documents[1].id
+          )
+        ]
+      end
+
+      it "doesn't copy metadata" do
+        expect(Document.count).to eq(2)
+        expect(Document.first.type).to eq(saved_documents[0].type)
+
+        returned_documents = document_service.find_or_create_documents!
+        expect(returned_documents.first.reload.annotations.count).to eq(0)
       end
     end
 

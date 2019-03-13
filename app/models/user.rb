@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
@@ -9,14 +11,14 @@ class User < ApplicationRecord
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
 
-  BOARD_STATION_ID = "101".freeze
+  BOARD_STATION_ID = "101"
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
                "Reader", "Hearing Prep", "Mail Intake", "Admin Intake",
-               "Hearing Schedule"].freeze
+               "Hearing Schedule", "Case Details"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -59,6 +61,10 @@ class User < ApplicationRecord
 
   def intake_user?
     roles && (roles.include?("Mail Intake") || roles.include?("Admin Intake"))
+  end
+
+  def administer_org_users?
+    admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end
 
   def vacols_uniq_id
@@ -196,7 +202,8 @@ class User < ApplicationRecord
   end
 
   def to_session_hash
-    serializable_hash.merge("id" => css_id, "name" => full_name)
+    skip_attrs = %w[full_name created_at updated_at last_login_at]
+    serializable_hash.merge("id" => css_id, "name" => full_name).except(*skip_attrs)
   end
 
   def station_offices
@@ -225,16 +232,6 @@ class User < ApplicationRecord
 
   def administered_teams
     organizations_users.select(&:admin?).map(&:organization)
-  end
-
-  def judge_css_id
-    organizations.find_by(type: JudgeTeam.name)
-      .try(:judge)
-      .try(:css_id)
-  end
-
-  def as_json(options)
-    super(options).merge("judge_css_id" => judge_css_id)
   end
 
   def user_info_for_idt
@@ -300,27 +297,48 @@ class User < ApplicationRecord
     end
 
     def from_session(session)
-      user = session["user"] ||= authentication_service.default_user_session
+      user_session = session["user"] ||= authentication_service.default_user_session
 
-      return nil if user.nil?
+      return nil if user_session.nil?
 
-      find_or_create_by(css_id: user["id"], station_id: user["station_id"]).tap do |u|
-        u.full_name = user["name"]
-        u.email = user["email"]
-        u.roles = user["roles"]
-        u.regional_office = session[:regional_office]
-        u.save
-      end
+      # TODO: ignore station_id since id should be globally unique.
+      css_id = user_session["id"]
+      station_id = user_session["station_id"]
+      user = find_by_css_id_and_station_id(css_id, station_id)
+
+      attrs = {
+        full_name: user_session["name"],
+        email: user_session["email"],
+        roles: user_session["roles"],
+        regional_office: session[:regional_office]
+      }
+
+      user ||= create!(attrs.merge(css_id: css_id.upcase, station_id: station_id))
+      user.update!(attrs.merge(last_login_at: Time.zone.now))
+      user
+    end
+
+    def find_by_css_id_and_station_id(css_id, station_id)
+      # prefer case match first
+      user = find_by(css_id: css_id, station_id: station_id)
+      return user if user
+
+      find_by("UPPER(css_id)=UPPER(?) AND station_id=?", css_id, station_id)
     end
 
     def find_by_css_id_or_create_with_default_station_id(css_id)
-      User.find_by(css_id: css_id) || User.create(css_id: css_id, station_id: BOARD_STATION_ID)
+      find_by_css_id(css_id) || User.create(css_id: css_id.upcase, station_id: BOARD_STATION_ID)
     end
 
     def list_hearing_coordinators
       Rails.cache.fetch("#{Rails.env}_list_of_hearing_coordinators_from_vacols") do
         user_repository.find_all_hearing_coordinators
       end
+    end
+
+    # case-insensitive search
+    def find_by_css_id(css_id)
+      find_by("UPPER(css_id)=UPPER(?)", css_id)
     end
 
     def authentication_service

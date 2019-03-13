@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe GenericTask do
   describe ".available_actions" do
     let(:task) { nil }
@@ -11,10 +13,11 @@ describe GenericTask do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
       end
-      it "should return team assign, person reassign, and mark complete actions" do
+      it "should return team assign, person reassign, complete, and cancel actions" do
         expect(subject).to eq(expected_actions)
       end
     end
@@ -36,7 +39,8 @@ describe GenericTask do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
       end
       before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
@@ -303,8 +307,8 @@ describe GenericTask do
 
       it "should change status of old task to completed but not complete parent task" do
         expect { subject }.to_not raise_error
-        expect(task.status).to eq(Constants.TASK_STATUSES.completed)
-        expect(task.parent.status).to_not eq(Constants.TASK_STATUSES.completed)
+        expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(task.parent.status).to_not eq(Constants.TASK_STATUSES.cancelled)
       end
     end
 
@@ -327,9 +331,9 @@ describe GenericTask do
 
       it "incomplete children tasks are adopted by new task and completed tasks are not" do
         expect { subject }.to_not raise_error
-        expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
-        new_task = task.parent.children.where.not(status: Constants.TASK_STATUSES.completed).first
+        new_task = task.parent.children.active.first
         expect(new_task.children.length).to eq(incomplete_children_cnt)
 
         task.reload

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppealIntake < DecisionReviewIntake
   attr_reader :request_params
 
@@ -14,11 +16,11 @@ class AppealIntake < DecisionReviewIntake
 
     transaction do
       detail.assign_attributes(review_params)
-      Claimant.create!(
+      Claimant.find_or_initialize_by(
         participant_id: claimant_participant_id,
         payee_code: nil,
         review_request: detail
-      )
+      ).tap(&:save!)
       update_person!
       detail.save(context: :intake_review)
     end
@@ -36,6 +38,7 @@ class AppealIntake < DecisionReviewIntake
   def complete!(request_params)
     super(request_params) do
       detail.update!(established_at: Time.zone.now)
+      detail.set_target_decision_date!
       detail.create_tasks_on_intake_success!
       detail.submit_for_processing!
       if run_async?

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 feature "NonComp Dispositions Task Page" do
@@ -21,6 +23,8 @@ feature "NonComp Dispositions Task Page" do
   def find_disabled_disposition(num, disposition, description = nil)
     expect(page).to have_field(type: "textarea", with: description, disabled: true)
 
+    scroll_element_in_to_view(".dropdown-disposition-issue-#{num}")
+
     within(".dropdown-disposition-issue-#{num}") do
       expect(find("span[class='Select-value-label']", text: disposition)).to_not be_nil
     end
@@ -28,7 +32,7 @@ feature "NonComp Dispositions Task Page" do
   end
 
   context "with an existing organization" do
-    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+    let!(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
 
     let(:user) { create(:default_user) }
 
@@ -36,11 +40,12 @@ feature "NonComp Dispositions Task Page" do
 
     let(:epe) { create(:end_product_establishment, veteran_file_number: veteran.file_number) }
 
-    let(:hlr) do
+    let(:decision_review) do
       create(
         :higher_level_review,
         end_product_establishments: [epe],
-        veteran_file_number: veteran.file_number
+        veteran_file_number: veteran.file_number,
+        benefit_type: non_comp_org.url
       )
     end
 
@@ -50,29 +55,57 @@ feature "NonComp Dispositions Task Page" do
                :nonrating,
                end_product_establishment: epe,
                veteran_participant_id: veteran.participant_id,
-               review_request: hlr)
+               decision_review: decision_review,
+               benefit_type: decision_review.benefit_type)
       end
     end
 
     let!(:in_progress_task) do
-      create(:higher_level_review_task, :in_progress, appeal: hlr, assigned_to: non_comp_org)
+      create(:higher_level_review_task, :in_progress, appeal: decision_review, assigned_to: non_comp_org)
     end
 
-    let(:business_line_url) { "decision_reviews/nco" }
+    let(:business_line_url) { "decision_reviews/nca" }
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+    let(:arbitrary_decision_date) { "01/01/2019" }
     before do
       User.stub = user
       OrganizationsUser.add_user_to_organization(user, non_comp_org)
     end
 
+    context "decision_review is a Supplemental Claim" do
+      let(:decision_review) do
+        create(
+          :supplemental_claim,
+          end_product_establishments: [epe],
+          veteran_file_number: veteran.file_number,
+          benefit_type: non_comp_org.url
+        )
+      end
+
+      scenario "does not offer DTA Error as a disposition choice" do
+        visit dispositions_url
+
+        expect(page).to have_content("National Cemetery Administration")
+
+        expect do
+          click_dropdown name: "disposition-issue-1", text: "DTA Error", wait: 1
+        end.to raise_error(Capybara::ElementNotFound)
+
+        expect(page).to_not have_content("DTA Error")
+      end
+    end
+
     scenario "displays dispositions page" do
       visit dispositions_url
 
-      expect(page).to have_content("Non-Comp Org")
+      within("header") do
+        expect(page).to have_css("h2", text: "National Cemetery Administration")
+      end
+      expect(page).to have_content("National Cemetery Administration")
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(
-        "Prior decision date: #{hlr.request_issues[0].decision_date.strftime('%m/%d/%Y')}"
+        "Prior decision date: #{decision_review.request_issues[0].decision_date.strftime('%m/%d/%Y')}"
       )
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
@@ -86,13 +119,14 @@ feature "NonComp Dispositions Task Page" do
 
     scenario "saves decision issues" do
       visit dispositions_url
-
       expect(page).to have_button("Complete", disabled: true)
+      expect(page).to have_link("Edit Issues")
 
       # set description & disposition for each request issue
       fill_in_disposition(0, "Granted")
-      fill_in_disposition(1, "Granted", "test description")
+      fill_in_disposition(1, "DTA Error", "test description")
       fill_in_disposition(2, "Denied", "denied")
+      fill_in "decision-date", with: arbitrary_decision_date
 
       # save
       expect(page).to have_button("Complete", disabled: false)
@@ -105,21 +139,24 @@ feature "NonComp Dispositions Task Page" do
       expect(page).to have_content(veteran.participant_id)
 
       # verify database updated
-      hlr.decision_issues.reload
-      expect(hlr.decision_issues.length).to eq(3)
-      expect(hlr.decision_issues.find_by(disposition: "Granted", description: nil)).to_not be_nil
-      expect(hlr.decision_issues.find_by(disposition: "Granted", description: "test description")).to_not be_nil
-      expect(hlr.decision_issues.find_by(disposition: "Denied", description: "denied")).to_not be_nil
+      dissues = decision_review.reload.decision_issues
+      expect(dissues.length).to eq(3)
+      expect(dissues.find_by(disposition: "Granted", description: nil)).to_not be_nil
+      expect(dissues.find_by(disposition: "DTA Error", description: "test description")).to_not be_nil
+      expect(dissues.find_by(disposition: "Denied", description: "denied")).to_not be_nil
 
       # verify that going to the completed task does not allow edits
       click_link veteran.name
       expect(page).to have_content("Review each issue and assign the appropriate dispositions")
       expect(page).to have_current_path("/#{dispositions_url}")
       expect(page).not_to have_button("Complete")
+      expect(page).not_to have_link("Edit Issues")
 
       find_disabled_disposition(0, "Granted")
-      find_disabled_disposition(1, "Granted", "test description")
+      find_disabled_disposition(1, "DTA Error", "test description")
       find_disabled_disposition(2, "Denied", "denied")
+      # decision date should be saved
+      expect(page).to have_css("input[value='#{arbitrary_decision_date}']")
     end
 
     context "when there is an error saving" do
@@ -155,7 +192,7 @@ feature "NonComp Dispositions Task Page" do
         visit dispositions_url
         click_on "Edit Issues"
 
-        expect(page).to have_current_path(hlr.reload.caseflow_only_edit_issues_url)
+        expect(page).to have_current_path(decision_review.reload.caseflow_only_edit_issues_url)
       end
     end
   end

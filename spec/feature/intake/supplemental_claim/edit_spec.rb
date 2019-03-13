@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Supplemental Claim Edit issues" do
@@ -8,8 +10,7 @@ feature "Supplemental Claim Edit issues" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
@@ -32,7 +33,7 @@ feature "Supplemental Claim Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
-  let(:profile_date) { "2017-11-02T07:00:00.000Z" }
+  let(:profile_date) { (Time.zone.today - 60).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -132,7 +133,7 @@ feature "Supplemental Claim Edit issues" do
   context "when there is a non-rating end product" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
-        review_request: supplemental_claim,
+        decision_review: supplemental_claim,
         issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
         contention_reference_id: "1234",
@@ -187,7 +188,7 @@ feature "Supplemental Claim Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "A description!",
-        date: "04/25/2018"
+        date: profile_date.mdY
       )
 
       safe_click("#button-submit-update")
@@ -206,7 +207,7 @@ feature "Supplemental Claim Edit issues" do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
-        review_request: supplemental_claim,
+        decision_review: supplemental_claim,
         benefit_type: benefit_type,
         contested_issue_description: "PTSD denied"
       )
@@ -301,7 +302,7 @@ feature "Supplemental Claim Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/25/2018"
+        date: profile_date.mdY
       )
       expect(page).to have_content("3 issues")
 
@@ -322,7 +323,7 @@ feature "Supplemental Claim Edit issues" do
       let!(:active_nonrating_request_issue) do
         create(:request_issue,
                :nonrating,
-               review_request: another_higher_level_review)
+               decision_review: another_higher_level_review)
       end
 
       before do
@@ -352,7 +353,7 @@ feature "Supplemental Claim Edit issues" do
 
         expect(
           RequestIssue.find_by(
-            review_request: supplemental_claim,
+            decision_review: supplemental_claim,
             issue_category: active_nonrating_request_issue.issue_category,
             ineligible_due_to: active_nonrating_request_issue.id,
             ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
@@ -368,7 +369,7 @@ feature "Supplemental Claim Edit issues" do
       let(:decision_request_issue) do
         create(
           :request_issue,
-          review_request: supplemental_claim,
+          decision_review: supplemental_claim,
           contested_issue_description: "currently contesting decision issue",
           decision_date: Time.zone.now - 2.days,
           contested_decision_issue_id: contested_decision_issues.first.id
@@ -381,7 +382,7 @@ feature "Supplemental Claim Edit issues" do
         already_active_hlr = create(:higher_level_review, :with_end_product_establishment)
         create(
           :request_issue,
-          review_request: already_active_hlr,
+          decision_review: already_active_hlr,
           contested_issue_description: "currently active request issue",
           decision_date: Time.zone.now - 2.days,
           end_product_establishment_id: already_active_hlr.end_product_establishments.first.id,
@@ -417,7 +418,8 @@ feature "Supplemental Claim Edit issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "supplemental_claims/#{rating_ep_claim_id}/edit",
           supplemental_claim,
-          decision_request_issue.decision_issues + nonrating_decision_request_issue.decision_issues
+          DecisionIssue.where(id: [decision_request_issue.contested_decision_issue_id,
+                                   nonrating_decision_request_issue.contested_decision_issue_id])
         )
       end
     end
@@ -495,10 +497,13 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
-      new_request_issue = supplemental_claim.reload.request_issues.first
+      new_request_issue = supplemental_claim.reload.request_issues.active.first
       expect(new_request_issue.description).to eq("Left knee granted")
-      expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(request_issue.reload.decision_review).to_not be_nil
+      expect(request_issue.contention_removed_at).to eq(Time.zone.now)
+      expect(request_issue.closed_at).to eq(Time.zone.now)
+      expect(request_issue).to be_closed
+      expect(request_issue).to be_removed
       expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update

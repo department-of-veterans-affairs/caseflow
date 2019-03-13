@@ -71,6 +71,25 @@ export const handleDocketServerError = (err) => ({
   }
 });
 
+export const handleSaveHearingSuccess = (hearing, date) => ({
+  type: Constants.HANDLE_SAVE_HEARING_SUCCESS,
+  payload: {
+    hearing,
+    date
+  }
+});
+
+export const handleSaveHearingError = (err) => ({
+  type: Constants.HANDLE_SAVE_HEARING_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const resetSaveHearingSuccess = () => ({
+  type: Constants.RESET_SAVE_HEARING_SUCCESS
+});
+
 export const onRepNameChange = (repName) => ({
   type: Constants.SET_REPNAME,
   payload: {
@@ -227,13 +246,6 @@ export const setWorksheetTimeSaved = (timeSaved) => ({
   }
 });
 
-export const setDocketTimeSaved = (timeSaved) => ({
-  type: Constants.SET_DOCKET_TIME_SAVED,
-  payload: {
-    timeSaved
-  }
-});
-
 export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
   payload: {
@@ -281,7 +293,7 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
   }
 };
 
-export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
+export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (dispatch) => {
   const payload = {
     hearingId,
     prepped,
@@ -292,7 +304,7 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
   dispatch(setHearingPrepped(payload,
     CATEGORIES.HEARING_WORKSHEET_PAGE));
 
-  ApiUtil.patch(`/hearings/${hearingId}`, { data: { prepped } }).
+  ApiUtil.patch(`/hearings/${hearingExternalId}`, { data: { prepped } }).
     then(() => {
       // request was successful
     },
@@ -302,53 +314,4 @@ export const setPrepped = (hearingId, prepped, date) => (dispatch) => {
       // request failed, resetting value
       dispatch(setHearingPrepped(payload, CATEGORIES.HEARING_WORKSHEET_PAGE, false));
     });
-};
-
-export const saveDocket = (docket, date) => (dispatch) => () => {
-  const hearingsToSave = docket.filter((hearing) => hearing.edited);
-
-  if (hearingsToSave.length === 0) {
-    dispatch(setDocketTimeSaved(now()));
-
-    return;
-  }
-
-  dispatch({
-    type: Constants.TOGGLE_DOCKET_SAVING,
-    payload: { saving: true }
-  });
-  dispatch({
-    type: Constants.SET_DOCKET_SAVE_FAILED,
-    payload: { saveFailed: false }
-  });
-
-  let apiRequests = [];
-
-  hearingsToSave.forEach((hearing) => {
-    const promise = new Promise((resolve) => {
-      ApiUtil.patch(`/hearings/${hearing.external_id}`, { data: { hearing } }).
-        then(() => {
-          dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
-            payload: { date,
-              hearingId: hearing.id } });
-        },
-        () => {
-          dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
-            payload: { saveFailed: true } });
-        }).
-        finally(() => {
-          resolve();
-        });
-    });
-
-    apiRequests.push(promise);
-  });
-
-  Promise.all(apiRequests).then(() => {
-    dispatch(setDocketTimeSaved(now()));
-    dispatch({
-      type: Constants.TOGGLE_DOCKET_SAVING,
-      payload: { saving: false }
-    });
-  });
 };

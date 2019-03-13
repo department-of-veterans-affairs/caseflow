@@ -1,4 +1,4 @@
-require "rails_helper"
+# frozen_string_literal: true
 
 describe RequestIssuesUpdate do
   before do
@@ -45,7 +45,7 @@ describe RequestIssuesUpdate do
   let!(:existing_request_issues) do
     [
       RequestIssue.new(
-        review_request: review,
+        decision_review: review,
         contested_rating_issue_profile_date: Time.zone.local(2017, 4, 5),
         contested_rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
@@ -53,7 +53,7 @@ describe RequestIssuesUpdate do
         rating_issue_associated_at: 5.days.ago
       ),
       RequestIssue.new(
-        review_request: review,
+        decision_review: review,
         contested_rating_issue_profile_date: Time.zone.local(2017, 4, 6),
         contested_rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
@@ -291,17 +291,17 @@ describe RequestIssuesUpdate do
           )
 
           removed_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
-          expect(removed_issue).to have_attributes(
-            review_request: nil
-          )
-          expect(removed_issue.removed_at).to_not be_nil
+          expect(removed_issue.decision_review).to_not be_nil
+          expect(removed_issue.contention_removed_at).to_not be_nil
+          expect(removed_issue).to be_closed
+          expect(removed_issue).to be_removed
           expect(removed_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
 
           expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
-          new_map = rating_end_product_establishment.send(
+          new_map = rating_end_product_establishment.reload.send(
             :rating_issue_contention_map,
-            review.request_issues.reload
+            review.reload.request_issues.active
           )
 
           expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
@@ -319,7 +319,7 @@ describe RequestIssuesUpdate do
         it "cancels end products with no request issues" do
           create(
             :request_issue,
-            review_request: review,
+            decision_review: review,
             end_product_establishment: nonrating_end_product_establishment,
             contention_reference_id: nonrating_request_issue_contention.id,
             nonrating_issue_description: nonrating_request_issue_contention.text,

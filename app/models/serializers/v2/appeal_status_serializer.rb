@@ -1,4 +1,6 @@
-class V2::AppealStatusSerializer < V2::AppealSerializer
+# frozen_string_literal: true
+
+class V2::AppealStatusSerializer < ActiveModel::Serializer
   type :appeal
 
   def id
@@ -6,36 +8,34 @@ class V2::AppealStatusSerializer < V2::AppealSerializer
   end
 
   attribute :linked_review_ids, key: :appeal_ids
-  attribute :advanced_on_docket, key: :aod
 
-  attribute :type do
-    "original"
-  end
-
-  attribute :location do
-    # to be implement
+  attribute :updated do
+    Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
   end
 
   attribute :incomplete_history do
     false
   end
 
-  attribute :aoj do
-    "other"
+  attribute :type do
+    "original"
   end
 
-  attribute :docket do
-    # to be implemented
-  end
+  attribute :active_status?, key: :active
+  attribute :description
+  attribute :advanced_on_docket, key: :aod
+  attribute :location
+  attribute :aoj
+  attribute :program, key: :program_area
+  attribute :status_hash, key: :status
+  attribute :alerts
+  attribute :docket_hash, key: :docket
+  attribute :issues
+  attribute :events
+  attribute :issues_hash, key: :issues
 
-  attribute :events do
-    # to be implemented
-  end
-
-  attribute :issues do
-    # to be implemented
-    # will need to override method used
-    # issues already exists in appeal
+  # Stubbed attributes
+  attribute :evidence do
     []
   end
 end

@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 describe TaskTimerJob do
   class TimedTask < GenericTask
     include TimeableTask
 
     def when_timer_ends; end
 
-    def self.timer_delay
-      1.day
+    def timer_ends_at
+      Time.zone.today + 1.day
     end
   end
 
@@ -16,8 +18,8 @@ describe TaskTimerJob do
       fail
     end
 
-    def self.timer_delay
-      1.day
+    def timer_ends_at
+      Time.zone.today + 1.day
     end
   end
 

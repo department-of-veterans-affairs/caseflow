@@ -20,10 +20,12 @@ const serverData = {
             pg_id: 10
           },
           assigned_on: '2018-08-02T17:37:03.000Z',
-          completed_at: null,
+          closed_at: null,
           assigned_to: {
             css_id: 'BVANKUVALIS',
+            name: 'name',
             id: 130,
+            isOrganization: false,
             type: 'User'
           },
           case_type: 'Post Remand',
@@ -31,7 +33,6 @@ const serverData = {
           docket_name: 'Legacy',
           docket_number: '6182238',
           document_id: '12345-12345678',
-          due_on: '2018-08-11T00:00:00.000Z',
           external_appeal_id: '3625593',
           issue_count: 6,
           paper_case: false,
@@ -45,6 +46,7 @@ const serverData = {
           veteran_name: 'Mills, Beulah, J',
           work_product: 'OTD',
           status: 'Assigned',
+          hide_from_queue_table_view: false,
           hide_from_case_timeline: false,
           hide_from_task_snapshot: false
         },
@@ -67,19 +69,19 @@ describe('QueueLoadingScreen', () => {
         appealType: 'LegacyAppeal',
         externalAppealId: '3625593',
         assignedOn: '2018-08-02T17:37:03.000Z',
-        completedOn: null,
-        dueOn: '2018-08-11T00:00:00.000Z',
+        closedAt: null,
         assignedTo: {
           cssId: 'BVANKUVALIS',
+          name: 'name',
           id: 130,
-          type: 'User'
+          type: 'User',
+          // eslint-disable-next-line no-undefined
+          isOrganization: undefined
         },
         // eslint-disable-next-line no-undefined
         availableActions: undefined,
         // eslint-disable-next-line no-undefined
         timelineTitle: undefined,
-        // eslint-disable-next-line no-undefined
-        taskBusinessPayloads: undefined,
         addedByName: 'Nash X Kuvalis',
         addedByCssId: 'BVANKUVALIS',
         taskId: '3625593-2018-07-11',
@@ -96,6 +98,7 @@ describe('QueueLoadingScreen', () => {
         status: 'Assigned',
         decisionPreparedBy: null,
         type: 'LegacyJudgeTask',
+        hideFromQueueTableView: false,
         hideFromCaseTimeline: false,
         hideFromTaskSnapshot: false
       }

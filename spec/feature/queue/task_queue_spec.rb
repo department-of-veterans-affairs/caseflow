@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Task queue" do
@@ -8,7 +10,36 @@ RSpec.feature "Task queue" do
       FactoryBot.create(
         :ama_attorney_task,
         :on_hold,
-        assigned_to: attorney_user
+        assigned_to: attorney_user,
+        placed_on_hold_at: 2.days.ago
+      )
+    end
+
+    let!(:attorney_task_new_docs) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        :on_hold,
+        assigned_to: attorney_user,
+        placed_on_hold_at: 4.days.ago,
+        appeal: attorney_task.appeal
+      )
+    end
+
+    let!(:colocated_task) do
+      FactoryBot.create(
+        :ama_colocated_task,
+        assigned_by: attorney_user,
+        assigned_at: 2.days.ago,
+        appeal: create(:appeal)
+      )
+    end
+
+    let!(:colocated_task_new_docs) do
+      FactoryBot.create(
+        :ama_colocated_task,
+        assigned_by: attorney_user,
+        assigned_at: 4.days.ago,
+        appeal: attorney_task.appeal
       )
     end
 
@@ -27,7 +58,7 @@ RSpec.feature "Task queue" do
 
     let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
     let(:attorney_on_hold_tasks) do
-      Task.where(status: :on_hold, assigned_to: attorney_user)
+      Task.where(status: :on_hold, assigned_to: attorney_user) + ColocatedTask.where(assigned_by: attorney_user)
     end
 
     before do
@@ -36,14 +67,30 @@ RSpec.feature "Task queue" do
     end
 
     context "the on-hold task is attached to an appeal with documents" do
-      let!(:documents) { ["NOD", "BVA Decision", "SSOC"].map { |t| FactoryBot.build(:document, type: t) } }
+      let!(:documents) do
+        ["NOD", "BVA Decision", "SSOC"].map do |t|
+          FactoryBot.create(
+            :document,
+            type: t,
+            upload_date: 3.days.ago,
+            file_number: attorney_task.appeal.veteran_file_number
+          )
+        end
+      end
 
-      before do
-        allow_any_instance_of(Appeal).to receive(:new_documents_for_user) { documents }
+      let!(:more_documents) do
+        ["NOD", "BVA Decision", "SSOC"].map do |t|
+          FactoryBot.create(
+            :document,
+            type: t,
+            upload_date: 3.days.ago,
+            file_number: colocated_task.appeal.veteran_file_number
+          )
+        end
       end
 
       it "shows the correct number of tasks on hold" do
-        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4))
       end
     end
 
@@ -52,10 +99,39 @@ RSpec.feature "Task queue" do
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
     end
 
+    context "hearings" do
+      context "if a task has a hearing" do
+        let!(:attorney_task_with_hearing) do
+          FactoryBot.create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user
+          )
+        end
+
+        let!(:hearing) { create(:hearing, appeal: attorney_task_with_hearing.appeal, disposition: "held") }
+
+        before do
+          visit "/queue"
+        end
+
+        it "shows the hearing badge" do
+          expect(page).to have_selector(".cf-hearing-badge")
+          expect(find(".cf-hearing-badge")).to have_content("H")
+        end
+      end
+
+      context "if no tasks have hearings" do
+        it "does not show the hearing badge" do
+          expect(page).not_to have_selector(".cf-hearing-badge")
+        end
+      end
+    end
+
     it "supports custom sorting" do
       docket_number_column_header = page.find(:xpath, "//thead/tr/th[3]/span/span[1]")
       docket_number_column_header.click
-      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[3]/span[3]")
+      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[4]/span[3]")
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
       docket_number_column_header.click
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
@@ -121,8 +197,8 @@ RSpec.feature "Task queue" do
     it "should be able to take actions on task from VSO queue" do
       expect(page).to have_content(COPY::ORGANIZATION_QUEUE_TABLE_TITLE % vso.name)
 
-      case_details_link = page.find(:xpath, "//tbody/tr/td[1]/a")
-      case_details_link.click
+      find_table_cell(vso_task.id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
+        .click_link
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
 
       # Marking the task as complete correctly changes the task's status in the database.
@@ -133,6 +209,44 @@ RSpec.feature "Task queue" do
 
       expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, vso_task.appeal.veteran_full_name))
       expect(Task.find(vso_task.id).status).to eq("completed")
+    end
+  end
+
+  context "VSO team queue" do
+    let(:vso_employee) { FactoryBot.create(:user, roles: ["VSO"]) }
+    let(:vso) { FactoryBot.create(:vso) }
+
+    let(:unassigned_count) { 3 }
+    let(:assigned_count) { 7 }
+    let(:tracking_task_count) { 14 }
+
+    before do
+      FactoryBot.create_list(:informal_hearing_presentation_task, unassigned_count, :in_progress, assigned_to: vso)
+      FactoryBot.create_list(:informal_hearing_presentation_task, assigned_count, :on_hold, assigned_to: vso)
+      FactoryBot.create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
+
+      allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+      User.authenticate!(user: vso_employee)
+      visit(vso.path)
+    end
+
+    it "shows the right number of cases in each tab" do
+      step("Unassigned tab") do
+        expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, vso.name))
+        expect(find("tbody").find_all("tr").length).to eq(unassigned_count)
+      end
+
+      step("Assigned tab") do
+        find("button", text: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_count)).click
+        expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, vso.name))
+        expect(find("tbody").find_all("tr").length).to eq(assigned_count)
+      end
+
+      step("All cases tab") do
+        find("button", text: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE, assigned_count)).click
+        expect(page).to have_content(format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, vso.name))
+        expect(find("tbody").find_all("tr").length).to eq(tracking_task_count)
+      end
     end
   end
 
@@ -147,7 +261,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal).becomes(RootTask) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
       let(:instructions) { "Some instructions for how to complete the task" }
 
       it "should allow us to assign a mail task to a user" do
@@ -217,6 +331,10 @@ RSpec.feature "Task queue" do
       expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
     end
 
+    it "does not show all cases tab for non-VSO organization" do
+      expect(page).to_not have_content(COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE)
+    end
+
     it "shows the right number of cases in each tab" do
       # Unassigned tab
       expect(page).to have_content(
@@ -266,6 +384,7 @@ RSpec.feature "Task queue" do
 
         find(".Select-control", text: "Select an action…").click
         find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
+        expect(page).to have_content("Instructions:")
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
@@ -386,6 +505,26 @@ RSpec.feature "Task queue" do
       it "should display both legacy and caseflow review tasks" do
         visit("/queue")
         expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
+      end
+    end
+  end
+
+  describe "GenericTask" do
+    context "when it is assigned to the current user" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:appeal) { root_task.appeal }
+      let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
+
+      before { User.authenticate!(user: user) }
+
+      it "allows the user to cancel the task" do
+        visit("queue/appeals/#{task.appeal.external_id}")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: COPY::CANCEL_TASK_MODAL_TITLE)
+        click_button("Submit")
+        expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
+        expect(page.current_path).to eq("/queue")
+        expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
     end
   end

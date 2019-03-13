@@ -1,3 +1,13 @@
+# frozen_string_literal: true
+
+##
+# Any task assigned to a colocated team at the BVA, which is any team that handles admin actions at BVA.
+# Colocated teams perform actions like:
+#  - translating documents
+#  - scheduling hearings
+#  - handling FOIA requests
+# Note: Full list of colocated tasks in /client/constants/CO_LOCATED_ADMIN_ACTIONS.json
+
 class ColocatedTask < Task
   validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validates :assigned_by, presence: true
@@ -34,30 +44,44 @@ class ColocatedTask < Task
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
-  def available_actions(_user)
-    actions = [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h]
+  def label
+    action
+  end
 
-    if %w[translation schedule_hearing].include?(action) && appeal.class.name.eql?("LegacyAppeal")
+  def available_actions(user)
+    if assigned_to != user
+      if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
+        return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
+      end
+
+      return []
+    end
+
+    available_actions_with_conditions([
+                                        Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
+                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+                                        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+                                      ])
+  end
+
+  def available_actions_with_conditions(core_actions)
+    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
       send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
-      actions.unshift(send_to_team)
-    else
-      actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
+      return core_actions.unshift(send_to_team)
     end
+
+    core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
-      actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
+      core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
     end
 
-    actions
+    core_actions
   end
-  # rubocop:enable Metrics/AbcSize
 
-  def actions_available?(user)
-    return false if completed? || assigned_to != user
-
-    true
+  def actions_available?(_user)
+    active?
   end
 
   private
@@ -67,10 +91,12 @@ class ColocatedTask < Task
   end
 
   def update_location_in_vacols
-    if saved_change_to_status? &&
-       completed? &&
-       appeal_type == LegacyAppeal.name &&
-       all_tasks_completed_for_appeal?
+    all_colocated_tasks_for_legacy_appeal_complete = saved_change_to_status? &&
+                                                     !active? &&
+                                                     appeal_type == LegacyAppeal.name &&
+                                                     all_tasks_closed_for_appeal?
+
+    if all_colocated_tasks_for_legacy_appeal_complete
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
@@ -84,8 +110,8 @@ class ColocatedTask < Task
     end
   end
 
-  def all_tasks_completed_for_appeal?
-    appeal.tasks.where(type: ColocatedTask.name).map(&:status).uniq == [Constants.TASK_STATUSES.completed]
+  def all_tasks_closed_for_appeal?
+    appeal.tasks.active.where(type: ColocatedTask.name).none?
   end
 
   def on_hold_duration_is_set

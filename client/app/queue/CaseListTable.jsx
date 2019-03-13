@@ -15,23 +15,24 @@ import { clearCaseListSearch } from './CaseList/CaseListActions';
 import { DateString } from '../util/DateUtil';
 import { renderAppealType } from './utils';
 import COPY from '../../COPY.json';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
 
 const currentAssigneeStyling = css({
   color: COLORS.GREEN
 });
 
-const labelForLocation = (locationCode, userId) => {
-  if (!locationCode) {
+const labelForLocation = (assignedToLocation, userId) => {
+  if (!assignedToLocation) {
     return '';
   }
 
-  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)?${locationCode}\\b`);
+  const regex = new RegExp(`\\b(?:BVA|VACO|VHAISA)?${assignedToLocation}\\b`);
 
   if (userId.match(regex) !== null) {
     return <span {...currentAssigneeStyling}>{COPY.CASE_LIST_TABLE_ASSIGNEE_IS_CURRENT_USER_LABEL}</span>;
   }
 
-  return locationCode;
+  return assignedToLocation;
 };
 
 class CaseListTable extends React.PureComponent {
@@ -73,20 +74,27 @@ class CaseListTable extends React.PureComponent {
       },
       {
         header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-        valueFunction: (appeal) => labelForLocation(appeal.locationCode, this.props.userCssId)
+        valueFunction: (appeal) => labelForLocation(appeal.assignedToLocation, this.props.userCssId)
       }
     ];
 
-    const doAnyAppealsHaveHearings = Boolean(_.find(this.props.appeals, (appeal) => {
-      return appeal.hearings.length;
-    }));
+    const doAnyAppealsHaveHeldHearings = Boolean(
+      _.find(this.props.appeals, (appeal) => {
+        return appeal.hearings.
+          filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
+          length;
+      }));
 
-    if (doAnyAppealsHaveHearings) {
+    if (doAnyAppealsHaveHeldHearings) {
       const hearingColumn = {
         valueFunction: (appeal) => {
-          const hearings = appeal.hearings.sort((h1, h2) => h1.date < h2.date ? 1 : -1);
+          const hearings = appeal.hearings.
+            filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
+            sort((h1, h2) => h1.date < h2.date ? 1 : -1);
 
-          return <HearingBadge hearing={hearings[0]} />;
+          const mostRecentHearing = hearings[0];
+
+          return mostRecentHearing ? <HearingBadge hearing={mostRecentHearing} /> : null;
         }
       };
 

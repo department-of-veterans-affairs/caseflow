@@ -20,8 +20,7 @@ import { COLORS } from '../constants/AppConstants';
 import { renderLegacyAppealType } from './utils';
 
 import {
-  requestPatch,
-  requestSave
+  requestPatch
 } from './uiReducer/uiActions';
 
 const editButton = css({
@@ -44,7 +43,7 @@ const listStyling = css({
   listStyleType: 'none',
   verticalAlign: 'super',
   display: 'flex',
-  'flex-wrap': 'wrap',
+  flexWrap: 'wrap',
   padding: '1rem 0 0 0'
 });
 
@@ -118,9 +117,9 @@ export class CaseTitleDetails extends React.PureComponent {
         this.handleModalClose();
       }).
       catch((error) => {
-        const documentIdErrors = JSON.parse(error.message).errors.document_id;
+        const documentIdErrors = JSON.parse(error.message).errors;
 
-        const documentIdErrorText = documentIdErrors && documentIdErrors[0];
+        const documentIdErrorText = documentIdErrors && documentIdErrors[0].detail;
 
         this.setState({
           highlightModal: true,
@@ -155,6 +154,7 @@ export class CaseTitleDetails extends React.PureComponent {
       </React.Fragment>
 
       { !userIsVsoEmployee &&
+      !this.props.hasCaseDetailsRole &&
         <React.Fragment>
           <h4>Veteran Documents</h4>
           <div>
@@ -164,7 +164,8 @@ export class CaseTitleDetails extends React.PureComponent {
               redirectUrl={redirectUrl}
               appeal={appeal}
               taskType={taskType}
-              docCountWithinLink />
+              docCountWithinLink
+              newDocsIcon />
           </div>
         </React.Fragment> }
 
@@ -251,7 +252,6 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
   requestPatch
 }, dispatch);
 

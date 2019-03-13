@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe SupplementalClaimIntake do
   before do
     Time.zone = "Eastern Time (US & Canada)"
@@ -42,7 +44,7 @@ describe SupplementalClaimIntake do
 
     let!(:request_issue) do
       RequestIssue.new(
-        review_request: detail,
+        decision_review: detail,
         contested_rating_issue_reference_id: "issue1",
         contested_rating_issue_profile_date: Time.zone.local(2018, 4, 5),
         contested_issue_description: "description",
@@ -99,7 +101,8 @@ describe SupplementalClaimIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: intake.veteran.participant_id,
-          payee_code: nil
+          payee_code: nil,
+          decision_review: intake.detail
         )
       end
     end
@@ -115,7 +118,8 @@ describe SupplementalClaimIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: "1234",
-          payee_code: "10"
+          payee_code: "10",
+          decision_review: intake.detail
         )
       end
 
@@ -133,7 +137,7 @@ describe SupplementalClaimIntake do
 
       context "And payee code is nil" do
         let(:payee_code) { nil }
-        # Check that the review_request validations still work
+        # Check that the decision_review validations still work
         let(:receipt_date) { 3.days.from_now }
 
         context "And benefit type is compensation" do
@@ -168,7 +172,8 @@ describe SupplementalClaimIntake do
           expect(intake.detail.claimants.count).to eq 1
           expect(intake.detail.claimants.first).to have_attributes(
             participant_id: "1234",
-            payee_code: nil
+            payee_code: nil,
+            decision_review: intake.detail
           )
         end
       end
@@ -241,7 +246,9 @@ describe SupplementalClaimIntake do
           end_product_code: "040SCR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
-          claimant_participant_id: claimant.participant_id
+          claimant_participant_id: claimant.participant_id,
+          limited_poa_code: nil,
+          limited_poa_access: nil
         },
         veteran_hash: intake.veteran.to_vbms_hash,
         user: user
@@ -270,6 +277,7 @@ describe SupplementalClaimIntake do
     end
 
     context "when benefit type is non comp" do
+      before { RequestStore[:current_user] = user }
       let(:benefit_type) { "fiduciary" }
 
       it "creates DecisionReviewTask" do
@@ -279,6 +287,11 @@ describe SupplementalClaimIntake do
 
         expect(intake.detail.tasks.count).to eq(1)
         expect(intake.detail.tasks.first).to be_a(DecisionReviewTask)
+      end
+
+      it "adds user to organization" do
+        subject
+        expect(OrganizationsUser.find_by(user: user, organization: intake.detail.business_line)).to_not be_nil
       end
     end
 

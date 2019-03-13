@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingSchedule::ValidateRoSpreadsheet do
   context "when RO non-availaility dates are out of range" do
     subject do

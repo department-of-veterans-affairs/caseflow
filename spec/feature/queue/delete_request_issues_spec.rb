@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 feature "correcting issues" do
@@ -17,8 +19,9 @@ feature "correcting issues" do
       expect(page).to_not have_content "first request issue"
       expect(DecisionIssue.count).to eq 1
       expect(RequestDecisionIssue.count).to eq 1
-      expect(first_request_issue.reload.review_request_id).to be_nil
-      expect(first_request_issue.reload.review_request_type).to be_nil
+      expect(first_request_issue.reload.decision_review).to_not be_nil
+      expect(first_request_issue).to be_closed
+      expect(first_request_issue).to be_removed
     end
   end
 
@@ -35,8 +38,9 @@ feature "correcting issues" do
       expect(page).to_not have_content "with many decision issues"
       expect(DecisionIssue.pluck(:id)).to eq [3]
       expect(RequestDecisionIssue.count).to eq 1
-      expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.reload.review_request_type).to be_nil
+      expect(request_issue.reload.decision_review).to_not be_nil
+      expect(request_issue).to be_closed
+      expect(request_issue).to be_removed
     end
   end
 
@@ -57,8 +61,9 @@ feature "correcting issues" do
       expect(page).to_not have_content "with a shared decision issue"
       expect(DecisionIssue.pluck(:id)).to eq [1]
       expect(RequestDecisionIssue.count).to eq 1
-      expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.reload.review_request_type).to be_nil
+      expect(request_issue.reload.decision_review).to_not be_nil
+      expect(request_issue).to be_closed
+      expect(request_issue).to be_removed
       expect(page).to_not have_content "Added to 2 issues"
       expect(page).to_not have_content "decision with id 2"
       expect(page).to have_content "decision with id 1"
@@ -129,7 +134,7 @@ feature "correcting issues" do
   end
 
   def decision_issue(id)
-    create(:decision_issue, id: id, description: "decision with id #{id}", decision_review_type: "Appeal")
+    create(:decision_issue, id: id, description: "decision with id #{id}", decision_review: create(:appeal))
   end
 
   def judge_user

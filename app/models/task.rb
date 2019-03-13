@@ -1,11 +1,16 @@
+# frozen_string_literal: true
+
+##
+# Base model for all tasks in Caseflow.
+# Tasks represent work to be done by judges, attorneys, VSOs, and anyone else who touches a Veteran's appeal.
+
 class Task < ApplicationRecord
   acts_as_tree
 
   belongs_to :assigned_to, polymorphic: true
-  belongs_to :assigned_by, class_name: User.name
+  belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
-  has_many :task_business_payloads
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
@@ -14,21 +19,41 @@ class Task < ApplicationRecord
   after_create :put_parent_on_hold
 
   before_update :set_timestamps
-  after_update :update_parent_status, if: :status_changed_to_completed_and_has_parent?
+  after_update :update_parent_status, if: :task_just_closed_and_has_parent?
+  after_update :update_children_status, if: :task_just_closed?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
     Constants.TASK_STATUSES.on_hold.to_sym => Constants.TASK_STATUSES.on_hold,
-    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed
+    Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed,
+    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
+
+  scope :active, -> { where.not(status: inactive_statuses) }
+
+  scope :inactive, -> { where(status: inactive_statuses) }
 
   def available_actions(_user)
     []
   end
 
   def label
-    action
+    self.class.name
+  end
+
+  def self.inactive_statuses
+    [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled]
+  end
+
+  # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
+  # properties of the task will not change.
+  def active?
+    !self.class.inactive_statuses.include?(status)
+  end
+
+  def active_with_no_children?
+    active? && children.empty?
   end
 
   # available_actions() returns an array of options from selected by the subclass
@@ -57,7 +82,7 @@ class Task < ApplicationRecord
   end
 
   def actions_allowable?(user)
-    return false if Constants.TASK_STATUSES.completed == status
+    return false if !active?
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
     return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
@@ -77,16 +102,12 @@ class Task < ApplicationRecord
     children.where(type: AttorneyTask.name)
   end
 
-  def self.recently_completed
-    where(status: Constants.TASK_STATUSES.completed, completed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+  def self.recently_closed
+    inactive.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
-  def self.incomplete
-    where.not(status: Constants.TASK_STATUSES.completed)
-  end
-
-  def self.incomplete_or_recently_completed
-    incomplete.or(recently_completed)
+  def self.incomplete_or_recently_closed
+    active.or(recently_closed)
   end
 
   def self.create_many_from_params(params_array, current_user)
@@ -118,6 +139,10 @@ class Task < ApplicationRecord
     [self]
   end
 
+  def hide_from_queue_table_view
+    false
+  end
+
   def hide_from_case_timeline
     false
   end
@@ -125,8 +150,6 @@ class Task < ApplicationRecord
   def hide_from_task_snapshot
     false
   end
-
-  def reassign; end
 
   def legacy?
     appeal_type == LegacyAppeal.name
@@ -158,12 +181,14 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete
   end
 
-  def can_be_updated_by_user?(user)
-    return true if [assigned_to, assigned_by].include?(user) ||
-                   parent&.assigned_to == user ||
-                   user.administered_teams.select { |team| team.is_a?(JudgeTeam) }.any?
+  def task_is_assigned_to_user_within_organization?(user)
+    parent&.assigned_to.is_a?(Organization) &&
+      assigned_to.is_a?(User) &&
+      parent.assigned_to.user_has_access?(user)
+  end
 
-    false
+  def can_be_updated_by_user?(user)
+    available_actions_unwrapper(user).any?
   end
 
   def verify_user_can_update!(user)
@@ -187,6 +212,34 @@ class Task < ApplicationRecord
     end
   end
 
+  def reassign(reassign_params, current_user)
+    sibling = dup.tap do |t|
+      t.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)
+      t.assigned_to = self.class.child_task_assignee(parent, reassign_params)
+      t.instructions = [instructions, reassign_params[:instructions]].flatten
+      t.save!
+    end
+
+    update!(status: Constants.TASK_STATUSES.cancelled)
+
+    children.active.each { |t| t.update!(parent_id: sibling.id) }
+
+    [sibling, self, sibling.children].flatten
+  end
+
+  def self.child_task_assignee(_parent, params)
+    Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
+  end
+
+  def self.child_assigned_by_id(parent, current_user)
+    return current_user.id if current_user
+    return parent.assigned_to_id if parent && parent.assigned_to_type == User.name
+  end
+
+  def self.most_recently_assigned
+    order(:updated_at).last
+  end
+
   def root_task(task_id = nil)
     task_id = id if task_id.nil?
     return parent.root_task(task_id) if parent
@@ -195,8 +248,18 @@ class Task < ApplicationRecord
     fail Caseflow::Error::NoRootTask, task_id: task_id
   end
 
+  def descendants
+    [self, children.map(&:descendants)].flatten
+  end
+
   def previous_task
     nil
+  end
+
+  def cancel_task_and_child_subtasks
+    # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
+    descendant_ids = descendants.pluck(:id)
+    Task.active.where(id: descendant_ids).update_all(status: Constants.TASK_STATUSES.cancelled)
   end
 
   def assign_to_organization_data(_user = nil)
@@ -216,6 +279,15 @@ class Task < ApplicationRecord
 
   def mail_assign_to_organization_data(_user = nil)
     { options: MailTask.subclass_routing_options }
+  end
+
+  def cancel_task_data(_user = nil)
+    {
+      modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
+      modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
+      message_title: format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name),
+      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by&.full_name || "the assigner")
+    }
   end
 
   def assign_to_user_data(user = nil)
@@ -266,7 +338,7 @@ class Task < ApplicationRecord
     {
       selected: org,
       options: [{ label: org.name, value: org.id }],
-      type: GenericTask.name
+      type: TranslationTask.name
     }
   end
 
@@ -316,7 +388,7 @@ class Task < ApplicationRecord
   def timeline_details
     {
       title: timeline_title,
-      date: completed_at
+      date: closed_at
     }
   end
 
@@ -333,6 +405,10 @@ class Task < ApplicationRecord
 
   def serializer_class
     ::WorkQueue::TaskSerializer
+  end
+
+  def assigned_to_label
+    assigned_to.is_a?(Organization) ? assigned_to.name : assigned_to.css_id
   end
 
   private
@@ -353,8 +429,14 @@ class Task < ApplicationRecord
     parent.when_child_task_completed
   end
 
-  def status_changed_to_completed_and_has_parent?
-    saved_change_to_attribute?("status") && completed? && parent
+  def update_children_status; end
+
+  def task_just_closed?
+    saved_change_to_attribute?("status") && !active?
+  end
+
+  def task_just_closed_and_has_parent?
+    task_just_closed? && parent
   end
 
   def users_to_options(users)
@@ -367,7 +449,7 @@ class Task < ApplicationRecord
   end
 
   def update_status_if_children_tasks_are_complete
-    if children.any? && children.reject { |t| t.status == Constants.TASK_STATUSES.completed }.empty?
+    if children.any? && children.select(&:active?).empty?
       return update!(status: Constants.TASK_STATUSES.completed) if assigned_to.is_a?(Organization)
       return update!(status: :assigned) if on_hold?
     end
@@ -383,10 +465,16 @@ class Task < ApplicationRecord
 
   def set_timestamps
     if will_save_change_to_status?
-      self.assigned_at = updated_at if assigned?
-      self.started_at = updated_at if in_progress?
-      self.placed_on_hold_at = updated_at if on_hold?
-      self.completed_at = updated_at if completed?
+      case status_change_to_be_saved&.last&.to_sym
+      when :assigned
+        self.assigned_at = updated_at
+      when :in_progress
+        self.started_at = updated_at
+      when :on_hold
+        self.placed_on_hold_at = updated_at
+      when :completed, :cancelled
+        self.closed_at = updated_at
+      end
     end
   end
 end

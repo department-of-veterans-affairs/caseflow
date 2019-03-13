@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe QueueMapper do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -95,13 +97,13 @@ describe QueueMapper do
       let(:info) do
         { work_product: "OMO - IME",
           overtime: true,
-          note: ("a" * 341) + "Véteran’s",
+          note: ("a" * 341) + "Véteran’s issue",
           reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone,
           document_id: "123456789.1234",
           modifying_user: "TESTSLOGID" }
       end
 
-      it "only converts all characters to ASCII" do
+      it "only keeps the first 350 characters and converts them to ASCII" do
         expect(subject[:deatcom]).to eq(("a" * 341) + "Veteran's")
       end
     end
@@ -117,6 +119,22 @@ describe QueueMapper do
 
       it "does not contain the deatcom key" do
         expect(subject.keys).to_not include :deatcom
+      end
+    end
+
+    context "when comment contains non-ASCII characters that make the length greater than 600" do
+      let(:info) do
+        { work_product: "OMO - IME",
+          overtime: true,
+          note: "test",
+          comment: ("a" * 575) + "“pleadings” and ‘motions” and",
+          reassigned_to_judge_date: VacolsHelper.local_date_with_utc_timezone,
+          document_id: "M1234567.1234",
+          modifying_user: "TESTSLOGID" }
+      end
+
+      it "only keeps the first 600 characters and converts them to ASCII" do
+        expect(subject[:debmcom]).to eq(("a" * 575) + "\"pleadings\" and 'motions\"")
       end
     end
 

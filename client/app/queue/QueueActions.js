@@ -1,27 +1,17 @@
 /* eslint-disable max-lines */
-// @flow
 import { associateTasksWithAppeals,
   prepareAllTasksForStore,
   extractAppealsAndAmaTasks,
+  prepareMostRecentlyHeldHearingForStore,
   prepareTasksForStore } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
 import _ from 'lodash';
 import pluralize from 'pluralize';
-import type { Dispatch } from './types/state';
-import type {
-  Task,
-  Tasks,
-  BasicAppeals,
-  AppealDetails,
-  ClaimReviews,
-  User
-} from './types/models';
 
 export const onReceiveQueue = (
-  { tasks, amaTasks, appeals }:
-  { tasks: Tasks, amaTasks: Tasks, appeals: BasicAppeals }
+  { tasks, amaTasks, appeals }
 ) => ({
   type: ACTIONS.RECEIVE_QUEUE_DETAILS,
   payload: {
@@ -32,7 +22,7 @@ export const onReceiveQueue = (
 });
 
 export const onReceiveAppealDetails = (
-  { appeals, appealDetails }: { appeals: BasicAppeals, appealDetails: AppealDetails }
+  { appeals, appealDetails }
 ) => ({
   type: ACTIONS.RECEIVE_APPEAL_DETAILS,
   payload: {
@@ -42,7 +32,7 @@ export const onReceiveAppealDetails = (
 });
 
 export const onReceiveClaimReviewDetails = (
-  { claimReviews }: { claimReviews: ClaimReviews }
+  { claimReviews }
 ) => ({
   type: ACTIONS.RECEIVE_CLAIM_REVIEW_DETAILS,
   payload: {
@@ -51,7 +41,7 @@ export const onReceiveClaimReviewDetails = (
 });
 
 export const onReceiveTasks = (
-  { tasks, amaTasks }: { tasks: Tasks, amaTasks: Tasks }
+  { tasks, amaTasks }
 ) => ({
   type: ACTIONS.RECEIVE_TASKS,
   payload: {
@@ -60,14 +50,14 @@ export const onReceiveTasks = (
   }
 });
 
-export const onReceiveAmaTasks = (amaTasks: Array<Object>) => ({
+export const onReceiveAmaTasks = (amaTasks) => ({
   type: ACTIONS.RECEIVE_AMA_TASKS,
   payload: {
     amaTasks: prepareTasksForStore(amaTasks)
   }
 });
 
-export const fetchJudges = () => (dispatch: Dispatch) => {
+export const fetchJudges = () => (dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
     const resp = JSON.parse(response.text);
     const judges = _.keyBy(resp.judges, 'id');
@@ -81,17 +71,17 @@ export const fetchJudges = () => (dispatch: Dispatch) => {
   });
 };
 
-export const receiveNewDocuments = ({ appealId, newDocuments }: { appealId: string, newDocuments: Array<Object> }) => ({
-  type: ACTIONS.RECEIVE_NEW_FILES,
+export const receiveNewDocumentsForAppeal = ({ appealId, newDocuments }) => ({
+  type: ACTIONS.RECEIVE_NEW_FILES_FOR_APPEAL,
   payload: {
     appealId,
     newDocuments
   }
 });
 
-export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch: Dispatch) => {
+export const getNewDocumentsForAppeal = (appealId) => (dispatch) => {
   dispatch({
-    type: ACTIONS.STARTED_LOADING_DOCUMENTS,
+    type: ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_APPEAL,
     payload: {
       appealId
     }
@@ -100,16 +90,16 @@ export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch
     timeout: { response: 5 * 60 * 1000 }
   };
 
-  ApiUtil.get(`/appeals/${appealId}/new_documents${cached ? '?cached' : ''}`, requestOptions).then((response) => {
+  ApiUtil.get(`/appeals/${appealId}/new_documents`, requestOptions).then((response) => {
     const resp = JSON.parse(response.text);
 
-    dispatch(receiveNewDocuments({
+    dispatch(receiveNewDocumentsForAppeal({
       appealId,
       newDocuments: resp.new_documents
     }));
   }, (error) => {
     dispatch({
-      type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES,
+      type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_APPEAL,
       payload: {
         appealId,
         error
@@ -118,7 +108,53 @@ export const getNewDocuments = (appealId: string, cached: ?boolean) => (dispatch
   });
 };
 
-export const getAppealValue = (appealId: string, endpoint: string, name: string) => (dispatch: Dispatch) => {
+export const receiveNewDocumentsForTask = ({ taskId, newDocuments }) => ({
+  type: ACTIONS.RECEIVE_NEW_FILES_FOR_TASK,
+  payload: {
+    taskId,
+    newDocuments
+  }
+});
+
+export const getNewDocumentsForTask = (taskId) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_LOADING_DOCUMENTS_FOR_TASK,
+    payload: {
+      taskId
+    }
+  });
+  const requestOptions = {
+    timeout: { response: 5 * 60 * 1000 }
+  };
+
+  ApiUtil.get(`/tasks/${taskId}/new_documents`, requestOptions).then((response) => {
+    const resp = JSON.parse(response.text);
+
+    dispatch(receiveNewDocumentsForTask({
+      taskId,
+      newDocuments: resp.new_documents
+    }));
+  }, (error) => {
+    dispatch({
+      type: ACTIONS.ERROR_ON_RECEIVE_NEW_FILES_FOR_TASK,
+      payload: {
+        taskId,
+        error
+      }
+    });
+  });
+};
+
+export const loadAppealDocCount = (appealId) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.STARTED_DOC_COUNT_REQUEST,
+    payload: {
+      appealId
+    }
+  });
+};
+
+export const getAppealValue = (appealId, endpoint, name) => (dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_LOADING_APPEAL_VALUE,
     payload: {
@@ -149,15 +185,21 @@ export const getAppealValue = (appealId: string, endpoint: string, name: string)
   });
 };
 
-export const setAppealDocCount = (appealId: string, docCount: number) => ({
+export const setAppealDocCount = (appealId, docCount, cached) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
     appealId,
-    docCount
+    docCount,
+    cached
   }
 });
 
-export const setDecisionOptions = (opts: Object) => (dispatch: Dispatch) => {
+export const setMostRecentlyHeldHearingForAppeal = (appealId, hearing) => ({
+  type: ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL,
+  payload: prepareMostRecentlyHeldHearingForStore(appealId, hearing)
+});
+
+export const setDecisionOptions = (opts) => (dispatch) => {
   dispatch(hideErrorMessage());
   dispatch({
     type: ACTIONS.SET_DECISION_OPTIONS,
@@ -179,14 +221,14 @@ const editAppeal = (appealId, attributes) => ({
   }
 });
 
-export const deleteAppeal = (appealId: string) => ({
+export const deleteAppeal = (appealId) => ({
   type: ACTIONS.DELETE_APPEAL,
   payload: {
     appealId
   }
 });
 
-export const editStagedAppeal = (appealId: string, attributes: Object) => ({
+export const editStagedAppeal = (appealId, attributes) => ({
   type: ACTIONS.EDIT_STAGED_APPEAL,
   payload: {
     appealId,
@@ -194,14 +236,14 @@ export const editStagedAppeal = (appealId: string, attributes: Object) => ({
   }
 });
 
-export const checkoutStagedAppeal = (appealId: string) => ({
+export const checkoutStagedAppeal = (appealId) => ({
   type: ACTIONS.CHECKOUT_STAGED_APPEAL,
   payload: {
     appealId
   }
 });
 
-export const stageAppeal = (appealId: string) => (dispatch: Dispatch) => {
+export const stageAppeal = (appealId) => (dispatch) => {
   dispatch(checkoutStagedAppeal(appealId));
 
   dispatch({
@@ -212,7 +254,7 @@ export const stageAppeal = (appealId: string) => (dispatch: Dispatch) => {
   });
 };
 
-export const updateEditingAppealIssue = (attributes: Object) => ({
+export const updateEditingAppealIssue = (attributes) => ({
   type: ACTIONS.UPDATE_EDITING_APPEAL_ISSUE,
   payload: {
     attributes
@@ -220,7 +262,7 @@ export const updateEditingAppealIssue = (attributes: Object) => ({
 });
 
 export const startEditingAppealIssue =
-  (appealId: string, issueId: string, attributes: Object) => (dispatch: Dispatch) => {
+  (appealId, issueId, attributes) => (dispatch) => {
     dispatch({
       type: ACTIONS.START_EDITING_APPEAL_ISSUE,
       payload: {
@@ -235,7 +277,7 @@ export const startEditingAppealIssue =
   };
 
 export const deleteEditingAppealIssue =
-  (appealId: string, issueId: string, attributes: Object) => (dispatch: Dispatch) => {
+  (appealId, issueId, attributes) => (dispatch) => {
     dispatch({
       type: ACTIONS.DELETE_EDITING_APPEAL_ISSUE,
       payload: {
@@ -250,7 +292,7 @@ export const cancelEditingAppealIssue = () => ({
   type: ACTIONS.CANCEL_EDITING_APPEAL_ISSUE
 });
 
-export const saveEditedAppealIssue = (appealId: string, attributes: { issues: Object }) => (dispatch: Dispatch) => {
+export const saveEditedAppealIssue = (appealId, attributes) => (dispatch) => {
   dispatch({
     type: ACTIONS.SAVE_EDITED_APPEAL_ISSUE,
     payload: {
@@ -264,7 +306,7 @@ export const saveEditedAppealIssue = (appealId: string, attributes: { issues: Ob
   }
 };
 
-export const setAttorneysOfJudge = (attorneys: Array<User>) => ({
+export const setAttorneysOfJudge = (attorneys) => ({
   type: ACTIONS.SET_ATTORNEYS_OF_JUDGE,
   payload: {
     attorneys
@@ -295,15 +337,14 @@ const errorTasksAndAppealsOfAttorney = ({ attorneyId, error }) => ({
   }
 });
 
-export const errorFetchingDocumentCount = (appealId: string, error: Object) => ({
+export const errorFetchingDocumentCount = (appealId) => ({
   type: ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT,
   payload: {
-    appealId,
-    error
+    appealId
   }
 });
 
-export const fetchTasksAndAppealsOfAttorney = (attorneyId: string, params: Object) => (dispatch: Dispatch) => {
+export const fetchTasksAndAppealsOfAttorney = (attorneyId, params) => (dispatch) => {
   const requestOptions = {
     timeout: true
   };
@@ -324,7 +365,7 @@ export const fetchTasksAndAppealsOfAttorney = (attorneyId: string, params: Objec
 };
 
 export const setSelectionOfTaskOfUser =
-  ({ userId, taskId, selected }: {userId: string, taskId: string, selected: boolean}) => ({
+  ({ userId, taskId, selected }) => ({
     type: ACTIONS.SET_SELECTION_OF_TASK_OF_USER,
     payload: {
       userId,
@@ -335,9 +376,7 @@ export const setSelectionOfTaskOfUser =
 
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
-}: {
-  tasks: Array<Task>, assigneeId: string, previousAssigneeId: string
-}) => (dispatch: Dispatch) => Promise.all(tasks.map((oldTask) => {
+}) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
@@ -394,9 +433,7 @@ export const initialAssignTasksToUser = ({
 
 export const reassignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
-}: {
-  tasks: Array<Task>, assigneeId: string, previousAssigneeId: string
-}) => (dispatch: Dispatch) => Promise.all(tasks.map((oldTask) => {
+}) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
@@ -449,14 +486,18 @@ export const reassignTasksToUser = ({
     });
 }));
 
-const refreshLegacyTasks = (dispatch, userId) =>
-  ApiUtil.get(`/queue/${userId}`, { timeout: { response: 5 * 60 * 1000 } }).
-    then((response) =>
-      dispatch(onReceiveQueue({
-        amaTasks: {},
-        ...associateTasksWithAppeals(JSON.parse(response.text))
-      }))
-    );
+const refreshTasks = (dispatch, userId, userRole) => {
+  return Promise.all([
+    ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`),
+    ApiUtil.get(`/queue/${userId}`, { timeout: { response: 5 * 60 * 1000 } })
+  ]).then((responses) => {
+    dispatch(onReceiveQueue(extractAppealsAndAmaTasks(responses[0].body.tasks.data)));
+    dispatch(onReceiveQueue({
+      amaTasks: {},
+      ...associateTasksWithAppeals(JSON.parse(responses[1].text))
+    }));
+  });
+};
 
 const setPendingDistribution = (distribution) => ({
   type: ACTIONS.SET_PENDING_DISTRIBUTION,
@@ -472,7 +513,7 @@ const distributionError = (dispatch, userId, error) => {
 
   if (firstError.error === 'unassigned_cases') {
     dispatch(setPendingDistribution({ status: 'completed' }));
-    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+    refreshTasks(dispatch, userId, 'judge').then(() => dispatch(setPendingDistribution(null)));
   } else {
     dispatch(setPendingDistribution(null));
   }
@@ -487,20 +528,22 @@ const receiveDistribution = (dispatch, userId, response) => {
     const caseN = distribution.distributed_cases_count;
 
     dispatch(showSuccessMessage({
-      title: 'Distribution Complete',
+      title: 'Distribution complete',
       detail: `${caseN} new ${pluralize('case', caseN)} have been distributed from the docket.`
     }));
 
-    refreshLegacyTasks(dispatch, userId).then(() => dispatch(setPendingDistribution(null)));
+    refreshTasks(dispatch, userId, 'judge').then(() => dispatch(setPendingDistribution(null)));
   } else {
-    // Poll until the distribution completes or errors out.
-    ApiUtil.get(`/distributions/${distribution.id}`).
-      then((resp) => receiveDistribution(dispatch, userId, resp)).
-      catch((error) => distributionError(dispatch, userId, error));
+    setTimeout(() => {
+      // Poll until the distribution completes or errors out.
+      ApiUtil.get(`/distributions/${distribution.id}`).
+        then((resp) => receiveDistribution(dispatch, userId, resp)).
+        catch((error) => distributionError(dispatch, userId, error));
+    }, 2000);
   }
 };
 
-export const requestDistribution = (userId: string) => (dispatch: Dispatch) => {
+export const requestDistribution = (userId) => (dispatch) => {
   dispatch(setPendingDistribution({ status: 'pending' }));
 
   ApiUtil.get('/distributions/new').
@@ -522,16 +565,16 @@ const errorAllAttorneys = (error) => ({
   }
 });
 
-export const fetchAllAttorneys = () => (dispatch: Dispatch) =>
+export const fetchAllAttorneys = () => (dispatch) =>
   ApiUtil.get('/users?role=Attorney').
     then((resp) => dispatch(receiveAllAttorneys(resp.body.attorneys))).
     catch((error) => dispatch(errorAllAttorneys(error)));
 
-export const fetchAmaTasksOfUser = (userId: number, userRole: string) => (dispatch: Dispatch) =>
+export const fetchAmaTasksOfUser = (userId, userRole) => (dispatch) =>
   ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`).
     then((resp) => dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.tasks.data))));
 
-export const setAppealAttrs = (appealId: string, attributes: Object) => ({
+export const setAppealAttrs = (appealId, attributes) => ({
   type: ACTIONS.SET_APPEAL_ATTRS,
   payload: {
     appealId,
@@ -539,14 +582,14 @@ export const setAppealAttrs = (appealId: string, attributes: Object) => ({
   }
 });
 
-export const setSpecialIssues = (specialIssues: Object) => ({
+export const setSpecialIssues = (specialIssues) => ({
   type: ACTIONS.SET_SPECIAL_ISSUE,
   payload: {
     specialIssues
   }
 });
 
-export const setAppealAod = (externalAppealId: string) => ({
+export const setAppealAod = (externalAppealId) => ({
   type: ACTIONS.SET_APPEAL_AOD,
   payload: {
     externalAppealId

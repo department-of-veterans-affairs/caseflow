@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IntakeStats < Caseflow::Stats
   INTERVALS = [:daily, :weekly, :monthly, :fiscal_yearly].freeze
 
@@ -46,6 +48,8 @@ class IntakeStats < Caseflow::Stats
     end
 
     def average(values)
+      return 0.0 unless values.count
+
       values.inject(0.0) { |sum, i| sum + i } / values.count
     end
 
@@ -115,7 +119,9 @@ class IntakeStats < Caseflow::Stats
 
     average_election_response_time_by_notice_date: lambda do |range|
       elections = RampElection.established.where(notice_date: offset_range(range))
-      response_times = elections.map { |e| e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f }
+      response_times = elections.select { |e| e.receipt_date && e.notice_date }.map do |e|
+        e.receipt_date.to_time.to_f - e.notice_date.to_time.to_f
+      end
       average(response_times)
     end,
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Build HearSched"]) }
   let!(:ro_schedule_period) { create(:ro_schedule_period) }
@@ -18,7 +20,10 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
 
-      allocated_count = ro_schedule_period.allocations.map(&:allocated_days).inject(:+).ceil
+      ro_allocated_count = ro_schedule_period.allocations.map(&:allocated_days).inject(:+).ceil
+      co_hearing_days_count = HearingSchedule::GenerateHearingDaysSchedule.new(ro_schedule_period)
+        .generate_co_hearing_days_schedule.size
+      allocated_count = ro_allocated_count + co_hearing_days_count
       expect(response_body["schedule_period"]["hearing_days"].count).to eq allocated_count
       expect(response_body["schedule_period"]["file_name"]).to eq "validRoSpreadsheet.xlsx"
       expect(response_body["schedule_period"]["start_date"]).to eq "2018-01-01"
@@ -28,11 +33,26 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
 
   context "show judge" do
     let!(:co_hearing_days) do
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 1), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 7), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 16), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 22), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 23), folder_nr: "VIDEO RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 1),
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 7),
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 16),
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 22),
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 23),
+             regional_office: "RO13")
     end
 
     it "returns a schedule period and its hearing days with judges assigned" do
@@ -97,7 +117,7 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
       @controller = Hearings::HearingDayController.new
       get :index, params: { start_date: "2018-01-01", end_date: "2018-06-01" }, as: :json
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearings"].size).to be_between(355, 359)
+      expect(JSON.parse(response.body)["hearings"].size).to eq(442)
     end
 
     it "persist twice and second request should return an error" do
@@ -117,11 +137,26 @@ RSpec.describe Hearings::SchedulePeriodsController, type: :controller do
 
   context "assign judges to full schedule for a schedule period" do
     let!(:hearing_days) do
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 1), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 8), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 15), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 22), folder_nr: "VIDEO RO13")
-      create(:case_hearing, hearing_type: "C", hearing_date: Date.new(2018, 5, 29), folder_nr: "VIDEO RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 1),
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 8),
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 15),
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 22),
+             regional_office: "RO13")
+      create(:hearing_day,
+             request_type: HearingDay::REQUEST_TYPES[:video],
+             scheduled_for: Date.new(2018, 5, 29),
+             regional_office: "RO13")
     end
 
     it "update judge assignments for a given schedulePeriod id" do

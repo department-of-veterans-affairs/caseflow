@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Dispatch::Task < ApplicationRecord
   self.table_name = "dispatch_tasks"
 
@@ -226,7 +228,7 @@ class Dispatch::Task < ApplicationRecord
   end
 
   def assign_user(user)
-    fail(UserAlreadyHasTaskError) if user.dispatch_tasks.to_complete.where(type: type).count > 0
+    fail(UserAlreadyHasTaskError) if user.dispatch_tasks.to_complete.where(type: type).any?
 
     assign_attributes(
       user: user,
@@ -262,7 +264,7 @@ class Dispatch::Task < ApplicationRecord
   end
 
   def no_open_tasks_for_appeal
-    if self.class.to_complete_task_for_appeal(appeal).count > 0
+    if self.class.to_complete_task_for_appeal(appeal).any?
       errors.add(:appeal, "Uncompleted task already exists for this appeal")
     end
   end

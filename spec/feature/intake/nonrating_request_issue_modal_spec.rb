@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Nonrating Request Issue Modal" do
@@ -6,7 +8,7 @@ feature "Nonrating Request Issue Modal" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    Timecop.freeze(Time.utc(2018, 11, 28))
+    Timecop.freeze(post_ama_start_date)
   end
 
   after do
@@ -47,7 +49,7 @@ feature "Nonrating Request Issue Modal" do
     add_intake_nonrating_issue(
       category: included_category,
       description: "I am a description",
-      date: "04/19/2018"
+      date: Time.zone.today.mdY
     )
     click_intake_finish
 

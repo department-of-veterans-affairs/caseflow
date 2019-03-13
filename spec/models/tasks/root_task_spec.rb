@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe RootTask do
   context ".create_root_and_sub_tasks!" do
     let(:participant_id_with_pva) { "1234" }
@@ -43,50 +45,61 @@ describe RootTask do
 
     context "when a direct docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       context "when it has no vso representation" do
         let(:appeal) do
-          create(:appeal, docket_type: "direct_docket", claimants: [
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
                    create(:claimant, participant_id: participant_id_with_no_vso)
                  ])
         end
+
+        before { RootTask.create_root_and_sub_tasks!(appeal) }
+
         it "is ready for distribution immediately" do
-          RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
+        end
+
+        it "does not create a tracking task" do
+          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(0)
         end
       end
 
       context "when it has an ihp-writing vso" do
         let(:appeal) do
-          create(:appeal, docket_type: "direct_docket", claimants: [
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
                    create(:claimant, participant_id: participant_id_with_pva),
                    create(:claimant, participant_id: participant_id_with_aml)
                  ])
         end
 
+        before { RootTask.create_root_and_sub_tasks!(appeal) }
+
         it "blocks distribution" do
-          RootTask.create_root_and_sub_tasks!(appeal)
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
         end
 
         it "requires an informal hearing presentation" do
-          RootTask.create_root_and_sub_tasks!(appeal)
           expect(InformalHearingPresentationTask.find_by(appeal: appeal).status).to eq("assigned")
           expect(InformalHearingPresentationTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        end
+
+        it "creates a tracking task assigned to the VSO" do
+          expect(appeal.tasks.select { |t| t.is_a?(TrackVeteranTask) }.length).to eq(1)
+          expect(appeal.tasks.detect { |t| t.is_a?(TrackVeteranTask) }.assigned_to).to eq(pva)
         end
       end
     end
 
     context "when an evidence submission docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "evidence_submission", claimants: [
@@ -103,10 +116,10 @@ describe RootTask do
 
     context "when a hearing docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "hearing", claimants: [
@@ -117,7 +130,25 @@ describe RootTask do
       it "blocks distribution with schedule hearing task" do
         RootTask.create_root_and_sub_tasks!(appeal)
         expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("HearingTask")
+        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.parent.class.name).to eq("DistributionTask")
+      end
+
+      context "when VSO does not writes IHPs for hearing docket cases" do
+        let(:appeal) do
+          FactoryBot.create(
+            :appeal,
+            docket_type: Constants.AMA_DOCKETS.hearing,
+            claimants: [FactoryBot.create(:claimant, participant_id: participant_id_with_pva)]
+          )
+        end
+
+        before { allow_any_instance_of(Vso).to receive(:should_write_ihp?).with(anything).and_return(false) }
+
+        it "creates no IHP tasks" do
+          RootTask.create_root_and_sub_tasks!(appeal)
+          expect(InformalHearingPresentationTask.find_by(appeal: appeal)).to be_nil
+        end
       end
     end
 
@@ -138,6 +169,19 @@ describe RootTask do
         expect(InformalHearingPresentationTask.count).to eq(2)
         expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
         expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
+      end
+
+      it "does not create a task for a VSO if one already exists for that appeal" do
+        InformalHearingPresentationTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: vva
+        )
+        RootTask.create_root_and_sub_tasks!(appeal)
+
+        expect(InformalHearingPresentationTask.count).to eq(2)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(vva)
+        expect(InformalHearingPresentationTask.second.assigned_to).to eq(pva)
       end
 
       it "creates RootTask assigned to Bva organization" do
@@ -173,6 +217,57 @@ describe RootTask do
     context "when user is not a member of the Mail team" do
       it "should return an empty list" do
         expect(subject).to eq([])
+      end
+    end
+  end
+
+  describe ".update_children_status" do
+    let!(:root_task) { FactoryBot.create(:root_task) }
+    let!(:appeal) { root_task.appeal }
+
+    subject { root_task.update_children_status }
+
+    context "when there are multiple children tasks" do
+      let!(:generic_task) { FactoryBot.create(:generic_task, appeal: appeal, parent: root_task) }
+      let!(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, parent: root_task) }
+
+      it "should close the tracking task but not the generic task" do
+        expect { subject }.to_not raise_error
+        expect(tracking_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(generic_task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
+      end
+    end
+  end
+
+  describe ".set_assignee" do
+    context "when retrieving an existing RootTask" do
+      let!(:root_task) { FactoryBot.create(:root_task, assigned_to: assignee) }
+      context "when the assignee is already set" do
+        let(:assignee) { Bva.singleton }
+
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to_not receive(:set_assignee)
+
+          RootTask.find(root_task.id)
+        end
+      end
+    end
+
+    context "when creating a new RootTask" do
+      context "when the assignee is already set" do
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to_not receive(:set_assignee)
+
+          RootTask.create(appeal: FactoryBot.create(:appeal), assigned_to: Bva.singleton)
+        end
+      end
+
+      context "when the assignee is not set" do
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to receive(:set_assignee).exactly(1).times
+
+          RootTask.create(appeal: FactoryBot.create(:appeal))
+        end
       end
     end
   end

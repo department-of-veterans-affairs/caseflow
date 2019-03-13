@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingMapper do
   context ".bfha_vacols_code" do
     let(:hearing) do
@@ -12,42 +14,42 @@ describe HearingMapper do
 
     context "when disposition is held and it is central office hearing" do
       let(:hearing_disp) { "H" }
-      let(:hearing_type) { "C" }
+      let(:hearing_type) { HearingDay::REQUEST_TYPES[:central] }
 
       it { is_expected.to eq "1" }
     end
 
     context "when disposition is held and it is video hearing" do
       let(:hearing_disp) { "H" }
-      let(:hearing_type) { "V" }
+      let(:hearing_type) { HearingDay::REQUEST_TYPES[:video] }
 
       it { is_expected.to eq "6" }
     end
 
     context "when disposition is held and it is travel board hearing" do
       let(:hearing_disp) { "H" }
-      let(:hearing_type) { "T" }
+      let(:hearing_type) { HearingDay::REQUEST_TYPES[:travel] }
 
       it { is_expected.to eq "2" }
     end
 
     context "when disposition is postponed" do
       let(:hearing_disp) { "P" }
-      let(:hearing_type) { "T" }
+      let(:hearing_type) { HearingDay::REQUEST_TYPES[:travel] }
 
       it { is_expected.to eq nil }
     end
 
     context "when disposition is cancelled" do
       let(:hearing_disp) { "C" }
-      let(:hearing_type) { "V" }
+      let(:hearing_type) { HearingDay::REQUEST_TYPES[:video] }
 
       it { is_expected.to eq "5" }
     end
 
     context "when disposition is not held" do
       let(:hearing_disp) { "N" }
-      let(:hearing_type) { "C" }
+      let(:hearing_type) { HearingDay::REQUEST_TYPES[:central] }
 
       it { is_expected.to eq "5" }
     end
@@ -64,7 +66,7 @@ describe HearingMapper do
     let(:datetime) { Time.new(2013, 9, 5, 20, 0, 0, "-08:00") }
 
     context "when travel board" do
-      let(:type) { "T" }
+      let(:type) { HearingDay::REQUEST_TYPES[:travel] }
 
       it "uses a regional office timezone to set the zone" do
         expect(subject.day).to eq 5
@@ -74,7 +76,7 @@ describe HearingMapper do
     end
 
     context "when video" do
-      let(:type) { "V" }
+      let(:type) { HearingDay::REQUEST_TYPES[:video] }
 
       it "uses a regional office timezone to set the zone" do
         expect(subject.day).to eq 5
@@ -84,7 +86,7 @@ describe HearingMapper do
     end
 
     context "when central_office" do
-      let(:type) { "C" }
+      let(:type) { HearingDay::REQUEST_TYPES[:central] }
 
       it "does not use a regional office timezone" do
         expect(subject.day).to eq 6

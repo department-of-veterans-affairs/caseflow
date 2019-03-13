@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class FormResponse
   def initialize(success:, errors:, extra: {})
     @success = success
-    @errors = errors.to_hash
+    @errors = errors.to_ary
     @extra = extra
   end
 

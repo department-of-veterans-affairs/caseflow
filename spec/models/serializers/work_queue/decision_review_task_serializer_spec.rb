@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe WorkQueue::DecisionReviewTaskSerializer do
   let(:veteran) { create(:veteran) }
   let(:hlr) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
@@ -12,7 +14,7 @@ describe WorkQueue::DecisionReviewTaskSerializer do
                                     appeal: { id: hlr.id.to_s, isLegacyAppeal: false, issueCount: 0 },
                                     veteran_participant_id: veteran.participant_id,
                                     assigned_on: task.assigned_at,
-                                    completed_at: task.completed_at,
+                                    closed_at: task.closed_at,
                                     started_at: task.started_at,
                                     tasks_url: "/decision_reviews/nco",
                                     id: task.id,

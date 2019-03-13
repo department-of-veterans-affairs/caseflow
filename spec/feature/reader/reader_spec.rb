@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 def scroll_position(id: nil, class_name: nil)
@@ -107,7 +109,6 @@ end
 RSpec.feature "Reader" do
   before do
     Fakes::Initializer.load!
-    Time.zone = "America/New_York"
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
     Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
@@ -117,7 +118,15 @@ RSpec.feature "Reader" do
   let(:file_number) { "123456789" }
   let!(:ama_appeal) { Appeal.create(veteran_file_number: file_number) }
   let!(:appeal) do
-    Generators::LegacyAppealV2.create(documents: documents)
+    Generators::LegacyAppealV2.create(
+      documents: documents,
+      case_issue_attrs: [
+        { issdc: "1" },
+        { issdc: "A" },
+        { issdc: "3" },
+        { issdc: "D" }
+      ]
+    )
   end
 
   let!(:current_user) do
@@ -323,7 +332,7 @@ RSpec.feature "Reader" do
 
     scenario "User visits help page" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      find_link("DSUSER (DSUSER)").click
+      find("a", text: "DSUSER (DSUSER)").click
       find_link("Help").click
       expect(page).to have_content("Reader Help")
     end
@@ -344,7 +353,7 @@ RSpec.feature "Reader" do
 
     scenario "Clicking outside pdf or next pdf removes annotation mode" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-      expect(page).to have_content("Caseflow> Reader")
+      expect(page).to have_content("CaseflowQueue")
 
       add_comment_without_clicking_save("text")
       page.find("body").click
@@ -395,7 +404,7 @@ RSpec.feature "Reader" do
       end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
-      expect(page).to have_content("Caseflow> Reader")
+      expect(page).to have_content("CaseflowQueue")
 
       add_comment(text: "comment text")
 
@@ -475,7 +484,7 @@ RSpec.feature "Reader" do
 
     scenario "Add, edit, share, and delete comments" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
-      expect(page).to have_content("Caseflow> Reader")
+      expect(page).to have_content("CaseflowQueue")
 
       # Click on the link to the first file
       click_on documents[0].type
@@ -946,6 +955,7 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Regional Office")
       expect(page).to have_content("#{appeal.regional_office.key} - #{appeal.regional_office.city}")
       expect(page).to have_content("Issues")
+      expect(page.all("td", text: appeal.issues[0].type).count).to eq(appeal.undecided_issues.length)
       appeal.issues do |issue|
         expect(page).to have_content(issue.type)
         issue.levels do |level|
@@ -1052,6 +1062,7 @@ RSpec.feature "Reader" do
     scenario "Claim Folder Details" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents"
       appeal_info = appeal.to_hash(issues: appeal.issues)
+      issues_info = appeal.undecided_issues
 
       expect(page).to have_content("#{appeal.veteran_full_name}'s Claims Folder")
       expect(page).to have_content("Claims folder details")
@@ -1071,26 +1082,25 @@ RSpec.feature "Reader" do
 
       # all the current issues listed in the UI
       issue_list = all("#claims-folder-issues tr")
-      expect(issue_list.count).to eq(appeal_info["issues"].length)
+      expect(issue_list.count).to eq(issues_info.length)
       issue_list.each_with_index do |issue, index|
-        expect(issue.text.include?(appeal_info["issues"][index][:type])).to be true
+        expect(issue.text.include?(issues_info[index].type)).to be true
 
         # verifying the level information is being shown as part of the issue information
-        appeal_info["issues"][index][:levels].each_with_index do |level, level_index|
-          expect(level.include?(appeal_info["issues"][index][:levels][level_index])).to be true
+        issues_info[index].levels.each_with_index do |level, level_index|
+          expect(level.include?(issues_info[index].levels[level_index])).to be true
         end
       end
     end
 
     context "Tags" do
-      # :nocov:
-      scenario "adding and deleting tags", skip: true do
-        TAG1 = "Medical".freeze
-        TAG2 = "Law document".freeze
+      scenario "adding and deleting tags" do
+        TAG1 = "Medical"
+        TAG2 = "Law document"
 
-        DOC2_TAG1 = "Appeal Document".freeze
+        DOC2_TAG1 = "Appeal Document"
 
-        SELECT_VALUE_LABEL_CLASS = ".Select-value-label".freeze
+        SELECT_VALUE_LABEL_CLASS = ".Select-value-label"
 
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         click_on documents[0].type
@@ -1120,12 +1130,8 @@ RSpec.feature "Reader" do
         # getting remove buttons of all tags
         cancel_icons = page.all(".Select-value-icon", count: 1)
 
-        # rubocop:disable all
         # delete all tags
-        for i in (cancel_icons.length - 1).downto(0)
-          cancel_icons[i].click
-        end
-        # rubocop:enable all
+        cancel_icons[0].click
 
         # expecting the page not to have any tags
         expect(page).not_to have_css(SELECT_VALUE_LABEL_CLASS, text: DOC2_TAG1)
@@ -1138,7 +1144,6 @@ RSpec.feature "Reader" do
         # verify that the tags on the previous document still exist
         expect(page).to have_css(SELECT_VALUE_LABEL_CLASS, count: 4)
       end
-      # :nocov:
 
       context "Share tags among all documents in a case" do
         scenario "Shouldn't show auto suggestions" do
@@ -1162,7 +1167,7 @@ RSpec.feature "Reader" do
             expect(tag_options[index]).to have_content(tag.text, wait: 5)
           end
 
-          NEW_TAG_TEXT = "New Tag".freeze
+          NEW_TAG_TEXT = "New Tag"
           fill_in "tags", with: (NEW_TAG_TEXT + "\n")
 
           # going to the document[0] page
@@ -1438,11 +1443,8 @@ RSpec.feature "Reader" do
       expect(page).to have_content("Reader")
       click_on Document.last.type
 
-      expect(page).to have_content("This document has been updated")
-
-      click_on "Got It"
-      expect(page).to_not have_content("This document has been updated")
       expect(page).to have_content("test comment")
+      expect(page).to_not have_content("This document has been updated")
     end
   end
 end

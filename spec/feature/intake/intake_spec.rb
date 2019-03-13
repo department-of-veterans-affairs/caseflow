@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 require "support/intake_helpers"
 
@@ -7,8 +9,7 @@ RSpec.feature "Intake" do
   before do
     FeatureToggle.enable!(:intake)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 12, 8))
+    Timecop.freeze(post_ama_start_date)
 
     Fakes::BGSService.inaccessible_appeal_vbms_ids = []
 
@@ -88,6 +89,14 @@ RSpec.feature "Intake" do
         find("label", text: "RAMP Selection (VA Form 21-4138)").click
       end
       safe_click ".cf-submit.usa-button"
+      expect(page).to have_css(".cf-submit[disabled]")
+
+      # try to hit enter key on empty search bar
+      fill_in search_bar_title, with: ""
+      find(".cf-search-input-with-close").native.send_keys(:return)
+
+      # check error message doesn't exist
+      expect(page).to have_no_css(".usa-alert-heading")
 
       fill_in search_bar_title, with: "5678"
       click_on "Search"
@@ -141,6 +150,29 @@ RSpec.feature "Intake" do
       end
     end
 
+    context "Veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+      end
+
+      scenario "Search for a veteran with multiple active phone numbers" do
+        visit "/intake"
+
+        within_fieldset("Which form are you processing?") do
+          find("label", text: "RAMP Selection (VA Form 21-4138)").click
+        end
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("The Veteran has multiple active phone numbers")
+      end
+    end
+
     context "Veteran has invalid information" do
       let(:veteran) do
         Generators::Veteran.build(
@@ -166,14 +198,14 @@ RSpec.feature "Intake" do
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
         expect(page).to have_content(
-          "the corporate database, then retry establishing the EP in Caseflow: ssn, sex, country."
+          "the corporate database, then retry establishing the EP in Caseflow: ssn, country."
         )
         expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       end
     end
 
     scenario "Search for a veteran whose form is already being processed" do
-      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: 6.months.ago)
 
       RampElectionIntake.new(
         veteran_file_number: "12341234",
@@ -195,7 +227,7 @@ RSpec.feature "Intake" do
     end
 
     scenario "Cancel an intake" do
-      create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 8, 7))
+      create(:ramp_election, veteran_file_number: "12341234", notice_date: 6.months.ago)
 
       intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
@@ -225,6 +257,42 @@ RSpec.feature "Intake" do
       expect(intake.cancel_reason).to eq("other")
       expect(intake.cancel_other).to eq("blue!")
       expect(intake).to be_canceled
+    end
+
+    context "BGS error" do
+      before do
+        FeatureToggle.enable!(:intakeAma)
+
+        allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships)
+          .and_raise(BGS::ShareError, "bgs error")
+      end
+
+      after do
+        FeatureToggle.disable!(:intakeAma)
+      end
+
+      scenario "Cancel intake on error" do
+        visit "/intake"
+        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
+        find("#form-select").send_keys :enter
+
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_content("Something went wrong")
+
+        visit "/intake"
+        expect(page).to have_content("Error: bgs error. Intake has been cancelled, please retry.")
+
+        # verify that current intake has been cancelled
+        expect(Intake.find_by(completion_status: "canceled", veteran_file_number: "12341234")).to_not be_nil
+
+        # verify user can proceed with new intake
+        visit "/intake"
+        expect(page).to have_content("Welcome to Caseflow Intake!")
+      end
     end
   end
 end

@@ -19,12 +19,16 @@ export default class HearingScheduleApp extends React.PureComponent {
   userPermissionProps = () => {
     const {
       userRoleAssign,
-      userRoleBuild
+      userRoleBuild,
+      userRoleView,
+      userInHearingsOrganization
     } = this.props;
 
     return {
       userRoleAssign,
-      userRoleBuild
+      userRoleBuild,
+      userRoleView,
+      userInHearingsOrganization
     };
   };
 
@@ -52,6 +56,7 @@ export default class HearingScheduleApp extends React.PureComponent {
       defaultUrl="/schedule"
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
+      applicationUrls={this.props.applicationUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.HEARING_SCHEDULE.OVERLAP,
         accentColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT
@@ -122,6 +127,7 @@ HearingScheduleApp.propTypes = {
   userDisplayName: PropTypes.string,
   userRoleAssign: PropTypes.bool,
   userRoleBuild: PropTypes.bool,
+  userRoleView: PropTypes.bool,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array,

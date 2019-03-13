@@ -1,18 +1,20 @@
+# frozen_string_literal: true
+
 RSpec.describe Hearings::DocketsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:staff) { create(:staff, user: user) }
   let!(:case_hearing) { create(:case_hearing, user: user, hearing_date: Time.zone.today, board_member: staff.sattyid) }
   let!(:legacy_hearing) { create(:legacy_hearing, case_hearing: case_hearing) }
   let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 1, judge_id: user.id) }
-  let!(:hearing) { create(:hearing, hearing_day: hearing_day, judge_id: user.id) }
+  let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day, judge_id: user.id) }
 
   describe "SHOW Daily Docket" do
     it "returns legacy data with success" do
       get :show, params: { docket_date: legacy_hearing.scheduled_for }, format: "json"
       response_hearing = JSON.parse(response.body)
       expect(response.status).to eq 200
-      expect(response_hearing["hearingDay"]["requestType"]).to eq nil
-      expect(response_hearing["hearingDay"]["room"]).to eq nil
+      expected_hearing_day = {}
+      expect(response_hearing["hearingDay"]).to eq expected_hearing_day
       expect(response_hearing["dailyDocket"].length).to eq 1
     end
 

@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 class DecisionDocument < ApplicationRecord
   include Asyncable
   include UploadableDocument
 
   class NoFileError < StandardError; end
+  class NotYetSubmitted < StandardError; end
 
   belongs_to :appeal
   has_many :end_product_establishments, as: :source
@@ -12,7 +15,7 @@ class DecisionDocument < ApplicationRecord
 
   attr_writer :file
 
-  S3_SUB_BUCKET = "decisions".freeze
+  S3_SUB_BUCKET = "decisions"
 
   delegate :veteran, to: :appeal
 
@@ -31,7 +34,8 @@ class DecisionDocument < ApplicationRecord
     output_location
   end
 
-  def submit_for_processing!
+  def submit_for_processing!(delay: 0)
+    update_decision_issue_decision_dates!
     return no_processing_required! unless upload_enabled?
 
     cache_file!
@@ -40,6 +44,8 @@ class DecisionDocument < ApplicationRecord
 
   def process!
     return if processed?
+
+    fail NotYetSubmitted unless submitted_and_ready?
 
     attempted!
     upload_to_vbms!
@@ -80,6 +86,14 @@ class DecisionDocument < ApplicationRecord
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
       end_product_establishment.commit!
+    end
+  end
+
+  def update_decision_issue_decision_dates!
+    transaction do
+      appeal.decision_issues.each do |di|
+        di.update!(caseflow_decision_date: decision_date) unless di.caseflow_decision_date
+      end
     end
   end
 

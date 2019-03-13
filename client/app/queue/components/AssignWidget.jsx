@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,6 +12,7 @@ import {
   setSelectedAssignee,
   setSelectedAssigneeSecondary
 } from '../uiReducer/uiActions';
+import { requestDistribution } from '../QueueActions';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -23,43 +23,9 @@ import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
 import editModalBase from './EditModalBase';
 
-import type {
-  AttorneysOfJudge, State
-} from '../types/state';
-import type {
-  Task, Attorneys
-} from '../types/models';
-
 const OTHER = 'OTHER';
 
-type Params = {|
-  userId?: string,
-  previousAssigneeId: string,
-  onTaskAssignment: Function,
-  selectedTasks: Array<Task>,
-  isModal?: boolean,
-  assignedVerb?: string
-|};
-
-type Props = Params & {|
-  // From state
-  attorneysOfJudge: AttorneysOfJudge,
-  selectedAssignee: string,
-  selectedAssigneeSecondary: string,
-  attorneys: Attorneys,
-  savePending: boolean,
-  // Action creators
-  setSelectedAssignee: typeof setSelectedAssignee,
-  setSelectedAssigneeSecondary: typeof setSelectedAssigneeSecondary,
-  showErrorMessage: typeof showErrorMessage,
-  resetErrorMessages: typeof resetErrorMessages,
-  showSuccessMessage: typeof showSuccessMessage,
-  resetSuccessMessages: typeof resetSuccessMessages,
-  setSavePending: typeof setSavePending,
-  resetSaveState: typeof resetSaveState
-|};
-
-class AssignWidget extends React.PureComponent<Props> {
+class AssignWidget extends React.PureComponent {
   submit = () => {
     const { selectedAssignee, selectedAssigneeSecondary, selectedTasks } = this.props;
 
@@ -97,7 +63,7 @@ class AssignWidget extends React.PureComponent<Props> {
     return this.assignTasks(selectedTasks, selectedAssigneeSecondary);
   }
 
-  assignTasks = (selectedTasks: Array<Task>, assigneeId: string) => {
+  assignTasks = (selectedTasks, assigneeId) => {
     const {
       previousAssigneeId,
       userId
@@ -133,6 +99,15 @@ class AssignWidget extends React.PureComponent<Props> {
       });
   }
 
+  requestDistributionSubmit = () => {
+    this.props.resetSuccessMessages();
+    this.props.resetErrorMessages();
+    // Note: the default value of "" will never be used, and will fail on the backend.
+    // Even though this code path will never be hit unless we have a value for userId,
+    // Flow complains without a default value.
+    this.props.requestDistribution(this.props.userId || '');
+  }
+
   render = () => {
     const {
       attorneysOfJudge,
@@ -140,7 +115,9 @@ class AssignWidget extends React.PureComponent<Props> {
       selectedAssigneeSecondary,
       attorneys,
       selectedTasks,
-      savePending
+      savePending,
+      distributionLoading,
+      featureToggles
     } = this.props;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
@@ -201,14 +178,23 @@ class AssignWidget extends React.PureComponent<Props> {
               casePlural: pluralize('case', selectedTasks.length) })}
           loading={savePending}
           loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
+        {this.props.userId && this.props.showRequestCasesButton && featureToggles.automatic_case_distribution &&
+          <div {...css({ marginLeft: 'auto' })}>
+            <Button
+              name="Request more cases"
+              onClick={this.requestDistributionSubmit}
+              loading={distributionLoading}
+              classNames={['usa-button-secondary', 'cf-push-right']} />
+          </div>
+        }
       </div>
     </React.Fragment>;
   }
 }
 
-const mapStateToProps = (state: State) => {
-  const { attorneysOfJudge, attorneys } = state.queue;
-  const { selectedAssignee, selectedAssigneeSecondary } = state.ui;
+const mapStateToProps = (state) => {
+  const { attorneysOfJudge, attorneys, pendingDistribution } = state.queue;
+  const { selectedAssignee, selectedAssigneeSecondary, featureToggles } = state.ui;
   const { savePending } = state.ui.saveState;
 
   return {
@@ -216,7 +202,9 @@ const mapStateToProps = (state: State) => {
     selectedAssignee,
     selectedAssigneeSecondary,
     attorneys,
-    savePending
+    distributionLoading: pendingDistribution !== null,
+    savePending,
+    featureToggles
   };
 };
 
@@ -228,16 +216,17 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage,
   resetErrorMessages,
   showSuccessMessage,
-  resetSuccessMessages
+  resetSuccessMessages,
+  requestDistribution
 }, dispatch);
 
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(AssignWidget): React.ComponentType<Params>);
+)(AssignWidget));
 
 export const AssignWidgetModal = (connect(
   mapStateToProps,
   mapDispatchToProps
-)(editModalBase(AssignWidget, { title: COPY.ASSIGN_WIDGET_MODAL_TITLE })): React.ComponentType<Params>);
+)(editModalBase(AssignWidget, { title: COPY.ASSIGN_WIDGET_MODAL_TITLE })));
 

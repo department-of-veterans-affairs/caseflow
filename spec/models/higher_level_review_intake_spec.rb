@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HigherLevelReviewIntake do
   before do
     Time.zone = "Eastern Time (US & Canada)"
@@ -21,6 +23,41 @@ describe HigherLevelReviewIntake do
     )
   end
 
+  context "#start!" do
+    subject { intake.start! }
+
+    let!(:active_epe) do
+      create(
+        :end_product_establishment,
+        :active,
+        veteran_file_number: veteran_file_number,
+        established_at: Time.zone.yesterday
+      )
+    end
+
+    let!(:canceled_epe) do
+      create(
+        :end_product_establishment,
+        :canceled,
+        veteran_file_number: veteran_file_number,
+        established_at: Time.zone.yesterday
+      )
+    end
+
+    before do
+      @synced = []
+      allow_any_instance_of(EndProductEstablishment).to receive(:sync_source!) do |epe|
+        @synced << epe.id
+      end
+    end
+
+    it "syncs all active EPEs" do
+      subject
+
+      expect(@synced).to eq [active_epe.id]
+    end
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
@@ -41,7 +78,7 @@ describe HigherLevelReviewIntake do
 
     let!(:request_issue) do
       RequestIssue.new(
-        review_request: detail,
+        decision_review: detail,
         contested_rating_issue_profile_date: Time.zone.local(2018, 4, 5),
         contested_rating_issue_reference_id: "issue1",
         contested_issue_description: "description",
@@ -100,7 +137,8 @@ describe HigherLevelReviewIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: intake.veteran.participant_id,
-          payee_code: nil
+          payee_code: nil,
+          decision_review: intake.detail
         )
       end
     end
@@ -116,7 +154,8 @@ describe HigherLevelReviewIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: "1234",
-          payee_code: "10"
+          payee_code: "10",
+          decision_review: intake.detail
         )
       end
 
@@ -134,7 +173,7 @@ describe HigherLevelReviewIntake do
 
       context "And payee code is nil" do
         let(:payee_code) { nil }
-        # Check that the review_request validations still work
+        # Check that the decision_review validations still work
         let(:receipt_date) { 3.days.from_now }
 
         context "And benefit type is compensation" do
@@ -169,7 +208,8 @@ describe HigherLevelReviewIntake do
           expect(intake.detail.claimants.count).to eq 1
           expect(intake.detail.claimants.first).to have_attributes(
             participant_id: "1234",
-            payee_code: nil
+            payee_code: nil,
+            decision_review: intake.detail
           )
         end
       end
@@ -288,6 +328,7 @@ describe HigherLevelReviewIntake do
     end
 
     context "when benefit type is non comp" do
+      before { RequestStore[:current_user] = user }
       let(:benefit_type) { "fiduciary" }
 
       it "creates DecisionReviewTask" do
@@ -297,6 +338,11 @@ describe HigherLevelReviewIntake do
 
         expect(intake.detail.tasks.count).to eq(1)
         expect(intake.detail.tasks.first).to be_a(DecisionReviewTask)
+      end
+
+      it "adds user to organization" do
+        subject
+        expect(OrganizationsUser.find_by(user: user, organization: intake.detail.business_line)).to_not be_nil
       end
     end
 

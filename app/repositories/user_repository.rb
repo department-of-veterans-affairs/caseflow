@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserRepository
   class << self
     def user_info_from_vacols(css_id)
@@ -39,9 +41,11 @@ class UserRepository
 
       results = {}
       users.each do |user|
-        results.merge!(user.sattyid => { css_id: user.sdomainid,
-                                         first_name: user.snamef,
-                                         last_name: user.snamel })
+        results[user.sattyid] = {
+          css_id: user.sdomainid,
+          first_name: user.snamef,
+          last_name: user.snamel
+        }
       end
       results
     end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AppealSeries do
   before do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
@@ -317,7 +319,7 @@ describe AppealSeries do
         expect(subject[:type]).to eq(:remand_ssoc)
         expect(subject[:details][:last_soc_date]).to eq(1.day.ago.to_date)
         expect(subject[:details][:return_timeliness]).to eq([1, 2])
-        expect(subject[:details][:remand_ssoc_timeliness]).to eq([3, 10])
+        expect(subject[:details][:remand_ssoc_timeliness]).to eq([3, 11])
       end
     end
 
@@ -332,7 +334,7 @@ describe AppealSeries do
 
       it "returns a details hash with the decided issues" do
         expect(subject[:type]).to eq(:remand)
-        expect(subject[:details][:remand_timeliness]).to eq([7, 17])
+        expect(subject[:details][:remand_timeliness]).to eq([16, 29])
         expect(subject[:details][:issues].length).to eq(2)
         expect(subject[:details][:issues].first[:disposition]).to eq(:allowed)
         expect(subject[:details][:issues].first[:description]).to eq(
@@ -356,8 +358,8 @@ describe AppealSeries do
 
       it "returns a details hash with the vso name" do
         expect(subject[:type]).to eq(:pending_form9)
-        expect(subject[:details][:certification_timeliness]).to eq([2, 12])
-        expect(subject[:details][:ssoc_timeliness]).to eq([7, 20])
+        expect(subject[:details][:certification_timeliness]).to eq([2, 8])
+        expect(subject[:details][:ssoc_timeliness]).to eq([5, 13])
       end
     end
   end
@@ -448,11 +450,12 @@ describe AppealSeries do
         [
           create(:case_issue, issseq: 1, issprog: "02", isscode: "17", isslev1: "02"),
           create(:case_issue, issseq: 2, issprog: "02", isscode: "15", isslev1: "03", isslev2: "5252"),
-          create(:case_issue, issseq: 3, issprog: "02", isscode: "15", isslev1: "03", isslev2: "9432")
+          create(:case_issue, issseq: 3, issprog: "02", isscode: "12", isslev1: "05"),
+          create(:case_issue, issseq: 4, issprog: "02", isscode: "15", isslev1: "03", isslev2: "9432")
         ]
       end
 
-      it { is_expected.to eq("Service connection, limitation of thigh motion (flexion), and 2 others") }
+      it { is_expected.to eq("Service connection, limitation of thigh motion (flexion), and 3 others") }
     end
 
     context "when those issues do not have commas" do

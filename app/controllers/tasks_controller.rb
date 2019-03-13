@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TasksController < ApplicationController
   include Errors
 
@@ -13,6 +15,7 @@ class TasksController < ApplicationController
     JudgeAssignTask: JudgeAssignTask,
     JudgeQualityReviewTask: JudgeQualityReviewTask,
     ScheduleHearingTask: ScheduleHearingTask,
+    TranslationTask: TranslationTask,
     HearingAdminActionTask: HearingAdminActionTask,
     MailTask: MailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask
@@ -88,11 +91,6 @@ class TasksController < ApplicationController
     no_cache
     RootTask.find_or_create_by!(appeal: appeal)
 
-    # This is a temporary solution for legacy hearings. We need them to exist on the case details
-    # page, but have no good way to create them before a page load. So we need to check here if we
-    # need to create a hearing task and if so, create it.
-    ScheduleHearingTask.create_if_eligible(appeal)
-
     # VSO users should only get tasks assigned to them or their organization.
     if current_user.vso_employee?
       return json_vso_tasks
@@ -112,14 +110,16 @@ class TasksController < ApplicationController
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
 
+    tasks = ScheduleHearingTask.tasks_for_ro(ro)
+    AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+
     render json: {
-      data: ScheduleHearingTask.tasks_for_ro(ro).map do |task|
-        ActiveModelSerializers::SerializableResource.new(
-          task,
-          user: current_user,
-          role: user_role
-        ).as_json[:data]
-      end
+      data: ActiveModelSerializers::SerializableResource.new(
+        tasks,
+        user: current_user,
+        role: user_role,
+        exclude_extra_fields: true
+      ).as_json[:data]
     }
   end
 

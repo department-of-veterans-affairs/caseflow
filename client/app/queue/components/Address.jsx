@@ -1,21 +1,17 @@
-// @flow
 import * as React from 'react';
 import { css } from 'glamor';
-
-import type {
-  Address as AddressType
-} from '../types/models';
 
 const addressIndentStyling = css({
   display: 'inline-block',
   verticalAlign: 'top'
 });
 
-type Props = {|
-  address: AddressType
-|};
+const flexColumnStyling = css({
+  display: 'flex',
+  flexDirection: 'column'
+});
 
-export default class Address extends React.PureComponent<Props> {
+export default class Address extends React.PureComponent {
   render = () => {
     const {
       address_line_1: addressLine1,
@@ -28,10 +24,13 @@ export default class Address extends React.PureComponent<Props> {
     } = this.props.address;
 
     return <span {...addressIndentStyling}>
-      {addressLine1}
-      {addressLine2 && <React.Fragment><br /><span>{addressLine2}</span></React.Fragment>}
-      {addressLine3 && <React.Fragment><br /><span>{addressLine3}</span></React.Fragment>}
-      <span>{city}, {state} {zip} {country === 'USA' ? '' : country}</span>
+      <span {...flexColumnStyling}>
+        <span> {addressLine1}</span>
+        <span> {addressLine2 && <React.Fragment><span>{addressLine2}</span></React.Fragment>}</span>
+        <span> {addressLine3 && <React.Fragment><span>{addressLine3}</span></React.Fragment>}</span>
+        <span> <span>{city}, {state} {zip} {country === 'USA' ? '' : country}</span></span>
+      </span>
     </span>;
+
   };
 }

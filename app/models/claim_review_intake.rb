@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ClaimReviewIntake < DecisionReviewIntake
   attr_reader :request_params
 
@@ -39,6 +41,7 @@ class ClaimReviewIntake < DecisionReviewIntake
   def complete!(request_params)
     super(request_params) do
       detail.submit_for_processing!
+      detail.add_user_to_business_line!
       detail.create_decision_review_task_if_required!
       if run_async?
         DecisionReviewProcessJob.perform_later(detail)
@@ -52,17 +55,19 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def create_claimant!
     if request_params[:veteran_is_not_claimant] == true
-      Claimant.create!(
-        participant_id: request_params[:claimant],
-        payee_code: need_payee_code? ? request_params[:payee_code] : nil,
-        review_request: detail
-      )
+      participant_id = request_params[:claimant]
+      payee_code = need_payee_code? ? request_params[:payee_code] : nil
     else
-      Claimant.create!(
-        participant_id: veteran.participant_id,
-        payee_code: nil,
-        review_request: detail
-      )
+      participant_id = veteran.participant_id
+      payee_code = nil
+    end
+
+    Claimant.find_or_initialize_by(
+      participant_id: participant_id,
+      review_request: detail
+    ).tap do |claimant|
+      claimant.payee_code = payee_code
+      claimant.save!
     end
     update_person!
   end

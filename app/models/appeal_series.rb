@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 class AppealSeries < ApplicationRecord
   has_many :appeals, class_name: "LegacyAppeal", dependent: :nullify
 
   # Timeliness is returned as a range of integer months from 50 to 84.1%tile.
   # TODO: Replace these hardcoded values with dynamic data
-  SOC_TIMELINESS           = [13, 30].freeze # 75%tile = 24
-  SSOC_TIMELINESS          = [7, 20].freeze  # 75%tile = 15
-  CERTIFICATION_TIMELINESS = [2, 12].freeze  # 75%tile = 7
+  SOC_TIMELINESS           = [10, 26].freeze # 75%tile = 20
+  SSOC_TIMELINESS          = [5, 13].freeze  # 75%tile = 10
+  CERTIFICATION_TIMELINESS = [2, 8].freeze   # 75%tile = 5
   DECISION_TIMELINESS      = [1, 2].freeze   # 75%tile = 1
-  REMAND_TIMELINESS        = [7, 17].freeze  # 75%tile = 13
-  REMAND_SSOC_TIMELINESS   = [3, 10].freeze  # 75%tile = 7
-  RETURN_TIMELINESS        = [1, 2].freeze   # 75%tile = 1
+  REMAND_TIMELINESS        = [16, 29].freeze # 75%tile = 25
+  REMAND_SSOC_TIMELINESS   = [3, 11].freeze  # 75%tile = 9
+  RETURN_TIMELINESS        = [1, 2].freeze   # 75%tile = 2
 
   delegate :vacols_id,
            :active?,
@@ -83,17 +85,11 @@ class AppealSeries < ApplicationRecord
     @issues ||= AppealSeriesIssues.new(appeal_series: self).all
   end
 
-  # rubocop:disable CyclomaticComplexity
   def description
     ordered_issues = latest_appeal.issues
       .select(&:codes?)
-      .sort do |a, b|
-        dc_comparison = (a.diagnostic_code.nil? ? 1 : 0) <=> (b.diagnostic_code.nil? ? 1 : 0)
-
-        next dc_comparison unless dc_comparison == 0
-
-        a.vacols_sequence_id <=> b.vacols_sequence_id
-      end
+      .sort_by(&:vacols_sequence_id)
+      .partition(&:diagnostic_code).flatten
 
     return "VA needs to record issues" if ordered_issues.empty?
 
@@ -106,21 +102,19 @@ class AppealSeries < ApplicationRecord
 
     "#{marquee_issue_description}#{comma} and #{issue_count} #{'other'.pluralize(issue_count)}"
   end
-  # rubocop:enable CyclomaticComplexity
 
   private
 
   def fetch_latest_appeal
-    active_appeals.first || appeals_by_decision_date.first
+    latest_active_appeal_by_last_location_change_date || latest_appeal_by_decision_date
   end
 
-  def active_appeals
-    appeals.select(&:active?)
-      .sort { |x, y| y.last_location_change_date <=> x.last_location_change_date }
+  def latest_active_appeal_by_last_location_change_date
+    appeals.select(&:active?).max_by(&:last_location_change_date)
   end
 
-  def appeals_by_decision_date
-    appeals.sort { |x, y| y.decision_date <=> x.decision_date }
+  def latest_appeal_by_decision_date
+    appeals.max_by(&:decision_date)
   end
 
   def fetch_docket
@@ -130,7 +124,7 @@ class AppealSeries < ApplicationRecord
   end
 
   def last_soc_date
-    events.select { |event| [:soc, :ssoc].include? event.type }.last.date.to_date
+    events.reverse.detect { |event| [:soc, :ssoc].include? event.type }.date.to_date
   end
 
   def issues_for_last_decision

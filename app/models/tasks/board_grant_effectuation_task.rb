@@ -1,4 +1,13 @@
+# frozen_string_literal: true
+
+##
+# A task to track when the Board grants a benefit that is not compensation or pension,
+# like education or a loan guaranty, otherwise known as an "effectuation task".
+# This task is created for the appropriate business line(s) based on the benefit type(s) of the decision issue(s).
+
 class BoardGrantEffectuationTask < DecisionReviewTask
+  include BusinessLineTask
+
   def label
     "Board Grant"
   end
@@ -7,23 +16,17 @@ class BoardGrantEffectuationTask < DecisionReviewTask
     ::WorkQueue::BoardGrantEffectuationTaskSerializer
   end
 
-  def ui_hash
-    serializer_class.new(self).as_json
-  end
-
-  def complete_with_payload!(_decision_issue_params, _decision_date)
-    return false unless validate_task
-
-    update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
+  def appeal_ui_hash
+    appeal.ui_hash.merge(
+      requestIssues: request_issues_by_benefit_type.map(&:ui_hash)
+    )
   end
 
   private
 
-  def validate_task
-    if completed?
-      @error_code = :task_completed
+  def request_issues_by_benefit_type
+    appeal.request_issues.active_or_ineligible.select do |issue|
+      issue.benefit_type == business_line.url
     end
-
-    !@error_code
   end
 end

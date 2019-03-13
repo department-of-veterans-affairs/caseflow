@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :is_legacy do
     false
@@ -9,12 +11,13 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :assigned_at
   attribute :started_at
   attribute :created_at
-  attribute :completed_at
+  attribute :closed_at
   attribute :placed_on_hold_at
   attribute :on_hold_duration
   attribute :instructions
   attribute :appeal_type
   attribute :timeline_title
+  attribute :hide_from_queue_table_view
   attribute :hide_from_case_timeline
   attribute :hide_from_task_snapshot
 
@@ -30,6 +33,8 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :assigned_to do
     {
       css_id: object.assigned_to.try(:css_id),
+      is_organization: object.assigned_to.is_a?(Organization),
+      name: object.appeal.assigned_to_location,
       type: object.assigned_to.class.name,
       id: object.assigned_to.id
     }
@@ -55,6 +60,10 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.veteran_file_number
   end
 
+  attribute :closest_regional_office do
+    object.appeal.closest_regional_office
+  end
+
   attribute :external_appeal_id do
     object.appeal.external_id
   end
@@ -67,38 +76,49 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     object.appeal.number_of_issues
   end
 
-  attribute :closest_regional_office do
-    object.appeal.veteran_closest_regional_office
-  end
-
-  attribute :veteran_available_hearing_locations do
-    object.appeal.veteran_available_hearing_locations
+  attribute :available_hearing_locations do
+    object.appeal.available_hearing_locations
   end
 
   attribute :previous_task do
-    {
-      assigned_at: object.previous_task.try(:assigned_at)
-    }
+    if @instance_options[:exclude_extra_fields]
+      {
+        assigned_at: nil
+      }
+    else
+      {
+        assigned_at: object.previous_task.try(:assigned_at)
+      }
+    end
   end
 
   attribute :document_id do
-    object.latest_attorney_case_review ? object.latest_attorney_case_review.document_id : nil
+    if @instance_options[:exclude_extra_fields]
+      nil
+    else
+      object.latest_attorney_case_review ? object.latest_attorney_case_review.document_id : nil
+    end
   end
 
   attribute :decision_prepared_by do
-    {
-      first_name: object.prepared_by_display_name ? object.prepared_by_display_name.first : nil,
-      last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
-    }
+    if @instance_options[:exclude_extra_fields]
+      {
+        first_name: nil,
+        last_name: nil
+      }
+    else
+      {
+        first_name: object.prepared_by_display_name ? object.prepared_by_display_name.first : nil,
+        last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
+      }
+    end
   end
 
   attribute :available_actions do
-    object.available_actions_unwrapper(@instance_options[:user])
-  end
-
-  attribute :task_business_payloads do
-    object.task_business_payloads.map do |payload|
-      { description: payload.description, values: payload.values }
+    if @instance_options[:exclude_extra_fields]
+      nil
+    else
+      object.available_actions_unwrapper(@instance_options[:user])
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents the action where a Caseflow user updates the request issues on
 # a review, typically to make a correction.
 
@@ -27,9 +29,8 @@ class RequestIssuesUpdate < ApplicationRecord
         after_request_issue_ids: after_issues.map(&:id)
       )
       submit_for_processing!
+      process_job
     end
-
-    process_job
 
     true
   end
@@ -77,7 +78,7 @@ class RequestIssuesUpdate < ApplicationRecord
   private
 
   def changes?
-    review.request_issues.count != @request_issues_data.count || !new_issues.empty?
+    review.request_issues.active_or_ineligible.count != @request_issues_data.count || !new_issues.empty?
   end
 
   def new_issues
@@ -89,12 +90,12 @@ class RequestIssuesUpdate < ApplicationRecord
     before_issues
 
     @request_issues_data.map do |issue_data|
-      review.request_issues.find_or_build_from_intake_data(issue_data)
+      review.request_issues.active_or_ineligible.find_or_build_from_intake_data(issue_data)
     end
   end
 
   def calculate_before_issues
-    review.request_issues.select(&:persisted?)
+    review.request_issues.active_or_ineligible.select(&:persisted?)
   end
 
   def validate_before_perform

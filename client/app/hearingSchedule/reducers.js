@@ -58,6 +58,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
             'editedDisposition',
             'editedDate',
             'editedTime',
+            'editedOptionalTime',
             'editedRegionalOffice',
             'editedLocation',
             'edited'
@@ -81,6 +82,15 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       hearings: {
         [action.payload.hearingId]: {
           editedNotes: { $set: action.payload.notes },
+          edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.TRANSCRIPT_REQUESTED_UPDATE:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedTranscriptRequested: { $set: action.payload.transcriptRequested },
           edited: { $set: true }
         }
       }
@@ -127,6 +137,29 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         [action.payload.hearingId]: {
           editedTime: { $set: action.payload.time },
           edited: { $set: true }
+        }
+      }
+    });
+  case ACTIONS.HEARING_OPTIONAL_TIME:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          editedOptionalTime: { $set: action.payload.optionalTime },
+          edited: { $set: true }
+        }
+      }
+    });
+
+  case ACTIONS.INVALID_FORM:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          invalid: {
+            $set: {
+              ...(state.hearings[action.payload.hearingId].invalid || {}),
+              ...action.payload.invalid
+            }
+          }
         }
       }
     });

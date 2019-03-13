@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Appeal Edit issues" do
@@ -8,8 +10,7 @@ feature "Appeal Edit issues" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
@@ -31,8 +32,8 @@ feature "Appeal Edit issues" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:receipt_date) { Time.zone.today - 20 }
-  let(:profile_date) { "2017-11-02T07:00:00.000Z" }
+  let(:receipt_date) { Time.zone.today - 20.days }
+  let(:profile_date) { (receipt_date - 30.days).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -95,7 +96,7 @@ feature "Appeal Edit issues" do
 
   let(:nonrating_request_issue_attributes) do
     {
-      review_request: appeal,
+      decision_review: appeal,
       issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
@@ -107,7 +108,7 @@ feature "Appeal Edit issues" do
 
   let(:rating_request_issue_attributes) do
     {
-      review_request: appeal,
+      decision_review: appeal,
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date,
       contested_issue_description: "PTSD denied",
@@ -127,10 +128,13 @@ feature "Appeal Edit issues" do
     click_remove_intake_issue(nonrating_intake_num)
     click_remove_issue_confirmation
     expect(page).not_to have_content(nonrating_request_issue.description)
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # add a different issue
     click_intake_add_issue
     add_intake_rating_issue("Left knee granted")
+    # save flash should still occur because issues are different
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # save
     expect(page).to have_content("Left knee granted")
@@ -162,6 +166,7 @@ feature "Appeal Edit issues" do
     click_remove_intake_issue(issue_num)
     click_remove_issue_confirmation
     expect(page).not_to have_content(issue_description)
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # re-add
     click_intake_add_issue
@@ -170,24 +175,43 @@ feature "Appeal Edit issues" do
     expect(page).to_not have_content(
       Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
     )
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # issue note was added
     expect(page).to have_button("Save", disabled: false)
   end
 
+  context "with remove decision review enabled" do
+    before do
+      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
+    end
+
+    scenario "allows all request issues to be removed and saved" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      # remove all issues
+      click_remove_intake_issue(1)
+      click_remove_issue_confirmation
+      click_remove_intake_issue(1)
+      click_remove_issue_confirmation
+      expect(page).to have_button("Save", disabled: false)
+    end
+  end
+
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date - 1.day }
     let(:disability_profile_date) { receipt_date - 10.days }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       visit "appeals/#{appeal.uuid}/edit/"
 
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.appeal,
         appeal
       )
@@ -209,7 +233,7 @@ feature "Appeal Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "A description!",
-        date: "04/26/2018"
+        date: profile_date.mdY
       )
 
       click_edit_submit_and_confirm
@@ -233,6 +257,7 @@ feature "Appeal Edit issues" do
 
     context "with legacy_opt_in_approved" do
       let(:legacy_opt_in_approved) { true }
+
       scenario "adding issues" do
         visit "appeals/#{appeal.uuid}/edit/"
 

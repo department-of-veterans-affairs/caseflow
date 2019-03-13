@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # GenerateHearingDaysSchedule is used to generate the dates available for RO
 # video hearings in a specified date range after filtering out weekends,
 # holidays, and board non-availability dates
@@ -13,6 +15,8 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   MAX_NUMBER_OF_DAYS_PER_DATE = 12
   BVA_VIDEO_ROOMS = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13].freeze
+
+  CO_DAYS_OF_WEEK = [1, 2, 3, 4].freeze
 
   def initialize(schedule_period)
     @amortized = 0
@@ -85,6 +89,21 @@ class HearingSchedule::GenerateHearingDaysSchedule
     @ros.sort_by do |_k, v|
       v[:allocated_days].to_f / v[:num_of_rooms] / v[:available_days].count
     end.reverse.to_h
+  end
+
+  def generate_co_hearing_days_schedule
+    co_schedule = []
+    (@schedule_period.start_date..@schedule_period.end_date).each do |scheduled_for|
+      next unless valid_day_to_schedule_co(scheduled_for)
+
+      co_schedule.push(
+        scheduled_for: scheduled_for,
+        request_type: HearingDay::REQUEST_TYPES[:central],
+        room: "2",
+        bva_poc: "CAROL COLEMAN-DEW"
+      )
+    end
+    co_schedule
   end
 
   private
@@ -310,6 +329,13 @@ class HearingSchedule::GenerateHearingDaysSchedule
 
   def co_not_available?(day)
     @co_non_availability_days.find { |non_availability_day| non_availability_day.date == day }.present?
+  end
+
+  def valid_day_to_schedule_co(scheduled_for)
+    CO_DAYS_OF_WEEK.include?(scheduled_for.cwday) &&
+      !weekend?(scheduled_for) &&
+      !holiday?(scheduled_for) &&
+      !co_not_available?(scheduled_for)
   end
 
   # Filters out the non-available RO days from the board available days for

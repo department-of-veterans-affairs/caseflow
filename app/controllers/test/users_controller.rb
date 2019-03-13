@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rake"
 
 Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode

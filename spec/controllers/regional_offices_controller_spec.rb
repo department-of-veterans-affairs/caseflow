@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe RegionalOfficesController, type: :controller do
   let!(:user) { User.authenticate! }
 
@@ -13,20 +15,20 @@ RSpec.describe RegionalOfficesController, type: :controller do
   context "where a hearing day has an open slot" do
     let!(:child_hearing) do
       create(:case_hearing,
-             hearing_type: "V",
+             hearing_type: HearingDay::REQUEST_TYPES[:video],
              hearing_date: Time.zone.today + 20,
              folder_nr: create(:case).bfkey)
     end
 
     let!(:co_hearing) do
       create(:case_hearing,
-             hearing_type: "C",
+             hearing_type: HearingDay::REQUEST_TYPES[:central],
              hearing_date: Time.zone.today + 20,
              folder_nr: create(:case).bfkey)
     end
 
     xit "returns hearing dates with open slots" do
-      get :open_hearing_dates, params: { regional_office: "C" }, as: :json
+      get :open_hearing_dates, params: { regional_office: HearingDay::REQUEST_TYPES[:central] }, as: :json
       expect(response.status).to eq 200
       response_body = JSON.parse(response.body)
       expect(response_body["hearing_days"].size).to eq 1

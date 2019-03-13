@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents a veteran with values fetched from BGS
 #
 # TODO: How do we deal with differences between the BGS vet values and the
@@ -14,7 +16,7 @@ class Veteran < ApplicationRecord
                     :military_postal_type_code, :military_post_office_type_code,
                     :service, :date_of_birth, :date_of_death
 
-  validates :ssn, :sex, :first_name, :last_name, presence: true, on: :bgs
+  validates :ssn, :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
@@ -38,8 +40,8 @@ class Veteran < ApplicationRecord
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
   # C&P Live = '1', C&P Death = '2'
-  BENEFIT_TYPE_CODE_LIVE = "1".freeze
-  BENEFIT_TYPE_CODE_DEATH = "2".freeze
+  BENEFIT_TYPE_CODE_LIVE = "1"
+  BENEFIT_TYPE_CODE_DEATH = "2"
 
   # TODO: get middle initial from BGS
   def name
@@ -65,6 +67,12 @@ class Veteran < ApplicationRecord
   # Convert to hash used in AppealRepository.establish_claim!
   def to_vbms_hash
     military_address? ? military_address_vbms_hash : base_vbms_hash
+  end
+
+  def find_latest_end_product_by_claimant(claimant)
+    end_products.select do |ep|
+      ep.claimant_first_name == claimant.first_name && ep.claimant_last_name == claimant.last_name
+    end.max_by(&:claim_date)
   end
 
   def end_products
@@ -109,6 +117,7 @@ class Veteran < ApplicationRecord
     # Now that we are always checking find_flashes for access control before we fetch the
     # veteran, we should never see this error. Reporting it to sentry if it happens
     Raven.capture_exception(error)
+    @access_error = error.message
 
     # Set the veteran as inaccessible if a sensitivity error is thrown
     raise error unless error.message.match?(/Sensitive File/)
@@ -118,6 +127,18 @@ class Veteran < ApplicationRecord
 
   def accessible?
     bgs.can_access?(file_number)
+  end
+
+  def access_error
+    @access_error ||= nil if bgs_record.is_a?(Hash)
+  rescue BGS::ShareError => error
+    error.message
+  end
+
+  # When two Veteran records get merged for data clean up, it can lead to multiple active phone numbers
+  # This causes an error fetching the BGS record and needs to be fixed in SHARE
+  def multiple_phone_numbers?
+    !!access_error&.include?("NonUniqueResultException")
   end
 
   def relationships
@@ -176,68 +197,112 @@ class Veteran < ApplicationRecord
     )
   end
 
+  def stale_name?
+    return false unless accessible? && bgs_record.is_a?(Hash)
+
+    is_stale = (first_name.nil? || last_name.nil?)
+    [:first_name, :last_name, :middle_name, :name_suffix].each do |name|
+      is_stale = true if self[name] != bgs_record[name]
+    end
+    is_stale
+  end
+
   class << self
-    def find_or_create_by_file_number(file_number)
-      find_and_maybe_backfill_name(file_number) || create_by_file_number(file_number)
+    def find_or_create_by_file_number(file_number, sync_name: false)
+      find_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
     end
 
-    def find_by_file_number_or_ssn(file_number_or_ssn)
+    def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_by(file_number: file_number_or_ssn) || find_by_ssn(file_number_or_ssn)
+        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
+          find_by_ssn(file_number_or_ssn, sync_name: sync_name)
       else
-        find_by(file_number: file_number_or_ssn)
+        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
+      end
+    end
+
+    def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
+      if file_number_or_ssn.to_s.length == 9
+        find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name) ||
+          find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name)
+      else
+        find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       end
     end
 
     private
 
-    def find_by_ssn(ssn)
+    def find_by_ssn(ssn, sync_name: false)
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
-      find_by(file_number: file_number)
+      find_and_maybe_backfill_name(file_number, sync_name: sync_name)
     end
 
-    def find_and_maybe_backfill_name(file_number)
+    def find_or_create_by_ssn(ssn, sync_name: false)
+      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      return unless file_number
+
+      find_or_create_by_file_number(file_number, sync_name: sync_name)
+    end
+
+    def find_and_maybe_backfill_name(file_number, sync_name: false)
       veteran = find_by(file_number: file_number)
       return nil unless veteran
 
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
-      if veteran.first_name.nil? && veteran.accessible? && veteran.bgs_record.is_a?(Hash)
-        veteran.update!(
-          first_name: veteran.bgs_record[:first_name],
-          last_name: veteran.bgs_record[:last_name],
-          middle_name: veteran.bgs_record[:middle_name],
-          name_suffix: veteran.bgs_record[:name_suffix]
+      if sync_name
+        Rails.logger.warn(
+          %(
+          find_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
+          )
         )
+
+        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
+          veteran.update!(
+            first_name: veteran.bgs_record[:first_name],
+            last_name: veteran.bgs_record[:last_name],
+            middle_name: veteran.bgs_record[:middle_name],
+            name_suffix: veteran.bgs_record[:name_suffix]
+          )
+        end
       end
       veteran
     end
 
+    # rubocop:disable Metrics/MethodLength
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
 
-      return nil unless veteran.found?
+      unless veteran.found?
+        Rails.logger.warn(
+          %(create_by_file_number file_number:#{file_number} found:false accessible:#{veteran.accessible?})
+        )
+        return nil
+      end
+
+      Rails.logger.warn(
+        %(create_by_file_number file_number:#{file_number} found:true accessible:#{veteran.accessible?})
+      )
+
+      return veteran unless veteran.accessible?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
-        v.update!(participant_id: v.ptcpnt_id)
-        # Check to see if veteran is accessible to make sure
-        # bgs_record is a hash and not :not_found
-        if v.accessible?
-          v.update!(
-            first_name: v.bgs_record[:first_name],
-            last_name: v.bgs_record[:last_name],
-            middle_name: v.bgs_record[:middle_name],
-            name_suffix: v.bgs_record[:name_suffix]
-          )
-        end
+        v.update!(
+          participant_id: v.ptcpnt_id,
+          first_name: v.bgs_record[:first_name],
+          last_name: v.bgs_record[:last_name],
+          middle_name: v.bgs_record[:middle_name],
+          name_suffix: v.bgs_record[:name_suffix]
+        )
       end
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
+    # rubocop:enable Metrics/MethodLength
 
     def before_create_veteran_by_file_number
       # noop - used to simulate race conditions

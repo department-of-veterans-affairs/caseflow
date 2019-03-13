@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :appeal do
     transient do
-      number_of_claimants nil
+      number_of_claimants { nil }
     end
 
     sequence(:veteran_file_number, 500_000_000)
-    docket_type "evidence_submission"
+    docket_type { Constants.AMA_DOCKETS.evidence_submission }
 
     transient do
       veteran do
@@ -22,13 +24,13 @@ FactoryBot.define do
 
     after(:create) do |appeal, _evaluator|
       appeal.request_issues.each do |issue|
-        issue.review_request = appeal
+        issue.decision_review = appeal
         issue.save
       end
     end
 
     trait :hearing_docket do
-      docket_type "hearing"
+      docket_type { Constants.AMA_DOCKETS.hearing }
     end
 
     trait :advanced_on_docket_due_to_age do
@@ -83,7 +85,7 @@ FactoryBot.define do
     end
 
     transient do
-      documents []
+      documents { [] }
     end
 
     after(:build) do |appeal, evaluator|

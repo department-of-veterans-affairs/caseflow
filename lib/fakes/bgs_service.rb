@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 require "bgs"
 require "fakes/end_product_store"
@@ -114,7 +116,7 @@ class Fakes::BGSService
           payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
-          review_request: hlr,
+          decision_review: hlr,
           benefit_type: "compensation",
           end_product_establishment: epe,
           contested_rating_issue_reference_id: in_active_review_reference_id
@@ -137,13 +139,13 @@ class Fakes::BGSService
           payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
-          review_request: previous_hlr,
+          decision_review: previous_hlr,
           benefit_type: "compensation",
           end_product_establishment: cleared_epe,
-          rating_issue_reference_id: completed_review_reference_id,
+          contested_rating_issue_reference_id: completed_review_reference_id,
           contention_reference_id: 999
         ) do |reqi|
-          reqi.rating_issue_profile_date = Time.zone.today - 100
+          reqi.contested_rating_issue_profile_date = Time.zone.today - 100
         end
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
@@ -201,7 +203,7 @@ class Fakes::BGSService
           payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
-          review_request: hlr,
+          decision_review: hlr,
           benefit_type: "compensation",
           end_product_establishment: epe,
           contention_reference_id: contention_reference_id
@@ -459,7 +461,14 @@ class Fakes::BGSService
   end
 
   def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
-    # noop
+    end_products = get_end_products(veteran_id)
+    matching_eps = end_products.select do |ep|
+      ep[:claim_type_code] == end_product_code && ep[:end_product_type_code] == end_product_modifier
+    end
+    matching_eps.each do |ep|
+      ep[:status_type_code] = "CAN"
+      self.class.store_end_product_record(veteran_id, ep)
+    end
   end
 
   def fetch_veteran_info(vbms_id)
@@ -547,6 +556,19 @@ class Fakes::BGSService
     )
   end
   # rubocop:enable Metrics/MethodLength
+
+  def fetch_limited_poas_by_claim_ids(claim_ids)
+    result = {}
+    Array.wrap(claim_ids).each do |claim_id|
+      if claim_id.include? "HAS_LIMITED_POA_WITH_ACCESS"
+        result[claim_id] = { limited_poa_code: "OU3", limited_poa_access: "Y" }
+      elsif claim_id.include? "HAS_LIMITED_POA_WITHOUT_ACCESS"
+        result[claim_id] = { limited_poa_code: "007", limited_poa_access: "N" }
+      end
+    end
+
+    result.empty? ? nil : result
+  end
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
@@ -689,8 +711,8 @@ class Fakes::BGSService
 
   private
 
-  VSO_PARTICIPANT_ID = "4623321".freeze
-  DEFAULT_PARTICIPANT_ID = "781162".freeze
+  VSO_PARTICIPANT_ID = "4623321"
+  DEFAULT_PARTICIPANT_ID = "781162"
 
   def default_claimant_info
     {

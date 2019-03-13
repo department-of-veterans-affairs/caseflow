@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDocket do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
@@ -15,7 +17,7 @@ describe HearingDocket do
   let(:docket) do
     HearingDocket.new(
       scheduled_for: 7.days.from_now,
-      request_type: "V",
+      request_type: HearingDay::REQUEST_TYPES[:video],
       regional_office_names: [hearing.regional_office_name],
       regional_office_key: "RO31",
       hearings: [
@@ -45,7 +47,7 @@ describe HearingDocket do
     subject { docket.slots }
 
     context "should use the default number of slots for the regional office" do
-      it { is_expected.to eq 4 }
+      it { is_expected.to eq 10 }
     end
   end
 
@@ -59,7 +61,7 @@ describe HearingDocket do
       expect(subject[:hearings_count]).to eq(docket.hearings_count)
       expect(subject[:request_type]).to eq(docket.request_type)
       expect(subject[:regional_office_names]).to eq(docket.regional_office_names)
-      expect(subject[:slots]).to eq 4
+      expect(subject[:slots]).to eq 10
     end
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # History of this class is in docs/asyncable-models.md
 #
 # Mixin module to apply to an ActiveRecord class, to make it easier to process via
@@ -25,7 +27,11 @@ module Asyncable
     DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
 
     def processing_retry_interval_hours
-      DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
+      self::DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
+    end
+
+    def requires_processing_until
+      self::REQUIRES_PROCESSING_WINDOW_DAYS.days.ago
     end
 
     def last_submitted_at_column
@@ -49,7 +55,7 @@ module Asyncable
     end
 
     def unexpired
-      where(arel_table[last_submitted_at_column].gt(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
+      where(arel_table[last_submitted_at_column].gt(requires_processing_until))
     end
 
     def processable
@@ -78,7 +84,7 @@ module Asyncable
 
     def expired_without_processing
       where(processed_at_column => nil)
-        .where(arel_table[last_submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
+        .where(arel_table[last_submitted_at_column].lteq(requires_processing_until))
     end
 
     def attempted_without_being_submitted
@@ -93,7 +99,8 @@ module Asyncable
   end
 
   def submit_for_processing!(delay: 0)
-    when_to_start = Time.zone.now + delay
+    # One minute offset to prevent "this date is in the future" errors with external services
+    when_to_start = delay.try(:to_datetime) ? delay.to_datetime + 1.minute : Time.zone.now + delay
 
     update!(
       self.class.last_submitted_at_column => when_to_start,
@@ -132,6 +139,23 @@ module Asyncable
 
   def submitted?
     !!self[self.class.submitted_at_column]
+  end
+
+  def expired_without_processing?
+    return false if processed?
+
+    last_submitted = self[self.class.last_submitted_at_column]
+    return false unless last_submitted
+
+    last_submitted < self.class.requires_processing_until
+  end
+
+  def submitted_and_ready?
+    !!self[self.class.submitted_at_column] && self[self.class.submitted_at_column] <= Time.zone.now
+  end
+
+  def submitted_not_processed?
+    submitted? && !processed?
   end
 
   def sort_by_last_submitted_at

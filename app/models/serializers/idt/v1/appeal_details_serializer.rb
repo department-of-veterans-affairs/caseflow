@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
   def id
     object.is_a?(LegacyAppeal) ? object.vacols_id : object.uuid
@@ -85,10 +87,9 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
         ).as_json[:data][:attributes]
       end
     else
-      object.request_issues.map do |issue|
+      object.request_issues.active.map do |issue|
         {
           id: issue.id,
-          disposition: issue.disposition,
           program: Constants::BENEFIT_TYPES[issue.benefit_type],
           description: issue.description
         }

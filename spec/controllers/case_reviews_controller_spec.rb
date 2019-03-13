@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe CaseReviewsController, type: :controller do
   before do
     Fakes::Initializer.load!
@@ -12,9 +14,9 @@ RSpec.describe CaseReviewsController, type: :controller do
       let!(:judge_staff) { create(:staff, :judge_role, slogid: "CSF444", sdomainid: judge.css_id) }
       let!(:attorney_staff) { create(:staff, :attorney_role, slogid: "CSF555", sdomainid: attorney.css_id) }
 
-      let!(:request_issue1) { create(:request_issue, review_request: task.appeal) }
-      let(:request_issue2) { create(:request_issue, review_request: task.appeal) }
-      let(:request_issue3) { create(:request_issue, review_request: task.appeal) }
+      let!(:request_issue1) { create(:request_issue, decision_review: task.appeal) }
+      let(:request_issue2) { create(:request_issue, decision_review: task.appeal) }
+      let(:request_issue3) { create(:request_issue, decision_review: task.appeal) }
 
       context "Attorney Case Review" do
         before do
@@ -25,46 +27,7 @@ RSpec.describe CaseReviewsController, type: :controller do
         let(:judge_task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
         let(:task) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge, parent: judge_task) }
 
-        context "when all parameters are present to create Draft Decision with old issue format" do
-          let(:params) do
-            {
-              "type": "AttorneyCaseReview",
-              "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
-              "reviewing_judge_id": judge.id,
-              "work_product": "Decision",
-              "document_id": "123456789.1234",
-              "overtime": true,
-              "note": "something",
-              "issues": [{ "disposition": "allowed", "id": request_issue1.id },
-                         { "disposition": "remanded", "id": request_issue2.id,
-                           "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
-            }
-          end
-          let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
-
-          it "should be successful" do
-            post :complete, params: { task_id: task.id, tasks: params }
-            expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)
-            expect(response_body["task"]["document_id"]).to eq "123456789.1234"
-            expect(response_body["task"]["overtime"]).to eq true
-            expect(response_body["task"]["note"]).to eq "something"
-            expect(response_body.keys).to include "issues"
-            # TODO: uncomment when we use decision issues
-            # expect(response_body["issues"]["decision_issues"].size).to eq 2
-            expect(response_body["issues"]["request_issues"].size).to eq 2
-            expect(request_issue1.reload.disposition).to eq "allowed"
-            expect(request_issue2.reload.disposition).to eq "remanded"
-            expect(task.reload.status).to eq "completed"
-            expect(task.completed_at).to_not eq nil
-            expect(task.parent.reload.status).to eq "assigned"
-            expect(task.parent.type).to eq JudgeDecisionReviewTask.name
-
-            expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
-          end
-        end
-
-        context "when new issue format" do
+        context "when creating a draft decision" do
           context "when missing dispositions" do
             let(:params) do
               {
@@ -72,7 +35,7 @@ RSpec.describe CaseReviewsController, type: :controller do
                 "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
                 "reviewing_judge_id": judge.id,
                 "work_product": "Decision",
-                "document_id": "123456789.1234",
+                "document_id": "12345678.1234",
                 "overtime": true,
                 "note": "something",
                 "issues": [{ "description": "wonderful life",
@@ -92,7 +55,7 @@ RSpec.describe CaseReviewsController, type: :controller do
               post :complete, params: { task_id: task.id, tasks: params }
               expect(response.status).to eq 400
               response_body = JSON.parse(response.body)
-              msg = "Validation failed: Disposition is not included in the list"
+              msg = "Validation failed: Disposition can't be blank, Disposition is not included in the list"
               expect(response_body["errors"].first["detail"]).to eq msg
               FeatureToggle.disable!(:ama_decision_issues)
             end
@@ -105,7 +68,7 @@ RSpec.describe CaseReviewsController, type: :controller do
                 "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
                 "reviewing_judge_id": judge.id,
                 "work_product": "Decision",
-                "document_id": "123456789.1234",
+                "document_id": "12345678.1234",
                 "overtime": true,
                 "note": "something",
                 "issues": [{ "disposition": "allowed", "description": "wonderful life",
@@ -137,7 +100,7 @@ RSpec.describe CaseReviewsController, type: :controller do
                 "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
                 "reviewing_judge_id": judge.id,
                 "work_product": "Decision",
-                "document_id": "123456789.1234",
+                "document_id": "12345678.1234",
                 "overtime": true,
                 "note": "something",
                 "issues": [{ "disposition": "allowed", "description": "wonderful life",
@@ -154,17 +117,13 @@ RSpec.describe CaseReviewsController, type: :controller do
             let!(:bva_dispatch_task_count_before) { BvaDispatchTask.count }
 
             it "should be successful" do
-              FeatureToggle.enable!(:ama_decision_issues)
               post :complete, params: { task_id: task.id, tasks: params }
               expect(response.status).to eq 200
               response_body = JSON.parse(response.body)
-              expect(response_body["task"]["document_id"]).to eq "123456789.1234"
+              expect(response_body["task"]["document_id"]).to eq "12345678.1234"
               expect(response_body["task"]["overtime"]).to eq true
               expect(response_body["task"]["note"]).to eq "something"
               expect(response_body.keys).to include "issues"
-              expect(request_issue1.reload.disposition).to eq nil
-              expect(request_issue2.reload.disposition).to eq nil
-              expect(request_issue3.reload.disposition).to eq nil
 
               expect(DecisionIssue.count).to eq 2
               expect(request_issue1.decision_issues.first.disposition).to eq "allowed"
@@ -184,12 +143,11 @@ RSpec.describe CaseReviewsController, type: :controller do
               expect(request_issue2.decision_issues.first.remand_reasons.first.post_aoj).to eq true
 
               expect(task.reload.status).to eq "completed"
-              expect(task.completed_at).to_not eq nil
+              expect(task.closed_at).to_not eq nil
               expect(task.parent.reload.status).to eq "assigned"
               expect(task.parent.type).to eq JudgeDecisionReviewTask.name
 
               expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
-              FeatureToggle.disable!(:ama_decision_issues)
             end
           end
         end
@@ -219,8 +177,16 @@ RSpec.describe CaseReviewsController, type: :controller do
               "comment": "do this",
               "factors_not_considered": %w[theory_contention relevant_records],
               "areas_for_improvement": ["process_violations"],
-              "issues": [{ "disposition": "denied", "id": request_issue1.id },
-                         { "disposition": "remanded", "id": request_issue2.id,
+              "issues": [{ "disposition": "denied",
+                           "request_issue_ids": [request_issue1.id],
+                           "description": "wonderful life",
+                           "benefit_type": "pension",
+                           "diagnostic_code": "5001" },
+                         { "disposition": "remanded",
+                           "request_issue_ids": [request_issue2.id],
+                           "description": "wonderful life",
+                           "benefit_type": "pension",
+                           "diagnostic_code": "5001",
                            "remand_reasons": [{ "code": "va_records", "post_aoj": true }] }]
             }
           end
@@ -239,14 +205,10 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response_body["task"]["comment"]).to eq "do this"
             expect(response_body["task"]["factors_not_considered"]).to eq %w[theory_contention relevant_records]
             expect(response_body["task"]["areas_for_improvement"]).to eq ["process_violations"]
-            expect(response_body.keys).to include "issues"
-            # TODO: uncomment when we use decision issues
-            # expect(response_body["issues"]["decision_issues"].size).to eq 2
-            expect(response_body["issues"]["request_issues"].size).to eq 2
-            expect(request_issue1.reload.disposition).to eq "denied"
-            expect(request_issue2.reload.disposition).to eq "remanded"
+            expect(request_issue1.decision_issues.first.disposition).to eq "denied"
+            expect(request_issue2.decision_issues.first.disposition).to eq "remanded"
             expect(task.reload.status).to eq "completed"
-            expect(task.completed_at).to_not eq nil
+            expect(task.closed_at).to_not eq nil
 
             # When a judge completes judge checkout we create either a QR or dispatch task.
             quality_review_task = QualityReviewTask.find_by(parent_id: root_task.id)
@@ -255,7 +217,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(dispatch_task.assigned_to).to eq(BvaDispatch.singleton) if dispatch_task
           end
 
-          context "When case is being QRed" do
+          context "when case is being QRed" do
             let(:qr_user) { create(:user) }
             let!(:quality_review_organization_task) do
               create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
@@ -308,7 +270,7 @@ RSpec.describe CaseReviewsController, type: :controller do
               "document_type": Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
               "reviewing_judge_id": judge.id,
               "work_product": "OMO - IME",
-              "document_id": "123456789.1234",
+              "document_id": "M1234567.1234",
               "overtime": true,
               "note": "something"
             }
@@ -319,7 +281,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             post :complete, params: { task_id: task_id, tasks: params }
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)
-            expect(response_body["task"]["document_id"]).to eq "123456789.1234"
+            expect(response_body["task"]["document_id"]).to eq "M1234567.1234"
             expect(response_body["task"]["overtime"]).to eq true
             expect(response_body["task"]["note"]).to eq "something"
             expect(bva_dispatch_task_count_before).to eq(BvaDispatchTask.count)
@@ -333,7 +295,7 @@ RSpec.describe CaseReviewsController, type: :controller do
               "document_type": Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"],
               "reviewing_judge_id": judge.id,
               "work_product": "Decision",
-              "document_id": "123456789.1234",
+              "document_id": "12345678.1234",
               "overtime": true,
               "note": "something",
               "issues": [{ "disposition": "3", "id": vacols_issue_remanded.issseq,
@@ -347,7 +309,7 @@ RSpec.describe CaseReviewsController, type: :controller do
             post :complete, params: { task_id: task_id, tasks: params }
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)
-            expect(response_body["task"]["document_id"]).to eq "123456789.1234"
+            expect(response_body["task"]["document_id"]).to eq "12345678.1234"
             expect(response_body["task"]["overtime"]).to eq true
             expect(response_body["task"]["note"]).to eq "something"
             expect(response_body.keys).to include "issues"
@@ -355,13 +317,12 @@ RSpec.describe CaseReviewsController, type: :controller do
           end
         end
 
-        context "when not all parameters are present" do
+        context "when some required parameters are not present" do
           let(:params) do
             {
               "type": "AttorneyCaseReview",
               "document_type": Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
               "work_product": "OMO - IME",
-              "document_id": "123456789.1234",
               "overtime": true,
               "note": "something"
             }
@@ -372,7 +333,33 @@ RSpec.describe CaseReviewsController, type: :controller do
             expect(response.status).to eq 400
             response_body = JSON.parse(response.body)
             expect(response_body["errors"].first["title"]).to eq "Record is invalid"
-            expect(response_body["errors"].first["detail"]).to eq "Reviewing judge can't be blank"
+            expect(response_body["errors"].first["detail"])
+              .to eq "Reviewing judge can't be blank, Document ID can't be blank"
+          end
+        end
+
+        context "when document_id is in the wrong format" do
+          let(:params) do
+            {
+              "type": "AttorneyCaseReview",
+              "document_id": "123456789.1234",
+              "document_type": Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
+              "work_product": "OMO - IME",
+              "overtime": true,
+              "note": "something"
+            }
+          end
+
+          it "should not be successful" do
+            post :complete, params: { task_id: task_id, tasks: params }
+            response_body = JSON.parse(response.body)
+
+            expect(response.status).to eq 400
+            expect(response_body["errors"].first["title"]).to eq "Record is invalid"
+            expect(response_body["errors"].first["detail"])
+              .to eq "Document ID of type IME must be in one of these formats: M1234567.123 or M1234567.1234, " \
+                      "Reviewing judge can't be blank"
+            expect(AttorneyCaseReview.count).to eq 0
           end
         end
       end

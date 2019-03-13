@@ -1,4 +1,11 @@
+# frozen_string_literal: true
+
+##
+# Created whenever an Appeal request issue has a benefit_type that is not compensation or pension.
+
 class VeteranRecordRequest < GenericTask
+  include BusinessLineTask
+
   def label
     "Record Request"
   end
@@ -7,7 +14,6 @@ class VeteranRecordRequest < GenericTask
     ::WorkQueue::VeteranRecordRequestSerializer
   end
 
-  def ui_hash
-    serializer_class.new(self).as_json
-  end
+  # this creates a method called appeal_ui_hash
+  delegate :ui_hash, to: :appeal, prefix: true
 end

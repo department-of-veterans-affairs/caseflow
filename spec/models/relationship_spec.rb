@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Relationship do
   let(:veteran) { create(:veteran) }
   let(:relationship_type) { "Spouse" }

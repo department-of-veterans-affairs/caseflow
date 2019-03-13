@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job will sync end products & contentions that we created for decision reviews
 class SyncReviewsJob < CaseflowJob
   queue_as :low_priority
@@ -56,7 +58,7 @@ class SyncReviewsJob < CaseflowJob
 
   def reprocess_decision_documents(limit)
     DecisionDocument.requires_processing.limit(limit).each do |decision_document|
-      ProcessDecisionDocumentJob.perform_later(decision_document)
+      ProcessDecisionDocumentJob.perform_later(decision_document.id)
     end
   end
 end

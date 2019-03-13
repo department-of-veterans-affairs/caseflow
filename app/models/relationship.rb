@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Relationship
   include ActiveModel::Model
   include ActiveModel::Validations
@@ -34,7 +36,7 @@ class Relationship
   end
 
   def previous_claim_payee_code
-    @previous_claim_payee_code ||= end_products.max_by(&:claim_date).try(:payee_code)
+    @previous_claim_payee_code ||= latest_end_product.try(:payee_code)
   end
 
   def payee_code_by_relationship_type
@@ -53,8 +55,8 @@ class Relationship
     end
   end
 
-  def end_products
-    veteran.end_products.select { |ep| ep.claimant_first_name == first_name && ep.claimant_last_name == last_name }
+  def latest_end_product
+    veteran.find_latest_end_product_by_claimant(self)
   end
 
   def veteran

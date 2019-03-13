@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe LegacyAppeal do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -225,6 +227,35 @@ describe LegacyAppeal do
     end
   end
 
+  context "#soc_opt_in_due_date" do
+    subject { appeal.soc_opt_in_due_date }
+
+    context "when is no soc" do
+      let(:vacols_case) do
+        create(:case)
+      end
+
+      let(:soc_date) { nil }
+      it { is_expected.to eq(nil) }
+    end
+
+    context "when there is an soc" do
+      let(:vacols_case) do
+        create(:case, bfdsoc: 1.day.ago)
+      end
+
+      it { is_expected.to eq((vacols_case.bfdsoc + 60.days).to_date) }
+    end
+
+    context "when there are multiple socs" do
+      let(:vacols_case) do
+        create(:case, bfdsoc: 1.year.ago, bfssoc1: 6.months.ago, bfssoc2: 1.day.ago)
+      end
+
+      it { is_expected.to eq((vacols_case.bfssoc2 + 60.days).to_date) }
+    end
+  end
+
   context "#cavc_due_date" do
     subject { appeal.cavc_due_date }
 
@@ -417,63 +448,6 @@ describe LegacyAppeal do
 
       it "should return number of documents" do
         expect(subject).to eq 3
-      end
-    end
-
-    context "Number of documents from caseflow" do
-      subject { appeal.number_of_documents_from_caseflow }
-
-      it "should return number of documents" do
-        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
-        expect(subject).to eq 3
-      end
-    end
-  end
-
-  context "#new_documents_from_caseflow" do
-    before do
-      documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
-    end
-
-    let(:user) { create(:user) }
-
-    let!(:documents) do
-      [
-        Generators::Document.create(upload_date: 5.days.ago),
-        Generators::Document.create(upload_date: 5.days.ago)
-      ]
-    end
-
-    let!(:appeal) { Generators::LegacyAppeal.create }
-    let!(:vacols_case) { create(:case, documents: documents) }
-
-    subject { appeal.new_documents_from_caseflow(user) }
-
-    context "when appeal has no appeal view" do
-      it "should return all documents" do
-        expect(subject).to match_array(documents)
-      end
-    end
-
-    context "when appeal has an appeal view newer than documents" do
-      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-
-      it "should return no documents" do
-        expect(subject).to eq([])
-      end
-
-      context "when one document is missing a received at date" do
-        it "should return no documents" do
-          documents[0].update(upload_date: nil)
-          expect(subject).to eq([])
-        end
-      end
-
-      context "when one document is newer than the appeal view date" do
-        it "should return the newer document" do
-          documents[0].update(upload_date: -2.days.ago)
-          expect(subject).to eq([documents[0]])
-        end
       end
     end
   end
@@ -1598,7 +1572,7 @@ describe LegacyAppeal do
 
       it { expect(subject.length).to eq(4) }
       it { is_expected.to include("Foreign claim - compensation claims, dual claims, appeals") }
-      it { is_expected.to include("Vocational Rehab") }
+      it { is_expected.to include("Vocational Rehabilitation and Employment") }
       it { is_expected.to include(/Education - GI Bill, dependents educational assistance/) }
       it { is_expected.to include("U.S. Territory claim - Puerto Rico and Virgin Islands") }
     end
@@ -2293,6 +2267,84 @@ describe LegacyAppeal do
                                                            }
                                                          }
                                                        ])
+      end
+    end
+  end
+
+  context "#assigned_to_location" do
+    context "if the case is complete" do
+      let!(:vacols_case) { create(:case, :status_complete) }
+
+      it "returns nil" do
+        expect(appeal.assigned_to_location).to eq(nil)
+      end
+    end
+
+    context "if the case has not been worked in caseflow" do
+      let(:location_code) { "96" }
+      let!(:vacols_case) { create(:case, bfcurloc: location_code) }
+
+      it "returns the location code" do
+        expect(appeal.assigned_to_location).to eq(location_code)
+      end
+    end
+
+    context "if the case has been worked in caseflow" do
+      let!(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
+
+      it "if there are no active tasks it returns 'CASEFLOW' (fallback case)" do
+        expect(appeal.assigned_to_location).to eq("CASEFLOW")
+      end
+
+      context "if the only active case is a RootTask" do
+        before do
+          create(:root_task, appeal: appeal)
+        end
+
+        it "returns Case storage" do
+          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        end
+      end
+
+      context "if there is an assignee" do
+        context "if the most recent assignee is an organization" do
+          let(:organization) { create(:organization) }
+
+          before do
+            organization_root_task = create(:root_task, appeal: appeal)
+            create(:generic_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
+          end
+
+          it "it returns the organization name" do
+            expect(appeal.assigned_to_location).to eq(organization.name)
+          end
+        end
+
+        context "if the most recent assignee is not an organization" do
+          let(:user) { create(:user) }
+
+          before do
+            user_root_task = create(:root_task, appeal: appeal)
+            create(:generic_task, assigned_to: user, appeal: appeal, parent: user_root_task)
+          end
+
+          it "it returns the id" do
+            expect(appeal.assigned_to_location).to eq(user.css_id)
+          end
+        end
+
+        context "if the task is on hold but there isn't an assignee" do
+          let(:pre_ama) { Date.new(2018, 1, 1) }
+
+          before do
+            on_hold_root = create(:root_task, appeal: appeal, updated_at: pre_ama - 1)
+            create(:generic_task, status: :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
+          end
+
+          it "it returns something" do
+            expect(appeal.assigned_to_location).not_to eq(nil)
+          end
+        end
       end
     end
   end

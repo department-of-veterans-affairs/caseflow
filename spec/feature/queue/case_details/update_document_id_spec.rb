@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 feature "Updating Document ID" do
@@ -8,13 +10,14 @@ feature "Updating Document ID" do
       User.authenticate!(user: attorney)
       visit("/queue/appeals/#{Appeal.last.external_id}")
 
+      expect(page).to have_content "DECISION DOCUMENT ID"
       within "#document-id" do
         click_button "Edit"
       end
 
       enter_invalid_decision_document_id
 
-      expect(page).to have_content "Draft Decision Document IDs must be in one of these formats:"
+      expect(page).to have_content "Document ID of type Draft Decision must be in one of these formats:"
       expect(page).to have_content "12345678.1234"
 
       enter_valid_decision_document_id
@@ -48,6 +51,7 @@ feature "Updating Document ID" do
       create_legacy_attorney_case_review_in_browser(appeal)
       visit("/queue/appeals/#{appeal.vacols_id}")
 
+      expect(page).to have_content "DECISION DOCUMENT ID"
       within "#document-id" do
         click_button "Edit"
       end
@@ -90,7 +94,7 @@ feature "Updating Document ID" do
       appeal: appeal,
       parent: root_task,
       assigned_to: attorney,
-      completed_at: Time.zone.now - 4.days
+      closed_at: Time.zone.now - 4.days
     )
     attorney_task.update!(status: Constants.TASK_STATUSES.completed)
     create(
@@ -122,6 +126,7 @@ feature "Updating Document ID" do
   def switch_to_judge_associated_with_case_and_visit_ama_appeals_page(judge)
     User.authenticate!(user: judge)
     visit("/queue/appeals/#{Appeal.last.external_id}")
+    expect(page).to have_content "DECISION DOCUMENT ID"
   end
 
   def create_legacy_case_review
@@ -170,10 +175,12 @@ feature "Updating Document ID" do
     user = create(:user)
     User.authenticate!(user: user)
     visit("/queue/appeals/#{LegacyAppeal.last.vacols_id}")
+    expect(page).to have_content "DECISION DOCUMENT ID"
   end
 
   def switch_to_judge_associated_with_case_and_visit_legacy_appeals_page(judge)
     User.authenticate!(user: judge)
     visit("/queue/appeals/#{LegacyAppeal.last.vacols_id}")
+    expect(page).to have_content "DECISION DOCUMENT ID"
   end
 end

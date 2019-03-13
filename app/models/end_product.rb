@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EndProduct
   include ActiveModel::Model
   include ActiveModel::Validations
@@ -6,7 +8,8 @@ class EndProduct
   STATUSES = {
     "PEND" => "Pending",
     "CLR" => "Cleared",
-    "CAN" => "Canceled"
+    "CAN" => "Canceled",
+    "RW" => "Ready to work"
   }.freeze
 
   INACTIVE_STATUSES = %w[CAN CLR].freeze
@@ -80,13 +83,13 @@ class EndProduct
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  DEFAULT_PAYEE_CODE = "00".freeze
+  DEFAULT_PAYEE_CODE = "00"
 
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter, :payee_code,
                 :claimant_last_name, :claimant_first_name
 
-  attr_writer :claimant_participant_id, :benefit_type_code
+  attr_writer :claimant_participant_id, :benefit_type_code, :limited_poa_code, :limited_poa_access
 
   # Validators are used for validating the EP before we create it in VBMS
   validates :modifier, :claim_type_code, :station_of_jurisdiction, :claim_date, presence: true
@@ -99,6 +102,14 @@ class EndProduct
 
   def claimant_participant_id
     @claimant_participant_id ||= nil
+  end
+
+  def limited_poa_code
+    @limited_poa_code ||= nil
+  end
+
+  def limited_poa_access
+    @limited_poa_access ||= nil
   end
 
   def claim_type
@@ -158,7 +169,9 @@ class EndProduct
       date: claim_date.to_date,
       suppress_acknowledgement_letter: suppress_acknowledgement_letter,
       gulf_war_registry: gulf_war_registry,
-      claimant_participant_id: claimant_participant_id
+      claimant_participant_id: claimant_participant_id,
+      limited_poa_code: limited_poa_code,
+      limited_poa_access: limited_poa_access
     }
   end
 
@@ -182,6 +195,10 @@ class EndProduct
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
   end
 
+  def limited_poa
+    @limited_poa ||= fetch_limited_poa
+  end
+
   def ramp?
     RAMP_CODES.key?(claim_type_code)
   end
@@ -190,6 +207,13 @@ class EndProduct
 
   def label
     @label ||= CODES[claim_type_code]
+  end
+
+  def fetch_limited_poa
+    return unless claim_id
+
+    limited_poa = BGSService.new.fetch_limited_poas_by_claim_ids(claim_id)
+    limited_poa ? limited_poa[claim_id] : nil
   end
 
   def near_decision_date_of?(appeal)
@@ -225,11 +249,11 @@ class EndProduct
     def from_bgs_hash(hash)
       new(
         claim_id: hash[:benefit_claim_id],
-        claim_date: parse_claim_date(hash[:claim_receive_date]),
+        claim_date: parse_date(hash[:claim_receive_date]).try(:in_time_zone),
         claim_type_code: hash[:claim_type_code],
         modifier: hash[:end_product_type_code],
         status_type_code: hash[:status_type_code],
-        last_action_date: hash[:last_action_date],
+        last_action_date: parse_date(hash[:last_action_date]),
         claimant_first_name: hash[:claimant_first_name],
         claimant_last_name: hash[:claimant_last_name],
         payee_code: hash[:payee_type_code]
@@ -238,7 +262,7 @@ class EndProduct
 
     def from_establish_claim_params(hash)
       new(
-        claim_date: parse_claim_date(hash[:date]),
+        claim_date: parse_date(hash[:date]).try(:in_time_zone),
         claim_type_code: hash[:end_product_code],
         modifier: hash[:end_product_modifier],
         suppress_acknowledgement_letter: hash[:suppress_acknowledgement_letter],
@@ -250,8 +274,14 @@ class EndProduct
 
     private
 
-    def parse_claim_date(date)
-      Date.strptime(date, "%m/%d/%Y").in_time_zone
+    def parse_date(date)
+      return unless date
+
+      begin
+        Date.iso8601(date)
+      rescue ArgumentError => _err
+        Date.strptime(date, "%m/%d/%Y")
+      end
     end
   end
 end

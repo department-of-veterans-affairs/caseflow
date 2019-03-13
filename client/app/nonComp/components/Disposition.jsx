@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import update from 'immutability-helper';
 
-import { formatDateStr } from '../../util/DateUtil';
+import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
@@ -29,7 +29,11 @@ class NonCompDecisionIssue extends React.PureComponent {
   }
 
   dispositionOptions = () => {
-    return DISPOSITION_OPTIONS.map((code) => {
+    const isSupplementalClaim = this.props.issue.decision_review_title === 'Supplemental Claim';
+
+    return DISPOSITION_OPTIONS.filter((code) => {
+      return !isSupplementalClaim || code !== 'DTA Error';
+    }).map((code) => {
       return {
         value: code,
         label: code
@@ -47,7 +51,7 @@ class NonCompDecisionIssue extends React.PureComponent {
       index,
       disabled
     } = this.props;
-    let issueDate = formatDateStr(issue.rating_issue_profile_date || issue.decision_date);
+    let issueDate = formatDateStr(issue.approx_decision_date);
 
     return <div className="cf-decision">
       <hr />
@@ -138,7 +142,15 @@ class NonCompDispositions extends React.PureComponent {
 
     let completeDiv = null;
 
-    if (!task.completed_at) {
+    let decisionDate = this.state.decisionDate;
+
+    if (appeal.decisionIssues.length > 0) {
+      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].approxDecisionDate);
+    }
+
+    let editIssuesLink = null;
+
+    if (!task.closed_at) {
       completeDiv = <React.Fragment>
         <div className="cf-txt-r">
           <a className="cf-cancel-link" href={`${task.tasks_url}`}>Cancel</a>
@@ -147,6 +159,10 @@ class NonCompDispositions extends React.PureComponent {
             loading={decisionIssuesStatus.update === DECISION_ISSUE_UPDATE_STATUS.IN_PROGRESS}
             disabled={!this.state.isFilledOut} onClick={this.handleSave}>Complete</Button>
         </div>
+      </React.Fragment>;
+
+      editIssuesLink = <React.Fragment>
+        <a className="cf-link-btn" href={appeal.editIssuesUrl}>Edit Issues</a>
       </React.Fragment>;
     }
 
@@ -158,9 +174,7 @@ class NonCompDispositions extends React.PureComponent {
             <div>Review each issue and assign the appropriate dispositions.</div>
           </div>
           <div className="usa-width-one-half cf-txt-r">
-            <a className="cf-link-btn" href={appeal.editIssuesUrl}>
-              Edit Issues
-            </a>
+            { editIssuesLink }
           </div>
         </div>
         <div className="cf-decision-list">
@@ -171,7 +185,7 @@ class NonCompDispositions extends React.PureComponent {
                 onDescriptionChange={this.onDecisionIssueDescriptionChange}
                 decisionDescription={issue.decisionIssue.description}
                 decisionDisposition={issue.decisionIssue.disposition}
-                disabled={Boolean(task.completed_at)}
+                disabled={Boolean(task.closed_at)}
               />;
             })
           }
@@ -183,9 +197,9 @@ class NonCompDispositions extends React.PureComponent {
             <DateSelector
               label="Thank you for completing your decision in Caseflow. Please indicate the decision date."
               name="decision-date"
-              value={this.state.decisionDate}
+              value={decisionDate}
               onChange={this.handleDecisionDate}
-              readOnly={Boolean(task.completed_at)}
+              readOnly={Boolean(task.closed_at)}
             />
           </InlineForm>
         </div>

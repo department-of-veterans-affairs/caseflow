@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "RAMP Election Intake" do
@@ -144,7 +146,7 @@ feature "RAMP Election Intake" do
   end
 
   scenario "Start intake and go back and edit option" do
-    create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
+    create(:ramp_election, veteran_file_number: "12341234", notice_date: post_ramp_start_date.to_date)
     intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
     intake.start!
 
@@ -153,7 +155,7 @@ feature "RAMP Election Intake" do
     visit "/intake/completed"
 
     # Validate validation
-    fill_in "What is the Receipt Date of this form?", with: "08/06/2017"
+    fill_in "What is the Receipt Date of this form?", with: pre_ramp_start_date.to_date.mdY
     click_intake_continue
 
     expect(page).to have_content("Please select an option.")
@@ -164,7 +166,7 @@ feature "RAMP Election Intake" do
     within_fieldset("Which review lane did the Veteran select?") do
       find("label", text: "Higher-Level Review", match: :prefer_exact).click
     end
-    fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
     click_intake_continue
 
     expect(page).to have_content("Finish processing Higher-Level Review election")
@@ -198,7 +200,7 @@ feature "RAMP Election Intake" do
   end
 
   scenario "Review intake for RAMP Election form fails due to unexpected error" do
-    create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
+    create(:ramp_election, veteran_file_number: "12341234", notice_date: post_ramp_start_date.to_date)
 
     intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
     intake.start!
@@ -209,7 +211,7 @@ feature "RAMP Election Intake" do
       find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
     expect_any_instance_of(RampElectionIntake).to receive(:review!).and_raise("A random error. Oh no!")
 
     click_intake_continue
@@ -232,14 +234,14 @@ feature "RAMP Election Intake" do
       find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
     click_intake_continue
 
     expect(page).to have_content("Finish processing Higher-Level Review election")
 
     election = RampElection.find_by(veteran_file_number: "12341234")
     expect(election.option_selected).to eq("higher_level_review_with_hearing")
-    expect(election.receipt_date).to eq(Date.new(2017, 11, 7))
+    expect(election.receipt_date).to eq(Time.zone.today)
 
     # Validate the app redirects you to the appropriate location
     visit "/intake"
@@ -285,7 +287,9 @@ feature "RAMP Election Intake" do
         end_product_code: "682HLRRRAMP",
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
-        claimant_participant_id: veteran.participant_id
+        claimant_participant_id: veteran.participant_id,
+        limited_poa_code: nil,
+        limited_poa_access: nil
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
@@ -314,7 +318,7 @@ feature "RAMP Election Intake" do
   scenario "Complete intake for RAMP Election form fails due to duplicate EP" do
     allow(VBMSService).to receive(:establish_claim!).and_raise(ep_already_exists_error)
 
-    create(:ramp_election, veteran_file_number: "12341234", notice_date: Date.new(2017, 11, 7))
+    create(:ramp_election, veteran_file_number: "12341234", notice_date: post_ramp_start_date.to_date)
 
     intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
     intake.start!
@@ -325,7 +329,7 @@ feature "RAMP Election Intake" do
       find("label", text: "Higher-Level Review with Informal Conference").click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "11/07/2017"
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
     click_intake_continue
 
     expect(page).to have_content("Finish processing Higher-Level Review election")

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Log in as User" do
@@ -25,9 +27,8 @@ RSpec.feature "Log in as User" do
     safe_click("#button-Log-in-as-user")
     expect(page).to have_content("ANNE MERICA (DSUSER)")
     expect(page).not_to have_content("Log in as user")
-    click_on "ANNE MERICA (DSUSER)"
-
-    click_on "Sign Out"
+    find("a", text: "ANNE MERICA (DSUSER)").click
+    find("a", text: "Sign Out").click
     expect(page).not_to have_content("ANNE MERICA")
   end
 end

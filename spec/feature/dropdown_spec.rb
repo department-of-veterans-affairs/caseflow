@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Dropdown" do
@@ -8,11 +10,11 @@ RSpec.feature "Dropdown" do
     User.authenticate!
 
     visit "certifications/new/#{appeal.vacols_id}"
-    click_on "DSUSER (DSUSER)"
+    find("a", text: "DSUSER (DSUSER)") .click
     expect(page).to have_content("Sign Out")
 
     visit "dispatch/establish-claim"
-    click_on "Menu"
+    find("a", text: "Menu") .click
     expect(page).to have_content("Help")
   end
 end

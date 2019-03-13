@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Document < ApplicationRecord
   has_many :annotations
   has_many :document_views
@@ -7,7 +9,7 @@ class Document < ApplicationRecord
 
   self.inheritance_column = nil
 
-  S3_BUCKET_NAME = "documents".freeze
+  S3_BUCKET_NAME = "documents"
 
   # Document types are defined in the following file in
   # caseflow commons: /app/models/caseflow/document_types.rb
@@ -236,9 +238,9 @@ class Document < ApplicationRecord
       RequestStore.store[:application] == "reader"
   end
 
-  def match_vbms_document_using(vbms_documents, &date_match_test)
+  def match_vbms_document_using(vbms_documents)
     match = vbms_documents.detect do |doc|
-      date_match_test.call(doc) && doc.type?(type)
+      yield(doc) && doc.type?(type)
     end
 
     match ? merge_with(match) : self

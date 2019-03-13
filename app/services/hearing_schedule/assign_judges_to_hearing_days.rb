@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "business_time"
 require "set"
 
@@ -5,7 +7,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   attr_reader :judges, :video_co_hearing_days
 
   TB_ADDITIONAL_NA_DAYS = 3
-  CO_ROOM_NUM = "2".freeze
+  CO_ROOM_NUM = "2"
   DAYS_OF_SEPARATION = 3
 
   class HearingDaysNotAllocated < StandardError; end
@@ -200,7 +202,7 @@ class HearingSchedule::AssignJudgesToHearingDays
   end
 
   def co_hearing_day?(hearing_day)
-    hearing_day.request_type == "C"
+    hearing_day.request_type == HearingDay::REQUEST_TYPES[:central]
   end
 
   def valid_co_day?(day)

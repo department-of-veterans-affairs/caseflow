@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DecisionReviewsController, type: :controller do
   before do
     FeatureToggle.enable!(:decision_reviews)
@@ -9,7 +11,7 @@ describe DecisionReviewsController, type: :controller do
     FeatureToggle.disable!(:decision_reviews)
   end
 
-  let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
   let(:user) { create(:default_user) }
 
   describe "#index" do
@@ -31,6 +33,19 @@ describe DecisionReviewsController, type: :controller do
         get :index, params: { business_line_slug: non_comp_org.url }
 
         expect(response.status).to eq 200
+      end
+
+      context "user has an unknown station_id" do
+        before do
+          user.station_id = "xxx"
+        end
+
+        it "redirects to /login" do
+          get :index, params: { business_line_slug: non_comp_org.url }
+
+          expect(response.status).to eq 302
+          expect(response.body).to match(/login/)
+        end
       end
     end
 
@@ -100,7 +115,7 @@ describe DecisionReviewsController, type: :controller do
         expect(response_data["completed_tasks"].length).to eq(1)
         task.reload
         expect(task.status).to eq("completed")
-        expect(task.completed_at).to eq(Time.zone.now)
+        expect(task.closed_at).to eq(Time.zone.now)
       end
 
       it "returns 400 when the task has already been completed" do
@@ -119,8 +134,8 @@ describe DecisionReviewsController, type: :controller do
 
       let!(:request_issues) do
         [
-          create(:request_issue, :rating, review_request: task.appeal),
-          create(:request_issue, :nonrating, review_request: task.appeal)
+          create(:request_issue, :rating, decision_review: task.appeal, benefit_type: non_comp_org.url),
+          create(:request_issue, :nonrating, decision_review: task.appeal, benefit_type: non_comp_org.url)
         ]
       end
 
@@ -140,7 +155,7 @@ describe DecisionReviewsController, type: :controller do
                                ],
                                decision_date: decision_date }
 
-        datetime = Date.parse(decision_date).to_datetime
+        datetime = Date.parse(decision_date).in_time_zone(Time.zone)
 
         expect(response.status).to eq(200)
         response_data = JSON.parse(response.body)
@@ -152,15 +167,15 @@ describe DecisionReviewsController, type: :controller do
         expect(task.appeal.decision_issues.find_by(
                  disposition: "Granted",
                  description: "a rating note",
-                 promulgation_date: datetime
+                 caseflow_decision_date: datetime
                )).to_not be_nil
         expect(task.appeal.decision_issues.find_by(
                  disposition: "Denied",
                  description: "a nonrating note",
-                 promulgation_date: datetime
+                 caseflow_decision_date: datetime
                )).to_not be_nil
         expect(task.status).to eq("completed")
-        expect(task.completed_at).to eq(Time.zone.now)
+        expect(task.closed_at).to eq(Time.zone.now)
       end
 
       it "returns 400 when there is not a matching decision issue for each request issue" do

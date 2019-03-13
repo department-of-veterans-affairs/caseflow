@@ -104,7 +104,7 @@ export default class ContestedIssues extends React.PureComponent {
               </span>}
             </div>
           </div>
-          <div {...verticalSpaceDiv} {...flexContainer}>
+          <div {...flexContainer}>
             <span {...descriptionSpan}>
               {decisionIssue.description}
               { decisionIssue.diagnostic_code &&

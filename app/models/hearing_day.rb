@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Class to coordinate interactions between controller
 # and repository class. Eventually may persist data to
 # Caseflow DB. For now all schedule data is sent to the
@@ -16,6 +18,22 @@ class HearingDay < ApplicationRecord
     central: "C"
   }.freeze
 
+  SLOTS_BY_REQUEST_TYPE = { REQUEST_TYPES[:central] => 12 }.freeze
+
+  SLOTS_BY_TIMEZONE = {
+    "America/New_York" => 12,
+    "America/Chicago" => 10,
+    "America/Indiana/Indianapolis" => 12,
+    "America/Kentucky/Louisville" => 12,
+    "America/Denver" => 10,
+    "America/Los_Angeles" => 8,
+    "America/Boise" => 10,
+    "America/Puerto_Rico" => 12,
+    "Asia/Manila" => 8,
+    "Pacific/Honolulu" => 8,
+    "America/Anchorage" => 8
+  }.freeze
+
   # rubocop:disable Style/SymbolProc
   after_update { |hearing_day| hearing_day.update_children_records }
   # rubocop:enable Style/SymbolProc
@@ -25,7 +43,7 @@ class HearingDay < ApplicationRecord
   end
 
   def update_children_records
-    vacols_children_records.each do |hearing|
+    vacols_hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
         room: room,
         bva_poc: bva_poc,
@@ -37,15 +55,19 @@ class HearingDay < ApplicationRecord
   end
 
   def confirm_no_children_records
-    fail HearingDayHasChildrenRecords if vacols_children_records.count > 0 || hearings.count > 0
+    fail HearingDayHasChildrenRecords if !vacols_hearings.empty? || !hearings.empty?
   end
 
-  def vacols_children_records
-    if request_type == REQUEST_TYPES[:central]
-      HearingRepository.fetch_co_hearings_for_date(scheduled_for)
-    else
-      HearingRepository.fetch_video_hearings_for_parent(id)
-    end
+  def vacols_hearings
+    HearingRepository.fetch_hearings_for_parent(id)
+  end
+
+  def open_vacols_hearings
+    vacols_hearings.reject { |hearing| [:postponed, :cancelled].include?(hearing.disposition) }
+  end
+
+  def open_hearings
+    hearings.reject { |hearing| %w[postponed cancelled].include?(hearing.disposition) }
   end
 
   def to_hash
@@ -55,10 +77,17 @@ class HearingDay < ApplicationRecord
               judge_last_name: judge ? judge.full_name.split(" ").last : nil)
   end
 
-  # These dates indicate the date in which we pull parent records into Caseflow. For
-  # legacy appeals, the children hearings will continue to be stored in VACOLS.
-  CASEFLOW_V_PARENT_DATE = Date.new(2019, 3, 31).freeze
-  CASEFLOW_CO_PARENT_DATE = Date.new(2018, 12, 31).freeze
+  def hearing_day_full?
+    lock || open_hearings.count + open_vacols_hearings.count >= total_slots
+  end
+
+  def total_slots
+    if request_type == REQUEST_TYPES[:central]
+      return SLOTS_BY_REQUEST_TYPE[request_type]
+    end
+
+    SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
+  end
 
   class << self
     def to_hash(hearing_day)
@@ -76,19 +105,8 @@ class HearingDay < ApplicationRecord
     end
 
     def create_hearing_day(hearing_hash)
-      scheduled_for = hearing_hash[:scheduled_for]
-      scheduled_for = if scheduled_for.is_a?(DateTime) | scheduled_for.is_a?(Date)
-                        scheduled_for
-                      else
-                        Time.zone.parse(scheduled_for).to_datetime
-                      end
-      comparison_date = (hearing_hash[:request_type] == "C") ? CASEFLOW_CO_PARENT_DATE : CASEFLOW_V_PARENT_DATE
-      if scheduled_for > comparison_date
-        hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
-        create(hearing_hash).to_hash
-      else
-        HearingDayRepository.create_vacols_hearing!(hearing_hash)
-      end
+      hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
+      create(hearing_hash).to_hash
     end
 
     def create_schedule(scheduled_hearings)
@@ -110,8 +128,8 @@ class HearingDay < ApplicationRecord
         video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
       elsif regional_office == REQUEST_TYPES[:central]
         cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
-                                "C", start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_central_office(start_date, end_date)
+                                REQUEST_TYPES[:central], start_date, end_date)
+        video_and_co = []
       else
         cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
                                 regional_office, start_date, end_date)
@@ -126,22 +144,18 @@ class HearingDay < ApplicationRecord
       }
     end
 
-    def hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
+    def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
       hearing_days = load_days(start_date, end_date, regional_office)
       total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
 
       # fetching all the RO keys of the dockets
-      regional_office_keys = total_video_and_co.map(&:regional_office)
-      regional_office_hash = HearingDayRepository.ro_staff_hash(regional_office_keys)
 
       hearing_days_to_array_of_days_and_hearings(
         total_video_and_co, regional_office.nil? || regional_office == "C"
       ).map do |value|
         scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
 
-        total_slots = HearingDayRepository.fetch_hearing_day_slots(
-          regional_office_hash[value[:hearing_day].regional_office], value[:hearing_day]
-        )
+        total_slots = HearingDayRepository.fetch_hearing_day_slots(regional_office)
 
         if scheduled_hearings.length >= total_slots || value[:hearing_day][:lock]
           nil
@@ -157,9 +171,7 @@ class HearingDay < ApplicationRecord
     def filter_non_scheduled_hearings(hearings)
       hearings.select do |hearing|
         if hearing.is_a?(Hearing)
-          ![:postponed, :canceled].include?(hearing.disposition)
-        elsif hearing.request_type == REQUEST_TYPES[:central]
-          !hearing.vacols_record.folder_nr.nil?
+          !%w[postponed cancelled].include?(hearing.disposition)
         else
           hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
         end
@@ -174,30 +186,18 @@ class HearingDay < ApplicationRecord
 
     private
 
-    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, is_video_hearing)
+    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, _is_video_hearing)
       # We need to associate all of the hearing days from postgres with all of the
       # hearings from VACOLS. For efficiency we make one call to VACOLS and then
-      # create a hash of the results using either their ids or hearing dates as keys
-      # depending on if it's a video or CO hearing.
-      symbol_to_group_by = nil
+      # create a hash of the results using their ids.
 
-      vacols_hearings_for_days = if is_video_hearing
-                                   symbol_to_group_by = :scheduled_for
-
-                                   HearingRepository.fetch_co_hearings_for_dates(
-                                     total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
-                                   )
-                                 else
-                                   symbol_to_group_by = :id
-
-                                   HearingRepository.fetch_video_hearings_for_parents(
-                                     total_video_and_co.map { |hearing_day| hearing_day[symbol_to_group_by] }
-                                   )
-                                 end
+      vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(
+        total_video_and_co.map { |hearing_day| hearing_day[:id] }
+      )
 
       # Group the hearing days with the same keys as the hearings
       grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
-        hearing_day[symbol_to_group_by].to_s
+        hearing_day[:id].to_s
       end
 
       grouped_hearing_days.map do |key, day|

@@ -30,6 +30,7 @@ tags
 # Ignore hidden files
 .*
 !.dockerignore
+!.fasterer.yml
 
 # React on Rails
 npm-debug.log*

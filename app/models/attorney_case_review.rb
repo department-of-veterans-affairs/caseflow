@@ -1,12 +1,16 @@
+# frozen_string_literal: true
+
 class AttorneyCaseReview < ApplicationRecord
   include CaseReviewConcern
   include IssueUpdater
+  include ::AmaAttorneyCaseReviewDocumentIdValidator
 
   belongs_to :reviewing_judge, class_name: "User"
   belongs_to :attorney, class_name: "User"
   belongs_to :task
 
   validates :attorney, :document_type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
+  validates :untimely_evidence, inclusion: { in: [true, false] }
   validates :overtime, inclusion: { in: [true, false] }
   validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
   validates :note, length: { maximum: Constants::VACOLS_COLUMN_MAX_LENGTHS["DECASS"]["DEATCOM"] }
@@ -15,8 +19,6 @@ class AttorneyCaseReview < ApplicationRecord
     omo_request: Constants::APPEAL_DECISION_TYPES["OMO_REQUEST"],
     draft_decision: Constants::APPEAL_DECISION_TYPES["DRAFT_DECISION"]
   }
-
-  before_create :strip_document_id
 
   def update_in_vacols!
     MetricsService.record("VACOLS: reassign_case_to_judge #{task_id}",
@@ -62,10 +64,6 @@ class AttorneyCaseReview < ApplicationRecord
 
   def modifying_user
     attorney.vacols_uniq_id
-  end
-
-  def strip_document_id
-    self.document_id = document_id&.strip
   end
 
   class << self

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe ApiKey do
   context ".create!" do
     subject { ApiKey.create!(consumer_name: "CaseSlow") }

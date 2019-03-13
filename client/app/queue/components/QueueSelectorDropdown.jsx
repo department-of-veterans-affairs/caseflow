@@ -1,7 +1,5 @@
-// @flow
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -24,56 +22,41 @@ const styles = {
   })
 };
 
-type Props = {|
-  organizations: Array<Object>
-|};
-
-type ComponentState = {|
-  menu: boolean
-|};
-
-export default class QueueSelectorDropdown extends React.Component<Props, ComponentState> {
-  constructor(props: Props) {
+export default class QueueSelectorDropdown extends React.Component {
+  constructor(props) {
     super(props);
     this.state = {
       menu: false
     };
   }
 
-  onMenuClick = () => {
+  toggleMenuVisible = () => {
     this.setState((prevState) => ({
       menu: !prevState.menu
     }));
   };
 
   render = () => {
-    const { organizations } = this.props;
-    const url = window.location.pathname.split('/');
-    const location = url[url.length - 1];
+    const { items } = this.props;
     let dropdownButtonList;
 
-    if (organizations.length < 1) {
+    if (items.length < 1) {
       return null;
     }
 
     if (this.state.menu) {
-      const queueHref = (location === 'queue') ? '#' : '/queue';
-
       dropdownButtonList = <ul className="cf-dropdown-menu active" {...styles.dropdownList}>
-        <li key={0}>
-          <Link className="usa-button-secondary usa-button"
-            href={queueHref} onClick={this.onMenuClick}>
-            {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CASES_LABEL}
-          </Link>
-        </li>
+        {items.map((item) => {
+          const linkProps = {
+            className: 'usa-button-secondary usa-button',
+            onClick: this.toggleMenuVisible,
+            href: item.href,
+            to: item.to
+          };
 
-        {organizations.map((org, index) => {
-          const orgHref = (location === org.url) ? '#' : `/organizations/${org.url}`;
-
-          return <li key={index + 1}>
-            <Link className="usa-button-secondary usa-button"
-              href={orgHref} onClick={this.onMenuClick}>
-              {sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name)}
+          return <li key={item.key}>
+            <Link {...linkProps}>
+              {item.label}
             </Link>
           </li>;
         })}
@@ -81,7 +64,7 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
     }
 
     return <div className="cf-dropdown" {...styles.dropdownButton}>
-      <a onClick={this.onMenuClick}
+      <a onClick={this.toggleMenuVisible}
         className="cf-dropdown-trigger usa-button usa-button-secondary"
         {...styles.dropdownTrigger}>
         {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL}
@@ -91,9 +74,19 @@ export default class QueueSelectorDropdown extends React.Component<Props, Compon
   }
 }
 
+const hrefOrToRequired = (props, propName, componentName) => {
+  if (!props.href && !props.to) {
+    return new Error(`The ${componentName} component requires either an 'href' or a 'to' value.`);
+  } else if (props.href && props.to) {
+    return new Error(`The ${componentName} component should not be given both 'href' and 'to' values.`);
+  }
+};
+
 QueueSelectorDropdown.propTypes = {
-  organizations: PropTypes.arrayOf(PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired
+  items: PropTypes.arrayOf(PropTypes.shape({
+    key: PropTypes.string.isRequired,
+    href: hrefOrToRequired,
+    to: hrefOrToRequired,
+    label: PropTypes.string.isRequired
   }))
 };

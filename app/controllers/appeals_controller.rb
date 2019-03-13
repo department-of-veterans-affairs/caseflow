@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class AppealsController < ApplicationController
   include Errors
 
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :new_documents]
+  before_action :set_application, only: [:document_count]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
 
@@ -37,23 +39,11 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    if params[:cached]
-      render json: { document_count: appeal.number_of_documents_from_caseflow }
-      return
-    end
     render json: { document_count: appeal.number_of_documents }
+  rescue Caseflow::Error::EfolderAccessForbidden => e
+    render(e.serialize_response)
   rescue StandardError => e
     handle_non_critical_error("document_count", e)
-  end
-
-  def new_documents
-    if params[:cached]
-      render json: { new_documents: appeal.new_documents_from_caseflow(current_user) }
-      return
-    end
-    render json: { new_documents: appeal.new_documents_for_user(current_user) }
-  rescue StandardError => e
-    handle_non_critical_error("new_documents", e)
   end
 
   def power_of_attorney
@@ -62,6 +52,28 @@ class AppealsController < ApplicationController
       representative_name: appeal.representative_name,
       representative_address: appeal.representative_address
     }
+  end
+
+  def hearings
+    log_hearings_request
+
+    most_recently_held_hearing = appeal.hearings
+      .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
+      .max_by(&:scheduled_for)
+
+    render json:
+      if most_recently_held_hearing
+        {
+          held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
+          viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
+          date: most_recently_held_hearing.scheduled_for,
+          type: most_recently_held_hearing.readable_request_type,
+          external_id: most_recently_held_hearing.external_id,
+          disposition: most_recently_held_hearing.disposition
+        }
+      else
+        {}
+      end
   end
 
   # For legacy appeals, veteran address and birth/death dates are
@@ -111,6 +123,16 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  def log_hearings_request
+    # Log requests to this endpoint to try to investigate cause addressed by this rollback:
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/9271
+    DataDogService.increment_counter(
+      metric_group: "request_counter",
+      metric_name: "hearings_for_appeal",
+      app_name: RequestStore[:application]
+    )
+  end
 
   def request_issues_update
     @request_issues_update ||= RequestIssuesUpdate.new(

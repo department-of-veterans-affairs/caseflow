@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "User organization" do
@@ -21,10 +23,28 @@ RSpec.feature "User organization" do
       visit organization.path
       expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
     end
+
+    scenario "Does not have a link to the team admin page" do
+      visit "/"
+
+      find(".cf-dropdown-trigger").click
+      expect(page).not_to have_content("#{organization.name} team management")
+    end
   end
 
   context "When user is admin of the organization" do
     before { OrganizationsUser.make_user_admin(user, organization) }
+
+    scenario "Has a link to the team admin page" do
+      visit "/"
+
+      find(".cf-dropdown-trigger").click
+      expect(page).to have_content("#{organization.name} team management")
+
+      find("a", text: "#{organization.name} team management").click
+      expect(page.current_path).to eq(organization.user_admin_path)
+      expect(page).to have_content("#{organization.name} team")
+    end
 
     scenario "Adds and removes users from the organization" do
       visit organization.user_admin_path

@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+
+##
+# Task for a business line at BVA (e.g., Vocational Rehab & Employment) to review a decision from a judge relating to
+# non-compensation benefits like education or loan guarantys.
+
 class DecisionReviewTask < GenericTask
   attr_reader :error_code
 
@@ -18,11 +24,13 @@ class DecisionReviewTask < GenericTask
 
     transaction do
       appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
-      update!(status: Constants.TASK_STATUSES.completed, completed_at: Time.zone.now)
+      update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
     end
 
     true
   end
+
+  delegate :ui_hash, to: :appeal, prefix: true
 
   private
 

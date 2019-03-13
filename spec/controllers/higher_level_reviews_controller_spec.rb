@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HigherLevelReviewsController, type: :controller do
   before do
     FeatureToggle.enable!(:intake)

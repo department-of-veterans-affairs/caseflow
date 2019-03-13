@@ -1,23 +1,17 @@
-# This module has too many lines temporarily. There are a few deprecated methods that will be removed once
-# we turn on 'ama_decision_issues' flag
-# rubocop:disable Metrics/ModuleLength
+# frozen_string_literal: true
+
 module IssueUpdater
   extend ActiveSupport::Concern
 
-  # Remove this method when feature flag 'ama_decision_issues' is enabled for all.
   def update_issue_dispositions_in_caseflow!
-    use_ama_decision_issues? ? delete_and_create_decision_issues! : update_issue_dispositions_deprecated!
-  rescue ActiveRecord::RecordInvalid => e
-    raise Caseflow::Error::AttorneyJudgeCheckoutError, message: e.message
-  end
-
-  def delete_and_create_decision_issues!
     return unless appeal
 
     # We will always delete and re-create decision issues on attorney/judge checkout
     appeal.decision_issues.destroy_all
     create_decision_issues!
     fail_if_not_all_request_issues_have_decision!
+  rescue ActiveRecord::RecordInvalid => e
+    raise Caseflow::Error::AttorneyJudgeCheckoutError, message: e.message
   end
 
   def update_issue_dispositions_in_vacols!
@@ -42,7 +36,7 @@ module IssueUpdater
 
   def create_decision_issues!
     issues.each do |issue_attrs|
-      request_issues = appeal.request_issues.where(id: issue_attrs[:request_issue_ids])
+      request_issues = appeal.request_issues.active.where(id: issue_attrs[:request_issue_ids])
       next if request_issues.empty?
 
       decision_issue = DecisionIssue.create!(
@@ -51,7 +45,8 @@ module IssueUpdater
         benefit_type: issue_attrs[:benefit_type],
         diagnostic_code: issue_attrs[:diagnostic_code],
         participant_id: appeal.veteran.participant_id,
-        decision_review: appeal
+        decision_review: appeal,
+        caseflow_decision_date: appeal.decision_document&.decision_date
       )
 
       request_issues.each do |request_issue|
@@ -82,8 +77,7 @@ module IssueUpdater
   end
 
   def fail_if_count_mismatch!
-    existing_issues_count = legacy? ? appeal.undecided_issues.count : appeal.eligible_request_issues.count
-    if (issues || []).count != existing_issues_count
+    if (issues || []).count != appeal.undecided_issues.count
       msg = "Number of issues in the request does not match the number in the database"
       fail Caseflow::Error::AttorneyJudgeCheckoutError, message: msg
     end
@@ -105,42 +99,4 @@ module IssueUpdater
       end
     end
   end
-
-  # Delete this method when feature flag 'ama_decision_issues' is enabled for all
-  def use_ama_decision_issues?
-    FeatureToggle.enabled?(:ama_decision_issues, user: RequestStore.store[:current_user]) ||
-      issues&.first && issues.first[:request_issue_ids]
-  end
-
-  # Delete this method when feature flag 'ama_decision_issues' is enabled for all
-  def update_issue_dispositions_deprecated!
-    fail_if_invalid_issues_attrs!
-
-    (issues || []).each do |issue_attrs|
-      request_issue = appeal.request_issues.find_by(id: issue_attrs[:id]) if appeal
-      next unless request_issue
-
-      request_issue.update(disposition: issue_attrs[:disposition])
-
-      # If disposition was remanded and now is changed to another dispostion,
-      # delete all remand reasons associated with the request issue
-      update_remand_reasons_deprecated(request_issue, issue_attrs[:remand_reasons] || [])
-    end
-  end
-
-  # Delete this method when feature flag 'ama_decision_issues' is enabled for all
-  def update_remand_reasons_deprecated(request_issue, remand_reasons_attrs)
-    fail_if_no_remand_reasons!(request_issue, remand_reasons_attrs)
-    remand_reasons_attrs.each do |remand_reason_attrs|
-      request_issue.remand_reasons.find_or_initialize_by(code: remand_reason_attrs[:code]).tap do |record|
-        record.post_aoj = remand_reason_attrs[:post_aoj]
-        record.save!
-      end
-    end
-    # Delete remand reasons that are not part of the request
-    existing_codes = request_issue.reload.remand_reasons.pluck(:code)
-    codes_to_delete = existing_codes - remand_reasons_attrs.pluck(:code)
-    request_issue.remand_reasons.where(code: codes_to_delete).delete_all
-  end
 end
-# rubocop:enable Metrics/ModuleLength

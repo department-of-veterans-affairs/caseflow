@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe GenericQueue do
   describe "#tasks" do
     let(:atty) { FactoryBot.create(:user) }
@@ -22,7 +24,7 @@ describe GenericQueue do
         tasks = GenericQueue.new(user: user).tasks
         expect(tasks.size).to eq(task_count + 1)
 
-        expired_on_hold_task = tasks.select { |t| t.id == on_hold_task.id }.first
+        expired_on_hold_task = tasks.detect { |t| t.id == on_hold_task.id }
         expect(expired_on_hold_task.status).to eq("in_progress")
       end
     end

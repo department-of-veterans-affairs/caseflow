@@ -543,6 +543,27 @@ svg title {
   border-bottom: 7px solid $color-gray-light;
 }
 
+// =====================================*
+// Application continuous progress bar  *
+// =====================================*/
+.cf-continuous-progress-bar {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: $color-gray-light;
+  margin: auto;
+
+  >div {
+    height: 100%;
+    border-radius: 2px;
+    background: $color-gray-dark;
+  }
+
+  >.cf-continuous-progress-bar-warning {
+    background: $color-secondary;
+  }
+}
+
 // ===========================*
 // Application navigation bar  *
 // ============================*/
@@ -770,23 +791,6 @@ form {
     background: transparent;
   }
 }
-
-//--- Table styles ---*/
-.usa-table-borderless {
-  width: 100%;
-
-  th,
-  td {
-    border-bottom-color: $color-gray-lighter;
-  }
-
-  td {
-    &:first-child {
-      padding-left: 0;
-    }
-  }
-}
-
 
 // ===========================*
 // Form-related states

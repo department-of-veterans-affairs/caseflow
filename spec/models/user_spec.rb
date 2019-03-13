@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe User do
-  let(:session) { { "user" => { "id" => "123", "station_id" => "310" } } }
+  let(:css_id) { "TomBrady" }
+  let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
   let(:user) { User.from_session(session) }
 
   before(:all) do
@@ -16,6 +19,23 @@ describe User do
     Fakes::AuthenticationService.user_session = nil
   end
 
+  context ".find_by_css_id" do
+    let!(:user) { create(:user, css_id: "FOOBAR") }
+
+    it "searches case insensitively" do
+      expect(User.find_by_css_id("fooBaR")).to eq(user)
+    end
+  end
+
+  context ".find_by_css_id_or_create_with_default_station_id" do
+    subject { User.find_by_css_id_or_create_with_default_station_id(css_id) }
+
+    it "forces the css id to UPCASE" do
+      expect(css_id.upcase).to_not eq(css_id)
+      expect(subject.css_id).to eq(css_id.upcase)
+    end
+  end
+
   context "#regional_office" do
     context "when RO can't be determined using station_id" do
       subject { user.regional_office }
@@ -28,6 +48,25 @@ describe User do
       before { session["user"]["station_id"] = "301" }
       it { is_expected.to eq("RO01") }
     end
+  end
+
+  context "#to_session_hash" do
+    subject { user.to_session_hash }
+
+    let(:result) do
+      {
+        "id" => css_id.upcase,
+        "station_id" => "310",
+        "css_id" => css_id.upcase,
+        "email" => nil,
+        "roles" => [],
+        "selected_regional_office" => nil,
+        :display_name => css_id.upcase,
+        "name" => "Tom Brady"
+      }
+    end
+
+    it { is_expected.to eq result }
   end
 
   context "#roles" do
@@ -89,12 +128,12 @@ describe User do
         session["user"]["id"] = "Shaner"
         user.regional_office = "RO77"
       end
-      it { is_expected.to eq("Shaner (RO77)") }
+      it { is_expected.to eq("SHANER (RO77)") }
     end
 
     context "when just username is set" do
       before { session["user"]["id"] = "Shaner" }
-      it { is_expected.to eq("Shaner") }
+      it { is_expected.to eq("SHANER") }
     end
   end
 
@@ -119,18 +158,18 @@ describe User do
 
     context "when roles don't contain the thing but user is granted the function" do
       before { session["user"]["roles"] = ["Do the other thing!"] }
-      before { Functions.grant!("Do the thing", users: ["123"]) }
+      before { Functions.grant!("Do the thing", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
 
     context "when roles contains the thing but user is denied" do
       before { session["user"]["roles"] = ["Do the thing"] }
-      before { Functions.deny!("Do the thing", users: ["123"]) }
+      before { Functions.deny!("Do the thing", users: [css_id.upcase]) }
       it { is_expected.to be_falsey }
     end
 
     context "when system admin and roles don't contain the thing" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: [css_id.upcase]) }
       before { session["user"]["roles"] = ["Do the other thing"] }
       it { is_expected.to be_truthy }
     end
@@ -151,7 +190,7 @@ describe User do
     end
 
     context "when user with roles that contain admin" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
   end
@@ -262,6 +301,36 @@ describe User do
     end
   end
 
+  context "#administer_org_users?" do
+    subject { user.administer_org_users? }
+    before { session["user"]["roles"] = nil }
+    before { Functions.client.del("System Admin") }
+
+    context "when user with roles that are nil" do
+      it { is_expected.to be_falsey }
+    end
+
+    context "when user with roles that don't contain admin" do
+      before { session["user"]["roles"] = ["Do the other thing!"] }
+      it { is_expected.to be_falsey }
+    end
+
+    context "when user with roles that contain admin" do
+      before { Functions.grant!("System Admin", users: [css_id.upcase]) }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user with grant that contain Admin Intake" do
+      before { Functions.grant!("Admin Intake", users: [css_id.upcase]) }
+      it { is_expected.to be_truthy }
+    end
+
+    context "when user with roles that contain Admin Intake" do
+      before { session["user"]["roles"] = ["Admin Intake"] }
+      it { is_expected.to be_truthy }
+    end
+  end
+
   context "#can_edit_request_issues?" do
     let(:appeal) { create(:appeal) }
 
@@ -366,6 +435,11 @@ describe User do
         session["user"]["roles"] = ["Do the thing"]
         session[:regional_office] = "283"
         session["user"]["name"] = "Anne Merica"
+        Timecop.freeze(Time.zone.now)
+      end
+
+      after do
+        Timecop.return
       end
 
       it do
@@ -373,6 +447,8 @@ describe User do
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
         expect(subject.full_name).to eq("Anne Merica")
+        expect(subject.css_id).to eq("TOMBRADY")
+        expect(subject.last_login_at).to eq(Time.zone.now)
       end
 
       it "persists user to DB" do
@@ -383,6 +459,32 @@ describe User do
     context "returns nil when no user in session" do
       before { session["user"] = nil }
       it { is_expected.to be_nil }
+    end
+
+    context "2 users exist with different case css id" do
+      let(:station_id) { 123 }
+      let!(:user1) { create(:user, css_id: "foobar", station_id: station_id) }
+      let!(:user2) { create(:user, css_id: "FOOBAR", station_id: station_id) }
+
+      before do
+        session["user"]["station_id"] = station_id
+      end
+
+      context "css id is lower" do
+        before { session["user"]["id"] = user1.css_id }
+
+        it "prefers exact case match" do
+          expect(subject.css_id).to eq user1.css_id
+        end
+      end
+
+      context "css is UPPER" do
+        before { session["user"]["id"] = user2.css_id }
+
+        it "prefers exact case match" do
+          expect(subject.css_id).to eq user2.css_id
+        end
+      end
     end
   end
 
@@ -463,27 +565,8 @@ describe User do
         admin_orgs.each { |o| OrganizationsUser.make_user_admin(user, o) }
       end
       it "should return a list of all teams user is an admin for" do
-        expect(user.administered_teams).to eq(admin_orgs)
+        expect(user.administered_teams).to include(*admin_orgs)
       end
-    end
-  end
-
-  describe ".judge_css_id" do
-    let(:css_id) { SecureRandom.uuid }
-    let(:judge) { FactoryBot.create :user, css_id: css_id }
-    let(:attorney) { FactoryBot.create :user }
-    let!(:judge_team) { JudgeTeam.create_for_judge(judge) }
-
-    before do
-      OrganizationsUser.add_user_to_organization(attorney, judge_team)
-    end
-
-    it "returns the css_id of the judge adminstering a judge team the attorney is in" do
-      expect(attorney.judge_css_id).to eq css_id
-    end
-
-    it "returns the judge's own css_id" do
-      expect(judge.judge_css_id).to eq judge.css_id
     end
   end
 end

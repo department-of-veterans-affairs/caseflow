@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe Rating do
@@ -33,7 +35,6 @@ describe Rating do
       profile_date: profile_date,
       contention_reference_id: nil,
       ramp_claim_id: nil,
-      title_of_active_review: nil,
       rba_contentions_data: [{ prfil_dt: profile_date, cntntn_id: nil }]
     }
   end
@@ -90,11 +91,11 @@ describe Rating do
         expect(subject.count).to eq(2)
 
         expect(subject.first).to have_attributes(
-          reference_id: "Issue1", decision_text: "Decision1", disability_code: "later_code"
+          reference_id: "Issue1", decision_text: "Decision1", diagnostic_code: "later_code"
         )
 
         expect(subject.second).to have_attributes(
-          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+          reference_id: "Issue2", decision_text: "Decision2", diagnostic_code: nil
         )
       end
     end
@@ -115,11 +116,11 @@ describe Rating do
         expect(subject.count).to eq(2)
 
         expect(subject.first).to have_attributes(
-          reference_id: "Issue1", decision_text: "Decision1", disability_code: "original_code"
+          reference_id: "Issue1", decision_text: "Decision1", diagnostic_code: "original_code"
         )
 
         expect(subject.second).to have_attributes(
-          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+          reference_id: "Issue2", decision_text: "Decision2", diagnostic_code: nil
         )
       end
     end
@@ -143,11 +144,11 @@ describe Rating do
         expect(subject.count).to eq(2)
 
         expect(subject.first).to have_attributes(
-          reference_id: "Issue1", decision_text: "Decision1", disability_code: "later_code"
+          reference_id: "Issue1", decision_text: "Decision1", diagnostic_code: "later_code"
         )
 
         expect(subject.second).to have_attributes(
-          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+          reference_id: "Issue2", decision_text: "Decision2", diagnostic_code: nil
         )
       end
     end
@@ -160,14 +161,14 @@ describe Rating do
         }
       end
 
-      it "creates ratings without disability codes" do
+      it "creates ratings without diagnostic codes" do
         expect(subject.count).to eq(2)
         expect(subject.first).to have_attributes(
-          reference_id: "Issue1", decision_text: "Decision1", disability_code: nil
+          reference_id: "Issue1", decision_text: "Decision1", diagnostic_code: nil
         )
 
         expect(subject.second).to have_attributes(
-          reference_id: "Issue2", decision_text: "Decision2", disability_code: nil
+          reference_id: "Issue2", decision_text: "Decision2", diagnostic_code: nil
         )
       end
     end

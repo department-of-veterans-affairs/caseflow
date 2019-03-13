@@ -153,7 +153,7 @@ class ListSchedule extends React.Component {
         getFilterValues: uniqueRequestTypes,
         isDropdownFilterOpen: this.props.filterTypeIsOpen,
         anyFiltersAreSet: false,
-        toggleDropdownFilterVisiblity: this.props.toggleTypeFilterVisibility,
+        toggleDropdownFilterVisibility: this.props.toggleTypeFilterVisibility,
         setSelectedValue: this.setTypeSelectedValue
       },
       {
@@ -164,7 +164,7 @@ class ListSchedule extends React.Component {
         getFilterValues: uniqueLocations,
         isDropdownFilterOpen: this.props.filterLocationIsOpen,
         anyFiltersAreSet: false,
-        toggleDropdownFilterVisiblity: this.props.toggleLocationFilterVisibility,
+        toggleDropdownFilterVisibility: this.props.toggleLocationFilterVisibility,
         setSelectedValue: this.setLocationSelectedValue
       },
       {
@@ -183,7 +183,7 @@ class ListSchedule extends React.Component {
         getFilterValues: uniqueVljs,
         isDropdownFilterOpen: this.props.filterVljIsOpen,
         anyFiltersAreSet: false,
-        toggleDropdownFilterVisiblity: this.props.toggleVljFilterVisibility,
+        toggleDropdownFilterVisibility: this.props.toggleVljFilterVisibility,
         setSelectedValue: this.setVljSelectedValue
       }
     ];
@@ -273,11 +273,13 @@ class ListSchedule extends React.Component {
               <FilterRibbon
                 filteredByList={this.state.filteredByList}
                 clearAllFilters={this.clearFilteredByList} />
-              <Button
-                linkStyling
-                onClick={this.props.openModal} >
-                Add Hearing Date
-              </Button>
+              { this.props.userRoleBuild &&
+                <Button
+                  linkStyling
+                  onClick={this.props.openModal} >
+                  Add Hearing Date
+                </Button>
+              }
             </div>
             <Table
               columns={hearingScheduleColumns}

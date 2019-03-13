@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Higher Level Review Edit issues" do
@@ -8,8 +10,7 @@ feature "Higher Level Review Edit issues" do
     FeatureToggle.enable!(:intakeAma)
     FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
@@ -32,12 +33,13 @@ feature "Higher Level Review Edit issues" do
   end
 
   let(:receipt_date) { Time.zone.today - 20 }
-  let(:profile_date) { "2017-11-02T07:00:00.000Z" }
+  let(:promulgation_date) { receipt_date - 1 }
+  let(:profile_date) { (receipt_date - 2.days).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted", contention_reference_id: 55 },
@@ -85,13 +87,15 @@ feature "Higher Level Review Edit issues" do
 
   let(:legacy_opt_in_approved) { false }
 
+  let(:benefit_type) { "compensation" }
+
   let!(:higher_level_review) do
     HigherLevelReview.create!(
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
       informal_conference: false,
       same_office: false,
-      benefit_type: "compensation",
+      benefit_type: benefit_type,
       veteran_is_not_claimant: true,
       legacy_opt_in_approved: legacy_opt_in_approved
     )
@@ -139,19 +143,19 @@ feature "Higher Level Review Edit issues" do
 
     let!(:eligible_request_issue) do
       RequestIssue.create!(
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         issue_category: "Military Retired Pay",
         nonrating_issue_description: "eligible nonrating description",
         contention_reference_id: "1234",
         ineligible_reason: nil,
         benefit_type: "compensation",
-        decision_date: Date.new(2018, 5, 1)
+        decision_date: Time.zone.today
       )
     end
 
     let!(:untimely_request_issue) do
       RequestIssue.create!(
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "untimely nonrating description",
         contention_reference_id: "12345",
@@ -164,12 +168,12 @@ feature "Higher Level Review Edit issues" do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
-        review_request: another_higher_level_review,
+        decision_review: another_higher_level_review,
         contested_issue_description: "PTSD denied",
         contention_reference_id: "123",
         benefit_type: "compensation",
         ineligible_reason: nil,
-        removed_at: nil
+        contention_removed_at: nil
       )
     end
 
@@ -177,7 +181,7 @@ feature "Higher Level Review Edit issues" do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         contested_issue_description: "PTSD denied",
         contention_reference_id: "111",
         ineligible_reason: :duplicate_of_rating_issue_in_active_review,
@@ -190,10 +194,11 @@ feature "Higher Level Review Edit issues" do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "abc123",
         contested_rating_issue_profile_date: rating.profile_date,
-        review_request: another_higher_level_review,
+        decision_review: another_higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Left knee granted",
-        contention_reference_id: 55
+        contention_reference_id: 55,
+        closed_at: 2.months.ago
       )
     end
 
@@ -201,7 +206,7 @@ feature "Higher Level Review Edit issues" do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "abc123",
         contested_rating_issue_profile_date: rating.profile_date,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         contested_issue_description: "Left knee granted",
         benefit_type: "compensation",
         ineligible_reason: :higher_level_review_to_higher_level_review,
@@ -213,7 +218,7 @@ feature "Higher Level Review Edit issues" do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "before_ama_ref_id",
         contested_rating_issue_profile_date: rating_before_ama.profile_date,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Non-RAMP Issue before AMA Activation",
         contention_reference_id: "12345",
@@ -225,7 +230,7 @@ feature "Higher Level Review Edit issues" do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "ramp_ref_id",
         contested_rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Issue before AMA Activation from RAMP",
         contention_reference_id: "123456",
@@ -237,7 +242,7 @@ feature "Higher Level Review Edit issues" do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "has_legacy_issue",
         contested_rating_issue_profile_date: rating_before_ama.profile_date,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         contested_issue_description: "Issue with legacy issue not withdrawn",
         vacols_id: "vacols1",
         benefit_type: "compensation",
@@ -251,7 +256,7 @@ feature "Higher Level Review Edit issues" do
       RequestIssue.create!(
         contested_rating_issue_reference_id: "has_ineligible_legacy_appeal",
         contested_rating_issue_profile_date: rating_before_ama.profile_date,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         contested_issue_description: "Issue connected to ineligible legacy appeal",
         contention_reference_id: "12345678",
         vacols_id: "vacols2",
@@ -289,7 +294,7 @@ feature "Higher Level Review Edit issues" do
         RequestIssue.create!(
           contested_rating_issue_reference_id: "before_ama_ref_id",
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
-          review_request: higher_level_review,
+          decision_review: higher_level_review,
           contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
           contention_reference_id: "12345678",
           vacols_id: "vacols1",
@@ -311,7 +316,7 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: 05/01/2018")
+        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: #{Time.zone.today.mdY}")
         expect(page).to have_content(
           "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
@@ -419,7 +424,7 @@ feature "Higher Level Review Edit issues" do
         legacy_issues: true
       )
       add_intake_rating_issue("None of these match")
-      add_untimely_exemption_response("No", "I am a nonrating exemption note")
+      add_untimely_exemption_response("No")
 
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
@@ -475,7 +480,7 @@ feature "Higher Level Review Edit issues" do
   context "when there is a nonrating end product" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
         contention_reference_id: "1234",
@@ -502,11 +507,15 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_content("Military Retired Pay")
 
       click_intake_add_issue
+
+      rating_date = promulgation_date.mdY
+      expect(page).to have_content("Past decisions from #{rating_date}")
+
       click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "A description!",
-        date: "04/26/2018"
+        date: profile_date.mdY
       )
 
       click_intake_add_issue
@@ -514,7 +523,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
-        date: "10/25/2017"
+        date: pre_ama_start_date.to_date.mdY
       )
 
       safe_click("#button-submit-update")
@@ -534,7 +543,7 @@ feature "Higher Level Review Edit issues" do
       let!(:active_nonrating_request_issue) do
         create(:request_issue,
                :nonrating,
-               review_request: another_higher_level_review)
+               decision_review: another_higher_level_review)
       end
 
       before do
@@ -563,7 +572,7 @@ feature "Higher Level Review Edit issues" do
 
         expect(
           RequestIssue.find_by(
-            review_request: higher_level_review,
+            decision_review: higher_level_review,
             issue_category: active_nonrating_request_issue.issue_category,
             ineligible_due_to: active_nonrating_request_issue.id,
             ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
@@ -579,7 +588,7 @@ feature "Higher Level Review Edit issues" do
         create(
           :request_issue,
           :nonrating,
-          review_request: higher_level_review
+          decision_review: higher_level_review
         )
       end
 
@@ -625,7 +634,7 @@ feature "Higher Level Review Edit issues" do
         :request_issue,
         :nonrating,
         nonrating_issue_description: "nonrating issue desc",
-        review_request: higher_level_review
+        decision_review: higher_level_review
       )
     end
     let(:rating_ep_claim_id) do
@@ -646,10 +655,38 @@ feature "Higher Level Review Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/19/2018"
+        date: profile_date.mdY
       )
 
       expect(page).to have_content("2 issues")
+    end
+  end
+
+  context "when the HLR has a non-compensation benefit type" do
+    let(:benefit_type) { "education" }
+    let(:request_issues) { [request_issue] }
+    let!(:request_issue) do
+      create(
+        :request_issue,
+        decision_review: higher_level_review,
+        issue_category: "Accrued",
+        decision_date: 1.month.ago,
+        nonrating_issue_description: "test description"
+      )
+    end
+
+    before do
+      higher_level_review.create_issues!(request_issues)
+      higher_level_review.establish!
+      higher_level_review.reload
+    end
+
+    it "does not mention VBMS when removing an issue" do
+      visit "/higher_level_reviews/#{higher_level_review.uuid}/edit"
+      expect(page).to have_content(request_issue.nonrating_issue_description)
+
+      click_remove_intake_issue_by_text(request_issue.nonrating_issue_description)
+      expect(page).to have_content("The contention you selected will be removed from the decision review.")
     end
   end
 
@@ -658,7 +695,7 @@ feature "Higher Level Review Edit issues" do
     let!(:request_issue) do
       create(
         :request_issue,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
         contested_issue_description: "PTSD denied"
@@ -685,7 +722,7 @@ feature "Higher Level Review Edit issues" do
       let(:decision_request_issue) do
         create(
           :request_issue,
-          review_request: higher_level_review,
+          decision_review: higher_level_review,
           contested_issue_description: "currently contesting decision issue",
           decision_date: Time.zone.now - 2.days,
           contested_decision_issue_id: contested_decision_issues.first.id
@@ -696,7 +733,7 @@ feature "Higher Level Review Edit issues" do
         already_active_hlr = create(:higher_level_review, :with_end_product_establishment)
         create(
           :request_issue,
-          review_request: already_active_hlr,
+          decision_review: already_active_hlr,
           contested_issue_description: "currently active request issue",
           decision_date: Time.zone.now - 2.days,
           end_product_establishment_id: already_active_hlr.end_product_establishments.first.id,
@@ -734,7 +771,8 @@ feature "Higher Level Review Edit issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "higher_level_reviews/#{rating_ep_claim_id}/edit",
           higher_level_review,
-          decision_request_issue.decision_issues + nonrating_decision_request_issue.decision_issues
+          DecisionIssue.where(id: [decision_request_issue.contested_decision_issue_id,
+                                   nonrating_decision_request_issue.contested_decision_issue_id])
         )
       end
     end
@@ -792,7 +830,7 @@ feature "Higher Level Review Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/25/2018"
+        date: profile_date.mdY
       )
       expect(page).to have_content("3 issues")
 
@@ -804,9 +842,8 @@ feature "Higher Level Review Edit issues" do
         description: "Another Description for Active Duty Adjustments",
         date: "04/25/2016"
       )
-      add_untimely_exemption_response("No", "I am a nonrating exemption note")
+      add_untimely_exemption_response("No")
       expect(page).to have_content("4 issues")
-      expect(page).to have_content("I am a nonrating exemption note")
       expect(page).to have_content("Another Description for Active Duty Adjustments")
 
       # add unidentified issue
@@ -844,16 +881,16 @@ feature "Higher Level Review Edit issues" do
 
       # assert server has updated data for nonrating and unidentified issues
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         issue_category: "Active Duty Adjustments",
-        decision_date: 1.month.ago,
+        decision_date: profile_date,
         nonrating_issue_description: "Description for Active Duty Adjustments"
       )
 
       expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
 
       another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "Another Description for Active Duty Adjustments"
       )
@@ -864,14 +901,14 @@ feature "Higher Level Review Edit issues" do
 
       expect(
         RequestIssue.find_by(
-          review_request: higher_level_review,
+          decision_review: higher_level_review,
           unidentified_issue_text: "This is an unidentified issue"
         )
       ).to_not be_nil
 
       expect(
         RequestIssue.find_by(
-          review_request: higher_level_review,
+          decision_review: higher_level_review,
           ramp_claim_id: "ramp_claim_id"
         )
       ).to_not be_nil
@@ -889,7 +926,7 @@ feature "Higher Level Review Edit issues" do
       expect(nonrating_epe).to_not be_nil
 
       # expect the remove/re-add to create a new RequestIssue for same RatingIssue
-      expect(higher_level_review.reload.request_issues).to_not include(request_issue)
+      expect(higher_level_review.reload.request_issues.active).to_not include(request_issue)
 
       new_version_of_request_issue = higher_level_review.request_issues.find do |ri|
         ri.description == request_issue.description
@@ -996,10 +1033,14 @@ feature "Higher Level Review Edit issues" do
       expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
-      new_request_issue = higher_level_review.reload.request_issues.first
+      new_request_issue = higher_level_review.reload.request_issues.active.first
       expect(new_request_issue.description).to eq("Left knee granted")
-      expect(request_issue.reload.review_request_id).to be_nil
-      expect(request_issue.removed_at).to eq(Time.zone.now)
+      expect(request_issue.reload.decision_review_id).to_not be_nil
+      expect(request_issue).to be_closed
+      expect(request_issue.contention_removed_at).to eq(Time.zone.now)
+      expect(request_issue.closed_at).to eq(Time.zone.now)
+      expect(request_issue.closed_status).to eq("removed")
+      expect(request_issue).to be_removed
       expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update

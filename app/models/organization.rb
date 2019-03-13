@@ -1,7 +1,12 @@
+# frozen_string_literal: true
+
 class Organization < ApplicationRecord
+  has_one :vso_config, dependent: :destroy
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
+
+  before_save :clean_url
 
   def admins
     organizations_users.includes(:user).select(&:admin?).map(&:user)
@@ -35,7 +40,7 @@ class Organization < ApplicationRecord
   end
 
   def user_has_access?(user)
-    users.pluck(:id).include?(user.id)
+    users.pluck(:id).include?(user&.id)
   end
 
   def user_is_admin?(user)
@@ -48,5 +53,11 @@ class Organization < ApplicationRecord
 
   def user_admin_path
     "#{path}/users"
+  end
+
+  private
+
+  def clean_url
+    self.url = url&.parameterize&.dasherize
   end
 end

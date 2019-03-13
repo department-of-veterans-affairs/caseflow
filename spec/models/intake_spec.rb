@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Intake do
   before do
     FeatureToggle.enable!(:intake_legacy_opt_in)
@@ -275,6 +277,75 @@ describe Intake do
     end
   end
 
+  context ".user_stats" do
+    subject { Intake.user_stats(user) }
+
+    let(:veteran_file_number) { "1234" }
+    let(:user) { create(:user) }
+    let(:busy_day) { 30.days.ago }
+
+    before do
+      5.times do
+        Intake.create!(
+          user: user,
+          veteran_file_number: veteran_file_number,
+          detail_type: "SupplementalClaim",
+          completed_at: busy_day,
+          completion_status: "success"
+        )
+      end
+      5.times do
+        Intake.create!(
+          user: user,
+          veteran_file_number: veteran_file_number,
+          detail_type: "HigherLevelReview",
+          completed_at: busy_day,
+          completion_status: "success"
+        )
+      end
+      Intake.create!(
+        user: user,
+        veteran_file_number: veteran_file_number,
+        detail_type: "SupplementalClaim",
+        completed_at: 3.days.ago,
+        completion_status: "canceled"
+      )
+      Intake.create!(
+        user: user,
+        veteran_file_number: veteran_file_number,
+        detail_type: "HigherLevelReview",
+        completed_at: 3.days.ago,
+        completion_status: "canceled"
+      )
+      Intake.create!(
+        user: user,
+        veteran_file_number: veteran_file_number,
+        detail_type: "SupplementalClaim",
+        completed_at: 61.days.ago,
+        completion_status: "success"
+      )
+      Intake.create!(
+        user: create(:user),
+        veteran_file_number: veteran_file_number,
+        detail_type: "SupplementalClaim",
+        completed_at: 3.days.ago,
+        completion_status: "success"
+      )
+    end
+
+    it "returns array of hashes of day-by-day stats" do
+      expect(subject).to eq(
+        [
+          {
+            higher_level_review: 5,
+            supplemental_claim: 5,
+            date: busy_day.to_date.to_s
+          }
+        ]
+      )
+    end
+  end
+
   context "#complete_with_status!" do
     it "saves intake with proper tagging" do
       intake.complete_with_status!(:canceled)
@@ -376,6 +447,18 @@ describe Intake do
       it "adds veteran_not_accessible and returns false" do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("veteran_not_accessible")
+      end
+
+      context "Veteran has multiple phone numbers" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+            .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+        end
+
+        it "adds veteran_has_multiple_phone_numbers and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_has_multiple_phone_numbers")
+        end
       end
     end
 

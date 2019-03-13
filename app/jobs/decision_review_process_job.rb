@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job will call establish! on a DecisionReview
 # or anything that acts like a DecisionReview
 class DecisionReviewProcessJob < CaseflowJob
@@ -11,9 +13,11 @@ class DecisionReviewProcessJob < CaseflowJob
 
     return_value = nil
 
+    Raven.extra_context(class: decision_review.class.to_s, id: decision_review.id)
+
     begin
       return_value = decision_review.establish!
-    rescue VBMS::ClientError => err
+    rescue VBMS::ClientError, VBMSError => err
       decision_review.update_error!(err.to_s)
       Raven.capture_exception(err)
     end

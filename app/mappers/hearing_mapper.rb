@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module HearingMapper
   class InvalidHoldOpenError < StandardError; end
   class InvalidAodError < StandardError; end
@@ -47,14 +49,14 @@ module HearingMapper
     # asctime - returns a canonical string representation of time
     def datetime_based_on_type(datetime:, regional_office_key:, type:)
       datetime = VacolsHelper.normalize_vacols_datetime(datetime)
-      return datetime if type == "C"
+      return datetime if type == HearingDay::REQUEST_TYPES[:central]
 
       datetime.asctime.in_time_zone(timezone(regional_office_key)).in_time_zone("Eastern Time (US & Canada)")
     end
 
     def timezone(regional_office_key)
       regional_office = RegionalOffice::CITIES[regional_office_key] ||
-                        RegionalOffice::SATELLITE_OFFICES[regional_office_key]
+                        RegionalOffice::SATELLITE_OFFICES[regional_office_key] || {}
       regional_office[:timezone]
     end
 

@@ -39,6 +39,7 @@ Rails.application.routes.draw do
         get 'appeals', to: 'appeals#list'
         get 'appeals/:appeal_id', to: 'appeals#details'
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
+        post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
       end
@@ -99,9 +100,9 @@ Rails.application.routes.draw do
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
       get :document_count
-      get :new_documents
       get :veteran
       get :power_of_attorney
+      get :hearings
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
@@ -126,7 +127,7 @@ Rails.application.routes.draw do
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
   get 'hearings/schedule', to: "hearings/hearing_day#index"
-  get 'hearings/:hearing_id/details', to: "hearings/hearing_day#index"
+  get 'hearings/:hearing_id/details', to: "hearing_schedule#hearing_details_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
@@ -159,6 +160,7 @@ Rails.application.routes.draw do
     get "/", to: 'intakes#index'
     get "/manager", to: 'intake_manager#index'
     get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
+    get "/manager/users/:user_css_id", to: 'intake_manager#user_stats'
   end
 
   resources :intakes, path: "/intake", only: [:index, :create, :destroy] do
@@ -201,6 +203,12 @@ Rails.application.routes.draw do
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
+  resources :team_management, only: [:index, :update]
+  get '/team_management(*rest)', to: 'team_management#index'
+  post '/team_management/judge_team/:user_id', to: 'team_management#create_judge_team'
+  post '/team_management/national_vso', to: 'team_management#create_national_vso'
+  post '/team_management/field_vso', to: 'team_management#create_field_vso'
+
   get '/search', to: 'queue#index'
 
   resources :legacy_tasks, only: [:create, :update]
@@ -232,6 +240,7 @@ Rails.application.routes.draw do
 
   get "styleguide", to: "styleguide#show"
 
+  get "tableau-login", to: "tableau_logins#login"
 
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 

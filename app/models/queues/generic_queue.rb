@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GenericQueue
   include ActiveModel::Model
 
@@ -10,7 +12,9 @@ class GenericQueue
   private
 
   def relevant_tasks
-    Task.incomplete_or_recently_completed.where(assigned_to: user)
+    Task.incomplete_or_recently_closed
+      .where(assigned_to: user)
+      .includes(*task_includes)
   end
 
   def relevant_attorney_tasks
@@ -18,6 +22,16 @@ class GenericQueue
 
     # If the user is a judge there will be attorneys in the list, if the user is not a judge the list of attorneys will
     # be an empty set and this function will also then return an empty set.
-    AttorneyTask.incomplete_or_recently_completed.where(assigned_to: Judge.new(user).attorneys)
+    AttorneyTask.incomplete_or_recently_closed
+      .where(assigned_to: Judge.new(user).attorneys)
+      .includes(*task_includes)
+  end
+
+  def task_includes
+    [
+      :appeal,
+      :assigned_by,
+      :assigned_to
+    ]
   end
 end

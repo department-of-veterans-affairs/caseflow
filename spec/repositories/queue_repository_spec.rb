@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe QueueRepository do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -40,6 +42,7 @@ describe QueueRepository do
         expect(decass.deatty).to eq attorney_staff.sattyid
         expect(decass.deteam).to eq attorney_staff.stitle[0..2]
         expect(decass.deadusr).to eq judge_staff.slogid
+        expect(decass.demdusr).to eq judge_staff.slogid
         expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
         expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
         expect(decass.deassign).to eq VacolsHelper.local_date_with_utc_timezone
@@ -157,6 +160,18 @@ describe QueueRepository do
         subject
 
         expect(decass.reload.deatcom).to eq(("a" * 341) + "Veteran's")
+      end
+    end
+
+    context "when comment with multi-byte characters causes it to be greater than 600 characters" do
+      let(:decass_attrs) { { comment: ("a" * 575) + "“pleadings” and ‘motions”" } }
+      let(:date_added) { "2018-04-18".to_date }
+      let!(:decass) { create(:decass, defolder: vacols_case.bfkey, deadtim: date_added) }
+
+      it "converts multi-byte characters to ASCII (VACOLS Oracle DB is in ASCII format)" do
+        subject
+
+        expect(decass.reload.debmcom).to eq(("a" * 575) + "\"pleadings\" and 'motions\"")
       end
     end
   end

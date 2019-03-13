@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe RoundRobinAssigner do
   class RoundRobinAssignedTask < Task
     include RoundRobinAssigner
