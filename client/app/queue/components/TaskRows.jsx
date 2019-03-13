@@ -207,6 +207,17 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
 
+    const appealCancelled = taskList.find((task) => task.type === 'RootTask' && task.status === 'cancelled')
+    let timelineContainerText;
+
+    if (appealCancelled){
+      timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
+    } else if (appeal.decisionDate){
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
+    } else {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
+    }
+
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}></td>
@@ -214,7 +225,7 @@ class TaskRows extends React.PureComponent {
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
             <div {...grayLineTimelineStyling}{...css({ top: '25px !important' })} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
-          { appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
+          { timelineContainerText
           } <br />
         </td>
       </tr> }
