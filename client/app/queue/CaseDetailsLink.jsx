@@ -46,7 +46,7 @@ class CaseDetailsLink extends React.PureComponent {
       fontWeight: (task.status === 'assigned' && userRole === USER_ROLE_TYPES.colocated) ? 'bold' : null
     });
 
-    return <span {...linkStyling}>
+    return <span {...linkStyling} id={`veteran-name-for-task-${task.taskId}`}>
       {appeal.veteranFullName} ({appeal.veteranFileNumber})
     </span>;
   }
