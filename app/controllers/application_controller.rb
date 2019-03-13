@@ -18,6 +18,7 @@ class ApplicationController < ApplicationBaseController
 
   rescue_from ActiveRecord::RecordNotFound, with: :not_found
   rescue_from VBMS::ClientError, with: :on_vbms_error
+  rescue_from VBMSError, with: :on_vbms_error
 
   rescue_from Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "Vacols error occured: #{e.message}"
