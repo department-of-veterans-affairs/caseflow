@@ -678,7 +678,7 @@ describe EndProductEstablishment do
           allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(BGS::ShareError.new("E"))
         end
 
-        it "re-raises  error" do
+        it "re-raises error" do
           expect { subject }.to raise_error(::BGSSyncError)
         end
       end
