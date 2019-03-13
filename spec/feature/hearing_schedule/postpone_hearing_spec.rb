@@ -2,8 +2,9 @@ require "rails_helper" # frozen_string_literal: true
 
 RSpec.feature "Postpone hearing" do
   let!(:current_user) do
-    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
-    User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
+    user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
+    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    User.authenticate!(user: user)
   end
 
   let!(:hearings_user) do
