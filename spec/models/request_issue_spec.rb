@@ -118,6 +118,18 @@ describe RequestIssue do
       expect(todo).to_not include(rating_request_issue)
       expect(todo).to include(nonrating_request_issue)
     end
+
+    it "keeps trying for #{RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS} days" do
+      Timecop.travel(Time.zone.now + RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS.days - 1.day) do
+        expect(nonrating_request_issue.expired_without_processing?).to eq(false)
+      end
+    end
+
+    it "gives up after #{RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS} days" do
+      Timecop.travel(Time.zone.now + RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS.days) do
+        expect(nonrating_request_issue.expired_without_processing?).to eq(true)
+      end
+    end
   end
 
   context ".rating" do
@@ -149,18 +161,8 @@ describe RequestIssue do
     end
   end
 
-  context ".not_deleted" do
-    subject { RequestIssue.not_deleted }
-
-    let!(:deleted_request_issue) { create(:request_issue, decision_review: nil) }
-
-    it "filters by whether it is associated with a decision_review" do
-      expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
-    end
-  end
-
-  context ".open" do
-    subject { RequestIssue.open }
+  context ".active" do
+    subject { RequestIssue.active }
 
     let!(:closed_request_issue) { create(:request_issue, :removed) }
 

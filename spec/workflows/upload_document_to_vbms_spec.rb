@@ -21,7 +21,12 @@ describe UploadDocumentToVbms do
   end
   let(:uploaded_to_vbms_at) { nil }
   let(:processed_at) { nil }
-  let!(:doc_to_upload) { UploadDocumentToVbms.new(document) }
+  let!(:doc_to_upload) do
+    UploadDocumentToVbms.new(
+      document: document,
+      file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW"
+    )
+  end
 
   describe "#pdf_location" do
     it "fetches file from s3 and returns temporary location" do
