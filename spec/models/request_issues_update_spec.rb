@@ -256,8 +256,20 @@ describe RequestIssuesUpdate do
       end
 
       context "when issues contain a subset of existing issues" do
+        let(:non_existent_contention_reference_id) { "8888" }
+        let!(:request_issue_with_non_existent_contention) do
+          create(
+            :request_issue,
+            end_product_establishment: create(:end_product_establishment, source: review),
+            decision_review: review,
+            contention_reference_id: non_existent_contention_reference_id
+          )
+        end
+
         # remove issue with legacy opt in
-        let(:request_issues_data) { [{ request_issue_id: existing_request_issue_id }] }
+        let(:request_issues_data) do
+          [{ request_issue_id: existing_request_issue_id }]
+        end
 
         let(:nonrating_end_product_establishment) do
           create(
@@ -283,7 +295,7 @@ describe RequestIssuesUpdate do
 
           request_issues_update.reload
           expect(request_issues_update.before_request_issue_ids).to contain_exactly(
-            *existing_request_issues.map(&:id)
+            *existing_request_issues.map(&:id), request_issue_with_non_existent_contention.id
           )
 
           expect(request_issues_update.after_request_issue_ids).to contain_exactly(
@@ -296,6 +308,12 @@ describe RequestIssuesUpdate do
           expect(removed_issue).to be_closed
           expect(removed_issue).to be_removed
           expect(removed_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
+
+          request_issue_with_non_existent_contention.reload
+          expect(request_issue_with_non_existent_contention.decision_review).to_not be_nil
+          expect(request_issue_with_non_existent_contention.contention_removed_at).to be_nil
+          expect(request_issue_with_non_existent_contention).to be_closed
+          expect(request_issue_with_non_existent_contention).to be_removed
 
           expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
