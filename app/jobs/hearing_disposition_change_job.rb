@@ -14,7 +14,6 @@ class HearingDispositionChangeJob < CaseflowJob
   def perform
     start_time = Time.zone.now
     error_count = 0
-    hearing_ids = []
     task_count_for = {
       Constants.HEARING_DISPOSITION_TYPES.held => 0,
       Constants.HEARING_DISPOSITION_TYPES.cancelled => 0,
@@ -29,45 +28,40 @@ class HearingDispositionChangeJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
 
     # This is inefficient. If it runs slowly or consumes a lot of resources then refactor. Until then we're fine.
-    DispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold).each do |task|
+    tasks = DispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold).select do |t|
+      t.hearing && (t.hearing.scheduled_for < 24.hours.ago)
+    end
+    hearing_ids = tasks.map { |t| t.hearing.id }
+
+    tasks.each do |task|
       hearing = task.hearing
-      if hearing.scheduled_for < 24.hours.ago
-
-        if hearing_ids.include?(hearing.id)
-          Raven.capture_exception(e, extra: { hearing_id: hearing.id })
-          error_count += 1
-          next
-        end
-        hearing_ids.push(hearing.id)
-
-        case hearing.disposition
-        when Constants.HEARING_DISPOSITION_TYPES.held
-          # Will be added as part of #9540. Ignoring this situation for now.
-          task_count_for[hearing.disposition] += 1
-        when Constants.HEARING_DISPOSITION_TYPES.cancelled
-          task.cancel!
-          task_count_for[hearing.disposition] += 1
-        when Constants.HEARING_DISPOSITION_TYPES.postponed
-          # Postponed hearings should be acted on immediately and the related tasks should be closed. Do not take any
-          # action here.
-          task_count_for[hearing.disposition] += 1
-        when Constants.HEARING_DISPOSITION_TYPES.no_show
-          task.mark_no_show!
-          task_count_for[hearing.disposition] += 1
-        when nil
-          # We allow judges and hearings staff 2 days to make changes to the hearing's disposition. If it has been more
-          # than 2 days since the hearing was held and there is no disposition then remind the hearings staff.
-          if hearing.scheduled_for < 48.hours.ago
-            # Logic will be added as part of #9833.
-            task_count_for[:stale] += 1
-          else
-            task_count_for[:more_than_24_hours_old] += 1
-          end
+      case hearing.disposition
+      when Constants.HEARING_DISPOSITION_TYPES.held
+        # Will be added as part of #9540. Ignoring this situation for now.
+        task_count_for[hearing.disposition] += 1
+      when Constants.HEARING_DISPOSITION_TYPES.cancelled
+        task.cancel!
+        task_count_for[hearing.disposition] += 1
+      when Constants.HEARING_DISPOSITION_TYPES.postponed
+        # Postponed hearings should be acted on immediately and the related tasks should be closed. Do not take any
+        # action here.
+        task_count_for[hearing.disposition] += 1
+      when Constants.HEARING_DISPOSITION_TYPES.no_show
+        task.mark_no_show!
+        task_count_for[hearing.disposition] += 1
+      when nil
+        # We allow judges and hearings staff 2 days to make changes to the hearing's disposition. If it has been more
+        # than 2 days since the hearing was held and there is no disposition then remind the hearings staff.
+        if hearing.scheduled_for < 48.hours.ago
+          # Logic will be added as part of #9833.
+          task_count_for[:stale] += 1
         else
-          # Expect to never reach this block since all dispositions should be accounted for above. If we run into this
-          # case we ignore it and will investigate and potentially incorporate that fix here. Until then we're fine.
-          task_count_for[:unknown_dispositions] += 1
+          task_count_for[:more_than_24_hours_old] += 1
         end
+      else
+        # Expect to never reach this block since all dispositions should be accounted for above. If we run into this
+        # case we ignore it and will investigate and potentially incorporate that fix here. Until then we're fine.
+        task_count_for[:unknown_dispositions] += 1
       end
 
     rescue StandardError => e
