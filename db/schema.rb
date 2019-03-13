@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190307210920) do
+ActiveRecord::Schema.define(version: 20190312160930) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -228,6 +228,7 @@ ActiveRecord::Schema.define(version: 20190307210920) do
     t.datetime "created_at"
     t.string "query"
     t.integer "user_id"
+    t.index ["user_id"], name: "index_claims_folder_searches_on_user_id"
   end
 
   create_table "decision_documents", force: :cascade do |t|
@@ -280,6 +281,7 @@ ActiveRecord::Schema.define(version: 20190307210920) do
     t.string "type", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.index ["user_id"], name: "index_dispatch_tasks_on_user_id"
   end
 
   create_table "distributed_cases", force: :cascade do |t|
@@ -371,6 +373,7 @@ ActiveRecord::Schema.define(version: 20190307210920) do
     t.integer "user_id"
     t.string "veteran_file_number", null: false
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
+    t.index ["user_id"], name: "index_end_product_establishments_on_user_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
   end
 
@@ -644,6 +647,7 @@ ActiveRecord::Schema.define(version: 20190307210920) do
     t.integer "user_id"
     t.string "vacols_id", null: false
     t.string "witness"
+    t.index ["user_id"], name: "index_legacy_hearings_on_user_id"
   end
 
   create_table "legacy_issue_optins", force: :cascade, comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review." do |t|
@@ -1035,9 +1039,24 @@ ActiveRecord::Schema.define(version: 20190307210920) do
     t.index ["deleted_at"], name: "index_worksheet_issues_on_deleted_at"
   end
 
+  add_foreign_key "advance_on_docket_motions", "users"
   add_foreign_key "annotations", "users"
   add_foreign_key "api_views", "api_keys"
+  add_foreign_key "appeal_views", "users"
   add_foreign_key "certifications", "users"
+  add_foreign_key "claims_folder_searches", "users"
+  add_foreign_key "dispatch_tasks", "users"
+  add_foreign_key "document_views", "users"
+  add_foreign_key "end_product_establishments", "users"
+  add_foreign_key "hearing_views", "users"
+  add_foreign_key "intakes", "users"
   add_foreign_key "legacy_appeals", "appeal_series"
+  add_foreign_key "legacy_hearings", "users"
+  add_foreign_key "organizations_users", "users"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
+  add_foreign_key "ramp_election_rollbacks", "users"
+  add_foreign_key "reader_users", "users"
+  add_foreign_key "request_issues_updates", "users"
+  add_foreign_key "schedule_periods", "users"
+  add_foreign_key "user_quotas", "users"
 end
