@@ -575,6 +575,7 @@ feature "Higher Level Review Edit issues" do
             decision_review: higher_level_review,
             issue_category: active_nonrating_request_issue.issue_category,
             ineligible_due_to: active_nonrating_request_issue.id,
+            closed_status: :ineligible,
             ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
             nonrating_issue_description: active_nonrating_request_issue.description,
             decision_date: active_nonrating_request_issue.decision_date

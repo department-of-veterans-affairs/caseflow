@@ -2,17 +2,6 @@
 
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
-  # TODO: remove this eventually, used to protect caching from screwing up removed columns
-  self.ignored_columns = %w[
-    contested_rating_issue_disability_code
-    rating_issue_reference_id
-    rating_issue_profile_date
-    review_request_id
-    review_request_type
-    description
-    disposition
-  ]
-
   include Asyncable
   include HasBusinessLine
 
@@ -51,10 +40,12 @@ class RequestIssue < ApplicationRecord
     end_product_canceled: "end_product_canceled",
     withdrawn: "withdrawn",
     dismissed_death: "dismissed_death",
-    stayed: "stayed"
+    stayed: "stayed",
+    ineligible: "ineligible"
   }
 
   before_save :set_contested_rating_issue_profile_date
+  before_save :close_if_ineligible!
 
   # TODO: this is a temporary callback in order to synchronize columns. Remove after data is migrated
   before_save :set_decision_sync_last_submitted_at
@@ -163,7 +154,7 @@ class RequestIssue < ApplicationRecord
     end
 
     def active_or_ineligible
-      where(closed_at: nil)
+      active.or(ineligible)
     end
 
     def unidentified
@@ -387,30 +378,35 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
-  def remove!
-    update!(closed_at: Time.zone.now, closed_status: :removed)
+  def close!(status)
+    return unless closed_at.nil?
+
+    transaction do
+      update!(closed_at: Time.zone.now, closed_status: status)
+      yield if block_given?
+    end
+  end
+
+  def close_if_ineligible!
+    close!(:ineligible) if ineligible_reason?
   end
 
   def close_decided_issue!
-    return unless closed_at.nil?
     return unless decision_issues.any?
 
-    update!(closed_at: Time.zone.now, closed_status: :decided)
+    close!(:decided)
   end
 
   def close_after_end_product_canceled!
-    return unless closed_at.nil?
     return unless end_product_establishment&.reload&.status_canceled?
 
-    update!(closed_at: Time.zone.now, closed_status: :end_product_canceled)
-    legacy_issue_optin&.flag_for_rollback!
+    close!(:end_product_canceled) do
+      legacy_issue_optin&.flag_for_rollback!
+    end
   end
 
-  # Instead of fully deleting removed issues, we instead strip them from the review so we can
-  # maintain a record of the other data that was on them incase we need to revert the update.
-  def remove_from_review
-    transaction do
-      remove!
+  def remove!
+    close!(:removed) do
       legacy_issue_optin&.flag_for_rollback!
 
       # removing a request issue also deletes the associated request_decision_issue
