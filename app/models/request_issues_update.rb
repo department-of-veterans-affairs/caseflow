@@ -50,12 +50,7 @@ class RequestIssuesUpdate < ApplicationRecord
 
     potential_end_products_to_remove = []
     removed_issues.select(&:end_product_establishment).each do |request_issue|
-      begin
-        request_issue.end_product_establishment.remove_contention!(request_issue)
-      rescue EndProductEstablishment::ContentionNotFound => _err
-        next
-      end
-
+      request_issue.end_product_establishment.remove_contention!(request_issue)
       potential_end_products_to_remove << request_issue.end_product_establishment
     end
 
