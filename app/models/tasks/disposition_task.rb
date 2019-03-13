@@ -77,6 +77,10 @@ class DispositionTask < GenericTask
   end
 
   def hearing_disposition
-    parent&.hearing_task_association&.hearing&.disposition
+    hearing&.disposition
+  end
+
+  def hearing
+    parent&.hearing_task_association&.hearing
   end
 end
