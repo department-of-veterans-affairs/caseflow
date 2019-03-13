@@ -90,7 +90,7 @@ class RequestIssuesUpdate < ApplicationRecord
     before_issues
 
     @request_issues_data.map do |issue_data|
-      review.request_issues.active_or_ineligible.find_or_build_from_intake_data(issue_data)
+      review.find_or_build_request_issue_from_intake_data(issue_data)
     end
   end
 

@@ -595,7 +595,7 @@ feature "Higher Level Review Edit issues" do
 
       before do
         higher_level_review.create_issues!([active_nonrating_request_issue])
-        active_nonrating_request_issue.remove_from_review
+        active_nonrating_request_issue.remove!
         higher_level_review.reload
       end
 

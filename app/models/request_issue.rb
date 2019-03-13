@@ -164,11 +164,6 @@ class RequestIssue < ApplicationRecord
       )
     end
 
-    def find_or_build_from_intake_data(data)
-      # request issues on edit have ids but newly added issues do not
-      data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
-    end
-
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
     def from_intake_data(data, decision_review: nil)
       attrs = attributes_from_intake_data(data)
