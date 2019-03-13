@@ -16,7 +16,7 @@ task :security_caseflow do
 
   snoozed_cves = [
     # Example:
-    # { cve_name: "CVE-2018-1000201", until: Time.zone.local(2018, 9, 10) }
+    # { cve_name: "CVE-2018-1000201", until: Time.utc(2018, 9, 10) }
     { cve_name: "CVE-2019-5420", until: Time.utc(2019, 3, 30) }
   ]
 
