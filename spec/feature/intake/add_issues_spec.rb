@@ -68,4 +68,28 @@ feature "Intake Add Issues Page" do
       )
     end
   end
+
+  context "When the user adds an untimely issue" do
+    before do
+      Generators::Rating.build(
+        participant_id: veteran.participant_id,
+        promulgation_date: 2.years.ago,
+        profile_date: 2.years.ago,
+        issues: [
+          { reference_id: "untimely", decision_text: "Untimely Issue" }
+        ]
+      )
+    end
+
+    scenario "When the user selects untimely exemption it shows untimely exemption notes" do
+      start_appeal(veteran, legacy_opt_in_approved: true)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      add_intake_rating_issue("Untimely Issue")
+      expect(page).to_not have_content("Notes")
+      expect(page).to have_content("Issue 1 is an Untimely Issue")
+      find("label", text: "Yes").click
+      expect(page).to have_content("Notes")
+    end
+  end
 end

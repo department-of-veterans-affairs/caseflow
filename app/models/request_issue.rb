@@ -16,6 +16,9 @@ class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
 
+  # how many days before we give up trying to sync decisions
+  REQUIRES_PROCESSING_WINDOW_DAYS = 14
+
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment
   has_many :request_decision_issues
@@ -149,19 +152,17 @@ class RequestIssue < ApplicationRecord
       ).where.not(issue_category: nil)
     end
 
-    def not_deleted
-      where.not(decision_review_id: nil)
-    end
-
     def eligible
       where(ineligible_reason: nil)
     end
 
-    def open
+    # "Active" issues are issues that need decisions.
+    # They show up as contentions in VBMS and issues in Caseflow Queue.
+    def active
       eligible.where(closed_at: nil)
     end
 
-    def open_or_ineligible
+    def active_or_ineligible
       where(closed_at: nil)
     end
 
@@ -707,7 +708,7 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     add_duplicate_issue_error(
-      RequestIssue.open.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
+      RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
     )
   end
 
@@ -715,7 +716,7 @@ class RequestIssue < ApplicationRecord
     return unless contested_decision_issue_id
 
     add_duplicate_issue_error(
-      RequestIssue.open.find_by(contested_decision_issue_id: contested_decision_issue_id)
+      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
     )
   end
 

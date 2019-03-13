@@ -301,7 +301,7 @@ describe RequestIssuesUpdate do
 
           new_map = rating_end_product_establishment.reload.send(
             :rating_issue_contention_map,
-            review.reload.open_request_issues
+            review.reload.request_issues.active
           )
 
           expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
