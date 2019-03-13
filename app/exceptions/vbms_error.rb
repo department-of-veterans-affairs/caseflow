@@ -13,7 +13,7 @@ class VBMSError < RuntimeError
     "additional review due to an Incident Flash" => "VBMS::IncidentFlashError",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/
-    "Retrieving Contention list failed. System error." => "VBMS::TransientError",
+    "Could not access remote service at" => "VBMS::TransientError",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3405/
     "Unable to associate rated issue, rated issue does not exist" => "VBMS::RatedIssueMissingError",
@@ -28,7 +28,9 @@ class VBMSError < RuntimeError
     "VBMS is currently unavailable due to maintenance." => "VBMS::DownForMaintenanceError",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3274/
-    "The data value of the PostalCode did not satisfy" => "VBMS::BadPostalCodeError"
+    "The data value of the PostalCode did not satisfy" => "VBMS::BadPostalCodeError",
+
+    "ClaimNotFoundException thrown in findContentions for ClaimID" => "VBMS::ClaimNotFoundError"
   }.freeze
 
   class << self
@@ -64,3 +66,4 @@ class VBMS::DocumentTooBigError < StandardError; end
 class VBMS::SecurityError < StandardError; end
 class VBMS::DownForMaintenanceError < StandardError; end
 class VBMS::BadPostalCodeError < StandardError; end
+class VBMS::ClaimNotFoundError < StandardError; end
