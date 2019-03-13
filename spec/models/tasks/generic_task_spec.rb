@@ -14,6 +14,7 @@ describe GenericTask do
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
           Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
           Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
       end
