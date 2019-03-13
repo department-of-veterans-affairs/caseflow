@@ -16,6 +16,12 @@ class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
 
+  # how many days before we give up trying to sync decisions
+  REQUIRES_PROCESSING_WINDOW_DAYS = 14
+
+  # don't need to try as frequently as default 3 hours
+  DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
+
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment
   has_many :request_decision_issues
@@ -52,9 +58,6 @@ class RequestIssue < ApplicationRecord
   }
 
   before_save :set_contested_rating_issue_profile_date
-
-  # TODO: this is a temporary callback in order to synchronize columns. Remove after data is migrated
-  before_save :set_decision_sync_last_submitted_at
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -115,9 +118,8 @@ class RequestIssue < ApplicationRecord
   }.freeze
 
   class << self
-    # We don't need to retry these as frequently
-    def processing_retry_interval_hours
-      12
+    def last_submitted_at_column
+      :decision_sync_last_submitted_at
     end
 
     def submitted_at_column
@@ -149,11 +151,17 @@ class RequestIssue < ApplicationRecord
       ).where.not(issue_category: nil)
     end
 
-    def not_deleted
-      where.not(decision_review_id: nil)
+    def eligible
+      where(ineligible_reason: nil)
     end
 
-    def open
+    # "Active" issues are issues that need decisions.
+    # They show up as contentions in VBMS and issues in Caseflow Queue.
+    def active
+      eligible.where(closed_at: nil)
+    end
+
+    def active_or_ineligible
       where(closed_at: nil)
     end
 
@@ -167,30 +175,6 @@ class RequestIssue < ApplicationRecord
     def find_or_build_from_intake_data(data)
       # request issues on edit have ids but newly added issues do not
       data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
-    end
-
-    def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
-      request_issue = unscoped.find_by(
-        contested_rating_issue_reference_id: rating_issue_reference_id,
-        contention_removed_at: nil,
-        ineligible_reason: nil
-      )
-
-      return unless request_issue&.status_active?
-
-      request_issue
-    end
-
-    def find_active_by_contested_decision_id(contested_decision_issue_id)
-      request_issue = unscoped.find_by(
-        contested_decision_issue_id: contested_decision_issue_id,
-        contention_removed_at: nil,
-        ineligible_reason: nil
-      )
-
-      return unless request_issue&.status_active?
-
-      request_issue
     end
 
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
@@ -723,14 +707,16 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     add_duplicate_issue_error(
-      self.class.find_active_by_contested_rating_issue_reference_id(contested_rating_issue_reference_id)
+      RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
     )
   end
 
   def check_for_active_request_issue_by_decision_issue!
     return unless contested_decision_issue_id
 
-    add_duplicate_issue_error(self.class.find_active_by_contested_decision_id(contested_decision_issue_id))
+    add_duplicate_issue_error(
+      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
+    )
   end
 
   def original_end_product_code
@@ -791,10 +777,6 @@ class RequestIssue < ApplicationRecord
 
   def appeal_active?
     decision_review.tasks.active.any?
-  end
-
-  def set_decision_sync_last_submitted_at
-    self.decision_sync_last_submitted_at = last_submitted_at
   end
 end
 # rubocop:enable Metrics/ClassLength

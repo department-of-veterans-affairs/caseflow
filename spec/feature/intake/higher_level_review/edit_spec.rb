@@ -197,7 +197,8 @@ feature "Higher Level Review Edit issues" do
         decision_review: another_higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Left knee granted",
-        contention_reference_id: 55
+        contention_reference_id: 55,
+        closed_at: 2.months.ago
       )
     end
 
@@ -423,7 +424,7 @@ feature "Higher Level Review Edit issues" do
         legacy_issues: true
       )
       add_intake_rating_issue("None of these match")
-      add_untimely_exemption_response("No", "I am a nonrating exemption note")
+      add_untimely_exemption_response("No")
 
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
@@ -841,9 +842,8 @@ feature "Higher Level Review Edit issues" do
         description: "Another Description for Active Duty Adjustments",
         date: "04/25/2016"
       )
-      add_untimely_exemption_response("No", "I am a nonrating exemption note")
+      add_untimely_exemption_response("No")
       expect(page).to have_content("4 issues")
-      expect(page).to have_content("I am a nonrating exemption note")
       expect(page).to have_content("Another Description for Active Duty Adjustments")
 
       # add unidentified issue
@@ -926,7 +926,7 @@ feature "Higher Level Review Edit issues" do
       expect(nonrating_epe).to_not be_nil
 
       # expect the remove/re-add to create a new RequestIssue for same RatingIssue
-      expect(higher_level_review.reload.open_request_issues).to_not include(request_issue)
+      expect(higher_level_review.reload.request_issues.active).to_not include(request_issue)
 
       new_version_of_request_issue = higher_level_review.request_issues.find do |ri|
         ri.description == request_issue.description
@@ -1033,7 +1033,7 @@ feature "Higher Level Review Edit issues" do
       expect(page).to_not have_content("PTSD denied")
 
       # assert server has updated data
-      new_request_issue = higher_level_review.reload.open_request_issues.first
+      new_request_issue = higher_level_review.reload.request_issues.active.first
       expect(new_request_issue.description).to eq("Left knee granted")
       expect(request_issue.reload.decision_review_id).to_not be_nil
       expect(request_issue).to be_closed

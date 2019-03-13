@@ -5,8 +5,9 @@ class UploadDocumentToVbms
 
   delegate :document_type, to: :document
 
-  def initialize(document)
+  def initialize(document:, file:)
     @document = document
+    @file = file
   end
 
   def call
@@ -38,10 +39,10 @@ class UploadDocumentToVbms
 
   private
 
-  attr_reader :document
+  attr_reader :document, :file
 
   def cache_file!
-    S3Service.store_file(s3_location, Base64.decode64(document.file))
+    S3Service.store_file(s3_location, Base64.decode64(file))
   end
 
   def submit_for_processing!

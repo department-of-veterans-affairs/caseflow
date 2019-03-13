@@ -21,6 +21,7 @@ class Appeal < DecisionReview
 
   has_one :special_issue_list
 
+  validate :validate_receipt_date
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
@@ -164,7 +165,7 @@ class Appeal < DecisionReview
   def eligible_request_issues
     # It's possible that two users create issues around the same time and the sequencer gets thrown off
     # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
-    open_request_issues.select(&:eligible?).sort_by(&:id)
+    request_issues.active.all.sort_by(&:id)
   end
 
   def issues
@@ -595,11 +596,10 @@ class Appeal < DecisionReview
 
   def docket_switch_deadline
     return unless receipt_date
-    return unless request_issues.open.any?
-    return if request_issues.any? { |ri| !ri.closed? && ri.decision_or_promulgation_date.nil? }
+    return unless request_issues.active_or_ineligible.any?
+    return if request_issues.active_or_ineligible.any? { |ri| ri.decision_or_promulgation_date.nil? }
 
-    open_request_issues = request_issues.find_all { |ri| !ri.closed? }
-    oldest = open_request_issues.min_by(&:decision_or_promulgation_date)
+    oldest = request_issues.active_or_ineligible.min_by(&:decision_or_promulgation_date)
     deadline_from_oldest_request_issue = oldest.decision_or_promulgation_date + 365.days
     deadline_from_receipt = receipt_date + 60.days
 
@@ -648,7 +648,7 @@ class Appeal < DecisionReview
   end
 
   def issues_hash
-    issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
+    issue_list = decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
 
     return [] if issue_list.empty?
 

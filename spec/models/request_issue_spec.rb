@@ -118,6 +118,18 @@ describe RequestIssue do
       expect(todo).to_not include(rating_request_issue)
       expect(todo).to include(nonrating_request_issue)
     end
+
+    it "keeps trying for #{RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS} days" do
+      Timecop.travel(Time.zone.now + RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS.days - 1.day) do
+        expect(nonrating_request_issue.expired_without_processing?).to eq(false)
+      end
+    end
+
+    it "gives up after #{RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS} days" do
+      Timecop.travel(Time.zone.now + RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS.days) do
+        expect(nonrating_request_issue.expired_without_processing?).to eq(true)
+      end
+    end
   end
 
   context ".rating" do
@@ -149,78 +161,13 @@ describe RequestIssue do
     end
   end
 
-  context ".not_deleted" do
-    subject { RequestIssue.not_deleted }
-
-    let!(:deleted_request_issue) { create(:request_issue, decision_review: nil) }
-
-    it "filters by whether it is associated with a decision_review" do
-      expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
-    end
-  end
-
-  context ".open" do
-    subject { RequestIssue.open }
+  context ".active" do
+    subject { RequestIssue.active }
 
     let!(:closed_request_issue) { create(:request_issue, :removed) }
 
     it "filters by whether the closed_at is nil" do
       expect(subject.find_by(id: closed_request_issue.id)).to be_nil
-    end
-  end
-
-  context ".find_active_by_contested_rating_issue_reference_id" do
-    let(:active_rating_request_issue) do
-      rating_request_issue.tap do |ri|
-        ri.update!(end_product_establishment: create(:end_product_establishment, :active))
-      end
-    end
-
-    context "EPE is active" do
-      let(:rating_issue) do
-        RatingIssue.new(reference_id: active_rating_request_issue.contested_rating_issue_reference_id)
-      end
-
-      it "filters by reference_id" do
-        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
-        expect(in_review).to eq(rating_request_issue)
-      end
-
-      it "ignores request issues that are already ineligible" do
-        create(
-          :request_issue,
-          contested_rating_issue_reference_id: rating_request_issue.contested_rating_issue_reference_id,
-          ineligible_reason: :duplicate_of_rating_issue_in_active_review
-        )
-
-        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
-        expect(in_review).to eq(rating_request_issue)
-      end
-    end
-
-    context "EPE is not active" do
-      let(:rating_issue) { RatingIssue.new(reference_id: rating_request_issue.contested_rating_issue_reference_id) }
-
-      it "ignores request issues" do
-        expect(RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)).to be_nil
-      end
-    end
-
-    context "EPE does not yet have a synced status" do
-      let(:active_rating_request_issue) do
-        rating_request_issue.tap do |ri|
-          ri.update!(end_product_establishment: create(:end_product_establishment))
-        end
-      end
-
-      let(:rating_issue) do
-        RatingIssue.new(reference_id: active_rating_request_issue.contested_rating_issue_reference_id)
-      end
-
-      it "treats EPE as active" do
-        in_review = RequestIssue.find_active_by_contested_rating_issue_reference_id(rating_issue.reference_id)
-        expect(in_review).to eq(rating_request_issue)
-      end
     end
   end
 
@@ -761,7 +708,7 @@ describe RequestIssue do
     let(:duplicate_reference_id) { "xyz789" }
     let(:duplicate_appeal_reference_id) { "xyz555" }
     let(:old_reference_id) { "old123" }
-    let(:active_epe) { create(:end_product_establishment, :active) }
+    let(:closed_at) { nil }
     let(:receipt_date) { review.receipt_date }
     let(:previous_contention_reference_id) { "8888" }
 
@@ -771,7 +718,8 @@ describe RequestIssue do
         :request_issue,
         decision_review: previous_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
-        contention_reference_id: previous_contention_reference_id
+        contention_reference_id: previous_contention_reference_id,
+        closed_at: 2.months.ago
       )
     end
 
@@ -828,9 +776,9 @@ describe RequestIssue do
     let!(:request_issue_in_progress) do
       create(
         :request_issue,
-        end_product_establishment: active_epe,
         contested_rating_issue_reference_id: duplicate_reference_id,
-        contested_issue_description: "Old injury"
+        contested_issue_description: "Old injury",
+        closed_at: closed_at
       )
     end
 

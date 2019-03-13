@@ -115,7 +115,7 @@ RSpec.describe "Hearing Day", type: :request do
       create(:staff, stafkey: "RO13", stc4: 11)
     end
     let!(:hearing_day) { create(:hearing_day) }
-    let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+    let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
 
     it "returns video children hearings" do
       headers = {

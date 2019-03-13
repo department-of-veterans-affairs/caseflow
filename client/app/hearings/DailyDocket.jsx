@@ -263,6 +263,7 @@ export class DailyDocket extends React.PureComponent {
       onChange={this.setDisposition(hearing.id, getDate(hearing.scheduled_for))}
       value={hearing.disposition}
       searchable={false}
+      readOnly={!hearing.disposition_editable}
     />;
   };
 
