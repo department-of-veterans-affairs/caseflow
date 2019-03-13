@@ -22,6 +22,8 @@ def legacy_hearings_with_no_hearing_tasks(hearing_type)
 end
 
 def create_hearing_tasks_tree_for(vacols_records)
+  count = 0
+
   vacols_records.each do |hearing|
     legacy_hearing = LegacyHearing.assign_or_create_from_vacols_record(hearing)
 
@@ -35,15 +37,29 @@ def create_hearing_tasks_tree_for(vacols_records)
       parent: root_task
     )
 
-    DispositionTask.create_disposition_task!(
+    disposition_task = DispositionTask.create_disposition_task!(
       legacy_hearing.appeal, hearing_task, legacy_hearing
     )
 
     AppealRepository.update_location!(legacy_hearing.appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+
+    puts "created hearing task: #{hearing_task.id} and disposition task: #{disposition_task.id}
+          for legacy_appeal #{hearing.appeal.id}"
+    count += 1
   end
+
+  puts "created #{count} hearing tasks"
 end
 
-def update_stale_hearing_tasks
+def update_non_existent_hearing_task_associations
+  appeal_ids = HearingTask.where(appeal_type: "legacy_appeal")
+    .joins("legacy_appeals ON legacy_appeals.id = tasks.appeal_id")
+    .select("legacy_appeals.vacols_id").map { |a| a.vacols_id }
+
+  unassociated_hearings = VACOLS::CaseHearing.where(folder_nr: appeal_ids, hearing_disp: nil)
+end
+
+def update_stale_hearing_task_associations
   hearing_task_associations = HearingTaskAssociation.all
 
   legacy_hearing_ids = hearing_task_associations.pluck(:hearing_id)
@@ -64,6 +80,10 @@ def update_stale_hearing_tasks
     hearing_task = HearingTask.find_by(appeal: hearing.appeal)
     fail if hearing_task.nil?
 
+    old_hearing = hearing_task.hearing_task_association.hearing
+
     hearing_task.hearing_task_association.update(hearing: hearing)
+
+    puts "update hearing task #{hearing_task.id} association from #{old_hearing&.id} to #{hearing.id}"
   end
 end
