@@ -52,6 +52,6 @@ class WorkQueue::BeaamSerializer < ActiveModel::Serializer
   end
 
   attribute :issue_count do
-    object.request_issues.open.count
+    object.request_issues.active.count
   end
 end
