@@ -13,7 +13,7 @@ export const getAssignHearingTime = (time, day) => {
     h: time.split(':')[0],
     // eslint-disable-next-line id-length
     m: time.split(':')[1],
-    offset: moment.tz(day.hearingDate, day.timezone || 'America/New_York').format('Z')
+    offset: moment.tz(day.hearingDate || day.scheduledFor, day.timezone || 'America/New_York').format('Z')
   };
 };
 
