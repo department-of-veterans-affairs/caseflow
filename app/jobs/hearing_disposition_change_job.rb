@@ -14,12 +14,13 @@ class HearingDispositionChangeJob < CaseflowJob
   def perform
     start_time = Time.zone.now
     error_count = 0
+    hearing_ids = []
     task_count_for = {
       Constants.HEARING_DISPOSITION_TYPES.held => 0,
       Constants.HEARING_DISPOSITION_TYPES.cancelled => 0,
       Constants.HEARING_DISPOSITION_TYPES.postponed => 0,
       Constants.HEARING_DISPOSITION_TYPES.no_show => 0,
-      held_in_past_24_hours: 0,
+      more_than_24_hours_old: 0,
       stale: 0,
       unknown_dispositions: 0
     }
@@ -31,6 +32,14 @@ class HearingDispositionChangeJob < CaseflowJob
     DispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold).each do |task|
       hearing = task.hearing
       if hearing.scheduled_for < 24.hours.ago
+
+        if hearing_ids.include?(hearing.id)
+          Raven.capture_exception(e, extra: { hearing_id: hearing.id })
+          error_count += 1
+          next
+        end
+        hearing_ids.push(hearing.id)
+
         case hearing.disposition
         when Constants.HEARING_DISPOSITION_TYPES.held
           # Will be added as part of #9540. Ignoring this situation for now.
@@ -52,7 +61,7 @@ class HearingDispositionChangeJob < CaseflowJob
             # Logic will be added as part of #9833.
             task_count_for[:stale] += 1
           else
-            task_count_for[:held_in_past_24_hours] += 1
+            task_count_for[:more_than_24_hours_old] += 1
           end
         else
           # Expect to never reach this block since all dispositions should be accounted for above. If we run into this
@@ -67,16 +76,16 @@ class HearingDispositionChangeJob < CaseflowJob
       error_count += 1
     end
 
-    log_info(start_time, task_count_for, error_count)
+    log_info(start_time, task_count_for, error_count, hearing_ids)
   rescue StandardError => e
-    log_info(start_time, task_count_for, error_count, e)
+    log_info(start_time, task_count_for, error_count, hearing_ids, e)
   end
   # rubocop:enable Metrics/PerceivedComplexity
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/AbcSize
 
-  def log_info(start_time, task_count_for, error_count, err = nil)
+  def log_info(start_time, task_count_for, error_count, hearing_ids, err = nil)
     duration = time_ago_in_words(start_time)
     result = err ? "failed" : "completed"
 
@@ -88,6 +97,7 @@ class HearingDispositionChangeJob < CaseflowJob
     msg += " Fatal error: #{err.message}" if err
 
     Rails.logger.info(msg)
+    Rails.logger.info(hearing_ids)
     Rails.logger.info(err.backtrace.join("\n")) if err
 
     slack_service.send_notification(msg)
