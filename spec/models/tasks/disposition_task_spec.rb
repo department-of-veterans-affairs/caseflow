@@ -265,38 +265,6 @@ describe DispositionTask do
         end
       end
     end
-  end
-
-  describe ".mark_no_show!" do
-    let(:disposition) { nil }
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, disposition: disposition) }
-    let!(:hearing_task_association) do
-      FactoryBot.create(
-        :hearing_task_association,
-        hearing: hearing,
-        hearing_task: hearing_task
-      )
-    end
-    let!(:schedule_hearing_task) do
-      FactoryBot.create(
-        :schedule_hearing_task,
-        parent: hearing_task,
-        appeal: appeal,
-        assigned_to: HearingsManagement.singleton,
-        status: Constants.TASK_STATUSES.completed
-      )
-    end
-    let!(:disposition_task) do
-      FactoryBot.create(
-        :disposition_task,
-        parent: hearing_task,
-        appeal: appeal,
-        status: Constants.TASK_STATUSES.in_progress
-      )
-    end
 
     describe ".mark_no_show!" do
       subject { disposition_task.mark_no_show! }
