@@ -4,9 +4,9 @@ class AppealsController < ApplicationController
   include Errors
 
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :new_documents]
+  before_action :set_application, only: [:document_count]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
+  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
 
   def index
     respond_to do |format|
@@ -44,18 +44,6 @@ class AppealsController < ApplicationController
     render(e.serialize_response)
   rescue StandardError => e
     handle_non_critical_error("document_count", e)
-  end
-
-  def new_documents
-    new_documents_for_user = NewDocumentsForUser.new(
-      appeal: appeal, user: current_user, query_vbms: true, date_to_compare_with: Time.zone.at(0)
-    )
-    render json: { new_documents: new_documents_for_user.process! }
-  rescue Caseflow::Error::EfolderAccessForbidden => e
-    render(e.serialize_response)
-  rescue StandardError => e
-    Raven.capture_exception(e)
-    handle_non_critical_error("appeals_new_documents", e)
   end
 
   def power_of_attorney

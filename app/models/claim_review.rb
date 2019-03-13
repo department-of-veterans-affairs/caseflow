@@ -10,6 +10,7 @@ class ClaimReview < DecisionReview
   has_one :intake, as: :detail
 
   with_options if: :saving_review do
+    validate :validate_receipt_date
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
@@ -186,7 +187,7 @@ class ClaimReview < DecisionReview
   end
 
   def issues_hash
-    issue_list = active_status? ? request_issues.open : fetch_all_decision_issues
+    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
 
     return [] if issue_list.empty?
 

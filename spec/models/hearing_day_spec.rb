@@ -317,7 +317,7 @@ describe HearingDay do
                regional_office: staff.stafkey)
       end
       let!(:ama_appeal) { create(:appeal) }
-      let!(:ama_hearing) { create(:hearing, hearing_day: ama_hearing_day, appeal: ama_appeal) }
+      let!(:ama_hearing) { create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal) }
 
       it "returns hearings are mapped to days" do
         expect(subject.size).to eq 3
