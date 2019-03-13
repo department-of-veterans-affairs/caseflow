@@ -36,7 +36,7 @@ class ContestableIssue
         approx_decision_date: decision_issue.approx_decision_date,
         description: decision_issue.description,
         decision_issue: decision_issue,
-        source_request_issues: decision_issue.request_issues.open,
+        source_request_issues: decision_issue.request_issues.active,
         source_decision_review: decision_issue.decision_review,
         contesting_decision_review: contesting_decision_review
       )
@@ -78,7 +78,7 @@ class ContestableIssue
   end
 
   # If a contestable issue is currently being reviewed by an open request issue on another decision review,
-  # then this method returns the title of that review.
+  # then this method returns the title of that review. (e.g. "Appeal")
   def title_of_active_review
     conflicting_request_issue.try(:review_title)
   end
@@ -86,8 +86,10 @@ class ContestableIssue
   private
 
   def contested_by_request_issue
-    RequestIssue.open.find_by(contested_rating_issue_reference_id: rating_issue_reference_id,
-                              contested_decision_issue_id: decision_issue&.id)
+    RequestIssue.active.find_by(
+      contested_rating_issue_reference_id: rating_issue_reference_id,
+      contested_decision_issue_id: decision_issue&.id
+    )
   end
 
   def serialize_latest_decision_issues
@@ -126,7 +128,7 @@ class ContestableIssue
       "decision_review_id != ? OR decision_review_type != ?",
       contesting_decision_review.id,
       contesting_decision_review.class.name
-    ).open
+    ).active
   end
 
   def timely?
