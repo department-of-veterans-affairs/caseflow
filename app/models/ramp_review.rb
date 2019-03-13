@@ -68,7 +68,7 @@ class RampReview < ApplicationRecord
   #
   # Returns a symbol designating whether the end product was created or connected
   def create_or_connect_end_product!
-    return connect_end_product! if end_product_establishment.preexisting_end_product
+    return connect_end_product! if end_product_establishment.preexisting_end_product&.active?
 
     establish_end_product!(commit: true) && :created
   end
@@ -124,7 +124,9 @@ class RampReview < ApplicationRecord
       station: "397", # AMC
       benefit_type_code: veteran.benefit_type_code,
       user: intake_processed_by
-    )
+    ).tap do |new_epe|
+      update!(reference_id: new_epe.preexisting_end_product.claim_id) if new_epe.preexisting_end_product
+    end
   end
 
   def veteran
@@ -132,8 +134,6 @@ class RampReview < ApplicationRecord
   end
 
   def connect_end_product!
-    end_product_establishment.update!(reference_id: end_product_establishment.preexisting_end_product.claim_id)
-
     update!(
       established_at: Time.zone.now
     ) && :connected
