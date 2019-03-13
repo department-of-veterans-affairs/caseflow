@@ -78,14 +78,15 @@ class ReviewNextButton extends React.PureComponent {
 
     const rampRefilingIneligibleOption = () => {
       if (formType === 'ramp_refiling') {
-        return toggleIneligibleError(intakeData.hasInvalidOption, intakeData.optionSelected)
+        return toggleIneligibleError(intakeData.hasInvalidOption, intakeData.optionSelected);
       }
-      return false
+
+      return false;
     };
 
-    const disableSubmit = rampRefilingIneligibleOption() || needsRelationships || veteranNotValid;
+    const invalidVet = intakeData && VBMS_BENEFIT_TYPES.includes(intakeData.benefitType) && !intakeData.veteranValid;
     const needsRelationships = intakeData && intakeData.veteranIsNotClaimant && intakeData.relationships.length === 0;
-    const veteranNotValid = intakeData && VBMS_BENEFIT_TYPES.includes(intakeData.benefitType) && !intakeData.veteranValid;
+    const disableSubmit = rampRefilingIneligibleOption() || needsRelationships || invalidVet;
 
     return <Button
       name="submit-review"

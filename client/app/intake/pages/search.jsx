@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';

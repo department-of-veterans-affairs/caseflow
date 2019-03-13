@@ -30,7 +30,7 @@ class Fakes::BGSService
     @veteran_records_created = true
 
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
-    
+
     Generators::Veteran.build(
       file_number: "25252525",
       sex: nil,

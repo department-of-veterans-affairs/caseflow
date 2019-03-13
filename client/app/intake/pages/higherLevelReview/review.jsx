@@ -52,13 +52,12 @@ class Review extends React.PureComponent {
 
     const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
     const showInvalidVeteranError = VBMS_BENEFIT_TYPES.includes(benefitType) && !veteranValid;
-    console.log("veteranInvalidFields::", veteranInvalidFields.veteranMissingFields)
 
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
-      { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={veteranInvalidFields}/> }
+      { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={veteranInvalidFields} /> }
 
       <BenefitType
         value={benefitType}
