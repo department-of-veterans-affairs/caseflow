@@ -14,7 +14,7 @@ import {
 import { withRouter } from 'react-router-dom';
 import QueueFlowModal from './components/QueueFlowModal';
 
-class AddJudgeTaskModal extends React.Component {
+class AddJudgeTeamModal extends React.Component {
   constructor(props) {
     super(props);
 
@@ -77,5 +77,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage
 }, dispatch);
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddJudgeTaskModal));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddJudgeTeamModal));
 
