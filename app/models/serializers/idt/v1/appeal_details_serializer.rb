@@ -87,7 +87,7 @@ class Idt::V1::AppealDetailsSerializer < ActiveModel::Serializer
         ).as_json[:data][:attributes]
       end
     else
-      object.request_issues.open.map do |issue|
+      object.request_issues.active.map do |issue|
         {
           id: issue.id,
           program: Constants::BENEFIT_TYPES[issue.benefit_type],
