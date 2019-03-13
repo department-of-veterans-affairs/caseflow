@@ -70,6 +70,15 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
+    },
+    veteranValid: {
+      $set: serverIntake.veteranValid
+    },
+    veteranInvalidFields: {
+      $set: {
+        veteranMissingFields: serverIntake.veteranInvalidFields.veteran_missing_fields.join(', '),
+        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
+      }
     }
   });
 };
@@ -97,6 +106,8 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     payeeCodeError: null,
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
+    veteranValid: null,
+    veteranInvalidFields: null,
     legacyAppeals: [],
     isStarted: false,
     isReviewed: false,

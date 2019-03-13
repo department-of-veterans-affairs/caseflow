@@ -6,6 +6,7 @@ import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import BenefitType from '../../components/BenefitType';
 import LegacyOptInApproved from '../../components/LegacyOptInApproved';
+
 import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
 import {
@@ -16,7 +17,7 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES, VBMS_BENEFIT_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -36,7 +37,9 @@ class Review extends React.PureComponent {
       legacyOptInApproved,
       legacyOptInApprovedError,
       reviewIntakeError,
-      featureToggles
+      featureToggles,
+      veteranValid,
+      veteranInvalidFields
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -48,11 +51,14 @@ class Review extends React.PureComponent {
     }
 
     const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
+    const showInvalidVeteranError = VBMS_BENEFIT_TYPES.includes(benefitType) && !veteranValid;
+    console.log("veteranInvalidFields::", veteranInvalidFields.veteranMissingFields)
 
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
+      { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={veteranInvalidFields}/> }
 
       <BenefitType
         value={benefitType}
@@ -136,7 +142,9 @@ export default connect(
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
     sameOfficeError: state.higherLevelReview.sameOfficeError,
-    reviewIntakeError: state.higherLevelReview.requestStatus.reviewIntakeError
+    reviewIntakeError: state.higherLevelReview.requestStatus.reviewIntakeError,
+    veteranValid: state.higherLevelReview.veteranValid,
+    veteranInvalidFields: state.higherLevelReview.veteranInvalidFields
   }),
   (dispatch) => bindActionCreators({
     setInformalConference,

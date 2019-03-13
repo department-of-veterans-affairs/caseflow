@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import Alert from '../../components/Alert';
+import BareList from '../../components/BareList';
 
 export default class ErrorAlert extends React.PureComponent {
   render() {
@@ -27,14 +28,44 @@ export default class ErrorAlert extends React.PureComponent {
           </Fragment>
         )
       },
+      veteran_not_valid: {
+        title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
+        body: invalidVeteranInstructions(this.props.errorData)
+      },
       default: {
         title: 'Something went wrong',
         body: 'Please try again. If the problem persists, please contact Caseflow support.'
       }
     }[this.props.errorCode || 'default'];
 
-    return <Alert title={errorObject.title} type="error" lowerMargin>
+    return <Alert title={errorObject.title} type="error">
       {errorObject.body}
     </Alert>;
   }
 }
+
+export const invalidVeteranInstructions = (searchErrorData) => <Fragment>
+  { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
+    missingFieldsMessage(searchErrorData.veteranMissingFields) }
+  { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
+</Fragment>;
+
+const missingFieldsMessage = (fields) => <p>
+  Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
+  then retry establishing the EP in Caseflow: {fields}.
+</p>;
+
+const addressTips = [
+  () => <Fragment>Do: move the last word(s) of the street address down to an another street address field</Fragment>,
+  () => <Fragment>Do: abbreviate to St. Ave. Rd. Blvd. Dr. Ter. Pl. Ct.</Fragment>,
+  () => <Fragment>Don't: edit street names or numbers</Fragment>
+];
+
+const addressTooLongMessage = <Fragment>
+  <p>
+    This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than
+    20 characters (including spaces) then try again.
+  </p>
+  <p>Tips:</p>
+  <BareList items={addressTips} ListElementComponent="ul" />
+</Fragment>;
