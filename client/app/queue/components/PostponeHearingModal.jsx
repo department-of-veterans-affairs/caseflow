@@ -2,7 +2,6 @@ import * as React from 'react';
 import { formatDateStr } from '../../util/DateUtil';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 
 import {
   taskById,
@@ -12,7 +11,7 @@ import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
-import editModalBase from './EditModalBase';
+import QueueFlowModal from './QueueFlowModal';
 import { taskActionData, prepareAppealForStore } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
@@ -174,7 +173,11 @@ class PostponeHearingModal extends React.Component {
     const taskData = taskActionData(this.props);
 
     return (
-      <div>
+      <QueueFlowModal
+        title="Postpone Hearing"
+        submit={this.submit}
+        validateForm={this.validateForm}
+        pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}>
         <RadioField
           name="postponeAfterDispositionUpdateAction"
           hideLabel
@@ -195,7 +198,7 @@ class PostponeHearingModal extends React.Component {
           adminActionOptions={taskData ? taskData.options : []}
         />
         }
-      </div>
+      </QueueFlowModal>
     );
   };
 }
@@ -213,19 +216,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAppealDetails
 }, dispatch);
 
-const propsToText = (props) => {
-  const taskData = taskActionData(props);
-
-  const pathAfterSubmit = (taskData && taskData.redirect_after) || '/queue';
-
-  return {
-    title: 'Postpone Hearing',
-    pathAfterSubmit
-  };
-};
-
-export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(editModalBase(
-    PostponeHearingModal, { propsToText }
-  ))
-));
+export default connect(mapStateToProps, mapDispatchToProps)(PostponeHearingModal);
