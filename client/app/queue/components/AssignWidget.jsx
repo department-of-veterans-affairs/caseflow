@@ -21,7 +21,7 @@ import pluralize from 'pluralize';
 import COPY from '../../../COPY.json';
 import { sprintf } from 'sprintf-js';
 import { fullWidth } from '../constants';
-import editModalBase from './EditModalBase';
+import QueueFlowModal from './QueueFlowModal';
 
 const OTHER = 'OTHER';
 
@@ -138,7 +138,7 @@ class AssignWidget extends React.PureComponent {
       placeholderOther = COPY.ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS;
     }
 
-    return <React.Fragment>
+    const Widget = <React.Fragment>
       <div {...css({
         display: 'flex',
         alignItems: 'center',
@@ -189,6 +189,10 @@ class AssignWidget extends React.PureComponent {
         }
       </div>
     </React.Fragment>;
+
+    return this.props.isModal ? <QueueFlowModal title={COPY.ASSIGN_WIDGET_MODAL_TITLE} submit={this.submit}>
+      {Widget}
+    </QueueFlowModal> : Widget;
   }
 }
 
@@ -225,8 +229,4 @@ export default (connect(
   mapDispatchToProps
 )(AssignWidget));
 
-export const AssignWidgetModal = (connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(editModalBase(AssignWidget, { title: COPY.ASSIGN_WIDGET_MODAL_TITLE })));
-
+export const AssignWidgetModal = (connect(mapStateToProps, mapDispatchToProps)(AssignWidget));
