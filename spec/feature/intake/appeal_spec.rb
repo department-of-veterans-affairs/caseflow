@@ -657,20 +657,23 @@ feature "Appeal Intake" do
       create(
         :request_issue,
         decision_review: previous_appeal,
-        contested_rating_issue_reference_id: appeal_reference_id
+        contested_rating_issue_reference_id: appeal_reference_id,
+        closed_at: 2.months.ago
       )
     end
 
     let!(:previous_appeal_decision_issue) do
-      create(:decision_issue,
-             decision_review: previous_appeal,
-             request_issues: [previous_appeal_request_issue],
-             rating_issue_reference_id: appeal_reference_id,
-             participant_id: veteran.participant_id,
-             description: "appeal decision issue",
-             decision_text: "appeal decision issue",
-             benefit_type: "compensation",
-             caseflow_decision_date: profile_date)
+      create(
+        :decision_issue,
+        decision_review: previous_appeal,
+        request_issues: [previous_appeal_request_issue],
+        rating_issue_reference_id: appeal_reference_id,
+        participant_id: veteran.participant_id,
+        description: "appeal decision issue",
+        decision_text: "appeal decision issue",
+        benefit_type: "compensation",
+        caseflow_decision_date: profile_date
+      )
     end
 
     scenario "the issue is ineligible" do

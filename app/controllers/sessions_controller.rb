@@ -2,6 +2,7 @@
 
 class SessionsController < ApplicationController
   skip_before_action :verify_authentication
+  skip_before_action :deny_vso_access
 
   def new
     # :nocov:
