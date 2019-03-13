@@ -206,6 +206,14 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.regional_office.city)
         expect(page).to have_content(appeal.veteran_address_line_1)
       end
+      scenario "when there is no POA" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_content("Power of Attorney")
+        expect(page).to have_content(":")
+        expect(page).to have_content("Address: ,")
+        expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
+      end
     end
 
     context "when veteran is not in BGS" do
