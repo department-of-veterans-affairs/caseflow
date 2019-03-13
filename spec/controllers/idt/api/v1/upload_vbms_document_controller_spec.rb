@@ -101,12 +101,12 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, type: :controller do
           uploaded_document = instance_double(VbmsUploadedDocument)
           document_params = {
             appeal_id: appeal.id,
-            document_type: params[:document_type],
-            file: params[:file]
+            document_type: params[:document_type]
           }
           expect(VbmsUploadedDocument).to receive(:create).with(document_params).and_return(uploaded_document)
 
-          expect(UploadDocumentToVbmsJob).to receive(:perform_later).with(uploaded_document)
+          expect(UploadDocumentToVbmsJob)
+            .to receive(:perform_later).with(document: uploaded_document, file: params[:file])
 
           post :create, params: params
         end
