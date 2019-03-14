@@ -207,15 +207,15 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
 
-    const appealCancelled = taskList.find((task) => task.type === 'RootTask' && task.status === 'cancelled')
+    const appealCancelled = taskList.find((task) => task.type === 'RootTask' && task.status === 'cancelled');
     let timelineContainerText;
 
-    if (appealCancelled){
+    if (appealCancelled) {
       timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
-    } else if (appeal.decisionDate){
+    } else if (appeal.decisionDate) {
       timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
     } else {
-      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
     }
 
     return <React.Fragment key={appeal.externalId}>
