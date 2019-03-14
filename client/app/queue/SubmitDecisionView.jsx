@@ -16,7 +16,6 @@ import {
 } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
 
-import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
 import Checkbox from '../components/Checkbox';
 import TextField from '../components/TextField';
@@ -37,6 +36,7 @@ import {
 } from './constants';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import COPY from '../../COPY.json';
+import QueueFlowPage from './components/QueueFlowPage';
 
 class SubmitDecisionView extends React.PureComponent {
   componentDidMount = () => {
@@ -160,7 +160,8 @@ class SubmitDecisionView extends React.PureComponent {
       checkoutFlow,
       decision: {
         opts: decisionOpts
-      }
+      },
+      ...otherProps
     } = this.props;
 
     const decisionTypeDisplay = getDecisionTypeDisplay(checkoutFlow);
@@ -172,7 +173,12 @@ class SubmitDecisionView extends React.PureComponent {
       documentIdErrorMessage = COPY.FORM_ERROR_FIELD_INVALID;
     }
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      goToNextStep={this.goToNextStep}
+      getPrevStepUrl={this.getPrevStepUrl}
+      validateForm={this.validateForm}
+      {...otherProps}
+    >
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         Submit {decisionTypeDisplay} for Review
       </h1>
@@ -239,7 +245,7 @@ class SubmitDecisionView extends React.PureComponent {
         />
       </div>
       }
-    </React.Fragment>;
+    </QueueFlowPage>;
   };
 }
 
@@ -280,10 +286,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal
 }, dispatch);
 
-export default (connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(
-  decisionViewBase(SubmitDecisionView)
-)
-);
+export default (connect(mapStateToProps,mapDispatchToProps)(SubmitDecisionView));
