@@ -1033,6 +1033,24 @@ describe RequestIssue do
         expect(rating_request_issue.ineligible_reason).to eq("before_ama")
       end
 
+      context "decision review is a Supplemental Claim" do
+        let(:review) do
+          create(
+            :supplemental_claim,
+            veteran_file_number: veteran.file_number,
+            legacy_opt_in_approved: legacy_opt_in_approved
+          )
+        end
+
+        it "does not apply before AMA checks" do
+          nonrating_request_issue.decision_date = DecisionReview.ama_activation_date - 5.days
+          nonrating_request_issue.validate_eligibility!
+
+          expect(nonrating_request_issue.ineligible_reason).to_not eq("before_ama")
+          expect(nonrating_request_issue).to_not be_ineligible
+        end
+      end
+
       context "rating issue is from a RAMP decision" do
         let(:ramp_claim_id) { "ramp_claim_id" }
 
