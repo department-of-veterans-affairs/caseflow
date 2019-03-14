@@ -1047,7 +1047,7 @@ describe RequestIssue do
           nonrating_request_issue.validate_eligibility!
 
           expect(nonrating_request_issue.ineligible_reason).to_not eq("before_ama")
-          expect(nonrating_request_issue).to_not be_ineligible
+          expect(nonrating_request_issue).to be_eligible
         end
       end
 
