@@ -985,7 +985,8 @@ feature "Higher-Level Review" do
           end_product_establishment_id: nil,
           untimely_exemption: false,
           benefit_type: "compensation",
-          ineligible_reason: "untimely"
+          ineligible_reason: "untimely",
+          closed_status: :ineligible
         )
       ).to_not be_nil
 
@@ -1025,6 +1026,7 @@ feature "Higher-Level Review" do
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: nil,
                ineligible_reason: :before_ama,
+               closed_status: :ineligible,
                benefit_type: "compensation"
              )).to_not be_nil
 
@@ -1041,6 +1043,7 @@ feature "Higher-Level Review" do
                decision_review: higher_level_review,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
+               closed_status: :ineligible,
                end_product_establishment_id: nil,
                benefit_type: "compensation"
              )).to_not be_nil
