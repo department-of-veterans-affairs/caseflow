@@ -213,7 +213,6 @@ class Veteran < ApplicationRecord
     end
 
     def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
-      file_number_or_ssn.sub!(/[CS]$/, "")
       if file_number_or_ssn.to_s.length == 9
         find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
           find_by_ssn(file_number_or_ssn, sync_name: sync_name)
