@@ -592,7 +592,7 @@ feature "Supplemental Claim Edit issues" do
                assigned_at: last_week)
       end
 
-      fscenario "cancel all active tasks when all request issues are removed" do
+      scenario "cancel all active tasks when all request issues are removed" do
         visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
         # remove all request issues
         supplemental_claim.request_issues.length.times do
