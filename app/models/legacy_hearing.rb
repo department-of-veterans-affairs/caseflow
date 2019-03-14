@@ -70,7 +70,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def regional_office_key
-    return appeal&.regional_office_key if request_type == "T"
+    return appeal&.regional_office_key if request_type == "T" || hearing_day.nil?
 
     hearing_day&.regional_office
   end
