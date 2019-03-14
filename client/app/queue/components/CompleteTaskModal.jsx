@@ -16,8 +16,9 @@ import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
-import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
+
+import QueueFlowModal from './QueueFlowModal';
 
 const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
   mark_task_complete: {
@@ -116,8 +117,16 @@ class CompleteTaskModal extends React.Component {
   }
 
   render = () => {
-    return this.props.task ? SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].
-      getContent(this.getContentArgs()) : null;
+    return <QueueFlowModal
+      title={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].title({
+        teamName: (this.props.task && this.props.task.label) ? CO_LOCATED_ADMIN_ACTIONS[this.props.task.label] : ''
+      })}
+      button={SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].buttonText}
+      submit={this.submit}
+    >
+      {this.props.task ? SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].
+        getContent(this.getContentArgs()) : null}
+    </QueueFlowModal>;
   };
 }
 
@@ -132,17 +141,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
-const propsToText = (props) => {
-  return {
-    title: SEND_TO_LOCATION_MODAL_TYPE_ATTRS[props.modalType].title({
-      teamName: (props.task && props.task.label) ? CO_LOCATED_ADMIN_ACTIONS[props.task.label] : ''
-    }),
-    button: SEND_TO_LOCATION_MODAL_TYPE_ATTRS[props.modalType].buttonText
-  };
-};
-
-export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(editModalBase(
-    CompleteTaskModal, { propsToText }
-  ))
-));
+export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(CompleteTaskModal)));

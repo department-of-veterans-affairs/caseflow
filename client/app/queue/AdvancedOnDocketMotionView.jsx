@@ -10,8 +10,8 @@ import {
 import { setAppealAod } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
-import editModalBase from './components/EditModalBase';
 import { requestSave } from './uiReducer/uiActions';
+import QueueFlowModal from './components/QueueFlowModal';
 
 const GRANTED = 'granted';
 
@@ -61,7 +61,11 @@ class AdvancedOnDocketMotionView extends React.Component {
       highlightFormItems
     } = this.props;
 
-    return <React.Fragment>
+    return <QueueFlowModal
+      title={COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE}
+      submit={this.submit}
+      validateForm={this.validateForm}
+    >
       <h3>{COPY.ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN}</h3>
       <SearchableDropdown
         name="AOD Motion Disposition"
@@ -96,7 +100,7 @@ class AdvancedOnDocketMotionView extends React.Component {
           { label: 'Other',
             value: 'other' }
         ]} />
-    </React.Fragment>;
+    </QueueFlowModal>;
   }
 }
 
@@ -116,6 +120,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealAod
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AdvancedOnDocketMotionView, { title: COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE })
-));
+export default (connect(mapStateToProps, mapDispatchToProps)(AdvancedOnDocketMotionView));

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import COPY from '../../COPY.json';
-import editModalBase from './components/EditModalBase';
 import RadioField from '../components/RadioField';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -11,6 +10,7 @@ import {
 } from './uiReducer/uiActions';
 import TextField from '../components/TextField';
 import { withRouter } from 'react-router-dom';
+import QueueFlowModal from './components/QueueFlowModal';
 
 const VSO_CLASS = {
   national: 'national',
@@ -61,7 +61,11 @@ class AddVsoModal extends React.Component {
   changeClassification = (value) => this.setState({ classification: value });
 
   render = () => {
-    return <React.Fragment>
+    return <QueueFlowModal
+      title={COPY.TEAM_MANAGEMENT_ADD_VSO_MODAL_TITLE}
+      pathAfterSubmit="/team_management"
+      submit={this.submit}
+    >
       <TextField
         name={COPY.TEAM_MANAGEMENT_NAME_COLUMN_HEADING}
         value={this.state.name}
@@ -86,7 +90,7 @@ class AddVsoModal extends React.Component {
         options={Object.keys(VSO_CLASS).map((classification) => ({ value: classification,
           displayText: configForVsoClasses[classification].displayText }))}
       />
-    </React.Fragment>;
+    </QueueFlowModal>;
   };
 }
 
@@ -98,7 +102,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   showErrorMessage
 }, dispatch);
 
-const modalOptions = { title: COPY.TEAM_MANAGEMENT_ADD_VSO_MODAL_TITLE,
-  pathAfterSubmit: '/team_management' };
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(editModalBase(AddVsoModal, modalOptions)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddVsoModal));
