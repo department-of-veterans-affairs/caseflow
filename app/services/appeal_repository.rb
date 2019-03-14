@@ -54,7 +54,6 @@ class AppealRepository
     end
   end
 
-  # TODO: Change method name to make it clear it can miss.
   def self.vacols_records_for_appeals(ids)
     MetricsService.record("VACOLS: eager_load_legacy_appeals_batch",
                           service: :vacols,
