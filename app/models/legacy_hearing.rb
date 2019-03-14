@@ -66,10 +66,12 @@ class LegacyHearing < ApplicationRecord
   def hearing_day
     # access with caution. this retrieves the hearing_day_id from vacols
     # then looks up the HearingDay in Caseflow
-    @hearing_day ||= HearingDay.find(hearing_day_id)
+    @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
   end
 
   def regional_office_key
+    return appeal&.regional_office_key if request_type == "T"
+
     hearing_day&.regional_office
   end
 
