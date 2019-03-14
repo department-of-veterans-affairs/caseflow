@@ -183,7 +183,7 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
-  def cancel_active_tasks!
+  def cancel_active_tasks
     tasks.each(&:cancel_task_and_child_subtasks)
   end
 

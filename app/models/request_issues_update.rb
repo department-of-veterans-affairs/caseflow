@@ -28,7 +28,7 @@ class RequestIssuesUpdate < ApplicationRecord
         before_request_issue_ids: before_issues.map(&:id),
         after_request_issue_ids: after_issues.map(&:id)
       )
-      cancel_active_tasks!
+      cancel_active_tasks
       submit_for_processing!
       process_job
     end
@@ -131,7 +131,7 @@ class RequestIssuesUpdate < ApplicationRecord
     removed_issues.each(&:remove!)
   end
 
-  def cancel_active_tasks!
-    after_issues.empty? && review.cancel_active_tasks!
+  def cancel_active_tasks
+    after_issues.empty? && review.cancel_active_tasks
   end
 end
