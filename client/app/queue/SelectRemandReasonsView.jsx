@@ -7,7 +7,6 @@ import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
 import COPY from '../../COPY.json';
 
-import decisionViewBase from './components/DecisionViewBase';
 import IssueRemandReasonsOptions from './components/IssueRemandReasonsOptions';
 import {
   editStagedAppeal
@@ -19,6 +18,7 @@ import {
   PAGE_TITLES
 } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import QueueFlowPage from './components/QueueFlowPage.jsx';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 
@@ -97,7 +97,13 @@ class SelectRemandReasonsView extends React.Component {
     });
   }
 
-  render = () => <React.Fragment>
+  render = () => <QueueFlowPage
+    getNextStepUrl={this.getNextStepUrl}
+    goToNextStep={this.goToNextStep}
+    goToPrevStep={this.goToPrevStep}
+    validateForm={this.validateForm}
+    {...this.props}
+  >
     <h1 className="cf-push-left" {...css(fullWidth, smallBottomMargin)}>
       {this.getPageName()}
     </h1>
@@ -116,7 +122,7 @@ class SelectRemandReasonsView extends React.Component {
         ref={this.getChildRef}
         idx={idx} />
     )}
-  </React.Fragment>;
+  </QueueFlowPage>;
 }
 
 SelectRemandReasonsView.propTypes = {
@@ -142,4 +148,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   editStagedAppeal
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectRemandReasonsView));
+export default connect(mapStateToProps, mapDispatchToProps)(SelectRemandReasonsView);
