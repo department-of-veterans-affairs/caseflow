@@ -117,18 +117,15 @@ class Distribution < ApplicationRecord
   end
 
   def batch_size
-    team_batch_size = JudgeTeam.for_judge(judge)
-      .try(:non_admins)
-      .try(:count)
-      .try(:*, CASES_PER_ATTORNEY)
+    team_batch_size = JudgeTeam.for_judge(judge)&.non_admin_users&.size
 
-    return team_batch_size unless team_batch_size.nil? || team_batch_size == 0
+    return ALTERNATIVE_BATCH_SIZE if team_batch_size.nil? || team_batch_size == 0
 
-    ALTERNATIVE_BATCH_SIZE
+    team_batch_size * CASES_PER_ATTORNEY
   end
 
   def total_batch_size
-    JudgeTeam.all.map(&:non_admins).flatten.count * CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * CASES_PER_ATTORNEY
   end
 
   def distributed_cases_count
