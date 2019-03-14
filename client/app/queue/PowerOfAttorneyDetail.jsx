@@ -43,7 +43,8 @@ export class PowerOfAttorneyDetail extends React.PureComponent {
       { hasPowerOfAttorneyDetails &&
       <span>
         <p><strong>{powerOfAttorney.representative_type}:</strong> {powerOfAttorney.representative_name}</p>
-        <p><strong>Address:</strong> <Address address={powerOfAttorney.representative_address} /></p>
+        {powerOfAttorney.representative_address &&
+          <p><strong>Address:</strong> <Address address={powerOfAttorney.representative_address} /></p>}
         <p><em>{COPY.CASE_DETAILS_INCORRECT_POA}</em></p>
       </span>
       }
