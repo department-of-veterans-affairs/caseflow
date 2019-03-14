@@ -286,4 +286,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   deleteAppeal
 }, dispatch);
 
-export default (connect(mapStateToProps,mapDispatchToProps)(SubmitDecisionView));
+export default (connect(mapStateToProps, mapDispatchToProps)(SubmitDecisionView));

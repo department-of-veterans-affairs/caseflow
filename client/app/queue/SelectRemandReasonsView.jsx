@@ -18,7 +18,7 @@ import {
   PAGE_TITLES
 } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
-import QueueFlowPage from './components/QueueFlowPage.jsx';
+import QueueFlowPage from './components/QueueFlowPage';
 const subHeadStyling = css({ marginBottom: '2rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 
