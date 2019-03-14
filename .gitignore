@@ -32,6 +32,7 @@ tags
 !.codeclimate.yml
 !.dockerignore
 !.fasterer.yml
+!.reek.yml
 
 # React on Rails
 npm-debug.log*
