@@ -2,6 +2,7 @@ import * as React from 'react';
 import { formatDateStr } from '../../util/DateUtil';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import {
   taskById,
@@ -216,4 +217,5 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAppealDetails
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(PostponeHearingModal);
+export default (withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(PostponeHearingModal)));
