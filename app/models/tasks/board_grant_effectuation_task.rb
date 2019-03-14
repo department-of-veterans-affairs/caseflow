@@ -25,7 +25,8 @@ class BoardGrantEffectuationTask < DecisionReviewTask
   private
 
   def request_issues_by_benefit_type
-    appeal.request_issues.open
-      .select { |issue| issue.benefit_type == business_line.url }
+    appeal.request_issues.active_or_ineligible.select do |issue|
+      issue.benefit_type == business_line.url
+    end
   end
 end

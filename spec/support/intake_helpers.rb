@@ -147,7 +147,7 @@ module IntakeHelpers
   def add_untimely_exemption_response(yes_or_no, note = "I am an exemption note")
     expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
     find_all("label", text: yes_or_no).first.click
-    fill_in "Notes", with: note
+    fill_in "Notes", with: note if yes_or_no == "Yes"
     safe_click ".add-issue"
   end
 
@@ -618,7 +618,7 @@ module IntakeHelpers
     expect(updated_request_issue).to be_closed
 
     # check that new request issue is created contesting the decision issue
-    request_issues = decision_review.reload.open_request_issues
+    request_issues = decision_review.reload.request_issues.active_or_ineligible
     first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
     second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
 

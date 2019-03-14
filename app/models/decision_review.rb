@@ -100,7 +100,7 @@ class DecisionReview < ApplicationRecord
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: open_request_issues.map(&:ui_hash),
+      requestIssues: request_issues_ui_hash,
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
@@ -190,14 +190,9 @@ class DecisionReview < ApplicationRecord
   end
 
   def active_nonrating_request_issues
-    @active_nonrating_request_issues ||= RequestIssue.nonrating.open
+    @active_nonrating_request_issues ||= RequestIssue.nonrating.active
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
-      .select(&:status_active?)
-  end
-
-  def open_request_issues
-    request_issues.includes(:decision_review, :contested_decision_issue).open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
@@ -281,7 +276,17 @@ class DecisionReview < ApplicationRecord
     decision_event_date + 365.days if decision_event_date
   end
 
+  def find_or_build_request_issue_from_intake_data(data)
+    return request_issues.active_or_ineligible.find(data[:request_issue_id]) if data[:request_issue_id]
+
+    RequestIssue.from_intake_data(data, decision_review: self)
+  end
+
   private
+
+  def request_issues_ui_hash
+    request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible.map(&:ui_hash)
+  end
 
   def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass

@@ -8,6 +8,10 @@ describe Appeal do
 
   let!(:appeal) { create(:appeal) }
 
+  before do
+    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+  end
+
   context "priority and non-priority appeals" do
     let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
     let!(:aod_motion_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
@@ -118,13 +122,15 @@ describe Appeal do
   end
 
   context "ready appeals sorted by date" do
-    let!(:first_appeal) { create(:appeal, :with_tasks) }
-    let!(:second_appeal) { create(:appeal, :with_tasks) }
+    it "returns appeals with distribution tasks ordered by when they became ready for distribution" do
+      first_appeal = create(:appeal, :with_tasks)
+      first_appeal.tasks.each { |task| task.update!(assigned_at: 2.days.ago, type: "DistributionTask") }
+      second_appeal = create(:appeal, :with_tasks)
+      second_appeal.tasks.each { |task| task.update!(assigned_at: 5.days.ago, type: "DistributionTask") }
 
-    subject { Appeal.ordered_by_distribution_ready_date }
+      sorted_appeals = Appeal.ordered_by_distribution_ready_date
 
-    it "returns appeals ordered by when they became ready for distribution" do
-      expect(subject.find_index(first_appeal) < subject.find_index(second_appeal)).to eq(true)
+      expect(sorted_appeals[0]).to eq second_appeal
     end
   end
 
@@ -1243,12 +1249,21 @@ describe Appeal do
     let(:october_docket_date) { Time.new("2018", "10", "01").utc }
     let(:receipt_date) { october_docket_date + 20.days }
 
-    let(:promulgation_date1) { receipt_date - 50.days }
-    let(:request_issue1) { create(:request_issue) }
-    let(:promulgation_date2) { receipt_date - 60.days }
-    let(:request_issue2) { create(:request_issue) }
-    let(:promulgation_date3) { receipt_date - 100.days }
-    let(:removed_request_issue) { create(:request_issue, :removed, closed_at: receipt_date) }
+    let(:decision_date1) { receipt_date - 50.days }
+    let(:request_issue1) { create(:request_issue, :nonrating, decision_date: decision_date1) }
+
+    let(:decision_date2) { receipt_date - 60.days }
+    let(:request_issue2) { create(:request_issue, :nonrating, decision_date: decision_date2) }
+
+    let(:decision_date3) { receipt_date - 100.days }
+    let(:removed_request_issue) do
+      create(
+        :request_issue,
+        :nonrating,
+        decision_date: decision_date3,
+        closed_at: receipt_date
+      )
+    end
 
     let(:docket_type) { "direct_review" }
     let!(:appeal) do
@@ -1261,31 +1276,20 @@ describe Appeal do
     let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
 
     context "all request issues have a decision or promulgation date" do
-      before do
-        Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
-
-        allow(request_issue1).to receive(:decision_or_promulgation_date).and_return(promulgation_date1)
-        allow(request_issue2).to receive(:decision_or_promulgation_date).and_return(promulgation_date2)
-        allow(removed_request_issue).to receive(:decision_or_promulgation_date).and_return(promulgation_date3)
-      end
-
       it "is direct review, in Oct month, has docket switch deadline and is eligible to switch" do
         docket = appeal.docket_hash
 
         expect(docket).not_to be_nil
         expect(docket[:type]).to eq("directReview")
         expect(docket[:month]).to eq(october_docket_date.to_date)
-        expect(docket[:switchDueDate]).to eq((promulgation_date2 + 365.days))
+        expect(docket[:switchDueDate]).to eq((decision_date2 + 365.days).to_date)
         expect(docket[:eligibleToSwitch]).to eq(true)
       end
     end
 
     context "cannot get decision or promulgation date for an open request issue" do
-      before do
-        Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
-
-        allow(request_issue2).to receive(:decision_or_promulgation_date).and_return(promulgation_date2)
-      end
+      let(:decision_date1) { nil }
+      let(:decision_date3) { nil }
 
       it "is direct review, in Oct month, has no switch deadline and is not eligible to switch" do
         docket = appeal.docket_hash
