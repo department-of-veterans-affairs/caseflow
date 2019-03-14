@@ -46,7 +46,7 @@ class BGSSyncError < RuntimeError
       #  Similar to above, an outage of connection to BDN.
       #
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2926/
-      /Connection timed out - connect\(2\) for "bepprod\.vba\.va\.gov" port 443/,
+      /Connection timed out - connect/,
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/2888/
       /Connection refused - connect\(2\) for "bepprod\.vba\.va\.gov" port 443/,
       # Example: https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3128/
