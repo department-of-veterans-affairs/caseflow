@@ -708,7 +708,7 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               end_product_establishment_id: nil
+               end_product_establishment_id: end_product_establishment.id
              )).to be_eligible
 
       expect(RequestIssue.find_by(
@@ -722,7 +722,7 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
                nonrating_issue_description: "A nonrating issue before AMA",
-               end_product_establishment_id: nil
+               end_product_establishment_id: non_rating_end_product_establishment.id
              )).to be_eligible
 
       duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
