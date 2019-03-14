@@ -41,8 +41,6 @@ class Review extends React.PureComponent {
     default:
     }
 
-    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
-
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 
@@ -65,11 +63,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
-      { legacyOptInEnabled && <LegacyOptInApproved
+      <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
-      /> }
+      />
     </div>;
   }
 }
