@@ -8,9 +8,15 @@ def update_non_existent_hearing_task_associations
     hearings = VACOLS::CaseHearing.where(folder_nr: group, hearing_disp: nil)
   end.flatten
 
+  logs = []
+
   hearings.each do |hearing|
-    legacy_hearing = LegacyHearing.assign_or_create_from_vacols_record(hearing)
-    legacy_hearing.save
+    legacy_hearing = LegacyHearing.find_by(vacols_id: hearing.hearing_pkseq)
+
+    if legacy_hearing.nil?
+      logs << "no legacy_hearing for vacols hearing #{hearing.hearing_pkseq}"
+      next
+    end
 
     hearing_tasks = HearingTask
       .where(
@@ -23,10 +29,12 @@ def update_non_existent_hearing_task_associations
     hearing_task = hearing_tasks.first
 
     if hearing_task.hearing_task_association.nil?
-      HearingTaskAssociation.create(
+      HearingTaskAssociation.create!(
         hearing: legacy_hearing,
         hearing_task: hearing_task
       )
+
+      logs << "associated hearing_task #{hearing_task.id} with legacy_hearing #{legacy_hearing.id}"
     end
   end
 end
@@ -47,8 +55,7 @@ def update_stale_hearing_task_associations
   )
 
   new_hearing_task_hearings = new_vacols_hearings.map do |hearing|
-    legacy_hearing = LegacyHearing.assign_or_create_from_vacols_record(hearing)
-    legacy_hearing.save
+    LegacyHearing.find_by(vacols_id: hearing.hearing_pkseq)
   end
 
   new_hearing_task_hearings.each do |hearing|
