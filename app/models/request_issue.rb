@@ -156,6 +156,10 @@ class RequestIssue < ApplicationRecord
       active.or(ineligible)
     end
 
+    def active_or_decided
+      active.or(decided).order(id: :asc)
+    end
+
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,

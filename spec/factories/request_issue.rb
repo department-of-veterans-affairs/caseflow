@@ -26,6 +26,11 @@ FactoryBot.define do
       closed_status { :removed }
     end
 
+    trait :decided do
+      closed_at { Time.zone.now }
+      closed_status { :decided }
+    end
+
     trait :with_rating_decision_issue do
       transient do
         veteran_participant_id { nil }
