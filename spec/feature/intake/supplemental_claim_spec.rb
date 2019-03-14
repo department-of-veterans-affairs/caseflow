@@ -703,6 +703,7 @@ feature "Supplemental Claim Intake" do
                decision_review: supplemental_claim,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: nil,
+               closed_status: :ineligible,
                ineligible_reason: :before_ama
              )).to_not be_nil
 
@@ -717,6 +718,7 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
                nonrating_issue_description: "A nonrating issue before AMA",
+               closed_status: :ineligible,
                ineligible_reason: :before_ama,
                end_product_establishment_id: nil
              )).to_not be_nil
@@ -935,6 +937,7 @@ feature "Supplemental Claim Intake" do
 
           expect(RequestIssue.find_by(
                    contested_issue_description: "Left knee granted",
+                   closed_status: :ineligible,
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
