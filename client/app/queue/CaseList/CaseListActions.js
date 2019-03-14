@@ -81,6 +81,15 @@ export const fetchAppealUsingInvalidVeteranIdFailed = (searchQuery) => ({
   }
 });
 
+export const fetchAppealUsingBackendError = (searchQuery, error) => ({
+  type: Constants.SEARCH_RESULTED_IN_ERROR,
+  payload: {
+    errorType: SEARCH_ERROR_FOR.BACKEND_ERROR,
+    searchQuery,
+    error
+  }
+});
+
 export const fetchAppealsUsingVeteranId = (searchQuery) =>
   (dispatch) => new Promise((resolve, reject) => {
     if (!searchQuery.length) {
@@ -127,8 +136,17 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
 
         return resolve(caseflowVeteranId);
 
-      }, () => {
-        dispatch(fetchAppealUsingVeteranIdFailed(searchQuery));
+      }).
+      catch((error) => {
+        const backendError = error.response.body;
+
+        if (backendError) {
+          const errorMessage = backendError.errors[0].detail;
+
+          dispatch(fetchAppealUsingBackendError(searchQuery, errorMessage));
+        } else {
+          dispatch(fetchAppealUsingVeteranIdFailed(searchQuery));
+        }
 
         return reject();
       });

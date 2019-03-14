@@ -25,5 +25,6 @@
     "SEND_TO_TEAM": { "label": "Send to team", "value": "modal/send_colocated_task" },
     "SEND_TO_TRANSLATION": { "label": "Assign to Translation team", "value": "modal/assign_to_translation_team", "func": "assign_to_translation_team_data" },
     "SUBMIT_OMO_REQUEST_FOR_REVIEW": { "label": "Medical Request Ready for Review", "value": "omo_request/submit" },
-    "WITHDRAW_HEARING": { "label": "Withdraw hearing", "value": "modal/cancel_task", "func": "withdraw_hearing_data" }
+    "WITHDRAW_HEARING": { "label": "Withdraw hearing", "value": "modal/cancel_task", "func": "withdraw_hearing_data" },
+    "POSTPONE_HEARING": { "label": "Postpone hearing", "value": "modal/postpone_hearing", "func": "add_schedule_hearing_task_admin_actions_data" }
 }

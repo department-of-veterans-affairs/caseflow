@@ -12,9 +12,9 @@ import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
-import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import QueueFlowModal from './QueueFlowModal';
 
 class CancelTaskModal extends React.Component {
   submit = () => {
@@ -29,6 +29,7 @@ class CancelTaskModal extends React.Component {
         }
       }
     };
+
     const hearingScheduleLink = taskActionData(this.props).back_to_hearing_schedule ?
       <p>
         <Link href={`/hearings/schedule/assign?roValue=${hearingDay.regionalOffice}`}>Back to Hearing Schedule </Link>
@@ -49,7 +50,13 @@ class CancelTaskModal extends React.Component {
   render = () => {
     const taskData = taskActionData(this.props);
 
-    return <div>{taskData && taskData.modal_body}</div>;
+    return <QueueFlowModal
+      title={taskData ? taskData.modal_title : ''}
+      pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}
+      submit={this.submit}
+    >
+      <div>{taskData && taskData.modal_body}</div>
+    </QueueFlowModal>;
   };
 }
 
@@ -65,18 +72,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
-const propsToText = (props) => {
-  const taskData = taskActionData(props);
-  const pathAfterSubmit = (taskData && taskData.redirect_after) || '/queue';
-
-  return {
-    title: taskData ? taskData.modal_title : '',
-    pathAfterSubmit
-  };
-};
-
 export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(editModalBase(
-    CancelTaskModal, { propsToText }
-  ))
+  connect(mapStateToProps, mapDispatchToProps)(
+    CancelTaskModal
+  )
 ));
