@@ -27,7 +27,7 @@ import {
   marginTop,
   COLOCATED_HOLD_DURATIONS
 } from './constants';
-import QueueFlowPage from './components/QueueFlowPage.jsx';
+import QueueFlowPage from './components/QueueFlowPage';
 
 class ColocatedPlaceHoldView extends React.Component {
   constructor(props) {
