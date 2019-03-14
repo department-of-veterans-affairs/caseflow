@@ -17,7 +17,6 @@ import {
   onHearingOptionalTime
 } from '../../components/common/actions';
 import { fullWidth } from '../constants';
-import editModalBase from './EditModalBase';
 import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
@@ -39,6 +38,7 @@ import _ from 'lodash';
 import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING, TIME_OPTIONS } from '../../hearings/constants/constants';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import moment from 'moment';
+import QueueFlowModal from './QueueFlowModal';
 
 const formStyling = css({
   '& .cf-form-radio-option:not(:last-child)': {
@@ -319,7 +319,12 @@ class AssignHearingModal extends React.PureComponent {
     }
 
     /* eslint-disable camelcase */
-    return <React.Fragment>
+    return <QueueFlowModal
+      submit={this.submit}
+      validateForm={this.validateForm}
+      title="Schedule Veteran"
+      button="Schedule"
+    >
       <div {...fullWidth}>
         <p>
           Veteran Address<br />
@@ -371,7 +376,7 @@ class AssignHearingModal extends React.PureComponent {
             label })}
           hideLabel />}
       </div>
-    </React.Fragment>;
+    </QueueFlowModal>;
   }
 }
 
@@ -411,8 +416,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(editModalBase(
-    AssignHearingModal, { title: 'Schedule Veteran',
-      button: 'Schedule' }
-  ))
-));
+  connect(mapStateToProps, mapDispatchToProps)(AssignHearingModal)));
