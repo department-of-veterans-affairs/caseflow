@@ -64,7 +64,17 @@ class ColocatedTask < Task
                                       ])
   end
 
-  # rubocop:disable Metrics/AbcSize
+  def handle_schedule_hearing(actions)
+    if !appeal.is_a?(LegacyAppeal)
+      return actions
+    end
+
+    actions.shift
+    actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h)
+    actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
+    actions
+  end
+
   def available_actions_with_conditions(core_actions)
     if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
@@ -75,9 +85,7 @@ class ColocatedTask < Task
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
 
     if action == "schedule_hearing"
-      core_actions.shift
-      core_actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h)
-      core_actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
+      core_actions = handle_schedule_hearing(core_actions)
     end
 
     if action == "translation" && appeal.is_a?(Appeal)
@@ -87,7 +95,6 @@ class ColocatedTask < Task
     core_actions
   end
 
-  # rubocop:enable Metrics/AbcSize
   def actions_available?(_user)
     active?
   end
