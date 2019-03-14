@@ -26,6 +26,14 @@ module DateTimeHelper
   end
 end
 
+class Time
+  # rubocop:disable Naming/MethodName
+  def mdY
+    strftime("%m/%d/%Y")
+  end
+  # rubocop:enable Naming/MethodName
+end
+
 class Date
   # rubocop:disable Naming/MethodName
   def mdY

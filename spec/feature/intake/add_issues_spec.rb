@@ -46,6 +46,69 @@ feature "Intake Add Issues Page" do
     end
   end
 
+  context "for an Appeal" do
+    context "when there is an invalid veteran" do
+      let!(:veteran) do
+        Generators::Veteran.build(
+          file_number: "25252525",
+          sex: nil,
+          ssn: nil,
+          country: nil,
+          address_line1: "this address is more than 20 chars"
+        )
+      end
+
+      scenario "check invalid veteran alert if any added issues are a VBMS benefit type" do
+        start_appeal(veteran)
+        visit "/intake"
+        click_intake_continue
+        expect(page).to have_current_path("/intake/add_issues")
+
+        # Add issue that is not a VBMS issue
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          benefit_type: "Education",
+          category: "Accrued",
+          description: "Description for Accrued",
+          date: 1.day.ago.mdY
+        )
+
+        expect(page).to have_content("Description for Accrued")
+        expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to have_button("Establish appeal", disabled: false)
+
+        # Add a rating issue
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
+        expect(page).to have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+        expect(page).to have_content(
+          "the corporate database, then retry establishing the EP in Caseflow: ssn, country."
+        )
+        expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
+        expect(page).to have_button("Establish appeal", disabled: true)
+
+        click_remove_intake_issue_by_text("Left knee granted")
+        expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+
+        # Add a compensation nonrating issue
+        click_intake_add_issue
+        click_intake_no_matching_issues
+        add_intake_nonrating_issue(
+          benefit_type: "Compensation",
+          category: "Apportionment",
+          description: "Description for Apportionment",
+          date: 2.days.ago.mdY
+        )
+
+        expect(page).to have_content("Description for Apportionment")
+        expect(page).to have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to have_button("Establish appeal", disabled: true)
+      end
+    end
+  end
+
   context "check that none of these match works for VACOLS issue" do
     before do
       setup_legacy_opt_in_appeals(veteran.file_number)

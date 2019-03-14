@@ -105,6 +105,8 @@ class DecisionReview < ApplicationRecord
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
       editIssuesUrl: caseflow_only_edit_issues_url
+      # veteranValid: veteran&.valid?(:bgs),
+      # veteranInvalidFields: intake.veteran_invalid_fields
     }
   end
 

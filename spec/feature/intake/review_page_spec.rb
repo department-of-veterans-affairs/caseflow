@@ -45,10 +45,6 @@ feature "Intake Review Page" do
       )
     end
 
-    let!(:current_user) do
-      User.authenticate!(roles: ["Admin Intake"])
-    end
-
     scenario "Higher level review shows alert on Review page" do
       check_invalid_veteran_alert_on_review_page("higher_level_review")
     end

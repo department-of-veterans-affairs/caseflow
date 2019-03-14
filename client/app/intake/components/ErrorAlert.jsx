@@ -23,11 +23,15 @@ const addressTooLongMessage = <Fragment>
   <BareList items={addressTips} ListElementComponent="ul" />
 </Fragment>;
 
-export const invalidVeteranInstructions = (searchErrorData) => <Fragment>
-  { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
-    missingFieldsMessage(searchErrorData.veteranMissingFields) }
-  { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
-</Fragment>;
+export const invalidVeteranInstructions = (searchErrorData) => {
+  if (searchErrorData) {
+    return <Fragment>
+      { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
+        missingFieldsMessage(searchErrorData.veteranMissingFields) }
+      { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
+    </Fragment>;
+  }
+};
 
 export default class ErrorAlert extends React.PureComponent {
   render() {
@@ -55,13 +59,13 @@ export default class ErrorAlert extends React.PureComponent {
           </Fragment>
         )
       },
-      veteran_not_valid: {
-        title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
-        body: invalidVeteranInstructions(this.props.errorData)
-      },
       default: {
         title: 'Something went wrong',
         body: 'Please try again. If the problem persists, please contact Caseflow support.'
+      },
+      veteran_not_valid: {
+        title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
+        body: invalidVeteranInstructions(this.props.errorData)
       }
     }[this.props.errorCode || 'default'];
 
