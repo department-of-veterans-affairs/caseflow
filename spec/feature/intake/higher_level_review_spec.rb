@@ -856,7 +856,6 @@ feature "Higher-Level Review" do
       add_intake_rating_issue("Really old injury")
       add_untimely_exemption_response("No")
       expect(page).to have_content("5 issues")
-      expect(page).to have_content("I am an exemption note")
       expect(page).to have_content("5. Really old injury #{ineligible_constants.untimely}")
 
       # add untimely nonrating request issue
@@ -867,9 +866,8 @@ feature "Higher-Level Review" do
         description: "Another Description for Active Duty Adjustments",
         date: "04/19/2016"
       )
-      add_untimely_exemption_response("No", "I am a nonrating exemption note")
+      add_untimely_exemption_response("No")
       expect(page).to have_content("6 issues")
-      expect(page).to have_content("I am a nonrating exemption note")
       expect(page).to have_content(
         "Another Description for Active Duty Adjustments #{ineligible_constants.untimely}"
       )
@@ -986,9 +984,9 @@ feature "Higher-Level Review" do
           contested_issue_description: "Really old injury",
           end_product_establishment_id: nil,
           untimely_exemption: false,
-          untimely_exemption_notes: "I am an exemption note",
           benefit_type: "compensation",
-          ineligible_reason: "untimely"
+          ineligible_reason: "untimely",
+          closed_status: :ineligible
         )
       ).to_not be_nil
 
@@ -1028,6 +1026,7 @@ feature "Higher-Level Review" do
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: nil,
                ineligible_reason: :before_ama,
+               closed_status: :ineligible,
                benefit_type: "compensation"
              )).to_not be_nil
 
@@ -1044,6 +1043,7 @@ feature "Higher-Level Review" do
                decision_review: higher_level_review,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
+               closed_status: :ineligible,
                end_product_establishment_id: nil,
                benefit_type: "compensation"
              )).to_not be_nil

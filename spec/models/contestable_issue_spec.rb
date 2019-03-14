@@ -108,7 +108,7 @@ describe ContestableIssue do
         decision_issue: decision_issue,
         approx_decision_date: caseflow_decision_date,
         description: decision_issue.description,
-        source_request_issues: decision_issue.request_issues.open,
+        source_request_issues: decision_issue.request_issues.active,
         contesting_decision_review: decision_review,
         source_review_type: "Appeal"
       )

@@ -508,7 +508,6 @@ feature "Appeal Intake" do
     add_intake_rating_issue("Really old injury")
     add_untimely_exemption_response("No")
     expect(page).to have_content("5 issues")
-    expect(page).to have_content("I am an exemption note")
     expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
     expect_ineligible_issue(5)
 
@@ -520,9 +519,8 @@ feature "Appeal Intake" do
       description: "Another Description for Active Duty Adjustments",
       date: untimely_date.mdY
     )
-    add_untimely_exemption_response("No", "I am an untimely exemption")
+    add_untimely_exemption_response("No")
     expect(page).to have_content("6 issues")
-    expect(page).to have_content("I am an untimely exemption")
     expect(page).to have_content(
       "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
@@ -584,8 +582,7 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              decision_review: appeal,
              contested_issue_description: "Really old injury",
-             untimely_exemption: false,
-             untimely_exemption_notes: "I am an exemption note"
+             untimely_exemption: false
            )).to_not be_nil
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -618,7 +615,8 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              decision_review: appeal,
              contested_issue_description: "Non-RAMP Issue before AMA Activation",
-             ineligible_reason: :before_ama
+             ineligible_reason: :before_ama,
+             closed_status: :ineligible
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
@@ -631,7 +629,8 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              decision_review: appeal,
              nonrating_issue_description: "A nonrating issue before AMA",
-             ineligible_reason: :before_ama
+             ineligible_reason: :before_ama,
+             closed_status: :ineligible
            )).to_not be_nil
 
     expect(RequestIssue.find_by(

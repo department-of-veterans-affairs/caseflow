@@ -3,12 +3,9 @@
 require "rails_helper"
 
 RSpec.feature "Schedule Veteran For A Hearing" do
-  let!(:hearings_user) do
-    create(:hearings_management)
-  end
-
   let!(:current_user) do
-    User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
+    user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
+    User.authenticate!(user: user)
   end
 
   let(:other_user) { create(:user) }

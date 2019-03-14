@@ -19,6 +19,7 @@ describe RequestIssue do
   let(:vacols_sequence_id) { nil }
   let(:closed_at) { nil }
   let(:closed_status) { nil }
+  let(:ineligible_reason) { nil }
 
   let(:review) do
     create(
@@ -71,7 +72,8 @@ describe RequestIssue do
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id,
       closed_at: closed_at,
-      closed_status: closed_status
+      closed_status: closed_status,
+      ineligible_reason: ineligible_reason
     )
   end
 
@@ -103,6 +105,23 @@ describe RequestIssue do
 
   let(:associated_claims) { [] }
 
+  context "#save" do
+    subject { rating_request_issue.save }
+
+    context "when ineligible_reason is set" do
+      let(:ineligible_reason) { "appeal_to_appeal" }
+
+      it "closes the issue as ineligible" do
+        subject
+
+        expect(rating_request_issue).to have_attributes(
+          closed_at: Time.zone.now,
+          closed_status: "ineligible"
+        )
+      end
+    end
+  end
+
   context ".requires_processing" do
     before do
       rating_request_issue.submit_for_processing!(delay: 1.day)
@@ -117,6 +136,18 @@ describe RequestIssue do
       todo = RequestIssue.requires_processing
       expect(todo).to_not include(rating_request_issue)
       expect(todo).to include(nonrating_request_issue)
+    end
+
+    it "keeps trying for #{RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS} days" do
+      Timecop.travel(Time.zone.now + RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS.days - 1.day) do
+        expect(nonrating_request_issue.expired_without_processing?).to eq(false)
+      end
+    end
+
+    it "gives up after #{RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS} days" do
+      Timecop.travel(Time.zone.now + RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS.days) do
+        expect(nonrating_request_issue.expired_without_processing?).to eq(true)
+      end
     end
   end
 
@@ -149,18 +180,8 @@ describe RequestIssue do
     end
   end
 
-  context ".not_deleted" do
-    subject { RequestIssue.not_deleted }
-
-    let!(:deleted_request_issue) { create(:request_issue, decision_review: nil) }
-
-    it "filters by whether it is associated with a decision_review" do
-      expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
-    end
-  end
-
-  context ".open" do
-    subject { RequestIssue.open }
+  context ".active" do
+    subject { RequestIssue.active }
 
     let!(:closed_request_issue) { create(:request_issue, :removed) }
 
