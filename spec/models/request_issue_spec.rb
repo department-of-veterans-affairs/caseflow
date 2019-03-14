@@ -19,6 +19,7 @@ describe RequestIssue do
   let(:vacols_sequence_id) { nil }
   let(:closed_at) { nil }
   let(:closed_status) { nil }
+  let(:ineligible_reason) { nil }
 
   let(:review) do
     create(
@@ -71,7 +72,8 @@ describe RequestIssue do
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id,
       closed_at: closed_at,
-      closed_status: closed_status
+      closed_status: closed_status,
+      ineligible_reason: ineligible_reason
     )
   end
 
@@ -102,6 +104,23 @@ describe RequestIssue do
   end
 
   let(:associated_claims) { [] }
+
+  context "#save" do
+    subject { rating_request_issue.save }
+
+    context "when ineligible_reason is set" do
+      let(:ineligible_reason) { "appeal_to_appeal" }
+
+      it "closes the issue as ineligible" do
+        subject
+
+        expect(rating_request_issue).to have_attributes(
+          closed_at: Time.zone.now,
+          closed_status: "ineligible"
+        )
+      end
+    end
+  end
 
   context ".requires_processing" do
     before do
@@ -168,6 +187,20 @@ describe RequestIssue do
 
     it "filters by whether the closed_at is nil" do
       expect(subject.find_by(id: closed_request_issue.id)).to be_nil
+    end
+  end
+
+  context ".active_or_decided" do
+    subject { RequestIssue.active_or_decided }
+
+    let!(:decided_request_issue) { create(:request_issue, :decided) }
+    let!(:removed_request_issue) { create(:request_issue, :removed) }
+    let!(:open_eligible_request_issue) { create(:request_issue) }
+
+    it "returns open eligible or closed decided issues" do
+      expect(subject.find_by(id: removed_request_issue.id)).to be_nil
+      expect(subject.find_by(id: decided_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: open_eligible_request_issue.id)).to_not be_nil
     end
   end
 

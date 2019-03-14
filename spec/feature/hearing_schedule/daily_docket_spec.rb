@@ -100,10 +100,15 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can only update notes" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to_not have_content("Edit Hearing Day")
+      expect(page).to_not have_content("Lock Hearing Day")
+      expect(page).to_not have_content("Hearing Details")
       expect(page).to have_field("Transcript Requested", disabled: true, visible: false)
       find(".dropdown-Disposition").find(".is-disabled")
       fill_in "Notes", with: "This is a note about the hearing!"
       click_button("Save")
+
+      expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("This is a note about the hearing!")
     end
   end

@@ -183,6 +183,10 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
+  def cancel_active_tasks
+    tasks.each(&:cancel_task_and_child_subtasks)
+  end
+
   def contestable_issues
     return contestable_issues_from_decision_issues unless can_contest_rating_issues?
 
@@ -274,6 +278,12 @@ class DecisionReview < ApplicationRecord
 
   def due_date_to_appeal_decision
     decision_event_date + 365.days if decision_event_date
+  end
+
+  def find_or_build_request_issue_from_intake_data(data)
+    return request_issues.active_or_ineligible.find(data[:request_issue_id]) if data[:request_issue_id]
+
+    RequestIssue.from_intake_data(data, decision_review: self)
   end
 
   private

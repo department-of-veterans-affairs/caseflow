@@ -33,7 +33,8 @@ export class VeteranDetail extends React.PureComponent {
       full_name,
       gender,
       date_of_birth: dob,
-      date_of_death: dod
+      date_of_death: dod,
+      regional_office: regionalOffice
     } = this.props.veteranInfo.veteran;
 
     const details = [{
@@ -69,6 +70,15 @@ export class VeteranDetail extends React.PureComponent {
       details.push({
         label: 'Mailing Address',
         value: <Address address={address} />
+      });
+    }
+
+    if (regionalOffice) {
+      const { city, key } = regionalOffice;
+
+      details.push({
+        label: 'Regional Office',
+        value: `${city} (${key.replace('RO', '')})`
       });
     }
 
