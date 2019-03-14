@@ -102,6 +102,14 @@ class RampReview < ApplicationRecord
     issues.destroy_all unless issues.empty?
   end
 
+  def backfill_end_product_establishment
+    return if end_product_establishment.id
+    return unless established_at
+    return unless end_product_establishment.preexisting_end_products.count == 1
+
+    end_product_establishment.update!(reference_id: end_product_establishment.preexisting_end_product.claim_id)
+  end
+
   private
 
   def preexisting_end_product_establishment
@@ -127,20 +135,13 @@ class RampReview < ApplicationRecord
     )
   end
 
-  def backfill_end_product_establishment
-    return if end_product_establishment.id
-    return unless end_product_establishment.preexisting_end_products.count == 1
-
-    end_product_establishment.update!(reference_id: end_product_establishment.preexisting_end_product.claim_id)
-  end
-
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   def connect_end_product!
     end_product_establishment.update!(reference_id: end_product_establishment.preexisting_end_product.claim_id)
-    
+
     update!(
       established_at: Time.zone.now
     ) && :connected
