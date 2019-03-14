@@ -7,6 +7,9 @@ Rails.application.configure do
   end
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # workaround https://groups.google.com/forum/#!topic/rubyonrails-security/IsQKvDqZdKw
+  config.secret_key_base = SecureRandom.hex(64)
+
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.

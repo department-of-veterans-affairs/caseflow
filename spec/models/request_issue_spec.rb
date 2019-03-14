@@ -19,6 +19,7 @@ describe RequestIssue do
   let(:vacols_sequence_id) { nil }
   let(:closed_at) { nil }
   let(:closed_status) { nil }
+  let(:ineligible_reason) { nil }
 
   let(:review) do
     create(
@@ -71,7 +72,8 @@ describe RequestIssue do
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id,
       closed_at: closed_at,
-      closed_status: closed_status
+      closed_status: closed_status,
+      ineligible_reason: ineligible_reason
     )
   end
 
@@ -102,6 +104,23 @@ describe RequestIssue do
   end
 
   let(:associated_claims) { [] }
+
+  context "#save" do
+    subject { rating_request_issue.save }
+
+    context "when ineligible_reason is set" do
+      let(:ineligible_reason) { "appeal_to_appeal" }
+
+      it "closes the issue as ineligible" do
+        subject
+
+        expect(rating_request_issue).to have_attributes(
+          closed_at: Time.zone.now,
+          closed_status: "ineligible"
+        )
+      end
+    end
+  end
 
   context ".requires_processing" do
     before do
