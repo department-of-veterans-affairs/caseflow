@@ -166,7 +166,7 @@ class RequestIssue < ApplicationRecord
     end
 
     def active_or_decided
-      active.or(decided).sort_by(&:id)
+      active.or(decided).order(id: :asc)
     end
 
     def unidentified
