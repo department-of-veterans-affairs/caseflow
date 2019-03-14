@@ -21,7 +21,8 @@ class AppealRepository
     # Make a single request to VACOLS to grab all of the rows we want here?
     legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
 
-    # Load the VACOLS case records associated with legacy tasks into memory in a single batch.
+    # Load the VACOLS case records associated with legacy tasks into memory in a single batch. Ignore appeals that no
+    # longer appear in VACOLS.
     cases = (vacols_records_for_appeals(legacy_appeal_ids) || []).group_by(&:id)
 
     aod = legacy_appeal_ids.in_groups_of(1000, false).reduce({}) do |acc, group|
@@ -32,28 +33,33 @@ class AppealRepository
     tasks.each do |t|
       next unless t.appeal.is_a?(LegacyAppeal)
 
-      case_record = cases[t.appeal.vacols_id.to_s].first
+      case_record = cases[t.appeal.vacols_id.to_s]&.first
       set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
       t.appeal.aod = aod[t.appeal.vacols_id.to_s]
     end
   end
 
-  def self.find_case_record(id)
+  def self.find_case_record(id, ignore_misses: false)
     # Oracle cannot load more than 1000 records at a time
     if id.is_a?(Array)
       id.in_groups_of(1000, false).map do |group|
-        VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(group)
+        if ignore_misses
+          VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find_by(bfkey: group)
+        else
+          VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(group)
+        end
       end.flatten
     else
       VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(id)
     end
   end
 
+  # TODO: Change method name to make it clear it can miss.
   def self.vacols_records_for_appeals(ids)
     MetricsService.record("VACOLS: eager_load_legacy_appeals_batch",
                           service: :vacols,
                           name: "eager_load_legacy_appeals_batch") do
-      find_case_record(ids)
+      find_case_record(ids, ignore_misses: true)
     end
   end
 

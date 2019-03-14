@@ -355,6 +355,19 @@ RSpec.feature "Task queue" do
     it "shows queue switcher dropdown" do
       expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
     end
+
+    context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
+      let(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      let!(:task) { FactoryBot.create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization) }
+
+      it "loads the task queue successfully" do
+        # Re-navigate to the organization queue so we pick up the above task creation.
+        visit(organization.path)
+
+        expect(page).to have_content(legacy_appeal.veteran_file_number)
+        expect(page).to_not have_content("Information cannot be found")
+      end
+    end
   end
 
   describe "VLJ support staff task action" do
@@ -525,6 +538,23 @@ RSpec.feature "Task queue" do
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
         expect(page.current_path).to eq("/queue")
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+    end
+
+    context "when a task is associated with a LegacyAppeal that has been removed from VACOLS" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      let!(:task) { FactoryBot.create(:generic_task, appeal: legacy_appeal, assigned_to: user) }
+
+      before do
+        User.authenticate!(user: user)
+      end
+
+      it "loads the task queue successfully" do
+        visit("/queue")
+
+        expect(page).to have_content(legacy_appeal.veteran_file_number)
+        expect(page).to_not have_content("Information cannot be found")
       end
     end
   end
