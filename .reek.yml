@@ -1,0 +1,23 @@
+### Generic smell configuration
+detectors:
+  # You can disable smells completely
+  IrresponsibleModule:
+    enabled: false
+  NilCheck:
+    enabled: false
+
+### Directory specific configuration
+# You can configure smells on a per-directory base.
+# E.g. the classic Rails case: controllers smell of NestedIterators (see /docs/Nested-Iterators.md) and
+# helpers smell of UtilityFunction (see docs/Utility-Function.md)
+# Note that we only allow configuration on a directory level, not a file level, so all paths have to point to directories.
+directories:
+  "app/controllers":
+    InstanceVariableAssumption:
+      enabled: false
+
+### Excluding directories
+# Directories and files below will not be scanned at all
+exclude_paths:
+  - db/migrate
+  - spec
