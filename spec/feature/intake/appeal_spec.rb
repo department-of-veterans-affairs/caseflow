@@ -615,7 +615,8 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              decision_review: appeal,
              contested_issue_description: "Non-RAMP Issue before AMA Activation",
-             ineligible_reason: :before_ama
+             ineligible_reason: :before_ama,
+             closed_status: :ineligible
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
@@ -628,7 +629,8 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              decision_review: appeal,
              nonrating_issue_description: "A nonrating issue before AMA",
-             ineligible_reason: :before_ama
+             ineligible_reason: :before_ama,
+             closed_status: :ineligible
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
