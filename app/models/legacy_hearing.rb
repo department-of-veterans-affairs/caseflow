@@ -11,7 +11,7 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative, :hearing_day_id
-  vacols_attr_accessor :regional_office_key, :master_record
+  vacols_attr_accessor :master_record
   vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
   vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
   vacols_attr_accessor :appellant_zip, :appellant_country, :room, :bva_poc, :judge_id
@@ -63,6 +63,34 @@ class LegacyHearing < ApplicationRecord
     vacols_id
   end
 
+  def hearing_day
+    # access with caution. this retrieves the hearing_day_id from vacols
+    # then looks up the HearingDay in Caseflow
+    @hearing_day ||= HearingDay.find(hearing_day_id)
+  end
+
+  def regional_office_key
+    hearing_day&.regional_office
+  end
+
+  def regional_office
+    @regional_office ||= begin
+                            RegionalOffice.find!(regional_office_key)
+                         rescue RegionalOffice::NotFoundError
+                           nil
+                          end
+  end
+
+  def regional_office_name
+    return if regional_office_key.nil?
+
+    "#{regional_office.city}, #{regional_office.state}"
+  end
+
+  def regional_office_timezone
+    HearingMapper.timezone(regional_office_key)
+  end
+
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
@@ -112,10 +140,6 @@ class LegacyHearing < ApplicationRecord
       self.class.repository.update_vacols_hearing!(vacols_record, hearing_hash)
       update!(hearing_hash)
     end
-  end
-
-  def regional_office_timezone
-    HearingMapper.timezone(regional_office_key)
   end
 
   def readable_location
