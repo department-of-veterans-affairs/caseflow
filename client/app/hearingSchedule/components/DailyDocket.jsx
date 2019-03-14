@@ -360,7 +360,7 @@ export default class DailyDocket extends React.Component {
       <div>
         {this.getDispositionDropdown(hearing, readOnly)}
         {this.getTranscriptRequested(hearing, readOnly)}
-        {this.getHearingDetailsLink(hearing)}
+        {this.props.userRoleAssign && this.getHearingDetailsLink(hearing)}
         {this.getNotesField(hearing)}
       </div>
       <div>
@@ -496,24 +496,25 @@ export default class DailyDocket extends React.Component {
         <div {...backLinkStyling}>
           <Link
             linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
-          <Button
-            {...editLinkStyling}
-            linkStyling
-            onClick={this.props.openModal} >
-            <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
-            <span {...css({ marginRight: '5px',
-              marginLeft: '20px' })}>Edit Hearing Day</span>
-          </Button>&nbsp;&nbsp;
-          <Button
-            linkStyling
-            onClick={this.props.onDisplayLockModal} >
-            <span {...css({ position: 'absolute',
-              '& > svg > g > g': { fill: '#0071bc' } })}>{lockIcon()}</span>
-            <span {...css({ marginRight: '5px',
-              marginLeft: '16px' })}>
-              {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
-            </span>
-          </Button>&nbsp;&nbsp;
+          { this.props.userRoleAssign && <span>
+            <Button
+              {...editLinkStyling}
+              linkStyling
+              onClick={this.props.openModal} >
+              <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+              <span {...css({ marginRight: '5px',
+                marginLeft: '20px' })}>Edit Hearing Day</span>
+            </Button>&nbsp;&nbsp;
+            <Button
+              linkStyling
+              onClick={this.props.onDisplayLockModal} >
+              <span {...css({ position: 'absolute',
+                '& > svg > g > g': { fill: '#0071bc' } })}>{lockIcon()}</span>
+              <span {...css({ marginRight: '5px',
+                marginLeft: '16px' })}>
+                {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+              </span>
+            </Button>&nbsp;&nbsp; </span> }
           { _.isEmpty(this.props.hearings) && this.props.userRoleBuild &&
           <Button
             linkStyling
