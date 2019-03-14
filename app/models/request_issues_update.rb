@@ -20,7 +20,7 @@ class RequestIssuesUpdate < ApplicationRecord
 
     transaction do
       review.create_issues!(new_issues)
-      strip_removed_issues!
+      process_removed_issues!
       process_legacy_issues!
       review.mark_rating_request_issues_to_reassociate!
 
@@ -90,7 +90,7 @@ class RequestIssuesUpdate < ApplicationRecord
     before_issues
 
     @request_issues_data.map do |issue_data|
-      review.request_issues.active_or_ineligible.find_or_build_from_intake_data(issue_data)
+      review.find_or_build_request_issue_from_intake_data(issue_data)
     end
   end
 
@@ -122,7 +122,7 @@ class RequestIssuesUpdate < ApplicationRecord
     LegacyOptinManager.new(decision_review: review).process!
   end
 
-  def strip_removed_issues!
-    removed_issues.each(&:remove_from_review)
+  def process_removed_issues!
+    removed_issues.each(&:remove!)
   end
 end
