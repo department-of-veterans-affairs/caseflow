@@ -175,7 +175,6 @@ class LegacyHearing < ApplicationRecord
       representative: representative,
       representative_name: representative_name,
       vdkey: vdkey,
-      regional_office_key: regional_office_key,
       master_record: master_record,
       veteran_first_name: veteran_first_name,
       veteran_middle_initial: veteran_middle_initial,
