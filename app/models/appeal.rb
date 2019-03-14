@@ -479,7 +479,7 @@ class Appeal < DecisionReview
         type: "video"
       }
     when :scheduled_hearing
-      scheduled_hearing_status_details
+      api_scheduled_hearing_status_details
     when :decision_in_progress
       {
         decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
@@ -509,7 +509,7 @@ class Appeal < DecisionReview
     end
   end
 
-  def scheduled_hearing_status_details
+  def api_scheduled_hearing_status_details
     {
       type: api_scheduled_hearing_type,
       date: scheduled_hearing.scheduled_for.to_date,
