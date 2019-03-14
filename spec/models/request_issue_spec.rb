@@ -190,6 +190,20 @@ describe RequestIssue do
     end
   end
 
+  context ".active_or_decided" do
+    subject { RequestIssue.active_or_decided }
+
+    let!(:decided_request_issue) { create(:request_issue, :decided) }
+    let!(:removed_request_issue) { create(:request_issue, :removed) }
+    let!(:open_eligible_request_issue) { create(:request_issue) }
+
+    it "returns open eligible or closed decided issues" do
+      expect(subject.find_by(id: removed_request_issue.id)).to be_nil
+      expect(subject.find_by(id: decided_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: open_eligible_request_issue.id)).to_not be_nil
+    end
+  end
+
   context "limited_poa" do
     let(:previous_dr) { create(:higher_level_review) }
     let(:previous_ri) { create(:request_issue, decision_review: previous_dr, end_product_establishment: previous_epe) }
