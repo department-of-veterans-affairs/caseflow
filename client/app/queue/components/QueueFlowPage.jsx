@@ -127,8 +127,6 @@ class QueueFlowPage extends React.PureComponent {
       goToNextStep: nextStepHook
     } = this.props;
 
-    console.log(nextStepHook);
-
     if (validateForm && !validateForm()) {
       return this.props.highlightInvalidFormItems(true);
     }
