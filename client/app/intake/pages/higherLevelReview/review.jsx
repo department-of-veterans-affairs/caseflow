@@ -35,8 +35,7 @@ class Review extends React.PureComponent {
       sameOfficeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError,
-      featureToggles
+      reviewIntakeError
     } = this.props;
 
     switch (higherLevelReviewStatus) {

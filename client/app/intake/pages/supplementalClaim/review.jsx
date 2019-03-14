@@ -29,8 +29,7 @@ class Review extends React.PureComponent {
       benefitTypeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError,
-      featureToggles
+      reviewIntakeError
     } = this.props;
 
     switch (supplementalClaimStatus) {

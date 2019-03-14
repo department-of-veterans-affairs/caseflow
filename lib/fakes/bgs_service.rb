@@ -34,6 +34,7 @@ class Fakes::BGSService
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
       veteran = Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+      ama_begin_date = DecisionReview.ama_activation_date
 
       case row_hash["bgs_key"]
       when "has_rating"
@@ -46,14 +47,13 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          promulgation_date: DecisionReview.ama_activation_date + 2.days,
+          promulgation_date: ama_begin_date + 2.days,
           issues: [
             { decision_text: "Left knee" },
             { decision_text: "PTSD" }
           ]
         )
       when "has_many_ratings"
-        ama_begin_date = DecisionReview.ama_activation_date
         in_active_review_reference_id = "in-active-review-ref-id"
         in_active_review_receipt_date = Time.zone.parse("2018-04-01")
         completed_review_receipt_date = in_active_review_receipt_date - 30.days
