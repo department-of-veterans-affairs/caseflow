@@ -280,6 +280,12 @@ class DecisionReview < ApplicationRecord
     decision_event_date + 365.days if decision_event_date
   end
 
+  def find_or_build_request_issue_from_intake_data(data)
+    return request_issues.active_or_ineligible.find(data[:request_issue_id]) if data[:request_issue_id]
+
+    RequestIssue.from_intake_data(data, decision_review: self)
+  end
+
   private
 
   def request_issues_ui_hash
