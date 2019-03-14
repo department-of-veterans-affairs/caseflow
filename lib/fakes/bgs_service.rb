@@ -46,13 +46,14 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          promulgation_date: Time.zone.today - 60,
+          promulgation_date: DecisionReview.ama_activation_date + 2.days,
           issues: [
             { decision_text: "Left knee" },
             { decision_text: "PTSD" }
           ]
         )
       when "has_many_ratings"
+        ama_begin_date = DecisionReview.ama_activation_date
         in_active_review_reference_id = "in-active-review-ref-id"
         in_active_review_receipt_date = Time.zone.parse("2018-04-01")
         completed_review_receipt_date = in_active_review_receipt_date - 30.days
@@ -63,8 +64,8 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          profile_date: Time.zone.today - 100,
-          promulgation_date: Time.zone.today - 90,
+          profile_date: ama_begin_date + 3.days,
+          promulgation_date: ama_begin_date + 7.days,
           issues: [
             { decision_text: "Left knee" },
             { decision_text: "Right knee" },
@@ -75,9 +76,8 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          # 2019/2/14 is AMA activation date
-          profile_date: Date.new(2019, 2, 14) - 10.days,
-          promulgation_date: Date.new(2019, 2, 14) - 5.days,
+          profile_date: ama_begin_date - 10.days,
+          promulgation_date: ama_begin_date - 5.days,
           issues: [
             { decision_text: "Issue before AMA not from a RAMP Review", reference_id: "before_ama_ref_id" },
             { decision_text: "Issue before AMA from a RAMP Review",
@@ -85,11 +85,11 @@ class Fakes::BGSService
               reference_id: "ramp_reference_id" }
           ]
         )
+        ramp_begin_date = Date.new(2017, 11, 1)
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          # 2017/11/1 is RAMP begin date
-          profile_date: Date.new(2017, 11, 1) - 20.days,
-          promulgation_date: Date.new(2017, 11, 1) - 15.days,
+          profile_date: ramp_begin_date - 20.days,
+          promulgation_date: ramp_begin_date - 15.days,
           issues: [
             { decision_text: "Issue before test AMA not from a RAMP Review", reference_id: "before_test_ama_ref_id" },
             { decision_text: "Issue before test AMA from a RAMP Review",
@@ -154,7 +154,7 @@ class Fakes::BGSService
 
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          promulgation_date: Time.zone.today - 60,
+          promulgation_date: ama_begin_date + 10.days,
           issues: [
             { decision_text: "Lorem ipsum dolor sit amet, paulo scaevola abhorreant mei te, ex est mazim ornatus, at pro causae maiestatis." },
             { decision_text: "Inani movet maiestatis nec no, verear periculis signiferumque in sit." },
@@ -165,7 +165,7 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          promulgation_date: Time.zone.today - 60,
+          promulgation_date: ama_begin_date + 12.days,
           issues: [
             { decision_text: "In mei labore oportere mediocritatem, vel ex dicta quidam corpora, fierent explicari liberavisse ei quo." },
             { decision_text: "Vel malis impetus ne, vim cibo appareat scripserit ne, qui lucilius consectetuer ex." },
