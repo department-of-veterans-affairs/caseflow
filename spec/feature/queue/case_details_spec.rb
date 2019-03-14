@@ -203,8 +203,14 @@ RSpec.feature "Case details" do
         expect(page).to have_content("About the Veteran")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
+        expect(page).to have_content(appeal.regional_office.city)
         expect(page).to have_content(appeal.veteran_address_line_1)
-        expect(page).to_not have_content("Regional Office")
+      end
+      scenario "when there is no POA" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_content("Power of Attorney")
+        expect(page).to have_content(COPY::CASE_DETAILS_NO_POA)
       end
     end
 
@@ -234,7 +240,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")
-        expect(page).to_not have_content("Regional Office")
+        expect(page).to have_content(appeal.regional_office.city)
       end
     end
     context "when veteran is in BGS" do
@@ -247,7 +253,6 @@ RSpec.feature "Case details" do
         visit("/queue/appeals/#{appeal.external_id}")
         expect(page).to have_content("About the Veteran")
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
-        expect(page).to_not have_content("Regional Office")
       end
     end
 
@@ -281,7 +286,6 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
-        expect(page).to_not have_content("Regional Office")
       end
     end
 
@@ -451,34 +455,60 @@ RSpec.feature "Case details" do
         )
       )
     end
-    let!(:on_hold_task) do
-      FactoryBot.create(
-        :colocated_task,
-        :on_hold,
-        assigned_to: colocated_user,
-        assigned_by: attorney_user
-      )
-    end
 
     before do
       User.authenticate!(user: colocated_user)
     end
 
-    scenario "displays task information" do
-      visit "/queue"
+    context "on hold task" do
+      let!(:on_hold_task) do
+        FactoryBot.create(
+          :colocated_task,
+          :on_hold,
+          assigned_to: colocated_user,
+          assigned_by: attorney_user
+        )
+      end
 
-      vet_name = on_hold_task.appeal.veteran_full_name
-      assigner_name = on_hold_task.assigned_by_display_name
+      scenario "displays task information" do
+        visit "/queue"
 
-      click_on "On hold (1)"
-      click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
+        vet_name = on_hold_task.appeal.veteran_full_name
+        assigner_name = on_hold_task.assigned_by_display_name
 
-      expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
-      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-      expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions[0]}")
-      expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
+        click_on "On hold (1)"
+        click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
-      expect(Task.find(on_hold_task.id).status).to eq("on_hold")
+        expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+        find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions[0]}")
+        expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
+
+        expect(Task.find(on_hold_task.id).status).to eq("on_hold")
+      end
+    end
+
+    context "assigned task" do
+      let!(:assigned_task) do
+        FactoryBot.create(
+          :colocated_task,
+          status: Constants.TASK_STATUSES.assigned,
+          assigned_to: colocated_user,
+          assigned_by: attorney_user
+        )
+      end
+
+      scenario "displays task bold in queue" do
+        visit "/queue"
+        vet_name = assigned_task.appeal.veteran_full_name
+        fontweight_new = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
+        click_on vet_name
+        expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL, wait: 30)
+        click_on "Caseflow"
+        expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION, wait: 30)
+        fontweight_visited = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
+        expect(fontweight_visited).to be < fontweight_new
+      end
     end
   end
 
