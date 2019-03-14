@@ -90,7 +90,10 @@ class ScheduleHearingTask < GenericTask
         hearing_day_id = task_payloads[:values][:hearing_day_id]
         hearing_location = task_payloads[:values][:hearing_location]
 
-        hearing = slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
+        hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+                                                     appeal: appeal,
+                                                     hearing_location_attrs: hearing_location&.to_hash,
+                                                     scheduled_time: hearing_time&.stringify_keys)
         DispositionTask.create_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
@@ -157,17 +160,5 @@ class ScheduleHearingTask < GenericTask
         assigned_to: MailTeam.singleton
       )
     end
-  end
-
-  def slot_new_hearing(hearing_day_id, hearing_time, hearing_location)
-    hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                 appeal: appeal,
-                                                 hearing_location_attrs: hearing_location&.to_hash,
-                                                 scheduled_time: hearing_time&.stringify_keys)
-    if appeal.is_a?(LegacyAppeal)
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
-    end
-
-    hearing
   end
 end
