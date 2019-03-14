@@ -11,7 +11,6 @@ class LegacyDocket
     "legacy"
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def count(priority: nil, ready: nil)
     counts_by_priority_and_readiness.inject(0) do |sum, row|
       next sum unless (priority.nil? || (priority ? 1 : 0) == row["priority"]) &&
@@ -20,7 +19,6 @@ class LegacyDocket
       sum + row["n"]
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def weight
     count(priority: false) + nod_count * NOD_ADJUSTMENT
