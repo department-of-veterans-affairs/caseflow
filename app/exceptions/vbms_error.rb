@@ -30,7 +30,10 @@ class VBMSError < RuntimeError
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3274/
     "The data value of the PostalCode did not satisfy" => "VBMS::BadPostalCodeError",
 
-    "ClaimNotFoundException thrown in findContentions for ClaimID" => "VBMS::ClaimNotFoundError"
+    "ClaimNotFoundException thrown in findContentions for ClaimID" => "VBMS::ClaimNotFoundError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/270914/
+    "A PIF for this EP code already exists." => "VBMS::PIFExistsForEPCodeError"
   }.freeze
 
   class << self
@@ -67,3 +70,4 @@ class VBMS::SecurityError < StandardError; end
 class VBMS::DownForMaintenanceError < StandardError; end
 class VBMS::BadPostalCodeError < StandardError; end
 class VBMS::ClaimNotFoundError < StandardError; end
+class VBMS::PIFExistsForEPCodeError < StandardError; end
