@@ -146,6 +146,15 @@ class EndProductEstablishment < ApplicationRecord
     @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
   end
 
+  def preexisting_end_products
+    return unless source.established_at
+
+    veteran.end_products.select do |ep|
+      end_product_to_establish.matches?(ep)
+      ep.last_action_date.nil? || ep.last_action_date > source.established_at
+    end
+  end
+
   def cancel_unused_end_product!
     # do not cancel ramp reviews for now
     return if source.is_a?(RampReview)

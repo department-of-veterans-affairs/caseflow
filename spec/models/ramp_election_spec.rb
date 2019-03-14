@@ -56,9 +56,9 @@ describe RampElection do
           )
         end
 
-        it "saves to the DB with the preexisting_end_product's claim_id" do
-          expect(subject.id).to_not be_nil
-          expect(subject.reference_id).to eq(end_product.claim_id)
+        it "doesn't connect it or save it" do
+          expect(subject.id).to be_nil
+          expect(subject.reference_id).to be_nil
         end
       end
 
