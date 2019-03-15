@@ -13,6 +13,34 @@ describe LegacyAppeal do
     create(:legacy_appeal, vacols_case: vacols_case)
   end
 
+  context "open_hearing appeals", focus: true do
+    let!(:open_hearing_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let!(:active_disposition_task) do
+      create(
+        :disposition_task,
+        appeal: open_hearing_appeal,
+        parent: create(:hearing_task, appeal: open_hearing_appeal)
+      )
+    end
+    let!(:no_hearing_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let!(:completed_hearing_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let!(:complete_disposition_task) do
+      create(
+        :disposition_task,
+        appeal: completed_hearing_appeal,
+        status: :completed,
+        parent: create(:hearing_task, appeal: completed_hearing_appeal)
+      )
+    end
+
+    subject { LegacyAppeal.open_hearing }
+    it "returns only active appeals" do
+      expect(subject.include?(open_hearing_appeal)).to eq(true)
+      expect(subject.include?(no_hearing_appeal)).to eq(false)
+      expect(subject.include?(completed_hearing_appeal)).to eq(false)
+    end
+  end
+
   context "#eligible_for_soc_opt_in? and #matchable_to_request_issue?" do
     let(:soc_eligible_date) { receipt_date - 60.days }
     let(:nod_eligible_date) { receipt_date - 372.days }

@@ -16,8 +16,8 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
-    Appeal.active.each do |a|
-      appeal_new_task_count, appeal_closed_task_count = a.sync_tracking_tasks
+    [*LegacyAppeal.open_hearing, *Appeal.active].each do |a|
+      appeal_new_task_count, appeal_closed_task_count = TrackVeteranTask.sync_tracking_tasks(a)
       new_task_count += appeal_new_task_count
       closed_task_count += appeal_closed_task_count
 

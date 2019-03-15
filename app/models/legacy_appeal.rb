@@ -85,6 +85,13 @@ class LegacyAppeal < ApplicationRecord
     (self.class.repository.remand_return_date(vacols_id) || false) unless active?
   end
 
+  scope :open_hearing, lambda {
+    joins(:tasks)
+      .group("legacy_appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
+              DispositionTask.name, Task.inactive_statuses, 1)
+  }
+
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
@@ -374,6 +381,10 @@ class LegacyAppeal < ApplicationRecord
 
   def docket_name
     "legacy"
+  end
+
+  def root_task
+    RootTask.find_by(appeal: self)
   end
 
   # TODO: delegate this to veteran
