@@ -69,13 +69,16 @@ class ColocatedTask < Task
       return actions
     end
 
-    actions.shift
     actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h)
     actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
     actions
   end
 
   def available_actions_with_conditions(core_actions)
+    if action == "schedule_hearing"
+      core_actions = handle_schedule_hearing(core_actions)
+      return core_actions
+    end
     if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
       send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
@@ -84,14 +87,9 @@ class ColocatedTask < Task
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
 
-    if action == "schedule_hearing"
-      core_actions = handle_schedule_hearing(core_actions)
-    end
-
     if action == "translation" && appeal.is_a?(Appeal)
       core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
     end
-
     core_actions
   end
 
