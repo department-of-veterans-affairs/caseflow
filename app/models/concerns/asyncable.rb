@@ -63,7 +63,9 @@ module Asyncable
     end
 
     def never_attempted
-      where(attempted_at_column => nil)
+      where(attempted_at_column => nil).where(
+        arel_table[submitted_at_column].lt(processing_retry_interval_hours.hours.ago)
+      )
     end
 
     def previously_attempted_ready_for_retry
