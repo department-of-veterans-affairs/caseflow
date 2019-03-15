@@ -36,7 +36,6 @@ class Review extends React.PureComponent {
       legacyOptInApproved,
       legacyOptInApprovedError,
       reviewIntakeError,
-      featureToggles,
       veteranValid,
       veteranInvalidFields
     } = this.props;
@@ -48,8 +47,7 @@ class Review extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
-
-    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
+    
     const showInvalidVeteranError = VBMS_BENEFIT_TYPES.includes(benefitType) && !veteranValid;
 
     return <div>
@@ -97,11 +95,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
-      { legacyOptInEnabled && <LegacyOptInApproved
+      <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
-      /> }
+      />
     </div>;
   }
 }

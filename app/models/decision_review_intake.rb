@@ -26,7 +26,7 @@ class DecisionReviewIntake < Intake
   # rubocop:enable Metrics/AbcSize
 
   def cancel_detail!
-    detail.remove_claimants!
+    detail&.remove_claimants!
     super
   end
 

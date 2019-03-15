@@ -163,7 +163,6 @@ class DecisionReview < ApplicationRecord
   end
 
   def serialized_legacy_appeals
-    return [] unless legacy_opt_in_enabled?
     return [] unless available_legacy_appeals.any?
 
     available_legacy_appeals.map do |legacy_appeal|
@@ -186,6 +185,10 @@ class DecisionReview < ApplicationRecord
 
   def establish!
     # no-op
+  end
+
+  def cancel_active_tasks
+    tasks.each(&:cancel_task_and_child_subtasks)
   end
 
   def contestable_issues
@@ -392,10 +395,6 @@ class DecisionReview < ApplicationRecord
 
     validate_receipt_date_not_before_ama
     validate_receipt_date_not_in_future
-  end
-
-  def legacy_opt_in_enabled?
-    FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
 
   def description

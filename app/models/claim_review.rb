@@ -17,7 +17,7 @@ class ClaimReview < DecisionReview
 
   validates :legacy_opt_in_approved, inclusion: {
     in: [true, false], message: "blank"
-  }, if: [:legacy_opt_in_enabled?, :saving_review]
+  }, if: [:saving_review]
 
   self.abstract_class = true
 
