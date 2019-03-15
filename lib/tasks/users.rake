@@ -8,7 +8,7 @@ namespace :users do
       next if css_id == css_id.upcase
 
       # look for any duplicates in alternate casings
-      matches = all_users_for_css_id(css_id)
+      matches = User.where("UPPER(css_id)=UPPER(?)", css_id)
       if matches.count > 1
         puts "Cannot upcase #{css_id} because duplicates exist in alternate casings"
         next
@@ -17,43 +17,11 @@ namespace :users do
     end
   end
 
-  def load_all_models
-    ::Rails.application.eager_load!
-  end
-
-  def models_with_user_id
-    load_all_models unless @models_with_user_id
-    @models_with_user_id ||= ActiveRecord::Base.descendants.reject(&:abstract_class?)
-      .select { |c| c.attribute_names.include?("user_id") }
-  end
-
-  def report_user_related_records(user)
-    has_related_records = false
-    models_with_user_id.each do |cls|
-      num = cls.where(user_id: user.id).count
-      if num > 0
-        puts "#{user.id} has #{num} #{cls}"
-        has_related_records = true
-      end
-    end
-    unless has_related_records
-      puts "#{user.inspect} has zero related records and may be a candidate to merge/delete"
-    end
-    has_related_records
-  end
-
-  def all_users_for_css_id(css_id)
-    User.where("UPPER(css_id)=UPPER(?)", css_id)
-  end
-
   desc "report on a user db footprint"
   task footprint: :environment do
-    user_id = ENV.fetch("USER_ID")
-    user = User.find user_id
-    puts "User #{user_id} -> #{user.inspect}"
-    all_users_for_css_id(user.css_id).each do |u|
-      report_user_related_records(u)
-    end
+    css_id = ENV.fetch("CSS_ID")
+    reporter = UserReporter.new(css_id)
+    reporter.report.each { |ln| puts ln }
   end
 
   desc "find duplicates and suggest which one(s) to delete"
@@ -63,9 +31,8 @@ namespace :users do
     dupes = css_ids.select { |e| css_ids.count(e) > 1 }.uniq
     dupes.each do |css_id|
       puts "Duplicate: #{css_id}"
-      all_users_for_css_id(css_id).each do |user|
-        report_user_related_records(user)
-      end
+      reporter = UserReporter.new(css_id)
+      reporter.report.each { |ln| puts ln }
     end
   end
 end

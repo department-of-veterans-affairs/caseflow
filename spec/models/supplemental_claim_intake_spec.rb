@@ -74,6 +74,7 @@ describe SupplementalClaimIntake do
     let(:claimant) { nil }
     let(:payee_code) { nil }
     let(:veteran_is_not_claimant) { false }
+    let(:legacy_opt_in_approved) { false }
 
     let(:detail) do
       create(
@@ -90,7 +91,8 @@ describe SupplementalClaimIntake do
         benefit_type: benefit_type,
         claimant: claimant,
         payee_code: payee_code,
-        veteran_is_not_claimant: veteran_is_not_claimant
+        veteran_is_not_claimant: veteran_is_not_claimant,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 

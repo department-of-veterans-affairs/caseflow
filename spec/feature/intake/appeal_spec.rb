@@ -9,14 +9,12 @@ feature "Appeal Intake" do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
     FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
-    FeatureToggle.enable!(:intake_legacy_opt_in, users: [current_user.css_id])
 
     Timecop.freeze(post_ramp_start_date)
   end
 
   after do
     FeatureToggle.disable!(:intakeAma, users: [current_user.css_id])
-    FeatureToggle.disable!(:intake_legacy_opt_in, users: [current_user.css_id])
   end
 
   let!(:current_user) do
@@ -508,7 +506,6 @@ feature "Appeal Intake" do
     add_intake_rating_issue("Really old injury")
     add_untimely_exemption_response("No")
     expect(page).to have_content("5 issues")
-    expect(page).to have_content("I am an exemption note")
     expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
     expect_ineligible_issue(5)
 
@@ -520,9 +517,8 @@ feature "Appeal Intake" do
       description: "Another Description for Active Duty Adjustments",
       date: untimely_date.mdY
     )
-    add_untimely_exemption_response("No", "I am an untimely exemption")
+    add_untimely_exemption_response("No")
     expect(page).to have_content("6 issues")
-    expect(page).to have_content("I am an untimely exemption")
     expect(page).to have_content(
       "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
@@ -584,8 +580,7 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              decision_review: appeal,
              contested_issue_description: "Really old injury",
-             untimely_exemption: false,
-             untimely_exemption_notes: "I am an exemption note"
+             untimely_exemption: false
            )).to_not be_nil
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
@@ -618,7 +613,8 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              decision_review: appeal,
              contested_issue_description: "Non-RAMP Issue before AMA Activation",
-             ineligible_reason: :before_ama
+             ineligible_reason: :before_ama,
+             closed_status: :ineligible
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
@@ -631,7 +627,8 @@ feature "Appeal Intake" do
     expect(RequestIssue.find_by(
              decision_review: appeal,
              nonrating_issue_description: "A nonrating issue before AMA",
-             ineligible_reason: :before_ama
+             ineligible_reason: :before_ama,
+             closed_status: :ineligible
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
@@ -911,19 +908,6 @@ feature "Appeal Intake" do
 
         expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end
-    end
-
-    scenario "adding issue with legacy opt in disabled" do
-      allow(FeatureToggle).to receive(:enabled?).and_call_original
-      allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
-
-      start_appeal(veteran)
-      visit "/intake/add_issues"
-
-      click_intake_add_issue
-      expect(page).to have_content("Add this issue")
-      add_intake_rating_issue("Left knee granted")
-      expect(page).to have_content("Left knee granted")
     end
   end
 

@@ -98,15 +98,17 @@ RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, type: :controller do
         end
 
         it "queues the document for upload to VBMS" do
-          uploaded_document = instance_double(VbmsUploadedDocument)
+          uploaded_document = instance_double(VbmsUploadedDocument, id: 1)
           document_params = {
             appeal_id: appeal.id,
             document_type: params[:document_type],
             file: params[:file]
           }
-          expect(VbmsUploadedDocument).to receive(:create).with(document_params).and_return(uploaded_document)
 
-          expect(UploadDocumentToVbmsJob).to receive(:perform_later).with(uploaded_document)
+          expect(VbmsUploadedDocument).to receive(:create).with(document_params).and_return(uploaded_document)
+          expect(UploadDocumentToVbmsJob)
+            .to receive(:perform_later).with(document_id: uploaded_document.id)
+          expect(uploaded_document).to receive(:cache_file)
 
           post :create, params: params
         end

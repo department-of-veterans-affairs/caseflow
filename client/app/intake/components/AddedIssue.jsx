@@ -67,7 +67,7 @@ class AddedIssue extends React.PureComponent {
       } else if (issue.eligibleForSocOptIn === false) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
       }
-    } else if (issue.beforeAma) {
+    } else if (issue.beforeAma && formType !== 'supplemental_claim') {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
     }
 
