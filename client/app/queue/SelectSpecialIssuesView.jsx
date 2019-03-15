@@ -6,13 +6,13 @@ import { connect } from 'react-redux';
 import { setSpecialIssues } from './QueueActions';
 import { requestSave } from './uiReducer/uiActions';
 
-import decisionViewBase from './components/DecisionViewBase';
 import Alert from '../components/Alert';
 import { css } from 'glamor';
 import CheckboxGroup from '../components/CheckboxGroup';
 import specialIssueFilters from '../constants/SpecialIssueFilters';
 import COPY from '../../COPY.json';
 import ApiUtil from '../util/ApiUtil';
+import QueueFlowPage from './components/QueueFlowPage';
 
 const flexContainer = css({
   display: 'flex',
@@ -52,7 +52,8 @@ class SelectSpecialIssuesView extends React.PureComponent {
   }
   renderLegacySpecialIssues = (specialIssues) => {
     const {
-      error
+      error,
+      ...otherProps
     } = this.props;
     let sections = [
       specialIssueFilters.aboutSection(),
@@ -76,7 +77,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment
     const [aboutSection, residenceSection, benefitTypeSection, issuesOnAppealSection, dicOrPensionSection] = sections;
 
-    return <React.Fragment>
+    return <QueueFlowPage goToNextStep={this.goToNextStep} {...otherProps}>
       <h1>
         {this.getPageName()}
       </h1>
@@ -126,7 +127,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
           />
         </div>
       </div>
-    </React.Fragment>;
+    </QueueFlowPage>;
   };
 }
 
@@ -145,4 +146,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectSpecialIssuesView));
+export default connect(mapStateToProps, mapDispatchToProps)(SelectSpecialIssuesView);

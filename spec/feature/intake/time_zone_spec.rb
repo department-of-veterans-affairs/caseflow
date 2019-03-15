@@ -8,7 +8,6 @@ feature "Appeal time zone" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Timecop.freeze(now_utc)
   end
@@ -16,7 +15,6 @@ feature "Appeal time zone" do
   after do
     FeatureToggle.disable!(:intake)
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let!(:current_user) do

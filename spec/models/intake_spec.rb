@@ -2,12 +2,7 @@
 
 describe Intake do
   before do
-    FeatureToggle.enable!(:intake_legacy_opt_in)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   class TestIntake < Intake
