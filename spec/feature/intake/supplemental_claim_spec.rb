@@ -613,15 +613,19 @@ feature "Supplemental Claim Intake" do
       # add before_ama ratings
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
-      expect(page).to have_content(
+      expect(page).to_not have_content(
         "6. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
       )
+      expect(page).to have_content("6. Non-RAMP Issue before AMA Activation")
 
       # Eligible because it comes from a RAMP decision
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
         "7. Issue before AMA Activation from RAMP Decision date:"
+      )
+      expect(page).to_not have_content(
+        "7. Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
       )
 
       click_intake_add_issue
@@ -631,22 +635,24 @@ feature "Supplemental Claim Intake" do
         description: "A nonrating issue before AMA",
         date: (profile_date - 400.days).mdY
       )
-      expect(page).to have_content(
+      expect(page).to_not have_content(
         "A nonrating issue before AMA #{ineligible_constants.before_ama}"
       )
+      expect(page).to have_content("A nonrating issue before AMA")
 
       click_intake_finish
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
       expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
+
       success_checklist = find("ul.cf-success-checklist")
-      expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
-      expect(success_checklist).to_not have_content("A nonrating issue before AMA")
+      expect(success_checklist).to have_content("Non-RAMP Issue before AMA Activation")
+      expect(success_checklist).to have_content("A nonrating issue before AMA")
 
       ineligible_checklist = find("ul.cf-ineligible-checklist")
-      expect(ineligible_checklist).to have_content("Non-RAMP Issue before AMA Activation is ineligible")
-      expect(ineligible_checklist).to have_content("A nonrating issue before AMA is ineligible")
+      expect(ineligible_checklist).to_not have_content("Non-RAMP Issue before AMA Activation is ineligible")
+      expect(ineligible_checklist).to_not have_content("A nonrating issue before AMA is ineligible")
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,
@@ -702,10 +708,8 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               end_product_establishment_id: nil,
-               closed_status: :ineligible,
-               ineligible_reason: :before_ama
-             )).to_not be_nil
+               end_product_establishment_id: end_product_establishment.id
+             )).to be_eligible
 
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
@@ -718,10 +722,8 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
                nonrating_issue_description: "A nonrating issue before AMA",
-               closed_status: :ineligible,
-               ineligible_reason: :before_ama,
-               end_product_establishment_id: nil
-             )).to_not be_nil
+               end_product_establishment_id: non_rating_end_product_establishment.id
+             )).to be_eligible
 
       duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
