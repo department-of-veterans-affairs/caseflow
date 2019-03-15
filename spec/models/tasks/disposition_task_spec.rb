@@ -8,6 +8,7 @@ describe DispositionTask do
     let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
     let!(:disposition_task) { DispositionTask.create_disposition_task!(appeal, hearing_task, hearing) }
     let(:after_disposition_update) { nil }
+    let(:user) { FactoryBot.create(:user) }
 
     let(:params) do
       {
@@ -29,7 +30,7 @@ describe DispositionTask do
       end
 
       it "creates a new HearingTask and ScheduleHearingTask" do
-        disposition_task.update_from_params(params, nil)
+        disposition_task.update_from_params(params, user)
 
         expect(Hearing.first.disposition).to eq "postponed"
         expect(Hearing.count).to eq 1
@@ -52,7 +53,7 @@ describe DispositionTask do
       end
 
       it "creates a new HearingTask and ScheduleHearingTask with admin action" do
-        disposition_task.update_from_params(params, nil)
+        disposition_task.update_from_params(params, user)
 
         expect(Hearing.first.disposition).to eq "postponed"
         expect(Hearing.count).to eq 1
@@ -79,7 +80,7 @@ describe DispositionTask do
       end
 
       it "creates a new hearing with a new DispositionTask" do
-        disposition_task.update_from_params(params, nil)
+        disposition_task.update_from_params(params, user)
 
         expect(Hearing.count).to eq 2
         expect(Hearing.first.disposition).to eq "postponed"
