@@ -50,6 +50,10 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     end
   end
 
+  attribute :withdrawn do
+    object.withdrawn?
+  end
+
   attribute :assigned_to_location do
     object.assigned_to_location
   end

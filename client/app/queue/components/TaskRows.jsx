@@ -207,10 +207,9 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
 
-    const appealCancelled = taskList.find((task) => task.type === 'RootTask' && task.status === 'cancelled');
     let timelineContainerText;
 
-    if (appealCancelled) {
+    if (appeal.withdrawn) {
       timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
     } else if (appeal.decisionDate) {
       timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
