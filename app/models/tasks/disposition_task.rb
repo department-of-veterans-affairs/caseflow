@@ -11,6 +11,7 @@ class DispositionTask < GenericTask
 
   class HearingDispositionNotCanceled < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
+  class HearingDispositionNotHeld < StandardError; end
 
   class << self
     def create_disposition_task!(appeal, parent, hearing)
@@ -156,6 +157,22 @@ class DispositionTask < GenericTask
       status: Constants.TASK_STATUSES.on_hold,
       on_hold_duration: 25.days
     )
+  end
+
+  def hold!
+    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.held
+      fail HearingDispositionNotHeld
+    end
+
+    if appeal.is_a?(LegacyAppeal)
+      update!(status: Constants.TASK_STATUSES.completed)
+      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:transcription])
+    else
+      TranscriptionTask.create!(appeal: appeal, parent: self, assigned_to: TranscriptionTeam.singleton)
+      unless parent&.hearing_task_association&.hearing&.evidence_window_waived
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
+      end
+    end
   end
 
   private
