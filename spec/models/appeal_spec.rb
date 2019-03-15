@@ -270,7 +270,9 @@ describe Appeal do
     let!(:appeal_requiring_processing) do
       create(:appeal).tap do |appeal|
         appeal.submit_for_processing!
-        appeal.update!(establishment_submitted_at: (Appeal.processing_retry_interval_hours + 1).hours.ago)
+        appeal.update!(
+          establishment_last_submitted_at: (Appeal.processing_retry_interval_hours + 1).hours.ago
+        )
       end
     end
 
