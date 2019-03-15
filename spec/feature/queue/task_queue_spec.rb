@@ -357,14 +357,20 @@ RSpec.feature "Task queue" do
     end
 
     context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
-      let(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
-      let!(:task) { FactoryBot.create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization) }
+      let!(:tasks) do
+        Array.new(4) do
+          vacols_case = FactoryBot.create(:case)
+          legacy_appeal = FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+          vacols_case.destroy!
+          FactoryBot.create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+        end
+      end
 
       it "loads the task queue successfully" do
         # Re-navigate to the organization queue so we pick up the above task creation.
         visit(organization.path)
 
-        expect(page).to have_content(legacy_appeal.veteran_file_number)
+        tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
         expect(page).to_not have_content("Information cannot be found")
       end
     end
@@ -543,10 +549,12 @@ RSpec.feature "Task queue" do
 
     context "when a task is associated with a LegacyAppeal that has been removed from VACOLS" do
       let(:user) { FactoryBot.create(:user) }
-      let(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+      let(:vacols_case) { FactoryBot.create(:case) }
+      let(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
       let!(:task) { FactoryBot.create(:generic_task, appeal: legacy_appeal, assigned_to: user) }
 
       before do
+        vacols_case.destroy!
         User.authenticate!(user: user)
       end
 

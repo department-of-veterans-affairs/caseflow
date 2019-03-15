@@ -44,7 +44,7 @@ class AppealRepository
     if id.is_a?(Array)
       id.in_groups_of(1000, false).map do |group|
         if ignore_misses
-          VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find_by(bfkey: group)
+          VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).where(bfkey: group)
         else
           VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(group)
         end
