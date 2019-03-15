@@ -2,19 +2,14 @@
 
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
-  # TODO: remove this eventually, used to protect caching from screwing up removed columns
-  self.ignored_columns = %w[
-    contested_rating_issue_disability_code
-    rating_issue_reference_id
-    rating_issue_profile_date
-    review_request_id
-    review_request_type
-    description
-    disposition
-  ]
-
   include Asyncable
   include HasBusinessLine
+
+  # how many days before we give up trying to sync decisions
+  REQUIRES_PROCESSING_WINDOW_DAYS = 14
+
+  # don't need to try as frequently as default 3 hours
+  DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment
@@ -48,13 +43,12 @@ class RequestIssue < ApplicationRecord
     end_product_canceled: "end_product_canceled",
     withdrawn: "withdrawn",
     dismissed_death: "dismissed_death",
-    stayed: "stayed"
+    stayed: "stayed",
+    ineligible: "ineligible"
   }
 
   before_save :set_contested_rating_issue_profile_date
-
-  # TODO: this is a temporary callback in order to synchronize columns. Remove after data is migrated
-  before_save :set_decision_sync_last_submitted_at
+  before_save :close_if_ineligible!
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -115,9 +109,8 @@ class RequestIssue < ApplicationRecord
   }.freeze
 
   class << self
-    # We don't need to retry these as frequently
-    def processing_retry_interval_hours
-      12
+    def last_submitted_at_column
+      :decision_sync_last_submitted_at
     end
 
     def submitted_at_column
@@ -149,20 +142,22 @@ class RequestIssue < ApplicationRecord
       ).where.not(issue_category: nil)
     end
 
-    def not_deleted
-      where.not(decision_review_id: nil)
-    end
-
     def eligible
       where(ineligible_reason: nil)
     end
 
-    def open
+    # "Active" issues are issues that need decisions.
+    # They show up as contentions in VBMS and issues in Caseflow Queue.
+    def active
       eligible.where(closed_at: nil)
     end
 
-    def open_or_ineligible
-      where(closed_at: nil)
+    def active_or_ineligible
+      active.or(ineligible)
+    end
+
+    def active_or_decided
+      active.or(decided).order(id: :asc)
     end
 
     def unidentified
@@ -170,11 +165,6 @@ class RequestIssue < ApplicationRecord
         contested_rating_issue_reference_id: nil,
         is_unidentified: true
       )
-    end
-
-    def find_or_build_from_intake_data(data)
-      # request issues on edit have ids but newly added issues do not
-      data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
     end
 
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
@@ -386,30 +376,35 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
-  def remove!
-    update!(closed_at: Time.zone.now, closed_status: :removed)
+  def close!(status)
+    return unless closed_at.nil?
+
+    transaction do
+      update!(closed_at: Time.zone.now, closed_status: status)
+      yield if block_given?
+    end
+  end
+
+  def close_if_ineligible!
+    close!(:ineligible) if ineligible_reason?
   end
 
   def close_decided_issue!
-    return unless closed_at.nil?
     return unless decision_issues.any?
 
-    update!(closed_at: Time.zone.now, closed_status: :decided)
+    close!(:decided)
   end
 
   def close_after_end_product_canceled!
-    return unless closed_at.nil?
     return unless end_product_establishment&.reload&.status_canceled?
 
-    update!(closed_at: Time.zone.now, closed_status: :end_product_canceled)
-    legacy_issue_optin&.flag_for_rollback!
+    close!(:end_product_canceled) do
+      legacy_issue_optin&.flag_for_rollback!
+    end
   end
 
-  # Instead of fully deleting removed issues, we instead strip them from the review so we can
-  # maintain a record of the other data that was on them incase we need to revert the update.
-  def remove_from_review
-    transaction do
-      remove!
+  def remove!
+    close!(:removed) do
       legacy_issue_optin&.flag_for_rollback!
 
       # removing a request issue also deletes the associated request_decision_issue
@@ -677,7 +672,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def should_check_for_before_ama?
-    !is_unidentified && !ramp_claim_id && !vacols_id
+    !is_unidentified && !ramp_claim_id && !vacols_id && !decision_review&.is_a?(SupplementalClaim)
   end
 
   def check_for_legacy_issue_not_withdrawn!
@@ -707,7 +702,7 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     add_duplicate_issue_error(
-      RequestIssue.open.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
+      RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
     )
   end
 
@@ -715,7 +710,7 @@ class RequestIssue < ApplicationRecord
     return unless contested_decision_issue_id
 
     add_duplicate_issue_error(
-      RequestIssue.open.find_by(contested_decision_issue_id: contested_decision_issue_id)
+      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
     )
   end
 
@@ -777,10 +772,6 @@ class RequestIssue < ApplicationRecord
 
   def appeal_active?
     decision_review.tasks.active.any?
-  end
-
-  def set_decision_sync_last_submitted_at
-    self.decision_sync_last_submitted_at = last_submitted_at
   end
 end
 # rubocop:enable Metrics/ClassLength

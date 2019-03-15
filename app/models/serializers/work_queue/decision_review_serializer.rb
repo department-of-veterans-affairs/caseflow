@@ -2,7 +2,7 @@
 
 class WorkQueue::DecisionReviewSerializer < ActiveModel::Serializer
   attribute :issues do
-    object.request_issues.open.map do |issue|
+    object.request_issues.active.map do |issue|
       {
         id: issue.id,
         disposition: issue.disposition,

@@ -51,19 +51,6 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       expect(find_field("Transcript Requested", visible: false)).to be_checked
       expect(find_field("8:30", visible: false)).to be_checked
     end
-
-    scenario "User can postpone a hearing", skip: "Flaky test" do
-      visit "hearings/schedule/docket/" + hearing_day.id.to_s
-      click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
-      click_dropdown(name: "Disposition", text: "Postponed")
-      click_dropdown(name: "HearingDay", text: hearing_day_two.scheduled_for.strftime("%m/%d/%Y"))
-      click_button("Save")
-      expect(page).to have_content("You have successfully updated")
-      expect(page).to have_content("No Veterans are scheduled for this hearing day.")
-      expect(page).to have_content("Previously Scheduled")
-      new_hearing = VACOLS::CaseHearing.find_by(vdkey: hearing_day_two.id)
-      expect(new_hearing.folder_nr).to eql(case_hearing.folder_nr)
-    end
   end
 
   context "Daily docket with one AMA hearing" do
@@ -113,10 +100,15 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can only update notes" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to_not have_content("Edit Hearing Day")
+      expect(page).to_not have_content("Lock Hearing Day")
+      expect(page).to_not have_content("Hearing Details")
       expect(page).to have_field("Transcript Requested", disabled: true, visible: false)
       find(".dropdown-Disposition").find(".is-disabled")
       fill_in "Notes", with: "This is a note about the hearing!"
       click_button("Save")
+
+      expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("This is a note about the hearing!")
     end
   end

@@ -4,5 +4,9 @@ class VbmsUploadedDocument < ApplicationRecord
   belongs_to :appeal, optional: false
   validates :document_type, presence: true
 
-  attr_accessor :file
+  attribute :file, :string
+
+  def cache_file
+    UploadDocumentToVbms.new(document: self).cache_file
+  end
 end
