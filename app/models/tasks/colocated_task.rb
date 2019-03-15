@@ -64,25 +64,10 @@ class ColocatedTask < Task
                                       ])
   end
 
-  def handle_schedule_hearing(actions)
-    if !appeal.is_a?(LegacyAppeal)
-      return actions
-    end
-
-    actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h)
-    actions.push(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
-    actions
-  end
-
   def available_actions_with_conditions(core_actions)
-    if action == "schedule_hearing"
-      core_actions = handle_schedule_hearing(core_actions)
-      return core_actions
-    end
-    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
-      send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
-      send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
-      return core_actions.unshift(send_to_team)
+    if appeal.is_a?(LegacyAppeal)
+      return legacy_schedule_hearing_actions(core_actions) if action == "schedule_hearing"
+      return legacy_translation_actions(core_actions) if action == "translation"
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
@@ -98,6 +83,19 @@ class ColocatedTask < Task
   end
 
   private
+
+  def legacy_schedule_hearing_actions(actions)
+    task_actions = Constants.TASK_ACTIONS
+    actions.push(task_actions.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h)
+    actions.push(task_actions.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
+    actions
+  end
+
+  def legacy_translation_actions(_actions)
+    send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
+    send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
+    core_actions.unshift(send_to_team)
+  end
 
   def create_and_auto_assign_child_task(_options = {})
     super(appeal: appeal)
