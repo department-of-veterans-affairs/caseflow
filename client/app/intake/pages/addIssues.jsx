@@ -91,8 +91,8 @@ export class AddIssuesPage extends React.Component {
     const intakeData = intakeForms[formType];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
-    const showInvalidVeteranError = !intakeData.veteranValid && _.some(
-      intakeData.addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
+    const showInvalidVeteranError = !intakeData.veteranValid && (_.some(
+      intakeData.addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
     );
 
     if (intakeData.isDtaError) {

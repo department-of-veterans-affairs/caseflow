@@ -10,6 +10,7 @@ class ClaimReview < DecisionReview
 
   with_options if: :saving_review do
     validate :validate_receipt_date
+    validate :validate_veteran
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
@@ -231,5 +232,13 @@ class ClaimReview < DecisionReview
 
   def issue_active_status(_issue)
     active?
+  end
+
+  def validate_veteran
+    return unless intake
+    return if processed_in_caseflow?
+    return if intake.veteran.valid?(:bgs)
+
+    self.error_code = :veteran_not_valid
   end
 end

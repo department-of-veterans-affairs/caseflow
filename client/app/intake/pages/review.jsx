@@ -84,7 +84,7 @@ class ReviewNextButton extends React.PureComponent {
       return false;
     };
 
-    const invalidVet = intakeData && VBMS_BENEFIT_TYPES.includes(intakeData.benefitType) && !intakeData.veteranValid;
+    const invalidVet = intakeData && !intakeData.veteranValid && VBMS_BENEFIT_TYPES.includes(intakeData.benefitType);
     const needsRelationships = intakeData && intakeData.veteranIsNotClaimant && intakeData.relationships.length === 0;
     const disableSubmit = rampRefilingIneligibleOption() || needsRelationships || invalidVet;
 

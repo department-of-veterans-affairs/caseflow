@@ -47,8 +47,8 @@ class Review extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
-    
-    const showInvalidVeteranError = VBMS_BENEFIT_TYPES.includes(benefitType) && !veteranValid;
+
+    const showInvalidVeteranError = !veteranValid && VBMS_BENEFIT_TYPES.includes(benefitType);
 
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>

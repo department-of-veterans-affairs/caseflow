@@ -17,8 +17,8 @@ const mapStateToProps = (state) => {
 
 const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
 
-const invalidVeteran = (appeal) => !appeal.veteranValid && _.some(
-  appeal.addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
+const invalidVeteran = (appeal) => !appeal.veteranValid && (_.some(
+  appeal.addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
 );
 
 class FinishNextButton extends React.PureComponent {

@@ -96,9 +96,11 @@ class SaveButtonUnconnected extends React.Component {
       disableDueToIssueCount = true;
     }
 
-    const invalidVeteran = !veteranValid && _.some(
-      addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
+    const invalidVeteran = !veteranValid && (_.some(
+      addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
     );
+    console.log("invalidVeteran::", invalidVeteran)
+    console.log("veteranValid::", veteranValid)
     const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount || invalidVeteran;
 
     return <span>
@@ -149,6 +151,7 @@ const SaveButton = connect(
     requestStatus: state.requestStatus,
     issueCount: issueCountSelector(state),
     removeDecisionReviews: state.featureToggles.removeDecisionReviews,
+    veteranValid: state.veteranValid,
     state
   }),
   (dispatch) => bindActionCreators({
