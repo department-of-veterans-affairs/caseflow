@@ -295,7 +295,9 @@ describe Appeal do
 
     context ".unexpired" do
       it "matches appeals still inside the processing window" do
-        expect(Appeal.unexpired).to match_array([appeal_requiring_processing, appeal_requiring_processing_newly_submitted])
+        expect(Appeal.unexpired).to match_array(
+          [appeal_requiring_processing, appeal_requiring_processing_newly_submitted]
+        )
       end
     end
 
