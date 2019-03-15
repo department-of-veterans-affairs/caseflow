@@ -30,8 +30,12 @@ class DispositionTask < GenericTask
     @hearing_task ||= parent
   end
 
-  def available_actions(_user)
-    [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+  def available_actions(user)
+    if JudgeTeam.for_judge(user) || HearingsManagement.singleton.user_has_access?(user)
+      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+    else
+      []
+    end
   end
 
   def add_schedule_hearing_task_admin_actions_data(_user)
