@@ -22,7 +22,7 @@ class DecisionReviewIntake < Intake
   end
 
   def cancel_detail!
-    detail.remove_claimants!
+    detail&.remove_claimants!
     super
   end
 

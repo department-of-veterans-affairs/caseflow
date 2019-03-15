@@ -8,7 +8,6 @@ feature "Supplemental Claim Edit issues" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Timecop.freeze(post_ama_start_date)
 
@@ -19,7 +18,6 @@ feature "Supplemental Claim Edit issues" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:veteran) do
@@ -549,6 +547,92 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
         expect(page).to have_content("Issues Not Editable")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+      end
+    end
+  end
+
+  context "when remove decision reviews is enabled for supplemental_claim" do
+    before do
+      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
+      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+    end
+
+    after do
+      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
+    end
+
+    let(:today) { Time.zone.now }
+    let(:last_week) { Time.zone.now - 7.days }
+    let(:supplemental_claim) do
+      # binding.pry
+      # reload to get uuid
+      create(:supplemental_claim, veteran_file_number: veteran.file_number).reload
+    end
+    let!(:existing_request_issues) do
+      [create(:request_issue, :nonrating, decision_review: supplemental_claim),
+       create(:request_issue, :nonrating, decision_review: supplemental_claim)]
+    end
+    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+    let!(:completed_task) do
+      create(:higher_level_review_task,
+             :completed,
+             appeal: supplemental_claim,
+             assigned_to: non_comp_org,
+             closed_at: last_week)
+    end
+
+    context "when review has multiple active tasks" do
+      let!(:in_progress_task) do
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: supplemental_claim,
+               assigned_to: non_comp_org,
+               assigned_at: last_week)
+      end
+
+      scenario "cancel all active tasks when all request issues are removed" do
+        visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+        # remove all request issues
+        supplemental_claim.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit_and_confirm
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+
+        sleep 1
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+
+        # going back to the edit page does not show any requested issues
+        visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+        expect(page).not_to have_content(existing_request_issues.first.description)
+        expect(page).not_to have_content(existing_request_issues.second.description)
+      end
+
+      scenario "no active tasks cancelled when request issues remain" do
+        visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+        # only cancel 1 of the 2 request issues
+        click_remove_intake_issue(1)
+        click_remove_issue_confirmation
+        click_edit_submit_and_confirm
+
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
+      end
+
+      context "when review has no active tasks" do
+        scenario "no tasks are cancelled when all request issues are removed" do
+          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+          click_edit_submit_and_confirm
+
+          expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
+          expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        end
       end
     end
   end
