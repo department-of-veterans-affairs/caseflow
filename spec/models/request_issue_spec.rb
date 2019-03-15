@@ -941,8 +941,6 @@ describe RequestIssue do
 
     context "Issues with legacy issues" do
       before do
-        FeatureToggle.enable!(:intake_legacy_opt_in)
-
         # Active and eligible
         create(:legacy_appeal, vacols_case: create(
           :case,
@@ -976,10 +974,6 @@ describe RequestIssue do
               Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242], disposition: nil)
             ]
           )
-      end
-
-      after do
-        FeatureToggle.disable!(:intake_legacy_opt_in)
       end
 
       context "when legacy opt in is not approved" do
