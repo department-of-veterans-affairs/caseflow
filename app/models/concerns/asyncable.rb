@@ -64,7 +64,7 @@ module Asyncable
 
     def never_attempted
       where(attempted_at_column => nil).where(
-        arel_table[last_submitted_at_column].lt(processing_retry_interval_hours.hours.ago)
+        arel_table[last_submitted_at_column].lteq(processing_retry_interval_hours.hours.ago)
       )
     end
 
@@ -103,6 +103,11 @@ module Asyncable
   def submit_for_processing!(delay: 0)
     # One minute offset to prevent "this date is in the future" errors with external services
     when_to_start = delay.try(:to_datetime) ? delay.to_datetime + 1.minute : Time.zone.now + delay
+
+    # Add the `processing_retry_interval_hours` to the delay time, since it should not be considered
+    if delay != 0
+      when_to_start -= self.class.processing_retry_interval_hours.hours
+    end
 
     update!(
       self.class.last_submitted_at_column => when_to_start,
