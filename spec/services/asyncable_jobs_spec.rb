@@ -2,7 +2,8 @@
 
 describe AsyncableJobs do
   before do
-    Timecop.freeze(Time.zone.now)
+    seven_am_random_date = Time.new(2019, 3, 29, 7, 0, 0).in_time_zone
+    Timecop.freeze(seven_am_random_date)
   end
 
   let(:veteran) { create(:veteran) }
