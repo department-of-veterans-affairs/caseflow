@@ -70,7 +70,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def regional_office_key
-    return appeal&.regional_office_key if request_type == "T" || hearing_day.nil?
+    return (venue_key || appeal&.regional_office_key) if request_type == "T" || hearing_day.nil?
 
     hearing_day&.regional_office
   end
@@ -175,7 +175,6 @@ class LegacyHearing < ApplicationRecord
       representative: representative,
       representative_name: representative_name,
       vdkey: vdkey,
-      regional_office_key: appeal&.regional_office_key,
       master_record: master_record,
       veteran_first_name: veteran_first_name,
       veteran_middle_initial: veteran_middle_initial,
