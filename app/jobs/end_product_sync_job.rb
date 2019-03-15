@@ -10,6 +10,9 @@ class EndProductSyncJob < CaseflowJob
 
     begin
       EndProductEstablishment.find(end_product_establishment_id).sync!
+    rescue TransientBGSSyncError => err
+      # we don't care about transient errors in Sentry since it will alert us. we'll just try again later.
+      Rails.logger.error err
     rescue StandardError => err
       Raven.capture_exception(err, extra: { end_product_establishment_id: end_product_establishment_id })
     end
