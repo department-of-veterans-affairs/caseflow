@@ -91,6 +91,7 @@ feature "Intake Add Issues Page" do
 
         click_remove_intake_issue_by_text("Left knee granted")
         expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+        expect(page).to have_button("Establish appeal", disabled: false)
 
         # Add a compensation nonrating issue
         click_intake_add_issue

@@ -7,7 +7,6 @@ class ClaimReview < DecisionReview
   include HasBusinessLine
 
   has_many :end_product_establishments, as: :source
-  has_one :intake, as: :detail
 
   with_options if: :saving_review do
     validate :validate_receipt_date

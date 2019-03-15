@@ -241,6 +241,22 @@ class Intake < ApplicationRecord
     raise e
   end
 
+  def veteran_invalid_fields
+    missing_fields = veteran.errors.details
+      .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
+      .keys
+
+    address_too_long = veteran.errors.details.any? do |field_name, errors|
+      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
+        errors.any? { |e| e[:error] == :too_long }
+    end
+
+    {
+      veteran_missing_fields: missing_fields,
+      veteran_address_too_long: address_too_long
+    }
+  end
+
   private
 
   def set_veteran_accessible_error
@@ -275,21 +291,5 @@ class Intake < ApplicationRecord
 
   def find_or_build_initial_detail
     fail Caseflow::Error::MustImplementInSubclass
-  end
-
-  def veteran_invalid_fields
-    missing_fields = veteran.errors.details
-      .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
-      .keys
-
-    address_too_long = veteran.errors.details.any? do |field_name, errors|
-      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
-        errors.any? { |e| e[:error] == :too_long }
-    end
-
-    {
-      veteran_missing_fields: missing_fields,
-      veteran_address_too_long: address_too_long
-    }
   end
 end

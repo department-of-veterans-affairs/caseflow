@@ -31,14 +31,6 @@ class Fakes::BGSService
 
     file_path = Rails.root.join("local", "vacols", "bgs_setup.csv")
 
-    Generators::Veteran.build(
-      file_number: "25252525",
-      sex: nil,
-      ssn: nil,
-      country: nil,
-      address_line1: "this address is more than 20 chars"
-    )
-
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
       veteran = Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)

@@ -9,7 +9,7 @@ import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
 import { issueCountSelector } from '../../intake/selectors';
 import { requestIssuesUpdate } from '../actions/edit';
-import { REQUEST_STATE } from '../../intake/constants';
+import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../intake/constants';
 import SaveAlertConfirmModal from './SaveAlertConfirmModal';
 
 class SaveButtonUnconnected extends React.Component {
@@ -86,7 +86,8 @@ class SaveButtonUnconnected extends React.Component {
       originalIssues,
       issueCount,
       requestStatus,
-      removeDecisionReviews
+      removeDecisionReviews,
+      veteranValid
     } = this.props;
 
     let disableDueToIssueCount = false;
@@ -95,7 +96,10 @@ class SaveButtonUnconnected extends React.Component {
       disableDueToIssueCount = true;
     }
 
-    const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount;
+    const invalidVeteran = !veteranValid && _.some(
+      addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
+    );
+    const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount || invalidVeteran;
 
     return <span>
       { this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
