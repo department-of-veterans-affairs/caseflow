@@ -85,6 +85,7 @@ class DecisionReview < ApplicationRecord
   def external_id
     id.to_s
   end
+
   # rubocop:disable Metrics/MethodLength
   def ui_hash
     {
@@ -110,7 +111,6 @@ class DecisionReview < ApplicationRecord
       veteranInvalidFields: veteran_invalid_fields
     }
   end
-  # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
   def timely_issue?(decision_date)

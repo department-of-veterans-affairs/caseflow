@@ -21,8 +21,6 @@ const invalidVeteran = (appeal) => !appeal.veteranValid && _.some(
   appeal.addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId
 );
 
-// const invalidVeteran = false;
-
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
     this.props.completeIntake(this.props.intakeId, this.props.appeal).then(

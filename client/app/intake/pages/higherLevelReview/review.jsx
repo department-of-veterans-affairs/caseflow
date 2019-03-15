@@ -6,7 +6,6 @@ import RadioField from '../../../components/RadioField';
 import DateSelector from '../../../components/DateSelector';
 import BenefitType from '../../components/BenefitType';
 import LegacyOptInApproved from '../../components/LegacyOptInApproved';
-
 import SelectClaimant from '../../components/SelectClaimant';
 import { setInformalConference, setSameOffice } from '../../actions/higherLevelReview';
 import {
