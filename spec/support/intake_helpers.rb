@@ -122,7 +122,6 @@ module IntakeHelpers
   def setup_intake_flags
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Timecop.freeze(Time.zone.today)
 
@@ -133,7 +132,6 @@ module IntakeHelpers
 
   def teardown_intake_flags
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   def search_page_title
