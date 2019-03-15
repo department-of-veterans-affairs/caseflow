@@ -274,8 +274,8 @@ describe DispositionTask do
       end
     end
 
-    describe ".mark_no_show!" do
-      subject { disposition_task.mark_no_show! }
+    describe ".no_show!" do
+      subject { disposition_task.no_show! }
 
       context "the hearing's diposition is 'no_show'" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }

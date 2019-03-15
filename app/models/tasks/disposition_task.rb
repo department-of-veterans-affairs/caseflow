@@ -141,7 +141,7 @@ class DispositionTask < GenericTask
     end
   end
 
-  def mark_no_show!
+  def no_show!
     if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
       fail HearingDispositionNotNoShow
     end
