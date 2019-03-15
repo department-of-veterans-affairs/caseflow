@@ -908,8 +908,9 @@ describe EndProductEstablishment do
       it "submits each request issue and starts decision sync job" do
         subject
 
-        # delay in processing should be 1 day for rating, immediatly for nonrating
-        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        # delay in processing should be 1 day for rating (minus the processing offset of 12.hours)
+        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        # immediatly for nonrating
         expect(nonrating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
 
         expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(rating_issue)
@@ -931,8 +932,8 @@ describe EndProductEstablishment do
       it "submits each effectuation and starts decision sync job" do
         subject
 
-        # delay in processing should be 1 day
-        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        # delay in processing should be 1 day (minus the processing offset of 12.hours)
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
         expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end

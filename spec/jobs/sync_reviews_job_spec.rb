@@ -15,7 +15,7 @@ describe SyncReviewsJob do
     end
 
     let!(:higher_level_review_requiring_processing) do
-      create(:higher_level_review).tap(&:submit_for_processing!)
+      create(:higher_level_review, :requires_processing)
     end
 
     let!(:higher_level_review_processed) do
@@ -30,7 +30,7 @@ describe SyncReviewsJob do
     end
 
     let!(:riu_requiring_processing) do
-      create(:request_issues_update).tap(&:submit_for_processing!)
+      create(:request_issues_update, :requires_processing)
     end
 
     let!(:riu_processed) do
@@ -76,7 +76,7 @@ describe SyncReviewsJob do
     end
 
     context "when there are request issues awaiting processing" do
-      let!(:pending_request_issue) { create(:request_issue).tap(&:submit_for_processing!) }
+      let!(:pending_request_issue) { create(:request_issue, :requires_processing) }
       let!(:request_issue) { create(:request_issue) }
 
       it "ignores request issues that are not flagged" do
@@ -88,7 +88,7 @@ describe SyncReviewsJob do
     end
 
     context "when there are effectuations awaiting processing" do
-      let!(:pending_effectuation) { create(:board_grant_effectuation).tap(&:submit_for_processing!) }
+      let!(:pending_effectuation) { create(:board_grant_effectuation, :requires_processing) }
       let!(:effectuation) { create(:board_grant_effectuation) }
 
       it "ignores effectuations that are not flagged" do

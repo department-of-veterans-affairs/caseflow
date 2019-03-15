@@ -125,7 +125,12 @@ describe RequestIssue do
   context ".requires_processing" do
     before do
       rating_request_issue.submit_for_processing!(delay: 1.day)
-      nonrating_request_issue.submit_for_processing!
+      nonrating_request_issue.tap do |issue|
+        issue.submit_for_processing!
+        issue.update!(
+          decision_sync_last_submitted_at: (RequestIssue.processing_retry_interval_hours + 1).hours.ago
+        )
+      end
     end
 
     it "respects the delay" do
