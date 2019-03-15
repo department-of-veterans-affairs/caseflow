@@ -35,7 +35,7 @@ class SaveButtonUnconnected extends React.Component {
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      if (this.props.state.addedIssues === 0) {
+      if (this.props.state.addedIssues.length === 0) {
         showModals.reviewRemovedModal = true;
       } else {
         showModals.issueChangeModal = true;
