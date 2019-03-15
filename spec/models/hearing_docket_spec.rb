@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe HearingDocket, focus: true do
+describe HearingDocket do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
     Time.zone = "America/Chicago"
