@@ -92,10 +92,11 @@ class ColocatedTask < Task
     actions
   end
 
-  def legacy_translation_actions(_actions)
+  def legacy_translation_actions(actions)
     send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
     send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
-    core_actions.unshift(send_to_team)
+    actions.unshift(send_to_team)
+    actions
   end
 
   def create_and_auto_assign_child_task(_options = {})
