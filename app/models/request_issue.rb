@@ -672,7 +672,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def should_check_for_before_ama?
-    !is_unidentified && !ramp_claim_id && !vacols_id
+    !is_unidentified && !ramp_claim_id && !vacols_id && !decision_review&.is_a?(SupplementalClaim)
   end
 
   def check_for_legacy_issue_not_withdrawn!
