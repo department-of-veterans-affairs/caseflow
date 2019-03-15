@@ -2,18 +2,20 @@
 
 require "rails_helper"
 
-RSpec.feature "Judge assignment to attorney" do
-  let(:judge) { Judge.new(FactoryBot.create(:user, full_name: "Billie Daniel")) }
-  let!(:vacols_user) { FactoryBot.create(:staff, :judge_role, user: judge.user) }
-  let!(:judge_team) { JudgeTeam.create_for_judge(judge.user) }
+RSpec.feature "Judge assignment to attorney and judge" do
+  let(:judge_one) { Judge.new(FactoryBot.create(:user, full_name: "Billie Daniel")) }
+  let(:judge_two) { Judge.new(FactoryBot.create(:user, full_name: "Joe Shmoe")) }
+  let!(:vacols_user_one) { FactoryBot.create(:staff, :judge_role, user: judge_one.user) }
+  let!(:vacols_user_two) { FactoryBot.create(:staff, :judge_role, user: judge_two.user) }
+  let!(:judge_team) { JudgeTeam.create_for_judge(judge_one.user) }
   let(:attorney_one) { FactoryBot.create(:user, full_name: "Moe Syzlak") }
   let(:attorney_two) { FactoryBot.create(:user, full_name: "Alice Macgyvertwo") }
   let(:team_attorneys) { [attorney_one, attorney_two] }
   let(:appeal_one) { FactoryBot.create(:appeal) }
   let(:appeal_two) { FactoryBot.create(:appeal) }
 
-  let!(:judge_task_one) { create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_one) }
-  let!(:judge_task_two) { create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_two) }
+  let!(:judge_task_one) { create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one) }
+  let!(:judge_task_two) { create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two) }
 
   before do
     team_attorneys.each do |attorney|
@@ -21,7 +23,37 @@ RSpec.feature "Judge assignment to attorney" do
       OrganizationsUser.add_user_to_organization(attorney, judge_team)
     end
 
-    User.authenticate!(user: judge.user)
+    User.authenticate!(user: judge_one.user)
+  end
+
+  context "Can assign ama appeal to another judge" do
+    scenario "submits draft decision" do
+      visit "/queue"
+
+      find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+      expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+      click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+      expect(page).to have_content("Cases to Assign (2)")
+      expect(page).to have_content("Moe Syzlak")
+      expect(page).to have_content("Alice Macgyvertwo")
+
+      case_rows = page.find_all("tr[id^='table-row-']")
+      expect(case_rows.length).to eq(2)
+
+      step "checks a case and assigns them to another judge" do
+        scroll_element_in_to_view(".usa-table-borderless")
+        check judge_task_one.id.to_s, allow_label_click: true
+
+        safe_click ".Select"
+        click_dropdown(text: "Other")
+        safe_click ".dropdown-Other"
+        click_dropdown({ text: judge_two.user.full_name }, page.find(".dropdown-Other"))
+
+        click_on "Assign 1 case"
+        expect(page).to have_content("Assigned 1 case")
+      end
+    end
   end
 
   context "Can move appeals between attorneys" do
@@ -87,7 +119,7 @@ RSpec.feature "Judge assignment to attorney" do
 
     context "there's another in-progress JudgeAssignTask" do
       let!(:judge_task) do
-        FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal, parent: root_task)
+        FactoryBot.create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal, parent: root_task)
       end
 
       scenario "viewing the assign task queue" do
@@ -108,7 +140,7 @@ RSpec.feature "Judge assignment to attorney" do
     context "there's an in-progress JudgeDecisionReviewTask" do
       let!(:judge_review_task) do
         FactoryBot.create(
-          :ama_judge_decision_review_task, :in_progress, assigned_to: judge.user, appeal: appeal, parent: root_task
+          :ama_judge_decision_review_task, :in_progress, assigned_to: judge_one.user, appeal: appeal, parent: root_task
         )
       end
 
@@ -135,21 +167,21 @@ RSpec.feature "Judge assignment to attorney" do
         expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
         click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
 
-        expect(page).to have_current_path("/queue/#{judge.user.id}/assign")
+        expect(page).to have_current_path("/queue/#{judge_one.user.id}/assign")
         expect(page).to have_content("Assign 2 Cases")
 
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
         expect(page).to have_content(COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL)
         click_on COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL
 
-        expect(page).to have_current_path("/queue/#{judge.user.id}/review")
+        expect(page).to have_current_path("/queue/#{judge_one.user.id}/review")
         expect(page).to have_content("Review 1 Cases")
       end
     end
   end
 
   describe "Assigning a legacy appeal to an attorney from the case details page" do
-    let!(:vacols_case) { FactoryBot.create(:case, staff: vacols_user) }
+    let!(:vacols_case) { FactoryBot.create(:case, staff: vacols_user_one) }
     let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
     let!(:decass) { FactoryBot.create(:decass, defolder: vacols_case.bfkey) }
 
