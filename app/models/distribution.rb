@@ -4,6 +4,7 @@ class Distribution < ApplicationRecord
   include ActiveModel::Serializers::JSON
   include LegacyCaseDistribution
   include AmaCaseDistribution
+  include RunAsyncable
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
@@ -17,7 +18,7 @@ class Distribution < ApplicationRecord
   enum status: { pending: "pending", started: "started", error: "error", completed: "completed" }
 
   before_create :mark_as_pending
-  after_commit :enqueue_distribution_job, on: :create
+  after_create_commit :enqueue_distribution_job, if: :pending?
 
   CASES_PER_ATTORNEY = 3
   ALTERNATIVE_BATCH_SIZE = 15
@@ -29,17 +30,17 @@ class Distribution < ApplicationRecord
       return unless valid?(context: :create)
     end
 
-    update(status: "started")
+    update!(status: "started")
 
     if FeatureToggle.enabled?(:ama_auto_case_distribution, user: RequestStore.store[:current_user])
       ama_distribution
-      update(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
+      update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
     else
       legacy_distribution
-      update(status: "completed", completed_at: Time.zone.now, statistics: legacy_statistics)
+      update!(status: "completed", completed_at: Time.zone.now, statistics: legacy_statistics)
     end
   rescue StandardError => e
-    update(status: "error")
+    update!(status: "error")
     raise e
   end
 
@@ -58,10 +59,10 @@ class Distribution < ApplicationRecord
   end
 
   def enqueue_distribution_job
-    if Rails.env.development? || Rails.env.test?
-      StartDistributionJob.perform_now(self)
-    else
+    if run_async?
       StartDistributionJob.perform_later(self, RequestStore[:current_user])
+    else
+      StartDistributionJob.perform_now(self)
     end
   end
 

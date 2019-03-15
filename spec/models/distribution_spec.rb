@@ -127,6 +127,7 @@ describe Distribution do
 
     context "when the job errors" do
       it "marks the distribution as error" do
+        described_class.skip_callback(:commit, :after, :enqueue_distribution_job)
         allow_any_instance_of(LegacyDocket).to receive(:distribute_priority_appeals).and_raise(StandardError)
         expect { subject.distribute! }.to raise_error(StandardError)
         expect(subject.status).to eq("error")
