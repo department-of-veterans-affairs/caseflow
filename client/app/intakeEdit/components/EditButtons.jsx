@@ -99,8 +99,7 @@ class SaveButtonUnconnected extends React.Component {
     const invalidVeteran = !veteranValid && (_.some(
       addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
     );
-    console.log("invalidVeteran::", invalidVeteran)
-    console.log("veteranValid::", veteranValid)
+
     const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount || invalidVeteran;
 
     return <span>

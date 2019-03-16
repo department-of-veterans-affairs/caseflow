@@ -236,9 +236,8 @@ class ClaimReview < DecisionReview
 
   def validate_veteran
     return unless intake
-    return if processed_in_caseflow?
-    return if intake.veteran.valid?(:bgs)
+    return if processed_in_caseflow? || intake.veteran.valid?(:bgs)
 
-    self.error_code = :veteran_not_valid
+    errors.add(:veteran, "veteran_not_valid")
   end
 end
