@@ -412,7 +412,7 @@ describe RequestIssuesUpdate do
 
           subject
 
-          expect(request_issues_update.error).to eq(vbms_error.to_s)
+          expect(request_issues_update.error).to eq(vbms_error.inspect)
           expect(@raven_called).to eq(true)
         end
       end
@@ -426,7 +426,7 @@ describe RequestIssuesUpdate do
 
           subject
 
-          expect(request_issues_update.error).to eq(vbms_error.to_s)
+          expect(request_issues_update.error).to eq(vbms_error.inspect)
           expect(@raven_called).to eq(true)
         end
       end
