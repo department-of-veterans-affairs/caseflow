@@ -35,7 +35,7 @@ class SaveButtonUnconnected extends React.Component {
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      if (this.props.state.addedIssues.length === 0) {
+      if (_.isEmpty(this.props.state.addedIssues.length)) {
         showModals.reviewRemovedModal = true;
       } else {
         showModals.issueChangeModal = true;
@@ -97,7 +97,7 @@ class SaveButtonUnconnected extends React.Component {
 
     let disableDueToIssueCount = false;
 
-    if (issueCount === 0 && !removeDecisionReviews) {
+    if (!issueCount && !removeDecisionReviews) {
       disableDueToIssueCount = true;
     }
 

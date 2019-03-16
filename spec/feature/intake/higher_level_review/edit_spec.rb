@@ -1166,10 +1166,9 @@ feature "Higher Level Review Edit issues" do
           click_remove_intake_issue(1)
           click_remove_issue_confirmation
         end
-        
+
         click_edit_submit
         expect(page).to have_content("Remove review?")
-        click_edit_submit_and_confirm
         click_intake_confirm
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         sleep 1
