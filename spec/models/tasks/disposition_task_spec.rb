@@ -9,6 +9,12 @@ describe DispositionTask do
     let!(:disposition_task) { DispositionTask.create_disposition_task!(appeal, hearing_task, hearing) }
     let(:after_disposition_update) { nil }
     let(:user) { FactoryBot.create(:user) }
+    let(:organization) { HearingsManagement.singleton }
+
+    before do
+      # Add user to hearing management branch
+      OrganizationsUser.add_user_to_organization(user, organization)
+    end
 
     let(:params) do
       {
