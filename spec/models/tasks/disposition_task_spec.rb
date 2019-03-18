@@ -135,12 +135,15 @@ describe DispositionTask do
     let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
     let(:evidence_window_waived) { nil }
+    let(:hearing_scheduled_for) { appeal.receipt_date + 15.days }
+    let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_scheduled_for) }
     let(:hearing) do
       FactoryBot.create(
         :hearing,
         appeal: appeal,
         disposition: disposition,
-        evidence_window_waived: evidence_window_waived
+        evidence_window_waived: evidence_window_waived,
+        hearing_day: hearing_day
       )
     end
     let!(:hearing_task_association) do
@@ -334,7 +337,7 @@ describe DispositionTask do
               expect(window_task.parent).to eq disposition_task
               expect(window_task.appeal).to eq appeal
               expect(window_task.assigned_to).to eq MailTeam.singleton
-              expect(window_task.timer_ends_at).to eq appeal.receipt_date + 90.days
+              expect(window_task.timer_ends_at).to eq hearing_scheduled_for + 90.days
               expect(disposition_task.on_hold?).to be_truthy
             end
           end
