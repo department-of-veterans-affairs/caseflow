@@ -11,7 +11,7 @@ RSpec.feature "Hearings tasks workflows" do
   end
 
   describe "Completing a NoShowHearingTask" do
-    def click_dropdown_and_check_status(appeal, page, task)
+    def mark_complete_and_verify_status(appeal, page, task)
       visit("/queue/appeals/#{appeal.external_id}")
       click_dropdown(text: Constants.TASK_ACTIONS.MARK_NO_SHOW_HEARING_COMPLETE.label)
       click_on(COPY::MARK_TASK_COMPLETE_BUTTON)
@@ -46,7 +46,7 @@ RSpec.feature "Hearings tasks workflows" do
         it "marks all Caseflow tasks complete and sets the VACOLS location correctly" do
           caseflow_task_count_before = Task.count
 
-          click_dropdown_and_check_status(appeal, page, no_show_hearing_task)
+          mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
           expect(Task.count).to eq(caseflow_task_count_before)
           expect(Task.active.where.not(type: RootTask.name).count).to eq(0)
@@ -61,7 +61,7 @@ RSpec.feature "Hearings tasks workflows" do
         it "marks all Caseflow tasks complete and sets the VACOLS location correctly" do
           caseflow_task_count_before = Task.count
 
-          click_dropdown_and_check_status(appeal, page, no_show_hearing_task)
+          mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
           expect(Task.count).to eq(caseflow_task_count_before)
           expect(Task.active.where.not(type: RootTask.name).count).to eq(0)
@@ -86,7 +86,7 @@ RSpec.feature "Hearings tasks workflows" do
           before { allow_any_instance_of(Vso).to receive(:should_write_ihp?) { false } }
 
           it "marks the case ready for distribution" do
-            click_dropdown_and_check_status(appeal, page, no_show_hearing_task)
+            mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
             # DispositionTask has been closed and no IHP tasks have been created for this appeal.
             expect(parent_hearing_task.reload.children.active.count).to eq(0)
@@ -100,7 +100,7 @@ RSpec.feature "Hearings tasks workflows" do
           before { allow_any_instance_of(Vso).to receive(:should_write_ihp?) { true } }
 
           it "creates an IHP task as a child of the HearingTask" do
-            click_dropdown_and_check_status(appeal, page, no_show_hearing_task)
+            mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
             # DispositionTask has been closed but IHP task has been created for this appeal.
             expect(parent_hearing_task.reload.children.active.count).to eq(1)
@@ -113,7 +113,7 @@ RSpec.feature "Hearings tasks workflows" do
 
       context "when the appellant is not represented by a VSO" do
         it "marks the case ready for distribution" do
-          click_dropdown_and_check_status(appeal, page, no_show_hearing_task)
+          mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
           # DispositionTask has been closed and no IHP tasks have been created for this appeal.
           expect(parent_hearing_task.reload.children.active.count).to eq(0)
