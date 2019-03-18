@@ -71,7 +71,7 @@ feature "Intake Add Issues Page" do
           benefit_type: "Education",
           category: "Accrued",
           description: "Description for Accrued",
-          date: 1.day.ago.mdY
+          date: 1.day.ago.to_date.mdY
         )
 
         expect(page).to have_content("Description for Accrued")
@@ -82,7 +82,6 @@ feature "Intake Add Issues Page" do
         click_intake_add_issue
         add_intake_rating_issue("Left knee granted")
         expect(page).to have_content("The Veteran's profile has missing or invalid information")
-        expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
         expect(page).to have_content(
           "the corporate database, then retry establishing the EP in Caseflow: ssn, country."
         )
@@ -100,7 +99,7 @@ feature "Intake Add Issues Page" do
           benefit_type: "Compensation",
           category: "Apportionment",
           description: "Description for Apportionment",
-          date: 2.days.ago.mdY
+          date: 2.days.ago.to_date.mdY
         )
 
         expect(page).to have_content("Description for Apportionment")

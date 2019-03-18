@@ -69,8 +69,8 @@ export default class ErrorAlert extends React.PureComponent {
       }
     }[this.props.errorCode || 'default'];
 
-    return <div className="cf-margin-bottom-2rem"><Alert title={errorObject.title} type="error">
+    return <Alert title={errorObject.title} type="error" lowerMargin>
       {errorObject.body}
-    </Alert></div>;
+    </Alert>;
   }
 }

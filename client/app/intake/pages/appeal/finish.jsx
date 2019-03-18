@@ -32,15 +32,18 @@ class FinishNextButton extends React.PureComponent {
     );
   };
 
-  render = () =>
-    <Button
+  render() {
+    const disableSubmit = (!this.props.issueCount && !this.props.addedIssues) || invalidVeteran(this.props.appeal);
+
+    return <Button
       name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      disabled={(!this.props.issueCount && !this.props.addedIssues) || invalidVeteran(this.props.appeal)}
+      disabled={disableSubmit}
     >
-      Establish appeal
+        Establish appeal
     </Button>;
+  }
 }
 
 const FinishNextButtonConnected = connect(

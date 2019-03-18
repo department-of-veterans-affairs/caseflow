@@ -380,7 +380,7 @@ feature "Appeal Edit issues" do
         benefit_type: "Education",
         category: "Accrued",
         description: "Description for Accrued",
-        date: 1.day.ago.mdY
+        date: 1.day.ago.to_date.mdY
       )
       expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
       expect(page).to have_button("Save", disabled: false)
@@ -408,7 +408,7 @@ feature "Appeal Edit issues" do
         benefit_type: "Compensation",
         category: "Apportionment",
         description: "Description for Apportionment",
-        date: 2.days.ago.mdY
+        date: 2.days.ago.to_date.mdY
       )
       expect(page).to have_content("The Veteran's profile has missing or invalid information")
       expect(page).to have_button("Save", disabled: true)
