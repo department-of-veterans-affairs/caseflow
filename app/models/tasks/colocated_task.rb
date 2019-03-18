@@ -72,9 +72,9 @@ class ColocatedTask < Task
     end
 
     if action_is_translation
-      core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
+      return ama_translation_actions(core_actions)
     end
-    core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
+
     core_actions
   end
 
@@ -83,6 +83,12 @@ class ColocatedTask < Task
   end
 
   private
+
+  def ama_translation_actions(core_actions)
+    core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
+    core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
+    core_actions
+  end
 
   def legacy_schedule_hearing_actions(actions)
     task_actions = Constants.TASK_ACTIONS
