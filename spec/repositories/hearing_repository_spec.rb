@@ -38,7 +38,6 @@ describe HearingRepository do
 
     let(:hearing_hash) do
       OpenStruct.new(
-        hearing_venue: "SO62",
         hearing_date: date,
         hearing_type: HearingDay::REQUEST_TYPES[:video],
         hearing_pkseq: "12345678",
@@ -55,7 +54,6 @@ describe HearingRepository do
     end
 
     it "assigns values properly" do
-      expect(subject.venue[:city]).to eq("San Antonio")
       expect(subject.request_type).to eq(HearingDay::REQUEST_TYPES[:video])
       expect(subject.vacols_record).to eq(hearing_hash)
       expect(subject.scheduled_for.class).to eq(ActiveSupport::TimeWithZone)
@@ -66,7 +64,6 @@ describe HearingRepository do
       expect(subject.notes).to eq "test notes"
       expect(subject.representative_name).to eq "test rep name"
       expect(subject.representative).to eq "Jewish War Veterans"
-      expect(subject.regional_office_key).to eq "SO62"
     end
   end
 
