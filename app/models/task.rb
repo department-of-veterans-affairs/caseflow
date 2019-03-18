@@ -252,6 +252,12 @@ class Task < ApplicationRecord
     [self, children.map(&:descendants)].flatten
   end
 
+  def ancestor_task_of_type(task_type)
+    return nil unless parent
+
+    parent.is_a?(task_type) ? parent : parent.ancestor_task_of_type(task_type)
+  end
+
   def previous_task
     nil
   end

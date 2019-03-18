@@ -331,7 +331,9 @@ describe HigherLevelReview do
               decision_review_remanded: higher_level_review
             )
             expect(dta_sc).to_not be_nil
-            expect(dta_sc.establishment_submitted_at).to eq(caseflow_decision_date.to_date.to_datetime + 1.minute)
+            expect(dta_sc.establishment_submitted_at).to eq(
+              caseflow_decision_date.to_date.to_datetime - 3.hours + 1.minute
+            )
             expect do
               subject
             end.to_not have_enqueued_job(DecisionReviewProcessJob)
