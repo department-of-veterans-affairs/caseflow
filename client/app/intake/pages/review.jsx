@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
-import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE } from '../constants';
+import { PAGE_PATHS, FORM_TYPES, REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../constants';
 import RampElectionPage from './rampElection/review';
 import RampRefilingPage from './rampRefiling/review';
 import SupplementalClaimPage from './supplementalClaim/review';
@@ -75,7 +75,18 @@ class ReviewNextButton extends React.PureComponent {
     // in that case, just use null as data types since page will be redirected
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const intakeData = selectedForm ? intakeForms[selectedForm.key] : null;
+
+    const rampRefilingIneligibleOption = () => {
+      if (formType === 'ramp_refiling') {
+        return toggleIneligibleError(intakeData.hasInvalidOption, intakeData.optionSelected);
+      }
+
+      return false;
+    };
+
+    const invalidVet = intakeData && !intakeData.veteranValid && VBMS_BENEFIT_TYPES.includes(intakeData.benefitType);
     const needsRelationships = intakeData && intakeData.veteranIsNotClaimant && intakeData.relationships.length === 0;
+    const disableSubmit = rampRefilingIneligibleOption() || needsRelationships || invalidVet;
 
     return <Button
       name="submit-review"
@@ -83,8 +94,7 @@ class ReviewNextButton extends React.PureComponent {
         this.handleClick(selectedForm, intakeData);
       }}
       loading={intakeData ? intakeData.requestStatus.submitReview === REQUEST_STATE.IN_PROGRESS : true}
-      disabled={formType === 'ramp_refiling' ?
-        toggleIneligibleError(intakeData.hasInvalidOption, intakeData.optionSelected) : needsRelationships}
+      disabled={disableSubmit}
     >
       Continue to next step
     </Button>;

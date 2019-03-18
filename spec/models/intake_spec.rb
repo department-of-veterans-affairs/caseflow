@@ -35,6 +35,28 @@ describe Intake do
     )
   end
 
+  let(:ramp_election_intake) do
+    RampElectionIntake.new(
+      veteran_file_number: veteran_file_number,
+      detail: detail,
+      user: user,
+      started_at: 15.minutes.ago,
+      completion_status: completion_status,
+      completion_started_at: completion_started_at
+    )
+  end
+
+  let(:ramp_refiling_intake) do
+    RampRefilingIntake.new(
+      veteran_file_number: veteran_file_number,
+      detail: detail,
+      user: user,
+      started_at: 15.minutes.ago,
+      completion_status: completion_status,
+      completion_started_at: completion_started_at
+    )
+  end
+
   let!(:veteran) { Generators::Veteran.build(file_number: "64205050", country: country) }
 
   let(:completion_status) { nil }
@@ -366,9 +388,26 @@ describe Intake do
     context "country is null" do
       let(:country) { nil }
 
-      it "adds veteran_not_valid and returns false" do
-        expect(subject).to eq(false)
-        expect(intake.error_code).to eq("veteran_not_valid")
+      it "does not validate veteran" do
+        expect(subject).to be_truthy
+      end
+
+      context "RAMP Election Intake" do
+        let(:intake) { ramp_election_intake }
+
+        it "adds veteran_not_valid and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_not_valid")
+        end
+      end
+
+      context "RAMP Refiling Intake" do
+        let(:intake) { ramp_refiling_intake }
+
+        it "adds veteran_not_valid and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_not_valid")
+        end
       end
     end
 
@@ -466,9 +505,26 @@ describe Intake do
         )
       end
 
-      it "adds veteran_not_valid and returns false" do
-        expect(subject).to eq(false)
-        expect(intake.error_code).to eq("veteran_not_valid")
+      it "does not validate Veteran" do
+        expect(subject).to be_truthy
+      end
+
+      context "RAMP Election Intake" do
+        let(:intake) { ramp_election_intake }
+
+        it "adds veteran_not_valid and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_not_valid")
+        end
+      end
+
+      context "RAMP Refiling Intake" do
+        let(:intake) { ramp_refiling_intake }
+
+        it "adds veteran_not_valid and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_not_valid")
+        end
       end
     end
 
