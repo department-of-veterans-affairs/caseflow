@@ -133,7 +133,7 @@ class DispositionTask < GenericTask
   def mark_held() end
 
   def cancel!
-    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
       fail HearingDispositionNotCanceled
     end
 
@@ -141,7 +141,7 @@ class DispositionTask < GenericTask
   end
 
   def no_show!
-    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
       fail HearingDispositionNotNoShow
     end
 
@@ -158,7 +158,7 @@ class DispositionTask < GenericTask
   end
 
   def hold!
-    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.held
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.held
       fail HearingDispositionNotHeld
     end
 
@@ -167,7 +167,7 @@ class DispositionTask < GenericTask
       AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:transcription])
     else
       TranscriptionTask.create!(appeal: appeal, parent: self, assigned_to: TranscriptionTeam.singleton)
-      unless parent&.hearing_task_association&.hearing&.evidence_window_waived
+      unless hearing&.evidence_window_waived
         EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
       end
     end
@@ -194,9 +194,5 @@ class DispositionTask < GenericTask
                end
 
     AppealRepository.update_location!(appeal, location)
-  end
-
-  def hearing_disposition
-    parent&.hearing_task_association&.hearing&.disposition
   end
 end
