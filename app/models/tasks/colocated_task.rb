@@ -65,7 +65,7 @@ class ColocatedTask < Task
   end
 
   def available_actions_with_conditions(core_actions)
-    if appeal.is_a?(LegacyAppeal) && %w[translation schedule_hearing].include?(action)
+    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       return legacy_translation_or_hearing_actions(core_actions)
     end
 
