@@ -163,13 +163,9 @@ class DispositionTask < GenericTask
     end
 
     if appeal.is_a?(LegacyAppeal)
-      update!(status: Constants.TASK_STATUSES.completed)
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:transcription])
+      complete_and_move_legacy_appeal_to_transcription
     else
-      TranscriptionTask.create!(appeal: appeal, parent: self, assigned_to: TranscriptionTeam.singleton)
-      unless hearing&.evidence_window_waived
-        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
-      end
+      create_transcription_and_maybe_evidence_submission_window_tasks
     end
   end
 
@@ -194,5 +190,17 @@ class DispositionTask < GenericTask
                end
 
     AppealRepository.update_location!(appeal, location)
+  end
+
+  def complete_and_move_legacy_appeal_to_transcription
+    update!(status: Constants.TASK_STATUSES.completed)
+    AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:transcription])
+  end
+
+  def create_transcription_and_maybe_evidence_submission_window_tasks
+    TranscriptionTask.create!(appeal: appeal, parent: self, assigned_to: TranscriptionTeam.singleton)
+    unless hearing&.evidence_window_waived
+      EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
+    end
   end
 end
