@@ -91,6 +91,7 @@ class ColocatedTask < Task
 
   def legacy_translation_or_hearing_actions(actions)
     return legacy_schedule_hearing_actions(actions) if action == "schedule_hearing"
+
     legacy_translation_actions(actions)
   end
 
