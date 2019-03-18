@@ -564,7 +564,6 @@ feature "Supplemental Claim Edit issues" do
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
     let(:supplemental_claim) do
-      # binding.pry
       # reload to get uuid
       create(:supplemental_claim, veteran_file_number: veteran.file_number).reload
     end
