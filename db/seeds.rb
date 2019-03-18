@@ -96,7 +96,7 @@ class SeedDB
 
   def create_hearings_user_and_tasks
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
-    # OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
+    OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
 
@@ -489,7 +489,9 @@ class SeedDB
 
     ScheduleHearingTask.create!(
       appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
+      # status: "unassigned",
+      assigned_to: HearingAdmin.singleton,
+      # assigned_to: HearingsManagement.singleton,
       parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     )
   end
