@@ -263,8 +263,17 @@ describe Appeal do
   end
 
   context "async logic scopes" do
-    let!(:appeal_requiring_processing) do
+    let!(:appeal_requiring_processing_newly_submitted) do
       create(:appeal).tap(&:submit_for_processing!)
+    end
+
+    let!(:appeal_requiring_processing) do
+      create(:appeal).tap do |appeal|
+        appeal.submit_for_processing!
+        appeal.update!(
+          establishment_last_submitted_at: (Appeal.processing_retry_interval_hours + 1).hours.ago
+        )
+      end
     end
 
     let!(:appeal_processed) do
@@ -288,14 +297,16 @@ describe Appeal do
 
     context ".unexpired" do
       it "matches appeals still inside the processing window" do
-        expect(Appeal.unexpired).to eq([appeal_requiring_processing])
+        expect(Appeal.unexpired).to match_array(
+          [appeal_requiring_processing, appeal_requiring_processing_newly_submitted]
+        )
       end
     end
 
     context ".processable" do
       it "matches appeals eligible for processing" do
         expect(Appeal.processable).to match_array(
-          [appeal_requiring_processing, appeal_attempts_ended]
+          [appeal_requiring_processing, appeal_attempts_ended, appeal_requiring_processing_newly_submitted]
         )
       end
     end
@@ -307,8 +318,8 @@ describe Appeal do
     end
 
     context ".requires_processing" do
-      it "matches appeals that must still be processed" do
-        expect(Appeal.requires_processing).to eq([appeal_requiring_processing])
+      it "matches appeals that need to be reprocessed" do
+        expect(Appeal.requires_processing).to match_array([appeal_requiring_processing])
       end
     end
 
