@@ -5,14 +5,13 @@ class UploadDocumentToVbms
 
   delegate :document_type, to: :document
 
-  def initialize(document)
+  def initialize(document:)
     @document = document
   end
 
   def call
     return if document.processed_at
 
-    cache_file!
     submit_for_processing!
     upload_to_vbms!
     set_processed_at_to_current_time
@@ -36,13 +35,13 @@ class UploadDocumentToVbms
     Document.type_id(document_type)
   end
 
+  def cache_file
+    S3Service.store_file(s3_location, Base64.decode64(document.file))
+  end
+
   private
 
   attr_reader :document
-
-  def cache_file!
-    S3Service.store_file(s3_location, Base64.decode64(document.file))
-  end
 
   def submit_for_processing!
     when_to_start = Time.zone.now

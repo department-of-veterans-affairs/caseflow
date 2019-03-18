@@ -301,7 +301,7 @@ describe RequestIssuesUpdate do
 
           new_map = rating_end_product_establishment.reload.send(
             :rating_issue_contention_map,
-            review.reload.open_request_issues
+            review.reload.request_issues.active
           )
 
           expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
@@ -412,7 +412,7 @@ describe RequestIssuesUpdate do
 
           subject
 
-          expect(request_issues_update.error).to eq(vbms_error.to_s)
+          expect(request_issues_update.error).to eq(vbms_error.inspect)
           expect(@raven_called).to eq(true)
         end
       end
@@ -426,7 +426,7 @@ describe RequestIssuesUpdate do
 
           subject
 
-          expect(request_issues_update.error).to eq(vbms_error.to_s)
+          expect(request_issues_update.error).to eq(vbms_error.inspect)
           expect(@raven_called).to eq(true)
         end
       end
@@ -459,7 +459,7 @@ describe RequestIssuesUpdate do
 
   context "async logic scopes" do
     let!(:riu_requiring_processing) do
-      create(:request_issues_update).tap(&:submit_for_processing!)
+      create(:request_issues_update, :requires_processing)
     end
 
     let!(:riu_processed) do

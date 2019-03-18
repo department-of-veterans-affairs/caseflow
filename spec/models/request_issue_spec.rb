@@ -19,6 +19,7 @@ describe RequestIssue do
   let(:vacols_sequence_id) { nil }
   let(:closed_at) { nil }
   let(:closed_status) { nil }
+  let(:ineligible_reason) { nil }
 
   let(:review) do
     create(
@@ -71,7 +72,8 @@ describe RequestIssue do
       vacols_id: vacols_id,
       vacols_sequence_id: vacols_sequence_id,
       closed_at: closed_at,
-      closed_status: closed_status
+      closed_status: closed_status,
+      ineligible_reason: ineligible_reason
     )
   end
 
@@ -103,10 +105,32 @@ describe RequestIssue do
 
   let(:associated_claims) { [] }
 
+  context "#save" do
+    subject { rating_request_issue.save }
+
+    context "when ineligible_reason is set" do
+      let(:ineligible_reason) { "appeal_to_appeal" }
+
+      it "closes the issue as ineligible" do
+        subject
+
+        expect(rating_request_issue).to have_attributes(
+          closed_at: Time.zone.now,
+          closed_status: "ineligible"
+        )
+      end
+    end
+  end
+
   context ".requires_processing" do
     before do
       rating_request_issue.submit_for_processing!(delay: 1.day)
-      nonrating_request_issue.submit_for_processing!
+      nonrating_request_issue.tap do |issue|
+        issue.submit_for_processing!
+        issue.update!(
+          decision_sync_last_submitted_at: (RequestIssue.processing_retry_interval_hours + 1).hours.ago
+        )
+      end
     end
 
     it "respects the delay" do
@@ -117,6 +141,18 @@ describe RequestIssue do
       todo = RequestIssue.requires_processing
       expect(todo).to_not include(rating_request_issue)
       expect(todo).to include(nonrating_request_issue)
+    end
+
+    it "keeps trying for #{RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS} days" do
+      Timecop.travel(Time.zone.now + RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS.days - 1.day) do
+        expect(nonrating_request_issue.expired_without_processing?).to eq(false)
+      end
+    end
+
+    it "gives up after #{RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS} days" do
+      Timecop.travel(Time.zone.now + RequestIssue::REQUIRES_PROCESSING_WINDOW_DAYS.days) do
+        expect(nonrating_request_issue.expired_without_processing?).to eq(true)
+      end
     end
   end
 
@@ -149,23 +185,27 @@ describe RequestIssue do
     end
   end
 
-  context ".not_deleted" do
-    subject { RequestIssue.not_deleted }
-
-    let!(:deleted_request_issue) { create(:request_issue, decision_review: nil) }
-
-    it "filters by whether it is associated with a decision_review" do
-      expect(subject.find_by(id: deleted_request_issue.id)).to be_nil
-    end
-  end
-
-  context ".open" do
-    subject { RequestIssue.open }
+  context ".active" do
+    subject { RequestIssue.active }
 
     let!(:closed_request_issue) { create(:request_issue, :removed) }
 
     it "filters by whether the closed_at is nil" do
       expect(subject.find_by(id: closed_request_issue.id)).to be_nil
+    end
+  end
+
+  context ".active_or_decided" do
+    subject { RequestIssue.active_or_decided }
+
+    let!(:decided_request_issue) { create(:request_issue, :decided) }
+    let!(:removed_request_issue) { create(:request_issue, :removed) }
+    let!(:open_eligible_request_issue) { create(:request_issue) }
+
+    it "returns open eligible or closed decided issues" do
+      expect(subject.find_by(id: removed_request_issue.id)).to be_nil
+      expect(subject.find_by(id: decided_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: open_eligible_request_issue.id)).to_not be_nil
     end
   end
 
@@ -906,8 +946,6 @@ describe RequestIssue do
 
     context "Issues with legacy issues" do
       before do
-        FeatureToggle.enable!(:intake_legacy_opt_in)
-
         # Active and eligible
         create(:legacy_appeal, vacols_case: create(
           :case,
@@ -941,10 +979,6 @@ describe RequestIssue do
               Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242], disposition: nil)
             ]
           )
-      end
-
-      after do
-        FeatureToggle.disable!(:intake_legacy_opt_in)
       end
 
       context "when legacy opt in is not approved" do
@@ -996,6 +1030,24 @@ describe RequestIssue do
         rating_request_issue.contested_rating_issue_reference_id = "before_ama_ref_id"
         rating_request_issue.validate_eligibility!
         expect(rating_request_issue.ineligible_reason).to eq("before_ama")
+      end
+
+      context "decision review is a Supplemental Claim" do
+        let(:review) do
+          create(
+            :supplemental_claim,
+            veteran_file_number: veteran.file_number,
+            legacy_opt_in_approved: legacy_opt_in_approved
+          )
+        end
+
+        it "does not apply before AMA checks" do
+          nonrating_request_issue.decision_date = DecisionReview.ama_activation_date - 5.days
+          nonrating_request_issue.validate_eligibility!
+
+          expect(nonrating_request_issue.ineligible_reason).to_not eq("before_ama")
+          expect(nonrating_request_issue).to be_eligible
+        end
       end
 
       context "rating issue is from a RAMP decision" do
