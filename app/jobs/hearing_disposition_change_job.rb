@@ -90,7 +90,7 @@ class HearingDispositionChangeJob < CaseflowJob
     result = err ? "failed" : "completed"
 
     msg = "#{self.class.name} #{result} after running for #{duration}."
-    task_count_for.keys.each do |k, v|
+    task_count_for.each do |k, v|
       msg += "Processed #{v} #{k.to_s.humanize} hearings"
     end
     msg += " Encountered errors for #{error_count} hearings."
