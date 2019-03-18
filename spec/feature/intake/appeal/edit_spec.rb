@@ -391,7 +391,7 @@ feature "Appeal Edit issues" do
              closed_at: last_week)
     end
 
-    context "when review has multiple active tasks" do
+    fcontext "when review has multiple active tasks" do
       let!(:in_progress_task) do
         create(:higher_level_review_task,
                :in_progress,
@@ -421,6 +421,19 @@ feature "Appeal Edit issues" do
         expect(page).not_to have_content(existing_request_issues.second.description)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+
+      scenario "remove all decsions" do
+        visit "appeals/#{appeal.uuid}/edit"
+        # remove all request issues
+        appeal.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit
+        expect(page).to have_content("Remove review?")
+        click_intake_confirm
       end
 
       context "when review has no active tasks" do
