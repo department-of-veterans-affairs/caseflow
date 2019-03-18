@@ -7,7 +7,8 @@ RSpec.feature "Judge assignment to attorney and judge" do
   let(:judge_two) { Judge.new(FactoryBot.create(:user, full_name: "Joe Shmoe")) }
   let!(:vacols_user_one) { FactoryBot.create(:staff, :judge_role, user: judge_one.user) }
   let!(:vacols_user_two) { FactoryBot.create(:staff, :judge_role, user: judge_two.user) }
-  let!(:judge_team) { JudgeTeam.create_for_judge(judge_one.user) }
+  let!(:judge_one_team) { JudgeTeam.create_for_judge(judge_one.user) }
+  let!(:judge_two_team) { JudgeTeam.create_for_judge(judge_two.user) }
   let(:attorney_one) { FactoryBot.create(:user, full_name: "Moe Syzlak") }
   let(:attorney_two) { FactoryBot.create(:user, full_name: "Alice Macgyvertwo") }
   let(:team_attorneys) { [attorney_one, attorney_two] }
@@ -20,7 +21,7 @@ RSpec.feature "Judge assignment to attorney and judge" do
   before do
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney)
-      OrganizationsUser.add_user_to_organization(attorney, judge_team)
+      OrganizationsUser.add_user_to_organization(attorney, judge_one_team)
     end
 
     User.authenticate!(user: judge_one.user)
