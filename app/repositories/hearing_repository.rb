@@ -222,7 +222,6 @@ class HearingRepository
         appellant_middle_initial: vacols_record.sspare3,
         appellant_last_name: vacols_record.sspare1,
         room: vacols_record.room,
-        regional_office_key: ro,
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
         hearing_day_id: vacols_record.vdkey,

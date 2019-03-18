@@ -36,7 +36,7 @@ class AsyncableJobsReporter
       cls = job.class.to_s
       age = ((Time.zone.now - job.sort_by_last_submitted_at) / 3600 / 24).ceil.to_s
       # keep PII out of output
-      err = (job[job.class.error_column] || "none").sub(/ .+/, "")
+      err = (job[job.class.error_column] || "none").gsub(/\s.+/s, "")
       report[cls] ||= {}
       report[cls][age] ||= { err => 0 }
       report[cls][age][err] ||= 0
