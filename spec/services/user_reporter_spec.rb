@@ -11,4 +11,12 @@ describe UserReporter do
       expect(reporter.user_ids).to include(user_UC.id, user_dc.id)
     end
   end
+
+  describe ".models_with_user_id" do
+    it "memoizes array of model constants" do
+      reporter = described_class.new("foobar")
+      reporter.report
+      expect(described_class.models_with_user_id).to include(Intake)
+    end
+  end
 end
