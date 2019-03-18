@@ -31,8 +31,12 @@ class DispositionTask < GenericTask
     @hearing_task ||= parent
   end
 
-  def available_actions(_user)
-    [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+  def available_actions(user)
+    if JudgeTeam.for_judge(user) || HearingsManagement.singleton.user_has_access?(user)
+      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+    else
+      []
+    end
   end
 
   def add_schedule_hearing_task_admin_actions_data(_user)
@@ -134,12 +138,6 @@ class DispositionTask < GenericTask
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
-
-    if appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
-    else
-      RootTask.create_ihp_tasks!(appeal, parent)
-    end
   end
 
   def no_show!
@@ -173,6 +171,17 @@ class DispositionTask < GenericTask
         EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
       end
     end
+  end
+
+  def update_parent_status
+    # Create the child IHP tasks before running DistributionTask's update_status_if_children_tasks_are_complete method.
+    if appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
+    else
+      RootTask.create_ihp_tasks!(appeal, parent)
+    end
+
+    super
   end
 
   private

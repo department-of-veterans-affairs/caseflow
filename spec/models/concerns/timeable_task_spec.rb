@@ -1,27 +1,36 @@
 # frozen_string_literal: true
 
 describe TimeableTask do
+  NOW = Time.utc(2018, 4, 24, 12, 0, 0)
+
   class SomeTimedTask < GenericTask
     include TimeableTask
 
     def when_timer_ends; end
 
     def timer_ends_at
-      appeal.receipt_date + 5.days
+      NOW + 5.days
     end
   end
+
   class AnotherTimedTask < GenericTask
     include TimeableTask
 
     def timer_ends_at; end
   end
 
-  before do
-    Timecop.freeze(Time.zone.today)
+  class OldTimedTask < GenericTask
+    include TimeableTask
+
+    def when_timer_ends; end
+
+    def timer_ends_at
+      NOW - 5.days
+    end
   end
 
-  after do
-    Timecop.return
+  before do
+    Timecop.freeze(NOW)
   end
 
   let(:appeal) { create(:appeal, receipt_date: 10.days.ago) }
@@ -30,7 +39,19 @@ describe TimeableTask do
     task = SomeTimedTask.create!(appeal: appeal, assigned_to: Bva.singleton)
     timers = TaskTimer.where(task: task)
     expect(timers.length).to eq(1)
-    expect(timers.first.last_submitted_at.to_date).to eq(Time.zone.today - 5.days)
+    delayed_start = Time.zone.now + 5.days - 3.hours + 1.minute
+    expect(timers.first.last_submitted_at).to eq(delayed_start)
+    expect(timers.first.submitted_at).to eq(delayed_start)
+  end
+
+  it "queues itself when the delay is in the past" do
+    task = OldTimedTask.create!(appeal: appeal, assigned_to: Bva.singleton)
+    timers = TaskTimer.where(task: task)
+    expect(timers.length).to eq(1)
+    expect(timers.first.submitted_and_ready?).to eq(true)
+    expect(timers.first.last_submitted_at).to eq(NOW)
+    delay_in_the_past = Time.zone.now - 5.days - 3.hours + 1.minute
+    expect(timers.first.submitted_at).to eq(delay_in_the_past)
   end
 
   context "when not correctly configured" do
