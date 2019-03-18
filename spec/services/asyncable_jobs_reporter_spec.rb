@@ -18,7 +18,7 @@ describe AsyncableJobsReporter do
     create(:supplemental_claim,
            establishment_last_submitted_at: 6.days.ago,
            establishment_attempted_at: 7.days.ago,
-           establishment_error: "bad problem",
+           establishment_error: "problem\nwith multiple\nlines",
            veteran_file_number: veteran.file_number)
   end
   let!(:sc2) do
@@ -52,7 +52,7 @@ describe AsyncableJobsReporter do
       expect(subject.summary).to eq(
         "SupplementalClaim" => {
           "8" => { "none" => 1 },
-          "6" => { "bad" => 2 },
+          "6" => { "bad" => 1, "problem" => 1 },
           "2" => { "none" => 1 },
           "0" => { "bad" => 1 }
         },
@@ -64,13 +64,14 @@ describe AsyncableJobsReporter do
   end
 
   describe "#summarize" do
-    it "writes a report to stdout" do
+    it "creates a report suitable for puts" do
       msg = <<~HEREDOC
         HigherLevelReview has 1 jobs 7 days old with error bad
         HigherLevelReview has 1 total jobs in queue
         SupplementalClaim has 1 jobs 0 days old with error bad
         SupplementalClaim has 1 jobs 2 days old with error none
-        SupplementalClaim has 2 jobs 6 days old with error bad
+        SupplementalClaim has 1 jobs 6 days old with error bad
+        SupplementalClaim has 1 jobs 6 days old with error problem
         SupplementalClaim has 1 jobs 8 days old with error none
         SupplementalClaim has 5 total jobs in queue
       HEREDOC
