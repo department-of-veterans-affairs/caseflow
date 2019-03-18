@@ -3,6 +3,31 @@
 require "rails_helper"
 
 describe DistributionsController do
+  describe "#new" do
+    context "current user is not a judge" do
+      before { FeatureToggle.enable!(:automatic_case_distribution) }
+      after { FeatureToggle.disable!(:automatic_case_distribution) }
+
+      it "renders an error" do
+        User.authenticate!(user: create(:user))
+        get :new
+
+        body = JSON.parse(response.body)
+        expect(body["errors"].first["error"]).to eq "not_judge"
+      end
+    end
+
+    context "feature is not enabled" do
+      it "renders an error" do
+        User.authenticate!(user: create(:user))
+        get :new
+
+        body = JSON.parse(response.body)
+        expect(body["errors"].first["error"]).to eq "feature_not_enabled"
+      end
+    end
+  end
+
   describe "#show" do
     context "current user is not judge associated with distribution" do
       it "renders an error" do
