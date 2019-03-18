@@ -122,7 +122,6 @@ module IntakeHelpers
   def setup_intake_flags
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Timecop.freeze(Time.zone.today)
 
@@ -133,7 +132,6 @@ module IntakeHelpers
 
   def teardown_intake_flags
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   def search_page_title
@@ -618,7 +616,7 @@ module IntakeHelpers
     expect(updated_request_issue).to be_closed
 
     # check that new request issue is created contesting the decision issue
-    request_issues = decision_review.reload.request_issues.active
+    request_issues = decision_review.reload.request_issues.active_or_ineligible
     first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
     second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
 

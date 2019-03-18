@@ -16,7 +16,6 @@ import {
 import { onReceiveAmaTasks } from './QueueActions';
 import { requestPatch } from './uiReducer/uiActions';
 
-import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import Alert from '../components/Alert';
@@ -28,6 +27,7 @@ import {
   marginTop,
   COLOCATED_HOLD_DURATIONS
 } from './constants';
+import QueueFlowPage from './components/QueueFlowPage';
 
 class ColocatedPlaceHoldView extends React.Component {
   constructor(props) {
@@ -88,7 +88,8 @@ class ColocatedPlaceHoldView extends React.Component {
       task,
       error,
       appeal,
-      highlightFormItems
+      highlightFormItems,
+      ...otherProps
     } = this.props;
     const columnStyling = css({
       width: '50%',
@@ -98,7 +99,13 @@ class ColocatedPlaceHoldView extends React.Component {
       'usa-input-error': highlightFormItems && !this.state.hold
     });
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      validateForm={this.validateForm}
+      goToNextStep={this.goToNextStep}
+      continueBtnText={COPY.COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY}
+      hideCancelButton
+      {...otherProps}
+    >
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         {sprintf(COPY.COLOCATED_ACTION_PLACE_HOLD_HEAD, appeal.veteranFullName, appeal.veteranFileNumber)}
       </h1>
@@ -148,7 +155,7 @@ class ColocatedPlaceHoldView extends React.Component {
         value={this.state.instructions}
         onChange={(instructions) => this.setState({ instructions })}
         styling={marginTop(2)} />
-    </React.Fragment>;
+    </QueueFlowPage>;
   }
 }
 
@@ -171,11 +178,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
-const WrappedComponent = decisionViewBase(ColocatedPlaceHoldView, {
-  hideCancelButton: true,
-  continueBtnText: COPY.COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY
-});
-
 export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(WrappedComponent)
+  connect(mapStateToProps, mapDispatchToProps)(ColocatedPlaceHoldView)
 ));

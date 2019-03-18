@@ -110,6 +110,7 @@ describe HigherLevelReviewIntake do
     let(:claimant) { nil }
     let(:payee_code) { nil }
     let(:veteran_is_not_claimant) { false }
+    let(:legacy_opt_in_approved) { false }
 
     let(:detail) do
       HigherLevelReview.create!(
@@ -126,7 +127,8 @@ describe HigherLevelReviewIntake do
         same_office: same_office,
         claimant: claimant,
         payee_code: payee_code,
-        veteran_is_not_claimant: veteran_is_not_claimant
+        veteran_is_not_claimant: veteran_is_not_claimant,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 

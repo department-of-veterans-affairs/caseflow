@@ -15,8 +15,10 @@ class PrepareDocumentUploadToVbms
   def call
     @success = valid?
     if success
-      document = VbmsUploadedDocument.create(document_params)
-      UploadDocumentToVbmsJob.perform_later(document: document, file: file)
+      VbmsUploadedDocument.create(document_params).tap do |document|
+        document.cache_file
+        UploadDocumentToVbmsJob.perform_later(document_id: document.id)
+      end
     end
 
     FormResponse.new(success: success, errors: [response_errors])
@@ -37,7 +39,8 @@ class PrepareDocumentUploadToVbms
   def document_params
     {
       appeal_id: appeal_id,
-      document_type: document_type
+      document_type: document_type,
+      file: file
     }
   end
 

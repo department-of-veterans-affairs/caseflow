@@ -22,6 +22,9 @@ class CaseSearchErrorMessage extends React.PureComponent {
     case SEARCH_ERROR_FOR.INVALID_VETERAN_ID:
       title = sprintf(COPY.CASE_SEARCH_ERROR_INVALID_ID_HEADING, this.props.queryResultingInError);
       break;
+    case SEARCH_ERROR_FOR.BACKEND_ERROR:
+      title = sprintf(this.props.errorMessage);
+      break;
     case SEARCH_ERROR_FOR.NO_APPEALS:
       title = sprintf(COPY.CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING, this.props.queryResultingInError);
       break;
@@ -37,7 +40,8 @@ class CaseSearchErrorMessage extends React.PureComponent {
 
 const mapStateToProps = (state) => ({
   errorType: state.caseList.search.errorType,
-  queryResultingInError: state.caseList.search.queryResultingInError
+  queryResultingInError: state.caseList.search.queryResultingInError,
+  errorMessage: state.caseList.search.errorMessage
 });
 
 export default connect(mapStateToProps)(CaseSearchErrorMessage);

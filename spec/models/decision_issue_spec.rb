@@ -42,9 +42,9 @@ describe DecisionIssue do
   context "scopes" do
     let!(:ri_contesting_decision_issue) { create(:request_issue, contested_decision_issue_id: decision_issue.id) }
     let!(:uncontested_di) { create(:decision_issue, disposition: "other") }
-    let!(:uncontested_remand_di) { create(:decision_issue, id: 55, disposition: "remanded") }
-    let!(:uncontested_dta_di) { create(:decision_issue, id: 56, disposition: "DTA Error - Fed Recs") }
-    let!(:granted_di) { create(:decision_issue, id: 57, disposition: "DTA Error - Fed Recs") }
+    let!(:uncontested_remand_di) { create(:decision_issue, disposition: "remanded") }
+    let!(:uncontested_dta_di) { create(:decision_issue, disposition: "DTA Error - Fed Recs") }
+    let!(:granted_di) { create(:decision_issue, disposition: "DTA Error - Fed Recs") }
 
     context ".contested" do
       it "matches decision issue that has been contested" do

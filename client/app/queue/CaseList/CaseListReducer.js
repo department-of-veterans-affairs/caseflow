@@ -8,7 +8,8 @@ export const initialState = {
   isRequestingAppealsUsingVeteranId: false,
   search: {
     errorType: null,
-    queryResultingInError: null
+    queryResultingInError: null,
+    errorMessage: null
   },
   fetchedAllCasesFor: {}
 };
@@ -20,7 +21,8 @@ export const caseListReducer = (state = initialState, action = {}) => {
       isRequestingAppealsUsingVeteranId: { $set: initialState.isRequestingAppealsUsingVeteranId },
       search: {
         errorType: { $set: action.payload.errorType },
-        queryResultingInError: { $set: action.payload.searchQuery }
+        queryResultingInError: { $set: action.payload.searchQuery },
+        errorMessage: { $set: action.payload.error }
       }
     });
   case Constants.CLEAR_CASE_LIST_SEARCH:
