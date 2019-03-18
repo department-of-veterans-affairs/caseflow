@@ -35,7 +35,7 @@ class SaveButtonUnconnected extends React.Component {
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      if (_.isEmpty(this.props.state.addedIssues.length)) {
+      if (this.props.state.addedIssues.length === 0) {
         showModals.reviewRemovedModal = true;
       } else {
         showModals.issueChangeModal = true;
@@ -103,6 +103,22 @@ class SaveButtonUnconnected extends React.Component {
 
     const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount;
 
+    let removeReviewModal = () => {
+      if (this.props.formType === 'supplemental_claim' || this.props.formType === 'higher_level_review') {
+        return this.state.showModals.reviewRemovedModal && <SaveAlertConfirmModal
+          title="Remove review?"
+          buttonText= "Yes, remove"
+          onClose={() => this.closeModal('reviewRemovedModal')}
+          onConfirm={() => this.confirmModal('reviewRemovedModal')}>
+          <p>
+          The review originally had {this.state.originalIssueNumber}&nbsp;
+            { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
+          </p>
+          <p>This will remove the review and cancel all the End Products associated with it.</p>
+        </SaveAlertConfirmModal>;
+      }
+    };
+
     return <span>
       { this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
         title="Number of issues has changed"
@@ -115,17 +131,7 @@ class SaveButtonUnconnected extends React.Component {
         <p>Please check that this is the correct number.</p>
       </SaveAlertConfirmModal>}
 
-      { this.state.showModals.reviewRemovedModal && <SaveAlertConfirmModal
-        title="Remove review?"
-        buttonText= "Yes, remove"
-        onClose={() => this.closeModal('reviewRemovedModal')}
-        onConfirm={() => this.confirmModal('reviewRemovedModal')}>
-        <p>
-          The review originally had {this.state.originalIssueNumber}&nbsp;
-          { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
-        </p>
-        <p>This will remove the review and cancel all the End Products associated with it.</p>
-      </SaveAlertConfirmModal>}
+      {removeReviewModal()}
 
       { this.state.showModals.unidentifiedIssueModal && <SaveAlertConfirmModal
         title="Unidentified issue"
