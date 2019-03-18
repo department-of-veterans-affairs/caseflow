@@ -5,6 +5,7 @@ class Organization < ApplicationRecord
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
+  has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
 
   before_save :clean_url
 
@@ -13,7 +14,7 @@ class Organization < ApplicationRecord
   end
 
   def non_admins
-    organizations_users.reject(&:admin?).map(&:user)
+    organizations_users.includes(:user).non_admin.map(&:user)
   end
 
   def self.assignable(task)

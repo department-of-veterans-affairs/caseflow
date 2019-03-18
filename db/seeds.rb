@@ -990,6 +990,12 @@ class SeedDB
     )
   end
 
+  def create_intake_users
+    ["Mail Intake", "Admin Intake"].each do |role|
+      User.create(css_id: "#{role.tr(' ', '')}_LOCAL", roles: [role], station_id: "101", full_name: "Local #{role}")
+    end
+  end
+
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
@@ -1012,6 +1018,8 @@ class SeedDB
     create_ama_hearing_appeals
     create_board_grant_tasks
     create_veteran_record_request_tasks
+
+    create_intake_users
 
     FetchHearingLocationsForVeteransJob.perform_now
 

@@ -8,7 +8,6 @@ feature "Supplemental Claim Edit issues" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Timecop.freeze(post_ama_start_date)
 
@@ -19,7 +18,6 @@ feature "Supplemental Claim Edit issues" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:veteran) do
@@ -566,7 +564,6 @@ feature "Supplemental Claim Edit issues" do
     let(:today) { Time.zone.now }
     let(:last_week) { Time.zone.now - 7.days }
     let(:supplemental_claim) do
-      # binding.pry
       # reload to get uuid
       create(:supplemental_claim, veteran_file_number: veteran.file_number).reload
     end
