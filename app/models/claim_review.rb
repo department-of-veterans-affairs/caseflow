@@ -18,7 +18,7 @@ class ClaimReview < DecisionReview
 
   validates :legacy_opt_in_approved, inclusion: {
     in: [true, false], message: "blank"
-  }, if: [:legacy_opt_in_enabled?, :saving_review]
+  }, if: [:saving_review]
 
   self.abstract_class = true
 
@@ -187,7 +187,7 @@ class ClaimReview < DecisionReview
   end
 
   def issues_hash
-    issue_list = active_status? ? request_issues.open.select(&:eligible?) : fetch_all_decision_issues
+    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
 
     return [] if issue_list.empty?
 

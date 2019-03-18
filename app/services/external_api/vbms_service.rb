@@ -209,6 +209,6 @@ class ExternalApi::VBMSService
   rescue VBMS::ClientError => e
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
 
-    raise e
+    raise VBMSError.from_vbms_http_error(e)
   end
 end

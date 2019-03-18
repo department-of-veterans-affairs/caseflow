@@ -29,8 +29,7 @@ class Review extends React.PureComponent {
       docketTypeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError,
-      featureToggles
+      reviewIntakeError
     } = this.props;
 
     switch (appealStatus) {
@@ -40,8 +39,6 @@ class Review extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
-
-    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
 
     const docketTypeRadioOptions = [
       { value: 'direct_review',
@@ -79,11 +76,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
-      { legacyOptInEnabled && <LegacyOptInApproved
+      <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
-      /> }
+      />
     </div>;
   }
 }

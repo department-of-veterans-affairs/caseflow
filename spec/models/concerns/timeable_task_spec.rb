@@ -1,15 +1,18 @@
 # frozen_string_literal: true
 
 describe TimeableTask do
+  NOW = Time.utc(2018, 4, 24, 12, 0, 0)
+
   class SomeTimedTask < GenericTask
     include TimeableTask
 
     def when_timer_ends; end
 
     def timer_ends_at
-      appeal.receipt_date + 5.days
+      NOW + 5.days
     end
   end
+
   class AnotherTimedTask < GenericTask
     include TimeableTask
 
@@ -17,11 +20,7 @@ describe TimeableTask do
   end
 
   before do
-    Timecop.freeze(Time.zone.today)
-  end
-
-  after do
-    Timecop.return
+    Timecop.freeze(NOW)
   end
 
   let(:appeal) { create(:appeal, receipt_date: 10.days.ago) }
@@ -30,7 +29,7 @@ describe TimeableTask do
     task = SomeTimedTask.create!(appeal: appeal, assigned_to: Bva.singleton)
     timers = TaskTimer.where(task: task)
     expect(timers.length).to eq(1)
-    expect(timers.first.last_submitted_at.to_date).to eq(Time.zone.today - 5.days)
+    expect(timers.first.last_submitted_at).to eq(Time.zone.now + 5.days - 3.hours + 1.minute)
   end
 
   context "when not correctly configured" do

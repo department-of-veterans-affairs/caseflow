@@ -8,7 +8,6 @@ feature "Higher-Level Review" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Timecop.freeze(post_ramp_start_date)
 
@@ -20,7 +19,6 @@ feature "Higher-Level Review" do
   after do
     FeatureToggle.disable!(:intake)
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
@@ -856,7 +854,6 @@ feature "Higher-Level Review" do
       add_intake_rating_issue("Really old injury")
       add_untimely_exemption_response("No")
       expect(page).to have_content("5 issues")
-      expect(page).to have_content("I am an exemption note")
       expect(page).to have_content("5. Really old injury #{ineligible_constants.untimely}")
 
       # add untimely nonrating request issue
@@ -867,9 +864,8 @@ feature "Higher-Level Review" do
         description: "Another Description for Active Duty Adjustments",
         date: "04/19/2016"
       )
-      add_untimely_exemption_response("No", "I am a nonrating exemption note")
+      add_untimely_exemption_response("No")
       expect(page).to have_content("6 issues")
-      expect(page).to have_content("I am a nonrating exemption note")
       expect(page).to have_content(
         "Another Description for Active Duty Adjustments #{ineligible_constants.untimely}"
       )
@@ -986,9 +982,9 @@ feature "Higher-Level Review" do
           contested_issue_description: "Really old injury",
           end_product_establishment_id: nil,
           untimely_exemption: false,
-          untimely_exemption_notes: "I am an exemption note",
           benefit_type: "compensation",
-          ineligible_reason: "untimely"
+          ineligible_reason: "untimely",
+          closed_status: :ineligible
         )
       ).to_not be_nil
 
@@ -1028,6 +1024,7 @@ feature "Higher-Level Review" do
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: nil,
                ineligible_reason: :before_ama,
+               closed_status: :ineligible,
                benefit_type: "compensation"
              )).to_not be_nil
 
@@ -1044,6 +1041,7 @@ feature "Higher-Level Review" do
                decision_review: higher_level_review,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
+               closed_status: :ineligible,
                end_product_establishment_id: nil,
                benefit_type: "compensation"
              )).to_not be_nil
@@ -1432,19 +1430,6 @@ feature "Higher-Level Review" do
 
           expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
         end
-      end
-
-      scenario "adding issue with legacy opt in disabled" do
-        allow(FeatureToggle).to receive(:enabled?).and_call_original
-        allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
-
-        start_higher_level_review(veteran)
-        visit "/intake/add_issues"
-
-        click_intake_add_issue
-        expect(page).to have_content("Add this issue")
-        add_intake_rating_issue(/^Left knee granted$/)
-        expect(page).to have_content("Left knee granted")
       end
     end
   end

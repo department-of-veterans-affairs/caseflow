@@ -20,7 +20,7 @@ class RequestIssuesUpdate < ApplicationRecord
 
     transaction do
       review.create_issues!(new_issues)
-      strip_removed_issues!
+      process_removed_issues!
       process_legacy_issues!
       review.mark_rating_request_issues_to_reassociate!
 
@@ -28,6 +28,7 @@ class RequestIssuesUpdate < ApplicationRecord
         before_request_issue_ids: before_issues.map(&:id),
         after_request_issue_ids: after_issues.map(&:id)
       )
+      cancel_active_tasks
       submit_for_processing!
       process_job
     end
@@ -78,7 +79,7 @@ class RequestIssuesUpdate < ApplicationRecord
   private
 
   def changes?
-    review.request_issues.open_or_ineligible.count != @request_issues_data.count || !new_issues.empty?
+    review.request_issues.active_or_ineligible.count != @request_issues_data.count || !new_issues.empty?
   end
 
   def new_issues
@@ -90,16 +91,16 @@ class RequestIssuesUpdate < ApplicationRecord
     before_issues
 
     @request_issues_data.map do |issue_data|
-      review.request_issues.open_or_ineligible.find_or_build_from_intake_data(issue_data)
+      review.find_or_build_request_issue_from_intake_data(issue_data)
     end
   end
 
   def calculate_before_issues
-    review.request_issues.open_or_ineligible.select(&:persisted?)
+    review.request_issues.active_or_ineligible.select(&:persisted?)
   end
 
   def validate_before_perform
-    if @request_issues_data.blank?
+    if @request_issues_data.blank? && !allow_zero_request_issues
       @error_code = :request_issues_data_empty
     elsif !changes?
       @error_code = :no_changes
@@ -108,6 +109,10 @@ class RequestIssuesUpdate < ApplicationRecord
     end
 
     !@error_code
+  end
+
+  def allow_zero_request_issues
+    FeatureToggle.enabled?(:remove_decision_reviews, user: RequestStore.store[:current_user])
   end
 
   def fetch_before_issues
@@ -122,7 +127,11 @@ class RequestIssuesUpdate < ApplicationRecord
     LegacyOptinManager.new(decision_review: review).process!
   end
 
-  def strip_removed_issues!
-    removed_issues.each(&:remove_from_review)
+  def process_removed_issues!
+    removed_issues.each(&:remove!)
+  end
+
+  def cancel_active_tasks
+    after_issues.empty? && review.cancel_active_tasks
   end
 end

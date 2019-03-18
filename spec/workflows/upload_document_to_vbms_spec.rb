@@ -16,12 +16,13 @@ describe UploadDocumentToVbms do
       :vbms_uploaded_document,
       uploaded_to_vbms_at: uploaded_to_vbms_at,
       appeal: appeal,
-      processed_at: processed_at
+      processed_at: processed_at,
+      file: "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW"
     )
   end
   let(:uploaded_to_vbms_at) { nil }
   let(:processed_at) { nil }
-  let!(:doc_to_upload) { UploadDocumentToVbms.new(document) }
+  let!(:doc_to_upload) { UploadDocumentToVbms.new(document: document) }
 
   describe "#pdf_location" do
     it "fetches file from s3 and returns temporary location" do
@@ -57,16 +58,6 @@ describe UploadDocumentToVbms do
       allow(VBMSService).to receive(:upload_document_to_vbms).and_call_original
     end
 
-    it "caches the file" do
-      expected_path = "idt-uploaded-documents/appeal-#{document.appeal.external_id}-doc-#{document.id}.pdf"
-
-      expect(S3Service).to receive(:store_file).with(expected_path, /PDF/)
-
-      subject
-
-      expect(document.submitted_at).to eq(Time.zone.now)
-    end
-
     context "the document has already been uploaded" do
       let(:uploaded_to_vbms_at) { Time.zone.now }
 
@@ -86,6 +77,7 @@ describe UploadDocumentToVbms do
 
         expect(document.uploaded_to_vbms_at).to eq(Time.zone.now)
         expect(document.processed_at).to_not be_nil
+        expect(document.submitted_at).to eq(Time.zone.now)
       end
     end
 
@@ -115,6 +107,16 @@ describe UploadDocumentToVbms do
         expect(document.submitted_at).to be_nil
         expect(document.processed_at).to_not be_nil
       end
+    end
+  end
+
+  context "#cache_file" do
+    it "stores the file in S3" do
+      expected_path = "idt-uploaded-documents/appeal-#{document.appeal.external_id}-doc-#{document.id}.pdf"
+
+      expect(S3Service).to receive(:store_file).with(expected_path, /PDF/)
+
+      doc_to_upload.cache_file
     end
   end
 end

@@ -11,8 +11,6 @@ class HearingsController < ApplicationController
   end
 
   def update
-    slot_new_hearing if postponed?
-
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(update_params_legacy)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
@@ -52,19 +50,6 @@ class HearingsController < ApplicationController
 
   private
 
-  def slot_new_hearing
-    HearingRepository.slot_new_hearing(
-      master_record_params["id"],
-      scheduled_time: master_record_params["time"]&.stringify_keys,
-      appeal: hearing.appeal,
-      hearing_location_attrs: master_record_params["hearing_location_attributes"]&.to_hash
-    )
-  end
-
-  def postponed?
-    params["master_record_updated"].present?
-  end
-
   def check_hearing_prep_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("hearing_prep_out_of_service")
   end
@@ -86,7 +71,7 @@ class HearingsController < ApplicationController
   end
 
   def verify_access_to_hearing_prep_or_schedule
-    verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched")
+    verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched")
   end
 
   def set_application
@@ -107,17 +92,6 @@ class HearingsController < ApplicationController
                                        :classification, :name, :distance,
                                        :zip_code
                                      ])
-  end
-
-  def master_record_params
-    params.require("master_record_updated").permit(:id,
-                                                   time: [:h, :m, :offset],
-                                                   hearing_location_attributes: [
-                                                     :city, :state, :address,
-                                                     :facility_id, :facility_type,
-                                                     :classification, :name, :distance,
-                                                     :zip_code
-                                                   ])
   end
 
   # rubocop:disable Metrics/MethodLength

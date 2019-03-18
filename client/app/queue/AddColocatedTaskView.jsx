@@ -2,11 +2,11 @@ import * as React from 'react';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
 import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
-import decisionViewBase from './components/DecisionViewBase';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
@@ -27,6 +27,7 @@ import COPY from '../../COPY.json';
 import Button from '../components/Button';
 
 import { taskActionData } from './utils';
+import QueueFlowPage from './components/QueueFlowPage';
 
 const adminActionTemplate = () => {
   return {
@@ -171,10 +172,17 @@ class AddColocatedTaskView extends React.PureComponent {
   }
 
   render = () => {
-    const { error } = this.props;
+    const { error, ...otherProps } = this.props;
     const { adminActions } = this.state;
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      validateForm={this.validateForm}
+      goToNextStep={this.goToNextStep}
+      getNextStepUrl={this.getNextStepUrl}
+      continueBtnText={COPY.ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL}
+      hideCancelButton
+      {...otherProps}
+    >
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         {COPY.ADD_COLOCATED_TASK_SUBHEAD}
       </h1>
@@ -183,7 +191,7 @@ class AddColocatedTaskView extends React.PureComponent {
         {error.detail}
       </Alert>}
       { this.actionFormList(adminActions) }
-    </React.Fragment>;
+    </QueueFlowPage>;
   }
 }
 
@@ -201,9 +209,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealAttrs
 }, dispatch);
 
-const WrappedComponent = decisionViewBase(AddColocatedTaskView, {
-  hideCancelButton: true,
-  continueBtnText: COPY.ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
-});
-
-export default (connect(mapStateToProps, mapDispatchToProps)(WrappedComponent));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddColocatedTaskView));

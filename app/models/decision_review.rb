@@ -100,7 +100,7 @@ class DecisionReview < ApplicationRecord
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: open_request_issues.map(&:ui_hash),
+      requestIssues: request_issues_ui_hash,
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
@@ -158,7 +158,6 @@ class DecisionReview < ApplicationRecord
   end
 
   def serialized_legacy_appeals
-    return [] unless legacy_opt_in_enabled?
     return [] unless available_legacy_appeals.any?
 
     available_legacy_appeals.map do |legacy_appeal|
@@ -183,6 +182,10 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
+  def cancel_active_tasks
+    tasks.each(&:cancel_task_and_child_subtasks)
+  end
+
   def contestable_issues
     return contestable_issues_from_decision_issues unless can_contest_rating_issues?
 
@@ -190,14 +193,9 @@ class DecisionReview < ApplicationRecord
   end
 
   def active_nonrating_request_issues
-    @active_nonrating_request_issues ||= RequestIssue.nonrating.open
+    @active_nonrating_request_issues ||= RequestIssue.nonrating.active
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
-      .select(&:status_active?)
-  end
-
-  def open_request_issues
-    request_issues.includes(:decision_review, :contested_decision_issue).open_or_ineligible
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
@@ -281,7 +279,17 @@ class DecisionReview < ApplicationRecord
     decision_event_date + 365.days if decision_event_date
   end
 
+  def find_or_build_request_issue_from_intake_data(data)
+    return request_issues.active_or_ineligible.find(data[:request_issue_id]) if data[:request_issue_id]
+
+    RequestIssue.from_intake_data(data, decision_review: self)
+  end
+
   private
+
+  def request_issues_ui_hash
+    request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible.map(&:ui_hash)
+  end
 
   def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass
@@ -375,10 +383,6 @@ class DecisionReview < ApplicationRecord
 
     validate_receipt_date_not_before_ama
     validate_receipt_date_not_in_future
-  end
-
-  def legacy_opt_in_enabled?
-    FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
 
   def description

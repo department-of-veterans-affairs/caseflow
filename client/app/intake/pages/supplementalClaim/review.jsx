@@ -29,8 +29,7 @@ class Review extends React.PureComponent {
       benefitTypeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError,
-      featureToggles
+      reviewIntakeError
     } = this.props;
 
     switch (supplementalClaimStatus) {
@@ -40,8 +39,6 @@ class Review extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
-
-    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
 
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
@@ -65,11 +62,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
-      { legacyOptInEnabled && <LegacyOptInApproved
+      <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
-      /> }
+      />
     </div>;
   }
 }

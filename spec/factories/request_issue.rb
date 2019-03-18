@@ -26,6 +26,17 @@ FactoryBot.define do
       closed_status { :removed }
     end
 
+    trait :decided do
+      closed_at { Time.zone.now }
+      closed_status { :decided }
+    end
+
+    trait :requires_processing do
+      decision_sync_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
+      decision_sync_last_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
+      decision_sync_processed_at { nil }
+    end
+
     trait :with_rating_decision_issue do
       transient do
         veteran_participant_id { nil }
