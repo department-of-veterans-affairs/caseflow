@@ -25,9 +25,26 @@ describe HearingDispositionChangeJob do
       end
     end
 
+    context "when there is are elements in the input task_count_for hash" do
+      let(:task_count_for) { { first_key: 0, second_key: 13 } }
+
+      it "includes a sentence in the output message for each element of the hash" do
+        slack_msg = ""
+        allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+        HearingDispositionChangeJob.new.log_info(start_time, task_count_for, error_count, hearing_ids, error)
+
+        expected_msg = "HearingDispositionChangeJob completed after running for .*." \
+          " Processed 0 First key hearings." \
+          " Processed 13 Second key hearings." \
+          " Encountered errors for #{error_count} hearings."
+        expect(slack_msg).to match(/#{expected_msg}/)
+      end
+    end
+
     context "when the job encounters a fatal error" do
       let(:err_msg) { "Example error text" }
-      # Throw and then catch the error so we have it has a stack trace.
+      # Throw and then catch the error so it has a stack trace.
       let(:error) do
         fail StandardError, err_msg
       rescue StandardError => e
