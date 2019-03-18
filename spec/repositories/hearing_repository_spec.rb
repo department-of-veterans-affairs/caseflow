@@ -54,7 +54,6 @@ describe HearingRepository do
     end
 
     it "assigns values properly" do
-      expect(subject.venue[:city]).to eq("San Antonio")
       expect(subject.request_type).to eq(HearingDay::REQUEST_TYPES[:video])
       expect(subject.vacols_record).to eq(hearing_hash)
       expect(subject.scheduled_for.class).to eq(ActiveSupport::TimeWithZone)
