@@ -13,10 +13,10 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 class CaseDetailsLink extends React.PureComponent {
   onClick = () => {
-    const { task } = this.props;
+    const { task, userRole } = this.props;
 
     // when searching for a case, we only load appeal info, no tasks
-    if (task && task.status && task.status === 'assigned') {
+    if (task && task.status && task.status === 'assigned' && userRole === USER_ROLE_TYPES.colocated) {
       const payload = {
         data: {
           task: {
@@ -46,7 +46,7 @@ class CaseDetailsLink extends React.PureComponent {
       fontWeight: (task.status === 'assigned' && userRole === USER_ROLE_TYPES.colocated) ? 'bold' : null
     });
 
-    return <span {...linkStyling}>
+    return <span {...linkStyling} id={`veteran-name-for-task-${task.taskId}`}>
       {appeal.veteranFullName} ({appeal.veteranFileNumber})
     </span>;
   }

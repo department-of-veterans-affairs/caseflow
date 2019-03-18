@@ -102,7 +102,9 @@ class HearingRepository
       )
 
       hearing = if appeal.is_a?(LegacyAppeal)
-                  create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
+                  vacols_hearing = create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
+                  AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
+                  vacols_hearing
                 else
                   Hearing.create!(
                     appeal: appeal,

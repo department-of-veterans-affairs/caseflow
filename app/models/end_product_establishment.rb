@@ -32,6 +32,7 @@ class EndProductEstablishment < ApplicationRecord
   class ContentionCreationFailed < StandardError; end
   class InvalidEndProductError < StandardError; end
   class NoAvailableModifiers < StandardError; end
+  class ContentionNotFound < StandardError; end
 
   class << self
     def order_by_sync_priority
@@ -100,9 +101,13 @@ class EndProductEstablishment < ApplicationRecord
     fail ContentionCreationFailed if records_ready_for_contentions.any? { |r| r.contention_reference_id.nil? }
   end
 
-  def remove_contention!(for_object)
-    VBMSService.remove_contention!(contention_for_object(for_object))
-    for_object.update!(contention_removed_at: Time.zone.now)
+  def remove_contention!(request_issue)
+    contention = contention_for_object(request_issue)
+
+    fail ContentionNotFound unless contention
+
+    VBMSService.remove_contention!(contention)
+    request_issue.update!(contention_removed_at: Time.zone.now)
   end
 
   # Committing an end product establishment is a way to signify that any other actions performed
@@ -160,7 +165,7 @@ class EndProductEstablishment < ApplicationRecord
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
-    fail EstablishedEndProductNotFound unless result
+    fail EstablishedEndProductNotFound, id unless result
 
     # load contentions now, in case "source" needs them.
     # this VBMS call is slow and will cause the transaction below
