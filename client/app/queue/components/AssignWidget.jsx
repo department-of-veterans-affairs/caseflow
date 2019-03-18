@@ -65,16 +65,20 @@ class AssignWidget extends React.PureComponent {
 
   assignTasks = (selectedTasks, assigneeId) => {
     const {
+      attorneys,
       previousAssigneeId,
       userId
     } = this.props;
 
     this.props.setSavePending();
 
+    const assigneeIsJudge = _.find(attorneys.data, { id: Number(assigneeId) })['judge_team?'];
+
     return this.props.onTaskAssignment(
       { tasks: selectedTasks,
         assigneeId,
-        previousAssigneeId }).
+        previousAssigneeId,
+        assigneeIsJudge }).
       then(() => {
         this.props.resetSaveState();
 
