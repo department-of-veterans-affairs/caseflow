@@ -14,7 +14,7 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES, VBMS_BENEFIT_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -29,7 +29,9 @@ class Review extends React.PureComponent {
       benefitTypeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError
+      reviewIntakeError,
+      veteranValid,
+      veteranInvalidFields
     } = this.props;
 
     switch (supplementalClaimStatus) {
@@ -40,10 +42,13 @@ class Review extends React.PureComponent {
     default:
     }
 
+    const showInvalidVeteranError = !veteranValid && VBMS_BENEFIT_TYPES.includes(benefitType);
+
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
+      { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={veteranInvalidFields} /> }
 
       <BenefitType
         value={benefitType}
@@ -101,7 +106,9 @@ export default connect(
     benefitTypeError: state.supplementalClaim.benefitTypeError,
     legacyOptInApproved: state.supplementalClaim.legacyOptInApproved,
     legacyOptInApprovedError: state.supplementalClaim.legacyOptInApprovedError,
-    reviewIntakeError: state.supplementalClaim.requestStatus.reviewIntakeError
+    reviewIntakeError: state.supplementalClaim.requestStatus.reviewIntakeError,
+    veteranValid: state.supplementalClaim.veteranValid,
+    veteranInvalidFields: state.supplementalClaim.veteranInvalidFields
   }),
   (dispatch) => bindActionCreators({
     setReceiptDate,
