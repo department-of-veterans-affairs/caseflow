@@ -69,9 +69,8 @@ class ColocatedTask < Task
     if appeal.is_a?(LegacyAppeal)
       return legacy_schedule_hearing_actions(core_actions) if action == "schedule_hearing"
       return legacy_translation_actions(core_actions) if action_is_translation
-    else
-      core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
     end
+    core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
     if action_is_translation
       return ama_translation_actions(core_actions)
     end
