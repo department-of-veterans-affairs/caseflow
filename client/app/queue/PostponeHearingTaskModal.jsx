@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import editModalBase from './components/EditModalBase';
 import { onReceiveAmaTasks } from './QueueActions';
+import QueueFlowModal from './components/QueueFlowModal';
 import { requestSave } from './uiReducer/uiActions';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import { taskById } from './selectors';
 import { withRouter } from 'react-router-dom';
 
-class PostponeHearingModal extends React.Component {
+class PostponeHearingTaskModal extends React.Component {
   submit = () => {
     const parentTaskId = this.props.task.taskId;
 
@@ -31,7 +31,12 @@ class PostponeHearingModal extends React.Component {
       });
   }
 
-  render = () => <p>Postponing this case will make the case available to be scheduled again.</p>;
+  render = () => <QueueFlowModal
+    title={TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.label}
+    submit={this.submit}
+  >
+    <p>Postponing this case will make the case available to be scheduled again.</p>
+  </QueueFlowModal>;
 }
 
 const mapStateToProps = (state, ownProps) => ({
@@ -43,10 +48,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
-const modalProperties = {
-  title: TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.label
-};
-
-export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(PostponeHearingModal, modalProperties)
-)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(PostponeHearingTaskModal));
