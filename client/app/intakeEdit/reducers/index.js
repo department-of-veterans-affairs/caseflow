@@ -11,6 +11,13 @@ export const mapDataToInitialState = function(props = {}) {
   serverIntake.relationships = formatRelationships(serverIntake.relationships);
   serverIntake.contestableIssues = formatContestableIssues(serverIntake.contestableIssuesByDate);
 
+  if (serverIntake.veteranInvalidFields) {
+    serverIntake.veteranInvalidFields = {
+      veteranMissingFields: serverIntake.veteranInvalidFields.veteran_missing_fields.join(', '),
+      veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
+    };
+  }
+
   return {
     ...serverIntake,
     claimId,
