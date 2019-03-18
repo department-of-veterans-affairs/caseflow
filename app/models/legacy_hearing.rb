@@ -68,7 +68,7 @@ class LegacyHearing < ApplicationRecord
       "Board of Veterans' Appeals in Washington, DC"
     elsif venue
       venue[:label]
-    else hearing_location
+    elsif hearing_location
       hearing_location.name
     end
   end
