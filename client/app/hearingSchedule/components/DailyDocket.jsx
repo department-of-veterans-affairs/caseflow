@@ -178,26 +178,24 @@ export default class DailyDocket extends React.Component {
       options={DISPOSITION_OPTIONS}
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={(option) => {
-        if (option.value === 'postponed') {
-          this.setState({ editedDispositionModalProps: {
-            hearing,
-            disposition: option.value,
-            onCancel: this.closeEditedDispositionModal,
-            onConfirm: () => {
+        this.setState({ editedDispositionModalProps: {
+          hearing,
+          disposition: option.value,
+          onCancel: this.closeEditedDispositionModal,
+          onConfirm: () => {
+            if (option.value === 'postpone') {
               this.cancelHearingUpdate(hearing)();
-              this.onHearingDispositionUpdate(hearing.id)(option);
-              this.closeEditedDispositionModal();
-              // give redux some time to update.
-              setTimeout(() => {
-                const updatedHearing = this.props.hearings[hearing.id];
-
-                this.validateAndSaveHearing(updatedHearing)();
-              }, 0);
             }
-          } });
-        } else {
-          this.onHearingDispositionUpdate(hearing.id)(option);
-        }
+            this.onHearingDispositionUpdate(hearing.id)(option);
+            this.closeEditedDispositionModal();
+            // give redux some time to update.
+            setTimeout(() => {
+              const updatedHearing = this.props.hearings[hearing.id];
+
+              this.validateAndSaveHearing(updatedHearing)();
+            }, 0);
+          }
+        } });
       }}
       readOnly={readOnly || !hearing.dispositionEditable}
     />;
