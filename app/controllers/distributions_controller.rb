@@ -8,10 +8,11 @@ class DistributionsController < ApplicationController
   def new
     return render_403_error(:feature_not_enabled) unless feature_enabled?
 
-    render_single(Distribution.create!(judge: current_user))
+    distribution = Distribution.create!(judge: current_user)
+    enqueue_distribution_job(distribution)
+    render_single(distribution)
   rescue ActiveRecord::RecordInvalid => invalid
     errors = invalid.record.errors.details.values.flatten.map { |e| e[:error] }
-
     return render_single(pending_distribution) if errors.include? :pending_distribution
 
     render_403_error(errors)
@@ -27,6 +28,14 @@ class DistributionsController < ApplicationController
   end
 
   private
+
+  def enqueue_distribution_job(distribution)
+    if Rails.env.development? || Rails.env.test?
+      StartDistributionJob.perform_now(distribution)
+    else
+      StartDistributionJob.perform_later(distribution, current_user)
+    end
+  end
 
   def render_single(distribution)
     render json: { distribution: distribution.as_json }

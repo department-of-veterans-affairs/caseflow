@@ -9,7 +9,7 @@ import Button from '../../components/Button';
 import IssueCounter from '../../intake/components/IssueCounter';
 import { issueCountSelector } from '../../intake/selectors';
 import { requestIssuesUpdate } from '../actions/edit';
-import { REQUEST_STATE } from '../../intake/constants';
+import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../intake/constants';
 import SaveAlertConfirmModal from './SaveAlertConfirmModal';
 
 class SaveButtonUnconnected extends React.Component {
@@ -93,6 +93,7 @@ class SaveButtonUnconnected extends React.Component {
       issueCount,
       requestStatus,
       removeDecisionReviews,
+      veteranValid,
       supplementalClaims,
       higherLevelReviews
     } = this.props;
@@ -103,7 +104,11 @@ class SaveButtonUnconnected extends React.Component {
       disableDueToIssueCount = true;
     }
 
-    const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount;
+    const invalidVeteran = !veteranValid && (_.some(
+      addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
+    );
+
+    const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount || invalidVeteran;
 
     const removeReviewCopy = () => {
       const removeVbmsCopy = 'This will remove the review and cancel all the End Products associated with it.';
@@ -180,6 +185,7 @@ const SaveButton = connect(
     requestStatus: state.requestStatus,
     issueCount: issueCountSelector(state),
     removeDecisionReviews: state.featureToggles.removeDecisionReviews,
+    veteranValid: state.veteranValid,
     supplementalClaims: state,
     higherLevelReviews: state,
     state

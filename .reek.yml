@@ -1,6 +1,8 @@
 ### Generic smell configuration
 detectors:
   # You can disable smells completely
+  DuplicateMethodCall:
+    enabled: false
   IrresponsibleModule:
     enabled: false
   NilCheck:

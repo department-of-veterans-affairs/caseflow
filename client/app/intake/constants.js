@@ -281,4 +281,5 @@ const getValidPayeeCodes = (isDeceased) => {
 // wrap in singleton so these are calculated once
 export const DECEASED_PAYEE_CODES = (() => getValidPayeeCodes(true))();
 export const LIVING_PAYEE_CODES = (() => getValidPayeeCodes(false))();
+
 export const VBMS_BENEFIT_TYPES = ['compensation', 'pension'];
