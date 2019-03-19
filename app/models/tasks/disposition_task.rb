@@ -49,7 +49,28 @@ class DispositionTask < GenericTask
     }
   end
 
+  def find_and_associate_orphan_hearing
+    # temporary patch to find and update hearings that have not been
+    # properly associated with a HearingTask
+    hearings = if appeal.is_a?(LegacyAppeal)
+                 LegacyHearing.where(appeal: appeal).select { |hearing| hearing.disposition.nil? }
+               else
+                 Hearing.where(appeal: appeal, disposition: nil)
+               end
+
+    if hearings.count > 1 || hearings.count == 0
+      fail(
+        Caseflow::Error::UnassociatedHearingTask,
+        task_id: hearing_task.id
+      )
+    else
+      Raven.capture_message("Associated HearingTask #{hearing_task.id} with hearing #{hearings.first.id}.")
+      HearingTaskAssociation.create!(hearing: hearings.first, hearing_task: parent)
+    end
+  end
+
   def update_from_params(params, user)
+    find_and_associate_orphan_hearing if hearing.nil?
     disposition_params = params.delete(:business_payloads)[:values]
 
     if params[:status] == Constants.TASK_STATUSES.cancelled
@@ -106,24 +127,26 @@ class DispositionTask < GenericTask
   end
 
   def mark_postponed(after_disposition_update:)
-    if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(disposition: "postponed")
-    else
-      hearing.update(disposition: "postponed")
-    end
+    multi_transaction do
+      if hearing.is_a?(LegacyHearing)
+        hearing.update_caseflow_and_vacols(disposition: "postponed")
+      else
+        hearing.update(disposition: "postponed")
+      end
 
-    case after_disposition_update[:action]
-    when "reschedule"
-      new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
-      reschedule(
-        hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
-        hearing_location: new_hearing_attrs[:hearing_location]
-      )
-    when "schedule_later"
-      schedule_later(
-        with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
-        instructions: after_disposition_update[:admin_action_instructions]
-      )
+      case after_disposition_update[:action]
+      when "reschedule"
+        new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
+        reschedule(
+          hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
+          hearing_location: new_hearing_attrs[:hearing_location]
+        )
+      when "schedule_later"
+        schedule_later(
+          with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
+          instructions: after_disposition_update[:admin_action_instructions]
+        )
+      end
     end
   end
 

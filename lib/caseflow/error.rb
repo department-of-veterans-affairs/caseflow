@@ -147,6 +147,14 @@ module Caseflow::Error
     end
   end
 
+  class UnassociatedHearingTask < SerializableError
+    def initialize(args)
+      @task_id = args[:task_id]
+      @code = args[:code] || 500
+      @message = args[:message] || "HearingTask #{@task_id} has no associated hearings"
+    end
+  end
+
   class ChildTaskAssignedToSameUser < SerializableError
     def initialize
       @code = 500
