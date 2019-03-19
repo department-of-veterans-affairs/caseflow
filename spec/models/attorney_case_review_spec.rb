@@ -163,7 +163,7 @@ describe AttorneyCaseReview do
       let(:issues) { [] }
 
       it "should raise AttorneyJudgeCheckoutError" do
-        appeal.request_issues.each { |issue| issue.close!(:decided)) }
+        appeal.reload.request_issues.each { |issue| issue.close!(:decided) }
         expect { subject }.to raise_error(Caseflow::Error::AttorneyJudgeCheckoutError)
         expect(AttorneyCaseReview.count).to eq 0
       end
