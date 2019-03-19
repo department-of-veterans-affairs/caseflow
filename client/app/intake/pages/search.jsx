@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/intake';
+import { invalidVeteranInstructions } from '../components/ErrorAlert';
 import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
@@ -51,32 +52,6 @@ const veteranNotFoundInstructions = <div>
     for assistance.
   </p>
 </div>;
-
-const missingFieldsMessage = (fields) => <p>
-  Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
-  then retry establishing the EP in Caseflow: {fields}.
-</p>;
-
-const addressTips = [
-  () => <Fragment>Do: move the last word(s) of the street address down to an another street address field</Fragment>,
-  () => <Fragment>Do: abbreviate to St. Ave. Rd. Blvd. Dr. Ter. Pl. Ct.</Fragment>,
-  () => <Fragment>Don't: edit street names or numbers</Fragment>
-];
-
-const addressTooLongMessage = <Fragment>
-  <p>
-    This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than
-    20 characters (including spaces) then try again.
-  </p>
-  <p>Tips:</p>
-  <BareList items={addressTips} ListElementComponent="ul" />
-</Fragment>;
-
-const invalidVeteranInstructions = (searchErrorData) => <Fragment>
-  { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
-    missingFieldsMessage(searchErrorData.veteranMissingFields) }
-  { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
-</Fragment>;
 
 class Search extends React.PureComponent {
   handleSearchSubmit = () => (

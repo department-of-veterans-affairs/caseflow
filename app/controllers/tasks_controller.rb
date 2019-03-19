@@ -123,6 +123,18 @@ class TasksController < ApplicationController
     }
   end
 
+  def reschedule
+    if !task.is_a?(NoShowHearingTask)
+      fail(Caseflow::Error::ActionForbiddenError, message: "Can only reschedule NoShowHearingTasks")
+    end
+
+    task.reschedule_hearing
+
+    render json: {
+      tasks: json_tasks(task.appeal.tasks)[:data]
+    }
+  end
+
   private
 
   def can_assign_task?

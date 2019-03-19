@@ -26,13 +26,4 @@ class WorkQueue::VeteranSerializer < ActiveModel::Serializer
       }
     end
   end
-  attribute :regional_office do
-    if object.regional_office
-      {
-        key: object.regional_office.key,
-        city: object.regional_office.city,
-        state: object.regional_office.state
-      }
-    end
-  end
 end
