@@ -73,6 +73,10 @@ class DecisionDocument < ApplicationRecord
     end_product_establishment.sync_decision_issues! if end_product_establishment.status_cleared?
   end
 
+  def contention_records(epe)
+    effectuations.where(end_product_establishment: epe)
+  end
+
   private
 
   def create_board_grant_effectuations!

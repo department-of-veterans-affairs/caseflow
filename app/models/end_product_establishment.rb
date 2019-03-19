@@ -92,7 +92,9 @@ class EndProductEstablishment < ApplicationRecord
     # has a contention.
     create_contentions_in_vbms(contentions).each do |contention|
       record = records_ready_for_contentions.find do |r|
-        r.contention_text == contention.text && r.contention_reference_id.nil?
+        contention.claim_id == reference_id &&
+          r.contention_text == contention.text &&
+          r.contention_reference_id.nil?
       end
 
       record&.update!(contention_reference_id: contention.id)
@@ -309,18 +311,14 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  # All records that create contentions should be an instance of ApplicationRecord with
-  # a contention_reference_id column, and contention_text method
-  # TODO: this can be refactored to ask the source instead of using a case statement
   def calculate_records_ready_for_contentions
     select_ready_for_contentions(contention_records)
   end
 
+  # All records that create contentions should be an instance of ApplicationRecord with
+  # a contention_reference_id column, and contention_text method
   def contention_records
-    case source
-    when ClaimReview then request_issues.active
-    when DecisionDocument then source.effectuations.where(end_product_establishment: self)
-    end
+    source.contention_records(self)
   end
 
   def decision_issues_sync_complete?(processing_request_issue)

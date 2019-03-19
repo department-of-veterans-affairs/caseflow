@@ -194,6 +194,10 @@ class ClaimReview < DecisionReview
     fetch_issues_status(issue_list)
   end
 
+  def contention_records(_epe)
+    request_issues.active
+  end
+
   private
 
   def incomplete_tasks?
