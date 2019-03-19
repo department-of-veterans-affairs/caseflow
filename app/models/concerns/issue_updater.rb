@@ -64,7 +64,8 @@ module IssueUpdater
   end
 
   def fail_if_appeal_has_no_decision_issues!
-    if appeal.decision_issues.blank?
+    # In order for this to work, have to reload an appeal from memory
+    if appeal.reload.decision_issues.blank?
       fail Caseflow::Error::AttorneyJudgeCheckoutError, message: "Appeal is missing decision issues"
     end
   end

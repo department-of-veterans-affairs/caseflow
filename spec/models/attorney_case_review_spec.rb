@@ -159,7 +159,7 @@ describe AttorneyCaseReview do
       end
     end
 
-    context "when no issues are sent and all request issues are closed" do
+    context "when no decision issues are sent and all request issues are closed" do
       let(:issues) { [] }
 
       it "should raise AttorneyJudgeCheckoutError" do
