@@ -158,6 +158,16 @@ describe AttorneyCaseReview do
         expect(AttorneyCaseReview.count).to eq 0
       end
     end
+
+    context "when no decision issues are sent and all request issues are closed" do
+      let(:issues) { [] }
+
+      it "should raise AttorneyJudgeCheckoutError" do
+        appeal.reload.request_issues.each { |issue| issue.close!(:decided) }
+        expect { subject }.to raise_error(Caseflow::Error::AttorneyJudgeCheckoutError)
+        expect(AttorneyCaseReview.count).to eq 0
+      end
+    end
   end
 
   context ".complete" do
