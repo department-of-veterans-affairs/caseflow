@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190312160930) do
+ActiveRecord::Schema.define(version: 20190318220422) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -798,7 +798,6 @@ ActiveRecord::Schema.define(version: 20190312160930) do
     t.string "ineligible_reason"
     t.boolean "is_unidentified"
     t.string "issue_category"
-    t.datetime "last_submitted_at"
     t.string "nonrating_issue_description"
     t.text "notes"
     t.string "ramp_claim_id"

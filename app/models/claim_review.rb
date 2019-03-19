@@ -7,10 +7,10 @@ class ClaimReview < DecisionReview
   include HasBusinessLine
 
   has_many :end_product_establishments, as: :source
-  has_one :intake, as: :detail
 
   with_options if: :saving_review do
     validate :validate_receipt_date
+    validate :validate_veteran
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
@@ -18,7 +18,7 @@ class ClaimReview < DecisionReview
 
   validates :legacy_opt_in_approved, inclusion: {
     in: [true, false], message: "blank"
-  }, if: [:legacy_opt_in_enabled?, :saving_review]
+  }, if: [:saving_review]
 
   self.abstract_class = true
 
@@ -232,5 +232,12 @@ class ClaimReview < DecisionReview
 
   def issue_active_status(_issue)
     active?
+  end
+
+  def validate_veteran
+    return unless intake
+    return if processed_in_caseflow? || intake.veteran.valid?(:bgs)
+
+    errors.add(:veteran, "veteran_not_valid")
   end
 end

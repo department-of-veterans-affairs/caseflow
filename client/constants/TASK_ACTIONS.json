@@ -13,9 +13,11 @@
     "JUDGE_AMA_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/dispositions"  },
     "JUDGE_RETURN_TO_ATTORNEY": { "label": "Return to attorney", "value": "modal/return_to_attorney", "func": "return_to_attorney_data" },
     "MARK_COMPLETE": { "label": "Mark task complete", "value": "modal/mark_task_complete", "func": "complete_data" },
+    "MARK_NO_SHOW_HEARING_COMPLETE": { "label": "Mark task complete: Release case for review", "value": "modal/mark_task_complete", "func": "complete_data" },
     "PLACE_HOLD": { "label": "Place hold", "value": "place_hold" },
     "REASSIGN_TO_PERSON": { "label": "Re-assign to person", "value": "modal/reassign_to_person", "func": "assign_to_user_data" },
     "RESCHEDULE_HEARING": { "label": "Mark as complete: Reschedule hearing", "value": "modal/cancel_task", "func": "assign_to_hearing_schedule_team_data" },
+    "RESCHEDULE_NO_SHOW_HEARING": { "label": "Mark as complete: Postpone", "value": "modal/reschedule_hearing" },
     "RETURN_TO_JUDGE": { "label": "Return to judge", "value": "modal/assign_to_judge", "func": "assign_to_judge_data" },
     "REVIEW_LEGACY_DECISION": { "label": "Decision ready for review", "value": "draft_decision/special_issues"},
     "REVIEW_AMA_DECISION": { "label": "Decision ready for review", "value": "draft_decision/dispositions"},
@@ -23,5 +25,6 @@
     "SEND_TO_TEAM": { "label": "Send to team", "value": "modal/send_colocated_task" },
     "SEND_TO_TRANSLATION": { "label": "Assign to Translation team", "value": "modal/assign_to_translation_team", "func": "assign_to_translation_team_data" },
     "SUBMIT_OMO_REQUEST_FOR_REVIEW": { "label": "Medical Request Ready for Review", "value": "omo_request/submit" },
-    "WITHDRAW_HEARING": { "label": "Withdraw hearing", "value": "modal/cancel_task", "func": "withdraw_hearing_data" }
+    "WITHDRAW_HEARING": { "label": "Withdraw hearing", "value": "modal/cancel_task", "func": "withdraw_hearing_data" },
+    "POSTPONE_HEARING": { "label": "Postpone hearing", "value": "modal/postpone_hearing", "func": "add_schedule_hearing_task_admin_actions_data" }
 }

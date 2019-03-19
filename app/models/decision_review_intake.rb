@@ -3,6 +3,7 @@
 class DecisionReviewIntake < Intake
   include RunAsyncable
 
+  # rubocop:disable Metrics/AbcSize
   def ui_hash(ama_enabled)
     super.merge(
       receipt_date: detail.receipt_date,
@@ -14,15 +15,18 @@ class DecisionReviewIntake < Intake
       ratings: detail.serialized_ratings,
       requestIssues: detail.request_issues.active_or_ineligible.map(&:ui_hash),
       activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:ui_hash),
-      contestableIssuesByDate: detail.contestable_issues.map(&:serialize)
+      contestableIssuesByDate: detail.contestable_issues.map(&:serialize),
+      veteranValid: veteran&.valid?(:bgs),
+      veteranInvalidFields: veteran_invalid_fields
     )
   rescue Rating::NilRatingProfileListError, Rating::LockedRatingError
     cancel!(reason: "system_error")
     raise
   end
+  # rubocop:enable Metrics/AbcSize
 
   def cancel_detail!
-    detail.remove_claimants!
+    detail&.remove_claimants!
     super
   end
 

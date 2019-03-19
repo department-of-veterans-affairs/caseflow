@@ -43,6 +43,14 @@ FactoryBot.define do
       assigned_to { Bva.singleton }
     end
 
+    factory :distribution_task, class: DistributionTask do
+      type { DistributionTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+      assigned_to { Bva.singleton }
+      status { Constants.TASK_STATUSES.on_hold }
+    end
+
     factory :generic_task do
       type { GenericTask.name }
       appeal { create(:appeal) }
@@ -131,7 +139,7 @@ FactoryBot.define do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
       assigned_to { HearingAdmin.singleton }
-      parent { create(:ama_disposition_task, appeal: appeal) }
+      parent { create(:disposition_task, appeal: appeal) }
     end
 
     factory :ama_attorney_task do

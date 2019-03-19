@@ -13,24 +13,28 @@ feature "Intake Confirmation Page" do
 
   describe "when completing a claim review" do
     describe "Confirmation copy" do
+      context "HRL allows ineligible issues to remain due to untimeliness" do
+        let(:claim_review_type) { :higher_level_review }
+
+        it "does not show edit in VBMS or tracked item if there is no End Product" do
+          start_claim_review(claim_review_type)
+
+          visit "/intake"
+          click_intake_continue
+          click_intake_add_issue
+          # Add only one ineligible issue, so there will be no eligible issues
+          add_intake_nonrating_issue(date: before_ama_date.strftime("%m/%d/%Y"))
+          add_untimely_exemption_response("Yes")
+          click_intake_finish
+          expect(page).to have_content("Intake completed")
+          expect(page).to_not have_content("If you need to edit this, go to VBMS claim details")
+          expect(page).to_not have_content("Informal Conference Tracked Item")
+          expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
+        end
+      end
+
       [:higher_level_review, :supplemental_claim].each do |claim_review_type|
         describe "given a #{claim_review_type}" do
-          it "does not show edit in VBMS or tracked item if there is no End Product" do
-            start_claim_review(claim_review_type)
-
-            visit "/intake"
-            click_intake_continue
-            click_intake_add_issue
-            # Add only one ineligible issue, so there will be no eligible issues
-            add_intake_nonrating_issue(date: before_ama_date.strftime("%m/%d/%Y"))
-            add_untimely_exemption_response("Yes") if claim_review_type == :higher_level_review
-            click_intake_finish
-            expect(page).to have_content("Intake completed")
-            expect(page).to_not have_content("If you need to edit this, go to VBMS claim details")
-            expect(page).to_not have_content("Informal Conference Tracked Item")
-            expect(page).to have_content("Edit the notice letter to reflect the status of requested issues")
-          end
-
           it "shows EP related content if there is an end product created" do
             start_claim_review(claim_review_type)
 
