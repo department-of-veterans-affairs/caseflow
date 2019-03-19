@@ -128,7 +128,7 @@ describe DecisionDocument do
       it "submits the effectuation for processing and enqueues DecisionIssueSyncJob" do
         subject
         board_grant_effectuation.reload
-        expect(board_grant_effectuation.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        expect(board_grant_effectuation.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
 
         # because we set delay, neither "submitted" nor queued.
         expect(board_grant_effectuation).to be_submitted

@@ -96,7 +96,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content("Judge: #{hearing.user.full_name}")
       end
 
-      scenario "Post remanded appeal shows indication of earlier appeal hearing" do
+      scenario "post remanded appeal shows indication of earlier appeal hearing" do
         visit "/queue"
 
         find_table_cell(post_remanded_appeal.vacols_id, COPY::CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE)
@@ -203,8 +203,8 @@ RSpec.feature "Case details" do
         expect(page).to have_content("About the Veteran")
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to have_content("1/10/1935")
-        expect(page).to have_content(appeal.regional_office.city)
         expect(page).to have_content(appeal.veteran_address_line_1)
+        expect(page).to_not have_content("Regional Office")
       end
       scenario "when there is no POA" do
         visit "/queue"
@@ -240,7 +240,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::CASE_DETAILS_GENDER_FIELD_VALUE_FEMALE)
         expect(page).to_not have_content("1/10/1935")
         expect(page).to_not have_content("5/25/2016")
-        expect(page).to have_content(appeal.regional_office.city)
+        expect(page).to_not have_content("Regional Office")
       end
     end
     context "when veteran is in BGS" do
@@ -253,6 +253,7 @@ RSpec.feature "Case details" do
         visit("/queue/appeals/#{appeal.external_id}")
         expect(page).to have_content("About the Veteran")
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
+        expect(page).to_not have_content("Regional Office")
       end
     end
 
@@ -286,6 +287,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(appeal.appellant_relationship)
         expect(page).to have_content(appeal.appellant_address_line_1)
         expect(page).to have_content(COPY::CASE_DETAILS_VETERAN_ADDRESS_SOURCE)
+        expect(page).to_not have_content("Regional Office")
       end
     end
 
@@ -382,6 +384,33 @@ RSpec.feature "Case details" do
 
       expect(page).to have_content("Knee pain")
       expect(page).to_not have_content("Sunburn")
+    end
+  end
+
+  context "when an appeal has an issue that is decided" do
+    let(:issues) do
+      [
+        build_list(
+          :request_issue,
+          1,
+          contested_issue_description: "Knee pain"
+        ),
+        build_list(
+          :request_issue,
+          1,
+          contested_issue_description: "Sunburn",
+          closed_status: :decided,
+          closed_at: 2.days.ago
+        )
+      ].flatten
+    end
+    let!(:appeal) { FactoryBot.create(:appeal, request_issues: issues) }
+
+    scenario "decided issues should appear in case details page" do
+      visit "/queue/appeals/#{appeal.uuid}"
+
+      expect(page).to have_content("Knee pain")
+      expect(page).to have_content("Sunburn")
     end
   end
 

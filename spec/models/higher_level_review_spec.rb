@@ -2,12 +2,7 @@
 
 describe HigherLevelReview do
   before do
-    FeatureToggle.enable!(:intake_legacy_opt_in)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:veteran_file_number) { "64205555" }
@@ -305,7 +300,9 @@ describe HigherLevelReview do
               decision_review_remanded: higher_level_review
             )
             expect(dta_sc).to_not be_nil
-            expect(dta_sc.establishment_submitted_at).to eq(caseflow_decision_date.to_date.to_datetime + 1.minute)
+            expect(dta_sc.establishment_submitted_at).to eq(
+              caseflow_decision_date.to_date.to_datetime - 3.hours + 1.minute
+            )
             expect do
               subject
             end.to_not have_enqueued_job(DecisionReviewProcessJob)

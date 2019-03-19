@@ -35,8 +35,7 @@ class Review extends React.PureComponent {
       sameOfficeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError,
-      featureToggles
+      reviewIntakeError
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -46,8 +45,6 @@ class Review extends React.PureComponent {
       return <Redirect to={PAGE_PATHS.COMPLETED} />;
     default:
     }
-
-    const legacyOptInEnabled = featureToggles.legacyOptInEnabled;
 
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
@@ -93,11 +90,11 @@ class Review extends React.PureComponent {
 
       <SelectClaimantConnected />
 
-      { legacyOptInEnabled && <LegacyOptInApproved
+      <LegacyOptInApproved
         value={legacyOptInApproved === null ? null : legacyOptInApproved.toString()}
         onChange={this.props.setLegacyOptInApproved}
         errorMessage={legacyOptInApprovedError}
-      /> }
+      />
     </div>;
   }
 }
