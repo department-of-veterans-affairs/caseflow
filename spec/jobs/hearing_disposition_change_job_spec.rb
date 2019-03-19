@@ -3,6 +3,26 @@
 require "rails_helper"
 
 describe HearingDispositionChangeJob do
+  describe ".eligible_disposition_tasks" do
+    subject { HearingDispositionChangeJob.new.eligible_disposition_tasks }
+
+    context "when there are no DispositionTasks" do
+      it "returns an empty collection" do
+        expect(subject.length).to eq(0)
+      end
+    end
+
+    context "when there are a mix of DispositionTasks with different statuses and hearing dates" do
+      before do
+        # TODO: Come back here.
+      end
+
+      it "returns only the active, not on-hold tasks with hearings scheduled to happen more than a day ago" do
+        expect(subject.length).to eq(0)
+      end
+    end
+  end
+
   describe ".log_info" do
     let(:start_time) { 5.minutes.ago }
     let(:task_count_for) { {} }
