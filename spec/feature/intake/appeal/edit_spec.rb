@@ -456,7 +456,7 @@ feature "Appeal Edit issues" do
              closed_at: last_week)
     end
 
-    fcontext "when review has multiple active tasks" do
+    context "when review has multiple active tasks" do
       let!(:in_progress_task) do
         create(:higher_level_review_task,
                :in_progress,
@@ -488,7 +488,7 @@ feature "Appeal Edit issues" do
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
 
-      scenario "remove all decisions" do
+      scenario "remove all vbms decision reviews" do
         visit "appeals/#{appeal.uuid}/edit"
         # remove all request issues
         appeal.request_issues.length.times do

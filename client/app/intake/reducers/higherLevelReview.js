@@ -45,7 +45,7 @@ const updateFromServerIntake = (state, serverIntake) => {
       $set: serverIntake.payeeCode
     },
     processedInCaseflow: {
-      $set: serverIntake.processedInCaseflow
+      $set: serverIntake.processed_in_caseflow
     },
     legacyOptInApproved: {
       $set: serverIntake.legacy_opt_in_approved
@@ -121,8 +121,7 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     redirectTo: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
-    },
-    processedInCaseflow: null
+    }
   }, data.serverIntake)
 );
 

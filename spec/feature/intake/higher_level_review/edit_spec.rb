@@ -1159,7 +1159,7 @@ feature "Higher Level Review Edit issues" do
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
       end
 
-      scenario "remove all decsions" do
+      scenario "remove all vbms decisions reviews" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
         higher_level_review.request_issues.length.times do

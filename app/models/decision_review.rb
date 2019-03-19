@@ -87,6 +87,7 @@ class DecisionReview < ApplicationRecord
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def ui_hash
     {
       veteran: {
@@ -113,6 +114,7 @@ class DecisionReview < ApplicationRecord
     }
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
