@@ -212,7 +212,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def status_active?
-    return appeal_active? if decision_review.is_a?(Appeal)
+    return appeal_active? if decision_review_is_appeal?
     return false unless end_product_establishment
 
     end_product_establishment.status_active?
@@ -440,7 +440,7 @@ class RequestIssue < ApplicationRecord
 
   def api_status_active?
     return decision_review.active_status? if decision_review.is_a?(ClaimReview)
-    return true if decision_review.is_a?(Appeal)
+    return true if decision_review_is_appeal?
   end
 
   def api_status_last_action
@@ -538,12 +538,12 @@ class RequestIssue < ApplicationRecord
     decision_review.is_a?(Appeal)
   end
 
-  def appeal_has_closed_bva_dispatch_task?
-    decision_review.completed_bva_dispatch_task?
+  def decision_review_is_appeal_and_does_not_have_completed_bva_dispatch_task?
+    decision_review_is_appeal? && !decision_review.completed_bva_dispatch_task?
   end
 
   def create_decision_issues
-    return false if decision_review_is_appeal? && !appeal_has_closed_bva_dispatch_task?
+    return false if decision_review_is_appeal_and_does_not_have_completed_bva_dispatch_task?
 
     if rating?
       return false unless end_product_establishment.associated_rating
@@ -664,7 +664,7 @@ class RequestIssue < ApplicationRecord
       end
     end
 
-    if decision_review.is_a?(Appeal) && contested_issue.source_review_type == "Appeal"
+    if decision_review_is_appeal? && contested_issue.source_review_type == "Appeal"
       self.ineligible_reason = :appeal_to_appeal
     end
 
