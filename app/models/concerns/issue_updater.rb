@@ -64,7 +64,7 @@ module IssueUpdater
   end
 
   def fail_if_appeal_has_no_decision_issues!
-    unless appeal.decision_issues.empty?
+    unless appeal.decision_issues.present?
       fail Caseflow::Error::AttorneyJudgeCheckoutError, message: "Appeal is missing decision issues"
     end
   end
