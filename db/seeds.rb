@@ -843,6 +843,14 @@ class SeedDB
       assigned_to: Translation.singleton,
       parent: FactoryBot.create(:root_task)
     )
+
+    FactoryBot.create_list(
+      :ama_judge_task,
+      3,
+      :in_progress,
+      assigned_to: User.find_by(css_id: "BVAEBECKER"),
+      appeal: FactoryBot.create(:appeal)
+    )
   end
 
   def create_board_grant_tasks
