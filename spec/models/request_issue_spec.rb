@@ -332,7 +332,7 @@ describe RequestIssue do
       end
     end
 
-    fcontext "when on remand (dta) decision review" do
+    context "when on remand (dta) decision review" do
       let(:decision_review_remanded) { nil }
       let(:review) { create(:supplemental_claim, decision_review_remanded: decision_review_remanded) }
 
@@ -341,7 +341,7 @@ describe RequestIssue do
 
         context "when decision review remanded is an Appeal" do
           let(:decision_review_remanded) { create(:appeal) }
-          
+
           context "when rating" do
             let(:request_issue) { rating_request_issue }
             let(:contested_decision_issue_id) do
@@ -352,7 +352,7 @@ describe RequestIssue do
 
           context "when not nonrating" do
             let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
-            let(:request_issue) {nonrating_request_issue}
+            let(:request_issue) { nonrating_request_issue }
             it { is_expected.to eq "040HDENRPMC" }
           end
         end
@@ -410,8 +410,8 @@ describe RequestIssue do
           end
 
           context "when nonrating" do
+            let(:request_issue) { nonrating_request_issue }
             let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
-            let (:request_issue) {nonrating_request_issue}
             it { is_expected.to eq "040BDENR" }
           end
         end
