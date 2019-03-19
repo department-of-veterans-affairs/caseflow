@@ -24,7 +24,7 @@ class HearingDispositionChangeJob < CaseflowJob
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
-    tasks = eligible_disposition_tasks
+    tasks = DispositionTask.ready_for_action
     hearing_ids = tasks.map { |t| t.hearing.id }
 
     tasks.each do |task|
@@ -41,13 +41,6 @@ class HearingDispositionChangeJob < CaseflowJob
     log_info(start_time, task_count_for, error_count, hearing_ids, e)
   end
   # rubocop:enable Metrics/MethodLength
-
-  def eligible_disposition_tasks
-    # This is inefficient. If it runs slowly or consumes a lot of resources then refactor. Until then we're fine.
-    DispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold).select do |t|
-      t.hearing && (t.hearing.scheduled_for < 24.hours.ago)
-    end
-  end
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def modify_task_by_dispisition(task)
