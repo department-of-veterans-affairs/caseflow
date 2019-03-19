@@ -412,7 +412,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                 repkey: vacols_case.bfkey,
                 reptype: "C",
                 repfirst: "Contested",
-                replast: "Claimant"
+                replast: "Claimant",
+                repso: "A"
               )
             end
 
@@ -421,6 +422,10 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["contested_claimants"][0]["first_name"]).to eq("Contested")
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["code"])
+                .to eq(representative.repso)
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["name"])
+                .to eq(VACOLS::Case::REPRESENTATIVES[representative.repso][:full_name])
             end
           end
 
