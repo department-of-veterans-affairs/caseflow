@@ -15,9 +15,6 @@ RSpec.feature "Judge assignment to attorney and judge" do
   let(:appeal_one) { FactoryBot.create(:appeal) }
   let(:appeal_two) { FactoryBot.create(:appeal) }
 
-  let!(:judge_task_one) { create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one) }
-  let!(:judge_task_two) { create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two) }
-
   before do
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney)
@@ -28,6 +25,9 @@ RSpec.feature "Judge assignment to attorney and judge" do
   end
 
   context "Can assign ama appeal to another judge" do
+    let!(:judge_task_one) { create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one) }
+    let!(:judge_task_two) { create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two) }
+
     scenario "submits draft decision" do
       visit "/queue"
 
@@ -206,6 +206,11 @@ RSpec.feature "Judge assignment to attorney and judge" do
   end
 
   describe "Assigning an ama appeal to a judge from the case details page" do
+    before do
+      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_one)
+      create(:ama_judge_task, :in_progress, assigned_to: judge_one.user, appeal: appeal_two)
+    end
+
     it "should allow us to assign an ama appeal to a judge from the case details page" do
       visit("/queue/appeals/#{appeal_one.external_id}")
 
