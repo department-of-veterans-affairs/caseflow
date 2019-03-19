@@ -1326,6 +1326,7 @@ describe RequestIssue do
             it "will not sync" do
               subject
               expect(request_issue.decision_issues.count).to eq(0)
+              expect(request_issue.closed?).to eq(false)
             end
           end
 
@@ -1337,6 +1338,7 @@ describe RequestIssue do
             it "syncs" do
               subject
               expect(request_issue.decision_issues.count).to eq(1)
+              expect(request_issue.closed?).to eq(true)
             end
           end
         end
