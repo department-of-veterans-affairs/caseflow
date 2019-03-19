@@ -419,6 +419,34 @@ RSpec.feature "Task queue" do
       expect(page).to_not have_content(judgeteam.name)
     end
   end
+  describe "VLJ support staff schedule hearing action" do
+    let!(:attorney) { FactoryBot.create(:user) }
+    let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+    let!(:vlj_support_staffer) { FactoryBot.create(:user) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
+      User.authenticate!(user: vlj_support_staffer)
+    end
+
+    context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
+      before do
+        ColocatedTask.create_many_from_params([{
+                                                assigned_by: attorney,
+                                                action: :schedule_hearing,
+                                                appeal: appeal
+                                              }], attorney)
+      end
+
+      it "the new options - SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY and SCHEDULE_HEARING_SEND_TO_TEAM should appear" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        find(".Select-control", text: "Select an action…").click
+        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h[:label])
+        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+      end
+    end
+  end
 
   describe "JudgeTask" do
     let!(:judge_user) { FactoryBot.create(:user) }
