@@ -219,7 +219,7 @@ RSpec.feature "Judge assignment to attorney and judge" do
       expect(page).to have_content("Assigned 1 case")
     end
   end
-  
+
   describe "requesting cases (automatic case distribution)" do
     before { FeatureToggle.enable!(:automatic_case_distribution) }
     after { FeatureToggle.disable!(:automatic_case_distribution) }
