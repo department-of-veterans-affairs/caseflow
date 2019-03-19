@@ -534,7 +534,17 @@ class RequestIssue < ApplicationRecord
     duplicate_of_rating_issue_in_active_review? || duplicate_of_nonrating_issue_in_active_review?
   end
 
+  def decision_review_is_appeal?
+    decision_review.is_a?(Appeal)
+  end
+
+  def appeal_has_closed_bva_dispatch_task?
+    decision_review.completed_bva_dispatch_task?
+  end
+
   def create_decision_issues
+    return false if decision_review_is_appeal? && !appeal_has_closed_bva_dispatch_task?
+
     if rating?
       return false unless end_product_establishment.associated_rating
 

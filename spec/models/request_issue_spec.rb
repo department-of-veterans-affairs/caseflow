@@ -1312,6 +1312,34 @@ describe RequestIssue do
             expect(nonrating_request_issue.processed?).to eq(false)
           end
         end
+
+        context "decision review is an Appeal" do
+          let(:review) do
+            create(
+              :appeal,
+              veteran_file_number: veteran.file_number,
+              legacy_opt_in_approved: legacy_opt_in_approved
+            )
+          end
+
+          context "Appeal does not have a completed BvaDispatchTask" do
+            it "will not sync" do
+              subject
+              expect(request_issue.decision_issues.count).to eq(0)
+            end
+          end
+
+          context "Appeal has a completed BvaDispatchTask" do
+            let(:bva_dispatch_task) { create(:bva_dispatch_task, appeal: review, parent: review.root_task) }
+
+            before { bva_dispatch_task.completed! }
+
+            it "syncs" do
+              subject
+              expect(request_issue.decision_issues.count).to eq(1)
+            end
+          end
+        end
       end
     end
   end

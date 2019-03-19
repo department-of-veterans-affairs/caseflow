@@ -673,6 +673,10 @@ class Appeal < DecisionReview
     %w[supplemental_claim cavc]
   end
 
+  def completed_bva_dispatch_task?
+    !!tasks.find { |t| t.is_a?(BvaDispatchTask) }&.completed?
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)

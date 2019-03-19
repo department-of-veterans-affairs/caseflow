@@ -121,6 +121,26 @@ describe Appeal do
     end
   end
 
+  context "#completed_bva_dispatch_task?" do
+    let(:bva_dispatch_task) { create(:bva_dispatch_task, appeal: appeal, parent: appeal.root_task) }
+
+    subject { appeal.completed_bva_dispatch_task? }
+
+    context "task is complete" do
+      before { bva_dispatch_task.completed! }
+
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "task is not complete" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
+
   context "ready appeals sorted by date" do
     it "returns appeals with distribution tasks ordered by when they became ready for distribution" do
       first_appeal = create(:appeal, :with_tasks)
