@@ -431,6 +431,16 @@ describe RequestIssuesUpdate do
         end
       end
 
+      context "when we add and remove an unidentified issue" do
+        let(:unidentified1) { create(:request_issue, :unidentified, decision_review: review) }
+        let(:unidentified2) { create(:request_issue, :unidentified, decision_review: review) }
+        let(:request_issues_data) { [{ request_issue_id: unidentified1.id }, { request_issue_id: unidentified2.id }] }
+
+        it "does not re-use contention_reference_id" do
+
+        end
+      end
+
       def capture_raven_log
         allow(Raven).to receive(:capture_exception) { @raven_called = true }
       end
