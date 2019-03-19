@@ -128,6 +128,8 @@ module IntakeHelpers
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
+
+    User.authenticate!(roles: ["Admin Intake"])
   end
 
   def teardown_intake_flags
