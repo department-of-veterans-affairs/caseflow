@@ -16,9 +16,9 @@ class HearingDispositionChangeJob < CaseflowJob
       Constants.HEARING_DISPOSITION_TYPES.cancelled => 0,
       Constants.HEARING_DISPOSITION_TYPES.postponed => 0,
       Constants.HEARING_DISPOSITION_TYPES.no_show => 0,
-      more_than_24_hours_old: 0,
+      between_one_and_two_days_old: 0,
       stale: 0,
-      unknown_dispositions: 0
+      unknown_disposition: 0
     }
 
     # Set user to system_user to avoid sensitivity errors
@@ -65,12 +65,12 @@ class HearingDispositionChangeJob < CaseflowJob
                 # Logic will be added as part of #9833.
                 :stale
               else
-                :more_than_24_hours_old
+                :between_one_and_two_days_old
               end
     else
       # Expect to never reach this block since all dispositions should be accounted for above. If we run into this
       # case we ignore it and will investigate and potentially incorporate that fix here. Until then we're fine.
-      label = :unknown_dispositions
+      label = :unknown_disposition
     end
     # rubocop:enable Lint/EmptyWhen
 

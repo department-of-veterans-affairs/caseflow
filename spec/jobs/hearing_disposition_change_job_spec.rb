@@ -3,6 +3,97 @@
 require "rails_helper"
 
 describe HearingDispositionChangeJob do
+  describe ".modify_task_by_dispisition" do
+    def create_disposition_task_ancestry(disposition: nil, scheduled_for: nil)
+      appeal = FactoryBot.create(:appeal)
+      root_task = FactoryBot.create(:root_task, appeal: appeal)
+      distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
+      parent_hearing_task = FactoryBot.create(:hearing_task, appeal: appeal, parent: distribution_task)
+
+      hearing = FactoryBot.create(:hearing, appeal: appeal, disposition: disposition)
+      if scheduled_for
+        hearing_day = FactoryBot.create(:hearing_day, scheduled_for: scheduled_for)
+        hearing.update!(hearing_day: hearing_day)
+      end
+
+      HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent_hearing_task)
+      DispositionTask.create!(appeal: appeal, parent: parent_hearing_task, assigned_to: Bva.singleton)
+    end
+
+    subject { HearingDispositionChangeJob.new.modify_task_by_dispisition(task) }
+
+    context "when hearing has a disposition" do
+      let(:task) { create_disposition_task_ancestry(disposition: disposition) }
+
+      context "when disposition is held" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+        it "returns a label matching the hearing disposition and not change the task until #9540 is merged" do
+          attributes_before = task.attributes
+          expect(subject).to eq(disposition)
+          expect(task.attributes).to eq(attributes_before)
+        end
+      end
+
+      context "when disposition is cancelled" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+        it "returns a label matching the hearing disposition and call DispositionTask.cancel!" do
+          expect(task).to receive(:cancel!).exactly(1).times
+          expect(subject).to eq(disposition)
+        end
+      end
+
+      context "when disposition is postponed" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+        it "returns a label matching the hearing disposition and not change the task" do
+          attributes_before = task.attributes
+          expect(subject).to eq(disposition)
+          expect(task.attributes).to eq(attributes_before)
+        end
+      end
+
+      context "when disposition is no_show" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
+        it "returns a label matching the hearing disposition and call DispositionTask.mark_no_show!" do
+          expect(task).to receive(:mark_no_show!).exactly(1).times
+          expect(subject).to eq(disposition)
+        end
+      end
+
+      context "when the disposition is not an expected disposition" do
+        let(:disposition) { "FAKE_DISPOSITION" }
+        it "returns a label indicating that the hearing disposition is unknown and not change the task" do
+          attributes_before = task.attributes
+          expect(subject).to eq(:unknown_disposition)
+          expect(task.attributes).to eq(attributes_before)
+        end
+      end
+    end
+
+    context "when hearing has no disposition" do
+      let(:task) { create_disposition_task_ancestry(disposition: nil, scheduled_for: scheduled_for) }
+
+      context "when hearing was scheduled to take place more than 2 days ago" do
+        let(:scheduled_for) { 3.days.ago }
+
+        it "returns a label indicating that the hearing is stale and does not change the task" do
+          attributes_before = task.attributes
+          expect(subject).to eq(:stale)
+          expect(task.attributes).to eq(attributes_before)
+        end
+      end
+
+      context "when hearing was scheduled to take place less than 2 days ago" do
+        let(:scheduled_for) { 25.hours.ago }
+
+        it "returns a label indicating that the hearing was recently held and does not change the task" do
+          attributes_before = task.attributes
+          expect(subject).to eq(:between_one_and_two_days_old)
+          expect(task.attributes).to eq(attributes_before)
+        end
+      end
+    end
+  end
+
   describe ".log_info" do
     let(:start_time) { 5.minutes.ago }
     let(:task_count_for) { {} }
