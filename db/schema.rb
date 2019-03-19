@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190313152622) do
+ActiveRecord::Schema.define(version: 20190319171122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -752,6 +752,17 @@ ActiveRecord::Schema.define(version: 20190313152622) do
     t.integer "user_id", null: false
     t.index ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at"
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
+  end
+
+  create_table "record_synced_by_jobs", force: :cascade do |t|
+    t.datetime "attempted_at"
+    t.string "error"
+    t.datetime "processed_at"
+    t.bigint "record_id"
+    t.string "record_type"
+    t.datetime "submitted_at"
+    t.string "sync_job_name"
+    t.index ["record_type", "record_id"], name: "index_record_synced_by_jobs_on_record_type_and_record_id"
   end
 
   create_table "remand_reasons", force: :cascade do |t|
