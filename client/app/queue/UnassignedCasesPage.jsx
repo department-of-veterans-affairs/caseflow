@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TaskTable from './components/TaskTable';
 import {
-  initialAssignTasksToUser
+  initialAssignTasksToUser,
+  reassignTasksToUser
 } from './QueueActions';
 import AssignWidget from './components/AssignWidget';
 import { JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE } from '../../COPY.json';
@@ -26,6 +27,14 @@ class UnassignedCasesPage extends React.PureComponent {
     this.props.resetErrorMessages();
   }
 
+  handleAssignment = (params) => {
+    if (params.assigneeIsJudge) {
+      return this.props.reassignTasksToUser(params);
+    }
+
+    return this.props.initialAssignTasksToUser(params);
+  }
+
   render = () => {
     const { userId, selectedTasks, success, error } = this.props;
 
@@ -38,7 +47,7 @@ class UnassignedCasesPage extends React.PureComponent {
           <AssignWidget
             userId={userId}
             previousAssigneeId={userId}
-            onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
+            onTaskAssignment={this.handleAssignment}
             selectedTasks={selectedTasks}
             showRequestCasesButton />
           {this.props.distributionCompleteCasesLoading &&
@@ -98,6 +107,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     initialAssignTasksToUser,
+    reassignTasksToUser,
     resetErrorMessages,
     resetSuccessMessages
   }, dispatch);
