@@ -196,4 +196,19 @@ RSpec.feature "Judge assignment to attorney and judge" do
       expect(page).to have_content("Assigned 1 case")
     end
   end
+
+  describe "Assigning an ama appeal to a judge from the case details page" do
+    it "should allow us to assign an ama appeal to a judge from the case details page" do
+      visit("/queue/appeals/#{appeal_one.external_id}")
+
+      click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.label)
+      click_dropdown(prompt: "Select a user", text: "Other")
+      safe_click ".dropdown-Other"
+      click_dropdown({ text: judge_two.user.full_name }, page.find(".dropdown-Other"))
+
+      click_on("Submit")
+
+      expect(page).to have_content("Assigned 1 case")
+    end
+  end
 end
