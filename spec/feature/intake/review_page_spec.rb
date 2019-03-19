@@ -34,6 +34,26 @@ feature "Intake Review Page" do
     end
   end
 
+  context "when the Veteran is not valid" do
+    let!(:veteran) do
+      Generators::Veteran.build(
+        file_number: "25252525",
+        sex: nil,
+        ssn: nil,
+        country: nil,
+        address_line1: "this address is more than 20 chars"
+      )
+    end
+
+    scenario "Higher level review shows alert on Review page" do
+      check_invalid_veteran_alert_on_review_page("higher_level_review")
+    end
+
+    scenario "Supplemental Claim shows alert on Review page" do
+      check_invalid_veteran_alert_on_review_page("supplemental_claim")
+    end
+  end
+
   describe "Selecting a claimant" do
     before do
       allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -231,6 +251,39 @@ def check_pension_and_compensation_payee_code
 
   click_intake_continue
   expect(page).to have_current_path("/intake/add_issues")
+end
+
+def check_invalid_veteran_alert_on_review_page(form_type)
+  visit "/intake"
+
+  fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.send(form_type.to_sym)
+  find("#form-select").send_keys :enter
+  safe_click ".cf-submit.usa-button"
+
+  fill_in search_bar_title, with: "25252525"
+  click_on "Search"
+
+  expect(page).to have_current_path("/intake/review_request")
+  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+
+  within_fieldset("What is the Benefit Type?") do
+    find("label", text: "Compensation", match: :prefer_exact).click
+  end
+
+  expect(page).to have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+  expect(page).to have_content(
+    "the corporate database, then retry establishing the EP in Caseflow: ssn, country."
+  )
+  expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
+  expect(page).to have_button("Continue to next step", disabled: true)
+
+  within_fieldset("What is the Benefit Type?") do
+    find("label", text: "Education", match: :prefer_exact).click
+  end
+
+  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to have_button("Continue to next step", disabled: false)
 end
 
 # rubocop: enable Metrics/AbcSize
