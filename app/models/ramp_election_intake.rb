@@ -125,7 +125,11 @@ class RampElectionIntake < Intake
   end
 
   def validate_detail_on_start
-    if active_veteran_appeals.empty?
+    if !veteran.valid?(:bgs)
+      self.error_code = :veteran_not_valid
+      @error_data = veteran_invalid_fields
+
+    elsif active_veteran_appeals.empty?
       self.error_code = :no_active_appeals
 
     elsif active_compensation_appeals.empty?
