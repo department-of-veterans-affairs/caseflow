@@ -488,7 +488,7 @@ feature "Appeal Edit issues" do
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
 
-      scenario "remove all decsions" do
+      scenario "remove all decisions" do
         visit "appeals/#{appeal.uuid}/edit"
         # remove all request issues
         appeal.request_issues.length.times do

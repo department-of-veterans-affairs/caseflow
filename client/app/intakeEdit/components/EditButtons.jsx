@@ -35,7 +35,7 @@ class SaveButtonUnconnected extends React.Component {
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      if (this.props.state.addedIssues.length === 0) {
+      if (this.props.state.addedIssues.length === 0 && this.props.removeDecisionReviews) {
         showModals.reviewRemovedModal = true;
       } else {
         showModals.issueChangeModal = true;
@@ -94,8 +94,7 @@ class SaveButtonUnconnected extends React.Component {
       requestStatus,
       removeDecisionReviews,
       veteranValid,
-      supplementalClaims,
-      higherLevelReviews
+      processedInCaseflow
     } = this.props;
 
     let disableDueToIssueCount = false;
@@ -110,20 +109,9 @@ class SaveButtonUnconnected extends React.Component {
 
     const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount || invalidVeteran;
 
-    const removeReviewCopy = () => {
-      const removeVbmsCopy = 'This will remove the review and cancel all the End Products associated with it.';
+    const removeVbmsCopy = 'This will remove the review and cancel all the End Products associated with it.';
 
-      const removeCaseflowCopy = 'This review and all tasks associated with it will be removed.';
-
-      const decisionsInCaseflow = supplementalClaims.processedInCaseflow || higherLevelReviews.processedInCaseflow;
-
-      if (decisionsInCaseflow) {
-        return removeCaseflowCopy;
-      }
-
-      return removeVbmsCopy;
-
-    };
+    const removeCaseflowCopy = 'This review and all tasks associated with it will be removed.';
 
     return <span>
       {this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
@@ -146,7 +134,7 @@ class SaveButtonUnconnected extends React.Component {
           The review originally had {this.state.originalIssueNumber}&nbsp;
           { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
         </p>
-        <p>{removeReviewCopy()}</p>
+        <p>{processedInCaseflow ? removeCaseflowCopy : removeVbmsCopy}</p>
       </SaveAlertConfirmModal>}
 
       { this.state.showModals.unidentifiedIssueModal && <SaveAlertConfirmModal
@@ -186,8 +174,7 @@ const SaveButton = connect(
     issueCount: issueCountSelector(state),
     removeDecisionReviews: state.featureToggles.removeDecisionReviews,
     veteranValid: state.veteranValid,
-    supplementalClaims: state,
-    higherLevelReviews: state,
+    processedInCaseflow: state.processedInCaseflow,
     state
   }),
   (dispatch) => bindActionCreators({
