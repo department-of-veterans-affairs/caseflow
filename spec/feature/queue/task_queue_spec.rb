@@ -439,7 +439,7 @@ RSpec.feature "Task queue" do
                                               }], attorney)
       end
 
-      it "the new options - SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY and SCHEDULE_HEARING_SEND_TO_TEAM should appear" do
+      it "the new options should appear when a hearing has been scheduled" do
         visit("/queue/appeals/#{appeal.external_id}")
         find(".Select-control", text: "Select an action…").click
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h[:label])
