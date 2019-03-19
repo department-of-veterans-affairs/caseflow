@@ -115,12 +115,12 @@ export class PdfFile extends React.PureComponent {
     if (this.grid && nextProps.scale !== this.props.scale) {
       // Set the scroll location based on the current page and where you
       // are on that page scaled by the zoom factor.
-      const zoomFactor = nextProps.scale / this.props.scale;
-      const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.currentPage).scrollTop);
+      // const zoomFactor = nextProps.scale / this.props.scale;
+      // const nonZoomedLocation = (this.scrollTop - this.getOffsetForPageIndex(this.currentPage).scrollTop);
 
       this.scrollLocation = {
         page: this.currentPage,
-        locationOnPage: nonZoomedLocation * zoomFactor
+        locationOnPage: 0
       };
     }
   }
@@ -131,6 +131,7 @@ export class PdfFile extends React.PureComponent {
     if (pageIndex >= this.props.pdfDocument.pdfInfo.numPages) {
       return <div key={(this.columnCount * rowIndex) + columnIndex} style={style} />;
     }
+    console.log(pageIndex, rowIndex, columnIndex, 'the indices');
 
     return <div key={pageIndex} style={style}>
       <PdfPage
@@ -459,7 +460,7 @@ export class PdfFile extends React.PureComponent {
               marginBottom: `-${PAGE_MARGIN}px`
             }}
             overscanIndicesGetter={this.overscanIndicesGetter}
-            estimatedRowSize={(PDF_PAGE_HEIGHT + PAGE_MARGIN) * this.props.scale}
+            estimatedRowSize={(PDF_PAGE_HEIGHT + PAGE_MARGIN)}
             overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
             onSectionRendered={this.onSectionRendered}
             onScroll={this.onScroll}
