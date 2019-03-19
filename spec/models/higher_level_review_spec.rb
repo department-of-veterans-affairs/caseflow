@@ -6,7 +6,8 @@ describe HigherLevelReview do
   end
 
   let(:veteran_file_number) { "64205555" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
+  let(:ssn) { "64205555" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, ssn: ssn) }
   let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
@@ -29,8 +30,38 @@ describe HigherLevelReview do
     )
   end
 
+  let!(:intake) do
+    create(:intake, user: current_user, detail: higher_level_review, veteran_file_number: veteran_file_number)
+  end
+
+  let(:current_user) do
+    User.authenticate!(roles: ["Admin Intake"])
+  end
+
   context "#valid?" do
     subject { higher_level_review.valid? }
+
+    context "invalid Veteran" do
+      before { higher_level_review.start_review! }
+      let(:ssn) { nil }
+      let(:informal_conference) { true }
+      let(:same_office) { false }
+
+      context "processed in VBMS" do
+        let(:benefit_type) { "compensation" }
+
+        it "adds an error" do
+          expect(subject).to eq false
+          expect(higher_level_review.errors[:veteran]).to include("veteran_not_valid")
+        end
+      end
+
+      context "processed in Caseflow" do
+        let(:benefit_type) { "education" }
+
+        it { is_expected.to be_truthy }
+      end
+    end
 
     context "receipt_date" do
       context "when it is nil" do
@@ -300,7 +331,9 @@ describe HigherLevelReview do
               decision_review_remanded: higher_level_review
             )
             expect(dta_sc).to_not be_nil
-            expect(dta_sc.establishment_submitted_at).to eq(caseflow_decision_date.to_date.to_datetime + 1.minute)
+            expect(dta_sc.establishment_submitted_at).to eq(
+              caseflow_decision_date.to_date.to_datetime - 3.hours + 1.minute
+            )
             expect do
               subject
             end.to_not have_enqueued_job(DecisionReviewProcessJob)
