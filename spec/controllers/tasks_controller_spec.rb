@@ -774,4 +774,26 @@ RSpec.describe TasksController, type: :controller do
       end
     end
   end
+
+  describe "POST tasks/:id/reschedule" do
+    context "when the task is not a NoShowHearingTask" do
+      let(:task) { FactoryBot.create(:task) }
+      it "returns an error" do
+        post(:reschedule, params: { id: task.id })
+        response_body = JSON.parse(response.body)
+        expect(response.status).to eq(403)
+        expect(response_body["errors"].length).to eq(1)
+      end
+    end
+
+    context "when the task is a NoShowHearingTask" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: root_task) }
+      let(:task) { FactoryBot.create(:no_show_hearing_task, parent: parent_hearing_task) }
+      it "creates the new ScheduleHearingTask as expected" do
+        post(:reschedule, params: { id: task.id })
+        expect(response.status).to eq(200)
+      end
+    end
+  end
 end

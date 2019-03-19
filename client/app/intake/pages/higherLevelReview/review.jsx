@@ -16,7 +16,7 @@ import {
   setLegacyOptInApproved
 } from '../../actions/decisionReview';
 import { setReceiptDate } from '../../actions/intake';
-import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES } from '../../constants';
+import { PAGE_PATHS, INTAKE_STATES, BOOLEAN_RADIO_OPTIONS, FORM_TYPES, VBMS_BENEFIT_TYPES } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
 
@@ -35,7 +35,9 @@ class Review extends React.PureComponent {
       sameOfficeError,
       legacyOptInApproved,
       legacyOptInApprovedError,
-      reviewIntakeError
+      reviewIntakeError,
+      veteranValid,
+      veteranInvalidFields
     } = this.props;
 
     switch (higherLevelReviewStatus) {
@@ -46,10 +48,13 @@ class Review extends React.PureComponent {
     default:
     }
 
+    const showInvalidVeteranError = !veteranValid && VBMS_BENEFIT_TYPES.includes(benefitType);
+
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.HIGHER_LEVEL_REVIEW.name }</h1>
 
       { reviewIntakeError && <ErrorAlert /> }
+      { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={veteranInvalidFields} /> }
 
       <BenefitType
         value={benefitType}
@@ -133,7 +138,9 @@ export default connect(
     informalConferenceError: state.higherLevelReview.informalConferenceError,
     sameOffice: state.higherLevelReview.sameOffice,
     sameOfficeError: state.higherLevelReview.sameOfficeError,
-    reviewIntakeError: state.higherLevelReview.requestStatus.reviewIntakeError
+    reviewIntakeError: state.higherLevelReview.requestStatus.reviewIntakeError,
+    veteranValid: state.higherLevelReview.veteranValid,
+    veteranInvalidFields: state.higherLevelReview.veteranInvalidFields
   }),
   (dispatch) => bindActionCreators({
     setInformalConference,
