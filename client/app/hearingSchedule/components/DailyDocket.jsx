@@ -183,7 +183,7 @@ export default class DailyDocket extends React.Component {
           disposition: option.value,
           onCancel: this.closeEditedDispositionModal,
           onConfirm: () => {
-            if (option.value === 'postpone') {
+            if (option.value === 'postponed') {
               this.cancelHearingUpdate(hearing)();
             }
             this.onHearingDispositionUpdate(hearing.id)(option);
