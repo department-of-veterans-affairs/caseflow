@@ -15,11 +15,11 @@ import {
 
 class AssignToAttorneyModalView extends React.PureComponent {
   handleAssignment = (
-    { tasks, assigneeId }
+    { tasks, assigneeId, assigneeIsJudge }
   ) => {
     const previousAssigneeId = tasks[0].assignedTo.id.toString();
 
-    if (['assign', 'quality review'].includes(tasks[0].label)) {
+    if (['assign', 'quality review'].includes(tasks[0].label) && !assigneeIsJudge) {
       return this.props.initialAssignTasksToUser({
         tasks,
         assigneeId,
@@ -30,7 +30,8 @@ class AssignToAttorneyModalView extends React.PureComponent {
     return this.props.reassignTasksToUser({
       tasks,
       assigneeId,
-      previousAssigneeId
+      previousAssigneeId,
+      assigneeIsJudge
     });
   }
 
