@@ -420,6 +420,7 @@ RSpec.feature "AmaQueue" do
     let!(:quality_review_organization) { QualityReview.singleton }
     let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
     let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+    let!(:request_issue) { create(:request_issue, decision_review: appeal) }
 
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let!(:judge_task) do
@@ -521,6 +522,14 @@ RSpec.feature "AmaQueue" do
       expect(page).not_to have_content("Select special issues (optional)")
 
       expect(page).to have_content("Add decisions")
+      all("button", text: "+ Add decision", count: 1)[0].click
+      expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+      fill_in "Text Box", with: "test"
+      find(".Select-control", text: "Select disposition").click
+      find("div", class: "Select-option", text: "Allowed").click
+
+      click_on "Save"
 
       click_on "Continue"
 
