@@ -7,19 +7,12 @@ class HearingDispositionChangeJob < CaseflowJob
   include ActionView::Helpers::DateHelper
   queue_as :low_priority
 
-  # rubocop:disable Metrics/MethodLength
   def perform
     start_time = Time.zone.now
     error_count = 0
-    task_count_for = {
-      Constants.HEARING_DISPOSITION_TYPES.held => 0,
-      Constants.HEARING_DISPOSITION_TYPES.cancelled => 0,
-      Constants.HEARING_DISPOSITION_TYPES.postponed => 0,
-      Constants.HEARING_DISPOSITION_TYPES.no_show => 0,
-      between_one_and_two_days_old: 0,
-      stale: 0,
-      unknown_disposition: 0
-    }
+    task_count_keys = Constants.HEARING_DISPOSITION_TYPES.to_h.values.map(&:to_sym) +
+                      [:between_one_and_two_days_old, :stale, :unknown_disposition]
+    task_count_for = Hash[task_count_keys.map { |key| [key, 0] }]
 
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
@@ -29,7 +22,7 @@ class HearingDispositionChangeJob < CaseflowJob
 
     tasks.each do |task|
       label = update_task_by_hearing_disposition(task)
-      task_count_for[label] += 1
+      task_count_for[label.to_sym] += 1
     rescue StandardError => error
       # Rescue from errors so we attempt to change disposition even if we hit individual errors.
       Raven.capture_exception(error, extra: { task_id: task.id })
@@ -40,7 +33,6 @@ class HearingDispositionChangeJob < CaseflowJob
   rescue StandardError => error
     log_info(start_time, task_count_for, error_count, hearing_ids, error)
   end
-  # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def update_task_by_hearing_disposition(task)

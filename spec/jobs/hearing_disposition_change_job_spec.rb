@@ -182,10 +182,10 @@ describe HearingDispositionChangeJob do
       let(:error_count) { 13 }
       let(:task_count_for_dispositions) do
         {
-          Constants.HEARING_DISPOSITION_TYPES.held => 8,
-          Constants.HEARING_DISPOSITION_TYPES.cancelled => 2,
-          Constants.HEARING_DISPOSITION_TYPES.postponed => 3,
-          Constants.HEARING_DISPOSITION_TYPES.no_show => 5
+          Constants.HEARING_DISPOSITION_TYPES.held.to_sym => 8,
+          Constants.HEARING_DISPOSITION_TYPES.cancelled.to_sym => 2,
+          Constants.HEARING_DISPOSITION_TYPES.postponed.to_sym => 3,
+          Constants.HEARING_DISPOSITION_TYPES.no_show.to_sym => 5
         }
       end
       let(:task_count_for_others) do
