@@ -3,23 +3,23 @@
 require "rails_helper"
 
 describe HearingDispositionChangeJob do
-  describe ".modify_task_by_dispisition" do
-    def create_disposition_task_ancestry(disposition: nil, scheduled_for: nil)
-      appeal = FactoryBot.create(:appeal)
-      root_task = FactoryBot.create(:root_task, appeal: appeal)
-      distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
-      parent_hearing_task = FactoryBot.create(:hearing_task, appeal: appeal, parent: distribution_task)
+  def create_disposition_task_ancestry(disposition: nil, scheduled_for: nil, associated_hearing: true)
+    appeal = FactoryBot.create(:appeal)
+    root_task = FactoryBot.create(:root_task, appeal: appeal)
+    distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
+    parent_hearing_task = FactoryBot.create(:hearing_task, appeal: appeal, parent: distribution_task)
 
-      hearing = FactoryBot.create(:hearing, appeal: appeal, disposition: disposition)
-      if scheduled_for
-        hearing_day = FactoryBot.create(:hearing_day, scheduled_for: scheduled_for)
-        hearing.update!(hearing_day: hearing_day)
-      end
-
-      HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent_hearing_task)
-      DispositionTask.create!(appeal: appeal, parent: parent_hearing_task, assigned_to: Bva.singleton)
+    hearing = FactoryBot.create(:hearing, appeal: appeal, disposition: disposition)
+    if scheduled_for
+      hearing_day = FactoryBot.create(:hearing_day, scheduled_for: scheduled_for)
+      hearing.update!(hearing_day: hearing_day)
     end
 
+    HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent_hearing_task) if associated_hearing
+    DispositionTask.create!(appeal: appeal, parent: parent_hearing_task, assigned_to: Bva.singleton)
+  end
+
+  describe ".modify_task_by_dispisition" do
     subject { HearingDispositionChangeJob.new.modify_task_by_dispisition(task) }
 
     context "when hearing has a disposition" do
@@ -153,6 +153,111 @@ describe HearingDispositionChangeJob do
         expected_msg = "HearingDispositionChangeJob failed after running for .*." \
           " Encountered errors for #{error_count} hearings. Fatal error: #{err_msg}"
         expect(slack_msg).to match(/#{expected_msg}/)
+      end
+    end
+  end
+
+  describe ".perform" do
+    subject { HearingDispositionChangeJob.new.perform }
+
+    context "when there is an error outside of the loop" do
+      let(:error_msg) { "FAKE ERROR MESSAGE HERE" }
+
+      before { allow(DispositionTask).to receive(:ready_for_action).and_raise(error_msg) }
+
+      it "sends the correct number of arguments to log_info" do
+        args = Array.new(5, anything)
+        expect_any_instance_of(HearingDispositionChangeJob).to receive(:log_info).with(*args).exactly(1).times
+        subject
+      end
+    end
+
+    context "when the job runs successfully" do
+      let(:not_ready_for_action_count) { 4 }
+      let(:error_count) { 13 }
+      let(:task_count_for_dispositions) do
+        {
+          Constants.HEARING_DISPOSITION_TYPES.held => 8,
+          Constants.HEARING_DISPOSITION_TYPES.cancelled => 2,
+          Constants.HEARING_DISPOSITION_TYPES.postponed => 3,
+          Constants.HEARING_DISPOSITION_TYPES.no_show => 5
+        }
+      end
+      let(:task_count_for_others) do
+        {
+          between_one_and_two_days_old: 6,
+          stale: 7,
+          unknown_disposition: 1
+        }
+      end
+      let(:task_count_for) { task_count_for_dispositions.merge(task_count_for_others) }
+
+      before do
+        not_ready_for_action_count.times do
+          create_disposition_task_ancestry(
+            disposition: Constants.HEARING_DISPOSITION_TYPES.held,
+            scheduled_for: nil,
+            associated_hearing: false
+          )
+        end
+
+        ready_for_action_time = 36.hours.ago
+        task_count_for_dispositions.each do |disp, cnt|
+          cnt.times do
+            create_disposition_task_ancestry(
+              disposition: disp,
+              scheduled_for: ready_for_action_time,
+              associated_hearing: true
+            )
+          end
+        end
+
+        task_count_for_others[:between_one_and_two_days_old].times do
+          create_disposition_task_ancestry(
+            disposition: nil,
+            scheduled_for: ready_for_action_time,
+            associated_hearing: true
+          )
+        end
+
+        task_count_for_others[:stale].times do
+          create_disposition_task_ancestry(
+            disposition: nil,
+            scheduled_for: 5.days.ago,
+            associated_hearing: true
+          )
+        end
+
+        task_count_for_others[:unknown_disposition].times do
+          create_disposition_task_ancestry(
+            disposition: "FAKE_DISPOSITION",
+            scheduled_for: ready_for_action_time,
+            associated_hearing: true
+          )
+        end
+
+        hearing_ids_to_error = Array.new(error_count) do
+          create_disposition_task_ancestry(
+            disposition: Constants.HEARING_DISPOSITION_TYPES.held,
+            scheduled_for: ready_for_action_time,
+            associated_hearing: true
+          ).hearing.id
+        end
+
+        disposition_for_hearing = Hearing.all.map { |h| [h.id, h.disposition] }.to_h
+
+        allow_any_instance_of(Hearing).to receive(:disposition) do |h|
+          fail "FAKE ERROR MESSAGE" if hearing_ids_to_error.include?(h.id)
+
+          disposition_for_hearing[h.id]
+        end
+      end
+
+      it "sends the correct arguments to log_info" do
+        expect_any_instance_of(HearingDispositionChangeJob).to(
+          receive(:log_info).with(anything, task_count_for, error_count, anything).exactly(1).times
+        )
+        subject
       end
     end
   end
