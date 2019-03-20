@@ -41,6 +41,7 @@ import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddVsoModal from './AddVsoModal';
+import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -212,6 +213,8 @@ class QueueApp extends React.PureComponent {
 
   routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
 
+  routedPostponeHearingTaskModal = (props) => <PostponeHearingTaskModal {...props.match.params} />;
+
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
   propsForQueueLoadingScreen = () => {
@@ -296,6 +299,9 @@ class QueueApp extends React.PureComponent {
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_TO_TRANSLATION.value}`}
             render={this.routedAssignToSingleTeam} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.value}`}
+            render={this.routedPostponeHearingTaskModal} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
             render={this.routedAssignToTeam} />
