@@ -17,7 +17,6 @@ class Distribution < ApplicationRecord
   enum status: { pending: "pending", started: "started", error: "error", completed: "completed" }
 
   before_create :mark_as_pending
-  after_commit :enqueue_distribution_job, on: :create
 
   CASES_PER_ATTORNEY = 3
   ALTERNATIVE_BATCH_SIZE = 15
@@ -55,14 +54,6 @@ class Distribution < ApplicationRecord
 
   def mark_as_pending
     self.status = "pending"
-  end
-
-  def enqueue_distribution_job
-    if Rails.env.development? || Rails.env.test?
-      StartDistributionJob.perform_now(self)
-    else
-      StartDistributionJob.perform_later(self, RequestStore[:current_user])
-    end
   end
 
   def validate_user_is_judge

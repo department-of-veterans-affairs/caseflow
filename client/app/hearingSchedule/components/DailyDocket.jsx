@@ -264,10 +264,9 @@ export default class DailyDocket extends React.Component {
   };
 
   getTimeRadioButtons = (hearing, readOnly) => {
-    const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+    const timezone = hearing.readableRequestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
 
-    const value = hearing.editedTime ? hearing.editedTime :
-      getTimeWithoutTimeZone(hearing.scheduledTime || hearing.scheduledFor, timezone);
+    const value = hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
 
     return <HearingTime
       regionalOffice={this.getRegionalOffice()}

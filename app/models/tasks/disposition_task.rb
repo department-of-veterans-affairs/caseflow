@@ -11,6 +11,7 @@ class DispositionTask < GenericTask
 
   class HearingDispositionNotCanceled < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
+  class HearingDispositionNotHeld < StandardError; end
 
   class << self
     def create_disposition_task!(appeal, parent, hearing)
@@ -30,8 +31,12 @@ class DispositionTask < GenericTask
     @hearing_task ||= parent
   end
 
-  def available_actions(_user)
-    [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+  def available_actions(user)
+    if JudgeTeam.for_judge(user) || HearingsManagement.singleton.user_has_access?(user)
+      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+    else
+      []
+    end
   end
 
   def add_schedule_hearing_task_admin_actions_data(_user)
@@ -128,21 +133,15 @@ class DispositionTask < GenericTask
   def mark_held() end
 
   def cancel!
-    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
       fail HearingDispositionNotCanceled
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
-
-    if appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
-    else
-      RootTask.create_ihp_tasks!(appeal, parent)
-    end
   end
 
-  def mark_no_show!
-    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
+  def no_show!
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
       fail HearingDispositionNotNoShow
     end
 
@@ -158,6 +157,29 @@ class DispositionTask < GenericTask
     )
   end
 
+  def hold!
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.held
+      fail HearingDispositionNotHeld
+    end
+
+    if appeal.is_a?(LegacyAppeal)
+      complete_and_move_legacy_appeal_to_transcription
+    else
+      create_transcription_and_maybe_evidence_submission_window_tasks
+    end
+  end
+
+  def update_parent_status
+    # Create the child IHP tasks before running DistributionTask's update_status_if_children_tasks_are_complete method.
+    if appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
+    else
+      RootTask.create_ihp_tasks!(appeal, parent)
+    end
+
+    super
+  end
+
   private
 
   def update_legacy_appeal_location
@@ -170,7 +192,15 @@ class DispositionTask < GenericTask
     AppealRepository.update_location!(appeal, location)
   end
 
-  def hearing_disposition
-    parent&.hearing_task_association&.hearing&.disposition
+  def complete_and_move_legacy_appeal_to_transcription
+    update!(status: Constants.TASK_STATUSES.completed)
+    AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:transcription])
+  end
+
+  def create_transcription_and_maybe_evidence_submission_window_tasks
+    TranscriptionTask.create!(appeal: appeal, parent: self, assigned_to: TranscriptionTeam.singleton)
+    unless hearing&.evidence_window_waived
+      EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
+    end
   end
 end
