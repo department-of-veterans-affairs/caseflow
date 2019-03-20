@@ -421,8 +421,9 @@ RSpec.feature "Task queue" do
   end
   describe "VLJ support staff schedule hearing action" do
     let!(:attorney) { FactoryBot.create(:user) }
+    let!(:vacols_case) { create(:case) }
     let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-    let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+    let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
     let!(:vlj_support_staffer) { FactoryBot.create(:user) }
 
     before do
@@ -439,11 +440,15 @@ RSpec.feature "Task queue" do
                                               }], attorney)
       end
 
-      it "the new options should appear when a hearing has been scheduled" do
+      it "the new options should appear when a hearing has been scheduled, and the bfcurloc should be updated to 57" do
         visit("/queue/appeals/#{appeal.external_id}")
         find(".Select-control", text: "Select an action…").click
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h[:label])
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+        find("button", text: "Send case").click
+        expect(page).to have_content("Bob Smith's case has been sent to the Schedule hearing team")
+        expect(vacols_case.reload.bfcurloc).to eq("57")
       end
     end
   end
