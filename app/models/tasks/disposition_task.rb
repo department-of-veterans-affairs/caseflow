@@ -106,26 +106,24 @@ class DispositionTask < GenericTask
   end
 
   def mark_postponed(after_disposition_update:)
-    multi_transaction do
-      if hearing.is_a?(LegacyHearing)
-        hearing.update_caseflow_and_vacols(disposition: "postponed")
-      else
-        hearing.update(disposition: "postponed")
-      end
+    if hearing.is_a?(LegacyHearing)
+      hearing.update_caseflow_and_vacols(disposition: "postponed")
+    else
+      hearing.update(disposition: "postponed")
+    end
 
-      case after_disposition_update[:action]
-      when "reschedule"
-        new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
-        reschedule(
-          hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
-          hearing_location: new_hearing_attrs[:hearing_location]
-        )
-      when "schedule_later"
-        schedule_later(
-          with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
-          instructions: after_disposition_update[:admin_action_instructions]
-        )
-      end
+    case after_disposition_update[:action]
+    when "reschedule"
+      new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
+      reschedule(
+        hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
+        hearing_location: new_hearing_attrs[:hearing_location]
+      )
+    when "schedule_later"
+      schedule_later(
+        with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
+        instructions: after_disposition_update[:admin_action_instructions]
+      )
     end
   end
 
