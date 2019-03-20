@@ -11,6 +11,7 @@ class DispositionTask < GenericTask
 
   class HearingDispositionNotCanceled < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
+  class HearingDispositionNotHeld < StandardError; end
 
   # This is inefficient. If it runs slowly or consumes a lot of resources then refactor. Until then we're fine.
   scope :ready_for_action, lambda {
@@ -139,15 +140,15 @@ class DispositionTask < GenericTask
   def mark_held() end
 
   def cancel!
-    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
       fail HearingDispositionNotCanceled
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
-  def mark_no_show!
-    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
+  def no_show!
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
       fail HearingDispositionNotNoShow
     end
 
@@ -161,6 +162,18 @@ class DispositionTask < GenericTask
       status: Constants.TASK_STATUSES.on_hold,
       on_hold_duration: 25.days
     )
+  end
+
+  def hold!
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.held
+      fail HearingDispositionNotHeld
+    end
+
+    if appeal.is_a?(LegacyAppeal)
+      complete_and_move_legacy_appeal_to_transcription
+    else
+      create_transcription_and_maybe_evidence_submission_window_tasks
+    end
   end
 
   def update_parent_status
@@ -188,5 +201,17 @@ class DispositionTask < GenericTask
 
   def hearing_disposition
     hearing&.disposition
+  end
+    
+  def complete_and_move_legacy_appeal_to_transcription
+    update!(status: Constants.TASK_STATUSES.completed)
+    AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:transcription])
+  end
+
+  def create_transcription_and_maybe_evidence_submission_window_tasks
+    TranscriptionTask.create!(appeal: appeal, parent: self, assigned_to: TranscriptionTeam.singleton)
+    unless hearing&.evidence_window_waived
+      EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
+    end
   end
 end
