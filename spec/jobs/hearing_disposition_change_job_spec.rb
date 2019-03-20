@@ -25,8 +25,8 @@ describe HearingDispositionChangeJob do
     DispositionTask.create!(appeal: appeal, parent: parent_hearing_task, assigned_to: Bva.singleton)
   end
 
-  describe ".modify_task_by_dispisition" do
-    subject { HearingDispositionChangeJob.new.modify_task_by_dispisition(task) }
+  describe ".update_task_by_hearing_disposition" do
+    subject { HearingDispositionChangeJob.new.update_task_by_hearing_disposition(task) }
 
     context "when hearing has a disposition" do
       let(:task) { create_disposition_task_ancestry(disposition: disposition) }

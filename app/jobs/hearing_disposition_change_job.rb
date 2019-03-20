@@ -28,7 +28,7 @@ class HearingDispositionChangeJob < CaseflowJob
     hearing_ids = tasks.map { |task| task.hearing.id }
 
     tasks.each do |task|
-      label = modify_task_by_dispisition(task)
+      label = update_task_by_hearing_disposition(task)
       task_count_for[label] += 1
     rescue StandardError => error
       # Rescue from errors so we attempt to change disposition even if we hit individual errors.
@@ -43,7 +43,7 @@ class HearingDispositionChangeJob < CaseflowJob
   # rubocop:enable Metrics/MethodLength
 
   # rubocop:disable Metrics/CyclomaticComplexity
-  def modify_task_by_dispisition(task)
+  def update_task_by_hearing_disposition(task)
     hearing = task.hearing
     label = hearing.disposition
 
