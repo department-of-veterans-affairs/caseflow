@@ -130,18 +130,19 @@ export class AddIssuesPage extends React.Component {
                 formType={formType} />
               <div className="issue-action">
                 { withdrawDecisionReviews && <Dropdown
-                      name=""
-                      options={issueActionOptions}
-                      defaultText="Select action"
-                      onChange={(option) => this.onRemoveClick(index, option)}
-                    />
+                  name={`issue-action-${index}`}
+                  options={issueActionOptions}
+                  defaultText="Select action"
+                  onChange={(option) => this.onRemoveClick(index, option)}
+                  hideLabel
+                />
                 }
                 { !withdrawDecisionReviews && <Button
-                    onClick={() => this.onRemoveClick(index)}
-                    classNames={['cf-btn-link', 'remove-issue']}
-                  >
-                    <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
-                  </Button>
+                  onClick={() => this.onRemoveClick(index)}
+                  classNames={['cf-btn-link', 'remove-issue']}
+                >
+                  <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
+                </Button>
                 }
               </div>
             </div>;

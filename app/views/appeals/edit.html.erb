@@ -9,7 +9,7 @@
     featureToggles: {
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
       removeDecisionReviews: FeatureToggle.enabled?(:remove_decision_reviews, user: current_user),
-      withdrawDecisionReviews: FeatureToggle.enabled?(:withdraw_decision_reviews, user: current_user)
+      withdrawDecisionReviews: FeatureToggle.enabled?(:withdraw_decision_review, user: current_user)
     }
   }) %>
 <% end %>

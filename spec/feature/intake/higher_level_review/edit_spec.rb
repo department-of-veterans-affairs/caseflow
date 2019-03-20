@@ -87,7 +87,7 @@ feature "Higher Level Review Edit issues" do
 
   let(:benefit_type) { "compensation" }
 
-  let!(:higher_level_review) do
+  let(:higher_level_review) do
     HigherLevelReview.create!(
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
@@ -1085,6 +1085,18 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
         expect(page).to have_content("Issues Not Editable")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+      end
+    end
+
+    context "when withdraw decision reviews is enabled" do
+      before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
+
+      scenario "remove an issue with dropdown" do
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+        expect(page).to have_content("PTSD denied")
+        click_remove_intake_issue_dropdown("0")
+        expect(page).to_not have_content("PTSD denied")
       end
     end
   end

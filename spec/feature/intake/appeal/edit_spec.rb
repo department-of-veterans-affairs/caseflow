@@ -362,6 +362,18 @@ feature "Appeal Edit issues" do
     end
   end
 
+  context "when withdraw decision reviews is enabled" do
+    before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
+    after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
+
+    scenario "remove an issue with dropdown" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      expect(page).to have_content("PTSD denied")
+      click_remove_intake_issue_dropdown(1)
+      expect(page).to_not have_content("PTSD denied")
+    end
+  end
+
   context "when remove decision reviews is enabled" do
     before do
       FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
