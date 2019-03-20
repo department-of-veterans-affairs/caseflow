@@ -39,6 +39,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       find(".dropdown-Disposition").click
       find("#react-select-2--option-1").click
+      click_button("Confirm")
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "8:30").click
@@ -62,6 +63,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       find(".dropdown-Disposition").click
       find("#react-select-2--option-1").click
+      click_button("Confirm")
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "9:00").click
       find("label", text: "Transcript Requested").click
