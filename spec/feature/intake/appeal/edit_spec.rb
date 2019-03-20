@@ -498,6 +498,7 @@ feature "Appeal Edit issues" do
 
         click_edit_submit
         expect(page).to have_content("Remove review?")
+        expect(page).to have_content("This review and all tasks associated with it will be removed.")
         click_intake_confirm
       end
 
