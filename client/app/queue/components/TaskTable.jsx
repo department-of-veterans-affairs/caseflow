@@ -14,10 +14,7 @@ import { bindActionCreators } from 'redux';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
-import Button from '../../components/Button';
 import BulkAssignModal from './BulkAssignModal';
-// import Modal from '../../components/Modal';
-// import Dropdown from '../../components/Dropdown';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
@@ -39,23 +36,6 @@ import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 export class TaskTableUnconnected extends React.PureComponent {
-  constructor(props) {
-    super(props);
-
-    const state = {
-      showModal: false,
-      showErrors: false,
-      modal: {
-        assignedUser: undefined,
-        regionalOffice: undefined,
-        taskType: undefined,
-        numberOfTasks: undefined
-      }
-    };
-
-    this.state = state;
-  }
-
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
   isTaskSelected = (uniqueId) => {
@@ -373,83 +353,12 @@ export class TaskTableUnconnected extends React.PureComponent {
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
-  handleModalToggle = () => {
-    const modalStatus = this.state.showModal;
-
-    this.setState({ showModal: !modalStatus });
-  }
-
-  generateErrors = () => {
-    const requiredFields = ['assignedUser', 'taskType', 'numberOfTasks'];
-    const undefinedFields = _.keys(_.omitBy(this.state.modal, !_.isUndefined));
-    let errorFields = [];
-
-    undefinedFields.forEach((field) => {
-      if (requiredFields.includes(field)) {
-        errorFields.push(field);
-      }
-    });
-
-    return errorFields;
-  }
-
-  bulkAssignTasks = () => {
-    this.setState({ showErrors: true });
-
-    if (this.generateErrors().length === 0) {
-      // Placeholder for posting data
-
-      this.handleModalToggle();
-    }
-  }
-
-  generateTaskTypeOptions = () => {
-    let { tasks } = this.props;
-
-    if (this.state.modal.regionalOffice) {
-      tasks = _.filter(this.props.tasks, { closestRegionalOffice: this.state.modal.regionalOffice });
-    }
-
-    return _.uniq(tasks.map(task => task.type));
-  }
-
-  // generateNumberOfTaskOptions = () => {
-  //   const allOptions = [5, 10, 20, 30, 40, 50];
-  //   let taskOptions = [];
-
-  //   for (let i = 0; i < allOptions.length; i++) {
-  //     if (this.props.tasks.length > allOptions[i]) {
-  //       taskOptions.push(allOptions[i]);
-  //     } else {
-  //       break;
-  //     }
-  //   }
-
-  //   if (taskOptions.length === 0) {
-  //     taskOptions.push(this.props.tasks.length);
-  //   }
-  // }
-
   render = () => {
     const { tasks } = this.props;
-    console.log(this.props.state);
-    console.log(this.generateErrors());
-    const bulkAssignButton = <Button onClick={this.handleModalToggle}>Assign Tasks</Button>;
 
     return (
       <div>
-        {this.state.showModal &&
-          <BulkAssignModal
-            modal={this.state.modal}
-            users={[{value: 'First', displayText: 'First'}, {value: 'Second', displayText: 'Second'}, {value: 'Third', displayText: 'Third'}]}
-            regionalOffices={_.uniq(this.props.tasks.map(task => task.closestRegionalOffice))}
-            taskTypes={this.generateTaskTypeOptions()}
-            numberOfTasks={[5, 10, 20, 30, 40, 50]}
-            errors={this.state.showErrors ? this.generateErrors() : []}
-            handleFieldChange={(value, field) => { this.setState({ modal: { [field]: value } }) }}
-            handleModalToggle={this.handleModalToggle} />
-        }
-        {bulkAssignButton}
+        <BulkAssignModal tasks={tasks} />
         <QueueTable
           columns={this.getQueueColumns}
           rowObjects={tasks}
@@ -467,8 +376,7 @@ export class TaskTableUnconnected extends React.PureComponent {
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
-  userRole: state.ui.userRole,
-  state
+  userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) => (
