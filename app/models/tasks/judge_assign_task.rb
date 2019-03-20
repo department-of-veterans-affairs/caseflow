@@ -8,9 +8,8 @@ class JudgeAssignTask < JudgeTask
     [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
   end
 
-  def when_child_task_completed
+  def begin_decision_review_phase
     update!(type: JudgeDecisionReviewTask.name)
-    super
   end
 
   def label
