@@ -341,18 +341,19 @@ describe RequestIssue do
 
         context "when decision review remanded is an Appeal" do
           let(:decision_review_remanded) { create(:appeal) }
-          let(:request_issue) { rating_request_issue }
 
-          context "when imo" do
+          context "when rating" do
+            let(:request_issue) { rating_request_issue }
             let(:contested_decision_issue_id) do
               create(:decision_issue, :imo, decision_review: decision_review_remanded).id
             end
-            it { is_expected.to eq "040BDEIMOPMC" }
+            it { is_expected.to eq "040BDERPMC" }
           end
 
-          context "when not imo" do
+          context "when not nonrating" do
             let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
-            it { is_expected.to eq "040BDEPMC" }
+            let(:request_issue) { nonrating_request_issue }
+            it { is_expected.to eq "040HDENRPMC" }
           end
         end
 
@@ -399,18 +400,19 @@ describe RequestIssue do
 
         context "when decision review remanded is an Appeal" do
           let(:decision_review_remanded) { create(:appeal) }
-          let(:request_issue) { rating_request_issue }
 
-          context "when imo" do
+          context "when rating" do
+            let(:request_issue) { rating_request_issue }
             let(:contested_decision_issue_id) do
               create(:decision_issue, :imo, decision_review: decision_review_remanded).id
             end
-            it { is_expected.to eq "040BDEIMO" }
+            it { is_expected.to eq "040BDER" }
           end
 
-          context "when not imo" do
+          context "when nonrating" do
+            let(:request_issue) { nonrating_request_issue }
             let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
-            it { is_expected.to eq "040BDE" }
+            it { is_expected.to eq "040BDENR" }
           end
         end
 
