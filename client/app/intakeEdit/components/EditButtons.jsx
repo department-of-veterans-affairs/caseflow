@@ -113,14 +113,16 @@ class SaveButtonUnconnected extends React.Component {
 
     const removeCaseflowCopy = 'This review and all tasks associated with it will be removed.';
 
+    const originalIssueNumberCopy = `The review originally had ${this.state.originalIssueNumber}
+       ${pluralize('issue', this.state.originalIssueNumber)} but now has ${this.props.state.addedIssues.length}.`;
+
     return <span>
       {this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
         title="Number of issues has changed"
         onClose={() => this.closeModal('issueChangeModal')}
         onConfirm={() => this.confirmModal('issueChangeModal')}>
         <p>
-          The review originally had {this.state.originalIssueNumber}&nbsp;
-          { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
+          {originalIssueNumberCopy}
         </p>
         <p>Please check that this is the correct number.</p>
       </SaveAlertConfirmModal>}
@@ -131,8 +133,7 @@ class SaveButtonUnconnected extends React.Component {
         onClose={() => this.closeModal('reviewRemovedModal')}
         onConfirm={() => this.confirmModal('reviewRemovedModal')}>
         <p>
-          The review originally had {this.state.originalIssueNumber}&nbsp;
-          { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
+          {originalIssueNumberCopy}
         </p>
         <p>{processedInCaseflow ? removeCaseflowCopy : removeVbmsCopy}</p>
       </SaveAlertConfirmModal>}
