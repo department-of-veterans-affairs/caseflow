@@ -432,7 +432,7 @@ export const initialAssignTasksToUser = ({
 }));
 
 export const reassignTasksToUser = ({
-  tasks, assigneeId, previousAssigneeId, assigneeIsJudge
+  tasks, assigneeId, previousAssigneeId
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {
   let params, url;
 
@@ -441,7 +441,7 @@ export const reassignTasksToUser = ({
     params = {
       data: {
         task: {
-          type: assigneeIsJudge ? 'JudgeTask' : 'AttorneyTask',
+          type: 'AttorneyTask',
           assigned_to_id: assigneeId
         }
       }

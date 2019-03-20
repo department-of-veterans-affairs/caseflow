@@ -62,7 +62,6 @@ describe User do
         "roles" => [],
         "selected_regional_office" => nil,
         :display_name => css_id.upcase,
-        :judge_team? => false,
         "name" => "Tom Brady"
       }
     end

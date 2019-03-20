@@ -43,10 +43,6 @@ class User < ApplicationRecord
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
-  def judge_team?
-    @judge_team ||= JudgeTeam.exists?(name: css_id)
-  end
-
   def attorney_in_vacols?
     vacols_roles.include?("attorney")
   end
@@ -194,7 +190,7 @@ class User < ApplicationRecord
   end
 
   def attributes
-    super.merge(display_name: display_name, judge_team?: judge_team?)
+    super.merge(display_name: display_name)
   end
 
   def current_task(task_type)

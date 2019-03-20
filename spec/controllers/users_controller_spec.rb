@@ -55,7 +55,6 @@ RSpec.describe UsersController, type: :controller do
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["attorneys"].size).to eq team_member_count
-        expect(response_body["attorneys"].select { |attorney| attorney["judge_team?"] }.size).to eq 0
       end
     end
 
@@ -67,10 +66,6 @@ RSpec.describe UsersController, type: :controller do
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
         expect(response_body["attorneys"].size).to eq team_member_count + solo_count + 2
-        expect(response_body["attorneys"].select { |attorney| attorney["judge_team?"] }.size).to eq 1
-        response_body["attorneys"].each do |attorney|
-          expect(attorney["judge_team?"]).to eq(attorney["css_id"] == judge.user.css_id)
-        end
       end
     end
   end
