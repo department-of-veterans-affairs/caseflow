@@ -489,7 +489,6 @@ class SeedDB
 
     ScheduleHearingTask.create!(
       appeal: appeal,
-      # status: "unassigned",
       assigned_to: HearingAdmin.singleton,
       # assigned_to: HearingsManagement.singleton,
       parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)

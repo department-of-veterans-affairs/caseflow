@@ -44,8 +44,9 @@ export class TaskTableUnconnected extends React.PureComponent {
 
     const state = {
       showModal: false,
+      showErrors: false,
       modal: {
-        assignedAttorney: undefined,
+        assignedUser: undefined,
         regionalOffice: undefined,
         taskType: undefined,
         numberOfTasks: undefined
@@ -372,28 +373,67 @@ export class TaskTableUnconnected extends React.PureComponent {
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
-  incompleteModalFields = () => {
-    return _.keys(_.pick(this.state.modal, ['undefined']));
-  }  
-
-
-  bulkAssignTasks = () => {
-    const requiredFields = ['assignedAttorney', 'taskType', 'numberOfTasks'];
-
-    if (this.incompleteModalFields().length > 0) {
-      
-    }
-  }
-
   handleModalToggle = () => {
     const modalStatus = this.state.showModal;
 
     this.setState({ showModal: !modalStatus });
   }
 
+  generateErrors = () => {
+    const requiredFields = ['assignedUser', 'taskType', 'numberOfTasks'];
+    const undefinedFields = _.keys(_.omitBy(this.state.modal, !_.isUndefined));
+    let errorFields = [];
+
+    undefinedFields.forEach((field) => {
+      if (requiredFields.includes(field)) {
+        errorFields.push(field);
+      }
+    });
+
+    return errorFields;
+  }
+
+  bulkAssignTasks = () => {
+    this.setState({ showErrors: true });
+
+    if (this.generateErrors().length === 0) {
+      // Placeholder for posting data
+
+      this.handleModalToggle();
+    }
+  }
+
+  generateTaskTypeOptions = () => {
+    let { tasks } = this.props;
+
+    if (this.state.modal.regionalOffice) {
+      tasks = _.filter(this.props.tasks, { closestRegionalOffice: this.state.modal.regionalOffice });
+    }
+
+    return _.uniq(tasks.map(task => task.type));
+  }
+
+  // generateNumberOfTaskOptions = () => {
+  //   const allOptions = [5, 10, 20, 30, 40, 50];
+  //   let taskOptions = [];
+
+  //   for (let i = 0; i < allOptions.length; i++) {
+  //     if (this.props.tasks.length > allOptions[i]) {
+  //       taskOptions.push(allOptions[i]);
+  //     } else {
+  //       break;
+  //     }
+  //   }
+
+  //   if (taskOptions.length === 0) {
+  //     taskOptions.push(this.props.tasks.length);
+  //   }
+  // }
+
   render = () => {
     const { tasks } = this.props;
     console.log(this.props.state);
+    console.log(this.generateErrors());
     const bulkAssignButton = <Button onClick={this.handleModalToggle}>Assign Tasks</Button>;
 
     return (
@@ -401,12 +441,11 @@ export class TaskTableUnconnected extends React.PureComponent {
         {this.state.showModal &&
           <BulkAssignModal
             modal={this.state.modal}
-            // attorneys={this.props.attorneys}
-            attorneys={[{value: null, displayText: ''}, {value: 'First', displayText: 'First'}, {value: 'Second', displayText: 'Second'}, {value: 'Third', displayText: 'Third'}]}
-            regionalOffices={[]}
-            taskTypes={[]}
-            numberOfTasks={[]}
-            errors={[]}
+            users={[{value: 'First', displayText: 'First'}, {value: 'Second', displayText: 'Second'}, {value: 'Third', displayText: 'Third'}]}
+            regionalOffices={_.uniq(this.props.tasks.map(task => task.closestRegionalOffice))}
+            taskTypes={this.generateTaskTypeOptions()}
+            numberOfTasks={[5, 10, 20, 30, 40, 50]}
+            errors={this.state.showErrors ? this.generateErrors() : []}
             handleFieldChange={(value, field) => { this.setState({ modal: { [field]: value } }) }}
             handleModalToggle={this.handleModalToggle} />
         }
@@ -429,7 +468,6 @@ const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole,
-  attorneys: state.queue.attorneys,
   state
 });
 
@@ -440,8 +478,3 @@ const mapDispatchToProps = (dispatch) => (
 );
 
 export default (connect(mapStateToProps, mapDispatchToProps)(TaskTableUnconnected));
-
-
-
-// assignedTo:
-// cssId: "BVASCASPER1"

@@ -15,8 +15,36 @@ class BulkAssignModal extends React.PureComponent {
     this.props.handleModalToggle();
   }
 
+  getDisplayTextOption = (options) => {
+    const optionsWithDisplayText = [
+      {
+        value: null,
+        displayText: ''
+      }
+    ];
+
+    options.forEach((option) => {
+      if (typeof option === 'object') {
+        optionsWithDisplayText.push(option);
+      } else {
+        optionsWithDisplayText.push(
+          {
+            value: option,
+            displayText: option
+          }
+        );
+      }
+    });
+
+    return optionsWithDisplayText;
+  }
+
+  displayErrorMessage = (field) => {
+    return this.props.errors.includes(field) ? 'Please select a value' : null;
+  }
+
   render() {
-    const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.onModalChange}>
+    const confirmButton = <Button classNames={['usa-button-secondary']} onClick={() => {}}>
       Assign
     </Button>;
     const cancelButton = <Button linkStyling onClick={this.onModalChange}>Cancel</Button>;
@@ -29,35 +57,37 @@ class BulkAssignModal extends React.PureComponent {
         cancelButton={cancelButton} >
           <Dropdown
             name="Assign to"
-            options={this.props.attorneys}
-            value={this.props.modal.assignedAttorney}
+            options={this.getDisplayTextOption(this.props.users)}
+            value={this.props.modal.assignedUser}
             defaultText="Select"
-            onChange={(value) => this.onFieldChange(value, 'assignedAttorney')}
-            errorMessage={null}
+            onChange={(value) => this.onFieldChange(value, 'assignedUser')}
+            errorMessage={this.displayErrorMessage('assignedUser')}
             required
           />
-          <RegionalOfficeDropdown
+          <Dropdown
+            name="Regional office"
+            options={this.getDisplayTextOption(this.props.regionalOffices)}
             value={this.props.modal.regionalOffice}
+            defaultText="Select"
             onChange={(value) => this.onFieldChange(value, 'regionalOffice')}
-            placeholder="Select"
-            errorMessage={null}
+            errorMessages={this.displayErrorMessage('regionalOffice')}
           />
           <Dropdown
             name="Select task type"
-            options={this.props.taskTypes}
+            options={this.getDisplayTextOption(this.props.taskTypes)}
             value={this.props.modal.taskType}
             defaultText="Select"
             onChange={(value) => this.onFieldChange(value, 'taskType')}
-            errorMessage={null}
+            errorMessage={this.displayErrorMessage('taskType')}
             required
           />
           <Dropdown
             name="Select number of tasks to assign"
-            options={this.props.numberOfTasks}
+            options={this.getDisplayTextOption(this.props.numberOfTasks)}
             value={this.props.modal.numberOfTasks}
             defaultText="Select"
             onChange={(value) => this.onFieldChange(value, 'numberOfTasks')}
-            errorMessage={null}
+            errorMessage={this.displayErrorMessage('numberOfTasks')}
             required
           />
       </Modal>
@@ -66,7 +96,7 @@ class BulkAssignModal extends React.PureComponent {
 }
 
 BulkAssignModal.propTypes = {
-  attorneys: PropTypes.array.isRequired,
+  users: PropTypes.array.isRequired,
   handleFieldChange: PropTypes.func,
   handleModalToggle: PropTypes.func,
   modal: PropTypes.object.isRequired,
@@ -76,3 +106,10 @@ BulkAssignModal.propTypes = {
 };
 
 export default BulkAssignModal;
+
+          // <RegionalOfficeDropdown
+          //   value={this.props.modal.regionalOffice}
+          //   onChange={(value) => this.onFieldChange(value, 'regionalOffice')}
+          //   placeholder="Select"
+          //   errorMessage={null}
+          // />
