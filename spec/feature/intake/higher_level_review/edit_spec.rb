@@ -1178,7 +1178,7 @@ feature "Higher Level Review Edit issues" do
       end
     end
 
-    fcontext "when all caseflow decision reviews" do
+    context "when all caseflow decision reviews" do
       let!(:benefit_type) { "education" }
 
       scenario "remove all caseflow decisions reviews" do
