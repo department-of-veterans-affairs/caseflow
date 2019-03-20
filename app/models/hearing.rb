@@ -115,8 +115,9 @@ class Hearing < ApplicationRecord
   end
 
   def regional_office_timezone
-    RegionalOffice::CITIES[regional_office_key][:timezone] unless regional_office_key.nil?
-    "America/New_York"
+    return "America/New_York" if regional_office_key.nil?
+
+    RegionalOffice::CITIES[regional_office_key][:timezone]
   end
 
   def current_issue_count

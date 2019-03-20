@@ -13,6 +13,7 @@ class DecisionReview < ApplicationRecord
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review
   has_many :tasks, as: :appeal
+  has_one :intake, as: :detail
 
   before_destroy :remove_issues!
 
@@ -85,6 +86,7 @@ class DecisionReview < ApplicationRecord
     id.to_s
   end
 
+  # rubocop:disable Metrics/MethodLength
   def ui_hash
     {
       veteran: {
@@ -104,9 +106,12 @@ class DecisionReview < ApplicationRecord
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
-      editIssuesUrl: caseflow_only_edit_issues_url
+      editIssuesUrl: caseflow_only_edit_issues_url,
+      veteranValid: veteran&.valid?(:bgs),
+      veteranInvalidFields: veteran_invalid_fields
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
@@ -158,7 +163,6 @@ class DecisionReview < ApplicationRecord
   end
 
   def serialized_legacy_appeals
-    return [] unless legacy_opt_in_enabled?
     return [] unless available_legacy_appeals.any?
 
     available_legacy_appeals.map do |legacy_appeal|
@@ -288,6 +292,13 @@ class DecisionReview < ApplicationRecord
 
   private
 
+  def veteran_invalid_fields
+    return unless intake
+
+    intake.veteran.valid?(:bgs)
+    intake.veteran_invalid_fields
+  end
+
   def request_issues_ui_hash
     request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible.map(&:ui_hash)
   end
@@ -384,10 +395,6 @@ class DecisionReview < ApplicationRecord
 
     validate_receipt_date_not_before_ama
     validate_receipt_date_not_in_future
-  end
-
-  def legacy_opt_in_enabled?
-    FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
 
   def description

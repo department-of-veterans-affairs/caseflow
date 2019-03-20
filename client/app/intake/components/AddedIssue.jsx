@@ -19,9 +19,6 @@ class AddedIssue extends React.PureComponent {
 
     let existingRequestIssue = _.filter(requestIssues, { rating_issue_reference_id: issue.ratingIssueReferenceId })[0];
 
-    // leaving this here to make it easier to debug in future.
-    // console.log('existingRequestIssue', existingRequestIssue);
-
     if (existingRequestIssue && !existingRequestIssue.ineligible_reason) {
       return false;
     }
@@ -31,8 +28,6 @@ class AddedIssue extends React.PureComponent {
 
   getEligibility() {
     let { issue, formType, legacyOptInApproved } = this.props;
-
-    // console.log('getEligibility', formType, issue, legacyOptInApproved);
 
     let errorMsg = '';
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
@@ -67,7 +62,7 @@ class AddedIssue extends React.PureComponent {
       } else if (issue.eligibleForSocOptIn === false) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
       }
-    } else if (issue.beforeAma) {
+    } else if (issue.beforeAma && formType !== 'supplemental_claim') {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
     }
 
@@ -83,8 +78,6 @@ class AddedIssue extends React.PureComponent {
       errorMsg: '',
       cssKlasses: ['issue-desc']
     };
-
-    // console.log('needsEligibilityCheck', issue, this.needsEligibilityCheck());
 
     if (this.needsEligibilityCheck()) {
       let eligibilityCheck = this.getEligibility();

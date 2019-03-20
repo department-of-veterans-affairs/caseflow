@@ -2,16 +2,12 @@
 
 describe SupplementalClaim do
   before do
-    FeatureToggle.enable!(:intake_legacy_opt_in)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
-  after do
-    FeatureToggle.disable!(:intake_legacy_opt_in)
-  end
-
   let(:veteran_file_number) { "64205555" }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let(:ssn) { "64205555" }
+  let!(:veteran) { Generators::Veteran.build(file_number: "64205555", ssn: ssn) }
   let(:receipt_date) { nil }
   let(:benefit_type) { nil }
   let(:legacy_opt_in_approved) { nil }
@@ -29,6 +25,14 @@ describe SupplementalClaim do
     )
   end
 
+  let!(:intake) do
+    create(:intake, user: current_user, detail: supplemental_claim, veteran_file_number: veteran_file_number)
+  end
+
+  let(:current_user) do
+    User.authenticate!(roles: ["Admin Intake"])
+  end
+
   context "#valid?" do
     subject { supplemental_claim.valid? }
 
@@ -42,6 +46,25 @@ describe SupplementalClaim do
 
         it "is valid" do
           is_expected.to be true
+        end
+
+        context "invalid Veteran" do
+          let(:ssn) { nil }
+
+          context "processed in VBMS" do
+            let(:benefit_type) { "compensation" }
+
+            it "adds an error" do
+              expect(subject).to eq false
+              expect(supplemental_claim.errors[:veteran]).to include("veteran_not_valid")
+            end
+          end
+
+          context "processed in Caseflow" do
+            let(:benefit_type) { "education" }
+
+            it { is_expected.to be_truthy }
+          end
         end
       end
 

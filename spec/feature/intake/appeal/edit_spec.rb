@@ -8,7 +8,6 @@ feature "Appeal Edit issues" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
     Timecop.freeze(post_ama_start_date)
 
@@ -19,7 +18,6 @@ feature "Appeal Edit issues" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:veteran) do
@@ -85,6 +83,7 @@ feature "Appeal Edit issues" do
   end
 
   let(:legacy_opt_in_approved) { false }
+
   let!(:appeal) do
     create(:appeal,
            veteran_file_number: veteran.file_number,
@@ -92,6 +91,10 @@ feature "Appeal Edit issues" do
            docket_type: "evidence_submission",
            veteran_is_not_claimant: false,
            legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+  end
+
+  let!(:appeal_intake) do
+    create(:intake, user: current_user, detail: appeal, veteran_file_number: veteran.file_number)
   end
 
   let(:nonrating_request_issue_attributes) do
@@ -350,17 +353,65 @@ feature "Appeal Edit issues" do
                )).to_not be_nil
       end
     end
+  end
 
-    scenario "adding issue with legacy opt in disabled" do
-      allow(FeatureToggle).to receive(:enabled?).and_call_original
-      allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+  context "Veteran is invalid" do
+    let!(:veteran) do
+      create(:veteran,
+             first_name: "Ed",
+             last_name: "Merica",
+             bgs_veteran_record: {
+               sex: nil,
+               ssn: nil,
+               country: nil,
+               address_line1: "this address is more than 20 chars"
+             })
+    end
 
+    let!(:rating_request_issue) { nil }
+
+    scenario "adding an issue with a vbms benefit type" do
       visit "appeals/#{appeal.uuid}/edit/"
 
+      # Add issue that is not a VBMS issue
       click_intake_add_issue
-      expect(page).to have_content("Add this issue")
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        benefit_type: "Education",
+        category: "Accrued",
+        description: "Description for Accrued",
+        date: 1.day.ago.to_date.mdY
+      )
+      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: false)
+
+      # Add a rating issue
+      click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
-      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+      expect(page).to have_content(
+        "the corporate database, then retry establishing the EP in Caseflow: ssn, country"
+      )
+      expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
+      expect(page).to have_button("Save", disabled: true)
+
+      click_remove_intake_issue_by_text("Left knee granted")
+      click_remove_issue_confirmation
+      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: false)
+
+      # Add a compensation nonrating issue
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        benefit_type: "Compensation",
+        category: "Apportionment",
+        description: "Description for Apportionment",
+        date: 2.days.ago.to_date.mdY
+      )
+      expect(page).to have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: true)
     end
   end
 

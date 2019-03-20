@@ -9,14 +9,12 @@ feature "Appeal Intake" do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
     FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
-    FeatureToggle.enable!(:intake_legacy_opt_in, users: [current_user.css_id])
 
     Timecop.freeze(post_ramp_start_date)
   end
 
   after do
     FeatureToggle.disable!(:intakeAma, users: [current_user.css_id])
-    FeatureToggle.disable!(:intake_legacy_opt_in, users: [current_user.css_id])
   end
 
   let!(:current_user) do
@@ -910,19 +908,6 @@ feature "Appeal Intake" do
 
         expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end
-    end
-
-    scenario "adding issue with legacy opt in disabled" do
-      allow(FeatureToggle).to receive(:enabled?).and_call_original
-      allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
-
-      start_appeal(veteran)
-      visit "/intake/add_issues"
-
-      click_intake_add_issue
-      expect(page).to have_content("Add this issue")
-      add_intake_rating_issue("Left knee granted")
-      expect(page).to have_content("Left knee granted")
     end
   end
 

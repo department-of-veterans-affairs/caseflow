@@ -125,7 +125,12 @@ describe RequestIssue do
   context ".requires_processing" do
     before do
       rating_request_issue.submit_for_processing!(delay: 1.day)
-      nonrating_request_issue.submit_for_processing!
+      nonrating_request_issue.tap do |issue|
+        issue.submit_for_processing!
+        issue.update!(
+          decision_sync_last_submitted_at: (RequestIssue.processing_retry_interval_hours + 1).hours.ago
+        )
+      end
     end
 
     it "respects the delay" do
@@ -941,8 +946,6 @@ describe RequestIssue do
 
     context "Issues with legacy issues" do
       before do
-        FeatureToggle.enable!(:intake_legacy_opt_in)
-
         # Active and eligible
         create(:legacy_appeal, vacols_case: create(
           :case,
@@ -976,10 +979,6 @@ describe RequestIssue do
               Generators::Issue.build(id: "vacols2", vacols_sequence_id: 2, codes: %w[02 15 03 5242], disposition: nil)
             ]
           )
-      end
-
-      after do
-        FeatureToggle.disable!(:intake_legacy_opt_in)
       end
 
       context "when legacy opt in is not approved" do
@@ -1031,6 +1030,24 @@ describe RequestIssue do
         rating_request_issue.contested_rating_issue_reference_id = "before_ama_ref_id"
         rating_request_issue.validate_eligibility!
         expect(rating_request_issue.ineligible_reason).to eq("before_ama")
+      end
+
+      context "decision review is a Supplemental Claim" do
+        let(:review) do
+          create(
+            :supplemental_claim,
+            veteran_file_number: veteran.file_number,
+            legacy_opt_in_approved: legacy_opt_in_approved
+          )
+        end
+
+        it "does not apply before AMA checks" do
+          nonrating_request_issue.decision_date = DecisionReview.ama_activation_date - 5.days
+          nonrating_request_issue.validate_eligibility!
+
+          expect(nonrating_request_issue.ineligible_reason).to_not eq("before_ama")
+          expect(nonrating_request_issue).to be_eligible
+        end
       end
 
       context "rating issue is from a RAMP decision" do

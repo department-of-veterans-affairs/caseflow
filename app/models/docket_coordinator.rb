@@ -95,7 +95,7 @@ class DocketCoordinator
   private
 
   def total_batch_size
-    JudgeTeam.all.map(&:non_admins).flatten.count * Distribution::CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * Distribution::CASES_PER_ATTORNEY
   end
 
   def docket_margin_net_of_priority

@@ -25,7 +25,6 @@ import {
   prepareAppealIssuesForStore
 } from './utils';
 
-import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
@@ -39,6 +38,7 @@ import {
 import COPY from '../../COPY.json';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import QueueFlowPage from './components/QueueFlowPage';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -197,7 +197,8 @@ class AddEditIssueView extends React.Component {
       action,
       highlight,
       error,
-      deleteIssueModal
+      deleteIssueModal,
+      ...otherProps
     } = this.props;
 
     const programs = ISSUE_INFO;
@@ -213,7 +214,11 @@ class AddEditIssueView extends React.Component {
       diagCode: highlight && this.issueLevelsConfigHasDiagCode() && !_.find(issue.codes, (code) => code.length === 4)
     };
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      validateForm={this.validateForm}
+      goToNextStep={this.goToNextStep}
+      {...otherProps}
+    >
       {deleteIssueModal && <div className="cf-modal-scroll">
         <Modal
           title="Delete Issue?"
@@ -322,7 +327,7 @@ class AddEditIssueView extends React.Component {
         value={_.get(this.props.issue, 'note', '')}
         maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
-    </React.Fragment>;
+    </QueueFlowPage>;
   };
 }
 
@@ -348,4 +353,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));
+export default connect(mapStateToProps, mapDispatchToProps)(AddEditIssueView);
