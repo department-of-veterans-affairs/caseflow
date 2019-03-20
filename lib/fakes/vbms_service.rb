@@ -169,10 +169,11 @@ class Fakes::VBMSService
     # Used to simulate a contention that fails to be created in VBMS
     contentions.delete(description: "FAIL ME")
 
-    # return fake list of contentions
-    contentions.map do |contention|
+    # generate new contentions and return list of all contentions on the claim.
+    contentions.each do |contention|
       Generators::Contention.build(text: contention[:description], claim_id: claim_id)
     end
+    Fakes::VBMSService.contention_records[claim_id]
   end
 
   def self.associate_rating_request_issues!(claim_id:, rating_issue_contention_map:)

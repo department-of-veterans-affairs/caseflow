@@ -97,7 +97,7 @@ describe RequestIssuesUpdate do
     end
 
     let(:existing_request_issue_id) do
-      review.request_issues.find { |issue| issue.contested_rating_issue_reference_id == "issue1" }.id
+      existing_request_issues.first.id
     end
 
     context "#veteran" do
@@ -432,12 +432,41 @@ describe RequestIssuesUpdate do
       end
 
       context "when we add and remove an unidentified issue" do
-        let(:unidentified1) { create(:request_issue, :unidentified, decision_review: review) }
-        let(:unidentified2) { create(:request_issue, :unidentified, decision_review: review) }
-        let(:request_issues_data) { [{ request_issue_id: unidentified1.id }, { request_issue_id: unidentified2.id }] }
+        let!(:unidentified1) { create(:request_issue, :unidentified, decision_review: review) }
+        let!(:unidentified2) { create(:request_issue, :unidentified, decision_review: review) }
+        let(:request_issues_data) do
+          [
+            { is_unidentified: true, decision_text: unidentified1.unidentified_issue_text },
+            { is_unidentified: true, decision_text: unidentified2.unidentified_issue_text }
+          ]
+        end
 
         it "does not re-use contention_reference_id" do
+          expect(review.reload.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(2)
+          subject
+          review.reload
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(4)
+          expect(review.request_issues.active.count).to eq(2)
+        end
+      end
 
+      context "when we remove and add the same rating issue" do
+        let(:request_issues_data) do
+          existing_request_issues.map do |ri|
+            {
+              rating_issue_reference_id: ri.contested_rating_issue_reference_id,
+              rating_issue_profile_date: ri.contested_rating_issue_profile_date,
+              decision_text: ri.contested_issue_description
+            }
+          end
+        end
+
+        it "does not re-use contention_reference_id" do
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(2)
+          subject
+          review.reload
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(4)
+          expect(review.request_issues.active.count).to eq(2)
         end
       end
 

@@ -635,35 +635,4 @@ feature "Supplemental Claim Edit issues" do
       end
     end
   end
-
-  context "review replaces one unidentified issue with another" do
-    let(:supplemental_claim) do
-      # reload to get uuid
-      create(:supplemental_claim, veteran_file_number: veteran.file_number).reload
-    end
-    let!(:existing_request_issues) do
-      [create(:request_issue, :unidentified, decision_review: supplemental_claim)]
-    end
-
-    before do
-      supplemental_claim.create_issues!(existing_request_issues)
-      supplemental_claim.establish!
-    end
-
-    it "does not re-use removed contention id" do
-      binding.pry
-      visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
-
-      click_remove_intake_issue(1)
-      click_remove_issue_confirmation
-
-      # add unidentified issue
-      click_intake_add_issue
-      add_intake_unidentified_issue(existing_request_issues.first.unidentified_issue_text)
-
-      click_edit_submit_and_confirm
-
-      binding.pry
-    end
-  end
 end

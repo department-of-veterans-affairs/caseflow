@@ -79,11 +79,11 @@ class EndProductEstablishment < ApplicationRecord
 
     set_establishment_values_from_source
 
-    contentions = records_ready_for_contentions.map do |issue|
-      contention = { description: issue.contention_text }
-      issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
-      contention
-    end
+    contentions = build_contentions(records_ready_for_contentions)
+
+    # VBMS returns all the contentions on the claim, old and new, so keep track
+    # of existing contentions we know about. That way if text matches we can avoid false positives.
+    existing_contention_reference_ids = all_contention_records.pluck(:contention_reference_id).compact.uniq.map(&:to_s)
 
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
@@ -91,6 +91,8 @@ class EndProductEstablishment < ApplicationRecord
     # We don't care about duplicate text; we just care that every request issue
     # has a contention.
     create_contentions_in_vbms(contentions).each do |contention|
+      next if existing_contention_reference_ids.include?(contention.id)
+
       record = records_ready_for_contentions.find do |r|
         contention.claim_id == reference_id &&
           r.contention_text == contention.text &&
@@ -101,6 +103,14 @@ class EndProductEstablishment < ApplicationRecord
     end
 
     fail ContentionCreationFailed if records_ready_for_contentions.any? { |r| r.contention_reference_id.nil? }
+  end
+
+  def build_contentions(records_ready_for_contentions)
+    records_ready_for_contentions.map do |issue|
+      contention = { description: issue.contention_text }
+      issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
+      contention
+    end
   end
 
   def remove_contention!(request_issue)
@@ -319,6 +329,10 @@ class EndProductEstablishment < ApplicationRecord
   # a contention_reference_id column, and contention_text method
   def contention_records
     source.contention_records(self)
+  end
+
+  def all_contention_records
+    source.all_contention_records(self)
   end
 
   def decision_issues_sync_complete?(processing_request_issue)

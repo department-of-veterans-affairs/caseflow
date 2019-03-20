@@ -198,6 +198,10 @@ class ClaimReview < DecisionReview
     request_issues.active
   end
 
+  def all_contention_records(_epe)
+    request_issues
+  end
+
   private
 
   def incomplete_tasks?

@@ -77,6 +77,10 @@ class DecisionDocument < ApplicationRecord
     effectuations.where(end_product_establishment: epe)
   end
 
+  def all_contention_records(epe)
+    contention_records(epe)
+  end
+
   private
 
   def create_board_grant_effectuations!
