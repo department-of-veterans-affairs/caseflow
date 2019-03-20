@@ -82,5 +82,5 @@ Rails.application.configure do
   # Allow health check to pushgateway
   ENV["ENABLE_PUSHGATEWAY_HEALTHCHECK"] = "true"
 
-  config.active_job.queue_adapter = :inline
+  config.active_job.queue_adapter = :test
 end
