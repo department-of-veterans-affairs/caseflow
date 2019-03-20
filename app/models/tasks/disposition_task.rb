@@ -15,8 +15,8 @@ class DispositionTask < GenericTask
 
   # This is inefficient. If it runs slowly or consumes a lot of resources then refactor. Until then we're fine.
   scope :ready_for_action, lambda {
-    active.where.not(status: Constants.TASK_STATUSES.on_hold).select do |t|
-      t.hearing && (t.hearing.scheduled_for < 24.hours.ago)
+    active.where.not(status: Constants.TASK_STATUSES.on_hold).select do |task|
+      task.hearing && (task.hearing.scheduled_for < 24.hours.ago)
     end
   }
 

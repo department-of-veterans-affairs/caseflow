@@ -25,20 +25,20 @@ class HearingDispositionChangeJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
 
     tasks = DispositionTask.ready_for_action
-    hearing_ids = tasks.map { |t| t.hearing.id }
+    hearing_ids = tasks.map { |task| task.hearing.id }
 
     tasks.each do |task|
       label = modify_task_by_dispisition(task)
       task_count_for[label] += 1
-    rescue StandardError => e
+    rescue StandardError => error
       # Rescue from errors so we attempt to change disposition even if we hit individual errors.
-      Raven.capture_exception(e, extra: { task_id: task.id })
+      Raven.capture_exception(error, extra: { task_id: task.id })
       error_count += 1
     end
 
     log_info(start_time, task_count_for, error_count, hearing_ids)
-  rescue StandardError => e
-    log_info(start_time, task_count_for, error_count, hearing_ids, e)
+  rescue StandardError => error
+    log_info(start_time, task_count_for, error_count, hearing_ids, error)
   end
   # rubocop:enable Metrics/MethodLength
 
@@ -83,8 +83,8 @@ class HearingDispositionChangeJob < CaseflowJob
     result = err ? "failed" : "completed"
 
     msg = "#{self.class.name} #{result} after running for #{duration}."
-    task_count_for.each do |k, v|
-      msg += " Processed #{v} #{k.to_s.humanize} hearings."
+    task_count_for.each do |label, task_count|
+      msg += " Processed #{task_count} #{label.to_s.humanize} hearings."
     end
     msg += " Encountered errors for #{error_count} hearings."
     msg += " Fatal error: #{err.message}" if err

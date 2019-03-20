@@ -11,6 +11,12 @@ describe HearingDispositionChangeJob do
 
     hearing = FactoryBot.create(:hearing, appeal: appeal, disposition: disposition)
     if scheduled_for
+      hearing = FactoryBot.create(
+        :hearing,
+        appeal: appeal,
+        disposition: disposition,
+        scheduled_time: scheduled_for
+      )
       hearing_day = FactoryBot.create(:hearing_day, scheduled_for: scheduled_for)
       hearing.update!(hearing_day: hearing_day)
     end
@@ -201,10 +207,10 @@ describe HearingDispositionChangeJob do
         end
 
         ready_for_action_time = 36.hours.ago
-        task_count_for_dispositions.each do |disp, cnt|
-          cnt.times do
+        task_count_for_dispositions.each do |disposition, task_count|
+          task_count.times do
             create_disposition_task_ancestry(
-              disposition: disp,
+              disposition: disposition,
               scheduled_for: ready_for_action_time,
               associated_hearing: true
             )
@@ -243,12 +249,12 @@ describe HearingDispositionChangeJob do
           ).hearing.id
         end
 
-        disposition_for_hearing = Hearing.all.map { |h| [h.id, h.disposition] }.to_h
+        disposition_for_hearing = Hearing.all.map { |hearing| [hearing.id, hearing.disposition] }.to_h
 
-        allow_any_instance_of(Hearing).to receive(:disposition) do |h|
-          fail "FAKE ERROR MESSAGE" if hearing_ids_to_error.include?(h.id)
+        allow_any_instance_of(Hearing).to receive(:disposition) do |hearing|
+          fail "FAKE ERROR MESSAGE" if hearing_ids_to_error.include?(hearing.id)
 
-          disposition_for_hearing[h.id]
+          disposition_for_hearing[hearing.id]
         end
       end
 
