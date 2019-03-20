@@ -440,7 +440,8 @@ RSpec.feature "Task queue" do
                                               }], attorney)
       end
 
-      it "the new options should appear when a hearing has been scheduled, and the bfcurloc in vacols should be updated to 57" do
+      it "the new options should appear when a hearing has been scheduled,
+        and the bfcurloc in vacols should be updated to 57" do
         visit("/queue/appeals/#{appeal.external_id}")
         find(".Select-control", text: "Select an action…").click
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h[:label])
