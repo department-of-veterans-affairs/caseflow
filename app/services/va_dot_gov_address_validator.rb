@@ -103,7 +103,7 @@ class VaDotGovAddressValidator
     distances = VADotGovService.get_distance(ids: facility_ids, lat: va_dot_gov_address[:lat],
                                              long: va_dot_gov_address[:long])
     closest_ro = RegionalOffice::CITIES.find { |_k, v| v[:facility_locator_id] == distances[0][:facility_id] }[0]
-    closest_ro = map_san_antonio_satellite_office_to_houston(closest_ro) if state_code == "TX"
+    closest_ro = map_san_antonio_satellite_office_to_houston(closest_ro)
 
     appeal.update(closest_regional_office: except_delaware(closest_ro))
 
