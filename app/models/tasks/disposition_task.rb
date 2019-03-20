@@ -199,10 +199,6 @@ class DispositionTask < GenericTask
     AppealRepository.update_location!(appeal, location)
   end
 
-  def hearing_disposition
-    hearing&.disposition
-  end
-    
   def complete_and_move_legacy_appeal_to_transcription
     update!(status: Constants.TASK_STATUSES.completed)
     AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:transcription])

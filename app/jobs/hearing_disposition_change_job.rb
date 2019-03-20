@@ -50,14 +50,14 @@ class HearingDispositionChangeJob < CaseflowJob
     # rubocop:disable Lint/EmptyWhen
     case hearing.disposition
     when Constants.HEARING_DISPOSITION_TYPES.held
-      # Will be added as part of #9540. Ignoring this situation for now.
+      task.hold!
     when Constants.HEARING_DISPOSITION_TYPES.cancelled
       task.cancel!
     when Constants.HEARING_DISPOSITION_TYPES.postponed
       # Postponed hearings should be acted on immediately and the related tasks should be closed. Do not take any
       # action here.
     when Constants.HEARING_DISPOSITION_TYPES.no_show
-      task.mark_no_show!
+      task.no_show!
     when nil
       # We allow judges and hearings staff 2 days to make changes to the hearing's disposition. If it has been more
       # than 2 days since the hearing was held and there is no disposition then remind the hearings staff.

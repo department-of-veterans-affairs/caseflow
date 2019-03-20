@@ -27,10 +27,9 @@ describe HearingDispositionChangeJob do
 
       context "when disposition is held" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
-        it "returns a label matching the hearing disposition and not change the task until #9540 is merged" do
-          attributes_before = task.attributes
+        it "returns a label matching the hearing disposition and call DispositionTask.hold!" do
+          expect(task).to receive(:hold!).exactly(1).times
           expect(subject).to eq(disposition)
-          expect(task.attributes).to eq(attributes_before)
         end
       end
 
@@ -53,8 +52,8 @@ describe HearingDispositionChangeJob do
 
       context "when disposition is no_show" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
-        it "returns a label matching the hearing disposition and call DispositionTask.mark_no_show!" do
-          expect(task).to receive(:mark_no_show!).exactly(1).times
+        it "returns a label matching the hearing disposition and call DispositionTask.no_show!" do
+          expect(task).to receive(:no_show!).exactly(1).times
           expect(subject).to eq(disposition)
         end
       end
