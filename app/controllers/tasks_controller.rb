@@ -21,6 +21,8 @@ class TasksController < ApplicationController
     InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
+
+
   def set_application
     RequestStore.store[:application] = "queue"
   end
@@ -79,7 +81,11 @@ class TasksController < ApplicationController
   #   on_hold_duration: "something"
   # }
   def update
-    tasks = task.update_from_params(update_params, current_user)
+    tasks = if task.is_a?(GenericTask) && update_params.status == "on_hold"
+              GenericTask.place_on_hold(task, current_user, update_params)
+            else
+              task.update_from_params(update_params, current_user)
+            end
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
@@ -96,7 +102,7 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
-    tasks = appeal.tasks
+    tasks = appeal.tasks_for_frontend
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
       legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
       tasks = (legacy_appeal_tasks + tasks).uniq

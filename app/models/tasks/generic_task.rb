@@ -56,8 +56,22 @@ class GenericTask < Task
 
     []
   end
+
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
+
+  def placed_on_hold_at
+    timed_hold_task&.created_at
+  end
+
+  def on_hold_duration
+    timed_hold_task&.on_hold_duration
+  end
+
+  attr_accessor  :timed_hold_task
+  def timed_hold_task
+    @timed_hold_task ||= children.select { |t| t.is_a?(TimedHoldTask) && t.active? }.max(&:created_at)
+  end
 
   private
 
@@ -90,6 +104,25 @@ class GenericTask < Task
           parent_id: parent.id,
           assigned_to: child_task_assignee(parent, params),
           instructions: params[:instructions]
+        )
+      end
+    end
+
+    def place_on_hold(parent, current_user, params)
+      transaction do
+        # Remove any other hold tasks so we don't wind up with more than one
+        if parent.timed_hold_task
+          TaskTimer.where(task: parent.timed_hold_task).destroy
+          parent.timed_hold_task.destroy
+        end
+
+        parent.update!(status: Constants.TASK_STATUSES.on_hold)
+
+        TimedHoldTask.create!(
+          appeal: parent.appeal,
+          parent_id: parent.id,
+          instructions: params[:instructions],
+          on_hold_duration: params[:on_hold_duration]
         )
       end
     end
