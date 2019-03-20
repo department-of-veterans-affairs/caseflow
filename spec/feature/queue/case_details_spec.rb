@@ -471,6 +471,28 @@ RSpec.feature "Case details" do
     end
   end
 
+  context "when there is a dispatch and decision_date" do
+    let(:vacols_case) do
+      create(:case, bfkey: "654321",
+                    bfddec: 1.day.ago,
+                    bfdnod: 2.days.ago,
+                    bfd19: 1.day.ago)
+    end
+    let(:appeal) do
+      create(:legacy_appeal, vacols_case: vacols_case)
+    end
+
+    before do
+      User.authenticate!(user: judge_user)
+    end
+
+    scenario "ensure that the green checkmark appears next to the appropriate message when there is a decision date" do
+      visit "/queue/appeals/#{appeal.external_id}"
+      expect(find("tr", text: COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA)).to have_selector(".green-checkmark")
+      expect(find("tr", text: COPY::CASE_TIMELINE_FORM_9_RECEIVED)).to have_selector(".green-checkmark")
+    end
+  end
+
   context "loads colocated task detail views" do
     let!(:appeal) do
       FactoryBot.create(
