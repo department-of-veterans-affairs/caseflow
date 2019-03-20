@@ -87,8 +87,8 @@ class RequestIssue < ApplicationRecord
     dta: {
       compensation: {
         appeal: {
-          imo: "040BDEIMO",
-          not_imo: "040BDE"
+          rating: "040BDER",
+          nonrating: "040BDENR"
         },
         claim_review: {
           rating: "040HDER",
@@ -97,8 +97,8 @@ class RequestIssue < ApplicationRecord
       },
       pension: {
         appeal: {
-          imo: "040BDEIMOPMC",
-          not_imo: "040BDEPMC"
+          rating: "040BDERPMC",
+          nonrating: "040HDENRPMC"
         },
         claim_review: {
           rating: "040HDERPMC",
@@ -733,7 +733,7 @@ class RequestIssue < ApplicationRecord
 
   def choose_dta_end_product_code(end_product_codes)
     if decision_review.decision_review_remanded.is_a?(Appeal)
-      end_product_codes[:appeal][contested_decision_issue.imo? ? :imo : :not_imo]
+      end_product_codes[:appeal][rating? ? :rating : :nonrating]
     else
       end_product_codes[:claim_review][rating? ? :rating : :nonrating]
     end
