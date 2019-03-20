@@ -123,7 +123,7 @@ class Fakes::VBMSService
     Rails.logger.info("Submitting claim to VBMS...")
     Rails.logger.info("Veteran data:\n #{veteran_hash}")
     Rails.logger.info("Claim data:\n #{claim_hash}")
-    Rails.logger.info("User:\n #{user}")
+    Rails.logger.info("User:\n #{user.inspect}")
 
     self.end_product_claim_ids_by_file_number ||= {}
 
@@ -164,7 +164,7 @@ class Fakes::VBMSService
     Rails.logger.info("File number: #{veteran_file_number}")
     Rails.logger.info("Claim id:\n #{claim_id}")
     Rails.logger.info("Contentions: #{contentions.inspect}")
-    Rails.logger.info("User:\n #{user}")
+    Rails.logger.info("User:\n #{user.inspect}")
 
     # Used to simulate a contention that fails to be created in VBMS
     contentions.delete(description: "FAIL ME")
