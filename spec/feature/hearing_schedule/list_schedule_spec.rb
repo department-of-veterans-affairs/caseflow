@@ -44,13 +44,26 @@ RSpec.feature "List Schedule" do
         expect(page).to_not have_content("Add Hearing Date")
       end
     end
+  end
 
-    context "VSO user view" do
-      let!(:current_user) { User.authenticate!(css_id: "VSO_USER", roles: ["VSO"]) }
+  context "VSO user view" do
+    let!(:judge_one) { create(:user, full_name: "Judge One") }
+    let!(:judge_two) { create(:user, full_name: "Judge Two") }
+    let!(:hearing_day_one) { create(:hearing_day, judge: judge_one) }
+    let!(:hearing_day_two) { create(:hearing_day, judge: judge_two) }
+    let!(:hearing_one) { create(:hearing, :with_tasks, hearing_day: hearing_day_one) }
+    let!(:hearing_two) { create(:hearing, :with_tasks, hearing_day: hearing_day_two) }
+    let!(:vso) { create(:vso) }
+    let!(:current_user) { User.authenticate!(css_id: "VSO_USER", roles: ["VSO"]) }
+    let!(:track_veteran_task) { create(:track_veteran_task, appeal: hearing_one.appeal, assigned_to: vso) }
 
-      scenario "Only hearing days with VSO assigned hearings are displayed" do
-        visit "hearings/schedule"
-      end
+    scenario "Only hearing days with VSO assigned hearings are displayed" do
+      OrganizationsUser.add_user_to_organization(current_user, vso)
+
+      visit "hearings/schedule"
+
+      expect(page).to have_content("One, Judge")
+      expect(page).to_not have_content("Two, Judge")
     end
   end
 end
