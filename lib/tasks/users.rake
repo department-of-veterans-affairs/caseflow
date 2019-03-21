@@ -35,4 +35,21 @@ namespace :users do
       reporter.report.each { |ln| puts ln }
     end
   end
+
+  desc "moves any hearings and hearing days assigned to the lowercase css_id of a user to the uppercase version"
+  task dedupe_hearings: :environment do
+    users = User.all
+    css_ids = users.map(&:css_id)
+    dupes = css_ids.
+      select { |e| e.upcase != e && css_ids.count(e.upcase) == 1 }.
+      map { |e| { old: e, new: e.upcase } }
+    output = dupes.map do |css_ids|
+      upper_case_user = User.find_by(css_id: css_ids[:new])
+      lower_case_user = User.find_by(css_id: css_ids[:old])
+      {
+        day: HearingDay.where(judge_id: lower_case_user.id).count,
+        hearing: Hearing.where(judge_id: lower_case_user.id).count
+      }
+    end
+  end
 end
