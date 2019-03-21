@@ -88,8 +88,7 @@ class EndProductEstablishment < ApplicationRecord
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
 
-    # We don't care about duplicate text; we just care that every request issue
-    # has a contention.
+    # We don't care about duplicate text; we just care that every request issue has a contention.
     create_contentions_in_vbms(contentions).each do |contention|
       next if existing_contention_reference_ids.include?(contention.id)
 

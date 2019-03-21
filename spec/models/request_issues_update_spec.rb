@@ -431,22 +431,24 @@ describe RequestIssuesUpdate do
         end
       end
 
-      context "when we add and remove an unidentified issue" do
-        let!(:unidentified1) { create(:request_issue, :unidentified, decision_review: review) }
-        let!(:unidentified2) { create(:request_issue, :unidentified, decision_review: review) }
+      context "when we add and remove unidentified issues" do
         let(:request_issues_data) do
-          [
-            { is_unidentified: true, decision_text: unidentified1.unidentified_issue_text },
-            { is_unidentified: true, decision_text: unidentified2.unidentified_issue_text }
-          ]
+          request_issues = []
+          10.times do |i|
+            issue = create(:request_issue, :unidentified, decision_review: review)
+            request_issues << { is_unidentified: true, decision_text: issue.unidentified_issue_text }
+          end
+          request_issues
         end
 
         it "does not re-use contention_reference_id" do
+          # start with existing rating request issues
           expect(review.reload.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(2)
           subject
           review.reload
-          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(4)
-          expect(review.request_issues.active.count).to eq(2)
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(12)
+          # only unidentified are left
+          expect(review.request_issues.active.count).to eq(10)
         end
       end
 
