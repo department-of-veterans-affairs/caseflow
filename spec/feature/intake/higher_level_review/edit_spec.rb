@@ -1115,7 +1115,8 @@ feature "Higher Level Review Edit issues" do
     let(:last_week) { Time.zone.now - 7.days }
     let(:higher_level_review) do
       # reload to get uuid
-      create(:higher_level_review, :with_end_product_establishment, veteran_file_number: veteran.file_number).reload
+      create(:higher_level_review, :with_end_product_establishment, veteran_file_number: veteran.file_number,
+                                                                    benefit_type: benefit_type).reload
     end
     let!(:existing_request_issues) do
       [create(:request_issue, :nonrating, decision_review: higher_level_review),
@@ -1169,6 +1170,44 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
+      end
+
+      scenario "remove all vbms decisions reviews" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        # remove all request issues
+        higher_level_review.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit
+        expect(page).to have_content("Remove review?")
+        expect(page).to have_content("This will remove the review and cancel all the End Products associated with it")
+        click_intake_confirm
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        sleep 1
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+      end
+    end
+
+    context "when all caseflow decision reviews" do
+      let!(:benefit_type) { "education" }
+
+      scenario "remove all caseflow decisions reviews" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        # remove all request issues
+        higher_level_review.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit
+        expect(page).to have_content("Remove review?")
+        expect(page).to have_content("This review and all tasks associated with it will be removed.")
+        click_intake_confirm
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        sleep 1
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       end
     end
 

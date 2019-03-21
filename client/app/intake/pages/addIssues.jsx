@@ -14,7 +14,7 @@ import Button from '../../components/Button';
 import Dropdown from '../../components/Dropdown';
 import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
-import { REQUEST_STATE, PAGE_PATHS } from '../constants';
+import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import {
@@ -94,6 +94,9 @@ export class AddIssuesPage extends React.Component {
     const intakeData = intakeForms[formType];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
+    const showInvalidVeteranError = !intakeData.veteranValid && (_.some(
+      intakeData.addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
+    );
 
     if (intakeData.isDtaError) {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
@@ -217,6 +220,9 @@ export class AddIssuesPage extends React.Component {
       { requestState === REQUEST_STATE.FAILED &&
         <ErrorAlert errorCode={requestErrorCode} />
       }
+
+      { showInvalidVeteranError &&
+        <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} /> }
 
       <Table
         columns={columns}
