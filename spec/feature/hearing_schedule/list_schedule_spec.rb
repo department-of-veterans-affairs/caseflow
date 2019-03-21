@@ -44,6 +44,19 @@ RSpec.feature "List Schedule" do
         expect(page).to_not have_content("Add Hearing Date")
       end
     end
+
+    context "VSO permissions" do
+      let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["VSO"]) }
+
+      scenario "No buttons are visible" do
+        visit "hearings/schedule"
+
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER_VSO)
+        expect(page).to_not have_content("Schedule Veterans")
+        expect(page).to_not have_content("Build Schedule")
+        expect(page).to_not have_content("Add Hearing Date")
+      end
+    end
   end
 
   context "VSO user view" do
