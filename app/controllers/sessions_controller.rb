@@ -51,7 +51,16 @@ class SessionsController < ApplicationController
   def destroy
     session.delete(:regional_office)
     session.delete("user")
-    redirect_to "/"
+    if session["global_admin"]
+      user = User.find(session["global_admin"])
+      session["user"] = user.to_session_hash
+      RequestStore[:current_user] = user
+      session[:regional_office] = user.selected_regional_office || user.regional_office
+      session.delete("global_admin")
+      redirect_to "/test/users"
+    else
+      redirect_to "/"
+    end
   end
   # :nocov:
 end
