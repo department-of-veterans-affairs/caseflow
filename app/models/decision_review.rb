@@ -13,6 +13,7 @@ class DecisionReview < ApplicationRecord
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review
   has_many :tasks, as: :appeal
+  has_one :intake, as: :detail
 
   before_destroy :remove_issues!
 
@@ -85,6 +86,8 @@ class DecisionReview < ApplicationRecord
     id.to_s
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def ui_hash
     {
       veteran: {
@@ -104,9 +107,14 @@ class DecisionReview < ApplicationRecord
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
-      editIssuesUrl: caseflow_only_edit_issues_url
+      editIssuesUrl: caseflow_only_edit_issues_url,
+      veteranValid: veteran&.valid?(:bgs),
+      veteranInvalidFields: veteran_invalid_fields,
+      processedInCaseflow: processed_in_caseflow?
     }
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
@@ -286,6 +294,13 @@ class DecisionReview < ApplicationRecord
   end
 
   private
+
+  def veteran_invalid_fields
+    return unless intake
+
+    intake.veteran.valid?(:bgs)
+    intake.veteran_invalid_fields
+  end
 
   def request_issues_ui_hash
     request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible.map(&:ui_hash)

@@ -46,44 +46,6 @@ namespace :ci do
     end
   end
 
-  desc "Verify code coverage (via simplecov) on travis, skips if testing is incomplete"
-  task :travis_verify_code_coverage do
-    puts "\nVerifying code coverage"
-    require "simplecov"
-
-    test_categories = %w[unit api certification dispatch reader other queue]
-
-    merged_results = test_categories.inject({}) do |merged, category|
-      path = File.join("coverage/", ".#{category}.resultset.json")
-
-      unless File.exist?(path)
-        puts Rainbow("Missing code coverage result for #{category} tests. Testing isn't complete.").yellow
-        exit!(0)
-      end
-
-      json = JSON.parse(File.read(path))
-      SimpleCov::RawCoverage.merge_resultsets(merged, json[category]["coverage"])
-    end
-
-    result = SimpleCov::Result.new(merged_results)
-
-    if result.covered_percentages.empty?
-      puts Rainbow("No valid coverage results were found").red
-      exit!(1)
-    end
-
-    # Rebuild HTML file with correct merged results
-    result.format!
-
-    if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
-      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
-                   This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
-      exit!(1)
-    else
-      puts Rainbow("Code coverage threshold met\n").green
-    end
-  end
-
   desc "Verify code coverage on CircleCI "
   task :circleci_verify_code_coverage do
     require "simplecov"
