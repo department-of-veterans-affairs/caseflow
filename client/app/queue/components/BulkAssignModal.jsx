@@ -71,8 +71,8 @@ class BulkAssignModal extends React.PureComponent {
     if (this.generateErrors().length === 0) {
       // placeholder for posting data
 
-      this.handleModalToggle();
       this.setState({ tasksAssigned: true });
+      // this.handleModalToggle();
     }
   }
 
@@ -148,23 +148,6 @@ class BulkAssignModal extends React.PureComponent {
 
     return taskOptions;
   }
-
-  // generateNumberOfTaskOptions = () => {
-  //   const allOptions = [5, 10, 20, 30, 40, 50];
-  //   let taskOptions = [];
-
-  //   for (let i = 0; i < allOptions.length; i++) {
-  //     if (this.props.tasks.length > allOptions[i]) {
-  //       taskOptions.push(allOptions[i]);
-  //     } else {
-  //       break;
-  //     }
-  //   }
-
-  //   if (taskOptions.length === 0) {
-  //     taskOptions.push(this.props.tasks.length);
-  //   }
-  // }
 
   render() {
     const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
