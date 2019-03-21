@@ -87,7 +87,7 @@ feature "Higher Level Review Edit issues" do
 
   let(:benefit_type) { "compensation" }
 
-  let(:higher_level_review) do
+  let!(:higher_level_review) do
     HigherLevelReview.create!(
       veteran_file_number: veteran.file_number,
       receipt_date: receipt_date,
