@@ -16,6 +16,7 @@ class BulkAssignModal extends React.PureComponent {
     this.state = {
       showModal: false,
       showErrors: false,
+      tasksAssigned: false,
       users: [],
       modal: {
         assignedUser: undefined,
@@ -70,7 +71,8 @@ class BulkAssignModal extends React.PureComponent {
     if (this.generateErrors().length === 0) {
       // placeholder for posting data
       
-      this.handleModalToggle()
+      this.handleModalToggle();
+      this.setState({ tasksAssigned: true });
     }
   }
 
@@ -125,13 +127,26 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   generateTaskTypeOptions = () => {
-    let { tasks } = this.props;
+    let filteredTasks = this.props.tasks;
 
     if (this.state.modal.regionalOffice) {
-      tasks = _.filter(tasks, { closestRegionalOffice: this.state.modal.regionalOffice });
+      filteredTasks = _.filter(filteredTasks, { closestRegionalOffice: this.state.modal.regionalOffice });
     }
 
-    return this.getDisplayTextOption(_.uniq(tasks.map((task) => task.type)));
+    const uniqueTasks = _.uniq(filteredTasks.map((task) => task.type));
+    const taskOptions = uniqueTasks.map((task) => {
+      return {
+        value: task,
+        displayText: task.replace(/([a-z])([A-Z])/g, '$1 $2')
+      }
+    });
+
+    taskOptions.unshift({
+      value: null,
+      displayText: ''
+    });
+
+    return taskOptions;
   }
 
   // generateNumberOfTaskOptions = () => {
