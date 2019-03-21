@@ -7,6 +7,15 @@ export const getBlankOptionError = (responseErrorCodes, field) => (
   (_.get(responseErrorCodes[field], 0) === 'blank') && 'Please select an option.'
 );
 
+export const getClaimantError = (responseErrorCodes) => {
+  const error_code = _.get(responseErrorCodes[claimant], 0)
+  if (error_code === 'blank') {
+    return 'Please select an option.'
+  } else if (error_code === 'claimant_address_required') {
+    return 'The Claimant is missing an address in SYSTEM_NAME'
+  }
+};
+
 export const getPageError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
 );

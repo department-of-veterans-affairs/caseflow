@@ -3,14 +3,14 @@
 class ClaimantValidator < ActiveModel::Validator
   PAYEE_CODE_REQUIRED = "payee_code may not be blank"
   CLAIMANT_REQUIRED = "participant_id may not be blank"
-  CLAIMANT_ADDRESS_REQUIRED = "The Claimant must have an address in SYSTEM_NAME"
+  CLAIMANT_ADDRESS_REQUIRED = "claimant_address_required"
   BLANK = "blank"
   BENEFIT_TYPE_REQUIRES_PAYEE_CODE = %w[compensation pension].freeze
 
   def validate(claimant)
     validate_payee_code(claimant)
     validate_participant_id(claimant)
-    validate_claimant_address(claimant)
+    # validate_claimant_address(claimant)
   end
 
   def validate_payee_code(claimant)
@@ -33,8 +33,10 @@ class ClaimantValidator < ActiveModel::Validator
 
   def validate_claimant_address(claimant)
     return unless claimant.participant_id
+    # return if claimant.address
 
     claimant.errors[:address] << BLANK
+    claimant.review_request.errors[:claimant] << CLAIMANT_ADDRESS_REQUIRED
   end
 
   def benefit_type_requires_payee_code?(claimant)

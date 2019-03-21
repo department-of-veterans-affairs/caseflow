@@ -6,6 +6,7 @@ import {
   convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
+  getClaimantError,
   getPageError,
   formatRelationships,
   getDefaultPayeeCode
@@ -263,7 +264,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
       },
       claimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
+        $set: getClaimantError(action.payload.responseErrorCodes, 'claimant')
       },
       payeeCodeError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')

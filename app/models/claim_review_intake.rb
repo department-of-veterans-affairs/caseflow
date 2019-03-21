@@ -21,6 +21,7 @@ class ClaimReviewIntake < DecisionReviewIntake
       detail.save!
     end
   rescue ActiveRecord::RecordInvalid => _err
+    detail.validate
     # propagate the error from invalid column to the user-visible reason
     if detail.errors.messages[:benefit_type].include?(ClaimantValidator::PAYEE_CODE_REQUIRED)
       payee_code_error = ClaimantValidator::BLANK
@@ -30,14 +31,14 @@ class ClaimReviewIntake < DecisionReviewIntake
       claimant_required_error = ClaimantValidator::BLANK
     end
 
-    if claimant.errors.messages[:address].include?(ClaimantValidator::BLANK)
+    if detail.claimants.first.reload.errors.messages[:address].include?(ClaimantValidator::BLANK)
       claimant_address_error = ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
     end
 
     detail.validate
     detail.errors[:payee_code] << payee_code_error if payee_code_error
     detail.errors[:claimant] << claimant_required_error if claimant_required_error
-    detail.errors[:claimant] << claimant_address_required_error if claimant_address_required_error
+    detail.errors[:claimant] << claimant_address_error if claimant_address_error
 
     false
     # we just swallow the exception otherwise, since we want the validation errors to return to client
