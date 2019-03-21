@@ -20,7 +20,8 @@ class SaveButtonUnconnected extends React.Component {
       originalIssueNumber: this.props.state.addedIssues.length,
       showModals: {
         issueChangeModal: false,
-        unidentifiedIssueModal: false
+        unidentifiedIssueModal: false,
+        reviewRemovedModal: false
       }
     };
   }
@@ -29,11 +30,16 @@ class SaveButtonUnconnected extends React.Component {
     // do validation and show modals
     let showModals = {
       issueChangeModal: false,
-      unidentifiedIssueModal: false
+      unidentifiedIssueModal: false,
+      reviewRemovedModal: false
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      showModals.issueChangeModal = true;
+      if (this.props.state.addedIssues.length === 0 && this.props.removeDecisionReviews) {
+        showModals.reviewRemovedModal = true;
+      } else {
+        showModals.issueChangeModal = true;
+      }
     }
 
     if (this.props.state.addedIssues.filter((i) => i.isUnidentified).length > 0) {
@@ -87,12 +93,13 @@ class SaveButtonUnconnected extends React.Component {
       issueCount,
       requestStatus,
       removeDecisionReviews,
-      veteranValid
+      veteranValid,
+      processedInCaseflow
     } = this.props;
 
     let disableDueToIssueCount = false;
 
-    if (issueCount === 0 && !removeDecisionReviews) {
+    if (!issueCount && !removeDecisionReviews) {
       disableDueToIssueCount = true;
     }
 
@@ -102,16 +109,33 @@ class SaveButtonUnconnected extends React.Component {
 
     const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount || invalidVeteran;
 
+    const removeVbmsCopy = 'This will remove the review and cancel all the End Products associated with it.';
+
+    const removeCaseflowCopy = 'This review and all tasks associated with it will be removed.';
+
+    const originalIssueNumberCopy = `The review originally had ${this.state.originalIssueNumber}
+       ${pluralize('issue', this.state.originalIssueNumber)} but now has ${this.props.state.addedIssues.length}.`;
+
     return <span>
-      { this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
+      {this.state.showModals.issueChangeModal && <SaveAlertConfirmModal
         title="Number of issues has changed"
         onClose={() => this.closeModal('issueChangeModal')}
         onConfirm={() => this.confirmModal('issueChangeModal')}>
         <p>
-          The review originally had {this.state.originalIssueNumber}&nbsp;
-          { pluralize('issue', this.state.originalIssueNumber) } but now has {this.props.state.addedIssues.length}.
+          {originalIssueNumberCopy}
         </p>
         <p>Please check that this is the correct number.</p>
+      </SaveAlertConfirmModal>}
+
+      {this.state.showModals.reviewRemovedModal && <SaveAlertConfirmModal
+        title="Remove review?"
+        buttonText= "Yes, remove"
+        onClose={() => this.closeModal('reviewRemovedModal')}
+        onConfirm={() => this.confirmModal('reviewRemovedModal')}>
+        <p>
+          {originalIssueNumberCopy}
+        </p>
+        <p>{processedInCaseflow ? removeCaseflowCopy : removeVbmsCopy}</p>
       </SaveAlertConfirmModal>}
 
       { this.state.showModals.unidentifiedIssueModal && <SaveAlertConfirmModal
@@ -151,6 +175,7 @@ const SaveButton = connect(
     issueCount: issueCountSelector(state),
     removeDecisionReviews: state.featureToggles.removeDecisionReviews,
     veteranValid: state.veteranValid,
+    processedInCaseflow: state.processedInCaseflow,
     state
   }),
   (dispatch) => bindActionCreators({

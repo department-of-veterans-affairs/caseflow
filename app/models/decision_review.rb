@@ -87,6 +87,7 @@ class DecisionReview < ApplicationRecord
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def ui_hash
     {
       veteran: {
@@ -108,10 +109,12 @@ class DecisionReview < ApplicationRecord
       contestableIssuesByDate: contestable_issues.map(&:serialize),
       editIssuesUrl: caseflow_only_edit_issues_url,
       veteranValid: veteran&.valid?(:bgs),
-      veteranInvalidFields: veteran_invalid_fields
+      veteranInvalidFields: veteran_invalid_fields,
+      processedInCaseflow: processed_in_caseflow?
     }
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
