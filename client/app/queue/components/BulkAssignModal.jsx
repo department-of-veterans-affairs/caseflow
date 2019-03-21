@@ -19,10 +19,10 @@ class BulkAssignModal extends React.PureComponent {
       tasksAssigned: false,
       users: [],
       modal: {
-        assignedUser: undefined,
-        regionalOffice: undefined,
-        taskType: undefined,
-        numberOfTasks: undefined
+        assignedUser: null,
+        regionalOffice: null,
+        taskType: null,
+        numberOfTasks: null
       }
     };
   }
@@ -44,7 +44,7 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   onFieldChange = (value, field) => {
-    let newState = this.state.modal;
+    const newState = this.state.modal;
 
     newState[field] = value;
     this.setState({ modal: newState });
@@ -70,7 +70,7 @@ class BulkAssignModal extends React.PureComponent {
 
     if (this.generateErrors().length === 0) {
       // placeholder for posting data
-      
+
       this.handleModalToggle();
       this.setState({ tasksAssigned: true });
     }
@@ -109,7 +109,7 @@ class BulkAssignModal extends React.PureComponent {
       return {
         value: user.attributes.css_id,
         displayText: `${user.attributes.css_id} ${user.attributes.full_name}`
-      }
+      };
     });
 
     users.unshift({
@@ -138,7 +138,7 @@ class BulkAssignModal extends React.PureComponent {
       return {
         value: task,
         displayText: task.replace(/([a-z])([A-Z])/g, '$1 $2')
-      }
+      };
     });
 
     taskOptions.unshift({
@@ -167,13 +167,13 @@ class BulkAssignModal extends React.PureComponent {
   // }
 
   render() {
-    const bulkAssignButton = <Button onClick={this.handleModalToggle}>Assign Tasks</Button>;
+    const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
+      Assign Tasks
+    </Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.bulkAssignTasks}>
       Assign
     </Button>;
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
-
-    console.log(this.props.match.params);
 
     return (
       <div>
