@@ -302,6 +302,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Task assigned to #{other_organization.name}")
         expect(Task.last.instructions.first).to eq(instructions)
       end
+
       context "A TranslationTask is assigned to the organization" do
         let(:veteran_first_name) { "Milivoj" }
         let(:veteran_last_name) { "Veilleux" }
@@ -582,6 +583,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content valid_document_id
       end
     end
+
     it "checkout details (documentID, judge, attorney notes) are preserved in attorney checkout" do
       step "judge reviews case and assigns a task to an attorney" do
         visit "/queue"
