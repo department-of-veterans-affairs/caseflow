@@ -40,6 +40,9 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/276980/
     "User is not authorized." => "VBMS::UserNotAuthorizedError"
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/278667/
+    "An error occurred while establishing the claim: Unable to establish claim: insertBenefitClaim: City is null" => "VBMS::ClaimantAddressError"
   }.freeze
 
   class << self
@@ -79,3 +82,4 @@ class VBMS::ClaimNotFoundError < StandardError; end
 class VBMS::PIFExistsForEPCodeError < StandardError; end
 class VBMS::DuplicateEPError < StandardError; end
 class VBMS::UserNotAuthorizedError < StandardError; end
+class VBMS::ClaimantAddressError < StandardError; end
