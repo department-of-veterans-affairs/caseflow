@@ -49,18 +49,26 @@ class SessionsController < ApplicationController
 
   # :nocov:
   def destroy
-    session.delete(:regional_office)
-    session.delete("user")
+    remove_user_from_session
     if session["global_admin"]
-      user = User.find(session["global_admin"])
-      session["user"] = user.to_session_hash
-      RequestStore[:current_user] = user
-      session[:regional_office] = user.selected_regional_office || user.regional_office
+      add_user_to_session(session["global_admin"])
       session.delete("global_admin")
       redirect_to "/test/users"
     else
       redirect_to "/"
     end
+  end
+
+  def remove_user_from_session
+    session.delete(:regional_office)
+    session.delete("user")
+  end
+
+  def add_user_to_session(user_id)
+    user = User.find(user_id)
+    session["user"] = user.to_session_hash
+    session[:regional_office] = user.selected_regional_office || user.regional_office
+    RequestStore[:current_user] = user
   end
   # :nocov:
 end
