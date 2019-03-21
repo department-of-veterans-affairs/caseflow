@@ -63,6 +63,10 @@ class User < ApplicationRecord
     roles && (roles.include?("Mail Intake") || roles.include?("Admin Intake"))
   end
 
+  def vso_user?
+    roles&.include?("VSO")
+  end
+
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end

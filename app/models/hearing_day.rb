@@ -122,8 +122,17 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def load_days(start_date, end_date, regional_office = nil)
-      if regional_office.nil?
+    def upcoming_days_for_vso_user(start_date, end_date, user)
+      HearingDay.joins(hearings: [appeal: :tasks]).where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+        .where(tasks: { type: TrackVeteranTask.name }).select do |hearing_day|
+        hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
+      end
+    end
+
+    def load_days(start_date, end_date, user = nil, regional_office = nil)
+      if user&.vso_user?
+        upcoming_days_for_vso_user(start_date, end_date, user)
+      elsif regional_office.nil?
         where("DATE(scheduled_for) between ? and ?", start_date, end_date) +
           HearingDayRepository.load_video_days_for_range(start_date, end_date)
       elsif regional_office == REQUEST_TYPES[:central]
@@ -132,13 +141,6 @@ class HearingDay < ApplicationRecord
         where("regional_office = ? and DATE(scheduled_for) between ? and ?", regional_office, start_date, end_date) +
           HearingDayRepository.load_video_days_for_regional_office(regional_office, start_date, end_date)
       end
-    end
-
-    def upcoming_days_for_vso_user(user)
-      HearingDay.joins(hearings: [appeal: :tasks]).where("DATE(scheduled_for) > ?", 30.days.ago)
-        .where(tasks: { type: TrackVeteranTask.name }).select do |hearing_day|
-          hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
-        end
     end
 
     def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)

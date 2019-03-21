@@ -174,7 +174,7 @@ describe HearingDay do
       subject { HearingDay.load_days(schedule_period.start_date, schedule_period.end_date) }
 
       it do
-        expect(subject[:caseflow_hearings].size).to eql(442)
+        expect(subject.size).to eql(442)
       end
     end
   end
@@ -188,7 +188,7 @@ describe HearingDay do
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "RO13") }
 
     it "gets hearings for a date range" do
-      expect(subject[:vacols_hearings].size).to eq 2
+      expect(subject.size).to eq 2
     end
   end
 
@@ -202,7 +202,7 @@ describe HearingDay do
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today + 2.days, HearingDay::REQUEST_TYPES[:central]) }
 
     it "should load all three hearing days" do
-      expect(subject[:caseflow_hearings].size).to eq 3
+      expect(subject.size).to eq 3
     end
   end
 
