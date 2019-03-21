@@ -6,4 +6,6 @@ class RemandReason < ApplicationRecord
   # This will be removed
   belongs_to :request_issue
   belongs_to :decision_issue
+
+  default_scope { where(deleted_at: nil) }
 end

@@ -30,6 +30,14 @@ class DecisionIssue < ApplicationRecord
   REMAND = "remanded"
   REMAND_DISPOSITIONS = [REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
+  default_scope { where(deleted_at: nil) }
+
+  def remove
+    update(deleted_at: Time.now)
+    remand_reasons.update_all(deleted_at: Time.now)
+    request_decision_issues.update_all(deleted_at: Time.now)
+  end
+
   class AppealDTAPayeeCodeError < StandardError
     def initialize(appeal_id)
       super("Can't create a SC DTA for appeal #{appeal_id} due to missing payee code")

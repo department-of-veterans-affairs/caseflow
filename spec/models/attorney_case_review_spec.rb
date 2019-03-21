@@ -69,6 +69,12 @@ describe AttorneyCaseReview do
         expect(DecisionIssue.where(id: old_decision_issue_ids)).to eq []
         expect(RequestDecisionIssue.where(decision_issue_id: old_decision_issue_ids)).to eq []
         expect(RemandReason.where(id: old_remand_reasons_ids)).to eq []
+
+        # Ensure soft deleted records are there
+        expect(DecisionIssue.unscoped.where(id: old_decision_issue_ids).size).to eq old_decision_issue_ids.size
+        expect(RequestDecisionIssue.unscoped.where(decision_issue_id: old_decision_issue_ids).size).to eq old_decision_issue_ids.size
+        expect(RemandReason.unscoped.where(id: old_remand_reasons_ids).size).to eq old_remand_reasons_ids.size
+
         expect(request_issue1.reload.decision_issues.size).to eq 2
         expect(request_issue2.reload.decision_issues.size).to eq 2
         expect(request_issue1.decision_issues).to eq request_issue2.decision_issues
