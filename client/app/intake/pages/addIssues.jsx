@@ -134,7 +134,6 @@ export class AddIssuesPage extends React.Component {
                   options={issueActionOptions}
                   defaultText="Select action"
                   onChange={(option) => this.onRemoveClick(index, option)}
-                  hideLabel
                 />
                 }
                 { !withdrawDecisionReviews && <Button
