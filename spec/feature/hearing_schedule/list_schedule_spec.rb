@@ -44,5 +44,13 @@ RSpec.feature "List Schedule" do
         expect(page).to_not have_content("Add Hearing Date")
       end
     end
+
+    context "VSO user view" do
+      let!(:current_user) { User.authenticate!(css_id: "VSO_USER", roles: ["VSO"]) }
+
+      scenario "Only hearing days with VSO assigned hearings are displayed" do
+        visit "hearings/schedule"
+      end
+    end
   end
 end

@@ -2,6 +2,7 @@
 
 class Hearings::HearingDayController < HearingScheduleController
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
+  skip_before_action :deny_vso_access, only: [:index, :show]
 
   # show schedule days for date range provided
   def index
@@ -9,7 +10,7 @@ class Hearings::HearingDayController < HearingScheduleController
     end_date = validate_end_date(params[:end_date])
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearing_days = HearingDay.load_days(start_date, end_date, current_user, regional_office)
+    hearing_days = HearingDay.list_upcoming_hearing_days(start_date, end_date, current_user, regional_office)
 
     respond_to do |format|
       format.html do
