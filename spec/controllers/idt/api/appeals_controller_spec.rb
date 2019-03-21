@@ -429,6 +429,30 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
             end
           end
 
+          context "when contested claimant with unknown REPSO value (representative code)" do
+            let!(:representative) do
+              create(
+                :representative,
+                repkey: vacols_case.bfkey,
+                reptype: "C",
+                repfirst: "Contested",
+                replast: "Claimant",
+                repso: "5"
+              )
+            end
+
+            it "returns nil value for representative name" do
+              get :details, params: params
+              response_body = JSON.parse(response.body)["data"]
+
+              expect(response_body["attributes"]["contested_claimants"][0]["first_name"]).to eq("Contested")
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["code"])
+                .to eq representative.repso
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["name"])
+                .to be_nil
+            end
+          end
+
           context "when contested claimant agent" do
             let!(:representative) do
               create(

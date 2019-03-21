@@ -157,7 +157,7 @@ class VACOLS::Representative < VACOLS::Record
       address: get_address_from_rep_entry(self),
       representative: {
         code: code,
-        name: VACOLS::Case::REPRESENTATIVES[code][:full_name]
+        name: VACOLS::Case::REPRESENTATIVES.dig(code, :full_name)
       }
     }
   end
