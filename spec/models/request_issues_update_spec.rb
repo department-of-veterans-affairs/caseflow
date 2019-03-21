@@ -434,7 +434,7 @@ describe RequestIssuesUpdate do
       context "when we add and remove unidentified issues" do
         let(:request_issues_data) do
           request_issues = []
-          10.times do |i|
+          10.times do
             issue = create(:request_issue, :unidentified, decision_review: review)
             request_issues << { is_unidentified: true, decision_text: issue.unidentified_issue_text }
           end
