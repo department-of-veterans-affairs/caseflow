@@ -146,9 +146,8 @@ export class ListScheduleContainer extends React.Component {
         </Alert>}
         <AppSegment filledBackground>
           <h1 className="cf-push-left">
-            {this.props.userRoleView && COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_RO}
-            {this.props.userRoleVso && COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_VSO}
-            {!this.props.userRoleView && !this.props.userRoleVso && COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}
+            {this.props.userRoleView || this.props.userRoleVso ? COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER :
+              COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}
           </h1>
           {this.props.userRoleBuild &&
             <span className="cf-push-right">
