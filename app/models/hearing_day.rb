@@ -124,29 +124,25 @@ class HearingDay < ApplicationRecord
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        cf_video_and_co = where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
+        where("DATE(scheduled_for) between ? and ?", start_date, end_date) +
+          HearingDayRepository.load_video_days_for_range(start_date, end_date)
       elsif regional_office == REQUEST_TYPES[:central]
-        cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
-                                REQUEST_TYPES[:central], start_date, end_date)
-        video_and_co = []
+        where("request_type = ? and DATE(scheduled_for) between ? and ?", REQUEST_TYPES[:central], start_date, end_date)
       else
-        cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
-                                regional_office, start_date, end_date)
-        video_and_co, travel_board =
-          HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
+        where("regional_office = ? and DATE(scheduled_for) between ? and ?", regional_office, start_date, end_date) +
+          HearingDayRepository.load_video_days_for_regional_office(regional_office, start_date, end_date)
       end
+    end
 
-      {
-        caseflow_hearings: cf_video_and_co,
-        vacols_hearings: video_and_co,
-        travel_board_hearings: travel_board
-      }
+    def upcoming_days_for_vso_user(user)
+      HearingDay.joins(hearings: [appeal: :tasks]).where("DATE(scheduled_for) > ?", 30.days.ago)
+        .where(tasks: { type: TrackVeteranTask.name }).select do |hearing_day|
+          hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
+        end
     end
 
     def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
-      hearing_days = load_days(start_date, end_date, regional_office)
-      total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
+      total_video_and_co = load_days(start_date, end_date, regional_office)
 
       # fetching all the RO keys of the dockets
 

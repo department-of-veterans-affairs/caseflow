@@ -9,7 +9,7 @@ class Hearings::HearingDayController < HearingScheduleController
     end_date = validate_end_date(params[:end_date])
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearings = HearingDay.load_days(start_date, end_date, regional_office)
+    hearing_days = HearingDay.load_days(start_date, end_date, regional_office)
 
     respond_to do |format|
       format.html do
@@ -17,7 +17,7 @@ class Hearings::HearingDayController < HearingScheduleController
       end
       format.json do
         render json: {
-          hearings: json_hearings(HearingDay.array_to_hash(hearings[:vacols_hearings] + hearings[:caseflow_hearings])),
+          hearings: json_hearings(HearingDay.array_to_hash(hearing_days)),
           startDate: start_date,
           endDate: end_date
         }
