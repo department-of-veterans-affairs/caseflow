@@ -97,7 +97,7 @@ class Test::UsersController < ApplicationController
     # We keep track of current user to use when logging out
     session["global_admin"] = current_user.id
     RequestStore[:current_user] = user
-    session[:regional_office] = user.selected_regional_office || user.regional_office
+    session[:regional_office] = user.users_regional_office
     head :ok
   end
 

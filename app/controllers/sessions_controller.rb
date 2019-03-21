@@ -67,7 +67,7 @@ class SessionsController < ApplicationController
   def add_user_to_session(user_id)
     user = User.find(user_id)
     session["user"] = user.to_session_hash
-    session[:regional_office] = user.selected_regional_office || user.regional_office
+    session[:regional_office] = user.users_regional_office
     RequestStore[:current_user] = user
   end
   # :nocov:
