@@ -488,6 +488,20 @@ feature "Appeal Edit issues" do
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
 
+      scenario "remove all vbms decision reviews" do
+        visit "appeals/#{appeal.uuid}/edit"
+        # remove all request issues
+        appeal.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit
+        expect(page).to have_content("Remove review?")
+        expect(page).to have_content("This review and all tasks associated with it will be removed.")
+        click_intake_confirm
+      end
+
       context "when review has no active tasks" do
         scenario "no tasks are cancelled when all request issues are removed" do
           visit "appeals/#{appeal.uuid}/edit"
