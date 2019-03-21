@@ -221,7 +221,10 @@ Rails.application.routes.draw do
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
     resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
   end
+
   resources :judge_assign_tasks, only: [:create]
+
+  resources :bulk_task_assignments, only: [:create]
 
   resources :distributions, only: [:new, :show]
 
