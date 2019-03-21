@@ -420,6 +420,15 @@ command in a separate Terminal pane:
 cd client && yarn run dev:hot
 ```
 
+### Debugging tests in the browser
+
+By default, tests will run by launching an instance of Chrome for easier
+debugging. If you prefer to run the tests using a headless driver, set the `CI`
+env var to `true`. For example:
+```console
+CI=true bundle exec rspec spec/feature/queue/case_details_spec.rb:350
+```
+
 ### focus
 
 During development, it can be helpful to narrow the scope of tests being run. You can do this by
