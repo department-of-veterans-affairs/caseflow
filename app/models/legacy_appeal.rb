@@ -21,6 +21,7 @@ class LegacyAppeal < ApplicationRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_one :special_issue_list, as: :appeal
+  has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
@@ -84,13 +85,6 @@ class LegacyAppeal < ApplicationRecord
     # closed but does not have a remand return date (false is cached, nil is not).
     (self.class.repository.remand_return_date(vacols_id) || false) unless active?
   end
-
-  scope :open_hearing, lambda {
-    joins(:tasks)
-      .group("legacy_appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
-              DispositionTask.name, Task.inactive_statuses, 1)
-  }
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js
   # rubocop:disable Metrics/LineLength

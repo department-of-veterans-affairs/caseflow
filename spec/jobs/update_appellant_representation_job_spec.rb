@@ -32,7 +32,7 @@ describe UpdateAppellantRepresentationJob do
       allow_any_instance_of(Appeal).to receive(:vsos) { |a| vso_for_appeal[a.id] }
     end
 
-    it "runs the job as expected" do
+    it "runs the job as expected", focus: true do
       expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:log_info).with(
         anything,
         new_task_count,
@@ -119,6 +119,8 @@ describe UpdateAppellantRepresentationJob do
       expect(slack_msg).to match(/#{expected_msg}/)
     end
   end
+
+  # context "when individual appeals throw errors" do
 end
 
 def create_appeal_and_vso

@@ -20,7 +20,7 @@ class Appeal < DecisionReview
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
-  has_one :record_synced_by_job, as: :record
+  has_many :record_synced_by_job, as: :record
 
   validate :validate_receipt_date
   with_options on: :intake_review do

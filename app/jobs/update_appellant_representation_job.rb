@@ -7,6 +7,8 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   include ActionView::Helpers::DateHelper
   queue_as :low_priority
 
+  TOTAL_NUMBER_OF_APPEALS_TO_UPDATE = 1000
+
   def perform
     start_time = Time.zone.now
     new_task_count = 0
@@ -16,7 +18,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
-    [*LegacyAppeal.open_hearing, *Appeal.active].each do |a|
+    appeals_to_update.each do |a|
       appeal_new_task_count, appeal_closed_task_count = TrackVeteranTask.sync_tracking_tasks(a)
       new_task_count += appeal_new_task_count
       closed_task_count += appeal_closed_task_count
@@ -31,6 +33,37 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     log_info(start_time, new_task_count, closed_task_count, error_count)
   rescue StandardError => e
     log_info(start_time, new_task_count, closed_task_count, error_count, e)
+  end
+
+  def appeals_to_update
+    number_of_legacy_appeals = legacy_appeals_with_hearings.size
+    number_of_ama_appeals = active_appeals.size
+
+    number_of_legacy_appeals_to_update =
+      TOTAL_NUMBER_OF_APPEALS_TO_UPDATE * number_of_legacy_appeals / (number_of_legacy_appeals + number_of_ama_appeals)
+    number_of_appeals_to_update =
+      TOTAL_NUMBER_OF_APPEALS_TO_UPDATE * number_of_ama_appeals / (number_of_legacy_appeals + number_of_ama_appeals)
+
+    legacy_appeals = RecordSyncedByJob.next_records_to_process(
+      legacy_appeals_with_hearings,
+      number_of_legacy_appeals_to_update
+    )
+    appeals = RecordSyncedByJob.next_records_to_process(
+      active_appeals,
+      number_of_appeals_to_update
+    )
+
+    [legacy_appeals, appeals].flatten
+  end
+
+  def legacy_appeals_with_hearings
+    LegacyAppeal.joins(:tasks).where(
+      "tasks.type = ? AND tasks.status NOT IN (?)", "DispositionTask", Task.inactive_statuses
+    )
+  end
+
+  def active_appeals
+    Appeal.joins(:tasks).where("tasks.type = ? AND tasks.status NOT IN (?)", "RootTask", Task.inactive_statuses)
   end
 
   def log_info(start_time, new_task_count, closed_task_count, error_count, err = nil)
