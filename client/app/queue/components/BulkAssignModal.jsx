@@ -2,6 +2,9 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
+import { withRouter } from 'react-router-dom';
+import ApiUtil from '../../util/ApiUtil';
+
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/Dropdown';
@@ -10,9 +13,10 @@ class BulkAssignModal extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    const state = {
+    this.state = {
       showModal: false,
       showErrors: false,
+      users: [],
       modal: {
         assignedUser: undefined,
         regionalOffice: undefined,
@@ -20,12 +24,16 @@ class BulkAssignModal extends React.PureComponent {
         numberOfTasks: undefined
       }
     };
-
-    this.state = state;
   }
 
-  onFieldChange = (value, field) => {
-    this.setState({ [field]: value });
+  componentDidMount() {
+    let fetchedUsers;
+
+    ApiUtil.get(`/organizations/${this.props.match.params.organization}/users.json`).then((resp) => {
+      fetchedUsers = resp.body.organization_users.data;
+
+      this.setState({ users: fetchedUsers });
+    });
   }
 
   handleModalToggle = () => {
@@ -34,9 +42,17 @@ class BulkAssignModal extends React.PureComponent {
     this.setState({ showModal: !modalStatus });
   }
 
+  onFieldChange = (value, field) => {
+    let newState = this.state.modal;
+
+    newState[field] = value;
+    this.setState({ modal: newState });
+    this.forceUpdate();
+  }
+
   generateErrors = () => {
     const requiredFields = ['assignedUser', 'taskType', 'numberOfTasks'];
-    const undefinedFields = _.keys(_.omitBy(this.state.modal, !_.isUndefined));
+    const undefinedFields = _.keys(_.omitBy(this.state.modal, _.isString));
     const errorFields = [];
 
     undefinedFields.forEach((field) => {
@@ -52,9 +68,9 @@ class BulkAssignModal extends React.PureComponent {
     this.setState({ showErrors: true });
 
     if (this.generateErrors().length === 0) {
-      // Placeholder for posting data
-
-      this.handleModalToggle();
+      // placeholder for posting data
+      
+      this.handleModalToggle()
     }
   }
 
@@ -87,7 +103,19 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   generateUserOptions = () => {
-    return this.getDisplayTextOption(['First', 'Second', 'Third']);
+    const users = this.state.users.map((user) => {
+      return {
+        value: user.attributes.css_id,
+        displayText: `${user.attributes.css_id} ${user.attributes.full_name}`
+      }
+    });
+
+    users.unshift({
+      value: null,
+      displayText: ''
+    });
+
+    return users;
   }
 
   generateRegionalOfficeOptions = () => {
@@ -125,10 +153,12 @@ class BulkAssignModal extends React.PureComponent {
 
   render() {
     const bulkAssignButton = <Button onClick={this.handleModalToggle}>Assign Tasks</Button>;
-    const confirmButton = <Button classNames={['usa-button-secondary']} onClick={() => {}}>
+    const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.bulkAssignTasks}>
       Assign
     </Button>;
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
+
+    console.log(this.props.match.params);
 
     return (
       <div>
@@ -185,4 +215,4 @@ BulkAssignModal.propTypes = {
   tasks: PropTypes.array.isRequired
 };
 
-export default BulkAssignModal;
+export default withRouter(BulkAssignModal);
