@@ -322,6 +322,15 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                 state: "CA",
                 zip: "20001"
               )
+
+              allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+                .with([ama_appeals.first.claimants.last.participant_id]).and_return(
+                  ama_appeals.first.claimants.last.participant_id => {
+                    representative_name: "POA Name",
+                    representative_type: "POA Attorney",
+                    participant_id: "600153863"
+                  }
+                )
             end
 
             it "succeeds and passes address info" do
@@ -330,11 +339,11 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
-                .to eq ama_appeals.first.claimants.first.address_line_1
+                .to eq ama_appeals.first.reload.claimants.first.address_line_1
               expect(response_body["attributes"]["appellants"][0]["address"]["city"])
                 .to eq ama_appeals.first.claimants.first.city
               expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
-                .to eq ama_appeals.first.representative_address.stringify_keys
+                .to eq ama_appeals.first.reload.representative_address.stringify_keys
               expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])
                 .to eq ama_appeals.first.claimants.second.address_line_1
               expect(response_body["attributes"]["appellants"][1]["address"]["city"])

@@ -123,9 +123,7 @@ feature "Intake Review Page" do
       end
 
       context "when the claimant is missing an address" do
-        before do
-          allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
-        end
+        before { allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil) }
 
         [:higher_level_review, :supplemental_claim, :appeal].each do |claim_review_type|
           describe "given a #{claim_review_type}" do
