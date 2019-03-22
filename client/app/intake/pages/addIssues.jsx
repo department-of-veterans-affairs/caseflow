@@ -11,6 +11,7 @@ import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import UntimelyExemptionModal from '../components/UntimelyExemptionModal';
 import LegacyOptInModal from '../components/LegacyOptInModal';
 import Button from '../../components/Button';
+import Dropdown from '../../components/Dropdown';
 import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
@@ -55,15 +56,17 @@ export class AddIssuesPage extends React.Component {
     return false;
   }
 
-  onRemoveClick = (index) => {
-    if (this.props.toggleIssueRemoveModal) {
-      // on the edit page, so show the remove modal
-      this.setState({
-        issueRemoveIndex: index
-      });
-      this.props.toggleIssueRemoveModal();
-    } else {
-      this.props.removeIssue(index);
+  onRemoveClick = (index, option = 'remove') => {
+    if (option === 'remove') {
+      if (this.props.toggleIssueRemoveModal) {
+        // on the edit page, so show the remove modal
+        this.setState({
+          issueRemoveIndex: index
+        });
+        this.props.toggleIssueRemoveModal();
+      } else {
+        this.props.removeIssue(index);
+      }
     }
   }
 
@@ -87,7 +90,7 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
 
-    const { useAmaActivationDate } = featureToggles;
+    const { useAmaActivationDate, withdrawDecisionReviews } = featureToggles;
     const intakeData = intakeForms[formType];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
@@ -110,6 +113,13 @@ export class AddIssuesPage extends React.Component {
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData, useAmaActivationDate);
 
+      const issueActionOptions = [
+        { displayText: 'Withdraw issue',
+          value: 'withdraw' },
+        { displayText: 'Remove issue',
+          value: 'remove' }
+      ];
+
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
@@ -122,12 +132,22 @@ export class AddIssuesPage extends React.Component {
                 legacyAppeals={intakeData.legacyAppeals}
                 formType={formType} />
               <div className="issue-action">
-                <Button
+                { withdrawDecisionReviews && <Dropdown
+                  name={`issue-action-${index}`}
+                  label="Actions"
+                  hideLabel
+                  options={issueActionOptions}
+                  defaultText="Select action"
+                  onChange={(option) => this.onRemoveClick(index, option)}
+                />
+                }
+                { !withdrawDecisionReviews && <Button
                   onClick={() => this.onRemoveClick(index)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
-                  <i className="fa fa-trash-o" aria-hidden="true"></i>Remove
+                  <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
                 </Button>
+                }
               </div>
             </div>;
           })}
