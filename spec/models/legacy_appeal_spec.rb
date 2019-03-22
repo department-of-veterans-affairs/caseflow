@@ -2185,6 +2185,7 @@ describe LegacyAppeal do
         create(:representative,
                repkey: vacols_case.bfkey,
                reptype: "C",
+               repso: "V",
                repfirst: "Contested",
                repmi: "H",
                replast: "Claimant",
@@ -2210,7 +2211,8 @@ describe LegacyAppeal do
                                                        city: "New York",
                                                        state: "NY",
                                                        zip: "10000"
-                                                     }
+                                                     },
+                                                     representative: { code: "V", name: "Vietnam Veterans of America" }
                                                    }
                                                  ])
       end
@@ -2264,7 +2266,8 @@ describe LegacyAppeal do
                                                              city: "New York",
                                                              state: "NY",
                                                              zip: "10000"
-                                                           }
+                                                           },
+                                                           representative: { code: nil, name: nil }
                                                          }
                                                        ])
       end
