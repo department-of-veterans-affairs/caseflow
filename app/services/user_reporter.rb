@@ -32,11 +32,13 @@ class UserReporter
         )
 
         undo_merge["create_associations"].each do |association|
-          (Object.const_get association["model"]).where(id: association["ids"]).update(association["column"] => association["user_id"])
+          (Object.const_get association["model"])
+            .where(id: association["ids"])
+            .update!(association["column"] => association["user_id"])
         end
       end
 
-      uppercase_user.update(undo_record_merging: nil)
+      uppercase_user.update!(undo_record_merging: nil)
     end
   end
 
@@ -51,7 +53,7 @@ class UserReporter
         }
       end
 
-      uppercase_user.update(undo_record_merging: ((uppercase_user.undo_record_merging || []) + reassigned_users))
+      uppercase_user.update!(undo_record_merging: ((uppercase_user.undo_record_merging || []) + reassigned_users))
       other_users.each(&:delete)
     end
   end
@@ -115,7 +117,7 @@ class UserReporter
         user_id: old_user.id
       }
 
-      scope.update(column_id_name => new_user.id)
+      scope.update!(column_id_name => new_user.id)
 
       undo_action
     end
