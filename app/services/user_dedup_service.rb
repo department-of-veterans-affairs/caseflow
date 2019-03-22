@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-# builds a profile of a user's footprint across Caseflow.
-# Originally for de-duping user records but can be used more generally
-# to report on a user's activity.
+# Provides methods to deduplicate users. Each user with the same css_id
+# (possibly with different cases) gets merged into the user with the css_id
+# in all caps. It also writes a bunch of data to a new jsonb field in the User
+# model which can be used to undo all of the changes.
 class UserDedupService
   attr_accessor :user
   cattr_accessor :models_with_user_id
