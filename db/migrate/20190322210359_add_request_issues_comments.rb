@@ -1,6 +1,6 @@
 class AddRequestIssuesComments < ActiveRecord::Migration[5.1]
   def change
-    change_table_comment(:request_issues, "Each Request Issue represents the Veteran's response to a Rating Issue. Request Issues come in three flavors: rating, nonrating, and unidentified. They are attached to a Decision Review and (for those that track contentions) an End Product Establishment.")
+    change_table_comment(:request_issues, "Each Request Issue represents the Veteran's response to a Rating Issue. Request Issues come in three flavors: rating, nonrating, and unidentified. They are attached to a Decision Review and (for those that track contentions) an End Product Establishment. A Request Issue can contest a rating issue, a decision issue, or a nonrating issue without a decision issue.")
 
     change_column_comment(:request_issues, :benefit_type, "The Line of Business the issue is connected with.")
     change_column_comment(:request_issues, :closed_at, "Timestamp when the request issue was closed. The reason it was closed is in closed_status.")
@@ -29,7 +29,7 @@ class AddRequestIssuesComments < ActiveRecord::Migration[5.1]
     change_column_comment(:request_issues, :nonrating_issue_description, "The user entered description if the issue is a nonrating issue")
     change_column_comment(:request_issues, :notes, "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture.")
     change_column_comment(:request_issues, :ramp_claim_id, "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID.")
-    change_column_comment(:request_issues, :rating_issue_associated_at, "Timestamp when a contention and its End Product are associated in VBMS.")
+    change_column_comment(:request_issues, :rating_issue_associated_at, "Timestamp when a contention and its contested rating issue are associated in VBMS.")
     change_column_comment(:request_issues, :unidentified_issue_text, "User entered description if the request issue is neither a rating or a nonrating issue")
     change_column_comment(:request_issues, :untimely_exemption, "If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here.")
     change_column_comment(:request_issues, :untimely_exemption_notes, "Notes related to the untimeliness exemption requested.")

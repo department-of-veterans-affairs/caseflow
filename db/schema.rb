@@ -774,45 +774,7 @@ ActiveRecord::Schema.define(version: 20190322210359) do
     t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
   end
 
-<<<<<<< HEAD
-  create_table "request_issues", force: :cascade do |t|
-    t.string "benefit_type", null: false
-    t.datetime "closed_at"
-    t.string "closed_status"
-    t.integer "contention_reference_id"
-    t.datetime "contention_removed_at"
-    t.integer "contested_decision_issue_id"
-    t.string "contested_issue_description"
-    t.string "contested_rating_issue_diagnostic_code"
-    t.string "contested_rating_issue_profile_date"
-    t.string "contested_rating_issue_reference_id"
-    t.datetime "created_at"
-    t.date "decision_date"
-    t.bigint "decision_review_id"
-    t.string "decision_review_type"
-    t.datetime "decision_sync_attempted_at"
-    t.string "decision_sync_error"
-    t.datetime "decision_sync_last_submitted_at"
-    t.datetime "decision_sync_processed_at"
-    t.datetime "decision_sync_submitted_at"
-    t.integer "end_product_establishment_id"
-    t.bigint "ineligible_due_to_id"
-    t.string "ineligible_reason"
-    t.boolean "is_unidentified"
-    t.string "issue_category"
-    t.string "nonrating_issue_description"
-    t.text "notes"
-    t.string "ramp_claim_id"
-    t.datetime "rating_issue_associated_at"
-    t.string "unidentified_issue_text"
-    t.boolean "untimely_exemption"
-    t.text "untimely_exemption_notes"
-    t.datetime "updated_at"
-    t.string "vacols_id"
-    t.integer "vacols_sequence_id"
-    t.string "veteran_participant_id"
-=======
-  create_table "request_issues", force: :cascade, comment: "Each Request Issue represents the Veteran's response to a Rating Issue. Request Issues come in three flavors: rating, nonrating, and unidentified. They are attached to a Decision Review and (for those that track contentions) an End Product Establishment." do |t|
+  create_table "request_issues", force: :cascade, comment: "Each Request Issue represents the Veteran's response to a Rating Issue. Request Issues come in three flavors: rating, nonrating, and unidentified. They are attached to a Decision Review and (for those that track contentions) an End Product Establishment. A Request Issue can contest a rating issue, a decision issue, or a nonrating issue without a decision issue." do |t|
     t.string "benefit_type", null: false, comment: "The Line of Business the issue is connected with."
     t.datetime "closed_at", comment: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
     t.string "closed_status", comment: "Indicates whether the request issue is closed, for example if it was removed from a Decision Review, the associated End Product got canceled, the Decision Review was withdrawn."
@@ -840,7 +802,7 @@ ActiveRecord::Schema.define(version: 20190322210359) do
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
-    t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its End Product are associated in VBMS."
+    t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
     t.boolean "untimely_exemption", comment: "If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
     t.text "untimely_exemption_notes", comment: "Notes related to the untimeliness exemption requested."
@@ -848,7 +810,6 @@ ActiveRecord::Schema.define(version: 20190322210359) do
     t.string "vacols_id", comment: "The vacols_id of the legacy appeal that had an issue found to match the request issue."
     t.integer "vacols_sequence_id", comment: "The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
     t.string "veteran_participant_id", comment: "The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates."
->>>>>>> schema update
     t.index ["contention_reference_id"], name: "index_request_issues_on_contention_reference_id", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["contested_rating_issue_reference_id"], name: "index_request_issues_on_contested_rating_issue_reference_id"
