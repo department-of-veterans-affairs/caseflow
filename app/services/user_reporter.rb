@@ -9,7 +9,7 @@ class UserReporter
   cattr_accessor :models_with_user_id
 
   def initialize(css_id)
-    @css_id = css_id
+    @css_id = css_id.is_a?(User) ? css_id.css_id : css_id
   end
 
   def report
@@ -34,7 +34,7 @@ class UserReporter
         undo_merge["create_associations"].each do |association|
           (Object.const_get association["model"])
             .where(id: association["ids"])
-            .update!(association["column"] => association["user_id"])
+            .update(association["column"] => association["user_id"])
         end
       end
 
@@ -83,7 +83,7 @@ class UserReporter
     load_all_models unless self.class.models_with_user_id
     self.class.models_with_user_id ||= ActiveRecord::Base.descendants.reject(&:abstract_class?)
       .select { |c| c.attribute_names.include?("user_id") }.uniq
-      .map { |cls| { model: cls, column: :user } }
+      .map { |cls| { model: cls, column: :user_id } }
   end
 
   def report_user_related_records(user)
@@ -103,21 +103,24 @@ class UserReporter
     (models_with_user_id + models_with_named_user_foreign_key).map do |foreign_key|
       column_id_name = "#{foreign_key[:column]}_id".to_sym
       column_type_name = "#{foreign_key[:column]}_type".to_sym
+      model_col_names = foreign_key[:model].column_names.map(&:to_sym)
 
-      scope = if foreign_key[:model].column_names.include?(column_type_name)
+      fk_column_name = model_col_names.include?(column_id_name) ? column_id_name : foreign_key[:column]
+
+      scope = if model_col_names.include?(column_type_name)
                 foreign_key[:model].where(column_id_name => old_user.id).where(column_type_name => "User")
               else
-                foreign_key[:model].where(column_id_name => old_user.id)
+                foreign_key[:model].where(fk_column_name => old_user.id)
               end
 
       undo_action = {
         model: foreign_key[:model].name,
-        column: column_id_name,
+        column: fk_column_name,
         ids: scope.pluck(:id),
         user_id: old_user.id
       }
 
-      scope.update!(column_id_name => new_user.id)
+      scope.update(fk_column_name => new_user.id)
 
       undo_action
     end

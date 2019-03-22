@@ -16,7 +16,7 @@ describe UserReporter do
     it "memoizes array of model constants" do
       reporter = described_class.new("foobar")
       reporter.report
-      expect(described_class.models_with_user_id).to include(Intake)
+      expect(described_class.models_with_user_id).to include(model: Intake, column: :user_id)
     end
   end
 
@@ -31,7 +31,7 @@ describe UserReporter do
 
     describe "#merge_all_users_with_uppercased_user" do
       it "combines the users" do
-        UserDedupService.new(user).merge_all_users_with_uppercased_user
+        described_class.new(user).merge_all_users_with_uppercased_user
 
         expect(associated_hearing_day.reload.judge_id).to eq(user.id)
         expect(associated_task.reload.assigned_to_id).to eq(user.id)
@@ -41,13 +41,13 @@ describe UserReporter do
 
     describe ".undo_change" do
       it "saves commands to undo the operation" do
-        UserDedupService.new(user).merge_all_users_with_uppercased_user
+        described_class.new(user).merge_all_users_with_uppercased_user
 
         expect(associated_hearing_day.reload.judge_id).to eq(user.id)
         expect(associated_task.reload.assigned_to_id).to eq(user.id)
         expect(associated_appeal_view.reload.user_id).to eq(user.id)
 
-        UserDedupService.new(user.reload).undo_change
+        described_class.new(user.reload).undo_change
 
         expect(associated_hearing_day.reload.judge_id).to eq(duplicate_user.id)
         expect(associated_task.reload.assigned_to_id).to eq(duplicate_user.id)
