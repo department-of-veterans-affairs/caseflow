@@ -222,8 +222,12 @@ feature "Appeal Edit issues" do
   end
 
   context "with multiple request issues with same data fields" do
-    let!(:duplicate_nonrating_request_issue) { create(:request_issue, nonrating_request_issue_attributes) }
-    let!(:duplicate_rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+    let!(:duplicate_nonrating_request_issue) do
+      create(:request_issue, nonrating_request_issue_attributes.merge(contention_reference_id: "4444"))
+    end
+    let!(:duplicate_rating_request_issue) do
+      create(:request_issue, rating_request_issue_attributes.merge(contention_reference_id: "5555"))
+    end
 
     scenario "saves by id" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -486,6 +490,20 @@ feature "Appeal Edit issues" do
         expect(page).not_to have_content(existing_request_issues.second.description)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+
+      scenario "remove all vbms decision reviews" do
+        visit "appeals/#{appeal.uuid}/edit"
+        # remove all request issues
+        appeal.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit
+        expect(page).to have_content("Remove review?")
+        expect(page).to have_content("This review and all tasks associated with it will be removed.")
+        click_intake_confirm
       end
 
       context "when review has no active tasks" do
