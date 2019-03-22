@@ -72,7 +72,8 @@ describe AttorneyCaseReview do
 
         # Ensure soft deleted records are there
         expect(DecisionIssue.unscoped.where(id: old_decision_issue_ids).size).to eq old_decision_issue_ids.size
-        expect(RequestDecisionIssue.unscoped.where(decision_issue_id: old_decision_issue_ids).size).to eq old_decision_issue_ids.size
+        deleted_request_decision_issues = RequestDecisionIssue.unscoped.where(decision_issue_id: old_decision_issue_ids)
+        expect(deleted_request_decision_issues.size).to eq old_decision_issue_ids.size
         expect(RemandReason.unscoped.where(id: old_remand_reasons_ids).size).to eq old_remand_reasons_ids.size
 
         expect(request_issue1.reload.decision_issues.size).to eq 2
