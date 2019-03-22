@@ -222,8 +222,12 @@ feature "Appeal Edit issues" do
   end
 
   context "with multiple request issues with same data fields" do
-    let!(:duplicate_nonrating_request_issue) { create(:request_issue, nonrating_request_issue_attributes) }
-    let!(:duplicate_rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+    let!(:duplicate_nonrating_request_issue) do
+      create(:request_issue, nonrating_request_issue_attributes.merge(contention_reference_id: "4444"))
+    end
+    let!(:duplicate_rating_request_issue) do
+      create(:request_issue, rating_request_issue_attributes.merge(contention_reference_id: "5555"))
+    end
 
     scenario "saves by id" do
       visit "appeals/#{appeal.uuid}/edit/"
