@@ -114,8 +114,8 @@ class GenericTask < Task
 
     def place_on_hold(task, _current_user, params)
       transaction do
-        # Remove any other hold tasks so we don't wind up with more than one
-        task.timed_hold_tasks.each { |t| t.update!(status: Constants.TASK_STATUSES.on_hold) }
+        # Cancel any other hold tasks so we don't wind up with more than one
+        task.timed_hold_tasks.each { |t| t.update!(status: Constants.TASK_STATUSES.cancelled) }
 
         TimedHoldTask.create!(
           appeal: task.appeal,
