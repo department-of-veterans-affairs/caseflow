@@ -57,6 +57,20 @@ plugins:
       - HACK
       - BUG
       - XXX
+  grep:
+    enabled: true
+    config:
+      patterns:
+        no-disabled-rubocop-rules:
+          pattern: rubocop:disable
+          annotation: "Don't disable Rubocop rules"
+          severity: major
+          categories: Complexity
+          content: >
+            Unless it's a clear false positive, Rubocop rules should not be
+            disabled because they allow us to keep our code maintainable. If
+            you're not sure how to refactor the code, please reach out to a
+            teammate.
   reek:
     enabled: true
     exclude_patterns:

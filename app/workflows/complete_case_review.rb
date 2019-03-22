@@ -28,6 +28,7 @@ class CompleteCaseReview
     case_review_class.constantize
   end
 
+  # rubocop:disable Metrics/AbcSize
   def create_quality_review_task
     return if case_review.appeal.is_a?(LegacyAppeal) ||
               !case_review.is_a?(JudgeCaseReview) ||
@@ -40,6 +41,7 @@ class CompleteCaseReview
       BvaDispatchTask.create_from_root_task(root_task)
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   def response_errors
     return if success
