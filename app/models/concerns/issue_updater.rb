@@ -36,7 +36,7 @@ module IssueUpdater
   private
 
   def soft_delete_decision_issues
-    appeal.decision_issues.each(&:remove)
+    appeal.decision_issues.each(&:soft_delete)
   end
 
   def create_decision_issues!

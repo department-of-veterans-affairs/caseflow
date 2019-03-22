@@ -32,12 +32,6 @@ class DecisionIssue < ApplicationRecord
 
   default_scope { where(deleted_at: nil) }
 
-  def remove
-    update(deleted_at: Time.now)
-    remand_reasons.update_all(deleted_at: Time.now)
-    request_decision_issues.update_all(deleted_at: Time.now)
-  end
-
   class AppealDTAPayeeCodeError < StandardError
     def initialize(appeal_id)
       super("Can't create a SC DTA for appeal #{appeal_id} due to missing payee code")
@@ -68,6 +62,13 @@ class DecisionIssue < ApplicationRecord
         .where("request_issues.contested_decision_issue_id IS NULL")
     end
   end
+
+  def soft_delete
+    update(deleted_at: Time.now)
+    remand_reasons.update_all(deleted_at: Time.now)
+    request_decision_issues.update_all(deleted_at: Time.now)
+  end
+
 
   def approx_decision_date
     processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
