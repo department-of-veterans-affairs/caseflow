@@ -705,10 +705,6 @@ class Appeal < DecisionReview
     BGSService.new
   end
 
-  def tasks_for_frontend
-    tasks.reject { |t| t.is_a?(TimedHoldTask) }
-  end
-
   # we always want to show ratings on intake
   def can_contest_rating_issues?
     true

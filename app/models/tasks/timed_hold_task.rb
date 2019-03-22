@@ -17,4 +17,12 @@ class TimedHoldTask < GenericTask
   def timer_ends_at
     Time.zone.today + on_hold_duration.days
   end
+
+  def hide_from_case_timeline
+    true
+  end
+
+  def hide_from_case_snapshot
+    true
+  end
 end

@@ -102,7 +102,7 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
-    tasks = appeal.tasks_for_frontend
+    tasks = appeal.tasks
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
       legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
       tasks = (legacy_appeal_tasks + tasks).uniq
