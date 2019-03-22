@@ -438,7 +438,7 @@ feature "Appeal Edit issues" do
     scenario "remove an issue with dropdown" do
       visit "appeals/#{appeal.uuid}/edit/"
       expect(page).to have_content("PTSD denied")
-      click_remove_intake_issue_dropdown(1)
+      click_remove_intake_issue_dropdown(0)
       expect(page).to_not have_content("PTSD denied")
     end
   end
