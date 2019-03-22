@@ -80,7 +80,7 @@ class TasksController < ApplicationController
   # }
   def update
     tasks = if task.is_a?(GenericTask) && update_params.status == "on_hold"
-              GenericTask.place_on_hold(task, current_user, update_params)
+              GenericTask.place_on_hold(task, update_params)
             else
               task.update_from_params(update_params, current_user)
             end

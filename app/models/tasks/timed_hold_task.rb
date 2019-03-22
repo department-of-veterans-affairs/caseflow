@@ -7,7 +7,7 @@
 class TimedHoldTask < GenericTask
   include TimeableTask
 
-  validates :on_hold_duration, :parent, presence: true
+  validates :on_hold_duration, presence: true
   validates :on_hold_duration, inclusion: { in: 1..100 }
 
   def when_timer_ends

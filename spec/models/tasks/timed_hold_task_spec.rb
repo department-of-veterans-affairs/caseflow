@@ -17,8 +17,10 @@ describe TimedHoldTask do
     it "completes timed hold task" do
       task = TimedHoldTask.create!(params.merge(on_hold_duration: 10))
       expect(task.status).to eq("assigned")
+      expect(task.parent.status).to eq("on_hold")
       task.when_timer_ends
       expect(task.reload.status).to eq("completed")
+      expect(task.parent.status).to eq("assigned")
     end
   end
 end
