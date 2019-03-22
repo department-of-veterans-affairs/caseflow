@@ -343,7 +343,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["appellants"][0]["address"]["city"])
                 .to eq ama_appeals.first.claimants.first.city
               expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
-                .to eq ama_appeals.first.reload.representative_address.stringify_keys
+                .to eq ama_appeals.first.representative_address.stringify_keys
               expect(response_body["attributes"]["appellants"][1]["address"]["address_line_1"])
                 .to eq ama_appeals.first.claimants.second.address_line_1
               expect(response_body["attributes"]["appellants"][1]["address"]["city"])
