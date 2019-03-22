@@ -11,6 +11,7 @@ class Task < ApplicationRecord
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
+  # has_many :task_timers, dependent: :destroy
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
@@ -21,6 +22,7 @@ class Task < ApplicationRecord
   before_update :set_timestamps
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status, if: :task_just_closed?
+
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
