@@ -21,8 +21,6 @@ class TasksController < ApplicationController
     InformalHearingPresentationTask: InformalHearingPresentationTask
   }.freeze
 
-
-
   def set_application
     RequestStore.store[:application] = "queue"
   end

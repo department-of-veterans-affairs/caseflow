@@ -23,7 +23,6 @@ class Task < ApplicationRecord
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status, if: :task_just_closed?
 
-
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
