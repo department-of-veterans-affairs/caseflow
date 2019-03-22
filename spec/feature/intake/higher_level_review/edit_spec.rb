@@ -219,7 +219,7 @@ feature "Higher Level Review Edit issues" do
         decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Non-RAMP Issue before AMA Activation",
-        contention_reference_id: "12345",
+        contention_reference_id: "23456",
         ineligible_reason: :before_ama
       )
     end
@@ -294,7 +294,7 @@ feature "Higher Level Review Edit issues" do
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
           decision_review: higher_level_review,
           contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
-          contention_reference_id: "12345678",
+          contention_reference_id: "123456789",
           vacols_id: "vacols1",
           benefit_type: "compensation",
           vacols_sequence_id: "2"
