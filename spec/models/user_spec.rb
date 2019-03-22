@@ -57,6 +57,7 @@ describe User do
       {
         "id" => css_id.upcase,
         "station_id" => "310",
+        "undo_record_merging"=>nil,
         "css_id" => css_id.upcase,
         "email" => nil,
         "roles" => [],
