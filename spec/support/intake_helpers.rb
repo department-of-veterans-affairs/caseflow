@@ -33,7 +33,7 @@ module IntakeHelpers
     if claim_participant_id
       create(
         :claimant,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         participant_id: claim_participant_id,
         payee_code: "02"
       )
@@ -70,7 +70,7 @@ module IntakeHelpers
 
     if claim_participant_id
       Claimant.create!(
-        review_request: supplemental_claim,
+        decision_review: supplemental_claim,
         participant_id: claim_participant_id
       )
     end
@@ -101,7 +101,7 @@ module IntakeHelpers
     )
 
     Claimant.create!(
-      review_request: appeal,
+      decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
 
@@ -396,7 +396,7 @@ module IntakeHelpers
     )
 
     prior_sc_claimant = create(:claimant,
-                               review_request: prior_supplemental_claim,
+                               decision_review: prior_supplemental_claim,
                                participant_id: appeal.claimants.first.participant_id,
                                payee_code: appeal.claimants.first.payee_code)
 

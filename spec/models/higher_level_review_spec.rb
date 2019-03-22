@@ -238,7 +238,7 @@ describe HigherLevelReview do
 
       let!(:claimant) do
         Claimant.create!(
-          review_request: higher_level_review,
+          decision_review: higher_level_review,
           participant_id: veteran.participant_id,
           payee_code: "10"
         )
