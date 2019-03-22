@@ -36,20 +36,15 @@ namespace :users do
     end
   end
 
-  desc "moves any hearings and hearing days assigned to the lowercase css_id of a user to the uppercase version"
-  task dedupe_hearings: :environment do
+  desc "deduplicates all user records merging all records with the same css_id with the capitalized one"
+  task dedupe_users: :environment do
     users = User.all
-    css_ids = users.map(&:css_id)
-    dupes = css_ids.
-      select { |e| e.upcase != e && css_ids.count(e.upcase) == 1 }.
-      map { |e| { old: e, new: e.upcase } }
-    output = dupes.map do |css_ids|
-      upper_case_user = User.find_by(css_id: css_ids[:new])
-      lower_case_user = User.find_by(css_id: css_ids[:old])
-      {
-        day: HearingDay.where(judge_id: lower_case_user.id).count,
-        hearing: Hearing.where(judge_id: lower_case_user.id).count
-      }
+    css_ids = users.map(&:css_id).map(&:upcase)
+    dupes = css_ids.select { |e| css_ids.count(e) > 1 }.uniq
+    dupes.each do |css_id|
+      puts "Duplicate: #{css_id}"
+      dedup_service = UserDedupService.new(css_id)
+      dedup_service.merge_all_users_with_uppercased_user
     end
   end
 end
