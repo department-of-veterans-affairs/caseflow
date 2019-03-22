@@ -44,6 +44,8 @@ class RequestIssuesUpdate < ApplicationRecord
     end
   end
 
+  # establish! is called async via DecisionReviewProcessJob.
+  # it is queued via submit_for_processing! in the perform! method above.
   def establish!
     attempted!
 
