@@ -7,6 +7,16 @@ export const getBlankOptionError = (responseErrorCodes, field) => (
   (_.get(responseErrorCodes[field], 0) === 'blank') && 'Please select an option.'
 );
 
+export const getClaimantError = (responseErrorCodes) => {
+  const errorCode = _.get(responseErrorCodes.claimant, 0);
+
+  if (errorCode === 'blank') {
+    return 'Please select an option.';
+  } else if (errorCode === 'claimant_address_required') {
+    return "Please update the claimant's address.";
+  }
+};
+
 export const getPageError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
 );

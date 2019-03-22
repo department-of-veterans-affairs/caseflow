@@ -6,6 +6,7 @@ import {
   convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
+  getClaimantError,
   getPageError,
   formatRelationships,
   getDefaultPayeeCode
@@ -232,7 +233,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
       },
       claimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
+        $set: getClaimantError(action.payload.responseErrorCodes)
       },
       payeeCodeError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')
