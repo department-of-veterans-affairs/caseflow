@@ -8,11 +8,12 @@ export const getBlankOptionError = (responseErrorCodes, field) => (
 );
 
 export const getClaimantError = (responseErrorCodes) => {
-  const error_code = _.get(responseErrorCodes[claimant], 0)
-  if (error_code === 'blank') {
-    return 'Please select an option.'
-  } else if (error_code === 'claimant_address_required') {
-    return 'The Claimant is missing an address in SYSTEM_NAME'
+  const errorCode = _.get(responseErrorCodes.claimant, 0);
+
+  if (errorCode === 'blank') {
+    return 'Please select an option.';
+  } else if (errorCode === 'claimant_address_required') {
+    return "Please update the claimant's address.";
   }
 };
 

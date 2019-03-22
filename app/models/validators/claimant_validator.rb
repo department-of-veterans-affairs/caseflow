@@ -10,7 +10,7 @@ class ClaimantValidator < ActiveModel::Validator
   def validate(claimant)
     validate_payee_code(claimant)
     validate_participant_id(claimant)
-    # validate_claimant_address(claimant)
+    validate_claimant_address(claimant)
   end
 
   def validate_payee_code(claimant)
@@ -33,7 +33,7 @@ class ClaimantValidator < ActiveModel::Validator
 
   def validate_claimant_address(claimant)
     return unless claimant.participant_id
-    # return if claimant.address
+    return if claimant.address
 
     claimant.errors[:address] << BLANK
     claimant.review_request.errors[:claimant] << CLAIMANT_ADDRESS_REQUIRED

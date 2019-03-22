@@ -122,6 +122,21 @@ feature "Intake Review Page" do
         )
       end
 
+      context "when the claimant is missing an address" do
+        before do
+          allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
+        end
+
+        [:higher_level_review, :supplemental_claim, :appeal].each do |claim_review_type|
+          describe "given a #{claim_review_type}" do
+            it "requires that the claimant have an address" do
+              start_claim_review(claim_review_type, veteran: veteran, veteran_is_not_claimant: veteran_is_not_claimant)
+              check_claimant_address_error
+            end
+          end
+        end
+      end
+
       context "when benefit type is pension or compensation" do
         [:higher_level_review, :supplemental_claim].each do |claim_review_type|
           describe "given a #{claim_review_type}" do
@@ -129,19 +144,6 @@ feature "Intake Review Page" do
               start_claim_review(claim_review_type, veteran: veteran, veteran_is_not_claimant: veteran_is_not_claimant)
               check_pension_and_compensation_payee_code
             end
-          end
-        end
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        context "higher level review" do
-          it "requires payee code" do
-          end
-        end
-
-        context "supplemental claim" do
-          it "requires payee code" do
           end
         end
       end
@@ -251,6 +253,22 @@ def check_pension_and_compensation_payee_code
 
   click_intake_continue
   expect(page).to have_current_path("/intake/add_issues")
+end
+
+def check_claimant_address_error
+  visit "/intake"
+  expect(page).to have_current_path("/intake/review_request")
+
+  within_fieldset("What is the Benefit Type?") do
+    find("label", text: "Compensation", match: :prefer_exact).click
+  end
+
+  fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
+  find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
+  click_intake_continue
+
+  expect(page).to have_content("Please update the claimant's address")
 end
 
 def check_invalid_veteran_alert_on_review_page(form_type)

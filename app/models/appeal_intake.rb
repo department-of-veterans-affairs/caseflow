@@ -25,19 +25,7 @@ class AppealIntake < DecisionReviewIntake
       detail.save(context: :intake_review)
     end
   rescue ActiveRecord::RecordInvalid => _err
-    # propagate the error from invalid column to the user-visible reason
-    if detail.errors.messages[:veteran_is_not_claimant].include?(ClaimantValidator::CLAIMANT_REQUIRED)
-      claimant_required_error = ClaimantValidator::BLANK
-    end
-
-    if detail.errors.messages[:claimant].include?(ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED)
-      claimant_address_error = ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
-    end
-
-    detail.validate
-    detail.errors[:claimant] << claimant_required_error if claimant_required_error
-    detail.errors[:claimant] << claimant_address_required_error if claimant_address_required_error
-    false
+    set_review_errors
   end
 
   def complete!(request_params)
