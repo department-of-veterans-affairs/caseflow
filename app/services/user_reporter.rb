@@ -74,16 +74,22 @@ class UserReporter
     ]
   end
 
-  # when run from a rake task in production, must load models explicitly.
-  def load_all_models
-    ::Rails.application.eager_load!
-  end
-
   def models_with_user_id
-    load_all_models unless self.class.models_with_user_id
-    self.class.models_with_user_id ||= ActiveRecord::Base.descendants.reject(&:abstract_class?)
-      .select { |c| c.attribute_names.include?("user_id") }.uniq
-      .map { |cls| { model: cls, column: :user_id } }
+    self.class.models_with_user_id ||= [
+      AdvanceOnDocketMotion, Annotation, AppealIntake, AppealView,
+      Certification, ClaimReviewIntake, ClaimsFolderSearch,
+      DecisionReviewIntake, Dispatch::Task, DocumentView,
+      EndProductEstablishment, EstablishClaim,
+      HearingView, HigherLevelReviewIntake,
+      Intake,
+      JudgeSchedulePeriod,
+      LegacyHearing,
+      OrganizationsUser,
+      RampElectionIntake, RampElectionRollback, RampRefilingIntake, ReaderUser, RequestIssuesUpdate,
+      RoSchedulePeriod,
+      SchedulePeriod, SupplementalClaimIntake,
+      UserQuota
+    ].map { |cls| { model: cls, column: :user_id } }
   end
 
   def report_user_related_records(user)
