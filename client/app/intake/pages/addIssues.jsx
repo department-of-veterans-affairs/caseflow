@@ -134,6 +134,8 @@ export class AddIssuesPage extends React.Component {
               <div className="issue-action">
                 { withdrawDecisionReviews && <Dropdown
                   name={`issue-action-${index}`}
+                  label="Actions"
+                  hideLabel
                   options={issueActionOptions}
                   defaultText="Select action"
                   onChange={(option) => this.onRemoveClick(index, option)}
