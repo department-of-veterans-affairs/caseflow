@@ -358,7 +358,9 @@ export class TaskTableUnconnected extends React.PureComponent {
 
     return (
       <div>
-        <BulkAssignModal tasks={tasks} />
+        <BulkAssignModal
+          organization="hearing-admin"
+          tasks={tasks} />
         <QueueTable
           columns={this.getQueueColumns}
           rowObjects={tasks}

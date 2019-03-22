@@ -2,7 +2,6 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
-import { withRouter } from 'react-router-dom';
 import ApiUtil from '../../util/ApiUtil';
 
 import Button from '../../components/Button';
@@ -30,7 +29,7 @@ class BulkAssignModal extends React.PureComponent {
   componentDidMount() {
     let fetchedUsers;
 
-    ApiUtil.get(`/organizations/${this.props.match.params.organization}/users.json`).then((resp) => {
+    ApiUtil.get(`/organizations/${this.props.organization}/users.json`).then((resp) => {
       fetchedUsers = resp.body.organization_users.data;
 
       this.setState({ users: fetchedUsers });
@@ -213,4 +212,4 @@ BulkAssignModal.propTypes = {
   tasks: PropTypes.array.isRequired
 };
 
-export default withRouter(BulkAssignModal);
+export default BulkAssignModal;
