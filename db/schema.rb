@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190321204810) do
+ActiveRecord::Schema.define(version: 20190322203141) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -803,7 +803,6 @@ ActiveRecord::Schema.define(version: 20190321204810) do
     t.text "notes"
     t.string "ramp_claim_id"
     t.datetime "rating_issue_associated_at"
-    t.datetime "removed_at"
     t.string "unidentified_issue_text"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
