@@ -37,7 +37,7 @@ namespace :users do
   end
 
   desc "deduplicates all user records merging all records with the same css_id with the capitalized one"
-  task dedupe_users: :environment do
+  task merge: :environment do
     users = User.all
     css_ids = users.map(&:css_id).map(&:upcase)
     dupes = css_ids.select { |e| css_ids.count(e) > 1 }.uniq
