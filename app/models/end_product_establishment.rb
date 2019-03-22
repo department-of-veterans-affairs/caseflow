@@ -115,7 +115,7 @@ class EndProductEstablishment < ApplicationRecord
   def remove_contention!(request_issue)
     contention = contention_for_object(request_issue)
 
-    fail ContentionNotFound unless contention
+    fail ContentionNotFound, request_issue.contention_reference_id unless contention
 
     VBMSService.remove_contention!(contention)
     request_issue.update!(contention_removed_at: Time.zone.now)
