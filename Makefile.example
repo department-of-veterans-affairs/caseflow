@@ -21,7 +21,7 @@
 #   # run all the linting tasks
 #   % make lint security
 #
-#   # if you add a .git/hook/pre-commit like this:
+#   # if you add a .git/hooks/pre-commit like this:
 #   #!/bin/sh
 #   exec make lint security
 #
