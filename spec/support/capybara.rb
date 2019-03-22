@@ -46,7 +46,7 @@ Capybara.register_driver(:sniffybara_headless) do |app|
 
   chrome_options.args << "--headless"
   chrome_options.args << "--disable-gpu"
-  chrome_options.args << "--window-size=990,1200"
+  chrome_options.args << "--window-size=1200,1200"
 
   options = {
     port: 51_674,
@@ -65,7 +65,7 @@ Capybara::Screenshot.register_driver(:sniffybara_headless) do |driver, path|
   driver.browser.save_screenshot(path)
 end
 
-Capybara.default_driver = :sniffybara_headless
+Capybara.default_driver = ENV["CI"] ? :sniffybara_headless : :parallel_sniffybara
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5
 

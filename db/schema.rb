@@ -142,6 +142,7 @@ ActiveRecord::Schema.define(version: 20190321204810) do
     t.bigint "granted_decision_issue_id", null: false
     t.datetime "last_submitted_at"
     t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
+    t.index ["contention_reference_id"], name: "index_board_grant_effectuations_on_contention_reference_id", unique: true
     t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
     t.index ["end_product_establishment_id"], name: "index_board_grant_effectuations_on_end_product_establishment_id"
     t.index ["granted_decision_issue_id"], name: "index_board_grant_effectuations_on_granted_decision_issue_id"
@@ -806,10 +807,11 @@ ActiveRecord::Schema.define(version: 20190321204810) do
     t.string "unidentified_issue_text"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
+    t.datetime "updated_at"
     t.string "vacols_id"
     t.integer "vacols_sequence_id"
     t.string "veteran_participant_id"
-    t.index ["contention_reference_id", "removed_at"], name: "index_request_issues_on_contention_reference_id_and_removed_at", unique: true
+    t.index ["contention_reference_id"], name: "index_request_issues_on_contention_reference_id", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["contested_rating_issue_reference_id"], name: "index_request_issues_on_contested_rating_issue_reference_id"
     t.index ["decision_review_type", "decision_review_id"], name: "index_request_issues_on_decision_review_columns"
