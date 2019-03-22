@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe UserReporter, skip: "This triggers code coverage problems in circle" do
+describe UserReporter do
   let!(:user_UC) { create(:user, css_id: "FOOBAR") }
   let!(:user_dc) { create(:user, css_id: "foobar") }
 
