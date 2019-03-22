@@ -53,6 +53,47 @@ class DecisionReviewIntake < Intake
 
   private
 
+  def set_review_errors
+    fetch_claimant_errors
+    detail.validate
+    set_claimant_errors
+    false
+    # we just swallow the exception otherwise, since we want the validation errors to return to client
+  end
+
+  def fetch_claimant_errors
+    payee_code_error
+    claimant_required_error
+    claimant_address_error
+  end
+
+  def set_claimant_errors
+    detail.errors[:payee_code] << payee_code_error if payee_code_error
+    detail.errors[:claimant] << claimant_required_error if claimant_required_error
+    detail.errors[:claimant] << claimant_address_error if claimant_address_error
+  end
+
+  def claimant_address_error
+    @claimant_address_error ||=
+      detail.errors.messages[:claimant].include?(
+        ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
+      ) && ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
+  end
+
+  def claimant_required_error
+    @claimant_required_error ||=
+      detail.errors.messages[:veteran_is_not_claimant].include?(
+        ClaimantValidator::CLAIMANT_REQUIRED
+      ) && ClaimantValidator::BLANK
+  end
+
+  def payee_code_error
+    @payee_code_error ||=
+      detail.errors.messages[:benefit_type].include?(
+        ClaimantValidator::PAYEE_CODE_REQUIRED
+      ) && ClaimantValidator::BLANK
+  end
+
   # run during start!
   def after_validated_pre_start!
     epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
