@@ -465,7 +465,7 @@ describe RequestIssue do
           :request_issue,
           decision_review: previous_higher_level_review,
           contested_rating_issue_reference_id: higher_level_review_reference_id,
-          contention_reference_id: contention_reference_id,
+          contention_reference_id: "2222",
           end_product_establishment: active_epe,
           contention_removed_at: nil,
           ineligible_reason: nil
@@ -477,7 +477,7 @@ describe RequestIssue do
           :request_issue,
           decision_review: new_higher_level_review,
           contested_rating_issue_reference_id: higher_level_review_reference_id,
-          contention_reference_id: contention_reference_id,
+          contention_reference_id: "3333",
           ineligible_reason: :duplicate_of_rating_issue_in_active_review,
           ineligible_due_to: request_issue_in_active_review
         )
@@ -639,7 +639,13 @@ describe RequestIssue do
   end
 
   context "#previous_request_issue" do
-    let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 10.days) }
+    let(:previous_higher_level_review) do
+      create(
+        :higher_level_review,
+        veteran_file_number: veteran.file_number,
+        receipt_date: review.receipt_date - 10.days
+      )
+    end
 
     let(:previous_end_product_establishment) do
       create(
@@ -650,6 +656,8 @@ describe RequestIssue do
       )
     end
 
+    let(:previous_contention_ref_id) { "4444" }
+
     let!(:previous_request_issue) do
       create(
         :request_issue,
@@ -657,7 +665,7 @@ describe RequestIssue do
         contested_rating_issue_reference_id: higher_level_review_reference_id,
         contested_rating_issue_profile_date: profile_date,
         contested_issue_description: "a rating request issue",
-        contention_reference_id: contention_reference_id,
+        contention_reference_id: previous_contention_ref_id,
         end_product_establishment: previous_end_product_establishment
       ).tap(&:submit_for_processing!)
     end
@@ -672,7 +680,7 @@ describe RequestIssue do
     context "when contesting the same decision review" do
       let(:previous_contention) do
         Generators::Contention.build(
-          id: contention_reference_id,
+          id: previous_contention_ref_id,
           claim_id: previous_end_product_establishment.reference_id,
           disposition: "allowed"
         )
