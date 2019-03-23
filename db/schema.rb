@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190320215814) do
+ActiveRecord::Schema.define(version: 20190322203141) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -803,7 +803,6 @@ ActiveRecord::Schema.define(version: 20190320215814) do
     t.text "notes"
     t.string "ramp_claim_id"
     t.datetime "rating_issue_associated_at"
-    t.datetime "removed_at"
     t.string "unidentified_issue_text"
     t.boolean "untimely_exemption"
     t.text "untimely_exemption_notes"
@@ -976,6 +975,7 @@ ActiveRecord::Schema.define(version: 20190320215814) do
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
+    t.jsonb "undo_record_merging"
     t.datetime "updated_at"
     t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
   end
