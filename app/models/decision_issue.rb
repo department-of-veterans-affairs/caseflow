@@ -65,7 +65,6 @@ class DecisionIssue < ApplicationRecord
 
   def soft_delete
     update(deleted_at: Time.zone.now)
-    remand_reasons.update_all(deleted_at: Time.zone.now)
     request_decision_issues.update_all(deleted_at: Time.zone.now)
   end
 
@@ -77,9 +76,11 @@ class DecisionIssue < ApplicationRecord
     associated_request_issue&.issue_category
   end
 
-  def destroy_on_removed_request_issue(request_issue_id)
-    # destroy if the request issue is deleted and there are no other request issues associated
-    destroy if request_issues.length == 1 && request_issues.first.id == request_issue_id
+  def mark_deleted_on_removed_request_issue(request_issue_id)
+    # mark as deleted if the request issue is deleted and there are no other request issues associated
+    if request_issues.length == 1 && request_issues.first.id == request_issue_id
+      update(deleted_at: Time.zone.now) 
+    end
   end
 
   # Since nonrating issues require specialization to process, if any associated request issue is nonrating

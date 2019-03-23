@@ -65,16 +65,13 @@ describe AttorneyCaseReview do
       it "should create and delete decision issues" do
         subject
         old_decision_issue_ids = [decision_issue1.id, decision_issue2.id, decision_issue3.id, decision_issue4.id]
-        old_remand_reasons_ids = [remand_reason1.id, remand_reason2.id]
         expect(DecisionIssue.where(id: old_decision_issue_ids)).to eq []
         expect(RequestDecisionIssue.where(decision_issue_id: old_decision_issue_ids)).to eq []
-        expect(RemandReason.where(id: old_remand_reasons_ids)).to eq []
 
         # Ensure soft deleted records are there
         expect(DecisionIssue.unscoped.where(id: old_decision_issue_ids).size).to eq old_decision_issue_ids.size
         deleted_request_decision_issues = RequestDecisionIssue.unscoped.where(decision_issue_id: old_decision_issue_ids)
         expect(deleted_request_decision_issues.size).to eq old_decision_issue_ids.size
-        expect(RemandReason.unscoped.where(id: old_remand_reasons_ids).size).to eq old_remand_reasons_ids.size
 
         expect(request_issue1.reload.decision_issues.size).to eq 2
         expect(request_issue2.reload.decision_issues.size).to eq 2

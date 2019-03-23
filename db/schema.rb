@@ -760,7 +760,6 @@ ActiveRecord::Schema.define(version: 20190320215814) do
     t.string "code"
     t.datetime "created_at", null: false
     t.integer "decision_issue_id"
-    t.datetime "deleted_at"
     t.boolean "post_aoj"
     t.bigint "request_issue_id"
     t.datetime "updated_at", null: false
