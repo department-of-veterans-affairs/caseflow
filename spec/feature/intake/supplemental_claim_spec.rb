@@ -389,6 +389,7 @@ feature "Supplemental Claim Intake" do
     click_intake_continue
 
     expect(page).to have_content("Something went wrong")
+    expect(page).to have_content("Error code")
     expect(page).to have_current_path("/intake/review_request")
   end
 

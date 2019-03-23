@@ -23,9 +23,9 @@ class IntakesController < ApplicationController
       }, status: :unprocessable_entity
     end
   rescue StandardError => error
-    error_uuid = SecureRandom.uuid
     Raven.capture_exception(error, extra: { error_uuid: error_uuid })
     Rails.logger.error("Error UUID #{error_uuid} : #{error}")
+    # we name the variable error_code to re-use the client error handling.
     render json: { error_code: error_uuid }, status: :internal_server_error
   end
 
@@ -41,8 +41,12 @@ class IntakesController < ApplicationController
       render json: { error_codes: intake.review_errors }, status: :unprocessable_entity
     end
   rescue StandardError => error
-    Raven.capture_exception(error)
-    render json: { error_codes: { other: ["unknown_error"] } }, status: :internal_server_error
+    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+    Rails.logger.error("Error UUID #{error_uuid} : #{error}")
+    render json: {
+      error_codes: { other: ["unknown_error"] },
+      error_uuid: error_uuid
+    }, status: :internal_server_error
   end
 
   def complete
