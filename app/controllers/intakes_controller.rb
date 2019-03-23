@@ -22,6 +22,11 @@ class IntakesController < ApplicationController
         error_data: new_intake.error_data
       }, status: :unprocessable_entity
     end
+  rescue StandardError => error
+    error_uuid = SecureRandom.uuid
+    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+    Rails.logger.error("Error UUID #{error_uuid} : #{error}")
+    render json: { error_code: error_uuid }, status: :internal_server_error
   end
 
   def destroy

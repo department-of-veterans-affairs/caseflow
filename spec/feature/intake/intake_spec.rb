@@ -112,7 +112,7 @@ RSpec.feature "Intake" do
     end
 
     scenario "Search for a veteran but search throws an unhandled exception" do
-      expect_any_instance_of(IntakesController).to receive(:create).and_raise("random error")
+      expect_any_instance_of(Intake).to receive(:start!).and_raise("random error")
       visit "/intake"
 
       within_fieldset("Which form are you processing?") do
@@ -127,6 +127,7 @@ RSpec.feature "Intake" do
 
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Something went wrong")
+      expect(page).to have_content(/Error code \w+-\w+-\w+-\w+/)
     end
 
     context "Veteran has too high of a sensitivity level for user" do

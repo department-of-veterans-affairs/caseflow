@@ -133,11 +133,14 @@ class Search extends React.PureComponent {
          'Please contact Caseflow Support if you need additional assistance.'
       },
       default: {
-        title: 'Something went wrong',
-        body: `Error code ${searchErrorCode}. ` +
-          'Please try again. If the problem persists, please contact Caseflow support.'
+        title: 'Something went wrong'
       }
     };
+
+    searchErrors.default.body = <div>
+      <div>{`Error code ${searchErrorCode}.`}</div>
+      <div>Please try again. If the problem persists, please contact Caseflow support.</div>
+    </div>;
 
     const error = searchErrors[searchErrorCode] || searchErrors.default;
 
