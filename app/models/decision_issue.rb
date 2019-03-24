@@ -63,11 +63,6 @@ class DecisionIssue < ApplicationRecord
     end
   end
 
-  def soft_delete
-    update(deleted_at: Time.zone.now)
-    request_decision_issues.update_all(deleted_at: Time.zone.now)
-  end
-
   def approx_decision_date
     processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
   end
@@ -79,7 +74,7 @@ class DecisionIssue < ApplicationRecord
   def mark_deleted_on_removed_request_issue(request_issue_id)
     # mark as deleted if the request issue is deleted and there are no other request issues associated
     if request_issues.length == 1 && request_issues.first.id == request_issue_id
-      update(deleted_at: Time.zone.now) 
+      update(deleted_at: Time.zone.now)
     end
   end
 

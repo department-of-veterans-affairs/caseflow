@@ -407,7 +407,6 @@ class RequestIssue < ApplicationRecord
     close!(:removed) do
       legacy_issue_optin&.flag_for_rollback!
 
-      
       # If the decision issue is not associated with any other request issue, also delete
       decision_issues.each { |decision_issue| decision_issue.mark_deleted_on_removed_request_issue(id) }
       # Removing a request issue also deletes the associated request_decision_issue

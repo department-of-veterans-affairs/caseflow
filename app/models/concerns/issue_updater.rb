@@ -36,7 +36,10 @@ module IssueUpdater
   private
 
   def soft_delete_decision_issues
-    appeal.decision_issues.each(&:soft_delete)
+    appeal.decision_issues.each do |decision_issue|
+      decision_issue.update(deleted_at: Time.zone.now)
+      decision_issue.request_decision_issues.update_all(deleted_at: Time.zone.now)
+    end
   end
 
   def create_decision_issues!
