@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe UpdateAppellantRepresentationJob, focus: true do
+describe UpdateAppellantRepresentationJob do
   context "when the job runs successfully" do
     let(:new_task_count) { 3 }
     let(:closed_task_count) { 1 }
@@ -32,7 +32,7 @@ describe UpdateAppellantRepresentationJob, focus: true do
       allow_any_instance_of(Appeal).to receive(:vsos) { |a| vso_for_appeal[a.id] }
     end
 
-    it "runs the job as expected", focus: true do
+    it "runs the job as expected" do
       expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:log_info).with(
         anything,
         new_task_count,
@@ -41,6 +41,26 @@ describe UpdateAppellantRepresentationJob, focus: true do
       )
 
       UpdateAppellantRepresentationJob.perform_now
+    end
+
+    context "when there are legacy appeals with disposition task" do
+      let(:legacy_task_count) { 10 }
+
+      let(:legacy_appeals) do
+        legacy_task_count.map do |_|
+          legacy_appeal = create(:legacy_appeal, vacols_case: create(:case))
+          create(:disposition_task, appeal: legacy_appeal)
+          vso_for_appeal[appeal.id] = [create(:vso)]
+
+          legacy_appeal
+        end
+      end
+
+      it "updates every appeal", focus: true do
+        UpdateAppellantRepresentationJob.perform_now
+
+        legacy_appeal
+      end
     end
 
     it "sends the correct message to Slack" do

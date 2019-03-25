@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class RecordSyncedByJob < ApplicationRecord
+  include Asyncable
+
   belongs_to :record, polymorphic: true
 
   def self.next_records_to_process(records, limit)

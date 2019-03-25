@@ -19,7 +19,10 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
 
     appeals_to_update.each do |a|
+      a.record_synced_by_job.find_or_create_by(sync_job_name: UpdateAppellantRepresentationJob.name).attempted!
       appeal_new_task_count, appeal_closed_task_count = TrackVeteranTask.sync_tracking_tasks(a)
+      a.record_synced_by_job.find_by(sync_job_name: UpdateAppellantRepresentationJob.name).processed!
+
       new_task_count += appeal_new_task_count
       closed_task_count += appeal_closed_task_count
 
