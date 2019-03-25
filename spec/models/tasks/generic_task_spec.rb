@@ -362,7 +362,7 @@ describe GenericTask do
     end
   end
 
-  describe ".place_on_timed_hold", focus: true do
+  describe ".place_on_timed_hold" do
     let(:root_task){ create(:root_task) }
     let(:task) { GenericTask.find(FactoryBot.create(:generic_task, parent: root_task).id) }
     let(:user) { FactoryBot.create(:user) }
@@ -380,7 +380,8 @@ describe GenericTask do
 
     context "when placing a task on timed hold that is already on hold" do
       it "cancels the other timed hold task " do
-        subject
+        GenericTask.place_on_timed_hold(task, params)
+        task.reload
         subject
 
         tasks = TimedHoldTask.where(parent_id: task.id)

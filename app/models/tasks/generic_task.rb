@@ -64,7 +64,10 @@ class GenericTask < Task
     timed_hold_task&.created_at
   end
 
-  def on_hold_duration
+  # if we decide to remove the "on_hold_duration" column,
+  # this method could just subtract the task timer expiration time from
+  # # the hold task's created at.
+  def on_hold_duration_days
     timed_hold_task&.on_hold_duration
   end
 
@@ -119,8 +122,6 @@ class GenericTask < Task
           t.task_timers.each(&:processed!)
           t.update!(status: Constants.TASK_STATUSES.cancelled) 
         end
-
-        byebug
 
         TimedHoldTask.create!(
           appeal: task.appeal,
