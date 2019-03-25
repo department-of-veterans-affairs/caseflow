@@ -52,10 +52,12 @@ class AppealDocumentCount extends React.PureComponent {
       loadingText
     } = this.props;
 
-    if (docCountForAppeal && docCountForAppeal.docCount) {
-      return docCountForAppeal.docCount;
-    } else if (loadingText && (docCountForAppeal.loading || docCountForAppeal.error)) {
-      return docCountForAppeal.error || <span {...documentCountStyling}>Loading number of docs...</span>;
+    if (docCountForAppeal) {
+      if (docCountForAppeal.docCount) {
+        return docCountForAppeal.docCount;
+      } else if (loadingText && (docCountForAppeal.loading || docCountForAppeal.error)) {
+        return docCountForAppeal.error || <span {...documentCountStyling}>Loading number of docs...</span>;
+      }
     }
 
     return null;
