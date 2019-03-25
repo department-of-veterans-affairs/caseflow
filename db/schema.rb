@@ -256,6 +256,7 @@ ActiveRecord::Schema.define(version: 20190322210359) do
     t.integer "decision_review_id"
     t.string "decision_review_type"
     t.string "decision_text"
+    t.datetime "deleted_at"
     t.string "description"
     t.string "diagnostic_code"
     t.string "disposition"
@@ -769,6 +770,7 @@ ActiveRecord::Schema.define(version: 20190322210359) do
   create_table "request_decision_issues", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "decision_issue_id"
+    t.datetime "deleted_at"
     t.integer "request_issue_id"
     t.datetime "updated_at", null: false
     t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
