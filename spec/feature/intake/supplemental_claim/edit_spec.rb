@@ -549,6 +549,18 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
       end
     end
+
+    context "when withdraw decision reviews is enabled" do
+      before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
+
+      scenario "remove an issue with dropdown" do
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+        expect(page).to have_content("PTSD denied")
+        click_remove_intake_issue_dropdown("0")
+        expect(page).to_not have_content("PTSD denied")
+      end
+    end
   end
 
   context "when remove decision reviews is enabled for supplemental_claim" do
