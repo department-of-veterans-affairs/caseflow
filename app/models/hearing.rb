@@ -75,7 +75,9 @@ class Hearing < ApplicationRecord
   end
 
   def assigned_to_vso?(user)
-    TrackVeteranTask.active.where(appeal: appeal).any? { |task| user.organizations.include?(task.assigned_to) }
+    appeal.tasks.any? do |task|
+      task.type = TrackVeteranTask.name && user.organizations.include?(task.assigned_to) && task.active?
+    end
   end
 
   def hearing_task?
