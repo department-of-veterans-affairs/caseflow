@@ -208,7 +208,8 @@ class TaskRows extends React.PureComponent {
     } = this.props;
     const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
     const sortedTaskList = taskList.sort((prev, next) => {
-      return new Date(next.closedAt || next.createdAt).getTime() - new Date(prev.closedAt || prev.createdAt).getTime();
+      return new Date(next.closedAt || next.createdAt).getTime() -
+      new Date(prev.closedAt || prev.createdAt).getTime();
     });
 
     return <React.Fragment key={appeal.externalId}>
