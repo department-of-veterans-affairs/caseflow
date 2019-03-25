@@ -961,7 +961,7 @@ RSpec.feature "Reader" do
       click_on documents[0].type
       find("h3", text: "Document information").click
       find("#document_description-edit").click
-
+      find("#document_description-save")
       fill_in "document_description", with: "Another New Description"
 
       find("#document_description").send_keys [:enter]

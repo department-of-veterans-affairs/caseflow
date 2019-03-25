@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190320215814) do
+ActiveRecord::Schema.define(version: 20190322210359) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -774,43 +774,42 @@ ActiveRecord::Schema.define(version: 20190320215814) do
     t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
   end
 
-  create_table "request_issues", force: :cascade do |t|
-    t.string "benefit_type", null: false
-    t.datetime "closed_at"
-    t.string "closed_status"
-    t.integer "contention_reference_id"
-    t.datetime "contention_removed_at"
-    t.integer "contested_decision_issue_id"
-    t.string "contested_issue_description"
-    t.string "contested_rating_issue_diagnostic_code"
-    t.string "contested_rating_issue_profile_date"
-    t.string "contested_rating_issue_reference_id"
-    t.datetime "created_at"
-    t.date "decision_date"
-    t.bigint "decision_review_id"
-    t.string "decision_review_type"
-    t.datetime "decision_sync_attempted_at"
-    t.string "decision_sync_error"
-    t.datetime "decision_sync_last_submitted_at"
-    t.datetime "decision_sync_processed_at"
-    t.datetime "decision_sync_submitted_at"
-    t.integer "end_product_establishment_id"
-    t.bigint "ineligible_due_to_id"
-    t.string "ineligible_reason"
-    t.boolean "is_unidentified"
-    t.string "issue_category"
-    t.string "nonrating_issue_description"
-    t.text "notes"
-    t.string "ramp_claim_id"
-    t.datetime "rating_issue_associated_at"
-    t.datetime "removed_at"
-    t.string "unidentified_issue_text"
-    t.boolean "untimely_exemption"
-    t.text "untimely_exemption_notes"
-    t.datetime "updated_at"
-    t.string "vacols_id"
-    t.integer "vacols_sequence_id"
-    t.string "veteran_participant_id"
+  create_table "request_issues", force: :cascade, comment: "Each Request Issue represents the Veteran's response to a Rating Issue. Request Issues come in three flavors: rating, nonrating, and unidentified. They are attached to a Decision Review and (for those that track contentions) an End Product Establishment. A Request Issue can contest a rating issue, a decision issue, or a nonrating issue without a decision issue." do |t|
+    t.string "benefit_type", null: false, comment: "The Line of Business the issue is connected with."
+    t.datetime "closed_at", comment: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
+    t.string "closed_status", comment: "Indicates whether the request issue is closed, for example if it was removed from a Decision Review, the associated End Product got canceled, the Decision Review was withdrawn."
+    t.integer "contention_reference_id", comment: "The ID of the contention created on the End Product for this request issue. This is populated after the contention is created in VBMS."
+    t.datetime "contention_removed_at", comment: "When a request issue is removed from a Decision Review during an edit, if it has a contention in VBMS that is also removed. This field indicates when the contention has successfully been removed in VBMS."
+    t.integer "contested_decision_issue_id", comment: "The ID of the decision issue that this request issue contests. A Request issue will contest either a rating issue or a decision issue"
+    t.string "contested_issue_description", comment: "Description of the contested rating or decision issue. Will be either a rating issue's decision text or a decision issue's description."
+    t.string "contested_rating_issue_diagnostic_code", comment: "If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
+    t.string "contested_rating_issue_profile_date", comment: "If the contested issue is a rating issue, this is the rating issue's profile date. Will be nil if this request issue contests a decision issue."
+    t.string "contested_rating_issue_reference_id", comment: "If the contested issue is a rating issue, this is the rating issue's reference id. Will be nil if this request issue contests a decision issue."
+    t.datetime "created_at", comment: "Automatic timestamp when row was created"
+    t.date "decision_date", comment: "Either the rating issue's promulgation date or the decision issue's approx decision date"
+    t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
+    t.string "decision_review_type", comment: "Class name of the decision review that this request issue belongs to"
+    t.datetime "decision_sync_attempted_at", comment: "Async job processing last attempted timestamp"
+    t.string "decision_sync_error", comment: "Async job processing last error message"
+    t.datetime "decision_sync_last_submitted_at", comment: "Async job processing most recent start timestamp"
+    t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp"
+    t.datetime "decision_sync_submitted_at", comment: "Async job processing start timestamp"
+    t.integer "end_product_establishment_id", comment: "The ID of the End Product Establishment created for this request issue."
+    t.bigint "ineligible_due_to_id", comment: "If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
+    t.string "ineligible_reason", comment: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
+    t.boolean "is_unidentified", comment: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
+    t.string "issue_category", comment: "The category selected for nonrating request issues. These vary by business line (also known as benefit type)."
+    t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
+    t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
+    t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
+    t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
+    t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
+    t.boolean "untimely_exemption", comment: "If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
+    t.text "untimely_exemption_notes", comment: "Notes related to the untimeliness exemption requested."
+    t.datetime "updated_at", comment: "Automatic timestamp whenever the record changes."
+    t.string "vacols_id", comment: "The vacols_id of the legacy appeal that had an issue found to match the request issue."
+    t.integer "vacols_sequence_id", comment: "The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
+    t.string "veteran_participant_id", comment: "The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates."
     t.index ["contention_reference_id"], name: "index_request_issues_on_contention_reference_id", unique: true
     t.index ["contested_decision_issue_id"], name: "index_request_issues_on_contested_decision_issue_id"
     t.index ["contested_rating_issue_reference_id"], name: "index_request_issues_on_contested_rating_issue_reference_id"
@@ -976,6 +975,7 @@ ActiveRecord::Schema.define(version: 20190320215814) do
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
+    t.jsonb "undo_record_merging"
     t.datetime "updated_at"
     t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
   end
