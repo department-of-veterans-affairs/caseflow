@@ -121,6 +121,7 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   end
 
   attribute :attorney_case_review_id do
+    # binding.pry
     latest_attorney_case_review&.vacols_id
   end
 

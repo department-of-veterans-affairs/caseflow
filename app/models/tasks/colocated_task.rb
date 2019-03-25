@@ -99,6 +99,7 @@ class ColocatedTask < Task
     task_actions = Constants.TASK_ACTIONS
     actions.push(task_actions.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h)
     actions.push(task_actions.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
+    actions
   end
 
   def legacy_translation_actions(actions)
@@ -123,6 +124,8 @@ class ColocatedTask < Task
   end
 
   def location_based_on_action
+    # need to add more logic to differentiate between sending back to attorney or specific location number when vlj selects "Schedule hearing, send back to attorney"
+    binding.pry
     case action.to_sym
     when :translation, :schedule_hearing
       LegacyAppeal::LOCATION_CODES[action.to_sym]

@@ -179,7 +179,7 @@ class AppealRepository
     folder_record = case_record.folder
     # Only fetch outcoder (VACOLS::Staff) if the foreign key (:tiocuser) isn't nil
     outcoder_record = folder_record.outcoder if folder_record.tiocuser?
-
+    # binding.pry
     appeal.assign_from_vacols(
       vbms_id: case_record.bfcorlid,
       type: VACOLS::Case::TYPES[case_record.bfac],
