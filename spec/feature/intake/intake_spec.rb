@@ -285,6 +285,8 @@ RSpec.feature "Intake" do
         expect(page).to have_content("Something went wrong")
 
         visit "/intake"
+
+        expect(page).to have_content(/Error code: \w+-\w+-\w+-\w+/)
         expect(page).to have_content("Error: bgs error. Intake has been cancelled, please retry.")
 
         # verify that current intake has been cancelled
