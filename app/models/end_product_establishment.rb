@@ -191,7 +191,7 @@ class EndProductEstablishment < ApplicationRecord
       sync_source!
       close_request_issues_if_canceled!
     end
-  rescue EstablishedEndProductNotFound => e
+  rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => e
     raise e
   rescue StandardError => e
     raise ::BGSSyncError.from_bgs_error(e, self)
