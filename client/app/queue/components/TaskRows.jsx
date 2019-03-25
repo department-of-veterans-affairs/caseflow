@@ -207,6 +207,9 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
     const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
+    const sortedTaskList = taskList.sort((prev, next) => {
+      return new Date(next.closedAt).getTime() - new Date(prev.closedAt).getTime();
+    });
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
@@ -225,7 +228,7 @@ class TaskRows extends React.PureComponent {
           } <br />
         </td>
       </tr> }
-      { taskList.map((task, index) =>
+      { sortedTaskList.map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
