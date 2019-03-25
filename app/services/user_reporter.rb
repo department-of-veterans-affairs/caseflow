@@ -109,6 +109,25 @@ class UserReporter
     related_records
   end
 
+  def delete_unique_constraint_violating_records(scope, foreign_key, fk_column_name, old_user, new_user)
+    if foreign_key[:unique]
+      if foreign_key[:unique].empty?
+        scope.where(fk_column_name => old_user.id).delete_all
+      else
+        existing_unique_fields = scope.where(fk_column_name => new_user.id).pluck(*foreign_key[:unique])
+
+        if !existing_unique_fields.empty?
+          # This query inspired by https://stackoverflow.com/questions/15750234/ruby-activerecord-and-sql-tuple-support
+          scope
+            .where(
+              "(#{foreign_key[:unique].join(', ')}) IN (#{(['(?)']*existing_unique_fields.size).join(', ')})",
+              *existing_unique_fields
+            ).where(fk_column_name => old_user.id).delete_all
+        end
+      end
+    end
+  end
+
   def replace_user(old_user, new_user)
     (models_with_user_id + models_with_named_user_foreign_key).map do |foreign_key|
       column_id_name = "#{foreign_key[:column]}_id".to_sym
@@ -123,22 +142,7 @@ class UserReporter
                 foreign_key[:model]
               end
 
-      if foreign_key[:unique]
-        if foreign_key[:unique].empty?
-          scope.where(fk_column_name => old_user.id).delete_all
-        else
-          existing_unique_fields = scope.where(fk_column_name => new_user.id).pluck(*foreign_key[:unique])
-
-          if !existing_unique_fields.empty?
-            # This query inspired by https://stackoverflow.com/questions/15750234/ruby-activerecord-and-sql-tuple-support
-            scope
-              .where(
-                "(#{foreign_key[:unique].join(', ')}) IN (#{(['(?)']*existing_unique_fields.size).join(', ')})",
-                *existing_unique_fields
-              ).where(fk_column_name => old_user.id).delete_all
-          end
-        end
-      end
+      delete_unique_constraint_violating_records(scope, foreign_key, fk_column_name, old_user, new_user)
 
       undo_action = {
         model: foreign_key[:model].name,
