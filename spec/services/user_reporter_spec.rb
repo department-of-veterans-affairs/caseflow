@@ -37,6 +37,39 @@ describe UserReporter do
         expect(associated_task.reload.assigned_to_id).to eq(user.id)
         expect(associated_appeal_view.reload.user_id).to eq(user.id)
       end
+
+      context "when records with unique constraints are duplicated" do
+        let!(:duplicate_appeal) { create(:appeal) }
+        let!(:second_duplicate_appeal) { create(:appeal) }
+        let!(:appeal) { create(:appeal) }
+
+        let!(:duplicated_appeal_view_old) { AppealView.create(appeal: duplicate_appeal, user_id: duplicate_user.id) }
+        let!(:duplicated_appeal_view_new) { AppealView.create(appeal: duplicate_appeal, user_id: user.id) }
+
+        let!(:second_duplicated_appeal_view_old) do
+          AppealView.create(appeal: second_duplicate_appeal, user_id: duplicate_user.id)
+        end
+        let!(:second_duplicated_appeal_view_new) do
+          AppealView.create(appeal: second_duplicate_appeal, user_id: user.id)
+        end
+
+        let!(:appeal_view) { AppealView.create(appeal: appeal, user_id: duplicate_user.id) }
+
+        let!(:duplicated_reader_user) { ReaderUser.create(user_id: duplicate_user.id) }
+        let!(:reader_user) { ReaderUser.create(user_id: user.id) }
+
+        it "deletes the old record's violating rows" do
+          described_class.new(user).merge_all_users_with_uppercased_user
+
+          expect(AppealView.where(appeal: duplicate_appeal, user_id: duplicate_user.id)).to_not exist
+          expect(AppealView.where(appeal: duplicate_appeal, user_id: user.id)).to exist
+          expect(AppealView.where(appeal: second_duplicate_appeal, user_id: duplicate_user.id)).to_not exist
+          expect(AppealView.where(appeal: second_duplicate_appeal, user_id: user.id)).to exist
+          expect(AppealView.where(appeal: appeal, user_id: user.id)).to exist
+          expect(ReaderUser.where(user_id: duplicate_user.id)).to_not exist
+          expect(ReaderUser.where(user_id: user.id)).to exist
+        end
+      end
     end
 
     describe ".undo_change" do
