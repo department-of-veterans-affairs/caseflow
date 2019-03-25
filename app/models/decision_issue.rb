@@ -76,11 +76,9 @@ class DecisionIssue < ApplicationRecord
     associated_request_issue&.issue_category
   end
 
-  def mark_deleted_on_removed_request_issue(request_issue_id)
+  def mark_deleted_on_removed_request_issue
     # mark as deleted if the request issue is deleted and there are no other request issues associated
-    if request_issues.length == 1 && request_issues.first.id == request_issue_id
-      update(deleted_at: Time.zone.now)
-    end
+    update(deleted_at: Time.zone.now) if request_issues.length == 1
   end
 
   # Since nonrating issues require specialization to process, if any associated request issue is nonrating
