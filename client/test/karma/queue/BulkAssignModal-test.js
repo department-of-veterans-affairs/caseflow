@@ -7,6 +7,7 @@ import BulkAssignModal from '../../../app/queue/components/BulkAssignModal';
 describe('BulkAssignModal', () => {
   let wrapper;
   let props = {
+    enableBulkAssign: true,
     tasks: [
       {
         type: 'FirstType',
@@ -24,12 +25,23 @@ describe('BulkAssignModal', () => {
   };
 
   context('renders', () => {
-    it('always renders button', () => {
+    it('always renders button when enableBulkAssign is true', () => {
       wrapper = mount(
         <BulkAssignModal {...props} />
       );
 
       expect(wrapper.find('button.bulk-assign-button')).to.have.length(1);
+    });
+
+    it('does not render anything when enableBulkAssign is false', () => {
+      const newProps = Object.assign({}, props);
+
+      newProps.enableBulkAssign = false;
+      wrapper = mount(
+        <BulkAssignModal {...newProps} />
+      );
+
+      expect(wrapper.find('button.bulk-assign.button')).to.have.length(0);
     });
 
     it('only renders modal if button is clicked', () => {

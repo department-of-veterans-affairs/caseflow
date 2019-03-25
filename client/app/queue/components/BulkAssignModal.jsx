@@ -29,7 +29,7 @@ class BulkAssignModal extends React.PureComponent {
   componentDidMount() {
     let fetchedUsers;
 
-    ApiUtil.get(`/organizations/${this.props.organization}/users.json`).then((resp) => {
+    ApiUtil.get(`/organizations/${this.props.organizationUrl}/users.json`).then((resp) => {
       fetchedUsers = resp.body.organization_users.data;
 
       this.setState({ users: fetchedUsers });
@@ -149,6 +149,7 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   render() {
+    const isBulkAssignEnabled = this.props.enableBulkAssign;
     const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
       Assign Tasks
     </Button>;
@@ -159,7 +160,7 @@ class BulkAssignModal extends React.PureComponent {
 
     return (
       <div>
-        {this.state.showModal &&
+        {isBulkAssignEnabled && this.state.showModal &&
           <Modal
             title="Assign Tasks"
             closeHandler={this.handleModalToggle}
@@ -202,14 +203,15 @@ class BulkAssignModal extends React.PureComponent {
             />
           </Modal>
         }
-        {bulkAssignButton}
+        {isBulkAssignEnabled && bulkAssignButton}
       </div>
     );
   }
 }
 
 BulkAssignModal.propTypes = {
-  tasks: PropTypes.array.isRequired
+  tasks: PropTypes.array.isRequired,
+  organizationUrl: PropTypes.string.isRequired
 };
 
 export default BulkAssignModal;

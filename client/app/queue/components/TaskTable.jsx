@@ -34,6 +34,7 @@ import {
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -359,7 +360,8 @@ export class TaskTableUnconnected extends React.PureComponent {
     return (
       <div>
         <BulkAssignModal
-          organization="hearing-admin"
+          enableBulkAssign={this.props.organizationName === 'Hearing Admin'}
+          organizationUrl={ORGANIZATION_NAMES[this.props.organizationName]}
           tasks={tasks} />
         <QueueTable
           columns={this.getQueueColumns}
