@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 
 export default class Dropdown extends React.Component {
   onChange = (event) => {
@@ -15,7 +16,8 @@ export default class Dropdown extends React.Component {
       required,
       value,
       defaultText,
-      readOnly
+      readOnly,
+      hideLabel
     } = this.props;
 
     // Use empty string instead of null or undefined,
@@ -27,8 +29,10 @@ export default class Dropdown extends React.Component {
     //
     value = (value === null || typeof value === 'undefined') ? '' : value;
 
+    const labelClasses = classNames({ 'usa-sr-only': hideLabel });
+
     return <div className="cf-form-dropdown">
-      <label htmlFor={name}>
+      <label htmlFor={name} className={labelClasses}>
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message">{errorMessage}</span>}
