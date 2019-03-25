@@ -239,6 +239,14 @@ module IntakeHelpers
     issue_el.find(".remove-issue").click
   end
 
+  def click_remove_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_num = issue_el[:id].sub(/^issue-/, "").to_i - 1
+    find("#issue-action-#{issue_num}").click
+    find("#issue-action-#{issue_num}_remove").click
+    click_remove_issue_confirmation
+  end
+
   def click_remove_intake_issue_by_text(text)
     issue_el = find_intake_issue_by_text(text)
     issue_el.find(".remove-issue").click
