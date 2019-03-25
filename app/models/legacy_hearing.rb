@@ -55,6 +55,10 @@ class LegacyHearing < ApplicationRecord
     user
   end
 
+  def assigned_to_vso?(user)
+    TrackVeteranTask.active.where(appeal: appeal).any? { |task| user.organizations.include?(task.assigned_to) }
+  end
+
   def venue
     self.class.venues[venue_key]
   end
