@@ -30,6 +30,9 @@ class DecisionIssue < ApplicationRecord
   REMAND = "remanded"
   REMAND_DISPOSITIONS = [REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
 
+  # We are using default scope here because we'd like to soft delete decision issues
+  # for debugging purposes and to make it easier for developers to filter out
+  # soft deleted records
   default_scope { where(deleted_at: nil) }
 
   class AppealDTAPayeeCodeError < StandardError
@@ -76,7 +79,7 @@ class DecisionIssue < ApplicationRecord
     associated_request_issue&.issue_category
   end
 
-  def mark_deleted_on_removed_request_issue
+  def soft_delete_on_removed_request_issue
     # mark as deleted if the request issue is deleted and there are no other request issues associated
     update(deleted_at: Time.zone.now) if request_issues.length == 1
   end

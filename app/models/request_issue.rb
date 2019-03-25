@@ -408,7 +408,7 @@ class RequestIssue < ApplicationRecord
       legacy_issue_optin&.flag_for_rollback!
 
       # If the decision issue is not associated with any other request issue, also delete
-      decision_issues.each(&:mark_deleted_on_removed_request_issue)
+      decision_issues.each(&:soft_delete_on_removed_request_issue)
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
     end
