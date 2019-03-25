@@ -21,6 +21,7 @@ export default class HearingScheduleApp extends React.PureComponent {
       userRoleAssign,
       userRoleBuild,
       userRoleView,
+      userRoleVso,
       userInHearingsOrganization
     } = this.props;
 
@@ -28,6 +29,7 @@ export default class HearingScheduleApp extends React.PureComponent {
       userRoleAssign,
       userRoleBuild,
       userRoleView,
+      userRoleVso,
       userInHearingsOrganization
     };
   };
@@ -128,6 +130,7 @@ HearingScheduleApp.propTypes = {
   userRoleAssign: PropTypes.bool,
   userRoleBuild: PropTypes.bool,
   userRoleView: PropTypes.bool,
+  userRoleVso: PropTypes.bool,
   feedbackUrl: PropTypes.string.isRequired,
   buildDate: PropTypes.string,
   dropdownUrls: PropTypes.array,

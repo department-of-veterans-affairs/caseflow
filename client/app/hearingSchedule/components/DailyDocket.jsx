@@ -302,6 +302,7 @@ export default class DailyDocket extends React.Component {
     return <TextareaField
       name="Notes"
       strongLabel
+      disabled={this.props.userRoleVso}
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
       value={_.isUndefined(hearing.editedNotes) ? hearing.notes || '' : hearing.editedNotes}
@@ -423,7 +424,7 @@ export default class DailyDocket extends React.Component {
     ];
 
     const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings),
-      this.props.userRoleView);
+      this.props.userRoleView || this.props.userRoleVso);
     const cancelButton = <Button linkStyling onClick={this.props.onCancelRemoveHearingDay}>Go back</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.props.deleteHearingDay}>
       Confirm
