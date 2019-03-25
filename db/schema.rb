@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190322203141) do
+ActiveRecord::Schema.define(version: 20190323003906) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -212,15 +212,14 @@ ActiveRecord::Schema.define(version: 20190322203141) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "claimants", force: :cascade do |t|
-    t.bigint "decision_review_id"
-    t.string "decision_review_type"
-    t.string "participant_id", null: false
-    t.string "payee_code"
-    t.bigint "review_request_id", null: false
-    t.string "review_request_type", null: false
+  create_table "claimants", force: :cascade, comment: "The claimant for each Decision Review, and its payee_code if required." do |t|
+    t.bigint "decision_review_id", comment: "The ID of the Decision Review the claimant is on."
+    t.string "decision_review_type", comment: "The type of Decision Review the claimant is on."
+    t.string "participant_id", null: false, comment: "The participant ID of the claimant selected on a Decision Review."
+    t.string "payee_code", comment: "The payee_code for the claimant selected on a Decision Review, if applicable. Payee_code is required for claimants when the claim is processed in VBMS and the Veteran is not the claimant. For Supplemental Claims automatically created due to remanded decisions, this is automatically selected based on the last payee code used for the same claimant on a previous end product, if available."
+    t.integer "review_request_id"
+    t.string "review_request_type"
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
-    t.index ["review_request_type", "review_request_id"], name: "index_claimants_on_review_request"
   end
 
   create_table "claims_folder_searches", id: :serial, force: :cascade do |t|
@@ -727,12 +726,12 @@ ActiveRecord::Schema.define(version: 20190322203141) do
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
-  create_table "ramp_issues", id: :serial, force: :cascade do |t|
-    t.string "contention_reference_id"
-    t.string "description", null: false
-    t.integer "review_id", null: false
-    t.string "review_type", null: false
-    t.integer "source_issue_id"
+  create_table "ramp_issues", id: :serial, force: :cascade, comment: "Issues added to an end product as contentions for RAMP reviews. For RAMP elections, these are created in VBMS after the end product is established and updated in Caseflow when the end product is synced. For RAMP refilings, these are selected from the RAMP election's issues and added to the RAMP refiling end product that is established." do |t|
+    t.string "contention_reference_id", comment: "The ID of the contention created in VBMS that corresponds to the RAMP issue."
+    t.string "description", null: false, comment: "The description of the contention in VBMS."
+    t.integer "review_id", null: false, comment: "The ID of the RAMP election or RAMP refiling for this issue."
+    t.string "review_type", null: false, comment: "The type of RAMP review the issue is on, indicating whether this is a RAMP election issue or a RAMP refiling issue."
+    t.integer "source_issue_id", comment: "If a RAMP election issue added to a RAMP refiling, it is the source issue for the corresponding RAMP refiling issue."
     t.index ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id"
   end
 
