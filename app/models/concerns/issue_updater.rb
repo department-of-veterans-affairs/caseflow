@@ -7,7 +7,7 @@ module IssueUpdater
     return unless appeal
 
     # We will always delete and re-create decision issues on attorney/judge checkout
-    appeal.decision_issues.destroy_all
+    appeal.decision_issues.each(&:soft_delete)
     create_decision_issues!
     fail_if_not_all_request_issues_have_decision!
     fail_if_appeal_has_no_decision_issues!

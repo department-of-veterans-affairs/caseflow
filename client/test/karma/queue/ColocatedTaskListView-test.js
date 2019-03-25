@@ -179,13 +179,9 @@ describe('ColocatedTaskListView', () => {
       expect(wrapper.find('td').at(6).
         text()).to.include('Failed to Load');
 
-      store.dispatch(setAppealDocCount(task.externalAppealId, 5, true));
+      store.dispatch(setAppealDocCount(task.externalAppealId, 5));
       expect(wrapper.find('td').at(6).
         text()).to.include('5');
-
-      store.dispatch(setAppealDocCount(task.externalAppealId, 6, false));
-      expect(wrapper.find('td').at(6).
-        text()).to.include('6');
 
       const onHoldDaysWaiting = cells.at(12);
 
