@@ -110,18 +110,20 @@ class UserReporter
   end
 
   def delete_unique_constraint_violating_records(scope, foreign_key, fk_column_name, old_user, new_user)
-    if foreign_key[:unique]&.empty?
-      scope.where(fk_column_name => old_user.id).delete_all
-    else
-      existing_unique_fields = scope.where(fk_column_name => new_user.id).pluck(*foreign_key[:unique])
+    if foreign_key[:unique]
+      if foreign_key[:unique].empty?
+        scope.where(fk_column_name => old_user.id).delete_all
+      else
+        existing_unique_fields = scope.where(fk_column_name => new_user.id).pluck(*foreign_key[:unique])
 
-      if !existing_unique_fields.empty?
-        # This query inspired by https://stackoverflow.com/questions/15750234/ruby-activerecord-and-sql-tuple-support
-        scope
-          .where(
-            "(#{foreign_key[:unique].join(', ')}) IN (#{(['(?)'] * existing_unique_fields.size).join(', ')})",
-            *existing_unique_fields
-          ).where(fk_column_name => old_user.id).delete_all
+        if !existing_unique_fields.empty?
+          # This query inspired by https://stackoverflow.com/questions/15750234/ruby-activerecord-and-sql-tuple-support
+          scope
+            .where(
+              "(#{foreign_key[:unique].join(', ')}) IN (#{(['(?)'] * existing_unique_fields.size).join(', ')})",
+              *existing_unique_fields
+            ).where(fk_column_name => old_user.id).delete_all
+        end
       end
     end
   end
