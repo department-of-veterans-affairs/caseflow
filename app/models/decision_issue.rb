@@ -63,6 +63,11 @@ class DecisionIssue < ApplicationRecord
     end
   end
 
+  def soft_delete
+    update(deleted_at: Time.zone.now)
+    request_decision_issues.update_all(deleted_at: Time.zone.now)
+  end
+
   def approx_decision_date
     processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
   end
