@@ -157,52 +157,53 @@ class BulkAssignModal extends React.PureComponent {
       Assign
     </Button>;
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
+    const modal = (
+      <Modal
+        title="Assign Tasks"
+        closeHandler={this.handleModalToggle}
+        confirmButton={confirmButton}
+        cancelButton={cancelButton} >
+        <Dropdown
+          name="Assign to"
+          options={this.generateUserOptions()}
+          value={this.state.modal.assignedUser}
+          defaultText="Select"
+          onChange={(value) => this.onFieldChange(value, 'assignedUser')}
+          errorMessage={this.displayErrorMessage('assignedUser')}
+          required
+        />
+        <Dropdown
+          name="Regional office"
+          options={this.generateRegionalOfficeOptions()}
+          value={this.state.modal.regionalOffice}
+          defaultText="Select"
+          onChange={(value) => this.onFieldChange(value, 'regionalOffice')}
+          errorMessages={this.displayErrorMessage('regionalOffice')}
+        />
+        <Dropdown
+          name="Select task type"
+          options={this.generateTaskTypeOptions()}
+          value={this.state.modal.taskType}
+          defaultText="Select"
+          onChange={(value) => this.onFieldChange(value, 'taskType')}
+          errorMessage={this.displayErrorMessage('taskType')}
+          required
+        />
+        <Dropdown
+          name="Select number of tasks to assign"
+          options={this.getDisplayTextOption([5, 10, 20, 30, 40, 50])}
+          value={this.state.modal.numberOfTasks}
+          defaultText="Select"
+          onChange={(value) => this.onFieldChange(value, 'numberOfTasks')}
+          errorMessage={this.displayErrorMessage('numberOfTasks')}
+          required
+        />
+      </Modal>
+    );
 
     return (
       <div>
-        {isBulkAssignEnabled && this.state.showModal &&
-          <Modal
-            title="Assign Tasks"
-            closeHandler={this.handleModalToggle}
-            confirmButton={confirmButton}
-            cancelButton={cancelButton} >
-            <Dropdown
-              name="Assign to"
-              options={this.generateUserOptions()}
-              value={this.state.modal.assignedUser}
-              defaultText="Select"
-              onChange={(value) => this.onFieldChange(value, 'assignedUser')}
-              errorMessage={this.displayErrorMessage('assignedUser')}
-              required
-            />
-            <Dropdown
-              name="Regional office"
-              options={this.generateRegionalOfficeOptions()}
-              value={this.state.modal.regionalOffice}
-              defaultText="Select"
-              onChange={(value) => this.onFieldChange(value, 'regionalOffice')}
-              errorMessages={this.displayErrorMessage('regionalOffice')}
-            />
-            <Dropdown
-              name="Select task type"
-              options={this.generateTaskTypeOptions()}
-              value={this.state.modal.taskType}
-              defaultText="Select"
-              onChange={(value) => this.onFieldChange(value, 'taskType')}
-              errorMessage={this.displayErrorMessage('taskType')}
-              required
-            />
-            <Dropdown
-              name="Select number of tasks to assign"
-              options={this.getDisplayTextOption([5, 10, 20, 30, 40, 50])}
-              value={this.state.modal.numberOfTasks}
-              defaultText="Select"
-              onChange={(value) => this.onFieldChange(value, 'numberOfTasks')}
-              errorMessage={this.displayErrorMessage('numberOfTasks')}
-              required
-            />
-          </Modal>
-        }
+        {isBulkAssignEnabled && this.state.showModal && modal}
         {isBulkAssignEnabled && bulkAssignButton}
       </div>
     );
