@@ -675,6 +675,10 @@ RSpec.feature "Case details" do
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:attorney_task) do
         create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
+                                   closed_at: 3.weeks.ago)
+      end
+      let!(:attorney_task2) do
+        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
                                    closed_at: Time.zone.now - 4.days)
       end
       let!(:judge_task) do
@@ -686,12 +690,19 @@ RSpec.feature "Case details" do
       before do
         # This attribute needs to be set here due to update_parent_status hook in the task model
         attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+        attorney_task2.update!(status: Constants.TASK_STATUSES.completed)
       end
 
       it "should display judge & attorney tasks" do
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
         expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+
+      it "should sort tasks properly" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        first_row_with_date = page.find_all("table#case-timeline-table tbody tr")[1]
+        expect(first_row_with_date).to have_content("01/01/2020")
       end
 
       it "should NOT display judge & attorney tasks" do
