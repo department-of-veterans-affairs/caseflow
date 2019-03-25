@@ -110,7 +110,7 @@ class UserReporter
   end
 
   def delete_unique_constraint_violating_records(scope, foreign_key, fk_column_name, old_user, new_user)
-    if foreign_key[:unique] && foreign_key[:unique].empty?
+    if foreign_key[:unique]&.empty?
       scope.where(fk_column_name => old_user.id).delete_all
     else
       existing_unique_fields = scope.where(fk_column_name => new_user.id).pluck(*foreign_key[:unique])
