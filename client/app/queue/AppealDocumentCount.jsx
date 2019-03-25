@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import ApiUtil from '../util/ApiUtil';
-import _ from 'lodash';
 
 import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
