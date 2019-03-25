@@ -42,7 +42,10 @@ class VBMSError < RuntimeError
     "User is not authorized." => "VBMS::UserNotAuthorizedError",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/278342/
-    "Unable to establish claim: " => "VBMS::BadClaimError"
+    "Unable to establish claim: " => "VBMS::BadClaimError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4164/events/279584/
+    "The contention is connected to an issue in ratings and cannot be deleted." => "VBMS::CannotDeleteContentionError"
   }.freeze
 
   class << self
@@ -83,3 +86,4 @@ class VBMS::PIFExistsForEPCodeError < StandardError; end
 class VBMS::DuplicateEPError < StandardError; end
 class VBMS::UserNotAuthorizedError < StandardError; end
 class VBMS::BadClaimError < StandardError; end
+class VBMS::CannotDeleteContentionError < StandardError; end
