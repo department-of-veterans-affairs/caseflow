@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-describe UpdateAppellantRepresentationJob do
+describe UpdateAppellantRepresentationJob, focus: true do
   context "when the job runs successfully" do
     let(:new_task_count) { 3 }
     let(:closed_task_count) { 1 }

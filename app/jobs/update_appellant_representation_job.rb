@@ -36,24 +36,32 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   end
 
   def appeals_to_update
-    number_of_legacy_appeals = legacy_appeals_with_hearings.size
-    number_of_ama_appeals = active_appeals.size
-
-    number_of_legacy_appeals_to_update =
-      TOTAL_NUMBER_OF_APPEALS_TO_UPDATE * number_of_legacy_appeals / (number_of_legacy_appeals + number_of_ama_appeals)
-    number_of_appeals_to_update =
-      TOTAL_NUMBER_OF_APPEALS_TO_UPDATE * number_of_ama_appeals / (number_of_legacy_appeals + number_of_ama_appeals)
+    number_to_update = retrieve_number_to_update
 
     legacy_appeals = RecordSyncedByJob.next_records_to_process(
       legacy_appeals_with_hearings,
-      number_of_legacy_appeals_to_update
+      number_to_update[:number_of_legacy_appeals_to_update]
     )
     appeals = RecordSyncedByJob.next_records_to_process(
       active_appeals,
-      number_of_appeals_to_update
+      number_to_update[:number_of_appeals_to_update]
     )
 
     [legacy_appeals, appeals].flatten
+  end
+
+  def retrieve_number_to_update
+    number_of_legacy_appeals = legacy_appeals_with_hearings.size
+    number_of_ama_appeals = active_appeals.size
+
+    {
+      number_of_legacy_appeals_to_update:
+        TOTAL_NUMBER_OF_APPEALS_TO_UPDATE * number_of_legacy_appeals /
+          (number_of_legacy_appeals + number_of_ama_appeals),
+      number_of_appeals_to_update:
+        TOTAL_NUMBER_OF_APPEALS_TO_UPDATE * number_of_ama_appeals /
+          (number_of_legacy_appeals + number_of_ama_appeals)
+    }
   end
 
   def legacy_appeals_with_hearings
