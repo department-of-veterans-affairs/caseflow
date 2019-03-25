@@ -16,7 +16,7 @@ class Generators::Contention
 
     def build(attrs = {})
       attrs = default_attrs.merge(attrs)
-      claim_id = attrs.delete(:claim_id)
+      claim_id = attrs[:claim_id]
       disposition = attrs.delete(:disposition)
 
       OpenStruct.new(attrs).tap do |contention|

@@ -79,20 +79,23 @@ class EndProductEstablishment < ApplicationRecord
 
     set_establishment_values_from_source
 
-    contentions = records_ready_for_contentions.map do |issue|
-      contention = { description: issue.contention_text }
-      issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
-      contention
-    end
+    contentions = build_contentions(records_ready_for_contentions)
+
+    # VBMS returns all the contentions on the claim, old and new, so keep track
+    # of existing contentions we know about. That way if text matches we can avoid false positives.
+    existing_contention_reference_ids = all_contention_records.pluck(:contention_reference_id).compact.uniq.map(&:to_s)
 
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
 
-    # We don't care about duplicate text; we just care that every request issue
-    # has a contention.
+    # We don't care about duplicate text; we just care that every request issue has a contention.
     create_contentions_in_vbms(contentions).each do |contention|
+      next if existing_contention_reference_ids.include?(contention.id)
+
       record = records_ready_for_contentions.find do |r|
-        r.contention_text == contention.text && r.contention_reference_id.nil?
+        contention.claim_id == reference_id &&
+          r.contention_text == contention.text &&
+          r.contention_reference_id.nil?
       end
 
       record&.update!(contention_reference_id: contention.id)
@@ -101,10 +104,18 @@ class EndProductEstablishment < ApplicationRecord
     fail ContentionCreationFailed if records_ready_for_contentions.any? { |r| r.contention_reference_id.nil? }
   end
 
+  def build_contentions(records_ready_for_contentions)
+    records_ready_for_contentions.map do |issue|
+      contention = { description: issue.contention_text }
+      issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
+      contention
+    end
+  end
+
   def remove_contention!(request_issue)
     contention = contention_for_object(request_issue)
 
-    fail ContentionNotFound unless contention
+    fail ContentionNotFound, request_issue.contention_reference_id unless contention
 
     VBMSService.remove_contention!(contention)
     request_issue.update!(contention_removed_at: Time.zone.now)
@@ -309,18 +320,18 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  # All records that create contentions should be an instance of ApplicationRecord with
-  # a contention_reference_id column, and contention_text method
-  # TODO: this can be refactored to ask the source instead of using a case statement
   def calculate_records_ready_for_contentions
     select_ready_for_contentions(contention_records)
   end
 
+  # All records that create contentions should be an instance of ApplicationRecord with
+  # a contention_reference_id column, and contention_text method
   def contention_records
-    case source
-    when ClaimReview then request_issues.active
-    when DecisionDocument then source.effectuations.where(end_product_establishment: self)
-    end
+    source.contention_records(self)
+  end
+
+  def all_contention_records
+    source.all_contention_records(self)
   end
 
   def decision_issues_sync_complete?(processing_request_issue)

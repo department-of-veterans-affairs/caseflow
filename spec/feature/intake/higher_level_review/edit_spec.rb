@@ -219,7 +219,7 @@ feature "Higher Level Review Edit issues" do
         decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Non-RAMP Issue before AMA Activation",
-        contention_reference_id: "12345",
+        contention_reference_id: "23456",
         ineligible_reason: :before_ama
       )
     end
@@ -294,7 +294,7 @@ feature "Higher Level Review Edit issues" do
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
           decision_review: higher_level_review,
           contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
-          contention_reference_id: "12345678",
+          contention_reference_id: "123456789",
           vacols_id: "vacols1",
           benefit_type: "compensation",
           vacols_sequence_id: "2"
@@ -1085,6 +1085,18 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
         expect(page).to have_content("Issues Not Editable")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+      end
+    end
+
+    context "when withdraw decision reviews is enabled" do
+      before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
+
+      scenario "remove an issue with dropdown" do
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+        expect(page).to have_content("PTSD denied")
+        click_remove_intake_issue_dropdown("0")
+        expect(page).to_not have_content("PTSD denied")
       end
     end
   end

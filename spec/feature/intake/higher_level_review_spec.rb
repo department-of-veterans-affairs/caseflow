@@ -210,7 +210,7 @@ feature "Higher-Level Review" do
     click_intake_continue
 
     expect(page).to have_content(
-      "If you do not see the claimant in the options below, and you have access, "
+      "If you do not see the claimant in the options below or if the claimant's information needs updated,"
     )
     expect(page).to have_content(
       "What is the payee code for this claimant? Please select an option."

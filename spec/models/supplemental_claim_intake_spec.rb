@@ -125,6 +125,18 @@ describe SupplementalClaimIntake do
         )
       end
 
+      context "claimant is missing address" do
+        before do
+          allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
+        end
+
+        it "adds claimant address required error" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("claimant_address_required")
+          expect(detail.claimants).to be_empty
+        end
+      end
+
       context "claimant is nil" do
         let(:claimant) { nil }
         let(:receipt_date) { 3.days.from_now }
@@ -370,8 +382,10 @@ describe SupplementalClaimIntake do
       it "clears pending status" do
         allow(detail).to receive(:establish!).and_raise(unknown_error)
 
-        expect { subject }.to raise_exception(unknown_error)
-        expect(intake.completion_status).to be_nil
+        subject
+
+        expect(intake.completion_status).to eq("success")
+        expect(intake.detail.establishment_error).to eq(unknown_error.inspect)
       end
     end
   end
