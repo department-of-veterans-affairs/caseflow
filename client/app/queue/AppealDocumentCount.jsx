@@ -19,7 +19,6 @@ class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
     const {
       appeal,
-      cached,
       docCountForAppeal
     } = this.props;
 
@@ -27,8 +26,7 @@ class AppealDocumentCount extends React.PureComponent {
       return;
     }
 
-    if (docCountForAppeal &&
-      (_.isNumber(docCountForAppeal.precise) || (cached && _.isNumber(docCountForAppeal.cached)))) {
+    if (docCountForAppeal && docCountForAppeal.docCount) {
       return;
     }
 
@@ -37,14 +35,12 @@ class AppealDocumentCount extends React.PureComponent {
       timeout: { response: 5 * 60 * 1000 }
     };
 
-    const endpoint = `document_count${cached ? '?cached' : ''}`;
-
     this.props.loadAppealDocCount(this.props.externalId);
 
-    ApiUtil.get(`/appeals/${this.props.externalId}/${endpoint}`, requestOptions).then((response) => {
+    ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
       const resp = JSON.parse(response.text);
 
-      this.props.setAppealDocCount(this.props.externalId, resp.document_count, Boolean(cached));
+      this.props.setAppealDocCount(this.props.externalId, resp.document_count);
     }, () => {
       this.props.errorFetchingDocumentCount(this.props.externalId);
     });
@@ -53,18 +49,13 @@ class AppealDocumentCount extends React.PureComponent {
   render = () => {
     const {
       docCountForAppeal,
-      cached,
       loadingText
     } = this.props;
 
-    if (docCountForAppeal) {
-      if (_.isNumber(docCountForAppeal.precise)) {
-        return docCountForAppeal.precise;
-      } else if (cached && _.isNumber(docCountForAppeal.cached)) {
-        return docCountForAppeal.cached;
-      } else if (loadingText && (docCountForAppeal.loading || docCountForAppeal.error)) {
-        return docCountForAppeal.error || <span {...documentCountStyling}>Loading number of docs...</span>;
-      }
+    if (docCountForAppeal && docCountForAppeal.docCount) {
+      return docCountForAppeal.docCount;
+    } else if (loadingText && (docCountForAppeal.loading || docCountForAppeal.error)) {
+      return docCountForAppeal.error || <span {...documentCountStyling}>Loading number of docs...</span>;
     }
 
     return null;
@@ -73,8 +64,7 @@ class AppealDocumentCount extends React.PureComponent {
 
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired,
-  loadingText: PropTypes.bool,
-  cached: PropTypes.bool
+  loadingText: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
