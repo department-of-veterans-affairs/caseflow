@@ -135,7 +135,7 @@ class SubmitDecisionView extends React.PureComponent {
       veteran: veteranFullName,
       judge: judges[decision.opts.reviewing_judge_id] ?
         judges[decision.opts.reviewing_judge_id].full_name :
-        this.props.task && this.props.task.addedByName
+        `${this.props.task.assignedBy.first_name} ${this.props.task.assignedBy.last_name}`
     };
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
