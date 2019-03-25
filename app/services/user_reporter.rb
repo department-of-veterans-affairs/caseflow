@@ -70,25 +70,29 @@ class UserReporter
       { model: JudgeCaseReview, column: :judge },
       { model: JudgeCaseReview, column: :attorney },
       { model: Task, column: :assigned_by },
-      { model: Task, column: :assigned_to }
+      { model: Task, column: :assigned_to },
+      { model: AppealView, column: :user, unique: [:appeal_type, :appeal_id] },
+      { model: HearingView, column: :user, unique: [:hearing_type, :hearing_id] },
+      { model: DocumentView, column: :user, unique: [:document_id] },
+      { model: ReaderUser, column: :user, unique: [] },
+      { model: UserQuota, column: :user, unique: [:team_quota_id] }
     ]
   end
 
   def models_with_user_id
     self.class.models_with_user_id ||= [
-      AdvanceOnDocketMotion, Annotation, AppealIntake, AppealView,
+      AdvanceOnDocketMotion, Annotation, AppealIntake,
       Certification, ClaimReviewIntake, ClaimsFolderSearch,
-      DecisionReviewIntake, Dispatch::Task, DocumentView,
+      DecisionReviewIntake, Dispatch::Task,
       EndProductEstablishment, EstablishClaim,
-      HearingView, HigherLevelReviewIntake,
+      HigherLevelReviewIntake,
       Intake,
       JudgeSchedulePeriod,
       LegacyHearing,
       OrganizationsUser,
-      RampElectionIntake, RampElectionRollback, RampRefilingIntake, ReaderUser, RequestIssuesUpdate,
+      RampElectionIntake, RampElectionRollback, RampRefilingIntake, RequestIssuesUpdate,
       RoSchedulePeriod,
-      SchedulePeriod, SupplementalClaimIntake,
-      UserQuota
+      SchedulePeriod, SupplementalClaimIntake
     ].map { |cls| { model: cls, column: :user_id } }
   end
 
@@ -114,10 +118,27 @@ class UserReporter
       fk_column_name = model_col_names.include?(column_id_name) ? column_id_name : foreign_key[:column]
 
       scope = if model_col_names.include?(column_type_name)
-                foreign_key[:model].where(column_id_name => old_user.id).where(column_type_name => "User")
+                foreign_key[:model].where(column_type_name => "User")
               else
-                foreign_key[:model].where(fk_column_name => old_user.id)
+                foreign_key[:model]
               end
+
+      if foreign_key[:unique]
+        if foreign_key[:unique].empty?
+          scope.where(fk_column_name => old_user.id).delete_all
+        else
+          existing_unique_fields = scope.where(fk_column_name => new_user.id).pluck(*foreign_key[:unique])
+
+          if !existing_unique_fields.empty?
+            # This query inspired by https://stackoverflow.com/questions/15750234/ruby-activerecord-and-sql-tuple-support
+            scope
+              .where(
+                "(#{foreign_key[:unique].join(', ')}) IN (#{(['(?)']*existing_unique_fields.size).join(', ')})",
+                *existing_unique_fields
+              ).where(fk_column_name => old_user.id).delete_all
+          end
+        end
+      end
 
       undo_action = {
         model: foreign_key[:model].name,
@@ -126,7 +147,7 @@ class UserReporter
         user_id: old_user.id
       }
 
-      scope.update(fk_column_name => new_user.id)
+      scope.where(fk_column_name => old_user.id).update(fk_column_name => new_user.id)
 
       undo_action
     end
