@@ -208,7 +208,7 @@
   "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Hearing Schedule!",
-  "HEARING_SCHEDULE_VIEW_PAGE_HEADER_RO": "Board Hearing Schedule",
+  "HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER": "Board Hearing Schedule",
   "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
   "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
   "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:",
@@ -375,7 +375,7 @@
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
 
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
-  "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
+  "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below or if the claimant's information needs updated, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
 
   "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
@@ -394,7 +394,7 @@
   "UNTIMELY_EVIDENCE_BULLET_ONE": "1. Requested a Direct Review appeal option and submitted evidence",
   "UNTIMELY_EVIDENCE_BULLET_TWO": "2. Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD",
   "UNTIMELY_EVIDENCE_BULLET_THREE": "3. Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
-  "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?", 
-  
+  "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
+
   "TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE": "must contain only Users"
 }

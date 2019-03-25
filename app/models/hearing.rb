@@ -74,6 +74,10 @@ class Hearing < ApplicationRecord
     false
   end
 
+  def assigned_to_vso?(user)
+    TrackVeteranTask.active.where(appeal: appeal).any? { |task| user.organizations.include?(task.assigned_to) }
+  end
+
   def hearing_task?
     !hearing_task_association.nil?
   end

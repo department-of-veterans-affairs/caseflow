@@ -88,12 +88,12 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.find_by(hearing_pkseq: pkseq)
     end
 
-    def load_days_for_range(start_date, end_date)
+    def load_video_days_for_range(start_date, end_date)
       select_schedule_days.where("trunc(hearing_date) between ? and ?", VacolsHelper.day_only_str(start_date),
                                  VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
-    def load_days_for_regional_office(regional_office, start_date, end_date)
+    def load_video_days_for_regional_office(regional_office, start_date, end_date)
       select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
                                  "VIDEO #{regional_office}", VacolsHelper.day_only_str(start_date),
                                  VacolsHelper.day_only_str(end_date)).order(:hearing_date)
