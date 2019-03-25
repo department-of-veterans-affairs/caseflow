@@ -123,8 +123,7 @@ class HearingDay < ApplicationRecord
     end
 
     def upcoming_days_for_vso_user(start_date, end_date, user)
-      HearingDay.joins(hearings: [appeal: :tasks]).where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-        .where(tasks: { type: TrackVeteranTask.name }).select do |hearing_day|
+      HearingDay.where("DATE(scheduled_for) between ? and ?", start_date, end_date).select do |hearing_day|
         hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
       end
     end
