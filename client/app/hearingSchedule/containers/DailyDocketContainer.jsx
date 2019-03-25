@@ -296,6 +296,7 @@ export class DailyDocketContainer extends React.Component {
         userRoleBuild={this.props.userRoleBuild}
         userRoleAssign={this.props.userRoleAssign}
         userRoleView={this.props.userRoleView}
+        userRoleVso={this.props.userRoleVso}
         dailyDocketServerError={this.props.dailyDocketServerError}
         onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
         notes={this.props.notes}
