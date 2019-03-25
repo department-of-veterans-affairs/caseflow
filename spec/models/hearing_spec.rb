@@ -41,4 +41,25 @@ describe Hearing do
       it { is_expected.to eq(false) }
     end
   end
+
+  context "assigned_to_vso?" do
+    let(:hearing) { create(:hearing, :with_tasks) }
+    let(:vso) { create(:vso) }
+    let(:user) { create(:user, :vso_role) }
+    let!(:track_veteran_task) { create(:track_veteran_task, appeal: hearing.appeal, assigned_to: vso) }
+
+    subject { hearing.assigned_to_vso?(user) }
+
+    context "when the hearing is not assigned a vso" do
+      it { is_expected.to eq(false) }
+    end
+
+    context "when the hearing is assigned a vso" do
+      before do
+        OrganizationsUser.add_user_to_organization(user, vso)
+      end
+
+      it { is_expected.to eq(true) }
+    end
+  end
 end
