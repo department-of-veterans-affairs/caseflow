@@ -8,7 +8,7 @@ import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
 import { GrayDot, GreenCheckmark } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
-import { taskIsOnHold } from '../utils';
+import { taskIsOnHold, sortTaskList } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -207,10 +207,7 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
     const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
-    const sortedTaskList = taskList.sort((prev, next) => {
-      return new Date(next.closedAt || next.createdAt).getTime() -
-      new Date(prev.closedAt || prev.createdAt).getTime();
-    });
+    const sortedTaskList = sortTaskList(taskList);
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
