@@ -132,6 +132,7 @@ class LegacyAppeal < ApplicationRecord
     omo_office: "20",
     caseflow: "CASEFLOW",
     quality_review: "48",
+    transcription: "33",
     translation: "14",
     schedule_hearing: "57",
     case_storage: "81",

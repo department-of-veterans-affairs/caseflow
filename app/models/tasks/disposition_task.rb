@@ -11,6 +11,7 @@ class DispositionTask < GenericTask
 
   class HearingDispositionNotCanceled < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
+  class HearingDispositionNotHeld < StandardError; end
 
   class << self
     def create_disposition_task!(appeal, parent, hearing)
@@ -106,24 +107,26 @@ class DispositionTask < GenericTask
   end
 
   def mark_postponed(after_disposition_update:)
-    if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(disposition: "postponed")
-    else
-      hearing.update(disposition: "postponed")
-    end
+    multi_transaction do
+      if hearing.is_a?(LegacyHearing)
+        hearing.update_caseflow_and_vacols(disposition: "postponed")
+      else
+        hearing.update(disposition: "postponed")
+      end
 
-    case after_disposition_update[:action]
-    when "reschedule"
-      new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
-      reschedule(
-        hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
-        hearing_location: new_hearing_attrs[:hearing_location]
-      )
-    when "schedule_later"
-      schedule_later(
-        with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
-        instructions: after_disposition_update[:admin_action_instructions]
-      )
+      case after_disposition_update[:action]
+      when "reschedule"
+        new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
+        reschedule(
+          hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
+          hearing_location: new_hearing_attrs[:hearing_location]
+        )
+      when "schedule_later"
+        schedule_later(
+          with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
+          instructions: after_disposition_update[:admin_action_instructions]
+        )
+      end
     end
   end
 
@@ -132,21 +135,15 @@ class DispositionTask < GenericTask
   def mark_held() end
 
   def cancel!
-    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
       fail HearingDispositionNotCanceled
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
-
-    if appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
-    else
-      RootTask.create_ihp_tasks!(appeal, parent)
-    end
   end
 
-  def mark_no_show!
-    if hearing_disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
+  def no_show!
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
       fail HearingDispositionNotNoShow
     end
 
@@ -162,6 +159,29 @@ class DispositionTask < GenericTask
     )
   end
 
+  def hold!
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.held
+      fail HearingDispositionNotHeld
+    end
+
+    if appeal.is_a?(LegacyAppeal)
+      complete_and_move_legacy_appeal_to_transcription
+    else
+      create_transcription_and_maybe_evidence_submission_window_tasks
+    end
+  end
+
+  def update_parent_status
+    # Create the child IHP tasks before running DistributionTask's update_status_if_children_tasks_are_complete method.
+    if appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
+    else
+      RootTask.create_ihp_tasks!(appeal, parent)
+    end
+
+    super
+  end
+
   private
 
   def update_legacy_appeal_location
@@ -174,7 +194,15 @@ class DispositionTask < GenericTask
     AppealRepository.update_location!(appeal, location)
   end
 
-  def hearing_disposition
-    parent&.hearing_task_association&.hearing&.disposition
+  def complete_and_move_legacy_appeal_to_transcription
+    update!(status: Constants.TASK_STATUSES.completed)
+    AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:transcription])
+  end
+
+  def create_transcription_and_maybe_evidence_submission_window_tasks
+    TranscriptionTask.create!(appeal: appeal, parent: self, assigned_to: TranscriptionTeam.singleton)
+    unless hearing&.evidence_window_waived
+      EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: self, assigned_to: MailTeam.singleton)
+    end
   end
 end

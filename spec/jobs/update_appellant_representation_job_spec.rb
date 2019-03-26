@@ -45,10 +45,10 @@ describe UpdateAppellantRepresentationJob do
     end
 
     context "when there are legacy appeals with disposition task" do
-      let(:legacy_task_count) { 10 }
+      let(:legacy_appeal_count) { 10 }
 
       let!(:legacy_appeals) do
-        (1..legacy_task_count).map do |_|
+        (1..legacy_appeal_count).map do |_|
           legacy_appeal = create(:legacy_appeal, vacols_case: create(:case))
           create(
             :disposition_task,
@@ -147,6 +147,48 @@ describe UpdateAppellantRepresentationJob do
           " Created #{new_task_count} new tracking tasks and closed #{closed_task_count} existing tracking tasks." \
           " Encountered errors for #{error_count} individual appeals."
       expect(slack_msg).to match(/#{expected_msg}/)
+    end
+  end
+
+  context "#when there are ama and legacy appeals" do
+    let!(:legacy_appeals) do
+      (1..legacy_appeal_count).map do |_|
+        legacy_appeal = create(:legacy_appeal, vacols_case: create(:case))
+        create(
+          :disposition_task,
+          appeal: legacy_appeal,
+          assigned_to: HearingsManagement.singleton,
+          parent: create(:hearing_task, appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
+        )
+        vso_for_legacy_appeal[legacy_appeal.id] = [create(:vso)]
+
+        legacy_appeal
+      end
+    end
+
+    let!(:appeals) do
+      (1..appeal_count).map do |_|
+        appeal = create(:appeal)
+        create(
+          :root_task,
+          appeal: appeal,
+          assigned_to: Bva.singleton
+        )
+        vso_for_appeal[appeal.id] = [create(:vso)]
+
+        appeal
+      end
+    end
+
+    context "#appeals_to_update" do
+      let(:legacy_appeal_count) { 10 }
+      let(:appeal_count) { 10 }
+
+      it "returns both legacy and ama appeals", focus: true do
+        all_appeals = UpdateAppellantRepresentationJob.new.appeals_to_update
+
+        expect(all_appeals).to match_array(legacy_appeals + appeals)
+      end
     end
   end
 

@@ -43,6 +43,14 @@ FactoryBot.define do
       assigned_to { Bva.singleton }
     end
 
+    factory :distribution_task, class: DistributionTask do
+      type { DistributionTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+      assigned_to { Bva.singleton }
+      status { Constants.TASK_STATUSES.on_hold }
+    end
+
     factory :generic_task do
       type { GenericTask.name }
       appeal { create(:appeal) }
@@ -62,7 +70,7 @@ FactoryBot.define do
           poa_clarification: "We received some correspondence from the Veteran's attorney in November indicating the attorney  wants to withdraw from representation of the Veteran.  I don't see any paperwork from the Veteran appointing a new rep or otherwise acknowledging the withdraw of the old one.  Please contact the Veteran to clarify if they have current representation.  If the Veteran no longer wishes the current representative to act on his behalf, please get that in writing.    ",
           hearing_clarification: "A March statement filed by the Veteran indicates that they desired a 'Televideo conference hearing' for all their appeals.  No hearing was scheduled.  Please clarify whether the Veteran still desires a Board hearing, and, if so, please reroute as necessary to schedule one.   Thanks!",
           aoj: "Please clarify whether the Veteran desires AOJ review of any evidence, to include VA treatment records dated through June, submitted since an April statement of the case.  Thank you!",
-          extension: "The Veteran's POA submitted a letter requesting a 90 day extension.  Please send letter granting the extension.",
+          extension: "The Veteran's POA submitted a letter requesting a 90 day extension. Please send letter granting the extension.",
           missing_hearing_transcripts: "Good evening, could you please return this to the hearing branch as the hearing was just held and the transcripts are not yet available. Thank you.",
           unaccredited_rep: "Unaccredited rep",
           foia: "The Veteran's representative submitted FOIA request in December of last year, which was acknowledged the same month. To date, there has been no response provided.  Please follow up on the FOIA request.",
@@ -131,7 +139,7 @@ FactoryBot.define do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
       assigned_to { HearingAdmin.singleton }
-      parent { create(:ama_disposition_task, appeal: appeal) }
+      parent { create(:disposition_task, appeal: appeal) }
     end
 
     factory :ama_attorney_task do

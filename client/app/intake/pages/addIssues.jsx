@@ -11,9 +11,10 @@ import UnidentifiedIssuesModal from '../components/UnidentifiedIssuesModal';
 import UntimelyExemptionModal from '../components/UntimelyExemptionModal';
 import LegacyOptInModal from '../components/LegacyOptInModal';
 import Button from '../../components/Button';
+import Dropdown from '../../components/Dropdown';
 import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
-import { REQUEST_STATE, PAGE_PATHS } from '../constants';
+import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
 import Table from '../../components/Table';
 import {
@@ -55,15 +56,17 @@ export class AddIssuesPage extends React.Component {
     return false;
   }
 
-  onRemoveClick = (index) => {
-    if (this.props.toggleIssueRemoveModal) {
-      // on the edit page, so show the remove modal
-      this.setState({
-        issueRemoveIndex: index
-      });
-      this.props.toggleIssueRemoveModal();
-    } else {
-      this.props.removeIssue(index);
+  onRemoveClick = (index, option = 'remove') => {
+    if (option === 'remove') {
+      if (this.props.toggleIssueRemoveModal) {
+        // on the edit page, so show the remove modal
+        this.setState({
+          issueRemoveIndex: index
+        });
+        this.props.toggleIssueRemoveModal();
+      } else {
+        this.props.removeIssue(index);
+      }
     }
   }
 
@@ -87,10 +90,13 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
 
-    const { useAmaActivationDate } = featureToggles;
+    const { useAmaActivationDate, withdrawDecisionReviews } = featureToggles;
     const intakeData = intakeForms[formType];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
+    const showInvalidVeteranError = !intakeData.veteranValid && (_.some(
+      intakeData.addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
+    );
 
     if (intakeData.isDtaError) {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
@@ -107,10 +113,21 @@ export class AddIssuesPage extends React.Component {
     const issuesComponent = () => {
       let issues = formatAddedIssues(intakeData, useAmaActivationDate);
 
+      const issueActionOptions = [
+        { displayText: 'Withdraw issue',
+          value: 'withdraw' },
+        { displayText: 'Remove issue',
+          value: 'remove' }
+      ];
+
       return <div className="issues">
         <div>
           { issues.map((issue, index) => {
-            return <div className="issue" key={`issue-${index}`} id={`issue-${issue.referenceId}`}>
+            return <div
+              className="issue"
+              data-key={`issue-${index}`}
+              key={`issue-${index}`}
+              id={`issue-${issue.referenceId}`}>
               <AddedIssue
                 issue={issue}
                 issueIdx={index}
@@ -119,12 +136,22 @@ export class AddIssuesPage extends React.Component {
                 legacyAppeals={intakeData.legacyAppeals}
                 formType={formType} />
               <div className="issue-action">
-                <Button
+                { withdrawDecisionReviews && <Dropdown
+                  name={`issue-action-${index}`}
+                  label="Actions"
+                  hideLabel
+                  options={issueActionOptions}
+                  defaultText="Select action"
+                  onChange={(option) => this.onRemoveClick(index, option)}
+                />
+                }
+                { !withdrawDecisionReviews && <Button
                   onClick={() => this.onRemoveClick(index)}
                   classNames={['cf-btn-link', 'remove-issue']}
                 >
-                  <i className="fa fa-trash-o" aria-hidden="true"></i>Remove
+                  <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
                 </Button>
+                }
               </div>
             </div>;
           })}
@@ -199,6 +226,9 @@ export class AddIssuesPage extends React.Component {
       { requestState === REQUEST_STATE.FAILED &&
         <ErrorAlert errorCode={requestErrorCode} />
       }
+
+      { showInvalidVeteranError &&
+        <ErrorAlert errorCode="veteran_not_valid" errorData={intakeData.veteranInvalidFields} /> }
 
       <Table
         columns={columns}

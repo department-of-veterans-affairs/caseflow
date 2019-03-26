@@ -87,8 +87,8 @@ class RequestIssue < ApplicationRecord
     dta: {
       compensation: {
         appeal: {
-          imo: "040BDEIMO",
-          not_imo: "040BDE"
+          rating: "040BDER",
+          nonrating: "040BDENR"
         },
         claim_review: {
           rating: "040HDER",
@@ -97,8 +97,8 @@ class RequestIssue < ApplicationRecord
       },
       pension: {
         appeal: {
-          imo: "040BDEIMOPMC",
-          not_imo: "040BDEPMC"
+          rating: "040BDERPMC",
+          nonrating: "040HDENRPMC"
         },
         claim_review: {
           rating: "040HDERPMC",
@@ -407,10 +407,10 @@ class RequestIssue < ApplicationRecord
     close!(:removed) do
       legacy_issue_optin&.flag_for_rollback!
 
-      # removing a request issue also deletes the associated request_decision_issue
-      # if the decision issue is not associated with any other request issue, also delete
-      decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
-      decision_issues.delete_all
+      # If the decision issue is not associated with any other request issue, also delete
+      decision_issues.each(&:soft_delete_on_removed_request_issue)
+      # Removing a request issue also deletes the associated request_decision_issue
+      request_decision_issues.update_all(deleted_at: Time.zone.now)
     end
   end
 
@@ -733,7 +733,7 @@ class RequestIssue < ApplicationRecord
 
   def choose_dta_end_product_code(end_product_codes)
     if decision_review.decision_review_remanded.is_a?(Appeal)
-      end_product_codes[:appeal][contested_decision_issue.imo? ? :imo : :not_imo]
+      end_product_codes[:appeal][rating? ? :rating : :nonrating]
     else
       end_product_codes[:claim_review][rating? ? :rating : :nonrating]
     end

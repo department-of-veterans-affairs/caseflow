@@ -69,12 +69,13 @@ class SeedDB
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
     create_judge_teams
-    create_hearings_team
+    create_hearings_user_and_tasks
   end
 
   def create_team_admin
     u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
-    Functions.grant!("System Admin", users: [u.css_id])
+    existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
+    Functions.grant!("System Admin", users: existing_sysadmins + [u.css_id])
     OrganizationsUser.add_user_to_organization(u, Bva.singleton)
   end
 
@@ -93,9 +94,22 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(transcription_member, TranscriptionTeam.singleton)
   end
 
-  def create_hearings_team
+  def create_hearings_user_and_tasks
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
+    OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
+
+    create_no_show_hearings_task
+  end
+
+  def create_no_show_hearings_task
+    appeal = FactoryBot.create(:appeal, :hearing_docket)
+    root_task = FactoryBot.create(:root_task, appeal: appeal)
+    distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
+    parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
+    FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
+    disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
+    FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
   end
 
   def create_colocated_users

@@ -74,6 +74,15 @@ class Hearing < ApplicationRecord
     false
   end
 
+  def assigned_to_vso?(user)
+    appeal.tasks.any? do |task|
+      task.type = TrackVeteranTask.name &&
+                  task.assigned_to.is_a?(Vso) &&
+                  task.assigned_to.user_has_access?(user) &&
+                  task.active?
+    end
+  end
+
   def hearing_task?
     !hearing_task_association.nil?
   end
@@ -115,8 +124,9 @@ class Hearing < ApplicationRecord
   end
 
   def regional_office_timezone
-    RegionalOffice::CITIES[regional_office_key][:timezone] unless regional_office_key.nil?
-    "America/New_York"
+    return "America/New_York" if regional_office_key.nil?
+
+    RegionalOffice::CITIES[regional_office_key][:timezone]
   end
 
   def current_issue_count

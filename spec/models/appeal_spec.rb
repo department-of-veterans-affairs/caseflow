@@ -954,6 +954,59 @@ describe Appeal do
       end
     end
 
+    context "hearing is scheduled" do
+      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let(:hearing_scheduled_for) { Time.zone.today + 15.days }
+      let(:hearing_day) do
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               regional_office: "RO18",
+               scheduled_for: hearing_scheduled_for)
+      end
+
+      let(:hearing) do
+        FactoryBot.create(
+          :hearing,
+          appeal: appeal,
+          disposition: nil,
+          evidence_window_waived: nil,
+          hearing_day: hearing_day
+        )
+      end
+      let!(:hearing_task_association) do
+        FactoryBot.create(
+          :hearing_task_association,
+          hearing: hearing,
+          hearing_task: hearing_task
+        )
+      end
+      let!(:schedule_hearing_task) do
+        FactoryBot.create(
+          :schedule_hearing_task,
+          parent: hearing_task,
+          appeal: appeal,
+          assigned_to: HearingsManagement.singleton,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+      let!(:disposition_task) do
+        FactoryBot.create(
+          :disposition_task,
+          parent: hearing_task,
+          appeal: appeal,
+          status: Constants.TASK_STATUSES.in_progress
+        )
+      end
+
+      it "status is scheduled_hearing with hearing details" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:scheduled_hearing)
+        expect(status[:details][:type]).to eq("video")
+        expect(status[:details][:date]).to eq(hearing_scheduled_for.to_date)
+        expect(status[:details][:location]).to be_nil
+      end
+    end
+
     context "in an evidence submission window" do
       let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
