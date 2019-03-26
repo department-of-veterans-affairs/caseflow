@@ -11,7 +11,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "Fields are not editable" do
       visit "hearings/" + hearing.external_id.to_s + "/details"
-      field_labeled("Notes", disabled: true)
+      expect(page).to have_field("Notes", disabled: true)
     end
   end
 
