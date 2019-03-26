@@ -68,6 +68,14 @@ describe UserReporter do
           expect(AppealView.where(appeal: appeal, user_id: user.id)).to exist
           expect(ReaderUser.where(user_id: duplicate_user.id)).to_not exist
           expect(ReaderUser.where(user_id: user.id)).to exist
+
+          %w[AppealView ReaderUser].each do |model_name|
+            ids = user.reload.undo_record_merging.first["create_associations"].find do |assoc|
+              assoc["model"] == model_name
+            end["ids"]
+
+            expect(ids).to eq []
+          end
         end
       end
     end

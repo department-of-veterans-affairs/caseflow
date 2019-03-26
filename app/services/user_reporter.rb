@@ -71,10 +71,10 @@ class UserReporter
       { model: JudgeCaseReview, column: :attorney },
       { model: Task, column: :assigned_by },
       { model: Task, column: :assigned_to },
-      { model: AppealView, column: :user, unique: [:appeal_type, :appeal_id] },
-      { model: HearingView, column: :user, unique: [:hearing_type, :hearing_id] },
-      { model: DocumentView, column: :user, unique: [:document_id] },
-      { model: ReaderUser, column: :user, unique: [] },
+      { model: AppealView, column: :user, unique: [:appeal_type, :appeal_id], undo: false },
+      { model: HearingView, column: :user, unique: [:hearing_type, :hearing_id], undo: false },
+      { model: DocumentView, column: :user, unique: [:document_id], undo: false },
+      { model: ReaderUser, column: :user, unique: [], undo: false },
       { model: UserQuota, column: :user, unique: [:team_quota_id] }
     ]
   end
@@ -152,6 +152,9 @@ class UserReporter
       }
 
       scope.where(fk_column_name => old_user.id).update(fk_column_name => new_user.id)
+
+      # due to space limitations, statistics are not undo-able
+      undo_action[:ids] = [] if foreign_key.key?(:undo) && foreign_key[:undo] == false
 
       undo_action
     end
