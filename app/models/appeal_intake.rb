@@ -19,7 +19,7 @@ class AppealIntake < DecisionReviewIntake
       Claimant.find_or_initialize_by(
         participant_id: claimant_participant_id,
         payee_code: nil,
-        review_request: detail
+        decision_review: detail
       ).tap(&:save!)
       update_person!
       detail.save(context: :intake_review)
