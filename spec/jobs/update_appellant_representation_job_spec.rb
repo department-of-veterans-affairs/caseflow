@@ -8,10 +8,9 @@ describe UpdateAppellantRepresentationJob do
     let(:closed_task_count) { 1 }
     let(:correct_task_count) { 6 }
     let(:error_count) { 0 }
+    let(:vso_for_appeal) { {} }
 
     before do
-      vso_for_appeal = {}
-
       correct_task_count.times do |_|
         appeal, vso = create_appeal_and_vso
         FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
@@ -47,10 +46,15 @@ describe UpdateAppellantRepresentationJob do
       let(:legacy_task_count) { 10 }
 
       let(:legacy_appeals) do
-        legacy_task_count.map do |_|
+        (1..legacy_task_count).map do |_|
           legacy_appeal = create(:legacy_appeal, vacols_case: create(:case))
-          create(:disposition_task, appeal: legacy_appeal)
-          vso_for_appeal[appeal.id] = [create(:vso)]
+          create(
+            :disposition_task,
+            appeal: legacy_appeal,
+            assigned_to: HearingsManagement.singleton,
+            parent: create(:hearing_task, appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
+          )
+          vso_for_appeal[legacy_appeal.id] = [create(:vso)]
 
           legacy_appeal
         end
@@ -59,7 +63,9 @@ describe UpdateAppellantRepresentationJob do
       it "updates every appeal", focus: true do
         UpdateAppellantRepresentationJob.perform_now
 
-        legacy_appeal
+        legacy_appeals.each do |legacy_appeal|
+          expect(legacy_appeal.reload.record_synced_by_job.first.processed?).to eq(true)
+        end
       end
     end
 
