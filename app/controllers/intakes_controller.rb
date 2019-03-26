@@ -40,8 +40,7 @@ class IntakesController < ApplicationController
       render json: { error_codes: intake.review_errors }, status: :unprocessable_entity
     end
   rescue StandardError => error
-    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-    Rails.logger.error("Error UUID #{error_uuid} : #{error}")
+    log_error(error)
     render json: {
       error_codes: { other: ["unknown_error"] },
       error_uuid: error_uuid
