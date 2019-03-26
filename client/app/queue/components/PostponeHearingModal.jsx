@@ -10,7 +10,7 @@ import {
 } from '../selectors';
 import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import {
-  requestPatch
+  requestPatch, showErrorMessage
 } from '../uiReducer/uiActions';
 import QueueFlowModal from './QueueFlowModal';
 import { taskActionData, prepareAppealForStore } from '../utils';
@@ -49,7 +49,8 @@ class PostponeHearingModal extends React.Component {
 
     this.state = {
       afterDispositionUpdateAction: '',
-      showErrorMessages: false
+      showErrorMessages: false,
+      isPosting: false
     };
   }
 
@@ -149,14 +150,28 @@ class PostponeHearingModal extends React.Component {
   }
 
   submit = () => {
+    if (this.state.isPosting) {
+      return;
+    }
+
     const { task } = this.props;
     const payload = this.getPayload();
 
+    this.setState({ isPosting: true });
+
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, this.getSuccessMsg()).
       then((resp) => {
+        this.setState({ isPosting: false });
         const response = JSON.parse(resp.text);
 
         this.props.onReceiveAmaTasks(response.tasks.data);
+      }, () => {
+        this.setState({ isPosting: false });
+
+        this.props.showErrorMessage({
+          title: 'Unable to postpone hearing.',
+          detail: 'Please retry submitting again and contact support if errors persist.'
+        });
       });
   }
 
@@ -190,6 +205,7 @@ class PostponeHearingModal extends React.Component {
 
         {afterDispositionUpdateAction === ACTIONS.RESCHEDULE &&
         <AssignHearingForm
+          initialRegionalOffice={appeal.closestRegionalOffice}
           showErrorMessages={showErrorMessages}
           appeal={appeal}
         />
@@ -214,6 +230,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
   onReceiveAmaTasks,
+  showErrorMessage,
   onReceiveAppealDetails
 }, dispatch);
 

@@ -135,7 +135,7 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <Re
     includeHearingBadge
     includeDetailsLink
     includeTask
-    includeRegionalOffice={organizationName === 'Hearing Management'}
+    includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
     includeDocketNumber
     includeDaysWaiting
@@ -151,7 +151,7 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName }) =>
     includeHearingBadge
     includeDetailsLink
     includeTask
-    includeRegionalOffice={organizationName === 'Hearing Management'}
+    includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
     includeAssignedTo
     includeDocketNumber

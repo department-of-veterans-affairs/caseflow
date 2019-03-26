@@ -94,6 +94,7 @@ class AssignHearingForm extends React.Component {
   render() {
     const { appeal, showErrorMessages, values } = this.props;
     const { regionalOffice, hearingLocation, hearingDay, hearingTime, errorMessages } = values;
+    const availableHearingLocations = _.sortBy(appeal.availableHearingLocations || [], 'distance');
 
     return (
       <div>
@@ -110,7 +111,7 @@ class AssignHearingForm extends React.Component {
             appealId={appeal.externalId}
             dynamic={regionalOffice !== appeal.closestRegionalOffice ||
               _.isEmpty(appeal.availableHearingLocations)}
-            staticHearingLocations={appeal.availableHearingLocations}
+            staticHearingLocations={availableHearingLocations}
             value={hearingLocation}
             onChange={(value) => this.onChange({ hearingLocation: value })}
           />

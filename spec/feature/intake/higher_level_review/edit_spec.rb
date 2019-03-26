@@ -219,7 +219,7 @@ feature "Higher Level Review Edit issues" do
         decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Non-RAMP Issue before AMA Activation",
-        contention_reference_id: "12345",
+        contention_reference_id: "23456",
         ineligible_reason: :before_ama
       )
     end
@@ -294,7 +294,7 @@ feature "Higher Level Review Edit issues" do
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
           decision_review: higher_level_review,
           contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
-          contention_reference_id: "12345678",
+          contention_reference_id: "123456789",
           vacols_id: "vacols1",
           benefit_type: "compensation",
           vacols_sequence_id: "2"
@@ -314,12 +314,12 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: #{Time.zone.today.mdY}")
+        expect(page).to have_content("#{eligible_request_issue.contention_text}\nDecision date: #{Time.zone.today.mdY}")
         expect(page).to have_content(
           "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
         expect(page).to have_content(
-          "#{eligible_ri_before_ama.contention_text} Decision date:"
+          "#{eligible_ri_before_ama.contention_text}\nDecision date:"
         )
         expect(page).to have_content(
           "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
@@ -328,7 +328,7 @@ feature "Higher Level Review Edit issues" do
           "#{ri_legacy_issue_ineligible.contention_text} #{ineligible.legacy_appeal_not_eligible}"
         )
         expect(page).to have_content(
-          "#{ri_legacy_issue_eligible.contention_text} Decision date:"
+          "#{ri_legacy_issue_eligible.contention_text}\nDecision date:"
         )
       end
     end
@@ -864,7 +864,7 @@ feature "Higher Level Review Edit issues" do
       # add RAMP issue before AMA
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
-      expect(page).to have_content("Issue before AMA Activation from RAMP Decision date:")
+      expect(page).to have_content("Issue before AMA Activation from RAMP\nDecision date:")
 
       safe_click("#button-submit-update")
 
@@ -1087,6 +1087,18 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
       end
     end
+
+    context "when withdraw decision reviews is enabled" do
+      before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
+
+      scenario "remove an issue with dropdown" do
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+        expect(page).to have_content("PTSD denied")
+        click_remove_intake_issue_dropdown("PTSD denied")
+        expect(page).to_not have_content("PTSD denied")
+      end
+    end
   end
 
   context "when remove decision reviews is enabled" do
@@ -1103,7 +1115,8 @@ feature "Higher Level Review Edit issues" do
     let(:last_week) { Time.zone.now - 7.days }
     let(:higher_level_review) do
       # reload to get uuid
-      create(:higher_level_review, :with_end_product_establishment, veteran_file_number: veteran.file_number).reload
+      create(:higher_level_review, :with_end_product_establishment, veteran_file_number: veteran.file_number,
+                                                                    benefit_type: benefit_type).reload
     end
     let!(:existing_request_issues) do
       [create(:request_issue, :nonrating, decision_review: higher_level_review),
@@ -1157,6 +1170,44 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
+      end
+
+      scenario "remove all vbms decisions reviews" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        # remove all request issues
+        higher_level_review.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit
+        expect(page).to have_content("Remove review?")
+        expect(page).to have_content("This will remove the review and cancel all the End Products associated with it")
+        click_intake_confirm
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        sleep 1
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+      end
+    end
+
+    context "when all caseflow decision reviews" do
+      let!(:benefit_type) { "education" }
+
+      scenario "remove all caseflow decisions reviews" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        # remove all request issues
+        higher_level_review.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit
+        expect(page).to have_content("Remove review?")
+        expect(page).to have_content("This review and all tasks associated with it will be removed.")
+        click_intake_confirm
+        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        sleep 1
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
       end
     end
 

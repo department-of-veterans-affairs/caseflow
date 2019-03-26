@@ -21,6 +21,11 @@ FactoryBot.define do
       nonrating_issue_description { "nonrating issue description" }
     end
 
+    trait :unidentified do
+      is_unidentified { true }
+      unidentified_issue_text { "unidentified issue description" }
+    end
+
     trait :removed do
       closed_at { Time.zone.now }
       closed_status { :removed }

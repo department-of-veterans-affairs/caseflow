@@ -80,7 +80,7 @@ feature "Asyncable Jobs index" do
 
     context "zero unprocessed jobs" do
       before do
-        AsyncableJobs.new.jobs.each(&:processed!)
+        AsyncableJobs.new.jobs.each(&:clear_error!).each(&:processed!)
       end
 
       it "shows nice message" do

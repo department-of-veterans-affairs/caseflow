@@ -124,7 +124,7 @@ class TaskRows extends React.PureComponent {
       <dd>{assignee}</dd></div> : null;
   }
 
-  getAbbrevName = ({ firstName, lastName } : { firstName: string, lastName: string }) => {
+  getAbbrevName = ({ firstName, lastName }) => {
     return `${firstName.substring(0, 1)}. ${lastName}`;
   }
 
@@ -206,15 +206,22 @@ class TaskRows extends React.PureComponent {
       taskList,
       timeline
     } = this.props;
+    const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
-        <td {...taskTimeTimelineContainerStyling}></td>
-        <td {...taskInfoWithIconTimelineContainer} {...greyDotStyling}><GrayDot />
+        <td {...taskTimeTimelineContainerStyling}>
+          {isLegacyAppealWithDecisionDate ? moment(appeal.decisionDate).format('MM/DD/YYYY') : ''}
+        </td>
+        <td {...taskInfoWithIconTimelineContainer}
+          {...(isLegacyAppealWithDecisionDate ? {} : greyDotStyling)}>
+          {isLegacyAppealWithDecisionDate ? <GreenCheckmark /> : <GrayDot /> }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-            <div {...grayLineTimelineStyling}{...css({ top: '25px !important' })} />}</td>
+            <div {...grayLineTimelineStyling}
+              {...(isLegacyAppealWithDecisionDate ? {} : css({ top: '25px !important' }))} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
-          { appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
+          { appeal.decisionDate ?
+            COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
           } <br />
         </td>
       </tr> }

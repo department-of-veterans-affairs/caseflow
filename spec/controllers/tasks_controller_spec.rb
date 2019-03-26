@@ -765,7 +765,9 @@ RSpec.describe TasksController, type: :controller do
         data = JSON.parse(response.body)["data"]
 
         expect(data.size).to be(1)
-        expect(data.first["attributes"]["closest_regional_office"]).to eq(closest_regional_office)
+        expect(data.first["attributes"]["closest_regional_office"]).to eq(
+          RegionalOffice.find!(closest_regional_office).city
+        )
         expect(data.first["attributes"]["available_hearing_locations"].first["address"]).to eq(
           address
         )

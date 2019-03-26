@@ -36,7 +36,16 @@ class VBMSError < RuntimeError
     "A PIF for this EP code already exists." => "VBMS::PIFExistsForEPCodeError",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/events/271178/
-    "A duplicate claim for this EP code already exists in CorpDB" => "VBMS::DuplicateEPError"
+    "A duplicate claim for this EP code already exists in CorpDB" => "VBMS::DuplicateEPError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/276980/
+    "User is not authorized." => "VBMS::UserNotAuthorizedError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/278342/
+    "Unable to establish claim: " => "VBMS::BadClaimError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4164/events/279584/
+    "The contention is connected to an issue in ratings and cannot be deleted." => "VBMS::CannotDeleteContentionError"
   }.freeze
 
   class << self
@@ -75,3 +84,6 @@ class VBMS::BadPostalCodeError < StandardError; end
 class VBMS::ClaimNotFoundError < StandardError; end
 class VBMS::PIFExistsForEPCodeError < StandardError; end
 class VBMS::DuplicateEPError < StandardError; end
+class VBMS::UserNotAuthorizedError < StandardError; end
+class VBMS::BadClaimError < StandardError; end
+class VBMS::CannotDeleteContentionError < StandardError; end

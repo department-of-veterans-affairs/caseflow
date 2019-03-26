@@ -168,14 +168,36 @@ describe JudgeTask do
     end
   end
 
-  describe ".when_child_task_completed" do
-    let(:attorney_task) { FactoryBot.create(:ama_attorney_task) }
+  describe "when child task completed" do
+    let(:judge_task) { FactoryBot.create(:ama_judge_task) }
 
-    it "changes the task type" do
-      parent = attorney_task.parent
-      expect(parent.type).to eq JudgeAssignTask.name
-      parent.when_child_task_completed
-      expect(parent.type).to eq JudgeDecisionReviewTask.name
+    subject { child_task.update!(status: Constants.TASK_STATUSES.completed) }
+
+    context "when child task is an attorney task" do
+      let(:child_task) do
+        FactoryBot.create(
+          :ama_attorney_task,
+          assigned_by: judge,
+          assigned_to: attorney,
+          parent: judge_task
+        ).becomes(AttorneyTask)
+      end
+
+      it "changes the judge task type to decision review" do
+        expect(judge_task.type).to eq(JudgeAssignTask.name)
+        subject
+        expect(Task.find(judge_task.id).type).to eq(JudgeDecisionReviewTask.name)
+      end
+    end
+
+    context "when child task is an VLJ support staff admin action" do
+      let(:child_task) { FactoryBot.create(:colocated_task, assigned_by: judge, parent: judge_task) }
+
+      it "does not change the judge task type" do
+        expect(judge_task.type).to eq(JudgeAssignTask.name)
+        subject
+        expect(Task.find(judge_task.id).type).to eq(JudgeAssignTask.name)
+      end
     end
   end
 

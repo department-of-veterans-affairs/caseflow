@@ -178,26 +178,24 @@ export default class DailyDocket extends React.Component {
       options={DISPOSITION_OPTIONS}
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={(option) => {
-        if (option.value === 'postponed') {
-          this.setState({ editedDispositionModalProps: {
-            hearing,
-            disposition: option.value,
-            onCancel: this.closeEditedDispositionModal,
-            onConfirm: () => {
+        this.setState({ editedDispositionModalProps: {
+          hearing,
+          disposition: option.value,
+          onCancel: this.closeEditedDispositionModal,
+          onConfirm: () => {
+            if (option.value === 'postponed') {
               this.cancelHearingUpdate(hearing)();
-              this.onHearingDispositionUpdate(hearing.id)(option);
-              this.closeEditedDispositionModal();
-              // give redux some time to update.
-              setTimeout(() => {
-                const updatedHearing = this.props.hearings[hearing.id];
-
-                this.validateAndSaveHearing(updatedHearing)();
-              }, 0);
             }
-          } });
-        } else {
-          this.onHearingDispositionUpdate(hearing.id)(option);
-        }
+            this.onHearingDispositionUpdate(hearing.id)(option);
+            this.closeEditedDispositionModal();
+            // give redux some time to update.
+            setTimeout(() => {
+              const updatedHearing = this.props.hearings[hearing.id];
+
+              this.validateAndSaveHearing(updatedHearing)();
+            }, 0);
+          }
+        } });
       }}
       readOnly={readOnly || !hearing.dispositionEditable}
     />;
@@ -304,6 +302,7 @@ export default class DailyDocket extends React.Component {
     return <TextareaField
       name="Notes"
       strongLabel
+      disabled={this.props.userRoleVso}
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
       value={_.isUndefined(hearing.editedNotes) ? hearing.notes || '' : hearing.editedNotes}
@@ -425,7 +424,7 @@ export default class DailyDocket extends React.Component {
     ];
 
     const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings),
-      this.props.userRoleView);
+      this.props.userRoleView || this.props.userRoleVso);
     const cancelButton = <Button linkStyling onClick={this.props.onCancelRemoveHearingDay}>Go back</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.props.deleteHearingDay}>
       Confirm

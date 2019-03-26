@@ -11,15 +11,6 @@ def scroll_position(id: nil, class_name: nil)
   EOS
 end
 
-def scroll_to(id: nil, class_name: nil, value: 0, index: 0)
-  page.driver.evaluate_script <<-EOS
-    function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')['#{index}'];
-      elem.scrollTop=#{value};
-    }();
-  EOS
-end
-
 def scrolled_amount(child_class_name)
   page.evaluate_script <<-EOS
     function() {
@@ -34,14 +25,6 @@ def scrolled_amount(child_class_name)
       return 0;
     }();
   EOS
-end
-
-def skip_because_sending_keys_to_body_does_not_work_on_travis
-  if ENV["TRAVIS"]
-    puts "Warning: skipping block because find('body').send_keys does not work on Travis"
-  else
-    yield
-  end
 end
 
 def scroll_element_to_view(element)
@@ -227,8 +210,8 @@ RSpec.feature "Reader" do
       let(:vbms_fetched_ts) { Time.zone.now }
       let(:vva_fetched_ts) { Time.zone.now }
 
-      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}" }
-      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}" }
+      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
+      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
 
       let!(:appeal) do
         Generators::LegacyAppealV2.build(
@@ -242,7 +225,7 @@ RSpec.feature "Reader" do
       scenario "Claims folder details issues show no issues message" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         find(".rc-collapse-header", text: "Claims folder details").click
-        expect(find("#claims-folder-issues").text).to have_content("No issues on appeal")
+        expect(page).to have_css("#claims-folder-issues", text: "No issues on appeal")
       end
 
       context "When both document source manifest retrieval times are set" do
@@ -417,19 +400,11 @@ RSpec.feature "Reader" do
       expect_doc_type_to_be "Form 9"
 
       click_on "Cancel"
+      find("body").send_keys(:arrow_right)
+      expect_doc_type_to_be "BVA Decision"
 
-      # The following lines work locally but not on Travis.
-      # I spent two hours pushing changes and waiting 10
-      # minutes to see if various changes would fix it.
-      #
-      # Please forgive me.
-      skip_because_sending_keys_to_body_does_not_work_on_travis do
-        find("body").send_keys(:arrow_right)
-        expect_doc_type_to_be "BVA Decision"
-
-        find("body").send_keys(:arrow_left)
-        expect_doc_type_to_be "Form 9"
-      end
+      find("body").send_keys(:arrow_left)
+      expect_doc_type_to_be "Form 9"
 
       add_comment_without_clicking_save "unsaved comment text"
       find("#addComment").send_keys(:arrow_left)
@@ -560,15 +535,13 @@ RSpec.feature "Reader" do
         expect(find("#button-save")["disabled"]).to eq("true")
       end
 
-      skip_because_sending_keys_to_body_does_not_work_on_travis do
-        scenario "alt+enter shortcut doesn't trigger save" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-          add_comment_without_clicking_save(random_whitespace_no_tab)
+      scenario "alt+enter shortcut doesn't trigger save" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        add_comment_without_clicking_save(random_whitespace_no_tab)
 
-          find("body").send_keys [:alt, :enter]
-          expect(find("#button-save")["disabled"]).to eq("true")
-          expect(documents[0].annotations.empty?).to eq(true)
-        end
+        find("body").send_keys [:alt, :enter]
+        expect(find("#button-save")["disabled"]).to eq("true")
+        expect(documents[0].annotations.empty?).to eq(true)
       end
     end
 
@@ -663,44 +636,42 @@ RSpec.feature "Reader" do
       end
 
       # :nocov:
-      skip_because_sending_keys_to_body_does_not_work_on_travis do
-        scenario "Leave annotation with keyboard" do
-          visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-          assert_selector(".commentIcon-container", count: 5)
-          find("body").send_keys [:alt, "c"]
-          expect(page).to have_css(".cf-pdf-placing-comment")
-          assert_selector(".commentIcon-container", count: 6)
+      scenario "Leave annotation with keyboard" do
+        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+        assert_selector(".commentIcon-container", count: 5)
+        find("body").send_keys [:alt, "c"]
+        expect(page).to have_css(".cf-pdf-placing-comment")
+        assert_selector(".commentIcon-container", count: 6)
 
-          def placing_annotation_icon_position
-            element_position "[data-placing-annotation-icon]"
-          end
-
-          orig_position = placing_annotation_icon_position
-
-          KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX = 5
-
-          find("body").send_keys [:up]
-          after_up_position = placing_annotation_icon_position
-          expect(after_up_position["left"]).to eq(orig_position["left"])
-          expect(after_up_position["top"]).to eq(orig_position["top"] - KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
-
-          find("body").send_keys [:down]
-          after_down_position = placing_annotation_icon_position
-          expect(after_down_position).to eq(orig_position)
-
-          find("body").send_keys [:right]
-          after_right_position = placing_annotation_icon_position
-          expect(after_right_position["left"]).to eq(orig_position["left"] + KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
-          expect(after_right_position["top"]).to eq(orig_position["top"])
-
-          find("body").send_keys [:left]
-          after_left_position = placing_annotation_icon_position
-
-          expect(after_left_position).to eq(orig_position)
-
-          find("body").send_keys [:alt, :enter]
-          expect(page).to_not have_css(".cf-pdf-placing-comment")
+        def placing_annotation_icon_position
+          element_position "[data-placing-annotation-icon]"
         end
+
+        orig_position = placing_annotation_icon_position
+
+        KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX = 5
+
+        find("body").send_keys [:up]
+        after_up_position = placing_annotation_icon_position
+        expect(after_up_position["left"]).to eq(orig_position["left"])
+        expect(after_up_position["top"]).to eq(orig_position["top"] - KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
+
+        find("body").send_keys [:down]
+        after_down_position = placing_annotation_icon_position
+        expect(after_down_position).to eq(orig_position)
+
+        find("body").send_keys [:right]
+        after_right_position = placing_annotation_icon_position
+        expect(after_right_position["left"]).to eq(orig_position["left"] + KEYPRESS_ANNOTATION_MOVE_DISTANCE_PX)
+        expect(after_right_position["top"]).to eq(orig_position["top"])
+
+        find("body").send_keys [:left]
+        after_left_position = placing_annotation_icon_position
+
+        expect(after_left_position).to eq(orig_position)
+
+        find("body").send_keys [:alt, :enter]
+        expect(page).to_not have_css(".cf-pdf-placing-comment")
       end
       # :nocov:
 
@@ -733,15 +704,8 @@ RSpec.feature "Reader" do
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
 
-        # Click on the comment icon and ensure the scroll position of
-        # the comment wrapper changes
-        original_scroll = scroll_position(id: element_id)
-
         # Click on the second to last comment icon (last comment icon is off screen)
         all(".commentIcon-container", wait: 3, count: documents[0].annotations.size)[annotations.size - 3].click
-        after_click_scroll = scroll_position(id: element_id)
-
-        expect(after_click_scroll - original_scroll).to be > 0
 
         # Make sure the comment icon and comment are shown as selected
         expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"
@@ -792,15 +756,15 @@ RSpec.feature "Reader" do
 
       scenario "Scrolling pages changes page numbers" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
         click_on documents[1].type
 
         expect(page).to have_content("IN THE APPEAL", wait: 10)
-
         expect(page).to have_css(".page")
-        expect(find_field("page-progress-indicator-input").value).to eq "1"
-        scroll_to(class_name: "ReactVirtualized__Grid", value: 2000, index: 1)
-        expect(find_field("page-progress-indicator-input").value).to_not eq "1"
+        expect(page).to have_field("page-progress-indicator-input", with: "1")
+
+        all(".ReactVirtualized__Grid").last.scroll_to(0, 2000)
+
+        expect(page).to_not have_field("page-progress-indicator-input", with: "1")
       end
 
       context "When document 3 is a 147 page document" do
@@ -969,27 +933,24 @@ RSpec.feature "Reader" do
       click_on documents[0].type
       find("h3", text: "Document information").click
       find("#document_description-edit").click
-
+      find("#document_description-save")
       fill_in "document_description", with: "New Description"
-
       find("#document_description-save").click
 
       expect(find("#document_description").text).to eq("New Description")
     end
 
     scenario "Update Document Description with Enter" do
-      skip_because_sending_keys_to_body_does_not_work_on_travis do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/"
-        click_on documents[0].type
-        find("h3", text: "Document information").click
-        find("#document_description-edit").click
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/"
+      click_on documents[0].type
+      find("h3", text: "Document information").click
+      find("#document_description-edit").click
+      find("#document_description-save")
+      fill_in "document_description", with: "Another New Description"
 
-        fill_in "document_description", with: "Another New Description"
+      find("#document_description").send_keys [:enter]
 
-        find("#document_description").send_keys [:enter]
-
-        expect(find("#document_description").text).to eq("Another New Description")
-      end
+      expect(find("#document_description").text).to eq("Another New Description")
     end
 
     scenario "Open and close keyboard shortcuts modal" do
@@ -1272,34 +1233,30 @@ RSpec.feature "Reader" do
     end
 
     scenario "Navigate Search Results with Keyboard" do
-      skip_because_sending_keys_to_body_does_not_work_on_travis do
-        open_search_bar
+      open_search_bar
 
-        internal_text = find("#search-internal-text")
+      internal_text = find("#search-internal-text")
 
-        fill_in "search-ahead", with: "decision"
+      fill_in "search-ahead", with: "decision"
 
-        expect(internal_text).to have_xpath("//input[@value='1 of 2']")
+      expect(internal_text).to have_xpath("//input[@value='1 of 2']")
 
-        find("body").send_keys [:meta, "g"]
+      find("body").send_keys [:meta, "g"]
 
-        expect(internal_text).to have_xpath("//input[@value='2 of 2']")
-      end
+      expect(internal_text).to have_xpath("//input[@value='2 of 2']")
     end
 
     scenario "Show and Hide Document Searchbar with Keyboard" do
-      skip_because_sending_keys_to_body_does_not_work_on_travis do
-        visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-        search_bar = find(".cf-search-bar")
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+      search_bar = find(".cf-search-bar")
 
-        find("body").send_keys [:meta, "f"]
+      find("body").send_keys [:meta, "f"]
 
-        expect(search_bar).not_to match_css(".hidden")
+      expect(search_bar).not_to match_css(".hidden")
 
-        find("body").send_keys [:escape]
+      find("body").send_keys [:escape]
 
-        expect(search_bar).to match_css(".hidden")
-      end
+      expect(search_bar).to match_css(".hidden")
     end
 
     scenario "Navigating Search Results scrolls page" do

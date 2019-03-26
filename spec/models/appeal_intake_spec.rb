@@ -45,7 +45,7 @@ describe AppealIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
       )
@@ -145,6 +145,18 @@ describe AppealIntake do
           payee_code: nil,
           decision_review: intake.detail
         )
+      end
+
+      context "claimant is missing address" do
+        before do
+          allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
+        end
+
+        it "adds claimant address required error" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("claimant_address_required")
+          expect(detail.claimants).to be_empty
+        end
       end
 
       context "claimant is nil" do
