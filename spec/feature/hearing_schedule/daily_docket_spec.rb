@@ -121,20 +121,12 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     let!(:vso) { create(:vso) }
     let!(:track_veteran_task) { create(:track_veteran_task, appeal: hearing.appeal, assigned_to: vso) }
 
-    scenario "User can only see their assigned hearings" do
+    scenario "User has no assigned hearings" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-
       expect(page).to have_content("No Veterans are scheduled for this hearing day.")
       expect(page).to_not have_content("Edit Hearing Day")
       expect(page).to_not have_content("Lock Hearing Day")
       expect(page).to_not have_content("Hearing Details")
-
-      OrganizationsUser.add_user_to_organization(current_user, vso)
-
-      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      expect(page).to have_field("Transcript Requested", disabled: true, visible: false)
-      find(".dropdown-Disposition").find(".is-disabled")
-      expect(page).to have_field("Notes", disabled: true, visible: false)
     end
   end
 end
