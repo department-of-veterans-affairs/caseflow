@@ -153,7 +153,7 @@ class SubmitDecisionView extends React.PureComponent {
     if (judgeIsInJudgesArray) {
       return judgeIsInJudgesArray.full_name;
     }
-    if (this.props.task) {
+    if (this.props.task && this.props.task.assignedBy) {
       return `${this.props.task.assignedBy.first_name} ${this.props.task.assignedBy.last_name}`;
     }
 
