@@ -403,4 +403,73 @@ describe DispositionTask do
       end
     end
   end
+
+  describe ".ready_for_action" do
+    def create_disposition_task_ancestry(status: nil, hearing: nil)
+      appeal = FactoryBot.create(:appeal)
+      root_task = FactoryBot.create(:root_task, appeal: appeal)
+      distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
+      parent_hearing_task = FactoryBot.create(:hearing_task, appeal: appeal, parent: distribution_task)
+
+      HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent_hearing_task) if hearing
+      DispositionTask.create!(appeal: appeal, parent: parent_hearing_task, assigned_to: Bva.singleton, status: status)
+    end
+
+    subject { DispositionTask.ready_for_action }
+
+    context "when there are no DispositionTasks" do
+      it "returns an empty collection" do
+        expect(subject.length).to eq(0)
+      end
+    end
+
+    context "when there are a mix of DispositionTasks with different statuses and hearing dates" do
+      let!(:cancelled_tasks_without_hearings) do
+        Array.new(3) { create_disposition_task_ancestry(status: Constants.TASK_STATUSES.cancelled, hearing: nil) }
+      end
+      let!(:completed_tasks_with_hearings) do
+        Array.new(5) do
+          hearing = FactoryBot.create(:hearing)
+          create_disposition_task_ancestry(status: Constants.TASK_STATUSES.completed, hearing: hearing)
+        end
+      end
+      let!(:on_hold_tasks_with_hearings) do
+        Array.new(7) do
+          hearing = FactoryBot.create(:hearing)
+          create_disposition_task_ancestry(status: Constants.TASK_STATUSES.on_hold, hearing: hearing)
+        end
+      end
+      let!(:in_progress_tasks_without_hearings) do
+        Array.new(11) do
+          create_disposition_task_ancestry(status: Constants.TASK_STATUSES.in_progress, hearing: nil)
+        end
+      end
+      let!(:in_progress_tasks_with_recent_hearings) do
+        Array.new(2) do
+          hearing_day = FactoryBot.create(:hearing_day, scheduled_for: 0.days.ago)
+          hearing = FactoryBot.create(:hearing, hearing_day: hearing_day)
+          create_disposition_task_ancestry(status: Constants.TASK_STATUSES.in_progress, hearing: hearing)
+        end
+      end
+      let!(:in_progress_tasks_with_old_hearings) do
+        Array.new(3) do
+          hearing_day = FactoryBot.create(:hearing_day, scheduled_for: 2.days.ago)
+          hearing = FactoryBot.create(:hearing, hearing_day: hearing_day)
+          create_disposition_task_ancestry(status: Constants.TASK_STATUSES.in_progress, hearing: hearing)
+        end
+      end
+      let!(:assigned_tasks_with_old_hearings) do
+        Array.new(5) do
+          hearing_day = FactoryBot.create(:hearing_day, scheduled_for: 2.days.ago)
+          hearing = FactoryBot.create(:hearing, hearing_day: hearing_day)
+          create_disposition_task_ancestry(status: Constants.TASK_STATUSES.in_progress, hearing: hearing)
+        end
+      end
+
+      it "returns only the active, not on-hold tasks with hearings scheduled to happen more than a day ago" do
+        selected_tasks = [in_progress_tasks_with_old_hearings, assigned_tasks_with_old_hearings].flatten
+        expect(subject.pluck(:id).sort).to eq(selected_tasks.pluck(:id).sort)
+      end
+    end
+  end
 end
