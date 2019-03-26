@@ -97,8 +97,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find_field("the number of people").value).to have_content("2")
 
       # Check user quotas and totals
-      expect(page).to have_content("1. Jane Smith 0 0 1 1 3")
-      expect(page).to have_content("2. Not logged in 0 0 0 0 2")
+      expect(page).to have_content("1.\nJane Smith\n0 0 1 1 3")
+      expect(page).to have_content("2.\nNot logged in\n0 0 0 0 2")
       expect(page).to have_content("Employee Total 0 0 1 1 5")
 
       # Two more users starting tasks should force the number of people to bump up to 3
@@ -117,9 +117,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       expect(find_field("the number of people").value).to have_content("3")
 
       # Validate remanders are handled correctly
-      expect(page).to have_content("1. Jane Smith 0 0 1 1 3")
-      expect(page).to have_content("2. June Smith 1 0 0 1 2")
-      expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
+      expect(page).to have_content("1.\nJane Smith\n0 0 1 1 3")
+      expect(page).to have_content("2.\nJune Smith\n1 0 0 1 2")
+      expect(page).to have_content("3.\nJeffers Smith\n0 1 0 1 2")
       expect(page).to have_content("Employee Total 1 1 1 3 7")
     end
 
@@ -143,9 +143,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       visit "/dispatch/work-assignments"
-      expect(page).to have_content("1. Janet Smith 0 0 1 1 3")
-      expect(page).to have_content("2. June Smith 1 0 0 1 2")
-      expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
+      expect(page).to have_content("1.\nJanet Smith\n0 0 1 1 3")
+      expect(page).to have_content("2.\nJune Smith\n1 0 0 1 2")
+      expect(page).to have_content("3.\nJeffers Smith\n0 1 0 1 2")
       expect(page).to have_content("Employee Total 1 1 1 3 7")
 
       # Begin editing June's quota
@@ -157,16 +157,16 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         click_on "Save"
       end
 
-      expect(page).to have_content("1. Janet Smith 0 0 1 1 1")
-      expect(page).to have_content("2. June Smith 1 0 0 1 5")
-      expect(page).to have_content("3. Jeffers Smith 0 1 0 1 1")
-      expect(page).to have_content("Employee Total  1 1 1 3 7")
+      expect(page).to have_content("1.\nJanet Smith\n0 0 1 1 1")
+      expect(page).to have_content("2.\nJune Smith\n1 0 0 1 5")
+      expect(page).to have_content("3.\nJeffers Smith\n0 1 0 1 1")
+      expect(page).to have_content("Employee Total 1 1 1 3 7")
 
       find("#button-unlock-quota-#{june_quota.id}").click
 
-      expect(page).to have_content("1. Janet Smith 0 0 1 1 3")
-      expect(page).to have_content("2. June Smith 1 0 0 1 2")
-      expect(page).to have_content("3. Jeffers Smith 0 1 0 1 2")
+      expect(page).to have_content("1.\nJanet Smith\n0 0 1 1 3")
+      expect(page).to have_content("2.\nJune Smith\n1 0 0 1 2")
+      expect(page).to have_content("3.\nJeffers Smith\n0 1 0 1 2")
     end
 
     scenario "Editing won't work if there's only one user" do
@@ -187,7 +187,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       visit "/dispatch/work-assignments"
-      expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
+      expect(page).to have_content("1.\nJanet Smith\n0 0 1 1 5")
 
       # Begin editing Janet's quota
       janet_quota = UserQuota.where(user: User.where(full_name: "Janet Smith").first).first
@@ -198,7 +198,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         click_on "Save"
       end
 
-      expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
+      expect(page).to have_content("1.\nJanet Smith\n0 0 1 1 5")
 
       within("#table-row-0") do
         click_on "Edit"
@@ -206,7 +206,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         click_on "Save"
       end
 
-      expect(page).to have_content("1. Janet Smith 0 0 1 1 5")
+      expect(page).to have_content("1.\nJanet Smith\n0 0 1 1 5")
     end
 
     scenario "View unprepared tasks page" do
@@ -572,7 +572,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         click_on "Create End Product"
 
         # Form Page
-        expect(page).to have_content("Route Claim Add VBMS Note")
+        expect(page).to have_content("Route Claim\nAdd VBMS Note")
         expect(find_field("VBMS Note").value).to have_content("Rice Compliance")
 
         # Validate I cannot return to Review Decision from the VACOLS Update page
@@ -808,7 +808,7 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
         click_label("dicDeathOrAccruedBenefitsUnitedStates")
         click_on "Route claim"
 
-        expect(page).to have_content("Route Claim Confirm VACOLS Update")
+        expect(page).to have_content("Route Claim\nConfirm VACOLS Update")
 
         # Validate special issue text within vacols note
         expect(page).to have_content("DIC - death, or accrued benefits")
