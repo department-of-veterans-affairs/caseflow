@@ -23,8 +23,7 @@ class IntakesController < ApplicationController
       }, status: :unprocessable_entity
     end
   rescue StandardError => error
-    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-    Rails.logger.error("Error UUID #{error_uuid} : #{error}")
+    log_error(error)
     # we name the variable error_code to re-use the client error handling.
     render json: { error_code: error_uuid }, status: :internal_server_error
   end
@@ -70,6 +69,11 @@ class IntakesController < ApplicationController
   end
 
   private
+
+  def log_error(error)
+    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+    Rails.logger.error("Error UUID #{error_uuid} : #{error}")
+  end
 
   helper_method :index_props
   def index_props
