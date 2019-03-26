@@ -1,6 +1,6 @@
 class AddIntakeDatabaseComments < ActiveRecord::Migration[5.1]
   def change
-    change_table_comment(:appeals, "Decision reviews intaken for appeals to the board (also known as a notice of disagreement).")
+    change_table_comment(:appeals, "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement).")
 
     change_table_comment(:decision_issues, "Issues that represent a decision made on a decision review's request issue.")
 

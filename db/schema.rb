@@ -79,7 +79,7 @@ ActiveRecord::Schema.define(version: 20190326202730) do
     t.index ["appeal_type", "appeal_id", "user_id"], name: "index_appeal_views_on_appeal_type_and_appeal_id_and_user_id", unique: true
   end
 
-  create_table "appeals", force: :cascade, comment: "Decision reviews intaken for appeals to the board (also known as a notice of disagreement)." do |t|
+  create_table "appeals", force: :cascade, comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement)." do |t|
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
     t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
     t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow."
