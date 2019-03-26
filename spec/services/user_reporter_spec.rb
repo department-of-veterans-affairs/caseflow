@@ -92,7 +92,7 @@ describe UserReporter do
 
         expect(associated_hearing_day.reload.judge_id).to eq(duplicate_user.id)
         expect(associated_task.reload.assigned_to_id).to eq(duplicate_user.id)
-        expect(associated_appeal_view.reload.user_id).to eq(duplicate_user.id)
+        expect(associated_appeal_view.reload.user_id).to eq(user.id)
 
         expect(User.find(duplicate_user.id).css_id).to eq(duplicate_css_id)
       end
