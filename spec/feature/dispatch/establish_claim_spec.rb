@@ -479,7 +479,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
 
       # Client error
       allow(VBMSService).to receive(:establish_claim!).and_raise(client_error)
-      expect(Raven).to receive(:capture_exception).with(client_error)
+      allow_any_instance_of(ApplicationController).to receive(:error_uuid).and_return(1234)
+      expect(Raven).to receive(:capture_exception).with(client_error, hash_including(extra: { error_uuid: 1234 }))
       click_on "Create End Product"
       expect(page).to_not have_content("Success!")
       expect(page).to have_content("System Error")
