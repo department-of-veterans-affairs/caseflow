@@ -39,6 +39,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       find(".dropdown-Disposition").click
       find("#react-select-2--option-1").click
+      click_button("Confirm")
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "8:30").click
@@ -62,6 +63,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       find(".dropdown-Disposition").click
       find("#react-select-2--option-1").click
+      click_button("Confirm")
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "9:00").click
       find("label", text: "Transcript Requested").click
@@ -110,6 +112,21 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
       expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("This is a note about the hearing!")
+    end
+  end
+
+  context "Daily docket for VSO user" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["VSO"]) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
+    let!(:vso) { create(:vso) }
+    let!(:track_veteran_task) { create(:track_veteran_task, appeal: hearing.appeal, assigned_to: vso) }
+
+    scenario "User has no assigned hearings" do
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to have_content("No Veterans are scheduled for this hearing day.")
+      expect(page).to_not have_content("Edit Hearing Day")
+      expect(page).to_not have_content("Lock Hearing Day")
+      expect(page).to_not have_content("Hearing Details")
     end
   end
 end

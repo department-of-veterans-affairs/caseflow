@@ -959,7 +959,7 @@ describe EndProductEstablishment do
       context "when source is a higher level review" do
         let!(:claimant) do
           Claimant.create!(
-            review_request: source,
+            decision_review: source,
             participant_id: veteran.participant_id,
             payee_code: "10"
           )

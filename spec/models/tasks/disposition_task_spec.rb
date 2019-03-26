@@ -141,7 +141,18 @@ describe DispositionTask do
     let(:appeal) { FactoryBot.create(:appeal) }
     let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, disposition: disposition) }
+    let(:evidence_window_waived) { nil }
+    let(:hearing_scheduled_for) { appeal.receipt_date + 15.days }
+    let(:hearing_day) { create(:hearing_day, scheduled_for: hearing_scheduled_for) }
+    let(:hearing) do
+      FactoryBot.create(
+        :hearing,
+        appeal: appeal,
+        disposition: disposition,
+        evidence_window_waived: evidence_window_waived,
+        hearing_day: hearing_day
+      )
+    end
     let!(:hearing_task_association) do
       FactoryBot.create(
         :hearing_task_association,
@@ -272,41 +283,9 @@ describe DispositionTask do
         end
       end
     end
-  end
 
-  describe ".mark_no_show!" do
-    let(:disposition) { nil }
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, disposition: disposition) }
-    let!(:hearing_task_association) do
-      FactoryBot.create(
-        :hearing_task_association,
-        hearing: hearing,
-        hearing_task: hearing_task
-      )
-    end
-    let!(:schedule_hearing_task) do
-      FactoryBot.create(
-        :schedule_hearing_task,
-        parent: hearing_task,
-        appeal: appeal,
-        assigned_to: HearingsManagement.singleton,
-        status: Constants.TASK_STATUSES.completed
-      )
-    end
-    let!(:disposition_task) do
-      FactoryBot.create(
-        :disposition_task,
-        parent: hearing_task,
-        appeal: appeal,
-        status: Constants.TASK_STATUSES.in_progress
-      )
-    end
-
-    describe ".mark_no_show!" do
-      subject { disposition_task.mark_no_show! }
+    describe ".no_show!" do
+      subject { disposition_task.no_show! }
 
       context "the hearing's diposition is 'no_show'" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
@@ -334,6 +313,92 @@ describe DispositionTask do
           expect { subject }.to raise_error DispositionTask::HearingDispositionNotNoShow
 
           expect(disposition_task.status).to eq Constants.TASK_STATUSES.in_progress
+        end
+      end
+    end
+
+    describe ".hold!" do
+      subject { disposition_task.hold! }
+
+      context "the appeal is an AMA appeal" do
+        context "the task's hearing's disposition is held" do
+          let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+
+          context "the evidence window has not been waived" do
+            let(:evidence_window_waived) { false }
+
+            it "creates a TranscriptionTask and an EvidenceSubmissionWindowTask as children of the DispositionTask" do
+              expect(disposition_task.children.count).to eq 0
+
+              expect { subject }.to_not raise_error
+
+              expect(disposition_task.children.count).to eq 2
+              expect(disposition_task.children.pluck(:type)).to match_array [
+                TranscriptionTask.name, EvidenceSubmissionWindowTask.name
+              ]
+              transcription_task = disposition_task.children.find_by(type: TranscriptionTask.name)
+              expect(transcription_task.parent).to eq disposition_task
+              expect(transcription_task.appeal).to eq appeal
+              expect(transcription_task.assigned_to).to eq TranscriptionTeam.singleton
+              window_task = disposition_task.children.find_by(type: EvidenceSubmissionWindowTask.name)
+              expect(window_task.parent).to eq disposition_task
+              expect(window_task.appeal).to eq appeal
+              expect(window_task.assigned_to).to eq MailTeam.singleton
+              expect(window_task.timer_ends_at).to eq hearing_scheduled_for + 90.days
+              expect(disposition_task.on_hold?).to be_truthy
+            end
+          end
+
+          context "the hearing has marked the evidence window waived" do
+            let(:evidence_window_waived) { true }
+
+            it "creates a TranscriptionTask as a child of the DispositionTask" do
+              expect(disposition_task.children.count).to eq 0
+
+              expect { subject }.to_not raise_error
+
+              expect(disposition_task.children.count).to eq 1
+              expect(disposition_task.children.first.type).to eq TranscriptionTask.name
+              transcription_task = disposition_task.children.first
+              expect(transcription_task.parent).to eq disposition_task
+              expect(transcription_task.appeal).to eq appeal
+              expect(transcription_task.assigned_to).to eq TranscriptionTeam.singleton
+            end
+          end
+        end
+
+        context "the task's hearing's disposition is not held" do
+          let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+
+          it "raises an error" do
+            expect(disposition_task.children.count).to eq 0
+
+            expect { subject }.to raise_error(DispositionTask::HearingDispositionNotHeld)
+
+            expect(disposition_task.children.count).to eq 0
+          end
+        end
+      end
+
+      context "the appeal is a legacy appeal" do
+        let(:vacols_case) { FactoryBot.create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:schedule_hearing]) }
+        let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+        let(:hearing) { create(:legacy_hearing, appeal: appeal, disposition: disposition) }
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
+
+        context "the task's hearing's disposition is held" do
+          let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
+
+          it "completes the DispositionTask, closes the HearingTask, and updates the appeal location" do
+            expect(disposition_task.in_progress?).to be_truthy
+            expect(hearing_task.on_hold?).to be_truthy
+
+            subject
+
+            expect(disposition_task.completed?).to be_truthy
+            expect(hearing_task.completed?).to be_truthy
+            expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:transcription])
+          end
         end
       end
     end

@@ -389,6 +389,7 @@ feature "Supplemental Claim Intake" do
     click_intake_continue
 
     expect(page).to have_content("Something went wrong")
+    expect(page).to have_content("Error code")
     expect(page).to have_current_path("/intake/review_request")
   end
 
@@ -415,7 +416,7 @@ feature "Supplemental Claim Intake" do
     )
 
     Claimant.create!(
-      review_request: supplemental_claim,
+      decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )
 
@@ -620,7 +621,7 @@ feature "Supplemental Claim Intake" do
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
-        "7. Issue before AMA Activation from RAMP Decision date:"
+        "7. Issue before AMA Activation from RAMP\nDecision date:"
       )
       expect(page).to_not have_content(
         "7. Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
@@ -925,7 +926,7 @@ feature "Supplemental Claim Intake" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+            "#{intake_constants.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
           )
 
           click_intake_finish

@@ -58,7 +58,7 @@ export default class TestUsers extends React.PureComponent {
     this.setState({ isLoggingIn: true });
     ApiUtil.post(`/test/log_in_as_user?id=${this.state.userId}&station_id=${this.state.stationId}`).
       then(() => {
-        window.location.reload();
+        window.location = '/help';
       }).
       catch((err) => {
         this.setState(

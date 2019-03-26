@@ -43,6 +43,10 @@ class User < ApplicationRecord
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
+  def users_regional_office
+    selected_regional_office || regional_office
+  end
+
   def attorney_in_vacols?
     vacols_roles.include?("attorney")
   end
