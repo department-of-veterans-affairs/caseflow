@@ -271,7 +271,7 @@ feature "Appeal Intake" do
     )
 
     Claimant.create!(
-      review_request: appeal,
+      decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
 
