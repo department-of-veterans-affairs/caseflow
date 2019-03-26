@@ -83,7 +83,7 @@ feature "NonComp Reviews Queue" do
       # ordered by assigned_at descending
 
       expect(page).to have_content(
-        /#{veteran_b.name} .+? #{veteran_c.name} .+? #{veteran_a.name}/
+        /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
       )
 
       click_on "Completed tasks"
@@ -92,7 +92,7 @@ feature "NonComp Reviews Queue" do
 
       # ordered by closed_at descending
       expect(page).to have_content(
-        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review #{veteran_a.name} 5\d+ 0 [\d\/]+/
+        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review\s#{veteran_a.name} 5\d+ 0 [\d\/]+/
       )
     end
 
