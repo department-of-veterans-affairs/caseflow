@@ -434,24 +434,27 @@ RSpec.feature "Attorney checkout flow" do
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.first.note)
 
-        expect(page.all("label", text: "Current findings").size).to eq 1
-        page.all("label", text: "Current findings")[0].click
-        expect(page.all("label", text: "After certification").size).to eq 1
-        page.all("label", text: "After certification")[0].click
+        all("label", text: "Current findings", count: 1)[0].click
+        all("label", text: "After certification", count: 1)[0].click
 
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")
         expect(page).to have_content(appeal.issues.second.note)
 
-        expect(page.all("label", text: "Current findings").size).to eq 2
-        page.all("label", text: "Current findings")[1].click
-        page.all("label", text: "Nexus opinion")[1].click
+        # I know we're not supposed to sleep in tests, but this is the only
+        # thing that allows the tests to pass consistently. I think the issue is
+        # that after pressing "Continue" above, the page is moving and we have
+        # to wait until it stops moving before clicking on the checkboxes.
+        # Otherwise, it's not always able to click on the right checkboxes. If
+        # someone knows a better way to wait for the page to stop moving, please
+        # change this.
+        sleep 1
 
-        expect(page.all("label", text: "Before certification").size).to eq 3
-        expect(page.all("label", text: "After certification").size).to eq 3
-        page.all("label", text: "Before certification")[1].click
-        page.all("label", text: "After certification")[2].click
+        all("label", text: "Current findings", count: 2)[1].click
+        all("label", text: "Nexus opinion", count: 2)[1].click
+        all("label", text: "Before certification", count: 3)[1].click
+        all("label", text: "After certification", count: 3)[2].click
 
         click_on "Continue"
         expect(page).to have_content("Submit Draft Decision for Review")
