@@ -10,8 +10,13 @@ import IneligibleIssuesList from '../components/IneligibleIssuesList';
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
+  const decisionIssuesAfter = requestIssues.filter((ri) => !ri.issuesAfter);
 
-  const leadMessageArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
+  const messageArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
+
+  const decisionArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Removal for ${formName} has been removed.`];
+
+  const leadMessageArr = decisionIssuesAfter.length === 0 ? decisionArr : messageArr;
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
@@ -56,10 +61,14 @@ const getEndProductUpdate = ({
   const epAfter = epIssuesAfter.length > 0;
   const epChanged = !_.isEqual(epIssuesBefore, epIssuesAfter);
 
+  const removedDecisions = issuesAfter.length === 0 ? null : `A ${claimReviewName} ${epType} EP is being canceled.`;
+
+  const removedDecisionsParagraph = issuesAfter.length === 0 ? null : 'All contentions on this EP were removed';
+
   if (epBefore && !epAfter) {
     return <Fragment>
-      <strong>A {claimReviewName} {epType} EP is being canceled.</strong>
-      <p>All contentions on this EP were removed</p>
+      <strong>{removedDecisions}</strong>
+      <p>{removedDecisionsParagraph}</p>
     </Fragment>;
   } else if (epBefore && epAfter && epChanged) {
     return <Fragment>
@@ -85,7 +94,9 @@ const getEndProductUpdate = ({
 const getChecklistItems = (formType, issuesBefore, issuesAfter, isInformalConferenceRequested) => {
   const eligibleRequestIssues = issuesAfter.filter((i) => !i.ineligibleReason);
 
-  return _.compact([
+  const issuesRemoved = issuesAfter.length === 0;
+
+  return _.compact([issuesRemoved ? 'Removed Form' : null,
     getEndProductUpdate({
       formType,
       isRating: true,
@@ -121,7 +132,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
 
     return <div>
       <StatusMessage
-        title="Claim Issues Saved"
+        title= {issuesAfter.length === 0 ? 'Review Removed' : 'Claim Issues Saved'}
         type="success"
         leadMessageList={
           leadMessageList({
