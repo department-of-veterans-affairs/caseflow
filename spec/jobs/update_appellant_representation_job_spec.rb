@@ -9,6 +9,7 @@ describe UpdateAppellantRepresentationJob do
     let(:correct_task_count) { 6 }
     let(:error_count) { 0 }
     let(:vso_for_appeal) { {} }
+    let(:vso_for_legacy_appeal) { {} }
 
     before do
       correct_task_count.times do |_|
@@ -29,6 +30,7 @@ describe UpdateAppellantRepresentationJob do
       end
 
       allow_any_instance_of(Appeal).to receive(:vsos) { |a| vso_for_appeal[a.id] }
+      allow_any_instance_of(LegacyAppeal).to receive(:vsos) { |a| vso_for_legacy_appeal[a.id] }
     end
 
     it "runs the job as expected" do
@@ -45,7 +47,7 @@ describe UpdateAppellantRepresentationJob do
     context "when there are legacy appeals with disposition task" do
       let(:legacy_task_count) { 10 }
 
-      let(:legacy_appeals) do
+      let!(:legacy_appeals) do
         (1..legacy_task_count).map do |_|
           legacy_appeal = create(:legacy_appeal, vacols_case: create(:case))
           create(
@@ -54,17 +56,19 @@ describe UpdateAppellantRepresentationJob do
             assigned_to: HearingsManagement.singleton,
             parent: create(:hearing_task, appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
           )
-          vso_for_appeal[legacy_appeal.id] = [create(:vso)]
+          vso_for_legacy_appeal[legacy_appeal.id] = [create(:vso)]
 
           legacy_appeal
         end
       end
 
-      it "updates every appeal", focus: true do
+      it "updates every legacy appeal", focus: true do
         UpdateAppellantRepresentationJob.perform_now
 
-        legacy_appeals.each do |legacy_appeal|
-          expect(legacy_appeal.reload.record_synced_by_job.first.processed?).to eq(true)
+        legacy_appeals.each do |appeal|
+          expect(appeal.reload.record_synced_by_job.first.processed?).to eq(true)
+          expect(appeal.tasks.where(type: TrackVeteranTask.name).first.assigned_to)
+            .to eq(vso_for_legacy_appeal[appeal.id].first)
         end
       end
     end

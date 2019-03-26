@@ -51,7 +51,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
       active_appeals,
       number_to_update[:number_of_appeals_to_update]
     )
-    binding.pry
 
     [legacy_appeals, appeals].flatten
   end
