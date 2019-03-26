@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190322235314) do
+ActiveRecord::Schema.define(version: 20190323003906) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -725,12 +725,12 @@ ActiveRecord::Schema.define(version: 20190322235314) do
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
-  create_table "ramp_issues", id: :serial, force: :cascade do |t|
-    t.string "contention_reference_id"
-    t.string "description", null: false
-    t.integer "review_id", null: false
-    t.string "review_type", null: false
-    t.integer "source_issue_id"
+  create_table "ramp_issues", id: :serial, force: :cascade, comment: "Issues added to an end product as contentions for RAMP reviews. For RAMP elections, these are created in VBMS after the end product is established and updated in Caseflow when the end product is synced. For RAMP refilings, these are selected from the RAMP election's issues and added to the RAMP refiling end product that is established." do |t|
+    t.string "contention_reference_id", comment: "The ID of the contention created in VBMS that corresponds to the RAMP issue."
+    t.string "description", null: false, comment: "The description of the contention in VBMS."
+    t.integer "review_id", null: false, comment: "The ID of the RAMP election or RAMP refiling for this issue."
+    t.string "review_type", null: false, comment: "The type of RAMP review the issue is on, indicating whether this is a RAMP election issue or a RAMP refiling issue."
+    t.integer "source_issue_id", comment: "If a RAMP election issue added to a RAMP refiling, it is the source issue for the corresponding RAMP refiling issue."
     t.index ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id"
   end
 
