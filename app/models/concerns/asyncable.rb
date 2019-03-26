@@ -93,9 +93,14 @@ module Asyncable
       where(arel_table[attempted_at_column].lteq(Time.zone.now)).where(last_submitted_at_column => nil)
     end
 
+    def with_error
+      where.not(error_column => nil)
+    end
+
     def potentially_stuck
       processable
         .or(attempted_without_being_submitted)
+        .or(with_error)
         .order_by_oldest_submitted
     end
   end

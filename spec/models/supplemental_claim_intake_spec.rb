@@ -36,7 +36,7 @@ describe SupplementalClaimIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
       )
@@ -229,7 +229,7 @@ describe SupplementalClaimIntake do
     let!(:claimant) do
       create(
         :claimant,
-        review_request: detail,
+        decision_review: detail,
         payee_code: "00",
         participant_id: "1234"
       )
