@@ -104,6 +104,10 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     end
   end
 
+  attribute :hearing_id do
+    object&.hearing&.id if object.respond_to?(:hearing)
+  end
+
   attribute :decision_prepared_by do
     if @instance_options[:exclude_extra_fields]
       {
