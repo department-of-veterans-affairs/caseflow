@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IntakesController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application, :check_intake_out_of_service
 
@@ -71,7 +73,6 @@ class IntakesController < ApplicationController
       buildDate: build_date,
       featureToggles: {
         intakeAma: FeatureToggle.enabled?(:intakeAma, user: current_user),
-        legacyOptInEnabled: FeatureToggle.enabled?(:intake_legacy_opt_in, user: current_user),
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
       }
     }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe EvidenceSubmissionWindowTask do
   let(:participant_id_with_pva) { "000000" }
   let(:participant_id_with_no_vso) { "11111" }
@@ -58,17 +60,66 @@ describe EvidenceSubmissionWindowTask do
   end
 
   context "timer_delay" do
-    let(:task) do
-      EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: Bva.singleton)
+    context "parent is not a DispositionTask" do
+      let(:task) do
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: Bva.singleton)
+      end
+
+      it "is marked as complete and vso tasks are created in 90 days" do
+        TaskTimerJob.perform_now
+        expect(task.reload.status).to eq("assigned")
+
+        Timecop.travel(receipt_date + 90.days) do
+          TaskTimerJob.perform_now
+          expect(task.reload.status).to eq("completed")
+        end
+      end
     end
 
-    it "is marked as complete and vso tasks are created in 90 days" do
-      TaskTimerJob.perform_now
-      expect(task.reload.status).to eq("assigned")
+    context "parent is a DispositionTask and there is a held hearing" do
+      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+      let(:hearing_day) { create(:hearing_day, scheduled_for: appeal.receipt_date + 15.days) }
+      let(:hearing) do
+        FactoryBot.create(
+          :hearing,
+          appeal: appeal,
+          disposition: Constants.HEARING_DISPOSITION_TYPES.held,
+          hearing_day: hearing_day
+        )
+      end
+      let!(:hearing_task_association) do
+        FactoryBot.create(
+          :hearing_task_association,
+          hearing: hearing,
+          hearing_task: hearing_task
+        )
+      end
+      let!(:parent) do
+        FactoryBot.create(
+          :disposition_task,
+          parent: hearing_task,
+          appeal: appeal,
+          status: Constants.TASK_STATUSES.in_progress
+        )
+      end
+      let!(:task) do
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: Bva.singleton, parent: parent)
+      end
 
-      Timecop.travel(receipt_date + 90.days) do
+      it "sets the timer to end 90 days after the hearing day" do
         TaskTimerJob.perform_now
-        expect(task.reload.status).to eq("completed")
+        expect(task.reload.status).to eq("assigned")
+
+        Timecop.travel(receipt_date + 90.days) do
+          TaskTimerJob.perform_now
+          expect(task.reload.status).to eq("assigned")
+        end
+
+        Timecop.travel(hearing_day.scheduled_for + 90.days) do
+          TaskTimerJob.perform_now
+          expect(task.reload.status).to eq("completed")
+        end
       end
     end
   end

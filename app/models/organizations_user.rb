@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 class OrganizationsUser < ApplicationRecord
   belongs_to :organization
   belongs_to :user
+  scope :non_admin, -> { where(admin: false) }
 
   def self.add_user_to_organization(user, organization)
     existing_record(user, organization) || create(organization_id: organization.id, user_id: user.id)

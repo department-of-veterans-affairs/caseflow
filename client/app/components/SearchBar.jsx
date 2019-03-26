@@ -92,6 +92,7 @@ export default class SearchBar extends React.Component {
       size,
       title,
       onSubmit,
+      searchDisabled,
       submitUsingEnterKey,
       placeholder,
       internalText,
@@ -134,7 +135,7 @@ export default class SearchBar extends React.Component {
         onBlur={this.onBlur}
         type="search"
         name="search"
-        onKeyPress={submitUsingEnterKey ? this.handleKeyPress : this.props.onKeyPress}
+        onKeyPress={submitUsingEnterKey && !searchDisabled ? this.handleKeyPress : this.props.onKeyPress}
         placeholder={placeholder}
         value={value} />
       { hasInternalText &&
@@ -153,6 +154,7 @@ export default class SearchBar extends React.Component {
           {closeIcon()}
         </Button>}
       { !isSearchAhead && <Button name={`search-${id}`}
+        disabled={searchDisabled}
         onClick={onSubmit ? this.onSubmit : null} on type="submit" loading={loading}>
         <span className={buttonClassNames}>Search</span>
       </Button> }
@@ -173,6 +175,7 @@ SearchBar.propTypes = {
   value: PropTypes.string,
   analyticsCategory: PropTypes.string,
   onSubmit: PropTypes.func,
+  searchDisabled: PropTypes.bool,
   submitUsingEnterKey: PropTypes.bool,
   internalText: PropTypes.string,
   spinnerColor: PropTypes.string,

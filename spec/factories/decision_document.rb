@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :decision_document do
     appeal { create(:appeal) }
@@ -6,7 +8,9 @@ FactoryBot.define do
     redacted_document_location { "C://Windows/User/BOBLAW/Documents/Decision.docx" }
 
     trait :requires_processing do
-      last_submitted_at { Time.zone.now - 1.minute }
+      submitted_at { (DecisionDocument.processing_retry_interval_hours + 1).hours.ago }
+      last_submitted_at { (DecisionDocument.processing_retry_interval_hours + 1).hours.ago }
+      processed_at { nil }
     end
 
     trait :processed do

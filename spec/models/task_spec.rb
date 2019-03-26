@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Task do
   describe ".when_child_task_completed" do
     context "when on_hold task is assigned to a person" do
@@ -246,6 +248,21 @@ describe Task do
     end
   end
 
+  describe "#cancel_task_and_child_subtasks" do
+    let(:appeal) { create(:appeal) }
+    let!(:top_level_task) { create(:task, appeal: appeal) }
+    let!(:second_level_tasks) { create_list(:task, 2, appeal: appeal, parent: top_level_task) }
+    let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
+
+    it "cancels all tasks and child subtasks" do
+      top_level_task.cancel_task_and_child_subtasks
+
+      [top_level_task, *second_level_tasks, *third_level_task].each do |task|
+        expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+    end
+  end
+
   describe ".root_task" do
     context "when sub-sub-sub...task has a root task" do
       let(:root_task) { FactoryBot.create(:root_task) }
@@ -279,6 +296,32 @@ describe Task do
       let(:task) { FactoryBot.create(:root_task) }
       it "should return itself" do
         expect(task.root_task.id).to eq(task.id)
+      end
+    end
+  end
+
+  describe ".descendants" do
+    let(:parent_task) { FactoryBot.create(:generic_task) }
+
+    subject { parent_task.descendants }
+
+    context "when a task has some descendants" do
+      let(:children_count) { 6 }
+      let(:grandkids_per_child) { 4 }
+      let(:children) { FactoryBot.create_list(:generic_task, children_count, parent: parent_task) }
+
+      before { children.each { |t| FactoryBot.create_list(:generic_task, grandkids_per_child, parent: t) } }
+
+      it "returns a list of all descendants and itself" do
+        total_grandkid_count = children_count * grandkids_per_child
+        total_descendant_count = 1 + children_count + total_grandkid_count
+        expect(subject.length).to eq(total_descendant_count)
+      end
+    end
+
+    context "when a task has no descendants" do
+      it "returns only itself" do
+        expect(subject.length).to eq(1)
       end
     end
   end
@@ -503,9 +546,7 @@ describe Task do
       end
 
       it "should not throw an error" do
-        expect { AttorneyTask.verify_user_can_create!(user, task) }.to_not raise_error(
-          Caseflow::Error::ActionForbiddenError
-        )
+        expect { AttorneyTask.verify_user_can_create!(user, task) }.to_not raise_error
       end
 
       context "when task is completed" do

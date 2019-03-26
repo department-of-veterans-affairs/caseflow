@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Intake < ApplicationRecord
   class FormTypeNotSupported < StandardError; end
 
@@ -17,6 +19,7 @@ class Intake < ApplicationRecord
   ERROR_CODES = {
     invalid_file_number: "invalid_file_number",
     veteran_not_found: "veteran_not_found",
+    veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_valid: "veteran_not_valid",
     duplicate_intake_in_progress: "duplicate_intake_in_progress"
@@ -191,11 +194,7 @@ class Intake < ApplicationRecord
       self.error_code = :veteran_not_found
 
     elsif !veteran.accessible?
-      self.error_code = :veteran_not_accessible
-
-    elsif !veteran.valid?(:bgs)
-      self.error_code = :veteran_not_valid
-      @error_data = veteran_invalid_fields
+      set_veteran_accessible_error
 
     elsif duplicate_intake_in_progress
       self.error_code = :duplicate_intake_in_progress
@@ -242,7 +241,29 @@ class Intake < ApplicationRecord
     raise e
   end
 
+  def veteran_invalid_fields
+    missing_fields = veteran.errors.details
+      .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
+      .keys
+
+    address_too_long = veteran.errors.details.any? do |field_name, errors|
+      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
+        errors.any? { |e| e[:error] == :too_long }
+    end
+
+    {
+      veteran_missing_fields: missing_fields,
+      veteran_address_too_long: address_too_long
+    }
+  end
+
   private
+
+  def set_veteran_accessible_error
+    return unless !veteran.accessible?
+
+    self.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+  end
 
   # Optional step called after the intake is validated and not-yet-marked as started
   def after_validated_pre_start!
@@ -270,21 +291,5 @@ class Intake < ApplicationRecord
 
   def find_or_build_initial_detail
     fail Caseflow::Error::MustImplementInSubclass
-  end
-
-  def veteran_invalid_fields
-    missing_fields = veteran.errors.details
-      .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
-      .keys
-
-    address_too_long = veteran.errors.details.any? do |field_name, errors|
-      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
-        errors.any? { |e| e[:error] == :too_long }
-    end
-
-    {
-      veteran_missing_fields: missing_fields,
-      veteran_address_too_long: address_too_long
-    }
   end
 end

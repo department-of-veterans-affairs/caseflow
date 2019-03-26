@@ -9,6 +9,7 @@ import { ACTIONS } from './constants';
 
 import caseListReducer from './CaseList/CaseListReducer';
 import uiReducer from './uiReducer/uiReducer';
+import teamManagementReducer from './teamManagement/reducers';
 
 import commonComponentsReducer from '../components/common/reducers';
 
@@ -217,7 +218,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
       docCountForAppeal: {
         [action.payload.appealId]: {
           $set: {
-            [action.payload.cached ? 'cached' : 'precise']: action.payload.docCount,
+            docCount: action.payload.docCount,
             loading: false
           }
         }
@@ -531,6 +532,7 @@ const rootReducer = combineReducers({
   caseList: caseListReducer,
   caseSelect: caseSelectReducer,
   queue: workQueueReducer,
+  teamManagement: teamManagementReducer,
   ui: uiReducer,
   components: commonComponentsReducer
 });

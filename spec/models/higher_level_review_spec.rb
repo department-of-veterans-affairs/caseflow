@@ -1,15 +1,13 @@
+# frozen_string_literal: true
+
 describe HigherLevelReview do
   before do
-    FeatureToggle.enable!(:intake_legacy_opt_in)
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
   end
 
-  after do
-    FeatureToggle.disable!(:intake_legacy_opt_in)
-  end
-
   let(:veteran_file_number) { "64205555" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
+  let(:ssn) { "64205555" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, ssn: ssn) }
   let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
@@ -32,8 +30,38 @@ describe HigherLevelReview do
     )
   end
 
+  let!(:intake) do
+    create(:intake, user: current_user, detail: higher_level_review, veteran_file_number: veteran_file_number)
+  end
+
+  let(:current_user) do
+    User.authenticate!(roles: ["Admin Intake"])
+  end
+
   context "#valid?" do
     subject { higher_level_review.valid? }
+
+    context "invalid Veteran" do
+      before { higher_level_review.start_review! }
+      let(:ssn) { nil }
+      let(:informal_conference) { true }
+      let(:same_office) { false }
+
+      context "processed in VBMS" do
+        let(:benefit_type) { "compensation" }
+
+        it "adds an error" do
+          expect(subject).to eq false
+          expect(higher_level_review.errors[:veteran]).to include("veteran_not_valid")
+        end
+      end
+
+      context "processed in Caseflow" do
+        let(:benefit_type) { "education" }
+
+        it { is_expected.to be_truthy }
+      end
+    end
 
     context "receipt_date" do
       context "when it is nil" do
@@ -41,26 +69,26 @@ describe HigherLevelReview do
         it { is_expected.to be true }
       end
 
-      context "when it is after today" do
-        let(:receipt_date) { 1.day.from_now }
-
-        it "adds an error to receipt_date" do
-          is_expected.to be false
-          expect(higher_level_review.errors[:receipt_date]).to include("in_future")
-        end
-      end
-
-      context "when it is before AMA begin date" do
-        let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
-
-        it "adds an error to receipt_date" do
-          is_expected.to be false
-          expect(higher_level_review.errors[:receipt_date]).to include("before_ama")
-        end
-      end
-
-      context "when saving receipt" do
+      context "when saving review" do
         before { higher_level_review.start_review! }
+
+        context "when it is after today" do
+          let(:receipt_date) { 1.day.from_now }
+
+          it "adds an error to receipt_date" do
+            is_expected.to be false
+            expect(higher_level_review.errors[:receipt_date]).to include("in_future")
+          end
+        end
+
+        context "when it is before AMA begin date" do
+          let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
+
+          it "adds an error to receipt_date" do
+            is_expected.to be false
+            expect(higher_level_review.errors[:receipt_date]).to include("before_ama")
+          end
+        end
 
         context "when it is nil" do
           let(:receipt_date) { nil }
@@ -210,7 +238,7 @@ describe HigherLevelReview do
 
       let!(:claimant) do
         Claimant.create!(
-          review_request: higher_level_review,
+          decision_review: higher_level_review,
           participant_id: veteran.participant_id,
           payee_code: "10"
         )
@@ -292,6 +320,24 @@ describe HigherLevelReview do
 
         it "creates DecisionReviewTask" do
           expect { subject }.to change(DecisionReviewTask, :count).by(1)
+        end
+
+        context "when decision date is in the future" do
+          let(:caseflow_decision_date) { 1.day.from_now }
+          it "creates a DTA Supplemental claim, but does not start processing until the claim_date" do
+            subject
+            dta_sc = SupplementalClaim.find_by(
+              receipt_date: caseflow_decision_date,
+              decision_review_remanded: higher_level_review
+            )
+            expect(dta_sc).to_not be_nil
+            expect(dta_sc.establishment_submitted_at).to eq(
+              caseflow_decision_date.to_date.to_datetime - 3.hours + 1.minute
+            )
+            expect do
+              subject
+            end.to_not have_enqueued_job(DecisionReviewProcessJob)
+          end
         end
       end
     end
@@ -438,6 +484,13 @@ describe HigherLevelReview do
              contested_rating_issue_diagnostic_code: "8877")
     end
 
+    let!(:request_issue3) do
+      create(:request_issue,
+             decision_review: hlr,
+             benefit_type: benefit_type,
+             ineligible_reason: :untimely)
+    end
+
     let!(:hlr) do
       create(:higher_level_review,
              veteran_file_number: veteran_file_number,
@@ -449,10 +502,11 @@ describe HigherLevelReview do
       it "gets status for the request issues" do
         issue_statuses = hlr.issues_hash
 
-        expect(issue_statuses.empty?).to eq(false)
+        expect(issue_statuses.count).to eq(2)
 
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
         expect(issue).to_not be_nil
+
         expect(issue[:active]).to eq(true)
         expect(issue[:last_action]).to be_nil
         expect(issue[:date]).to be_nil
@@ -756,8 +810,8 @@ describe HigherLevelReview do
 
         expect(alerts.empty?).to be(false)
         expect(alerts.first[:type]).to eq("ama_post_decision")
-        expect(alerts.first[:details][:decisionDate]).to eq(dta_sc_decision_date)
-        expect(alerts.first[:details][:dueDate]).to eq(dta_sc_decision_date + 365.days)
+        expect(alerts.first[:details][:decisionDate]).to eq(dta_sc_decision_date.to_date)
+        expect(alerts.first[:details][:dueDate]).to eq((dta_sc_decision_date + 365.days).to_date)
         expect(alerts.first[:details][:cavcDueDate]).to be_nil
 
         available_options = %w[supplemental_claim appeal]

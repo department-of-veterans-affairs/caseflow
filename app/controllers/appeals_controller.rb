@@ -1,22 +1,22 @@
-class AppealsController < ApplicationController
-  include Errors
+# frozen_string_literal: true
 
+class AppealsController < ApplicationController
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :new_documents]
+  before_action :set_application, only: [:document_count]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
+  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
 
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
         veteran_file_number = request.headers["HTTP_VETERAN_ID"]
-        file_number_not_found_error && return unless veteran_file_number
 
-        render json: {
-          appeals: get_appeals_for_file_number(veteran_file_number),
-          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
-        }
+        result = CaseSearchResultsForVeteranFileNumber.new(
+          file_number: veteran_file_number, user: current_user
+        ).call
+
+        render_search_results_as_json(result)
       end
     end
   end
@@ -25,36 +25,21 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        caseflow_veteran_id = params[:caseflow_veteran_id]
-        veteran_file_number = Veteran.find(caseflow_veteran_id).file_number
+        result = CaseSearchResultsForCaseflowVeteranId.new(
+          caseflow_veteran_id: params[:caseflow_veteran_id], user: current_user
+        ).call
 
-        render json: {
-          appeals: get_appeals_for_file_number(veteran_file_number),
-          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
-        }
+        render_search_results_as_json(result)
       end
     end
   end
 
   def document_count
-    # Boolean params come in as present/not present (the former with a value of nil) rather than true or false,
-    # so we only need to check if the cached param exists
-    if params.key?(:cached)
-      render json: { document_count: appeal.number_of_documents_from_caseflow }
-      return
-    end
     render json: { document_count: appeal.number_of_documents }
+  rescue Caseflow::Error::EfolderAccessForbidden => e
+    render(e.serialize_response)
   rescue StandardError => e
     handle_non_critical_error("document_count", e)
-  end
-
-  def new_documents
-    new_documents_for_user = NewDocumentsForUser.new(
-      appeal: appeal, user: current_user, query_vbms: true, date_to_compare_with: Time.zone.at(0)
-    )
-    render json: { new_documents: new_documents_for_user.process! }
-  rescue StandardError => e
-    handle_non_critical_error("new_documents", e)
   end
 
   def power_of_attorney
@@ -135,6 +120,16 @@ class AppealsController < ApplicationController
 
   private
 
+  # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
+  # :reek:FeatureEnvy
+  def render_search_results_as_json(result)
+    if result.success?
+      render json: result.extra[:search_results]
+    else
+      render json: result.to_h, status: result.extra[:status]
+    end
+  end
+
   def log_hearings_request
     # Log requests to this endpoint to try to investigate cause addressed by this rollback:
     # https://github.com/department-of-veterans-affairs/caseflow/pull/9271
@@ -155,63 +150,6 @@ class AppealsController < ApplicationController
 
   def set_application
     RequestStore.store[:application] = "queue"
-  end
-
-  def get_appeals_for_file_number(file_number)
-    return get_vso_appeals_for_file_number(file_number) if current_user.vso_employee?
-
-    MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
-                          service: :queue,
-                          name: "AppealsController.index") do
-
-      appeals = Appeal.where(veteran_file_number: file_number).to_a
-      # rubocop:disable Lint/HandleExceptions
-      begin
-        appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(file_number))
-      rescue ActiveRecord::RecordNotFound
-      end
-      # rubocop:enable Lint/HandleExceptions
-
-      json_appeals(appeals)[:data]
-    end
-  end
-
-  def get_vso_appeals_for_file_number(file_number)
-    return file_access_prohibited_error if !BGSService.new.can_access?(file_number)
-
-    MetricsService.record("VACOLS: Get vso appeals information for file_number #{file_number}",
-                          service: :queue,
-                          name: "AppealsController.get_vso_appeals_for_file_number") do
-      vso_participant_ids = current_user.vsos_user_represents.map { |poa| poa[:participant_id] }
-
-      veteran = Veteran.find_by(file_number: file_number)
-
-      appeals = if veteran
-                  veteran.accessible_appeals_for_poa(vso_participant_ids)
-                else
-                  []
-                end
-
-      json_appeals(appeals)[:data]
-    end
-  end
-
-  def file_access_prohibited_error
-    render json: {
-      "errors": [
-        "title": "Access to Veteran file prohibited",
-        "detail": "User is prohibited from accessing files associated with provided Veteran ID"
-      ]
-    }, status: :forbidden
-  end
-
-  def file_number_not_found_error
-    render json: {
-      "errors": [
-        "title": "Must include Veteran ID",
-        "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
-      ]
-    }, status: :bad_request
   end
 
   def json_appeals(appeals)

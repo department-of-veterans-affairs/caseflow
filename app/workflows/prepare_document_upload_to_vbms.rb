@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PrepareDocumentUploadToVbms
   include ActiveModel::Model
 
@@ -13,8 +15,10 @@ class PrepareDocumentUploadToVbms
   def call
     @success = valid?
     if success
-      document = VbmsUploadedDocument.create(document_params)
-      UploadDocumentToVbmsJob.perform_later(document)
+      VbmsUploadedDocument.create(document_params).tap do |document|
+        document.cache_file
+        UploadDocumentToVbmsJob.perform_later(document_id: document.id)
+      end
     end
 
     FormResponse.new(success: success, errors: [response_errors])

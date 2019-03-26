@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # GenerateHearingDaysSchedule is used to generate the dates available for RO
 # video hearings in a specified date range after filtering out weekends,
 # holidays, and board non-availability dates
@@ -306,7 +308,7 @@ class HearingSchedule::GenerateHearingDaysSchedule
   end
 
   def filter_travel_board_hearing_days(start_date, end_date)
-    travel_board_hearing_days = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
+    travel_board_hearing_days = HearingDayRepository.load_travel_board_days_for_range(start_date, end_date)
     tb_master_records = TravelBoardScheduleMapper.convert_from_vacols_format(travel_board_hearing_days)
 
     tb_master_records.select { |tb_master_record| @ros.key?(tb_master_record[:ro]) }

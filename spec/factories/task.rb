@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :task do
     assigned_at { rand(30..35).days.ago }
@@ -39,6 +41,14 @@ FactoryBot.define do
       appeal { create(:appeal) }
       assigned_by { nil }
       assigned_to { Bva.singleton }
+    end
+
+    factory :distribution_task, class: DistributionTask do
+      type { DistributionTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+      assigned_to { Bva.singleton }
+      status { Constants.TASK_STATUSES.on_hold }
     end
 
     factory :generic_task do
@@ -86,6 +96,12 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :disposition_task, class: DispositionTask do
+      type { DispositionTask.name }
+      assigned_to { Bva.singleton }
+      appeal { create(:appeal) }
+    end
+
     factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
       type { JudgeDecisionReviewTask.name }
       appeal { create(:appeal) }
@@ -108,6 +124,7 @@ FactoryBot.define do
 
     factory :hearing_task, class: HearingTask do
       type { HearingTask.name }
+      assigned_to { Bva.singleton }
       appeal { create(:appeal) }
     end
 
@@ -118,10 +135,24 @@ FactoryBot.define do
       parent { create(:hearing_task, appeal: appeal) }
     end
 
+    factory :no_show_hearing_task, class: NoShowHearingTask do
+      type { NoShowHearingTask.name }
+      appeal { create(:appeal) }
+      assigned_to { HearingAdmin.singleton }
+      parent { create(:disposition_task, appeal: appeal) }
+    end
+
     factory :ama_attorney_task do
       type { AttorneyTask.name }
       appeal { create(:appeal) }
       parent { create(:ama_judge_task) }
+    end
+
+    factory :transcription_task, class: TranscriptionTask do
+      type { TranscriptionTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
+      assigned_to { TranscriptionTeam.singleton }
     end
 
     factory :ama_vso_task do

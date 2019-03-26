@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Judge assignment to attorney" do
@@ -10,9 +12,6 @@ RSpec.feature "Judge assignment to attorney" do
   let(:appeal_one) { FactoryBot.create(:appeal) }
   let(:appeal_two) { FactoryBot.create(:appeal) }
 
-  let!(:judge_task_one) { create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_one) }
-  let!(:judge_task_two) { create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_two) }
-
   before do
     team_attorneys.each do |attorney|
       create(:staff, :attorney_role, user: attorney)
@@ -24,6 +23,9 @@ RSpec.feature "Judge assignment to attorney" do
 
   context "Can move appeals between attorneys" do
     scenario "submits draft decision" do
+      judge_task_one = create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_one)
+      judge_task_two = create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_two)
+
       visit "/queue"
 
       find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
@@ -82,6 +84,11 @@ RSpec.feature "Judge assignment to attorney" do
     let(:appeal) { FactoryBot.create(:appeal) }
     let(:veteran) { appeal.veteran }
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+    before do
+      create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_one)
+      create(:ama_judge_task, :in_progress, assigned_to: judge.user, appeal: appeal_two)
+    end
 
     context "there's another in-progress JudgeAssignTask" do
       let!(:judge_task) do
@@ -159,6 +166,30 @@ RSpec.feature "Judge assignment to attorney" do
       click_on("Submit")
 
       expect(page).to have_content("Assigned 1 case")
+    end
+  end
+
+  describe "requesting cases (automatic case distribution)" do
+    before { FeatureToggle.enable!(:automatic_case_distribution) }
+    after { FeatureToggle.disable!(:automatic_case_distribution) }
+
+    it "displays an error if the distribution request is invalid" do
+      create(:ama_judge_task, :in_progress, assigned_at: 40.days.ago, assigned_to: judge.user, appeal: appeal_one)
+
+      visit("/queue/#{judge.user.id}/assign")
+      click_on("Request more cases")
+      find_button("Request more cases")
+
+      expect(page).to have_content("Cases in your queue are waiting to be assigned")
+    end
+
+    it "queues the case distribution if the request is valid" do
+      create(:ama_judge_task, :in_progress, assigned_at: 10.days.ago, assigned_to: judge.user, appeal: appeal_one)
+
+      visit("/queue/#{judge.user.id}/assign")
+      click_on("Request more cases")
+
+      expect(page).to have_content("Distribution complete")
     end
   end
 end

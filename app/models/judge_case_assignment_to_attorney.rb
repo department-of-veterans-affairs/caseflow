@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class JudgeCaseAssignmentToAttorney
   include ActiveModel::Model
 

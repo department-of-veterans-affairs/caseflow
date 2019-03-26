@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :request_issue do
     association(:decision_review, factory: [:appeal, :with_tasks])
@@ -19,9 +21,25 @@ FactoryBot.define do
       nonrating_issue_description { "nonrating issue description" }
     end
 
+    trait :unidentified do
+      is_unidentified { true }
+      unidentified_issue_text { "unidentified issue description" }
+    end
+
     trait :removed do
       closed_at { Time.zone.now }
       closed_status { :removed }
+    end
+
+    trait :decided do
+      closed_at { Time.zone.now }
+      closed_status { :decided }
+    end
+
+    trait :requires_processing do
+      decision_sync_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
+      decision_sync_last_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
+      decision_sync_processed_at { nil }
     end
 
     trait :with_rating_decision_issue do

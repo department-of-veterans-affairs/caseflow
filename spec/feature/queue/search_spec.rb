@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Search" do
@@ -274,25 +276,28 @@ RSpec.feature "Search" do
       end
     end
 
-    context "when backend encounters an error" do
-      before do
-        allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+    context "when VSO employee does not have access to the file number" do
+      it "displays a helpful error message on same page" do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
-      end
 
-      it "displays error message on same page" do
-        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
+        expect(page).to have_content("You do not have access to this claims file number")
       end
+    end
 
-      it "searching in search bar produces another error" do
-        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
+    context "when VSO employee searches for file number that does not match any veteran" do
+      it "displays a helpful error message on same page" do
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
+        visit "/search"
+        fill_in "searchBarEmptyList", with: "123456789"
         click_on "Search"
 
-        expect(page).to have_content(
-          format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
-        )
+        expect(page).to have_content("Could not find a Veteran matching the file number")
       end
     end
 
@@ -423,30 +428,14 @@ RSpec.feature "Search" do
       end
     end
 
-    context "when backend encounters an error" do
-      before do
+    context "when backend returns non-serialized error" do
+      it "displays generic server error message" do
         allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
-      end
 
-      it "displays error message" do
         expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
-      end
-
-      it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
-        click_on "Search"
-        expect(page).to have_content(
-          format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
-        )
-      end
-
-      it "clicking on the x in the search bar returns browser to queue list page" do
-        click_on "button-clear-search"
-        expect(page).to have_content(search_homepage_title)
-        expect(page).to have_content(search_homepage_subtitle)
       end
     end
 

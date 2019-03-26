@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class IssueRepository
   # :nocov:
   def self.create_vacols_issue!(issue_attrs:)

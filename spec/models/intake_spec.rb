@@ -1,11 +1,8 @@
+# frozen_string_literal: true
+
 describe Intake do
   before do
-    FeatureToggle.enable!(:intake_legacy_opt_in)
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
-  end
-
-  after do
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   class TestIntake < Intake
@@ -29,6 +26,28 @@ describe Intake do
 
   let(:intake) do
     TestIntake.new(
+      veteran_file_number: veteran_file_number,
+      detail: detail,
+      user: user,
+      started_at: 15.minutes.ago,
+      completion_status: completion_status,
+      completion_started_at: completion_started_at
+    )
+  end
+
+  let(:ramp_election_intake) do
+    RampElectionIntake.new(
+      veteran_file_number: veteran_file_number,
+      detail: detail,
+      user: user,
+      started_at: 15.minutes.ago,
+      completion_status: completion_status,
+      completion_started_at: completion_started_at
+    )
+  end
+
+  let(:ramp_refiling_intake) do
+    RampRefilingIntake.new(
       veteran_file_number: veteran_file_number,
       detail: detail,
       user: user,
@@ -369,9 +388,26 @@ describe Intake do
     context "country is null" do
       let(:country) { nil }
 
-      it "adds veteran_not_valid and returns false" do
-        expect(subject).to eq(false)
-        expect(intake.error_code).to eq("veteran_not_valid")
+      it "does not validate veteran" do
+        expect(subject).to be_truthy
+      end
+
+      context "RAMP Election Intake" do
+        let(:intake) { ramp_election_intake }
+
+        it "adds veteran_not_valid and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_not_valid")
+        end
+      end
+
+      context "RAMP Refiling Intake" do
+        let(:intake) { ramp_refiling_intake }
+
+        it "adds veteran_not_valid and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_not_valid")
+        end
       end
     end
 
@@ -446,6 +482,18 @@ describe Intake do
         expect(subject).to eq(false)
         expect(intake.error_code).to eq("veteran_not_accessible")
       end
+
+      context "Veteran has multiple phone numbers" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+            .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+        end
+
+        it "adds veteran_has_multiple_phone_numbers and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_has_multiple_phone_numbers")
+        end
+      end
     end
 
     context "veteran address is too long" do
@@ -457,9 +505,26 @@ describe Intake do
         )
       end
 
-      it "adds veteran_not_valid and returns false" do
-        expect(subject).to eq(false)
-        expect(intake.error_code).to eq("veteran_not_valid")
+      it "does not validate Veteran" do
+        expect(subject).to be_truthy
+      end
+
+      context "RAMP Election Intake" do
+        let(:intake) { ramp_election_intake }
+
+        it "adds veteran_not_valid and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_not_valid")
+        end
+      end
+
+      context "RAMP Refiling Intake" do
+        let(:intake) { ramp_refiling_intake }
+
+        it "adds veteran_not_valid and returns false" do
+          expect(subject).to eq(false)
+          expect(intake.error_code).to eq("veteran_not_valid")
+        end
       end
     end
 

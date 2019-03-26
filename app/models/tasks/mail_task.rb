@@ -1,3 +1,14 @@
+# frozen_string_literal: true
+
+##
+# Task to track when the mail team receives any appeal-related mail from an appellant.
+# Mail is processed by a mail team member, and then a corresponding task is then assigned to an organization.
+# Tasks are assigned to organizations, including VLJ Support, AOD team, Privacy team, and Lit Support, and include:
+#   - add Evidence or Argument
+#   - changing Power of Attorney
+#   - advance a case on docket (AOD)
+#   - withdrawing an appeal
+
 class MailTask < GenericTask
   # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
   def verify_org_task_unique; end

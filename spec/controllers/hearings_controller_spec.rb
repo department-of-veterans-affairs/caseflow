@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.describe HearingsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
@@ -27,7 +29,7 @@ RSpec.describe HearingsController, type: :controller do
     end
 
     context "when updating an ama hearing" do
-      let!(:hearing) { create(:hearing) }
+      let!(:hearing) { create(:hearing, :with_tasks) }
 
       it "should update an ama hearing" do
         params = { notes: "Test",
@@ -50,74 +52,6 @@ RSpec.describe HearingsController, type: :controller do
       end
     end
 
-    context "when setting disposition as postponed" do
-      let!(:scheduled_for) { Date.new(2019, 4, 2) }
-      let!(:hearing_day) do
-        HearingDay.create_hearing_day(
-          request_type: HearingDay::REQUEST_TYPES[:central],
-          scheduled_for: scheduled_for,
-          room: "123",
-          judge_id: "456"
-        )
-      end
-
-      let!(:params) do
-        { notes: "Test",
-          hold_open: 30,
-          transcript_requested: false,
-          aod: :granted,
-          add_on: true,
-          disposition: :postponed,
-          prepped: true }
-      end
-
-      let!(:master_record_params) do
-        {
-          id: hearing_day[:id],
-          time: {
-            "h" => "9",
-            "m" => "00",
-            "offset" => "-500"
-          },
-          hearing_location_attributes: {
-            "facility_id" => "vba_301"
-          }
-        }
-      end
-
-      before { Time.zone = "America/New_York" }
-
-      context "for a legacy hearing" do
-        it "should create a new VACOLS hearing and LegacyHearing" do
-          patch :update, as: :json, params: {
-            id: legacy_hearing.external_id, hearing: params, master_record_updated: master_record_params
-          }
-          expect(response.status).to eq 200
-
-          expect(LegacyHearing.last.location.facility_id).to eq "vba_301"
-          expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day[:id]).hearing_date).to eq(
-            Time.new(2019, 4, 2, 10).in_time_zone("Eastern Time (US & Canada)")
-          )
-        end
-      end
-
-      context "for an AMA hearing" do
-        let(:hearing) { create(:hearing, scheduled_time: Time.zone.now) }
-        let!(:params) do
-          { notes: "Test",
-            disposition: :postponed }
-        end
-
-        it "should create a new hearing" do
-          patch :update, as: :json, params: {
-            id: hearing.external_id, hearing: params, master_record_updated: master_record_params
-          }
-
-          expect(Hearing.last.location.facility_id).to eq "vba_301"
-        end
-      end
-    end
-
     it "should return not found" do
       patch :update, params: { id: "78484", hearing: { notes: "Test", hold_open: 30, transcript_requested: false } }
       expect(response.status).to eq 404
@@ -125,7 +59,7 @@ RSpec.describe HearingsController, type: :controller do
   end
 
   describe "#show" do
-    let!(:hearing) { create(:hearing) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
 
     it "returns hearing details" do
       get :show, as: :json, params: { id: hearing.external_id }
@@ -135,6 +69,10 @@ RSpec.describe HearingsController, type: :controller do
   end
 
   describe "#find_closest_hearing_locations" do
+    before do
+      VADotGovService = Fakes::VADotGovService
+    end
+
     context "for AMA appeals" do
       let!(:appeal) { create(:appeal) }
 
@@ -157,6 +95,33 @@ RSpec.describe HearingsController, type: :controller do
             params: { appeal_id: legacy_appeal.external_id, regional_office: "RO13" }
 
         expect(response.status).to eq 200
+      end
+    end
+
+    context "when an address cannot be found" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        message = {
+          "messages" => [
+            {
+              "key" => "AddressCouldNotBeFound"
+            }
+          ]
+        }
+
+        error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
+
+        allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+      end
+
+      it "returns an error" do
+        get :find_closest_hearing_locations,
+            as: :json,
+            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
+
+        expect(response.status).to eq 400
+        expect(JSON.parse(response.body)["message"]).to eq "AddressCouldNotBeFound"
       end
     end
   end

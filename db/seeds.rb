@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
@@ -53,8 +55,11 @@ class SeedDB
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
+    create_team_admin
     create_colocated_users
+    create_transcription_team
     create_vso_users_and_tasks
+    create_field_vso_and_users
     create_org_queue_users
     create_qr_user
     create_aod_user
@@ -64,7 +69,14 @@ class SeedDB
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
     create_judge_teams
-    create_hearings_team
+    create_hearings_user_and_tasks
+  end
+
+  def create_team_admin
+    u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
+    existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
+    Functions.grant!("System Admin", users: existing_sysadmins + [u.css_id])
+    OrganizationsUser.add_user_to_organization(u, Bva.singleton)
   end
 
   def create_judge_teams
@@ -77,9 +89,27 @@ class SeedDB
     end
   end
 
-  def create_hearings_team
+  def create_transcription_team
+    transcription_member = User.find_or_create_by(css_id: "TRANSCRIPTION_USER", station_id: 101)
+    OrganizationsUser.add_user_to_organization(transcription_member, TranscriptionTeam.singleton)
+  end
+
+  def create_hearings_user_and_tasks
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
+    OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
+
+    create_no_show_hearings_task
+  end
+
+  def create_no_show_hearings_task
+    appeal = FactoryBot.create(:appeal, :hearing_docket)
+    root_task = FactoryBot.create(:root_task, appeal: appeal)
+    distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
+    parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
+    FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
+    disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
+    FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
   end
 
   def create_colocated_users
@@ -99,7 +129,6 @@ class SeedDB
   def create_vso_users_and_tasks
     vso = Vso.create(
       name: "VSO",
-      role: "VSO",
       url: "veterans-service-organization",
       participant_id: "2452415"
     )
@@ -141,8 +170,31 @@ class SeedDB
     end
   end
 
+  def create_field_vso_and_users
+    vso = FactoryBot.create(:field_vso, name: "Field VSO", url: "field-vso")
+
+    %w[MANDY NICHOLAS ELIJAH].each do |name|
+      u = User.create(
+        css_id: "#{name}_VSO",
+        station_id: 101,
+        full_name: "#{name} - VSO user",
+        roles: %w[VSO]
+      )
+      OrganizationsUser.add_user_to_organization(u, vso)
+
+      a = FactoryBot.create(:appeal)
+      root_task = FactoryBot.create(:root_task, appeal: a)
+      FactoryBot.create(
+        :track_veteran_task,
+        parent: root_task,
+        appeal: a,
+        assigned_to: vso
+      )
+    end
+  end
+
   def create_org_queue_users
-    nca = BusinessLine.create!(name: "National Cemetery Association", url: "nca")
+    nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
     (0..5).each do |n|
       u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{n}", full_name: "NCA team member #{n}")
       OrganizationsUser.add_user_to_organization(u, nca)
@@ -413,13 +465,7 @@ class SeedDB
       vacols_id = "3019752"
     end
 
-    appeal = LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
-
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
-    )
+    LegacyAppeal.find_or_create_by_vacols_id(vacols_id)
   end
 
   def create_ama_case_with_open_schedule_hearing_task(ro_key)
@@ -443,7 +489,7 @@ class SeedDB
     ScheduleHearingTask.create!(
       appeal: appeal,
       assigned_to: HearingsManagement.singleton,
-      parent: RootTask.find_or_create_by!(appeal: appeal)
+      parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     )
   end
 
@@ -475,7 +521,7 @@ class SeedDB
                           decision_review: higher_level_review)
       end
       FactoryBot.create(:higher_level_review_task,
-                        assigned_to: Organization.find_by(name: "National Cemetery Association"),
+                        assigned_to: Organization.find_by(name: "National Cemetery Administration"),
                         appeal: higher_level_review)
     end
   end
@@ -814,7 +860,7 @@ class SeedDB
   end
 
   def create_board_grant_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
     description = "Service connection for pain disorder is granted with an evaluation of 50\% effective May 1 2011"
     notes = "Pain disorder with 80\% evaluation per examination"
 
@@ -846,7 +892,7 @@ class SeedDB
   end
 
   def create_veteran_record_request_tasks
-    nca = BusinessLine.find_by(name: "National Cemetery Association")
+    nca = BusinessLine.find_by(name: "National Cemetery Administration")
 
     3.times do |_index|
       FactoryBot.create(:veteran_record_request_task,
@@ -958,6 +1004,12 @@ class SeedDB
     )
   end
 
+  def create_intake_users
+    ["Mail Intake", "Admin Intake"].each do |role|
+      User.create(css_id: "#{role.tr(' ', '')}_LOCAL", roles: [role], station_id: "101", full_name: "Local #{role}")
+    end
+  end
+
   def seed
     clean_db
     # Annotations and tags don't come from VACOLS, so our seeding should
@@ -980,6 +1032,8 @@ class SeedDB
     create_ama_hearing_appeals
     create_board_grant_tasks
     create_veteran_record_request_tasks
+
+    create_intake_users
 
     FetchHearingLocationsForVeteransJob.perform_now
 

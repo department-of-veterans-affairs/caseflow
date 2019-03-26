@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
@@ -13,7 +15,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "0d56a6c6a2ec314f97bce863f6aeffe837d75a13"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "dddc821c2335c7de234a5454e4b4874e3f658420"
 gem "dogstatsd-ruby"
 gem "holidays", "~> 6.4"
 # Use jquery as the JavaScript library
@@ -42,7 +44,7 @@ gem "puma", "~> 3.12.0"
 # rack versions before 2.0.6 are affected by CVE-2018-16470 and CVE-2018-16471.
 # Explicitly define rack version here to avoid that.
 gem "rack", "~> 2.0.6"
-gem "rails", "5.1.6.1"
+gem "rails", "5.1.6.2"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -68,8 +70,7 @@ gem "uglifier", ">= 1.3.0"
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
   gem "activerecord-oracle_enhanced-adapter"
-  # set require: 'oci8' here because bootsnap creates a warning: https://github.com/rails/rails/issues/32811#issuecomment-386541855
-  gem "ruby-oci8", "~> 2.2.5.1", require: "oci8"
+  gem "ruby-oci8", "~> 2.2"
 end
 
 group :test, :development, :demo do
@@ -83,6 +84,7 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
+  gem "chromedriver-helper"
   gem "danger", "~> 5.10"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 4.8"

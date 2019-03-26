@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RampClosedAppeal < ApplicationRecord
   class NoReclosingBvaDecidedAppeals < StandardError; end
 

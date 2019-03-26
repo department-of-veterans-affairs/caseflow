@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TaskTimerJob < CaseflowJob
   queue_as :low_priority
   application_attr :queue
@@ -18,12 +20,14 @@ class TaskTimerJob < CaseflowJob
     task_timer.with_lock do
       return if task_timer.processed?
 
+      task_timer.attempted!
       task_timer.task.when_timer_ends
       task_timer.processed!
     end
   rescue StandardError => e
     # Ensure errors are sent to Sentry, but don't block the job from continuing.
     # The next time the job runs, we'll process the unprocessed task timers again.
+    task_timer.update_error!(e.inspect)
     Raven.capture_exception(e)
   end
 end

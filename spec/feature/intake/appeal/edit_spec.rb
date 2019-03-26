@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Appeal Edit issues" do
@@ -6,10 +8,8 @@ feature "Appeal Edit issues" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 5, 26))
+    Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
@@ -18,7 +18,6 @@ feature "Appeal Edit issues" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:veteran) do
@@ -31,8 +30,8 @@ feature "Appeal Edit issues" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:receipt_date) { Time.zone.today - 20 }
-  let(:profile_date) { "2017-11-02T07:00:00.000Z" }
+  let(:receipt_date) { Time.zone.today - 20.days }
+  let(:profile_date) { (receipt_date - 30.days).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -84,6 +83,7 @@ feature "Appeal Edit issues" do
   end
 
   let(:legacy_opt_in_approved) { false }
+
   let!(:appeal) do
     create(:appeal,
            veteran_file_number: veteran.file_number,
@@ -91,6 +91,10 @@ feature "Appeal Edit issues" do
            docket_type: "evidence_submission",
            veteran_is_not_claimant: false,
            legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
+  end
+
+  let!(:appeal_intake) do
+    create(:intake, user: current_user, detail: appeal, veteran_file_number: veteran.file_number)
   end
 
   let(:nonrating_request_issue_attributes) do
@@ -127,10 +131,13 @@ feature "Appeal Edit issues" do
     click_remove_intake_issue(nonrating_intake_num)
     click_remove_issue_confirmation
     expect(page).not_to have_content(nonrating_request_issue.description)
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # add a different issue
     click_intake_add_issue
     add_intake_rating_issue("Left knee granted")
+    # save flash should still occur because issues are different
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # save
     expect(page).to have_content("Left knee granted")
@@ -162,6 +169,7 @@ feature "Appeal Edit issues" do
     click_remove_intake_issue(issue_num)
     click_remove_issue_confirmation
     expect(page).not_to have_content(issue_description)
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # re-add
     click_intake_add_issue
@@ -170,9 +178,26 @@ feature "Appeal Edit issues" do
     expect(page).to_not have_content(
       Constants.INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.gsub("{review_title}", "Appeal")
     )
+    expect(page).to have_content("When you finish making changes, click \"Save\" to continue")
 
     # issue note was added
     expect(page).to have_button("Save", disabled: false)
+  end
+
+  context "with remove decision review enabled" do
+    before do
+      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
+    end
+
+    scenario "allows all request issues to be removed and saved" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      # remove all issues
+      click_remove_intake_issue(1)
+      click_remove_issue_confirmation
+      click_remove_intake_issue(1)
+      click_remove_issue_confirmation
+      expect(page).to have_button("Save", disabled: false)
+    end
   end
 
   context "ratings with disabiliity codes" do
@@ -197,8 +222,12 @@ feature "Appeal Edit issues" do
   end
 
   context "with multiple request issues with same data fields" do
-    let!(:duplicate_nonrating_request_issue) { create(:request_issue, nonrating_request_issue_attributes) }
-    let!(:duplicate_rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+    let!(:duplicate_nonrating_request_issue) do
+      create(:request_issue, nonrating_request_issue_attributes.merge(contention_reference_id: "4444"))
+    end
+    let!(:duplicate_rating_request_issue) do
+      create(:request_issue, rating_request_issue_attributes.merge(contention_reference_id: "5555"))
+    end
 
     scenario "saves by id" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -211,7 +240,7 @@ feature "Appeal Edit issues" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "A description!",
-        date: "04/26/2018"
+        date: profile_date.mdY
       )
 
       click_edit_submit_and_confirm
@@ -235,6 +264,7 @@ feature "Appeal Edit issues" do
 
     context "with legacy_opt_in_approved" do
       let(:legacy_opt_in_approved) { true }
+
       scenario "adding issues" do
         visit "appeals/#{appeal.uuid}/edit/"
 
@@ -327,17 +357,65 @@ feature "Appeal Edit issues" do
                )).to_not be_nil
       end
     end
+  end
 
-    scenario "adding issue with legacy opt in disabled" do
-      allow(FeatureToggle).to receive(:enabled?).and_call_original
-      allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+  context "Veteran is invalid" do
+    let!(:veteran) do
+      create(:veteran,
+             first_name: "Ed",
+             last_name: "Merica",
+             bgs_veteran_record: {
+               sex: nil,
+               ssn: nil,
+               country: nil,
+               address_line1: "this address is more than 20 chars"
+             })
+    end
 
+    let!(:rating_request_issue) { nil }
+
+    scenario "adding an issue with a vbms benefit type" do
       visit "appeals/#{appeal.uuid}/edit/"
 
+      # Add issue that is not a VBMS issue
       click_intake_add_issue
-      expect(page).to have_content("Add this issue")
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        benefit_type: "Education",
+        category: "Accrued",
+        description: "Description for Accrued",
+        date: 1.day.ago.to_date.mdY
+      )
+      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: false)
+
+      # Add a rating issue
+      click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
-      expect(page).to have_content("Left knee granted")
+      expect(page).to have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+      expect(page).to have_content(
+        "the corporate database, then retry establishing the EP in Caseflow: ssn, country"
+      )
+      expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
+      expect(page).to have_button("Save", disabled: true)
+
+      click_remove_intake_issue_by_text("Left knee granted")
+      click_remove_issue_confirmation
+      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: false)
+
+      # Add a compensation nonrating issue
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        benefit_type: "Compensation",
+        category: "Apportionment",
+        description: "Description for Apportionment",
+        date: 2.days.ago.to_date.mdY
+      )
+      expect(page).to have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: true)
     end
   end
 
@@ -350,6 +428,105 @@ feature "Appeal Edit issues" do
       expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/outcoded")
       expect(page).to have_content("Issues Not Editable")
       expect(page).to have_content("This appeal has been outcoded and the issues are no longer editable.")
+    end
+  end
+
+  context "when withdraw decision reviews is enabled" do
+    before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
+    after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
+
+    scenario "remove an issue with dropdown", skip: "Flakey test" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      expect(page).to have_content("PTSD denied")
+      click_remove_intake_issue_dropdown("PTSD denied")
+      expect(page).to_not have_content("PTSD denied")
+    end
+  end
+
+  context "when remove decision reviews is enabled" do
+    before do
+      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
+      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+    end
+
+    after do
+      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
+    end
+
+    let(:today) { Time.zone.now }
+    let(:last_week) { Time.zone.now - 7.days }
+    let(:appeal) do
+      # reload to get uuid
+      create(:appeal, veteran_file_number: veteran.file_number).reload
+    end
+    let!(:existing_request_issues) do
+      [create(:request_issue, :nonrating, decision_review: appeal),
+       create(:request_issue, :nonrating, decision_review: appeal)]
+    end
+    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+    let!(:completed_task) do
+      create(:higher_level_review_task,
+             :completed,
+             appeal: appeal,
+             assigned_to: non_comp_org,
+             closed_at: last_week)
+    end
+
+    context "when review has multiple active tasks" do
+      let!(:in_progress_task) do
+        create(:higher_level_review_task,
+               :in_progress,
+               appeal: appeal,
+               assigned_to: non_comp_org,
+               assigned_at: last_week)
+      end
+
+      scenario "cancel all active tasks when all request issues are removed" do
+        visit "appeals/#{appeal.uuid}/edit"
+        # remove all request issues
+        appeal.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit_and_confirm
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+        expect(RequestIssue.find_by(
+                 benefit_type: "compensation",
+                 veteran_participant_id: nil
+               )).to_not be_nil
+
+        visit "appeals/#{appeal.uuid}/edit"
+        expect(page).not_to have_content(existing_request_issues.first.description)
+        expect(page).not_to have_content(existing_request_issues.second.description)
+        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+
+      scenario "remove all vbms decision reviews" do
+        visit "appeals/#{appeal.uuid}/edit"
+        # remove all request issues
+        appeal.request_issues.length.times do
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+        end
+
+        click_edit_submit
+        expect(page).to have_content("Remove review?")
+        expect(page).to have_content("This review and all tasks associated with it will be removed.")
+        click_intake_confirm
+      end
+
+      context "when review has no active tasks" do
+        scenario "no tasks are cancelled when all request issues are removed" do
+          visit "appeals/#{appeal.uuid}/edit"
+          click_remove_intake_issue(1)
+          click_remove_issue_confirmation
+          click_edit_submit_and_confirm
+          expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+      end
     end
   end
 end

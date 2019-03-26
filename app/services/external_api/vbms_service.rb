@@ -1,15 +1,15 @@
+# frozen_string_literal: true
+
 # :nocov:
 class VBMSCaseflowLogger
   def log(event, data)
     case event
     when :request
       status = data[:response_code]
-      name = data[:request].class.name.split("::").last
 
       if status != 200
         Rails.logger.error(
-          "VBMS HTTP Error #{status} " \
-          "(#{name}) #{data[:response_body]}"
+          "VBMS HTTP Error #{status} (#{data.pretty_inspect})"
         )
       end
     end
@@ -207,6 +207,6 @@ class ExternalApi::VBMSService
   rescue VBMS::ClientError => e
     Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
 
-    raise e
+    raise VBMSError.from_vbms_http_error(e)
   end
 end

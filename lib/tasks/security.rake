@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require "open3"
 require "rainbow"
 
-desc "shortcut to run all linting tools, at the same time."
+desc "shortcut to run all security tools, at the same time."
 task :security_caseflow do
   $stdout.sync = true
   puts "running Brakeman security scan..."
@@ -14,14 +16,19 @@ task :security_caseflow do
 
   snoozed_cves = [
     # Example:
-    # { cve_name: "CVE-2018-1000201", until: Time.zone.local(2018, 9, 10) }
+    # { cve_name: "CVE-2018-1000201", until: Time.utc(2018, 9, 10) }
+    { cve_name: "CVE-2019-5420", until: Time.utc(2019, 3, 30) }
   ]
 
   alerting_cves = snoozed_cves
-    .select { |cve| cve[:until] <= Time.zone.today }
+    .select { |cve| cve[:until] >= Time.now.utc }
     .map { |cve| cve[:cve_name] }
 
-  audit_result = ShellCommand.run("bundle-audit check --ignore=#{alerting_cves.join(' ')}")
+  audit_cmd = "bundle-audit check --ignore=#{alerting_cves.join(' ')}"
+
+  puts audit_cmd
+
+  audit_result = ShellCommand.run(audit_cmd)
 
   puts "\n"
   if brakeman_result && audit_result

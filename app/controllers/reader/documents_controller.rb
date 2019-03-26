@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Reader::DocumentsController < Reader::ApplicationController
   # rubocop:disable Metrics/MethodLength
   def index

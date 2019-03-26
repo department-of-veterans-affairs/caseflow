@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CAVCDecisionRepository
   # Potential optimization: load and store all CAVC decisions for the appeal, but only return those for the issue.
   # see https://github.com/department-of-veterans-affairs/caseflow/pull/4248/#discussion_r159923007

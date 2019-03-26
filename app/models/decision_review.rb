@@ -1,18 +1,19 @@
+# frozen_string_literal: true
+
 class DecisionReview < ApplicationRecord
   include CachedAttributes
   include Asyncable
-
-  validate :validate_receipt_date
 
   self.abstract_class = true
 
   attr_reader :saving_review
 
   has_many :request_issues, as: :decision_review
-  has_many :claimants, as: :review_request
+  has_many :claimants, as: :decision_review
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review
   has_many :tasks, as: :appeal
+  has_one :intake, as: :detail
 
   before_destroy :remove_issues!
 
@@ -85,6 +86,8 @@ class DecisionReview < ApplicationRecord
     id.to_s
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def ui_hash
     {
       veteran: {
@@ -100,13 +103,18 @@ class DecisionReview < ApplicationRecord
       legacyOptInApproved: legacy_opt_in_approved,
       legacyAppeals: serialized_legacy_appeals,
       ratings: serialized_ratings,
-      requestIssues: open_request_issues.map(&:ui_hash),
+      requestIssues: request_issues_ui_hash,
       decisionIssues: decision_issues.map(&:ui_hash),
       activeNonratingRequestIssues: active_nonrating_request_issues.map(&:ui_hash),
       contestableIssuesByDate: contestable_issues.map(&:serialize),
-      editIssuesUrl: caseflow_only_edit_issues_url
+      editIssuesUrl: caseflow_only_edit_issues_url,
+      veteranValid: veteran&.valid?(:bgs),
+      veteranInvalidFields: veteran_invalid_fields,
+      processedInCaseflow: processed_in_caseflow?
     }
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
@@ -158,7 +166,6 @@ class DecisionReview < ApplicationRecord
   end
 
   def serialized_legacy_appeals
-    return [] unless legacy_opt_in_enabled?
     return [] unless available_legacy_appeals.any?
 
     available_legacy_appeals.map do |legacy_appeal|
@@ -183,6 +190,10 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
+  def cancel_active_tasks
+    tasks.each(&:cancel_task_and_child_subtasks)
+  end
+
   def contestable_issues
     return contestable_issues_from_decision_issues unless can_contest_rating_issues?
 
@@ -190,14 +201,9 @@ class DecisionReview < ApplicationRecord
   end
 
   def active_nonrating_request_issues
-    @active_nonrating_request_issues ||= RequestIssue.nonrating.open
+    @active_nonrating_request_issues ||= RequestIssue.nonrating.active
       .where(veteran_participant_id: veteran.participant_id)
       .where.not(id: request_issues.map(&:id))
-      .select(&:status_active?)
-  end
-
-  def open_request_issues
-    request_issues.open
   end
 
   # do not confuse ui_hash with serializer. ui_hash for intake and intakeEdit. serializer for work queue.
@@ -215,10 +221,18 @@ class DecisionReview < ApplicationRecord
 
   def create_remand_supplemental_claims!
     decision_issues.remanded.uncontested.each(&:find_or_create_remand_supplemental_claim!)
-    remand_supplemental_claims.each(&:create_remand_issues!)
-    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
-    remand_supplemental_claims.each(&:submit_for_processing!)
-    remand_supplemental_claims.each(&:start_processing_job!)
+
+    remand_supplemental_claims.each do |rsc|
+      rsc.create_remand_issues!
+      rsc.create_decision_review_task_if_required!
+
+      delay = rsc.receipt_date.future? ? rsc.receipt_date : 0
+      rsc.submit_for_processing!(delay: delay)
+
+      unless rsc.processed? || rsc.receipt_date.future?
+        rsc.start_processing_job!
+      end
+    end
   end
 
   def active_remanded_claims
@@ -273,7 +287,24 @@ class DecisionReview < ApplicationRecord
     decision_event_date + 365.days if decision_event_date
   end
 
+  def find_or_build_request_issue_from_intake_data(data)
+    return request_issues.active_or_ineligible.find(data[:request_issue_id]) if data[:request_issue_id]
+
+    RequestIssue.from_intake_data(data, decision_review: self)
+  end
+
   private
+
+  def veteran_invalid_fields
+    return unless intake
+
+    intake.veteran.valid?(:bgs)
+    intake.veteran_invalid_fields
+  end
+
+  def request_issues_ui_hash
+    request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible.map(&:ui_hash)
+  end
 
   def can_contest_rating_issues?
     fail Caseflow::Error::MustImplementInSubclass
@@ -367,10 +398,6 @@ class DecisionReview < ApplicationRecord
 
     validate_receipt_date_not_before_ama
     validate_receipt_date_not_in_future
-  end
-
-  def legacy_opt_in_enabled?
-    FeatureToggle.enabled?(:intake_legacy_opt_in, user: RequestStore.store[:current_user])
   end
 
   def description

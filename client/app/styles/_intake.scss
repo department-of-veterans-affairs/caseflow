@@ -83,6 +83,14 @@
   }
 }
 
+.intake-issue-flash {
+  background-color: $color-primary-alt-lightest;
+
+  td {
+    background-color: $color-primary-alt-lightest;
+  }
+}
+
 .intake-add-issues .cf-modal-body {
   color: $color-gray-dark;
   width: 750px;
@@ -209,6 +217,8 @@
 
         .issue-action {
           padding: 0;
+          width: 140px;
+          display: block;
 
           button {
             i {

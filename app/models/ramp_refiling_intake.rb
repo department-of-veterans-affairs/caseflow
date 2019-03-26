@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RampRefilingIntake < Intake
   class TooManyCompletedRampElections < StandardError; end
 
@@ -72,7 +74,10 @@ class RampRefilingIntake < Intake
   end
 
   def validate_detail_on_start
-    if ramp_elections.empty?
+    if !veteran.valid?(:bgs)
+      self.error_code = :veteran_not_valid
+      @error_data = veteran_invalid_fields
+    elsif ramp_elections.empty?
       self.error_code = :no_complete_ramp_election
     elsif ramp_elections.all?(&:end_product_active?)
       self.error_code = :ramp_election_is_active

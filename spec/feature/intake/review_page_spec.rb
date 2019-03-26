@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Intake Review Page" do
@@ -14,6 +16,42 @@ feature "Intake Review Page" do
   let(:veteran_file_number) { "123412345" }
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
+  end
+
+  describe "Validating receipt date not before ama" do
+    before { FeatureToggle.enable!(:use_ama_activation_date) }
+
+    it "shows correct error with AMA date" do
+      start_higher_level_review(veteran)
+      visit "/intake"
+      expect(page).to have_current_path("/intake/review_request")
+      fill_in "What is the Receipt Date of this form?", with: "01/01/2019"
+      click_intake_continue
+
+      expect(page).to have_content(
+        "Receipt Date cannot be prior to 02/19/2019."
+      )
+    end
+  end
+
+  context "when the Veteran is not valid" do
+    let!(:veteran) do
+      Generators::Veteran.build(
+        file_number: "25252525",
+        sex: nil,
+        ssn: nil,
+        country: nil,
+        address_line1: "this address is more than 20 chars"
+      )
+    end
+
+    scenario "Higher level review shows alert on Review page" do
+      check_invalid_veteran_alert_on_review_page("higher_level_review")
+    end
+
+    scenario "Supplemental Claim shows alert on Review page" do
+      check_invalid_veteran_alert_on_review_page("supplemental_claim")
+    end
   end
 
   describe "Selecting a claimant" do
@@ -38,7 +76,7 @@ feature "Intake Review Page" do
 
     context "when veteran is deceased" do
       let(:veteran) do
-        Generators::Veteran.build(file_number: "123121234", date_of_death: Date.new(2017, 11, 20))
+        Generators::Veteran.build(file_number: "123121234", date_of_death: 2.years.ago)
       end
 
       context "higher level review" do
@@ -84,6 +122,19 @@ feature "Intake Review Page" do
         )
       end
 
+      context "when the claimant is missing an address" do
+        before { allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil) }
+
+        [:higher_level_review, :supplemental_claim, :appeal].each do |claim_review_type|
+          describe "given a #{claim_review_type}" do
+            it "requires that the claimant have an address" do
+              start_claim_review(claim_review_type, veteran: veteran, veteran_is_not_claimant: veteran_is_not_claimant)
+              check_claimant_address_error
+            end
+          end
+        end
+      end
+
       context "when benefit type is pension or compensation" do
         [:higher_level_review, :supplemental_claim].each do |claim_review_type|
           describe "given a #{claim_review_type}" do
@@ -91,19 +142,6 @@ feature "Intake Review Page" do
               start_claim_review(claim_review_type, veteran: veteran, veteran_is_not_claimant: veteran_is_not_claimant)
               check_pension_and_compensation_payee_code
             end
-          end
-        end
-      end
-
-      context "when benefit type is pension" do
-        let(:benefit_type) { "pension" }
-        context "higher level review" do
-          it "requires payee code" do
-          end
-        end
-
-        context "supplemental claim" do
-          it "requires payee code" do
           end
         end
       end
@@ -182,7 +220,7 @@ def check_pension_and_compensation_payee_code
     find("label", text: "Compensation", match: :prefer_exact).click
   end
 
-  fill_in "What is the Receipt Date of this form?", with: "04/20/2025"
+  fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
   find("label", text: "Blake Vance, Other", match: :prefer_exact).click
   click_intake_continue
 
@@ -192,7 +230,7 @@ def check_pension_and_compensation_payee_code
   )
   expect(page).to have_content("Please select an option.")
 
-  fill_in "What is the Receipt Date of this form?", with: "04/20/2018"
+  fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
 
   within_fieldset("What is the Benefit Type?") do
     find("label", text: "Pension", match: :prefer_exact).click
@@ -213,6 +251,55 @@ def check_pension_and_compensation_payee_code
 
   click_intake_continue
   expect(page).to have_current_path("/intake/add_issues")
+end
+
+def check_claimant_address_error
+  visit "/intake"
+  expect(page).to have_current_path("/intake/review_request")
+
+  within_fieldset("What is the Benefit Type?") do
+    find("label", text: "Compensation", match: :prefer_exact).click
+  end
+
+  fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
+  find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
+
+  click_intake_continue
+
+  expect(page).to have_content("Please update the claimant's address")
+end
+
+def check_invalid_veteran_alert_on_review_page(form_type)
+  visit "/intake"
+
+  fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.send(form_type.to_sym)
+  find("#form-select").send_keys :enter
+  safe_click ".cf-submit.usa-button"
+
+  fill_in search_bar_title, with: "25252525"
+  click_on "Search"
+
+  expect(page).to have_current_path("/intake/review_request")
+  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+
+  within_fieldset("What is the Benefit Type?") do
+    find("label", text: "Compensation", match: :prefer_exact).click
+  end
+
+  expect(page).to have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+  expect(page).to have_content(
+    "the corporate database, then retry establishing the EP in Caseflow: ssn, country."
+  )
+  expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
+  expect(page).to have_button("Continue to next step", disabled: true)
+
+  within_fieldset("What is the Benefit Type?") do
+    find("label", text: "Education", match: :prefer_exact).click
+  end
+
+  expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+  expect(page).to have_button("Continue to next step", disabled: false)
 end
 
 # rubocop: enable Metrics/AbcSize

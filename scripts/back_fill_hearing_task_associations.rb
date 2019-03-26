@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 # Script to backfill HearingTaskAssociation data in production.
 #
-# Identify all HoldHearingTasks
+# Identify all DispositionTasks
 # Check if their parent HearingTask has an existing HearingTaskAssociation entry
 # Find hearing associated with HearingTask using appeal id
 # Create HearingTaskAssociation with Hearing and HearingTask info
@@ -9,8 +11,8 @@
 # Date:   Feb 19, 2019
 #
 
-# All HoldHearingTasks are for Legacy Appeals in prod. Total 156 as of AM Feb 25th 2019
-hearing_tasks = Task.where(type: "HoldHearingTask", appeal_type: "LegacyAppeal").map(&:parent)
+# All DispositionTasks are for Legacy Appeals in prod. Total 156 as of AM Feb 25th 2019
+hearing_tasks = Task.where(type: "DispositionTask", appeal_type: "LegacyAppeal").map(&:parent)
 
 task_association_exists = 0
 nbr_of_task_associations_created = 0

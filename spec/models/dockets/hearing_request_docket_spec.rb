@@ -1,11 +1,11 @@
+# frozen_string_literal: true
+
 describe HearingRequestDocket do
   before do
     FeatureToggle.enable!(:ama_auto_case_distribution)
-    Distribution.skip_callback(:commit, :after, :enqueue_distribution_job)
   end
   after do
     FeatureToggle.disable!(:ama_auto_case_distribution)
-    Distribution.set_callback(:commit, :after, :enqueue_distribution_job)
   end
 
   let(:judge_user) { create(:user) }

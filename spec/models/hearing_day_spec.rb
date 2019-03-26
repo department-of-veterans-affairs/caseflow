@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDay do
   context "#create" do
     let(:hearing) do
@@ -134,7 +136,7 @@ describe HearingDay do
 
       before do
         6.times do
-          create(:hearing, hearing_day: hearing_day, disposition: :postponed)
+          create(:hearing, hearing_day: hearing_day, disposition: "postponed")
           create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
         end
       end
@@ -169,10 +171,10 @@ describe HearingDay do
         HearingDay.create_schedule(schedule_period.algorithm_assignments)
       end
 
-      subject { VACOLS::CaseHearing.load_days_for_range(schedule_period.start_date, schedule_period.end_date) }
+      subject { HearingDay.load_days(schedule_period.start_date, schedule_period.end_date) }
 
       it do
-        expect(subject.size).to eql(358)
+        expect(subject.size).to eql(442)
       end
     end
   end
@@ -186,7 +188,7 @@ describe HearingDay do
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "RO13") }
 
     it "gets hearings for a date range" do
-      expect(subject[:vacols_hearings].size).to eq 2
+      expect(subject.size).to eq 2
     end
   end
 
@@ -200,7 +202,7 @@ describe HearingDay do
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today + 2.days, HearingDay::REQUEST_TYPES[:central]) }
 
     it "should load all three hearing days" do
-      expect(subject[:caseflow_hearings].size).to eq 3
+      expect(subject.size).to eq 3
     end
   end
 
@@ -315,7 +317,7 @@ describe HearingDay do
                regional_office: staff.stafkey)
       end
       let!(:ama_appeal) { create(:appeal) }
-      let!(:ama_hearing) { create(:hearing, hearing_day: ama_hearing_day, appeal: ama_appeal) }
+      let!(:ama_hearing) { create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal) }
 
       it "returns hearings are mapped to days" do
         expect(subject.size).to eq 3

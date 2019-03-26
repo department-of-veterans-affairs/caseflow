@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::TaskSerializer < ActiveModel::Serializer
   attribute :is_legacy do
     false
@@ -32,7 +34,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
     {
       css_id: object.assigned_to.try(:css_id),
       is_organization: object.assigned_to.is_a?(Organization),
-      name: object.appeal.location_code,
+      name: object.appeal.assigned_to_location,
       type: object.assigned_to.class.name,
       id: object.assigned_to.id
     }
@@ -59,7 +61,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :closest_regional_office do
-    object.appeal.closest_regional_office
+    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office).city
   end
 
   attribute :external_appeal_id do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe BvaDispatchTask do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
@@ -110,7 +112,7 @@ describe BvaDispatchTask do
           end.to_not have_enqueued_job(ProcessDecisionDocumentJob)
 
           decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
-          expect(decision_document.submitted_at).to be >= decision_date
+          expect(decision_document.submitted_at).to eq(decision_date + 1.minute - 8.hours)
         end
       end
     end

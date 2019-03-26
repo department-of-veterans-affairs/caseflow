@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe ClaimReview do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
@@ -94,7 +96,7 @@ describe ClaimReview do
   let!(:claimant) do
     create(
       :claimant,
-      review_request: claim_review,
+      decision_review: claim_review,
       participant_id: veteran_participant_id,
       payee_code: "00"
     )
@@ -106,7 +108,7 @@ describe ClaimReview do
 
   context "async logic scopes" do
     let!(:claim_review_requiring_processing) do
-      create(:higher_level_review, receipt_date: receipt_date).tap(&:submit_for_processing!)
+      create(:higher_level_review, :requires_processing, receipt_date: receipt_date)
     end
 
     let!(:claim_review_processed) do

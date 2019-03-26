@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe LegacyOptinManager do
   before do
     Timecop.freeze(Time.zone.now)

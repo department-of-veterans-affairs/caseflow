@@ -1,3 +1,10 @@
+# frozen_string_literal: true
+
+##
+# Tasks that block scheduling a Veteran for a hearing.
+# A hearing coordinator must resolve these before scheduling a Veteran.
+# Subclasses of various admin actions are defined below.
+
 class HearingAdminActionTask < GenericTask
   validates :parent, presence: true
   validate :on_hold_duration_is_set, on: :update
@@ -81,7 +88,7 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
   end
 
   def fetch_closest_ro_and_ahls
-    FetchHearingLocationsForVeteransJob.new.perform_once_for(appeal)
+    appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
   end
 end
 class HearingAdminActionMissingFormsTask < HearingAdminActionTask

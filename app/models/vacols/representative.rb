@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class VACOLS::Representative < VACOLS::Record
   include AddressMapper
 
@@ -144,13 +146,19 @@ class VACOLS::Representative < VACOLS::Record
              "Agent"
            end
 
+    code = repso
+
     {
       type: type,
       first_name: repfirst,
       middle_name: repmi,
       last_name: replast,
       name_suffix: repsuf,
-      address: get_address_from_rep_entry(self)
+      address: get_address_from_rep_entry(self),
+      representative: {
+        code: code,
+        name: VACOLS::Case::REPRESENTATIVES.dig(code, :full_name)
+      }
     }
   end
 

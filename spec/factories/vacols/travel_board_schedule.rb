@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :travel_board_schedule, class: VACOLS::TravelBoardSchedule do
     sequence(:tbtrip)

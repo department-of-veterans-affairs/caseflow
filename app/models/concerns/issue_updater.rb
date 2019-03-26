@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module IssueUpdater
   extend ActiveSupport::Concern
 
@@ -5,9 +7,10 @@ module IssueUpdater
     return unless appeal
 
     # We will always delete and re-create decision issues on attorney/judge checkout
-    appeal.decision_issues.destroy_all
+    appeal.decision_issues.each(&:soft_delete)
     create_decision_issues!
     fail_if_not_all_request_issues_have_decision!
+    fail_if_appeal_has_no_decision_issues!
   rescue ActiveRecord::RecordInvalid => e
     raise Caseflow::Error::AttorneyJudgeCheckoutError, message: e.message
   end
@@ -34,7 +37,7 @@ module IssueUpdater
 
   def create_decision_issues!
     issues.each do |issue_attrs|
-      request_issues = appeal.request_issues.open.where(id: issue_attrs[:request_issue_ids])
+      request_issues = appeal.request_issues.active.where(id: issue_attrs[:request_issue_ids])
       next if request_issues.empty?
 
       decision_issue = DecisionIssue.create!(
@@ -57,6 +60,13 @@ module IssueUpdater
   def fail_if_not_all_request_issues_have_decision!
     unless appeal.every_request_issue_has_decision?
       fail Caseflow::Error::AttorneyJudgeCheckoutError, message: "Not every request issue has a decision issue"
+    end
+  end
+
+  def fail_if_appeal_has_no_decision_issues!
+    # In order for this to work, have to reload an appeal from memory
+    if appeal.reload.decision_issues.blank?
+      fail Caseflow::Error::AttorneyJudgeCheckoutError, message: "Appeal is missing decision issues"
     end
   end
 

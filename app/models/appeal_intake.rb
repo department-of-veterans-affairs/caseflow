@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppealIntake < DecisionReviewIntake
   attr_reader :request_params
 
@@ -17,20 +19,13 @@ class AppealIntake < DecisionReviewIntake
       Claimant.find_or_initialize_by(
         participant_id: claimant_participant_id,
         payee_code: nil,
-        review_request: detail
+        decision_review: detail
       ).tap(&:save!)
       update_person!
       detail.save(context: :intake_review)
     end
   rescue ActiveRecord::RecordInvalid => _err
-    # propagate the error from invalid column to the user-visible reason
-    if detail.errors.messages[:veteran_is_not_claimant].include?(ClaimantValidator::CLAIMANT_REQUIRED)
-      claimant_error = ClaimantValidator::BLANK
-    end
-
-    detail.validate
-    detail.errors[:claimant] << claimant_error if claimant_error
-    false
+    set_review_errors
   end
 
   def complete!(request_params)

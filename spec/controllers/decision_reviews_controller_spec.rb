@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DecisionReviewsController, type: :controller do
   before do
     FeatureToggle.enable!(:decision_reviews)
@@ -9,7 +11,7 @@ describe DecisionReviewsController, type: :controller do
     FeatureToggle.disable!(:decision_reviews)
   end
 
-  let(:non_comp_org) { create(:business_line, name: "National Cemetery Association", url: "nca") }
+  let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
   let(:user) { create(:default_user) }
 
   describe "#index" do
@@ -31,6 +33,19 @@ describe DecisionReviewsController, type: :controller do
         get :index, params: { business_line_slug: non_comp_org.url }
 
         expect(response.status).to eq 200
+      end
+
+      context "user has an unknown station_id" do
+        before do
+          user.station_id = "xxx"
+        end
+
+        it "redirects to /login" do
+          get :index, params: { business_line_slug: non_comp_org.url }
+
+          expect(response.status).to eq 302
+          expect(response.body).to match(/login/)
+        end
       end
     end
 

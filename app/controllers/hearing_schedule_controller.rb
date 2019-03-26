@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingScheduleController < ApplicationController
   before_action :react_routed, :check_hearing_schedule_out_of_service
   before_action :verify_build_hearing_schedule_access, only: [:build_schedule_index]
@@ -30,7 +32,7 @@ class HearingScheduleController < ApplicationController
   end
 
   def verify_view_hearing_schedule_access
-    verify_authorized_roles("Edit HearSched", "Build HearSched", "RO ViewHearSched")
+    verify_authorized_roles("Edit HearSched", "Build HearSched", "RO ViewHearSched", "VSO")
   end
 
   def verify_hearings_or_reader_access

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Supplemental Claim Intake" do
@@ -6,10 +8,8 @@ feature "Supplemental Claim Intake" do
   before do
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 11, 28))
+    Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -18,7 +18,6 @@ feature "Supplemental Claim Intake" do
 
   after do
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
@@ -49,7 +48,7 @@ feature "Supplemental Claim Intake" do
 
   let(:inaccessible) { false }
 
-  let(:receipt_date) { Date.new(2018, 9, 20) }
+  let(:receipt_date) { Time.zone.today - 30.days }
 
   let(:benefit_type) { "compensation" }
 
@@ -59,7 +58,7 @@ feature "Supplemental Claim Intake" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { Time.zone.local(2018, 9, 15) }
+  let(:profile_date) { (receipt_date - 15.days).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
@@ -169,13 +168,13 @@ feature "Supplemental Claim Intake" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
+    fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
     click_intake_continue
     expect(page).to have_content(
       "Receipt date cannot be in the future."
     )
 
-    fill_in "What is the Receipt Date of this form?", with: "09/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     expect(page).to_not have_content("Please select the claimant listed on the form.")
     within_fieldset("Is the claimant someone other than the Veteran?") do
@@ -238,7 +237,7 @@ feature "Supplemental Claim Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "10/27/2018"
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("2 issues")
@@ -361,7 +360,7 @@ feature "Supplemental Claim Intake" do
       contested_rating_issue_profile_date: nil,
       issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
-      decision_date: 1.month.ago.to_date
+      decision_date: profile_date.to_date
     )
 
     # skip the sync call since all edit requests require resyncing
@@ -371,7 +370,7 @@ feature "Supplemental Claim Intake" do
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
     expect(page).to have_content("Ed Merica (#{veteran_file_number})")
-    expect(page).to have_content("09/20/2018")
+    expect(page).to have_content(receipt_date.mdY)
     expect(page).to_not have_content("Informal conference request")
     expect(page).to_not have_content("Same office request")
     expect(page).to have_content("PTSD denied")
@@ -416,7 +415,7 @@ feature "Supplemental Claim Intake" do
     )
 
     Claimant.create!(
-      review_request: supplemental_claim,
+      decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )
 
@@ -434,7 +433,7 @@ feature "Supplemental Claim Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "10/27/2018"
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("1 issue")
@@ -529,7 +528,7 @@ feature "Supplemental Claim Intake" do
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",
-          date: "04/19/2018"
+          date: profile_date.mdY
         )
 
         expect(page).to have_content("1 issue")
@@ -584,7 +583,7 @@ feature "Supplemental Claim Intake" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "10/27/2018"
+        date: profile_date.mdY
       )
       expect(page).to have_content("2 issues")
       # SC is always timely
@@ -612,9 +611,10 @@ feature "Supplemental Claim Intake" do
       # add before_ama ratings
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
-      expect(page).to have_content(
+      expect(page).to_not have_content(
         "6. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
       )
+      expect(page).to have_content("6. Non-RAMP Issue before AMA Activation")
 
       # Eligible because it comes from a RAMP decision
       click_intake_add_issue
@@ -622,30 +622,35 @@ feature "Supplemental Claim Intake" do
       expect(page).to have_content(
         "7. Issue before AMA Activation from RAMP Decision date:"
       )
+      expect(page).to_not have_content(
+        "7. Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
+      )
 
       click_intake_add_issue
       click_intake_no_matching_issues
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
-        date: "10/19/2017"
+        date: (profile_date - 400.days).mdY
       )
-      expect(page).to have_content(
+      expect(page).to_not have_content(
         "A nonrating issue before AMA #{ineligible_constants.before_ama}"
       )
+      expect(page).to have_content("A nonrating issue before AMA")
 
       click_intake_finish
 
       expect(page).to have_content("Request for #{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been processed.")
       expect(page).to have_content(RequestIssue::UNIDENTIFIED_ISSUE_MSG)
       expect(page).to have_content('Unidentified issue: no issue matched for requested "This is an unidentified issue"')
+
       success_checklist = find("ul.cf-success-checklist")
-      expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
-      expect(success_checklist).to_not have_content("A nonrating issue before AMA")
+      expect(success_checklist).to have_content("Non-RAMP Issue before AMA Activation")
+      expect(success_checklist).to have_content("A nonrating issue before AMA")
 
       ineligible_checklist = find("ul.cf-ineligible-checklist")
-      expect(ineligible_checklist).to have_content("Non-RAMP Issue before AMA Activation is ineligible")
-      expect(ineligible_checklist).to have_content("A nonrating issue before AMA is ineligible")
+      expect(ineligible_checklist).to_not have_content("Non-RAMP Issue before AMA Activation is ineligible")
+      expect(ineligible_checklist).to_not have_content("A nonrating issue before AMA is ineligible")
 
       expect(SupplementalClaim.find_by(
                id: supplemental_claim.id,
@@ -686,7 +691,7 @@ feature "Supplemental Claim Intake" do
                decision_review: supplemental_claim,
                issue_category: "Active Duty Adjustments",
                nonrating_issue_description: "Description for Active Duty Adjustments",
-               decision_date: 1.month.ago.to_date,
+               decision_date: profile_date.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
              )).to_not be_nil
 
@@ -701,9 +706,8 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
-               end_product_establishment_id: nil,
-               ineligible_reason: :before_ama
-             )).to_not be_nil
+               end_product_establishment_id: end_product_establishment.id
+             )).to be_eligible
 
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
@@ -716,9 +720,8 @@ feature "Supplemental Claim Intake" do
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
                nonrating_issue_description: "A nonrating issue before AMA",
-               ineligible_reason: :before_ama,
-               end_product_establishment_id: nil
-             )).to_not be_nil
+               end_product_establishment_id: non_rating_end_product_establishment.id
+             )).to be_eligible
 
       duplicate_request_issues = RequestIssue.where(contested_rating_issue_reference_id: duplicate_reference_id)
       expect(duplicate_request_issues.count).to eq(2)
@@ -802,7 +805,7 @@ feature "Supplemental Claim Intake" do
           add_intake_nonrating_issue(
             category: "Accrued",
             description: "I am a description",
-            date: "10/25/2017"
+            date: profile_date.mdY
           )
 
           expect(page).to_not have_content("Establish EP")
@@ -896,7 +899,7 @@ feature "Supplemental Claim Intake" do
           add_intake_nonrating_issue(
             category: "Active Duty Adjustments",
             description: "Description for Active Duty Adjustments",
-            date: "10/25/2017",
+            date: profile_date.mdY,
             legacy_issues: true
           )
 
@@ -934,6 +937,7 @@ feature "Supplemental Claim Intake" do
 
           expect(RequestIssue.find_by(
                    contested_issue_description: "Left knee granted",
+                   closed_status: :ineligible,
                    ineligible_reason: :legacy_appeal_not_eligible,
                    vacols_id: "vacols2",
                    vacols_sequence_id: "1"
@@ -977,19 +981,6 @@ feature "Supplemental Claim Intake" do
 
           expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
         end
-      end
-
-      scenario "adding issue with legacy opt in disabled" do
-        allow(FeatureToggle).to receive(:enabled?).and_call_original
-        allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
-
-        start_supplemental_claim(veteran)
-        visit "/intake/add_issues"
-
-        click_intake_add_issue
-        expect(page).to have_content("Add this issue")
-        add_intake_rating_issue("Left knee granted")
-        expect(page).to have_content("Left knee granted")
       end
     end
   end

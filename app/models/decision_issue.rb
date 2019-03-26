@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionIssue < ApplicationRecord
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
   validates :disposition, presence: true
@@ -21,12 +23,17 @@ class DecisionIssue < ApplicationRecord
 
   # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
   # The characters an encoding is precise so don't change these unless you know they match VBMS values.
-  DTA_ERROR_PMR = "DTA Error - PMRs".freeze
-  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs".freeze
-  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs".freeze
-  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO".freeze
-  REMAND = "remanded".freeze
+  DTA_ERROR_PMR = "DTA Error - PMRs"
+  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs"
+  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs"
+  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO"
+  REMAND = "remanded"
   REMAND_DISPOSITIONS = [REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
+
+  # We are using default scope here because we'd like to soft delete decision issues
+  # for debugging purposes and to make it easier for developers to filter out
+  # soft deleted records
+  default_scope { where(deleted_at: nil) }
 
   class AppealDTAPayeeCodeError < StandardError
     def initialize(appeal_id)
@@ -59,6 +66,11 @@ class DecisionIssue < ApplicationRecord
     end
   end
 
+  def soft_delete
+    update(deleted_at: Time.zone.now)
+    request_decision_issues.update_all(deleted_at: Time.zone.now)
+  end
+
   def approx_decision_date
     processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
   end
@@ -67,9 +79,9 @@ class DecisionIssue < ApplicationRecord
     associated_request_issue&.issue_category
   end
 
-  def destroy_on_removed_request_issue(request_issue_id)
-    # destroy if the request issue is deleted and there are no other request issues associated
-    destroy if request_issues.length == 1 && request_issues.first.id == request_issue_id
+  def soft_delete_on_removed_request_issue
+    # mark as deleted if the request issue is deleted and there are no other request issues associated
+    update(deleted_at: Time.zone.now) if request_issues.length == 1
   end
 
   # Since nonrating issues require specialization to process, if any associated request issue is nonrating

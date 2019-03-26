@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearing < ApplicationRecord
   belongs_to :hearing_day
   belongs_to :appeal
@@ -33,7 +35,7 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :available_hearing_locations, to: :appeal
+  delegate :available_hearing_locations, :closest_regional_office, to: :appeal
   delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
@@ -72,6 +74,28 @@ class Hearing < ApplicationRecord
     false
   end
 
+  def assigned_to_vso?(user)
+    TrackVeteranTask.active.where(appeal: appeal).any? { |task| user.organizations.include?(task.assigned_to) }
+  end
+
+  def hearing_task?
+    !hearing_task_association.nil?
+  end
+
+  def disposition_task
+    if hearing_task?
+      hearing_task_association.hearing_task.children.detect { |child| child.type == DispositionTask.name }
+    end
+  end
+
+  def disposition_task_in_progress
+    disposition_task ? disposition_task.active_with_no_children? : false
+  end
+
+  def disposition_editable
+    disposition_task_in_progress || !hearing_task?
+  end
+
   def scheduled_for
     DateTime.new.in_time_zone(regional_office_timezone).change(
       year: hearing_day.scheduled_for.year,
@@ -90,31 +114,18 @@ class Hearing < ApplicationRecord
     end
   end
 
-  #:nocov:
-  # This is all fake data that will be refactored in a future PR.
   def regional_office_name
     RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
   end
 
   def regional_office_timezone
-    RegionalOffice::CITIES[regional_office_key][:timezone] unless regional_office_key.nil?
-    "America/New_York"
+    return "America/New_York" if regional_office_key.nil?
+
+    RegionalOffice::CITIES[regional_office_key][:timezone]
   end
 
   def current_issue_count
-    1
-  end
-  #:nocov:
-
-  def slot_new_hearing(hearing_day_id, hearing_location_attrs: nil, **_args)
-    # These fields are needed for the legacy hearing's version of this method
-    hearing = Hearing.create!(
-      hearing_day_id: hearing_day_id,
-      scheduled_time: scheduled_time,
-      appeal: appeal
-    )
-
-    hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
+    request_issues.size
   end
 
   def external_id
@@ -159,7 +170,9 @@ class Hearing < ApplicationRecord
         :appeal_representative_name,
         :location,
         :worksheet_issues,
-        :available_hearing_locations
+        :closest_regional_office,
+        :available_hearing_locations,
+        :disposition_editable
       ]
     )
   end

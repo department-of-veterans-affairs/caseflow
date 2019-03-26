@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DependenciesChecksController < ApplicationBaseController
   newrelic_ignore_apdex
 

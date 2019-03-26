@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 class AClaimReview
@@ -35,7 +37,7 @@ describe DecisionReviewProcessJob do
 
     subject
 
-    expect(claim_review.error).to eq(vbms_error.to_s)
+    expect(claim_review.error).to eq(vbms_error.inspect)
     expect(@raven_called).to eq(true)
     expect(Raven).to have_received(:extra_context).with(id: 123, class: "AClaimReview")
   end

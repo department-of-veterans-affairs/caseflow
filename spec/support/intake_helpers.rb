@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
@@ -31,7 +33,7 @@ module IntakeHelpers
     if claim_participant_id
       create(
         :claimant,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         participant_id: claim_participant_id,
         payee_code: "02"
       )
@@ -68,7 +70,7 @@ module IntakeHelpers
 
     if claim_participant_id
       Claimant.create!(
-        review_request: supplemental_claim,
+        decision_review: supplemental_claim,
         participant_id: claim_participant_id
       )
     end
@@ -99,7 +101,7 @@ module IntakeHelpers
     )
 
     Claimant.create!(
-      review_request: appeal,
+      decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
 
@@ -120,19 +122,18 @@ module IntakeHelpers
   def setup_intake_flags
     FeatureToggle.enable!(:intake)
     FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
 
-    Time.zone = "America/New_York"
     Timecop.freeze(Time.zone.today)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
+
+    User.authenticate!(roles: ["Admin Intake"])
   end
 
   def teardown_intake_flags
     FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   def search_page_title
@@ -146,7 +147,7 @@ module IntakeHelpers
   def add_untimely_exemption_response(yes_or_no, note = "I am an exemption note")
     expect(page).to have_content("The issue requested isn't usually eligible because its decision date is older")
     find_all("label", text: yes_or_no).first.click
-    fill_in "Notes", with: note
+    fill_in "Notes", with: note if yes_or_no == "Yes"
     safe_click ".add-issue"
   end
 
@@ -236,6 +237,14 @@ module IntakeHelpers
   def click_remove_intake_issue(number)
     issue_el = find_intake_issue_by_number(number)
     issue_el.find(".remove-issue").click
+  end
+
+  def click_remove_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_num = issue_el[:id].sub(/^issue-/, "").to_i - 1
+    find("#issue-action-#{issue_num}").click
+    find("#issue-action-#{issue_num}_remove").click
+    click_remove_issue_confirmation
   end
 
   def click_remove_intake_issue_by_text(text)
@@ -395,7 +404,7 @@ module IntakeHelpers
     )
 
     prior_sc_claimant = create(:claimant,
-                               review_request: prior_supplemental_claim,
+                               decision_review: prior_supplemental_claim,
                                participant_id: appeal.claimants.first.participant_id,
                                payee_code: appeal.claimants.first.payee_code)
 
@@ -617,7 +626,7 @@ module IntakeHelpers
     expect(updated_request_issue).to be_closed
 
     # check that new request issue is created contesting the decision issue
-    request_issues = decision_review.reload.open_request_issues
+    request_issues = decision_review.reload.request_issues.active_or_ineligible
     first_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.first.id)
     second_request_issue = request_issues.find_by(contested_decision_issue_id: contested_decision_issues.second.id)
 

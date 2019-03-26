@@ -1,10 +1,36 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "AmaQueue" do
   def valid_document_id
     "12345-12345678"
   end
+  context "user with case details role " do
+    let!(:appeal) { FactoryBot.create(:appeal) }
+    let(:no_queue_user) { FactoryBot.create(:user, roles: ["Case Details"]) }
 
+    it "should not be able to access queue and redirect to search" do
+      step "case details role tries to access queue" do
+        User.authenticate!(user: no_queue_user)
+        visit "/queue"
+        expect(page).to have_content("Search")
+        expect(current_path).to eq "/search"
+      end
+    end
+    it "should be able to search for a case" do
+      step "by veteran file number" do
+        User.authenticate!(user: no_queue_user)
+        visit "/queue"
+        expect(page).to have_content("Search")
+        expect(current_path).to eq "/search"
+        fill_in("searchBarEmptyList", with: appeal.veteran_file_number)
+        click_on("submit-search-searchBarEmptyList")
+        click_on(appeal.docket_number)
+        expect(page).to_not have_content("Veteran Documents")
+      end
+    end
+  end
   context "loads appellant detail view" do
     let(:attorney_first_name) { "Robby" }
     let(:attorney_last_name) { "McDobby" }
@@ -29,8 +55,6 @@ RSpec.feature "AmaQueue" do
     end
 
     before do
-      Time.zone = "America/New_York"
-
       Fakes::Initializer.load!
       FeatureToggle.enable!(:queue_beaam_appeals)
 
@@ -148,7 +172,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content(poa_address)
 
         expect(page.text).to match(/View (\d+) docs/)
-        expect(page).to have_selector("text", id: "NEW")
+        expect(page).not_to have_selector("text", id: "NEW")
         expect(page).to have_content("5 docs")
 
         find("a", text: /View (\d+) docs/).click
@@ -396,6 +420,7 @@ RSpec.feature "AmaQueue" do
     let!(:quality_review_organization) { QualityReview.singleton }
     let!(:other_organization) { Organization.create!(name: "Other organization", url: "other") }
     let!(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+    let!(:request_issue) { create(:request_issue, decision_review: appeal) }
 
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let!(:judge_task) do
@@ -497,6 +522,14 @@ RSpec.feature "AmaQueue" do
       expect(page).not_to have_content("Select special issues (optional)")
 
       expect(page).to have_content("Add decisions")
+      all("button", text: "+ Add decision", count: 1)[0].click
+      expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+      fill_in "Text Box", with: "test"
+      find(".Select-control", text: "Select disposition").click
+      find("div", class: "Select-option", text: "Allowed").click
+
+      click_on "Save"
 
       click_on "Continue"
 
@@ -571,7 +604,12 @@ RSpec.feature "AmaQueue" do
         number_of_claimants: 1,
         request_issues: [
           FactoryBot.create(:request_issue, contested_issue_description: "Tinnitus", notes: "Tinnitus note"),
-          FactoryBot.create(:request_issue, contested_issue_description: "Knee pain", notes: "Knee pain note")
+          FactoryBot.create(
+            :request_issue,
+            contested_issue_description: "Knee pain",
+            notes: "Knee pain note",
+            contested_rating_issue_diagnostic_code: nil
+          )
         ]
       )
     end
@@ -639,6 +677,7 @@ RSpec.feature "AmaQueue" do
         # Add a second decision issue
         all("button", text: "+ Add decision", count: 2)[1].click
         expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+        expect(page.find(".dropdown-Diagnostic.code")).to have_content("Diagnostic code")
 
         fill_in "Text Box", with: "test"
 
@@ -646,6 +685,7 @@ RSpec.feature "AmaQueue" do
         find("div", class: "Select-option", text: "Remanded").click
 
         click_on "Save"
+        expect(page).not_to have_content("This field is required")
         click_on "Continue"
 
         expect(page).to have_content("Select Remand Reasons")

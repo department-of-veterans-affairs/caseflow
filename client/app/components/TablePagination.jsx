@@ -48,7 +48,7 @@ class TablePagination extends React.PureComponent {
     let previousCaseCount = 0;
 
     for (let i = 0; i < currentPage; i += 1) {
-      previousCaseCount += paginatedData[i].length;
+      previousCaseCount += paginatedData[i] ? paginatedData[i].length : 0;
     }
     // If there are no pages, there is no data, so the range should be 0-0.
     // Otherwise, the beginning of the range is the previous amount of cases + 1

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FullGrantsReport < Report
   def self.output_filename
     "full_grants"

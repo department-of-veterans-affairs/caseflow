@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :users do
   desc "coerce all user css_id values to UPCASE where possible"
   task upcase: :environment do
@@ -15,6 +17,13 @@ namespace :users do
     end
   end
 
+  desc "report on a user db footprint"
+  task footprint: :environment do
+    css_id = ENV.fetch("CSS_ID")
+    reporter = UserReporter.new(css_id)
+    reporter.report.each { |ln| puts ln }
+  end
+
   desc "find duplicates and suggest which one(s) to delete"
   task dedupe: :environment do
     users = User.all
@@ -22,28 +31,20 @@ namespace :users do
     dupes = css_ids.select { |e| css_ids.count(e) > 1 }.uniq
     dupes.each do |css_id|
       puts "Duplicate: #{css_id}"
-      users = User.where("UPPER(css_id)=UPPER(?)", css_id)
-      users.each do |user|
-        stats = Intake.user_stats(user)
-        [
-          AdvanceOnDocketMotion,
-          Annotation,
-          AppealView,
-          Certification,
-          Dispatch::Task,
-          EndProductEstablishment,
-          RampElectionRollback,
-          SchedulePeriod
-        ].each do |cls|
-          num = cls.where(user_id: user.id).count
-          if num > 0
-            puts "#{user.id} has #{num} #{cls}"
-          end
-        end
-        if stats.empty?
-          puts "#{user.inspect} has zero intake stats and may be a candidate to merge/delete"
-        end
-      end
+      reporter = UserReporter.new(css_id)
+      reporter.report.each { |ln| puts ln }
+    end
+  end
+
+  desc "deduplicates all user records merging all records with the same css_id with the capitalized one"
+  task merge: :environment do
+    users = User.all
+    css_ids = users.map(&:css_id).map(&:upcase)
+    dupes = css_ids.select { |e| css_ids.count(e) > 1 }.uniq
+    dupes.each do |css_id|
+      puts "Duplicate: #{css_id}"
+      dedup_service = UserDedupService.new(css_id)
+      dedup_service.merge_all_users_with_uppercased_user
     end
   end
 end

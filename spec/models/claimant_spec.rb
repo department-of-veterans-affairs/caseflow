@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Claimant do
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
@@ -123,7 +125,7 @@ describe Claimant do
     context "participant_id" do
       let(:participant_id) { "1234" }
 
-      let(:review_request) do
+      let(:decision_review) do
         build(:higher_level_review,
               id: 1,
               benefit_type: "fiduciary",
@@ -131,11 +133,11 @@ describe Claimant do
       end
 
       let!(:claimant) do
-        create(:claimant, review_request: review_request, participant_id: participant_id)
+        create(:claimant, decision_review: decision_review, participant_id: participant_id)
       end
 
-      context "when created with the same participant_id and the same review_request" do
-        subject { build(:claimant, review_request: review_request, participant_id: participant_id) }
+      context "when created with the same participant_id and the same decision_review" do
+        subject { build(:claimant, decision_review: decision_review, participant_id: participant_id) }
 
         it "requires uniqueness" do
           expect(subject).to_not be_valid
@@ -143,14 +145,14 @@ describe Claimant do
         end
       end
 
-      context "when created with the same participant_id and different review_request" do
-        let(:review_request2) do
+      context "when created with the same participant_id and different decision_review" do
+        let(:decision_review2) do
           build(:appeal,
                 id: 1,
                 veteran_file_number: create(:veteran).file_number)
         end
 
-        subject { build(:claimant, review_request: review_request2, participant_id: participant_id) }
+        subject { build(:claimant, decision_review: decision_review2, participant_id: participant_id) }
 
         it "does not require uniqueness" do
           expect(subject).to be_valid
@@ -159,13 +161,13 @@ describe Claimant do
     end
 
     context "payee_code" do
-      let(:review_request) do
+      let(:decision_review) do
         build(:higher_level_review, benefit_type: benefit_type, veteran_file_number: create(:veteran).file_number)
       end
 
-      subject { build(:claimant, review_request: review_request) }
+      subject { build(:claimant, decision_review: decision_review) }
 
-      context "when review_request.benefit_type is compensation" do
+      context "when decision_review.benefit_type is compensation" do
         let(:benefit_type) { "compensation" }
 
         it "requires non-blank value" do
@@ -174,7 +176,7 @@ describe Claimant do
         end
       end
 
-      context "when review_request.benefit_type is pension" do
+      context "when decision_review.benefit_type is pension" do
         let(:benefit_type) { "pension" }
 
         it "requires non-blank value" do
@@ -183,7 +185,7 @@ describe Claimant do
         end
       end
 
-      context "when review_request.benefit_type is fiduciary" do
+      context "when decision_review.benefit_type is fiduciary" do
         let(:benefit_type) { "fiduciary" }
 
         it "allows blank value" do

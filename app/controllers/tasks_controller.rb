@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 class TasksController < ApplicationController
   include Errors
 
-  before_action :set_application, only: [:new_documents]
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
@@ -90,11 +91,6 @@ class TasksController < ApplicationController
     no_cache
     RootTask.find_or_create_by!(appeal: appeal)
 
-    # This is a temporary solution for legacy hearings. We need them to exist on the case details
-    # page, but have no good way to create them before a page load. So we need to check here if we
-    # need to create a hearing task and if so, create it.
-    ScheduleHearingTask.find_or_create_if_eligible(appeal)
-
     # VSO users should only get tasks assigned to them or their organization.
     if current_user.vso_employee?
       return json_vso_tasks
@@ -127,13 +123,16 @@ class TasksController < ApplicationController
     }
   end
 
-  def new_documents
-    new_documents_for_user = NewDocumentsForUser.new(
-      appeal: task.appeal, user: current_user, query_vbms: false, date_to_compare_with: task.placed_on_hold_at
-    )
-    render json: { new_documents: new_documents_for_user.process! }
-  rescue StandardError => e
-    handle_non_critical_error("new_documents", e)
+  def reschedule
+    if !task.is_a?(NoShowHearingTask)
+      fail(Caseflow::Error::ActionForbiddenError, message: "Can only reschedule NoShowHearingTasks")
+    end
+
+    task.reschedule_hearing
+
+    render json: {
+      tasks: json_tasks(task.appeal.tasks)[:data]
+    }
   end
 
   private

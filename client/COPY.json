@@ -82,7 +82,9 @@
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL": "This Post Remand data has hearing data associated with a previous original appeal.",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_LINK": "View all cases",
   "CASE_DETAILS_HEARING_ON_OTHER_APPEAL_POST_LINK": " to see other cases associated with this Veteran.",
-  "CASE_DETAILS_INCORRECT_POA": "POA data comes from VBMS. To update POA, please send a request to the VLJ support staff.",
+  "CASE_DETAILS_INCORRECT_POA": "POA data comes from VBMS. To update POA, please send a task to the VLJ support management branch.",
+  "CASE_DETAILS_NO_POA": "The appellant does not have a representative.",
+  "CASE_DETAILS_VETERAN_ADDRESS_SOURCE": "Veteran information comes from VBMS. To update the veteran's information, please send a request to the VLJ support staff.",
   "CASE_DETAILS_UNABLE_TO_LOAD": "We're unable to load this information. If the problem persists, please submit feedback through Caseflow",
   "CASE_DETAILS_LOADING": "Loading...",
   "CASE_DETAILS_POA_VSO": "Veteran Service Organization",
@@ -206,7 +208,7 @@
   "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Hearing Schedule!",
-  "HEARING_SCHEDULE_VIEW_PAGE_HEADER_RO": "Board Hearing Schedule",
+  "HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER": "Board Hearing Schedule",
   "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
   "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
   "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:",
@@ -233,12 +235,16 @@
   "MARK_TASK_COMPLETE_CONFIRMATION": "%s's case has been marked complete",
   "MARK_TASK_COMPLETE_CONFIRMATION_DETAIL": "If you've made a mistake, please email %s to manage any changes.",
 
+  "MODAL_SUBMIT_BUTTON": "Submit",
+  "MODAL_CANCEL_BUTTON": "Cancel",
+
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to the assigner",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
   "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
 
   "HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL": "Marking this task as complete will remove this admin action from your active tasks.",
+  "NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY": "Marking this case as complete will release it to a judge for review. A 90 day evidence hold may still apply to this case.",
 
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
@@ -323,6 +329,21 @@
   "DECISION_ISSUE_CONFIRM_DELETE_WITH_CONNECTED_ISSUES": " Deleting this decision will also remove it from other issues you've added it to.",
   "DECISION_ISSUE_CONFIRM_DELETE": "Are you sure you want to delete this decision?",
 
+  "TEAM_MANAGEMENT_PAGE_DROPDOWN_LINK": "Caseflow team management",
+  "TEAM_MANAGEMENT_PAGE_HEADER": "Caseflow Team Management",
+  "TEAM_MANAGEMENT_ID_COLUMN_HEADING": "ID",
+  "TEAM_MANAGEMENT_NAME_COLUMN_HEADING": "Name",
+  "TEAM_MANAGEMENT_URL_COLUMN_HEADING": "URL",
+  "TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING": "BGS Participant ID",
+  "TEAM_MANAGEMENT_UPDATE_ROW_BUTTON": "Update",
+  "TEAM_MANAGEMENT_ADD_JUDGE_BUTTON": "+ Add Judge Team",
+  "TEAM_MANAGEMENT_ADD_VSO_BUTTON": "+ Add VSO",
+  "TEAM_MANAGEMENT_ADD_JUDGE_TEAM_MODAL_TITLE": "Create JudgeTeam",
+  "TEAM_MANAGEMENT_SELECT_JUDGE_LABEL": "Select judge",
+  "TEAM_MANAGEMENT_ADD_VSO_MODAL_TITLE": "Create VSO",
+  "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
+  "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
+
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
 
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
@@ -354,18 +375,26 @@
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
 
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
-  "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
+  "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below or if the claimant's information needs updated, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
 
   "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
-  "WITHDRAW_HEARING_MODAL_BODY": "Withdrawing this hearing request will remove this veteran from the hearing pool.",
+  "WITHDRAW_HEARING_MODAL_BODY": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled.",
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE": "You have successfully withdrawn %s's hearing request",
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY": "%s has been removed from the hearing schedule and has been sent to the next appropriate location",
+
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_TITLE": "Schedule new hearing",
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY": "Withdrawing this hearing request will remove this veteran from the hearing pool.",
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_TITLE": "You have successfully completed this case",
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_BODY": "%s case has been removed from the transcription queue and has been sent to the next hearing management branch.",
+
+  "COMPLETE_TRANSCRIPTION_BODY": "Mark transcription as completed and send appeal to the next team.",
+
   "UNTIMELY_EVIDENCE_TITLE": "AMA requires that VA capture how frequently a Veteran submits evidence that can't be considered.  This includes when the Veteran:",
   "UNTIMELY_EVIDENCE_BULLET_ONE": "1. Requested a Direct Review appeal option and submitted evidence",
   "UNTIMELY_EVIDENCE_BULLET_TWO": "2. Requested the Evidence Submission appeal option and submitted evidence outside of the 90-day window after their NOD",
   "UNTIMELY_EVIDENCE_BULLET_THREE": "3. Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
-  "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?", 
-  
+  "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
+
   "TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE": "must contain only Users"
 }

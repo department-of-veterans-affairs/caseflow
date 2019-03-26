@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe GenericTask do
   describe ".available_actions" do
     let(:task) { nil }
@@ -11,11 +13,11 @@ describe GenericTask do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.CANCEL_TASK.to_h,
-          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
       end
-      it "should return team assign, person reassign, and mark complete actions" do
+      it "should return team assign, person reassign, complete, and cancel actions" do
         expect(subject).to eq(expected_actions)
       end
     end
@@ -37,7 +39,8 @@ describe GenericTask do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
       end
       before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }

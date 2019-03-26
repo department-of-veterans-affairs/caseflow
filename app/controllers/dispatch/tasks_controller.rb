@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Dispatch::TasksController < ApplicationController
   class InvalidTaskClassError < StandardError; end
   class InvalidTaskStateError < StandardError; end

@@ -1,12 +1,13 @@
+# frozen_string_literal: true
+
 class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
   attribute :issues do
-    object.eligible_request_issues.map do |issue|
+    object.request_issues.active_or_decided.map do |issue|
       {
         id: issue.id,
-        disposition: issue.disposition,
         program: issue.benefit_type,
         description: issue.description,
         notes: issue.notes,
@@ -49,8 +50,8 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     end
   end
 
-  attribute :location_code do
-    object.location_code
+  attribute :assigned_to_location do
+    object.assigned_to_location
   end
 
   attribute :completed_hearing_on_previous_appeal? do
@@ -166,6 +167,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
       case_review: latest_attorney_case_review
     ).editable?
   end
+
   def latest_attorney_case_review
     @latest_attorney_case_review ||=
       AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last

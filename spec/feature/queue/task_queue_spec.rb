@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Task queue" do
@@ -9,7 +11,35 @@ RSpec.feature "Task queue" do
         :ama_attorney_task,
         :on_hold,
         assigned_to: attorney_user,
-        placed_on_hold_at: 4.days.ago
+        placed_on_hold_at: 2.days.ago
+      )
+    end
+
+    let!(:attorney_task_new_docs) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        :on_hold,
+        assigned_to: attorney_user,
+        placed_on_hold_at: 4.days.ago,
+        appeal: attorney_task.appeal
+      )
+    end
+
+    let!(:colocated_task) do
+      FactoryBot.create(
+        :ama_colocated_task,
+        assigned_by: attorney_user,
+        assigned_at: 2.days.ago,
+        appeal: create(:appeal)
+      )
+    end
+
+    let!(:colocated_task_new_docs) do
+      FactoryBot.create(
+        :ama_colocated_task,
+        assigned_by: attorney_user,
+        assigned_at: 4.days.ago,
+        appeal: attorney_task.appeal
       )
     end
 
@@ -28,7 +58,7 @@ RSpec.feature "Task queue" do
 
     let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
     let(:attorney_on_hold_tasks) do
-      Task.where(status: :on_hold, assigned_to: attorney_user)
+      Task.where(status: :on_hold, assigned_to: attorney_user) + ColocatedTask.where(assigned_by: attorney_user)
     end
 
     before do
@@ -39,25 +69,28 @@ RSpec.feature "Task queue" do
     context "the on-hold task is attached to an appeal with documents" do
       let!(:documents) do
         ["NOD", "BVA Decision", "SSOC"].map do |t|
-          FactoryBot.build(:document, type: t, upload_date: 3.days.ago, file_number: paper_appeal.veteran_file_number)
+          FactoryBot.create(
+            :document,
+            type: t,
+            upload_date: 3.days.ago,
+            file_number: attorney_task.appeal.veteran_file_number
+          )
         end
       end
 
-      before do
-        allow_any_instance_of(NewDocumentsForUser).to receive(:process!) { documents }
+      let!(:more_documents) do
+        ["NOD", "BVA Decision", "SSOC"].map do |t|
+          FactoryBot.create(
+            :document,
+            type: t,
+            upload_date: 3.days.ago,
+            file_number: colocated_task.appeal.veteran_file_number
+          )
+        end
       end
 
       it "shows the correct number of tasks on hold" do
-        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
-      end
-
-      it "shows a new documents icon in the on hold tab" do
-        expect(page).to have_content("NEW")
-      end
-
-      it "shows a new documents icon next to the on hold task" do
-        page.find(:button, format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1)).click
-        expect(find("tbody td #NEW")).to have_content("NEW")
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4))
       end
     end
 
@@ -322,6 +355,25 @@ RSpec.feature "Task queue" do
     it "shows queue switcher dropdown" do
       expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
     end
+
+    context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
+      let!(:tasks) do
+        Array.new(4) do
+          vacols_case = FactoryBot.create(:case)
+          legacy_appeal = FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+          vacols_case.destroy!
+          FactoryBot.create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+        end
+      end
+
+      it "loads the task queue successfully" do
+        # Re-navigate to the organization queue so we pick up the above task creation.
+        visit(organization.path)
+
+        tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
+        expect(page).to_not have_content("Information cannot be found")
+      end
+    end
   end
 
   describe "VLJ support staff task action" do
@@ -351,6 +403,7 @@ RSpec.feature "Task queue" do
 
         find(".Select-control", text: "Select an action…").click
         find("div .Select-option", text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label]).click
+        expect(page).to have_content("Instructions:")
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
         expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION, appeal.veteran_full_name))
@@ -491,6 +544,25 @@ RSpec.feature "Task queue" do
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
         expect(page.current_path).to eq("/queue")
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+    end
+
+    context "when a task is associated with a LegacyAppeal that has been removed from VACOLS" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:vacols_case) { FactoryBot.create(:case) }
+      let(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:task) { FactoryBot.create(:generic_task, appeal: legacy_appeal, assigned_to: user) }
+
+      before do
+        vacols_case.destroy!
+        User.authenticate!(user: user)
+      end
+
+      it "loads the task queue successfully" do
+        visit("/queue")
+
+        expect(page).to have_content(legacy_appeal.veteran_file_number)
+        expect(page).to_not have_content("Information cannot be found")
       end
     end
   end

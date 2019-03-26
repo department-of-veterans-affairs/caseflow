@@ -8,6 +8,7 @@ import DailyDocket from '../components/DailyDocket';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
+import { getTimeWithoutTimeZone } from '../../util/DateUtil';
 import {
   onReceiveDailyDocket,
   onReceiveSavedHearing,
@@ -36,11 +37,11 @@ import {
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
   onResetLockHearingAfterError,
-  onHearingOptionalTime,
   onInvalidForm
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
+import { getAssignHearingTime } from '../components/modalForms/HearingTime';
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
@@ -91,74 +92,43 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  getTime = (hearing) => {
-    if (hearing.editedTime) {
-      return this.formatTime(hearing.scheduledFor, hearing.editedTime);
+  getHearingDay = (hearing) => {
+    if (hearing.editedDate) {
+      return hearing.editedDate;
     }
 
-    const timeObject = moment(hearing.scheduledFor);
-
     return {
-      // eslint-disable-next-line id-length
-      h: timeObject.hours(),
-      // eslint-disable-next-line id-length
-      m: timeObject.minutes(),
-      offset: timeObject.format('Z')
+      timezone: hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone,
+      scheduledFor: hearing.scheduledFor
     };
+  }
 
-  };
+  getTimezoneOffsetScheduledTimeObject = (hearing) => {
+    const hearingTime = this.getScheduledTime(hearing);
+    const hearingDay = this.getHearingDay(hearing);
 
-  formatTime = (hearingDate, hearingTime) => {
-    return {
-      // eslint-disable-next-line id-length
-      h: hearingTime.split(':')[0],
-      // eslint-disable-next-line id-length
-      m: hearingTime.split(':')[1],
-      offset: moment.tz(hearingDate, 'America/New_York').format('Z')
-    };
-  };
+    return getAssignHearingTime(hearingTime, hearingDay);
+  }
 
   getScheduledTime = (hearing) => {
-    let scheduledTime = null;
-
     if (hearing.editedTime) {
-      if (hearing.editedTime === 'other') {
-        scheduledTime = hearing.editedOptionalTime;
-      } else {
-        scheduledTime = hearing.editedTime;
-      }
-    } else {
-      scheduledTime = hearing.scheduledTime;
+      return hearing.editedTime;
     }
 
-    return scheduledTime;
-  };
+    const timezone = this.getHearingDay(hearing).timezone;
+
+    return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
+  }
 
   getScheduledFor = (hearing) => {
-    let scheduledFor = null;
-
     if (hearing.editedTime) {
-      if (hearing.editedTime === 'other') {
-        scheduledFor = moment(hearing.scheduledFor).
-          set(this.formatTime(hearing.scheduledFor, hearing.editedOptionalTime));
-      } else {
-        scheduledFor = moment(hearing.scheduledFor).set(this.getTime(hearing));
-      }
-    } else {
-      scheduledFor = hearing.scheduledFor;
+      const scheduledTimeObj = this.getTimezoneOffsetScheduledTimeObject(hearing);
+
+      return moment(hearing.scheduledFor).set(scheduledTimeObj).
+        format();
     }
 
-    return scheduledFor;
-  };
-
-  formatMasterRecordUpdated = (hearing) => {
-    const time = this.getTime(hearing);
-
-    return hearing.editedDate ? {
-      id: hearing.editedDate.hearingId,
-      time,
-      hearing_location_attributes: hearing.editedLocation ? ApiUtil.convertToSnakeCase(hearing.editedLocation) : null
-    } : null;
+    return hearing.scheduledFor;
   };
 
   formatHearing = (hearing) => {
@@ -175,12 +145,8 @@ export class DailyDocketContainer extends React.Component {
   };
 
   saveHearing = (hearing) => {
-    const formattedHearing = this.formatHearing(hearing);
-    const formattedMasterRecordUpdated = this.formatMasterRecordUpdated(hearing);
-
     ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
-      hearing: formattedHearing,
-      master_record_updated: formattedMasterRecordUpdated
+      hearing: this.formatHearing(hearing)
     } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
@@ -309,7 +275,6 @@ export class DailyDocketContainer extends React.Component {
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
-        onHearingOptionalTime={this.props.onHearingOptionalTime}
         onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
         onHearingLocationUpdate={this.props.onHearingLocationUpdate}
         onHearingRegionalOfficeUpdate={this.props.onHearingRegionalOfficeUpdate}
@@ -329,7 +294,9 @@ export class DailyDocketContainer extends React.Component {
         displayLockSuccessMessage={this.props.displayLockSuccessMessage}
         onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
         userRoleBuild={this.props.userRoleBuild}
+        userRoleAssign={this.props.userRoleAssign}
         userRoleView={this.props.userRoleView}
+        userRoleVso={this.props.userRoleVso}
         dailyDocketServerError={this.props.dailyDocketServerError}
         onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
         notes={this.props.notes}
@@ -393,8 +360,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError,
-  onHearingOptionalTime
+  onResetLockHearingAfterError
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

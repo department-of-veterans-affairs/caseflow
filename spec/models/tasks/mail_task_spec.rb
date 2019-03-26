@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe MailTask do
   let(:user) { FactoryBot.create(:user) }
   let(:mail_team) { MailTeam.singleton }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # A claim review is a short hand term to refer to either a supplemental claim or
 # higher level review as defined in the Appeals Modernization Act of 2017
 
@@ -5,9 +7,10 @@ class ClaimReview < DecisionReview
   include HasBusinessLine
 
   has_many :end_product_establishments, as: :source
-  has_one :intake, as: :detail
 
   with_options if: :saving_review do
+    validate :validate_receipt_date
+    validate :validate_veteran
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
@@ -15,7 +18,7 @@ class ClaimReview < DecisionReview
 
   validates :legacy_opt_in_approved, inclusion: {
     in: [true, false], message: "blank"
-  }, if: [:legacy_opt_in_enabled?, :saving_review]
+  }, if: [:saving_review]
 
   self.abstract_class = true
 
@@ -184,11 +187,19 @@ class ClaimReview < DecisionReview
   end
 
   def issues_hash
-    issue_list = active_status? ? request_issues.open : fetch_all_decision_issues
+    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
 
     return [] if issue_list.empty?
 
     fetch_issues_status(issue_list)
+  end
+
+  def contention_records(epe)
+    epe.request_issues.active
+  end
+
+  def all_contention_records(epe)
+    epe.request_issues
   end
 
   private
@@ -229,5 +240,12 @@ class ClaimReview < DecisionReview
 
   def issue_active_status(_issue)
     active?
+  end
+
+  def validate_veteran
+    return unless intake
+    return if processed_in_caseflow? || intake.veteran.valid?(:bgs)
+
+    errors.add(:veteran, "veteran_not_valid")
   end
 end

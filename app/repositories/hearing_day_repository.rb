@@ -1,12 +1,9 @@
+# frozen_string_literal: true
+
 # Hearing Schedule Repository to help build and edit hearing
 # master records in VACOLS for Video, TB and CO hearings.
 class HearingDayRepository
   class << self
-    def create_vacols_hearing!(hearing_hash)
-      hearing_hash = HearingDayMapper.hearing_day_field_validations(hearing_hash)
-      HearingDayRepository.to_hash(VACOLS::CaseHearing.create_hearing!(hearing_hash)) if hearing_hash.present?
-    end
-
     # Query Operations
     def find_hearing_day(request_type, hearing_key)
       if request_type.nil? || request_type == HearingDay::REQUEST_TYPES[:central] ||
@@ -18,17 +15,16 @@ class HearingDayRepository
       end
     end
 
-    def load_days_for_range(start_date, end_date)
-      video_and_co = VACOLS::CaseHearing.load_days_for_range(start_date, end_date)
-      travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
-      [video_and_co, travel_board]
+    def load_video_days_for_range(start_date, end_date)
+      VACOLS::CaseHearing.load_video_days_for_range(start_date, end_date)
     end
 
-    def load_days_for_regional_office(regional_office, start_date, end_date)
-      video_and_co = VACOLS::CaseHearing.load_days_for_regional_office(regional_office, start_date, end_date)
+    def load_travel_board_days_for_range(start_date, end_date)
+      VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
+    end
 
-      travel_board = VACOLS::TravelBoardSchedule.load_days_for_regional_office(regional_office, start_date, end_date)
-      [video_and_co, travel_board]
+    def load_video_days_for_regional_office(regional_office, start_date, end_date)
+      VACOLS::CaseHearing.load_video_days_for_regional_office(regional_office, start_date, end_date)
     end
 
     def fetch_hearing_day_slots(regional_office)

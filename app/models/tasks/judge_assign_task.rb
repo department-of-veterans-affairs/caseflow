@@ -1,11 +1,15 @@
+# frozen_string_literal: true
+
+##
+# Task for a judge to assign tasks to attorneys.
+
 class JudgeAssignTask < JudgeTask
   def additional_available_actions(_user)
     [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
   end
 
-  def when_child_task_completed
+  def begin_decision_review_phase
     update!(type: JudgeDecisionReviewTask.name)
-    super
   end
 
   def label

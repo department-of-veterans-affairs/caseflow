@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe LegacyDocket do
   let(:docket) do
     LegacyDocket.new

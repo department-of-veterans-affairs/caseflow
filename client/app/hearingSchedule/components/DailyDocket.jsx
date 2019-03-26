@@ -9,14 +9,15 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Table from '../../components/Table';
 import Checkbox from '../../components/Checkbox';
-import RadioField from '../../components/RadioField';
+import HearingTime from './modalForms/HearingTime';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import Modal from '../../components/Modal';
+import DispositionModal from './DailyDocketDispositionModal';
 import StatusMessage from '../../components/StatusMessage';
-import { DISPOSITION_OPTIONS, TIME_OPTIONS } from '../../hearings/constants/constants';
+import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, formatDateStr } from '../../util/DateUtil';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
@@ -79,17 +80,17 @@ const notesTitleStyling = css({
   marginTop: '15px'
 });
 
-const radioButtonStyling = css({ marginTop: '25px' });
-
-const formStyling = css({
-  '& .cf-form-radio-option:not(:last-child)': {
-    display: 'inline-block',
-    marginRight: '25px'
-  },
-  marginBottom: 0
-});
-
 export default class DailyDocket extends React.Component {
+
+  constructor (props) {
+    super(props);
+
+    this.state = {
+      editedDispositionModalProps: null
+    };
+  }
+
+  closeEditedDispositionModal = () => this.setState({ editedDispositionModalProps: null });
 
   onHearingNotesUpdate = (hearingId) => (notes) => this.props.onHearingNotesUpdate(hearingId, notes);
 
@@ -128,10 +129,6 @@ export default class DailyDocket extends React.Component {
     return _.filter(this.props.hearings, (hearing) => !this.previouslyScheduled(hearing));
   };
 
-   onHearingOptionalTime = (hearingId) => (optionalTime) => {
-     this.props.onHearingOptionalTime(hearingId, optionalTime.value);
-   }
-
   getAppellantName = (hearing) => {
     let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName } = hearing;
 
@@ -161,7 +158,7 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingTime = (hearing) => {
-    if (hearing.requestType === 'Central') {
+    if (hearing.readableRequestType === 'Central') {
       return <div>{getTime(hearing.scheduledFor)} <br />
         {hearing.regionalOfficeName}
       </div>;
@@ -181,12 +178,26 @@ export default class DailyDocket extends React.Component {
       options={DISPOSITION_OPTIONS}
       value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
       onChange={(option) => {
-        this.onHearingDispositionUpdate(hearing.id)(option);
-        if (option.value === 'postponed') {
-          this.onHearingDateUpdate(hearing.id)(null);
-        }
+        this.setState({ editedDispositionModalProps: {
+          hearing,
+          disposition: option.value,
+          onCancel: this.closeEditedDispositionModal,
+          onConfirm: () => {
+            if (option.value === 'postponed') {
+              this.cancelHearingUpdate(hearing)();
+            }
+            this.onHearingDispositionUpdate(hearing.id)(option);
+            this.closeEditedDispositionModal();
+            // give redux some time to update.
+            setTimeout(() => {
+              const updatedHearing = this.props.hearings[hearing.id];
+
+              this.validateAndSaveHearing(updatedHearing)();
+            }, 0);
+          }
+        } });
       }}
-      readOnly={readOnly || !_.isUndefined(hearing.editedDate)}
+      readOnly={readOnly || !hearing.dispositionEditable}
     />;
   };
 
@@ -204,13 +215,14 @@ export default class DailyDocket extends React.Component {
   };
 
   getHearingLocationDropdown = (hearing, readOnly) => {
-    const currentRegionalOffice = hearing.editedRegionalOffice || hearing.regionalOfficeKey;
-    let staticHearingLocations = hearing.availableHearingLocations ?
-      _.values(hearing.availableHearingLocations) : [];
+    const currentRegionalOffice = hearing.editedRegionalOffice || this.getRegionalOffice();
 
-    // always static for now
-    if (staticHearingLocations.length === 0 && hearing.location) {
-      staticHearingLocations = [hearing.location];
+    const roIsDifferent = currentRegionalOffice !== hearing.closestRegionalOffice;
+    let staticHearingLocations = _.isEmpty(hearing.availableHearingLocations) ?
+      [hearing.location] : _.values(hearing.availableHearingLocations);
+
+    if (roIsDifferent) {
+      staticHearingLocations = null;
     }
 
     return <AppealHearingLocationsDropdown
@@ -218,50 +230,10 @@ export default class DailyDocket extends React.Component {
       appealId={hearing.appealExternalId}
       regionalOffice={currentRegionalOffice}
       staticHearingLocations={staticHearingLocations}
-      dynamic={false}
+      dynamic={_.isEmpty(hearing.availableHearingLocations) || roIsDifferent}
       value={hearing.editedLocation || (hearing.location ? hearing.location.facilityId : null)}
       onChange={this.onHearingLocationUpdate(hearing.id)}
     />;
-  };
-
-  getHearingTimeOptions = (hearing, readOnly) => {
-    if (hearing.readableRequestType === 'Central') {
-      return [
-        {
-          displayText: '9:00',
-          value: '9:00',
-          disabled: readOnly
-        },
-        {
-          displayText: '1:00',
-          value: '13:00',
-          disabled: readOnly
-        },
-        {
-          displayText: 'Other',
-          value: 'other',
-          disabled: readOnly
-        }
-      ];
-    }
-
-    return [
-      {
-        displayText: '8:30',
-        value: '8:30',
-        disabled: readOnly
-      },
-      {
-        displayText: '12:30',
-        value: '12:30',
-        disabled: readOnly
-      },
-      {
-        displayText: 'Other',
-        value: 'other',
-        disabled: readOnly
-      }
-    ];
   };
 
   getHearingDayDropdown = (hearing, readOnly) => {
@@ -290,28 +262,15 @@ export default class DailyDocket extends React.Component {
   };
 
   getTimeRadioButtons = (hearing, readOnly) => {
-    const timezone = hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+    const timezone = hearing.readableRequestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
 
-    return <div {...radioButtonStyling}>
-      <span {...formStyling}>
-        <RadioField
-          label="Time"
-          name={`hearingTime${hearing.id}`}
-          options={this.getHearingTimeOptions(hearing, readOnly)}
-          value={hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
-          onChange={this.onHearingTimeUpdate(hearing.id)}
-          strongLabel />
-      </span>
-      {hearing.editedTime === 'other' && <SearchableDropdown
-        name="optionalTime"
-        placeholder="Select a time"
-        options={TIME_OPTIONS}
-        value={hearing.editedOptionalTime ? hearing.editedOptionalTime :
-          getTimeWithoutTimeZone(hearing.scheduledFor, timezone)}
-        onChange={this.onHearingOptionalTime(hearing.id)}
-        hideLabel />}
-    </div>
-    ;
+    const value = hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
+
+    return <HearingTime
+      regionalOffice={this.getRegionalOffice()}
+      value={value}
+      readOnly={readOnly}
+      onChange={this.onHearingTimeUpdate(hearing.id)} />;
   };
 
   getHearingDetailsLink = (hearing) => {
@@ -343,6 +302,7 @@ export default class DailyDocket extends React.Component {
     return <TextareaField
       name="Notes"
       strongLabel
+      disabled={this.props.userRoleVso}
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
       value={_.isUndefined(hearing.editedNotes) ? hearing.notes || '' : hearing.editedNotes}
@@ -351,16 +311,8 @@ export default class DailyDocket extends React.Component {
 
   validateAndSaveHearing = (hearing) => {
     return () => {
-      if (hearing.editedDisposition === 'postponed' &&
-        (!hearing.editedDate ||
-          formatDateStr(hearing.editedDate.scheduledFor) === formatDateStr(hearing.scheduledFor))) {
-        return this.onInvalidForm(hearing.id)({ hearingDate: 'Please select a new hearing date.' });
-      }
 
       this.saveHearing(hearing)();
-      this.onInvalidForm(hearing.id)({
-        hearingDate: null
-      });
     };
   }
 
@@ -406,7 +358,7 @@ export default class DailyDocket extends React.Component {
       <div>
         {this.getDispositionDropdown(hearing, readOnly)}
         {this.getTranscriptRequested(hearing, readOnly)}
-        {this.getHearingDetailsLink(hearing)}
+        {this.props.userRoleAssign && this.getHearingDetailsLink(hearing)}
         {this.getNotesField(hearing)}
       </div>
       <div>
@@ -472,7 +424,7 @@ export default class DailyDocket extends React.Component {
     ];
 
     const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings),
-      this.props.userRoleView);
+      this.props.userRoleView || this.props.userRoleVso);
     const cancelButton = <Button linkStyling onClick={this.props.onCancelRemoveHearingDay}>Go back</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.props.deleteHearingDay}>
       Confirm
@@ -491,7 +443,10 @@ export default class DailyDocket extends React.Component {
       'but you can edit existing entries' : 'You can now add more veterans to this hearing day';
 
     return <AppSegment filledBackground>
-      {this.props.displayRemoveHearingDayModal && <div>
+      {this.state.editedDispositionModalProps &&
+        <DispositionModal
+          {...this.state.editedDispositionModalProps} />
+      }{this.props.displayRemoveHearingDayModal && <div>
         <Modal
           title="Remove Hearing Day"
           closeHandler={this.props.onCancelRemoveHearingDay}
@@ -539,24 +494,25 @@ export default class DailyDocket extends React.Component {
         <div {...backLinkStyling}>
           <Link
             linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
-          <Button
-            {...editLinkStyling}
-            linkStyling
-            onClick={this.props.openModal} >
-            <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
-            <span {...css({ marginRight: '5px',
-              marginLeft: '20px' })}>Edit Hearing Day</span>
-          </Button>&nbsp;&nbsp;
-          <Button
-            linkStyling
-            onClick={this.props.onDisplayLockModal} >
-            <span {...css({ position: 'absolute',
-              '& > svg > g > g': { fill: '#0071bc' } })}>{lockIcon()}</span>
-            <span {...css({ marginRight: '5px',
-              marginLeft: '16px' })}>
-              {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
-            </span>
-          </Button>&nbsp;&nbsp;
+          { this.props.userRoleAssign && <span>
+            <Button
+              {...editLinkStyling}
+              linkStyling
+              onClick={this.props.openModal} >
+              <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+              <span {...css({ marginRight: '5px',
+                marginLeft: '20px' })}>Edit Hearing Day</span>
+            </Button>&nbsp;&nbsp;
+            <Button
+              linkStyling
+              onClick={this.props.onDisplayLockModal} >
+              <span {...css({ position: 'absolute',
+                '& > svg > g > g': { fill: '#0071bc' } })}>{lockIcon()}</span>
+              <span {...css({ marginRight: '5px',
+                marginLeft: '16px' })}>
+                {this.props.dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+              </span>
+            </Button>&nbsp;&nbsp; </span> }
           { _.isEmpty(this.props.hearings) && this.props.userRoleBuild &&
           <Button
             linkStyling

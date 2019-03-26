@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"
@@ -95,7 +97,7 @@ describe RequestIssuesUpdate do
     end
 
     let(:existing_request_issue_id) do
-      review.request_issues.find { |issue| issue.contested_rating_issue_reference_id == "issue1" }.id
+      existing_request_issues.first.id
     end
 
     context "#veteran" do
@@ -299,7 +301,7 @@ describe RequestIssuesUpdate do
 
           new_map = rating_end_product_establishment.reload.send(
             :rating_issue_contention_map,
-            review.reload.open_request_issues
+            review.reload.request_issues.active
           )
 
           expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
@@ -410,7 +412,7 @@ describe RequestIssuesUpdate do
 
           subject
 
-          expect(request_issues_update.error).to eq(vbms_error.to_s)
+          expect(request_issues_update.error).to eq(vbms_error.inspect)
           expect(@raven_called).to eq(true)
         end
       end
@@ -424,8 +426,49 @@ describe RequestIssuesUpdate do
 
           subject
 
-          expect(request_issues_update.error).to eq(vbms_error.to_s)
+          expect(request_issues_update.error).to eq(vbms_error.inspect)
           expect(@raven_called).to eq(true)
+        end
+      end
+
+      context "when we add and remove unidentified issues" do
+        let(:request_issues_data) do
+          request_issues = []
+          10.times do
+            issue = create(:request_issue, :unidentified, decision_review: review)
+            request_issues << { is_unidentified: true, decision_text: issue.unidentified_issue_text }
+          end
+          request_issues
+        end
+
+        it "does not re-use contention_reference_id" do
+          # start with existing rating request issues
+          expect(review.reload.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(2)
+          subject
+          review.reload
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(12)
+          # only unidentified are left
+          expect(review.request_issues.active.count).to eq(10)
+        end
+      end
+
+      context "when we remove and add the same rating issue" do
+        let(:request_issues_data) do
+          existing_request_issues.map do |ri|
+            {
+              rating_issue_reference_id: ri.contested_rating_issue_reference_id,
+              rating_issue_profile_date: ri.contested_rating_issue_profile_date,
+              decision_text: ri.contested_issue_description
+            }
+          end
+        end
+
+        it "does not re-use contention_reference_id" do
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(2)
+          subject
+          review.reload
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(4)
+          expect(review.request_issues.active.count).to eq(2)
         end
       end
 
@@ -457,7 +500,7 @@ describe RequestIssuesUpdate do
 
   context "async logic scopes" do
     let!(:riu_requiring_processing) do
-      create(:request_issues_update).tap(&:submit_for_processing!)
+      create(:request_issues_update, :requires_processing)
     end
 
     let!(:riu_processed) do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionDocument < ApplicationRecord
   include Asyncable
   include UploadableDocument
@@ -13,7 +15,7 @@ class DecisionDocument < ApplicationRecord
 
   attr_writer :file
 
-  S3_SUB_BUCKET = "decisions".freeze
+  S3_SUB_BUCKET = "decisions"
 
   delegate :veteran, to: :appeal
 
@@ -69,6 +71,14 @@ class DecisionDocument < ApplicationRecord
   # to be called any time a corresponding board grant end product change statuses.
   def on_sync(end_product_establishment)
     end_product_establishment.sync_decision_issues! if end_product_establishment.status_cleared?
+  end
+
+  def contention_records(epe)
+    effectuations.where(end_product_establishment: epe)
+  end
+
+  def all_contention_records(epe)
+    contention_records(epe)
   end
 
   private

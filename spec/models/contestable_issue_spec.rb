@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe ContestableIssue do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
@@ -106,7 +108,7 @@ describe ContestableIssue do
         decision_issue: decision_issue,
         approx_decision_date: caseflow_decision_date,
         description: decision_issue.description,
-        source_request_issues: decision_issue.request_issues.open,
+        source_request_issues: decision_issue.request_issues.active,
         contesting_decision_review: decision_review,
         source_review_type: "Appeal"
       )
@@ -257,6 +259,8 @@ describe ContestableIssue do
       ContestableIssue.from_rating_issue(rating_issue, decision_review)
     end
 
+    let(:closed_at) { nil }
+
     context "when there are no conflicting request issues" do
       it { is_expected.to be_nil }
     end
@@ -268,10 +272,20 @@ describe ContestableIssue do
 
       context "when the conflicting request issue is on another decision review" do
         let!(:conflicting_request_issue) do
-          create(:request_issue, contested_decision_issue: decision_issue)
+          create(
+            :request_issue,
+            contested_decision_issue: decision_issue,
+            closed_at: closed_at
+          )
         end
 
         it { is_expected.to eq(conflicting_request_issue.review_title) }
+
+        context "when conflicting request issue is closed" do
+          let(:closed_at) { Time.zone.now }
+
+          it { is_expected.to be_nil }
+        end
       end
 
       context "when the conflicting request issue is on the same decision review" do
@@ -285,10 +299,20 @@ describe ContestableIssue do
 
     context "when there are conflicting request issues on a rating issue" do
       let!(:conflicting_request_issue) do
-        create(:request_issue, contested_rating_issue_reference_id: rating_issue.reference_id)
+        create(
+          :request_issue,
+          contested_rating_issue_reference_id: rating_issue.reference_id,
+          closed_at: closed_at
+        )
       end
 
       it { is_expected.to eq(conflicting_request_issue.review_title) }
+
+      context "when conflicting request issue is closed" do
+        let(:closed_at) { Time.zone.now }
+
+        it { is_expected.to be_nil }
+      end
     end
   end
 end

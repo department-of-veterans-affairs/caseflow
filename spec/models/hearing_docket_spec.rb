@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDocket do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
@@ -9,7 +11,7 @@ describe HearingDocket do
   end
 
   let!(:hearing) do
-    Generators::LegacyHearing.create(appeal: appeal)
+    create(:legacy_hearing, appeal: appeal)
   end
 
   let(:docket) do
@@ -31,8 +33,8 @@ describe HearingDocket do
 
     let(:hearings) do
       [
-        Generators::LegacyHearing.create(scheduled_for: 5.minutes.ago),
-        Generators::LegacyHearing.create(scheduled_for: 10.minutes.ago)
+        create(:legacy_hearing, scheduled_for: 5.minutes.ago),
+        create(:legacy_hearing, scheduled_for: 10.minutes.ago)
       ]
     end
 

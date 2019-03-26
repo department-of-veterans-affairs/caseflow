@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 describe DecisionIssue do
@@ -40,9 +42,9 @@ describe DecisionIssue do
   context "scopes" do
     let!(:ri_contesting_decision_issue) { create(:request_issue, contested_decision_issue_id: decision_issue.id) }
     let!(:uncontested_di) { create(:decision_issue, disposition: "other") }
-    let!(:uncontested_remand_di) { create(:decision_issue, id: 55, disposition: "remanded") }
-    let!(:uncontested_dta_di) { create(:decision_issue, id: 56, disposition: "DTA Error - Fed Recs") }
-    let!(:granted_di) { create(:decision_issue, id: 57, disposition: "DTA Error - Fed Recs") }
+    let!(:uncontested_remand_di) { create(:decision_issue, disposition: "remanded") }
+    let!(:uncontested_dta_di) { create(:decision_issue, disposition: "DTA Error - Fed Recs") }
+    let!(:granted_di) { create(:decision_issue, disposition: "DTA Error - Fed Recs") }
 
     context ".contested" do
       it "matches decision issue that has been contested" do
@@ -382,7 +384,8 @@ describe DecisionIssue do
             expect(subject.claimants.count).to eq(1)
             expect(subject.claimants.first).to have_attributes(
               participant_id: decision_review.claimant_participant_id,
-              payee_code: prior_payee_code
+              payee_code: prior_payee_code,
+              decision_review: subject
             )
           end
         end

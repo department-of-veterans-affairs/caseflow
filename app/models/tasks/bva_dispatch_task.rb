@@ -1,3 +1,9 @@
+# frozen_string_literal: true
+
+##
+# Task assigned to BVA Dispatch team members whenever a judge completes a case review.
+# This indicates that an appeal is decided and the appellant is about to be notified of the decision.
+
 class BvaDispatchTask < GenericTask
   class << self
     def create_from_root_task(root_task)

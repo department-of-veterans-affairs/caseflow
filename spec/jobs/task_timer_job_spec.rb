@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe TaskTimerJob do
   class TimedTask < GenericTask
     include TimeableTask
@@ -61,7 +63,10 @@ describe TaskTimerJob do
 
     TaskTimerJob.perform_now
 
-    expect(timer.reload.processed_at).not_to eq(nil)
-    expect(error_timer.reload.processed_at).to eq(nil)
+    expect(timer.reload.processed_at).not_to be_nil
+    expect(timer.reload.attempted_at).not_to be_nil
+    expect(error_timer.reload.processed_at).to be_nil
+    expect(error_timer.error).to eq("RuntimeError")
+    expect(error_timer.attempted_at).to be_nil # because it was in a failed transaction
   end
 end

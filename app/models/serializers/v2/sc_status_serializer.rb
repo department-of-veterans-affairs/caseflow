@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class V2::SCStatusSerializer < ActiveModel::Serializer
   type :supplemental_claim
 

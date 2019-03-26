@@ -1,17 +1,15 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
-  # TODO: remove this eventually, used to protect caching from screwing up removed columns
-  self.ignored_columns = %w[
-    contested_rating_issue_disability_code
-    rating_issue_reference_id
-    rating_issue_profile_date
-    review_request_id
-    review_request_type
-    description
-  ]
-
   include Asyncable
   include HasBusinessLine
+
+  # how many days before we give up trying to sync decisions
+  REQUIRES_PROCESSING_WINDOW_DAYS = 14
+
+  # don't need to try as frequently as default 3 hours
+  DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
   belongs_to :decision_review, polymorphic: true
   belongs_to :end_product_establishment
@@ -45,13 +43,12 @@ class RequestIssue < ApplicationRecord
     end_product_canceled: "end_product_canceled",
     withdrawn: "withdrawn",
     dismissed_death: "dismissed_death",
-    stayed: "stayed"
+    stayed: "stayed",
+    ineligible: "ineligible"
   }
 
   before_save :set_contested_rating_issue_profile_date
-
-  # TODO: this is a temporary callback in order to synchronize columns. Remove after data is migrated
-  before_save :set_decision_sync_last_submitted_at
+  before_save :close_if_ineligible!
 
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -62,7 +59,7 @@ class RequestIssue < ApplicationRecord
 
   class NotYetSubmitted < StandardError; end
 
-  UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix".freeze
+  UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix"
 
   END_PRODUCT_CODES = {
     original: {
@@ -90,8 +87,8 @@ class RequestIssue < ApplicationRecord
     dta: {
       compensation: {
         appeal: {
-          imo: "040BDEIMO",
-          not_imo: "040BDE"
+          rating: "040BDER",
+          nonrating: "040BDENR"
         },
         claim_review: {
           rating: "040HDER",
@@ -100,8 +97,8 @@ class RequestIssue < ApplicationRecord
       },
       pension: {
         appeal: {
-          imo: "040BDEIMOPMC",
-          not_imo: "040BDEPMC"
+          rating: "040BDERPMC",
+          nonrating: "040HDENRPMC"
         },
         claim_review: {
           rating: "040HDERPMC",
@@ -112,9 +109,8 @@ class RequestIssue < ApplicationRecord
   }.freeze
 
   class << self
-    # We don't need to retry these as frequently
-    def processing_retry_interval_hours
-      12
+    def last_submitted_at_column
+      :decision_sync_last_submitted_at
     end
 
     def submitted_at_column
@@ -146,12 +142,22 @@ class RequestIssue < ApplicationRecord
       ).where.not(issue_category: nil)
     end
 
-    def not_deleted
-      where.not(decision_review_id: nil)
+    def eligible
+      where(ineligible_reason: nil)
     end
 
-    def open
-      where(closed_at: nil)
+    # "Active" issues are issues that need decisions.
+    # They show up as contentions in VBMS and issues in Caseflow Queue.
+    def active
+      eligible.where(closed_at: nil)
+    end
+
+    def active_or_ineligible
+      active.or(ineligible)
+    end
+
+    def active_or_decided
+      active.or(decided).order(id: :asc)
     end
 
     def unidentified
@@ -159,35 +165,6 @@ class RequestIssue < ApplicationRecord
         contested_rating_issue_reference_id: nil,
         is_unidentified: true
       )
-    end
-
-    def find_or_build_from_intake_data(data)
-      # request issues on edit have ids but newly added issues do not
-      data[:request_issue_id] ? find(data[:request_issue_id]) : from_intake_data(data)
-    end
-
-    def find_active_by_contested_rating_issue_reference_id(rating_issue_reference_id)
-      request_issue = unscoped.find_by(
-        contested_rating_issue_reference_id: rating_issue_reference_id,
-        contention_removed_at: nil,
-        ineligible_reason: nil
-      )
-
-      return unless request_issue&.status_active?
-
-      request_issue
-    end
-
-    def find_active_by_contested_decision_id(contested_decision_issue_id)
-      request_issue = unscoped.find_by(
-        contested_decision_issue_id: contested_decision_issue_id,
-        contention_removed_at: nil,
-        ineligible_reason: nil
-      )
-
-      return unless request_issue&.status_active?
-
-      request_issue
     end
 
     # ramp_claim_id is set to the claim id of the RAMP EP when the contested rating issue is part of a ramp decision
@@ -399,36 +376,41 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
-  def remove!
-    update!(closed_at: Time.zone.now, closed_status: :removed)
+  def close!(status)
+    return unless closed_at.nil?
+
+    transaction do
+      update!(closed_at: Time.zone.now, closed_status: status)
+      yield if block_given?
+    end
+  end
+
+  def close_if_ineligible!
+    close!(:ineligible) if ineligible_reason?
   end
 
   def close_decided_issue!
-    return unless closed_at.nil?
     return unless decision_issues.any?
 
-    update!(closed_at: Time.zone.now, closed_status: :decided)
+    close!(:decided)
   end
 
   def close_after_end_product_canceled!
-    return unless closed_at.nil?
     return unless end_product_establishment&.reload&.status_canceled?
 
-    update!(closed_at: Time.zone.now, closed_status: :end_product_canceled)
-    legacy_issue_optin&.flag_for_rollback!
+    close!(:end_product_canceled) do
+      legacy_issue_optin&.flag_for_rollback!
+    end
   end
 
-  # Instead of fully deleting removed issues, we instead strip them from the review so we can
-  # maintain a record of the other data that was on them incase we need to revert the update.
-  def remove_from_review
-    transaction do
-      remove!
+  def remove!
+    close!(:removed) do
       legacy_issue_optin&.flag_for_rollback!
 
-      # removing a request issue also deletes the associated request_decision_issue
-      # if the decision issue is not associated with any other request issue, also delete
-      decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
-      decision_issues.delete_all
+      # If the decision issue is not associated with any other request issue, also delete
+      decision_issues.each(&:soft_delete_on_removed_request_issue)
+      # Removing a request issue also deletes the associated request_decision_issue
+      request_decision_issues.update_all(deleted_at: Time.zone.now)
     end
   end
 
@@ -578,13 +560,25 @@ class RequestIssue < ApplicationRecord
         participant_id: decision_review.veteran.participant_id,
         disposition: contention_disposition.disposition,
         description: "#{contention_disposition.disposition}: #{description}",
-        profile_date: end_product_establishment.associated_rating&.profile_date,
-        promulgation_date: end_product_establishment.associated_rating&.promulgation_date,
+        profile_date: end_product_establishment_associated_rating_profile_date,
+        promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
       )
     end
+  end
+
+  def end_product_establishment_associated_rating_profile_date
+    return unless rating?
+
+    end_product_establishment.associated_rating&.profile_date
+  end
+
+  def end_product_establishment_associated_rating_promulgation_date
+    return unless rating?
+
+    end_product_establishment.associated_rating&.promulgation_date
   end
 
   def contention_disposition
@@ -678,7 +672,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def should_check_for_before_ama?
-    !is_unidentified && !ramp_claim_id && !vacols_id
+    !is_unidentified && !ramp_claim_id && !vacols_id && !decision_review&.is_a?(SupplementalClaim)
   end
 
   def check_for_legacy_issue_not_withdrawn!
@@ -708,14 +702,16 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     add_duplicate_issue_error(
-      self.class.find_active_by_contested_rating_issue_reference_id(contested_rating_issue_reference_id)
+      RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
     )
   end
 
   def check_for_active_request_issue_by_decision_issue!
     return unless contested_decision_issue_id
 
-    add_duplicate_issue_error(self.class.find_active_by_contested_decision_id(contested_decision_issue_id))
+    add_duplicate_issue_error(
+      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
+    )
   end
 
   def original_end_product_code
@@ -737,7 +733,7 @@ class RequestIssue < ApplicationRecord
 
   def choose_dta_end_product_code(end_product_codes)
     if decision_review.decision_review_remanded.is_a?(Appeal)
-      end_product_codes[:appeal][contested_decision_issue.imo? ? :imo : :not_imo]
+      end_product_codes[:appeal][rating? ? :rating : :nonrating]
     else
       end_product_codes[:claim_review][rating? ? :rating : :nonrating]
     end
@@ -776,10 +772,6 @@ class RequestIssue < ApplicationRecord
 
   def appeal_active?
     decision_review.tasks.active.any?
-  end
-
-  def set_decision_sync_last_submitted_at
-    self.decision_sync_last_submitted_at = last_submitted_at
   end
 end
 # rubocop:enable Metrics/ClassLength

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppealSeries < ApplicationRecord
   has_many :appeals, class_name: "LegacyAppeal", dependent: :nullify
 

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import SearchBar from '../../components/SearchBar';
 import Alert from '../../components/Alert';
 import BareList from '../../components/BareList';
@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { doFileNumberSearch, setFileNumberSearch } from '../actions/intake';
+import { invalidVeteranInstructions } from '../components/ErrorAlert';
 import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
@@ -46,37 +47,11 @@ const veteranNotFoundInstructions = <div>
     Database to continue processing this intake. If you do not
     have access, please
     <b>
-      <a href="mailto:VACaseflowOps@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"> email </a>
+      <a href="mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"> email </a>
     </b>
     for assistance.
   </p>
 </div>;
-
-const missingFieldsMessage = (fields) => <p>
-  Please fill in the following field(s) in the Veteran's profile in VBMS or the corporate database,
-  then retry establishing the EP in Caseflow: {fields}.
-</p>;
-
-const addressTips = [
-  () => <Fragment>Do: move the last word(s) of the street address down to an another street address field</Fragment>,
-  () => <Fragment>Do: abbreviate to St. Ave. Rd. Blvd. Dr. Ter. Pl. Ct.</Fragment>,
-  () => <Fragment>Don't: edit street names or numbers</Fragment>
-];
-
-const addressTooLongMessage = <Fragment>
-  <p>
-    This Veteran's address is too long. Please edit it in VBMS or SHARE so each address field is no longer than
-    20 characters (including spaces) then try again.
-  </p>
-  <p>Tips:</p>
-  <BareList items={addressTips} ListElementComponent="ul" />
-</Fragment>;
-
-const invalidVeteranInstructions = (searchErrorData) => <Fragment>
-  { (_.get(searchErrorData.veteranMissingFields, 'length', 0) > 0) &&
-    missingFieldsMessage(searchErrorData.veteranMissingFields) }
-  { searchErrorData.veteranAddressTooLong && addressTooLongMessage }
-</Fragment>;
 
 class Search extends React.PureComponent {
   handleSearchSubmit = () => (
@@ -96,6 +71,10 @@ class Search extends React.PureComponent {
       veteran_not_found: {
         title: 'Veteran not found',
         body: veteranNotFoundInstructions
+      },
+      veteran_has_multiple_phone_numbers: {
+        title: 'The Veteran has multiple active phone numbers',
+        body: 'Please edit the Veteran\'s contact information in SHARE to have only one active phone number.'
       },
       veteran_not_accessible: {
         title: 'You don\'t have permission to view this Veteran\'s information​',
@@ -171,7 +150,8 @@ class Search extends React.PureComponent {
       searchErrorCode,
       searchErrorData,
       intakeStatus,
-      formType
+      formType,
+      fileNumberSearchInput
     } = this.props;
 
     if (!formType) {
@@ -197,9 +177,10 @@ class Search extends React.PureComponent {
         size="small"
         title="Enter the Veteran's ID or SSN"
         onSubmit={this.handleSearchSubmit}
+        searchDisabled={_.isEmpty(fileNumberSearchInput)}
         onChange={this.props.setFileNumberSearch}
         onClearSearch={this.clearSearch}
-        value={this.props.fileNumberSearchInput}
+        value={fileNumberSearchInput}
         loading={this.props.fileNumberSearchRequestStatus === REQUEST_STATE.IN_PROGRESS}
         submitUsingEnterKey
       />

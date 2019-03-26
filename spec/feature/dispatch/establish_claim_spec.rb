@@ -1,10 +1,10 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Establish Claim - ARC Dispatch" do
   before do
-    # Set the time zone to the current user's time zone for proper date conversion
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2017, 1, 1))
+    Timecop.freeze(pre_ramp_start_date)
 
     Fakes::BGSService.inaccessible_appeal_vbms_ids ||= []
     Fakes::BGSService.inaccessible_appeal_vbms_ids << inaccessible_appeal.veteran_file_number

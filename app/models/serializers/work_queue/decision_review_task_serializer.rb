@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
   def task
     object
@@ -33,7 +35,7 @@ class WorkQueue::DecisionReviewTaskSerializer < ActiveModel::Serializer
     {
       id: decision_review.external_id,
       isLegacyAppeal: false,
-      issueCount: decision_review.open_request_issues.count
+      issueCount: decision_review.request_issues.active_or_ineligible.count
     }
   end
 

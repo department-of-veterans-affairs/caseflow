@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # History of this class is in docs/asyncable-models.md
 #
 # Mixin module to apply to an ActiveRecord class, to make it easier to process via
@@ -25,7 +27,11 @@ module Asyncable
     DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
 
     def processing_retry_interval_hours
-      DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
+      self::DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
+    end
+
+    def requires_processing_until
+      self::REQUIRES_PROCESSING_WINDOW_DAYS.days.ago
     end
 
     def last_submitted_at_column
@@ -49,7 +55,7 @@ module Asyncable
     end
 
     def unexpired
-      where(arel_table[last_submitted_at_column].gt(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
+      where(arel_table[last_submitted_at_column].gt(requires_processing_until))
     end
 
     def processable
@@ -57,7 +63,9 @@ module Asyncable
     end
 
     def never_attempted
-      where(attempted_at_column => nil)
+      where(attempted_at_column => nil).where(
+        arel_table[last_submitted_at_column].lteq(processing_retry_interval_hours.hours.ago)
+      )
     end
 
     def previously_attempted_ready_for_retry
@@ -78,22 +86,33 @@ module Asyncable
 
     def expired_without_processing
       where(processed_at_column => nil)
-        .where(arel_table[last_submitted_at_column].lteq(REQUIRES_PROCESSING_WINDOW_DAYS.days.ago))
+        .where(arel_table[last_submitted_at_column].lteq(requires_processing_until))
     end
 
     def attempted_without_being_submitted
       where(arel_table[attempted_at_column].lteq(Time.zone.now)).where(last_submitted_at_column => nil)
     end
 
+    def with_error
+      where.not(error_column => nil)
+    end
+
     def potentially_stuck
       processable
         .or(attempted_without_being_submitted)
+        .or(with_error)
         .order_by_oldest_submitted
     end
   end
 
   def submit_for_processing!(delay: 0)
-    when_to_start = delay.try(:to_datetime) ? delay.to_datetime : Time.zone.now + delay
+    # One minute offset to prevent "this date is in the future" errors with external services
+    when_to_start = delay.try(:to_datetime) ? delay.to_datetime + 1.minute : Time.zone.now + delay
+
+    # Add the `processing_retry_interval_hours` to the delay time, since it should not be considered
+    if delay != 0
+      when_to_start -= self.class.processing_retry_interval_hours.hours
+    end
 
     update!(
       self.class.last_submitted_at_column => when_to_start,
@@ -132,6 +151,15 @@ module Asyncable
 
   def submitted?
     !!self[self.class.submitted_at_column]
+  end
+
+  def expired_without_processing?
+    return false if processed?
+
+    last_submitted = self[self.class.last_submitted_at_column]
+    return false unless last_submitted
+
+    last_submitted < self.class.requires_processing_until
   end
 
   def submitted_and_ready?

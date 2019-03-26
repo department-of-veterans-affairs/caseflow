@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
@@ -9,14 +11,14 @@ class User < ApplicationRecord
   has_many :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
 
-  BOARD_STATION_ID = "101".freeze
+  BOARD_STATION_ID = "101"
 
   # Ephemeral values obtained from CSS on auth. Stored in user's session
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
                "Reader", "Hearing Prep", "Mail Intake", "Admin Intake",
-               "Hearing Schedule"].freeze
+               "Hearing Schedule", "Case Details"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -39,6 +41,10 @@ class User < ApplicationRecord
     upcase = ->(str) { str ? str.upcase : str }
 
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
+  end
+
+  def users_regional_office
+    selected_regional_office || regional_office
   end
 
   def attorney_in_vacols?

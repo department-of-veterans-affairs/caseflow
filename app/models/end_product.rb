@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EndProduct
   include ActiveModel::Model
   include ActiveModel::Validations
@@ -22,10 +24,10 @@ class EndProduct
     "040HDENR" => "Supplemental Claim Nonrating DTA",
     "040HDERPMC" => "PMC HLR DTA Error - Rating",
     "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating",
-    "040BDE" => "Board DTA Error",
-    "040BDEIMO" => "Board DTA Error with IMO",
-    "040BDEPMC" => "PMC Board DTA Error",
-    "040BDEIMOPMC" => "PMC Board DTA Error - w/IMO"
+    "040BDENR" => "Board DTA Error - Non-Rating",
+    "040BDER" => "Board DTA Error - Rating",
+    "040BDENRPM" => "PMC Board DTA Error - Non-Rating",
+    "040BDERPMC" => "PMC Board DTA Error - Rating"
   }.freeze
 
   DECISION_REVIEW_CODES = {
@@ -81,7 +83,7 @@ class EndProduct
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 
-  DEFAULT_PAYEE_CODE = "00".freeze
+  DEFAULT_PAYEE_CODE = "00"
 
   attr_accessor :claim_id, :claim_date, :claim_type_code, :modifier, :status_type_code, :last_action_date,
                 :station_of_jurisdiction, :gulf_war_registry, :suppress_acknowledgement_letter, :payee_code,

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RegionalOfficesController < ApplicationController
   def index
     render json: {
@@ -18,6 +20,8 @@ class RegionalOfficesController < ApplicationController
       hearing_days: hearing_days.map do |day|
         {
           hearing_id: day[:id],
+          regional_office: ro,
+          timezone: RegionalOffice::CITIES[ro][:timezone],
           scheduled_for: day[:scheduled_for],
           request_type: day[:request_type],
           room: day[:room],

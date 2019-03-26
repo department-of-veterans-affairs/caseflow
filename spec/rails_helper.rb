@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= "test"
 require "simplecov"
@@ -34,75 +36,13 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
 
-require "capybara"
-require "capybara/rspec"
-require "capybara-screenshot/rspec"
-Sniffybara::Driver.configuration_file = File.expand_path("support/VA-axe-configuration.json", __dir__)
+# The TZ variable controls the timezone of the browser in capybara tests, so we always define it.
+# By default (esp for CI) we use Eastern time, so that it doesn't matter where the developer happens to sit.
+ENV["TZ"] ||= "America/New_York"
 
-download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
-cache_directory = Rails.root.join("tmp/browser_cache_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
-
-Dir.mkdir download_directory unless File.directory?(download_directory)
-if File.directory?(cache_directory)
-  FileUtils.rm_r cache_directory
-else
-  Dir.mkdir cache_directory
-end
-
-ENV["TZ"] ||= "America/New York"
-
-Capybara.register_driver(:parallel_sniffybara) do |app|
-  chrome_options = ::Selenium::WebDriver::Chrome::Options.new
-
-  chrome_options.add_preference(:download,
-                                prompt_for_download: false,
-                                default_directory: download_directory)
-
-  chrome_options.add_preference(:browser,
-                                disk_cache_dir: cache_directory)
-
-  options = {
-    port: 51_674,
-    browser: :chrome,
-    options: chrome_options
-  }
-  Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
-end
-
-Capybara.register_driver(:sniffybara_headless) do |app|
-  chrome_options = ::Selenium::WebDriver::Chrome::Options.new
-
-  chrome_options.add_preference(:download,
-                                prompt_for_download: false,
-                                default_directory: download_directory)
-
-  chrome_options.add_preference(:browser,
-                                disk_cache_dir: cache_directory)
-  chrome_options.args << "--headless"
-  chrome_options.args << "--disable-gpu"
-
-  options = {
-    port: 51_674,
-    browser: :chrome,
-    options: chrome_options
-  }
-  Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
-end
-
-Capybara::Screenshot.register_driver(:parallel_sniffybara) do |driver, path|
-  driver.browser.save_screenshot(path)
-end
-
-Capybara::Screenshot.register_driver(:sniffybara_headless) do |driver, path|
-  driver.browser.save_screenshot(path)
-end
-
-Capybara.default_driver = ENV["SAUCE_SPECS"] ? :sauce_driver : :parallel_sniffybara
-# the default default_max_wait_time is 2 seconds
-Capybara.default_max_wait_time = 5
-
-# This allows for active job expectations
-ActiveJob::Base.queue_adapter = :test
+# Assume the browser and the server are in the same timezone for now. Eventually we should
+# use something like https://github.com/alindeman/zonebie to exercise browsers in different timezones.
+Time.zone = ENV["TZ"]
 
 # Convenience methods for stubbing current user
 module StubbableUser

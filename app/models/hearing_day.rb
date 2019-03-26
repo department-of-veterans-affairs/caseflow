@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Class to coordinate interactions between controller
 # and repository class. Eventually may persist data to
 # Caseflow DB. For now all schedule data is sent to the
@@ -65,7 +67,7 @@ class HearingDay < ApplicationRecord
   end
 
   def open_hearings
-    hearings.reject { |hearing| [:postponed, :cancelled].include?(hearing.disposition) }
+    hearings.reject { |hearing| %w[postponed cancelled].include?(hearing.disposition) }
   end
 
   def to_hash
@@ -87,11 +89,6 @@ class HearingDay < ApplicationRecord
     SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
   end
 
-  # These dates indicate the date in which we pull parent records into Caseflow. For
-  # legacy appeals, the children hearings will continue to be stored in VACOLS.
-  CASEFLOW_V_PARENT_DATE = Date.new(2019, 3, 31).freeze
-  CASEFLOW_CO_PARENT_DATE = Date.new(2018, 12, 31).freeze
-
   class << self
     def to_hash(hearing_day)
       if hearing_day.is_a?(HearingDay)
@@ -108,23 +105,8 @@ class HearingDay < ApplicationRecord
     end
 
     def create_hearing_day(hearing_hash)
-      scheduled_for = hearing_hash[:scheduled_for]
-      scheduled_for = if scheduled_for.is_a?(DateTime) | scheduled_for.is_a?(Date)
-                        scheduled_for
-                      else
-                        Time.zone.parse(scheduled_for).to_datetime
-                      end
-      comparison_date = if hearing_hash[:request_type] == REQUEST_TYPES[:central]
-                          CASEFLOW_CO_PARENT_DATE
-                        else
-                          CASEFLOW_V_PARENT_DATE
-                        end
-      if scheduled_for > comparison_date
-        hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
-        create(hearing_hash).to_hash
-      else
-        HearingDayRepository.create_vacols_hearing!(hearing_hash)
-      end
+      hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
+      create(hearing_hash).to_hash
     end
 
     def create_schedule(scheduled_hearings)
@@ -140,31 +122,36 @@ class HearingDay < ApplicationRecord
       end
     end
 
+    def upcoming_days_for_vso_user(start_date, end_date, user)
+      HearingDay.includes(hearings: [appeal: :tasks])
+        .where("DATE(scheduled_for) between ? and ?", start_date, end_date).select do |hearing_day|
+        hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) } ||
+          hearing_day.vacols_hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
+      end
+    end
+
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        cf_video_and_co = where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-        video_and_co, travel_board = HearingDayRepository.load_days_for_range(start_date, end_date)
+        where("DATE(scheduled_for) between ? and ?", start_date, end_date) +
+          HearingDayRepository.load_video_days_for_range(start_date, end_date)
       elsif regional_office == REQUEST_TYPES[:central]
-        cf_video_and_co = where("request_type = ? and DATE(scheduled_for) between ? and ?",
-                                REQUEST_TYPES[:central], start_date, end_date)
-        video_and_co = []
+        where("request_type = ? and DATE(scheduled_for) between ? and ?", REQUEST_TYPES[:central], start_date, end_date)
       else
-        cf_video_and_co = where("regional_office = ? and DATE(scheduled_for) between ? and ?",
-                                regional_office, start_date, end_date)
-        video_and_co, travel_board =
-          HearingDayRepository.load_days_for_regional_office(regional_office, start_date, end_date)
+        where("regional_office = ? and DATE(scheduled_for) between ? and ?", regional_office, start_date, end_date) +
+          HearingDayRepository.load_video_days_for_regional_office(regional_office, start_date, end_date)
       end
+    end
 
-      {
-        caseflow_hearings: cf_video_and_co,
-        vacols_hearings: video_and_co,
-        travel_board_hearings: travel_board
-      }
+    def list_upcoming_hearing_days(start_date, end_date, user, regional_office = nil)
+      if user&.vso_employee?
+        upcoming_days_for_vso_user(start_date, end_date, user)
+      else
+        load_days(start_date, end_date, regional_office)
+      end
     end
 
     def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
-      hearing_days = load_days(start_date, end_date, regional_office)
-      total_video_and_co = hearing_days[:caseflow_hearings] + hearing_days[:vacols_hearings]
+      total_video_and_co = load_days(start_date, end_date, regional_office)
 
       # fetching all the RO keys of the dockets
 
@@ -189,7 +176,7 @@ class HearingDay < ApplicationRecord
     def filter_non_scheduled_hearings(hearings)
       hearings.select do |hearing|
         if hearing.is_a?(Hearing)
-          ![:postponed, :canceled].include?(hearing.disposition)
+          !%w[postponed cancelled].include?(hearing.disposition)
         else
           hearing.vacols_record.hearing_disp != "P" && hearing.vacols_record.hearing_disp != "C"
         end
