@@ -37,10 +37,6 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
     }
   }
 
-  leadMessageArr.push(
-    <strong>Edit the notice letter to reflect the status of requested issues.</strong>
-  );
-
   return leadMessageArr;
 };
 
@@ -61,14 +57,10 @@ const getEndProductUpdate = ({
   const epAfter = epIssuesAfter.length > 0;
   const epChanged = !_.isEqual(epIssuesBefore, epIssuesAfter);
 
-  const removedDecisions = issuesAfter.length === 0 ? null : `A ${claimReviewName} ${epType} EP is being canceled.`;
-
-  const removedDecisionsParagraph = issuesAfter.length === 0 ? null : 'All contentions on this EP were removed';
-
   if (epBefore && !epAfter) {
     return <Fragment>
-      <strong>{removedDecisions}</strong>
-      <p>{removedDecisionsParagraph}</p>
+      <strong>Removed a {claimReviewName} {epType}.</strong>
+      <p>All contentions on this EP were removed</p>
     </Fragment>;
   } else if (epBefore && epAfter && epChanged) {
     return <Fragment>
@@ -94,9 +86,7 @@ const getEndProductUpdate = ({
 const getChecklistItems = (formType, issuesBefore, issuesAfter, isInformalConferenceRequested) => {
   const eligibleRequestIssues = issuesAfter.filter((i) => !i.ineligibleReason);
 
-  const issuesRemoved = issuesAfter.length === 0;
-
-  return _.compact([issuesRemoved ? 'Removed Form' : null,
+  return _.compact([
     getEndProductUpdate({
       formType,
       isRating: true,

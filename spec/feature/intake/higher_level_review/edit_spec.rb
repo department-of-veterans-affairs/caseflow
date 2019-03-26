@@ -1184,6 +1184,7 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Remove review?")
         expect(page).to have_content("This will remove the review and cancel all the End Products associated with it")
         click_intake_confirm
+        expect(page).to have_content("Review Removed")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         sleep 1
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
