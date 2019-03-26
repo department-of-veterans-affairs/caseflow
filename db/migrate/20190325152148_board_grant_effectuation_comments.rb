@@ -1,6 +1,6 @@
 class BoardGrantEffectuationComments < ActiveRecord::Migration[5.1]
   def change
-    change_table_comment(:board_grant_effectuations, "Tracks all the effects of a Board Grant decision made in Caseflow.")
+    change_table_comment(:board_grant_effectuations, "Represents the work item of updating records in response to a granted issue on a Board appeal. Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.")
     change_column_comment(:board_grant_effectuations, :appeal_id, "The ID of the appeal containing the granted issue being effectuated.")
     change_column_comment(:board_grant_effectuations, :contention_reference_id, "The ID of the contention created in VBMS. Indicates successful creation of the contention. If the EP has been rated, this contention could have been connected to a rating issue. That connection is used to map the rating issue back to the decision issue.")
     change_column_comment(:board_grant_effectuations, :decision_document_id, "The ID of the decision document which triggered this effectuation.")
