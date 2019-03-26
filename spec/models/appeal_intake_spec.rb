@@ -45,7 +45,7 @@ describe AppealIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
       )

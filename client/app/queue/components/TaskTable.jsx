@@ -298,7 +298,6 @@ export class TaskTableUnconnected extends React.PureComponent {
           appeal={task.appeal}
           newDocsIcon={this.props.includeNewDocsIcon}
           task={task}
-          cached
           docCountBelowLink />;
       }
     } : null;
