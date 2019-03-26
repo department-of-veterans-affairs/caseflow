@@ -147,14 +147,12 @@ class UserReporter
       undo_action = {
         model: foreign_key[:model].name,
         column: fk_column_name,
-        ids: scope.pluck(:id),
+        # due to space limitations, statistics are not undo-able
+        ids: (foreign_key.key?(:undo) && foreign_key[:undo] == false) ? [] : scope.pluck(:id),
         user_id: old_user.id
       }
 
       scope.where(fk_column_name => old_user.id).update(fk_column_name => new_user.id)
-
-      # due to space limitations, statistics are not undo-able
-      undo_action[:ids] = [] if foreign_key.key?(:undo) && foreign_key[:undo] == false
 
       undo_action
     end
