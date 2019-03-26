@@ -61,10 +61,15 @@ export default class ErrorAlert extends React.PureComponent {
       },
       default: {
         title: 'Something went wrong',
-        body: 'Please try again. If the problem persists, please contact Caseflow support.'
+        body: (
+          <Fragment>
+            <div>Error code {this.props.errorUUID}</div>
+            <div>Please try again. If the problem persists, please contact Caseflow support.</div>
+          </Fragment>
+        )
       },
       veteran_not_valid: {
-        title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
+        title: "The Veteran's profile has missing or invalid information required to create an EP.",
         body: invalidVeteranInstructions(this.props.errorData)
       }
     }[this.props.errorCode || 'default'];
