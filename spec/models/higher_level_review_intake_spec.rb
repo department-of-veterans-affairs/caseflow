@@ -70,7 +70,7 @@ describe HigherLevelReviewIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
       )
@@ -264,7 +264,7 @@ describe HigherLevelReviewIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: veteran.participant_id,
         payee_code: "00"
       )

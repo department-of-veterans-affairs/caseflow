@@ -50,7 +50,7 @@ class ClaimReviewIntake < DecisionReviewIntake
 
     Claimant.find_or_initialize_by(
       participant_id: participant_id,
-      review_request: detail
+      decision_review: detail
     ).tap do |claimant|
       claimant.payee_code = payee_code
       claimant.save!
