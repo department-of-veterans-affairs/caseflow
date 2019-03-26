@@ -158,19 +158,19 @@ feature "Higher-Level Review" do
       "Receipt date cannot be in the future."
     )
     expect(page).to have_content(
-      "What is the Benefit Type? Please select an option."
+      "What is the Benefit Type?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Was an informal conference requested? Please select an option."
+      "Was an informal conference requested?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Was an interview by the same office requested? Please select an option."
+      "Was an interview by the same office requested?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Is the claimant someone other than the Veteran? Please select an option."
+      "Is the claimant someone other than the Veteran?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Did they agree to withdraw their issues from the legacy system? Please select an option."
+      "Did they agree to withdraw their issues from the legacy system?\nPlease select an option."
     )
 
     within_fieldset("What is the Benefit Type?") do
@@ -213,7 +213,7 @@ feature "Higher-Level Review" do
       "If you do not see the claimant in the options below or if the claimant's information needs updated,"
     )
     expect(page).to have_content(
-      "What is the payee code for this claimant? Please select an option."
+      "What is the payee code for this claimant?\nPlease select an option."
     )
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
@@ -889,7 +889,7 @@ feature "Higher-Level Review" do
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
-        "9. Issue before AMA Activation from RAMP Decision date:"
+        "9. Issue before AMA Activation from RAMP\nDecision date:"
       )
 
       # Add decision issue
@@ -1343,7 +1343,7 @@ feature "Higher-Level Review" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+            "#{intake_constants.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
           )
 
           # add before_ama ratings
