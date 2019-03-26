@@ -478,6 +478,8 @@ class Appeal < DecisionReview
       {
         type: "video"
       }
+    when :scheduled_hearing
+      api_scheduled_hearing_status_details
     when :decision_in_progress
       {
         decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
@@ -507,6 +509,31 @@ class Appeal < DecisionReview
     end
   end
 
+  def api_scheduled_hearing_status_details
+    {
+      type: api_scheduled_hearing_type,
+      date: scheduled_hearing.scheduled_for.to_date,
+      location: scheduled_hearing.try(:hearing_location).try(&:name)
+    }
+  end
+
+  def scheduled_hearing
+    # Appeal Status api assumes that there can be multiple hearings that have happened in the past but only
+    # one that is currently scheduled. Will get this by getting the hearing whose scheduled date is in the future.
+    @scheduled_hearing ||= hearings.find { |hearing| hearing.scheduled_for >= Time.zone.today }
+  end
+
+  def api_scheduled_hearing_type
+    return unless scheduled_hearing
+
+    hearing_types_for_status_details = {
+      V: "video",
+      C: "central_office"
+    }.freeze
+
+    hearing_types_for_status_details[scheduled_hearing.request_type.to_sym]
+  end
+
   def remanded_sc_decision_issues
     issue_list = []
     remand_supplemental_claims.each do |sc|
@@ -523,8 +550,7 @@ class Appeal < DecisionReview
   end
 
   def hearing_pending?
-    # This isn't available yet.
-    # tasks.active.where(type: DispositionTask.name).any?
+    tasks.active.where(type: DispositionTask.name).any?
   end
 
   def evidence_submission_hold_pending?

@@ -55,10 +55,6 @@ class LegacyHearing < ApplicationRecord
     user
   end
 
-  def assigned_to_vso?(user)
-    TrackVeteranTask.active.where(appeal: appeal).any? { |task| user.organizations.include?(task.assigned_to) }
-  end
-
   def venue
     self.class.venues[venue_key]
   end
@@ -104,6 +100,8 @@ class LegacyHearing < ApplicationRecord
       "Board of Veterans' Appeals in Washington, DC"
     elsif venue
       venue[:label]
+    elsif hearing_location
+      hearing_location.name
     end
   end
 
