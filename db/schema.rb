@@ -212,13 +212,11 @@ ActiveRecord::Schema.define(version: 20190323003906) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "claimants", force: :cascade, comment: "The claimant for each Decision Review, and its payee_code if required." do |t|
-    t.bigint "decision_review_id", comment: "The ID of the Decision Review the claimant is on."
-    t.string "decision_review_type", comment: "The type of Decision Review the claimant is on."
-    t.string "participant_id", null: false, comment: "The participant ID of the claimant selected on a Decision Review."
-    t.string "payee_code", comment: "The payee_code for the claimant selected on a Decision Review, if applicable. Payee_code is required for claimants when the claim is processed in VBMS and the Veteran is not the claimant. For Supplemental Claims automatically created due to remanded decisions, this is automatically selected based on the last payee code used for the same claimant on a previous end product, if available."
-    t.integer "review_request_id"
-    t.string "review_request_type"
+  create_table "claimants", force: :cascade, comment: "This table bridges decision reviews to participants when the participant is listed as a claimant on the decision review. A participant can be a claimant on multiple decision reviews." do |t|
+    t.bigint "decision_review_id", comment: "The ID of the decision review the claimant is on."
+    t.string "decision_review_type", comment: "The type of decision review the claimant is on."
+    t.string "participant_id", null: false, comment: "The participant ID of the claimant."
+    t.string "payee_code", comment: "The payee_code for the claimant, if applicable. payee_code is required when the claim is processed in VBMS."
     t.index ["decision_review_type", "decision_review_id"], name: "index_claimants_on_decision_review_type_and_decision_review_id"
   end
 

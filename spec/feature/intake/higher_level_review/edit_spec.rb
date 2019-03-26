@@ -314,12 +314,12 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: #{Time.zone.today.mdY}")
+        expect(page).to have_content("#{eligible_request_issue.contention_text}\nDecision date: #{Time.zone.today.mdY}")
         expect(page).to have_content(
           "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
         expect(page).to have_content(
-          "#{eligible_ri_before_ama.contention_text} Decision date:"
+          "#{eligible_ri_before_ama.contention_text}\nDecision date:"
         )
         expect(page).to have_content(
           "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
@@ -328,7 +328,7 @@ feature "Higher Level Review Edit issues" do
           "#{ri_legacy_issue_ineligible.contention_text} #{ineligible.legacy_appeal_not_eligible}"
         )
         expect(page).to have_content(
-          "#{ri_legacy_issue_eligible.contention_text} Decision date:"
+          "#{ri_legacy_issue_eligible.contention_text}\nDecision date:"
         )
       end
     end
@@ -864,7 +864,7 @@ feature "Higher Level Review Edit issues" do
       # add RAMP issue before AMA
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
-      expect(page).to have_content("Issue before AMA Activation from RAMP Decision date:")
+      expect(page).to have_content("Issue before AMA Activation from RAMP\nDecision date:")
 
       safe_click("#button-submit-update")
 

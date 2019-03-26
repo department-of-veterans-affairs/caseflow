@@ -68,5 +68,8 @@ end
 Capybara.default_driver = ENV["CI"] ? :sniffybara_headless : :parallel_sniffybara
 # the default default_max_wait_time is 2 seconds
 Capybara.default_max_wait_time = 5
+# Capybara uses puma by default, but for some reason, some of our tests don't
+# pass with puma. See: https://github.com/teamcapybara/capybara/issues/2170
+Capybara.server = :webrick
 
 Chromedriver.set_version "2.45"
