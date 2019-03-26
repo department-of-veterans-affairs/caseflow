@@ -415,7 +415,7 @@ feature "Supplemental Claim Intake" do
     )
 
     Claimant.create!(
-      review_request: supplemental_claim,
+      decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )
 

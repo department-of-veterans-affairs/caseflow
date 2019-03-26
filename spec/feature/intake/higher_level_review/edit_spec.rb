@@ -1095,7 +1095,7 @@ feature "Higher Level Review Edit issues" do
       scenario "remove an issue with dropdown" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
         expect(page).to have_content("PTSD denied")
-        click_remove_intake_issue_dropdown("0")
+        click_remove_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content("PTSD denied")
       end
     end
