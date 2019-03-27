@@ -18,13 +18,16 @@ class JudgeAssignTasksController < TasksController
   end
 
   def tasks
-    if assignee_is_judge?
-      tasks = task.update_from_params(update_params, current_user)
-      tasks.each { |t| return invalid_record_error(t) unless t.valid? }
-    else
-      tasks = AttorneyTask.create_many_from_params(create_params, current_user)
-    end
+    assignee_is_judge? ? update_tasks : create_tasks
+  end
 
+  def create_tasks
+    AttorneyTask.create_many_from_params(create_params, current_user)
+  end
+
+  def update_tasks
+    tasks = task.update_from_params(update_params, current_user)
+    tasks.each { |tsk| return invalid_record_error(tsk) unless tsk.valid? }
     tasks
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
