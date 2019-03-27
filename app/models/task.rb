@@ -143,12 +143,16 @@ class Task < ApplicationRecord
     false
   end
 
+  def is_duplicate_org_task
+    assigned_to.is_a?(Organization) && children.pluck(:assigned_to_type).include?(User.name)
+  end
+
   def hide_from_case_timeline
-    false
+    is_duplicate_org_task
   end
 
   def hide_from_task_snapshot
-    false
+    is_duplicate_org_task
   end
 
   def legacy?

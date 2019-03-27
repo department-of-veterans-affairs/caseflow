@@ -96,8 +96,8 @@ export const prepareTasksForStore = (tasks) =>
       caseReviewId: task.attributes.attorney_case_review_id,
       timelineTitle: task.attributes.timeline_title,
       hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
-      hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot || task.attributes.assigned_to.is_organization,
-      hideFromCaseTimeline: task.attributes.hide_from_case_timeline || task.attributes.assigned_to.is_organization
+      hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
+      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
     };
 
     return acc;
