@@ -133,13 +133,7 @@ class SubmitDecisionView extends React.PureComponent {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
         'decision' : 'outside medical opinion (OMO) request',
       veteran: veteranFullName,
-<<<<<<< HEAD
-      judge: judges[decision.opts.reviewing_judge_id] ?
-        judges[decision.opts.reviewing_judge_id].full_name :
-        `${this.props.task.assignedBy.first_name} ${this.props.task.assignedBy.last_name}`
-=======
       judge: this.getJudgeValueForSuccessMessage(judges, decision)
->>>>>>> master
     };
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
