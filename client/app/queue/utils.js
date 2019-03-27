@@ -530,8 +530,6 @@ export const nullToFalse = (key, obj) => {
 };
 
 export const sortTaskList = (taskList) => {
-  console.log(taskList, 'the task list');
-
   return taskList.sort((prev, next) => {
     return new Date(next.closedAt || next.createdAt).getTime() -
     new Date(prev.closedAt || prev.createdAt).getTime();
