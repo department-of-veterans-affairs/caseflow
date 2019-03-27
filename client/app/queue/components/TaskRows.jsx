@@ -287,4 +287,4 @@ const mapStateToProps = () => {
   };
 };
 
-export default (withRouter(connect(mapStateToProps, null)(TaskRows)): React.ComponentType<>);
+export default (withRouter(connect(mapStateToProps, null)(TaskRows)));
