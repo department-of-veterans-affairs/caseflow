@@ -128,8 +128,8 @@ class HearingDay < ApplicationRecord
         hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
       end
 
-      remaining_hearing_days = HearingDay.where("DATE(scheduled_for) between ? and ?", start_date, end_date).
-        where.not(id: hearing_days_with_ama_hearings.pluck(:id))
+      remaining_hearing_days = HearingDay.where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+        .where.not(id: hearing_days_with_ama_hearings.pluck(:id)).order(:scheduled_for).limit(1000)
 
       vacols_hearings_for_remaining_hearing_days = HearingRepository.fetch_hearings_for_parents(
         remaining_hearing_days.pluck(:id)
@@ -137,8 +137,8 @@ class HearingDay < ApplicationRecord
 
       hearing_days_with_vacols_hearings = remaining_hearing_days.select do |hearing_day|
         !vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil? &&
-          vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].any? do
-            |hearing| hearing.assigned_to_vso?(user)
+          vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].any? do |hearing|
+            hearing.assigned_to_vso?(user)
           end
       end
 
