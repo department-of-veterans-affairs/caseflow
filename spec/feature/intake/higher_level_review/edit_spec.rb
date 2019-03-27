@@ -1192,6 +1192,16 @@ feature "Higher Level Review Edit issues" do
     end
 
     context "when all caseflow decision reviews" do
+      before do
+        education_org = create(:business_line, name: "Education", url: "education")
+        OrganizationsUser.add_user_to_organization(current_user, education_org)
+        FeatureToggle.enable!(:decision_reviews)
+      end
+
+      after do
+        FeatureToggle.disable!(:decision_reviews)
+      end
+
       let!(:benefit_type) { "education" }
 
       scenario "remove all caseflow decisions reviews" do
@@ -1206,9 +1216,9 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Remove review?")
         expect(page).to have_content("This review and all tasks associated with it will be removed.")
         click_intake_confirm
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         sleep 1
-        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(current_path).to eq("/decision_reviews/education")
+        expect(page).to have_content("Success!")
       end
     end
 

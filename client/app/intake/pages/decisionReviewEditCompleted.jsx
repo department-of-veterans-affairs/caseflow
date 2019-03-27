@@ -6,6 +6,8 @@ import { PAGE_PATHS, FORM_TYPES } from '../constants';
 import _ from 'lodash';
 import Alert from '../../components/Alert';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
+import SmallLoader from '../../components/SmallLoader';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -110,11 +112,19 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       formType,
       issuesBefore,
       issuesAfter,
-      informalConference
+      informalConference,
+      redirectTo
     } = this.props;
 
     if (!issuesBefore) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
+    }
+
+    if (redirectTo && formType !== FORM_TYPES.APPEAL.key) {
+      window.location.href = redirectTo;
+
+      return <SmallLoader message="Loading decision..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
+
     }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
@@ -153,6 +163,7 @@ export default connect(
     veteran: state.veteran,
     issuesBefore: state.issuesBefore,
     issuesAfter: state.issuesAfter,
-    informalConference: state.informalConference
+    informalConference: state.informalConference,
+    redirectTo: state.redirectTo
   })
 )(DecisionReviewEditCompletedPage);

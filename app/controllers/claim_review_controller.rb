@@ -5,10 +5,18 @@ class ClaimReviewController < ApplicationController
 
   def update
     if request_issues_update.perform!
-      render json: {
-        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
-      }
+      if claim_review.try(:processed_in_caseflow?)
+        flash[:success] = decisions_removed_message
+        render json: { redirect_to: claim_review.business_line.tasks_url,
+                       issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+                       issuesAfter: request_issues_update.after_issues.map(&:ui_hash) }
+      else
+        render json: {
+          redirect_to: nil,
+          issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+          issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
+        }
+      end
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     end
@@ -48,5 +56,11 @@ class ClaimReviewController < ApplicationController
 
   def verify_feature_enabled
     redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
+  end
+
+  def decisions_removed_message
+    claimant_name = claim_review.veteran_full_name
+    "You have successfully removed #{claim_review.class.review_title} for #{claimant_name}
+    (ID: #{claim_review.veteran.ssn})."
   end
 end
