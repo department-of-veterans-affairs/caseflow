@@ -674,12 +674,10 @@ RSpec.feature "Case details" do
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:attorney_task) do
-        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
-                                   closed_at: 3.weeks.ago)
+        create(:ama_attorney_task, :completed, appeal: appeal, parent: root_task, assigned_to: user)
       end
       let!(:attorney_task2) do
-        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
-                                   closed_at: Time.zone.now - 4.days)
+        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user)
       end
       let!(:judge_task) do
         create(:ama_judge_decision_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
@@ -688,9 +686,10 @@ RSpec.feature "Case details" do
       end
 
       before do
-        # This attribute needs to be set here due to update_parent_status hook in the task model
-        attorney_task.update!(status: Constants.TASK_STATUSES.completed,  closed_at: Time.zone.now - 4.days)
-        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
+        # The status attribute needs to be set here due to update_parent_status hook in the task model
+        # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-02-01")
+        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-03-01")
       end
 
       it "should display judge & attorney tasks" do
@@ -698,11 +697,14 @@ RSpec.feature "Case details" do
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
         expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
       end
-
       it "should sort tasks properly" do
         visit "/queue/appeals/#{appeal.uuid}"
         first_row_with_date = page.find_all("table#case-timeline-table tbody tr")[1]
+        second_row_with_date = page.find_all("table#case-timeline-table tbody tr")[2]
+        third_row_with_date = page.find_all("table#case-timeline-table tbody tr")[3]
         expect(first_row_with_date).to have_content("01/01/2020")
+        expect(second_row_with_date).to have_content("03/01/2019")
+        expect(third_row_with_date).to have_content("02/01/2019")
       end
 
       it "should NOT display judge & attorney tasks" do
