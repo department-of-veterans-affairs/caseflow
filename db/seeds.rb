@@ -100,7 +100,7 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
 
     create_no_show_hearings_task
-    create_assign_hearing_disposition_task
+    create_change_hearing_disposition_task
   end
 
   def create_no_show_hearings_task
@@ -113,10 +113,11 @@ class SeedDB
     FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
   end
 
-  def create_assign_hearing_disposition_task
+  def create_change_hearing_disposition_task
     hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
     hearing_day = FactoryBot.create(:hearing_day, created_by: hearings_member, updated_by: hearings_member)
-    appeal = FactoryBot.create(:appeal, :hearing_docket)
+    veteran = FactoryBot.create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
+    appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
     root_task = FactoryBot.create(:root_task, appeal: appeal)
     distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
     parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
@@ -124,7 +125,7 @@ class SeedDB
 
     hearing = FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day)
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
-    FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
+    FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
   end
 
   def create_colocated_users

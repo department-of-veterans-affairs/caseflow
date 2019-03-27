@@ -85,7 +85,7 @@ export const prepareTasksForStore = (tasks) =>
       taskId: task.id,
       label: task.attributes.label,
       documentId: task.attributes.document_id,
-      hearingId: task.attributes.hearing_id,
+      externalHearingId: task.attributes.external_hearing_id,
       workProduct: null,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
       placedOnHoldAt: task.attributes.placed_on_hold_at,

@@ -102,8 +102,8 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
-      type { AssignHearingDispositionTask.name }
+    factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do
+      type { ChangeHearingDispositionTask.name }
       assigned_to { HearingAdmin.singleton }
       appeal { create(:appeal) }
     end

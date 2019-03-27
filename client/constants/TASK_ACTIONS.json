@@ -1,6 +1,6 @@
 {
     "ADD_ADMIN_ACTION": { "label": "Add admin action", "value": "colocated_task", "func": "add_admin_action_data" },
-    "ASSIGN_HEARING_DISPOSITION": { "label": "Assign hearing disposition", "value": "modal/assign_hearing_disposition" },
+    "CHANGE_HEARING_DISPOSITION": { "label": "Change hearing disposition", "value": "modal/change_hearing_disposition" },
     "ASSIGN_OMO": { "label": "Assign OMO", "value": "omo_request/evaluate" },
     "ASSIGN_TO_ATTORNEY": { "label": "Assign to attorney", "value": "modal/assign_to_attorney", "func": "assign_to_attorney_data" },
     "ASSIGN_TO_PERSON": { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assign_to_user_data" },

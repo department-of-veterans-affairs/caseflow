@@ -35,7 +35,7 @@ import CompleteTaskModal from './components/CompleteTaskModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
-import AssignHearingDispositionModal from './AssignHearingDispositionModal';
+import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
@@ -199,7 +199,7 @@ class QueueApp extends React.PureComponent {
 
   routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
 
-  routedAssignHearingDisposition = (props) => <AssignHearingDispositionModal {...props.match.params} />;
+  routedChangeHearingDisposition = (props) => <ChangeHearingDispositionModal {...props.match.params} />;
 
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
@@ -320,8 +320,8 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
             render={this.routedAssignToUser} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_HEARING_DISPOSITION.value}`}
-            render={this.routedAssignHearingDisposition} />
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.value}`}
+            render={this.routedChangeHearingDisposition} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
