@@ -702,7 +702,6 @@ RSpec.feature "Case details" do
       it "should sort tasks properly" do
         visit "/queue/appeals/#{appeal.uuid}"
         first_row_with_date = page.find_all("table#case-timeline-table tbody tr")[1]
-        binding.pry
         expect(first_row_with_date).to have_content("01/01/2020")
       end
 
