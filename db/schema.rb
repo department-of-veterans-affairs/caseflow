@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190322235314) do
+ActiveRecord::Schema.define(version: 20190326200140) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -725,12 +725,12 @@ ActiveRecord::Schema.define(version: 20190322235314) do
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
-  create_table "ramp_issues", id: :serial, force: :cascade do |t|
-    t.string "contention_reference_id"
-    t.string "description", null: false
-    t.integer "review_id", null: false
-    t.string "review_type", null: false
-    t.integer "source_issue_id"
+  create_table "ramp_issues", id: :serial, force: :cascade, comment: "Issues added to an end product as contentions for RAMP reviews. For RAMP elections, these are created in VBMS after the end product is established and updated in Caseflow when the end product is synced. For RAMP refilings, these are selected from the RAMP election's issues and added to the RAMP refiling end product that is established." do |t|
+    t.string "contention_reference_id", comment: "The ID of the contention created in VBMS that corresponds to the RAMP issue."
+    t.string "description", null: false, comment: "The description of the contention in VBMS."
+    t.integer "review_id", null: false, comment: "The ID of the RAMP election or RAMP refiling for this issue."
+    t.string "review_type", null: false, comment: "The type of RAMP review the issue is on, indicating whether this is a RAMP election issue or a RAMP refiling issue."
+    t.integer "source_issue_id", comment: "If a RAMP election issue added to a RAMP refiling, it is the source issue for the corresponding RAMP refiling issue."
     t.index ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id"
   end
 
@@ -900,15 +900,15 @@ ActiveRecord::Schema.define(version: 20190322235314) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
-  create_table "task_timers", force: :cascade do |t|
-    t.datetime "attempted_at"
-    t.datetime "created_at", null: false
-    t.string "error"
-    t.datetime "last_submitted_at"
-    t.datetime "processed_at"
-    t.datetime "submitted_at"
-    t.bigint "task_id", null: false
-    t.datetime "updated_at", null: false
+  create_table "task_timers", force: :cascade, comment: "Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask." do |t|
+    t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run."
+    t.datetime "created_at", null: false, comment: "Automatic timestamp for record creation."
+    t.string "error", comment: "Async any error message from most recent failed attempt to run."
+    t.datetime "last_submitted_at", comment: "Async timestamp for most recent job start."
+    t.datetime "processed_at", comment: "Async timestamp for when the job completes successfully."
+    t.datetime "submitted_at", comment: "Async timestamp for initial job start."
+    t.bigint "task_id", null: false, comment: "ID of the Task to be run."
+    t.datetime "updated_at", null: false, comment: "Automatic timestmap for record update."
     t.index ["task_id"], name: "index_task_timers_on_task_id"
   end
 
