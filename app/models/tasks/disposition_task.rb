@@ -13,6 +13,13 @@ class DispositionTask < GenericTask
   class HearingDispositionNotNoShow < StandardError; end
   class HearingDispositionNotHeld < StandardError; end
 
+  # This is inefficient. If it runs slowly or consumes a lot of resources then refactor. Until then we're fine.
+  scope :ready_for_action, lambda {
+    active.where.not(status: Constants.TASK_STATUSES.on_hold).select do |task|
+      task.hearing && (task.hearing.scheduled_for < 24.hours.ago)
+    end
+  }
+
   class << self
     def create_disposition_task!(appeal, parent, hearing)
       disposition_task = DispositionTask.create!(

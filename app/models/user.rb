@@ -43,6 +43,10 @@ class User < ApplicationRecord
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
+  def users_regional_office
+    selected_regional_office || regional_office
+  end
+
   def attorney_in_vacols?
     vacols_roles.include?("attorney")
   end
@@ -202,7 +206,7 @@ class User < ApplicationRecord
   end
 
   def to_session_hash
-    skip_attrs = %w[full_name created_at updated_at last_login_at]
+    skip_attrs = %w[full_name created_at updated_at last_login_at undo_record_merging]
     serializable_hash.merge("id" => css_id, "name" => full_name).except(*skip_attrs)
   end
 

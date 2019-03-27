@@ -6,6 +6,7 @@ import {
   convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
+  getClaimantError,
   getPageError,
   formatRelationships,
   getDefaultPayeeCode
@@ -106,6 +107,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     nonRatingRequestIssues: { },
     contestableIssues: { },
     reviewIntakeError: null,
+    errorUUID: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
     redirectTo: null,
@@ -232,7 +234,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
       },
       claimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
+        $set: getClaimantError(action.payload.responseErrorCodes)
       },
       payeeCodeError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')
@@ -243,6 +245,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         },
         reviewIntakeError: {
           $set: getPageError(action.payload.responseErrorCodes)
+        },
+        errorUUID: {
+          $set: action.payload.errorUUID
         }
       }
     });

@@ -185,6 +185,51 @@ describe RequestIssue do
     end
   end
 
+  context "remove!" do
+    let(:decision_issue) { create(:decision_issue) }
+    let!(:request_issue1) { create(:request_issue, decision_issues: [decision_issue]) }
+
+    subject { request_issue1.remove! }
+
+    context "when a decision issue is shared between two request issues" do
+      let!(:request_issue2) { create(:request_issue, decision_issues: [decision_issue]) }
+
+      it "does not soft delete a decision issue" do
+        expect(RequestDecisionIssue.count).to eq 2
+        subject
+        expect(DecisionIssue.find_by(id: decision_issue.id)).to_not be_nil
+        expect(RequestDecisionIssue.count).to eq 1
+      end
+    end
+
+    context "when request issue has many decision issues" do
+      let(:decision_issue2) { create(:decision_issue) }
+      let!(:request_issue1) do
+        create(:request_issue, decision_issues: [decision_issue, decision_issue2])
+      end
+
+      it "soft deletes all decision issues" do
+        expect(RequestDecisionIssue.count).to eq 2
+        subject
+        expect(DecisionIssue.count).to eq 0
+        expect(DecisionIssue.unscoped.count).to eq 2
+        expect(RequestDecisionIssue.count).to eq 0
+        expect(RequestDecisionIssue.unscoped.count).to eq 2
+      end
+    end
+
+    context "when a decision issue is not shared between two request issues" do
+      it "soft deletes a decision issue" do
+        expect(RequestDecisionIssue.count).to eq 1
+        subject
+        expect(DecisionIssue.find_by(id: decision_issue.id)).to be_nil
+        expect(DecisionIssue.unscoped.find_by(id: decision_issue.id)).to_not be_nil
+        expect(RequestDecisionIssue.count).to eq 0
+        expect(RequestDecisionIssue.unscoped.count).to eq 1
+      end
+    end
+  end
+
   context ".active" do
     subject { RequestIssue.active }
 
@@ -465,7 +510,7 @@ describe RequestIssue do
           :request_issue,
           decision_review: previous_higher_level_review,
           contested_rating_issue_reference_id: higher_level_review_reference_id,
-          contention_reference_id: contention_reference_id,
+          contention_reference_id: "2222",
           end_product_establishment: active_epe,
           contention_removed_at: nil,
           ineligible_reason: nil
@@ -477,7 +522,7 @@ describe RequestIssue do
           :request_issue,
           decision_review: new_higher_level_review,
           contested_rating_issue_reference_id: higher_level_review_reference_id,
-          contention_reference_id: contention_reference_id,
+          contention_reference_id: "3333",
           ineligible_reason: :duplicate_of_rating_issue_in_active_review,
           ineligible_due_to: request_issue_in_active_review
         )
@@ -639,7 +684,13 @@ describe RequestIssue do
   end
 
   context "#previous_request_issue" do
-    let(:previous_higher_level_review) { create(:higher_level_review, receipt_date: review.receipt_date - 10.days) }
+    let(:previous_higher_level_review) do
+      create(
+        :higher_level_review,
+        veteran_file_number: veteran.file_number,
+        receipt_date: review.receipt_date - 10.days
+      )
+    end
 
     let(:previous_end_product_establishment) do
       create(
@@ -650,6 +701,8 @@ describe RequestIssue do
       )
     end
 
+    let(:previous_contention_ref_id) { "4444" }
+
     let!(:previous_request_issue) do
       create(
         :request_issue,
@@ -657,7 +710,7 @@ describe RequestIssue do
         contested_rating_issue_reference_id: higher_level_review_reference_id,
         contested_rating_issue_profile_date: profile_date,
         contested_issue_description: "a rating request issue",
-        contention_reference_id: contention_reference_id,
+        contention_reference_id: previous_contention_ref_id,
         end_product_establishment: previous_end_product_establishment
       ).tap(&:submit_for_processing!)
     end
@@ -672,7 +725,7 @@ describe RequestIssue do
     context "when contesting the same decision review" do
       let(:previous_contention) do
         Generators::Contention.build(
-          id: contention_reference_id,
+          id: previous_contention_ref_id,
           claim_id: previous_end_product_establishment.reference_id,
           disposition: "allowed"
         )
