@@ -756,6 +756,7 @@ ActiveRecord::Schema.define(version: 20190322235314) do
   create_table "record_synced_by_jobs", force: :cascade do |t|
     t.datetime "attempted_at"
     t.string "error"
+    t.datetime "last_submitted_at"
     t.datetime "processed_at"
     t.bigint "record_id"
     t.string "record_type"

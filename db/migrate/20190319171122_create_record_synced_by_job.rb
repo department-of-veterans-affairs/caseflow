@@ -5,6 +5,7 @@ class CreateRecordSyncedByJob < ActiveRecord::Migration[5.1]
       t.datetime :submitted_at
       t.datetime :attempted_at
       t.datetime :processed_at
+      t.datetime :last_submitted_at
       t.string :error
       t.string :sync_job_name
     end
