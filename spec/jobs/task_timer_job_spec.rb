@@ -59,7 +59,7 @@ describe TaskTimerJob do
     timer = timer_for_task
     Timecop.travel(Time.zone.now + 1.day)
 
-    expect(TaskTimer.requires_processing.include?(error_timer)).to eq(true)
+    expect(TaskTimer.requires_processing).to include error_timer
 
     TaskTimerJob.perform_now
 
