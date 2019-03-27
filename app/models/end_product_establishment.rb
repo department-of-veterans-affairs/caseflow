@@ -67,7 +67,7 @@ class EndProductEstablishment < ApplicationRecord
         modifier: end_product_to_establish.modifier
       )
     end
-  rescue VBMS::HTTPError => error
+  rescue VBMS::HTTPError, Caseflow::Error::VBMS => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
