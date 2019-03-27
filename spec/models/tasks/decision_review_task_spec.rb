@@ -22,8 +22,12 @@ describe DecisionReviewTask do
 
     let(:veteran) { create(:veteran) }
     let(:hlr) do
-      create(:higher_level_review, number_of_claimants: 1,
-                                   veteran_file_number: veteran.file_number, benefit_type: benefit_type)
+      create(
+        :higher_level_review,
+        number_of_claimants: 1,
+        veteran_file_number: veteran.file_number,
+        benefit_type: benefit_type
+      )
     end
     let(:task_status) { "assigned" }
     let!(:request_issues) do
