@@ -62,7 +62,7 @@ describe UpdateAppellantRepresentationJob do
         end
       end
 
-      it "updates every legacy appeal", focus: true do
+      it "updates every legacy appeal" do
         UpdateAppellantRepresentationJob.perform_now
 
         legacy_appeals.each do |appeal|
@@ -160,7 +160,6 @@ describe UpdateAppellantRepresentationJob do
           assigned_to: HearingsManagement.singleton,
           parent: create(:hearing_task, appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
         )
-        vso_for_legacy_appeal[legacy_appeal.id] = [create(:vso)]
 
         legacy_appeal
       end
@@ -174,7 +173,6 @@ describe UpdateAppellantRepresentationJob do
           appeal: appeal,
           assigned_to: Bva.singleton
         )
-        vso_for_appeal[appeal.id] = [create(:vso)]
 
         appeal
       end
@@ -184,10 +182,23 @@ describe UpdateAppellantRepresentationJob do
       let(:legacy_appeal_count) { 10 }
       let(:appeal_count) { 10 }
 
-      it "returns both legacy and ama appeals", focus: true do
+      it "returns both legacy and ama appeals" do
         all_appeals = UpdateAppellantRepresentationJob.new.appeals_to_update
 
         expect(all_appeals).to match_array(legacy_appeals + appeals)
+      end
+    end
+
+    context "#retrieve_number_to_update" do
+      let(:legacy_appeal_count) { 3 }
+      let(:appeal_count) { 6 }
+
+      it "returns the appropriate ratio of legacy to ama" do
+        UpdateAppellantRepresentationJob::TOTAL_NUMBER_OF_APPEALS_TO_UPDATE = 3
+        appeal_counts = UpdateAppellantRepresentationJob.new.retrieve_number_to_update
+
+        expect(appeal_counts[:number_of_legacy_appeals_to_update]).to eq(1)
+        expect(appeal_counts[:number_of_appeals_to_update]).to eq(2)
       end
     end
   end
