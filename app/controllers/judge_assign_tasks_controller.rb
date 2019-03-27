@@ -9,8 +9,12 @@ class JudgeAssignTasksController < TasksController
 
   private
 
+  def task_params
+    @task_params ||= create_params.first
+  end
+
   def task
-    @task ||= Task.find(create_params.first[:parent_id])
+    @task ||= Task.find(task_params[:parent_id])
   end
 
   def tasks
@@ -27,6 +31,6 @@ class JudgeAssignTasksController < TasksController
   end
 
   def assignee_is_judge?
-    JudgeTeam.for_judge(User.find(create_params.first[:assigned_to_id]))
+    JudgeTeam.for_judge(User.find(task_params[:assigned_to_id]))
   end
 end

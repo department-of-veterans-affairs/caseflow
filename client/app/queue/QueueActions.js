@@ -388,7 +388,10 @@ export const initialAssignTasksToUser = ({
           assigned_to_id: assigneeId
         }],
         task: {
-          assigned_to_id: assigneeId
+          reassign: {
+            assigned_to_type: 'User',
+            assigned_to_id: assigneeId
+          }
         }
       }
     };
