@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AssignTasksController < TasksController
+class JudgeAssignTasksController < TasksController
   def create
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 

@@ -379,7 +379,7 @@ export const initialAssignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = '/assign_tasks';
+    url = '/judge_assign_tasks';
     params = {
       data: {
         tasks: [{
