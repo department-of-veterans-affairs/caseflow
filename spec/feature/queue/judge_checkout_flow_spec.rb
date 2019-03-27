@@ -62,6 +62,7 @@ RSpec.feature "Judge checkout flow" do
       click_on "Continue"
       expect(page).to have_content("Evaluate Decision")
 
+      expect(page).to_not have_content("Select an action")
       expect(page).to_not have_content("One Touch Initiative")
 
       find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
@@ -149,6 +150,7 @@ RSpec.feature "Judge checkout flow" do
         click_on "Continue"
         expect(page).to have_content("Evaluate Decision")
 
+        expect(page).to_not have_content("Select an action")
         expect(page).to have_content("One Touch Initiative")
         find("label", text: COPY::JUDGE_EVALUATE_DECISION_CASE_ONE_TOUCH_INITIATIVE_SUBHEAD).click
 
