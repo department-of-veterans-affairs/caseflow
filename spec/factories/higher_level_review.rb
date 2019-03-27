@@ -23,20 +23,8 @@ FactoryBot.define do
     end
 
     after(:create) do |hlr, evaluator|
-      if !hlr.claimants.empty?
-        hlr.claimants.each do |claimant|
-          claimant.decision_review = hlr
-          claimant.save
-        end
-      elsif evaluator.number_of_claimants
+      if evaluator.number_of_claimants
         hlr.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: hlr)
-      else
-        hlr.claimants = [create(
-          :claimant,
-          participant_id: hlr.veteran.participant_id,
-          decision_review: hlr,
-          payee_code: "00"
-        )]
       end
     end
   end
