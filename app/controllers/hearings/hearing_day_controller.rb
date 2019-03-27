@@ -45,7 +45,7 @@ class Hearings::HearingDayController < HearingScheduleController
     end
 
     if current_user.vso_employee?
-      hearings = hearings.select { |hearing| hearing.is_a?(Hearing) && hearing.assigned_to_vso?(current_user) }
+      hearings = hearings.select { |hearing| hearing.assigned_to_vso?(current_user) }
     end
 
     render json: {
