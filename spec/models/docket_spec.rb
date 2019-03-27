@@ -87,14 +87,14 @@ describe Docket do
     end
 
     context "distribute_appeals" do
-      context "nonpriority appeals" do
+      context "priority appeals" do
         subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 2) }
 
         let(:judge_user) { create(:user) }
         let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
         let!(:distribution) { Distribution.create!(judge: judge_user) }
 
-        it "creates distributed cases and judge tasks" do
+        it "distributes and appeals" do
           tasks = subject
 
           expect(tasks.length).to eq(2)
