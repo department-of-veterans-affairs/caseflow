@@ -747,7 +747,7 @@ describe RequestIssue do
     end
   end
 
-  context "#rating?, #nonrating?", focus: true do
+  context "#rating?, #nonrating?" do
     subject { request_issue.rating? }
     let(:nonrating) { request_issue.nonrating? }
     let(:request_issue) { rating_request_issue }
@@ -756,7 +756,7 @@ describe RequestIssue do
       let(:contested_rating_issue_reference_id) { "123" }
       it { is_expected.to be true }
 
-      it "nonrating? is false" do 
+      it "nonrating? is false" do
         expect(nonrating).to be(false)
       end
     end
@@ -779,7 +779,7 @@ describe RequestIssue do
       end
 
       it { is_expected.to be true }
-      it "nonrating? is false" do 
+      it "nonrating? is false" do
         expect(nonrating).to be(false)
       end
     end
