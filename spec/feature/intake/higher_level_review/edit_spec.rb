@@ -1204,7 +1204,7 @@ feature "Higher Level Review Edit issues" do
 
       let!(:benefit_type) { "education" }
 
-      scenario "remove all caseflow decisions reviews" do
+      scenario "show alert message when all decision reviews are removed " do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
         higher_level_review.request_issues.length.times do
@@ -1218,7 +1218,7 @@ feature "Higher Level Review Edit issues" do
         click_intake_confirm
         sleep 1
         expect(current_path).to eq("/decision_reviews/education")
-        expect(page).to have_content("Success!")
+        expect(page).to have_content("Review Removed")
       end
     end
 

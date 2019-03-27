@@ -14,11 +14,11 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
   const decisionIssuesAfter = requestIssues.filter((ri) => !ri.issuesAfter);
 
-  const messageArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
+  const editMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
 
-  const decisionArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Removal for ${formName} has been removed.`];
+  const removalMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) ${formName} has been removed.`];
 
-  const leadMessageArr = decisionIssuesAfter.length === 0 ? decisionArr : messageArr;
+  const leadMessageArr = decisionIssuesAfter.length === 0 ? removalMessage : editMessage;
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
@@ -61,7 +61,7 @@ const getEndProductUpdate = ({
 
   if (epBefore && !epAfter) {
     return <Fragment>
-      <strong>Removed a {claimReviewName} {epType}.</strong>
+      <strong>A {claimReviewName} {epType} EP is being canceled.</strong>
       <p>All contentions on this EP were removed</p>
     </Fragment>;
   } else if (epBefore && epAfter && epChanged) {
@@ -123,7 +123,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     if (redirectTo && formType !== FORM_TYPES.APPEAL.key) {
       window.location.href = redirectTo;
 
-      return <SmallLoader message="Loading decision..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
+      return <SmallLoader message="Loading ..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
 
     }
 

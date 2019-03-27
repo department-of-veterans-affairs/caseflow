@@ -34,6 +34,7 @@ export class SuccessAlert extends React.PureComponent {
 
 export class FlashAlerts extends React.PureComponent {
   render() {
+
     let alerts = this.props.flash.map((flash, idx) => {
       let flashMsg;
 
@@ -44,7 +45,7 @@ export class FlashAlerts extends React.PureComponent {
       } else if (flash[0] === 'error') {
         flashMsg = <Alert key={idx} title="Error" type="error" >{flash[1]}</Alert>;
       } else if (flash[0] === 'removed') {
-        flashMsg = <Alert key={idx} title="Review Removed" type="removed" >{flash[1]}</Alert>;
+        flashMsg = <Alert key={idx} title="Review Removed" type="success">{flash[1]}</Alert>;
       }
 
       return flashMsg;
