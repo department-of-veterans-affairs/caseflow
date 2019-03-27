@@ -222,15 +222,12 @@ class RequestIssue < ApplicationRecord
     !!associated_rating_issue? || previous_rating_issue?
   end
 
-  def associated_rating_issue?
-    contested_rating_issue_reference_id
+  def nonrating?
+    !rating?
   end
 
-  # TODO: If a nonrating decision issue is contested, the request issue should also be considered
-  #       nonrating. Currently it won't be because we don't copy over these fields from the contested
-  #       decision issue if they are present.
-  def nonrating?
-    !!issue_category
+  def associated_rating_issue?
+    contested_rating_issue_reference_id
   end
 
   def open?
