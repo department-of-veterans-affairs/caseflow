@@ -17,7 +17,8 @@ class Api::V1::JobsController < Api::ApplicationController
     "take_docket_snapshot" => TakeDocketSnapshotJob,
     "task_timer_job" => TaskTimerJob,
     "fetch_hearing_locations_for_veterans_job" => FetchHearingLocationsForVeteransJob,
-    "update_appellant_representation_job" => UpdateAppellantRepresentationJob
+    "update_appellant_representation_job" => UpdateAppellantRepresentationJob,
+    "hearing_disposition_change_job" => HearingDispositionChangeJob
   }.freeze
 
   def create

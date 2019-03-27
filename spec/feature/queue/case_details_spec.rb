@@ -532,7 +532,7 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content("TASK\n#{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-        expect(page).to have_content("TASK INSTRUCTIONS\n#{on_hold_task.instructions[0].squeeze(' ')}")
+        expect(page).to have_content("TASK INSTRUCTIONS\n#{on_hold_task.instructions[0].squeeze(' ').strip}")
         expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
 
         expect(Task.find(on_hold_task.id).status).to eq("on_hold")

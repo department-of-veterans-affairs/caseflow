@@ -37,7 +37,7 @@ class Hearings::HearingDayController < HearingScheduleController
     hearing_day_options = HearingDay.open_hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 365.days,
-      (hearing_day[:request_type] == "C") ? "C" : hearing_day[:regional_office]
+      (hearing_day_hash[:request_type] == "C") ? "C" : hearing_day_hash[:regional_office]
     )
 
     if hearing_day.is_a?(HearingDay)
@@ -45,7 +45,7 @@ class Hearings::HearingDayController < HearingScheduleController
     end
 
     if current_user.vso_employee?
-      hearings = hearings.select { |hearing| hearing.assigned_to_vso?(current_user) }
+      hearings = hearings.select { |hearing| hearing.is_a?(Hearing) && hearing.assigned_to_vso?(current_user) }
     end
 
     render json: {
