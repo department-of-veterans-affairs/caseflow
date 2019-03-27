@@ -25,8 +25,9 @@ class DecisionReviewTask < GenericTask
     transaction do
       appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
       update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
-      appeal.on_decision_issues_sync_processed if appeal.is_a?(HigherLevelReview)
     end
+
+    appeal.on_decision_issues_sync_processed if appeal.is_a?(HigherLevelReview)
 
     true
   end
