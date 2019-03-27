@@ -33,7 +33,7 @@ module IntakeHelpers
     if claim_participant_id
       create(
         :claimant,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         participant_id: claim_participant_id,
         payee_code: "02"
       )
@@ -70,7 +70,7 @@ module IntakeHelpers
 
     if claim_participant_id
       Claimant.create!(
-        review_request: supplemental_claim,
+        decision_review: supplemental_claim,
         participant_id: claim_participant_id
       )
     end
@@ -101,7 +101,7 @@ module IntakeHelpers
     )
 
     Claimant.create!(
-      review_request: appeal,
+      decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
 
@@ -235,13 +235,14 @@ module IntakeHelpers
   end
 
   def click_remove_intake_issue(number)
+    number = number.strip if number.is_a?(String)
     issue_el = find_intake_issue_by_number(number)
     issue_el.find(".remove-issue").click
   end
 
   def click_remove_intake_issue_dropdown(text)
     issue_el = find_intake_issue_by_text(text)
-    issue_num = issue_el[:id].sub(/^issue-/, "").to_i - 1
+    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
     find("#issue-action-#{issue_num}").click
     find("#issue-action-#{issue_num}_remove").click
     click_remove_issue_confirmation
@@ -285,6 +286,7 @@ module IntakeHelpers
   end
 
   def expect_ineligible_issue(number)
+    number = number.strip if number.is_a?(String)
     expect(find_intake_issue_by_number(number)).to have_css(".not-eligible")
   end
 
@@ -404,7 +406,7 @@ module IntakeHelpers
     )
 
     prior_sc_claimant = create(:claimant,
-                               review_request: prior_supplemental_claim,
+                               decision_review: prior_supplemental_claim,
                                participant_id: appeal.claimants.first.participant_id,
                                payee_code: appeal.claimants.first.payee_code)
 
@@ -465,7 +467,7 @@ module IntakeHelpers
     click_intake_add_issue
     last_decision_date = (initial_date + 3.days).strftime("%m/%d/%Y")
     alternate_last_decision_date = (initial_date + 4.days).strftime("%m/%d/%Y")
-    text = "(Please select the most recent decision on "
+    text = "(Please select the most recent decision on"
     datetext = "#{text} #{last_decision_date})"
     multiple_datetext = "#{text} #{last_decision_date}, #{alternate_last_decision_date})"
 

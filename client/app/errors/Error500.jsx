@@ -35,7 +35,9 @@ class Error500 extends React.PureComponent {
           }} />
         <AppFrame>
           <StatusMessage title="Something went wrong." type="alert">
-             If you continue to see this page, please contact the help desk.
+            If you continue to see this page, please contact the help desk.
+
+            <div>Error code: {this.props.errorUUID}</div>
 
             { detailedErrorMessage }
           </StatusMessage>
