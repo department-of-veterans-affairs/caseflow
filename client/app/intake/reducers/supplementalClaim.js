@@ -107,6 +107,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     nonRatingRequestIssues: { },
     contestableIssues: { },
     reviewIntakeError: null,
+    errorUUID: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
     redirectTo: null,
@@ -244,6 +245,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         },
         reviewIntakeError: {
           $set: getPageError(action.payload.responseErrorCodes)
+        },
+        errorUUID: {
+          $set: action.payload.errorUUID
         }
       }
     });

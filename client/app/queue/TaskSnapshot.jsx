@@ -24,6 +24,7 @@ export class TaskSnapshot extends React.PureComponent {
   render = () => {
     const {
       appeal,
+      hideDropdown,
       tasks
     } = this.props;
 
@@ -32,7 +33,7 @@ export class TaskSnapshot extends React.PureComponent {
     if (tasks.length) {
       sectionBody = <table {...tableStyling}>
         <tbody>
-          { <TaskRows appeal={appeal} taskList={tasks} timeline={false} /> }
+          { <TaskRows appeal={appeal} taskList={tasks} timeline={false} hideDropdown={hideDropdown} /> }
         </tbody>
       </table>;
     }
