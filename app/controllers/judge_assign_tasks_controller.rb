@@ -18,7 +18,7 @@ class JudgeAssignTasksController < TasksController
   end
 
   def tasks
-    assignee_is_judge? ? update_tasks : create_tasks
+    @tasks ||= assignee_is_judge? ? update_tasks : create_tasks
   end
 
   def create_tasks
@@ -26,9 +26,8 @@ class JudgeAssignTasksController < TasksController
   end
 
   def update_tasks
-    tasks = task.update_from_params(update_params, current_user)
-    tasks.each { |tsk| return invalid_record_error(tsk) unless tsk.valid? }
-    tasks
+    update_tasks = task.update_from_params(update_params, current_user)
+    update_tasks.each { |tsk| return invalid_record_error(tsk) unless tsk.valid? }
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
   end
