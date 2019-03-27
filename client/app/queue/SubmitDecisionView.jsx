@@ -133,9 +133,7 @@ class SubmitDecisionView extends React.PureComponent {
       type: checkoutFlow === DECISION_TYPES.DRAFT_DECISION ?
         'decision' : 'outside medical opinion (OMO) request',
       veteran: veteranFullName,
-      judge: judges[decision.opts.reviewing_judge_id] ?
-        judges[decision.opts.reviewing_judge_id].full_name :
-        `${this.props.task.assignedBy.first_name} ${this.props.task.assignedBy.last_name}`
+      judge: this.getJudgeValueForSuccessMessage(judges, decision)
     };
     const successMsg = `Thank you for drafting ${fields.veteran}'s ${fields.type}. It's
     been sent to ${fields.judge} for review.`;
@@ -148,6 +146,19 @@ class SubmitDecisionView extends React.PureComponent {
         // handle the error from the frontend
       });
   };
+
+  getJudgeValueForSuccessMessage = (judges, decision) => {
+    const judgeIsInJudgesArray = judges[decision.opts.reviewing_judge_id];
+
+    if (judgeIsInJudgesArray) {
+      return judgeIsInJudgesArray.full_name;
+    }
+    if (this.props.task && this.props.task.assignedBy) {
+      return `${this.props.task.assignedBy.first_name} ${this.props.task.assignedBy.last_name}`;
+    }
+
+    return '';
+  }
 
   getDefaultJudgeSelector = () => {
     return this.props.task && this.props.task.isLegacy ?
