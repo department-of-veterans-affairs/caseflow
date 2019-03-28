@@ -585,7 +585,7 @@ RSpec.feature "AmaQueue" do
       page.go_back
       first_row_with_quality_review_task = page.find_all("table#case-timeline-table tbody tr")[1]
       expect(first_row_with_quality_review_task).to have_content("QualityReviewTask")
-      #this row shouldnt be a duplicate quality review task
+      # this row shouldnt be a duplicate quality review task
       second_row_on_case_timeline = page.find_all("table#case-timeline-table tbody tr")[2]
       expect(second_row_on_case_timeline).not_to have_content("QualityReviewTask")
     end
