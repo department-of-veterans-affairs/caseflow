@@ -84,15 +84,17 @@ class BulkAssignModal extends React.PureComponent {
     ];
 
     options.forEach((option) => {
-      if (typeof option === 'object') {
-        optionsWithDisplayText.push(option);
-      } else {
-        optionsWithDisplayText.push(
-          {
-            value: option,
-            displayText: option
-          }
-        );
+      if (option !== null) {
+        if (typeof option === 'object') {
+          optionsWithDisplayText.push(option);
+        } else {
+          optionsWithDisplayText.push(
+            {
+              value: option,
+              displayText: option
+            }
+          );
+        }
       }
     });
 
@@ -148,6 +150,20 @@ class BulkAssignModal extends React.PureComponent {
     return taskOptions;
   }
 
+  generateDropdown = (label, fieldName, options, isRequired) => {
+    return (
+      <Dropdown
+        name={label}
+        options={options}
+        value={this.state.modal[fieldName]}
+        defaultText="Select"
+        onChange={(value) => this.onFieldChange(value, fieldName)}
+        errorMessage={this.displayErrorMessage(fieldName)}
+        required={isRequired}
+      />
+    );
+  }
+
   render() {
     const isBulkAssignEnabled = this.props.enableBulkAssign;
     const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
@@ -163,41 +179,15 @@ class BulkAssignModal extends React.PureComponent {
         closeHandler={this.handleModalToggle}
         confirmButton={confirmButton}
         cancelButton={cancelButton} >
-        <Dropdown
-          name="Assign to"
-          options={this.generateUserOptions()}
-          value={this.state.modal.assignedUser}
-          defaultText="Select"
-          onChange={(value) => this.onFieldChange(value, 'assignedUser')}
-          errorMessage={this.displayErrorMessage('assignedUser')}
-          required
-        />
-        <Dropdown
-          name="Regional office"
-          options={this.generateRegionalOfficeOptions()}
-          value={this.state.modal.regionalOffice}
-          defaultText="Select"
-          onChange={(value) => this.onFieldChange(value, 'regionalOffice')}
-          errorMessages={this.displayErrorMessage('regionalOffice')}
-        />
-        <Dropdown
-          name="Select task type"
-          options={this.generateTaskTypeOptions()}
-          value={this.state.modal.taskType}
-          defaultText="Select"
-          onChange={(value) => this.onFieldChange(value, 'taskType')}
-          errorMessage={this.displayErrorMessage('taskType')}
-          required
-        />
-        <Dropdown
-          name="Select number of tasks to assign"
-          options={this.getDisplayTextOption([5, 10, 20, 30, 40, 50])}
-          value={this.state.modal.numberOfTasks}
-          defaultText="Select"
-          onChange={(value) => this.onFieldChange(value, 'numberOfTasks')}
-          errorMessage={this.displayErrorMessage('numberOfTasks')}
-          required
-        />
+        {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
+        {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
+        {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}
+        {this.generateDropdown(
+          'Select number of tasks to assign',
+          'numberOfTasks',
+          this.getDisplayTextOption([5, 10, 20, 30, 40, 50]),
+          true
+        )}
       </Modal>
     );
 
@@ -216,3 +206,39 @@ BulkAssignModal.propTypes = {
 };
 
 export default BulkAssignModal;
+
+//        <Dropdown
+//          name="Assign to"
+//          options={this.generateUserOptions()}
+//          value={this.state.modal.assignedUser}
+//          defaultText="Select"
+//          onChange={(value) => this.onFieldChange(value, 'assignedUser')}
+//          errorMessage={this.displayErrorMessage('assignedUser')}
+//          required
+//        />
+//        <Dropdown
+//          name="Regional office"
+//          options={this.generateRegionalOfficeOptions()}
+//          value={this.state.modal.regionalOffice}
+//          defaultText="Select"
+//          onChange={(value) => this.onFieldChange(value, 'regionalOffice')}
+//          errorMessages={this.displayErrorMessage('regionalOffice')}
+//        />
+//        <Dropdown
+//          name="Select task type"
+//          options={this.generateTaskTypeOptions()}
+//          value={this.state.modal.taskType}
+//          defaultText="Select"
+//          onChange={(value) => this.onFieldChange(value, 'taskType')}
+//          errorMessage={this.displayErrorMessage('taskType')}
+//          required
+//        />
+//        <Dropdown
+//          name="Select number of tasks to assign"
+//          options={this.getDisplayTextOption([5, 10, 20, 30, 40, 50])}
+//          value={this.state.modal.numberOfTasks}
+//          defaultText="Select"
+//          onChange={(value) => this.onFieldChange(value, 'numberOfTasks')}
+//          errorMessage={this.displayErrorMessage('numberOfTasks')}
+//          required
+//        />
