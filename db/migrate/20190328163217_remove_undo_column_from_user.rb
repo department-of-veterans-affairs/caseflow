@@ -1,5 +1,5 @@
 class RemoveUndoColumnFromUser < ActiveRecord::Migration[5.1]
   def change
-    remove_column :undo_record_merging, :user
+    safety_assured { remove_column :user, :undo_record_merging }
   end
 end
