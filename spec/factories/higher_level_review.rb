@@ -6,6 +6,10 @@ FactoryBot.define do
     receipt_date { 1.month.ago }
     benefit_type { "compensation" }
 
+    transient do
+      number_of_claimants { nil }
+    end
+
     trait :with_end_product_establishment do
       after(:create) do |higher_level_review|
         create(:end_product_establishment, source: higher_level_review)
@@ -16,6 +20,12 @@ FactoryBot.define do
       establishment_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_last_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_processed_at { nil }
+    end
+
+    after(:create) do |hlr, evaluator|
+      if evaluator.number_of_claimants
+        hlr.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: hlr)
+      end
     end
   end
 end
