@@ -699,9 +699,10 @@ RSpec.feature "Case details" do
       end
       it "should sort tasks properly" do
         visit "/queue/appeals/#{appeal.uuid}"
-        first_row_with_date = page.find_all("table#case-timeline-table tbody tr")[1]
-        second_row_with_date = page.find_all("table#case-timeline-table tbody tr")[2]
-        third_row_with_date = page.find_all("table#case-timeline-table tbody tr")[3]
+        case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
+        first_row_with_date = case_timeline_rows[1]
+        second_row_with_date = case_timeline_rows[2]
+        third_row_with_date = case_timeline_rows[3]
         expect(first_row_with_date).to have_content("01/01/2020")
         expect(second_row_with_date).to have_content("03/01/2019")
         expect(third_row_with_date).to have_content("02/01/2019")
