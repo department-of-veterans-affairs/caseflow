@@ -22,41 +22,41 @@ class UserReporter
     report.flatten
   end
 
-  def undo_change
-    return if uppercase_user.undo_record_merging.nil?
-
-    User.transaction do
-      uppercase_user.undo_record_merging.each do |undo_merge|
-        User.create(
-          undo_merge["create_user"].except!("display_name")
-        )
-
-        undo_merge["create_associations"].each do |association|
-          (Object.const_get association["model"])
-            .where(id: association["ids"])
-            .update(association["column"] => association["user_id"])
-        end
-      end
-
-      uppercase_user.update!(undo_record_merging: nil)
-    end
-  end
-
-  def merge_all_users_with_uppercased_user
-    User.transaction do
-      other_users = all_users_for_css_id - [uppercase_user]
-
-      reassigned_users = other_users.map do |user|
-        {
-          create_associations: replace_user(user, uppercase_user),
-          create_user: user.to_hash
-        }
-      end
-
-      uppercase_user.update!(undo_record_merging: ((uppercase_user.undo_record_merging || []) + reassigned_users))
-      other_users.each(&:delete)
-    end
-  end
+  #  def undo_change
+  #    return if uppercase_user.undo_record_merging.nil?
+  #
+  #    User.transaction do
+  #      uppercase_user.undo_record_merging.each do |undo_merge|
+  #        User.create(
+  #          undo_merge["create_user"].except!("display_name")
+  #        )
+  #
+  #        undo_merge["create_associations"].each do |association|
+  #          (Object.const_get association["model"])
+  #            .where(id: association["ids"])
+  #            .update(association["column"] => association["user_id"])
+  #        end
+  #      end
+  #
+  #      uppercase_user.update!(undo_record_merging: nil)
+  #    end
+  #  end
+  #
+  #  def merge_all_users_with_uppercased_user
+  #    User.transaction do
+  #      other_users = all_users_for_css_id - [uppercase_user]
+  #
+  #      reassigned_users = other_users.map do |user|
+  #        {
+  #          create_associations: replace_user(user, uppercase_user),
+  #          create_user: user.to_hash
+  #        }
+  #      end
+  #
+  #      uppercase_user.update!(undo_record_merging: ((uppercase_user.undo_record_merging || []) + reassigned_users))
+  #      other_users.each(&:delete)
+  #    end
+  #  end
 
   private
 
