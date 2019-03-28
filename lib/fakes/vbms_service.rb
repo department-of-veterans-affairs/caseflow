@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "ostruct"
 require "csv"
 
@@ -59,7 +61,7 @@ class Fakes::VBMSService
     path =
       case document.vbms_document_id.to_i
       when 1
-        File.join(Rails.root, "lib", "pdfs", "War_and_Peace_NT.pdf")
+        File.join(Rails.root, "lib", "pdfs", "VA8.pdf")
       when 2
         File.join(Rails.root, "lib", "pdfs", "Formal_Form9.pdf")
       when 3
@@ -121,7 +123,7 @@ class Fakes::VBMSService
     Rails.logger.info("Submitting claim to VBMS...")
     Rails.logger.info("Veteran data:\n #{veteran_hash}")
     Rails.logger.info("Claim data:\n #{claim_hash}")
-    Rails.logger.info("User:\n #{user}")
+    Rails.logger.info("User:\n #{user.inspect}")
 
     self.end_product_claim_ids_by_file_number ||= {}
 
@@ -162,15 +164,16 @@ class Fakes::VBMSService
     Rails.logger.info("File number: #{veteran_file_number}")
     Rails.logger.info("Claim id:\n #{claim_id}")
     Rails.logger.info("Contentions: #{contentions.inspect}")
-    Rails.logger.info("User:\n #{user}")
+    Rails.logger.info("User:\n #{user.inspect}")
 
     # Used to simulate a contention that fails to be created in VBMS
     contentions.delete(description: "FAIL ME")
 
-    # return fake list of contentions
-    contentions.map do |contention|
+    # generate new contentions and return list of all contentions on the claim.
+    contentions.each do |contention|
       Generators::Contention.build(text: contention[:description], claim_id: claim_id)
     end
+    Fakes::VBMSService.contention_records[claim_id]
   end
 
   def self.associate_rating_request_issues!(claim_id:, rating_issue_contention_map:)
