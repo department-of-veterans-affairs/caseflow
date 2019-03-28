@@ -223,7 +223,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def nonrating?
-    !rating?
+    !rating? && !is_unidentified?
   end
 
   def associated_rating_issue?
