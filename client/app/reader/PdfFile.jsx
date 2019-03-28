@@ -224,8 +224,8 @@ export class PdfFile extends React.PureComponent {
     if (this.props.scrollToComment && this.clientHeight > 0) {
       const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
       const transformedY = rotateCoordinates(this.props.scrollToComment,
-        this.pageDimensions(pageIndex), -this.props.rotation).y;
-      const scrollToY = transformedY - (this.pageHeight(pageIndex) / 2);
+        this.pageDimensions(pageIndex), -this.props.rotation).y * this.props.scale;
+      const scrollToY = (transformedY - (this.pageHeight(pageIndex) / 2)) / this.props.scale;
 
       this.scrollToPosition(pageIndex, scrollToY);
       this.props.onScrollToComment(null);
