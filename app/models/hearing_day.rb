@@ -143,7 +143,7 @@ class HearingDay < ApplicationRecord
       hearing_days_with_vacols_hearings = remaining_hearing_days.select do |hearing_day|
         !vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil? &&
           vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].any? do |hearing|
-            loaded_caseflow_hearings.find(hearing.id).assigned_to_vso?(user)
+            loaded_caseflow_hearings.detect { |legacy_hearing| legacy_hearing.id == hearing.id }.assigned_to_vso?(user)
           end
       end
 
