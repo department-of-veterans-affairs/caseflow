@@ -23,7 +23,7 @@ class RampRefilingIntake < Intake
   def save_error!(code:)
     self.error_code = code
     transaction do
-      detail.destroy!
+      detail.try(:destroy!)
       complete_with_status!(:error)
     end
   end

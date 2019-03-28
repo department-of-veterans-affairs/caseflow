@@ -27,6 +27,8 @@ class DecisionReviewTask < GenericTask
       update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
     end
 
+    appeal.on_decision_issues_sync_processed if appeal.is_a?(HigherLevelReview)
+
     true
   end
 
