@@ -535,7 +535,7 @@ feature "Appeal Intake" do
     # Eligible because it comes from a RAMP decision
     click_intake_add_issue
     add_intake_rating_issue("Issue before AMA Activation from RAMP")
-    expect(page).to have_content("8. Issue before AMA Activation from RAMP Decision date:")
+    expect(page).to have_content("8. Issue before AMA Activation from RAMP\nDecision date:")
 
     # nonrating before_ama
     click_intake_add_issue
@@ -853,7 +853,7 @@ feature "Appeal Intake" do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
         )
 
         click_intake_finish

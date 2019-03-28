@@ -47,8 +47,13 @@ class Review extends React.PureComponent {
     return <div>
       <h1>Review { veteranName }'s { FORM_TYPES.SUPPLEMENTAL_CLAIM.name }</h1>
 
-      { reviewIntakeError && <ErrorAlert /> }
-      { showInvalidVeteranError && <ErrorAlert errorCode="veteran_not_valid" errorData={veteranInvalidFields} /> }
+      { reviewIntakeError && <ErrorAlert errorUUID={this.props.errorUUID} /> }
+      { showInvalidVeteranError &&
+          <ErrorAlert
+            errorUUID={this.props.errorUUID}
+            errorCode="veteran_not_valid"
+            errorData={veteranInvalidFields} />
+      }
 
       <BenefitType
         value={benefitType}
@@ -107,6 +112,7 @@ export default connect(
     legacyOptInApproved: state.supplementalClaim.legacyOptInApproved,
     legacyOptInApprovedError: state.supplementalClaim.legacyOptInApprovedError,
     reviewIntakeError: state.supplementalClaim.requestStatus.reviewIntakeError,
+    errorUUID: state.supplementalClaim.requestStatus.errorUUID,
     veteranValid: state.supplementalClaim.veteranValid,
     veteranInvalidFields: state.supplementalClaim.veteranInvalidFields
   }),
