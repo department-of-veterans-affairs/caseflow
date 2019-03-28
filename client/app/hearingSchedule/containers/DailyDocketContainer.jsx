@@ -16,7 +16,6 @@ import {
   onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
-  onHearingDateUpdate,
   onTranscriptRequestedUpdate,
   onHearingTimeUpdate,
   onHearingLocationUpdate,
@@ -271,7 +270,6 @@ export class DailyDocketContainer extends React.Component {
         hearings={this.props.hearings}
         onHearingNotesUpdate={this.props.onHearingNotesUpdate}
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
-        onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
         onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
         onHearingLocationUpdate={this.props.onHearingLocationUpdate}
@@ -336,7 +334,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
-  onHearingDateUpdate,
   onHearingTimeUpdate,
   onTranscriptRequestedUpdate,
   onHearingLocationUpdate,

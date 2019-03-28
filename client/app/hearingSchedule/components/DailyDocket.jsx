@@ -18,12 +18,11 @@ import Modal from '../../components/Modal';
 import DispositionModal from './DailyDocketDispositionModal';
 import StatusMessage from '../../components/StatusMessage';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
-import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, formatDateStr } from '../../util/DateUtil';
+import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
 import {
   RegionalOfficeDropdown,
-  HearingDateDropdown,
   AppealHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 
@@ -101,8 +100,6 @@ export default class DailyDocket extends React.Component {
   onHearingDispositionUpdate = (hearingId) => (disposition) => {
     this.props.onHearingDispositionUpdate(hearingId, disposition.value);
   };
-
-  onHearingDateUpdate = (hearingId) => (hearingDay) => this.props.onHearingDateUpdate(hearingId, hearingDay);
 
   onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
 
@@ -236,29 +233,11 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingDayDropdown = (hearing, readOnly) => {
-    const regionalOffice = this.getRegionalOffice();
-    const currentRegionalOffice = hearing.editedRegionalOffice || regionalOffice;
-    // if date is in the past, always add current date as an option
-    const staticOptions = regionalOffice === currentRegionalOffice ?
-      [{
-        label: formatDateStr(hearing.scheduledFor),
-        value: {
-          scheduledFor: hearing.scheduledFor,
-          hearingId: this.props.dailyDocket.id
-        }
-      }] : null;
-
-    return <HearingDateDropdown
-      name="HearingDay"
-      label="Hearing Day"
-      key={currentRegionalOffice}
-      regionalOffice={currentRegionalOffice}
-      errorMessage={hearing.invalid ? hearing.invalid.hearingDate : null}
-      value={_.isUndefined(hearing.editedDate) ? hearing.scheduledFor : hearing.editedDate}
-      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
-      staticOptions={staticOptions}
-      onChange={this.onHearingDateUpdate(hearing.id)} />;
+  getStaticHearingDay = (hearing) => {
+    return <div>
+      <b>Hearing Day</b> <br /> <br />
+      <div>{moment(hearing.scheduledFor).format('ddd M/DD/YYYY')} <br /> <br /></div>
+    </div>;
   };
 
   getTimeRadioButtons = (hearing, readOnly) => {
@@ -364,7 +343,7 @@ export default class DailyDocket extends React.Component {
       <div>
         {this.getRegionalOfficeDropdown(hearing, readOnly)}
         {this.getHearingLocationDropdown(hearing, readOnly)}
-        {this.getHearingDayDropdown(hearing, readOnly)}
+        {this.getStaticHearingDay(hearing)}
         {this.getTimeRadioButtons(hearing, readOnly)}
         {this.getSaveButton(hearing)}
       </div>

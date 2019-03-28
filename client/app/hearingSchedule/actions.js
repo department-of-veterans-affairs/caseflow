@@ -78,14 +78,6 @@ export const onHearingDispositionUpdate = (hearingId, disposition) => ({
   }
 });
 
-export const onHearingDateUpdate = (hearingId, date) => ({
-  type: ACTIONS.HEARING_DATE_UPDATE,
-  payload: {
-    hearingId,
-    date
-  }
-});
-
 export const onHearingLocationUpdate = (hearingId, location) => ({
   type: ACTIONS.HEARING_LOCATION_UPDATE,
   payload: {
