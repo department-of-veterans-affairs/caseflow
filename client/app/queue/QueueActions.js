@@ -386,13 +386,7 @@ export const initialAssignTasksToUser = ({
           external_id: oldTask.externalAppealId,
           parent_id: oldTask.taskId,
           assigned_to_id: assigneeId
-        }],
-        task: {
-          reassign: {
-            assigned_to_type: 'User',
-            assigned_to_id: assigneeId
-          }
-        }
+        }]
       }
     };
   } else {

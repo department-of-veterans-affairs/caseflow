@@ -13,6 +13,10 @@ class JudgeAssignTasksController < TasksController
     @task_params ||= create_params.first
   end
 
+  def reassign_params
+    { assigned_to_id: task_params[:assigned_to_id], assigned_to_type: "User" }
+  end
+
   def task
     @task ||= Task.find(task_params[:parent_id])
   end
@@ -26,7 +30,7 @@ class JudgeAssignTasksController < TasksController
   end
 
   def update_tasks
-    update_tasks = task.update_from_params(update_params, current_user)
+    update_tasks = task.reassign(reassign_params, current_user)
     update_tasks.each { |tsk| return invalid_record_error(tsk) unless tsk.valid? }
   rescue ActiveRecord::RecordInvalid => error
     invalid_record_error(error.record)
