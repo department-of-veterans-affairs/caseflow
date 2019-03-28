@@ -62,13 +62,14 @@ class RampReview < ApplicationRecord
     # no-op, can be overwritten
   end
 
-  # If an EP with the exact same traits has already been created. Use that instead
+  # If an EP with the exact same traits has already been created and is still active. Use that instead
   # of creating a new EP. This prevents duplicate EP errors and allows this method
   # to be idempotent
   #
   # Returns a symbol designating whether the end product was created or connected
   def create_or_connect_end_product!
-    return connect_end_product! if end_product_establishment.preexisting_end_product
+    return :connected if preexisting_end_product_establishment
+    return connect_end_product! if matching_end_product&.active?
 
     establish_end_product!(commit: true) && :created
   end
@@ -86,12 +87,14 @@ class RampReview < ApplicationRecord
   end
 
   def establish_end_product!(commit:)
-    end_product_establishment.perform!(commit: commit)
+    new_end_product_establishment.perform!(commit: commit)
     update! established_at: Time.zone.now
   end
 
   def end_product_establishment
-    preexisting_end_product_establishment || new_end_product_establishment
+    return nil unless established_at
+
+    preexisting_end_product_establishment || connected_end_product_establishment
   end
 
   def valid_modifiers
@@ -104,12 +107,43 @@ class RampReview < ApplicationRecord
 
   private
 
-  def preexisting_end_product_establishment
-    @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self)
+  def set_established_at!
+    update!(
+      established_at: Time.zone.now
+    ) && :connected
   end
 
   def intake_processed_by
     intake ? intake.user : nil
+  end
+
+  def preexisting_end_product_establishment
+    @preexisting_end_product_establishment ||= EndProductEstablishment.find_by(source: self)
+  end
+
+  def matching_end_product_establishments
+    @matching_end_product_establishments ||= EndProductEstablishment.where(
+      veteran_file_number: veteran_file_number,
+      source_type: "RampElection",
+      claim_date: receipt_date,
+      code: end_product_code,
+      payee_code: payee_code,
+      claimant_participant_id: claimant_participant_id,
+      modifier: end_product_modifier,
+      station: "397",
+      benefit_type_code: veteran.benefit_type_code
+    )
+  end
+
+  def connected_end_product_establishment
+    @connected_end_product_establishment ||=
+      matching_end_product_establishments.detect do |epe|
+        epe.result&.last_action_date&.nil? || epe.result.last_action_date > established_at
+      end
+  end
+
+  def matching_active_end_product
+    new_end_product_establishment.preexisting_end_products.detect(&:active?)
   end
 
   def new_end_product_establishment
@@ -132,11 +166,17 @@ class RampReview < ApplicationRecord
   end
 
   def connect_end_product!
-    end_product_establishment.update!(reference_id: end_product_establishment.preexisting_end_product.claim_id)
+    save_end_product_establishment_if_missing
 
     update!(
       established_at: Time.zone.now
     ) && :connected
+  end
+
+  def save_end_product_establishment_if_missing
+    return if connected_end_product_establishment
+
+    new_end_product_establishment.update!(reference_id: matching_active_end_product.claim_id)
   end
 
   def end_product_code

@@ -41,12 +41,7 @@ class RampElectionIntake < Intake
     return if complete? || pending?
 
     start_completion!
-
-    if existing_ramp_election_active?
-      use_existing_ramp_election
-    else
-      create_or_connect_end_product
-    end
+    create_or_connect_end_product
 
     transaction do
       complete_with_status!(:success)
@@ -141,29 +136,7 @@ class RampElectionIntake < Intake
   end
 
   def new_intake_ramp_election
-    @new_intake_ramp_election ||= matching_ramp_election_with_notice_date || veteran_ramp_elections.build
-  end
-
-  def existing_ramp_election
-    @existing_ramp_election ||= RampElection.established.where(
-      veteran_file_number: veteran_file_number,
-      option_selected: detail.option_selected
-    ).where.not(id: detail_id).first
-  end
-
-  def existing_ramp_election_active?
-    existing_ramp_election&.end_product_active?
-  end
-
-  def use_existing_ramp_election
-    transaction do
-      detail.destroy!
-      update!(detail: existing_ramp_election)
-    end
-  end
-
-  def matching_ramp_election_with_notice_date
-    veteran_ramp_elections.where(established_at: nil).where.not(notice_date: nil).first
+    @new_intake_ramp_election ||= veteran_ramp_elections.build
   end
 
   def veteran_ramp_elections
