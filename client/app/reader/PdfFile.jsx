@@ -299,13 +299,7 @@ export class PdfFile extends React.PureComponent {
         domNode.focus();
       }
 
-      const dimensions = _.range(0, this.props.pdfDocument.pdfInfo.numPages).map((index) => this.pageDimensions(index));
-
-      console.log(dimensions);
-
-      // if (prevProps.pageDimensions !== this.props.pageDimensions || prevProps.scale !== this.props.scale) {
       this.grid.recomputeGridSize();
-      // }
 
       this.scrollWhenFinishedZooming();
       this.jumpToPage();
