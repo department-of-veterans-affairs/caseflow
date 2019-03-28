@@ -87,40 +87,46 @@ describe Docket do
     end
 
     context "distribute_appeals" do
-      let!(:appeals) do
-        (1..10).map do
-          create(:appeal, :with_tasks, docket_type: "direct_review")
-        end
-      end
-
-      let(:judge_user) { create(:user) }
-      let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
-      let(:distribution) { Distribution.create!(judge: judge_user) }
-
-      context "nonpriority appeals" do
-        subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }
-
-        it "creates distributed cases and judge tasks" do
-          tasks = subject
-
-          expect(tasks.length).to eq(10)
-          expect(tasks.first.class).to eq(DistributedCase)
-          expect(distribution.distributed_cases.length).to eq(10)
-          expect(judge_user.reload.tasks.map(&:appeal).include?(appeals.first)).to eq(true)
-        end
-      end
-
-      context "nonpriority appeals" do
+      context "priority appeals" do
         subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 2) }
 
-        it "creates distributed cases and judge tasks" do
+        let(:judge_user) { create(:user) }
+        let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+        let!(:distribution) { Distribution.create!(judge: judge_user) }
+
+        it "distributes and appeals" do
           tasks = subject
 
           expect(tasks.length).to eq(2)
           expect(tasks.first.class).to eq(DistributedCase)
           expect(distribution.distributed_cases.length).to eq(2)
-          expect(judge_user.reload.tasks.map(&:appeal).include?(aod_age_appeal)).to eq(true)
+          expect(judge_user.reload.tasks.map(&:appeal)).to include(aod_age_appeal)
         end
+      end
+    end
+  end
+
+  context "distribute_appeals" do
+    let!(:appeals) do
+      (1..10).map do
+        create(:appeal, :with_tasks, docket_type: "direct_review")
+      end
+    end
+
+    let(:judge_user) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:distribution) { Distribution.create!(judge: judge_user) }
+
+    context "nonpriority appeals" do
+      subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }
+
+      it "creates distributed cases and judge tasks" do
+        tasks = subject
+
+        expect(tasks.length).to eq(10)
+        expect(tasks.first.class).to eq(DistributedCase)
+        expect(distribution.distributed_cases.length).to eq(10)
+        expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
       end
     end
   end
