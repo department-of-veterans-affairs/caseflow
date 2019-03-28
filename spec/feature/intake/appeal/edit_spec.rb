@@ -440,7 +440,7 @@ feature "Appeal Edit issues" do
 
       click_edit_submit_and_confirm
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-      expect(page).to_not have_content("Unable to load documents") 
+      expect(page).to_not have_content("Unable to load documents")
       expect(RequestIssue.find_by(
                benefit_type: "education",
                veteran_participant_id: nil
