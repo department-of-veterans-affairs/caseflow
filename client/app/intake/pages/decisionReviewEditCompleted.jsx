@@ -38,6 +38,10 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
     }
   }
 
+  leadMessageArr.push(
+    <strong>Edit the notice letter to reflect the status of requested issues.</strong>
+  );
+
   return leadMessageArr;
 };
 
