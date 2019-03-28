@@ -549,5 +549,5 @@ DailyDocket.propTypes = {
   onInvalidForm: PropTypes.func,
   openModal: PropTypes.func,
   deleteHearingDay: PropTypes.func,
-  notes: PropTypes.string,
+  notes: PropTypes.string
 };
