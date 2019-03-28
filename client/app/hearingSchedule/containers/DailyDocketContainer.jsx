@@ -85,10 +85,9 @@ export class DailyDocketContainer extends React.Component {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       const hearings = _.keyBy(resp.hearingDay.hearings, 'id');
-      const hearingDayOptions = _.keyBy(resp.hearingDay.hearingDayOptions, 'id');
-      const dailyDocket = _.omit(resp.hearingDay, ['hearings', 'hearingDayOptions']);
+      const dailyDocket = _.omit(resp.hearingDay, ['hearings']);
 
-      this.props.onReceiveDailyDocket(dailyDocket, hearings, hearingDayOptions);
+      this.props.onReceiveDailyDocket(dailyDocket, hearings);
     });
   };
 
@@ -215,7 +214,7 @@ export class DailyDocketContainer extends React.Component {
 
           editedHearingDay.requestType = this.props.dailyDocket.requestType;
 
-          this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings, this.props.hearingDayOptions);
+          this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings);
         }, () => {
           this.setState({ serverError: true });
         });
@@ -270,7 +269,6 @@ export class DailyDocketContainer extends React.Component {
       <DailyDocket
         dailyDocket={this.props.dailyDocket}
         hearings={this.props.hearings}
-        hearingDayOptions={this.props.hearingDayOptions}
         onHearingNotesUpdate={this.props.onHearingNotesUpdate}
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
         onHearingDateUpdate={this.props.onHearingDateUpdate}
@@ -318,7 +316,6 @@ export class DailyDocketContainer extends React.Component {
 const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
   hearings: state.hearingSchedule.hearings,
-  hearingDayOptions: state.hearingSchedule.hearingDayOptions,
   saveSuccessful: state.hearingSchedule.saveSuccessful,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
