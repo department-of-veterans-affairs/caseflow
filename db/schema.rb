@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190323003906) do
+ActiveRecord::Schema.define(version: 20190328163217) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -753,6 +753,18 @@ ActiveRecord::Schema.define(version: 20190323003906) do
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
   end
 
+  create_table "record_synced_by_jobs", force: :cascade do |t|
+    t.datetime "attempted_at"
+    t.string "error"
+    t.datetime "last_submitted_at"
+    t.datetime "processed_at"
+    t.bigint "record_id"
+    t.string "record_type"
+    t.datetime "submitted_at"
+    t.string "sync_job_name"
+    t.index ["record_type", "record_id"], name: "index_record_synced_by_jobs_on_record_type_and_record_id"
+  end
+
   create_table "remand_reasons", force: :cascade do |t|
     t.string "code"
     t.datetime "created_at", null: false
@@ -900,15 +912,15 @@ ActiveRecord::Schema.define(version: 20190323003906) do
     t.index ["text"], name: "index_tags_on_text", unique: true
   end
 
-  create_table "task_timers", force: :cascade do |t|
-    t.datetime "attempted_at"
-    t.datetime "created_at", null: false
-    t.string "error"
-    t.datetime "last_submitted_at"
-    t.datetime "processed_at"
-    t.datetime "submitted_at"
-    t.bigint "task_id", null: false
-    t.datetime "updated_at", null: false
+  create_table "task_timers", force: :cascade, comment: "Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask." do |t|
+    t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run."
+    t.datetime "created_at", null: false, comment: "Automatic timestamp for record creation."
+    t.string "error", comment: "Async any error message from most recent failed attempt to run."
+    t.datetime "last_submitted_at", comment: "Async timestamp for most recent job start."
+    t.datetime "processed_at", comment: "Async timestamp for when the job completes successfully."
+    t.datetime "submitted_at", comment: "Async timestamp for initial job start."
+    t.bigint "task_id", null: false, comment: "ID of the Task to be run."
+    t.datetime "updated_at", null: false, comment: "Automatic timestmap for record update."
     t.index ["task_id"], name: "index_task_timers_on_task_id"
   end
 
@@ -974,7 +986,6 @@ ActiveRecord::Schema.define(version: 20190323003906) do
     t.string "roles", array: true
     t.string "selected_regional_office"
     t.string "station_id", null: false
-    t.jsonb "undo_record_merging"
     t.datetime "updated_at"
     t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
   end

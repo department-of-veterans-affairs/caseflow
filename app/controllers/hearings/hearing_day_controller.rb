@@ -26,36 +26,26 @@ class Hearings::HearingDayController < HearingScheduleController
     end
   end
 
-  # rubocop:disable Metrics/AbcSize
-  # In 2-3 weeks, we can assume that all hearing days are Caseflow hearing days, then we can clean this up.
   def show
     hearing_day = HearingDay.find_hearing_day(nil, params[:id])
     hearing_day_hash = HearingDay.to_hash(hearing_day)
 
     hearings = HearingRepository.fetch_hearings_for_parent(hearing_day_id)
 
-    hearing_day_options = HearingDay.open_hearing_days_with_hearings_hash(
-      Time.zone.today.beginning_of_day,
-      Time.zone.today.beginning_of_day + 365.days,
-      (hearing_day_hash[:request_type] == "C") ? "C" : hearing_day_hash[:regional_office]
-    )
-
     if hearing_day.is_a?(HearingDay)
       hearings += hearing_day.hearings
     end
 
     if current_user.vso_employee?
-      hearings = hearings.select { |hearing| hearing.is_a?(Hearing) && hearing.assigned_to_vso?(current_user) }
+      hearings = hearings.select { |hearing| hearing.assigned_to_vso?(current_user) }
     end
 
     render json: {
       hearing_day: json_hearing(hearing_day_hash).merge(
-        hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) },
-        hearing_day_options: hearing_day_options
+        hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) }
       )
     }
   end
-  # rubocop:enable Metrics/AbcSize
 
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
