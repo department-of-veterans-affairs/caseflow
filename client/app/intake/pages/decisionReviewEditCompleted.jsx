@@ -12,13 +12,12 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
-  const decisionIssuesAfter = requestIssues.filter((ri) => !ri.issuesAfter);
 
   const editMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
 
   const removalMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) ${formName} has been removed.`];
 
-  const leadMessageArr = decisionIssuesAfter.length === 0 ? removalMessage : editMessage;
+  const leadMessageArr = requestIssues.length === 0 ? removalMessage : editMessage;
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
