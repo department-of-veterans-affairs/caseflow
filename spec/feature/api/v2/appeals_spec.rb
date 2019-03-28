@@ -626,11 +626,11 @@ describe "Appeals API v2", type: :request do
 
   context "Remanded SC filtered out" do
     before do
-      Timecop.freeze(Time.utc(2018, 11, 28))
+      Timecop.freeze(pre_ama_start_date)
     end
 
     let(:veteran_file_number) { "111223333" }
-    let(:receipt_date) { Date.new(2018, 9, 20) }
+    let(:receipt_date) { Time.zone.today - 20.days }
     let(:benefit_type) { "compensation" }
 
     let(:hlr_ep_clr_date) { receipt_date + 30 }
