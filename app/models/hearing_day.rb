@@ -124,7 +124,7 @@ class HearingDay < ApplicationRecord
 
     # rubocop:disable Metrics/AbcSize
     def upcoming_days_for_vso_user(start_date, end_date, user)
-      hearing_days_with_ama_hearings = HearingDay.includes(hearings: [appeal: :tasks])
+      hearing_days_with_ama_hearings = HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
         .where("DATE(scheduled_for) between ? and ?", start_date, end_date).select do |hearing_day|
         hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
       end
@@ -138,7 +138,7 @@ class HearingDay < ApplicationRecord
 
       caseflow_hearing_ids = vacols_hearings_for_remaining_hearing_days.values.flatten.pluck(:id)
 
-      loaded_caseflow_hearings = LegacyHearing.includes(appeal: :tasks).where(id: caseflow_hearing_ids)
+      loaded_caseflow_hearings = LegacyHearing.includes(appeal: [tasks: :assigned_to]).where(id: caseflow_hearing_ids)
 
       hearing_days_with_vacols_hearings = remaining_hearing_days.select do |hearing_day|
         !vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil? &&
