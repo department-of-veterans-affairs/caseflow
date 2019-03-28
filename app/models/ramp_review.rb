@@ -68,7 +68,7 @@ class RampReview < ApplicationRecord
   #
   # Returns a symbol designating whether the end product was created or connected
   def create_or_connect_end_product!
-    return :connected if preexisting_end_product_establishment
+    return connect_existing_establishment! if preexisting_end_product_establishment
     return connect_end_product! if matching_end_product&.active?
 
     establish_end_product!(commit: true) && :created
@@ -107,7 +107,7 @@ class RampReview < ApplicationRecord
 
   private
 
-  def set_established_at!
+  def connect_existing_establishment!
     update!(
       established_at: Time.zone.now
     ) && :connected
