@@ -112,15 +112,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.HEARING_REGIONAL_OFFICE_UPDATE:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedRegionalOffice: { $set: action.payload.regionalOffice },
-          edited: { $set: true }
-        }
-      }
-    });
   case ACTIONS.HEARING_TIME_UPDATE:
     return update(state, {
       hearings: {

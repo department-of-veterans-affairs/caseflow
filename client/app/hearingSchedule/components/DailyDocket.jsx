@@ -22,7 +22,6 @@ import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
 import {
-  RegionalOfficeDropdown,
   AppealHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 
@@ -104,9 +103,6 @@ export default class DailyDocket extends React.Component {
   onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
 
   onHearingLocationUpdate = (hearingId) => (location) => this.props.onHearingLocationUpdate(hearingId, location);
-
-  onHearingRegionalOfficeUpdate = (hearingId) => (regionalOffice) =>
-    this.props.onHearingRegionalOfficeUpdate(hearingId, regionalOffice);
 
   onInvalidForm = (hearingId) => (invalid) => this.props.onInvalidForm(hearingId, invalid);
 
@@ -202,13 +198,15 @@ export default class DailyDocket extends React.Component {
     const { dailyDocket } = this.props;
 
     return dailyDocket.requestType === 'Central' ? 'C' : dailyDocket.regionalOfficeKey;
-  }
+  };
 
-  getRegionalOfficeDropdown = (hearing, readOnly) => {
-    return <RegionalOfficeDropdown
-      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
-      onChange={this.onHearingRegionalOfficeUpdate(hearing.id)}
-      value={hearing.editedRegionalOffice || this.getRegionalOffice()} />;
+  getStaticRegionalOffice = (hearing) => {
+    return <div>
+      <b>Regional Office</b> <br /> <br />
+      <div>
+        {hearing.readableRequestType === 'Central' ? hearing.readableRequestType : hearing.regionalOfficeName}<br />
+      </div>
+    </div>;
   };
 
   getHearingLocationDropdown = (hearing, readOnly) => {
@@ -341,7 +339,7 @@ export default class DailyDocket extends React.Component {
         {this.getNotesField(hearing)}
       </div>
       <div>
-        {this.getRegionalOfficeDropdown(hearing, readOnly)}
+        {this.getStaticRegionalOffice(hearing)}
         {this.getHearingLocationDropdown(hearing, readOnly)}
         {this.getStaticHearingDay(hearing)}
         {this.getTimeRadioButtons(hearing, readOnly)}
