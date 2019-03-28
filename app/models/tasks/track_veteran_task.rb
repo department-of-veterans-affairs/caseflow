@@ -30,6 +30,31 @@ class TrackVeteranTask < GenericTask
     true
   end
 
+  def self.sync_tracking_tasks(appeal)
+    new_task_count = 0
+    closed_task_count = 0
+
+    active_tracking_tasks = appeal.tasks.active.where(type: TrackVeteranTask.name)
+    cached_vsos = active_tracking_tasks.map(&:assigned_to)
+    fresh_vsos = appeal.vsos
+
+    # Create a TrackVeteranTask for each VSO that does not already have one.
+    new_vsos = fresh_vsos - cached_vsos
+    new_vsos.each do |new_vso|
+      TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: new_vso)
+      new_task_count += 1
+    end
+
+    # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
+    outdated_vsos = cached_vsos - fresh_vsos
+    active_tracking_tasks.select { |t| outdated_vsos.include?(t.assigned_to) }.each do |task|
+      task.update!(status: Constants.TASK_STATUSES.cancelled)
+      closed_task_count += 1
+    end
+
+    [new_task_count, closed_task_count]
+  end
+
   private
 
   def set_in_progress_status

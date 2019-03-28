@@ -398,7 +398,7 @@ describe RequestIssue do
           context "when not nonrating" do
             let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
             let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "040HDENRPMC" }
+            it { is_expected.to eq "040BDENRPM" }
           end
         end
 

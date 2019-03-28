@@ -98,7 +98,7 @@ class RequestIssue < ApplicationRecord
       pension: {
         appeal: {
           rating: "040BDERPMC",
-          nonrating: "040HDENRPMC"
+          nonrating: "040BDENRPM"
         },
         claim_review: {
           rating: "040HDERPMC",
