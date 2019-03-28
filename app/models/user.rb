@@ -206,7 +206,7 @@ class User < ApplicationRecord
   end
 
   def to_session_hash
-    skip_attrs = %w[full_name created_at updated_at last_login_at undo_record_merging]
+    skip_attrs = %w[full_name created_at updated_at last_login_at]
     serializable_hash.merge("id" => css_id, "name" => full_name).except(*skip_attrs)
   end
 
