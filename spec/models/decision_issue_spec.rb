@@ -369,7 +369,7 @@ describe DecisionIssue do
         let(:decision_review) { create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number) }
         let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
-        context "when there is a prior claim by the same cliamant on the same veteran" do
+        context "when there is a prior claim by the same claimant on the same veteran" do
           let(:prior_payee_code) { "10" }
           before do
             setup_prior_claim_with_payee_code(decision_review, veteran, prior_payee_code)

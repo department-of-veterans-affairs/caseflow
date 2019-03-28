@@ -21,6 +21,7 @@ class LegacyAppeal < ApplicationRecord
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
   has_one :special_issue_list, as: :appeal
+  has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
@@ -160,7 +161,7 @@ class LegacyAppeal < ApplicationRecord
   cache_attribute :cached_number_of_documents_after_certification do
     begin
       number_of_documents_after_certification
-    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError
       nil
     end
   end
@@ -375,6 +376,10 @@ class LegacyAppeal < ApplicationRecord
 
   def docket_name
     "legacy"
+  end
+
+  def root_task
+    RootTask.find_by(appeal: self)
   end
 
   # TODO: delegate this to veteran

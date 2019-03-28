@@ -753,6 +753,18 @@ ActiveRecord::Schema.define(version: 20190326200140) do
     t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
   end
 
+  create_table "record_synced_by_jobs", force: :cascade do |t|
+    t.datetime "attempted_at"
+    t.string "error"
+    t.datetime "last_submitted_at"
+    t.datetime "processed_at"
+    t.bigint "record_id"
+    t.string "record_type"
+    t.datetime "submitted_at"
+    t.string "sync_job_name"
+    t.index ["record_type", "record_id"], name: "index_record_synced_by_jobs_on_record_type_and_record_id"
+  end
+
   create_table "remand_reasons", force: :cascade do |t|
     t.string "code"
     t.datetime "created_at", null: false
