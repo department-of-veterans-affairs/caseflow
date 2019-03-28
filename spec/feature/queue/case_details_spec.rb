@@ -333,7 +333,7 @@ RSpec.feature "Case details" do
 
       # ["Caseflow", "> Reader"] are two elements, space handled by margin-left on second
       expect(page).to have_content("CaseflowQueue")
-      expect(page).to have_content("Back to Your Queue #{appeal.veteran_full_name}")
+      expect(page).to have_content("Back to Your Queue\n#{appeal.veteran_full_name}")
     end
   end
 
@@ -357,7 +357,7 @@ RSpec.feature "Case details" do
 
       # Call have_content() so we wait for the case details page to load
       expect(page).to have_content(appeal.veteran_full_name)
-      expect(page.document.text).to match(/Disposition 1 - Allowed/i)
+      expect(page).to have_content("DISPOSITION\n1 - Allowed")
     end
   end
 
@@ -443,8 +443,8 @@ RSpec.feature "Case details" do
       expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
       edit_link_url = "/queue/appeals/#{appeal.external_id}/modal/advanced_on_docket_motion"
       expect(page).to_not have_link("Edit", href: edit_link_url)
-      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL} #{preparer_name}/i)
-      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL} #{task.document_id}/i)
+      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase}\n#{preparer_name}/i)
+      expect(page.document.text).to match(/#{COPY::TASK_SNAPSHOT_DECISION_DOCUMENT_ID_LABEL}\n#{task.document_id}/i)
     end
   end
 
@@ -530,9 +530,9 @@ RSpec.feature "Case details" do
         click_on "On hold (1)"
         click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last}"
 
-        expect(page).to have_content("TASK #{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
+        expect(page).to have_content("TASK\n#{Constants::CO_LOCATED_ADMIN_ACTIONS[on_hold_task.action]}")
         find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-        expect(page).to have_content("TASK INSTRUCTIONS #{on_hold_task.instructions[0]}")
+        expect(page).to have_content("TASK INSTRUCTIONS\n#{on_hold_task.instructions[0].squeeze(' ').strip}")
         expect(page).to have_content("#{assigner_name.first[0]}. #{assigner_name.last}")
 
         expect(Task.find(on_hold_task.id).status).to eq("on_hold")
@@ -627,7 +627,7 @@ RSpec.feature "Case details" do
 
         find("button", text: COPY::MARK_TASK_COMPLETE_BUTTON).click
 
-        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, ""))
+        expect(page).to have_content(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, "").squeeze(" "))
       end
     end
 
@@ -653,7 +653,7 @@ RSpec.feature "Case details" do
 
         it "should display sorted issues" do
           visit "/queue/appeals/#{appeal.uuid}"
-          text = issue_description + " Diagnostic code: 5008 Issue Benefit type: Compensation " + issue_description2
+          text = issue_description + "\nDiagnostic code: 5008\nIssue\nBenefit type: Compensation\n" + issue_description2
           expect(page).to have_content(text)
         end
       end
@@ -664,7 +664,7 @@ RSpec.feature "Case details" do
 
       it "should display docket type and number" do
         visit "/queue/appeals/#{appeal.uuid}"
-        expect(page).to have_content("D #{appeal.docket_number}")
+        expect(page).to have_content("D\n#{appeal.docket_number}")
       end
     end
 
@@ -748,7 +748,7 @@ RSpec.feature "Case details" do
 
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).to have_content(task.assigned_at.strftime("%m/%d/%Y"))
-        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} #{task.assigned_to.css_id}")
+        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase}\n#{task.assigned_to.css_id}")
         expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTION_BOX_TITLE)
       end
@@ -778,12 +778,20 @@ RSpec.feature "Case details" do
         expect(page).to have_content(task2.assigned_to.css_id)
         expect(page).to have_content(task3.assigned_at.strftime("%m/%d/%Y"))
         expect(page).to have_content(task3.assigned_to.css_id)
-        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL.upcase} \
-                                      #{task2.assigned_at.strftime('%m/%d/%Y')} \
-                                      #{COPY::TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL.upcase}")
-        expect(page).to have_content("#{COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase} \
-                                      #{task3.assigned_to.css_id} \
-                                      #{COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase}")
+
+        assignment_date_label = COPY::TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL.upcase
+        assigned_at_date = task2.assigned_at.strftime("%m/%d/%Y")
+        days_since_label = COPY::TASK_SNAPSHOT_DAYS_SINCE_ASSIGNMENT_LABEL.upcase
+        assigned_on_text = "#{assignment_date_label}\n#{assigned_at_date}\n#{days_since_label}"
+
+        expect(page).to have_content(assigned_on_text)
+
+        assignee_label = COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase
+        assigned_to = task3.assigned_to.css_id
+        assignor_label = COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase
+        assigned_to_text = "#{assignee_label}\n#{assigned_to}\n#{assignor_label}"
+
+        expect(page).to have_content(assigned_to_text)
       end
     end
   end
