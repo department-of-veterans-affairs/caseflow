@@ -2,12 +2,12 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import { sprintf } from 'sprintf-js';
 import _ from 'lodash';
 import moment from 'moment';
 
 import COPY from '../../COPY.json';
 import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
 import {
   taskById,
@@ -25,14 +25,6 @@ import {
   requestSave
 } from './uiReducer/uiActions';
 
-import { taskActionData } from './utils';
-
-const selectedAction = (props) => {
-  const actionData = taskActionData(props);
-
-  return actionData.selected ? actionData.options.find((option) => option.value === actionData.selected.id) : null;
-};
-
 class ChangeHearingDispositionModal extends React.Component {
   constructor(props) {
     super(props);
@@ -42,8 +34,37 @@ class ChangeHearingDispositionModal extends React.Component {
       instructions: ''
     };
   }
+
   submit = () => {
-    console.log("submit!");
+    const { task } = this.props;
+
+    const payload = {
+      data: {
+        task: {
+          status: TASK_STATUSES.cancelled,
+          instructions: this.state.instructions,
+          business_payloads: {
+            values: {
+              disposition: this.state.selectedValue
+            }
+          }
+        }
+      }
+    };
+
+    const successMsg = {
+      title: `Successfully changed disposition to ${_.startCase(this.state.selectedValue)}`
+    };
+
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+      then((resp) => {
+        const response = JSON.parse(resp.text);
+
+        this.props.onReceiveAmaTasks(response.tasks.data);
+      }).
+      catch(() => {
+        // handle the error from the frontend
+      });
   }
 
   validateForm = () => {
@@ -56,13 +77,6 @@ class ChangeHearingDispositionModal extends React.Component {
       highlightFormItems,
       task
     } = this.props;
-    //
-    // const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
-    // const actionData = taskActionData(this.props);
-    //
-    // if (!task || task.availableActions.length === 0) {
-    //   return null;
-    // }
 
     const hearing = _.find(appeal.hearings, { externalId: task.externalHearingId });
     const currentDisposition = hearing.disposition ? _.startCase(hearing.disposition) : 'None';

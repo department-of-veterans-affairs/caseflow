@@ -134,6 +134,8 @@ class DispositionTask < GenericTask
 
   def mark_held() end
 
+  def mark_no_show() end
+
   def cancel!
     if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
       fail HearingDispositionNotCanceled

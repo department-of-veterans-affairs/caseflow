@@ -508,14 +508,11 @@ RSpec.describe TasksController, type: :controller do
 
   describe "PATCH /tasks/:id" do
     let(:colocated) { create(:user) }
+    let!(:colocated_staff) { create(:staff, :colocated_role, sdomainid: colocated.css_id) }
     let(:attorney) { create(:user) }
+    let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
     let(:judge) { create(:user) }
-
-    before do
-      create(:staff, :colocated_role, sdomainid: colocated.css_id)
-      create(:staff, :attorney_role, sdomainid: attorney.css_id)
-      create(:staff, :judge_role, sdomainid: judge.css_id)
-    end
+    let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
 
     context "when updating status to in-progress and on-hold" do
       let(:admin_action) { create(:colocated_task, assigned_by: attorney, assigned_to: colocated) }
