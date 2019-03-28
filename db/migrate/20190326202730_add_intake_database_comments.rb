@@ -90,7 +90,7 @@ class AddIntakeDatabaseComments < ActiveRecord::Migration[5.1]
 
      change_column_comment(:request_issues_updates, :after_request_issue_ids, "An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).")
 
-     change_column_comment(:request_issues_updates, :attempted_at, "Timestamp for when the request issue update was last attempted.")
+     change_column_comment(:request_issues_updates, :attempted_at, "Timestamp for when the request issue update processing was last attempted.")
 
      change_column_comment(:request_issues_updates, :before_request_issue_ids, "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).")
 
