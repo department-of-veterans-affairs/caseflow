@@ -197,7 +197,7 @@ describe HigherLevelReview do
   end
 
   context "#on_decision_issues_sync_processed" do
-    subject { higher_level_review.on_decision_issues_sync_processed(epe) }
+    subject { higher_level_review.on_decision_issues_sync_processed }
 
     let(:epe) do
       create(:end_product_establishment,

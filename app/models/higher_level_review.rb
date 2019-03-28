@@ -21,7 +21,7 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def on_decision_issues_sync_processed(_end_product_establishment)
+  def on_decision_issues_sync_processed
     create_remand_supplemental_claims!
   end
 
