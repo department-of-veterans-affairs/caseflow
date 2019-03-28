@@ -122,12 +122,34 @@ class HearingDay < ApplicationRecord
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def upcoming_days_for_vso_user(start_date, end_date, user)
-      HearingDay.includes(hearings: [appeal: :tasks])
+      hearing_days_with_ama_hearings = HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
         .where("DATE(scheduled_for) between ? and ?", start_date, end_date).select do |hearing_day|
         hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
       end
+
+      remaining_hearing_days = HearingDay.where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+        .where.not(id: hearing_days_with_ama_hearings.pluck(:id)).order(:scheduled_for).limit(1000)
+
+      vacols_hearings_for_remaining_hearing_days = HearingRepository.fetch_hearings_for_parents(
+        remaining_hearing_days.pluck(:id)
+      )
+
+      caseflow_hearing_ids = vacols_hearings_for_remaining_hearing_days.values.flatten.pluck(:id)
+
+      loaded_caseflow_hearings = LegacyHearing.includes(appeal: [tasks: :assigned_to]).where(id: caseflow_hearing_ids)
+
+      hearing_days_with_vacols_hearings = remaining_hearing_days.select do |hearing_day|
+        !vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil? &&
+          vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].any? do |hearing|
+            loaded_caseflow_hearings.find(hearing.id).assigned_to_vso?(user)
+          end
+      end
+
+      hearing_days_with_ama_hearings + hearing_days_with_vacols_hearings
     end
+    # rubocop:enable Metrics/AbcSize
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?

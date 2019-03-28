@@ -74,16 +74,19 @@ class VBMSError < RuntimeError
   end
 end
 
-class VBMS::IncidentFlashError < StandardError; end
-class VBMS::TransientError < StandardError; end
-class VBMS::RatedIssueMissingError < StandardError; end
-class VBMS::DocumentTooBigError < StandardError; end
-class VBMS::SecurityError < StandardError; end
-class VBMS::DownForMaintenanceError < StandardError; end
-class VBMS::BadPostalCodeError < StandardError; end
-class VBMS::ClaimNotFoundError < StandardError; end
-class VBMS::PIFExistsForEPCodeError < StandardError; end
-class VBMS::DuplicateEPError < StandardError; end
-class VBMS::UserNotAuthorizedError < StandardError; end
-class VBMS::BadClaimError < StandardError; end
-class VBMS::CannotDeleteContentionError < StandardError; end
+class Caseflow::Error::VBMS < StandardError
+  alias body message
+end
+class VBMS::IncidentFlashError < Caseflow::Error::VBMS; end
+class VBMS::TransientError < Caseflow::Error::VBMS; end
+class VBMS::RatedIssueMissingError < Caseflow::Error::VBMS; end
+class VBMS::DocumentTooBigError < Caseflow::Error::VBMS; end
+class VBMS::SecurityError < Caseflow::Error::VBMS; end
+class VBMS::DownForMaintenanceError < Caseflow::Error::VBMS; end
+class VBMS::BadPostalCodeError < Caseflow::Error::VBMS; end
+class VBMS::ClaimNotFoundError < Caseflow::Error::VBMS; end
+class VBMS::PIFExistsForEPCodeError < Caseflow::Error::VBMS; end
+class VBMS::DuplicateEPError < Caseflow::Error::VBMS; end
+class VBMS::UserNotAuthorizedError < Caseflow::Error::VBMS; end
+class VBMS::BadClaimError < Caseflow::Error::VBMS; end
+class VBMS::CannotDeleteContentionError < Caseflow::Error::VBMS; end

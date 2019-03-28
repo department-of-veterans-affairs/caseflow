@@ -27,8 +27,11 @@ class DecisionIssue < ApplicationRecord
   DTA_ERROR_FED_RECS = "DTA Error - Fed Recs"
   DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs"
   DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO"
+  DTA_ERROR = "DTA Error"
   REMAND = "remanded"
-  REMAND_DISPOSITIONS = [REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
+  REMAND_DISPOSITIONS = [
+    REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO, DTA_ERROR
+  ].freeze
 
   # We are using default scope here because we'd like to soft delete decision issues
   # for debugging purposes and to make it easier for developers to filter out
