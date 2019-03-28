@@ -3,8 +3,8 @@
 # builds a profile of a user's footprint across Caseflow.
 # Originally for de-duping user records but can be used more generally
 # to report on a user's activity.
-# :nocov:
 class UserReporter
+  # :nocov:
   attr_accessor :css_id
   attr_accessor :user_ids
   cattr_accessor :models_with_user_id
@@ -166,5 +166,5 @@ class UserReporter
   def uppercase_user
     User.find_by(css_id: css_id.upcase)
   end
+  # :nocov:
 end
-# :nocov:
