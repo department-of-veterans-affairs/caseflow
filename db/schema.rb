@@ -79,21 +79,21 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.index ["appeal_type", "appeal_id", "user_id"], name: "index_appeal_views_on_appeal_type_and_appeal_id_and_user_id", unique: true
   end
 
-  create_table "appeals", force: :cascade do |t|
-    t.string "closest_regional_office"
-    t.string "docket_type"
-    t.datetime "established_at"
-    t.datetime "establishment_attempted_at"
-    t.string "establishment_error"
-    t.datetime "establishment_last_submitted_at"
-    t.datetime "establishment_processed_at"
-    t.datetime "establishment_submitted_at"
-    t.boolean "legacy_opt_in_approved"
-    t.date "receipt_date"
-    t.date "target_decision_date"
-    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.string "veteran_file_number", null: false
-    t.boolean "veteran_is_not_claimant"
+  create_table "appeals", force: :cascade, comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement)." do |t|
+    t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
+    t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
+    t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow by the user."
+    t.datetime "establishment_attempted_at", comment: "Timestamp for when the appeal's establishment was last attempted."
+    t.string "establishment_error", comment: "The error message if attempting to establish the appeal resulted in an error. This gets cleared once the establishment is successful."
+    t.datetime "establishment_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
+    t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
+    t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
+    t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
+    t.date "receipt_date", comment: "Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues."
+    t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which can be used to navigate to appeals/appeal_uuid. This allows a single ID to determine an appeal whether it is a legacy appeal or an AMA appeal."
+    t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
+    t.boolean "veteran_is_not_claimant", comment: "Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -246,22 +246,22 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.index ["citation_number"], name: "index_decision_documents_on_citation_number", unique: true
   end
 
-  create_table "decision_issues", force: :cascade do |t|
-    t.string "benefit_type"
-    t.date "caseflow_decision_date"
-    t.datetime "created_at"
-    t.integer "decision_review_id"
-    t.string "decision_review_type"
-    t.string "decision_text"
+  create_table "decision_issues", force: :cascade, comment: "Issues that represent a decision made on a decision review." do |t|
+    t.string "benefit_type", comment: "Classification of the benefit being decided on. Maps 1 to 1 to VA lines of business, and typically used to know which line of business the decision correlates to."
+    t.date "caseflow_decision_date", comment: "This is a decision date for decision issues where decisions are entered in Caseflow, such as for appeals or for decision reviews with a business line that is not processed in VBMS."
+    t.datetime "created_at", comment: "Automatic timestamp when row was created."
+    t.integer "decision_review_id", comment: "ID of the decision review the decision was made on."
+    t.string "decision_review_type", comment: "Type of the decision review the decision was made on."
+    t.string "decision_text", comment: "If decision resulted in a change to a rating, the rating issue's decision text."
     t.datetime "deleted_at"
-    t.string "description"
-    t.string "diagnostic_code"
-    t.string "disposition"
-    t.date "end_product_last_action_date"
-    t.string "participant_id", null: false
-    t.datetime "profile_date"
-    t.datetime "promulgation_date"
-    t.string "rating_issue_reference_id"
+    t.string "description", comment: "Optional description that the user can input for decisions made in Caseflow."
+    t.string "diagnostic_code", comment: "If a decision resulted in a rating, this is the rating issue's diagnostic code."
+    t.string "disposition", comment: "The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values."
+    t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
+    t.string "participant_id", null: false, comment: "The Veteran's participant id."
+    t.datetime "profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
+    t.datetime "promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
+    t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating can have multiple issues). This is unique per rating issue."
     t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
   end
 
@@ -350,27 +350,27 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.index ["document_id", "tag_id"], name: "index_documents_tags_on_document_id_and_tag_id", unique: true
   end
 
-  create_table "end_product_establishments", force: :cascade do |t|
-    t.string "benefit_type_code"
-    t.date "claim_date"
-    t.string "claimant_participant_id"
-    t.string "code"
-    t.datetime "committed_at"
-    t.string "development_item_reference_id"
-    t.string "doc_reference_id"
-    t.datetime "established_at"
-    t.datetime "last_synced_at"
+  create_table "end_product_establishments", force: :cascade, comment: "Represents end products that have been, or need to be established by Caseflow. Used to track the status of those end products as they are processed in VBMS and/or SHARE." do |t|
+    t.string "benefit_type_code", comment: "1 if the Veteran is alive, and 2 if the Veteran is deceased. Not to be confused with benefit_type, which is unrelated."
+    t.date "claim_date", comment: "The claim_date for end product established."
+    t.string "claimant_participant_id", comment: "The participant ID of the claimant submitted on the end product."
+    t.string "code", comment: "The end product code, which determines the type of end product that is established. For example, it can contain information about whether it is rating, nonrating, compensation, pension, created automatically due to a Duty to Assist Error, and more."
+    t.datetime "committed_at", comment: "Timestamp indicating other actions performed as part of a larger atomic operation containing the end product establishment, such as creating contentions, are also complete."
+    t.string "development_item_reference_id", comment: "When a Veteran requests an informal conference with their higher level review, a tracked item is created. This stores the ID of the of the tracked item, it is also used to indicate the success of creating the tracked item."
+    t.string "doc_reference_id", comment: "When a Veteran requests an informal conference, a claimant letter is generated. This stores the document ID of the claimant letter, and is also used to track the success of creating the claimant letter."
+    t.datetime "established_at", comment: "Timestamp for when the end product was established."
+    t.datetime "last_synced_at", comment: "The time that the status of the end product was last synced with BGS. The end product is synced until it is canceled or cleared, meaning it is no longer active."
     t.boolean "limited_poa_access", comment: "Indicates whether the limited Power of Attorney has access to view documents"
     t.string "limited_poa_code", comment: "The limited Power of Attorney code, which indicates whether the claim has a POA specifically for this claim, which can be different than the Veteran's POA"
-    t.string "modifier"
-    t.string "payee_code", null: false
-    t.string "reference_id"
-    t.bigint "source_id", null: false
-    t.string "source_type", null: false
-    t.string "station"
-    t.string "synced_status"
-    t.integer "user_id"
-    t.string "veteran_file_number", null: false
+    t.string "modifier", comment: "The end product modifier. For higher level reviews, the modifiers range from 030-039. For supplemental claims, they range from 040-049. The same modifier cannot be used twice for an active end product per Veteran. Once an end product is no longer active, the modifier can be used again."
+    t.string "payee_code", null: false, comment: "The payee_code of the claimant submitted for this end product."
+    t.string "reference_id", comment: "The claim_id of the end product, which is stored after the end product is successfully established in VBMS."
+    t.bigint "source_id", null: false, comment: "The ID of the source that resulted in this end product establishment."
+    t.string "source_type", null: false, comment: "The type of source that resulted in this end product establishment."
+    t.string "station", comment: "The station ID of the end product's station."
+    t.string "synced_status", comment: "The status of the end product, which is synced by a job. Once and end product is cleared (CLR) or canceled (CAN) the status is final and the end product will not continue being synced."
+    t.integer "user_id", comment: "The ID of the user who performed the decision review intake."
+    t.string "veteran_file_number", null: false, comment: "The file number of the Veteran submitted when establishing the end product."
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["user_id"], name: "index_end_product_establishments_on_user_id"
     t.index ["veteran_file_number"], name: "index_end_product_establishments_on_veteran_file_number"
@@ -567,19 +567,19 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
-  create_table "intakes", id: :serial, force: :cascade do |t|
-    t.string "cancel_other"
-    t.string "cancel_reason"
-    t.datetime "completed_at"
-    t.datetime "completion_started_at"
-    t.string "completion_status"
-    t.integer "detail_id"
-    t.string "detail_type"
-    t.string "error_code"
-    t.datetime "started_at"
-    t.string "type"
-    t.integer "user_id", null: false
-    t.string "veteran_file_number"
+  create_table "intakes", id: :serial, force: :cascade, comment: "Represents the intake of an form or request made by a veteran." do |t|
+    t.string "cancel_other", comment: "Notes added if a user canceled an intake for any reason other than the stock set of options."
+    t.string "cancel_reason", comment: "The reason the intake was canceled. Could have been manually canceled by a user, or automatic."
+    t.datetime "completed_at", comment: "Timestamp for when the intake was completed, whether it was successful or not."
+    t.datetime "completion_started_at", comment: "Timestamp for when the user submitted the intake to be completed."
+    t.string "completion_status", comment: "Indicates whether the intake was successful, or was closed by being canceled, expired, or due to an error."
+    t.integer "detail_id", comment: "The ID of the record created as a result of the intake."
+    t.string "detail_type", comment: "The type of the record created as a result of the intake."
+    t.string "error_code", comment: "If the intake was unsuccessful due to a set of known errors, the error code is stored here. An error is also stored here for RAMP elections that are connected to an active end product, even though the intake is a success."
+    t.datetime "started_at", comment: "Timestamp for when the intake was created, which happens when a user successfully searches for a Veteran."
+    t.string "type", comment: "The class name of the intake."
+    t.integer "user_id", null: false, comment: "The ID of the user who created the intake."
+    t.string "veteran_file_number", comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.index ["type", "veteran_file_number"], name: "unique_index_to_avoid_duplicate_intakes", unique: true, where: "(completed_at IS NULL)"
     t.index ["type"], name: "index_intakes_on_type"
     t.index ["user_id"], name: "index_intakes_on_user_id"
@@ -716,12 +716,12 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.index ["user_id"], name: "index_ramp_election_rollbacks_on_user_id"
   end
 
-  create_table "ramp_elections", id: :serial, force: :cascade do |t|
-    t.datetime "established_at"
-    t.date "notice_date"
-    t.string "option_selected"
-    t.date "receipt_date"
-    t.string "veteran_file_number", null: false
+  create_table "ramp_elections", id: :serial, force: :cascade, comment: "Intake data for RAMP elections." do |t|
+    t.datetime "established_at", comment: "Timestamp for when the review successfully established, including any related actions such as establishing a claim in VBMS if applicable."
+    t.date "notice_date", comment: "The date that the Veteran was notified of their option to opt their legacy appeals into RAMP."
+    t.string "option_selected", comment: "Indicates whether the Veteran selected for their RAMP election to be processed as a higher level review (with or without a hearing), a supplemental claim, or a board appeal."
+    t.date "receipt_date", comment: "The date that the RAMP form was received by central mail."
+    t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.index ["veteran_file_number"], name: "index_ramp_elections_on_veteran_file_number"
   end
 
@@ -734,15 +734,15 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.index ["review_type", "review_id"], name: "index_ramp_issues_on_review_type_and_review_id"
   end
 
-  create_table "ramp_refilings", id: :serial, force: :cascade do |t|
-    t.string "appeal_docket"
-    t.datetime "established_at"
-    t.datetime "establishment_processed_at"
-    t.datetime "establishment_submitted_at"
-    t.boolean "has_ineligible_issue"
-    t.string "option_selected"
-    t.date "receipt_date"
-    t.string "veteran_file_number", null: false
+  create_table "ramp_refilings", id: :serial, force: :cascade, comment: "Intake data for RAMP refilings, also known as RAMP selection." do |t|
+    t.string "appeal_docket", comment: "When the RAMP refiling option selected is appeal, they can select hearing, direct review or evidence submission as the appeal docket."
+    t.datetime "established_at", comment: "Timestamp for when the review successfully established, including any related actions such as establishing a claim in VBMS if applicable."
+    t.datetime "establishment_processed_at", comment: "Timestamp for when the end product establishments for the RAMP review finished processing."
+    t.datetime "establishment_submitted_at", comment: "Timestamp for when an intake for a review was submitted by the user."
+    t.boolean "has_ineligible_issue", comment: "Selected by the user during intake, indicates whether the Veteran listed ineligible issues on their refiling."
+    t.string "option_selected", comment: "Which lane the RAMP refiling is for, between appeal, higher level review, and supplemental claim."
+    t.date "receipt_date", comment: "Receipt date of the RAMP form."
+    t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
@@ -776,12 +776,12 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
   end
 
-  create_table "request_decision_issues", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.integer "decision_issue_id"
+  create_table "request_decision_issues", force: :cascade, comment: "Join table for the has and belongs to many to many relationship between request issues and decision issues." do |t|
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created."
+    t.integer "decision_issue_id", comment: "The ID of the decision issue."
     t.datetime "deleted_at"
-    t.integer "request_issue_id"
-    t.datetime "updated_at", null: false
+    t.integer "request_issue_id", comment: "The ID of the request issue."
+    t.datetime "updated_at", null: false, comment: "Automatically populated when the record is updated."
     t.index ["request_issue_id", "decision_issue_id"], name: "index_on_request_issue_id_and_decision_issue_id", unique: true
   end
 
@@ -829,17 +829,17 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.index ["ineligible_due_to_id"], name: "index_request_issues_on_ineligible_due_to_id"
   end
 
-  create_table "request_issues_updates", force: :cascade do |t|
-    t.integer "after_request_issue_ids", null: false, array: true
-    t.datetime "attempted_at"
-    t.integer "before_request_issue_ids", null: false, array: true
-    t.string "error"
-    t.datetime "last_submitted_at"
-    t.datetime "processed_at"
-    t.bigint "review_id", null: false
-    t.string "review_type", null: false
-    t.datetime "submitted_at"
-    t.bigint "user_id", null: false
+  create_table "request_issues_updates", force: :cascade, comment: "Keeps track of edits to request issues on a decision review that happen after the initial intake, such as removing and adding issues.  When the decision review is processed in VBMS, this also tracks whether adding or removing contentions in VBMS for the update has succeeded." do |t|
+    t.integer "after_request_issue_ids", null: false, comment: "An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).", array: true
+    t.datetime "attempted_at", comment: "Timestamp for when the request issue update processing was last attempted."
+    t.integer "before_request_issue_ids", null: false, comment: "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).", array: true
+    t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
+    t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
+    t.datetime "processed_at", comment: "Timestamp for when the request issue update successfully completed processing."
+    t.bigint "review_id", null: false, comment: "The ID of the decision review edited."
+    t.string "review_type", null: false, comment: "The type of the decision review edited."
+    t.datetime "submitted_at", comment: "Timestamp when the request issues update was originally submitted."
+    t.bigint "user_id", null: false, comment: "The ID of the user who edited the decision review."
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
