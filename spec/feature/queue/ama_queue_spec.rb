@@ -583,10 +583,11 @@ RSpec.feature "AmaQueue" do
       expect(page).to have_content("#{veteran_full_name}'s case has been marked complete")
       # ensure no duplicate org tasks
       page.go_back
-      first_row_with_quality_review_task = page.find_all("table#case-timeline-table tbody tr")[1]
+      case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
+      first_row_with_quality_review_task = case_timeline_rows[1]
       expect(first_row_with_quality_review_task).to have_content("QualityReviewTask")
       # this row shouldnt be a duplicate quality review task
-      second_row_on_case_timeline = page.find_all("table#case-timeline-table tbody tr")[2]
+      second_row_on_case_timeline = case_timeline_rows[2]
       expect(second_row_on_case_timeline).not_to have_content("QualityReviewTask")
     end
   end
