@@ -550,5 +550,4 @@ DailyDocket.propTypes = {
   openModal: PropTypes.func,
   deleteHearingDay: PropTypes.func,
   notes: PropTypes.string,
-  onHearingOptionalTime: PropTypes.func
 };

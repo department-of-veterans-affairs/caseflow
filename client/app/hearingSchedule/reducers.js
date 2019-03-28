@@ -121,16 +121,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.HEARING_OPTIONAL_TIME:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedOptionalTime: { $set: action.payload.optionalTime },
-          edited: { $set: true }
-        }
-      }
-    });
-
   case ACTIONS.INVALID_FORM:
     return update(state, {
       hearings: {
