@@ -105,7 +105,6 @@ class CompleteTaskModal extends React.Component {
         }
       }
     };
-
     const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].
       buildSuccessMsg(appeal, this.getContentArgs());
 
