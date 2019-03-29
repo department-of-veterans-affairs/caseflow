@@ -1502,7 +1502,7 @@ describe Appeal do
   context "#alerts" do
     subject { appeal.alerts }
     let(:receipt_date) { Time.zone.today - 10.days }
-    let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
+    let!(:appeal) { create(:appeal, :hearing_docket, receipt_date: receipt_date) }
 
     context "has a remand and effectuation tracked in VBMS" do
       # the effectuation
@@ -1563,6 +1563,60 @@ describe Appeal do
         expect(subject.count).to eq(1)
         expect(subject[0][:type]).to eq("evidentiary_period")
         expect(subject[0][:details][:due_date]).to eq((receipt_date + 90.days).to_date)
+      end
+    end
+
+    context "has a scheduled hearing" do
+      let(:root_task_status) { "in_progress" }
+      let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
+      let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let(:hearing_scheduled_for) { Time.zone.today + 15.days }
+      let!(:hearing_day) do
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               regional_office: "RO18",
+               scheduled_for: hearing_scheduled_for)
+      end
+
+      let!(:hearing) do
+        FactoryBot.create(
+          :hearing,
+          appeal: appeal,
+          disposition: nil,
+          evidence_window_waived: nil,
+          hearing_day: hearing_day
+        )
+      end
+      let!(:hearing_task_association) do
+        FactoryBot.create(
+          :hearing_task_association,
+          hearing: hearing,
+          hearing_task: hearing_task
+        )
+      end
+      let!(:schedule_hearing_task) do
+        FactoryBot.create(
+          :schedule_hearing_task,
+          parent: hearing_task,
+          appeal: appeal,
+          assigned_to: HearingsManagement.singleton,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+      let!(:disposition_task) do
+        FactoryBot.create(
+          :disposition_task,
+          parent: hearing_task,
+          appeal: appeal,
+          status: Constants.TASK_STATUSES.in_progress
+        )
+      end
+
+      it "has a scheduled hearing alert" do
+        expect(subject.count).to eq(1)
+        expect(subject[0][:type]).to eq("scheduled_hearing")
+        expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
+        expect(subject[0][:details][:type]).to eq("video")
       end
     end
   end
