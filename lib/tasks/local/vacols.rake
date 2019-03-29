@@ -10,7 +10,7 @@ namespace :local do
       puts "Pinging FACOLS until it responds."
 
       # rubocop:disable Lint/HandleExceptions
-      300.times do
+      600.times do
         begin
           if VACOLS::Case.count == 0 &&
              VACOLS::CaseHearing.select("VACOLS.HEARING_VENUE(vdkey)").where(folder_nr: "1").count == 0
