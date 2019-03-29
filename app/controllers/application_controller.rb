@@ -110,6 +110,7 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :logo_path
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def application_urls
     urls = [{
       title: "Queue",
@@ -135,6 +136,7 @@ class ApplicationController < ApplicationBaseController
     # Only return the URL list if the user has applications to switch between
     (urls.length > 1) ? urls : nil
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
   helper_method :application_urls
 
   def dropdown_urls
