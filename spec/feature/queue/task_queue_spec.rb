@@ -444,12 +444,23 @@ RSpec.feature "Task queue" do
         and the bfcurloc in vacols should be updated to 57" do
         visit("/queue/appeals/#{appeal.external_id}")
         find(".Select-control", text: "Select an action…").click
-        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY.to_h[:label])
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
         find("button", text: "Send case").click
         expect(page).to have_content("Bob Smith's case has been sent to the Schedule hearing team")
         expect(vacols_case.reload.bfcurloc).to eq("57")
+      end
+      it "the case should be returned in the attorneys queue when canceled" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        find(".Select-control", text: "Select an action…").click
+        expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.to_h[:label])
+        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
+        find("button", text: "Submit").click
+        expect(page).to have_content("Task for Bob Smith's case has been cancelled")
+        User.authenticate!(user: attorney)
+        visit("/queue")
+        expect(page).to have_content(appeal.veteran_file_number)
       end
     end
   end
