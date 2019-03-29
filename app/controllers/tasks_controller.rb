@@ -96,6 +96,8 @@ class TasksController < ApplicationController
       return json_vso_tasks
     end
 
+    # DecisionReviewTask tasks are meant to be viewed on the /decision_reviews/:line-of-business route only.
+    # This change filters them out from the Queue page
     tasks = appeal.tasks.reject { |t| t.is_a?(DecisionReviewTask) }
     if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
       legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
