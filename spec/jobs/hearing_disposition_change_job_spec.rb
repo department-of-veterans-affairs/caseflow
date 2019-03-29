@@ -21,8 +21,11 @@ describe HearingDispositionChangeJob do
       hearing.update!(hearing_day: hearing_day)
     end
 
-    HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent_hearing_task) if associated_hearing
-    DispositionTask.create!(appeal: appeal, parent: parent_hearing_task, assigned_to: Bva.singleton)
+    if associated_hearing
+      FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
+    end
+
+    FactoryBot.create(:disposition_task, appeal: appeal, parent: parent_hearing_task)
   end
 
   def create_disposition_task_for_legacy_hearings_ancestry
