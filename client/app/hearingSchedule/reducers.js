@@ -36,6 +36,14 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       hearings: { $set: action.payload.hearings },
       hearingDayOptions: { $set: action.payload.hearingDayOptions }
     });
+  case ACTIONS.RECEIVE_HEARING:
+    return update(state, {
+      hearings: {
+        [action.payload.hearing.id]: {
+          $set: action.payload.hearing
+        }
+      }
+    });
   case ACTIONS.RECEIVE_SAVED_HEARING:
     return update(state, {
       hearings: {

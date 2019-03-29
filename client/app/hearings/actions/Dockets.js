@@ -4,6 +4,7 @@ import { CATEGORIES, ACTIONS, debounceMs } from '../analytics';
 import moment from 'moment';
 import { now } from '../util/DateUtil';
 import { DOCKETS_TAB_INDEX_MAPPING } from '../Dockets';
+import _ from 'lodash';
 
 export const selectDocketsPageTabIndex = (tabIndex) => ({
   type: Constants.SELECT_DOCKETS_PAGE_TAB_INDEX,
@@ -73,6 +74,14 @@ export const handleDocketServerError = (err) => ({
 
 export const handleSaveHearingSuccess = (hearing, date) => ({
   type: Constants.HANDLE_SAVE_HEARING_SUCCESS,
+  payload: {
+    hearing,
+    date
+  }
+});
+
+export const handleUpdateHearingSuccess = (hearing, date) => ({
+  type: Constants.HANDLE_UPDATE_HEARING_SUCCESS,
   payload: {
     hearing,
     date
@@ -287,6 +296,17 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
     ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
       then((response) => {
         dispatch(populateDailyDocket(response.body.hearingDay, response.body.dailyDocket, date));
+
+        _.each(response.body.dailyDocket, (hearing) => {
+          ApiUtil.get(`/hearings/${hearing.external_id}`).then((response) => {
+            const resp = JSON.parse(response.text);
+
+            dispatch(handleUpdateHearingSuccess(resp, date));
+          }).
+            catch((error) => {
+              console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
+            });
+        });
       }, (err) => {
         dispatch(handleDocketServerError(err));
       });

@@ -50,7 +50,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
     render json: {
       hearing_day: json_hearing(hearing_day_hash).merge(
-        hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) },
+        hearings: hearings.map { |hearing| hearing.quick_to_hash(current_user.id) },
         hearing_day_options: hearing_day_options
       )
     }
