@@ -15,7 +15,6 @@ class BulkAssignModal extends React.PureComponent {
     this.state = {
       showModal: false,
       showErrors: false,
-      tasksAssigned: false,
       users: [],
       modal: {
         assignedUser: null,
@@ -68,10 +67,8 @@ class BulkAssignModal extends React.PureComponent {
     this.setState({ showErrors: true });
 
     if (this.generateErrors().length === 0) {
-      // placeholder for posting data
-
-      this.setState({ tasksAssigned: true });
-      // this.handleModalToggle();
+      this.props.assignTasks(this.state.modal);
+      this.handleModalToggle();
     }
   }
 
@@ -150,6 +147,40 @@ class BulkAssignModal extends React.PureComponent {
     return taskOptions;
   }
 
+  generateNumberOfTaskOptions = () => {
+    const actualOptions = [];
+    const standardOptions = [5, 10, 20, 30, 40, 50];
+    let filteredTasks = this.props.tasks;
+
+    // filter by regional office
+    filteredTasks = this.state.modal.regionalOffice ?
+      _.filter(filteredTasks, { closestRegionalOffice: this.state.modal.regionalOffice }) :
+      filteredTasks;
+
+    // filter by task type
+    filteredTasks = this.state.modal.taskType ?
+      _.filter(filteredTasks, { closestRegionalOffice: this.state.modal.taskType }) :
+      filteredTasks;
+
+    for (let i = 0; i < standardOptions.length; i++) {
+      if (filteredTasks.length < standardOptions[i]) {
+        actualOptions.push({
+          value: filteredTasks.length,
+          displayText: `${filteredTasks.length} (all available tasks)`
+        });
+
+        break;
+      } else {
+        actualOptions.push({
+          value: standardOptions[1],
+          displayText: standardOptions[1]
+        });
+      }
+    }
+
+    return actualOptions;
+  }
+
   generateDropdown = (label, fieldName, options, isRequired) => {
     return (
       <Dropdown
@@ -182,12 +213,8 @@ class BulkAssignModal extends React.PureComponent {
         {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
         {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
         {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}
-        {this.generateDropdown(
-          'Select number of tasks to assign',
-          'numberOfTasks',
-          this.getDisplayTextOption([5, 10, 20, 30, 40, 50]),
-          true
-        )}
+        {this.generateDropdown('Select number of tasks to assign', 'numberOfTasks',
+          this.generateNumberOfTaskOptions(), true)}
       </Modal>
     );
 
@@ -201,44 +228,10 @@ class BulkAssignModal extends React.PureComponent {
 }
 
 BulkAssignModal.propTypes = {
+  enableBulkAssign: PropTypes.bool,
   tasks: PropTypes.array.isRequired,
-  organizationUrl: PropTypes.string.isRequired
+  organizationUrl: PropTypes.string.isRequired,
+  assignTasks: PropTypes.func.isRequired
 };
 
 export default BulkAssignModal;
-
-//        <Dropdown
-//          name="Assign to"
-//          options={this.generateUserOptions()}
-//          value={this.state.modal.assignedUser}
-//          defaultText="Select"
-//          onChange={(value) => this.onFieldChange(value, 'assignedUser')}
-//          errorMessage={this.displayErrorMessage('assignedUser')}
-//          required
-//        />
-//        <Dropdown
-//          name="Regional office"
-//          options={this.generateRegionalOfficeOptions()}
-//          value={this.state.modal.regionalOffice}
-//          defaultText="Select"
-//          onChange={(value) => this.onFieldChange(value, 'regionalOffice')}
-//          errorMessages={this.displayErrorMessage('regionalOffice')}
-//        />
-//        <Dropdown
-//          name="Select task type"
-//          options={this.generateTaskTypeOptions()}
-//          value={this.state.modal.taskType}
-//          defaultText="Select"
-//          onChange={(value) => this.onFieldChange(value, 'taskType')}
-//          errorMessage={this.displayErrorMessage('taskType')}
-//          required
-//        />
-//        <Dropdown
-//          name="Select number of tasks to assign"
-//          options={this.getDisplayTextOption([5, 10, 20, 30, 40, 50])}
-//          value={this.state.modal.numberOfTasks}
-//          defaultText="Select"
-//          onChange={(value) => this.onFieldChange(value, 'numberOfTasks')}
-//          errorMessage={this.displayErrorMessage('numberOfTasks')}
-//          required
-//        />

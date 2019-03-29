@@ -1,13 +1,18 @@
 import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
+import sinon from 'sinon';
 
 import BulkAssignModal from '../../../app/queue/components/BulkAssignModal';
 
 describe('BulkAssignModal', () => {
   let wrapper;
+  const assignFunction = () => ({});
+
   let props = {
     enableBulkAssign: true,
+    organizationUrl: 'something',
+    assignTasks: sinon.spy(assignFunction),
     tasks: [
       {
         type: 'FirstType',
@@ -120,7 +125,7 @@ describe('BulkAssignModal', () => {
       wrapper.setState({ modal: fieldValues });
       wrapper.find('.cf-modal .usa-button-secondary').simulate('click');
 
-      expect(wrapper.state().tasksAssigned).to.eql(true);
+      expect(props.assignTasks.calledOnce).to.equal(true);
     });
 
     it('correctly formats task types', () => {

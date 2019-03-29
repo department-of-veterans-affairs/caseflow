@@ -22,7 +22,7 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
-import { setSelectionOfTaskOfUser } from '../QueueActions';
+import { setSelectionOfTaskOfUser, bulkAssignTasks } from '../QueueActions';
 import { renderAppealType, taskHasCompletedHold } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
@@ -362,7 +362,8 @@ export class TaskTableUnconnected extends React.PureComponent {
         <BulkAssignModal
           enableBulkAssign={this.props.organizationName === 'Hearing Admin'}
           organizationUrl={ORGANIZATION_NAMES[this.props.organizationName]}
-          tasks={tasks} />
+          tasks={tasks}
+          assignTasks={this.props.bulkAssignTasks} />
         <QueueTable
           columns={this.getQueueColumns}
           rowObjects={tasks}
@@ -380,12 +381,14 @@ export class TaskTableUnconnected extends React.PureComponent {
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
-  userRole: state.ui.userRole
+  userRole: state.ui.userRole,
+  tasksAssignedByBulk: state.queue.tasksAssignedByBulk
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setSelectionOfTaskOfUser
+    setSelectionOfTaskOfUser,
+    bulkAssignTasks
   }, dispatch)
 );
 

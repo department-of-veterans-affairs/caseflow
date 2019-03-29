@@ -26,13 +26,17 @@ const containerStyles = css({
   position: 'relative'
 });
 
+const alertStyling = css({
+  'margin-bottom': '1.5em'
+});
+
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   }
 
   render = () => {
-    const { success } = this.props;
+    const { success, tasksAssignedByBulk } = this.props;
     const tabs = [
       {
         label: sprintf(
@@ -93,6 +97,16 @@ class OrganizationQueue extends React.PureComponent {
 
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
+      {tasksAssignedByBulk.assignedUser &&
+        <Alert
+          message="Please go to your individual queue to see your self assigned tasks"
+          title={`You have assigned
+            ${tasksAssignedByBulk.numberOfTasks}
+            ${tasksAssignedByBulk.taskType.replace(/([a-z])([A-Z])/g, '$1 $2')}
+            task(s) to your individual queue`}
+          type="success"
+          styling={alertStyling} />
+      }
       <div>
         <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
         <QueueOrganizationDropdown organizations={this.props.organizations} />
@@ -114,6 +128,7 @@ const mapStateToProps = (state) => {
     organizationName: state.ui.activeOrganization.name,
     organizationIsVso: state.ui.activeOrganization.isVso,
     organizations: state.ui.organizations,
+    tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
     completedTasks: getCompletedOrganizationalTasks(state),
