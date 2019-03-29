@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190328163217) do
+ActiveRecord::Schema.define(version: 20190329163603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -231,6 +231,7 @@ ActiveRecord::Schema.define(version: 20190328163217) do
 
   create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
+    t.string "appeal_type"
     t.datetime "attempted_at"
     t.string "citation_number", null: false
     t.datetime "created_at", null: false

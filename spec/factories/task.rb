@@ -43,6 +43,12 @@ FactoryBot.define do
       assigned_to { Bva.singleton }
     end
 
+    factory :root_task_legacy, class: RootTask do
+      type { RootTask.name }
+      assigned_by { nil }
+      assigned_to { Bva.singleton }
+    end
+
     factory :distribution_task, class: DistributionTask do
       type { DistributionTask.name }
       appeal { create(:appeal) }
