@@ -9,12 +9,15 @@ namespace :local do
     task wait_for_connection: :environment do
       puts "Pinging FACOLS until it responds."
 
+      facols_is_ready = false
+
       # rubocop:disable Lint/HandleExceptions
       600.times do
         begin
           if VACOLS::Case.count == 0 &&
              VACOLS::CaseHearing.select("VACOLS.HEARING_VENUE(vdkey)").where(folder_nr: "1").count == 0
             puts "FACOLS is ready."
+            facols_is_ready = true
             break
           end
         rescue StandardError
@@ -23,6 +26,10 @@ namespace :local do
         sleep 1
       end
       # rubocop:enable Lint/HandleExceptions
+
+      unless facols_is_ready
+        fail "Gave up waiting for FACOLS to get ready and we won't leave alone"
+      end
     end
 
     # rubocop:disable Metrics/MethodLength
