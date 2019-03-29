@@ -212,10 +212,8 @@ export class PdfFile extends React.PureComponent {
       const scrollToIndex = this.props.jumpToPageNumber ? pageIndexOfPageNumber(this.props.jumpToPageNumber) : -1;
 
       this.grid.scrollToCell(this.pageRowAndColumn(scrollToIndex));
-
-      setTimeout(() => {
-        this.props.resetJumpToPage();
-      }, 500);
+      this.props.resetJumpToPage();
+      
     }
   }
 
