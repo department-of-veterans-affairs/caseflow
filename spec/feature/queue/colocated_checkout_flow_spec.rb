@@ -97,7 +97,6 @@ RSpec.feature "Colocated checkout flows" do
 
       expect(colocated_action.reload.status).to eq(Constants.TASK_STATUSES.completed)
       expect(colocated_action.assigned_at.to_date).to eq Time.zone.today
-      # binding.pry
     end
 
     scenario "places task on hold" do

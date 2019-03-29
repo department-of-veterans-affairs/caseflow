@@ -1,4 +1,3 @@
-/* eslint-disable no-debugger */
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -107,13 +106,11 @@ class CompleteTaskModal extends React.Component {
       }
     };
 
-    debugger;
     const successMsg = SEND_TO_LOCATION_MODAL_TYPE_ATTRS[this.props.modalType].
       buildSuccessMsg(appeal, this.getContentArgs());
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
-        debugger;
         const response = JSON.parse(resp.text);
 
         this.props.onReceiveAmaTasks(response.tasks.data);

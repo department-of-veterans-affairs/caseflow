@@ -79,8 +79,6 @@ class TasksController < ApplicationController
   #   on_hold_duration: "something"
   # }
 
-  # when updating a legacy colocated task, can't just send status complete
-  # differentiate between whether you send to team or to attorney
   def update
     tasks = task.update_from_params(update_params, current_user)
     tasks.each { |t| return invalid_record_error(t) unless t.valid? }

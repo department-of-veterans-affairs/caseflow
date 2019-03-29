@@ -21,7 +21,6 @@
     "RETURN_TO_JUDGE": { "label": "Return to judge", "value": "modal/assign_to_judge", "func": "assign_to_judge_data" },
     "REVIEW_LEGACY_DECISION": { "label": "Decision ready for review", "value": "draft_decision/special_issues"},
     "REVIEW_AMA_DECISION": { "label": "Decision ready for review", "value": "draft_decision/dispositions"},
-    "SCHEDULE_HEARING_COLOCATED_RETURN_TO_ATTORNEY": { "label": "Hearing does not need to be scheduled, send back to attorney", "value": "modal/mark_task_complete" },
     "SCHEDULE_HEARING_SEND_TO_TEAM": { "label": "Hearing does need to be scheduled, send to hearing branch", "value": "modal/send_colocated_task" },
     "SCHEDULE_VETERAN": { "label": "Schedule Veteran", "value": "modal/schedule_veteran", "func": "schedule_veteran_data" },
     "SEND_TO_TEAM": { "label": "Send to team", "value": "modal/send_colocated_task" },
