@@ -12,7 +12,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { highlightInvalidFormItems, requestSave } from './uiReducer/uiActions';
-import { onReceiveAmaTasks, setAppealAttrs } from './QueueActions';
+import { onReceiveAmaTasks, setAppealAttrs, onReceiveTasks } from './QueueActions';
 
 import {
   appealWithDetailSelector,
@@ -26,7 +26,7 @@ import {
 import COPY from '../../COPY.json';
 import Button from '../components/Button';
 
-import { taskActionData } from './utils';
+import { taskActionData, prepareAllTasksForStore } from './utils';
 import QueueFlowPage from './components/QueueFlowPage';
 
 const adminActionTemplate = () => {
@@ -107,6 +107,14 @@ class AddColocatedTaskView extends React.PureComponent {
     this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
         if (task.isLegacy) {
+          const response = JSON.parse(resp.text);
+          const allTasks = prepareAllTasksForStore(response.tasks.data);
+
+          this.props.onReceiveTasks({
+            tasks: allTasks.tasks,
+            amaTasks: allTasks.amaTasks
+          });
+
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
         } else {
           const response = JSON.parse(resp.text);
@@ -206,6 +214,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightInvalidFormItems,
   requestSave,
   onReceiveAmaTasks,
+  onReceiveTasks,
   setAppealAttrs
 }, dispatch);
 
