@@ -55,7 +55,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
           $unset: [
             'editedNotes',
             'editedDisposition',
-            'editedDate',
             'editedTime',
             'editedOptionalTime',
             'editedRegionalOffice',
