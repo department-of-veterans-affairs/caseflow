@@ -82,7 +82,7 @@ class EstablishClaim < Dispatch::Task
         review!(outgoing_reference_id: result.claim_id)
       end
     end
-  rescue VBMS::HTTPError => error
+  rescue VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 

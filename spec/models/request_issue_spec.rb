@@ -398,7 +398,7 @@ describe RequestIssue do
           context "when not nonrating" do
             let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
             let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "040HDENRPMC" }
+            it { is_expected.to eq "040BDENRPM" }
           end
         end
 
@@ -747,13 +747,18 @@ describe RequestIssue do
     end
   end
 
-  context "#rating?" do
+  context "#rating?, #nonrating?" do
     subject { request_issue.rating? }
+    let(:nonrating) { request_issue.nonrating? }
     let(:request_issue) { rating_request_issue }
 
     context "when there is an associated rating issue" do
       let(:contested_rating_issue_reference_id) { "123" }
       it { is_expected.to be true }
+
+      it "nonrating? is false" do
+        expect(nonrating).to be(false)
+      end
     end
 
     context "when the request issue was a rating issue on its previous end product" do
@@ -774,11 +779,17 @@ describe RequestIssue do
       end
 
       it { is_expected.to be true }
+      it "nonrating? is false" do
+        expect(nonrating).to be(false)
+      end
     end
 
     context "when it's a nonrating issue" do
       let(:request_issue) { nonrating_request_issue }
       it { is_expected.to be_falsey }
+      it "nonrating? is true" do
+        expect(nonrating).to be(true)
+      end
     end
   end
 

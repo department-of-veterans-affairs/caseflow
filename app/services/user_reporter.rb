@@ -22,39 +22,14 @@ class UserReporter
     report.flatten
   end
 
-  def undo_change
-    return if uppercase_user.undo_record_merging.nil?
-
-    User.transaction do
-      uppercase_user.undo_record_merging.each do |undo_merge|
-        User.create(
-          undo_merge["create_user"].except!("display_name")
-        )
-
-        undo_merge["create_associations"].each do |association|
-          (Object.const_get association["model"])
-            .where(id: association["ids"])
-            .update(association["column"] => association["user_id"])
-        end
-      end
-
-      uppercase_user.update!(undo_record_merging: nil)
-    end
-  end
-
   def merge_all_users_with_uppercased_user
     User.transaction do
       other_users = all_users_for_css_id - [uppercase_user]
 
-      reassigned_users = other_users.map do |user|
-        {
-          create_associations: replace_user(user, uppercase_user),
-          create_user: user.to_hash
-        }
+      other_users.each do |user|
+        replace_user(user, uppercase_user)
+        user.delete
       end
-
-      uppercase_user.update!(undo_record_merging: ((uppercase_user.undo_record_merging || []) + reassigned_users))
-      other_users.each(&:delete)
     end
   end
 
@@ -110,7 +85,9 @@ class UserReporter
   end
 
   def delete_unique_constraint_violating_records(scope, foreign_key, fk_column_name, old_user, new_user)
-    if foreign_key[:unique]&.empty?
+    return unless foreign_key[:unique]
+
+    if foreign_key[:unique].empty?
       scope.where(fk_column_name => old_user.id).delete_all
     else
       existing_unique_fields = scope.where(fk_column_name => new_user.id).pluck(*foreign_key[:unique])
@@ -142,16 +119,7 @@ class UserReporter
 
       delete_unique_constraint_violating_records(scope, foreign_key, fk_column_name, old_user, new_user)
 
-      undo_action = {
-        model: foreign_key[:model].name,
-        column: fk_column_name,
-        ids: scope.pluck(:id),
-        user_id: old_user.id
-      }
-
       scope.where(fk_column_name => old_user.id).update(fk_column_name => new_user.id)
-
-      undo_action
     end
   end
 

@@ -419,6 +419,35 @@ feature "Appeal Edit issues" do
     end
   end
 
+  context "appeal is non-comp benefit type" do
+    let!(:request_issue) { create(:request_issue, benefit_type: "education") }
+
+    scenario "adding an issue with a non-comp benefit type" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      # Add issue that is not a VBMS issue
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        benefit_type: "Education",
+        category: "Accrued",
+        description: "Description for Accrued",
+        date: 1.day.ago.to_date.mdY
+      )
+
+      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: false)
+
+      click_edit_submit_and_confirm
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to_not have_content("Unable to load this case")
+      expect(RequestIssue.find_by(
+               benefit_type: "education",
+               veteran_participant_id: nil
+             )).to_not be_nil
+    end
+  end
+
   context "appeal is outcoded" do
     let(:appeal) { create(:appeal, :outcoded, veteran: veteran) }
 
@@ -438,7 +467,7 @@ feature "Appeal Edit issues" do
     scenario "remove an issue with dropdown" do
       visit "appeals/#{appeal.uuid}/edit/"
       expect(page).to have_content("PTSD denied")
-      click_remove_intake_issue_dropdown(0)
+      click_remove_intake_issue_dropdown("PTSD denied")
       expect(page).to_not have_content("PTSD denied")
     end
   end

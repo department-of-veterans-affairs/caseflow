@@ -18,12 +18,10 @@ import Modal from '../../components/Modal';
 import DispositionModal from './DailyDocketDispositionModal';
 import StatusMessage from '../../components/StatusMessage';
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
-import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone, formatDateStr } from '../../util/DateUtil';
+import { getTime, getTimeInDifferentTimeZone, getTimeWithoutTimeZone } from '../../util/DateUtil';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
 import {
-  RegionalOfficeDropdown,
-  HearingDateDropdown,
   AppealHearingLocationsDropdown
 } from '../../components/DataDropdowns';
 
@@ -102,14 +100,9 @@ export default class DailyDocket extends React.Component {
     this.props.onHearingDispositionUpdate(hearingId, disposition.value);
   };
 
-  onHearingDateUpdate = (hearingId) => (hearingDay) => this.props.onHearingDateUpdate(hearingId, hearingDay);
-
   onHearingTimeUpdate = (hearingId) => (time) => this.props.onHearingTimeUpdate(hearingId, time);
 
   onHearingLocationUpdate = (hearingId) => (location) => this.props.onHearingLocationUpdate(hearingId, location);
-
-  onHearingRegionalOfficeUpdate = (hearingId) => (regionalOffice) =>
-    this.props.onHearingRegionalOfficeUpdate(hearingId, regionalOffice);
 
   onInvalidForm = (hearingId) => (invalid) => this.props.onInvalidForm(hearingId, invalid);
 
@@ -205,13 +198,15 @@ export default class DailyDocket extends React.Component {
     const { dailyDocket } = this.props;
 
     return dailyDocket.requestType === 'Central' ? 'C' : dailyDocket.regionalOfficeKey;
-  }
+  };
 
-  getRegionalOfficeDropdown = (hearing, readOnly) => {
-    return <RegionalOfficeDropdown
-      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
-      onChange={this.onHearingRegionalOfficeUpdate(hearing.id)}
-      value={hearing.editedRegionalOffice || this.getRegionalOffice()} />;
+  getStaticRegionalOffice = (hearing) => {
+    return <div>
+      <b>Regional Office</b> <br /> <br />
+      <div>
+        {hearing.readableRequestType === 'Central' ? hearing.readableRequestType : hearing.regionalOfficeName}<br />
+      </div>
+    </div>;
   };
 
   getHearingLocationDropdown = (hearing, readOnly) => {
@@ -236,29 +231,11 @@ export default class DailyDocket extends React.Component {
     />;
   };
 
-  getHearingDayDropdown = (hearing, readOnly) => {
-    const regionalOffice = this.getRegionalOffice();
-    const currentRegionalOffice = hearing.editedRegionalOffice || regionalOffice;
-    // if date is in the past, always add current date as an option
-    const staticOptions = regionalOffice === currentRegionalOffice ?
-      [{
-        label: formatDateStr(hearing.scheduledFor),
-        value: {
-          scheduledFor: hearing.scheduledFor,
-          hearingId: this.props.dailyDocket.id
-        }
-      }] : null;
-
-    return <HearingDateDropdown
-      name="HearingDay"
-      label="Hearing Day"
-      key={currentRegionalOffice}
-      regionalOffice={currentRegionalOffice}
-      errorMessage={hearing.invalid ? hearing.invalid.hearingDate : null}
-      value={_.isUndefined(hearing.editedDate) ? hearing.scheduledFor : hearing.editedDate}
-      readOnly={readOnly || hearing.editedDisposition !== 'postponed'}
-      staticOptions={staticOptions}
-      onChange={this.onHearingDateUpdate(hearing.id)} />;
+  getStaticHearingDay = (hearing) => {
+    return <div>
+      <b>Hearing Day</b> <br /> <br />
+      <div>{moment(hearing.scheduledFor).format('ddd M/DD/YYYY')} <br /> <br /></div>
+    </div>;
   };
 
   getTimeRadioButtons = (hearing, readOnly) => {
@@ -302,6 +279,7 @@ export default class DailyDocket extends React.Component {
     return <TextareaField
       name="Notes"
       strongLabel
+      disabled={this.props.userRoleVso}
       onChange={this.onHearingNotesUpdate(hearing.id)}
       textAreaStyling={notesFieldStyling}
       value={_.isUndefined(hearing.editedNotes) ? hearing.notes || '' : hearing.editedNotes}
@@ -361,9 +339,9 @@ export default class DailyDocket extends React.Component {
         {this.getNotesField(hearing)}
       </div>
       <div>
-        {this.getRegionalOfficeDropdown(hearing, readOnly)}
+        {this.getStaticRegionalOffice(hearing)}
         {this.getHearingLocationDropdown(hearing, readOnly)}
-        {this.getHearingDayDropdown(hearing, readOnly)}
+        {this.getStaticHearingDay(hearing)}
         {this.getTimeRadioButtons(hearing, readOnly)}
         {this.getSaveButton(hearing)}
       </div>
@@ -423,7 +401,7 @@ export default class DailyDocket extends React.Component {
     ];
 
     const dailyDocketRows = this.getDailyDocketRows(this.dailyDocketHearings(this.props.hearings),
-      this.props.userRoleView);
+      this.props.userRoleView || this.props.userRoleVso);
     const cancelButton = <Button linkStyling onClick={this.props.onCancelRemoveHearingDay}>Go back</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.props.deleteHearingDay}>
       Confirm
@@ -571,6 +549,5 @@ DailyDocket.propTypes = {
   onInvalidForm: PropTypes.func,
   openModal: PropTypes.func,
   deleteHearingDay: PropTypes.func,
-  notes: PropTypes.string,
-  onHearingOptionalTime: PropTypes.func
+  notes: PropTypes.string
 };

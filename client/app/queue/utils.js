@@ -528,3 +528,10 @@ export const nullToFalse = (key, obj) => {
 
   return obj;
 };
+
+export const sortTaskList = (taskList) => {
+  return taskList.sort((prev, next) => {
+    return new Date(next.closedAt || next.createdAt).getTime() -
+    new Date(prev.closedAt || prev.createdAt).getTime();
+  });
+};
