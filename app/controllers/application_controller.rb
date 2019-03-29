@@ -124,7 +124,8 @@ class ApplicationController < ApplicationBaseController
     end
     if current_user.can?("Build HearSched") ||
        current_user.can?("Edit HearSched") ||
-       current_user.can?("RO ViewHearSched")
+       current_user.can?("RO ViewHearSched") ||
+       current_user.can?("VSO")
       urls << {
         title: "Hearing Schedule",
         link: "/hearings/schedule"
