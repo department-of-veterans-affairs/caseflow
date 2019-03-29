@@ -55,11 +55,14 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
         }
       },
       requestIssuesUpdateErrorCode: { $set: null },
+      redirectTo: {
+        $set: action.payload.responseObject.redirect_to
+      },
       issuesAfter: {
-        $set: formatRequestIssues(action.payload.issuesAfter)
+        $set: formatRequestIssues(action.payload.responseObject.issuesAfter)
       },
       issuesBefore: {
-        $set: formatRequestIssues(action.payload.issuesBefore)
+        $set: formatRequestIssues(action.payload.responseObject.issuesBefore)
       }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:
