@@ -27,10 +27,8 @@ class HearingRepository
 
     def fetch_hearings_for_parents(hearing_day_ids)
       # Get hash of hearings grouped by their hearing day ids
-      VACOLS::CaseHearing.hearings_for_hearing_days(hearing_day_ids)
-        .group_by { |record| record.vdkey.to_s }.transform_values do |value|
-        hearings_for(value)
-      end
+      hearings_for(VACOLS::CaseHearing.hearings_for_hearing_days(hearing_day_ids))
+        .group_by { |hearing| hearing.hearing_day_id.to_s }
     end
 
     def load_issues(hearings)
