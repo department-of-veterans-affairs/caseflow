@@ -198,11 +198,9 @@ class BulkAssignModal extends React.PureComponent {
   render() {
     const isBulkAssignEnabled = this.props.enableBulkAssign;
     const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
-      Assign Tasks
-    </Button>;
+      Assign Tasks</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.bulkAssignTasks}>
-      Assign
-    </Button>;
+      Assign</Button>;
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
     const modal = (
       <Modal
