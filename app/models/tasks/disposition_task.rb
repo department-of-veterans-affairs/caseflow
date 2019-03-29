@@ -51,17 +51,19 @@ class DispositionTask < GenericTask
   end
 
   def update_from_params(params, user)
-    disposition_params = params.delete(:business_payloads)[:values]
+    payload_values = params.delete(:business_payloads)[:values]
 
     if params[:status] == Constants.TASK_STATUSES.cancelled
-      case disposition_params[:disposition]
-      when "postponed"
-        after_disposition_update = disposition_params[:after_disposition_update]
-        mark_postponed(after_disposition_update: after_disposition_update)
+      case payload_values[:disposition]
+      when "cancelled"
+        mark_hearing_cancelled
       when "held"
-        mark_held
+        mark_hearing_held
       when "no_show"
-        mark_no_show
+        mark_hearing_no_show
+      when "postponed"
+        after_disposition_update = payload_values[:after_disposition_update]
+        mark_hearing_postponed(after_disposition_update: after_disposition_update)
       end
     end
 
@@ -106,7 +108,13 @@ class DispositionTask < GenericTask
     end
   end
 
-  def mark_postponed(after_disposition_update:)
+  def mark_hearing_cancelled() end
+
+  def mark_hearing_held() end
+
+  def mark_hearing_no_show() end
+
+  def mark_hearing_postponed(after_disposition_update:)
     multi_transaction do
       if hearing.is_a?(LegacyHearing)
         hearing.update_caseflow_and_vacols(disposition: "postponed")
@@ -129,12 +137,6 @@ class DispositionTask < GenericTask
       end
     end
   end
-
-  def mark_cancelled() end
-
-  def mark_held() end
-
-  def mark_no_show() end
 
   def cancel!
     if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
