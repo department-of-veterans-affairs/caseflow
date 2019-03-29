@@ -144,7 +144,7 @@ class Task < ApplicationRecord
   end
 
   def duplicate_org_task
-    assigned_to.is_a?(Organization) && children.pluck(:assigned_to_type).include?(User.name)
+    assigned_to.is_a?(Organization) && children.any? { |t| User.name == t.assigned_to_type && type == t.type }
   end
 
   def hide_from_case_timeline
