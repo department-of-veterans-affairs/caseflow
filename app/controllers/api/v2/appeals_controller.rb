@@ -48,7 +48,10 @@ class Api::V2::AppealsController < Api::ApplicationController
   end
 
   def supplemental_claims
+    # Filter out remanded SC because status and information of those are display through
+    # the original HLR or Appeal
     @supplemental_claims ||= SupplementalClaim.where(veteran_file_number: veteran_file_number)
+      .where(decision_review_remanded: nil)
       .select { |sc| sc.request_issues.any? }
   end
 
