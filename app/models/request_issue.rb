@@ -98,7 +98,7 @@ class RequestIssue < ApplicationRecord
       pension: {
         appeal: {
           rating: "040BDERPMC",
-          nonrating: "040HDENRPMC"
+          nonrating: "040BDENRPM"
         },
         claim_review: {
           rating: "040HDERPMC",
@@ -222,15 +222,12 @@ class RequestIssue < ApplicationRecord
     !!associated_rating_issue? || previous_rating_issue?
   end
 
-  def associated_rating_issue?
-    contested_rating_issue_reference_id
+  def nonrating?
+    !rating? && !is_unidentified?
   end
 
-  # TODO: If a nonrating decision issue is contested, the request issue should also be considered
-  #       nonrating. Currently it won't be because we don't copy over these fields from the contested
-  #       decision issue if they are present.
-  def nonrating?
-    !!issue_category
+  def associated_rating_issue?
+    contested_rating_issue_reference_id
   end
 
   def open?
@@ -407,10 +404,10 @@ class RequestIssue < ApplicationRecord
     close!(:removed) do
       legacy_issue_optin&.flag_for_rollback!
 
-      # removing a request issue also deletes the associated request_decision_issue
-      # if the decision issue is not associated with any other request issue, also delete
-      decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
-      decision_issues.delete_all
+      # If the decision issue is not associated with any other request issue, also delete
+      decision_issues.each(&:soft_delete_on_removed_request_issue)
+      # Removing a request issue also deletes the associated request_decision_issue
+      request_decision_issues.update_all(deleted_at: Time.zone.now)
     end
   end
 

@@ -74,7 +74,8 @@ class SeedDB
 
   def create_team_admin
     u = User.create(css_id: "TEAM_ADMIN", station_id: 101, full_name: "Team admin")
-    Functions.grant!("System Admin", users: [u.css_id])
+    existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
+    Functions.grant!("System Admin", users: existing_sysadmins + [u.css_id])
     OrganizationsUser.add_user_to_organization(u, Bva.singleton)
   end
 
@@ -855,6 +856,14 @@ class SeedDB
       assigned_by: judge,
       assigned_to: Translation.singleton,
       parent: FactoryBot.create(:root_task)
+    )
+
+    FactoryBot.create_list(
+      :ama_judge_task,
+      3,
+      :in_progress,
+      assigned_to: User.find_by(css_id: "BVAEBECKER"),
+      appeal: FactoryBot.create(:appeal)
     )
   end
 

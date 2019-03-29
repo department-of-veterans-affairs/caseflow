@@ -20,6 +20,7 @@ class Appeal < DecisionReview
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
+  has_many :record_synced_by_job, as: :record
 
   validate :validate_receipt_date
   with_options on: :intake_review do
@@ -206,31 +207,6 @@ class Appeal < DecisionReview
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
   end
 
-  def sync_tracking_tasks
-    new_task_count = 0
-    closed_task_count = 0
-
-    active_tracking_tasks = tasks.active.where(type: TrackVeteranTask.name)
-    cached_vsos = active_tracking_tasks.map(&:assigned_to)
-    fresh_vsos = vsos
-
-    # Create a TrackVeteranTask for each VSO that does not already have one.
-    new_vsos = fresh_vsos - cached_vsos
-    new_vsos.each do |new_vso|
-      TrackVeteranTask.create!(appeal: self, parent: root_task, assigned_to: new_vso)
-      new_task_count += 1
-    end
-
-    # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
-    outdated_vsos = cached_vsos - fresh_vsos
-    active_tracking_tasks.select { |t| outdated_vsos.include?(t.assigned_to) }.each do |task|
-      task.update!(status: Constants.TASK_STATUSES.cancelled)
-      closed_task_count += 1
-    end
-
-    [new_task_count, closed_task_count]
-  end
-
   def veteran_name
     # For consistency with LegacyAppeal.veteran_name
     veteran&.name&.formatted(:form)
@@ -375,7 +351,7 @@ class Appeal < DecisionReview
   end
 
   def root_task
-    RootTask.find_by(appeal_id: id)
+    RootTask.find_by(appeal: self)
   end
 
   # needed for appeal status api
@@ -478,6 +454,8 @@ class Appeal < DecisionReview
       {
         type: "video"
       }
+    when :scheduled_hearing
+      api_scheduled_hearing_status_details
     when :decision_in_progress
       {
         decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
@@ -507,6 +485,31 @@ class Appeal < DecisionReview
     end
   end
 
+  def api_scheduled_hearing_status_details
+    {
+      type: api_scheduled_hearing_type,
+      date: scheduled_hearing.scheduled_for.to_date,
+      location: scheduled_hearing.try(:hearing_location).try(&:name)
+    }
+  end
+
+  def scheduled_hearing
+    # Appeal Status api assumes that there can be multiple hearings that have happened in the past but only
+    # one that is currently scheduled. Will get this by getting the hearing whose scheduled date is in the future.
+    @scheduled_hearing ||= hearings.find { |hearing| hearing.scheduled_for >= Time.zone.today }
+  end
+
+  def api_scheduled_hearing_type
+    return unless scheduled_hearing
+
+    hearing_types_for_status_details = {
+      V: "video",
+      C: "central_office"
+    }.freeze
+
+    hearing_types_for_status_details[scheduled_hearing.request_type.to_sym]
+  end
+
   def remanded_sc_decision_issues
     issue_list = []
     remand_supplemental_claims.each do |sc|
@@ -523,8 +526,7 @@ class Appeal < DecisionReview
   end
 
   def hearing_pending?
-    # This isn't available yet.
-    # tasks.active.where(type: DispositionTask.name).any?
+    tasks.active.where(type: DispositionTask.name).any?
   end
 
   def evidence_submission_hold_pending?

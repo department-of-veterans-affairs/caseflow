@@ -96,7 +96,7 @@ describe ClaimReview do
   let!(:claimant) do
     create(
       :claimant,
-      review_request: claim_review,
+      decision_review: claim_review,
       participant_id: veteran_participant_id,
       payee_code: "00"
     )

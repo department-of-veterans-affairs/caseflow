@@ -135,6 +135,8 @@ describe Appeal do
   end
 
   context "#create_remand_supplemental_claims!" do
+    before { setup_prior_claim_with_payee_code(appeal, veteran) }
+
     let(:veteran) { create(:veteran) }
     let(:appeal) do
       create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
@@ -164,13 +166,10 @@ describe Appeal do
 
     let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
 
-    let!(:prior_sc_with_payee_code) { setup_prior_claim_with_payee_code(appeal, veteran) }
-
     it "creates supplemental claim, request issues, and starts processing" do
       subject
 
       remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)
-        .where.not(id: prior_sc_with_payee_code.id)
 
       expect(remanded_supplemental_claims.count).to eq(2)
 
@@ -954,6 +953,59 @@ describe Appeal do
       end
     end
 
+    context "hearing is scheduled" do
+      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let(:hearing_scheduled_for) { Time.zone.today + 15.days }
+      let(:hearing_day) do
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               regional_office: "RO18",
+               scheduled_for: hearing_scheduled_for)
+      end
+
+      let(:hearing) do
+        FactoryBot.create(
+          :hearing,
+          appeal: appeal,
+          disposition: nil,
+          evidence_window_waived: nil,
+          hearing_day: hearing_day
+        )
+      end
+      let!(:hearing_task_association) do
+        FactoryBot.create(
+          :hearing_task_association,
+          hearing: hearing,
+          hearing_task: hearing_task
+        )
+      end
+      let!(:schedule_hearing_task) do
+        FactoryBot.create(
+          :schedule_hearing_task,
+          parent: hearing_task,
+          appeal: appeal,
+          assigned_to: HearingsManagement.singleton,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+      let!(:disposition_task) do
+        FactoryBot.create(
+          :disposition_task,
+          parent: hearing_task,
+          appeal: appeal,
+          status: Constants.TASK_STATUSES.in_progress
+        )
+      end
+
+      it "status is scheduled_hearing with hearing details" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:scheduled_hearing)
+        expect(status[:details][:type]).to eq("video")
+        expect(status[:details][:date]).to eq(hearing_scheduled_for.to_date)
+        expect(status[:details][:location]).to be_nil
+      end
+    end
+
     context "in an evidence submission window" do
       let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
@@ -1511,76 +1563,6 @@ describe Appeal do
         expect(subject.count).to eq(1)
         expect(subject[0][:type]).to eq("evidentiary_period")
         expect(subject[0][:details][:due_date]).to eq((receipt_date + 90.days).to_date)
-      end
-    end
-  end
-
-  describe ".sync_tracking_tasks" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    subject { appeal.sync_tracking_tasks }
-
-    context "when the appeal has no VSOs" do
-      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return([]) }
-
-      context "when there are no existing TrackVeteranTasks" do
-        it "does not create or cancel any TrackVeteranTasks" do
-          task_count_before = TrackVeteranTask.count
-
-          expect(subject).to eq([0, 0])
-          expect(TrackVeteranTask.count).to eq(task_count_before)
-        end
-      end
-
-      context "when there is an existing open TrackVeteranTasks" do
-        let(:vso) { FactoryBot.create(:vso) }
-        let!(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso) }
-
-        it "cancels old TrackVeteranTask, does not create any new tasks" do
-          active_task_count_before = TrackVeteranTask.active.count
-
-          expect(subject).to eq([0, 1])
-          expect(TrackVeteranTask.active.count).to eq(active_task_count_before - 1)
-        end
-      end
-    end
-
-    context "when the appeal has two VSOs" do
-      let(:representing_vsos) { FactoryBot.create_list(:vso, 2) }
-      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return(representing_vsos) }
-
-      context "when there are no existing TrackVeteranTasks" do
-        it "creates 2 new TrackVeteranTasks" do
-          task_count_before = TrackVeteranTask.count
-
-          expect(subject).to eq([2, 0])
-          expect(TrackVeteranTask.count).to eq(task_count_before + 2)
-        end
-      end
-
-      context "when there is an existing open TrackVeteranTasks for a different VSO" do
-        before do
-          FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: FactoryBot.create(:vso))
-        end
-
-        it "cancels old TrackVeteranTask, creates 2 new tasks" do
-          expect(subject).to eq([2, 1])
-        end
-      end
-
-      context "when there are already TrackVeteranTasks for both VSOs" do
-        before do
-          representing_vsos.each do |vso|
-            FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso)
-          end
-        end
-
-        it "does not create or cancel any TrackVeteranTasks" do
-          task_count_before = TrackVeteranTask.count
-
-          expect(subject).to eq([0, 0])
-          expect(TrackVeteranTask.count).to eq(task_count_before)
-        end
       end
     end
   end

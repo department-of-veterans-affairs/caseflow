@@ -197,7 +197,7 @@ describe HigherLevelReview do
   end
 
   context "#on_decision_issues_sync_processed" do
-    subject { higher_level_review.on_decision_issues_sync_processed(epe) }
+    subject { higher_level_review.on_decision_issues_sync_processed }
 
     let(:epe) do
       create(:end_product_establishment,
@@ -238,7 +238,7 @@ describe HigherLevelReview do
 
       let!(:claimant) do
         Claimant.create!(
-          review_request: higher_level_review,
+          decision_review: higher_level_review,
           participant_id: veteran.participant_id,
           payee_code: "10"
         )

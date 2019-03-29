@@ -36,6 +36,7 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
         dispatch({
           type: ACTIONS.SUBMIT_REVIEW_FAIL,
           payload: {
+            errorUUID: responseObject.error_uuid,
             responseErrorCodes
           },
           meta: {

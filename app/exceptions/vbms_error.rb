@@ -39,7 +39,13 @@ class VBMSError < RuntimeError
     "A duplicate claim for this EP code already exists in CorpDB" => "VBMS::DuplicateEPError",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/276980/
-    "User is not authorized." => "VBMS::UserNotAuthorizedError"
+    "User is not authorized." => "VBMS::UserNotAuthorizedError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/278342/
+    "Unable to establish claim: " => "VBMS::BadClaimError",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4164/events/279584/
+    "The contention is connected to an issue in ratings and cannot be deleted." => "VBMS::CannotDeleteContentionError"
   }.freeze
 
   class << self
@@ -68,14 +74,19 @@ class VBMSError < RuntimeError
   end
 end
 
-class VBMS::IncidentFlashError < StandardError; end
-class VBMS::TransientError < StandardError; end
-class VBMS::RatedIssueMissingError < StandardError; end
-class VBMS::DocumentTooBigError < StandardError; end
-class VBMS::SecurityError < StandardError; end
-class VBMS::DownForMaintenanceError < StandardError; end
-class VBMS::BadPostalCodeError < StandardError; end
-class VBMS::ClaimNotFoundError < StandardError; end
-class VBMS::PIFExistsForEPCodeError < StandardError; end
-class VBMS::DuplicateEPError < StandardError; end
-class VBMS::UserNotAuthorizedError < StandardError; end
+class Caseflow::Error::VBMS < StandardError
+  alias body message
+end
+class VBMS::IncidentFlashError < Caseflow::Error::VBMS; end
+class VBMS::TransientError < Caseflow::Error::VBMS; end
+class VBMS::RatedIssueMissingError < Caseflow::Error::VBMS; end
+class VBMS::DocumentTooBigError < Caseflow::Error::VBMS; end
+class VBMS::SecurityError < Caseflow::Error::VBMS; end
+class VBMS::DownForMaintenanceError < Caseflow::Error::VBMS; end
+class VBMS::BadPostalCodeError < Caseflow::Error::VBMS; end
+class VBMS::ClaimNotFoundError < Caseflow::Error::VBMS; end
+class VBMS::PIFExistsForEPCodeError < Caseflow::Error::VBMS; end
+class VBMS::DuplicateEPError < Caseflow::Error::VBMS; end
+class VBMS::UserNotAuthorizedError < Caseflow::Error::VBMS; end
+class VBMS::BadClaimError < Caseflow::Error::VBMS; end
+class VBMS::CannotDeleteContentionError < Caseflow::Error::VBMS; end
