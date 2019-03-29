@@ -13,7 +13,9 @@ class BvaDispatchTask < GenericTask
     def outcode(appeal, params, user)
       tasks = where(appeal: appeal, assigned_to: user)
 
-      throw_error_if_no_tasks_or_if_task_is_completed(tasks)
+      throw_error_if_no_tasks_or_if_task_is_completed(appeal, tasks, user)
+
+      task = tasks[0]
 
       params[:appeal_id] = appeal.id
       params[:appeal_type] = appeal.class.name
@@ -43,7 +45,7 @@ class BvaDispatchTask < GenericTask
       end
     end
 
-    def throw_error_if_no_tasks_or_if_task_is_completed(tasks)
+    def throw_error_if_no_tasks_or_if_task_is_completed(appeal, tasks, user)
       if tasks.count != 1
         fail Caseflow::Error::BvaDispatchTaskCountMismatch, appeal_id: appeal.id, user_id: user.id, tasks: tasks
       end
