@@ -7,7 +7,7 @@ class ChangeHearingDispositionTask < DispositionTask
   before_validation :set_assignee
 
   def available_actions(_user)
-    [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h, Constants.TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.to_h]
+    [Constants.TASK_ACTIONS.PLACE_HOLD.to_h, Constants.TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.to_h]
   end
 
   private
