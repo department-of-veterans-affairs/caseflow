@@ -488,8 +488,9 @@ RSpec.feature "Task queue" do
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
-        # Expect to see a success message and have the task in the database
+        # Expect to see a success message, the correct number of remaining tasks and have the task in the database
         expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 0))
         expect(judge_task.children.length).to eq(1)
         expect(judge_task.children.first).to be_a(ColocatedTask)
       end
@@ -524,6 +525,24 @@ RSpec.feature "Task queue" do
       it "should display both legacy and caseflow review tasks" do
         visit("/queue")
         expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
+      end
+
+      it "should be able to add admin actions from case details", focus: true do
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        visit("/queue")
+        click_on "#{legacy_review_task.veteran_full_name} (#{legacy_review_task.sanitized_vbms_id})"
+        # On case details page select the "Add admin action" option
+        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
+
+        # On case details page fill in the admin action
+        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        click_dropdown(text: action)
+        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
+
+        # Expect to see a success message and the correct number of remaining tasks
+        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 1))
       end
     end
   end
