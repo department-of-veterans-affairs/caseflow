@@ -8,7 +8,6 @@ end
 # Wraps known VBMS errors so that we can better triage what gets reported in Sentry alerts.
 # Inherits from RuntimeError like VBMS::HTTPError does.
 class VBMSError < RuntimeError
-
   class IncidentFlash < Caseflow::Error::VBMS; end
   class Transient < Caseflow::Error::VBMS; end
   class RatedIssueMissing < Caseflow::Error::VBMS; end
