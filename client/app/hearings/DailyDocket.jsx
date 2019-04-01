@@ -308,8 +308,12 @@ export class DailyDocket extends React.PureComponent {
   };
 
   getRepresentative = (hearing) => {
+    if (!hearing.representative) {
+      return <span>Loading rep...</span>;
+    }
+
     return <span>
-      {hearing.appeal_representative_name ? hearing.appeal_representative_name : hearing.representative}<br />
+      {hearing.representative}<br />
       {hearing.representative_name}
     </span>;
   };

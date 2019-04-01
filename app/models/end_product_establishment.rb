@@ -67,7 +67,7 @@ class EndProductEstablishment < ApplicationRecord
         modifier: end_product_to_establish.modifier
       )
     end
-  rescue VBMS::HTTPError, Caseflow::Error::VBMS => error
+  rescue VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
@@ -280,7 +280,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def on_decision_issue_sync_processed(processing_request_issue)
     if decision_issues_sync_complete?(processing_request_issue)
-      source.on_decision_issues_sync_processed(self)
+      source.on_decision_issues_sync_processed
     end
   end
 

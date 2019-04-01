@@ -8,7 +8,7 @@ FactoryBot.define do
     full_name { "Lauren Roth" }
 
     factory :default_user do
-      css_id { "DSUSER" }
+      css_id { "DEFAULT_USER" }
       full_name { "Lauren Roth" }
       email { "test@example.com" }
       roles { ["Certify Appeal"] }

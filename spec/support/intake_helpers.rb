@@ -397,31 +397,19 @@ module IntakeHelpers
                              rating_request_issue.contested_decision_issue_id])
   end
 
-  def setup_prior_claim_with_payee_code(appeal, veteran, prior_payee_code = "10")
-    prior_supplemental_claim = create(
-      :supplemental_claim,
-      veteran_file_number: veteran.file_number,
-      decision_review_remanded: appeal,
-      benefit_type: "insurance"
-    )
-
-    prior_sc_claimant = create(:claimant,
-                               decision_review: prior_supplemental_claim,
-                               participant_id: appeal.claimants.first.participant_id,
-                               payee_code: appeal.claimants.first.payee_code)
+  def setup_prior_claim_with_payee_code(decision_review, veteran, prior_payee_code = "10")
+    same_claimant = decision_review.claimants.first
 
     Generators::EndProduct.build(
       veteran_file_number: veteran.file_number,
       bgs_attrs: {
         benefit_claim_id: "claim_id",
-        claimant_first_name: prior_sc_claimant.first_name,
-        claimant_last_name: prior_sc_claimant.last_name,
+        claimant_first_name: same_claimant.first_name,
+        claimant_last_name: same_claimant.last_name,
         payee_type_code: prior_payee_code,
         claim_date: 5.days.ago
       }
     )
-
-    prior_supplemental_claim
   end
 
   def setup_prior_decision_issue_chain(decision_review, request_issue, veteran, initial_date)
