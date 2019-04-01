@@ -127,7 +127,7 @@ class ColocatedTask < Task
   def location_based_on_action
     case action.to_sym
     when :translation, :schedule_hearing
-      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled
+      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled && action == "schedule_hearing"
 
       return LegacyAppeal::LOCATION_CODES[action.to_sym]
     else
