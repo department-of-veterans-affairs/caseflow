@@ -13,6 +13,7 @@
     feedbackUrl: feedback_url,
     buildDate: build_date,
     hasCaseDetailsRole: (current_user.roles.include? "Case Details"),
+    flash: flash,
     featureToggles: {
       judge_case_review_checkout: FeatureToggle.enabled?(:judge_case_review_checkout, user: current_user),
       automatic_case_distribution: FeatureToggle.enabled?(:automatic_case_distribution, user: current_user),
