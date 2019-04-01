@@ -22,6 +22,13 @@ export const onReceiveDailyDocket = (dailyDocket, hearings) => ({
   }
 });
 
+export const onReceiveHearing = (hearing) => ({
+  type: ACTIONS.RECEIVE_HEARING,
+  payload: {
+    hearing
+  }
+});
+
 export const onReceiveSavedHearing = (hearing) => ({
   type: ACTIONS.RECEIVE_SAVED_HEARING,
   payload: {

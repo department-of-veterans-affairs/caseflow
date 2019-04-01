@@ -145,8 +145,16 @@ export default class DailyDocket extends React.Component {
       {hearing.docketNumber}
       <br /><br />
       {hearing.appellantAddressLine1}<br />
-      {hearing.appellantCity} {hearing.appellantState} {hearing.appellantZip}
-      <div>{hearing.representative} <br /> {hearing.representativeName}</div>
+      {
+        hearing.appellantCity ?
+          `${hearing.appellantCity} ${hearing.appellantState} ${hearing.appellantZip}` :
+          <div>Loading address...</div>
+      }
+      {
+        hearing.representative ?
+          <div>{hearing.representative} <br /> {hearing.representativeName}</div> :
+          <div>Loading rep...</div>
+      }
     </div>;
   };
 
