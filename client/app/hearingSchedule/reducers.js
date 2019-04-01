@@ -35,6 +35,14 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
       dailyDocket: { $set: action.payload.dailyDocket },
       hearings: { $set: action.payload.hearings }
     });
+  case ACTIONS.RECEIVE_HEARING:
+    return update(state, {
+      hearings: {
+        [action.payload.hearing.id]: {
+          $set: action.payload.hearing
+        }
+      }
+    });
   case ACTIONS.RECEIVE_SAVED_HEARING:
     return update(state, {
       hearings: {
@@ -55,7 +63,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
           $unset: [
             'editedNotes',
             'editedDisposition',
-            'editedDate',
             'editedTime',
             'editedOptionalTime',
             'editedRegionalOffice',

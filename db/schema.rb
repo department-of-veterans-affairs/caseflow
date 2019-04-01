@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190328163217) do
+ActiveRecord::Schema.define(version: 20190329211019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -130,17 +130,17 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
-  create_table "board_grant_effectuations", force: :cascade do |t|
-    t.bigint "appeal_id", null: false
-    t.string "contention_reference_id"
-    t.bigint "decision_document_id"
-    t.datetime "decision_sync_attempted_at"
-    t.string "decision_sync_error"
-    t.datetime "decision_sync_processed_at"
-    t.datetime "decision_sync_submitted_at"
-    t.bigint "end_product_establishment_id"
-    t.bigint "granted_decision_issue_id", null: false
-    t.datetime "last_submitted_at"
+  create_table "board_grant_effectuations", force: :cascade, comment: "Represents the work item of updating records in response to a granted issue on a Board appeal. Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks." do |t|
+    t.bigint "appeal_id", null: false, comment: "The ID of the appeal containing the granted issue being effectuated."
+    t.string "contention_reference_id", comment: "The ID of the contention created in VBMS. Indicates successful creation of the contention. If the EP has been rated, this contention could have been connected to a rating issue. That connection is used to map the rating issue back to the decision issue."
+    t.bigint "decision_document_id", comment: "The ID of the decision document which triggered this effectuation."
+    t.datetime "decision_sync_attempted_at", comment: "When the EP is cleared, an asyncronous job attempts to map the resulting rating issue back to the decision issue. Timestamp representing the time the job was last attempted."
+    t.string "decision_sync_error", comment: "Async job processing last error message. See description for decision_sync_attempted_at for the decision sync job description."
+    t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp. See description for decision_sync_attempted_at for the decision sync job description."
+    t.datetime "decision_sync_submitted_at", comment: "Async job processing start timestamp. See description for decision_sync_attempted_at for the decision sync job description."
+    t.bigint "end_product_establishment_id", comment: "The ID of the end product establishment created for this board grant effectuation."
+    t.bigint "granted_decision_issue_id", null: false, comment: "The ID of the granted decision issue."
+    t.datetime "last_submitted_at", comment: "Async job processing most recent start timestamp (TODO rename)"
     t.index ["appeal_id"], name: "index_board_grant_effectuations_on_appeal_id"
     t.index ["contention_reference_id"], name: "index_board_grant_effectuations_on_contention_reference_id", unique: true
     t.index ["decision_document_id"], name: "index_board_grant_effectuations_on_decision_document_id"
@@ -987,7 +987,7 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.string "selected_regional_office"
     t.string "station_id", null: false
     t.datetime "updated_at"
-    t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
+    t.index "upper((css_id)::text)", name: "index_users_unique_css_id", unique: true
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
