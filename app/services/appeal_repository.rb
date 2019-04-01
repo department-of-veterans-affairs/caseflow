@@ -324,7 +324,9 @@ class AppealRepository
     VACOLS::Case.where(bfhr: "1", bfcurloc: "57").or(VACOLS::Case.where(bfhr: "2", bfdocind: "V", bfcurloc: "57"))
       .joins(:folder).order("folder.tinum")
       .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
-        case_record.case_hearings.any? { |hearing| hearing.hearing_disp.nil? }
+        case_record.case_hearings.any? do |hearing|
+          hearing.hearing_disp.nil? && HearingDay::REQUEST_TYPES.value?(hearing.hearing_type)
+        end
       end
   end
 
