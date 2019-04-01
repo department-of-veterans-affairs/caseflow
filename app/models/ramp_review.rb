@@ -58,7 +58,7 @@ class RampReview < ApplicationRecord
     HIGHER_LEVEL_REVIEW_OPTIONS.include?(option_selected)
   end
 
-  def on_decision_issues_sync_processed(end_product_establishment)
+  def on_decision_issues_sync_processed
     # no-op, can be overwritten
   end
 

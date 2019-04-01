@@ -15,17 +15,16 @@ class HearingDayRepository
       end
     end
 
-    def load_days_for_range(start_date, end_date)
-      video_and_co = VACOLS::CaseHearing.load_days_for_range(start_date, end_date)
-      travel_board = VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
-      [video_and_co, travel_board]
+    def load_video_days_for_range(start_date, end_date)
+      VACOLS::CaseHearing.load_video_days_for_range(start_date, end_date)
     end
 
-    def load_days_for_regional_office(regional_office, start_date, end_date)
-      video_and_co = VACOLS::CaseHearing.load_days_for_regional_office(regional_office, start_date, end_date)
+    def load_travel_board_days_for_range(start_date, end_date)
+      VACOLS::TravelBoardSchedule.load_days_for_range(start_date, end_date)
+    end
 
-      travel_board = VACOLS::TravelBoardSchedule.load_days_for_regional_office(regional_office, start_date, end_date)
-      [video_and_co, travel_board]
+    def load_video_days_for_regional_office(regional_office, start_date, end_date)
+      VACOLS::CaseHearing.load_video_days_for_regional_office(regional_office, start_date, end_date)
     end
 
     def fetch_hearing_day_slots(regional_office)

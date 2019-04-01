@@ -36,13 +36,13 @@ RSpec.feature "Dispatch Stats Dashboard" do
     it "loads the correct stats" do
       User.authenticate!(roles: ["Manage Claim Establishment"])
       visit "/dispatch/stats"
-      expect(page).to have_content("All 2")
+      expect(page).to have_content("All\n2")
     end
   end
 
   scenario "Users without manager permissions cannot view page" do
     User.authenticate!
     visit "/dispatch/stats"
-    expect(page).to have_content("Drat! You aren't authorized to use this part of Caseflow yet.")
+    expect(page).to have_content("Drat!\nYou aren't authorized to use this part of Caseflow yet.")
   end
 end

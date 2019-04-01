@@ -314,12 +314,12 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: #{Time.zone.today.mdY}")
+        expect(page).to have_content("#{eligible_request_issue.contention_text}\nDecision date: #{Time.zone.today.mdY}")
         expect(page).to have_content(
           "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
         expect(page).to have_content(
-          "#{eligible_ri_before_ama.contention_text} Decision date:"
+          "#{eligible_ri_before_ama.contention_text}\nDecision date:"
         )
         expect(page).to have_content(
           "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
@@ -328,7 +328,7 @@ feature "Higher Level Review Edit issues" do
           "#{ri_legacy_issue_ineligible.contention_text} #{ineligible.legacy_appeal_not_eligible}"
         )
         expect(page).to have_content(
-          "#{ri_legacy_issue_eligible.contention_text} Decision date:"
+          "#{ri_legacy_issue_eligible.contention_text}\nDecision date:"
         )
       end
     end
@@ -864,7 +864,7 @@ feature "Higher Level Review Edit issues" do
       # add RAMP issue before AMA
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
-      expect(page).to have_content("Issue before AMA Activation from RAMP Decision date:")
+      expect(page).to have_content("Issue before AMA Activation from RAMP\nDecision date:")
 
       safe_click("#button-submit-update")
 
@@ -1095,7 +1095,7 @@ feature "Higher Level Review Edit issues" do
       scenario "remove an issue with dropdown" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
         expect(page).to have_content("PTSD denied")
-        click_remove_intake_issue_dropdown("0")
+        click_remove_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content("PTSD denied")
       end
     end
@@ -1184,6 +1184,7 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Remove review?")
         expect(page).to have_content("This will remove the review and cancel all the End Products associated with it")
         click_intake_confirm
+        expect(page).to have_content("Review Removed")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         sleep 1
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
@@ -1191,9 +1192,19 @@ feature "Higher Level Review Edit issues" do
     end
 
     context "when all caseflow decision reviews" do
+      before do
+        education_org = create(:business_line, name: "Education", url: "education")
+        OrganizationsUser.add_user_to_organization(current_user, education_org)
+        FeatureToggle.enable!(:decision_reviews)
+      end
+
+      after do
+        FeatureToggle.disable!(:decision_reviews)
+      end
+
       let!(:benefit_type) { "education" }
 
-      scenario "remove all caseflow decisions reviews" do
+      scenario "show alert message when all decision reviews are removed " do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
         higher_level_review.request_issues.length.times do
@@ -1205,9 +1216,9 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Remove review?")
         expect(page).to have_content("This review and all tasks associated with it will be removed.")
         click_intake_confirm
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         sleep 1
-        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(current_path).to eq("/decision_reviews/education")
+        expect(page).to have_content("Review Removed")
       end
     end
 

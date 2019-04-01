@@ -33,8 +33,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
   case ACTIONS.RECEIVE_DAILY_DOCKET:
     return update(state, {
       dailyDocket: { $set: action.payload.dailyDocket },
-      hearings: { $set: action.payload.hearings },
-      hearingDayOptions: { $set: action.payload.hearingDayOptions }
+      hearings: { $set: action.payload.hearings }
     });
   case ACTIONS.RECEIVE_SAVED_HEARING:
     return update(state, {
@@ -56,7 +55,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
           $unset: [
             'editedNotes',
             'editedDisposition',
-            'editedDate',
             'editedTime',
             'editedOptionalTime',
             'editedRegionalOffice',
@@ -113,24 +111,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.HEARING_REGIONAL_OFFICE_UPDATE:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedRegionalOffice: { $set: action.payload.regionalOffice },
-          edited: { $set: true }
-        }
-      }
-    });
-  case ACTIONS.HEARING_DATE_UPDATE:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedDate: { $set: action.payload.date },
-          edited: { $set: true }
-        }
-      }
-    });
   case ACTIONS.HEARING_TIME_UPDATE:
     return update(state, {
       hearings: {
@@ -140,16 +120,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.HEARING_OPTIONAL_TIME:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedOptionalTime: { $set: action.payload.optionalTime },
-          edited: { $set: true }
-        }
-      }
-    });
-
   case ACTIONS.INVALID_FORM:
     return update(state, {
       hearings: {

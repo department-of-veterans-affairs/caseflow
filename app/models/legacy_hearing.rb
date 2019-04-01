@@ -55,6 +55,15 @@ class LegacyHearing < ApplicationRecord
     user
   end
 
+  def assigned_to_vso?(user)
+    appeal.tasks.any? do |task|
+      task.type = TrackVeteranTask.name &&
+                  task.assigned_to.is_a?(Vso) &&
+                  task.assigned_to.user_has_access?(user) &&
+                  task.active?
+    end
+  end
+
   def venue
     self.class.venues[venue_key]
   end
@@ -100,6 +109,8 @@ class LegacyHearing < ApplicationRecord
       "Board of Veterans' Appeals in Washington, DC"
     elsif venue
       venue[:label]
+    elsif hearing_location
+      hearing_location.name
     end
   end
 
@@ -189,7 +200,7 @@ class LegacyHearing < ApplicationRecord
   cache_attribute :cached_number_of_documents do
     begin
       number_of_documents
-    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError
       nil
     end
   end

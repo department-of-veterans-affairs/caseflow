@@ -38,7 +38,7 @@ class UnassignedCasesPage extends React.PureComponent {
           <AssignWidget
             userId={userId}
             previousAssigneeId={userId}
-            onTaskAssignment={(params) => this.props.initialAssignTasksToUser(params)}
+            onTaskAssignment={this.props.initialAssignTasksToUser}
             selectedTasks={selectedTasks}
             showRequestCasesButton />
           {this.props.distributionCompleteCasesLoading &&

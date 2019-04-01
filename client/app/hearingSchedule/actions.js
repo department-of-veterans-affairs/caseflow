@@ -14,12 +14,11 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
-export const onReceiveDailyDocket = (dailyDocket, hearings, hearingDayOptions) => ({
+export const onReceiveDailyDocket = (dailyDocket, hearings) => ({
   type: ACTIONS.RECEIVE_DAILY_DOCKET,
   payload: {
     dailyDocket,
-    hearings,
-    hearingDayOptions
+    hearings
   }
 });
 
@@ -79,14 +78,6 @@ export const onHearingDispositionUpdate = (hearingId, disposition) => ({
   }
 });
 
-export const onHearingDateUpdate = (hearingId, date) => ({
-  type: ACTIONS.HEARING_DATE_UPDATE,
-  payload: {
-    hearingId,
-    date
-  }
-});
-
 export const onHearingLocationUpdate = (hearingId, location) => ({
   type: ACTIONS.HEARING_LOCATION_UPDATE,
   payload: {
@@ -95,27 +86,11 @@ export const onHearingLocationUpdate = (hearingId, location) => ({
   }
 });
 
-export const onHearingRegionalOfficeUpdate = (hearingId, regionalOffice) => ({
-  type: ACTIONS.HEARING_REGIONAL_OFFICE_UPDATE,
-  payload: {
-    hearingId,
-    regionalOffice
-  }
-});
-
 export const onHearingTimeUpdate = (hearingId, time) => ({
   type: ACTIONS.HEARING_TIME_UPDATE,
   payload: {
     hearingId,
     time
-  }
-});
-
-export const onHearingOptionalTime = (hearingId, optionalTime) => ({
-  type: ACTIONS.HEARING_OPTIONAL_TIME,
-  payload: {
-    hearingId,
-    optionalTime
   }
 });
 
