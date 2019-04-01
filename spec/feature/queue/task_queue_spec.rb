@@ -420,10 +420,10 @@ RSpec.feature "Task queue" do
     end
   end
   describe "VLJ support staff schedule hearing action" do
-    let!(:attorney) { FactoryBot.create(:user) }
-    let!(:vacols_case) { create(:case) }
+    let(:attorney) { FactoryBot.create(:user) }
+    let(:vacols_case) { create(:case) }
     let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
-    let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
+    let(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
     let!(:vlj_support_staffer) { FactoryBot.create(:user) }
 
     before do
