@@ -28,18 +28,18 @@ describe HearingDispositionChangeJob do
     FactoryBot.create(:disposition_task, appeal: appeal, parent: parent_hearing_task)
   end
 
-  def create_disposition_task_for_legacy_hearings_ancestry
+  def create_disposition_task_for_legacy_hearings_ancestry(associated_hearing: nil)
     appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case))
     root_task = FactoryBot.create(:root_task, appeal: appeal)
     distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
     parent_hearing_task = FactoryBot.create(:hearing_task, appeal: appeal, parent: distribution_task)
 
-    hearing = FactoryBot.create(
-      :legacy_hearing,
-      appeal: appeal
-    )
-    HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent_hearing_task)
-    DispositionTask.create!(appeal: appeal, parent: parent_hearing_task, assigned_to: Bva.singleton)
+    hearing_args = { appeal: appeal }
+    hearing_args[:case_hearing] = associated_hearing if associated_hearing
+    hearing = FactoryBot.create(:legacy_hearing, hearing_args)
+
+    FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
+    FactoryBot.create(:disposition_task, appeal: appeal, parent: parent_hearing_task)
   end
 
   describe ".update_task_by_hearing_disposition" do
@@ -52,7 +52,7 @@ describe HearingDispositionChangeJob do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
         it "returns a label matching the hearing disposition and call DispositionTask.hold!" do
           expect(task).to receive(:hold!).exactly(1).times
-          expect(subject).to eq(disposition)
+          expect(subject).to eq(disposition.to_sym)
         end
       end
 
@@ -60,7 +60,7 @@ describe HearingDispositionChangeJob do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
         it "returns a label matching the hearing disposition and call DispositionTask.cancel!" do
           expect(task).to receive(:cancel!).exactly(1).times
-          expect(subject).to eq(disposition)
+          expect(subject).to eq(disposition.to_sym)
         end
       end
 
@@ -68,7 +68,7 @@ describe HearingDispositionChangeJob do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
         it "returns a label matching the hearing disposition and not change the task" do
           attributes_before = task.attributes
-          expect(subject).to eq(disposition)
+          expect(subject).to eq(disposition.to_sym)
           expect(task.attributes).to eq(attributes_before)
         end
       end
@@ -77,7 +77,7 @@ describe HearingDispositionChangeJob do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
         it "returns a label matching the hearing disposition and call DispositionTask.no_show!" do
           expect(task).to receive(:no_show!).exactly(1).times
-          expect(subject).to eq(disposition)
+          expect(subject).to eq(disposition.to_sym)
         end
       end
 
@@ -111,6 +111,27 @@ describe HearingDispositionChangeJob do
           attributes_before = task.attributes
           expect(subject).to eq(:between_one_and_two_days_old)
           expect(task.attributes).to eq(attributes_before)
+        end
+      end
+    end
+
+    context "when hearing is a LegacyHearing" do
+      let!(:task) { create_disposition_task_for_legacy_hearings_ancestry(associated_hearing: hearing) }
+
+      context "when disposition is held" do
+        let(:hearing) { FactoryBot.create(:case_hearing, :disposition_held) }
+        let(:label) { Constants.HEARING_DISPOSITION_TYPES.held.to_sym }
+        it "returns a label matching the hearing disposition and call DispositionTask.hold!" do
+          expect(task).to receive(:hold!).exactly(1).times
+          expect(subject).to eq(label)
+        end
+      end
+
+      context "when hearing does not have a disposition" do
+        let(:hearing) { FactoryBot.create(:case_hearing) }
+        let(:label) { :between_one_and_two_days_old }
+        it "returns a label indicating that the hearing has no disposition" do
+          expect(subject).to eq(label)
         end
       end
     end
