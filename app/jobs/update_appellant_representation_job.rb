@@ -21,6 +21,8 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     appeals_to_update.each do |a|
       sync_record = a.record_synced_by_job.find_or_create_by(sync_job_name: UpdateAppellantRepresentationJob.name)
 
+      sync_record.submit_for_processing! unless sync_record.submitted?
+
       sync_record.attempted!
       appeal_new_task_count, appeal_closed_task_count = TrackVeteranTask.sync_tracking_tasks(a)
       sync_record.processed!
