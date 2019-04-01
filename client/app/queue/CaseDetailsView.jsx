@@ -31,9 +31,6 @@ import {
   appealWithDetailSelector
 } from './selectors';
 
-import { ACTIONS } from '../intakeEdit/constants';
-import { FORM_TYPES } from '../intake/constants';
-
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
   border: 0,
@@ -76,21 +73,7 @@ class CaseDetailsView extends React.PureComponent {
       success
     } = this.props;
 
-    let successAlert = null;
-    const editMessage = `You have Successfully removed ${FORM_TYPES.APPEAL.name}
-           for ${appeal.veteranFullName}'s (ID #${appeal.veteranFileNumber}).`;
-
-    if (ACTIONS.REQUEST_ISSUES_UPDATE_SUCCEED) {
-      successAlert = <div {...alertPaddingStyle}>
-        <Alert title= "Review Removed"
-          type="success"
-          message= {editMessage}
-          scrollOnAlert={false} />
-      </div>;
-    }
-
     return <React.Fragment>
-      {successAlert}
       {error && <div {...alertPaddingStyle}><Alert title={error.title} type="error">
         {error.detail}
       </Alert></div>}
