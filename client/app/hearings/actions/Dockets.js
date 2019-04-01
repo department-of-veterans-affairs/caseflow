@@ -298,8 +298,8 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
         dispatch(populateDailyDocket(response.body.hearingDay, response.body.dailyDocket, date));
 
         _.each(response.body.dailyDocket, (hearing) => {
-          ApiUtil.get(`/hearings/${hearing.external_id}`).then((response) => {
-            const resp = JSON.parse(response.text);
+          ApiUtil.get(`/hearings/${hearing.external_id}`).then((hearingrResponse) => {
+            const resp = JSON.parse(hearingrResponse.text);
 
             dispatch(handleUpdateHearingSuccess(resp, date));
           }).
