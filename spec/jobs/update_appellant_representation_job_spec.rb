@@ -66,7 +66,7 @@ describe UpdateAppellantRepresentationJob do
         UpdateAppellantRepresentationJob.perform_now
 
         legacy_appeals.each do |appeal|
-          expect(appeal.reload.record_synced_by_job.first.processed?).to eq(true)
+          expect(appeal.reload.record_synced_by_job.first.processed_at.nil?).to eq(false)
           expect(appeal.tasks.where(type: TrackVeteranTask.name).first.assigned_to)
             .to eq(vso_for_legacy_appeal[appeal.id].first)
         end
