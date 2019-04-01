@@ -133,6 +133,17 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       docketServerError: { $set: action.payload.err }
     });
 
+  case Constants.HANDLE_UPDATE_HEARING_SUCCESS:
+    return update(state, {
+      dailyDocket: {
+        [action.payload.date]: {
+          [action.payload.hearing.id]: {
+            $set: action.payload.hearing
+          }
+        }
+      }
+    });
+
   case Constants.HANDLE_SAVE_HEARING_SUCCESS:
     return update(state, {
       dailyDocket: {

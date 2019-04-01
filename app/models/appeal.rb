@@ -268,7 +268,13 @@ class Appeal < DecisionReview
     claimants.first
   end
 
-  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
+  delegate :first_name,
+           :last_name,
+           :middle_name,
+           :name_suffix,
+           :city,
+           :zip,
+           :state, to: :appellant, prefix: true, allow_nil: true
 
   def cavc
     "not implemented for AMA"
