@@ -99,7 +99,7 @@ export class DailyDocketContainer extends React.Component {
       const hearings = _.keyBy(resp.hearingDay.hearings, 'id');
       const dailyDocket = _.omit(resp.hearingDay, ['hearings']);
 
-      this.props.onReceiveDailyDocket(dailyDocket, hearings, hearingDayOptions);
+      this.props.onReceiveDailyDocket(dailyDocket, hearings);
 
       this.loadHearingDetails(resp.hearingDay.hearings);
     });

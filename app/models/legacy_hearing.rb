@@ -271,7 +271,7 @@ class LegacyHearing < ApplicationRecord
   end
   # rubocop:enable Metrics/MethodLength
 
-  alias :quick_to_hash :to_hash
+  alias quick_to_hash to_hash
 
   def fetch_veteran_age
     veteran_age
