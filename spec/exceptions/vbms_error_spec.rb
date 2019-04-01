@@ -12,6 +12,14 @@ describe VBMSError do
       expect(vbms_error.message).to eq("oop!")
       expect(vbms_error.backtrace).to eq(trace)
     end
+
+    it "copies over code and body" do
+      orig_error = VBMS::HTTPError.new(500, "oops")
+      vbms_error = described_class.new(orig_error)
+
+      expect(vbms_error.body).to eq("oops")
+      expect(vbms_error.code).to eq(500)
+    end
   end
 
   describe ".from_vbms_http_error" do
