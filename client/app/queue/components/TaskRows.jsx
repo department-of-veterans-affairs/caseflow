@@ -8,7 +8,7 @@ import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
 import { GrayDot, GreenCheckmark } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
-import { taskIsOnHold } from '../utils';
+import { taskIsOnHold, sortTaskList } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -207,6 +207,7 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
     const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
+    const sortedTaskList = sortTaskList(taskList);
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
@@ -225,7 +226,7 @@ class TaskRows extends React.PureComponent {
           } <br />
         </td>
       </tr> }
-      { taskList.map((task, index) =>
+      { sortedTaskList.map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
@@ -286,4 +287,4 @@ const mapStateToProps = () => {
   };
 };
 
-export default (withRouter(connect(mapStateToProps, null)(TaskRows)): React.ComponentType<>);
+export default (withRouter(connect(mapStateToProps, null)(TaskRows)));

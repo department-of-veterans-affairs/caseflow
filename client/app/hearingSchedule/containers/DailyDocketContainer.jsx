@@ -17,11 +17,9 @@ import {
   onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
-  onHearingDateUpdate,
   onTranscriptRequestedUpdate,
   onHearingTimeUpdate,
   onHearingLocationUpdate,
-  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -99,8 +97,7 @@ export class DailyDocketContainer extends React.Component {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       const hearings = _.keyBy(resp.hearingDay.hearings, 'id');
-      const hearingDayOptions = _.keyBy(resp.hearingDay.hearingDayOptions, 'id');
-      const dailyDocket = _.omit(resp.hearingDay, ['hearings', 'hearingDayOptions']);
+      const dailyDocket = _.omit(resp.hearingDay, ['hearings']);
 
       this.props.onReceiveDailyDocket(dailyDocket, hearings, hearingDayOptions);
 
@@ -108,20 +105,16 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  getHearingDay = (hearing) => {
-    if (hearing.editedDate) {
-      return hearing.editedDate;
-    }
-
+  getHearingDate = (hearing) => {
     return {
-      timezone: hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone,
+      timezone: hearing.readableRequestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone,
       scheduledFor: hearing.scheduledFor
     };
   }
 
   getTimezoneOffsetScheduledTimeObject = (hearing) => {
     const hearingTime = this.getScheduledTime(hearing);
-    const hearingDay = this.getHearingDay(hearing);
+    const hearingDay = this.getHearingDate(hearing);
 
     return getAssignHearingTime(hearingTime, hearingDay);
   }
@@ -131,7 +124,7 @@ export class DailyDocketContainer extends React.Component {
       return hearing.editedTime;
     }
 
-    const timezone = this.getHearingDay(hearing).timezone;
+    const timezone = this.getHearingDate(hearing).timezone;
 
     return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
   }
@@ -231,7 +224,7 @@ export class DailyDocketContainer extends React.Component {
 
           editedHearingDay.requestType = this.props.dailyDocket.requestType;
 
-          this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings, this.props.hearingDayOptions);
+          this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings);
         }, () => {
           this.setState({ serverError: true });
         });
@@ -286,14 +279,11 @@ export class DailyDocketContainer extends React.Component {
       <DailyDocket
         dailyDocket={this.props.dailyDocket}
         hearings={this.props.hearings}
-        hearingDayOptions={this.props.hearingDayOptions}
         onHearingNotesUpdate={this.props.onHearingNotesUpdate}
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
-        onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
         onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
         onHearingLocationUpdate={this.props.onHearingLocationUpdate}
-        onHearingRegionalOfficeUpdate={this.props.onHearingRegionalOfficeUpdate}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
@@ -334,7 +324,6 @@ export class DailyDocketContainer extends React.Component {
 const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
   hearings: state.hearingSchedule.hearings,
-  hearingDayOptions: state.hearingSchedule.hearingDayOptions,
   saveSuccessful: state.hearingSchedule.saveSuccessful,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
@@ -356,11 +345,9 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCancelHearingUpdate,
   onHearingNotesUpdate,
   onHearingDispositionUpdate,
-  onHearingDateUpdate,
   onHearingTimeUpdate,
   onTranscriptRequestedUpdate,
   onHearingLocationUpdate,
-  onHearingRegionalOfficeUpdate,
   onInvalidForm,
   selectHearingRoom,
   selectVlj,

@@ -6,12 +6,18 @@ import { PAGE_PATHS, FORM_TYPES } from '../constants';
 import _ from 'lodash';
 import Alert from '../../components/Alert';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
+import SmallLoader from '../../components/SmallLoader';
+import { LOGO_COLORS } from '../../constants/AppConstants';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
-  const leadMessageArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
+  const editMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
+
+  const removalMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) ${formName} has been removed.`];
+
+  const leadMessageArr = requestIssues.length === 0 ? removalMessage : editMessage;
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
@@ -109,11 +115,19 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       formType,
       issuesBefore,
       issuesAfter,
-      informalConference
+      informalConference,
+      redirectTo
     } = this.props;
 
     if (!issuesBefore) {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
+    }
+
+    if (redirectTo && formType !== FORM_TYPES.APPEAL.key) {
+      window.location.href = redirectTo;
+
+      return <SmallLoader message="Loading ..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
+
     }
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
@@ -121,7 +135,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
 
     return <div>
       <StatusMessage
-        title="Claim Issues Saved"
+        title= {issuesAfter.length === 0 ? 'Review Removed' : 'Claim Issues Saved'}
         type="success"
         leadMessageList={
           leadMessageList({
@@ -152,6 +166,7 @@ export default connect(
     veteran: state.veteran,
     issuesBefore: state.issuesBefore,
     issuesAfter: state.issuesAfter,
-    informalConference: state.informalConference
+    informalConference: state.informalConference,
+    redirectTo: state.redirectTo
   })
 )(DecisionReviewEditCompletedPage);

@@ -22,7 +22,7 @@ describe VBMSError do
         let(:error) { VBMS::HTTPError.new(500, err_str) }
 
         it "re-casts the exception to a #{err_class}" do
-          expect(subject).to be_a(err_class.constantize)
+          expect(subject).to be_a("VBMSError::#{err_class}".constantize)
         end
       end
     end
