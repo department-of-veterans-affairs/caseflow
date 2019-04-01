@@ -351,6 +351,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveDailyDocket,
   onReceiveHearing,
+  onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
   onHearingNotesUpdate,

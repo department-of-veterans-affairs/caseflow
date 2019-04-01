@@ -155,8 +155,6 @@ class Hearing < ApplicationRecord
         :external_id,
         :veteran_first_name,
         :veteran_last_name,
-        :appellant_first_name,
-        :appellant_last_name,
         :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
@@ -170,14 +168,14 @@ class Hearing < ApplicationRecord
         :transcription,
         :docket_number,
         :docket_name,
-        :military_service,
         :current_issue_count,
         :location,
         :worksheet_issues,
         :closest_regional_office,
         :available_hearing_locations,
         :disposition_editable
-      ]
+      ],
+      except: [:military_service]
     )
   end
   # rubocop:enable Metrics/MethodLength
