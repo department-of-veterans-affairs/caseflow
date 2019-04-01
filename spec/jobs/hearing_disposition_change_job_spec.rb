@@ -21,7 +21,24 @@ describe HearingDispositionChangeJob do
       hearing.update!(hearing_day: hearing_day)
     end
 
-    HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent_hearing_task) if associated_hearing
+    if associated_hearing
+      FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
+    end
+
+    FactoryBot.create(:disposition_task, appeal: appeal, parent: parent_hearing_task)
+  end
+
+  def create_disposition_task_for_legacy_hearings_ancestry
+    appeal = FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case))
+    root_task = FactoryBot.create(:root_task, appeal: appeal)
+    distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
+    parent_hearing_task = FactoryBot.create(:hearing_task, appeal: appeal, parent: distribution_task)
+
+    hearing = FactoryBot.create(
+      :legacy_hearing,
+      appeal: appeal
+    )
+    HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent_hearing_task)
     DispositionTask.create!(appeal: appeal, parent: parent_hearing_task, assigned_to: Bva.singleton)
   end
 
@@ -168,7 +185,7 @@ describe HearingDispositionChangeJob do
     context "when there is an error outside of the loop" do
       let(:error_msg) { "FAKE ERROR MESSAGE HERE" }
 
-      before { allow(DispositionTask).to receive(:ready_for_action).and_raise(error_msg) }
+      before { allow(DispositionTask).to receive(:active).and_raise(error_msg) }
 
       it "sends the correct number of arguments to log_info" do
         args = Array.new(5, anything)
@@ -259,6 +276,47 @@ describe HearingDispositionChangeJob do
       end
 
       it "sends the correct arguments to log_info" do
+        expect_any_instance_of(HearingDispositionChangeJob).to(
+          receive(:log_info).with(anything, task_count_for, error_count, anything).exactly(1).times
+        )
+        subject
+      end
+    end
+
+    context "when we encounter a task related to a legacy hearing that has been deleted from VACOLS" do
+      let(:held_hearings_count) { 14 }
+      let(:error_count) { 2 }
+      let(:task_count_for) do
+        {
+          Constants.HEARING_DISPOSITION_TYPES.held.to_sym => held_hearings_count,
+          Constants.HEARING_DISPOSITION_TYPES.cancelled.to_sym => 0,
+          Constants.HEARING_DISPOSITION_TYPES.postponed.to_sym => 0,
+          Constants.HEARING_DISPOSITION_TYPES.no_show.to_sym => 0,
+          between_one_and_two_days_old: 0,
+          stale: 0,
+          unknown_disposition: 0
+        }
+      end
+
+      before do
+        ready_for_action_time = 36.hours.ago
+        held_hearings_count.times do
+          create_disposition_task_ancestry(
+            disposition: Constants.HEARING_DISPOSITION_TYPES.held.to_sym,
+            scheduled_for: ready_for_action_time,
+            associated_hearing: true
+          )
+        end
+
+        error_count.times do
+          disposition_task = create_disposition_task_for_legacy_hearings_ancestry
+
+          # Remove the hearing from the VACOLS database so we fail when we try to access a VACOLS field for the hearing.
+          VACOLS::CaseHearing.load_hearing(disposition_task.hearing.vacols_id).destroy
+        end
+      end
+
+      it "runs successfully and notes that there was an error" do
         expect_any_instance_of(HearingDispositionChangeJob).to(
           receive(:log_info).with(anything, task_count_for, error_count, anything).exactly(1).times
         )
