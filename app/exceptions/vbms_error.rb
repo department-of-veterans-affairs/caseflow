@@ -22,9 +22,14 @@ class VBMSError < RuntimeError
   class BadClaim < Caseflow::Error::VBMS; end
   class CannotDeleteContention < Caseflow::Error::VBMS; end
 
+  attr_accessor :body, :code, :request
+
   def initialize(error)
     super(error.message).tap do |result|
       result.set_backtrace(error.backtrace)
+      result.body = error.try(:body)
+      result.code = error.try(:code)
+      result.request = error.try(:request)
     end
   end
 
