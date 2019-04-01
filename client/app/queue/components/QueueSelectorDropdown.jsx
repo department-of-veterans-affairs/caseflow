@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 
-import DropdownButton from '../../components/DropdownButton'
+import DropdownButton from '../../components/DropdownButton';
 import COPY from '../../../COPY.json';
 
 // NOTE: parent container needs to be given 'position: relative'
