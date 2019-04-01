@@ -151,7 +151,7 @@ describe Task do
     end
 
     context "when there are duplicate organization tasks" do
-      it "returns true when the task is assigned to an organization" do
+      it "returns true when there is a duplicate task assigned to an organization" do
         expect(quality_review_organization_task.duplicate_org_task).to eq(true)
       end
 
