@@ -21,21 +21,21 @@ describe Appeal do
     context "#all_priority" do
       subject { Appeal.all_priority }
       it "returns aod appeals due to age and motion" do
-        expect(subject.include?(aod_age_appeal)).to eq(true)
-        expect(subject.include?(aod_motion_appeal)).to eq(true)
-        expect(subject.include?(appeal)).to eq(false)
-        expect(subject.include?(denied_aod_motion_appeal)).to eq(false)
-        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
+        expect(subject).to include aod_age_appeal
+        expect(subject).to include aod_motion_appeal
+        expect(subject).to_not include appeal
+        expect(subject).to_not include denied_aod_motion_appeal
+        expect(subject).to_not include inapplicable_aod_motion_appeal
       end
     end
 
     context "#all_nonpriority" do
       subject { Appeal.all_nonpriority }
       it "returns non aod appeals" do
-        expect(subject.include?(appeal)).to eq(true)
-        expect(subject.include?(aod_motion_appeal)).to eq(false)
-        expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
-        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
+        expect(subject).to include appeal
+        expect(subject).to_not include aod_motion_appeal
+        expect(subject).to include denied_aod_motion_appeal
+        expect(subject).to include inapplicable_aod_motion_appeal
       end
     end
   end
@@ -46,8 +46,8 @@ describe Appeal do
 
     subject { Appeal.active }
     it "returns only active appeals" do
-      expect(subject.include?(active_appeal)).to eq(true)
-      expect(subject.include?(inactive_appeal)).to eq(false)
+      expect(subject).to include active_appeal
+      expect(subject).to_not include inactive_appeal
     end
   end
 
@@ -69,9 +69,9 @@ describe Appeal do
         RootTask.create_root_and_sub_tasks!(appeal)
       end
 
-      expect(subject.include?(direct_review_appeal)).to eq(true)
-      expect(subject.include?(evidence_submission_appeal)).to eq(false)
-      expect(subject.include?(hearing_appeal)).to eq(false)
+      expect(subject).to include direct_review_appeal
+      expect(subject).to_not include evidence_submission_appeal
+      expect(subject).to_not include hearing_appeal
     end
 
     context "if mail tasks exist" do
@@ -110,13 +110,13 @@ describe Appeal do
       end
 
       it "does not return appeals with open blocking mail tasks" do
-        expect(subject.include?(blocked_appeal)).to eq(false)
+        expect(subject).to_not include blocked_appeal
       end
       it "returns appeals with open nonblocking mail tasks" do
-        expect(subject.include?(nonblocked_appeal)).to eq(true)
+        expect(subject).to include nonblocked_appeal
       end
       it "does not return appeals with completed blocking mail tasks " do
-        expect(subject.include?(nonblocked_appeal2)).to eq(true)
+        expect(subject).to include nonblocked_appeal2
       end
     end
   end
