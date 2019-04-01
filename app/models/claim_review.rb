@@ -126,6 +126,14 @@ class ClaimReview < DecisionReview
     end
   end
 
+  def sync_end_product_establishments!
+    end_product_establishments.each do |epe|
+      epe.veteran = veteran
+      binding.pry
+      epe.sync!
+    end
+  end
+
   def cleared_ep?
     end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
