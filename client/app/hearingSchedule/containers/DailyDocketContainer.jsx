@@ -89,20 +89,16 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  getHearingDay = (hearing) => {
-    if (hearing.editedDate) {
-      return hearing.editedDate;
-    }
-
+  getHearingDate = (hearing) => {
     return {
-      timezone: hearing.requestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone,
+      timezone: hearing.readableRequestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone,
       scheduledFor: hearing.scheduledFor
     };
   }
 
   getTimezoneOffsetScheduledTimeObject = (hearing) => {
     const hearingTime = this.getScheduledTime(hearing);
-    const hearingDay = this.getHearingDay(hearing);
+    const hearingDay = this.getHearingDate(hearing);
 
     return getAssignHearingTime(hearingTime, hearingDay);
   }
@@ -112,7 +108,7 @@ export class DailyDocketContainer extends React.Component {
       return hearing.editedTime;
     }
 
-    const timezone = this.getHearingDay(hearing).timezone;
+    const timezone = this.getHearingDate(hearing).timezone;
 
     return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
   }
