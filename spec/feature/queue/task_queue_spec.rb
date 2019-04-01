@@ -440,8 +440,7 @@ RSpec.feature "Task queue" do
                                               }], attorney)
       end
 
-      it "the new options should appear when a hearing has been scheduled,
-        and the bfcurloc in vacols should be updated to 57" do
+      it "the location is updated to 57 when a user assigns a colocated task back to the hearing team" do
         visit("/queue/appeals/#{appeal.external_id}")
         find(".Select-control", text: "Select an action…").click
         expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
@@ -450,6 +449,7 @@ RSpec.feature "Task queue" do
         expect(page).to have_content("Bob Smith's case has been sent to the Schedule hearing team")
         expect(vacols_case.reload.bfcurloc).to eq("57")
       end
+
       it "the case should be returned in the attorneys queue when canceled" do
         visit("/queue/appeals/#{appeal.external_id}")
         find(".Select-control", text: "Select an action…").click
