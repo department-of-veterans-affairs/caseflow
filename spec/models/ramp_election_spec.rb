@@ -198,7 +198,7 @@ describe RampElection do
 
         context "when the error is caught by VBMSError wrapper" do
           let(:vbms_error) do
-            VBMS::DuplicateEPError.new("A duplicate claim for this EP code already exists in CorpDB.")
+            VBMSError::DuplicateEP.new("A duplicate claim for this EP code already exists in CorpDB.")
           end
 
           it "raises a parsed EstablishClaimFailedInVBMS error" do
