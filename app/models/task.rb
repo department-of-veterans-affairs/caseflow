@@ -265,7 +265,7 @@ class Task < ApplicationRecord
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
     descendant_ids = descendants.pluck(:id)
-    Task.active.where(id: descendant_ids).update_all(status: Constants.TASK_STATUSES.cancelled)
+    Task.active.where(id: descendant_ids).update_all(closed_at: Time.zone.now)
   end
 
   def assign_to_organization_data(_user = nil)
