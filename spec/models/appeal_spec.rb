@@ -514,6 +514,24 @@ describe Appeal do
         expect(appeal.vsos.count).to eq(1)
         expect(appeal.vsos.first.name).to eq("Paralyzed Veterans Of America")
       end
+
+      context "when there is no VSO" do
+        let(:participant_id_with_nil) { "1234" }
+        before do
+          allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+            .with([participant_id_with_nil]).and_return(
+              participant_id_with_pva => nil
+            )
+        end
+        let(:appeal) do
+          create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_nil)])
+        end
+        let!(:vsos) { Vso.create(name: "Test VSO") }
+
+        it "does not return VSOs with nil participant_id" do
+          expect(appeal.vsos).to eq([])
+        end
+      end
     end
   end
 
