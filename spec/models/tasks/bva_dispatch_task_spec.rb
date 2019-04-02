@@ -45,7 +45,8 @@ describe BvaDispatchTask do
   describe ".outcode" do
     let(:user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
-    let(:root_task_legacy) { FactoryBot.create(:root_task_legacy) }
+    let(:the_case) { FactoryBot.create(:case) }
+    let!(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: the_case) }
     let(:citation_number) { "A18123456" }
     let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
     let(:decision_date) { Date.new(1989, 12, 13).to_s }
@@ -95,28 +96,21 @@ describe BvaDispatchTask do
       end
 
       context "when :decision_document_upload feature is enabled and it's legacy appeal" do
-        before { BvaDispatchTask.create_from_root_task(root_task_legacy) }
         let(:params_legacy) do
           p = params.clone
-          p[:appeal_id] = root_task_legacy.appeal.external_id
+          p[:appeal_id] = legacy_appeal.id
           p
         end
 
         it "should not complete the BvaDispatchTask and the task assigned to the BvaDispatch org" do
           expect do
-            BvaDispatchTask.outcode(root_task_legacy.appeal.reload, params_legacy, user)
+            BvaDispatchTask.outcode(legacy_appeal, params_legacy, user)
           end.to have_enqueued_job(ProcessDecisionDocumentJob).exactly(:once)
 
-          tasks = BvaDispatchTask.where(appeal: root_task_legacy.appeal, assigned_to: user)
-          expect(tasks.length).to eq(1)
-          task = tasks[0]
-          expect(task.status).to_not eq("completed")
-          expect(task.parent.status).to_not eq("completed")
-          expect(task.root_task.status).to_not eq("completed")
-          expect(request_issue.reload.closed_at).to_not eq(Time.zone.now)
-          expect(request_issue.closed_status).to_not eq("decided")
+          tasks = BvaDispatchTask.where(appeal: legacy_appeal, assigned_to: user)
+          expect(tasks.length).to eq(0)
 
-          decision_document = DecisionDocument.find_by(appeal_id: root_task_legacy.appeal.id)
+          decision_document = DecisionDocument.find_by(appeal_id: legacy_appeal.id)
           expect(decision_document).to_not eq nil
           expect(decision_document.document_type).to eq "BVA Decision"
           expect(decision_document.source).to eq "BVA"
