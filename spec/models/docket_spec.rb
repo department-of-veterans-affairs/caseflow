@@ -30,33 +30,33 @@ describe Docket do
       context "when no options given" do
         subject { DirectReviewDocket.new.appeals }
         it "returns all appeals if no option given" do
-          expect(subject.include?(appeal)).to eq(true)
-          expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
-          expect(subject.include?(aod_age_appeal)).to eq(true)
-          expect(subject.include?(aod_motion_appeal)).to eq(true)
+          expect(subject).to include appeal
+          expect(subject).to include denied_aod_motion_appeal
+          expect(subject).to include inapplicable_aod_motion_appeal
+          expect(subject).to include aod_age_appeal
+          expect(subject).to include aod_motion_appeal
         end
       end
 
       context "when looking for only priority and ready appeals" do
         subject { DirectReviewDocket.new.appeals(priority: true, ready: true) }
         it "returns priority/ready appeals" do
-          expect(subject.include?(appeal)).to eq(false)
-          expect(subject.include?(denied_aod_motion_appeal)).to eq(false)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
-          expect(subject.include?(aod_age_appeal)).to eq(true)
-          expect(subject.include?(aod_motion_appeal)).to eq(true)
+          expect(subject).to_not include appeal
+          expect(subject).to_not include denied_aod_motion_appeal
+          expect(subject).to_not include inapplicable_aod_motion_appeal
+          expect(subject).to include aod_age_appeal
+          expect(subject).to include aod_motion_appeal
         end
       end
 
       context "when looking for only nonpriority appeals" do
         subject { DirectReviewDocket.new.appeals(priority: false) }
         it "returns nonpriority appeals" do
-          expect(subject.include?(appeal)).to eq(true)
-          expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
-          expect(subject.include?(aod_age_appeal)).to eq(false)
-          expect(subject.include?(aod_motion_appeal)).to eq(false)
+          expect(subject).to include appeal
+          expect(subject).to include denied_aod_motion_appeal
+          expect(subject).to include inapplicable_aod_motion_appeal
+          expect(subject).to_not include aod_age_appeal
+          expect(subject).to_not include aod_motion_appeal
         end
       end
     end

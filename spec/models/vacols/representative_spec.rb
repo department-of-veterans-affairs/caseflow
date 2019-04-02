@@ -8,7 +8,7 @@ describe VACOLS::Representative do
   context ".appellant_representative" do
     it "will fetch only a row with an appellant reptype" do
       appellant_reptypes = VACOLS::Representative.appellant_reptypes
-      expect(appellant_reptypes.include?(rep.reptype)).to eq true
+      expect(appellant_reptypes).to include rep.reptype
     end
   end
 
