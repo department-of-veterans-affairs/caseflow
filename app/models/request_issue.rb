@@ -188,7 +188,7 @@ class RequestIssue < ApplicationRecord
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
-        decision_date: data[:decision_date] || data[:rating_issue_decision_date],
+        decision_date: data[:decision_date],
         issue_category: data[:issue_category],
         benefit_type: data[:benefit_type],
         notes: data[:notes],
