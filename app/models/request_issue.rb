@@ -296,8 +296,8 @@ class RequestIssue < ApplicationRecord
       contested_issue.approx_decision_date
     elsif decision_date
       decision_date
-    elsif decision_issues.any?
-      decision_issues.first.approx_decision_date
+  #  elsif decision_issues.any?
+  #    decision_issues.first.approx_decision_date
     else
       # in theory we should never get here
       fail MissingDecisionDate
