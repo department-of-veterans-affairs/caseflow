@@ -12,7 +12,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { highlightInvalidFormItems, requestSave } from './uiReducer/uiActions';
-import { onReceiveAmaTasks, setAppealAttrs, onReceiveTasks, deleteAppeal } from './QueueActions';
+import { onReceiveAmaTasks, setAppealAttrs, onReceiveTasks } from './QueueActions';
 
 import {
   appealWithDetailSelector,
@@ -211,7 +211,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
   onReceiveAmaTasks,
   onReceiveTasks,
-  deleteAppeal,
   setAppealAttrs
 }, dispatch);
 
