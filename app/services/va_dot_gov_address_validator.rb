@@ -133,7 +133,7 @@ class VaDotGovAddressValidator
   end
 
   def get_regional_office_from_facility_id(facility_id)
-    RegionalOffice::CITIES.find { |_k, v| v[:facility_locator_id] == facility_id }[0]
+    RegionalOffice::CITIES.find { |_key, regional_office| regional_office[:facility_locator_id] == facility_id }[0]
   end
 
   def ro_facility_ids_for_state(state_code)
