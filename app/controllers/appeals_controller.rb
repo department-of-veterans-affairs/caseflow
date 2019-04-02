@@ -109,6 +109,7 @@ class AppealsController < ApplicationController
 
   def update
     if request_issues_update.perform!
+      flash[:removed] = review_removed_message if request_issues_update.after_issues.empty?
       render json: {
         issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
         issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
@@ -157,5 +158,11 @@ class AppealsController < ApplicationController
       appeals,
       user: current_user
     ).as_json
+  end
+
+  def review_removed_message
+    claimant_name = appeal.veteran_full_name
+    "You have successfully removed #{appeal.class.review_title} for #{claimant_name}
+    (ID: #{appeal.veteran_file_number})."
   end
 end
