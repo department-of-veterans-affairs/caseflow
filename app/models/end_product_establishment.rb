@@ -173,8 +173,6 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync!
-
-    binding.pry
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
@@ -184,8 +182,6 @@ class EndProductEstablishment < ApplicationRecord
     # this VBMS call is slow and will cause the transaction below
     # to timeout in some cases.
     contentions
-
-    binding.pry
 
     transaction do
       update!(

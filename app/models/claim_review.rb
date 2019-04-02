@@ -127,9 +127,9 @@ class ClaimReview < DecisionReview
   end
 
   def sync_end_product_establishments!
+    # re-use the same veteran object so we only cache End Products once.
     end_product_establishments.each do |epe|
       epe.veteran = veteran
-      binding.pry
       epe.sync!
     end
   end
