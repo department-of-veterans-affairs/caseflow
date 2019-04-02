@@ -3,6 +3,7 @@
 class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count]
+  before_action :verify_bgs_sensitivity, only: [:show]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
 
@@ -151,6 +152,10 @@ class AppealsController < ApplicationController
 
   def set_application
     RequestStore.store[:application] = "queue"
+  end
+
+  def verify_bgs_sensitivity
+    fail(ActionForbiddenError) unless BGSService.new.can_access?(appeal.veteran_file_number)
   end
 
   def json_appeals(appeals)
