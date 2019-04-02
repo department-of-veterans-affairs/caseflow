@@ -527,7 +527,7 @@ RSpec.feature "Task queue" do
         expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
       end
 
-      it "should be able to add admin actions from case details", focus: true do
+      it "should be able to add admin actions from case details" do
         OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
         visit("/queue")
         click_on "#{legacy_review_task.veteran_full_name} (#{legacy_review_task.sanitized_vbms_id})"
