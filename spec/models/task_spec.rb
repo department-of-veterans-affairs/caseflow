@@ -140,6 +140,27 @@ describe Task do
     end
   end
 
+  describe "#duplicate_org_task" do
+    let(:root_task) { create(:root_task) }
+    let(:qr_user) { create(:user) }
+    let!(:quality_review_organization_task) do
+      create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
+    end
+    let!(:quality_review_task) do
+      create(:qr_task, assigned_to: qr_user, parent: quality_review_organization_task)
+    end
+
+    context "when there are duplicate organization tasks" do
+      it "returns true when there is a duplicate task assigned to an organization" do
+        expect(quality_review_organization_task.duplicate_org_task).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(quality_review_task.duplicate_org_task).to eq(false)
+      end
+    end
+  end
+
   describe "#latest_attorney_case_review" do
     let(:task) { create(:task, type: "Task") }
 
