@@ -12,7 +12,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { highlightInvalidFormItems, requestSave } from './uiReducer/uiActions';
-import { onReceiveAmaTasks, setAppealAttrs, onReceiveTasks } from './QueueActions';
+import { setAppealAttrs, onReceiveTasks, deleteTask } from './QueueActions';
 
 import {
   appealWithDetailSelector,
@@ -116,6 +116,7 @@ class AddColocatedTaskView extends React.PureComponent {
 
         if (task.isLegacy) {
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
+          this.props.deleteTask(task.uniqueId);
         }
       }).
       catch(() => {
@@ -209,8 +210,8 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightInvalidFormItems,
   requestSave,
-  onReceiveAmaTasks,
   onReceiveTasks,
+  deleteTask,
   setAppealAttrs
 }, dispatch);
 
