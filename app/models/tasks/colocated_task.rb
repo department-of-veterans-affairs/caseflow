@@ -97,6 +97,8 @@ class ColocatedTask < Task
 
   def legacy_schedule_hearing_actions(actions)
     task_actions = Constants.TASK_ACTIONS
+    assign_to_privacy_team_label = task_actions.ASSIGN_TO_PRIVACY_TEAM.to_h[:label]
+    actions = actions.reject { |action| action[:label] == assign_to_privacy_team_label }
     actions.unshift(task_actions.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
     actions
   end
