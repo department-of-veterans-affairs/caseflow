@@ -97,8 +97,6 @@ class ColocatedTask < Task
 
   def legacy_schedule_hearing_actions(actions)
     task_actions = Constants.TASK_ACTIONS
-    # remove the assign to privacy team option
-    actions.delete_at(1)
     actions.unshift(task_actions.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
     actions
   end
