@@ -57,7 +57,7 @@ describe HearingRepository do
       expect(subject.request_type).to eq(HearingDay::REQUEST_TYPES[:video])
       expect(subject.vacols_record).to eq(hearing_hash)
       expect(subject.scheduled_for.class).to eq(ActiveSupport::TimeWithZone)
-      expect(subject.disposition).to eq(:no_show)
+      expect(subject.disposition).to eq(Constants.HEARING_DISPOSITION_TYPES.no_show)
       expect(subject.aod).to eq :filed
       expect(subject.transcript_requested).to eq nil
       expect(subject.hold_open).to eq 90

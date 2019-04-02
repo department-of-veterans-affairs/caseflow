@@ -52,7 +52,7 @@ describe HearingDispositionChangeJob do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
         it "returns a label matching the hearing disposition and call DispositionTask.hold!" do
           expect(task).to receive(:hold!).exactly(1).times
-          expect(subject).to eq(disposition.to_sym)
+          expect(subject).to eq(disposition)
         end
       end
 
@@ -60,7 +60,7 @@ describe HearingDispositionChangeJob do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
         it "returns a label matching the hearing disposition and call DispositionTask.cancel!" do
           expect(task).to receive(:cancel!).exactly(1).times
-          expect(subject).to eq(disposition.to_sym)
+          expect(subject).to eq(disposition)
         end
       end
 
@@ -68,7 +68,7 @@ describe HearingDispositionChangeJob do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
         it "returns a label matching the hearing disposition and not change the task" do
           attributes_before = task.attributes
-          expect(subject).to eq(disposition.to_sym)
+          expect(subject).to eq(disposition)
           expect(task.attributes).to eq(attributes_before)
         end
       end
@@ -77,7 +77,7 @@ describe HearingDispositionChangeJob do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
         it "returns a label matching the hearing disposition and call DispositionTask.no_show!" do
           expect(task).to receive(:no_show!).exactly(1).times
-          expect(subject).to eq(disposition.to_sym)
+          expect(subject).to eq(disposition)
         end
       end
 
@@ -120,7 +120,7 @@ describe HearingDispositionChangeJob do
 
       context "when disposition is held" do
         let(:hearing) { FactoryBot.create(:case_hearing, :disposition_held) }
-        let(:label) { Constants.HEARING_DISPOSITION_TYPES.held.to_sym }
+        let(:label) { Constants.HEARING_DISPOSITION_TYPES.held }
         it "returns a label matching the hearing disposition and call DispositionTask.hold!" do
           expect(task).to receive(:hold!).exactly(1).times
           expect(subject).to eq(label)

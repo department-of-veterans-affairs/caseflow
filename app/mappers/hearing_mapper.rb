@@ -83,7 +83,7 @@ module HearingMapper
     end
 
     def disposition_to_vacols_format(value, keys)
-      vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value.try(:to_sym))
+      vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value)
       # disposition cannot be nil
       fail(InvalidDispositionError) if keys.include?(:disposition) && (value.blank? || vacols_code.blank?)
 

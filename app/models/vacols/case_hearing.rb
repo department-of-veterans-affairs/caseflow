@@ -14,10 +14,10 @@ class VACOLS::CaseHearing < VACOLS::Record
   HEARING_TYPES = %w[V T C].freeze
 
   HEARING_DISPOSITIONS = {
-    H: :held,
-    C: :cancelled,
-    P: :postponed,
-    N: :no_show
+    H: Constants.HEARING_DISPOSITION_TYPES.held,
+    C: Constants.HEARING_DISPOSITION_TYPES.cancelled,
+    P: Constants.HEARING_DISPOSITION_TYPES.postponed,
+    N: Constants.HEARING_DISPOSITION_TYPES.no_show
   }.freeze
 
   HEARING_AODS = {
