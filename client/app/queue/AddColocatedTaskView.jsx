@@ -116,7 +116,6 @@ class AddColocatedTaskView extends React.PureComponent {
 
         if (task.isLegacy) {
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
-          this.props.deleteAppeal(task.externalAppealId);
         }
       }).
       catch(() => {
