@@ -188,7 +188,7 @@ describe RemandReasonRepository do
       it "deletes a specific remand reason" do
         subject
         expect(VACOLS::RemandReason.all.length).to eq(2)
-        expect(VACOLS::RemandReason.all.map(&:rmdval).include?("DI")).to be_falsey
+        expect(VACOLS::RemandReason.all.map(&:rmdval)).to_not include "DI"
       end
     end
 

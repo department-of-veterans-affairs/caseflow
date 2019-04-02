@@ -18,13 +18,21 @@ RSpec.describe Hearings::DocketsController, type: :controller do
       expect(response_hearing["dailyDocket"].length).to eq 1
     end
 
-    it "returns data with success" do
-      get :show, params: { docket_date: hearing_day.scheduled_for }, format: "json"
-      response_hearing = JSON.parse(response.body)
-      expect(response.status).to eq 200
-      expect(response_hearing["hearingDay"]["requestType"]).to eq "Central"
-      expect(response_hearing["hearingDay"]["room"]).to eq "2"
-      expect(response_hearing["dailyDocket"].length).to eq 1
+    context "without making a bgs call" do
+      before do
+        BGSService.instance_methods(false).each do |method_name|
+          expect_any_instance_of(BGSService).not_to receive(method_name)
+        end
+      end
+
+      it "returns data with success without BGS call" do
+        get :show, params: { docket_date: hearing_day.scheduled_for }, format: "json"
+        response_hearing = JSON.parse(response.body)
+        expect(response.status).to eq 200
+        expect(response_hearing["hearingDay"]["requestType"]).to eq "Central"
+        expect(response_hearing["hearingDay"]["room"]).to eq "2"
+        expect(response_hearing["dailyDocket"].length).to eq 1
+      end
     end
 
     it "should fail with 404 error message" do

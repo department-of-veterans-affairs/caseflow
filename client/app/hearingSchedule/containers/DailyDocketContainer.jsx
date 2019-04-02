@@ -11,6 +11,7 @@ import ApiUtil from '../../util/ApiUtil';
 import { getTimeWithoutTimeZone } from '../../util/DateUtil';
 import {
   onReceiveDailyDocket,
+  onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
@@ -76,6 +77,19 @@ export class DailyDocketContainer extends React.Component {
     this.props.onResetLockHearingAfterError();
   };
 
+  loadHearingDetails = (hearings) => {
+    _.each(hearings, (hearing) => {
+      ApiUtil.get(`/hearings/${hearing.externalId}`).then((response) => {
+        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+        this.props.onReceiveHearing(resp);
+      }).
+        catch((error) => {
+          console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
+        });
+    });
+  }
+
   loadHearingDay = () => {
     const requestUrl = `/hearings/hearing_day/${this.props.match.params.hearingDayId}`;
 
@@ -86,6 +100,8 @@ export class DailyDocketContainer extends React.Component {
       const dailyDocket = _.omit(resp.hearingDay, ['hearings']);
 
       this.props.onReceiveDailyDocket(dailyDocket, hearings);
+
+      this.loadHearingDetails(resp.hearingDay.hearings);
     });
   };
 
@@ -323,6 +339,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveDailyDocket,
+  onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,

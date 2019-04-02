@@ -62,12 +62,13 @@ class HearingDay < ApplicationRecord
     HearingRepository.fetch_hearings_for_parent(id)
   end
 
-  def open_vacols_hearings
-    vacols_hearings.reject { |hearing| [:postponed, :cancelled].include?(hearing.disposition) }
-  end
-
   def open_hearings
-    hearings.reject { |hearing| %w[postponed cancelled].include?(hearing.disposition) }
+    closed_hearing_dispositions = [
+      Constants.HEARING_DISPOSITION_TYPES.postponed,
+      Constants.HEARING_DISPOSITION_TYPES.cancelled
+    ]
+
+    (hearings + vacols_hearings).reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
   end
 
   def to_hash
@@ -78,7 +79,7 @@ class HearingDay < ApplicationRecord
   end
 
   def hearing_day_full?
-    lock || open_hearings.count + open_vacols_hearings.count >= total_slots
+    lock || open_hearings.count >= total_slots
   end
 
   def total_slots

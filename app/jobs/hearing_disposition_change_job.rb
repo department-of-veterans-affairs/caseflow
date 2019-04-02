@@ -42,24 +42,24 @@ class HearingDispositionChangeJob < CaseflowJob
   end
 
   def increment_task_count_for(label)
-    task_count_for[label] += 1
+    task_count_for[label.to_sym] += 1
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def update_task_by_hearing_disposition(task)
     hearing = task.hearing
-    label = hearing.disposition&.to_sym
+    label = hearing.disposition
 
     # rubocop:disable Lint/EmptyWhen
-    case hearing.disposition&.to_sym
-    when Constants.HEARING_DISPOSITION_TYPES.held.to_sym
+    case hearing.disposition
+    when Constants.HEARING_DISPOSITION_TYPES.held
       task.hold!
-    when Constants.HEARING_DISPOSITION_TYPES.cancelled.to_sym
+    when Constants.HEARING_DISPOSITION_TYPES.cancelled
       task.cancel!
-    when Constants.HEARING_DISPOSITION_TYPES.postponed.to_sym
+    when Constants.HEARING_DISPOSITION_TYPES.postponed
       # Postponed hearings should be acted on immediately and the related tasks should be closed. Do not take any
       # action here.
-    when Constants.HEARING_DISPOSITION_TYPES.no_show.to_sym
+    when Constants.HEARING_DISPOSITION_TYPES.no_show
       task.no_show!
     when nil
       # We allow judges and hearings staff 2 days to make changes to the hearing's disposition. If it has been more
