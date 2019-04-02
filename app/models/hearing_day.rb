@@ -34,6 +34,11 @@ class HearingDay < ApplicationRecord
     "America/Anchorage" => 8
   }.freeze
 
+  CLOSED_HEARING_DISPOSITIONS = [
+    Constants.HEARING_DISPOSITION_TYPES.postponed,
+    Constants.HEARING_DISPOSITION_TYPES.cancelled
+  ].freeze
+
   # rubocop:disable Style/SymbolProc
   after_update { |hearing_day| hearing_day.update_children_records }
   # rubocop:enable Style/SymbolProc
@@ -62,19 +67,12 @@ class HearingDay < ApplicationRecord
     HearingRepository.fetch_hearings_for_parent(id)
   end
 
-  def closed_hearing_dispositions
-    [
-      Constants.HEARING_DISPOSITION_TYPES.postponed,
-      Constants.HEARING_DISPOSITION_TYPES.cancelled
-    ]
-  end
-
   def open_vacols_hearings
-    vacols_hearings.reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
+    vacols_hearings.reject { |hearing| CLOSED_HEARING_DISPOSITIONS.include?(hearing.disposition) }
   end
 
   def open_hearings
-    hearings.reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
+    hearings.reject { |hearing| CLOSED_HEARING_DISPOSITIONS.include?(hearing.disposition) }
   end
 
   def to_hash
