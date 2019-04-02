@@ -581,6 +581,13 @@ RSpec.feature "AmaQueue" do
       click_on "Mark complete"
 
       expect(page).to have_content("#{veteran_full_name}'s case has been marked complete")
+      # ensure no duplicate org tasks
+      page.go_back
+      case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
+      quality_review_tasks_on_timeline = case_timeline_rows.select do |html_node|
+        html_node.has_content?("QualityReviewTask")
+      end
+      expect(quality_review_tasks_on_timeline.length).to eq(1)
     end
   end
 
