@@ -102,8 +102,11 @@ class VaDotGovAddressValidator
 
     distances = VADotGovService.get_distance(ids: facility_ids, lat: va_dot_gov_address[:lat],
                                              long: va_dot_gov_address[:long])
-    closest_ro = RegionalOffice::CITIES.find { |_k, v| v[:facility_locator_id] == distances[0][:facility_id] }[0]
-    closest_ro = map_san_antonio_satellite_office_to_houston(closest_ro)
+
+    closest_facility_id = distances[0][:facility_id]
+    closest_facility_id = map_san_antonio_satellite_office_to_houston(closest_facility_id) if state_code == "TX"
+
+    closest_ro = get_regional_office_from_facility_id(closest_facility_id)
 
     appeal.update(closest_regional_office: except_delaware(closest_ro))
 
@@ -123,10 +126,14 @@ class VaDotGovAddressValidator
     facility_ids << "vha_671BY"
   end
 
-  def map_san_antonio_satellite_office_to_houston(regional_office)
-    return "RO62" if regional_office == "vha_671BY"
+  def map_san_antonio_satellite_office_to_houston(facility_id)
+    return "vba_362" if facility_id == "vha_671BY"
 
-    regional_office
+    facility_id
+  end
+
+  def get_regional_office_from_facility_id(facility_id)
+    RegionalOffice::CITIES.find { |_key, regional_office| regional_office[:facility_locator_id] == facility_id }[0]
   end
 
   def ro_facility_ids_for_state(state_code)

@@ -268,7 +268,13 @@ class Appeal < DecisionReview
     claimants.first
   end
 
-  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
+  delegate :first_name,
+           :last_name,
+           :middle_name,
+           :name_suffix,
+           :city,
+           :zip,
+           :state, to: :appellant, prefix: true, allow_nil: true
 
   def cavc
     "not implemented for AMA"
@@ -642,7 +648,7 @@ class Appeal < DecisionReview
     return if active_status?
     return if decision_issues.any?
 
-    root_task.closed_at.to_date
+    root_task.closed_at&.to_date
   end
 
   def events
