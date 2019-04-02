@@ -550,11 +550,6 @@ feature "Appeal Edit issues" do
           click_intake_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-          expect(RequestIssue.find_by(
-                   benefit_type: "education",
-                   veteran_participant_id: nil
-                 )).to_not be_nil
-
           expect(page).to have_content("Review Removed")
         end
       end
