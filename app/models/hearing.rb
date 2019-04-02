@@ -118,7 +118,7 @@ class Hearing < ApplicationRecord
 
   def worksheet_issues
     request_issues.map do |request_issue|
-      HearingIssueNote.select("*").joins(:request_issue)
+      HearingIssueNote.joins(:request_issue)
         .find_or_create_by(request_issue: request_issue, hearing: self).to_hash
     end
   end
