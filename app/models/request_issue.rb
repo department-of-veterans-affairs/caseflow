@@ -299,6 +299,7 @@ class RequestIssue < ApplicationRecord
     elsif decision_issues.any?
       decision_issues.first.approx_decision_date
     else
+      # in theory we should never get here
       fail MissingDecisionDate
     end
   end
