@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190329211019) do
+ActiveRecord::Schema.define(version: 20190402192428) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(version: 20190329211019) do
     t.datetime "updated_at", null: false
     t.string "veteran_file_number"
     t.string "zip_code"
+    t.index ["appeal_id", "appeal_type"], name: "index_available_hearing_locations_on_appeal_id_and_appeal_type"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
@@ -944,6 +945,7 @@ ActiveRecord::Schema.define(version: 20190329211019) do
     t.datetime "updated_at", null: false
     t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
+    t.index ["parent_id"], name: "index_tasks_on_parent_id"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|
