@@ -22,17 +22,6 @@ class UserReporter
     report.flatten
   end
 
-  def merge_all_users_with_uppercased_user
-    User.transaction do
-      other_users = all_users_for_css_id - [uppercase_user]
-
-      other_users.each do |user|
-        replace_user(user, uppercase_user)
-        user.delete
-      end
-    end
-  end
-
   private
 
   def models_with_named_user_foreign_key
@@ -82,45 +71,6 @@ class UserReporter
     end
 
     related_records
-  end
-
-  def delete_unique_constraint_violating_records(scope, foreign_key, fk_column_name, old_user, new_user)
-    return unless foreign_key[:unique]
-
-    if foreign_key[:unique].empty?
-      scope.where(fk_column_name => old_user.id).delete_all
-    else
-      existing_unique_fields = scope.where(fk_column_name => new_user.id).pluck(*foreign_key[:unique])
-
-      if !existing_unique_fields.empty?
-        # This query inspired by https://stackoverflow.com/questions/15750234/ruby-activerecord-and-sql-tuple-support
-        scope
-          .where(
-            "(#{foreign_key[:unique].join(', ')}) IN (#{(['(?)'] * existing_unique_fields.size).join(', ')})",
-            *existing_unique_fields
-          ).where(fk_column_name => old_user.id).delete_all
-      end
-    end
-  end
-
-  def replace_user(old_user, new_user)
-    (models_with_user_id + models_with_named_user_foreign_key).map do |foreign_key|
-      column_id_name = "#{foreign_key[:column]}_id".to_sym
-      column_type_name = "#{foreign_key[:column]}_type".to_sym
-      model_col_names = foreign_key[:model].column_names.map(&:to_sym)
-
-      fk_column_name = model_col_names.include?(column_id_name) ? column_id_name : foreign_key[:column]
-
-      scope = if model_col_names.include?(column_type_name)
-                foreign_key[:model].where(column_type_name => "User")
-              else
-                foreign_key[:model]
-              end
-
-      delete_unique_constraint_violating_records(scope, foreign_key, fk_column_name, old_user, new_user)
-
-      scope.where(fk_column_name => old_user.id).update(fk_column_name => new_user.id)
-    end
   end
 
   def all_users_for_css_id

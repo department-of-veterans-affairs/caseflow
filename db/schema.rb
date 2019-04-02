@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190328163217) do
+ActiveRecord::Schema.define(version: 20190329211019) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -987,7 +987,7 @@ ActiveRecord::Schema.define(version: 20190328163217) do
     t.string "selected_regional_office"
     t.string "station_id", null: false
     t.datetime "updated_at"
-    t.index ["station_id", "css_id"], name: "index_users_on_station_id_and_css_id", unique: true
+    t.index "upper((css_id)::text)", name: "index_users_unique_css_id", unique: true
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
