@@ -26,6 +26,8 @@ class User < ApplicationRecord
     "Hearing Prep" => ["Reader"]
   }.freeze
 
+  before_create :normalize_css_id
+
   def username
     css_id
   end
@@ -248,6 +250,10 @@ class User < ApplicationRecord
 
   private
 
+  def normalize_css_id
+    self.css_id = css_id.upcase
+  end
+
   def bgs
     @bgs ||= BGSService.new
   end
@@ -305,29 +311,21 @@ class User < ApplicationRecord
 
       return nil if user_session.nil?
 
-      # TODO: ignore station_id since id should be globally unique.
       css_id = user_session["id"]
       station_id = user_session["station_id"]
-      user = find_by_css_id_and_station_id(css_id, station_id)
+      user = find_by_css_id(css_id)
 
       attrs = {
+        station_id: station_id,
         full_name: user_session["name"],
         email: user_session["email"],
         roles: user_session["roles"],
         regional_office: session[:regional_office]
       }
 
-      user ||= create!(attrs.merge(css_id: css_id.upcase, station_id: station_id))
+      user ||= create!(attrs.merge(css_id: css_id.upcase))
       user.update!(attrs.merge(last_login_at: Time.zone.now))
       user
-    end
-
-    def find_by_css_id_and_station_id(css_id, station_id)
-      # prefer case match first
-      user = find_by(css_id: css_id, station_id: station_id)
-      return user if user
-
-      find_by("UPPER(css_id)=UPPER(?) AND station_id=?", css_id, station_id)
     end
 
     def find_by_css_id_or_create_with_default_station_id(css_id)

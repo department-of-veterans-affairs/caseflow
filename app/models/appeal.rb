@@ -648,7 +648,7 @@ class Appeal < DecisionReview
     return if active_status?
     return if decision_issues.any?
 
-    root_task.closed_at.to_date
+    root_task.closed_at&.to_date
   end
 
   def events
