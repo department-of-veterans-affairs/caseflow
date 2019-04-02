@@ -12,7 +12,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { highlightInvalidFormItems, requestSave } from './uiReducer/uiActions';
-import { onReceiveAmaTasks, setAppealAttrs, onReceiveTasks } from './QueueActions';
+import { onReceiveAmaTasks, setAppealAttrs, onReceiveTasks, deleteAppeal } from './QueueActions';
 
 import {
   appealWithDetailSelector,
@@ -106,20 +106,17 @@ class AddColocatedTaskView extends React.PureComponent {
 
     this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
+        const response = JSON.parse(resp.text);
+        const allTasks = prepareAllTasksForStore(response.tasks.data);
+
+        this.props.onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        });
+
         if (task.isLegacy) {
-          const response = JSON.parse(resp.text);
-          const allTasks = prepareAllTasksForStore(response.tasks.data);
-
-          this.props.onReceiveTasks({
-            tasks: allTasks.tasks,
-            amaTasks: allTasks.amaTasks
-          });
-
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
-        } else {
-          const response = JSON.parse(resp.text);
-
-          this.props.onReceiveAmaTasks(response.tasks.data);
+          this.props.deleteAppeal(task.externalAppealId);
         }
       }).
       catch(() => {
@@ -215,6 +212,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave,
   onReceiveAmaTasks,
   onReceiveTasks,
+  deleteAppeal,
   setAppealAttrs
 }, dispatch);
 
