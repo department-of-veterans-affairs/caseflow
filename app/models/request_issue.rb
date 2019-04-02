@@ -58,6 +58,7 @@ class RequestIssue < ApplicationRecord
   end
 
   class NotYetSubmitted < StandardError; end
+  class MissingDecisionDate < StandardError; end
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix"
 
@@ -187,7 +188,7 @@ class RequestIssue < ApplicationRecord
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
         nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
-        decision_date: data[:decision_date],
+        decision_date: data[:decision_date] || data[:rating_issue_decision_date],
         issue_category: data[:issue_category],
         benefit_type: data[:benefit_type],
         notes: data[:notes],
@@ -297,6 +298,8 @@ class RequestIssue < ApplicationRecord
       decision_date
     elsif decision_issues.any?
       decision_issues.first.approx_decision_date
+    else
+      fail MissingDecisionDate
     end
   end
 
