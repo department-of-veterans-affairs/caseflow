@@ -2351,4 +2351,18 @@ describe LegacyAppeal do
       end
     end
   end
+
+  context "#vsos" do
+    context "when there is no VSO" do
+      before do
+        allow_any_instance_of(PowerOfAttorney).to receive(:bgs_participant_id).and_return(nil)
+      end
+      let!(:vsos) { Vso.create(name: "Test VSO") }
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+      it "does not return VSOs with nil participant_id" do
+        expect(appeal.vsos).to eq([])
+      end
+    end
+  end
 end
