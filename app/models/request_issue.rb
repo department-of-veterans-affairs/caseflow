@@ -58,7 +58,11 @@ class RequestIssue < ApplicationRecord
   end
 
   class NotYetSubmitted < StandardError; end
-  class MissingDecisionDate < StandardError; end
+  class MissingDecisionDate < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id} lacks a decision_date")
+    end
+  end
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix"
 
@@ -298,11 +302,9 @@ class RequestIssue < ApplicationRecord
       contested_issue.approx_decision_date
     elsif decision_date
       decision_date
-#    elsif decision_issues.any?
-#      decision_issues.first.approx_decision_date
     else
       # in theory we should never get here
-      fail MissingDecisionDate
+      fail MissingDecisionDate, id
     end
   end
 
