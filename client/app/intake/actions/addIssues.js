@@ -36,6 +36,11 @@ export const removeIssue = (index) => ({
   payload: { index }
 });
 
+export const withdrawIssue = (index) => ({
+  type: ACTIONS.WITHDRAW_ISSUE,
+  payload: { index }
+});
+
 export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,

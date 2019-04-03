@@ -200,6 +200,15 @@
           }
         }
 
+        &.withdrawn-issue {
+          color: $color-red;
+
+          > p {
+            color: $color-gray-dark;
+            font-style: italic;
+          }
+        }
+
         .not-eligible {
           color: $color-red;
         }
