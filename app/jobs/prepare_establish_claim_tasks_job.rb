@@ -28,7 +28,7 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
   def unfinished_jobs_report
     jobs = AsyncableJobs.new.jobs.select(&:expired_without_processing?)
     job_reporter = AsyncableJobsReporter.new(jobs: jobs)
-    msg = "<@sierra> Expired Jobs: #{jobs.count} expired unfinished asyncable jobs exist in the queue.\n"
+    msg = "Expired Jobs: #{jobs.count} expired unfinished asyncable jobs exist in the queue.\n"
     msg += job_reporter.summarize
     Rails.logger.info msg
     SlackService.new(url: url).send_notification(msg)
