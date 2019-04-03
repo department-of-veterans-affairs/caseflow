@@ -418,7 +418,7 @@ feature "Higher-Level Review" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      decision_date: nil,
+      decision_date: promulgation_date,
       rating_issue_associated_at: Time.zone.now
     )
 

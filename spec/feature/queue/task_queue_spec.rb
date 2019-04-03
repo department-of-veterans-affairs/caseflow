@@ -419,6 +419,51 @@ RSpec.feature "Task queue" do
       expect(page).to_not have_content(judgeteam.name)
     end
   end
+  describe "VLJ support staff schedule hearing action" do
+    let(:attorney) { FactoryBot.create(:user) }
+    let(:vacols_case) { create(:case) }
+    let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
+    let!(:vlj_support_staffer) { FactoryBot.create(:user) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
+      User.authenticate!(user: vlj_support_staffer)
+    end
+
+    context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
+      before do
+        ColocatedTask.create_many_from_params([{
+                                                assigned_by: attorney,
+                                                action: :schedule_hearing,
+                                                appeal: appeal
+                                              }], attorney)
+      end
+
+      it "the location is updated to 57 when a user assigns a colocated task back to the hearing team" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        find(".Select-control", text: "Select an action…").click
+        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+        find("button", text: "Send case").click
+        expect(page).to have_content("Bob Smith's case has been sent to the Schedule hearing team")
+        expect(vacols_case.reload.bfcurloc).to eq("57")
+      end
+
+      it "the case should be returned in the attorneys queue when canceled" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        find(".Select-control", text: "Select an action…").click
+        expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.to_h[:label])
+        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
+        find("button", text: "Submit").click
+        expect(page).to have_content("Task for Bob Smith's case has been cancelled")
+        User.authenticate!(user: attorney)
+        visit("/queue")
+        expect(page).to have_content(appeal.veteran_file_number)
+      end
+    end
+  end
 
   describe "JudgeTask" do
     let!(:judge_user) { FactoryBot.create(:user) }
