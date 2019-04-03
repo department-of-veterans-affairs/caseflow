@@ -19,6 +19,8 @@ describe HigherLevelReviewsController, type: :controller do
   describe "#edit" do
     before do
       hlr.establish!
+
+      expect(hlr.end_product_establishments.first.result).to_not be_nil
     end
 
     it "finds by UUID" do
