@@ -21,6 +21,7 @@ class VBMSError < RuntimeError
   class UserNotAuthorized < Caseflow::Error::VBMS; end
   class BadClaim < Caseflow::Error::VBMS; end
   class CannotDeleteContention < Caseflow::Error::VBMS; end
+  class ClaimDateInvalid < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -70,7 +71,10 @@ class VBMSError < RuntimeError
     "Unable to establish claim: " => "BadClaim",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4164/events/279584/
-    "The contention is connected to an issue in ratings and cannot be deleted." => "CannotDeleteContention"
+    "The contention is connected to an issue in ratings and cannot be deleted." => "CannotDeleteContention",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/292533/
+    "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid"
   }.freeze
 
   class << self
