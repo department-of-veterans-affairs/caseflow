@@ -346,6 +346,11 @@ describe GenericTask do
     context "when attempting to create two tasks for different appeals assigned to the same organization" do
       let(:organization) { FactoryBot.create(:organization) }
       let(:appeals) { FactoryBot.create_list(:appeal, 2) }
+      let(:root_task) { FactoryBot.create(:root_task) }
+      before do
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        BvaDispatchTask.create_from_root_task(root_task)
+      end
       it "should succeed" do
         expect do
           appeals.each do |a|
@@ -357,6 +362,9 @@ describe GenericTask do
             )
           end
         end.to_not raise_error
+      end
+      it "should fail when organization-level BvaDispatchTask already exists with the same parent" do
+          expect { BvaDispatchTask.create_from_root_task(root_task) }.to raise_error(Caseflow::Error::DuplicateOrgTask)
       end
     end
   end
