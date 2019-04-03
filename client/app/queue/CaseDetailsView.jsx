@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import Alert from '../components/Alert';
+// import IssueAma from '../components/IssueAma';
 import AppellantDetail from './AppellantDetail';
 import VeteranDetail from './VeteranDetail';
 import VeteranCasesView from './VeteranCasesView';
