@@ -507,8 +507,8 @@ RSpec.describe TasksController, type: :controller do
   end
 
   describe "PATCH /tasks/:id" do
-    let(:authenticated_user) { create(:user) }
-    let(:assigned_by_user) { create(:user) }
+    let(:authenticated_user) { create(:user, station_id: "101") }
+    let(:assigned_by_user) { create(:user, station_id: "101") }
     let(:assigned_to_user) { authenticated_user }
     let(:task_type) { :colocated_task }
     let(:admin_action) { create(task_type, assigned_by: assigned_by_user, assigned_to: assigned_to_user) }

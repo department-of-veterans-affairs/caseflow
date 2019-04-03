@@ -62,8 +62,7 @@ class DispositionTask < GenericTask
       when "no_show"
         mark_hearing_no_show
       when "postponed"
-        after_disposition_update = payload_values[:after_disposition_update]
-        mark_hearing_postponed(after_disposition_update: after_disposition_update)
+        mark_hearing_postponed(after_disposition_update: payload_values[:after_disposition_update])
       end
     end
 
@@ -114,7 +113,7 @@ class DispositionTask < GenericTask
 
   def mark_hearing_no_show() end
 
-  def mark_hearing_postponed(after_disposition_update:)
+  def mark_hearing_postponed(after_disposition_update: nil)
     multi_transaction do
       if hearing.is_a?(LegacyHearing)
         hearing.update_caseflow_and_vacols(disposition: "postponed")
@@ -122,19 +121,7 @@ class DispositionTask < GenericTask
         hearing.update(disposition: "postponed")
       end
 
-      case after_disposition_update[:action]
-      when "reschedule"
-        new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
-        reschedule(
-          hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
-          hearing_location: new_hearing_attrs[:hearing_location]
-        )
-      when "schedule_later"
-        schedule_later(
-          with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
-          instructions: after_disposition_update[:admin_action_instructions]
-        )
-      end
+      reschedule_or_schedule_later(after_disposition_update: after_disposition_update)
     end
   end
 
@@ -187,6 +174,22 @@ class DispositionTask < GenericTask
   end
 
   private
+
+  def reschedule_or_schedule_later(after_disposition_update:)
+    case after_disposition_update[:action]
+    when "reschedule"
+      new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
+      reschedule(
+        hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
+        hearing_location: new_hearing_attrs[:hearing_location]
+      )
+    when "schedule_later"
+      schedule_later(
+        with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
+        instructions: after_disposition_update[:admin_action_instructions]
+      )
+    end
+  end
 
   def update_legacy_appeal_location
     location = if appeal.vsos.empty?
