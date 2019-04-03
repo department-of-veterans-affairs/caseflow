@@ -188,7 +188,7 @@ class HearingDay < ApplicationRecord
           nil
         else
           HearingDay.to_hash(value[:hearing_day]).slice(:id, :scheduled_for, :request_type, :room).tap do |day|
-            day[:hearings] = scheduled_hearings.map { |hearing| hearing.to_hash(current_user_id) }
+            day[:hearings] = scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
             day[:total_slots] = total_slots
           end
         end

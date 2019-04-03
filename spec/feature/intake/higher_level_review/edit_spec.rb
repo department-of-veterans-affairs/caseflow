@@ -10,10 +10,6 @@ feature "Higher Level Review Edit issues" do
     FeatureToggle.enable!(:intakeAma)
 
     Timecop.freeze(post_ama_start_date)
-
-    # skip the sync call since all edit requests require resyncing
-    # currently, we're not mocking out vbms and bgs
-    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
   end
 
   after do
@@ -1088,6 +1084,22 @@ feature "Higher Level Review Edit issues" do
       end
     end
 
+    context "when EPs have cleared very recently" do
+      before do
+        ep = higher_level_review.reload.end_product_establishments.first.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(veteran.file_number, ep.claim_id, "CLR")
+      end
+
+      it "syncs on initial GET" do
+        expect(higher_level_review.end_product_establishments.first.last_synced_at).to be_nil
+
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
+        expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
+        expect(page).to have_content("Issues Not Editable")
+      end
+    end
+
     context "when withdraw decision reviews is enabled" do
       before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
       after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
@@ -1105,6 +1117,10 @@ feature "Higher Level Review Edit issues" do
     before do
       FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+
+      # skip the sync call since all edit requests require resyncing
+      # currently, we're not mocking out vbms and bgs
+      allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
     end
 
     after do
