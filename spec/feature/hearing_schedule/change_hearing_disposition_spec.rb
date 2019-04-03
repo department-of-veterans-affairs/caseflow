@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Change hearing disposition spec" do
+RSpec.feature "Change hearing disposition" do
   let(:current_user) { FactoryBot.create(:user, css_id: "BVATWARNER", station_id: 101) }
   let(:hearing_day) { FactoryBot.create(:hearing_day) }
   let(:veteran) { FactoryBot.create(:veteran, first_name: "Chibueze", last_name: "Vanscoy", file_number: 800_888_001) }
@@ -15,18 +15,35 @@ RSpec.feature "Change hearing disposition spec" do
 
   before do
     OrganizationsUser.add_user_to_organization(current_user, HearingAdmin.singleton)
+    OrganizationsUser.add_user_to_organization(current_user, HearingsManagement.singleton)
     User.authenticate!(user: current_user)
   end
 
-  scenario "change to postponed" do
-    visit "/organizations/#{HearingAdmin.singleton.url}"
-    click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-    click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-    click_dropdown(prompt: "Select", text: "Postponed", container: ".cf-modal-body")
-    fill_in "Notes", with: "These are my detailed postponed hearing notes."
-    click_button("Submit")
-    expect(page).to have_content("Successfully changed hearing disposition to Postponed")
-    visit "/organizations/#{HearingAdmin.singleton.url}"
-    expect(page).to have_content("Unassigned (0)")
+  scenario "change hearing disposition to postponed" do
+    step "visit the hearing admin organization queue and click on the veteran's name" do
+      visit "/organizations/#{HearingAdmin.singleton.url}"
+      expect(page).to have_content("Unassigned (1)")
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+    end
+
+    step "change the hearing disposition to postponed" do
+      click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+      click_dropdown(prompt: "Select", text: "Postponed", container: ".cf-modal-body")
+      fill_in "Notes", with: "These are my detailed postponed hearing notes."
+      click_button("Submit")
+      expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+    end
+
+    step "return to the hearing admin organization queue and verify that the task is gone" do
+      click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
+      expect(page).to have_content("Unassigned (0)")
+    end
+
+    step "visit the hearings management organization queue and verify that the schedule hearing task is there" do
+      click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingsManagement.singleton.name
+      expect(page).to have_content("Unassigned (1)")
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+      expect(page).to have_content(ScheduleHearingTask.last.label)
+    end
   end
 end

@@ -69,7 +69,7 @@ class ChangeHearingDispositionModal extends React.Component {
     };
 
     const successMsg = {
-      title: `Successfully changed disposition to ${_.startCase(this.state.selectedValue)}`
+      title: `Successfully changed hearing disposition to ${_.startCase(this.state.selectedValue)}`
     };
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
