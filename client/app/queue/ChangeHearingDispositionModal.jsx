@@ -38,15 +38,31 @@ class ChangeHearingDispositionModal extends React.Component {
   submit = () => {
     const { task } = this.props;
 
+    const disposition = {
+      disposition: this.state.selectedValue
+    };
+    let afterDispositionUpdate = {};
+
+    if (this.state.selectedValue === HEARING_DISPOSITION_TYPES.postponed) {
+      afterDispositionUpdate = {
+        after_disposition_update: {
+          action: 'schedule_later'
+        }
+      };
+    }
+
+    const values = {
+      ...disposition,
+      ...afterDispositionUpdate
+    };
+
     const payload = {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
           instructions: this.state.instructions,
           business_payloads: {
-            values: {
-              disposition: this.state.selectedValue
-            }
+            values
           }
         }
       }
