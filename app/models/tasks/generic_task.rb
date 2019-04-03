@@ -14,7 +14,7 @@ class GenericTask < Task
   def verify_org_task_unique
     return if !active?
 
-    if appeal.tasks.active.where(type: type, assigned_to: assigned_to).any? && assigned_to.is_a?(Organization)
+    if appeal.tasks.active.where(type: type, assigned_to: assigned_to, parent: parent).any? && assigned_to.is_a?(Organization)
       fail(
         Caseflow::Error::DuplicateOrgTask,
         appeal_id: appeal.id,
