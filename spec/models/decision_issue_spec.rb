@@ -390,7 +390,7 @@ describe DecisionIssue do
           end
         end
 
-        fcontext "when there is no prior claim by the claimant" do
+        context "when there is no prior claim by the claimant" do
           context "when there is a bgs payee code" do
             before { allow_any_instance_of(Claimant).to receive(:bgs_payee_code).and_return("12") }
 
