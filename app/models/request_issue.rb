@@ -297,7 +297,7 @@ class RequestIssue < ApplicationRecord
 
   def approx_decision_date_of_issue_being_contested
     return if is_unidentified
- 
+
     if contested_issue
       contested_issue.approx_decision_date
     elsif decision_date
