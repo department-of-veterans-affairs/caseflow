@@ -13,6 +13,7 @@ FactoryBot.define do
     trait :rating do
       sequence(:contested_rating_issue_reference_id) { |n| "rating_issue#{n}" }
       contested_rating_issue_profile_date { Time.zone.today }
+      decision_date { Time.zone.today }
     end
 
     trait :nonrating do
