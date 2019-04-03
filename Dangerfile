@@ -15,8 +15,8 @@ if `git diff #{github.base_commit} spec/ | grep -E '(:focus => true)|(focus: tru
 end
 
 # We must take care of our VACOLS models. Remind developers to test this thoroughly
-if !git.modified_files.grep(/app\/models\/vacols/).empty?
-  warn("This PR changes VACOLS models. Please ensure this is tested against a UAT VACOLS instance")
+if !git.modified_files.grep(/db\/schema.rb/).empty?
+  warn("This PR changes the schema. Please use the PR template checklist.")
 end
 
 # We should not disable Rubocop rules unless there's a very good reason
