@@ -136,7 +136,8 @@ feature "Higher Level Review Edit issues" do
     ineligible = Constants.INELIGIBLE_REQUEST_ISSUES
 
     let!(:eligible_request_issue) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         decision_review: higher_level_review,
         issue_category: "Military Retired Pay",
         nonrating_issue_description: "eligible nonrating description",
@@ -148,8 +149,10 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:untimely_request_issue) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         decision_review: higher_level_review,
+        decision_date: 2.years.ago,
         issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "untimely nonrating description",
         contention_reference_id: "12345",
@@ -159,9 +162,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_in_review) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: another_higher_level_review,
         contested_issue_description: "PTSD denied",
         contention_reference_id: "123",
@@ -172,9 +177,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_with_active_previous_review) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "PTSD denied",
         contention_reference_id: "111",
@@ -185,9 +192,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_previous_hlr) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "abc123",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: another_higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Left knee granted",
@@ -197,9 +206,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_with_previous_hlr) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "abc123",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "Left knee granted",
         benefit_type: "compensation",
@@ -209,9 +220,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_before_ama) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "before_ama_ref_id",
         contested_rating_issue_profile_date: rating_before_ama.profile_date,
+        decision_date: rating_before_ama.promulgation_date,
         decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Non-RAMP Issue before AMA Activation",
@@ -221,9 +234,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:eligible_ri_before_ama) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "ramp_ref_id",
         contested_rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
+        decision_date: rating_before_ama_from_ramp.promulgation_date,
         decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Issue before AMA Activation from RAMP",
@@ -233,9 +248,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_legacy_issue_not_withdrawn) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "has_legacy_issue",
         contested_rating_issue_profile_date: rating_before_ama.profile_date,
+        decision_date: rating_before_ama.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "Issue with legacy issue not withdrawn",
         vacols_id: "vacols1",
@@ -247,9 +264,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_legacy_issue_ineligible) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "has_ineligible_legacy_appeal",
         contested_rating_issue_profile_date: rating_before_ama.profile_date,
+        decision_date: rating_before_ama.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "Issue connected to ineligible legacy appeal",
         contention_reference_id: "12345678",
@@ -285,9 +304,11 @@ feature "Higher Level Review Edit issues" do
 
     context "VACOLS issue from before AMA opted in" do
       let!(:ri_legacy_issue_eligible) do
-        RequestIssue.create!(
+        create(
+          :request_issue,
           contested_rating_issue_reference_id: "before_ama_ref_id",
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
+          decision_date: rating_before_ama.promulgation_date,
           decision_review: higher_level_review,
           contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
           contention_reference_id: "123456789",
