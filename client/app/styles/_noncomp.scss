@@ -3,6 +3,9 @@
   border: 1px solid $color-gray-lighter;
   padding: 2rem;
   margin: 2rem -2rem;
+  display: block;
+  text-align: center;
+  width: 100%;
 }
 
 .cf-review-details {
@@ -79,6 +82,8 @@
 }
 
 .cf-decision-date {
+  display: inline-block;
+  text-align: center;
   input {
     width: auto;
   }

@@ -180,11 +180,12 @@
 
         div {
           display: table-cell;
-          padding: 0.5em 0;
+          padding: 1em 0;
         }
 
         .issue-desc {
           width: 100%;
+          padding-right: 0.5em;
 
           .issue-num {
             padding-right: 0.25em;
@@ -198,12 +199,13 @@
           .issue-date {
             display: block;
           }
+
         }
 
-        &.withdrawn-issue {
-          color: $color-red;
+        .withdrawn-issue {
+          color: $color-gray-light;
 
-          > p {
+          p {
             color: $color-gray-dark;
             font-style: italic;
           }

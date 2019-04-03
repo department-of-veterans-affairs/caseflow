@@ -182,7 +182,7 @@ export class AddIssuesPage extends React.Component {
     };
 
     const withdrawnIssuesComponent = () => {
-      return <div className="withdrawn-issues">
+      return <div className="issues">
       { issuesPendingWithdrawal.map((issue, index) => {
         return <div
           className="issue"
@@ -276,7 +276,7 @@ export class AddIssuesPage extends React.Component {
         rowClassNames={issueChangeClassname}
         slowReRendersAreOk />
 
-      <div className="cf-gray-box">
+      <div className="cf-gray-box cf-decision-date">
         <InlineForm>
           <DateSelector
             label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
