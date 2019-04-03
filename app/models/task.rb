@@ -34,7 +34,7 @@ class Task < ApplicationRecord
 
   scope :inactive, -> { where(status: inactive_statuses) }
 
-  scope :not_decisions_review, ->  { where.not(type: "DecisionReviewTask") }
+  scope :not_decisions_review, -> { where.not(type: "DecisionReviewTask") }
 
   def available_actions(_user)
     []
