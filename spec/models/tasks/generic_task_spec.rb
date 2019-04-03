@@ -364,7 +364,7 @@ describe GenericTask do
         end.to_not raise_error
       end
       it "should fail when organization-level BvaDispatchTask already exists with the same parent" do
-          expect { BvaDispatchTask.create_from_root_task(root_task) }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+        expect { BvaDispatchTask.create_from_root_task(root_task) }.to raise_error(Caseflow::Error::DuplicateOrgTask)
       end
     end
   end
