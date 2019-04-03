@@ -155,7 +155,7 @@ class AppealsController < ApplicationController
   end
 
   def verify_bgs_sensitivity
-    fail(ActionForbiddenError) unless BGSService.new.can_access?(appeal.veteran_file_number)
+    fail(Caseflow::Error::ActionForbiddenError) unless BGSService.new.can_access?(appeal.veteran_file_number)
   end
 
   def json_appeals(appeals)
