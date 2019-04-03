@@ -26,7 +26,7 @@ class EndProduct
     "040HDENRPMC" => "PMC HLR DTA Error - Non-Rating",
     "040BDENR" => "Board DTA Error - Non-Rating",
     "040BDER" => "Board DTA Error - Rating",
-    "040BDENRPM" => "PMC Board DTA Error - Non-Rating",
+    "040BDENRPMC" => "PMC Board DTA Error - Non-Rating",
     "040BDERPMC" => "PMC Board DTA Error - Rating"
   }.freeze
 
