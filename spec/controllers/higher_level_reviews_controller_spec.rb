@@ -17,6 +17,10 @@ describe HigherLevelReviewsController, type: :controller do
   let(:user) { create(:default_user) }
 
   describe "#edit" do
+    before do
+      hlr.establish!
+    end
+
     it "finds by UUID" do
       get :edit, params: { claim_id: hlr.uuid }
 
@@ -24,8 +28,6 @@ describe HigherLevelReviewsController, type: :controller do
     end
 
     it "finds by EPE reference_id" do
-      hlr.end_product_establishments.first.update!(reference_id: "abc123")
-
       get :edit, params: { claim_id: hlr.end_product_establishments.first.reference_id }
 
       expect(response.status).to eq 200
