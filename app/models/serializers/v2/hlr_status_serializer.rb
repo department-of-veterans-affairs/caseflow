@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-class V2::HLRStatusSerializer < ActiveModel::Serializer
-  type :higher_level_review
+class V2::HLRStatusSerializer
+  include FastJsonapi::ObjectSerializer
+  set_key_transform :camel_lower
+  set_type :higher_level_review
+  set_id :review_status_id
 
-  def id
-    object.review_status_id
-  end
-
-  attribute :linked_review_ids, key: :appeal_ids
+  attribute :appeal_ids, &:linked_review_ids
 
   attribute :updated do
     Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
@@ -17,7 +16,7 @@ class V2::HLRStatusSerializer < ActiveModel::Serializer
     false
   end
 
-  attribute :active_status?, key: :active
+  attribute :active, &:active_status?
   attribute :description
 
   attribute :location do
@@ -25,10 +24,10 @@ class V2::HLRStatusSerializer < ActiveModel::Serializer
   end
 
   attribute :aoj
-  attribute :program, key: :program_area
-  attribute :status_hash, key: :status
+  attribute :program_area, &:program
+  attribute :status, &:status_hash
   attribute :alerts
-  attribute :issues_hash, key: :issues
+  attribute :issues, &:issues_hash
   attribute :events
 
   # Stubbed attributes
