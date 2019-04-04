@@ -43,6 +43,7 @@ class RequestIssue < ApplicationRecord
     end_product_canceled: "end_product_canceled",
     withdrawn: "withdrawn",
     dismissed_death: "dismissed_death",
+    dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
     ineligible: "ineligible"
   }
