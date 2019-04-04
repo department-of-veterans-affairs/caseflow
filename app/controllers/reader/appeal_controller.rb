@@ -25,8 +25,10 @@ class Reader::AppealController < Reader::ApplicationController
   private
 
   def json_appeal(appeal)
-    ActiveModelSerializers::SerializableResource.new(
-      appeal
-    ).as_json
+    if appeal.is_a?(Appeal)
+      WorkQueue::AppealSerializer.new(appeal)
+    elsif appeal.is_a?(LegacyAppeal)
+      WorkQueue::LegacyAppealSerializer.new(appeal)
+    end
   end
 end
