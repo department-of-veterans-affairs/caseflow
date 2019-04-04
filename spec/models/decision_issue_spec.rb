@@ -391,15 +391,37 @@ describe DecisionIssue do
         end
 
         context "when there is no prior claim by the claimant" do
-          it "rasies an error" do
-            expect { subject }.to raise_error(DecisionIssue::AppealDTAPayeeCodeError)
+          context "when there is a bgs payee code" do
+            before { allow_any_instance_of(Claimant).to receive(:bgs_payee_code).and_return("12") }
 
-            # verify that both appeal and newly created dta sc have errors
-            expect(SupplementalClaim.find_by(
-                     veteran_file_number: decision_review.veteran_file_number,
-                     establishment_error: "No payee code"
-                   )).to_not be_nil
-            expect(decision_review.establishment_error).to eq("DTA SC creation failed")
+            it "creates a new supplemental claim" do
+              expect(subject).to have_attributes(
+                veteran_file_number: decision_review.veteran_file_number,
+                decision_review_remanded: decision_review,
+                benefit_type: "compensation"
+              )
+              expect(subject.claimants.count).to eq(1)
+              expect(subject.claimants.first).to have_attributes(
+                participant_id: decision_review.claimant_participant_id,
+                payee_code: "12",
+                decision_review: subject
+              )
+            end
+          end
+
+          context "when there is no bgs payee code" do
+            before { allow_any_instance_of(Claimant).to receive(:bgs_payee_code).and_return(nil) }
+
+            it "raises an error" do
+              expect { subject }.to raise_error(DecisionIssue::AppealDTAPayeeCodeError)
+
+              # verify that both appeal and newly created dta sc have errors
+              expect(SupplementalClaim.find_by(
+                       veteran_file_number: decision_review.veteran_file_number,
+                       establishment_error: "No payee code"
+                     )).to_not be_nil
+              expect(decision_review.establishment_error).to eq("DTA SC creation failed")
+            end
           end
         end
       end
