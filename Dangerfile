@@ -14,9 +14,14 @@ if `git diff #{github.base_commit} spec/ | grep -E '(:focus => true)|(focus: tru
   fail("focus: true is left in test")
 end
 
-# We must take care of our VACOLS models. Remind developers to test this thoroughly
+# We must take care of our db schema.
 if !git.modified_files.grep(/db\/schema.rb/).empty?
   warn("This PR changes the schema. Please use the PR template checklist.")
+end
+
+# migration without running rake db:migrate
+if git.modified_files.grep(/db\/migrate\//).any? && !git.modified_files.grep(/db\/schema.rb/).any?
+  warn("This PR contains one or more db migrations, but the schema.rb is not modified.")
 end
 
 # We should not disable Rubocop rules unless there's a very good reason
