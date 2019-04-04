@@ -21,8 +21,7 @@ import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
 import {
-  requestPatch,
-  requestSave
+  requestPatch
 } from './uiReducer/uiActions';
 
 class ChangeHearingDispositionModal extends React.Component {
@@ -103,7 +102,6 @@ class ChangeHearingDispositionModal extends React.Component {
       })
     );
 
-    // debugger;
     return <QueueFlowModal
       title="Change hearing disposition"
       pathAfterSubmit = "/queue"
@@ -149,7 +147,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch,
-  requestSave,
   onReceiveAmaTasks
 }, dispatch);
 

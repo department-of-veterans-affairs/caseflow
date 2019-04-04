@@ -72,63 +72,6 @@ class DispositionTask < GenericTask
     super(params, user)
   end
 
-  def check_parent_type
-    if parent.type != "HearingTask"
-      fail(
-        Caseflow::Error::InvalidParentTask,
-        task_type: self.class.name,
-        assignee_type: assigned_to.class.name
-      )
-    end
-  end
-
-  def reschedule(hearing_day_id:, hearing_time:, hearing_location: nil)
-    new_hearing_task = hearing_task.cancel_and_recreate
-
-    new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
-                                                     appeal: appeal,
-                                                     hearing_location_attrs: hearing_location&.to_hash,
-                                                     scheduled_time: hearing_time.stringify_keys)
-    self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
-  end
-
-  def schedule_later(instructions: nil, with_admin_action_klass: nil, admin_action_instructions: nil)
-    new_hearing_task = hearing_task.cancel_and_recreate
-
-    schedule_task = ScheduleHearingTask.create!(
-      parent: new_hearing_task,
-      appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
-      instructions: instructions.present? ? [instructions] : nil
-    )
-    if with_admin_action_klass.present?
-      with_admin_action_klass.constantize.create!(
-        parent: schedule_task,
-        appeal: appeal,
-        instructions: admin_action_instructions.present? ? [admin_action_instructions] : nil,
-        assigned_to: HearingsManagement.singleton
-      )
-    end
-  end
-
-  def mark_hearing_cancelled() end
-
-  def mark_hearing_held() end
-
-  def mark_hearing_no_show() end
-
-  def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
-    multi_transaction do
-      if hearing.is_a?(LegacyHearing)
-        hearing.update_caseflow_and_vacols(disposition: "postponed")
-      else
-        hearing.update(disposition: "postponed")
-      end
-
-      reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
-    end
-  end
-
   def cancel!
     if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.cancelled
       fail HearingDispositionNotCanceled
@@ -166,6 +109,18 @@ class DispositionTask < GenericTask
     end
   end
 
+  private
+
+  def check_parent_type
+    if parent.type != "HearingTask"
+      fail(
+        Caseflow::Error::InvalidParentTask,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
+    end
+  end
+
   def update_parent_status
     # Create the child IHP tasks before running DistributionTask's update_status_if_children_tasks_are_complete method.
     if appeal.is_a?(LegacyAppeal)
@@ -177,7 +132,33 @@ class DispositionTask < GenericTask
     super
   end
 
-  private
+  def reschedule(hearing_day_id:, hearing_time:, hearing_location: nil)
+    new_hearing_task = hearing_task.cancel_and_recreate
+
+    new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
+                                                     appeal: appeal,
+                                                     hearing_location_attrs: hearing_location&.to_hash,
+                                                     scheduled_time: hearing_time.stringify_keys)
+    self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
+  end
+
+  def mark_hearing_cancelled() end
+
+  def mark_hearing_held() end
+
+  def mark_hearing_no_show() end
+
+  def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
+    multi_transaction do
+      if hearing.is_a?(LegacyHearing)
+        hearing.update_caseflow_and_vacols(disposition: "postponed")
+      else
+        hearing.update(disposition: "postponed")
+      end
+
+      reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
+    end
+  end
 
   def reschedule_or_schedule_later(instructions: nil, after_disposition_update:)
     case after_disposition_update[:action]
@@ -192,6 +173,25 @@ class DispositionTask < GenericTask
         instructions: instructions,
         with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
         admin_action_instructions: after_disposition_update[:admin_action_instructions]
+      )
+    end
+  end
+
+  def schedule_later(instructions: nil, with_admin_action_klass: nil, admin_action_instructions: nil)
+    new_hearing_task = hearing_task.cancel_and_recreate
+
+    schedule_task = ScheduleHearingTask.create!(
+      appeal: appeal,
+      assigned_to: HearingsManagement.singleton,
+      instructions: instructions.present? ? [instructions] : nil,
+      parent: new_hearing_task
+    )
+    if with_admin_action_klass.present?
+      with_admin_action_klass.constantize.create!(
+        appeal: appeal,
+        assigned_to: HearingsManagement.singleton,
+        instructions: admin_action_instructions.present? ? [admin_action_instructions] : nil,
+        parent: schedule_task
       )
     end
   end
