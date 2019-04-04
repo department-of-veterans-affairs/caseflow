@@ -249,7 +249,7 @@ class AppealSeries < ApplicationRecord
     when :at_vso
       { vso_name: representative_name }
     when :decision_in_progress
-      { decision_timeliness: DECISION_TIMELINESS.dup }
+      { decisionTimeliness: DECISION_TIMELINESS.dup }
     when :remand
       {
         issues: issues_for_last_decision,
