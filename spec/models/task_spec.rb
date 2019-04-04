@@ -382,7 +382,8 @@ describe Task do
 
     it "filters out subclasses of DecisionReviewTask" do
       tasks = described_class.not_decisions_review.all
-      expect(tasks).to eq([task])
+      expect(tasks).to_not include(veteran_record_request_task)
+      expect(tasks).to include(task)
     end
   end
 
