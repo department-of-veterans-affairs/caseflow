@@ -10,12 +10,6 @@ describe DispositionTask do
     let(:after_disposition_update) { nil }
     let(:user) { FactoryBot.create(:user) }
     let(:organization) { HearingsManagement.singleton }
-
-    before do
-      # Add user to hearing management branch
-      OrganizationsUser.add_user_to_organization(user, organization)
-    end
-
     let(:params) do
       {
         status: "cancelled",
@@ -25,7 +19,14 @@ describe DispositionTask do
             after_disposition_update: after_disposition_update
           }
         }
-      }
+      }.with_indifferent_access
+    end
+
+    subject { disposition_task.update_from_params(params, user) }
+
+    before do
+      # Add user to hearing management branch
+      OrganizationsUser.add_user_to_organization(user, organization)
     end
 
     context "when hearing should be scheduled later" do
@@ -36,7 +37,7 @@ describe DispositionTask do
       end
 
       it "creates a new HearingTask and ScheduleHearingTask" do
-        disposition_task.update_from_params(params, user)
+        subject
 
         expect(Hearing.first.disposition).to eq "postponed"
         expect(Hearing.count).to eq 1
@@ -46,20 +47,36 @@ describe DispositionTask do
         expect(ScheduleHearingTask.count).to eq 1
         expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
       end
+
+      context "when task instructions are passed" do
+        let(:instructions_text) { "My informative task instructions" }
+        before do
+          params[:instructions] = instructions_text
+        end
+
+        it "adds the instructions to both the DispositionTask and the ScheduleHearingTask" do
+          subject
+
+          expect(DispositionTask.first.status).to eq "cancelled"
+          expect(DispositionTask.first.instructions).to eq [instructions_text]
+          expect(ScheduleHearingTask.count).to eq 1
+          expect(ScheduleHearingTask.first.instructions).to eq [instructions_text]
+        end
+      end
     end
 
     context "when hearing should be scheduled later with admin action" do
-      let(:instructions) { "Fix this." }
+      let(:admin_action_instructions) { "Fix this." }
       let(:after_disposition_update) do
         {
           action: "schedule_later",
           with_admin_action_klass: "HearingAdminActionIncarceratedVeteranTask",
-          admin_action_instructions: instructions
+          admin_action_instructions: admin_action_instructions
         }
       end
 
       it "creates a new HearingTask and ScheduleHearingTask with admin action" do
-        disposition_task.update_from_params(params, user)
+        subject
 
         expect(Hearing.first.disposition).to eq "postponed"
         expect(Hearing.count).to eq 1
@@ -69,7 +86,7 @@ describe DispositionTask do
         expect(ScheduleHearingTask.count).to eq 1
         expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
         expect(HearingAdminActionIncarceratedVeteranTask.count).to eq 1
-        expect(HearingAdminActionIncarceratedVeteranTask.last.instructions).to eq [instructions]
+        expect(HearingAdminActionIncarceratedVeteranTask.last.instructions).to eq [admin_action_instructions]
       end
     end
 
@@ -86,7 +103,7 @@ describe DispositionTask do
       end
 
       it "creates a new hearing with a new DispositionTask" do
-        disposition_task.update_from_params(params, user)
+        subject
 
         expect(Hearing.count).to eq 2
         expect(Hearing.first.disposition).to eq "postponed"
