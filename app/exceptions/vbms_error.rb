@@ -19,6 +19,7 @@ class VBMSError < RuntimeError
   class PIFExistsForEPCode < Caseflow::Error::VBMS; end
   class DuplicateEP < Caseflow::Error::VBMS; end
   class UserNotAuthorized < Caseflow::Error::VBMS; end
+  class VeteranEmployedByStation < Caseflow::Error::VBMS; end
   class BadClaim < Caseflow::Error::VBMS; end
   class CannotDeleteContention < Caseflow::Error::VBMS; end
   class ClaimDateInvalid < Caseflow::Error::VBMS; end
@@ -66,6 +67,9 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/276980/
     "User is not authorized." => "UserNotAuthorized",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/294187/
+    "Veteran is employed by this station." => "VeteranEmployedByStation",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/278342/
     "Unable to establish claim: " => "BadClaim",
