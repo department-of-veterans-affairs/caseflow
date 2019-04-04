@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe AppealsController, type: :controller do
+  include TaskHelpers
+
   describe "GET appeals" do
     let(:ssn) { Generators::Random.unique_ssn }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
@@ -361,6 +363,7 @@ RSpec.describe AppealsController, type: :controller do
 
           expect(response.status).to eq 200
           expect(response_body["appeals"].size).to eq 1
+          expect(response_body["appeals"].first["type"]).to eq "appeal"
           expect(response_body["claim_reviews"].size).to eq 2
         end
       end
@@ -380,14 +383,17 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET appeals/:id.json" do
-    let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
-
-    before { User.authenticate!(roles: ["System Admin"]) }
-
     it "should succeed" do
+      appeal = create_legacy_appeal_with_hearings
+
+      User.authenticate!(roles: ["System Admin"])
       get :show, params: { appeal_id: appeal.vacols_id }, as: :json
 
+      appeal_json = JSON.parse(response.body)["appeal"]["attributes"]
+
       assert_response :success
+      expect(appeal_json["available_hearing_locations"][0]["city"]).to eq "Holdrege"
+      expect(appeal_json["hearings"][0]["type"]).to eq "Video"
     end
   end
 end

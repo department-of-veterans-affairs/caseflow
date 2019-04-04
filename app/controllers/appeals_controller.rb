@@ -76,11 +76,9 @@ class AppealsController < ApplicationController
   # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran
-    render json: { veteran:
-      ActiveModelSerializers::SerializableResource.new(
-        appeal,
-        serializer: ::WorkQueue::VeteranSerializer
-      ).as_json[:data][:attributes] }
+    render json: {
+      veteran: ::WorkQueue::VeteranSerializer.new(appeal).serializable_hash[:data][:attributes]
+    }
   end
 
   def show
@@ -92,7 +90,7 @@ class AppealsController < ApplicationController
         MetricsService.record("Get appeal information for ID #{id}",
                               service: :queue,
                               name: "AppealsController.show") do
-          render json: { appeal: json_appeals([appeal])[:data][0] }
+          render json: { appeal: json_appeals(appeal)[:data] }
         end
       end
     end
@@ -158,11 +156,12 @@ class AppealsController < ApplicationController
     fail(Caseflow::Error::ActionForbiddenError) unless BGSService.new.can_access?(appeal.veteran_file_number)
   end
 
-  def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      user: current_user
-    ).as_json
+  def json_appeals(appeal)
+    if appeal.is_a?(Appeal)
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    elsif appeal.is_a?(LegacyAppeal)
+      WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    end
   end
 
   def review_removed_message

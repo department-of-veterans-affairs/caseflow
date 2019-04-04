@@ -1419,14 +1419,14 @@ describe Appeal do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to be_nil
+        expect(issue[:lastAction]).to be_nil
         expect(issue[:date]).to be_nil
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(true)
-        expect(issue2[:last_action]).to be_nil
+        expect(issue2[:lastAction]).to be_nil
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Pension issue")
       end
@@ -1458,14 +1458,14 @@ describe Appeal do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to eq("remand")
+        expect(issue[:lastAction]).to eq("remand")
         expect(issue[:date].to_date).to eq(decision_date.to_date)
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
-        expect(issue2[:last_action]).to eq("allowed")
+        expect(issue2[:lastAction]).to eq("allowed")
         expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
       end
@@ -1503,14 +1503,14 @@ describe Appeal do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(false)
-        expect(issue[:last_action]).to eq("denied")
+        expect(issue[:lastAction]).to eq("denied")
         expect(issue[:date].to_date).to eq(remand_sc_decision_date.to_date)
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
-        expect(issue2[:last_action]).to eq("allowed")
+        expect(issue2[:lastAction]).to eq("allowed")
         expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
       end

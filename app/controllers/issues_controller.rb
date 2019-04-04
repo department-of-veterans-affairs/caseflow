@@ -49,10 +49,7 @@ class IssuesController < ApplicationController
 
   def json_issues
     appeal.issues.map do |issue|
-      ActiveModelSerializers::SerializableResource.new(
-        issue,
-        serializer: ::WorkQueue::LegacyIssueSerializer
-      ).as_json[:data][:attributes]
+      ::WorkQueue::LegacyIssueSerializer.new(issue).serializable_hash[:data][:attributes]
     end
   end
 

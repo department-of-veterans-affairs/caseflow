@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-class V2::AppealStatusSerializer < ActiveModel::Serializer
-  type :appeal
+class V2::AppealStatusSerializer
+  include FastJsonapi::ObjectSerializer
+  set_key_transform :camel_lower
+  set_type :appeal
+  set_id :appeal_status_id
 
-  def id
-    object.appeal_status_id
-  end
-
-  attribute :linked_review_ids, key: :appeal_ids
+  attribute :appeal_ids, &:linked_review_ids
 
   attribute :updated do
     Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
@@ -21,18 +20,18 @@ class V2::AppealStatusSerializer < ActiveModel::Serializer
     "original"
   end
 
-  attribute :active_status?, key: :active
+  attribute :active, &:active_status?
   attribute :description
-  attribute :advanced_on_docket, key: :aod
+  attribute :aod, &:advanced_on_docket
   attribute :location
   attribute :aoj
-  attribute :program, key: :program_area
-  attribute :status_hash, key: :status
+  attribute :program_area, &:program
+  attribute :status, &:status_hash
   attribute :alerts
-  attribute :docket_hash, key: :docket
+  attribute :docket, &:docket_hash
   attribute :issues
   attribute :events
-  attribute :issues_hash, key: :issues
+  attribute :issues, &:issues_hash
 
   # Stubbed attributes
   attribute :evidence do

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class WorkQueue::BeaamSerializer < ActiveModel::Serializer
+class WorkQueue::BeaamSerializer
+  include FastJsonapi::ObjectSerializer
   attribute :previous_task do
     {
       assigned_on: nil
@@ -23,35 +24,19 @@ class WorkQueue::BeaamSerializer < ActiveModel::Serializer
     }
   end
 
-  attribute :docket_name do
-    object.docket_name
-  end
+  attribute :docket_name
 
   attribute :case_type do
     "BEAAM"
   end
 
-  attribute :docket_number do
-    object.docket_number
-  end
+  attribute :docket_number
+  attribute :veteran_full_name, &:veteran_name
+  attribute :veteran_file_number
+  attribute :external_appeal_id, &:external_id
+  attribute :aod, &:advanced_on_docket
 
-  attribute :veteran_full_name do
-    object.veteran_name
-  end
-
-  attribute :veteran_file_number do
-    object.veteran_file_number
-  end
-
-  attribute :external_appeal_id do
-    object.external_id
-  end
-
-  attribute :aod do
-    object.advanced_on_docket
-  end
-
-  attribute :issue_count do
+  attribute :issue_count do |object|
     object.request_issues.active.count
   end
 end
