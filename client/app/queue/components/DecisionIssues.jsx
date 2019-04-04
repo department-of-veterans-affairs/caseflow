@@ -14,10 +14,6 @@ export const contestedIssueStyling = css({
   margin: '10px 0'
 });
 
-// const indentedIssueStyling = css({
-//   margin: `0 ${TEXT_INDENTATION}`
-// });
-
 const buttonDiv = css({
   textAlign: 'right',
   margin: '20px 0'
@@ -59,10 +55,6 @@ const noteDiv = css({
   fontSize: '1.5rem',
   color: COLORS.GREY
 });
-
-// const errorTextSpacing = css({
-//   margin: TEXT_INDENTATION
-// });
 
 export default class DecisionIssues extends React.PureComponent {
   decisionIssues = (requestIssue) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { css } from 'glamor';
 
 import { getIssueDiagnosticCodeLabel } from '../utils';
-import IssueAma from '../../components/IssueAma';
+import AmaIssueList from '../../components/AmaIssueList';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 import CaseDetailsDescriptionList from './CaseDetailsDescriptionList';
 import { dispositionLabelForDescription } from './LegacyIssueListItem';
@@ -25,7 +25,7 @@ const headingStyling = css({
 
 export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal) {
-    return <IssueAma
+    return <AmaIssueList
       requestIssues={props.issues}
       decisionIssues={props.decisionIssues} />;
   }

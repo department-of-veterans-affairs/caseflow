@@ -6,13 +6,12 @@ import _ from 'lodash';
 import { css } from 'glamor';
 
 import Button from '../components/Button';
-import IssueAma from '../components/IssueAma';
+import AmaIssueList from '../components/AmaIssueList';
 import DecisionIssues from './components/DecisionIssues';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
-// import ContestedIssues, { contestedIssueStyling } from './components/ContestedIssues';
 import COPY from '../../COPY.json';
 import { COLORS } from '../constants/AppConstants';
 
@@ -249,7 +248,6 @@ class SelectDispositionsView extends React.PureComponent {
 
   render = () => {
     const { appeal, highlight, ...otherProps } = this.props;
-
     const {
       highlightModal,
       decisionIssue,
@@ -258,25 +256,21 @@ class SelectDispositionsView extends React.PureComponent {
       deleteAddedDecisionIssue,
       requestIdToDelete
     } = this.state;
-
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
     });
     const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
     const toDeleteHasConnectedIssue = connectedIssues.length > 0;
+    const issueErrors = {};
 
-    const decisionIssues = (
-      <DecisionIssues
-        decisionIssues={appeal.decisionIssues}
-        openDecisionHandler={this.openDecisionHandler}
-        openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler} />
-    );
+    appeal.issues.forEach((issue) => {
+      const hasDecisionIssue = appeal.decisionIssues.some(
+        (decisionIssueAma) => decisionIssueAma.request_issue_ids.includes(issue.id)
+      );
 
-    const hasDecisionIssue = appeal.decisionIssues.some(
-      (decisionIssue) => decisionIssue.request_issue_ids.includes(issue.id)
-    );
-    const decisionIssueErrorMessage = highlight && !hasDecisionIssue &&
-      'You must add a decision before you continue.';
+      issueErrors[issue.id] = highlight && !hasDecisionIssue &&
+        'You must add a decision before you continue.';
+    });
 
     return <QueueFlowPage
       validateForm={this.validateForm}
@@ -287,10 +281,14 @@ class SelectDispositionsView extends React.PureComponent {
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
       <p>{COPY.DECISION_ISSUE_PAGE_EXPLANATION}</p>
       <hr />
-      <IssueAma
+      <AmaIssueList
         requestIssues={appeal.issues}
-        errorMessage={decisionIssueErrorMessage}
-        children={decisionIssues} />
+        errorMessages={issueErrors}>
+        <DecisionIssues
+          decisionIssues={appeal.decisionIssues}
+          openDecisionHandler={this.openDecisionHandler}
+          openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler} />
+      </AmaIssueList>
       { deleteAddedDecisionIssue && <Modal
         buttons = {this.deleteAddedDecisionIssueModalButtons}
         closeHandler={this.handleModalClose}
@@ -304,12 +302,8 @@ class SelectDispositionsView extends React.PureComponent {
         buttons = {this.decisionModalButtons}
         closeHandler={this.handleModalClose}
         title = {`${editingExistingIssue ? 'Edit' : 'Add'} decision`}
-        customStyles={css({
-          width: '800px'
-        })}
-      >
-
-        <div {...contestedIssueStyling}>
+        customStyles={css({ width: '800px' })}>
+        <div>
           {COPY.CONTESTED_ISSUE}
           <ul>
             {
