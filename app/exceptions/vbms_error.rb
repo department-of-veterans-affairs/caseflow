@@ -35,6 +35,9 @@ class VBMSError < RuntimeError
   end
 
   KNOWN_ERRORS = {
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4403/events/293678/
+    "FAILED FOR UNKNOWN REASONS" => "Transient",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/
     "additional review due to an Incident Flash" => "IncidentFlash",
 

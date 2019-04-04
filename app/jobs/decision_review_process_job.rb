@@ -17,6 +17,9 @@ class DecisionReviewProcessJob < CaseflowJob
 
     begin
       return_value = decision_review.establish!
+    rescue VBMSError::Transient => err
+      decision_review.update_error!(err.inspect)
+      # no need to tell Sentry about it
     rescue StandardError => err
       decision_review.update_error!(err.inspect)
       Raven.capture_exception(err)
