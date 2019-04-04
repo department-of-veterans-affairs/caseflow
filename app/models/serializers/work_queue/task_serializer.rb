@@ -77,7 +77,11 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
   end
 
   attribute :available_hearing_locations do
-    object.appeal.available_hearing_locations
+    if @instance_options[:exclude_hearing_locations]
+      []
+    else
+      object.appeal.available_hearing_locations
+    end
   end
 
   attribute :previous_task do
@@ -116,7 +120,7 @@ class WorkQueue::TaskSerializer < ActiveModel::Serializer
 
   attribute :available_actions do
     if @instance_options[:exclude_extra_fields]
-      nil
+      []
     else
       object.available_actions_unwrapper(@instance_options[:user])
     end
