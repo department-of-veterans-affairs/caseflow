@@ -419,7 +419,7 @@ feature "Appeal Edit issues" do
     end
   end
 
-  fcontext "appeal is non-comp benefit type" do
+  context "appeal is non-comp benefit type" do
     let!(:request_issue) { create(:request_issue, benefit_type: "education") }
 
     scenario "adding an issue with a non-comp benefit type" do
