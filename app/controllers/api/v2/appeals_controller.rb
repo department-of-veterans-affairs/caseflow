@@ -24,15 +24,7 @@ class Api::V2::AppealsController < Api::ApplicationController
 
   def json_appeals
     Rails.cache.fetch("appeals/v2/#{ssn}", expires_in: 20.hours, force: reload?) do
-      if appeal_status_v3_enabled?
-        all_reviews_and_appeals
-      else
-        ActiveModelSerializers::SerializableResource.new(
-          legacy_appeals,
-          each_serializer: ::V2::LegacyAppealStatusSerializer,
-          key_transform: :camel_lower
-        ).as_json
-      end
+      all_reviews_and_appeals
     end
   end
 
