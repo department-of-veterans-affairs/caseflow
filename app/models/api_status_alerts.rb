@@ -25,7 +25,8 @@ class ApiStatusAlerts
       post_decision,
       post_remand_decision,
       post_effectuation,
-      evidentiary_period
+      evidentiary_period,
+      scheduled_hearing
     ].flatten.compact.uniq
   end
 
@@ -90,6 +91,21 @@ class ApiStatusAlerts
       type: "evidentiary_period",
       details: {
         due_date: task.timer_ends_at.to_date
+      }
+    }
+  end
+
+  def scheduled_hearing
+    return unless decision_review.hearing_docket?
+
+    scheduled_hearing = decision_review.scheduled_hearing
+    return unless scheduled_hearing
+
+    {
+      type: "scheduled_hearing",
+      details: {
+        date: scheduled_hearing.scheduled_for.to_date,
+        type: decision_review.api_scheduled_hearing_type
       }
     }
   end
