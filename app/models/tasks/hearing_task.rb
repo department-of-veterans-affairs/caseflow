@@ -11,13 +11,17 @@ class HearingTask < GenericTask
   before_validation :set_assignee
 
   def cancel_and_recreate
-    cancel_task_and_child_subtasks
-
     HearingTask.create!(
       appeal: appeal,
       parent: parent,
       assigned_to: Bva.singleton
     )
+
+    cancel_task_and_child_subtasks
+  end
+
+  def verify_org_task_unique
+    true
   end
 
   def when_child_task_completed
