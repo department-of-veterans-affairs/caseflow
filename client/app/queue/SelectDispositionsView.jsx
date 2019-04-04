@@ -7,10 +7,12 @@ import { css } from 'glamor';
 
 import Button from '../components/Button';
 import IssueAma from '../components/IssueAma';
+import DecisionIssues from './components/DecisionIssues';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
+// import ContestedIssues, { contestedIssueStyling } from './components/ContestedIssues';
 import COPY from '../../COPY.json';
 import { COLORS } from '../constants/AppConstants';
 
@@ -263,6 +265,19 @@ class SelectDispositionsView extends React.PureComponent {
     const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
     const toDeleteHasConnectedIssue = connectedIssues.length > 0;
 
+    const decisionIssues = (
+      <DecisionIssues
+        decisionIssues={appeal.decisionIssues}
+        openDecisionHandler={this.openDecisionHandler}
+        openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler} />
+    );
+
+    const hasDecisionIssue = appeal.decisionIssues.some(
+      (decisionIssue) => decisionIssue.request_issue_ids.includes(issue.id)
+    );
+    const decisionIssueErrorMessage = highlight && !hasDecisionIssue &&
+      'You must add a decision before you continue.';
+
     return <QueueFlowPage
       validateForm={this.validateForm}
       getNextStepUrl={this.getNextStepUrl}
@@ -274,10 +289,8 @@ class SelectDispositionsView extends React.PureComponent {
       <hr />
       <IssueAma
         requestIssues={appeal.issues}
-        decisionIssues={appeal.decisionIssues}
-        openDecisionHandler={this.openDecisionHandler}
-        openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler}
-        highlight={highlight} />
+        errorMessage={decisionIssueErrorMessage}
+        children={decisionIssues} />
       { deleteAddedDecisionIssue && <Modal
         buttons = {this.deleteAddedDecisionIssueModalButtons}
         closeHandler={this.handleModalClose}
