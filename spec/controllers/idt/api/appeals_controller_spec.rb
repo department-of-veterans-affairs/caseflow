@@ -50,7 +50,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           expect(RequestStore[:current_user]).to eq user
           response_body = JSON.parse(response.body)["data"]
           ama_appeals = response_body
-            .select { |appeal| appeal["type"] == "appeals" }
+            .select { |appeal| appeal["attributes"]["type"] == "Appeal" }
             .sort_by { |appeal| appeal["attributes"]["file_number"] }
 
           expect(ama_appeals.size).to eq 1
@@ -186,7 +186,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           expect(RequestStore[:current_user]).to eq user
           response_body = JSON.parse(response.body)["data"]
           ama_appeals = response_body
-            .select { |appeal| appeal["type"] == "appeals" }
+            .select { |appeal| appeal["attributes"]["type"] == "Appeal" }
             .sort_by { |appeal| appeal["attributes"]["file_number"] }
 
           expect(ama_appeals.size).to eq 2
@@ -218,7 +218,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           get :list
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["data"]
-          ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+          ama_appeals = response_body.select { |appeal| appeal["attributes"]["type"] == "Appeal" }
           expect(ama_appeals.size).to eq 1
           expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
           expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name

@@ -24,9 +24,6 @@ class UsersController < ApplicationController
   private
 
   def json_users(users)
-    ActiveModelSerializers::SerializableResource.new(
-      users,
-      each_serializer: ::WorkQueue::UserSerializer
-    ).as_json
+    ::WorkQueue::UserSerializer.new(users, is_collection: true)
   end
 end

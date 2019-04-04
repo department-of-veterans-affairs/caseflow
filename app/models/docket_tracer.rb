@@ -16,7 +16,7 @@ class DocketTracer < ApplicationRecord
       ahead: ahead_count,
       ready: ahead_and_ready_count,
       month: month,
-      docket_month: latest_docket_month,
+      docketMonth: latest_docket_month,
       eta: nil
     }
   end
