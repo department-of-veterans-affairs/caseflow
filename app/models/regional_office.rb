@@ -839,7 +839,7 @@ class RegionalOffice
     timezone: "America/Los_Angeles",
     hold_hearings: true,
     facility_locator_id: "vba_343",
-    alternate_locations: ["vba_343an"] },
+    alternate_locations: ["vba_343f"] },
     "RO44" =>
   { label: "Los Angeles regional office",
     city: "Los Angeles",
