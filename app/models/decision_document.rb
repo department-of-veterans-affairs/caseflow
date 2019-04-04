@@ -35,7 +35,7 @@ class DecisionDocument < ApplicationRecord
   end
 
   def submit_for_processing!(delay: 0)
-    update_decision_issue_decision_dates!
+    update_decision_issue_decision_dates! if ama?
     return no_processing_required! unless upload_enabled?
 
     cache_file!
