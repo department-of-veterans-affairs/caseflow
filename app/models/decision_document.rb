@@ -134,10 +134,6 @@ class DecisionDocument < ApplicationRecord
     S3Service.store_file(s3_location, Base64.decode64(@file))
   end
 
-  def legacy?
-    appeal.class.name == LegacyAppeal.name
-  end
-
   def ama?
     appeal.class.name == Appeal.name
   end

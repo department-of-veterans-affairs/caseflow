@@ -11,7 +11,7 @@ class BvaDispatchTask < GenericTask
     end
 
     def outcode(appeal, params, user)
-      if ama?(appeal)
+      if appeal.class.name == Appeal.name
         tasks = where(appeal: appeal, assigned_to: user)
         throw_error_if_no_tasks_or_if_task_is_completed(appeal, tasks, user)
         task = tasks[0]
@@ -21,7 +21,7 @@ class BvaDispatchTask < GenericTask
       params[:appeal_type] = appeal.class.name
       create_decision_document!(params)
 
-      if ama?(appeal)
+      if appeal.class.name == Appeal.name
         task.update!(status: Constants.TASK_STATUSES.completed)
         task.root_task.update!(status: Constants.TASK_STATUSES.completed)
         appeal.request_issues.each(&:close_decided_issue!)
@@ -33,10 +33,6 @@ class BvaDispatchTask < GenericTask
     end
 
     private
-
-    def ama?(appeal)
-      appeal.class.name == Appeal.name
-    end
 
     def create_decision_document!(params)
       DecisionDocument.create!(params).tap do |decision_document|
