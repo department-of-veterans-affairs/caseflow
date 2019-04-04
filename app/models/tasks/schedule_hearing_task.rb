@@ -8,7 +8,6 @@
 class ScheduleHearingTask < GenericTask
   before_validation :set_assignee
   before_create :create_parent_hearing_task
-  after_update :update_location_in_vacols
 
   class << self
     def tasks_for_ro(regional_office)
@@ -61,12 +60,6 @@ class ScheduleHearingTask < GenericTask
   def create_parent_hearing_task
     if parent.type != HearingTask.name
       self.parent = HearingTask.create(appeal: appeal, parent: parent)
-    end
-  end
-
-  def update_location_in_vacols
-    if saved_change_to_status? && appeal.is_a?(LegacyAppeal) && on_hold?
-      AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
 

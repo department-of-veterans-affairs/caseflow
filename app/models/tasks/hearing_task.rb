@@ -20,6 +20,30 @@ class HearingTask < GenericTask
     )
   end
 
+  def when_child_task_completed
+    return unless appeal.tasks.active.where(type: HearingTask.name).empty?
+
+    if appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
+    else
+      RootTask.create_ihp_tasks!(appeal, parent)
+    end
+
+    super
+  end
+
+  def update_legacy_appeal_location
+    location = if hearing.held?
+                 LegacyAppeal::LOCATION_CODES[:transcription]
+               elsif appeal.vsos.empty?
+                 LegacyAppeal::LOCATION_CODES[:case_storage]
+               else
+                 LegacyAppeal::LOCATION_CODES[:service_organization]
+               end
+
+    AppealRepository.update_location!(appeal, location)
+  end
+
   private
 
   def set_assignee
