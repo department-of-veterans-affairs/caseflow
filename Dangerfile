@@ -15,12 +15,12 @@ if `git diff #{github.base_commit} spec/ | grep -E '(:focus => true)|(focus: tru
 end
 
 # We must take care of our db schema.
-if !git.modified_files.grep(/db\/schema.rb/).empty?
+if git.modified_files.grep(/db\/schema.rb/).any?
   warn("This PR changes the schema. Please use the PR template checklist.")
 end
 
 # migration without running rake db:migrate
-if git.modified_files.grep(/db\/migrate\//).any? && !git.modified_files.grep(/db\/schema.rb/).any?
+if git.modified_files.grep(/db\/migrate\//).any? && git.modified_files.grep(/db\/schema.rb/).none?
   warn("This PR contains one or more db migrations, but the schema.rb is not modified.")
 end
 
