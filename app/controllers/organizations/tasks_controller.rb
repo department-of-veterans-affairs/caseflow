@@ -24,7 +24,9 @@ class Organizations::TasksController < OrganizationsController
   def json_tasks(tasks)
     ActiveModelSerializers::SerializableResource.new(
       AppealRepository.eager_load_legacy_appeals_for_tasks(tasks),
-      user: current_user
+      user: current_user,
+      exclude_extra_fields: organization.is_a?(::Vso),
+      exclude_hearing_locations: organization.is_a?(::Vso)
     ).as_json
   end
 end

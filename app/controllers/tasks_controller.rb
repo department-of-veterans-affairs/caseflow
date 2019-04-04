@@ -91,17 +91,21 @@ class TasksController < ApplicationController
     no_cache
     RootTask.find_or_create_by!(appeal: appeal)
 
-    # VSO users should only get tasks assigned to them or their organization.
-    if current_user.vso_employee?
-      return json_vso_tasks
-    end
+    tasks = []
 
-    # DecisionReviewTask tasks are meant to be viewed on the /decision_reviews/:line-of-business route only.
-    # This change filters them out from the Queue page
-    tasks = appeal.tasks.reject { |t| t.is_a?(DecisionReviewTask) }
-    if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-      legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
-      tasks = (legacy_appeal_tasks + tasks).uniq
+    # Prevent VSOs from viewing tasks for this appeal assigned to anybody or team at the Board.
+    # VSO users will be able to see other VSO's tasks because we don't store that membership information in Caseflow.
+    if current_user.vso_employee?
+      # Return all tasks assigned to the current user or ANY VSO.
+      tasks = appeal.tasks.select { |t| t.assigned_to.is_a?(Vso) || current_user == t.assigned_to }
+    else
+      # DecisionReviewTask tasks are meant to be viewed on the /decision_reviews/:line-of-business route only.
+      # This change filters them out from the Queue page
+      tasks = appeal.tasks.reject { |t| t.is_a?(DecisionReviewTask) }
+      if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
+        legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
+        tasks = (legacy_appeal_tasks + tasks).uniq
+      end
     end
 
     render json: {
@@ -219,16 +223,6 @@ class TasksController < ApplicationController
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )
-  end
-
-  def json_vso_tasks
-    # For now we just return tasks that are assigned to the user. In the future,
-    # we will add tasks that are assigned to the user's organization.
-    tasks = GenericQueue.new(user: current_user).tasks
-
-    render json: {
-      tasks: json_tasks(tasks)[:data]
-    }
   end
 
   def json_tasks(tasks)
