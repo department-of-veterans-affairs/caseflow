@@ -12,6 +12,7 @@ RSpec.feature "Change hearing disposition" do
   let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day) }
   let!(:association) { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
   let!(:change_task) { FactoryBot.create(:change_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
+  let(:instructions_text) { "This is why I'm postponing this hearing." }
 
   before do
     OrganizationsUser.add_user_to_organization(current_user, HearingAdmin.singleton)
@@ -29,7 +30,7 @@ RSpec.feature "Change hearing disposition" do
     step "change the hearing disposition to postponed" do
       click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
       click_dropdown(prompt: "Select", text: "Postponed", container: ".cf-modal-body")
-      fill_in "Notes", with: "These are my detailed postponed hearing notes."
+      fill_in "Notes", with: instructions_text
       click_button("Submit")
       expect(page).to have_content("Successfully changed hearing disposition to Postponed")
     end
@@ -44,6 +45,11 @@ RSpec.feature "Change hearing disposition" do
       expect(page).to have_content("Unassigned (1)")
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       expect(page).to have_content(ScheduleHearingTask.last.label)
+    end
+
+    step "verify that the instructions are visible on the schedule hearing task" do
+      find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+      expect(page).to have_content(instructions_text)
     end
   end
 end

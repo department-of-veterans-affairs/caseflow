@@ -62,7 +62,10 @@ class DispositionTask < GenericTask
       when "no_show"
         mark_hearing_no_show
       when "postponed"
-        mark_hearing_postponed(after_disposition_update: payload_values[:after_disposition_update])
+        mark_hearing_postponed(
+          instructions: params["instructions"],
+          after_disposition_update: payload_values[:after_disposition_update]
+        )
       end
     end
 
@@ -89,19 +92,20 @@ class DispositionTask < GenericTask
     self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
   end
 
-  def schedule_later(with_admin_action_klass: nil, instructions: nil)
+  def schedule_later(instructions: nil, with_admin_action_klass: nil, admin_action_instructions: nil)
     new_hearing_task = hearing_task.cancel_and_recreate
 
     schedule_task = ScheduleHearingTask.create!(
       parent: new_hearing_task,
       appeal: appeal,
-      assigned_to: HearingsManagement.singleton
+      assigned_to: HearingsManagement.singleton,
+      instructions: instructions.present? ? [instructions] : nil
     )
     if with_admin_action_klass.present?
       with_admin_action_klass.constantize.create!(
         parent: schedule_task,
         appeal: appeal,
-        instructions: instructions.present? ? [instructions] : nil,
+        instructions: admin_action_instructions.present? ? [admin_action_instructions] : nil,
         assigned_to: HearingsManagement.singleton
       )
     end
@@ -113,7 +117,7 @@ class DispositionTask < GenericTask
 
   def mark_hearing_no_show() end
 
-  def mark_hearing_postponed(after_disposition_update: nil)
+  def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
     multi_transaction do
       if hearing.is_a?(LegacyHearing)
         hearing.update_caseflow_and_vacols(disposition: "postponed")
@@ -121,7 +125,7 @@ class DispositionTask < GenericTask
         hearing.update(disposition: "postponed")
       end
 
-      reschedule_or_schedule_later(after_disposition_update: after_disposition_update)
+      reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
     end
   end
 
@@ -175,7 +179,7 @@ class DispositionTask < GenericTask
 
   private
 
-  def reschedule_or_schedule_later(after_disposition_update:)
+  def reschedule_or_schedule_later(instructions: nil, after_disposition_update:)
     case after_disposition_update[:action]
     when "reschedule"
       new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
@@ -185,8 +189,9 @@ class DispositionTask < GenericTask
       )
     when "schedule_later"
       schedule_later(
+        instructions: instructions,
         with_admin_action_klass: after_disposition_update[:with_admin_action_klass],
-        instructions: after_disposition_update[:admin_action_instructions]
+        admin_action_instructions: after_disposition_update[:admin_action_instructions]
       )
     end
   end
