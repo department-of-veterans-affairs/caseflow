@@ -47,7 +47,7 @@ RSpec.describe TasksController, type: :controller do
         # Ensure we include recently completed tasks
         expect(response_body.count { |task| task["id"] == task13.id.to_s }).to eq 1
 
-        ama_tasks = response_body.select { |task| task["type"] == "attorney_tasks" }
+        ama_tasks = response_body.select { |task| task["attributes"]["type"] == "AttorneyTask" }
         expect(ama_tasks.size).to eq 4
         expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.assigned }).to eq 1
         expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.in_progress }).to eq 1
@@ -612,7 +612,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body["tasks"].length).to eq 3
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
-        expect(task["type"]).to eq("judge_legacy_tasks")
+        expect(task["attributes"]["type"]).to eq("JudgeLegacyTask")
         expect(task["attributes"]["user_id"]).to eq(judge_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
@@ -635,7 +635,7 @@ RSpec.describe TasksController, type: :controller do
           expect(response_body["tasks"].length).to eq 2
           task = response_body["tasks"][0]
           expect(task["id"]).to eq(legacy_appeal2.vacols_id)
-          expect(task["type"]).to eq("judge_legacy_tasks")
+          expect(task["attributes"]["type"]).to eq("JudgeLegacyTask")
           expect(task["attributes"]["user_id"]).to eq(another_judge.css_id)
           expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal2.id)
           expect(task["attributes"]["available_actions"].size).to eq 0
@@ -654,7 +654,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body["tasks"].length).to eq 3
         task = response_body["tasks"][0]
         expect(task["id"]).to eq(legacy_appeal.vacols_id)
-        expect(task["type"]).to eq("attorney_legacy_tasks")
+        expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
         expect(task["attributes"]["user_id"]).to eq(attorney_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
         expect(task["attributes"]["available_actions"].size).to eq 2
@@ -675,7 +675,7 @@ RSpec.describe TasksController, type: :controller do
           expect(response_body["tasks"].length).to eq 3
           task = response_body["tasks"][0]
           expect(task["id"]).to eq(legacy_appeal.vacols_id)
-          expect(task["type"]).to eq("attorney_legacy_tasks")
+          expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
           expect(task["attributes"]["user_id"]).to eq(another_attorney.css_id)
           expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
           expect(task["attributes"]["available_actions"].size).to eq 0
@@ -693,10 +693,10 @@ RSpec.describe TasksController, type: :controller do
         response_body = JSON.parse(response.body)
         expect(response_body["tasks"].length).to eq 2
 
-        task = response_body["tasks"].find { |t| t["type"] == "colocated_tasks" }
-        expect(task).to_not be_nil
-        expect(task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
-        expect(task["attributes"]["appeal_id"]).to eq appeal.id
+        colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "ColocatedTask" }
+        expect(colocated_task).to_not be_nil
+        expect(colocated_task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
+        expect(colocated_task["attributes"]["appeal_id"]).to eq appeal.id
       end
     end
 
@@ -714,7 +714,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body["tasks"].length).to eq 1
 
         task = response_body["tasks"][0]
-        expect(task["type"]).to eq "colocated_tasks"
+        expect(task["attributes"]["type"]).to eq "ColocatedTask"
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 

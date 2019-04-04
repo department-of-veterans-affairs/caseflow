@@ -44,9 +44,10 @@ export const Overview = ({
   <DetailsOverview columns={[
     {
       label: 'Hearing Date',
-      value: <Link to={`/schedule/docket/${hearingDayId}`}>
-        <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
-      </Link>
+      value: readableRequestType === 'Travel' ? <strong>{DateUtil.formatDateStr(scheduledFor)}</strong> :
+        <Link to={`/schedule/docket/${hearingDayId}`}>
+          <strong>{DateUtil.formatDateStr(scheduledFor)}</strong>
+        </Link>
     },
     {
       label: 'Docket Number',
