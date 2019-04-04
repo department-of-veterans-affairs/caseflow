@@ -689,7 +689,9 @@ RSpec.feature "AmaQueue" do
         # info below should be preserved from attorney completing the task
         document_id_node = find("#document_id")
         notes_node = find("#notes")
-        expect(find_field("untimely_evidence", visible: false)).to be_checked
+        expect(page).to have_field("untimely_evidence", type: "checkbox", visible: false) do |node|
+          node.value == "on"
+        end
         expect(document_id_node.value).to eq valid_document_id
         expect(page).to have_content(judge_user.full_name)
         expect(notes_node.value).to eq "all done"

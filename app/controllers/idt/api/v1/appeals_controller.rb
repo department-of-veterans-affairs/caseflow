@@ -74,12 +74,13 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def json_appeal_details
-    ActiveModelSerializers::SerializableResource.new(
+    ::Idt::V1::AppealDetailsSerializer.new(
       appeal,
-      serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: include_addresses_in_response?,
-      base_url: request.base_url
-    ).as_json
+      params: {
+        include_addresses: include_addresses_in_response?,
+        base_url: request.base_url
+      }
+    )
   end
 
   def include_addresses_in_response?
@@ -88,18 +89,14 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def json_appeals_with_tasks(tasks)
     tasks.map do |task|
-      ActiveModelSerializers::SerializableResource.new(
+      ::Idt::V1::AppealSerializer.new(
         task.appeal,
-        serializer: ::Idt::V1::AppealSerializer,
-        task: task
-      ).as_json[:data]
+        params: { task: task }
+      ).serializable_hash[:data]
     end
   end
 
   def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::Idt::V1::AppealSerializer
-    ).as_json
+    ::Idt::V1::AppealSerializer.new(appeals, is_collection: true)
   end
 end

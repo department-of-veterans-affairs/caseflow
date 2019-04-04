@@ -98,17 +98,10 @@ class LegacyTasksController < ApplicationController
   end
 
   def json_task(task)
-    ActiveModelSerializers::SerializableResource.new(
-      task,
-      serializer: ::WorkQueue::LegacyTaskSerializer
-    ).as_json
+    ::WorkQueue::LegacyTaskSerializer.new(task)
   end
 
   def json_tasks(tasks, role)
-    ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::WorkQueue::LegacyTaskSerializer,
-      role: role
-    ).as_json
+    ::WorkQueue::LegacyTaskSerializer.new(tasks, is_collection: true, params: { role: role })
   end
 end
