@@ -6,11 +6,11 @@ import _ from 'lodash';
 import { css } from 'glamor';
 
 import Button from '../components/Button';
+import IssueAma from '../components/IssueAma';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
-import ContestedIssues, { contestedIssueStyling } from './components/ContestedIssues';
 import COPY from '../../COPY.json';
 import { COLORS } from '../constants/AppConstants';
 
@@ -272,15 +272,12 @@ class SelectDispositionsView extends React.PureComponent {
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
       <p>{COPY.DECISION_ISSUE_PAGE_EXPLANATION}</p>
       <hr />
-
-      <ContestedIssues
-        decisionIssues={appeal.decisionIssues}
+      <IssueAma
         requestIssues={appeal.issues}
+        decisionIssues={appeal.decisionIssues}
         openDecisionHandler={this.openDecisionHandler}
         openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler}
-        numbered
-        highlight={highlight}
-      />
+        highlight={highlight} />
       { deleteAddedDecisionIssue && <Modal
         buttons = {this.deleteAddedDecisionIssueModalButtons}
         closeHandler={this.handleModalClose}
