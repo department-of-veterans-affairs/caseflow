@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-class WorkQueue::DecisionReviewSerializer < ActiveModel::Serializer
+class WorkQueue::DecisionReviewSerializer
+  include FastJsonapi::ObjectSerializer
   attribute :issues do
     object.request_issues.active.map do |issue|
       {

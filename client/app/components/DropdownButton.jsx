@@ -21,6 +21,21 @@ export default class DropdownButton extends React.Component {
     this.state = {
       menu: false
     };
+    this.wrapperRef = null;
+  }
+
+  componentDidMount = () => document.addEventListener('mousedown', this.onClickOutside);
+
+  componentWillUnmount = () => document.removeEventListener('mousedown', this.onClickOutside);
+
+  setWrapperRef = (node) => this.wrapperRef = node
+
+  onClickOutside = (event) => {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target) && this.state.menu) {
+      this.setState({
+        menu: false
+      });
+    }
   }
 
   onMenuClick = () => {
@@ -45,7 +60,7 @@ export default class DropdownButton extends React.Component {
       </ul>;
     };
 
-    return <div className="cf-dropdown" {...dropdownBtnContainer}>
+    return <div className="cf-dropdown" ref={this.setWrapperRef} {...dropdownBtnContainer}>
       <a {...dropdownBtn}
         onClick={this.onMenuClick}
         className="cf-dropdown-trigger usa-button usa-button-secondary">

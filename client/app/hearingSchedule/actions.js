@@ -22,6 +22,13 @@ export const onReceiveDailyDocket = (dailyDocket, hearings) => ({
   }
 });
 
+export const onReceiveHearing = (hearing) => ({
+  type: ACTIONS.RECEIVE_HEARING,
+  payload: {
+    hearing
+  }
+});
+
 export const onReceiveSavedHearing = (hearing) => ({
   type: ACTIONS.RECEIVE_SAVED_HEARING,
   payload: {
@@ -132,6 +139,14 @@ export const onReceiveHearingSchedule = (hearingSchedule) => ({
   payload: {
     hearingSchedule
   }
+});
+
+export const onInputInvalidDates = () => ({
+  type: ACTIONS.INPUT_INVALID_DATES
+});
+
+export const onResetInvalidDates = () => ({
+  type: ACTIONS.RESET_INVALID_DATES
 });
 
 export const setVacolsUpload = () => ({

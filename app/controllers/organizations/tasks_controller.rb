@@ -22,9 +22,15 @@ class Organizations::TasksController < OrganizationsController
   end
 
   def json_tasks(tasks)
-    ActiveModelSerializers::SerializableResource.new(
-      AppealRepository.eager_load_legacy_appeals_for_tasks(tasks),
-      user: current_user
-    ).as_json
+    tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    params = { user: current_user }
+
+    AmaAndLegacyTaskSerializer.new(
+      tasks: tasks, params: params, ama_serializer: serializer
+    ).call
+  end
+
+  def serializer
+    organization.is_a?(::Vso) ? WorkQueue::OrganizationTaskSerializer : WorkQueue::TaskSerializer
   end
 end

@@ -37,7 +37,7 @@ class LegacyWorkQueue
       if css_id && (css_id == user&.css_id) && (user&.station_id == User::BOARD_STATION_ID)
         user
       elsif css_id
-        User.find_or_create_by(css_id: css_id, station_id: User::BOARD_STATION_ID)
+        User.find_by_css_id_or_create_with_default_station_id(css_id)
       end
     end
   end

@@ -123,7 +123,7 @@ feature "NonComp Dispositions Task Page" do
       expect(page).to have_current_path("/#{business_line_url}")
     end
 
-    scenario "saves decision issues" do
+    scenario "saves decision issues", skip: "find_disabled_disposition is flakey" do
       visit dispositions_url
       expect(page).to have_button("Complete", disabled: true)
       expect(page).to have_link("Edit Issues")

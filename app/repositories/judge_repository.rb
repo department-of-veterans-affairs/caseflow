@@ -3,7 +3,7 @@
 class JudgeRepository
   def self.find_all_judges
     judge_records.select(&:sdomainid).map do |record|
-      User.find_or_create_by(css_id: record.sdomainid, station_id: User::BOARD_STATION_ID)
+      User.find_by_css_id_or_create_with_default_station_id(record.sdomainid)
     end
   end
 

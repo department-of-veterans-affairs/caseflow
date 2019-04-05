@@ -62,12 +62,13 @@ class HearingDay < ApplicationRecord
     HearingRepository.fetch_hearings_for_parent(id)
   end
 
-  def open_vacols_hearings
-    vacols_hearings.reject { |hearing| [:postponed, :cancelled].include?(hearing.disposition) }
-  end
-
   def open_hearings
-    hearings.reject { |hearing| %w[postponed cancelled].include?(hearing.disposition) }
+    closed_hearing_dispositions = [
+      Constants.HEARING_DISPOSITION_TYPES.postponed,
+      Constants.HEARING_DISPOSITION_TYPES.cancelled
+    ]
+
+    (hearings + vacols_hearings).reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
   end
 
   def to_hash
@@ -78,7 +79,7 @@ class HearingDay < ApplicationRecord
   end
 
   def hearing_day_full?
-    lock || open_hearings.count + open_vacols_hearings.count >= total_slots
+    lock || open_hearings.count >= total_slots
   end
 
   def total_slots
@@ -143,7 +144,7 @@ class HearingDay < ApplicationRecord
       hearing_days_with_vacols_hearings = remaining_hearing_days.select do |hearing_day|
         !vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil? &&
           vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].any? do |hearing|
-            loaded_caseflow_hearings.find(hearing.id).assigned_to_vso?(user)
+            loaded_caseflow_hearings.detect { |legacy_hearing| legacy_hearing.id == hearing.id }.assigned_to_vso?(user)
           end
       end
 
@@ -187,7 +188,7 @@ class HearingDay < ApplicationRecord
           nil
         else
           HearingDay.to_hash(value[:hearing_day]).slice(:id, :scheduled_for, :request_type, :room).tap do |day|
-            day[:hearings] = scheduled_hearings.map { |hearing| hearing.to_hash(current_user_id) }
+            day[:hearings] = scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
             day[:total_slots] = total_slots
           end
         end

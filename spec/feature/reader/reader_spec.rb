@@ -1045,11 +1045,11 @@ RSpec.feature "Reader" do
       issue_list = all("#claims-folder-issues tr")
       expect(issue_list.count).to eq(issues_info.length)
       issue_list.each_with_index do |issue, index|
-        expect(issue.text.include?(issues_info[index].type)).to be true
+        expect(issue.text).to include issues_info[index].type
 
         # verifying the level information is being shown as part of the issue information
         issues_info[index].levels.each_with_index do |level, level_index|
-          expect(level.include?(issues_info[index].levels[level_index])).to be true
+          expect(level).to include issues_info[index].levels[level_index]
         end
       end
     end

@@ -12,8 +12,8 @@ RSpec.feature "Send feedback" do
     expect(page).to have_link("Send feedback")
 
     href = find_link("Send feedback")["href"]
-    expect(href.include?(ENV["CASEFLOW_FEEDBACK_URL"])).to be true
-    expect(href.include?("subject=Caseflow+Certification")).to be true
-    expect(href.include?("redirect=")).to be true
+    expect(href).to include ENV["CASEFLOW_FEEDBACK_URL"]
+    expect(href).to include "subject=Caseflow+Certification"
+    expect(href).to include "redirect="
   end
 end

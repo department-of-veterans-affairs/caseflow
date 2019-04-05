@@ -18,6 +18,18 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.hearingSchedule
       }
     });
+  case ACTIONS.INPUT_INVALID_DATES:
+    return update(state, {
+      invalidDates: {
+        $set: true
+      }
+    });
+  case ACTIONS.RESET_INVALID_DATES:
+    return update(state, {
+      invalidDates: {
+        $set: false
+      }
+    });
   case ACTIONS.RECEIVE_PAST_UPLOADS:
     return update(state, {
       pastUploads: {
@@ -34,6 +46,14 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       dailyDocket: { $set: action.payload.dailyDocket },
       hearings: { $set: action.payload.hearings }
+    });
+  case ACTIONS.RECEIVE_HEARING:
+    return update(state, {
+      hearings: {
+        [action.payload.hearing.id]: {
+          $set: action.payload.hearing
+        }
+      }
     });
   case ACTIONS.RECEIVE_SAVED_HEARING:
     return update(state, {
@@ -55,7 +75,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
           $unset: [
             'editedNotes',
             'editedDisposition',
-            'editedDate',
             'editedTime',
             'editedOptionalTime',
             'editedRegionalOffice',

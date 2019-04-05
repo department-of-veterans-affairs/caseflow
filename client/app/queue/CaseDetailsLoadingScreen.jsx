@@ -7,6 +7,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import { prepareAppealForStore, prepareAllTasksForStore } from './utils';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
+import COPY from '../../COPY.json';
 
 import { onReceiveAppealDetails, onReceiveTasks, setAttorneysOfJudge, fetchAllAttorneys } from './QueueActions';
 
@@ -81,7 +82,7 @@ class CaseDetailLoadingScreen extends React.PureComponent {
         message: 'Loading this case...'
       }}
       failStatusMessageProps={{
-        title: 'Unable to load this case'
+        title: COPY.CASE_DETAILS_LOADING_FAILURE_TITLE
       }}
       failStatusMessageChildren={failStatusMessageChildren}>
       {this.props.children}

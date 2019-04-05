@@ -42,7 +42,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
     render json: {
       hearing_day: json_hearing(hearing_day_hash).merge(
-        hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) }
+        hearings: hearings.map { |hearing| hearing.quick_to_hash(current_user.id) }
       )
     }
   end
@@ -139,15 +139,6 @@ class Hearings::HearingDayController < HearingScheduleController
     }, status: :not_found
   end
 
-  def json_created_hearings(hearings)
-    json_hash = ActiveModelSerializers::SerializableResource.new(
-      hearings,
-      each_serializer: ::Hearings::HearingDaySerializer
-    ).as_json
-
-    format_for_client(json_hash)
-  end
-
   def json_hearings(hearings)
     hearings.each_with_object([]) do |hearing, result|
       result << json_hearing(hearing)
@@ -166,18 +157,6 @@ class Hearings::HearingDayController < HearingScheduleController
                      else
                        v
                      end
-    end
-  end
-
-  def format_for_client(json_hash)
-    if json_hash[:data].is_a?(Array)
-      hearing_array = []
-      json_hash[:data].each do |hearing_hash|
-        hearing_array.push({ id: hearing_hash[:id] }.merge(hearing_hash[:attributes]))
-      end
-      hearing_array
-    else
-      { id: json_hash[:data][:id] }.merge(json_hash[:data][:attributes])
     end
   end
 

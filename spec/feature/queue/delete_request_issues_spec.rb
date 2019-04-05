@@ -127,6 +127,7 @@ feature "correcting issues" do
   def create_request_issue(notes:, decision_issues:)
     create(
       :request_issue,
+      :rating,
       notes: notes,
       decision_issues: decision_issues
     )

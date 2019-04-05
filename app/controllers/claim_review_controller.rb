@@ -3,12 +3,15 @@
 class ClaimReviewController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
 
+  def edit
+    # force sync on initial edit call so that we have latest EP status.
+    # This helps prevent us editing something that recently closed upstream.
+    claim_review.sync_end_product_establishments!
+  end
+
   def update
     if request_issues_update.perform!
-      render json: {
-        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
-      }
+      render_success
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     end
@@ -48,5 +51,26 @@ class ClaimReviewController < ApplicationController
 
   def verify_feature_enabled
     redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
+  end
+
+  def render_success
+    if claim_review.processed_in_caseflow?
+      flash[:removed] = decisions_removed_message
+      render json: { redirect_to: claim_review.business_line.tasks_url,
+                     issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+                     issuesAfter: request_issues_update.after_issues.map(&:ui_hash) }
+    else
+      render json: {
+        redirect_to: nil,
+        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
+      }
+    end
+  end
+
+  def decisions_removed_message
+    claimant_name = claim_review.veteran_full_name
+    "You have successfully removed #{claim_review.class.review_title} for #{claimant_name}
+    (ID: #{claim_review.veteran.ssn})."
   end
 end

@@ -79,13 +79,13 @@ describe AppealSeriesIssues do
           "Service connection, limitation of thigh motion (flexion)"
         )
         expect(subject.first[:active]).to be_truthy
-        expect(subject.first[:last_action]).to eq(:remand)
+        expect(subject.first[:lastAction]).to eq(:remand)
         expect(subject.first[:date]).to eq(6.months.ago.to_date)
         expect(subject.last[:description]).to eq(
           "New and material evidence to reopen claim for service connection, shoulder or arm muscle injury"
         )
         expect(subject.last[:active]).to be_falsey
-        expect(subject.last[:last_action]).to eq(:allowed)
+        expect(subject.last[:lastAction]).to eq(:allowed)
         expect(subject.last[:date]).to eq(6.months.ago.to_date)
       end
 
@@ -105,7 +105,7 @@ describe AppealSeriesIssues do
           expect(subject.length).to eq(2)
           expect(subject.first[:active]).to be_truthy
           expect(subject.first[:date]).to eq(6.months.ago.to_date)
-          expect(subject.first[:last_action]).to eq(:remand)
+          expect(subject.first[:lastAction]).to eq(:remand)
         end
       end
     end
@@ -149,7 +149,7 @@ describe AppealSeriesIssues do
       end
 
       it "does not show as a last_action" do
-        expect(subject.first[:last_action]).to eq(:remand)
+        expect(subject.first[:lastAction]).to eq(:remand)
       end
     end
 
@@ -159,7 +159,7 @@ describe AppealSeriesIssues do
       end
 
       it "appears as the last action" do
-        expect(subject.first[:last_action]).to eq(:cavc_remand)
+        expect(subject.first[:lastAction]).to eq(:cavc_remand)
         expect(subject.first[:date]).to eq(1.month.ago.to_date)
       end
     end
