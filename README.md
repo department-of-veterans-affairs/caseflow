@@ -240,25 +240,7 @@ bundle exec rails dbconsole # password is `postgres`
 To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
 
 ### Debugging FACOLS setup
-FACOLS (short for fake-VACOLS) is our name for the Oracle DB with mock VACOLS data that we run locally. Sometimes the above setup fails at FACOLS steps, or the app cannot connect to the FACOLS DB. Here are some frequently encountered scenarios.
-
-1) Running `rake local:vacols:setup` logs out:
-```
-[36mVACOLS_DB-development     |[0m tail: cannot open '/u01/app/oracle/diag/rdbms/bvap/BVAP/trace/alert_BVAP.log' for reading: No such file or directory
-[36mVACOLS_DB-development     |[0m tail: no files remaining
-[36mVACOLS_DB-development exited with code 1
-```
-Try running `docker-compose down --rmi all -v --remove-orphans` and then running the setup again.
-
-2) The app is failing to connect to the DB and you get timeout errors. Try restarting your docker containers. `docker-compose restart`.
-
-If all else fails you can rebuild your local development environment by running the two rake tasks in sequence:
-```
-bundle exec rake local:destroy
-bundle exec rake local:build
-```
-
-More detailed errors and resolutions are located in the [Oracle Debugging readme](docs/oracle-debugging.md).
+See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols).
 
 ### Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
