@@ -376,6 +376,17 @@ describe Task do
     end
   end
 
+  describe ".not_decisions_review" do
+    let!(:veteran_record_request_task) { create(:veteran_record_request_task) }
+    let!(:task) { create(:generic_task) }
+
+    it "filters out subclasses of DecisionReviewTask" do
+      tasks = described_class.not_decisions_review.all
+      expect(tasks).to_not include(veteran_record_request_task)
+      expect(tasks).to include(task)
+    end
+  end
+
   describe ".active?" do
     let(:status) { nil }
     let(:task) { FactoryBot.create(:generic_task, status: status) }

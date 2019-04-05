@@ -1,69 +1,55 @@
 # frozen_string_literal: true
 
-class WorkQueue::VeteranRecordRequestSerializer < ActiveModel::Serializer
-  def task
-    object
+class WorkQueue::VeteranRecordRequestSerializer
+  include FastJsonapi::ObjectSerializer
+
+  def self.decision_review(object)
+    object.appeal
   end
 
-  def decision_review
-    task.appeal
-  end
-
-  def claimant_name
-    if decision_review.veteran_is_not_claimant
+  def self.claimant_name(object)
+    if decision_review(object).veteran_is_not_claimant
       # TODO: support multiple?
-      decision_review.claimants.first.try(:name)
+      decision_review(object).claimants.first.try(:name)
     else
-      decision_review.veteran_full_name
+      decision_review(object).veteran_full_name
     end
   end
 
-  def claimant_relationship
-    return "self" unless decision_review.veteran_is_not_claimant
+  def self.claimant_relationship(object)
+    return "self" unless decision_review(object).veteran_is_not_claimant
 
-    decision_review.claimants.first.try(:relationship)
+    decision_review(object).claimants.first.try(:relationship)
   end
 
-  attribute :claimant do
+  attribute :claimant do |object|
     {
-      name: claimant_name,
-      relationship: claimant_relationship
+      name: claimant_name(object),
+      relationship: claimant_relationship(object)
     }
   end
 
-  attribute :appeal do
+  attribute :appeal do |object|
     {
-      id: decision_review.external_id,
+      id: decision_review(object).external_id,
       isLegacyAppeal: false,
-      issueCount: decision_review.request_issues.active_or_ineligible.count
+      issueCount: decision_review(object).request_issues.active_or_ineligible.count
     }
   end
 
-  attribute :tasks_url do
-    task.assigned_to.tasks_url
+  attribute :tasks_url do |object|
+    object.assigned_to.tasks_url
   end
 
   attribute :id
-
   attribute :created_at
 
-  attribute :veteran_participant_id do
-    decision_review.veteran.participant_id
+  attribute :veteran_participant_id do |object|
+    decision_review(object).veteran.participant_id
   end
 
-  attribute :assigned_on do
-    task.assigned_at
-  end
-
-  attribute :closed_at do
-    task.closed_at
-  end
-
-  attribute :started_at do
-    task.started_at
-  end
-
-  attribute :type do
-    task.label
-  end
+  attribute :assigned_on, &:assigned_at
+  attribute :closed_at
+  attribute :started_at
+  attribute :type, &:label
 end
