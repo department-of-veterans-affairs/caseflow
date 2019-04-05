@@ -9,3 +9,9 @@ Please explain the changes you made here.
 ### Testing Plan
 1. Go to ...
 
+*Schema Changes Only*
+
+* [ ] Column comments updated
+* [ ] Query profiling performed (eyeball Rails log, check bullet and fasterer output)
+* [ ] Appropriate indexes added (especially for foreign keys, polymorphic columns, and unique constraints)
+* [ ] #appeals-schema notified with summary and link to this PR

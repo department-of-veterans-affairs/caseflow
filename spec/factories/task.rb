@@ -51,7 +51,7 @@ FactoryBot.define do
       status { Constants.TASK_STATUSES.on_hold }
     end
 
-    factory :generic_task do
+    factory :generic_task, class: GenericTask do
       type { GenericTask.name }
       appeal { create(:appeal) }
     end

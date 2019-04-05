@@ -496,7 +496,7 @@ class RequestIssue < ApplicationRecord
   # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
   # But the request issue should still be added to a rating End Product
   def previous_rating_issue?
-    contested_decision_issue&.associated_request_issue&.end_product_establishment&.rating?
+    previous_request_issue&.rating?
   end
 
   def fetch_diagnostic_code_status_description(diagnostic_code)
