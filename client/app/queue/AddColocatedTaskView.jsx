@@ -91,7 +91,8 @@ class AddColocatedTaskView extends React.PureComponent {
     const { task } = this.props;
     const payload = {
       data: {
-        tasks: this.buildPayload()
+        tasks: this.buildPayload(),
+        role: this.props.role
       }
     };
     const msgTitle = COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE;
