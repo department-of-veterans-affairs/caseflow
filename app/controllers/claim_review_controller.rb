@@ -10,8 +10,9 @@ class ClaimReviewController < ApplicationController
 
     # we call the serialization method here before the view does so we can rescue any data errors
     claim_review.ui_hash
-  rescue RequestIssue::MissingDecisionDate => err
-    render json: { error_code: err, error_uuid: error_uuid }, status: :unprocessable_entity
+  rescue RequestIssue::MissingDecisionDate => _err
+    flash[:error] = "One or more ratings may be locked on this Claim."
+    render "errors/500", layout: "application", status: :unprocessable_entity
   end
 
   def update

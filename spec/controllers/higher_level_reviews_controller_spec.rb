@@ -48,13 +48,10 @@ describe HigherLevelReviewsController, type: :controller do
         )
       end
 
-      it "returns 500 error with error_code" do
+      it "returns 422 error" do
         get :edit, params: { claim_id: hlr.uuid }
 
         expect(response.status).to eq 422
-        expect(JSON.parse(response.body, symbolize_names: true)[:error_code]).to eq(
-          "Request Issue #{request_issue.id} lacks a decision_date"
-        )
       end
     end
   end

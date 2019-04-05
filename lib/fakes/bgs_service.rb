@@ -590,6 +590,13 @@ class Fakes::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     ratings = (self.class.rating_records || {})[participant_id]
 
+    # mimic errors
+    if participant_id == "locked_rating"
+      return { reject_reason: "Locked Rating" }
+    elsif participant_id == "backfilled_rating"
+      return { reject_reason: "Converted or Backfilled Rating" }
+    end
+
     # Simulate the error bgs throws if participant doesn't exist or doesn't have any ratings
     unless ratings
       fail Savon::Error, "java.lang.IndexOutOfBoundsException: Index: 0, Size: 0"
