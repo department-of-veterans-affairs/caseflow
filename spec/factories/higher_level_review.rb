@@ -12,7 +12,11 @@ FactoryBot.define do
 
     trait :with_end_product_establishment do
       after(:create) do |higher_level_review|
-        create(:end_product_establishment, source: higher_level_review)
+        create(
+          :end_product_establishment,
+          veteran_file_number: higher_level_review.veteran.file_number,
+          source: higher_level_review
+        )
       end
     end
 

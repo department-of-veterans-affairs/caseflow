@@ -7,6 +7,11 @@ class ClaimReviewController < ApplicationController
     # force sync on initial edit call so that we have latest EP status.
     # This helps prevent us editing something that recently closed upstream.
     claim_review.sync_end_product_establishments!
+
+    # we call the serialization method here before the view does so we can rescue any data errors
+    claim_review.ui_hash
+  rescue RequestIssue::MissingDecisionDate => err
+    render json: { error_code: err, error_uuid: error_uuid }, status: :unprocessable_entity
   end
 
   def update
