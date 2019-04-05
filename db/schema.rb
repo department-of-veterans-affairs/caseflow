@@ -233,6 +233,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
 
   create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
+    t.string "appeal_type"
     t.datetime "attempted_at"
     t.string "citation_number", null: false
     t.datetime "created_at", null: false
