@@ -2164,116 +2164,62 @@ describe LegacyAppeal do
   end
 
   context "#contested_claimants" do
+    subject { appeal.contested_claimants }
+    let!(:vacols_case) { create(:case, bfso: "L", bfcorkey: "CK439252") }
+    let!(:representative) do
+      create(:representative,
+             repkey: repkey,
+             repcorkey: repcorkey,
+             reptype: "C",
+             repso: "V",
+             repfirst: "Contested",
+             repmi: "H",
+             replast: "Claimant",
+             repaddr1: "123 Oak St.",
+             repaddr2: "Suite 222",
+             repcity: "New York",
+             repst: "NY",
+             repzip: "10000")
+    end
+    let(:result) do
+      [
+        {
+          type: "Claimant",
+          first_name: "Contested",
+          middle_name: "H",
+          last_name: "Claimant",
+          name_suffix: nil,
+          address: {
+            address_line_1: "123 Oak St.",
+            address_line_2: "Suite 222",
+            city: "New York",
+            state: "NY",
+            zip: "10000"
+          },
+          representative: { code: "V", name: "Vietnam Veterans of America" }
+        }
+      ]
+    end
+
     context "when there are contested claimants" do
-      let(:correspondent) do
-        create(:correspondent,
-               snamef: "Bobby",
-               snamemi: "F",
-               snamel: "Veteran",
-               saddrst1: "123 K St. NW",
-               saddrst2: "Suite 456",
-               saddrcty: "Washington",
-               saddrstt: "DC",
-               saddrcnty: nil,
-               saddrzip: "20001",
-               sspare1: "Claimant",
-               sspare2: "Tommy",
-               sspare3: "G")
+      context "and representative is found by repkey" do
+        let(:repkey) { vacols_case.bfkey }
+        let(:repcorkey) { "CF99999" }
+
+        it { is_expected.to eq(result) }
       end
 
-      let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "L", bfcorkey: "CK439252") }
+      context "and representative is found by repcorkey" do
+        let(:repkey) { "12345" }
+        let(:repcorkey) { vacols_case.bfcorkey }
 
-      it "representative is found by repkey" do
-        let!(:representative) do
-          create(:representative,
-                 repkey: vacols_case.bfkey,
-                 reptype: "C",
-                 repso: "V",
-                 repfirst: "Contested",
-                 repmi: "H",
-                 replast: "Claimant",
-                 repaddr1: "123 Oak St.",
-                 repaddr2: "Suite 222",
-                 repcity: "New York",
-                 repst: "NY",
-                 repzip: "10000")
-        end
-
-        expect(appeal.contested_claimants).to eq([
-                                                   {
-                                                     type: "Claimant",
-                                                     first_name: "Contested",
-                                                     middle_name: "H",
-                                                     last_name: "Claimant",
-                                                     name_suffix: nil,
-                                                     address: {
-                                                       address_line_1: "123 Oak St.",
-                                                       address_line_2: "Suite 222",
-                                                       city: "New York",
-                                                       state: "NY",
-                                                       zip: "10000"
-                                                     },
-                                                     representative: { code: "V", name: "Vietnam Veterans of America" }
-                                                   }
-                                                 ])
-      end
-
-      it "representative is found by repcorkey" do
-        let!(:representative) do
-          create(:representative,
-                 repkey: "12345",
-                 repcorkey: vacols_case.bfcorkey,
-                 reptype: "C",
-                 repso: "V",
-                 repfirst: "Contested",
-                 repmi: "H",
-                 replast: "Claimant",
-                 repaddr1: "123 Oak St.",
-                 repaddr2: "Suite 222",
-                 repcity: "New York",
-                 repst: "NY",
-                 repzip: "10000")
-        end
-
-        expect(appeal.contested_claimants).to eq([
-                                                   {
-                                                     type: "Claimant",
-                                                     first_name: "Contested",
-                                                     middle_name: "H",
-                                                     last_name: "Claimant",
-                                                     name_suffix: nil,
-                                                     address: {
-                                                       address_line_1: "123 Oak St.",
-                                                       address_line_2: "Suite 222",
-                                                       city: "New York",
-                                                       state: "NY",
-                                                       zip: "10000"
-                                                     },
-                                                     representative: { code: "V", name: "Vietnam Veterans of America" }
-                                                   }
-                                                 ])
+        it { is_expected.to eq(result) }
       end
     end
   end
 
   context "#contested_claimant_agents" do
     context "when there are contested claimant agents" do
-      let(:correspondent) do
-        create(:correspondent,
-               snamef: "Bobby",
-               snamemi: "F",
-               snamel: "Veteran",
-               saddrst1: "123 K St. NW",
-               saddrst2: "Suite 456",
-               saddrcty: "Washington",
-               saddrstt: "DC",
-               saddrcnty: nil,
-               saddrzip: "20001",
-               sspare1: "Claimant",
-               sspare2: "Tommy",
-               sspare3: "G")
-      end
-
       let!(:representative) do
         create(:representative,
                repkey: vacols_case.bfkey,
@@ -2287,7 +2233,7 @@ describe LegacyAppeal do
                repst: "NY",
                repzip: "10000")
       end
-      let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "L") }
+      let!(:vacols_case) { create(:case, bfso: "L") }
 
       it "the contested claimant is returned" do
         expect(appeal.contested_claimant_agents).to eq([
