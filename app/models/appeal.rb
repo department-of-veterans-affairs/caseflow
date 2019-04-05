@@ -302,10 +302,6 @@ class Appeal < DecisionReview
     request_issues.reload
   end
 
-  def serializer_class
-    ::WorkQueue::AppealSerializer
-  end
-
   def docket_number
     return "Missing Docket Number" unless receipt_date
 
