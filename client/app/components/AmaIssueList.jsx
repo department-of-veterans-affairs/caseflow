@@ -55,8 +55,9 @@ export default class AmaIssueList extends React.PureComponent {
           <div className={error ? 'usa-input-error' : ''}>
             <AmaIssue
               issue={issue}
-              index={i}
-              children={children} />
+              index={i} >
+              {children}
+            </AmaIssue>
           </div>
         </div>;
       })}
