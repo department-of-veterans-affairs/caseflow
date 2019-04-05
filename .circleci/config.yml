@@ -26,7 +26,7 @@ jobs:
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
-    parallelism: 8
+    parallelism: 10
     resource_class: large
     steps:
       - checkout
