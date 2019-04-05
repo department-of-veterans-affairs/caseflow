@@ -88,7 +88,7 @@ class AddedIssue extends React.PureComponent {
     }
 
     if (issue.withdrawPending) {
-      eligibleState.cssKlasses.push('withdrawn-issue')
+      eligibleState.cssKlasses.push('withdrawn-issue');
     }
 
     return <div className={eligibleState.cssKlasses.join(' ')}>

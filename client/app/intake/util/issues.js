@@ -309,7 +309,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   return issues.map((issue, index) => {
     if (issue.isUnidentified) {
       return {
-        index: index,
+        index,
         referenceId: issue.id,
         text: `Unidentified issue: no issue matched for "${issue.description}"`,
         notes: issue.notes,
@@ -324,7 +324,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 
       return {
-        index: index,
+        index,
         referenceId: issue.id,
         text: issue.description,
         // formatDatStr converts to local time instead of UTC
@@ -351,7 +351,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
 
     // returns nonrating request issue format
     return {
-      index: index,
+      index,
       referenceId: issue.id,
       text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
       benefitType: issue.benefitType,

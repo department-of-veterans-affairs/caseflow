@@ -102,6 +102,13 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
+    return {
+      ...state,
+      withdrawalDate: action.payload.withdrawalDate
+    };
+  };
+
   return actionsMap;
 };
 

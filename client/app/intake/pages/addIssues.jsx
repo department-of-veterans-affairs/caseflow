@@ -18,6 +18,7 @@ import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
 import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
 import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
+import { formatDateStr } from '../../util/DateUtil';
 import Table from '../../components/Table';
 import {
   toggleAddIssuesModal,
@@ -25,6 +26,7 @@ import {
   toggleNonratingRequestIssueModal,
   removeIssue,
   withdrawIssue,
+  setIssueWithdrawalDate,
   toggleUnidentifiedIssuesModal,
   toggleIssueRemoveModal,
   toggleLegacyOptInModal
@@ -84,6 +86,10 @@ export class AddIssuesPage extends React.Component {
     }
   }
 
+  withdrawalDateOnChange = (value) => {
+    this.props.setIssueWithdrawalDate(value);
+  }
+
   render() {
     const {
       intakeForms,
@@ -107,10 +113,8 @@ export class AddIssuesPage extends React.Component {
     let issues = formatAddedIssues(intakeData, useAmaActivationDate);
     let requestIssues = issues.filter((issue) => !issue.withdrawPending);
     let issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawPending);
-
-    console.log("issues::", issues)
-    console.log("requestIssues::", requestIssues)
-    console.log("issuesPendingWithdrawal::", issuesPendingWithdrawal)
+    const hasWithdrawnIssues = !_.isEmpty(issuesPendingWithdrawal);
+    const withdrawDatePlaceholder = formatDateStr(new Date());
 
     if (intakeData.isDtaError) {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
@@ -134,7 +138,7 @@ export class AddIssuesPage extends React.Component {
 
       return <div className="issues">
         <div>
-          { requestIssues.map((issue, index) => {
+          { requestIssues.map((issue) => {
             return <div
               className="issue"
               data-key={`issue-${issue.index}`}
@@ -183,22 +187,22 @@ export class AddIssuesPage extends React.Component {
 
     const withdrawnIssuesComponent = () => {
       return <div className="issues">
-      { issuesPendingWithdrawal.map((issue, index) => {
-        return <div
-          className="issue"
-          data-key={`issue-${issue.index}`}
-          key={`issue-${issue.index}`}
-          id={`issue-${issue.referenceId}`}>
-          <AddedIssue
-            issue={issue}
-            issueIdx={issue.index}
-            requestIssues={intakeData.requestIssues}
-            legacyOptInApproved={intakeData.legacyOptInApproved}
-            legacyAppeals={intakeData.legacyAppeals}
-            formType={formType} />
-        </div>;
-      })}
-      </div>
+        { issuesPendingWithdrawal.map((issue) => {
+          return <div
+            className="issue"
+            data-key={`issue-${issue.index}`}
+            key={`issue-${issue.index}`}
+            id={`issue-${issue.referenceId}`}>
+            <AddedIssue
+              issue={issue}
+              issueIdx={issue.index}
+              requestIssues={intakeData.requestIssues}
+              legacyOptInApproved={intakeData.legacyOptInApproved}
+              legacyAppeals={intakeData.legacyAppeals}
+              formType={formType} />
+          </div>;
+        })}
+      </div>;
     };
 
     const columns = [
@@ -225,13 +229,14 @@ export class AddIssuesPage extends React.Component {
       { field: 'Requested issues',
         content: requestIssuesComponent() });
 
-    if (!_.isEmpty(issuesPendingWithdrawal)) {
+    if (hasWithdrawnIssues) {
       rowObjects = rowObjects.concat(
-      {
-        field: 'Withdrawn issues',
-        content: withdrawnIssuesComponent()
-      }
-    )}
+        {
+          field: 'Withdrawn issues',
+          content: withdrawnIssuesComponent()
+        }
+      );
+    }
 
     return <div className="cf-intake-edit">
       { intakeData.addIssuesModalVisible && <AddIssuesModal
@@ -276,16 +281,19 @@ export class AddIssuesPage extends React.Component {
         rowClassNames={issueChangeClassname}
         slowReRendersAreOk />
 
-      <div className="cf-gray-box cf-decision-date">
-        <InlineForm>
-          <DateSelector
-            label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
-            name="withdraw-date"
-            value={null}
-            onChange={null}
-          />
-        </InlineForm>
-      </div>
+      { hasWithdrawnIssues &&
+        <div className="cf-gray-box cf-decision-date">
+          <InlineForm>
+            <DateSelector
+              label={COPY.INTAKE_EDIT_WITHDRAW_DATE}
+              name="withdraw-date"
+              value={intakeData.withdrawalDate}
+              onChange={this.withdrawalDateOnChange}
+              placeholder={withdrawDatePlaceholder}
+            />
+          </InlineForm>
+        </div>
+      }
     </div>;
   }
 }
@@ -308,7 +316,8 @@ export const IntakeAddIssuesPage = connect(
     toggleUnidentifiedIssuesModal,
     toggleLegacyOptInModal,
     removeIssue,
-    withdrawIssue
+    withdrawIssue,
+    setIssueWithdrawalDate
   }, dispatch)
 )(AddIssuesPage);
 
@@ -332,6 +341,7 @@ export const EditAddIssuesPage = connect(
     toggleUnidentifiedIssuesModal,
     toggleLegacyOptInModal,
     removeIssue,
-    withdrawIssue
+    withdrawIssue,
+    setIssueWithdrawalDate
   }, dispatch)
 )(AddIssuesPage);

@@ -41,6 +41,11 @@ export const withdrawIssue = (index) => ({
   payload: { index }
 });
 
+export const setIssueWithdrawalDate = (withdrawalDate) => ({
+  type: ACTIONS.SET_ISSUE_WITHDRAWAL_DATE,
+  payload: { withdrawalDate }
+});
+
 export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
   dispatch({
     type: ACTIONS.ADD_ISSUE,
