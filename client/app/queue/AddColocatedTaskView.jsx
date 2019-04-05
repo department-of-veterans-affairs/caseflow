@@ -108,20 +108,20 @@ class AddColocatedTaskView extends React.PureComponent {
     this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
-        const allTasks = prepareAllTasksForStore(response.tasks.data),
-          newTask = _.find(allTasks.amaTasks, (amaTask) => {
-            return amaTask.externalAppealId === task.externalAppealId && amaTask.status === 'assigned';
-          }),
-          oldTasks = _.pickBy(allTasks.amaTasks, (amaTask) => {
-            return amaTask.externalAppealId !== task.externalAppealId;
-          }),
-          updatedTask = _.find(allTasks.amaTasks, (amaTask) => {
-            return amaTask.externalAppealId === task.externalAppealId && amaTask.status === 'on_hold';
-          });
+
+        // Remove any duplicate tasks returned by creating multiple admin actions
+        const filteredTasks = _.sortedUniqBy(response.tasks.data, (amaTask) => {
+          if (amaTask.attributes.external_appeal_id === task.externalAppealId) {
+            return amaTask.attributes.external_appeal_id;
+          }
+
+          return amaTask.id;
+        });
+        const allTasks = prepareAllTasksForStore(filteredTasks);
 
         this.props.onReceiveTasks({
           tasks: allTasks.tasks,
-          amaTasks: _.set(_.set(oldTasks, newTask.uniqueId, newTask), updatedTask.uniqueId, updatedTask)
+          amaTasks: allTasks.amaTasks
         });
 
         if (task.isLegacy) {
