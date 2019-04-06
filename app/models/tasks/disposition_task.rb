@@ -51,7 +51,7 @@ class DispositionTask < GenericTask
   end
 
   def update_from_params(params, user)
-    payload_values = params.delete(:business_payloads)[:values]
+    payload_values = params.delete(:business_payloads)&.dig(:values)
 
     if params[:status] == Constants.TASK_STATUSES.cancelled
       case payload_values[:disposition]
@@ -112,7 +112,7 @@ class DispositionTask < GenericTask
   private
 
   def check_parent_type
-    if parent.type != "HearingTask"
+    if parent.type != HearingTask.name
       fail(
         Caseflow::Error::InvalidParentTask,
         task_type: self.class.name,

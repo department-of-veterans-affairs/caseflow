@@ -298,6 +298,7 @@
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
   "ASSIGN_TASK_SUCCESS_MESSAGE": "Task assigned to %s",
+  "REASSIGN_TASK_SUCCESS_MESSAGE": "Task reassigned to %s",
   "HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can continue to assign tasks to yourself and others using this queue.",
 
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
