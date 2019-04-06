@@ -106,6 +106,8 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
+    veteranValid: null,
+    veteranInvalidFields: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
