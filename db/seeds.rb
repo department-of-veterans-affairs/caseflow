@@ -225,7 +225,6 @@ class SeedDB
     u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
     OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
 
-    # TODO: Create factories for mail task creation
     root_task = FactoryBot.create(:root_task)
     mail_task = ::AodMotionMailTask.create!(
       appeal: root_task.appeal,
