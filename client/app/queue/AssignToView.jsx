@@ -123,7 +123,7 @@ class AssignToView extends React.Component {
       }
     };
 
-    const successMsg = { title: `Task reassigned to ${this.getAssignee()}` };
+    const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {

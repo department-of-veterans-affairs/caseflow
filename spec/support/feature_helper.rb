@@ -7,6 +7,11 @@ module FeatureHelper
     find(:xpath, "//tbody/tr[@id='table-row-#{vacols_id}']/td[#{header_index}]")
   end
 
+  def click_queue_switcher(text)
+    find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+    click_on text
+  end
+
   # in the `options` hash...
   # required:
   #   `index` (the selection's position in the list) OR `text` (the value of the selection)
