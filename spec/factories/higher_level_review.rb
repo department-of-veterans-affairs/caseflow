@@ -14,7 +14,7 @@ FactoryBot.define do
       after(:create) do |higher_level_review|
         create(
           :end_product_establishment,
-          veteran_file_number: higher_level_review.veteran.file_number,
+          veteran_file_number: higher_level_review.veteran_file_number,
           source: higher_level_review
         )
       end
