@@ -262,14 +262,8 @@ RSpec.feature "Intake" do
 
     context "BGS error" do
       before do
-        FeatureToggle.enable!(:intakeAma)
-
         allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships)
           .and_raise(BGS::ShareError, "bgs error")
-      end
-
-      after do
-        FeatureToggle.disable!(:intakeAma)
       end
 
       scenario "Cancel intake on error" do

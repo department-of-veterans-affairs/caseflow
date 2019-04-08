@@ -15,8 +15,8 @@ class SelectForm extends React.PureComponent {
   }
 
   render() {
-    const amaEnabled = this.props.featureToggles.intakeAma;
-    const enabledFormTypes = amaEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'ramp' });
+
+    const enabledFormTypes = FORM_TYPES;
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,

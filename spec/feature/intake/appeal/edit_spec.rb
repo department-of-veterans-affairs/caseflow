@@ -7,17 +7,12 @@ feature "Appeal Edit issues" do
 
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
 
     Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:veteran) do

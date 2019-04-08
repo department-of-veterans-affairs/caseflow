@@ -7,13 +7,8 @@ feature "Supplemental Claim Edit issues" do
 
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
 
     Timecop.freeze(post_ama_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:veteran) do

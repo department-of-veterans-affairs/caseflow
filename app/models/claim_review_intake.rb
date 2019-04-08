@@ -3,7 +3,7 @@
 class ClaimReviewIntake < DecisionReviewIntake
   attr_reader :request_params
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       benefit_type: detail.benefit_type,
       processed_in_caseflow: detail.processed_in_caseflow?
