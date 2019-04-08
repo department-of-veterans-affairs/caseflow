@@ -1,19 +1,17 @@
 # frozen_string_literal: true
 
-class WorkQueue::VeteranSerializer < ActiveModel::Serializer
-  attribute :full_name do
-    object.veteran_full_name
-  end
-  attribute :gender do
-    object.veteran_gender
-  end
-  attribute :date_of_birth do
+class WorkQueue::VeteranSerializer
+  include FastJsonapi::ObjectSerializer
+
+  attribute :full_name, &:veteran_full_name
+  attribute :gender, &:veteran_gender
+  attribute :date_of_birth do |object|
     object.veteran ? object.veteran.date_of_birth : nil
   end
-  attribute :date_of_death do
+  attribute :date_of_death do |object|
     object.veteran ? object.veteran.date_of_death : nil
   end
-  attribute :address do
+  attribute :address do |object|
     if object.veteran_address_line_1
       {
         address_line_1: object.veteran_address_line_1,

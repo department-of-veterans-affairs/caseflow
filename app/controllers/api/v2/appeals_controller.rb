@@ -51,35 +51,14 @@ class Api::V2::AppealsController < Api::ApplicationController
     @appeals ||= Appeal.where(veteran_file_number: veteran_file_number).select { |a| a.request_issues.any? }
   end
 
-  # rubocop:disable Metrics/MethodLength
   def all_reviews_and_appeals
-    hlr_json = ActiveModelSerializers::SerializableResource.new(
-      hlrs,
-      each_serializer: ::V2::HLRStatusSerializer,
-      key_transform: :camel_lower
-    ).as_json
-
-    sc_json = ActiveModelSerializers::SerializableResource.new(
-      supplemental_claims,
-      each_serializer: ::V2::SCStatusSerializer,
-      key_transform: :camel_lower
-    ).as_json
-
-    appeal_json = ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::V2::AppealStatusSerializer,
-      key_transform: :camel_lower
-    ).as_json
-
-    legacy_appeal_json = ActiveModelSerializers::SerializableResource.new(
-      legacy_appeals,
-      each_serializer: ::V2::LegacyAppealStatusSerializer,
-      key_transform: :camel_lower
-    ).as_json
+    hlr_json = ::V2::HLRStatusSerializer.new(hlrs, is_collection: true).serializable_hash
+    sc_json = ::V2::SCStatusSerializer.new(supplemental_claims, is_collection: true).serializable_hash
+    appeal_json = ::V2::AppealStatusSerializer.new(appeals, is_collection: true).serializable_hash
+    legacy_appeal_json = ::V2::LegacyAppealStatusSerializer.new(legacy_appeals, is_collection: true).serializable_hash
 
     { data: hlr_json[:data] + sc_json[:data] + appeal_json[:data] + legacy_appeal_json[:data] }
   end
-  # rubocop:enable Metrics/MethodLength
 
   def vbms_id
     @vbms_id ||= LegacyAppeal.convert_file_number_to_vacols(veteran_file_number)
@@ -131,9 +110,5 @@ class Api::V2::AppealsController < Api::ApplicationController
         "detail": "Upstream service timed out"
       ]
     }, status: :gateway_timeout
-  end
-
-  def appeal_status_v3_enabled?
-    FeatureToggle.enabled?(:api_appeal_status_v3)
   end
 end
