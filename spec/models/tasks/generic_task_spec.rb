@@ -347,6 +347,16 @@ describe GenericTask do
     context "when attempting to create two tasks for different appeals assigned to the same organization" do
       let(:organization) { FactoryBot.create(:organization) }
       let(:appeals) { FactoryBot.create_list(:appeal, 2) }
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:root_task_2) { FactoryBot.create(:root_task) }
+      let(:root_task_3) { FactoryBot.create(:root_task) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        BvaDispatchTask.create_from_root_task(root_task)
+        QualityReviewTask.create_from_root_task(root_task_3).update!(status: "completed")
+      end
+
       it "should succeed" do
         expect do
           appeals.each do |a|
@@ -358,6 +368,21 @@ describe GenericTask do
             )
           end
         end.to_not raise_error
+      end
+
+      it "should not fail when the parent tasks are different" do
+        # not specifying the error due to warning from capybara about false positives
+        expect { BvaDispatchTask.create_from_root_task(root_task_2) }.to_not raise_error
+      end
+
+      it "should not fail when the duplicate task is completed" do
+        expect do
+          QualityReviewTask.create_from_root_task(root_task_3)
+        end.to_not raise_error
+      end
+
+      it "should fail when organization-level BvaDispatchTask already exists with the same parent" do
+        expect { BvaDispatchTask.create_from_root_task(root_task) }.to raise_error(Caseflow::Error::DuplicateOrgTask)
       end
     end
   end

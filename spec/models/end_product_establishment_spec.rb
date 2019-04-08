@@ -418,7 +418,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           decision_review: previous_review,
-          end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+          contested_rating_issue_reference_id: "123"
         )
       end
       let(:decision_issue) do
@@ -959,7 +959,7 @@ describe EndProductEstablishment do
       context "when source is a higher level review" do
         let!(:claimant) do
           Claimant.create!(
-            review_request: source,
+            decision_review: source,
             participant_id: veteran.participant_id,
             payee_code: "10"
           )

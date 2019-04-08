@@ -30,33 +30,33 @@ describe Docket do
       context "when no options given" do
         subject { DirectReviewDocket.new.appeals }
         it "returns all appeals if no option given" do
-          expect(subject.include?(appeal)).to eq(true)
-          expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
-          expect(subject.include?(aod_age_appeal)).to eq(true)
-          expect(subject.include?(aod_motion_appeal)).to eq(true)
+          expect(subject).to include appeal
+          expect(subject).to include denied_aod_motion_appeal
+          expect(subject).to include inapplicable_aod_motion_appeal
+          expect(subject).to include aod_age_appeal
+          expect(subject).to include aod_motion_appeal
         end
       end
 
       context "when looking for only priority and ready appeals" do
         subject { DirectReviewDocket.new.appeals(priority: true, ready: true) }
         it "returns priority/ready appeals" do
-          expect(subject.include?(appeal)).to eq(false)
-          expect(subject.include?(denied_aod_motion_appeal)).to eq(false)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
-          expect(subject.include?(aod_age_appeal)).to eq(true)
-          expect(subject.include?(aod_motion_appeal)).to eq(true)
+          expect(subject).to_not include appeal
+          expect(subject).to_not include denied_aod_motion_appeal
+          expect(subject).to_not include inapplicable_aod_motion_appeal
+          expect(subject).to include aod_age_appeal
+          expect(subject).to include aod_motion_appeal
         end
       end
 
       context "when looking for only nonpriority appeals" do
         subject { DirectReviewDocket.new.appeals(priority: false) }
         it "returns nonpriority appeals" do
-          expect(subject.include?(appeal)).to eq(true)
-          expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
-          expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
-          expect(subject.include?(aod_age_appeal)).to eq(false)
-          expect(subject.include?(aod_motion_appeal)).to eq(false)
+          expect(subject).to include appeal
+          expect(subject).to include denied_aod_motion_appeal
+          expect(subject).to include inapplicable_aod_motion_appeal
+          expect(subject).to_not include aod_age_appeal
+          expect(subject).to_not include aod_motion_appeal
         end
       end
     end
@@ -87,40 +87,46 @@ describe Docket do
     end
 
     context "distribute_appeals" do
-      let!(:appeals) do
-        (1..10).map do
-          create(:appeal, :with_tasks, docket_type: "direct_review")
-        end
-      end
-
-      let(:judge_user) { create(:user) }
-      let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
-      let(:distribution) { Distribution.create!(judge: judge_user) }
-
-      context "nonpriority appeals" do
-        subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }
-
-        it "creates distributed cases and judge tasks" do
-          tasks = subject
-
-          expect(tasks.length).to eq(10)
-          expect(tasks.first.class).to eq(DistributedCase)
-          expect(distribution.distributed_cases.length).to eq(10)
-          expect(judge_user.reload.tasks.map(&:appeal).include?(appeals.first)).to eq(true)
-        end
-      end
-
-      context "nonpriority appeals" do
+      context "priority appeals" do
         subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: true, limit: 2) }
 
-        it "creates distributed cases and judge tasks" do
+        let(:judge_user) { create(:user) }
+        let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+        let!(:distribution) { Distribution.create!(judge: judge_user) }
+
+        it "distributes and appeals" do
           tasks = subject
 
           expect(tasks.length).to eq(2)
           expect(tasks.first.class).to eq(DistributedCase)
           expect(distribution.distributed_cases.length).to eq(2)
-          expect(judge_user.reload.tasks.map(&:appeal).include?(aod_age_appeal)).to eq(true)
+          expect(judge_user.reload.tasks.map(&:appeal)).to include(aod_age_appeal)
         end
+      end
+    end
+  end
+
+  context "distribute_appeals" do
+    let!(:appeals) do
+      (1..10).map do
+        create(:appeal, :with_tasks, docket_type: "direct_review")
+      end
+    end
+
+    let(:judge_user) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:distribution) { Distribution.create!(judge: judge_user) }
+
+    context "nonpriority appeals" do
+      subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }
+
+      it "creates distributed cases and judge tasks" do
+        tasks = subject
+
+        expect(tasks.length).to eq(10)
+        expect(tasks.first.class).to eq(DistributedCase)
+        expect(distribution.distributed_cases.length).to eq(10)
+        expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
       end
     end
   end

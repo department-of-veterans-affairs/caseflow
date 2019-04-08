@@ -28,6 +28,7 @@ class Hearing < ApplicationRecord
   delegate :appellant_last_name, to: :appeal
   delegate :appellant_city, to: :appeal
   delegate :appellant_state, to: :appeal
+  delegate :appellant_zip, to: :appeal
   delegate :veteran_age, to: :appeal
   delegate :veteran_gender, to: :appeal
   delegate :veteran_file_number, to: :appeal
@@ -36,7 +37,6 @@ class Hearing < ApplicationRecord
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
   delegate :available_hearing_locations, :closest_regional_office, to: :appeal
-  delegate :representative_name, to: :appeal, prefix: true
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
@@ -74,6 +74,15 @@ class Hearing < ApplicationRecord
     false
   end
 
+  def assigned_to_vso?(user)
+    appeal.tasks.any? do |task|
+      task.type = TrackVeteranTask.name &&
+                  task.assigned_to.is_a?(Vso) &&
+                  task.assigned_to.user_has_access?(user) &&
+                  task.active?
+    end
+  end
+
   def hearing_task?
     !hearing_task_association.nil?
   end
@@ -92,6 +101,10 @@ class Hearing < ApplicationRecord
     disposition_task_in_progress || !hearing_task?
   end
 
+  def representative
+    appeal.representative_name
+  end
+
   def scheduled_for
     DateTime.new.in_time_zone(regional_office_timezone).change(
       year: hearing_day.scheduled_for.year,
@@ -105,7 +118,7 @@ class Hearing < ApplicationRecord
 
   def worksheet_issues
     request_issues.map do |request_issue|
-      HearingIssueNote.select("*").joins(:request_issue)
+      HearingIssueNote.joins(:request_issue)
         .find_or_create_by(request_issue: request_issue, hearing: self).to_hash
     end
   end
@@ -136,6 +149,38 @@ class Hearing < ApplicationRecord
   end
 
   # rubocop:disable Metrics/MethodLength
+  def quick_to_hash(_current_user_id)
+    serializable_hash(
+      methods: [
+        :external_id,
+        :veteran_first_name,
+        :veteran_last_name,
+        :regional_office_key,
+        :regional_office_name,
+        :regional_office_timezone,
+        :readable_request_type,
+        :scheduled_for,
+        :appeal_external_id,
+        :veteran_file_number,
+        :evidence_window_waived,
+        :bva_poc,
+        :room,
+        :transcription,
+        :docket_number,
+        :docket_name,
+        :current_issue_count,
+        :location,
+        :worksheet_issues,
+        :closest_regional_office,
+        :available_hearing_locations,
+        :disposition_editable
+      ],
+      except: [:military_service]
+    )
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  # rubocop:disable Metrics/MethodLength
   def to_hash(_current_user_id)
     serializable_hash(
       methods: [
@@ -146,6 +191,7 @@ class Hearing < ApplicationRecord
         :appellant_last_name,
         :appellant_city,
         :appellant_state,
+        :appellant_zip,
         :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
@@ -163,7 +209,7 @@ class Hearing < ApplicationRecord
         :docket_name,
         :military_service,
         :current_issue_count,
-        :appeal_representative_name,
+        :representative,
         :location,
         :worksheet_issues,
         :closest_regional_office,

@@ -3,13 +3,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import LoadingScreen from './LoadingScreen';
 import StatusMessage from './StatusMessage';
+import COPY from '../../COPY.json';
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',
   FAILURE: 'FAILURE'
 };
 
-const accessDeniedTitle = { title: 'Additional access needed' };
+const accessDeniedTitle = { title: COPY.ACCESS_DENIED_TITLE };
 const accessDeniedMsg = <div>
         It looks like you do not have the necessary level of access to view this information.<br />
         Please check with your application administrator before trying again.</div>;

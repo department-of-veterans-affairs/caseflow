@@ -10,10 +10,6 @@ feature "Higher Level Review Edit issues" do
     FeatureToggle.enable!(:intakeAma)
 
     Timecop.freeze(post_ama_start_date)
-
-    # skip the sync call since all edit requests require resyncing
-    # currently, we're not mocking out vbms and bgs
-    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
   end
 
   after do
@@ -140,7 +136,8 @@ feature "Higher Level Review Edit issues" do
     ineligible = Constants.INELIGIBLE_REQUEST_ISSUES
 
     let!(:eligible_request_issue) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         decision_review: higher_level_review,
         issue_category: "Military Retired Pay",
         nonrating_issue_description: "eligible nonrating description",
@@ -152,8 +149,10 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:untimely_request_issue) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         decision_review: higher_level_review,
+        decision_date: 2.years.ago,
         issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "untimely nonrating description",
         contention_reference_id: "12345",
@@ -163,9 +162,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_in_review) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: another_higher_level_review,
         contested_issue_description: "PTSD denied",
         contention_reference_id: "123",
@@ -176,9 +177,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_with_active_previous_review) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "def456",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "PTSD denied",
         contention_reference_id: "111",
@@ -189,9 +192,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_previous_hlr) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "abc123",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: another_higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Left knee granted",
@@ -201,9 +206,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_with_previous_hlr) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "abc123",
         contested_rating_issue_profile_date: rating.profile_date,
+        decision_date: rating.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "Left knee granted",
         benefit_type: "compensation",
@@ -213,9 +220,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_before_ama) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "before_ama_ref_id",
         contested_rating_issue_profile_date: rating_before_ama.profile_date,
+        decision_date: rating_before_ama.promulgation_date,
         decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Non-RAMP Issue before AMA Activation",
@@ -225,9 +234,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:eligible_ri_before_ama) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "ramp_ref_id",
         contested_rating_issue_profile_date: rating_before_ama_from_ramp.profile_date,
+        decision_date: rating_before_ama_from_ramp.promulgation_date,
         decision_review: higher_level_review,
         benefit_type: "compensation",
         contested_issue_description: "Issue before AMA Activation from RAMP",
@@ -237,9 +248,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_legacy_issue_not_withdrawn) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "has_legacy_issue",
         contested_rating_issue_profile_date: rating_before_ama.profile_date,
+        decision_date: rating_before_ama.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "Issue with legacy issue not withdrawn",
         vacols_id: "vacols1",
@@ -251,9 +264,11 @@ feature "Higher Level Review Edit issues" do
     end
 
     let!(:ri_legacy_issue_ineligible) do
-      RequestIssue.create!(
+      create(
+        :request_issue,
         contested_rating_issue_reference_id: "has_ineligible_legacy_appeal",
         contested_rating_issue_profile_date: rating_before_ama.profile_date,
+        decision_date: rating_before_ama.promulgation_date,
         decision_review: higher_level_review,
         contested_issue_description: "Issue connected to ineligible legacy appeal",
         contention_reference_id: "12345678",
@@ -289,9 +304,11 @@ feature "Higher Level Review Edit issues" do
 
     context "VACOLS issue from before AMA opted in" do
       let!(:ri_legacy_issue_eligible) do
-        RequestIssue.create!(
+        create(
+          :request_issue,
           contested_rating_issue_reference_id: "before_ama_ref_id",
           contested_rating_issue_profile_date: rating_before_ama.profile_date,
+          decision_date: rating_before_ama.promulgation_date,
           decision_review: higher_level_review,
           contested_issue_description: "Non-RAMP Issue before AMA Activation legacy",
           contention_reference_id: "123456789",
@@ -314,12 +331,12 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(
           "#{untimely_request_issue.contention_text} #{ineligible.untimely}"
         )
-        expect(page).to have_content("#{eligible_request_issue.contention_text} Decision date: #{Time.zone.today.mdY}")
+        expect(page).to have_content("#{eligible_request_issue.contention_text}\nDecision date: #{Time.zone.today.mdY}")
         expect(page).to have_content(
           "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
         )
         expect(page).to have_content(
-          "#{eligible_ri_before_ama.contention_text} Decision date:"
+          "#{eligible_ri_before_ama.contention_text}\nDecision date:"
         )
         expect(page).to have_content(
           "#{ri_legacy_issue_not_withdrawn.contention_text} #{ineligible.legacy_issue_not_withdrawn}"
@@ -328,7 +345,7 @@ feature "Higher Level Review Edit issues" do
           "#{ri_legacy_issue_ineligible.contention_text} #{ineligible.legacy_appeal_not_eligible}"
         )
         expect(page).to have_content(
-          "#{ri_legacy_issue_eligible.contention_text} Decision date:"
+          "#{ri_legacy_issue_eligible.contention_text}\nDecision date:"
         )
       end
     end
@@ -864,7 +881,7 @@ feature "Higher Level Review Edit issues" do
       # add RAMP issue before AMA
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
-      expect(page).to have_content("Issue before AMA Activation from RAMP Decision date:")
+      expect(page).to have_content("Issue before AMA Activation from RAMP\nDecision date:")
 
       safe_click("#button-submit-update")
 
@@ -1087,12 +1104,44 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
       end
     end
+
+    context "when EPs have cleared very recently" do
+      before do
+        ep = higher_level_review.reload.end_product_establishments.first.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(veteran.file_number, ep.claim_id, "CLR")
+      end
+
+      it "syncs on initial GET" do
+        expect(higher_level_review.end_product_establishments.first.last_synced_at).to be_nil
+
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
+        expect(page).to have_current_path("/higher_level_reviews/#{rating_ep_claim_id}/edit/cleared_eps")
+        expect(page).to have_content("Issues Not Editable")
+      end
+    end
+
+    context "when withdraw decision reviews is enabled" do
+      before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
+      after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
+
+      scenario "remove an issue with dropdown" do
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
+        expect(page).to have_content("PTSD denied")
+        click_remove_intake_issue_dropdown("PTSD denied")
+        expect(page).to_not have_content("PTSD denied")
+      end
+    end
   end
 
   context "when remove decision reviews is enabled" do
     before do
       FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+
+      # skip the sync call since all edit requests require resyncing
+      # currently, we're not mocking out vbms and bgs
+      allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
     end
 
     after do
@@ -1172,6 +1221,7 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Remove review?")
         expect(page).to have_content("This will remove the review and cancel all the End Products associated with it")
         click_intake_confirm
+        expect(page).to have_content("Review Removed")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         sleep 1
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
@@ -1179,9 +1229,19 @@ feature "Higher Level Review Edit issues" do
     end
 
     context "when all caseflow decision reviews" do
+      before do
+        education_org = create(:business_line, name: "Education", url: "education")
+        OrganizationsUser.add_user_to_organization(current_user, education_org)
+        FeatureToggle.enable!(:decision_reviews)
+      end
+
+      after do
+        FeatureToggle.disable!(:decision_reviews)
+      end
+
       let!(:benefit_type) { "education" }
 
-      scenario "remove all caseflow decisions reviews" do
+      scenario "show alert message when all decision reviews are removed " do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
         higher_level_review.request_issues.length.times do
@@ -1193,9 +1253,9 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Remove review?")
         expect(page).to have_content("This review and all tasks associated with it will be removed.")
         click_intake_confirm
-        expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
         sleep 1
-        expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(current_path).to eq("/decision_reviews/education")
+        expect(page).to have_content("Review Removed")
       end
     end
 

@@ -15,7 +15,7 @@ class RequestIssue < ApplicationRecord
   belongs_to :end_product_establishment
   has_many :request_decision_issues
   has_many :decision_issues, through: :request_decision_issues
-  has_many :remand_reasons
+  has_many :remand_reasons, through: :decision_issues
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   has_many :hearing_issue_notes
   has_one :legacy_issue_optin
@@ -43,6 +43,7 @@ class RequestIssue < ApplicationRecord
     end_product_canceled: "end_product_canceled",
     withdrawn: "withdrawn",
     dismissed_death: "dismissed_death",
+    dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
     ineligible: "ineligible"
   }
@@ -58,6 +59,11 @@ class RequestIssue < ApplicationRecord
   end
 
   class NotYetSubmitted < StandardError; end
+  class MissingDecisionDate < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id} lacks a decision_date")
+    end
+  end
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix"
 
@@ -98,7 +104,7 @@ class RequestIssue < ApplicationRecord
       pension: {
         appeal: {
           rating: "040BDERPMC",
-          nonrating: "040HDENRPMC"
+          nonrating: "040BDENRPMC"
         },
         claim_review: {
           rating: "040HDERPMC",
@@ -222,15 +228,12 @@ class RequestIssue < ApplicationRecord
     !!associated_rating_issue? || previous_rating_issue?
   end
 
-  def associated_rating_issue?
-    contested_rating_issue_reference_id
+  def nonrating?
+    !rating? && !is_unidentified?
   end
 
-  # TODO: If a nonrating decision issue is contested, the request issue should also be considered
-  #       nonrating. Currently it won't be because we don't copy over these fields from the contested
-  #       decision issue if they are present.
-  def nonrating?
-    !!issue_category
+  def associated_rating_issue?
+    contested_rating_issue_reference_id
   end
 
   def open?
@@ -294,12 +297,15 @@ class RequestIssue < ApplicationRecord
   end
 
   def approx_decision_date_of_issue_being_contested
+    return if is_unidentified
+
     if contested_issue
       contested_issue.approx_decision_date
     elsif decision_date
       decision_date
-    elsif decision_issues.any?
-      decision_issues.first.approx_decision_date
+    else
+      # in theory we should never get here
+      fail MissingDecisionDate, id
     end
   end
 
@@ -407,10 +413,10 @@ class RequestIssue < ApplicationRecord
     close!(:removed) do
       legacy_issue_optin&.flag_for_rollback!
 
-      # removing a request issue also deletes the associated request_decision_issue
-      # if the decision issue is not associated with any other request issue, also delete
-      decision_issues.each { |decision_issue| decision_issue.destroy_on_removed_request_issue(id) }
-      decision_issues.delete_all
+      # If the decision issue is not associated with any other request issue, also delete
+      decision_issues.each(&:soft_delete_on_removed_request_issue)
+      # Removing a request issue also deletes the associated request_decision_issue
+      request_decision_issues.update_all(deleted_at: Time.zone.now)
     end
   end
 
@@ -490,7 +496,7 @@ class RequestIssue < ApplicationRecord
   # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
   # But the request issue should still be added to a rating End Product
   def previous_rating_issue?
-    contested_decision_issue&.associated_request_issue&.end_product_establishment&.rating?
+    previous_request_issue&.rating?
   end
 
   def fetch_diagnostic_code_status_description(diagnostic_code)

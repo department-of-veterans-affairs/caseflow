@@ -185,6 +185,51 @@ describe RequestIssue do
     end
   end
 
+  context "remove!" do
+    let(:decision_issue) { create(:decision_issue) }
+    let!(:request_issue1) { create(:request_issue, decision_issues: [decision_issue]) }
+
+    subject { request_issue1.remove! }
+
+    context "when a decision issue is shared between two request issues" do
+      let!(:request_issue2) { create(:request_issue, decision_issues: [decision_issue]) }
+
+      it "does not soft delete a decision issue" do
+        expect(RequestDecisionIssue.count).to eq 2
+        subject
+        expect(DecisionIssue.find_by(id: decision_issue.id)).to_not be_nil
+        expect(RequestDecisionIssue.count).to eq 1
+      end
+    end
+
+    context "when request issue has many decision issues" do
+      let(:decision_issue2) { create(:decision_issue) }
+      let!(:request_issue1) do
+        create(:request_issue, decision_issues: [decision_issue, decision_issue2])
+      end
+
+      it "soft deletes all decision issues" do
+        expect(RequestDecisionIssue.count).to eq 2
+        subject
+        expect(DecisionIssue.count).to eq 0
+        expect(DecisionIssue.unscoped.count).to eq 2
+        expect(RequestDecisionIssue.count).to eq 0
+        expect(RequestDecisionIssue.unscoped.count).to eq 2
+      end
+    end
+
+    context "when a decision issue is not shared between two request issues" do
+      it "soft deletes a decision issue" do
+        expect(RequestDecisionIssue.count).to eq 1
+        subject
+        expect(DecisionIssue.find_by(id: decision_issue.id)).to be_nil
+        expect(DecisionIssue.unscoped.find_by(id: decision_issue.id)).to_not be_nil
+        expect(RequestDecisionIssue.count).to eq 0
+        expect(RequestDecisionIssue.unscoped.count).to eq 1
+      end
+    end
+  end
+
   context ".active" do
     subject { RequestIssue.active }
 
@@ -353,7 +398,7 @@ describe RequestIssue do
           context "when not nonrating" do
             let(:contested_decision_issue_id) { create(:decision_issue, decision_review: decision_review_remanded).id }
             let(:request_issue) { nonrating_request_issue }
-            it { is_expected.to eq "040HDENRPMC" }
+            it { is_expected.to eq "040BDENRPMC" }
           end
         end
 
@@ -364,14 +409,15 @@ describe RequestIssue do
             let(:request_issue) { rating_request_issue }
             it { is_expected.to eq "040HDERPMC" }
 
-            context "when missing contested_rating_issue_reference_id but comes from a previous rating request issue" do
-              let(:contested_rating_issue_reference_id) { nil }
+            context "when dta issues comes from a previous rating issue" do
               let(:contested_decision_issue_id) { decision_issue.id }
+              let(:contested_rating_issue_reference_id) { nil }
+
               let(:original_request_issue) do
                 create(
                   :request_issue,
                   decision_review: decision_review_remanded,
-                  end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+                  contested_rating_issue_reference_id: "123"
                 )
               end
               let(:decision_issue) do
@@ -702,16 +748,21 @@ describe RequestIssue do
     end
   end
 
-  context "#rating?" do
+  context "#rating?, #nonrating?" do
     subject { request_issue.rating? }
+    let(:nonrating) { request_issue.nonrating? }
     let(:request_issue) { rating_request_issue }
 
     context "when there is an associated rating issue" do
       let(:contested_rating_issue_reference_id) { "123" }
       it { is_expected.to be true }
+
+      it "nonrating? is false" do
+        expect(nonrating).to be(false)
+      end
     end
 
-    context "when the request issue was a rating issue on its previous end product" do
+    context "when the request issue is from a dta on a previous rating issue" do
       let(:contested_rating_issue_reference_id) { nil }
       let(:contested_decision_issue_id) { decision_issue.id }
       let(:previous_review) { create(:higher_level_review) }
@@ -719,7 +770,7 @@ describe RequestIssue do
         create(
           :request_issue,
           decision_review: previous_review,
-          end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+          contested_rating_issue_reference_id: "123"
         )
       end
       let(:decision_issue) do
@@ -729,11 +780,17 @@ describe RequestIssue do
       end
 
       it { is_expected.to be true }
+      it "nonrating? is false" do
+        expect(nonrating).to be(false)
+      end
     end
 
     context "when it's a nonrating issue" do
       let(:request_issue) { nonrating_request_issue }
       it { is_expected.to be_falsey }
+      it "nonrating? is true" do
+        expect(nonrating).to be(true)
+      end
     end
   end
 

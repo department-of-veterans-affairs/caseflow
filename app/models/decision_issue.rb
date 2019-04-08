@@ -27,8 +27,16 @@ class DecisionIssue < ApplicationRecord
   DTA_ERROR_FED_RECS = "DTA Error - Fed Recs"
   DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs"
   DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO"
+  DTA_ERROR = "DTA Error"
   REMAND = "remanded"
-  REMAND_DISPOSITIONS = [REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO].freeze
+  REMAND_DISPOSITIONS = [
+    REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO, DTA_ERROR
+  ].freeze
+
+  # We are using default scope here because we'd like to soft delete decision issues
+  # for debugging purposes and to make it easier for developers to filter out
+  # soft deleted records
+  default_scope { where(deleted_at: nil) }
 
   class AppealDTAPayeeCodeError < StandardError
     def initialize(appeal_id)
@@ -61,6 +69,11 @@ class DecisionIssue < ApplicationRecord
     end
   end
 
+  def soft_delete
+    update(deleted_at: Time.zone.now)
+    request_decision_issues.update_all(deleted_at: Time.zone.now)
+  end
+
   def approx_decision_date
     processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
   end
@@ -69,9 +82,9 @@ class DecisionIssue < ApplicationRecord
     associated_request_issue&.issue_category
   end
 
-  def destroy_on_removed_request_issue(request_issue_id)
-    # destroy if the request issue is deleted and there are no other request issues associated
-    destroy if request_issues.length == 1 && request_issues.first.id == request_issue_id
+  def soft_delete_on_removed_request_issue
+    # mark as deleted if the request issue is deleted and there are no other request issues associated
+    update(deleted_at: Time.zone.now) if request_issues.length == 1
   end
 
   # Since nonrating issues require specialization to process, if any associated request issue is nonrating
@@ -187,13 +200,11 @@ class DecisionIssue < ApplicationRecord
     latest_ep = decision_review.veteran
       .find_latest_end_product_by_claimant(decision_review.claimants.first)
 
-    if latest_ep.nil? || latest_ep.payee_code.nil?
-      # mark appeal as failed
-      decision_review.update_error!("DTA SC creation failed")
-      fail AppealDTAPayeeCodeError, decision_review.id
-    end
+    latest_ep&.payee_code
+  end
 
-    latest_ep.payee_code
+  def dta_payee_code
+    decision_review.payee_code || prior_payee_code || decision_review.claimants.first.bgs_payee_code
   end
 
   def find_remand_supplemental_claim
@@ -216,16 +227,18 @@ class DecisionIssue < ApplicationRecord
       veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
       receipt_date: approx_decision_date
     )
+    fail AppealDTAPayeeCodeError, decision_review.id unless dta_payee_code
 
     sc.create_claimants!(
       participant_id: decision_review.claimant_participant_id,
-      payee_code: decision_review.payee_code || prior_payee_code
+      payee_code: dta_payee_code
     )
 
     sc
   rescue AppealDTAPayeeCodeError
     # mark SC as failed
     sc.update_error!("No payee code")
+    decision_review.update_error!("DTA SC creation failed")
     raise
   end
 end

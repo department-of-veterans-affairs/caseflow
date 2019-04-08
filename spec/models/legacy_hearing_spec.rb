@@ -78,7 +78,7 @@ describe LegacyHearing do
 
   context "#no_show?" do
     subject { hearing.no_show? }
-    let(:disposition) { :no_show }
+    let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
 
     it { is_expected.to be_truthy }
   end

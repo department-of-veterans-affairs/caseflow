@@ -53,10 +53,12 @@ feature "Appeal Intake" do
 
   let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
 
+  let(:promulgation_date) { receipt_date - 5.days }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -213,7 +215,7 @@ feature "Appeal Intake" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      decision_date: nil,
+      decision_date: promulgation_date,
       benefit_type: "compensation"
     )
 
@@ -271,7 +273,7 @@ feature "Appeal Intake" do
     )
 
     Claimant.create!(
-      review_request: appeal,
+      decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
 
@@ -535,7 +537,7 @@ feature "Appeal Intake" do
     # Eligible because it comes from a RAMP decision
     click_intake_add_issue
     add_intake_rating_issue("Issue before AMA Activation from RAMP")
-    expect(page).to have_content("8. Issue before AMA Activation from RAMP Decision date:")
+    expect(page).to have_content("8. Issue before AMA Activation from RAMP\nDecision date:")
 
     # nonrating before_ama
     click_intake_add_issue
@@ -853,7 +855,7 @@ feature "Appeal Intake" do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
         )
 
         click_intake_finish

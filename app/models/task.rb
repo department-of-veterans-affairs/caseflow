@@ -35,6 +35,12 @@ class Task < ApplicationRecord
 
   scope :inactive, -> { where(status: inactive_statuses) }
 
+  scope :not_decisions_review, lambda {
+                                 where.not(
+                                   type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
+                                 )
+                               }
+
   def available_actions(_user)
     []
   end
@@ -144,12 +150,18 @@ class Task < ApplicationRecord
     false
   end
 
+  def duplicate_org_task
+    assigned_to.is_a?(Organization) && children.any? do |child_task|
+      User.name == child_task.assigned_to_type && type == child_task.type
+    end
+  end
+
   def hide_from_case_timeline
-    false
+    duplicate_org_task
   end
 
   def hide_from_task_snapshot
-    false
+    duplicate_org_task
   end
 
   def legacy?
@@ -266,7 +278,10 @@ class Task < ApplicationRecord
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
     descendant_ids = descendants.pluck(:id)
-    Task.active.where(id: descendant_ids).update_all(status: Constants.TASK_STATUSES.cancelled)
+    Task.active.where(id: descendant_ids).update_all(
+      status: Constants.TASK_STATUSES.cancelled,
+      closed_at: Time.zone.now
+    )
   end
 
   def assign_to_organization_data(_user = nil)

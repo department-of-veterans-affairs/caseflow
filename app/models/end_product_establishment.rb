@@ -67,7 +67,7 @@ class EndProductEstablishment < ApplicationRecord
         modifier: end_product_to_establish.modifier
       )
     end
-  rescue VBMS::HTTPError => error
+  rescue VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
@@ -115,7 +115,7 @@ class EndProductEstablishment < ApplicationRecord
   def remove_contention!(request_issue)
     contention = contention_for_object(request_issue)
 
-    fail ContentionNotFound unless contention
+    fail ContentionNotFound, request_issue.contention_reference_id unless contention
 
     VBMSService.remove_contention!(contention)
     request_issue.update!(contention_removed_at: Time.zone.now)
@@ -191,7 +191,7 @@ class EndProductEstablishment < ApplicationRecord
       sync_source!
       close_request_issues_if_canceled!
     end
-  rescue EstablishedEndProductNotFound => e
+  rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => e
     raise e
   rescue StandardError => e
     raise ::BGSSyncError.from_bgs_error(e, self)
@@ -280,7 +280,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def on_decision_issue_sync_processed(processing_request_issue)
     if decision_issues_sync_complete?(processing_request_issue)
-      source.on_decision_issues_sync_processed(self)
+      source.on_decision_issues_sync_processed
     end
   end
 

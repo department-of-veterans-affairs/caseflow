@@ -11,15 +11,6 @@ def scroll_position(id: nil, class_name: nil)
   EOS
 end
 
-def scroll_to(id: nil, class_name: nil, value: 0, index: 0)
-  page.driver.evaluate_script <<-EOS
-    function() {
-      var elem = document.getElementById('#{id}') || document.getElementsByClassName('#{class_name}')['#{index}'];
-      elem.scrollTop=#{value};
-    }();
-  EOS
-end
-
 def scrolled_amount(child_class_name)
   page.evaluate_script <<-EOS
     function() {
@@ -219,8 +210,8 @@ RSpec.feature "Reader" do
       let(:vbms_fetched_ts) { Time.zone.now }
       let(:vva_fetched_ts) { Time.zone.now }
 
-      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}" }
-      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}" }
+      let(:vbms_ts_string) { "Last VBMS retrieval: #{vbms_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
+      let(:vva_ts_string) { "Last VVA retrieval: #{vva_fetched_ts.strftime(fetched_at_format)}".squeeze(" ") }
 
       let!(:appeal) do
         Generators::LegacyAppealV2.build(
@@ -234,7 +225,7 @@ RSpec.feature "Reader" do
       scenario "Claims folder details issues show no issues message" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
         find(".rc-collapse-header", text: "Claims folder details").click
-        expect(find("#claims-folder-issues").text).to have_content("No issues on appeal")
+        expect(page).to have_css("#claims-folder-issues", text: "No issues on appeal")
       end
 
       context "When both document source manifest retrieval times are set" do
@@ -713,15 +704,8 @@ RSpec.feature "Reader" do
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
 
-        # Click on the comment icon and ensure the scroll position of
-        # the comment wrapper changes
-        original_scroll = scroll_position(id: element_id)
-
         # Click on the second to last comment icon (last comment icon is off screen)
         all(".commentIcon-container", wait: 3, count: documents[0].annotations.size)[annotations.size - 3].click
-        after_click_scroll = scroll_position(id: element_id)
-
-        expect(after_click_scroll - original_scroll).to be > 0
 
         # Make sure the comment icon and comment are shown as selected
         expect(find(".comment-container-selected").text).to eq "baby metal 4 lyfe"
@@ -772,15 +756,15 @@ RSpec.feature "Reader" do
 
       scenario "Scrolling pages changes page numbers" do
         visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
         click_on documents[1].type
 
         expect(page).to have_content("IN THE APPEAL", wait: 10)
-
         expect(page).to have_css(".page")
-        expect(find_field("page-progress-indicator-input").value).to eq "1"
-        scroll_to(class_name: "ReactVirtualized__Grid", value: 2000, index: 1)
-        expect(find_field("page-progress-indicator-input").value).to_not eq "1"
+        expect(page).to have_field("page-progress-indicator-input", with: "1")
+
+        all(".ReactVirtualized__Grid").last.scroll_to(0, 2000)
+
+        expect(page).to_not have_field("page-progress-indicator-input", with: "1")
       end
 
       context "When document 3 is a 147 page document" do
@@ -1061,11 +1045,11 @@ RSpec.feature "Reader" do
       issue_list = all("#claims-folder-issues tr")
       expect(issue_list.count).to eq(issues_info.length)
       issue_list.each_with_index do |issue, index|
-        expect(issue.text.include?(issues_info[index].type)).to be true
+        expect(issue.text).to include issues_info[index].type
 
         # verifying the level information is being shown as part of the issue information
         issues_info[index].levels.each_with_index do |level, level_index|
-          expect(level.include?(issues_info[index].levels[level_index])).to be true
+          expect(level).to include issues_info[index].levels[level_index]
         end
       end
     end

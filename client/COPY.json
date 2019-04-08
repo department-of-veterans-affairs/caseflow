@@ -208,7 +208,7 @@
   "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Hearing Schedule!",
-  "HEARING_SCHEDULE_VIEW_PAGE_HEADER_RO": "Board Hearing Schedule",
+  "HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER": "Board Hearing Schedule",
   "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
   "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
   "HEARING_SCHEDULE_VIEW_END_DATE_LABEL": "To:",
@@ -344,7 +344,9 @@
   "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
   "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
 
+  "ACCESS_DENIED_TITLE": "Additional access needed",
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
+  "CASE_DETAILS_LOADING_FAILURE_TITLE": "Unable to load this case",
 
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "review",

@@ -716,7 +716,8 @@ class Fakes::BGSService
 
   def default_claimant_info
     {
-      relationship: "Spouse"
+      relationship: "Spouse",
+      payee_code: "10"
     }
   end
 

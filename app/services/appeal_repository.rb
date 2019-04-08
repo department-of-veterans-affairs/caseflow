@@ -324,7 +324,10 @@ class AppealRepository
     VACOLS::Case.where(bfhr: "1", bfcurloc: "57").or(VACOLS::Case.where(bfhr: "2", bfdocind: "V", bfcurloc: "57"))
       .joins(:folder).order("folder.tinum")
       .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
-        case_record.case_hearings.any? { |hearing| hearing.hearing_disp.nil? }
+        case_record.case_hearings.any? do |hearing|
+          # VACOLS contains non-BVA hearings information, we want to confirm the appeal has no scheduled BVA hearings
+          hearing.hearing_disp.nil? && HearingDay::REQUEST_TYPES.value?(hearing.hearing_type)
+        end
       end
   end
 
@@ -332,7 +335,7 @@ class AppealRepository
     ScheduleHearingTask.where(appeal_type: LegacyAppeal.name)
       .joins("LEFT JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
       .where("status <> ? AND type = ?", Constants.TASK_STATUSES.completed.to_sym, ScheduleHearingTask.name)
-      .select("legacy_appeals.vacols_id").uniq
+      .select("legacy_appeals.vacols_id").pluck(:vacols_id).uniq
   end
 
   def self.create_schedule_hearing_tasks
@@ -595,7 +598,7 @@ class AppealRepository
 
     previous_active_location = case_record.previous_active_location
 
-    fail not_valid_to_reopen_err unless %w[50 53 54 70 96 97 98].include? previous_active_location
+    fail not_valid_to_reopen_err unless %w[50 53 54 62 70 96 97 98].include? previous_active_location
     fail not_valid_to_reopen_err if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
     follow_up_appeal_key = "#{case_record.bfkey}P"

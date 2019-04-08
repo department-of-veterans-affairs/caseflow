@@ -36,7 +36,7 @@ describe SupplementalClaimIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
       )
@@ -229,7 +229,7 @@ describe SupplementalClaimIntake do
     let!(:claimant) do
       create(
         :claimant,
-        review_request: detail,
+        decision_review: detail,
         payee_code: "00",
         participant_id: "1234"
       )
@@ -382,8 +382,10 @@ describe SupplementalClaimIntake do
       it "clears pending status" do
         allow(detail).to receive(:establish!).and_raise(unknown_error)
 
-        expect { subject }.to raise_exception(unknown_error)
-        expect(intake.completion_status).to be_nil
+        subject
+
+        expect(intake.completion_status).to eq("success")
+        expect(intake.detail.establishment_error).to eq(unknown_error.inspect)
       end
     end
   end

@@ -140,6 +140,27 @@ describe Task do
     end
   end
 
+  describe "#duplicate_org_task" do
+    let(:root_task) { create(:root_task) }
+    let(:qr_user) { create(:user) }
+    let!(:quality_review_organization_task) do
+      create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
+    end
+    let!(:quality_review_task) do
+      create(:qr_task, assigned_to: qr_user, parent: quality_review_organization_task)
+    end
+
+    context "when there are duplicate organization tasks" do
+      it "returns true when there is a duplicate task assigned to an organization" do
+        expect(quality_review_organization_task.duplicate_org_task).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(quality_review_task.duplicate_org_task).to eq(false)
+      end
+    end
+  end
+
   describe "#latest_attorney_case_review" do
     let(:task) { create(:task, type: "Task") }
 
@@ -352,6 +373,17 @@ describe Task do
           expect(e.labels).to match_array(labels)
         end
       end
+    end
+  end
+
+  describe ".not_decisions_review" do
+    let!(:veteran_record_request_task) { create(:veteran_record_request_task) }
+    let!(:task) { create(:generic_task) }
+
+    it "filters out subclasses of DecisionReviewTask" do
+      tasks = described_class.not_decisions_review.all
+      expect(tasks).to_not include(veteran_record_request_task)
+      expect(tasks).to include(task)
     end
   end
 

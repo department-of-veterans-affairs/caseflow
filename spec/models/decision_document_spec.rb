@@ -184,8 +184,7 @@ describe DecisionDocument do
           expect(decision_document.attempted_at).to eq(Time.zone.now)
           expect(decision_document.processed_at).to eq(Time.zone.now)
 
-          expect(SupplementalClaim.where(decision_review_remanded: decision_document.appeal)
-            .where.not(id: prior_sc_with_payee_code.id)).to eq([])
+          expect(SupplementalClaim.where(decision_review_remanded: decision_document.appeal)).to eq([])
         end
       end
 
@@ -201,8 +200,7 @@ describe DecisionDocument do
 
         it "creates remand supplemental claim" do
           subject
-          expect(SupplementalClaim.where(decision_review_remanded: decision_document.appeal)
-              .where.not(id: prior_sc_with_payee_code.id).length).to eq(1)
+          expect(SupplementalClaim.where(decision_review_remanded: decision_document.appeal).count).to eq(1)
         end
       end
 

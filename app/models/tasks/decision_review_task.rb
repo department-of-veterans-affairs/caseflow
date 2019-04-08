@@ -16,7 +16,7 @@ class DecisionReviewTask < GenericTask
   end
 
   def ui_hash
-    serializer_class.new(self).as_json
+    serializer_class.new(self).serializable_hash[:data][:attributes]
   end
 
   def complete_with_payload!(decision_issue_params, decision_date)
@@ -26,6 +26,8 @@ class DecisionReviewTask < GenericTask
       appeal.create_decision_issues_for_tasks(decision_issue_params, decision_date)
       update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
     end
+
+    appeal.on_decision_issues_sync_processed if appeal.is_a?(HigherLevelReview)
 
     true
   end

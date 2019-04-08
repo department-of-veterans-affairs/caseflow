@@ -5,7 +5,6 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
 gem "aasm", "4.11.0"
-gem "active_model_serializers", "~> 0.10.0"
 # Use sqlite3 as the database for Active Record
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "acts_as_tree"
@@ -17,6 +16,7 @@ gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
 gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "dddc821c2335c7de234a5454e4b4874e3f658420"
 gem "dogstatsd-ruby"
+gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
 # Use jquery as the JavaScript library
 gem "jquery-rails"
@@ -102,7 +102,7 @@ group :test, :development, :demo do
   gem "rubocop", "~> 0.52", require: false
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
-  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "master"
+  gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "mb-update-capybara-click"
   gem "timecop"
 end
 

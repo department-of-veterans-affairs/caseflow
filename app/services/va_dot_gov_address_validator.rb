@@ -98,10 +98,15 @@ class VaDotGovAddressValidator
   def fetch_and_update_ro(va_dot_gov_address:)
     state_code = get_state_code(va_dot_gov_address)
     facility_ids = ro_facility_ids_for_state(state_code)
+    facility_ids = include_san_antonio_satellite_office(facility_ids) if state_code == "TX"
 
     distances = VADotGovService.get_distance(ids: facility_ids, lat: va_dot_gov_address[:lat],
                                              long: va_dot_gov_address[:long])
-    closest_ro = RegionalOffice::CITIES.find { |_k, v| v[:facility_locator_id] == distances[0][:facility_id] }[0]
+
+    closest_facility_id = distances[0][:facility_id]
+    closest_facility_id = map_san_antonio_satellite_office_to_houston(closest_facility_id) if state_code == "TX"
+
+    closest_ro = get_regional_office_from_facility_id(closest_facility_id)
 
     appeal.update(closest_regional_office: except_delaware(closest_ro))
 
@@ -111,6 +116,24 @@ class VaDotGovAddressValidator
   def facility_ids_for_ro(regional_office_id)
     (RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
       []) << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
+  end
+
+  def include_san_antonio_satellite_office(facility_ids)
+    # veterans whose closest AHL is San Antonio should have Houston as the RO
+    # even though Waco may be closer. This is a RO/AHL policy quirk.
+    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
+
+    facility_ids << "vha_671BY"
+  end
+
+  def map_san_antonio_satellite_office_to_houston(facility_id)
+    return "vba_362" if facility_id == "vha_671BY"
+
+    facility_id
+  end
+
+  def get_regional_office_from_facility_id(facility_id)
+    RegionalOffice::CITIES.find { |_key, regional_office| regional_office[:facility_locator_id] == facility_id }[0]
   end
 
   def ro_facility_ids_for_state(state_code)

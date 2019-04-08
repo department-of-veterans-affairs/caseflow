@@ -59,11 +59,12 @@ feature "Supplemental Claim Intake" do
   end
 
   let(:profile_date) { (receipt_date - 15.days).to_datetime }
+  let(:promulgation_date) { receipt_date - 5.days }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -352,7 +353,7 @@ feature "Supplemental Claim Intake" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      decision_date: nil,
+      decision_date: promulgation_date,
       rating_issue_associated_at: Time.zone.now
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(
@@ -389,6 +390,7 @@ feature "Supplemental Claim Intake" do
     click_intake_continue
 
     expect(page).to have_content("Something went wrong")
+    expect(page).to have_content("Error code")
     expect(page).to have_current_path("/intake/review_request")
   end
 
@@ -415,7 +417,7 @@ feature "Supplemental Claim Intake" do
     )
 
     Claimant.create!(
-      review_request: supplemental_claim,
+      decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )
 
@@ -620,7 +622,7 @@ feature "Supplemental Claim Intake" do
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
-        "7. Issue before AMA Activation from RAMP Decision date:"
+        "7. Issue before AMA Activation from RAMP\nDecision date:"
       )
       expect(page).to_not have_content(
         "7. Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
@@ -925,7 +927,7 @@ feature "Supplemental Claim Intake" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+            "#{intake_constants.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
           )
 
           click_intake_finish

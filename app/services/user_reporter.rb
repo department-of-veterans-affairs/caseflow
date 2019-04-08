@@ -22,42 +22,6 @@ class UserReporter
     report.flatten
   end
 
-  def undo_change
-    return if uppercase_user.undo_record_merging.nil?
-
-    User.transaction do
-      uppercase_user.undo_record_merging.each do |undo_merge|
-        User.create(
-          undo_merge["create_user"].except!("display_name")
-        )
-
-        undo_merge["create_associations"].each do |association|
-          (Object.const_get association["model"])
-            .where(id: association["ids"])
-            .update(association["column"] => association["user_id"])
-        end
-      end
-
-      uppercase_user.update!(undo_record_merging: nil)
-    end
-  end
-
-  def merge_all_users_with_uppercased_user
-    User.transaction do
-      other_users = all_users_for_css_id - [uppercase_user]
-
-      reassigned_users = other_users.map do |user|
-        {
-          create_associations: replace_user(user, uppercase_user),
-          create_user: user.to_hash
-        }
-      end
-
-      uppercase_user.update!(undo_record_merging: ((uppercase_user.undo_record_merging || []) + reassigned_users))
-      other_users.each(&:delete)
-    end
-  end
-
   private
 
   def models_with_named_user_foreign_key
@@ -70,20 +34,30 @@ class UserReporter
       { model: JudgeCaseReview, column: :judge },
       { model: JudgeCaseReview, column: :attorney },
       { model: Task, column: :assigned_by },
-      { model: Task, column: :assigned_to }
+      { model: Task, column: :assigned_to },
+      { model: AppealView, column: :user, unique: [:appeal_type, :appeal_id] },
+      { model: HearingView, column: :user, unique: [:hearing_type, :hearing_id] },
+      { model: DocumentView, column: :user, unique: [:document_id] },
+      { model: ReaderUser, column: :user, unique: [] },
+      { model: UserQuota, column: :user, unique: [:team_quota_id] }
     ]
   end
 
-  # when run from a rake task in production, must load models explicitly.
-  def load_all_models
-    ::Rails.application.eager_load!
-  end
-
   def models_with_user_id
-    load_all_models unless self.class.models_with_user_id
-    self.class.models_with_user_id ||= ActiveRecord::Base.descendants.reject(&:abstract_class?)
-      .select { |c| c.attribute_names.include?("user_id") }.uniq
-      .map { |cls| { model: cls, column: :user_id } }
+    self.class.models_with_user_id ||= [
+      AdvanceOnDocketMotion, Annotation, AppealIntake,
+      Certification, ClaimReviewIntake, ClaimsFolderSearch,
+      DecisionReviewIntake, Dispatch::Task,
+      EndProductEstablishment, EstablishClaim,
+      HigherLevelReviewIntake,
+      Intake,
+      JudgeSchedulePeriod,
+      LegacyHearing,
+      OrganizationsUser,
+      RampElectionIntake, RampElectionRollback, RampRefilingIntake, RequestIssuesUpdate,
+      RoSchedulePeriod,
+      SchedulePeriod, SupplementalClaimIntake
+    ].map { |cls| { model: cls, column: :user_id } }
   end
 
   def report_user_related_records(user)
@@ -97,33 +71,6 @@ class UserReporter
     end
 
     related_records
-  end
-
-  def replace_user(old_user, new_user)
-    (models_with_user_id + models_with_named_user_foreign_key).map do |foreign_key|
-      column_id_name = "#{foreign_key[:column]}_id".to_sym
-      column_type_name = "#{foreign_key[:column]}_type".to_sym
-      model_col_names = foreign_key[:model].column_names.map(&:to_sym)
-
-      fk_column_name = model_col_names.include?(column_id_name) ? column_id_name : foreign_key[:column]
-
-      scope = if model_col_names.include?(column_type_name)
-                foreign_key[:model].where(column_id_name => old_user.id).where(column_type_name => "User")
-              else
-                foreign_key[:model].where(fk_column_name => old_user.id)
-              end
-
-      undo_action = {
-        model: foreign_key[:model].name,
-        column: fk_column_name,
-        ids: scope.pluck(:id),
-        user_id: old_user.id
-      }
-
-      scope.update(fk_column_name => new_user.id)
-
-      undo_action
-    end
   end
 
   def all_users_for_css_id

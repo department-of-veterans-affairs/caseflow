@@ -96,7 +96,7 @@ describe ClaimReview do
   let!(:claimant) do
     create(
       :claimant,
-      review_request: claim_review,
+      decision_review: claim_review,
       participant_id: veteran_participant_id,
       payee_code: "00"
     )
@@ -877,6 +877,25 @@ describe ClaimReview do
 
     it "returns the veteran" do
       expect(hlr.claim_veteran).to eq(veteran)
+    end
+  end
+
+  describe "#sync_end_product_establishments!" do
+    let!(:veteran) { create(:veteran) }
+    let!(:claim_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let!(:end_product_establishment) do
+      create(:end_product_establishment, source: claim_review, veteran_file_number: veteran.file_number)
+    end
+
+    before do
+      claim_review.create_issues!([rating_request_issue])
+      claim_review.establish!
+    end
+
+    it "syncs all EPEs" do
+      expect(claim_review.end_product_establishments.first.last_synced_at).to be_nil
+      claim_review.reload.sync_end_product_establishments!
+      expect(claim_review.end_product_establishments.first.last_synced_at).to_not be_nil
     end
   end
 end

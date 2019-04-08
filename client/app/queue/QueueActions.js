@@ -185,12 +185,11 @@ export const getAppealValue = (appealId, endpoint, name) => (dispatch) => {
   });
 };
 
-export const setAppealDocCount = (appealId, docCount, cached) => ({
+export const setAppealDocCount = (appealId, docCount) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
     appealId,
-    docCount,
-    cached
+    docCount
   }
 });
 
@@ -380,11 +379,10 @@ export const initialAssignTasksToUser = ({
   let params, url;
 
   if (oldTask.appealType === 'Appeal') {
-    url = '/tasks';
+    url = '/judge_assign_tasks';
     params = {
       data: {
         tasks: [{
-          type: 'AttorneyTask',
           external_id: oldTask.externalAppealId,
           parent_id: oldTask.taskId,
           assigned_to_id: assigneeId

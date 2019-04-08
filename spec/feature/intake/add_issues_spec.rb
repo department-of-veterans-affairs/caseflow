@@ -42,7 +42,7 @@ feature "Intake Add Issues Page" do
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
       expect(page).not_to have_content("When you finish making changes, click \"Save\" to continue")
-      expect(page).to have_content("1. Left knee granted Decision date: #{promulgation_date.mdY}")
+      expect(page).to have_content("1. Left knee granted\nDecision date: #{promulgation_date.mdY}")
     end
   end
 
@@ -125,7 +125,7 @@ feature "Intake Add Issues Page" do
       find("label", text: "None of these match").click
       safe_click ".add-issue"
 
-      expect(page).to have_content("Left knee granted Decision date")
+      expect(page).to have_content("Left knee granted\nDecision date")
       expect(page).to_not have_content(
         "Left knee granted is ineligible because the same issue is under review as a Legacy Appeal"
       )

@@ -197,7 +197,7 @@ describe HigherLevelReview do
   end
 
   context "#on_decision_issues_sync_processed" do
-    subject { higher_level_review.on_decision_issues_sync_processed(epe) }
+    subject { higher_level_review.on_decision_issues_sync_processed }
 
     let(:epe) do
       create(:end_product_establishment,
@@ -238,7 +238,7 @@ describe HigherLevelReview do
 
       let!(:claimant) do
         Claimant.create!(
-          review_request: higher_level_review,
+          decision_review: higher_level_review,
           participant_id: veteran.participant_id,
           payee_code: "10"
         )
@@ -508,14 +508,14 @@ describe HigherLevelReview do
         expect(issue).to_not be_nil
 
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to be_nil
+        expect(issue[:lastAction]).to be_nil
         expect(issue[:date]).to be_nil
         expect(issue[:description]).to eq("Dental or oral condition")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(true)
-        expect(issue2[:last_action]).to be_nil
+        expect(issue2[:lastAction]).to be_nil
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
@@ -569,14 +569,14 @@ describe HigherLevelReview do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to be_nil
+        expect(issue[:lastAction]).to be_nil
         expect(issue[:date]).to be_nil
         expect(issue[:description]).to eq("Dental or oral condition")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(true)
-        expect(issue[:last_action]).to be_nil
+        expect(issue[:lastAction]).to be_nil
         expect(issue[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
@@ -640,14 +640,14 @@ describe HigherLevelReview do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(false)
-        expect(issue[:last_action]).to eq("allowed")
+        expect(issue[:lastAction]).to eq("allowed")
         expect(issue[:date]).to eq(dta_sc_decision_date.to_date)
         expect(issue[:description]).to eq("Dental or oral condition")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
-        expect(issue2[:last_action]).to eq("denied")
+        expect(issue2[:lastAction]).to eq("denied")
         expect(issue2[:date]).to eq(hlr_decision_date.to_date)
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
