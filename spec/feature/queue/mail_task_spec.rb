@@ -46,8 +46,12 @@ RSpec.feature "MailTasks" do
 
         expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
         expect(page.current_path).to eq("/queue")
-        expect(aod_team_task.assigned_to_id).to eq(user.id)
-        expect(root_task.children.length).to eq(1)
+
+        new_tasks = aod_team_task.children
+        expect(new_tasks.length).to eq(1)
+
+        new_task = new_tasks.first
+        expect(new_task.assigned_to).to eq(user)
       end
     end
   end
