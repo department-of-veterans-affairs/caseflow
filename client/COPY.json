@@ -386,7 +386,7 @@
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY": "%s has been removed from the hearing schedule and has been sent to the next appropriate location",
 
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_TITLE": "Schedule new hearing",
-  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY": "Withdrawing this hearing request will remove this veteran from the hearing pool.",
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY": "This will place the case in the list of veterans to be scheduled for a hearing.",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_TITLE": "You have successfully completed this case",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_BODY": "%s case has been removed from the transcription queue and has been sent to the next hearing management branch.",
 
