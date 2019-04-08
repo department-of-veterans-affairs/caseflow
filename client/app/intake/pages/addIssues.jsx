@@ -111,8 +111,8 @@ export class AddIssuesPage extends React.Component {
     );
 
     const issues = formatAddedIssues(intakeData, useAmaActivationDate);
-    const requestIssues = issues.filter((issue) => !issue.withdrawPending);
-    const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawPending);
+    const requestIssues = issues.filter((issue) => !issue.withdrawalPending);
+    const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const hasWithdrawnIssues = !_.isEmpty(issuesPendingWithdrawal);
     const withdrawDatePlaceholder = formatDateStr(new Date());
 

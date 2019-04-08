@@ -314,7 +314,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         text: `Unidentified issue: no issue matched for "${issue.description}"`,
         notes: issue.notes,
         isUnidentified: true,
-        withdrawPending: issue.withdrawPending
+        withdrawalPending: issue.withdrawalPending
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -343,7 +343,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         vacolsSequenceId: issue.vacolsSequenceId,
         vacolsIssue: issue.vacolsIssue,
         eligibleForSocOptIn: issue.eligibleForSocOptIn,
-        withdrawPending: issue.withdrawPending
+        withdrawalPending: issue.withdrawalPending
       };
     }
 
@@ -366,7 +366,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       vacolsIssue: issue.vacolsIssue,
       eligibleForSocOptIn: issue.eligibleForSocOptIn,
       decisionReviewTitle: issue.decisionReviewTitle,
-      withdrawPending: issue.withdrawPending
+      withdrawalPending: issue.withdrawalPending
     };
   });
 };

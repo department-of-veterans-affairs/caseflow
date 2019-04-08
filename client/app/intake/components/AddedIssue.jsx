@@ -87,7 +87,7 @@ class AddedIssue extends React.PureComponent {
       }
     }
 
-    if (issue.withdrawPending) {
+    if (issue.withdrawalPending) {
       eligibleState.cssKlasses.push('withdrawn-issue');
     }
 
@@ -105,7 +105,7 @@ class AddedIssue extends React.PureComponent {
           <span className="desc">{ legacyIssue(issue, this.props.legacyAppeals).description }</span>
         </div>
       }
-      { issue.withdrawPending && <p>Withdraw pending</p> }
+      { issue.withdrawalPending && <p>Withdraw pending</p> }
     </div>;
   }
 
