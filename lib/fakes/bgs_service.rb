@@ -602,7 +602,11 @@ class Fakes::BGSService
       fail Savon::Error, "java.lang.IndexOutOfBoundsException: Index: 0, Size: 0"
     end
 
-    ratings = ratings.select do |r|
+    build_ratings_in_range(ratings, start_date, end_date)
+  end
+
+  def build_ratings_in_range(all_ratings, start_date, end_date)
+    ratings = all_ratings.select do |r|
       start_date <= r[:prmlgn_dt] && end_date >= r[:prmlgn_dt]
     end
 
