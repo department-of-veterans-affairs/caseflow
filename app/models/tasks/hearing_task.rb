@@ -27,6 +27,8 @@ class HearingTask < GenericTask
   end
 
   def when_child_task_completed
+    update!(status: Constants.TASK_STATUSES.completed)
+
     return unless appeal.tasks.active.where(type: HearingTask.name).empty?
 
     if appeal.is_a?(LegacyAppeal)
