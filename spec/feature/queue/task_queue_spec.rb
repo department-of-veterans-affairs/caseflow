@@ -253,7 +253,8 @@ RSpec.feature "Task queue" do
   describe "Creating a mail task" do
     let(:mail_user) { FactoryBot.create(:user) }
     let(:mail_team) { MailTeam.singleton }
-    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:appeal) { root_task.appeal }
+    let(:instructions) { "Some instructions for how to complete the task" }
 
     before do
       OrganizationsUser.add_user_to_organization(mail_user, mail_team)
@@ -261,8 +262,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let(:instructions) { "Some instructions for how to complete the task" }
+      let!(:root_task) { FactoryBot.create(:root_task) }
 
       it "should allow us to assign a mail task to a user" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -292,12 +292,32 @@ RSpec.feature "Task queue" do
     end
 
     context "when there is no active root task for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task, :completed, appeal: appeal) }
+      let!(:root_task) { FactoryBot.create(:root_task, :completed) }
 
-      it "should allow us to assign a mail task to a user" do
-        visit("/queue/appeals/#{appeal.uuid}")
+      it "should allow us to create a mail task" do
+        visit "/queue/appeals/#{appeal.uuid}"
 
-        expect(page).to_not have_content(COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
+        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
+
+        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find("div", class: "Select-option", text: COPY::FOIA_REQUEST_MAIL_TASK_LABEL).click
+
+        fill_in("taskInstructions", with: instructions)
+        find("button", text: "Submit").click
+
+        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::FOIA_REQUEST_MAIL_TASK_LABEL)
+        expect(page).to have_content(success_msg)
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
+
+        mail_task = root_task.children[0]
+        expect(mail_task.class).to eq(FoiaRequestMailTask)
+        expect(mail_task.assigned_to).to eq(MailTeam.singleton)
+        expect(mail_task.children.length).to eq(1)
+
+        child_task = mail_task.children[0]
+        expect(child_task.class).to eq(FoiaRequestMailTask)
+        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.children.length).to eq(0)
       end
     end
   end
