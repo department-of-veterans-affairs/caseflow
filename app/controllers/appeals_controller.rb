@@ -3,7 +3,6 @@
 class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count]
-  before_action :verify_bgs_sensitivity, only: [:show]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
 
@@ -86,11 +85,15 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        id = params[:appeal_id]
-        MetricsService.record("Get appeal information for ID #{id}",
-                              service: :queue,
-                              name: "AppealsController.show") do
-          render json: { appeal: json_appeals(appeal)[:data] }
+        if BGSService.new.can_access?(appeal.veteran_file_number)
+          id = params[:appeal_id]
+          MetricsService.record("Get appeal information for ID #{id}",
+                                service: :queue,
+                                name: "AppealsController.show") do
+            render json: { appeal: json_appeals(appeal)[:data] }
+          end
+        else
+          render(Caseflow::Error::ActionForbiddenError.new.serialize_response)
         end
       end
     end
@@ -150,10 +153,6 @@ class AppealsController < ApplicationController
 
   def set_application
     RequestStore.store[:application] = "queue"
-  end
-
-  def verify_bgs_sensitivity
-    fail(Caseflow::Error::ActionForbiddenError) unless BGSService.new.can_access?(appeal.veteran_file_number)
   end
 
   def json_appeals(appeal)
