@@ -1,4 +1,5 @@
 import React from 'react';
+import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -11,6 +12,8 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 
+const buttonPaddingStyle = css({ margin: '0 1rem' });
+
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -22,7 +25,8 @@ export default class OrganizationUsers extends React.PureComponent {
       loading: true,
       error: null,
       addingUser: null,
-      removingUser: {}
+      removingUser: {},
+      changingAdminRights: {}
     };
   }
 
@@ -109,9 +113,57 @@ export default class OrganizationUsers extends React.PureComponent {
     });
   }
 
+  modifyAdminRights = (user, adminFlag) => () => {
+    this.setState({
+      changingAdminRights: { ...this.state.changingAdminRights,
+        [user.id]: true }
+    });
+
+    const payload = { data: { admin: adminFlag } };
+
+    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
+      const resp = JSON.parse(response.text);
+      const updatedUser = resp.users.data[0];
+
+      // Replace the existing version of the user so it has the correct admin priveleges.
+      const updatedUserList = this.state.organizationUsers.map((existingUser) => {
+        return (existingUser.id === updatedUser.id) ? updatedUser : existingUser;
+      });
+
+      this.setState({
+        organizationUsers: updatedUserList,
+        changingAdminRights: { ...this.state.changingAdminRights,
+          [user.id]: false }
+      });
+    }, (error) => {
+      this.setState({
+        changingAdminRights: { ...this.state.changingAdminRights,
+          [user.id]: false },
+        error: {
+          title: 'Failed to modify user admin rights',
+          body: error.message
+        }
+      });
+    });
+  }
+
   mainContent = () => {
     const listOfUsers = this.state.organizationUsers.map((user) => {
       return <li key={user.id}>{this.formatName(user)} &nbsp;
+        <span {...buttonPaddingStyle}>
+          { !user.attributes.is_admin && <Button
+            name="Make user admin"
+            id={`Make-user-admin-${user.id}`}
+            classNames={['usa-button-primary']}
+            loading={this.state.changingAdminRights[user.id]}
+            onClick={this.modifyAdminRights(user, true)} /> }
+          { user.attributes.is_admin && <Button
+            name="Remove admin rights"
+            id={`Remove-admin=rights-${user.id}`}
+            classNames={['usa-button-secondary']}
+            loading={this.state.changingAdminRights[user.id]}
+            onClick={this.modifyAdminRights(user, false)} /> }
+        </span>
         <Button
           name="Remove user"
           id={`Remove-user-${user.id}`}

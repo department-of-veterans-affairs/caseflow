@@ -13,6 +13,10 @@ class OrganizationsUser < ApplicationRecord
     add_user_to_organization(user, organization).update!(admin: true)
   end
 
+  def self.remove_admin_rights_from_user(user, organization)
+    existing_record(user, organization).update!(admin: false)
+  end
+
   def self.remove_user_from_organization(user, organization)
     existing_record(user, organization).destroy
   end
