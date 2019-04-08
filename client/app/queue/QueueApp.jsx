@@ -173,7 +173,7 @@ class QueueApp extends React.PureComponent {
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
-  routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} />;
+  routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} role={this.props.userRole} />;
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 

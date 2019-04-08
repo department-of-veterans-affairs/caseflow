@@ -220,6 +220,13 @@ const editAppeal = (appealId, attributes) => ({
   }
 });
 
+export const deleteTask = (taskId) => ({
+  type: ACTIONS.DELETE_TASK,
+  payload: {
+    taskId
+  }
+});
+
 export const deleteAppeal = (appealId) => ({
   type: ACTIONS.DELETE_APPEAL,
   payload: {
