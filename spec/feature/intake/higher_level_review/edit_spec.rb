@@ -706,6 +706,35 @@ feature "Higher Level Review Edit issues" do
     end
   end
 
+  context "when the rating issue is locked" do
+    let(:url_path) { "higher_level_reviews" }
+    let(:decision_review) { higher_level_review }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: decision_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    let(:request_issues) { [request_issue] }
+
+    before do
+      decision_review.reload.create_issues!(request_issues)
+      decision_review.establish!
+      decision_review.veteran.update!(participant_id: "locked_rating")
+    end
+
+    it "returns an error message about the locked rating" do
+      visit "#{url_path}/#{decision_review.uuid}/edit"
+
+      expect(page).to have_content("One or more ratings may be locked on this Claim.")
+    end
+  end
+
   context "when there is a rating end product" do
     let(:contention_ref_id) { "123" }
     let!(:request_issue) do
