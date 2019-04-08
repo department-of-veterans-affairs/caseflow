@@ -276,7 +276,7 @@ RSpec.feature "AmaQueue" do
         fill_in "taskInstructions", with: instructions
         click_on "Submit"
 
-        expect(page).to have_content("Task reassigned to #{user_name}")
+        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % user_name
         old_task = translation_task.reload.children.find { |task| task.assigned_to == other_user }
         expect(old_task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
