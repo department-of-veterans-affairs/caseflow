@@ -165,38 +165,16 @@ class DispositionTask < GenericTask
     end
 
     if appeal.is_a?(LegacyAppeal)
-      complete_and_move_legacy_appeal_to_transcription
+      complete_task
     else
       create_transcription_and_maybe_evidence_submission_window_tasks
     end
   end
 
-  def update_parent_status
-    # Create the child IHP tasks before running DistributionTask's update_status_if_children_tasks_are_complete method.
-    if appeal.is_a?(LegacyAppeal)
-      update_legacy_appeal_location
-    else
-      RootTask.create_ihp_tasks!(appeal, parent)
-    end
-
-    super
-  end
-
   private
 
-  def update_legacy_appeal_location
-    location = if appeal.vsos.empty?
-                 LegacyAppeal::LOCATION_CODES[:case_storage]
-               else
-                 LegacyAppeal::LOCATION_CODES[:service_organization]
-               end
-
-    AppealRepository.update_location!(appeal, location)
-  end
-
-  def complete_and_move_legacy_appeal_to_transcription
+  def complete_task
     update!(status: Constants.TASK_STATUSES.completed)
-    AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:transcription])
   end
 
   def create_transcription_and_maybe_evidence_submission_window_tasks
