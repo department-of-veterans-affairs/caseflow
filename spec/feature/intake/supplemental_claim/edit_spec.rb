@@ -601,6 +601,20 @@ feature "Supplemental Claim Edit issues" do
         click_remove_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content("PTSD denied")
       end
+
+      scenario "Set an issue to be pending withdrawal" do
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+
+        expect(page).to_not have_content("Withdrawn issues")
+        expect(page).to_not have_content("Please include the date the withdrawal was requested")
+        expect(page).to have_content("Requested issues\n1. PTSD denied")
+
+        click_withdraw_intake_issue_dropdown("PTSD denied")
+
+        expect(page).to_not have_content("Requested issues\n1. PTSD denied")
+        expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
+        expect(page).to have_content("Please include the date the withdrawal was requested")
+      end
     end
   end
 
