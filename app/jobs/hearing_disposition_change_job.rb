@@ -10,28 +10,39 @@ class HearingDispositionChangeJob < CaseflowJob
   def perform
     start_time = Time.zone.now
     error_count = 0
-    task_count_keys = Constants.HEARING_DISPOSITION_TYPES.to_h.values.map(&:to_sym) +
-                      [:between_one_and_two_days_old, :stale, :unknown_disposition]
-    task_count_for = Hash[task_count_keys.map { |key| [key, 0] }]
+    hearing_ids = []
 
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
-    tasks = DispositionTask.ready_for_action
-    hearing_ids = tasks.map { |task| task.hearing.id }
+    tasks = DispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold)
 
     tasks.each do |task|
+      # Skip task unless there is a hearing associated with the task and it was held more than a day ago.
+      next unless task&.hearing&.scheduled_for &.< 24.hours.ago
+
+      hearing_ids.push(task.hearing.id)
       label = update_task_by_hearing_disposition(task)
-      task_count_for[label.to_sym] += 1
+      increment_task_count_for(label)
     rescue StandardError => error
       # Rescue from errors so we attempt to change disposition even if we hit individual errors.
       Raven.capture_exception(error, extra: { task_id: task.id })
       error_count += 1
     end
 
-    log_info(start_time, task_count_for, error_count, hearing_ids)
+    log_info(start_time, @task_count_for, error_count, hearing_ids)
   rescue StandardError => error
-    log_info(start_time, task_count_for, error_count, hearing_ids, error)
+    log_info(start_time, @task_count_for, error_count, hearing_ids, error)
+  end
+
+  def task_count_for
+    @task_count_keys ||= Constants.HEARING_DISPOSITION_TYPES.to_h.values.map(&:to_sym) +
+                         [:between_one_and_two_days_old, :stale, :unknown_disposition]
+    @task_count_for ||= Hash[@task_count_keys.map { |key| [key, 0] }]
+  end
+
+  def increment_task_count_for(label)
+    task_count_for[label.to_sym] += 1
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity

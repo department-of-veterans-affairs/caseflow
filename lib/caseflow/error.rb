@@ -33,7 +33,7 @@ module Caseflow::Error
   class FetchHearingLocationsJobError < SerializableError; end
 
   class ActionForbiddenError < SerializableError
-    def initialize(args)
+    def initialize(args = {})
       @code = args[:code] || 403
       @message = args[:message] || "Action forbidden"
     end

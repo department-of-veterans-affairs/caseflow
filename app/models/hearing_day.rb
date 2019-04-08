@@ -62,12 +62,13 @@ class HearingDay < ApplicationRecord
     HearingRepository.fetch_hearings_for_parent(id)
   end
 
-  def open_vacols_hearings
-    vacols_hearings.reject { |hearing| [:postponed, :cancelled].include?(hearing.disposition) }
-  end
-
   def open_hearings
-    hearings.reject { |hearing| %w[postponed cancelled].include?(hearing.disposition) }
+    closed_hearing_dispositions = [
+      Constants.HEARING_DISPOSITION_TYPES.postponed,
+      Constants.HEARING_DISPOSITION_TYPES.cancelled
+    ]
+
+    (hearings + vacols_hearings).reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
   end
 
   def to_hash
@@ -78,7 +79,7 @@ class HearingDay < ApplicationRecord
   end
 
   def hearing_day_full?
-    lock || open_hearings.count + open_vacols_hearings.count >= total_slots
+    lock || open_hearings.count >= total_slots
   end
 
   def total_slots
@@ -122,8 +123,9 @@ class HearingDay < ApplicationRecord
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def upcoming_days_for_vso_user(start_date, end_date, user)
-      hearing_days_with_ama_hearings = HearingDay.includes(hearings: [appeal: :tasks])
+      hearing_days_with_ama_hearings = HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
         .where("DATE(scheduled_for) between ? and ?", start_date, end_date).select do |hearing_day|
         hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
       end
@@ -135,15 +137,20 @@ class HearingDay < ApplicationRecord
         remaining_hearing_days.pluck(:id)
       )
 
+      caseflow_hearing_ids = vacols_hearings_for_remaining_hearing_days.values.flatten.pluck(:id)
+
+      loaded_caseflow_hearings = LegacyHearing.includes(appeal: [tasks: :assigned_to]).where(id: caseflow_hearing_ids)
+
       hearing_days_with_vacols_hearings = remaining_hearing_days.select do |hearing_day|
         !vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil? &&
           vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].any? do |hearing|
-            hearing.assigned_to_vso?(user)
+            loaded_caseflow_hearings.detect { |legacy_hearing| legacy_hearing.id == hearing.id }.assigned_to_vso?(user)
           end
       end
 
       hearing_days_with_ama_hearings + hearing_days_with_vacols_hearings
     end
+    # rubocop:enable Metrics/AbcSize
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
@@ -181,7 +188,7 @@ class HearingDay < ApplicationRecord
           nil
         else
           HearingDay.to_hash(value[:hearing_day]).slice(:id, :scheduled_for, :request_type, :room).tap do |day|
-            day[:hearings] = scheduled_hearings.map { |hearing| hearing.to_hash(current_user_id) }
+            day[:hearings] = scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
             day[:total_slots] = total_slots
           end
         end

@@ -91,15 +91,21 @@ class TasksController < ApplicationController
     no_cache
     RootTask.find_or_create_by!(appeal: appeal)
 
-    # VSO users should only get tasks assigned to them or their organization.
-    if current_user.vso_employee?
-      return json_vso_tasks
-    end
+    tasks = []
 
-    tasks = appeal.tasks
-    if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-      legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
-      tasks = (legacy_appeal_tasks + tasks).uniq
+    # Prevent VSOs from viewing tasks for this appeal assigned to anybody or team at the Board.
+    # VSO users will be able to see other VSO's tasks because we don't store that membership information in Caseflow.
+    if current_user.vso_employee?
+      # Return all tasks assigned to the current user or ANY VSO.
+      tasks = appeal.tasks.select { |t| t.assigned_to.is_a?(Vso) || current_user == t.assigned_to }
+    else
+      # DecisionReviewTask tasks are meant to be viewed on the /decision_reviews/:line-of-business route only.
+      # This change filters them out from the Queue page
+      tasks = appeal.tasks.not_decisions_review
+      if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
+        legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
+        tasks = (legacy_appeal_tasks + tasks).uniq
+      end
     end
 
     render json: {
@@ -109,18 +115,13 @@ class TasksController < ApplicationController
 
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
-
     tasks = ScheduleHearingTask.tasks_for_ro(ro)
     AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    params = { user: current_user, role: user_role }
 
-    render json: {
-      data: ActiveModelSerializers::SerializableResource.new(
-        tasks,
-        user: current_user,
-        role: user_role,
-        exclude_extra_fields: true
-      ).as_json[:data]
-    }
+    render json: AmaAndLegacyTaskSerializer.new(
+      tasks: tasks, params: params, ama_serializer: WorkQueue::RegionalOfficeTaskSerializer
+    ).call
   end
 
   def reschedule
@@ -219,21 +220,12 @@ class TasksController < ApplicationController
     )
   end
 
-  def json_vso_tasks
-    # For now we just return tasks that are assigned to the user. In the future,
-    # we will add tasks that are assigned to the user's organization.
-    tasks = GenericQueue.new(user: current_user).tasks
-
-    render json: {
-      tasks: json_tasks(tasks)[:data]
-    }
-  end
-
   def json_tasks(tasks)
-    ActiveModelSerializers::SerializableResource.new(
-      AppealRepository.eager_load_legacy_appeals_for_tasks(tasks),
-      user: current_user,
-      role: user_role
-    ).as_json
+    tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    params = { user: current_user, role: user_role }
+
+    AmaAndLegacyTaskSerializer.new(
+      tasks: tasks, params: params, ama_serializer: WorkQueue::TaskSerializer
+    ).call
   end
 end

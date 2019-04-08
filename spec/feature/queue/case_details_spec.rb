@@ -674,8 +674,10 @@ RSpec.feature "Case details" do
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
       let!(:attorney_task) do
-        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user,
-                                   closed_at: Time.zone.now - 4.days)
+        create(:ama_attorney_task, :completed, appeal: appeal, parent: root_task, assigned_to: user)
+      end
+      let!(:attorney_task2) do
+        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user)
       end
       let!(:judge_task) do
         create(:ama_judge_decision_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
@@ -684,14 +686,26 @@ RSpec.feature "Case details" do
       end
 
       before do
-        # This attribute needs to be set here due to update_parent_status hook in the task model
-        attorney_task.update!(status: Constants.TASK_STATUSES.completed)
+        # The status attribute needs to be set here due to update_parent_status hook in the task model
+        # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-02-01")
+        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-03-01")
       end
 
       it "should display judge & attorney tasks" do
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
         expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+      end
+      it "should sort tasks properly" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
+        first_row_with_date = case_timeline_rows[1]
+        second_row_with_date = case_timeline_rows[2]
+        third_row_with_date = case_timeline_rows[3]
+        expect(first_row_with_date).to have_content("01/01/2020")
+        expect(second_row_with_date).to have_content("03/01/2019")
+        expect(third_row_with_date).to have_content("02/01/2019")
       end
 
       it "should NOT display judge & attorney tasks" do
@@ -884,6 +898,75 @@ RSpec.feature "Case details" do
       it "should show the label for the IHP task" do
         visit("/queue/appeals/#{ihp_task.appeal.uuid}")
         expect(page).to have_content(COPY::IHP_TASK_LABEL)
+      end
+    end
+  end
+
+  describe "Case details page access control" do
+    let(:queue_home_path) { "/queue" }
+    let(:case_details_page_path) { "/queue/appeals/#{appeal.external_id}" }
+
+    context "when the current user does not have high enough BGS sensitivity level" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:can_access?).and_return(false)
+      end
+
+      context "when the appeal is a legacy appeal" do
+        let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+
+        # Assign a task to the current user so that a row appears on the queue page.
+        let!(:task) { FactoryBot.create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }
+
+        context "when we navigate directly to the case details page" do
+          it "displays a loading failed message on the case details page" do
+            visit(case_details_page_path)
+            expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
+            expect(page).to have_current_path(case_details_page_path)
+          end
+        end
+
+        context "when we click into the case details page from the queue table view" do
+          it "displays a loading failed message on the case details page" do
+            visit(queue_home_path)
+            click_on("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
+            expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
+            expect(page).to have_current_path(case_details_page_path)
+          end
+        end
+      end
+    end
+
+    context "when the current user has high enough BGS sensitivity level" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:can_access?).and_return(true)
+      end
+
+      context "when the appeal is a legacy appeal" do
+        let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+
+        # Assign a task to the current user so that a row appears on the queue page.
+        let!(:task) { FactoryBot.create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }
+
+        context "when we navigate directly to the case details page" do
+          it "displays a loading failed message on the case details page" do
+            visit(case_details_page_path)
+            expect(page).to_not have_content(COPY::CASE_DETAILS_LOADING_FAILURE_TITLE)
+            # The presence of the task snapshot element indicates that the case details page loaded.
+            expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+            expect(page).to have_current_path(case_details_page_path)
+          end
+        end
+
+        context "when we click into the case details page from the queue table view" do
+          it "displays a loading failed message on the case details page" do
+            visit(queue_home_path)
+            click_on("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
+            expect(page).to_not have_content(COPY::CASE_DETAILS_LOADING_FAILURE_TITLE)
+            # The presence of the task snapshot element indicates that the case details page loaded.
+            expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+            expect(page).to have_current_path(case_details_page_path)
+          end
+        end
       end
     end
   end

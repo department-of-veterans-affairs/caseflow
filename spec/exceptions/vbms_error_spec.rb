@@ -12,6 +12,14 @@ describe VBMSError do
       expect(vbms_error.message).to eq("oop!")
       expect(vbms_error.backtrace).to eq(trace)
     end
+
+    it "copies over code and body" do
+      orig_error = VBMS::HTTPError.new(500, "oops")
+      vbms_error = described_class.new(orig_error)
+
+      expect(vbms_error.body).to eq("oops")
+      expect(vbms_error.code).to eq(500)
+    end
   end
 
   describe ".from_vbms_http_error" do
@@ -22,7 +30,7 @@ describe VBMSError do
         let(:error) { VBMS::HTTPError.new(500, err_str) }
 
         it "re-casts the exception to a #{err_class}" do
-          expect(subject).to be_a(err_class.constantize)
+          expect(subject).to be_a("VBMSError::#{err_class}".constantize)
         end
       end
     end

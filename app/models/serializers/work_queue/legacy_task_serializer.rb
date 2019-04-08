@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
-class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
+class WorkQueue::LegacyTaskSerializer
+  include FastJsonapi::ObjectSerializer
+
   attribute :is_legacy do
     true
   end
-  attribute :type do
+  attribute :type do |object|
     object.class.name
   end
   attribute :assigned_on
@@ -20,13 +22,13 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
   attribute :work_product
   attribute :appeal_type
   attribute :timeline_title
-  attribute :previous_task do
+  attribute :previous_task do |object|
     {
       assigned_on: object.previous_task.try(:assigned_at)
     }
   end
 
-  attribute :assigned_by do
+  attribute :assigned_by do |object|
     {
       first_name: object.assigned_by_first_name,
       last_name: object.assigned_by_last_name,
@@ -35,7 +37,7 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
     }
   end
 
-  attribute :assigned_to do
+  attribute :assigned_to do |object|
     {
       css_id: object.user_id,
       type: "User",
@@ -43,39 +45,39 @@ class WorkQueue::LegacyTaskSerializer < ActiveModel::Serializer
     }
   end
 
-  attribute :case_type do
+  attribute :case_type do |object|
     object.appeal.type
   end
 
-  attribute :aod do
+  attribute :aod do |object|
     object.appeal.aod
   end
 
-  attribute :external_appeal_id do
+  attribute :external_appeal_id do |object|
     object.appeal.vacols_id
   end
 
-  attribute :docket_number do
+  attribute :docket_number do |object|
     object.appeal.docket_number
   end
 
-  attribute :veteran_full_name do
+  attribute :veteran_full_name do |object|
     object.appeal.veteran_full_name
   end
 
-  attribute :veteran_file_number do
+  attribute :veteran_file_number do |object|
     object.appeal.veteran_file_number
   end
 
-  attribute :issue_count do
+  attribute :issue_count do |object|
     object.appeal.undecided_issues.count
   end
 
-  attribute :paper_case do
+  attribute :paper_case do |object|
     object.appeal.file_type.eql? "Paper"
   end
 
-  attribute :available_actions do
-    object.available_actions_unwrapper(@instance_options[:user], @instance_options[:role])
+  attribute :available_actions do |object, params|
+    object.available_actions_unwrapper(params[:user], params[:role])
   end
 end
