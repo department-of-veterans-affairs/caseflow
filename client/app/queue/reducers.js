@@ -117,6 +117,11 @@ export const workQueueReducer = (state = initialState, action = {}) => {
       appealDetails: { $unset: action.payload.appealId }
     });
   }
+  case ACTIONS.DELETE_TASK: {
+    return update(state, {
+      tasks: { $unset: action.payload.taskId }
+    });
+  }
   case ACTIONS.EDIT_APPEAL:
     return update(state, {
       appealDetails: {
