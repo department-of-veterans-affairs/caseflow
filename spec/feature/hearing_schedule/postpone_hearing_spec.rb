@@ -15,16 +15,16 @@ RSpec.feature "Postpone hearing" do
     create(
       :hearing_day,
       request_type: HearingDay::REQUEST_TYPES[:video],
-      scheduled_for: Time.zone.today + 160,
+      scheduled_for: Time.zone.today + 160.days,
       regional_office: "RO39"
     )
   end
 
-  let!(:hearing_day_2) do
+  let!(:hearing_day_earlier) do
     create(
       :hearing_day,
       request_type: HearingDay::REQUEST_TYPES[:video],
-      scheduled_for: Time.zone.today + 160,
+      scheduled_for: Time.zone.today + 159.days,
       regional_office: "RO39"
     )
   end
@@ -55,8 +55,8 @@ RSpec.feature "Postpone hearing" do
     click_button("Submit")
 
     expect(page).to have_content("You have successfully assigned")
-    expect(Hearing.where(hearing_day: hearing_day_2).count).to eq 1
-    expect(Hearing.find_by(hearing_day: hearing_day_2).hearing_location.facility_id).to eq "vba_339"
+    expect(Hearing.where(hearing_day: hearing_day_earlier).count).to eq 1
+    expect(Hearing.find_by(hearing_day: hearing_day_earlier).hearing_location.facility_id).to eq "vba_339"
     expect(Hearing.first.disposition).to eq "postponed"
     expect(HearingTask.count).to eq 2
   end
