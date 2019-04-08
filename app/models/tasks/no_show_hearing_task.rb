@@ -16,8 +16,8 @@ class NoShowHearingTask < GenericTask
     end
   end
 
-  def actions_available?(_user)
-    active?
+  def actions_available?(user)
+    actions_allowable?(user)
   end
 
   def reschedule_hearing
