@@ -11,13 +11,43 @@ class HearingTask < GenericTask
   before_validation :set_assignee
 
   def cancel_and_recreate
-    cancel_task_and_child_subtasks
-
-    HearingTask.create!(
+    hearing_task = HearingTask.create!(
       appeal: appeal,
       parent: parent,
       assigned_to: Bva.singleton
     )
+
+    cancel_task_and_child_subtasks
+
+    hearing_task
+  end
+
+  def verify_org_task_unique
+    true
+  end
+
+  def when_child_task_completed
+    super
+
+    return unless appeal.tasks.active.where(type: HearingTask.name).empty?
+
+    if appeal.is_a?(LegacyAppeal)
+      update_legacy_appeal_location
+    else
+      RootTask.create_ihp_tasks!(appeal, parent)
+    end
+  end
+
+  def update_legacy_appeal_location
+    location = if hearing&.held?
+                 LegacyAppeal::LOCATION_CODES[:transcription]
+               elsif appeal.vsos.empty?
+                 LegacyAppeal::LOCATION_CODES[:case_storage]
+               else
+                 LegacyAppeal::LOCATION_CODES[:service_organization]
+               end
+
+    AppealRepository.update_location!(appeal, location)
   end
 
   private
