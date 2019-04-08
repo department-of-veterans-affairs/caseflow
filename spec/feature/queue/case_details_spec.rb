@@ -901,4 +901,73 @@ RSpec.feature "Case details" do
       end
     end
   end
+
+  describe "Case details page access control" do
+    let(:queue_home_path) { "/queue" }
+    let(:case_details_page_path) { "/queue/appeals/#{appeal.external_id}" }
+
+    context "when the current user does not have high enough BGS sensitivity level" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:can_access?).and_return(false)
+      end
+
+      context "when the appeal is a legacy appeal" do
+        let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+
+        # Assign a task to the current user so that a row appears on the queue page.
+        let!(:task) { FactoryBot.create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }
+
+        context "when we navigate directly to the case details page" do
+          it "displays a loading failed message on the case details page" do
+            visit(case_details_page_path)
+            expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
+            expect(page).to have_current_path(case_details_page_path)
+          end
+        end
+
+        context "when we click into the case details page from the queue table view" do
+          it "displays a loading failed message on the case details page" do
+            visit(queue_home_path)
+            click_on("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
+            expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
+            expect(page).to have_current_path(case_details_page_path)
+          end
+        end
+      end
+    end
+
+    context "when the current user has high enough BGS sensitivity level" do
+      before do
+        allow_any_instance_of(BGSService).to receive(:can_access?).and_return(true)
+      end
+
+      context "when the appeal is a legacy appeal" do
+        let!(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: FactoryBot.create(:case)) }
+
+        # Assign a task to the current user so that a row appears on the queue page.
+        let!(:task) { FactoryBot.create(:ama_attorney_task, appeal: appeal, assigned_to: attorney_user) }
+
+        context "when we navigate directly to the case details page" do
+          it "displays a loading failed message on the case details page" do
+            visit(case_details_page_path)
+            expect(page).to_not have_content(COPY::CASE_DETAILS_LOADING_FAILURE_TITLE)
+            # The presence of the task snapshot element indicates that the case details page loaded.
+            expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+            expect(page).to have_current_path(case_details_page_path)
+          end
+        end
+
+        context "when we click into the case details page from the queue table view" do
+          it "displays a loading failed message on the case details page" do
+            visit(queue_home_path)
+            click_on("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
+            expect(page).to_not have_content(COPY::CASE_DETAILS_LOADING_FAILURE_TITLE)
+            # The presence of the task snapshot element indicates that the case details page loaded.
+            expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+            expect(page).to have_current_path(case_details_page_path)
+          end
+        end
+      end
+    end
+  end
 end

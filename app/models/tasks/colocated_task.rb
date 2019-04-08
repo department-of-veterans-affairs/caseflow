@@ -66,15 +66,13 @@ class ColocatedTask < Task
 
   def available_actions_with_conditions(core_actions)
     if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
-      send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
-      send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
-      return core_actions.unshift(send_to_team)
+      return legacy_translation_or_hearing_actions(core_actions)
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
-      core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
+      return ama_translation_actions(core_actions)
     end
 
     core_actions
@@ -85,6 +83,30 @@ class ColocatedTask < Task
   end
 
   private
+
+  def ama_translation_actions(core_actions)
+    core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
+    core_actions
+  end
+
+  def legacy_translation_or_hearing_actions(actions)
+    return legacy_schedule_hearing_actions(actions) if action == "schedule_hearing"
+
+    legacy_translation_actions(actions)
+  end
+
+  def legacy_schedule_hearing_actions(actions)
+    task_actions = Constants.TASK_ACTIONS
+    actions = actions.reject { |action| action[:label] == task_actions.ASSIGN_TO_PRIVACY_TEAM.to_h[:label] }
+    actions.unshift(task_actions.SCHEDULE_HEARING_SEND_TO_TEAM.to_h)
+    actions
+  end
+
+  def legacy_translation_actions(actions)
+    send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
+    send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
+    actions.unshift(send_to_team)
+  end
 
   def create_and_auto_assign_child_task(_options = {})
     super(appeal: appeal)
@@ -104,7 +126,9 @@ class ColocatedTask < Task
   def location_based_on_action
     case action.to_sym
     when :translation, :schedule_hearing
-      LegacyAppeal::LOCATION_CODES[action.to_sym]
+      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled && action == "schedule_hearing"
+
+      return LegacyAppeal::LOCATION_CODES[action.to_sym]
     else
       assigned_by.vacols_uniq_id
     end

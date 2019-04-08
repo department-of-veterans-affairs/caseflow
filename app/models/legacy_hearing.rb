@@ -119,11 +119,11 @@ class LegacyHearing < ApplicationRecord
   end
 
   def no_show?
-    disposition == :no_show
+    disposition == Constants.HEARING_DISPOSITION_TYPES.no_show
   end
 
   def held?
-    disposition == :held
+    disposition == Constants.HEARING_DISPOSITION_TYPES.held
   end
 
   def scheduled_pending?

@@ -19,8 +19,10 @@ class VBMSError < RuntimeError
   class PIFExistsForEPCode < Caseflow::Error::VBMS; end
   class DuplicateEP < Caseflow::Error::VBMS; end
   class UserNotAuthorized < Caseflow::Error::VBMS; end
+  class VeteranEmployedByStation < Caseflow::Error::VBMS; end
   class BadClaim < Caseflow::Error::VBMS; end
   class CannotDeleteContention < Caseflow::Error::VBMS; end
+  class ClaimDateInvalid < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -34,6 +36,9 @@ class VBMSError < RuntimeError
   end
 
   KNOWN_ERRORS = {
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4403/events/293678/
+    "FAILED FOR UNKNOWN REASONS" => "Transient",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/
     "additional review due to an Incident Flash" => "IncidentFlash",
 
@@ -66,11 +71,17 @@ class VBMSError < RuntimeError
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/276980/
     "User is not authorized." => "UserNotAuthorized",
 
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/294187/
+    "Veteran is employed by this station." => "VeteranEmployedByStation",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/278342/
     "Unable to establish claim: " => "BadClaim",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4164/events/279584/
-    "The contention is connected to an issue in ratings and cannot be deleted." => "CannotDeleteContention"
+    "The contention is connected to an issue in ratings and cannot be deleted." => "CannotDeleteContention",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/292533/
+    "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid"
   }.freeze
 
   class << self

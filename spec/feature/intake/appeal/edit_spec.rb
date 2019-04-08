@@ -547,18 +547,25 @@ feature "Appeal Edit issues" do
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
 
-      scenario "remove all vbms decision reviews" do
-        visit "appeals/#{appeal.uuid}/edit"
-        # remove all request issues
-        appeal.request_issues.length.times do
-          click_remove_intake_issue(1)
-          click_remove_issue_confirmation
-        end
+      context "when appeal is non-comp benefit type" do
+        let!(:request_issue) { create(:request_issue, benefit_type: "education") }
 
-        click_edit_submit
-        expect(page).to have_content("Remove review?")
-        expect(page).to have_content("This review and all tasks associated with it will be removed.")
-        click_intake_confirm
+        scenario "remove all non-comp decision reviews" do
+          visit "appeals/#{appeal.uuid}/edit"
+          # remove all request issues
+          appeal.request_issues.length.times do
+            click_remove_intake_issue(1)
+            click_remove_issue_confirmation
+          end
+
+          click_edit_submit
+          expect(page).to have_content("Remove review?")
+          expect(page).to have_content("This review and all tasks associated with it will be removed.")
+          click_intake_confirm
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+          expect(page).to have_content("Review Removed")
+        end
       end
 
       context "when review has no active tasks" do
@@ -568,6 +575,34 @@ feature "Appeal Edit issues" do
           click_remove_issue_confirmation
           click_edit_submit_and_confirm
           expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      context "when appeal task is cancelled" do
+        let!(:task) do
+          create(:higher_level_review_task,
+                 status: Constants.TASK_STATUSES.cancelled,
+                 appeal: appeal,
+                 assigned_to: non_comp_org,
+                 closed_at: Time.zone.now)
+        end
+
+        scenario "show timestamp when all request issues are cancelled" do
+          visit "appeals/#{appeal.uuid}/edit"
+          # remove all request issues
+          appeal.request_issues.length.times do
+            click_remove_intake_issue(1)
+            click_remove_issue_confirmation
+          end
+
+          click_edit_submit_and_confirm
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+          visit "appeals/#{appeal.uuid}/edit"
+          expect(page).not_to have_content(existing_request_issues.first.description)
+          expect(page).not_to have_content(existing_request_issues.second.description)
+          expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(task.closed_at).to eq(Time.zone.now)
         end
       end
     end

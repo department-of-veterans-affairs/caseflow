@@ -1,41 +1,28 @@
 # frozen_string_literal: true
 
-class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
+class WorkQueue::LegacyAppealSerializer
+  include FastJsonapi::ObjectSerializer
+  extend Helpers::AppealHearingHelper
+
   attribute :assigned_attorney
   attribute :assigned_judge
   attribute :sanitized_hearing_request_type
 
-  attribute :issues do
+  attribute :issues do |object|
     object.issues.map do |issue|
-      ActiveModelSerializers::SerializableResource.new(
-        issue,
-        serializer: ::WorkQueue::LegacyIssueSerializer
-      ).as_json[:data][:attributes]
+      WorkQueue::LegacyIssueSerializer.new(issue).serializable_hash[:data][:attributes]
     end
   end
 
-  attribute :hearings do
-    object.hearings.map do |hearing|
-      {
-        held_by: hearing.judge.present? ? hearing.judge.full_name : "",
-        # this assumes only the assigned judge will view the hearing worksheet. otherwise,
-        # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
-        viewed_by_judge: !hearing.hearing_views.empty?,
-        date: hearing.scheduled_for,
-        type: hearing.readable_request_type,
-        external_id: hearing.external_id,
-        disposition: hearing.disposition
-      }
-    end
+  attribute :hearings do |object|
+    hearings(object)
   end
 
   attribute :completed_hearing_on_previous_appeal?
 
-  attribute :appellant_full_name do
-    object.appellant_name
-  end
+  attribute :appellant_full_name, &:appellant_name
 
-  attribute :appellant_address do
+  attribute :appellant_address do |object|
     {
       address_line_1: object.appellant_address_line_1,
       address_line_2: object.appellant_address_line_2,
@@ -48,17 +35,11 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
 
   attribute :appellant_relationship
   attribute :assigned_to_location
-  attribute :vbms_id do
-    object.sanitized_vbms_id
-  end
+  attribute :vbms_id, &:sanitized_vbms_id
   attribute :veteran_full_name
   # Aliasing the vbms_id to make it clear what we're returning.
-  attribute :veteran_file_number do
-    object.sanitized_vbms_id
-  end
-  attribute :external_id do
-    object.vacols_id
-  end
+  attribute :veteran_file_number, &:sanitized_vbms_id
+  attribute :external_id, &:vacols_id
   attribute :type
   attribute :aod
   attribute :docket_number
@@ -67,41 +48,23 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
   attribute :form9_date
   attribute :nod_date
   attribute :certification_date
-  attribute :paper_case do
+  attribute :paper_case do |object|
     object.file_type.eql? "Paper"
   end
 
-  attribute :caseflow_veteran_id do
+  attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end
 
-  attribute :closest_regional_office do
-    object.closest_regional_office
-  end
+  attribute :closest_regional_office
 
-  attribute :available_hearing_locations do
-    locations = object.available_hearing_locations || []
-
-    locations.map do |ahl|
-      {
-        name: ahl.name,
-        address: ahl.address,
-        city: ahl.city,
-        state: ahl.state,
-        distance: ahl.distance,
-        facility_id: ahl.facility_id,
-        facility_type: ahl.facility_type,
-        classification: ahl.classification,
-        zip_code: ahl.zip_code
-      }
-    end
-  end
+  attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :docket_name do
     "legacy"
   end
 
-  attribute :regional_office do
+  attribute :regional_office do |object|
     {
       key: object.regional_office.key,
       city: object.regional_office.city,
@@ -109,22 +72,22 @@ class WorkQueue::LegacyAppealSerializer < ActiveModel::Serializer
     }
   end
 
-  attribute :document_id do
-    latest_attorney_case_review&.document_id
+  attribute :document_id do |object|
+    latest_attorney_case_review(object)&.document_id
   end
 
-  attribute :can_edit_document_id do
+  attribute :can_edit_document_id do |object, params|
     LegacyDocumentIdPolicy.new(
-      user: @instance_options[:user],
-      case_review: latest_attorney_case_review
+      user: params[:user],
+      case_review: latest_attorney_case_review(object)
     ).editable?
   end
 
-  attribute :attorney_case_review_id do
-    latest_attorney_case_review&.vacols_id
+  attribute :attorney_case_review_id do |object|
+    latest_attorney_case_review(object)&.vacols_id
   end
 
-  def latest_attorney_case_review
+  def self.latest_attorney_case_review(object)
     VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
   end
 end

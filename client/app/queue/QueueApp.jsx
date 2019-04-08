@@ -63,6 +63,7 @@ import COPY from '../../COPY.json';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
+import { FlashAlerts } from '../nonComp/components/Alerts';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -171,7 +172,7 @@ class QueueApp extends React.PureComponent {
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
-  routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} />;
+  routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} role={this.props.userRole} />;
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
@@ -245,6 +246,7 @@ class QueueApp extends React.PureComponent {
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">
+          {this.props.flash && <FlashAlerts flash={this.props.flash} />}
           <PageRoute
             exact
             path="/search"
