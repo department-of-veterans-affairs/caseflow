@@ -130,7 +130,7 @@ RSpec.feature "Hearings tasks workflows" do
           end
         end
 
-        context "when the VSO is supposed to write an IHP for this appeal", focus: true do
+        context "when the VSO is supposed to write an IHP for this appeal" do
           before { allow_any_instance_of(Vso).to receive(:should_write_ihp?) { true } }
 
           it "creates an IHP task as a child of the HearingTask" do
