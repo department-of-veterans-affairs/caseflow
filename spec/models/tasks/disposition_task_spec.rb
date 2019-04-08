@@ -41,7 +41,7 @@ describe DispositionTask do
         expect(Hearing.first.disposition).to eq "postponed"
         expect(Hearing.count).to eq 1
         expect(HearingTask.count).to eq 2
-        expect(HearingTask.first.status).to eq "completed"
+        expect(HearingTask.first.status).to eq "cancelled"
         expect(DispositionTask.first.status).to eq "cancelled"
         expect(ScheduleHearingTask.count).to eq 1
         expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
@@ -64,7 +64,7 @@ describe DispositionTask do
         expect(Hearing.first.disposition).to eq "postponed"
         expect(Hearing.count).to eq 1
         expect(HearingTask.count).to eq 2
-        expect(HearingTask.first.status).to eq "completed"
+        expect(HearingTask.first.status).to eq "cancelled"
         expect(DispositionTask.first.status).to eq "cancelled"
         expect(ScheduleHearingTask.count).to eq 1
         expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
@@ -93,7 +93,7 @@ describe DispositionTask do
         expect(Hearing.last.hearing_location.facility_id).to eq "vba_370"
         expect(Hearing.last.scheduled_time.strftime("%I:%M%p")).to eq "12:30PM"
         expect(HearingTask.count).to eq 2
-        expect(HearingTask.first.status).to eq "completed"
+        expect(HearingTask.first.status).to eq "cancelled"
         expect(HearingTask.last.hearing_task_association.hearing.id).to eq Hearing.last.id
         expect(DispositionTask.count).to eq 2
         expect(DispositionTask.first.status).to eq "cancelled"

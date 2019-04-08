@@ -130,15 +130,15 @@ RSpec.feature "Hearings tasks workflows" do
           end
         end
 
-        context "when the VSO is supposed to write an IHP for this appeal" do
+        context "when the VSO is supposed to write an IHP for this appeal", focus: true do
           before { allow_any_instance_of(Vso).to receive(:should_write_ihp?) { true } }
 
           it "creates an IHP task as a child of the HearingTask" do
             mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
             # DispositionTask has been closed but IHP task has been created for this appeal.
-            expect(parent_hearing_task.reload.children.active.count).to eq(1)
-            expect(parent_hearing_task.children.active.first).to be_a(InformalHearingPresentationTask)
+            expect(parent_hearing_task.parent.reload.children.active.count).to eq(1)
+            expect(parent_hearing_task.parent.children.active.first).to be_a(InformalHearingPresentationTask)
 
             expect(distribution_task.reload.ready_for_distribution?).to eq(false)
           end
