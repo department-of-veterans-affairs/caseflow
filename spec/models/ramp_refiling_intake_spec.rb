@@ -187,11 +187,17 @@ describe RampRefilingIntake do
       Generators::EndProduct.build(
         veteran_file_number: veteran_file_number,
         bgs_attrs: {
+          claim_type_code: claim_type_code,
+          modifier: modifier,
+          claim_date: claim_date,
           status_type_code: end_product_status
         }
       )
     end
 
+    let(:claim_date) { nil }
+    let(:modifier) { nil }
+    let(:claim_type_code) { nil }
     let(:end_product_status) { "CLR" }
 
     context "there is not a completed ramp election for veteran" do
@@ -229,6 +235,15 @@ describe RampRefilingIntake do
         it "adds ramp_election_is_active and returns false" do
           expect(subject).to eq(false)
           expect(intake.error_code).to eq("ramp_election_is_active")
+        end
+
+        context "when there is no End Product Establishment, but there is an active End Product" do
+          let!(:end_product_establishment) { nil }
+
+          it "adds ramp_election_is_active and returns false" do
+            expect(subject).to eq(false)
+            expect(intake.error_code).to eq("ramp_election_is_active")
+          end
         end
       end
 

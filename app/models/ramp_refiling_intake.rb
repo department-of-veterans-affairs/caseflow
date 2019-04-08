@@ -79,7 +79,7 @@ class RampRefilingIntake < Intake
       @error_data = veteran_invalid_fields
     elsif ramp_elections.empty?
       self.error_code = :no_complete_ramp_election
-    elsif ramp_elections.all?(&:end_product_active?)
+    elsif ramp_elections.any?(&:end_product_active?)
       self.error_code = :ramp_election_is_active
     elsif ramp_elections.all? { |election| election.issues.empty? }
       self.error_code = :ramp_election_no_issues

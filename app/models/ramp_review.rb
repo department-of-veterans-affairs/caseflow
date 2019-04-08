@@ -68,7 +68,7 @@ class RampReview < ApplicationRecord
   #
   # Returns a symbol designating whether the end product was created or connected
   def create_or_connect_end_product!
-    return connect_end_product! if end_product_establishment.preexisting_end_product
+    return connect_end_product! if end_product_establishment.active_preexisting_end_product
 
     establish_end_product!(commit: true) && :created
   end
@@ -83,6 +83,11 @@ class RampReview < ApplicationRecord
 
   def end_product_active?
     end_product_establishment.status_active?(sync: true)
+  rescue EstablishedEndProductNotFound
+    return true if end_product_establishment.active_preexisting_end_product
+    return false if end_product_establishment.preexisting_end_products
+    
+    raise
   end
 
   def establish_end_product!(commit:)
