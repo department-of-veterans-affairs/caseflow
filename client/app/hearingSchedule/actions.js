@@ -61,6 +61,13 @@ export const onReceiveAppealsReadyForHearing = (appeals) => ({
   }
 });
 
+export const onReceiveAppealsInDocketRange = (appealIds) => ({
+  type: ACTIONS.RECEIVE_APPEALS_IN_DOCKET_RANGE,
+  payload: {
+    appealIds
+  }
+});
+
 export const onHearingNotesUpdate = (hearingId, notes) => ({
   type: ACTIONS.HEARING_NOTES_UPDATE,
   payload: {

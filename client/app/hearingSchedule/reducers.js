@@ -83,6 +83,12 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.appeals
       }
     });
+  case ACTIONS.RECEIVE_APPEALS_IN_DOCKET_RANGE:
+    return update(state, {
+      appealsInDocketRange: {
+        $set: action.payload.appealIds
+      }
+    });
   case ACTIONS.HEARING_NOTES_UPDATE:
     return update(state, {
       hearings: {

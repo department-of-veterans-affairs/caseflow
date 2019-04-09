@@ -11,7 +11,8 @@ import ApiUtil from '../../util/ApiUtil';
 import {
   onReceiveUpcomingHearingDays,
   onSelectedHearingDayChange,
-  onReceiveAppealsReadyForHearing
+  onReceiveAppealsReadyForHearing,
+  onReceiveAppealsInDocketRange
 } from '../actions';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
@@ -66,6 +67,8 @@ class AssignHearingsContainer extends React.PureComponent {
       label,
       value
     });
+
+    this.getAppealsInDocketRange(value);
   }
 
   loadUpcomingHearingDays = (roValue) => {
@@ -97,6 +100,20 @@ class AssignHearingsContainer extends React.PureComponent {
     });
   };
 
+  getAppealsInDocketRange = (roValue) => {
+    if (!roValue) {
+      return;
+    }
+
+    const requestUrl = `/hearings/docket_range/${roValue}`;
+
+    return ApiUtil.get(requestUrl).then((response) => {
+      const appealsInDocketRange = JSON.parse(response.text);
+
+      this.props.onReceiveAppealsInDocketRange(appealsInDocketRange);
+    });
+  }
+
   getNoUpcomingError = () => {
     if (this.props.selectedRegionalOffice) {
       return <div className="usa-input-error-message usa-input-error" {...smallTopMargin}>
@@ -120,6 +137,7 @@ class AssignHearingsContainer extends React.PureComponent {
   render = () => {
     const { selectedRegionalOffice } = this.props;
     const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
+    console.log(this.props);
 
     return (
       <AppSegment filledBackground>
@@ -153,6 +171,7 @@ class AssignHearingsContainer extends React.PureComponent {
             onSelectedHearingDayChange={this.props.onSelectedHearingDayChange}
             selectedHearingDay={this.props.selectedHearingDay}
             appealsReadyForHearing={this.props.appealsReadyForHearing}
+            appealsInDocketRange={this.props.appealsInDocketRange}
             userId={this.props.userId}
             onReceiveTasks={this.props.onReceiveTasks} />
         </LoadingDataDisplay>}
@@ -170,7 +189,8 @@ const mapStateToProps = (state) => ({
   selectedRegionalOffice: state.components.selectedRegionalOffice,
   upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
-  appealsReadyForHearing: state.hearingSchedule.appealsReadyForHearing
+  appealsReadyForHearing: state.hearingSchedule.appealsReadyForHearing,
+  appealsInDocketRange: state.hearingSchedule.appealsInDocketRange
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -178,6 +198,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onSelectedHearingDayChange,
   onReceiveUpcomingHearingDays,
   onReceiveAppealsReadyForHearing,
+  onReceiveAppealsInDocketRange,
   onReceiveTasks,
   setUserCssId
 }, dispatch);

@@ -38,7 +38,7 @@ const tableNumberStyling = css({
   }
 });
 
-const AvailableVeteransTable = ({ rows, columns }) => {
+const AvailableVeteransTable = ({ rows, columns, docketCutoffLineStyle }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
 
   if (_.isEmpty(rows)) {
@@ -52,13 +52,16 @@ const AvailableVeteransTable = ({ rows, columns }) => {
     </div>;
   }
 
-  return <Table
-    columns={removeTimeColumn}
-    rowObjects={rows}
-    summary="scheduled-hearings-table"
-    slowReRendersAreOk
-    bodyStyling={tableNumberStyling}
-  />;
+  console.log(docketCutoffLineStyle);
+
+  return <span {...docketCutoffLineStyle}>
+    <Table
+      columns={removeTimeColumn}
+      rowObjects={rows}
+      summary="scheduled-hearings-table"
+      slowReRendersAreOk
+      bodyStyling={tableNumberStyling} />
+  </span>;
 };
 
 const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => (
@@ -178,9 +181,10 @@ export default class AssignHearingsTabs extends React.Component {
     </span>;
   }
 
-  availableVeteransRows = (appeals, { tab }) => {
+  filterAppeals = (appeals, tab) => {
     const filteredBy = this.state[tab].filteredBy;
-    const filtered = _.filter(appeals, (appeal) => {
+
+    return _.filter(appeals, (appeal) => {
 
       if (filteredBy === null) {
         return true;
@@ -194,6 +198,10 @@ export default class AssignHearingsTabs extends React.Component {
 
       return filteredBy === appeal.attributes.availableHearingLocations[0].facilityId;
     });
+  }
+
+  availableVeteransRows = (appeals, { tab }) => {
+    const filtered = this.filterAppeals(appeals, tab);
 
     /*
       Sorting by docket number within each category of appeal:
@@ -362,6 +370,57 @@ export default class AssignHearingsTabs extends React.Component {
     }];
   }
 
+  docketCutoffLineStyle = (index, date = moment(new Date()).format('MMMM YYYY')) => (
+    css({
+      [`& #table-row-${index + 1} td`]: {
+        paddingTop: '35px'
+      },
+      [`& #table-row-${index}`]: {
+        borderBottom: '2px solid #000',
+        position: 'relative',
+        '& td': {
+          paddingBottom: '35px'
+        },
+        '& td:first-child::before': {
+          content: `Schedule for ${date}`,
+          display: 'block',
+          position: 'absolute',
+          transform: 'translateY(calc(100% + 4px))',
+          background: '#fff',
+          padding: '10px 10px 10px 0px',
+          fontWeight: 'bold'
+        }
+      }
+    })
+  )
+
+  amaDocketCutoffLineStyle = (appeals) => {
+    const { appealsInDocketRange } = this.props;
+
+    if (_.isEmpty(appealsInDocketRange)) {
+      return css({});
+    }
+
+    const filtered = this.filterAppeals(appeals, 'amaAppeals');
+    const numberOfAppealsInDocketRange = _.intersection(
+      filtered.map((appeal) => appeal.attributes.externalAppealId),
+      appealsInDocketRange.map((appeal) => appeal.external_id)
+    ).length;
+
+    const numberOfAodAndCavcAppeals = _.filter(filtered, (appeal) => (
+      appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
+      appeal.attributes.aod
+    )).length;
+
+    const indexOfLine = numberOfAppealsInDocketRange + numberOfAodAndCavcAppeals - 1;
+
+    return this.docketCutoffLineStyle(indexOfLine);
+  }
+
+  legacyDocketCutoffLineStyle = () => {
+    return css({});
+  }
+
   render() {
     const { selectedHearingDay, appealsReadyForHearing, room } = this.props;
 
@@ -391,6 +450,7 @@ export default class AssignHearingsTabs extends React.Component {
           {
             label: 'Legacy Veterans Waiting',
             page: <AvailableVeteransTable
+              docketCutoffLineStyle={this.legacyDocketCutoffLineStyle()}
               rows={this.availableVeteransRows(legacyAppeals, { tab: 'legacyAppeals' })}
               columns={this.tabWindowColumns(legacyAppeals, { tab: 'legacyAppeals' })}
             />
@@ -398,6 +458,7 @@ export default class AssignHearingsTabs extends React.Component {
           {
             label: 'AMA Veterans Waiting',
             page: <AvailableVeteransTable
+              docketCutoffLineStyle={this.amaDocketCutoffLineStyle(amaAppeals)}
               rows={this.availableVeteransRows(amaAppeals, { tab: 'amaAppeals' })}
               columns={this.tabWindowColumns(amaAppeals, { tab: 'amaAppeals' })}
             />

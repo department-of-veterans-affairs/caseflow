@@ -76,7 +76,8 @@ export default class AssignHearings extends React.Component {
   render() {
     const {
       upcomingHearingDays, selectedHearingDay,
-      appealsReadyForHearing, selectedRegionalOffice
+      appealsReadyForHearing, selectedRegionalOffice,
+      appealsInDocketRange
     } = this.props;
     const hasUpcomingHearingDays = !_.isEmpty(upcomingHearingDays);
     const room = this.room();
@@ -93,8 +94,10 @@ export default class AssignHearings extends React.Component {
             selectedRegionalOffice={selectedRegionalOffice}
             selectedHearingDay={selectedHearingDay}
             appealsReadyForHearing={appealsReadyForHearing}
+            appealsInDocketRange={appealsInDocketRange}
             room={room}
-          />}
+          />
+        }
       </React.Fragment>
     );
   }
@@ -107,6 +110,7 @@ AssignHearings.propTypes = {
   onSelectedHearingDayChange: PropTypes.func,
   selectedHearingDay: PropTypes.object,
   appealsReadyForHearing: PropTypes.object,
+  appealsInDocketRange: PropTypes.number,
   userId: PropTypes.number,
   onReceiveTasks: PropTypes.func
 };

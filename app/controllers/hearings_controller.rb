@@ -48,6 +48,31 @@ class HearingsController < ApplicationController
     end
   end
 
+  def docket_range
+    HearingDayMapper.validate_regional_office(params["regional_office"])
+
+    today = Time.zone.now
+
+    days_in_month = Time.days_in_month(today.month, today.year)
+    dc = DocketCoordinator.new
+    target = dc.target_number_of_ama_hearings(days_in_month.days)
+    target = 30 if target == 0
+
+    appeals = dc.dockets[:hearing].appeals(priority: false).limit(target)
+      .where(closest_regional_office: params["regional_office"]).map do |appeal|
+        {
+          id: appeal.id,
+          external_id: appeal.uuid,
+          receipt_date: appeal.receipt_date,
+          docket_number: appeal.docket_number,
+          target_decision_date: appeal.target_decision_date,
+          aod: appeal.advanced_on_docket
+        }
+      end
+
+    render json: appeals.as_json
+  end
+
   private
 
   def check_hearing_prep_out_of_service
