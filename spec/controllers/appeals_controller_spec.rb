@@ -372,13 +372,27 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET appeals/:id" do
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+    let(:request_params) { { appeal_id: appeal.vacols_id } }
+
+    subject { get(:show, params: request_params, format: :json) }
 
     before { User.authenticate!(roles: ["System Admin"]) }
 
-    it "should succeed" do
-      get :show, params: { appeal_id: appeal.vacols_id }
+    context "when user has high enough BGS sensitivity level to access the Veteran's case" do
+      it "returns a successful response" do
+        subject
+        assert_response(:success)
+      end
+    end
 
-      assert_response :success
+    context "when user does not have high enough BGS sensitivity level to access the Veteran's case" do
+      before { allow_any_instance_of(BGSService).to receive(:can_access?).and_return(false) }
+
+      it "returns an error but does not send a message to Sentry" do
+        expect(Raven).to receive(:capture_exception).exactly(0).times
+        subject
+        expect(response.response_code).to eq(403)
+      end
     end
   end
 
