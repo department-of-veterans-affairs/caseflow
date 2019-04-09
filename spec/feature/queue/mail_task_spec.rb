@@ -12,7 +12,6 @@ RSpec.feature "MailTasks" do
 
   describe "Assigning a mail team task to a team member" do
     context "when task is assigned to AOD team" do
-
       let(:root_task) { FactoryBot.create(:root_task) }
 
       let(:mail_team_task) do
@@ -23,7 +22,7 @@ RSpec.feature "MailTasks" do
         )
       end
 
-      let (:aod_team) { AodTeam.singleton }
+      let(:aod_team) { AodTeam.singleton }
 
       let(:aod_team_task) do
         AodMotionMailTask.create!(
@@ -38,9 +37,8 @@ RSpec.feature "MailTasks" do
       end
 
       it "successfully assigns the task to team member" do
-
         visit("queue/appeals/#{aod_team_task.appeal.external_id}")
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text:    Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
         fill_in("taskInstructions", with: "instructions")
         click_button("Submit")
 
@@ -52,6 +50,8 @@ RSpec.feature "MailTasks" do
 
         new_task = new_tasks.first
         expect(new_task.assigned_to).to eq(user)
+
+
       end
     end
   end
