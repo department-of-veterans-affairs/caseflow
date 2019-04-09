@@ -72,7 +72,7 @@ describe RampRefilingIntake do
   end
 
   context "#ui_hash" do
-    subject { intake.ui_hash(true) }
+    subject { intake.ui_hash }
 
     let!(:ramp_election) do
       completed_ramp_election
