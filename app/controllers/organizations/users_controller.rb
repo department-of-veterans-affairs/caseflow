@@ -36,7 +36,7 @@ class Organizations::UsersController < OrganizationsController
       end
     end
 
-    render json: { users: json_administered_users([user_to_modify.reload]) }, status: :ok
+    render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
 
   def destroy
