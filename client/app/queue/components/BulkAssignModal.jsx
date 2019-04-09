@@ -8,6 +8,8 @@ import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/Dropdown';
 
+const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
+
 class BulkAssignModal extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -102,6 +104,16 @@ class BulkAssignModal extends React.PureComponent {
     return this.state.showErrors && this.generateErrors().includes(field) ? 'Please select a value' : null;
   }
 
+  filterTasks = (fieldName, fieldValue, tasks) => {
+    let filteredTasks = tasks;
+
+    filteredTasks = fieldValue ?
+      _.filter(filteredTasks, { [fieldName]: fieldValue }) :
+      filteredTasks;
+
+    return filteredTasks;
+  }
+
   generateUserOptions = () => {
     const users = this.state.users.map((user) => {
       return {
@@ -149,21 +161,17 @@ class BulkAssignModal extends React.PureComponent {
 
   generateNumberOfTaskOptions = () => {
     const actualOptions = [];
-    const standardOptions = [5, 10, 20, 30, 40, 50];
+    const issueCounts = this.props.issueCountOptions || BULK_ASSIGN_ISSUE_COUNT;
     let filteredTasks = this.props.tasks;
 
     // filter by regional office
-    filteredTasks = this.state.modal.regionalOffice ?
-      _.filter(filteredTasks, { closestRegionalOffice: this.state.modal.regionalOffice }) :
-      filteredTasks;
+    filteredTasks = this.filterTasks('closestRegionalOffice', this.state.modal.regionalOffice, filteredTasks);
 
     // filter by task type
-    filteredTasks = this.state.modal.taskType ?
-      _.filter(filteredTasks, { closestRegionalOffice: this.state.modal.taskType }) :
-      filteredTasks;
+    filteredTasks = this.filterTasks('type', this.state.modal.taskType, filteredTasks);
 
-    for (let i = 0; i < standardOptions.length; i++) {
-      if (filteredTasks.length < standardOptions[i]) {
+    for (let i = 0; i < issueCounts.length; i++) {
+      if (filteredTasks && filteredTasks.length < issueCounts[i]) {
         actualOptions.push({
           value: filteredTasks.length,
           displayText: `${filteredTasks.length} (all available tasks)`
@@ -172,8 +180,8 @@ class BulkAssignModal extends React.PureComponent {
         break;
       } else {
         actualOptions.push({
-          value: standardOptions[1],
-          displayText: standardOptions[1]
+          value: issueCounts[1],
+          displayText: issueCounts[1]
         });
       }
     }
@@ -196,7 +204,7 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   render() {
-    const isBulkAssignEnabled = this.props.enableBulkAssign;
+    const isBulkAssignEnabled = this.props.enableBulkAssign && this.props.organizationUrl;
     const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
       Assign Tasks</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.bulkAssignTasks}>
@@ -228,8 +236,9 @@ class BulkAssignModal extends React.PureComponent {
 BulkAssignModal.propTypes = {
   enableBulkAssign: PropTypes.bool,
   tasks: PropTypes.array.isRequired,
-  organizationUrl: PropTypes.string.isRequired,
-  assignTasks: PropTypes.func.isRequired
+  organizationUrl: PropTypes.string,
+  assignTasks: PropTypes.func.isRequired,
+  issueCountOptions: PropTypes.array
 };
 
 export default BulkAssignModal;
