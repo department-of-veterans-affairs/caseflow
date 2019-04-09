@@ -39,6 +39,10 @@ class Idt::Api::V1::BaseController < ActionController::Base
     request.headers["TOKEN"]
   end
 
+  def ssn
+    request.headers["SSN"]
+  end
+
   def css_id
     Idt::Token.associated_css_id(token)
   end
