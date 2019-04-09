@@ -177,11 +177,12 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync!
-    fail EstablishedEndProductNotFound, id unless result
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
 
+    fail EstablishedEndProductNotFound, id unless result
+    
     # load contentions now, in case "source" needs them.
     # this VBMS call is slow and will cause the transaction below
     # to timeout in some cases.
