@@ -43,6 +43,7 @@ class RequestIssue < ApplicationRecord
     end_product_canceled: "end_product_canceled",
     withdrawn: "withdrawn",
     dismissed_death: "dismissed_death",
+    dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
     ineligible: "ineligible"
   }
@@ -58,6 +59,11 @@ class RequestIssue < ApplicationRecord
   end
 
   class NotYetSubmitted < StandardError; end
+  class MissingDecisionDate < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id} lacks a decision_date")
+    end
+  end
 
   UNIDENTIFIED_ISSUE_MSG = "UNIDENTIFIED ISSUE - Please click \"Edit in Caseflow\" button to fix"
 
@@ -98,7 +104,7 @@ class RequestIssue < ApplicationRecord
       pension: {
         appeal: {
           rating: "040BDERPMC",
-          nonrating: "040BDENRPM"
+          nonrating: "040BDENRPMC"
         },
         claim_review: {
           rating: "040HDERPMC",
@@ -291,12 +297,15 @@ class RequestIssue < ApplicationRecord
   end
 
   def approx_decision_date_of_issue_being_contested
+    return if is_unidentified
+
     if contested_issue
       contested_issue.approx_decision_date
     elsif decision_date
       decision_date
-    elsif decision_issues.any?
-      decision_issues.first.approx_decision_date
+    else
+      # in theory we should never get here
+      fail MissingDecisionDate, id
     end
   end
 
@@ -487,7 +496,7 @@ class RequestIssue < ApplicationRecord
   # If a request issue gets a DTA error, the follow up request issue may not have a rating_issue_reference_id
   # But the request issue should still be added to a rating End Product
   def previous_rating_issue?
-    contested_decision_issue&.associated_request_issue&.end_product_establishment&.rating?
+    previous_request_issue&.rating?
   end
 
   def fetch_diagnostic_code_status_description(diagnostic_code)

@@ -15,7 +15,7 @@ class Appeal < DecisionReview
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
 
   # decision_documents is effectively a has_one until post decisional motions are supported
-  has_many :decision_documents
+  has_many :decision_documents, as: :appeal
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
@@ -300,10 +300,6 @@ class Appeal < DecisionReview
       issue.create_legacy_issue_optin if issue.legacy_issue_opted_in?
     end
     request_issues.reload
-  end
-
-  def serializer_class
-    ::WorkQueue::AppealSerializer
   end
 
   def docket_number

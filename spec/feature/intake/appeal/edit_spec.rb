@@ -470,6 +470,20 @@ feature "Appeal Edit issues" do
       click_remove_intake_issue_dropdown("PTSD denied")
       expect(page).to_not have_content("PTSD denied")
     end
+
+    scenario "Set an issue to be pending withdrawal" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to_not have_content("Withdrawn issues")
+      expect(page).to_not have_content("Please include the date the withdrawal was requested")
+      expect(page).to have_content("Requested issues\n1. PTSD denied")
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+
+      expect(page).to have_content("Requested issues\n2. Military Retired Pay")
+      expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
+      expect(page).to have_content("Please include the date the withdrawal was requested")
+    end
   end
 
   context "when remove decision reviews is enabled" do
@@ -561,6 +575,34 @@ feature "Appeal Edit issues" do
           click_remove_issue_confirmation
           click_edit_submit_and_confirm
           expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      context "when appeal task is cancelled" do
+        let!(:task) do
+          create(:higher_level_review_task,
+                 status: Constants.TASK_STATUSES.cancelled,
+                 appeal: appeal,
+                 assigned_to: non_comp_org,
+                 closed_at: Time.zone.now)
+        end
+
+        scenario "show timestamp when all request issues are cancelled" do
+          visit "appeals/#{appeal.uuid}/edit"
+          # remove all request issues
+          appeal.request_issues.length.times do
+            click_remove_intake_issue(1)
+            click_remove_issue_confirmation
+          end
+
+          click_edit_submit_and_confirm
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+          visit "appeals/#{appeal.uuid}/edit"
+          expect(page).not_to have_content(existing_request_issues.first.description)
+          expect(page).not_to have_content(existing_request_issues.second.description)
+          expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(task.closed_at).to eq(Time.zone.now)
         end
       end
     end

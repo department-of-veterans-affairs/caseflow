@@ -202,6 +202,7 @@ const formatRatingRequestIssues = (state) => {
       return {
         request_issue_id: issue.id,
         rating_issue_reference_id: issue.ratingIssueReferenceId,
+        decision_date: issue.decisionDate,
         decision_text: issue.description,
         rating_issue_profile_date: issue.ratingIssueProfileDate,
         rating_issue_diagnostic_code: issue.ratingIssueDiagnosticCode,
@@ -306,13 +307,15 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
   let issues = intakeData.addedIssues || [];
   const amaActivationDate = new Date(useAmaActivationDate ? DATES.AMA_ACTIVATION : DATES.AMA_ACTIVATION_TEST);
 
-  return issues.map((issue) => {
+  return issues.map((issue, index) => {
     if (issue.isUnidentified) {
       return {
+        index,
         referenceId: issue.id,
         text: `Unidentified issue: no issue matched for "${issue.description}"`,
         notes: issue.notes,
-        isUnidentified: true
+        isUnidentified: true,
+        withdrawalPending: issue.withdrawalPending
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -322,6 +325,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       const decisionDate = new Date(issue.decisionDate || issue.approxDecisionDate);
 
       return {
+        index,
         referenceId: issue.id,
         text: issue.description,
         // formatDatStr converts to local time instead of UTC
@@ -339,7 +343,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         vacolsId: issue.vacolsId,
         vacolsSequenceId: issue.vacolsSequenceId,
         vacolsIssue: issue.vacolsIssue,
-        eligibleForSocOptIn: issue.eligibleForSocOptIn
+        eligibleForSocOptIn: issue.eligibleForSocOptIn,
+        withdrawalPending: issue.withdrawalPending
       };
     }
 
@@ -347,6 +352,7 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
 
     // returns nonrating request issue format
     return {
+      index,
       referenceId: issue.id,
       text: issue.decisionIssueId ? issue.description : `${issue.category} - ${issue.description}`,
       benefitType: issue.benefitType,
@@ -360,7 +366,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       vacolsSequenceId: issue.vacolsSequenceId,
       vacolsIssue: issue.vacolsIssue,
       eligibleForSocOptIn: issue.eligibleForSocOptIn,
-      decisionReviewTitle: issue.decisionReviewTitle
+      decisionReviewTitle: issue.decisionReviewTitle,
+      withdrawalPending: issue.withdrawalPending
     };
   });
 };

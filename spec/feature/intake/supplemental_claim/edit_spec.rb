@@ -10,10 +10,6 @@ feature "Supplemental Claim Edit issues" do
     FeatureToggle.enable!(:intakeAma)
 
     Timecop.freeze(post_ama_start_date)
-
-    # skip the sync call since all edit requests require resyncing
-    # currently, we're not mocking out vbms and bgs
-    allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
   end
 
   after do
@@ -197,6 +193,35 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to have_current_path(
         "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
       )
+    end
+  end
+
+  context "when the rating issue is locked" do
+    let(:url_path) { "supplemental_claims" }
+    let(:decision_review) { supplemental_claim }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: decision_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    let(:request_issues) { [request_issue] }
+
+    before do
+      decision_review.reload.create_issues!(request_issues)
+      decision_review.establish!
+      decision_review.veteran.update!(participant_id: "locked_rating")
+    end
+
+    it "returns an error message about the locked rating" do
+      visit "#{url_path}/#{decision_review.uuid}/edit"
+
+      expect(page).to have_content("One or more ratings may be locked on this Claim.")
     end
   end
 
@@ -550,6 +575,22 @@ feature "Supplemental Claim Edit issues" do
       end
     end
 
+    context "when EPs have cleared very recently" do
+      before do
+        ep = supplemental_claim.reload.end_product_establishments.first.result
+        ep_store = Fakes::EndProductStore.new
+        ep_store.update_ep_status(veteran.file_number, ep.claim_id, "CLR")
+      end
+
+      it "syncs on initial GET" do
+        expect(supplemental_claim.end_product_establishments.first.last_synced_at).to be_nil
+
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+        expect(page).to have_current_path("/supplemental_claims/#{rating_ep_claim_id}/edit/cleared_eps")
+        expect(page).to have_content("Issues Not Editable")
+      end
+    end
+
     context "when withdraw decision reviews is enabled" do
       before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
       after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
@@ -560,6 +601,20 @@ feature "Supplemental Claim Edit issues" do
         click_remove_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content("PTSD denied")
       end
+
+      scenario "Set an issue to be pending withdrawal" do
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+
+        expect(page).to_not have_content("Withdrawn issues")
+        expect(page).to_not have_content("Please include the date the withdrawal was requested")
+        expect(page).to have_content("Requested issues\n1. PTSD denied")
+
+        click_withdraw_intake_issue_dropdown("PTSD denied")
+
+        expect(page).to_not have_content("Requested issues\n1. PTSD denied")
+        expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
+        expect(page).to have_content("Please include the date the withdrawal was requested")
+      end
     end
   end
 
@@ -567,6 +622,10 @@ feature "Supplemental Claim Edit issues" do
     before do
       FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
+
+      # skip the sync call since all edit requests require resyncing
+      # currently, we're not mocking out vbms and bgs
+      allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
     end
 
     after do

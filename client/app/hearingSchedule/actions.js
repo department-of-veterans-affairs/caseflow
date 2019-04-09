@@ -148,6 +148,14 @@ export const onReceiveHearingSchedule = (hearingSchedule) => ({
   }
 });
 
+export const onInputInvalidDates = () => ({
+  type: ACTIONS.INPUT_INVALID_DATES
+});
+
+export const onResetInvalidDates = () => ({
+  type: ACTIONS.RESET_INVALID_DATES
+});
+
 export const setVacolsUpload = () => ({
   type: ACTIONS.SET_VACOLS_UPLOAD
 });

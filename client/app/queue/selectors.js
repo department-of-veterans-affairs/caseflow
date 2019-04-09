@@ -118,20 +118,16 @@ export const appealWithDetailSelector = createSelector(
   (appeals, appealId) => appeals[appealId]
 );
 
-export const getTasksForAppeal = createSelector(
-  [getTasks, getAmaTasks, getAppealId],
-  (tasks, amaTasks, appealId) => {
-    return incompleteTasksSelector(_.filter(tasks, (task) => task.externalAppealId === appealId).
-      concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId)));
-  }
-);
-
 export const getAllTasksForAppeal = createSelector(
   [getTasks, getAmaTasks, getAppealId],
   (tasks, amaTasks, appealId) => {
     return _.filter(tasks, (task) => task.externalAppealId === appealId).
       concat(_.filter(amaTasks, (task) => task.externalAppealId === appealId));
   }
+);
+
+export const incompleteTasksForAppeal = createSelector(
+  [getAllTasksForAppeal], (tasks) => incompleteTasksSelector(tasks)
 );
 
 export const getUnassignedOrganizationalTasks = createSelector(
@@ -152,7 +148,7 @@ export const getCompletedOrganizationalTasks = createSelector(
 );
 
 export const tasksForAppealAssignedToUserSelector = createSelector(
-  [getTasksForAppeal, getUserCssId],
+  [incompleteTasksForAppeal, getUserCssId],
   (tasks, cssId) => {
     return _.filter(tasks, (task) => task.assignedTo.cssId === cssId);
   }
@@ -204,7 +200,12 @@ export const completeTasksByAssigneeCssIdSelector = createSelector(
 );
 
 export const actionableTasksForAppeal = createSelector(
-  [getTasksForAppeal], (tasks) => _.filter(tasks, (task) => task.availableActions.length)
+  [getAllTasksForAppeal], (tasks) => _.filter(tasks, (task) => task.availableActions.length)
+);
+
+export const scheduleHearingTasksForAppeal = createSelector(
+  [actionableTasksForAppeal],
+  (tasks) => _.filter(incompleteTasksSelector(tasks), (task) => task.type === 'ScheduleHearingTask')
 );
 
 export const rootTasksForAppeal = createSelector(

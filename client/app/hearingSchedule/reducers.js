@@ -18,6 +18,18 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.hearingSchedule
       }
     });
+  case ACTIONS.INPUT_INVALID_DATES:
+    return update(state, {
+      invalidDates: {
+        $set: true
+      }
+    });
+  case ACTIONS.RESET_INVALID_DATES:
+    return update(state, {
+      invalidDates: {
+        $set: false
+      }
+    });
   case ACTIONS.RECEIVE_PAST_UPLOADS:
     return update(state, {
       pastUploads: {
