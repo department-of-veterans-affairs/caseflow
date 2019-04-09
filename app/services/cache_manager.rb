@@ -43,14 +43,7 @@ class CacheManager
   end
 
   def all_cache_keys
-    # skip some persistent key patterns because they are maintained separately.
-    keys = []
-    self.class.cache_store.scan_each do |key|
-      next if key.match?(/^(feature_toggle|functions):/)
-
-      keys << key
-    end
-    keys
+    self.class.cache_store.keys
   end
 
   def clear(bucket)
