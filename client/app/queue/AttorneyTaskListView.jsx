@@ -45,9 +45,10 @@ class AttorneyTaskListView extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
+    const combinedTasks = [...this.props.workableTasks, ...this.props.onHoldTasks, ...this.props.completedTasks];
 
     if (_.some(
-      [...this.props.workableTasks, ...this.props.onHoldTasks, ...this.props.completedTasks],
+      combinedTasks,
       (task) => !task.taskId)) {
       this.props.showErrorMessage({
         title: COPY.TASKS_NEED_ASSIGNMENT_ERROR_TITLE,
@@ -63,9 +64,7 @@ class AttorneyTaskListView extends React.PureComponent {
     this.props.loadAppealDocCount(this.props.externalId);
 
     const ids = [
-      ...this.props.workableTasks.map((task) => task.externalAppealId),
-      ...this.props.onHoldTasks.map((task) => task.externalAppealId),
-      ...this.props.completedTasks.map((task) => task.externalAppealId)
+      ...combinedTasks.map((task) => task.externalAppealId)
     ];
 
     ApiUtil.get(`/appeals/${ids}/document_count`,
