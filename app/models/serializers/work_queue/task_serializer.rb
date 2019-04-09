@@ -77,6 +77,10 @@ class WorkQueue::TaskSerializer
     object.appeal.number_of_issues
   end
 
+  attribute :external_hearing_id do |object|
+    object.hearing&.external_id if object.respond_to?(:hearing)
+  end
+
   attribute :available_hearing_locations do |object|
     object.appeal.available_hearing_locations
   end
