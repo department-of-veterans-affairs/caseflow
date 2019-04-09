@@ -52,8 +52,6 @@ const AvailableVeteransTable = ({ rows, columns, docketCutoffLineStyle }) => {
     </div>;
   }
 
-  console.log(docketCutoffLineStyle);
-
   return <span {...docketCutoffLineStyle}>
     <Table
       columns={removeTimeColumn}

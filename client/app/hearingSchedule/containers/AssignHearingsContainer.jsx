@@ -137,7 +137,6 @@ class AssignHearingsContainer extends React.PureComponent {
   render = () => {
     const { selectedRegionalOffice } = this.props;
     const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
-    console.log(this.props);
 
     return (
       <AppSegment filledBackground>
