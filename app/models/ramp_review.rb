@@ -146,7 +146,7 @@ class RampReview < ApplicationRecord
   end
 
   def connect_end_product!
-    end_product_establishment.update!(reference_id: end_product_establishment.preexisting_end_product.claim_id)
+    end_product_establishment.update!(reference_id: end_product_establishment.active_preexisting_end_product.claim_id)
 
     update!(
       established_at: Time.zone.now
