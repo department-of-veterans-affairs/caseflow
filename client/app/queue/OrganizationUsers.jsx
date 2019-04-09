@@ -159,7 +159,7 @@ export default class OrganizationUsers extends React.PureComponent {
             onClick={this.modifyAdminRights(user, true)} /> }
           { user.attributes.admin && <Button
             name={COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
-            id={`Remove-admin=rights-${user.id}`}
+            id={`Remove-admin-rights-${user.id}`}
             classNames={['usa-button-secondary']}
             loading={this.state.changingAdminRights[user.id]}
             onClick={this.modifyAdminRights(user, false)} /> }
