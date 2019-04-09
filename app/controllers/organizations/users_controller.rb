@@ -12,7 +12,7 @@ class Organizations::UsersController < OrganizationsController
 
         render json: {
           organization_name: organization.name,
-          organization_users: json_managed_users(organization_users),
+          organization_users: json_administered_users(organization_users),
           remaining_users: json_users(remaining_users)
         }
       end
@@ -22,7 +22,7 @@ class Organizations::UsersController < OrganizationsController
   def create
     OrganizationsUser.add_user_to_organization(user_to_modify, organization)
 
-    render json: { users: json_managed_users([user_to_modify]) }, status: :ok
+    render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
 
   def update
@@ -36,7 +36,7 @@ class Organizations::UsersController < OrganizationsController
       end
     end
 
-    render json: { users: json_managed_users([user_to_modify.reload]) }, status: :ok
+    render json: { users: json_administered_users([user_to_modify.reload]) }, status: :ok
   end
 
   def destroy
@@ -71,11 +71,11 @@ class Organizations::UsersController < OrganizationsController
     ::WorkQueue::UserSerializer.new(users, is_collection: true)
   end
 
-  def json_managed_users(users)
-    ::WorkQueue::UserSerializer.new(
+  def json_administered_users(users)
+    ::WorkQueue::AdministeredUserSerializer.new(
       users,
       is_collection: true,
-      params: { check_if_admin: true, organization: organization }
+      params: { organization: organization }
     )
   end
 end

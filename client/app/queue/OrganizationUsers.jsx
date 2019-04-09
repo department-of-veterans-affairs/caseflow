@@ -151,13 +151,13 @@ export default class OrganizationUsers extends React.PureComponent {
     const listOfUsers = this.state.organizationUsers.map((user) => {
       return <li key={user.id}>{this.formatName(user)} &nbsp;
         <span {...buttonPaddingStyle}>
-          { !user.attributes.is_admin && <Button
+          { !user.attributes.admin && <Button
             name="Make user admin"
             id={`Make-user-admin-${user.id}`}
             classNames={['usa-button-primary']}
             loading={this.state.changingAdminRights[user.id]}
             onClick={this.modifyAdminRights(user, true)} /> }
-          { user.attributes.is_admin && <Button
+          { user.attributes.admin && <Button
             name="Remove admin rights"
             id={`Remove-admin=rights-${user.id}`}
             classNames={['usa-button-secondary']}
