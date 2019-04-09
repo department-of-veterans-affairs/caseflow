@@ -160,7 +160,7 @@ class EndProductEstablishment < ApplicationRecord
 
   # Find an end product that has the traits of the end product that should be created.
   def active_preexisting_end_product
-    preexisting_end_products.find { |ep| ep.active? }
+    preexisting_end_products.find(&:active?)
   end
 
   def preexisting_end_products
@@ -177,10 +177,10 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync!
+    fail EstablishedEndProductNotFound, id unless result
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
-    fail EstablishedEndProductNotFound, id unless result
 
     # load contentions now, in case "source" needs them.
     # this VBMS call is slow and will cause the transaction below

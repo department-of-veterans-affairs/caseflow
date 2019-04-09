@@ -83,10 +83,10 @@ class RampReview < ApplicationRecord
 
   def end_product_active?
     end_product_establishment.status_active?(sync: true)
-  rescue EstablishedEndProductNotFound
+  rescue EndProductEstablishment::EstablishedEndProductNotFound
     return true if end_product_establishment.active_preexisting_end_product
     return false if end_product_establishment.preexisting_end_products
-    
+
     raise
   end
 
@@ -130,6 +130,15 @@ class RampReview < ApplicationRecord
       benefit_type_code: veteran.benefit_type_code,
       user: intake_processed_by
     )
+  end
+
+  # Find the matching end product that was active in the right timeframe if an EndProductEstablishment is not saved
+  def matching_end_product
+    return if end_product_establishment.preexisting_end_products.empty?
+
+    end_product_establishment.preexisting_end_products.detect do |ep|
+      ep.last_action_date.nil? || ep.last_action_date > established_at
+    end
   end
 
   def veteran
