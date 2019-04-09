@@ -113,7 +113,7 @@ class AppealsController < ApplicationController
   end
 
   def appeal_by_ids(id)
-    @appeal_by_ids ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
+    Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
   end
 
   def url_appeal_uuid
