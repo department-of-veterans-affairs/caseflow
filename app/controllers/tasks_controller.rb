@@ -7,6 +7,7 @@ class TasksController < ApplicationController
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
   TASK_CLASSES = {
+    ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,
@@ -101,7 +102,7 @@ class TasksController < ApplicationController
     else
       # DecisionReviewTask tasks are meant to be viewed on the /decision_reviews/:line-of-business route only.
       # This change filters them out from the Queue page
-      tasks = appeal.tasks.reject { |t| t.is_a?(DecisionReviewTask) }
+      tasks = appeal.tasks.not_decisions_review
       if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
         legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
         tasks = (legacy_appeal_tasks + tasks).uniq

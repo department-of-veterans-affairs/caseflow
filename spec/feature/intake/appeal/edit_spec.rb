@@ -7,17 +7,12 @@ feature "Appeal Edit issues" do
 
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
 
     Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:veteran) do
@@ -469,6 +464,20 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("PTSD denied")
       click_remove_intake_issue_dropdown("PTSD denied")
       expect(page).to_not have_content("PTSD denied")
+    end
+
+    scenario "Set an issue to be pending withdrawal" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to_not have_content("Withdrawn issues")
+      expect(page).to_not have_content("Please include the date the withdrawal was requested")
+      expect(page).to have_content("Requested issues\n1. PTSD denied")
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+
+      expect(page).to have_content("Requested issues\n2. Military Retired Pay")
+      expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
+      expect(page).to have_content("Please include the date the withdrawal was requested")
     end
   end
 

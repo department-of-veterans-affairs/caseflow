@@ -7,7 +7,6 @@ feature "Intake Edit Confirmation" do
   include IntakeHelpers
 
   before { setup_intake_flags }
-  after { teardown_intake_flags }
 
   let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
   let!(:intake) { create(:intake, :completed, detail: decision_review, user_id: current_user.id) }
