@@ -51,15 +51,9 @@ class HearingsController < ApplicationController
   def docket_range
     HearingDayMapper.validate_regional_office(params["regional_office"])
 
-    today = Time.zone.now
-
-    days_in_month = Time.days_in_month(today.month, today.year)
-    dc = DocketCoordinator.new
-    target = dc.target_number_of_ama_hearings(days_in_month.days)
-    target = 30 if target == 0
-
-    appeals = dc.dockets[:hearing].appeals(priority: false).limit(target)
-      .where(closest_regional_office: params["regional_office"]).map do |appeal|
+    appeals = DocketCoordinator.new.dockets[:hearing]
+      .appeals_in_docket_range_for_regional_office(params["regional_office"])
+      .map do |appeal|
         {
           id: appeal.id,
           external_id: appeal.uuid,
