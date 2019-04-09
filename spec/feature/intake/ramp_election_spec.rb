@@ -70,9 +70,9 @@ feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which form are you processing?") do
-      find("label", text: "RAMP Opt-In Election Form").click
-    end
+    safe_click ".Select"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
+    find("#form-select").send_keys :enter
     safe_click ".cf-submit.usa-button"
 
     fill_in search_bar_title, with: "77776666"
@@ -87,9 +87,9 @@ feature "RAMP Election Intake" do
 
     visit "/intake"
 
-    within_fieldset("Which form are you processing?") do
-      find("label", text: "RAMP Opt-In Election Form").click
-    end
+    safe_click ".Select"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
+    find("#form-select").send_keys :enter
     safe_click ".cf-submit.usa-button"
 
     fill_in search_bar_title, with: "77778888"
@@ -102,9 +102,9 @@ feature "RAMP Election Intake" do
   scenario "Search for a veteran already in progress by current user" do
     visit "/intake"
 
-    within_fieldset("Which form are you processing?") do
-      find("label", text: "RAMP Opt-In Election Form").click
-    end
+    safe_click ".Select"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
+    find("#form-select").send_keys :enter
     safe_click ".cf-submit.usa-button"
 
     RampElectionIntake.new(
@@ -128,9 +128,9 @@ feature "RAMP Election Intake" do
 
     visit "/intake/review_request"
 
-    within_fieldset("Which form are you processing?") do
-      find("label", text: "RAMP Opt-In Election Form").click
-    end
+    safe_click ".Select"
+    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
+    find("#form-select").send_keys :enter
     safe_click ".cf-submit.usa-button"
 
     fill_in search_bar_title, with: "12341234"
