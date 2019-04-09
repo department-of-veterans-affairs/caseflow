@@ -402,11 +402,11 @@ export default class AssignHearingsTabs extends React.Component {
     }
 
     const filtered = this.filterAppeals(appeals, 'amaAppeals');
+
     const numberOfAppealsInDocketRange = _.intersection(
       filtered.map((appeal) => appeal.attributes.externalAppealId),
       appealsInDocketRange.map((appeal) => appeal.external_id)
     ).length;
-
     const numberOfAodAndCavcAppeals = _.filter(filtered, (appeal) => (
       appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
       appeal.attributes.aod
