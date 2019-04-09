@@ -62,9 +62,12 @@ class AttorneyTaskListView extends React.PureComponent {
 
     this.props.loadAppealDocCount(this.props.externalId);
 
-    const ids = this.props.workableTasks.map((task) => task.externalAppealId);
+    const ids = [
+      ...this.props.workableTasks.map((task) => task.externalAppealId),
+      ...this.props.onHoldTasks.map((task) => task.externalAppealId),
+      ...this.props.completedTasks.map((task) => task.externalAppealId)
+    ];
 
-    console.log(this.props.workableTasks, 'the tasks');
     ApiUtil.get(`/appeals/${ids}/document_count`,
       requestOptions).then((response) => {
       const resp = JSON.parse(response.text);
@@ -72,7 +75,7 @@ class AttorneyTaskListView extends React.PureComponent {
 
       this.props.setAppealDocCount(this.props.externalId, resp.document_count);
     }, () => {
-      this.props.errorFetchingDocumentCount(this.props.externalId);
+      this.props.errorFetchingDocumentCount(ids);
     });
   };
 

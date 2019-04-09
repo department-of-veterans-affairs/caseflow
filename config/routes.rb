@@ -104,7 +104,6 @@ Rails.application.routes.draw do
   end
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
-      get :document_count
       get :veteran
       get :power_of_attorney
       get :hearings
