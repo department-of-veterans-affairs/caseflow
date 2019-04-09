@@ -40,7 +40,8 @@ class AppealsController < ApplicationController
     ids = params[:appeal_ids].split(',')
     document_counts_by_id = {}
     ids.each do |id| 
-      document_counts_by_id[id] = appeal_by_ids(id).number_of_documents 
+      doc_count = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id).number_of_documents 
+      document_counts_by_id[id] = doc_count
     end
     render json: { document_counts_by_id: document_counts_by_id }
     rescue Caseflow::Error::EfolderAccessForbidden => e
@@ -110,10 +111,6 @@ class AppealsController < ApplicationController
 
   def appeal
     @appeal ||= Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params[:appeal_id])
-  end
-
-  def appeal_by_ids(id)
-    Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
   end
 
   def url_appeal_uuid
