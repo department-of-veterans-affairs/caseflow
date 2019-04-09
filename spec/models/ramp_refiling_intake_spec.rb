@@ -187,11 +187,19 @@ describe RampRefilingIntake do
       Generators::EndProduct.build(
         veteran_file_number: veteran_file_number,
         bgs_attrs: {
-          status_type_code: end_product_status
+          claim_type_code: claim_type_code,
+          end_product_type_code: modifier,
+          claim_receive_date: claim_date,
+          status_type_code: end_product_status,
+          last_action_date: last_action_date
         }
       )
     end
 
+    let(:claim_date) { nil }
+    let(:modifier) { nil }
+    let(:claim_type_code) { nil }
+    let(:last_action_date) { nil }
     let(:end_product_status) { "CLR" }
 
     context "there is not a completed ramp election for veteran" do
@@ -212,7 +220,8 @@ describe RampRefilingIntake do
         create(:ramp_election,
                veteran_file_number: veteran_file_number,
                notice_date: 3.days.ago,
-               established_at: Time.zone.now)
+               established_at: Time.zone.now,
+               option_selected: "higher_level_review")
       end
 
       context "the EP associated with original RampElection is still pending" do
@@ -229,6 +238,19 @@ describe RampRefilingIntake do
         it "adds ramp_election_is_active and returns false" do
           expect(subject).to eq(false)
           expect(intake.error_code).to eq("ramp_election_is_active")
+        end
+
+        context "there is no End Product Establishment, but there is an active matching End Product" do
+          let!(:end_product_establishment) { nil }
+          let(:claim_date) { ramp_election.receipt_date.mdY }
+          let(:modifier) { "682" }
+          let(:claim_type_code) { "682HLRRRAMP" }
+          let(:end_product_status) { "PEND" }
+
+          it "adds ramp_election_is_active and returns false" do
+            expect(subject).to eq(false)
+            expect(intake.error_code).to eq("ramp_election_is_active")
+          end
         end
       end
 
@@ -265,26 +287,20 @@ describe RampRefilingIntake do
             )
           end
 
-          let!(:pending_ramp_election) do
-            create(:ramp_election,
-                   veteran_file_number: veteran_file_number,
-                   notice_date: 4.days.ago,
-                   established_at: Time.zone.now)
-          end
-
-          let!(:pending_end_product_establishment) do
-            create(
-              :end_product_establishment,
-              veteran_file_number: veteran_file_number,
-              source: pending_ramp_election,
-              established_at: Time.zone.now,
-              synced_status: "PEND"
-            )
-          end
-
           before { ramp_election.recreate_issues_from_contentions! }
 
           it { is_expected.to eq(true) }
+
+          context "there is no End Product Establishment, and the matching end products are closed" do
+            let!(:end_product_establishment) { nil }
+            let(:claim_date) { ramp_election.receipt_date.mdY }
+            let(:modifier) { "682" }
+            let(:claim_type_code) { "682HLRRRAMP" }
+            let(:end_product_status) { "CLR" }
+            let(:last_action_date) { (ramp_election.established_at + 1.day).to_date.mdY }
+
+            it { is_expected.to eq(true) }
+          end
 
           context "a saved RampRefiling already exists for the veteran" do
             let!(:preexisting_ramp_refiling) { RampRefiling.create!(veteran_file_number: veteran_file_number) }
