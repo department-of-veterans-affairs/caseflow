@@ -49,7 +49,7 @@ class MailTask < GenericTask
     end
 
     def child_task_assignee(parent, params)
-      if [:assigned_to_type, :assigned_to_id].all? { |k| params.key?(k) }
+      if [:assigned_to_type, :assigned_to_id].all? { |key| params.key?(key) }
         super
       else
         default_assignee(parent, params)

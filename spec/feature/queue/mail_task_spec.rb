@@ -38,7 +38,10 @@ RSpec.feature "MailTasks" do
 
       it "successfully assigns the task to team member" do
         visit("queue/appeals/#{aod_team_task.appeal.external_id}")
-        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL, text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label)
+
+        prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+        text = Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
+        click_dropdown(prompt: prompt, text: text)
         fill_in("taskInstructions", with: "instructions")
         click_button("Submit")
 
@@ -50,8 +53,6 @@ RSpec.feature "MailTasks" do
 
         new_task = new_tasks.first
         expect(new_task.assigned_to).to eq(user)
-
-
       end
     end
   end
