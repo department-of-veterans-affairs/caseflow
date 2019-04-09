@@ -12,8 +12,8 @@ class RequestIssue < ApplicationRecord
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
   belongs_to :decision_review, polymorphic: true
-  belongs_to :end_product_establishment
-  has_many :request_decision_issues
+  belongs_to :end_product_establishment, dependent: :destroy
+  has_many :request_decision_issues, dependent: :destroy
   has_many :decision_issues, through: :request_decision_issues
   has_many :remand_reasons, through: :decision_issues
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
