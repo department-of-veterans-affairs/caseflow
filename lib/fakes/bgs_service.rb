@@ -582,6 +582,10 @@ class Fakes::BGSService
     default_claimant_info
   end
 
+  def fetch_veteran_by_ssn(ssn)
+    (self.class.veteran_records || {}).values.find { |vet| vet[:ssn] == ssn }
+  end
+
   def fetch_file_number_by_ssn(ssn)
     # reverse is a hack to return something different than what is passed.
     ssn_not_found ? nil : ssn.to_s.reverse

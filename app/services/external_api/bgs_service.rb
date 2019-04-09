@@ -82,7 +82,7 @@ class ExternalApi::BGSService
     }
   end
 
-  def fetch_file_number_by_ssn(ssn)
+  def fetch_veteran_by_ssn(ssn)
     DBService.release_db_connections
 
     @people_by_ssn[ssn] ||=
@@ -91,8 +91,10 @@ class ExternalApi::BGSService
                             name: "people.find_by_ssn") do
         client.people.find_by_ssn(ssn)
       end
+  end
 
-    @people_by_ssn[ssn] && @people_by_ssn[ssn][:file_nbr]
+  def fetch_file_number_by_ssn(ssn)
+    fetch_veteran_by_ssn(ssn) && @people_by_ssn[ssn][:file_nbr]
   end
 
   def fetch_poa_by_file_number(file_number)
