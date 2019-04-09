@@ -11,6 +11,8 @@ import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
+import ApiUtil from '../util/ApiUtil';
+import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
 import {
   completeTasksByAssigneeCssIdSelector,
@@ -52,6 +54,22 @@ class AttorneyTaskListView extends React.PureComponent {
         detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
       });
     }
+
+    const requestOptions = {
+      withCredentials: true,
+      timeout: { response: 5 * 60 * 1000 }
+    };
+
+    this.props.loadAppealDocCount(this.props.externalId);
+
+    ApiUtil.get(`/appeals/${this.props.workableTasks[0].externalAppealId}/document_count`,
+      requestOptions).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      this.props.setAppealDocCount(this.props.externalId, resp.document_count);
+    }, () => {
+      this.props.errorFetchingDocumentCount(this.props.externalId);
+    });
   };
 
   render = () => {
@@ -63,6 +81,7 @@ class AttorneyTaskListView extends React.PureComponent {
         <b><Link to="/search">{COPY.NO_CASES_IN_QUEUE_LINK_TEXT}</Link></b>.
       </p> : '';
 
+    console.log(this.props.workableTasks[0].externalAppealId, 'duh');
     const tabs = [
       {
         label: sprintf(
@@ -141,7 +160,10 @@ const mapDispatchToProps = (dispatch) => ({
     resetErrorMessages,
     resetSuccessMessages,
     resetSaveState,
-    showErrorMessage
+    showErrorMessage,
+    loadAppealDocCount,
+    setAppealDocCount,
+    errorFetchingDocumentCount
   }, dispatch)
 });
 

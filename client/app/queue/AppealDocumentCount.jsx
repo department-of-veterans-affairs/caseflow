@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import ApiUtil from '../util/ApiUtil';
+// import ApiUtil from '../util/ApiUtil';
 
 import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
@@ -15,35 +15,35 @@ const documentCountStyling = css({
 });
 
 class AppealDocumentCount extends React.PureComponent {
-  componentDidMount = () => {
-    const {
-      appeal,
-      docCountForAppeal
-    } = this.props;
+  // componentDidMount = () => {
+  //   const {
+  //     appeal,
+  //     docCountForAppeal
+  //   } = this.props;
 
-    if (appeal.isPaperCase) {
-      return;
-    }
+  //   if (appeal.isPaperCase) {
+  //     return;
+  //   }
 
-    if (docCountForAppeal && docCountForAppeal.docCount) {
-      return;
-    }
+  //   if (docCountForAppeal && docCountForAppeal.docCount) {
+  //     return;
+  //   }
 
-    const requestOptions = {
-      withCredentials: true,
-      timeout: { response: 5 * 60 * 1000 }
-    };
+  //   const requestOptions = {
+  //     withCredentials: true,
+  //     timeout: { response: 5 * 60 * 1000 }
+  //   };
 
-    this.props.loadAppealDocCount(this.props.externalId);
+  //   this.props.loadAppealDocCount(this.props.externalId);
 
-    ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
-      const resp = JSON.parse(response.text);
+  //   ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
+  //     const resp = JSON.parse(response.text);
 
-      this.props.setAppealDocCount(this.props.externalId, resp.document_count);
-    }, () => {
-      this.props.errorFetchingDocumentCount(this.props.externalId);
-    });
-  }
+  //     this.props.setAppealDocCount(this.props.externalId, resp.document_count);
+  //   }, () => {
+  //     this.props.errorFetchingDocumentCount(this.props.externalId);
+  //   });
+  // }
 
   render = () => {
     const {
