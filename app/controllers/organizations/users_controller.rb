@@ -29,7 +29,7 @@ class Organizations::UsersController < OrganizationsController
     no_cache
 
     if params.key?(:admin)
-      if params[:admin]
+      if params[:admin] == true
         OrganizationsUser.make_user_admin(user_to_modify, organization)
       else
         OrganizationsUser.remove_admin_rights_from_user(user_to_modify, organization)
