@@ -7,7 +7,6 @@ feature "Higher-Level Review" do
 
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
 
     Timecop.freeze(post_ramp_start_date)
 
@@ -19,7 +18,6 @@ feature "Higher-Level Review" do
 
   after do
     FeatureToggle.disable!(:intake)
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:veteran) { create(:veteran) }
