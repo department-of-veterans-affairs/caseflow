@@ -36,10 +36,10 @@ class AppealsController < ApplicationController
 
   def document_counts_by_id
     render json: { document_counts_by_id: build_document_counts_hash }
-  rescue Caseflow::Error::EfolderAccessForbidden => e
-    render(e.serialize_response)
-  rescue StandardError => e
-    handle_non_critical_error("document_count", e)
+  rescue Caseflow::Error::EfolderAccessForbidden => error
+    render(error.serialize_response)
+  rescue StandardError => error
+    handle_non_critical_error("document_count", error)
   end
 
   def build_document_counts_hash
