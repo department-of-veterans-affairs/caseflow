@@ -478,11 +478,9 @@ feature "Appeal Edit issues" do
 
       expect(page).to_not have_content("Withdrawn issues")
       expect(page).to_not have_content("Please include the date the withdrawal was requested")
-      expect(page).to have_content(/Requested issues\n[1-2]..PTSD denied/i)
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
-      expect(page).to have_content(/Requested issues\n[1-2]..Military Retired Pay/i)
       expect(page).to have_content(
         /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
       )
