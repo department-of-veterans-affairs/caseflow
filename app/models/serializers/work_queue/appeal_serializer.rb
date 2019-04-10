@@ -121,7 +121,6 @@ class WorkQueue::AppealSerializer
   end
 
   def self.latest_attorney_case_review(object)
-    @latest_attorney_case_review ||=
-      AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last
+    AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last
   end
 end
