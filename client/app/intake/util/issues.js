@@ -227,7 +227,7 @@ const formatNonratingRequestIssues = (state) => {
       request_issue_id: issue.id,
       contested_decision_issue_id: issue.decisionIssueId,
       benefit_type: issue.benefitType,
-      issue_category: issue.category,
+      nonrating_issue_category: issue.category,
       decision_text: issue.description,
       decision_date: formatDateStringForApi(issue.decisionDate),
       untimely_exemption: issue.untimelyExemption,

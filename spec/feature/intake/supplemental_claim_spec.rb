@@ -352,7 +352,7 @@ feature "Supplemental Claim Intake" do
     expect(supplemental_claim.request_issues.last).to have_attributes(
       contested_rating_issue_reference_id: nil,
       contested_rating_issue_profile_date: nil,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       decision_date: profile_date.to_date
     )
@@ -684,7 +684,7 @@ feature "Supplemental Claim Intake" do
 
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
-               issue_category: "Active Duty Adjustments",
+               nonrating_issue_category: "Active Duty Adjustments",
                nonrating_issue_description: "Description for Active Duty Adjustments",
                decision_date: profile_date.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
@@ -817,7 +817,7 @@ feature "Supplemental Claim Intake" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    decision_review: sc,
-                   issue_category: "Accrued",
+                   nonrating_issue_category: "Accrued",
                    benefit_type: sc.benefit_type
                  )).to_not be_nil
         end

@@ -187,7 +187,7 @@ describe AppealIntake do
           decision_text: "decision text"
         },
         { decision_text: "nonrating request issue decision text",
-          issue_category: "test issue category",
+          nonrating_issue_category: "test issue category",
           benefit_type: "compensation",
           decision_date: "2018-12-25" }
       ]
@@ -214,7 +214,7 @@ describe AppealIntake do
         contested_issue_description: "decision text"
       )
       expect(intake.detail.request_issues.second).to have_attributes(
-        issue_category: "test issue category",
+        nonrating_issue_category: "test issue category",
         decision_date: Date.new(2018, 12, 25),
         nonrating_issue_description: "nonrating request issue decision text"
       )

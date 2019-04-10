@@ -145,7 +145,7 @@ class RequestIssue < ApplicationRecord
       where(
         contested_rating_issue_reference_id: nil,
         is_unidentified: [nil, false]
-      ).where.not(issue_category: nil)
+      ).where.not(nonrating_issue_category: nil)
     end
 
     def eligible
@@ -191,10 +191,10 @@ class RequestIssue < ApplicationRecord
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
-        nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
+        nonrating_issue_description: data[:nonrating_issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
         decision_date: data[:decision_date],
-        issue_category: data[:issue_category],
+        nonrating_issue_category: data[:nonrating_issue_category],
         benefit_type: data[:benefit_type],
         notes: data[:notes],
         is_unidentified: data[:is_unidentified],
@@ -246,7 +246,7 @@ class RequestIssue < ApplicationRecord
 
   def description
     return contested_issue_description if contested_issue_description
-    return "#{issue_category} - #{nonrating_issue_description}" if nonrating?
+    return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
     return unidentified_issue_text if is_unidentified?
   end
 
@@ -281,7 +281,7 @@ class RequestIssue < ApplicationRecord
       description: description,
       contention_text: contention_text,
       approx_decision_date: approx_decision_date_of_issue_being_contested,
-      category: issue_category,
+      category: nonrating_issue_category,
       notes: notes,
       is_unidentified: is_unidentified,
       ramp_claim_id: ramp_claim_id,

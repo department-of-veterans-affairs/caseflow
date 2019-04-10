@@ -240,7 +240,7 @@ describe RequestIssuesUpdate do
           let(:request_issues_data) do
             review.request_issues.map { |issue| { request_issue_id: issue.id } } + [{
               decision_text: "Nonrating issue",
-              issue_category: "Apportionment",
+              nonrating_issue_category: "Apportionment",
               decision_date: 1.month.ago
             }]
           end
@@ -331,7 +331,7 @@ describe RequestIssuesUpdate do
             end_product_establishment: nonrating_end_product_establishment,
             contention_reference_id: nonrating_request_issue_contention.id,
             nonrating_issue_description: nonrating_request_issue_contention.text,
-            issue_category: "Apportionment"
+            nonrating_issue_category: "Apportionment"
           )
 
           expect_any_instance_of(Fakes::BGSService).to receive(:cancel_end_product).with(
