@@ -6,8 +6,6 @@ feature "Higher Level Review Edit issues" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ama_start_date)
   end
 

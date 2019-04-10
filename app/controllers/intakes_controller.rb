@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IntakesController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application, :check_intake_out_of_service
+  before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
 
   def index
     no_cache
@@ -101,10 +101,6 @@ class IntakesController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Mail Intake", "Admin Intake")
-  end
-
-  def verify_feature_enabled
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
   end
 
   def check_intake_out_of_service

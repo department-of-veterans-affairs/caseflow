@@ -120,8 +120,6 @@ module IntakeHelpers
   end
 
   def setup_intake_flags
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(Time.zone.today)
 
     # skip the sync call since all edit requests require resyncing
