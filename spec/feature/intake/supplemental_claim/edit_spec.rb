@@ -380,7 +380,7 @@ feature "Supplemental Claim Edit issues" do
       end
     end
 
-    fcontext "has decision issues" do
+    context "has decision issues" do
       let(:contested_decision_issues) { setup_prior_decision_issues(veteran) }
       let(:decision_request_issue) do
         create(

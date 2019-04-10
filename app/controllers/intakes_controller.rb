@@ -126,6 +126,10 @@ class IntakesController < ApplicationController
     )
   end
 
+  def intake
+    @intake ||= Intake.where(user: current_user).find(params[:id])
+  end
+
   def veteran_file_number
     # param could be file number or SSN. Make sure we return file number.
     veteran = Veteran.find_by_file_number_or_ssn(params[:file_number], sync_name: true)
