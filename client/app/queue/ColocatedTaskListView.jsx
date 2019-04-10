@@ -23,6 +23,8 @@ import {
 
 import Alert from '../components/Alert';
 import TabWindow from '../components/TabWindow';
+import ApiUtil from '../util/ApiUtil';
+import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
 const containerStyles = css({
   position: 'relative'
@@ -30,7 +32,27 @@ const containerStyles = css({
 
 class ColocatedTaskListView extends React.PureComponent {
   componentDidMount = () => {
+
     this.props.clearCaseSelectSearch();
+    const requestOptions = {
+      withCredentials: true,
+      timeout: { response: 5 * 60 * 1000 }
+    };
+
+    const ids = [
+      ...this.props.combinedTasks.map((task) => task.externalAppealId)
+    ];
+
+    this.props.loadAppealDocCount(ids);
+
+    ApiUtil.get(`/appeals/${ids}/document_counts_by_id`,
+      requestOptions).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      this.props.setAppealDocCount(resp.document_counts_by_id);
+    }, () => {
+      this.props.errorFetchingDocumentCount(ids);
+    });
   };
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -74,13 +96,19 @@ const mapStateToProps = (state) => {
     success,
     organizations: state.ui.organizations,
     numNewTasks: newTasksByAssigneeCssIdSelector(state).length,
-    numOnHoldTasks: onHoldTasksByAssigneeCssIdSelector(state).length
+    numOnHoldTasks: onHoldTasksByAssigneeCssIdSelector(state).length,
+    combinedTasks: [...newTasksByAssigneeCssIdSelector(state),
+      ...onHoldTasksByAssigneeCssIdSelector(state),
+      ...completeTasksByAssigneeCssIdSelector(state)]
   };
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   clearCaseSelectSearch,
-  hideSuccessMessage
+  hideSuccessMessage,
+  loadAppealDocCount,
+  setAppealDocCount,
+  errorFetchingDocumentCount
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView));
