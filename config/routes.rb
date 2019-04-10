@@ -99,7 +99,7 @@ Rails.application.routes.draw do
 
   resources :appeals, param: :appeal_ids  do
     member do
-      get :document_count
+      get :document_counts_by_id
     end
   end
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
