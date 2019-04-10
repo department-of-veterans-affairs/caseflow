@@ -6,7 +6,6 @@ feature "Nonrating Request Issue Modal" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
     Timecop.freeze(post_ama_start_date)
   end
 

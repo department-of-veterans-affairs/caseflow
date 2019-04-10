@@ -2,13 +2,7 @@
 
 describe HigherLevelReviewsController, type: :controller do
   before do
-    FeatureToggle.enable!(:intake)
-
     User.stub = user
-  end
-
-  after do
-    FeatureToggle.disable!(:intake)
   end
 
   let(:veteran) { create(:veteran) }

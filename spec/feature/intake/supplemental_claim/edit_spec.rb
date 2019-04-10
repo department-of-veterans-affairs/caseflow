@@ -6,8 +6,6 @@ feature "Supplemental Claim Edit issues" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ama_start_date)
   end
 
@@ -382,7 +380,7 @@ feature "Supplemental Claim Edit issues" do
       end
     end
 
-    context "has decision issues" do
+    fcontext "has decision issues" do
       let(:contested_decision_issues) { setup_prior_decision_issues(veteran) }
       let(:decision_request_issue) do
         create(

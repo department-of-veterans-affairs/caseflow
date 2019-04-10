@@ -6,8 +6,6 @@ feature "Appeal Edit issues" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
