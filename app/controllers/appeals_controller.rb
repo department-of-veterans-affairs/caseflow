@@ -35,17 +35,17 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    ids = params[:appeal_ids].split(',')
+    ids = params[:appeal_ids].split(",")
     document_counts_by_id = {}
-    ids.each do |id| 
-      doc_count = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id).number_of_documents 
+    ids.each do |id|
+      doc_count = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id).number_of_documents
       document_counts_by_id[id] = doc_count
     end
     render json: { document_counts_by_id: document_counts_by_id }
-    rescue Caseflow::Error::EfolderAccessForbidden => e
-      render(e.serialize_response)
-    rescue StandardError => e
-      handle_non_critical_error("document_count", e)
+  rescue Caseflow::Error::EfolderAccessForbidden => e
+    render(e.serialize_response)
+  rescue StandardError => e
+    handle_non_critical_error("document_count", e)
   end
 
   def power_of_attorney
