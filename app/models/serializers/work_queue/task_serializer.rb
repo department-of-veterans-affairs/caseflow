@@ -53,6 +53,10 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:docket_number)
   end
 
+  attribute :docket_date do |object|
+    object.appeal.try(:docket_date)
+  end
+
   attribute :veteran_full_name do |object|
     object.appeal.veteran_full_name
   end

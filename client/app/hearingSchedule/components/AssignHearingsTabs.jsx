@@ -12,6 +12,7 @@ import { renderAppealType } from '../../queue/utils';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import StatusMessage from '../../components/StatusMessage';
 import { getFacilityType } from '../../components/DataDropdowns/AppealHearingLocations';
+import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
 
 const veteranNotAssignedStyle = css({ fontSize: '3rem' });
 const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
@@ -38,7 +39,7 @@ const tableNumberStyling = css({
   }
 });
 
-const AvailableVeteransTable = ({ rows, columns, docketCutoffLineStyle }) => {
+const AvailableVeteransTable = ({ rows, columns, style }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
 
   if (_.isEmpty(rows)) {
@@ -52,7 +53,7 @@ const AvailableVeteransTable = ({ rows, columns, docketCutoffLineStyle }) => {
     </div>;
   }
 
-  return <span {...docketCutoffLineStyle}>
+  return <span {...style}>
     <Table
       columns={removeTimeColumn}
       rowObjects={rows}
@@ -368,30 +369,6 @@ export default class AssignHearingsTabs extends React.Component {
     }];
   }
 
-  docketCutoffLineStyle = (index, date = moment(new Date()).format('MMMM YYYY')) => (
-    css({
-      [`& #table-row-${index + 1} td`]: {
-        paddingTop: '35px'
-      },
-      [`& #table-row-${index}`]: {
-        borderBottom: '2px solid #000',
-        position: 'relative',
-        '& td': {
-          paddingBottom: '35px'
-        },
-        '& td:first-child::before': {
-          content: `Schedule for ${date}`,
-          display: 'block',
-          position: 'absolute',
-          transform: 'translateY(calc(100% + 4px))',
-          background: '#fff',
-          padding: '10px 10px 10px 0px',
-          fontWeight: 'bold'
-        }
-      }
-    })
-  )
-
   amaDocketCutoffLineStyle = (appeals) => {
     const { appealsInDocketRange } = this.props;
 
@@ -401,22 +378,35 @@ export default class AssignHearingsTabs extends React.Component {
 
     const filtered = this.filterAppeals(appeals, 'amaAppeals');
 
-    const numberOfAppealsInDocketRange = _.intersection(
+    const filteredAppealsInDocketRange = _.intersection(
       filtered.map((appeal) => appeal.attributes.externalAppealId),
       appealsInDocketRange.map((appeal) => appeal.external_id)
-    ).length;
-    const numberOfAodAndCavcAppeals = _.filter(filtered, (appeal) => (
-      appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
-      appeal.attributes.aod
-    )).length;
+    );
 
-    const indexOfLine = numberOfAppealsInDocketRange + numberOfAodAndCavcAppeals - 1;
+    const indexOfLine = getIndexOfDocketLine(filtered, filteredAppealsInDocketRange);
 
-    return this.docketCutoffLineStyle(indexOfLine);
+    return docketCutoffLineStyle(indexOfLine);
   }
 
-  legacyDocketCutoffLineStyle = () => {
-    return css({});
+  legacyDocketCutoffLineStyle = (appeals) => {
+    const docketEndDate = moment().endOf('month');
+
+    const filtered = this.filterAppeals(appeals, 'legacyAppeals');
+
+    const filteredAppealsInDocketRange = _.filter(filtered, (appeal) => (
+      moment(appeal.attributes.docketDate).isBefore(docketEndDate) && !(
+        appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
+        appeal.attributes.aod
+      )
+    ));
+
+    const indexOfLine = getIndexOfDocketLine(filtered, filteredAppealsInDocketRange);
+
+    return docketCutoffLineStyle(
+      indexOfLine,
+      `Hearings docket date: ${moment().endOf('month').
+        format('MM/DD/YYYY')}`
+    );
   }
 
   render() {
@@ -448,7 +438,7 @@ export default class AssignHearingsTabs extends React.Component {
           {
             label: 'Legacy Veterans Waiting',
             page: <AvailableVeteransTable
-              docketCutoffLineStyle={this.legacyDocketCutoffLineStyle()}
+              style={this.legacyDocketCutoffLineStyle(legacyAppeals)}
               rows={this.availableVeteransRows(legacyAppeals, { tab: 'legacyAppeals' })}
               columns={this.tabWindowColumns(legacyAppeals, { tab: 'legacyAppeals' })}
             />
@@ -456,7 +446,7 @@ export default class AssignHearingsTabs extends React.Component {
           {
             label: 'AMA Veterans Waiting',
             page: <AvailableVeteransTable
-              docketCutoffLineStyle={this.amaDocketCutoffLineStyle(amaAppeals)}
+              style={this.amaDocketCutoffLineStyle(amaAppeals)}
               rows={this.availableVeteransRows(amaAppeals, { tab: 'amaAppeals' })}
               columns={this.tabWindowColumns(amaAppeals, { tab: 'amaAppeals' })}
             />

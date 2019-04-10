@@ -11,7 +11,6 @@ class WorkQueue::LegacyTaskSerializer
   end
   attribute :assigned_on
   attribute :docket_name
-  attribute :docket_date
   attribute :appeal_id
   attribute :user_id
   attribute :added_by_name
@@ -47,6 +46,10 @@ class WorkQueue::LegacyTaskSerializer
 
   attribute :case_type do |object|
     object.appeal.type
+  end
+
+  attribute :docket_date do |object|
+    object.appeal.docket_date
   end
 
   attribute :aod do |object|
