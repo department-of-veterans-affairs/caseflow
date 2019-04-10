@@ -6,6 +6,14 @@ describe RequestIssuesUpdate do
     Timecop.freeze(Time.utc(2018, 5, 20))
   end
 
+  def allow_associate_rating_request_issues
+    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+  end
+
+  def allow_remove_contention
+    allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+  end
+
   # TODO: make it simpler to set up a completed claim review, with end product data
   # and contention data stubbed out properly
   let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
@@ -403,6 +411,75 @@ describe RequestIssuesUpdate do
         end
       end
 
+      context "when an issue is withdrawn" do
+        let(:request_issues_data) do
+          [{ request_issue_id: existing_legacy_opt_in_request_issue_id, withdrawal_date: Time.zone.now },
+           { request_issue_id: existing_request_issue_id }]
+        end
+
+        it "withdraws issue, removes contention, and does not rollback legacy issue opt in" do
+          allow_remove_contention
+          allow_associate_rating_request_issues
+
+          expect(subject).to be_truthy
+
+          request_issues_update.reload
+          expect(request_issues_update.before_request_issue_ids).to contain_exactly(
+            *existing_request_issues.map(&:id)
+          )
+
+          expect(request_issues_update.after_request_issue_ids).to contain_exactly(
+            *existing_request_issues.map(&:id)
+          )
+
+          expect(request_issues_update.withdrawn_request_issue_ids).to contain_exactly(
+            existing_legacy_opt_in_request_issue_id
+          )
+
+          withdrawn_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
+          expect(withdrawn_issue.decision_review).to_not be_nil
+          expect(withdrawn_issue.contention_removed_at).to_not be_nil
+          expect(withdrawn_issue).to be_closed
+          expect(withdrawn_issue).to be_withdrawn
+          expect(withdrawn_issue.legacy_issue_optin.rollback_processed_at).to be_nil
+
+          expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
+
+          new_map = rating_end_product_establishment.reload.send(
+            :rating_issue_contention_map,
+            review.reload.request_issues.active
+          )
+
+          expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+            claim_id: rating_end_product_establishment.reference_id,
+            rating_issue_contention_map: new_map
+          )
+
+          expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
+
+          # ep should not be canceled because 1 rating request issue still exists
+          expect(rating_end_product_establishment.reload.synced_status).to eq(nil)
+        end
+
+        context "when an issue is withdrawn and there are no more active issues" do
+          let(:request_issues_data) do
+            [{ request_issue_id: existing_legacy_opt_in_request_issue_id, withdrawal_date: Time.zone.now }]
+          end
+
+          let!(:in_progress_task) do
+            create(:higher_level_review_task,
+                   :in_progress,
+                   appeal: review)
+          end
+
+          it "closes the end product establishment and cancels any active tasks" do
+            expect(subject).to be_truthy
+            expect(rating_end_product_establishment.reload.synced_status).to eq("CAN")
+            expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+          end
+        end
+      end
+
       context "when create_contentions raises VBMS service error" do
         let(:request_issues_data) { request_issues_data_with_new_issue }
 
@@ -484,16 +561,8 @@ describe RequestIssuesUpdate do
         allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
       end
 
-      def allow_associate_rating_request_issues
-        allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-      end
-
       def raise_error_on_remove_contention
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
-      end
-
-      def allow_remove_contention
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
     end
   end

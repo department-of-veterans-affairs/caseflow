@@ -6,8 +6,6 @@ feature "Supplemental Claim Edit issues" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ama_start_date)
   end
 
@@ -595,7 +593,10 @@ feature "Supplemental Claim Edit issues" do
     end
 
     context "when withdraw decision reviews is enabled" do
-      before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
+      before do
+        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+      end
       after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
 
       scenario "remove an issue with dropdown" do
@@ -605,7 +606,9 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to_not have_content("PTSD denied")
       end
 
-      scenario "Set an issue to be pending withdrawal" do
+      let(:withdraw_date) { 1.day.ago.to_date.mdY }
+
+      scenario "withdraw an issue" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
         expect(page).to_not have_content("Withdrawn issues")
@@ -617,6 +620,20 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
         expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
+
+        fill_in "withdraw-date", with: withdraw_date
+
+        safe_click("#button-submit-update")
+        expect(page).to have_current_path(
+          "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
+        )
+
+        withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
+
+        expect(withdrawn_issue).to_not be_nil
+        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+        expect(withdrawn_issue.decision_review.end_product_establishments.first.synced_status).to eq("CAN")
+        expect(Fakes::VBMSService).to have_received(:remove_contention!).once
       end
     end
   end
