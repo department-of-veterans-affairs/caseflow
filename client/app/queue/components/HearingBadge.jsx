@@ -45,7 +45,13 @@ const listStyling = css({
 class HearingBadge extends React.PureComponent {
   componentDidMount = () => {
     if (!this.props.mostRecentlyHeldHearingForAppeal && !this.props.hearing && this.props.externalId) {
-      ApiUtil.get(`/appeals/${this.props.externalId}/hearings`).then((response) => {
+      ApiUtil.get(`/appeals/${[
+        'c3c731e6-7d27-4124-8752-8f19a40909ec',
+        '22e6614f-9fdf-4666-b69f-bdabde34935b',
+        'aac6f387-dc34-451a-8fa1-69b6d772e173',
+        '2226048',
+        '2306397'
+      ]}/hearings_by_id`).then((response) => {
         this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, JSON.parse(response.text));
       });
     }
