@@ -500,6 +500,10 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
       expect(page).to have_content("Please include the date the withdrawal was requested")
 
+      fill_in "withdraw-date", with: "1"
+
+      expect(page).to have_button("Save", disabled: true)
+
       fill_in "withdraw-date", with: withdraw_date
 
       safe_click("#button-submit-update")

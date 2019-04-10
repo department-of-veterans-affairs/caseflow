@@ -454,8 +454,25 @@ describe RequestIssuesUpdate do
           expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
 
           # ep should not be canceled because 1 rating request issue still exists
-          rating_end_product_establishment.reload
-          expect(rating_end_product_establishment.synced_status).to eq(nil)
+          expect(rating_end_product_establishment.reload.synced_status).to eq(nil)
+        end
+
+        context "when an issue is withdrawn and there are no more active issues" do
+          let(:request_issues_data) do
+            [{ request_issue_id: existing_legacy_opt_in_request_issue_id, withdrawal_date: Time.zone.now }]
+          end
+
+          let!(:in_progress_task) do
+            create(:higher_level_review_task,
+                   :in_progress,
+                   appeal: review)
+          end
+
+          it "closes the end product establishment and cancels any active tasks" do
+            expect(subject).to be_truthy
+            expect(rating_end_product_establishment.reload.synced_status).to eq("CAN")
+            expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+          end
         end
       end
 
