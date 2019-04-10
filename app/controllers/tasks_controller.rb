@@ -7,6 +7,7 @@ class TasksController < ApplicationController
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
   TASK_CLASSES = {
+    ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,

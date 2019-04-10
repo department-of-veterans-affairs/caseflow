@@ -7,13 +7,8 @@ feature "Supplemental Claim Edit issues" do
 
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
 
     Timecop.freeze(post_ama_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:veteran) do
@@ -193,6 +188,35 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to have_current_path(
         "/supplemental_claims/#{nonrating_ep_claim_id}/edit/confirmation"
       )
+    end
+  end
+
+  context "when the rating issue is locked" do
+    let(:url_path) { "supplemental_claims" }
+    let(:decision_review) { supplemental_claim }
+    let(:request_issue) do
+      create(
+        :request_issue,
+        contested_rating_issue_reference_id: "def456",
+        contested_rating_issue_profile_date: rating.profile_date,
+        decision_review: decision_review,
+        benefit_type: benefit_type,
+        contested_issue_description: "PTSD denied"
+      )
+    end
+
+    let(:request_issues) { [request_issue] }
+
+    before do
+      decision_review.reload.create_issues!(request_issues)
+      decision_review.establish!
+      decision_review.veteran.update!(participant_id: "locked_rating")
+    end
+
+    it "returns an error message about the locked rating" do
+      visit "#{url_path}/#{decision_review.uuid}/edit"
+
+      expect(page).to have_content("One or more ratings may be locked on this Claim.")
     end
   end
 
@@ -533,9 +557,17 @@ feature "Supplemental Claim Edit issues" do
 
     feature "with cleared end product" do
       let!(:cleared_end_product) do
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { status_type_code: "CLR" }
+        )
+      end
+
+      let!(:cleared_end_product_establishment) do
         create(:end_product_establishment,
                source: supplemental_claim,
-               synced_status: "CLR")
+               synced_status: "CLR",
+               reference_id: cleared_end_product.claim_id)
       end
 
       scenario "prevents edits on eps that have cleared" do
@@ -571,6 +603,20 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_content("PTSD denied")
         click_remove_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content("PTSD denied")
+      end
+
+      scenario "Set an issue to be pending withdrawal" do
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+
+        expect(page).to_not have_content("Withdrawn issues")
+        expect(page).to_not have_content("Please include the date the withdrawal was requested")
+        expect(page).to have_content("Requested issues\n1. PTSD denied")
+
+        click_withdraw_intake_issue_dropdown("PTSD denied")
+
+        expect(page).to_not have_content("Requested issues\n1. PTSD denied")
+        expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
+        expect(page).to have_content("Please include the date the withdrawal was requested")
       end
     end
   end

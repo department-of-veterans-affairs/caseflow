@@ -91,6 +91,24 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  actionsMap[ACTIONS.WITHDRAW_ISSUE] = () => {
+    let listOfIssues = state.addedIssues ? state.addedIssues : [];
+
+    listOfIssues[action.payload.index].withdrawalPending = true;
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
+  actionsMap[ACTIONS.SET_ISSUE_WITHDRAWAL_DATE] = () => {
+    return {
+      ...state,
+      withdrawalDate: action.payload.withdrawalDate
+    };
+  };
+
   return actionsMap;
 };
 
