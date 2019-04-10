@@ -536,3 +536,7 @@ export const sortTaskList = (taskList) => {
     new Date(prev.closedAt || prev.createdAt).getTime();
   });
 };
+
+export const mapTasksToExternalIds = (taskList) => {
+  return taskList.map((task) => task.externalAppealId);
+};

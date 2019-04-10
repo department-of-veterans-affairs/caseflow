@@ -11,7 +11,7 @@ import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
-import ApiUtil from '../util/ApiUtil';
+import { batchDocCountRequests } from '../util/ApiUtil';
 import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
 import {
@@ -55,26 +55,7 @@ class AttorneyTaskListView extends React.PureComponent {
         detail: COPY.TASKS_NEED_ASSIGNMENT_ERROR_MESSAGE
       });
     }
-
-    const requestOptions = {
-      withCredentials: true,
-      timeout: { response: 5 * 60 * 1000 }
-    };
-
-    const ids = [
-      ...combinedTasks.map((task) => task.externalAppealId)
-    ];
-
-    this.props.loadAppealDocCount(ids);
-
-    ApiUtil.get(`/appeals/${ids}/document_counts_by_id`,
-      requestOptions).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setAppealDocCount(resp.document_counts_by_id);
-    }, () => {
-      this.props.errorFetchingDocumentCount(ids);
-    });
+    batchDocCountRequests(this.props, combinedTasks);
   };
 
   render = () => {

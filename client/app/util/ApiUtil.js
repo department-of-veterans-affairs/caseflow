@@ -4,6 +4,7 @@ import ReactOnRails from 'react-on-rails';
 import StringUtil from './StringUtil';
 import _ from 'lodash';
 import { timeFunctionPromise } from '../util/PerfDebug';
+import { mapTasksToExternalIds } from '../queue/utils';
 
 export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
 export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
@@ -140,6 +141,27 @@ const ApiUtil = {
   },
 
   ..._.mapValues(httpMethods, timeApiRequest)
+};
+
+export const batchDocCountRequests = (props, tasks) => {
+
+  const requestOptions = {
+    withCredentials: true,
+    timeout: { response: 5 * 60 * 1000 }
+  };
+
+  const ids = mapTasksToExternalIds(tasks);
+
+  props.loadAppealDocCount(ids);
+
+  return ApiUtil.get(`/appeals/${ids}/document_counts_by_id`,
+    requestOptions).then((response) => {
+    const resp = JSON.parse(response.text);
+
+    props.setAppealDocCount(resp.document_counts_by_id);
+  }, () => {
+    props.errorFetchingDocumentCount(ids);
+  });
 };
 
 export default ApiUtil;
