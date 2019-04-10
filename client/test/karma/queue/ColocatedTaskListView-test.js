@@ -173,7 +173,6 @@ describe('ColocatedTaskListView', () => {
       expect(docketNumber.text()).to.include(appeal.docketNumber);
       expect(daysWaiting.text()).to.equal('1');
       expect(documents.html()).to.include(`/reader/appeal/${task.externalAppealId}/documents`);
-      expect(documents.text()).to.include('Loading number of docs...');
 
       store.dispatch(errorFetchingDocumentCount(task.externalAppealId));
       expect(wrapper.find('td').at(6).
