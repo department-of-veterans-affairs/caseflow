@@ -54,6 +54,16 @@ class Claimant < ApplicationRecord
     general_info.merge(name_info)
   end
 
+  def bgs_payee_code
+    return unless bgs_record
+
+    bgs_record[:payee_code]
+  end
+
+  def bgs_record
+    @bgs_record ||= fetch_bgs_record
+  end
+
   private
 
   def bgs_address_service

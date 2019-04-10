@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190402195624) do
+ActiveRecord::Schema.define(version: 20190409231234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -233,6 +233,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
 
   create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
+    t.string "appeal_type"
     t.datetime "attempted_at"
     t.string "citation_number", null: false
     t.datetime "created_at", null: false
@@ -759,13 +760,10 @@ ActiveRecord::Schema.define(version: 20190402195624) do
   end
 
   create_table "record_synced_by_jobs", force: :cascade do |t|
-    t.datetime "attempted_at"
     t.string "error"
-    t.datetime "last_submitted_at"
     t.datetime "processed_at"
     t.bigint "record_id"
     t.string "record_type"
-    t.datetime "submitted_at"
     t.string "sync_job_name"
     t.index ["record_type", "record_id"], name: "index_record_synced_by_jobs_on_record_type_and_record_id"
   end
@@ -845,6 +843,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.string "review_type", null: false, comment: "The type of the decision review edited."
     t.datetime "submitted_at", comment: "Timestamp when the request issues update was originally submitted."
     t.bigint "user_id", null: false, comment: "The ID of the user who edited the decision review."
+    t.integer "withdrawn_request_issue_ids", comment: "An array of the request issue IDs that were withdrawn during this request issues update.", array: true
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end

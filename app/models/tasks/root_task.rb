@@ -39,6 +39,10 @@ class RootTask < GenericTask
     true
   end
 
+  def actions_allowable?(_user)
+    true
+  end
+
   def assigned_to_label
     COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
   end

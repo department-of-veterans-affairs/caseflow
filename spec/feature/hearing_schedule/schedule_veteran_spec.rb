@@ -38,6 +38,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     let!(:veteran) { create(:veteran, file_number: "123454787") }
+    let!(:hearing_location_dropdown_label) { "Suggested Hearing Location" }
 
     scenario "Schedule Veteran for central hearing" do
       visit "hearings/schedule/assign"
@@ -50,6 +51,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Currently active tasks", wait: 30)
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
+
+      # Wait for the contents of the dropdown to finish loading before clicking into the dropdown.
+      expect(page).to have_content(hearing_location_dropdown_label)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       find("label", text: "9:00 am").click
       click_button("Schedule")

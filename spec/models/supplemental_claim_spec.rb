@@ -229,7 +229,7 @@ describe SupplementalClaim do
 
         expect(issue_statuses.empty?).to eq(false)
         expect(issue_statuses.first[:active]).to eq(true)
-        expect(issue_statuses.first[:last_action]).to be_nil
+        expect(issue_statuses.first[:lastAction]).to be_nil
         expect(issue_statuses.first[:date]).to be_nil
         expect(issue_statuses.first[:description]).to eq("Compensation issue")
         expect(issue_statuses.first[:diagnosticCode]).to be_nil
@@ -248,7 +248,7 @@ describe SupplementalClaim do
         issue_statuses = sc.issues_hash
         expect(issue_statuses.empty?).to eq(false)
         expect(issue_statuses.first[:active]).to eq(false)
-        expect(issue_statuses.first[:last_action]).to eq("allowed")
+        expect(issue_statuses.first[:lastAction]).to eq("allowed")
         expect(issue_statuses.first[:date]).to eq((receipt_date + 100.days).to_date)
         expect(issue_statuses.first[:description]).to eq("Compensation issue")
         expect(issue_statuses.first[:diagnosticCode]).to be_nil

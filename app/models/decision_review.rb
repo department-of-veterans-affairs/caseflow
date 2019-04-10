@@ -293,6 +293,20 @@ class DecisionReview < ApplicationRecord
     RequestIssue.from_intake_data(data, decision_review: self)
   end
 
+  def description
+    return if request_issues.empty?
+
+    descripton = fetch_status_description_using_diagnostic_code
+    return descripton if descripton
+
+    description = fetch_status_description_using_claim_type
+    return description if description
+
+    return "1 issue" if request_issues.count == 1
+
+    "#{request_issues.count} issues"
+  end
+
   private
 
   def veteran_invalid_fields
@@ -400,20 +414,6 @@ class DecisionReview < ApplicationRecord
     validate_receipt_date_not_in_future
   end
 
-  def description
-    return if request_issues.empty?
-
-    descripton = fetch_status_description_using_diagnostic_code
-    return descripton if descripton
-
-    description = fetch_status_description_using_claim_type
-    return description if description
-
-    return "1 issue" if request_issues.count == 1
-
-    "#{request_issues.count} issues"
-  end
-
   def fetch_status_description_using_diagnostic_code
     issue = request_issues.find do |ri|
       !ri[:contested_rating_issue_diagnostic_code].nil?
@@ -443,7 +443,7 @@ class DecisionReview < ApplicationRecord
     issues_list.map do |issue|
       {
         active: issue.api_status_active?,
-        last_action: issue.api_status_last_action,
+        lastAction: issue.api_status_last_action,
         date: issue.api_status_last_action_date,
         description: issue.api_status_description,
         diagnosticCode: issue.diagnostic_code

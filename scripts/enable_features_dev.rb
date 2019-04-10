@@ -5,10 +5,6 @@
 json_config = <<EOS.strip_heredoc
   [
         {
-          feature: "intakeAma",
-          enable_all: true
-        },
-        {
           feature: "automatic_ramp_rollback",
           enable_all: true
         },
