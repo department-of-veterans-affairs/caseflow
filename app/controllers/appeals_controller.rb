@@ -70,8 +70,9 @@ class AppealsController < ApplicationController
     appeal_ids = params[:appeal_ids].split(",")
     most_recently_held_hearings_by_id = {}
     appeal_ids.each do |appeal_id|
-      hearing = most_recently_held_hearing(appeal_id)
-      build_hearing_object(appeal_id, most_recently_held_hearings_by_id, hearing)
+      build_hearing_object(appeal_id, 
+      most_recently_held_hearings_by_id, 
+      most_recently_held_hearing(appeal_id))
     end
     most_recently_held_hearings_by_id
   end
