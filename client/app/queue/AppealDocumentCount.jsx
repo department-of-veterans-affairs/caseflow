@@ -27,7 +27,7 @@ class AppealDocumentCount extends React.PureComponent {
         return docCountsByAppealId.error || <span {...documentCountStyling}>Loading number of docs...</span>;
       }
 
-      return docCountsByAppealId[externalId];
+      return docCountsByAppealId[externalId] || null;
     }
 
     return null;
