@@ -39,8 +39,10 @@ class LegacyTasksController < ApplicationController
       return assign_to_judge
     end
 
+
+
     task = JudgeCaseAssignmentToAttorney.create(legacy_task_params)
-    byebug
+    # byebug
     return invalid_record_error(task) unless task.valid?
 
     render json: {
