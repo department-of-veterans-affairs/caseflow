@@ -36,7 +36,7 @@ class BvaDispatchTask < GenericTask
 
     def create_decision_document!(params)
       DecisionDocument.create!(params).tap do |decision_document|
-        delay = decision_document.decision_date.future? ? decision_document.decision_date : 0
+        delay = decision_document.decision_date.future? ? decision_document.decision_date + 7.hours : 0
         decision_document.submit_for_processing!(delay: delay)
 
         unless decision_document.processed? || decision_document.decision_date.future?
