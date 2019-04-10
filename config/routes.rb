@@ -97,11 +97,6 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :appeals, param: :appeal_ids  do
-    member do
-      get :document_counts_by_id
-    end
-  end
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
       get :veteran
@@ -115,6 +110,7 @@ Rails.application.routes.draw do
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
+  match '/appeals/:appeal_ids/document_counts_by_id/' => 'appeals#document_counts_by_id', via: [:get]
 
   resources :beaam_appeals, only: [:index]
 
