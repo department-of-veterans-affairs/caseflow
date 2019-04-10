@@ -11,7 +11,7 @@ import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
-import ApiUtil, { batchDocCountRequests } from '../util/ApiUtil';
+import { batchDocCountRequests, batchHearingBadgeRequests } from '../util/ApiUtil';
 import { loadAppealDocCount, setAppealDocCount,
   errorFetchingDocumentCount, setMostRecentlyHeldHearingForAppeals } from './QueueActions';
 
@@ -57,13 +57,7 @@ class AttorneyTaskListView extends React.PureComponent {
       });
     }
     batchDocCountRequests(this.props, combinedTasks);
-    const ids = combinedTasks.map((task) => task.externalAppealId);
-
-    ApiUtil.get(`/appeals/${ids}/hearings_by_id`).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
-    });
+    batchHearingBadgeRequests(this.props, combinedTasks);
 
   };
 

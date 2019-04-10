@@ -22,7 +22,7 @@ import { judgeDecisionReviewTasksSelector } from './selectors';
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 import { setMostRecentlyHeldHearingForAppeals } from './QueueActions';
-import ApiUtil from '../util/ApiUtil';
+import { batchHearingBadgeRequests } from '../util/ApiUtil';
 
 const containerStyles = css({
   position: 'relative'
@@ -38,13 +38,7 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
-    const ids = this.props.tasks.map((task) => task.externalAppealId);
-
-    ApiUtil.get(`/appeals/${ids}/hearings_by_id`).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
-    });
+    batchHearingBadgeRequests(this.props, this.props.tasks);
   };
 
   render = () => {

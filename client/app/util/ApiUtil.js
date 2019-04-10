@@ -164,4 +164,19 @@ export const batchDocCountRequests = (props, tasks) => {
   });
 };
 
+export const batchHearingBadgeRequests = (props, tasks) => {
+
+  const ids = mapTasksToExternalIds(tasks);
+
+  return ApiUtil.get(`/appeals/${ids}/hearings_by_id`).then((response) => {
+    const resp = JSON.parse(response.text);
+
+    props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
+  }).
+    catch(() => {
+      console.log('there was an error fetching the hearing badge');
+    });
+
+};
+
 export default ApiUtil;

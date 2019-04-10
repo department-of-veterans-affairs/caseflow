@@ -23,8 +23,9 @@ import {
 
 import Alert from '../components/Alert';
 import TabWindow from '../components/TabWindow';
-import ApiUtil, { batchDocCountRequests } from '../util/ApiUtil';
-import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount, setMostRecentlyHeldHearingForAppeals } from './QueueActions';
+import { batchDocCountRequests, batchHearingBadgeRequests } from '../util/ApiUtil';
+import { loadAppealDocCount, setAppealDocCount,
+  errorFetchingDocumentCount, setMostRecentlyHeldHearingForAppeals } from './QueueActions';
 
 const containerStyles = css({
   position: 'relative'
@@ -35,14 +36,7 @@ class ColocatedTaskListView extends React.PureComponent {
 
     this.props.clearCaseSelectSearch();
     batchDocCountRequests(this.props, this.props.combinedTasks);
-    const ids = this.props.combinedTasks.map((task) => task.externalAppealId);
-
-    ApiUtil.get(`/appeals/${ids}/hearings_by_id`).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      this.props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
-    });
-
+    batchHearingBadgeRequests(this.props, this.props.combinedTasks);
   };
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
