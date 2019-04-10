@@ -213,8 +213,8 @@ describe Appeal do
     let(:appeal) { create(:appeal) }
     let(:task1) { create(:ama_attorney_task, appeal: appeal) }
     let(:task2) { create(:ama_attorney_task, appeal: appeal) }
-    let(:attorney_case_review1) { create(:attorney_case_review, task: task1, created_at: 2.days.ago) }
-    let(:attorney_case_review2) { create(:attorney_case_review, task: task2, created_at: 1.day.ago) }
+    let!(:attorney_case_review1) { create(:attorney_case_review, task: task1, created_at: 2.days.ago) }
+    let!(:attorney_case_review2) { create(:attorney_case_review, task: task2, created_at: 1.day.ago) }
 
     subject { appeal.latest_attorney_case_review }
 
