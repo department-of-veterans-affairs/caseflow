@@ -190,7 +190,8 @@ const formatUnidentifiedIssues = (state) => {
         request_issue_id: issue.id,
         decision_text: issue.description,
         notes: issue.notes,
-        is_unidentified: true
+        is_unidentified: true,
+        withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null
       };
     });
 };
@@ -214,7 +215,8 @@ const formatRatingRequestIssues = (state) => {
         vacols_sequence_id: issue.vacolsSequenceId,
         contested_decision_issue_id: issue.decisionIssueId,
         ineligible_reason: issue.ineligibleReason,
-        ineligible_due_to_id: issue.ineligibleDueToId
+        ineligible_due_to_id: issue.ineligibleDueToId,
+        withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null
       };
     });
 };
@@ -233,7 +235,8 @@ const formatNonratingRequestIssues = (state) => {
       vacols_id: issue.vacolsId,
       vacols_sequence_id: issue.vacolsSequenceId,
       ineligible_due_to_id: issue.ineligibleDueToId,
-      ineligible_reason: issue.ineligibleReason
+      ineligible_reason: issue.ineligibleReason,
+      withdrawal_date: issue.withdrawalPending ? state.withdrawalDate : null
     };
   });
 };

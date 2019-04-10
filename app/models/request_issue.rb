@@ -382,35 +382,39 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
-  def close!(status)
+  def close!(status:, closed_at_value: Time.zone.now)
     return unless closed_at.nil?
 
     transaction do
-      update!(closed_at: Time.zone.now, closed_status: status)
+      update!(closed_at: closed_at_value, closed_status: status)
       yield if block_given?
     end
   end
 
   def close_if_ineligible!
-    close!(:ineligible) if ineligible_reason?
+    close!(status: :ineligible) if ineligible_reason?
   end
 
   def close_decided_issue!
     return unless decision_issues.any?
 
-    close!(:decided)
+    close!(status: :decided)
   end
 
   def close_after_end_product_canceled!
     return unless end_product_establishment&.reload&.status_canceled?
 
-    close!(:end_product_canceled) do
+    close!(status: :end_product_canceled) do
       legacy_issue_optin&.flag_for_rollback!
     end
   end
 
+  def withdraw!(withdrawal_date)
+    close!(status: :withdrawn, closed_at_value: withdrawal_date)
+  end
+
   def remove!
-    close!(:removed) do
+    close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
 
       # If the decision issue is not associated with any other request issue, also delete
