@@ -70,22 +70,29 @@ class AppealsController < ApplicationController
     appeal_ids = params[:appeal_ids].split(",")
     most_recently_held_hearings_by_id = {}
     appeal_ids.each do |appeal_id|
-      most_recently_held_hearing = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
-        .hearings
-        .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
-        .max_by(&:scheduled_for)
-      next unless most_recently_held_hearing
-
-      most_recently_held_hearings_by_id[appeal_id] = {
-        held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
-        viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
-        date: most_recently_held_hearing.scheduled_for,
-        type: most_recently_held_hearing.readable_request_type,
-        external_id: most_recently_held_hearing.external_id,
-        disposition: most_recently_held_hearing.disposition
-      }
+      hearing = most_recently_held_hearing(appeal_id)
+      build_hearing_object(appeal_id, most_recently_held_hearings_by_id, hearing)
     end
     most_recently_held_hearings_by_id
+  end
+
+  def most_recently_held_hearing(appeal_id)
+    Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+      .hearings
+      .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
+      .max_by(&:scheduled_for)
+  end
+
+  def build_hearing_object(appeal_id, hash, hearing)
+    hash[appeal_id] = {
+      held_by: hearing&.judge.present? ? hearing.judge.full_name : "",
+      viewed_by_judge: hearing && !hearing.hearing_views.empty?,
+      date: hearing&.scheduled_for,
+      type: hearing&.readable_request_type,
+      external_id: hearing&.external_id,
+      disposition: hearing&.disposition
+    }
+    hash
   end
 
   # For legacy appeals, veteran address and birth/death dates are
