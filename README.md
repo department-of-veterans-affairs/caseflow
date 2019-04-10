@@ -355,9 +355,7 @@ To use intake features as the users, you'll need to toggle two features in a
 rails console `rails c`:
 
 ```
-[1] FeatureToggle.enable!(:intakeAma)
-=> true
-[2] FeatureToggle.enable!(:intake)
+[1] FeatureToggle.enable!(:intake)
 => true
 ```
 
