@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'json'
-
 class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count]
