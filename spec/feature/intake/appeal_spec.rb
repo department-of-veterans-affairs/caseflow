@@ -8,13 +8,8 @@ feature "Appeal Intake" do
   before do
     FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
-    FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
 
     Timecop.freeze(post_ramp_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma, users: [current_user.css_id])
   end
 
   let!(:current_user) do

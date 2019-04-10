@@ -7,7 +7,7 @@ class AppealIntake < DecisionReviewIntake
     Appeal.new(veteran_file_number: veteran_file_number)
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(docket_type: detail.docket_type)
   end
 

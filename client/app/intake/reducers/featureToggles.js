@@ -2,9 +2,6 @@ import { update } from '../../util/ReducerUtil';
 
 const updateFromServerFeatures = (state, featureToggles) => {
   return update(state, {
-    intakeAma: {
-      $set: Boolean(featureToggles.intakeAma)
-    },
     useAmaActivationDate: {
       $set: Boolean(featureToggles.useAmaActivationDate)
     },
@@ -16,7 +13,6 @@ const updateFromServerFeatures = (state, featureToggles) => {
 
 export const mapDataToFeatureToggle = (data = { featureToggles: {} }) => (
   updateFromServerFeatures({
-    intakeAma: false,
     useAmaActivationDate: false,
     withdrawDecisionReviews: false
   }, data.featureToggles)

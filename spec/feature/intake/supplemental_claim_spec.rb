@@ -7,17 +7,12 @@ feature "Supplemental Claim Intake" do
 
   before do
     FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
 
     Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
