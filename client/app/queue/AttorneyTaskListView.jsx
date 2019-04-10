@@ -61,18 +61,17 @@ class AttorneyTaskListView extends React.PureComponent {
       timeout: { response: 5 * 60 * 1000 }
     };
 
-    this.props.loadAppealDocCount(this.props.externalId);
-
     const ids = [
       ...combinedTasks.map((task) => task.externalAppealId)
     ];
 
+    this.props.loadAppealDocCount(ids);
+
     ApiUtil.get(`/appeals/${ids}/document_count`,
       requestOptions).then((response) => {
       const resp = JSON.parse(response.text);
-      // refactor this based on batching.
 
-      this.props.setAppealDocCount(this.props.externalId, resp.document_count);
+      this.props.setAppealDocCount(resp.document_counts_by_id);
     }, () => {
       this.props.errorFetchingDocumentCount(ids);
     });

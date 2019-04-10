@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-// import ApiUtil from '../util/ApiUtil';
+import _ from 'lodash';
 
 import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
@@ -15,48 +14,20 @@ const documentCountStyling = css({
 });
 
 class AppealDocumentCount extends React.PureComponent {
-  // componentDidMount = () => {
-  //   const {
-  //     appeal,
-  //     docCountForAppeal
-  //   } = this.props;
-
-  //   if (appeal.isPaperCase) {
-  //     return;
-  //   }
-
-  //   if (docCountForAppeal && docCountForAppeal.docCount) {
-  //     return;
-  //   }
-
-  //   const requestOptions = {
-  //     withCredentials: true,
-  //     timeout: { response: 5 * 60 * 1000 }
-  //   };
-
-  //   this.props.loadAppealDocCount(this.props.externalId);
-
-  //   ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
-  //     const resp = JSON.parse(response.text);
-
-  //     this.props.setAppealDocCount(this.props.externalId, resp.document_count);
-  //   }, () => {
-  //     this.props.errorFetchingDocumentCount(this.props.externalId);
-  //   });
-  // }
-
   render = () => {
     const {
-      docCountForAppeal,
-      loadingText
+      docCountsByAppealId,
+      loadingText,
+      externalId
     } = this.props;
+    const isLoadingOrError = loadingText && (docCountsByAppealId.loading || docCountsByAppealId.error);
 
-    if (docCountForAppeal) {
-      if (docCountForAppeal.docCount) {
-        return docCountForAppeal.docCount;
-      } else if (loadingText && (docCountForAppeal.loading || docCountForAppeal.error)) {
-        return docCountForAppeal.error || <span {...documentCountStyling}>Loading number of docs...</span>;
+    if (!_.isEmpty(docCountsByAppealId)) {
+      if (isLoadingOrError) {
+        return docCountsByAppealId.error || <span {...documentCountStyling}>Loading number of docs...</span>;
       }
+
+      return docCountsByAppealId[externalId];
     }
 
     return null;
@@ -73,7 +44,7 @@ const mapStateToProps = (state, ownProps) => {
 
   return {
     externalId,
-    docCountForAppeal: state.queue.docCountForAppeal[externalId] || null
+    docCountsByAppealId: state.queue.docCountsByAppealId
   };
 };
 

@@ -145,11 +145,11 @@ export const getNewDocumentsForTask = (taskId) => (dispatch) => {
   });
 };
 
-export const loadAppealDocCount = (appealId) => (dispatch) => {
+export const loadAppealDocCount = (appealIds) => (dispatch) => {
   dispatch({
     type: ACTIONS.STARTED_DOC_COUNT_REQUEST,
     payload: {
-      appealId
+      appealIds
     }
   });
 };
@@ -185,11 +185,10 @@ export const getAppealValue = (appealId, endpoint, name) => (dispatch) => {
   });
 };
 
-export const setAppealDocCount = (appealId, docCount) => ({
+export const setAppealDocCount = (docCountsByAppealId) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
-    appealId,
-    docCount
+    docCountsByAppealId
   }
 });
 

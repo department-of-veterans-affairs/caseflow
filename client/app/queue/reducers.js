@@ -24,7 +24,7 @@ export const initialState = {
   appealDetails: {},
   claimReviews: {},
   editingIssue: {},
-  docCountForAppeal: {},
+  docCountsByAppealId: {},
   mostRecentlyHeldHearingForAppeal: {},
   newDocsForAppeal: {},
   newDocsForTask: {},
@@ -197,38 +197,31 @@ export const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.STARTED_DOC_COUNT_REQUEST:
     return {
       ...state,
-      docCountForAppeal: {
-        ...state.docCountForAppeal,
-        [action.payload.appealId]: {
-          ...state.docCountForAppeal[action.payload.appealId],
-          error: null,
-          loading: true
-        }
+      docCountsByAppealId: {
+        ...state.docCountsByAppealId,
+        error: null,
+        loading: true
       }
     };
   case ACTIONS.ERROR_ON_RECEIVE_DOCUMENT_COUNT:
     return {
       ...state,
-      docCountForAppeal: {
-        ...state.docCountForAppeal,
-        [action.payload.appealId]: {
-          ...state.docCountForAppeal[action.payload.appealId],
-          error: 'Failed to Load',
-          loading: false
-        }
+      docCountsByAppealId: {
+        ...state.docCountsByAppealId,
+        error: 'Failed to Load',
+        loading: false
       }
     };
   case ACTIONS.SET_APPEAL_DOC_COUNT:
-    return update(state, {
-      docCountForAppeal: {
-        [action.payload.appealId]: {
-          $set: {
-            docCount: action.payload.docCount,
-            loading: false
-          }
-        }
+    return {
+      ...state,
+      docCountsByAppealId: {
+        ...action.payload.docCountsByAppealId,
+        error: null,
+        loading: false
       }
-    });
+    };
+
   case ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL:
     return update(state, {
       mostRecentlyHeldHearingForAppeal: {
