@@ -38,8 +38,7 @@ class AppealsController < ApplicationController
     ids = params[:appeal_ids].split(",")
     document_counts_by_id = {}
     ids.each do |id|
-      doc_count = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id).number_of_documents
-      document_counts_by_id[id] = doc_count
+      document_counts_by_id[id] = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id).number_of_documents
     end
     render json: { document_counts_by_id: document_counts_by_id }
   rescue Caseflow::Error::EfolderAccessForbidden => e
