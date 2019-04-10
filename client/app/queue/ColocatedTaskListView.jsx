@@ -73,15 +73,20 @@ class ColocatedTaskListView extends React.PureComponent {
 
 const mapStateToProps = (state) => {
   const { success } = state.ui.messages;
+  const newTasks = newTasksByAssigneeCssIdSelector(state);
+  const onHoldTasks = onHoldTasksByAssigneeCssIdSelector(state);
+  const completedTasks = completeTasksByAssigneeCssIdSelector(state);
 
   return {
     success,
     organizations: state.ui.organizations,
-    numNewTasks: newTasksByAssigneeCssIdSelector(state).length,
-    numOnHoldTasks: onHoldTasksByAssigneeCssIdSelector(state).length,
-    combinedTasks: [...newTasksByAssigneeCssIdSelector(state),
-      ...onHoldTasksByAssigneeCssIdSelector(state),
-      ...completeTasksByAssigneeCssIdSelector(state)]
+    numNewTasks: newTasks.length,
+    numOnHoldTasks: onHoldTasks.length,
+    combinedTasks: [
+      ...newTasks,
+      ...onHoldTasks,
+      ...completedTasks
+    ]
   };
 };
 
