@@ -432,6 +432,10 @@ describe RequestIssuesUpdate do
             *existing_request_issues.map(&:id)
           )
 
+          expect(request_issues_update.withdrawn_request_issue_ids).to contain_exactly(
+            existing_legacy_opt_in_request_issue_id
+          )
+
           withdrawn_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
           expect(withdrawn_issue.decision_review).to_not be_nil
           expect(withdrawn_issue.contention_removed_at).to_not be_nil

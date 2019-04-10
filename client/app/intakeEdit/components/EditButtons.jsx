@@ -109,9 +109,9 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
     );
 
-    const withdrawDateValid = _.some(
-      addedIssues, (issue) => issue.withdrawalPending !== null
-    ) && validateDate(withdrawalDate);
+    const withdrawDateValid = _.every(
+      addedIssues, (issue) => !issue.withdrawalPending
+    ) || validateDate(withdrawalDate);
 
     const saveDisabled = _.isEqual(
       addedIssues, originalIssues
