@@ -351,15 +351,6 @@ In order to impersonate other user, the user will need to have Global Admin role
 On test/users page, switch to a user that has Global Admin role. `Log in as user` interface
 will show up where you will have to specify User ID and Station ID.
 
-To use intake features as the users, you'll need to toggle two features in a
-rails console `rails c`:
-
-```
-[1] FeatureToggle.enable!(:intakeAma)
-=> true
-[2] FeatureToggle.enable!(:intake)
-=> true
-```
 
 This page also contains links to different parts of the site to make dev-ing faster. Please
 add more links and users as needed.

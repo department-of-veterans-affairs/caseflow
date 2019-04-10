@@ -98,30 +98,25 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :document_id do |object|
-    latest_attorney_case_review(object)&.document_id
+    object.latest_attorney_case_review&.document_id
   end
 
   attribute :attorney_case_review_id do |object|
-    latest_attorney_case_review(object)&.id
+    object.latest_attorney_case_review&.id
   end
 
   attribute :attorney_case_rewrite_details do |object|
     {
-      overtime: latest_attorney_case_review(object)&.overtime,
-      note_from_attorney: latest_attorney_case_review(object)&.note,
-      untimely_evidence: latest_attorney_case_review(object)&.untimely_evidence
+      overtime: object.latest_attorney_case_review&.overtime,
+      note_from_attorney: object.latest_attorney_case_review&.note,
+      untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
     }
   end
 
   attribute :can_edit_document_id do |object, params|
     AmaDocumentIdPolicy.new(
       user: params[:user],
-      case_review: latest_attorney_case_review(object)
+      case_review: object.latest_attorney_case_review
     ).editable?
-  end
-
-  def self.latest_attorney_case_review(object)
-    @latest_attorney_case_review ||=
-      AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last
   end
 end

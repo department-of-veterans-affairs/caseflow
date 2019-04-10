@@ -6,14 +6,7 @@ feature "Higher Level Review Edit issues" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-
     Timecop.freeze(post_ama_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:veteran) do
@@ -1121,9 +1114,17 @@ feature "Higher Level Review Edit issues" do
 
     feature "with cleared end product" do
       let!(:cleared_end_product) do
+        Generators::EndProduct.build(
+          veteran_file_number: veteran.file_number,
+          bgs_attrs: { status_type_code: "CLR" }
+        )
+      end
+
+      let!(:cleared_end_product_establishment) do
         create(:end_product_establishment,
                source: higher_level_review,
-               synced_status: "CLR")
+               synced_status: "CLR",
+               reference_id: cleared_end_product.claim_id)
       end
 
       scenario "prevents edits on eps that have cleared" do
