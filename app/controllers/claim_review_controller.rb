@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ClaimReviewController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
+  before_action :verify_access, :react_routed, :set_application
 
   def edit
     # force sync on initial edit call so that we have latest EP status.
@@ -11,7 +11,7 @@ class ClaimReviewController < ApplicationController
     # we call the serialization method here before the view does so we can rescue any data errors
     claim_review.ui_hash
   rescue RequestIssue::MissingDecisionDate => _err
-    flash[:error] = "One or more ratings may be locked on this Claim."
+    flash[:error] = "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours."
     render "errors/500", layout: "application", status: :unprocessable_entity
   end
 
@@ -53,10 +53,6 @@ class ClaimReviewController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Mail Intake", "Admin Intake")
-  end
-
-  def verify_feature_enabled
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
   end
 
   def render_success

@@ -120,9 +120,6 @@ module IntakeHelpers
   end
 
   def setup_intake_flags
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-
     Timecop.freeze(Time.zone.today)
 
     # skip the sync call since all edit requests require resyncing
@@ -130,10 +127,6 @@ module IntakeHelpers
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
 
     User.authenticate!(roles: ["Admin Intake"])
-  end
-
-  def teardown_intake_flags
-    FeatureToggle.disable!(:intakeAma)
   end
 
   def search_page_title
