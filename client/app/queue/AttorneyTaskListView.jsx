@@ -67,7 +67,7 @@ class AttorneyTaskListView extends React.PureComponent {
 
     this.props.loadAppealDocCount(ids);
 
-    ApiUtil.get(`/appeals/${ids}/document_count`,
+    ApiUtil.get(`/appeals/${ids}/document_counts_by_id`,
       requestOptions).then((response) => {
       const resp = JSON.parse(response.text);
 
