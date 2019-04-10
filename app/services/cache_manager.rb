@@ -29,10 +29,6 @@ class CacheManager
     ]
   }.freeze
 
-  def self.rails_cache
-    @rails_cache ||= ActiveSupport::Cache.lookup_store(Rails.configuration.cache_store)
-  end
-
   # NOTE that development and test envs currently do not use the Redis store, so this only applies
   # to production environments (AWS)
   def self.cache_store
@@ -50,13 +46,11 @@ class CacheManager
     key_names = BUCKETS[bucket.to_sym]
     fail NoSuchBucket, bucket unless key_names
 
-    rails_cache = self.class.rails_cache
-
     key_names.each do |key|
       if key.match?(/[\*\[\?]/)
-        rails_cache.delete_matched(key)
+        Rails.cache.delete_matched(key)
       else
-        rails_cache.delete(key)
+        Rails.cache.delete(key)
       end
     end
   end
