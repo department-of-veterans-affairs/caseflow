@@ -55,13 +55,13 @@ class DispositionTask < GenericTask
 
     if params[:status] == Constants.TASK_STATUSES.cancelled
       case payload_values[:disposition]
-      when "cancelled"
+      when Constants.HEARING_DISPOSITION_TYPES.cancelled
         mark_hearing_cancelled
-      when "held"
+      when Constants.HEARING_DISPOSITION_TYPES.held
         mark_hearing_held
-      when "no_show"
+      when Constants.HEARING_DISPOSITION_TYPES.no_show
         mark_hearing_no_show
-      when "postponed"
+      when Constants.HEARING_DISPOSITION_TYPES.postponed
         mark_hearing_postponed(
           instructions: params["instructions"],
           after_disposition_update: payload_values[:after_disposition_update]
@@ -103,13 +103,21 @@ class DispositionTask < GenericTask
     end
 
     if appeal.is_a?(LegacyAppeal)
-      complete_task
+      update!(status: Constants.TASK_STATUSES.completed)
     else
       create_transcription_and_maybe_evidence_submission_window_tasks
     end
   end
 
   private
+
+  def update_hearing_disposition(disposition:)
+    if hearing.is_a?(LegacyHearing)
+      hearing.update_caseflow_and_vacols(disposition: disposition)
+    else
+      hearing.update(disposition: disposition)
+    end
+  end
 
   def check_parent_type
     if parent.type != HearingTask.name
@@ -131,20 +139,30 @@ class DispositionTask < GenericTask
     self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
   end
 
-  def mark_hearing_cancelled() end
+  def mark_hearing_cancelled
+    multi_transaction do
+      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+      cancel!
+    end
+  end
 
-  def mark_hearing_held() end
+  def mark_hearing_held
+    multi_transaction do
+      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+      hold!
+    end
+  end
 
-  def mark_hearing_no_show() end
+  def mark_hearing_no_show
+    multi_transaction do
+      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
+      no_show!
+    end
+  end
 
   def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
     multi_transaction do
-      if hearing.is_a?(LegacyHearing)
-        hearing.update_caseflow_and_vacols(disposition: "postponed")
-      else
-        hearing.update(disposition: "postponed")
-      end
-
+      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
       reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
     end
   end
@@ -183,10 +201,6 @@ class DispositionTask < GenericTask
         parent: schedule_task
       )
     end
-  end
-
-  def complete_task
-    update!(status: Constants.TASK_STATUSES.completed)
   end
 
   def create_transcription_and_maybe_evidence_submission_window_tasks
