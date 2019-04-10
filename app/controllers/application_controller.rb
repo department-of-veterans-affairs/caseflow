@@ -202,20 +202,21 @@ class ApplicationController < ApplicationBaseController
   end
 
   # :nocov:
-  def can_assign_task?
-    if current_user.attorney_in_vacols?
-      # This feature toggle control access of attorneys to create admin actions for co-located users
-      feature_enabled?(:attorney_assignment_to_colocated) ||
-        current_user.organizations.pluck(:name).include?(QualityReview.singleton.name)
-    else
-      true
-    end
-  end
-
-  def verify_task_assignment_access
-    redirect_to("/unauthorized") unless can_assign_task?
-  end
-  # :nocov:
+  # def can_assign_task?
+  #   # if current_user.attorney_in_vacols?
+  #   #   # This feature toggle control access of attorneys to create admin actions for co-located users
+  #   #   feature_enabled?(:attorney_assignment_to_colocated) ||
+  #   #     current_user.organizations.pluck(:name).include?(QualityReview.singleton.name)
+  #   # else
+  #   #   true
+  #   # end
+  #   true
+  # end
+  #
+  # def verify_task_assignment_access
+  #   redirect_to("/unauthorized") unless can_assign_task?
+  # end
+  # # :nocov:
 
   def invalid_record_error(record)
     render json: {

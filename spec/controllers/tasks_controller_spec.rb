@@ -335,17 +335,12 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    context "Co-located admin action" do
+    context "Co-located admin action", focus: true do
       before do
         u = FactoryBot.create(:user)
         OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
-
-        FeatureToggle.enable!(:attorney_assignment_to_colocated)
       end
 
-      after do
-        FeatureToggle.disable!(:attorney_assignment_to_colocated)
-      end
 
       context "when current user is an attorney" do
         let(:role) { :attorney_role }
@@ -657,7 +652,7 @@ RSpec.describe TasksController, type: :controller do
         expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
         expect(task["attributes"]["user_id"]).to eq(attorney_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
-        expect(task["attributes"]["available_actions"].size).to eq 2
+        expect(task["attributes"]["available_actions"].size).to eq 3
       end
 
       context "when appeal is not assigned to current user" do

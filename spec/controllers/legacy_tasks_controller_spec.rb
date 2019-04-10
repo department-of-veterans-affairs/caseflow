@@ -75,9 +75,9 @@ RSpec.describe LegacyTasksController, type: :controller do
         }
       end
 
-      it "should not be successful" do
+      it "should be successful", focus: true do
         post :create, params: { tasks: params }
-        expect(response.status).to eq 302
+        expect(response.status).to eq 200
       end
     end
 
