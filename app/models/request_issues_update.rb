@@ -119,7 +119,7 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def withdrawn_issue_data
-    @withdrawn_issue_data ||= @request_issues_data.select { |ri| !ri[:withdrawal_date].nil? && ri[:request_issue_id] }
+    @request_issues_data.select { |ri| !ri[:withdrawal_date].nil? && ri[:request_issue_id] }
   end
 
   def calculate_before_issues
@@ -159,6 +159,8 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def process_withdrawn_issues!
+    return if withdrawn_issues.empty?
+
     withdrawal_date = withdrawn_issue_data.first[:withdrawal_date]
     withdrawn_issues.each { |ri| ri.withdraw!(withdrawal_date) }
   end

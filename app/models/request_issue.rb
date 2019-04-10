@@ -410,7 +410,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def withdraw!(withdrawal_date)
-    close!(status: :withdrawn, closed_at_value: withdrawal_date)
+    close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
   def remove!
