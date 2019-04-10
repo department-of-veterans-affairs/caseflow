@@ -174,7 +174,7 @@ export const batchHearingBadgeRequests = (props, tasks) => {
     props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
   }).
     catch(() => {
-      console.log('there was an error fetching the hearing badge');
+      // TODO: add error handling
     });
 
 };

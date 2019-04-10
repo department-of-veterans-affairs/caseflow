@@ -65,47 +65,25 @@ class AppealsController < ApplicationController
     log_hearings_request
     render json: { most_recently_held_hearings_by_id: build_most_recently_held_hearings_hash }
   end
-  # def hearings
-  #   log_hearings_request
 
-  #   most_recently_held_hearing = appeal.hearings
-  #     .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
-  #     .max_by(&:scheduled_for)
-
-  #   render json:
-  #     if most_recently_held_hearing
-  #       {
-  #         held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
-  #         viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
-  #         date: most_recently_held_hearing.scheduled_for,
-  #         type: most_recently_held_hearing.readable_request_type,
-  #         external_id: most_recently_held_hearing.external_id,
-  #         disposition: most_recently_held_hearing.disposition
-  #       }
-  #     else
-  #       {}
-  #     end
-  # end
   def build_most_recently_held_hearings_hash
     appeal_ids = params[:appeal_ids].split(",")
     most_recently_held_hearings_by_id = {}
     appeal_ids.each do |appeal_id|
-      
       most_recently_held_hearing = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
         .hearings
         .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
         .max_by(&:scheduled_for)
-        if most_recently_held_hearing
-          most_recently_held_hearings_by_id[appeal_id] = {
-            held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
-            viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
-            date: most_recently_held_hearing.scheduled_for,
-            type: most_recently_held_hearing.readable_request_type,
-            external_id: most_recently_held_hearing.external_id,
-            disposition: most_recently_held_hearing.disposition
-          }
-        end
-        
+      next unless most_recently_held_hearing
+
+      most_recently_held_hearings_by_id[appeal_id] = {
+        held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
+        viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
+        date: most_recently_held_hearing.scheduled_for,
+        type: most_recently_held_hearing.readable_request_type,
+        external_id: most_recently_held_hearing.external_id,
+        disposition: most_recently_held_hearing.disposition
+      }
     end
     most_recently_held_hearings_by_id
   end

@@ -3,7 +3,6 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import Tooltip from '../../components/Tooltip';
 import { COLORS } from '../../constants/AppConstants';
