@@ -21,6 +21,8 @@ import { judgeDecisionReviewTasksSelector } from './selectors';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
+import { setMostRecentlyHeldHearingForAppeals } from './QueueActions';
+import ApiUtil from '../util/ApiUtil';
 
 const containerStyles = css({
   position: 'relative'
@@ -36,6 +38,13 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
+    const ids = this.props.tasks.map((task) => task.externalAppealId);
+
+    ApiUtil.get(`/appeals/${ids}/hearings_by_id`).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      this.props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
+    });
   };
 
   render = () => {
@@ -102,7 +111,8 @@ const mapDispatchToProps = (dispatch) => (
     clearCaseSelectSearch,
     resetErrorMessages,
     resetSuccessMessages,
-    resetSaveState
+    resetSaveState,
+    setMostRecentlyHeldHearingForAppeals
   }, dispatch)
 );
 

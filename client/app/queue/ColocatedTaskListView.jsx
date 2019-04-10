@@ -23,8 +23,8 @@ import {
 
 import Alert from '../components/Alert';
 import TabWindow from '../components/TabWindow';
-import { batchDocCountRequests } from '../util/ApiUtil';
-import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
+import ApiUtil, { batchDocCountRequests } from '../util/ApiUtil';
+import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount, setMostRecentlyHeldHearingForAppeals } from './QueueActions';
 
 const containerStyles = css({
   position: 'relative'
@@ -35,6 +35,14 @@ class ColocatedTaskListView extends React.PureComponent {
 
     this.props.clearCaseSelectSearch();
     batchDocCountRequests(this.props, this.props.combinedTasks);
+    const ids = this.props.combinedTasks.map((task) => task.externalAppealId);
+
+    ApiUtil.get(`/appeals/${ids}/hearings_by_id`).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      this.props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
+    });
+
   };
 
   componentWillUnmount = () => this.props.hideSuccessMessage();
@@ -95,7 +103,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   hideSuccessMessage,
   loadAppealDocCount,
   setAppealDocCount,
-  errorFetchingDocumentCount
+  errorFetchingDocumentCount,
+  setMostRecentlyHeldHearingForAppeals
 }, dispatch);
 
 export default (connect(mapStateToProps, mapDispatchToProps)(ColocatedTaskListView));
