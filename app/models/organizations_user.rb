@@ -14,7 +14,7 @@ class OrganizationsUser < ApplicationRecord
   end
 
   def self.remove_admin_rights_from_user(user, organization)
-    existing_record(user, organization).update!(admin: false)
+    existing_record(user, organization)&.update!(admin: false)
   end
 
   def self.remove_user_from_organization(user, organization)
