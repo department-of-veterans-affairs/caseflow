@@ -45,7 +45,7 @@ class AppealsController < ApplicationController
       document_counts_by_id_hash[appeal_id] =
         Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
         .number_of_documents
-    handle_documents_error
+      handle_documents_error
     end
     document_counts_by_id_hash
   end
