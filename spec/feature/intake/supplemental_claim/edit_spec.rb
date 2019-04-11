@@ -628,6 +628,9 @@ feature "Supplemental Claim Edit issues" do
           "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
         )
 
+        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been withdrawn.")
+        expect(page).to have_content("Withdrawn\nPTSD denied")
+
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
 
         expect(withdrawn_issue).to_not be_nil

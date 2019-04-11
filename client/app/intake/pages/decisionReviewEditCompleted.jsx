@@ -9,15 +9,23 @@ import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 
-const leadMessageList = ({ veteran, formName, requestIssues }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
+  // const withdrawnRequestIssues = requestIssues.filter((ri) => ri.withdrawal_date);
 
-  const editMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
+  const editMessage = () => {
+    if (requestIssues.length === 0) {
+      return 'has been removed.';
+    } else if (_.every(addedIssues, (ri) => ri.withdrawalPending)) {
+      return 'has been withdrawn.';
+    }
 
-  const removalMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) ${formName} has been removed.`];
+    return 'has been processed.';
 
-  const leadMessageArr = requestIssues.length === 0 ? removalMessage : editMessage;
+  };
+
+  const leadMessageArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} ${editMessage()}`];
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
@@ -115,6 +123,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       formType,
       issuesBefore,
       issuesAfter,
+      addedIssues,
       informalConference,
       redirectTo
     } = this.props;
@@ -132,6 +141,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
+    const withdrawnRequestIssues = addedIssues.filter((ri) => ri.withdrawalPending);
 
     return <div>
       <StatusMessage
@@ -141,7 +151,8 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
           leadMessageList({
             veteran,
             formName: selectedForm.name,
-            requestIssues: issuesAfter
+            requestIssues: issuesAfter,
+            addedIssues
           })
         }
         checklist={
@@ -155,6 +166,17 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
         wrapInAppSegment={false}
       />
       { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
+      { withdrawnRequestIssues.length > 0 && <Fragment>
+        <ul className="cf-issue-checklist cf-left-padding">
+          <li>
+            <strong>Withdrawn</strong>
+            {withdrawnRequestIssues.map((ri, i) =>
+              <p key={`withdrawn-issue-${i}`}>
+                {ri.contentionText}
+              </p>)}
+          </li>
+        </ul>
+      </Fragment> }
     </div>
     ;
   }
@@ -166,6 +188,7 @@ export default connect(
     veteran: state.veteran,
     issuesBefore: state.issuesBefore,
     issuesAfter: state.issuesAfter,
+    addedIssues: state.addedIssues,
     informalConference: state.informalConference,
     redirectTo: state.redirectTo
   })

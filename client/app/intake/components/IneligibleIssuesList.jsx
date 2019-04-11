@@ -14,7 +14,7 @@ const ineligibilityCopy = (issue) => {
 export default class IneligibleIssuesList extends React.PureComponent {
   render = () =>
     <Fragment>
-      <ul className="cf-ineligible-checklist cf-left-padding">
+      <ul className="cf-issue-checklist cf-left-padding">
         <li>
           <strong>Ineligible</strong>
           {this.props.issues.map((ri, i) =>
