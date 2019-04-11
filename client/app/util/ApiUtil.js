@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import request from 'superagent';
 import nocache from 'superagent-no-cache';
 import ReactOnRails from 'react-on-rails';
@@ -8,6 +9,7 @@ import { mapTasksToExternalIds } from '../queue/utils';
 
 export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
 export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
+export const BATCH_REQUEST_SIZE = 5;
 
 const defaultTimeoutSettings = {
   response: STANDARD_API_TIMEOUT_MILLISECONDS,
@@ -147,36 +149,47 @@ export const batchDocCountRequests = (props, tasks) => {
 
   const requestOptions = {
     withCredentials: true,
-    timeout: { response: 5 * 60 * 1000 }
+    timeout: { response: RESPONSE_COMPLETE_LIMIT_MILLISECONDS }
   };
 
   const ids = mapTasksToExternalIds(tasks);
 
   props.loadAppealDocCount(ids);
 
-  return ApiUtil.get(`/appeals/${ids}/document_counts_by_id`,
-    requestOptions).then((response) => {
-    const resp = JSON.parse(response.text);
+  let numCallsToMake = ids.length / BATCH_REQUEST_SIZE;
 
-    props.setAppealDocCount(resp.document_counts_by_id);
-  }, () => {
-    props.errorFetchingDocumentCount(ids);
-  });
+  while (numCallsToMake > 0) {
+    ApiUtil.get(`/appeals/${ids}/document_counts_by_id`,
+      requestOptions).then((response) => {
+      const resp = JSON.parse(response.text);
+
+      props.setAppealDocCount(resp.document_counts_by_id);
+
+    }, () => {
+      props.errorFetchingDocumentCount(ids);
+    });
+    numCallsToMake -= 1;
+  }
+
 };
 
 export const batchHearingBadgeRequests = (props, tasks) => {
 
   const ids = mapTasksToExternalIds(tasks);
+  let numCallsToMake = ids.length / BATCH_REQUEST_SIZE;
 
-  return ApiUtil.get(`/appeals/${ids}/hearings_by_id`).then((response) => {
-    const resp = JSON.parse(response.text);
+  while (numCallsToMake > 0) {
 
-    props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
-  }).
-    catch(() => {
-      throw new Error('error getting the hearings by id');
-    });
+    ApiUtil.get(`/appeals/${ids}/hearings_by_id`).then((response) => {
+      const resp = JSON.parse(response.text);
 
+      props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
+    }).
+      catch(() => {
+        throw new Error('error getting the hearings by id', ids);
+      });
+    numCallsToMake -= 1;
+  }
 };
 
 export default ApiUtil;
