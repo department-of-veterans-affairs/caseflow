@@ -209,6 +209,20 @@ describe Appeal do
     end
   end
 
+  context "#latest_attorney_case_review" do
+    let(:appeal) { create(:appeal) }
+    let(:task1) { create(:ama_attorney_task, appeal: appeal) }
+    let(:task2) { create(:ama_attorney_task, appeal: appeal) }
+    let!(:attorney_case_review1) { create(:attorney_case_review, task: task1, created_at: 2.days.ago) }
+    let!(:attorney_case_review2) { create(:attorney_case_review, task: task2, created_at: 1.day.ago) }
+
+    subject { appeal.latest_attorney_case_review }
+
+    it "returns the latest record" do
+      expect(subject).to eq attorney_case_review2
+    end
+  end
+
   context "#contestable_issues" do
     subject { appeal.contestable_issues }
 

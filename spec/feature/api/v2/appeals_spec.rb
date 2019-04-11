@@ -442,12 +442,6 @@ describe "Appeals API v2", type: :request do
       end
 
       allow_any_instance_of(RequestIssue).to receive(:decision_or_promulgation_date).and_return(rating_promulgated_date)
-
-      FeatureToggle.enable!(:api_appeal_status_v3)
-    end
-
-    after do
-      FeatureToggle.disable!(:api_appeal_status_v3)
     end
 
     it "returns list of hlr, sc, appeal for veteran with SSN" do
@@ -599,12 +593,6 @@ describe "Appeals API v2", type: :request do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
         veteran_file_number
       end
-
-      FeatureToggle.enable!(:api_appeal_status_v3)
-    end
-
-    after do
-      FeatureToggle.disable!(:api_appeal_status_v3)
     end
 
     it "will filter out claims and appeal because no request issues" do
@@ -681,12 +669,6 @@ describe "Appeals API v2", type: :request do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
         veteran_file_number
       end
-
-      FeatureToggle.enable!(:api_appeal_status_v3)
-    end
-
-    after do
-      FeatureToggle.disable!(:api_appeal_status_v3)
     end
 
     it "will have HLR and not remanded SC" do

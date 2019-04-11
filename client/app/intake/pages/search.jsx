@@ -130,7 +130,7 @@ class Search extends React.PureComponent {
       ramp_refiling_already_processed: {
         title: 'Selection Form already processed in Caseflow',
         body: 'Caseflow does not currently support more than one Selection Form for a Veteran. ' +
-         'Please contact Caseflow Support if you need additional assistance.'
+         'Please contact your management team if you need additional assistance.'
       },
       default: {
         title: 'Something went wrong'

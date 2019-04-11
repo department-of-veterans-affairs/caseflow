@@ -6,13 +6,7 @@ feature "Nonrating Request Issue Modal" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
     Timecop.freeze(post_ama_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:veteran_file_number) { "123412345" }

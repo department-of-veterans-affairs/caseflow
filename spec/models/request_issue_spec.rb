@@ -1184,6 +1184,39 @@ describe RequestIssue do
     end
   end
 
+  context "#withdraw!" do
+    let(:withdraw_date) { 2.days.ago.to_date }
+    subject { rating_request_issue.withdraw!(withdraw_date) }
+
+    context "if the request issue is already closed" do
+      let(:closed_at) { 1.day.ago }
+      let(:closed_status) { "removed" }
+
+      it "does not reclose the issue" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(closed_at)
+        expect(rating_request_issue.closed_status).to eq(closed_status)
+      end
+    end
+
+    context "when there is a legacy issue optin" do
+      let(:vacols_id) { vacols_issue.id }
+      let(:vacols_sequence_id) { vacols_issue.isskey }
+      let(:vacols_issue) { create(:case_issue, :disposition_remanded, isskey: 1) }
+      let(:vacols_case) do
+        create(:case, case_issues: [vacols_issue])
+      end
+      let!(:legacy_issue_optin) { create(:legacy_issue_optin, request_issue: rating_request_issue) }
+
+      it "withdraws issue and does not flag the legacy issue optin for rollback" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(withdraw_date.to_datetime.utc)
+        expect(rating_request_issue.closed_status).to eq("withdrawn")
+        expect(legacy_issue_optin.reload.rollback_created_at).to be_nil
+      end
+    end
+  end
+
   context "#sync_decision_issues!" do
     let(:request_issue) { rating_request_issue.tap(&:submit_for_processing!) }
     subject { request_issue.sync_decision_issues! }
