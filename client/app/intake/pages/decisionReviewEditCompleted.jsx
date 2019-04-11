@@ -16,16 +16,17 @@ const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
 
   const editMessage = () => {
     if (requestIssues.length === 0) {
-      return 'has been removed.';
+      return 'removed';
     } else if (_.every(addedIssues, (ri) => ri.withdrawalPending)) {
-      return 'has been withdrawn.';
+      return 'withdrawn';
     }
 
-    return 'has been processed.';
-
+    return 'processed';
   };
 
-  const leadMessageArr = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} ${editMessage()}`];
+  const leadMessageArr = [
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been ${editMessage()}.`
+  ];
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
