@@ -72,8 +72,8 @@ class AppealsController < ApplicationController
     most_recently_held_hearings_by_id_hash = {}
     params[:appeal_ids].split(",").each do |appeal_id|
       begin
-      most_recently_held_hearings_by_id_hash[appeal_id] = HearingRepository
-        .build_hearing_object_for_appeal(most_recently_held_hearing(appeal_id))
+        most_recently_held_hearings_by_id_hash[appeal_id] = HearingRepository
+          .build_hearing_object_for_appeal(most_recently_held_hearing(appeal_id))
       rescue StandardError => error
         most_recently_held_hearings_by_id_hash[appeal_id] = error
         next
