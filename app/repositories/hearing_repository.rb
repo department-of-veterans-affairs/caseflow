@@ -11,7 +11,7 @@ class HearingRepository
                                       service: :vacols,
                                       name: "fetch_hearings_for_judge") do
         VACOLS::CaseHearing.hearings_for_judge(css_id) +
-          VACOLS::TravelBoardSchedule.hearings_for_judge(css_id)
+          VACOLS::TravelBoardSchedule.hearings_for_judge_before_hearing_prep_cutoff_date(css_id)
       end
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
 
