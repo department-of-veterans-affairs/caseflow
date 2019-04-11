@@ -84,18 +84,14 @@ class GenericTask < Task
     end
 
     def create_child_task(parent, current_user, params)
-      transaction do
-        parent.update!(status: Constants.TASK_STATUSES.on_hold)
-
-        Task.create!(
-          type: name,
-          appeal: parent.appeal,
-          assigned_by_id: child_assigned_by_id(parent, current_user),
-          parent_id: parent.id,
-          assigned_to: child_task_assignee(parent, params),
-          instructions: params[:instructions]
-        )
-      end
+      Task.create!(
+        type: name,
+        appeal: parent.appeal,
+        assigned_by_id: child_assigned_by_id(parent, current_user),
+        parent_id: parent.id,
+        assigned_to: child_task_assignee(parent, params),
+        instructions: params[:instructions]
+      )
     end
   end
 end
