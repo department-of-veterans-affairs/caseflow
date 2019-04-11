@@ -17,6 +17,10 @@ DEVELOPMENT_JUDGE_TEAMS = {
 }.freeze
 
 require "database_cleaner"
+
+# Explicitly include mail_task so we can create instances of MailTask's subclasses that are in the same file.
+require "mail_task"
+
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
@@ -62,7 +66,7 @@ class SeedDB
     create_field_vso_and_users
     create_org_queue_users
     create_qr_user
-    create_aod_user
+    create_aod_user_and_tasks
     create_privacy_user
     create_lit_support_user
     create_mail_team_user
@@ -233,9 +237,21 @@ class SeedDB
     create_task_at_quality_review(qr_user, "Huilen Concepcion", "Ilva Urrutia")
   end
 
-  def create_aod_user
+  def create_aod_user_and_tasks
     u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
     OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
+
+    root_task = FactoryBot.create(:root_task)
+    mail_task = ::AodMotionMailTask.create!(
+      appeal: root_task.appeal,
+      parent_id: root_task.id,
+      assigned_to: MailTeam.singleton
+    )
+    ::AodMotionMailTask.create!(
+      appeal: root_task.appeal,
+      parent_id: mail_task.id,
+      assigned_to: AodTeam.singleton
+    )
   end
 
   def create_privacy_user

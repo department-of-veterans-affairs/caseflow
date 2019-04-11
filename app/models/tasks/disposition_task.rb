@@ -93,7 +93,7 @@ class DispositionTask < GenericTask
 
     no_show_hearing_task.update!(
       status: Constants.TASK_STATUSES.on_hold,
-      on_hold_duration: 25.days
+      on_hold_duration: 25
     )
   end
 

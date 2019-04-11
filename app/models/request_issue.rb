@@ -195,6 +195,7 @@ class RequestIssue < ApplicationRecord
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
+        nonrating_issue_category: data[:issue_category],
         benefit_type: data[:benefit_type],
         notes: data[:notes],
         is_unidentified: data[:is_unidentified],
@@ -571,7 +572,9 @@ class RequestIssue < ApplicationRecord
         disposition: contention_disposition.disposition,
         description: "#{contention_disposition.disposition}: #{description}",
         profile_date: end_product_establishment_associated_rating_profile_date,
+        rating_profile_date: end_product_establishment_associated_rating_profile_date,
         promulgation_date: end_product_establishment_associated_rating_promulgation_date,
+        rating_promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
@@ -626,8 +629,10 @@ class RequestIssue < ApplicationRecord
       disposition: contention_disposition.disposition,
       participant_id: rating_issue.participant_id,
       promulgation_date: rating_issue.promulgation_date,
+      rating_promulgation_date: rating_issue.promulgation_date,
       decision_text: rating_issue.decision_text,
       profile_date: rating_issue.profile_date,
+      rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
       end_product_last_action_date: end_product_establishment.result.last_action_date
