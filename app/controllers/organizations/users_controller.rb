@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Organizations::UsersController < OrganizationsController
+  # We are skipping the verification step when requesting json in order to allow the list of
+  # hearing admin users to be sent to the front-end when enabling the bulk assign task feature
   skip_before_action :verify_organization_access, only: [:index], if: :requesting_json
 
   def index
