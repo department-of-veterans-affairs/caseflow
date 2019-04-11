@@ -12,7 +12,6 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
-  // const withdrawnRequestIssues = requestIssues.filter((ri) => ri.withdrawal_date);
 
   const editMessage = () => {
     if (requestIssues.length === 0) {
