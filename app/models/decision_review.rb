@@ -226,7 +226,7 @@ class DecisionReview < ApplicationRecord
       rsc.create_remand_issues!
       rsc.create_decision_review_task_if_required!
 
-      delay = rsc.receipt_date.future? ? rsc.receipt_date + 7.hours : 0
+      delay = rsc.receipt_date.future? ? (rsc.receipt_date + 7.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
 
       unless rsc.processed? || rsc.receipt_date.future?

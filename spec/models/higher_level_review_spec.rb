@@ -324,7 +324,7 @@ describe HigherLevelReview do
 
         context "when decision date is in the future" do
           let(:caseflow_decision_date) { 1.day.from_now }
-          it "creates a DTA Supplemental claim, but does not start processing until the claim_date" do
+          it "creates a DTA Supplemental claim, but does not start processing until hours after the claim_date" do
             subject
             dta_sc = SupplementalClaim.find_by(
               receipt_date: caseflow_decision_date,
@@ -332,7 +332,7 @@ describe HigherLevelReview do
             )
             expect(dta_sc).to_not be_nil
             expect(dta_sc.establishment_submitted_at).to eq(
-              caseflow_decision_date.to_date.to_datetime - 3.hours + 1.minute
+              caseflow_decision_date.to_date + 4.hours + 1.minute
             )
             expect do
               subject
