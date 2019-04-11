@@ -55,7 +55,7 @@ describe Organizations::UsersController, type: :controller do
   end
 
   describe "PATCH /organizations/:org_url/users/:user_id" do
-    subject { patch(:update, params: params, format: :json) }
+    subject { patch(:update, params: params, as: :json) }
 
     let(:org) { FactoryBot.create(:organization) }
     let(:user) { FactoryBot.create(:user) }
@@ -91,7 +91,7 @@ describe Organizations::UsersController, type: :controller do
       let(:params) { { organization_url: org.url, id: user.id, admin: admin_flag } }
 
       context "when the admin flag is true" do
-        let(:admin_flag) { "true" }
+        let(:admin_flag) { true }
 
         context "when the target user is not a member of the organization" do
           it "adds the user to the organization and makes them an admin" do
@@ -150,7 +150,7 @@ describe Organizations::UsersController, type: :controller do
       end
 
       context "when the admin flag is false" do
-        let(:admin_flag) { "false" }
+        let(:admin_flag) { false }
 
         context "when the target user is not a member of the organization" do
           it "does not change the admin rights of the user or their membership in the organization" do
