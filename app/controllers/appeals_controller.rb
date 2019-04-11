@@ -39,9 +39,8 @@ class AppealsController < ApplicationController
   end
 
   def build_document_counts_hash
-    appeal_ids = params[:appeal_ids].split(",")
     document_counts_by_id_hash = {}
-    appeal_ids.each do |appeal_id|
+    params[:appeal_ids].split(",").each do |appeal_id|
       document_counts_by_id_hash[appeal_id] =
         Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
         .number_of_documents
@@ -71,12 +70,10 @@ class AppealsController < ApplicationController
   end
 
   def build_most_recently_held_hearings_hash
-    appeal_ids = params[:appeal_ids].split(",")
     most_recently_held_hearings_by_id_hash = {}
-    appeal_ids.each do |appeal_id|
-      build_hearing_object(appeal_id,
-                           most_recently_held_hearings_by_id_hash,
-                           most_recently_held_hearing(appeal_id))
+    params[:appeal_ids].split(",").each do |appeal_id|
+      most_recently_held_hearings_by_id_hash[appeal_id] = HearingRepository
+      .build_hearing_object_for_appeal(most_recently_held_hearing(appeal_id))
     end
     most_recently_held_hearings_by_id_hash
   end
@@ -89,11 +86,6 @@ class AppealsController < ApplicationController
         .max_by(&:scheduled_for)
   end
 
-  def build_hearing_object(appeal_id, hash, most_recently_held_hearing_for_appeal)
-    hash[appeal_id] = HearingRepository
-      .build_hearing_object_for_appeal(most_recently_held_hearing_for_appeal)
-    @build_hearing_object = hash
-  end
 
   # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
