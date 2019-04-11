@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190411010006) do
+ActiveRecord::Schema.define(version: 20190411161143) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -775,10 +775,8 @@ ActiveRecord::Schema.define(version: 20190411010006) do
     t.datetime "created_at", null: false
     t.integer "decision_issue_id"
     t.boolean "post_aoj"
-    t.bigint "request_issue_id"
     t.datetime "updated_at", null: false
     t.index ["decision_issue_id"], name: "index_remand_reasons_on_decision_issue_id"
-    t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
   end
 
   create_table "request_decision_issues", force: :cascade, comment: "Join table for the has and belongs to many to many relationship between request issues and decision issues." do |t|
