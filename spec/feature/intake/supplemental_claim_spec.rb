@@ -6,18 +6,11 @@ feature "Supplemental Claim Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-
     Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
@@ -59,11 +52,12 @@ feature "Supplemental Claim Intake" do
   end
 
   let(:profile_date) { (receipt_date - 15.days).to_datetime }
+  let(:promulgation_date) { receipt_date - 5.days }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -352,7 +346,7 @@ feature "Supplemental Claim Intake" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      decision_date: nil,
+      decision_date: promulgation_date,
       rating_issue_associated_at: Time.zone.now
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(

@@ -51,7 +51,7 @@ FactoryBot.define do
       status { Constants.TASK_STATUSES.on_hold }
     end
 
-    factory :generic_task do
+    factory :generic_task, class: GenericTask do
       type { GenericTask.name }
       appeal { create(:appeal) }
     end
@@ -99,6 +99,12 @@ FactoryBot.define do
     factory :disposition_task, class: DispositionTask do
       type { DispositionTask.name }
       assigned_to { Bva.singleton }
+      appeal { create(:appeal) }
+    end
+
+    factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do
+      type { ChangeHearingDispositionTask.name }
+      assigned_to { HearingAdmin.singleton }
       appeal { create(:appeal) }
     end
 

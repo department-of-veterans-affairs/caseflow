@@ -3,7 +3,6 @@
 class AppealsController < ApplicationController
   before_action :react_routed
   before_action :set_application, only: [:document_count]
-  before_action :verify_bgs_sensitivity, only: [:show]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
 
@@ -76,11 +75,9 @@ class AppealsController < ApplicationController
   # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran
-    render json: { veteran:
-      ActiveModelSerializers::SerializableResource.new(
-        appeal,
-        serializer: ::WorkQueue::VeteranSerializer
-      ).as_json[:data][:attributes] }
+    render json: {
+      veteran: ::WorkQueue::VeteranSerializer.new(appeal).serializable_hash[:data][:attributes]
+    }
   end
 
   def show
@@ -88,11 +85,15 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        id = params[:appeal_id]
-        MetricsService.record("Get appeal information for ID #{id}",
-                              service: :queue,
-                              name: "AppealsController.show") do
-          render json: { appeal: json_appeals([appeal])[:data][0] }
+        if BGSService.new.can_access?(appeal.veteran_file_number)
+          id = params[:appeal_id]
+          MetricsService.record("Get appeal information for ID #{id}",
+                                service: :queue,
+                                name: "AppealsController.show") do
+            render json: { appeal: json_appeals(appeal)[:data] }
+          end
+        else
+          render(Caseflow::Error::ActionForbiddenError.new.serialize_response)
         end
       end
     end
@@ -154,15 +155,12 @@ class AppealsController < ApplicationController
     RequestStore.store[:application] = "queue"
   end
 
-  def verify_bgs_sensitivity
-    fail(ActionForbiddenError) unless BGSService.new.can_access?(appeal.veteran_file_number)
-  end
-
-  def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      user: current_user
-    ).as_json
+  def json_appeals(appeal)
+    if appeal.is_a?(Appeal)
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    elsif appeal.is_a?(LegacyAppeal)
+      WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    end
   end
 
   def review_removed_message

@@ -200,13 +200,11 @@ class DecisionIssue < ApplicationRecord
     latest_ep = decision_review.veteran
       .find_latest_end_product_by_claimant(decision_review.claimants.first)
 
-    if latest_ep.nil? || latest_ep.payee_code.nil?
-      # mark appeal as failed
-      decision_review.update_error!("DTA SC creation failed")
-      fail AppealDTAPayeeCodeError, decision_review.id
-    end
+    latest_ep&.payee_code
+  end
 
-    latest_ep.payee_code
+  def dta_payee_code
+    decision_review.payee_code || prior_payee_code || decision_review.claimants.first.bgs_payee_code
   end
 
   def find_remand_supplemental_claim
@@ -229,16 +227,18 @@ class DecisionIssue < ApplicationRecord
       veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
       receipt_date: approx_decision_date
     )
+    fail AppealDTAPayeeCodeError, decision_review.id unless dta_payee_code
 
     sc.create_claimants!(
       participant_id: decision_review.claimant_participant_id,
-      payee_code: decision_review.payee_code || prior_payee_code
+      payee_code: dta_payee_code
     )
 
     sc
   rescue AppealDTAPayeeCodeError
     # mark SC as failed
     sc.update_error!("No payee code")
+    decision_review.update_error!("DTA SC creation failed")
     raise
   end
 end

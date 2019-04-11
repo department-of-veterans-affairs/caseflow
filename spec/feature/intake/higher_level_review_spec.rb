@@ -6,19 +6,11 @@ feature "Higher-Level Review" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-
     Timecop.freeze(post_ramp_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:intake)
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
@@ -418,7 +410,7 @@ feature "Higher-Level Review" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      decision_date: nil,
+      decision_date: promulgation_date,
       rating_issue_associated_at: Time.zone.now
     )
 

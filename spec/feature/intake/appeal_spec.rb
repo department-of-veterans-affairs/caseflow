@@ -6,15 +6,9 @@ feature "Appeal Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
-    FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
 
     Timecop.freeze(post_ramp_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma, users: [current_user.css_id])
   end
 
   let!(:current_user) do
@@ -53,10 +47,12 @@ feature "Appeal Intake" do
 
   let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
 
+  let(:promulgation_date) { receipt_date - 5.days }
+
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -213,7 +209,7 @@ feature "Appeal Intake" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      decision_date: nil,
+      decision_date: promulgation_date,
       benefit_type: "compensation"
     )
 

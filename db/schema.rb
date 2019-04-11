@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190402192428) do
+ActiveRecord::Schema.define(version: 20190409231234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(version: 20190402192428) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which can be used to navigate to appeals/appeal_uuid. This allows a single ID to determine an appeal whether it is a legacy appeal or an AMA appeal."
     t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.boolean "veteran_is_not_claimant", comment: "Selected by the user during intake, indicates whether the Veteran is the claimant, or if the claimant is someone else such as a dependent. Must be TRUE if Veteran is deceased."
+    t.index ["uuid"], name: "index_appeals_on_uuid"
     t.index ["veteran_file_number"], name: "index_appeals_on_veteran_file_number"
   end
 
@@ -232,6 +233,7 @@ ActiveRecord::Schema.define(version: 20190402192428) do
 
   create_table "decision_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
+    t.string "appeal_type"
     t.datetime "attempted_at"
     t.string "citation_number", null: false
     t.datetime "created_at", null: false
@@ -549,6 +551,7 @@ ActiveRecord::Schema.define(version: 20190402192428) do
     t.date "transcript_sent_date"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness"
+    t.index ["uuid"], name: "index_hearings_on_uuid"
   end
 
   create_table "higher_level_reviews", force: :cascade, comment: "Intake data for Higher Level Reviews." do |t|
@@ -565,6 +568,7 @@ ActiveRecord::Schema.define(version: 20190402192428) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the Higher Level Review. Can be used to link to the claim after it is completed."
     t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Higher Level Review is for."
     t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Higher Level Review form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
+    t.index ["uuid"], name: "index_higher_level_reviews_on_uuid"
     t.index ["veteran_file_number"], name: "index_higher_level_reviews_on_veteran_file_number"
   end
 
@@ -648,6 +652,7 @@ ActiveRecord::Schema.define(version: 20190402192428) do
     t.string "vacols_id", null: false
     t.string "witness"
     t.index ["user_id"], name: "index_legacy_hearings_on_user_id"
+    t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id"
   end
 
   create_table "legacy_issue_optins", force: :cascade, comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review." do |t|
@@ -755,13 +760,10 @@ ActiveRecord::Schema.define(version: 20190402192428) do
   end
 
   create_table "record_synced_by_jobs", force: :cascade do |t|
-    t.datetime "attempted_at"
     t.string "error"
-    t.datetime "last_submitted_at"
     t.datetime "processed_at"
     t.bigint "record_id"
     t.string "record_type"
-    t.datetime "submitted_at"
     t.string "sync_job_name"
     t.index ["record_type", "record_id"], name: "index_record_synced_by_jobs_on_record_type_and_record_id"
   end
@@ -841,6 +843,7 @@ ActiveRecord::Schema.define(version: 20190402192428) do
     t.string "review_type", null: false, comment: "The type of the decision review edited."
     t.datetime "submitted_at", comment: "Timestamp when the request issues update was originally submitted."
     t.bigint "user_id", null: false, comment: "The ID of the user who edited the decision review."
+    t.integer "withdrawn_request_issue_ids", comment: "An array of the request issue IDs that were withdrawn during this request issues update.", array: true
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
@@ -903,6 +906,7 @@ ActiveRecord::Schema.define(version: 20190402192428) do
     t.string "veteran_file_number", null: false, comment: "The file number of the Veteran that the Supplemental Claim is for."
     t.boolean "veteran_is_not_claimant", comment: "Indicates whether the Veteran is the claimant on the Supplemental Claim form, or if the claimant is someone else like a spouse or a child. Must be TRUE if the Veteran is deceased."
     t.index ["decision_review_remanded_type", "decision_review_remanded_id"], name: "index_decision_issues_on_decision_review_remanded"
+    t.index ["uuid"], name: "index_supplemental_claims_on_uuid"
     t.index ["veteran_file_number"], name: "index_supplemental_claims_on_veteran_file_number"
   end
 

@@ -418,7 +418,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           decision_review: previous_review,
-          end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+          contested_rating_issue_reference_id: "123"
         )
       end
       let(:decision_issue) do
@@ -660,12 +660,6 @@ describe EndProductEstablishment do
       ]
     end
 
-    context "returns true if inactive" do
-      let(:synced_status) { EndProduct::INACTIVE_STATUSES.first }
-
-      it { is_expected.to eq(true) }
-    end
-
     context "when matching end product has not yet been established" do
       it "raises EstablishedEndProductNotFound error" do
         expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
@@ -680,6 +674,12 @@ describe EndProductEstablishment do
           veteran_file_number: veteran_file_number,
           bgs_attrs: { status_type_code: status_type_code }
         )
+      end
+
+      context "returns true if inactive" do
+        let(:synced_status) { EndProduct::INACTIVE_STATUSES.first }
+
+        it { is_expected.to eq(true) }
       end
 
       context "when BGS throws an error" do
