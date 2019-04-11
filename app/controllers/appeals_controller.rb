@@ -45,10 +45,7 @@ class AppealsController < ApplicationController
       document_counts_by_id_hash[appeal_id] =
         Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
         .number_of_documents
-    rescue Caseflow::Error::EfolderAccessForbidden => error
-      render(error.serialize_response)
-    rescue StandardError => error
-      handle_non_critical_error("document_counts_by_id", error)
+    handle_documents_error
     end
     document_counts_by_id_hash
   end
@@ -59,6 +56,13 @@ class AppealsController < ApplicationController
       representative_name: appeal.representative_name,
       representative_address: appeal.representative_address
     }
+  end
+
+  def handle_documents_error
+  rescue Caseflow::Error::EfolderAccessForbidden => error
+    render(error.serialize_response)
+  rescue StandardError => error
+    handle_non_critical_error("document_counts_by_id", error)
   end
 
   def hearings_by_id
