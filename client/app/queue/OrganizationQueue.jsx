@@ -27,7 +27,7 @@ const containerStyles = css({
 });
 
 const alertStyling = css({
-  'margin-bottom': '1.5em'
+  'marginBottom': '1.5em'
 });
 
 class OrganizationQueue extends React.PureComponent {

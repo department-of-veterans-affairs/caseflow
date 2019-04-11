@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Organizations::UsersController < OrganizationsController
+  skip_before_action :verify_organization_access, only: [:index], if: :requesting_json
+
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
@@ -34,7 +36,7 @@ class Organizations::UsersController < OrganizationsController
   def verify_organization_access
     return if current_user.administer_org_users?
 
-    # redirect_to "/unauthorized" unless current_user.administered_teams.include?(organization)
+    redirect_to "/unauthorized" unless current_user.administered_teams.include?(organization)
   end
 
   def verify_role_access
@@ -55,5 +57,9 @@ class Organizations::UsersController < OrganizationsController
 
   def json_users(users)
     ::WorkQueue::UserSerializer.new(users, is_collection: true)
+  end
+
+  def requestion_jason
+    request.format.json?
   end
 end
