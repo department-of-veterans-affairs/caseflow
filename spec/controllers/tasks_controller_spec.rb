@@ -335,12 +335,11 @@ RSpec.describe TasksController, type: :controller do
       end
     end
 
-    context "Co-located admin action", focus: true do
+    context "Co-located admin action" do
       before do
         u = FactoryBot.create(:user)
         OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
       end
-
 
       context "when current user is an attorney" do
         let(:role) { :attorney_role }

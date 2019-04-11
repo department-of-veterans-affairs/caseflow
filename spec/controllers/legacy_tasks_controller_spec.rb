@@ -196,7 +196,7 @@ RSpec.describe LegacyTasksController, type: :controller do
         }
       end
 
-      it "fails because the current user is not a judge", focus: true do
+      it "fails because the current user is not a judge" do
         patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
         expect(response.status).to eq(400)
       end
