@@ -75,9 +75,9 @@ RSpec.describe LegacyTasksController, type: :controller do
         }
       end
 
-      it "should be successful", focus: true do
+      it "fails because user is not a judge" do
         post :create, params: { tasks: params }
-        expect(response.status).to eq 200
+        expect(response.status).to eq(400)
       end
     end
 
@@ -196,9 +196,9 @@ RSpec.describe LegacyTasksController, type: :controller do
         }
       end
 
-      it "should not be successful" do
+      it "fails because the current user is not a judge", focus: true do
         patch :update, params: { tasks: params, id: "3615398-2018-04-18" }
-        expect(response.status).to eq 302
+        expect(response.status).to eq(400)
       end
     end
 
