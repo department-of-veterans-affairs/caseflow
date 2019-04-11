@@ -332,7 +332,9 @@ describe HigherLevelReview do
             )
             expect(dta_sc).to_not be_nil
             expect(dta_sc.establishment_submitted_at).to eq(
-              caseflow_decision_date.to_date + 4.hours + 1.minute
+              caseflow_decision_date.to_date +
+              DecisionReview::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours -
+              SupplementalClaim.processing_retry_interval_hours.hours + 1.minute
             )
             expect do
               subject

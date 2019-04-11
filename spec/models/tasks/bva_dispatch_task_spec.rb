@@ -137,7 +137,11 @@ describe BvaDispatchTask do
           end.to_not have_enqueued_job(ProcessDecisionDocumentJob)
 
           decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
-          expect(decision_document.submitted_at).to eq((decision_date.to_date + 1.minute + 4.hours))
+          expect(decision_document.submitted_at).to eq(
+            decision_date.to_date +
+            DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours -
+            DecisionDocument.processing_retry_interval_hours.hours + 1.minute
+          )
         end
       end
     end
