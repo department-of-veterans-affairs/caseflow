@@ -216,6 +216,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
     return {
       ...state,
       docCountsByAppealId: {
+        ...state.docCountsByAppealId,
         ...action.payload.docCountsByAppealId,
         error: null,
         loading: false
@@ -225,7 +226,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
   case ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL:
     return update(state, {
       mostRecentlyHeldHearingsById: {
-        $set: action.payload
+        $set: state.mostRecentlyHeldHearingsById.concat(action.payload)
       }
     });
   case ACTIONS.SET_DECISION_OPTIONS:

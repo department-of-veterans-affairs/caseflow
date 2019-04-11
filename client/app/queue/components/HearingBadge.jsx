@@ -43,6 +43,7 @@ class HearingBadge extends React.PureComponent {
 
   render = () => {
     const { externalId, mostRecentlyHeldHearingsById } = this.props;
+
     const hearing =
     mostRecentlyHeldHearingsById.filter((hearingObj) => hearingObj.appealId === externalId)[0] ||
     this.props.hearing;

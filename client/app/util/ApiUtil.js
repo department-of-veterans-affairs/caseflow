@@ -156,10 +156,9 @@ export const batchDocCountRequests = (props, tasks) => {
 
   props.loadAppealDocCount(ids);
 
-  let numCallsToMake = ids.length / BATCH_REQUEST_SIZE;
+  while (ids.length > 0) {
 
-  while (numCallsToMake > 0) {
-    ApiUtil.get(`/appeals/${ids}/document_counts_by_id`,
+    ApiUtil.get(`/appeals/${ids.splice(0, BATCH_REQUEST_SIZE)}/document_counts_by_id`,
       requestOptions).then((response) => {
       const resp = JSON.parse(response.text);
 
@@ -168,7 +167,6 @@ export const batchDocCountRequests = (props, tasks) => {
     }, () => {
       props.errorFetchingDocumentCount(ids);
     });
-    numCallsToMake -= 1;
   }
 
 };
@@ -176,11 +174,10 @@ export const batchDocCountRequests = (props, tasks) => {
 export const batchHearingBadgeRequests = (props, tasks) => {
 
   const ids = mapTasksToExternalIds(tasks);
-  let numCallsToMake = ids.length / BATCH_REQUEST_SIZE;
 
-  while (numCallsToMake > 0) {
+  while (ids.length > 0) {
 
-    ApiUtil.get(`/appeals/${ids}/hearings_by_id`).then((response) => {
+    ApiUtil.get(`/appeals/${ids.splice(0, BATCH_REQUEST_SIZE)}/hearings_by_id`).then((response) => {
       const resp = JSON.parse(response.text);
 
       props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
@@ -188,7 +185,7 @@ export const batchHearingBadgeRequests = (props, tasks) => {
       catch(() => {
         throw new Error('error getting the hearings by id', ids);
       });
-    numCallsToMake -= 1;
+
   }
 };
 
