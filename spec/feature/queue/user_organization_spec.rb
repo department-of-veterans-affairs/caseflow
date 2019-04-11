@@ -51,7 +51,7 @@ RSpec.feature "User organization" do
 
       expect(page).to have_content("#{organization.name} team")
 
-      find(".Select-control", text: "Select user to add").click
+      find(".Select-control", text: COPY::USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT).click
       expect(page).to have_content(user_with_role.full_name)
       expect(page).to_not have_content(user_without_role.full_name)
 
@@ -64,6 +64,30 @@ RSpec.feature "User organization" do
       expect(page).to_not have_content(user_with_role.full_name)
 
       expect(user_with_role.organizations.count).to eq(0)
+    end
+
+    context "when there are many users in the organization" do
+      let(:other_org_user) { FactoryBot.create(:user) }
+      before do
+        OrganizationsUser.add_user_to_organization(other_org_user, organization)
+      end
+
+      it "allows us to change admin rights for users in the organization" do
+        visit(organization.user_admin_path)
+
+        page.assert_selector("button", text: COPY::USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 1)
+        expect(organization.user_is_admin?(other_org_user)).to eq(false)
+
+        click_on("Make-user-admin-#{other_org_user.id}")
+
+        # Now that both members of the organization are admins we should see this text twice.
+        page.assert_selector("button", text: COPY::USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 2)
+        expect(organization.user_is_admin?(other_org_user)).to eq(true)
+
+        click_on("Remove-admin-rights-#{other_org_user.id}")
+        page.assert_selector("button", text: COPY::USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT, count: 1)
+        expect(organization.user_is_admin?(other_org_user)).to eq(false)
+      end
     end
 
     context "the user is in a judge team" do
