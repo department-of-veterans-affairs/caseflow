@@ -88,7 +88,7 @@ class AppealsController < ApplicationController
   def build_hearing_object(appeal_id, hash, most_recently_held_hearing_for_appeal)
     hash[appeal_id] = HearingRepository
       .build_hearing_object_for_appeal(most_recently_held_hearing_for_appeal)
-      @build_hearing_object = hash
+    @build_hearing_object = hash
   end
 
   # For legacy appeals, veteran address and birth/death dates are

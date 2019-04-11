@@ -19,7 +19,7 @@ class HearingRepository
       load_issues(hearings) if is_fetching_issues
       hearings
     end
-    
+
     def build_hearing_object_for_appeal(hearing)
       {
         held_by: hearing&.judge.present? ? hearing.judge.full_name : "",
@@ -30,7 +30,6 @@ class HearingRepository
         disposition: hearing&.disposition
       }
     end
-
 
     def fetch_hearings_for_parent(hearing_day_id)
       # Implemented by call the array version of this method
