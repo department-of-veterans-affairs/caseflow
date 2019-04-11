@@ -221,6 +221,35 @@ describe DispositionTask do
     end
   end
 
+  describe ".create_change_hearing_disposition_task_and_complete" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:disposition_task) do
+      FactoryBot.create(
+        :disposition_task,
+        parent: hearing_task,
+        appeal: appeal,
+        status: Constants.TASK_STATUSES.in_progress
+      )
+    end
+
+    subject { disposition_task.create_change_hearing_disposition_task_and_complete }
+
+    it "completes the disposition task and creates a new change hearing disposition task" do
+      expect(disposition_task.status).to_not eq Constants.TASK_STATUSES.completed
+      expect(ChangeHearingDispositionTask.count).to eq 0
+
+      subject
+
+      expect(disposition_task.status).to eq Constants.TASK_STATUSES.completed
+      expect(ChangeHearingDispositionTask.count).to eq 1
+      change_hearing_disposition_task = ChangeHearingDispositionTask.first
+      expect(change_hearing_disposition_task.appeal).to eq appeal
+      expect(change_hearing_disposition_task.parent).to eq hearing_task
+    end
+  end
+
   context "disposition updates" do
     let(:disposition) { nil }
     let(:appeal) { FactoryBot.create(:appeal) }

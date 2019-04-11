@@ -15,7 +15,7 @@ class DispositionTask < GenericTask
 
   class << self
     def create_disposition_task!(appeal, parent, hearing)
-      disposition_task = DispositionTask.create!(
+      disposition_task = create!(
         appeal: appeal,
         parent: parent,
         assigned_to: Bva.singleton
@@ -53,23 +53,20 @@ class DispositionTask < GenericTask
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    if params[:status] == Constants.TASK_STATUSES.cancelled
-      case payload_values[:disposition]
-      when Constants.HEARING_DISPOSITION_TYPES.cancelled
-        mark_hearing_cancelled
-      when Constants.HEARING_DISPOSITION_TYPES.held
-        mark_hearing_held
-      when Constants.HEARING_DISPOSITION_TYPES.no_show
-        mark_hearing_no_show
-      when Constants.HEARING_DISPOSITION_TYPES.postponed
-        mark_hearing_postponed(
-          instructions: params["instructions"],
-          after_disposition_update: payload_values[:after_disposition_update]
-        )
-      end
-    end
+    if params[:status] == Constants.TASK_STATUSES.cancelled && payload_values[:disposition].present?
+      update_hearing_and_self(params: params, payload_values: payload_values)
 
-    super(params, user)
+      [self]
+    else
+      super(params, user)
+    end
+  end
+
+  def create_change_hearing_disposition_task_and_complete
+    multi_transaction do
+      ChangeHearingDispositionTask.create!(appeal: appeal, parent: parent)
+      update!(status: Constants.TASK_STATUSES.completed)
+    end
   end
 
   def cancel!
@@ -110,6 +107,24 @@ class DispositionTask < GenericTask
   end
 
   private
+
+  def update_hearing_and_self(params:, payload_values:)
+    case payload_values[:disposition]
+    when Constants.HEARING_DISPOSITION_TYPES.cancelled
+      mark_hearing_cancelled
+    when Constants.HEARING_DISPOSITION_TYPES.held
+      mark_hearing_held
+    when Constants.HEARING_DISPOSITION_TYPES.no_show
+      mark_hearing_no_show
+    when Constants.HEARING_DISPOSITION_TYPES.postponed
+      mark_hearing_postponed(
+        instructions: params["instructions"],
+        after_disposition_update: payload_values[:after_disposition_update]
+      )
+    end
+
+    update!(instructions: flattened_instructions(params)) if params[:instructions].present?
+  end
 
   def update_hearing_disposition(disposition:)
     if hearing.is_a?(LegacyHearing)

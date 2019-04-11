@@ -97,10 +97,16 @@ describe HearingDispositionChangeJob do
       context "when hearing was scheduled to take place more than 2 days ago" do
         let(:scheduled_for) { 3.days.ago }
 
-        it "returns a label indicating that the hearing is stale and does not change the task" do
-          attributes_before = task.attributes
+        it "returns a label indicating that the hearing is stale, completes the task, and creates a new task" do
+          expect(ChangeHearingDispositionTask.count).to eq 0
+
           expect(subject).to eq(:stale)
-          expect(task.attributes).to eq(attributes_before)
+
+          expect(task.closed_at).to_not be_nil
+          expect(task.status).to eq Constants.TASK_STATUSES.completed
+          expect(ChangeHearingDispositionTask.count).to eq 1
+          expect(ChangeHearingDispositionTask.first.appeal).to eq task.appeal
+          expect(ChangeHearingDispositionTask.first.parent).to eq task.parent
         end
       end
 

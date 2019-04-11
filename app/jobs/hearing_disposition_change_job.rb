@@ -65,7 +65,7 @@ class HearingDispositionChangeJob < CaseflowJob
       # We allow judges and hearings staff 2 days to make changes to the hearing's disposition. If it has been more
       # than 2 days since the hearing was held and there is no disposition then remind the hearings staff.
       label = if hearing.scheduled_for < 48.hours.ago
-                # Logic will be added as part of #9833.
+                task.create_change_hearing_disposition_task_and_complete
                 :stale
               else
                 :between_one_and_two_days_old
