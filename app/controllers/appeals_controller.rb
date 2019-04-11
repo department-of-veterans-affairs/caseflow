@@ -86,14 +86,7 @@ class AppealsController < ApplicationController
   end
 
   def build_hearing_object(appeal_id, hash, hearing)
-    hash[appeal_id] = {
-      held_by: hearing&.judge.present? ? hearing.judge.full_name : "",
-      viewed_by_judge: hearing && !hearing.hearing_views.empty?,
-      date: hearing&.scheduled_for,
-      type: hearing&.readable_request_type,
-      external_id: hearing&.external_id,
-      disposition: hearing&.disposition
-    }
+    hash[appeal_id] = HearingMapper.build_hearing_object_for_appeal(hearing)
     @build_hearing_object = hash
   end
 
