@@ -31,7 +31,11 @@ class MailTask < GenericTask
     def create_from_params(params, user)
       verify_user_can_create!(user, Task.find(params[:parent_id]))
 
+<<<<<<< HEAD
       parent_task = Task.find(params[:parent_id])
+=======
+      root_task = Task.find(params[:parent_id]).root_task
+>>>>>>> Find root task off of parent task
 
       transaction do
         if parent_task.is_a?(RootTask)
