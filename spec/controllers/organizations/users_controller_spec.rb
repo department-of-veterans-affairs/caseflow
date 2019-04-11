@@ -42,6 +42,15 @@ describe Organizations::UsersController, type: :controller do
         expect(response.status).to eq 200
         expect(response.body).to match(user.username)
       end
+
+      it "includes admin field for users in organization" do
+        subject
+
+        resp = JSON.parse(response.body)
+        org_user = resp["organization_users"]["data"].first
+        expect(org_user["attributes"]["css_id"]).to eq(user.css_id)
+        expect(org_user["attributes"]["admin"]).to eq(false)
+      end
     end
   end
 end
