@@ -36,15 +36,21 @@ class AppealsController < ApplicationController
 
   def document_counts_by_id
     render json: { document_counts_by_id: build_document_counts_hash }
+  rescue Caseflow::Error::EfolderAccessForbidden => error
+    render(error.serialize_response)
   end
 
   def build_document_counts_hash
     document_counts_by_id_hash = {}
     params[:appeal_ids].split(",").each do |appeal_id|
-      document_counts_by_id_hash[appeal_id] =
-        Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
-        .number_of_documents
-      handle_documents_error
+      begin
+        document_counts_by_id_hash[appeal_id] =
+          Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+          .number_of_documents
+      rescue StandardError => error
+        document_counts_by_id_hash[appeal_id] = error
+        next
+      end
     end
     document_counts_by_id_hash
   end
@@ -57,13 +63,6 @@ class AppealsController < ApplicationController
     }
   end
 
-  def handle_documents_error
-  rescue Caseflow::Error::EfolderAccessForbidden => error
-    render(error.serialize_response)
-  rescue StandardError => error
-    handle_non_critical_error("document_counts_by_id", error)
-  end
-
   def hearings_by_id
     log_hearings_request
     render json: { most_recently_held_hearings_by_id: build_most_recently_held_hearings_hash }
@@ -72,8 +71,13 @@ class AppealsController < ApplicationController
   def build_most_recently_held_hearings_hash
     most_recently_held_hearings_by_id_hash = {}
     params[:appeal_ids].split(",").each do |appeal_id|
+      begin
       most_recently_held_hearings_by_id_hash[appeal_id] = HearingRepository
         .build_hearing_object_for_appeal(most_recently_held_hearing(appeal_id))
+      rescue StandardError => error
+        most_recently_held_hearings_by_id_hash[appeal_id] = error
+        next
+      end
     end
     most_recently_held_hearings_by_id_hash
   end
