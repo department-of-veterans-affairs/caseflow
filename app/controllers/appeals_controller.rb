@@ -78,10 +78,11 @@ class AppealsController < ApplicationController
   end
 
   def most_recently_held_hearing(appeal_id)
-    Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
-      .hearings
-      .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
-      .max_by(&:scheduled_for)
+    @most_recently_held_hearing =
+      Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+        .hearings
+        .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
+        .max_by(&:scheduled_for)
   end
 
   def build_hearing_object(appeal_id, hash, hearing)
@@ -93,7 +94,7 @@ class AppealsController < ApplicationController
       external_id: hearing&.external_id,
       disposition: hearing&.disposition
     }
-    hash
+    @build_hearing_object = hash
   end
 
   # For legacy appeals, veteran address and birth/death dates are
