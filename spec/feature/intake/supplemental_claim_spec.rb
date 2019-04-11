@@ -6,8 +6,6 @@ feature "Supplemental Claim Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original

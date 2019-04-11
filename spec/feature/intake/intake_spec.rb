@@ -7,8 +7,6 @@ RSpec.feature "Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ama_start_date)
 
     Fakes::BGSService.inaccessible_appeal_vbms_ids = []
