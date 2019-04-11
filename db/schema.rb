@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190402195624) do
+ActiveRecord::Schema.define(version: 20190409231234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -843,6 +843,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.string "review_type", null: false, comment: "The type of the decision review edited."
     t.datetime "submitted_at", comment: "Timestamp when the request issues update was originally submitted."
     t.bigint "user_id", null: false, comment: "The ID of the user who edited the decision review."
+    t.integer "withdrawn_request_issue_ids", comment: "An array of the request issue IDs that were withdrawn during this request issues update.", array: true
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end

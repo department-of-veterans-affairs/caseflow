@@ -6,7 +6,6 @@ feature "Appeal Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
 
     Timecop.freeze(post_ramp_start_date)
