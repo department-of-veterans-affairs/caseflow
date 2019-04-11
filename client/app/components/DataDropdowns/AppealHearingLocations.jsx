@@ -84,7 +84,7 @@ class AppealHearingLocationsDropdown extends React.Component {
       appealId, regionalOffice, dropdownName
     } = this.props;
 
-    if (options || isFetching) {
+    if (options || isFetching || _.isUndefined(regionalOffice)) {
       return;
     }
 
