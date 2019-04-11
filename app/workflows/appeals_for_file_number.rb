@@ -46,11 +46,11 @@ class AppealsForFileNumber
   def json_appeals
     ama_appeals, legacy_appeals = appeals.partition { |appeal| appeal.is_a?(Appeal) }
     ama_hash = WorkQueue::AppealSerializer.new(
-      ama_appeals, is_collection: true, params: { user: current_user }
+      ama_appeals, is_collection: true, params: { user: user }
     ).serializable_hash
 
     legacy_hash = WorkQueue::LegacyAppealSerializer.new(
-      legacy_appeals, is_collection: true, params: { user: current_user }
+      legacy_appeals, is_collection: true, params: { user: user }
     ).serializable_hash
 
     ama_hash[:data].concat(legacy_hash[:data])

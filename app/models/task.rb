@@ -34,6 +34,12 @@ class Task < ApplicationRecord
 
   scope :inactive, -> { where(status: inactive_statuses) }
 
+  scope :not_decisions_review, lambda {
+                                 where.not(
+                                   type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
+                                 )
+                               }
+
   def available_actions(_user)
     []
   end

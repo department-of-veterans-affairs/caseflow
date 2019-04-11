@@ -15,7 +15,7 @@ class Appeal < DecisionReview
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
 
   # decision_documents is effectively a has_one until post decisional motions are supported
-  has_many :decision_documents
+  has_many :decision_documents, as: :appeal
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
@@ -156,6 +156,11 @@ class Appeal < DecisionReview
 
   def every_request_issue_has_decision?
     eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
+  end
+
+  def latest_attorney_case_review
+    @latest_attorney_case_review ||=
+      AttorneyCaseReview.where(task_id: tasks.pluck(:id)).order(:created_at).last
   end
 
   def reviewing_judge_name

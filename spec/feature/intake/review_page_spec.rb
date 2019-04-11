@@ -9,10 +9,6 @@ feature "Intake Review Page" do
     setup_intake_flags
   end
 
-  after do
-    teardown_intake_flags
-  end
-
   let(:veteran_file_number) { "123412345" }
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")

@@ -183,15 +183,9 @@ feature "NonComp Dispositions Task Page" do
 
     context "with user enabled for intake" do
       before do
-        FeatureToggle.enable!(:intake)
-
         # allow user to have access to intake
         user.update(roles: user.roles << "Mail Intake")
         Functions.grant!("Mail Intake", users: [user.css_id])
-      end
-
-      after do
-        FeatureToggle.disable!(:intake)
       end
 
       scenario "goes back to intake" do

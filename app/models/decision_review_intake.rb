@@ -4,7 +4,7 @@ class DecisionReviewIntake < Intake
   include RunAsyncable
 
   # rubocop:disable Metrics/AbcSize
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       receipt_date: detail.receipt_date,
       claimant: detail.claimant_participant_id,

@@ -6,18 +6,11 @@ feature "Appeal Edit issues" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-
     Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:veteran) do
@@ -469,6 +462,38 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("PTSD denied")
       click_remove_intake_issue_dropdown("PTSD denied")
       expect(page).to_not have_content("PTSD denied")
+    end
+
+    let(:withdraw_date) { 1.day.ago.to_date.mdY }
+
+    scenario "withdraw an issue" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to_not have_content("Withdrawn issues")
+      expect(page).to_not have_content("Please include the date the withdrawal was requested")
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+
+      expect(page).to have_content(
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+      )
+      expect(page).to have_content("Please include the date the withdrawal was requested")
+
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: "13/01/24"
+
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: withdraw_date
+
+      safe_click("#button-submit-update")
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
+
+      expect(withdrawn_issue).to_not be_nil
+      expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
     end
   end
 
