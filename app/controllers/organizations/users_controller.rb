@@ -61,7 +61,7 @@ class Organizations::UsersController < OrganizationsController
     ::WorkQueue::UserSerializer.new(users, is_collection: true)
   end
 
-  def requestion_jason
+  def requesting_jason
     request.format.json?
   end
 end
