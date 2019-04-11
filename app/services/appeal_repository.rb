@@ -44,13 +44,13 @@ class AppealRepository
     if id.is_a?(Array)
       id.in_groups_of(1000, false).map do |group|
         if ignore_misses
-          VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).where(bfkey: group)
+          VACOLS::Case.includes(:folder, :correspondent, :case_issues).where(bfkey: group)
         else
-          VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(group)
+          VACOLS::Case.includes(:folder, :correspondent, :case_issues).find(group)
         end
       end.flatten
     else
-      VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(id)
+      VACOLS::Case.includes(:folder, :correspondent, :case_issues).find(id)
     end
   end
 
@@ -81,7 +81,7 @@ class AppealRepository
     cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
                                   service: :vacols,
                                   name: "appeals_by_vbms_id") do
-      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives, :case_issues)
+      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :case_issues)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -134,7 +134,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent, :representatives)
+        .includes(:folder, :correspondent)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
