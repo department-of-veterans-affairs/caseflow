@@ -25,6 +25,7 @@ module Asyncable
   class_methods do
     REQUIRES_PROCESSING_WINDOW_DAYS = 4
     DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
+    PROCESS_DELAY_VBMS_OFFSET_HOURS = 7
 
     def processing_retry_interval_hours
       self::DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
