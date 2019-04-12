@@ -58,11 +58,8 @@ class ApplicationController < ApplicationBaseController
         error_code: err.code
       }
     )
-    if !return_error_object
-      render err.serialize_response
-    else
-      err_obj(code, error_type)
-    end
+    render err.serialize_response unless return_error_object
+    err_obj(code, error_type)
   end
 
   def err_obj(code, err)
