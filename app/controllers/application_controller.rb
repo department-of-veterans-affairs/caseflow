@@ -63,9 +63,7 @@ class ApplicationController < ApplicationBaseController
 
   def serialize_error(err)
     error_type = err.class.name
-    if !err.class.method_defined? :serialize_response
-      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-    end
+    code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
     {
       code: code,
       err: error_type
