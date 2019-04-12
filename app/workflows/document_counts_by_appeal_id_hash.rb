@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class DocumentCountsByAppealIdHash
-  include ActiveModel::Model
 
   def initialize(hash:, appeal_ids:)
     @hash = hash
@@ -67,5 +66,4 @@ class DocumentCountsByAppealIdHash
     }
     hash
   end
-
 end
