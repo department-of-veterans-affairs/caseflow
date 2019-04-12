@@ -25,7 +25,7 @@ class DocumentCountsByAppealIdHash
     # Spin up a new thread of each appeal and then call join on each thread
     # Creating threads without calling join on them will cause the main thread
     # to continue without waiting and possibly exit before the child threads have finished
-    create_thread_for_each_appeal(appeals, document_counts_by_id_hash)
+    create_thread_for_each_appeal(appeals, document_counts_by_id_hash).map(&:join)
     document_counts_by_id_hash
   end
 
@@ -46,8 +46,7 @@ class DocumentCountsByAppealIdHash
           next
         end
       end
-    end.map(&:join)
-
+    end
   end
 
   def handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
