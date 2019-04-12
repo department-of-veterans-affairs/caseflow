@@ -84,6 +84,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
     t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
     t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow by the user."
     t.datetime "establishment_attempted_at", comment: "Timestamp for when the appeal's establishment was last attempted."
+    t.datetime "establishment_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "establishment_error", comment: "The error message if attempting to establish the appeal resulted in an error. This gets cleared once the establishment is successful."
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
@@ -137,6 +138,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
     t.string "contention_reference_id", comment: "The ID of the contention created in VBMS. Indicates successful creation of the contention. If the EP has been rated, this contention could have been connected to a rating issue. That connection is used to map the rating issue back to the decision issue."
     t.bigint "decision_document_id", comment: "The ID of the decision document which triggered this effectuation."
     t.datetime "decision_sync_attempted_at", comment: "When the EP is cleared, an asyncronous job attempts to map the resulting rating issue back to the decision issue. Timestamp representing the time the job was last attempted."
+    t.datetime "decision_sync_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "decision_sync_error", comment: "Async job processing last error message. See description for decision_sync_attempted_at for the decision sync job description."
     t.datetime "decision_sync_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp. See description for decision_sync_attempted_at for the decision sync job description."
@@ -236,6 +238,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
     t.bigint "appeal_id", null: false
     t.string "appeal_type"
     t.datetime "attempted_at"
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.string "citation_number", null: false
     t.datetime "created_at", null: false
     t.date "decision_date", null: false
@@ -560,6 +563,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
   create_table "higher_level_reviews", force: :cascade, comment: "Intake data for Higher Level Reviews." do |t|
     t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
     t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
+    t.datetime "establishment_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
@@ -805,6 +809,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
     t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
     t.string "decision_review_type", comment: "Class name of the decision review that this request issue belongs to"
     t.datetime "decision_sync_attempted_at", comment: "Async job processing last attempted timestamp"
+    t.datetime "decision_sync_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "decision_sync_error", comment: "Async job processing last error message"
     t.datetime "decision_sync_last_submitted_at", comment: "Async job processing most recent start timestamp"
     t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp"
@@ -838,6 +843,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
     t.integer "after_request_issue_ids", null: false, comment: "An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).", array: true
     t.datetime "attempted_at", comment: "Timestamp for when the request issue update processing was last attempted."
     t.integer "before_request_issue_ids", null: false, comment: "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).", array: true
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
     t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
     t.datetime "processed_at", comment: "Timestamp for when the request issue update successfully completed processing."
@@ -898,6 +904,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
     t.bigint "decision_review_remanded_id", comment: "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here."
     t.string "decision_review_remanded_type", comment: "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review."
     t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
+    t.datetime "establishment_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
@@ -921,6 +928,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
 
   create_table "task_timers", force: :cascade, comment: "Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask." do |t|
     t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run."
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false, comment: "Automatic timestamp for record creation."
     t.string "error", comment: "Async any error message from most recent failed attempt to run."
     t.datetime "last_submitted_at", comment: "Async timestamp for most recent job start."
@@ -1001,6 +1009,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.datetime "attempted_at"
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
     t.string "document_type", null: false
     t.string "error"
