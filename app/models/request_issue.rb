@@ -4,6 +4,7 @@
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
+  include DecisionSyncable
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 14
@@ -115,26 +116,6 @@ class RequestIssue < ApplicationRecord
   }.freeze
 
   class << self
-    def last_submitted_at_column
-      :decision_sync_last_submitted_at
-    end
-
-    def submitted_at_column
-      :decision_sync_submitted_at
-    end
-
-    def attempted_at_column
-      :decision_sync_attempted_at
-    end
-
-    def processed_at_column
-      :decision_sync_processed_at
-    end
-
-    def error_column
-      :decision_sync_error
-    end
-
     def rating
       where.not(
         contested_rating_issue_reference_id: nil
