@@ -6,6 +6,7 @@
 class BoardGrantEffectuation < ApplicationRecord
   include HasBusinessLine
   include Asyncable
+  include DecisionSyncable
 
   belongs_to :appeal
   belongs_to :granted_decision_issue, class_name: "DecisionIssue"
@@ -25,32 +26,8 @@ class BoardGrantEffectuation < ApplicationRecord
   delegate :contention_text, to: :granted_decision_issue
   delegate :veteran, to: :appeal
 
-  class << self
-    # We don't need to retry these as frequently
-    def processing_retry_interval_hours
-      12
-    end
-
-    def submitted_at_column
-      :decision_sync_submitted_at
-    end
-
-    def attempted_at_column
-      :decision_sync_attempted_at
-    end
-
-    def processed_at_column
-      :decision_sync_processed_at
-    end
-
-    def error_column
-      :decision_sync_error
-    end
-
-    def last_submitted_at_column
-      :decision_sync_last_submitted_at
-    end
-  end
+  # don't need to try as frequently as default 3 hours
+  DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
   def sync_decision_issues!
     return if processed?

@@ -55,8 +55,16 @@ module Asyncable
       :error
     end
 
+    def canceled_at_column
+      :canceled_at
+    end
+
     def unexpired
       where(arel_table[last_submitted_at_column].gt(requires_processing_until))
+    end
+
+    def canceled
+      where.not(arel_table[canceled_at_column]: nil)
     end
 
     def processable
@@ -74,7 +82,7 @@ module Asyncable
     end
 
     def attemptable
-      previously_attempted_ready_for_retry.or(never_attempted)
+      previously_attempted_ready_for_retry.or(never_attempted).where(arel_table[canceled_at_column]: nil)
     end
 
     def order_by_oldest_submitted
@@ -188,6 +196,7 @@ module Asyncable
       self.class.last_submitted_at_column => Time.zone.now,
       self.class.processed_at_column => nil,
       self.class.attempted_at_column => nil,
+      self.class.canceled_at_column => nil,
       self.class.error_column => nil
     )
   end
