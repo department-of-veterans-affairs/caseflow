@@ -50,9 +50,9 @@ class AppealsController < ApplicationController
           error: nil
         }
       rescue StandardError => err
-        serialized_error = handle_non_critical_error("document_counts_by_id", err, true)
+        err_obj = serialize_error(err)
         document_counts_by_id_hash[appeal_id] = {
-          error: serialized_error[:err], status: serialized_error[:code], count: nil
+          error: err_obj[:err], status: err_obj[:code], count: nil
         }
         next
       end
