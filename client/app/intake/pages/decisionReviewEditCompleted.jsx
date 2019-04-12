@@ -19,6 +19,8 @@ const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
     } else if (_.every(addedIssues, (ri) => ri.withdrawalPending)) {
       return 'withdrawn';
     }
+
+    return 'processed';
   };
 
   const leadMessageArr = [
