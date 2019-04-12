@@ -19,7 +19,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         request.headers["TOKEN"] = token
       end
 
-      context "and a valid ssn" do
+      context "and a veteran's ssn" do
         let(:veteran) { create(:veteran) }
         before do
           request.headers["SSN"] = veteran.ssn
@@ -46,7 +46,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           expect(response_body["veteran"]["participant_id"]).to eq veteran.participant_id
         end
 
-        it "returns the veteran's poa", focus: true do
+        it "returns the veteran's poa" do
           get :details
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)
@@ -66,7 +66,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
       context "but an invalid ssn" do
         before { request.headers["SSN"] = "123acb456" }
 
-        it "fails" do
+        it "returns 422 unprocessable entity " do
           get :details
           response_body = JSON.parse(response.body)
 
@@ -78,7 +78,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
       context "and no such veteran exists" do
         before { request.headers["SSN"] = "123456789" }
 
-        it "fails" do
+        it "returns 404 not found" do
           get :details
           response_body = JSON.parse(response.body)
 
