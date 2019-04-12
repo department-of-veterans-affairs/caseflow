@@ -62,11 +62,14 @@ class ApplicationController < ApplicationBaseController
   end
 
   def serialize_error(err)
-    err = err.class.name
-    code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+    error_type = err.class.name
+    if !err.class.method_defined? :serialize_response
+      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
+    end
     {
       code: code,
-      err: err
+      err: error_type
     }
   end
 
