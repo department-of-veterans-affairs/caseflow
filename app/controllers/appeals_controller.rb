@@ -50,14 +50,18 @@ class AppealsController < ApplicationController
           error: nil
         }
       rescue StandardError => err
-        err_obj = serialize_error(err)
-        document_counts_by_id_hash[appeal_id] = {
-          error: err_obj[:err], status: err_obj[:code], count: nil
-        }
+        handle_document_error(err, document_counts_by_id_hash, appeal_id)
         next
       end
     end
     document_counts_by_id_hash
+  end
+
+  def handle_document_error(err, document_counts_by_id_hash, appeal_id)
+    err_obj = serialize_error(err)
+    document_counts_by_id_hash[appeal_id] = {
+      error: err_obj[:err], status: err_obj[:code], count: nil
+    }
   end
 
   def power_of_attorney
