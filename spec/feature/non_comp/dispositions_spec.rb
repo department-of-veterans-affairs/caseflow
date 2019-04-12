@@ -23,7 +23,18 @@ feature "NonComp Dispositions Task Page" do
     find("#disposition-issue-#{num}").send_keys :enter
   end
 
-  def find_disabled_disposition(num, disposition, description = nil)
+  def find_dropdown_num_by_disposition(disposition)
+    nodes = find_all(".cf-form-dropdown")
+
+    nodes.each do |node|
+      if node.text.match?(/#{disposition}/)
+        return nodes.index(node)
+      end
+    end
+  end
+
+  def find_disabled_disposition(disposition, description = nil)
+    num = find_dropdown_num_by_disposition(disposition)
     expect(page).to have_field(type: "textarea", with: description, disabled: true)
 
     scroll_element_in_to_view(".dropdown-disposition-issue-#{num}")
@@ -123,7 +134,7 @@ feature "NonComp Dispositions Task Page" do
       expect(page).to have_current_path("/#{business_line_url}")
     end
 
-    scenario "saves decision issues", skip: "find_disabled_disposition is flakey" do
+    scenario "saves decision issues" do
       visit dispositions_url
       expect(page).to have_button("Complete", disabled: true)
       expect(page).to have_link("Edit Issues")
@@ -158,9 +169,10 @@ feature "NonComp Dispositions Task Page" do
       expect(page).not_to have_button("Complete")
       expect(page).not_to have_link("Edit Issues")
 
-      find_disabled_disposition(0, "Granted")
-      find_disabled_disposition(1, "DTA Error", "test description")
-      find_disabled_disposition(2, "Denied", "denied")
+      find_disabled_disposition("Granted")
+      find_disabled_disposition("DTA Error", "test description")
+      find_disabled_disposition("Denied", "denied")
+
       # decision date should be saved
       expect(page).to have_css("input[value='#{arbitrary_decision_date}']")
     end
