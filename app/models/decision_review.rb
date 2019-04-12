@@ -48,6 +48,10 @@ class DecisionReview < ApplicationRecord
       :establishment_last_submitted_at
     end
 
+    def canceled_at_column
+      :establishment_canceled_at
+    end
+
     def ama_activation_date
       if FeatureToggle.enabled?(:use_ama_activation_date)
         Constants::DATES["AMA_ACTIVATION"].to_date
