@@ -37,18 +37,21 @@ class DocumentCountsByAppealIdHash
 
   def create_thread_for_each_appeal(appeals, document_counts_by_id_hash)
     appeals.map do |appeal_id, appeal|
-      Thread.new do
-        begin
-          set_document_count_value_for_appeal_id(document_counts_by_id_hash, appeal_id, appeal)
-        rescue StandardError => err
-          err = serialize_error(err)
-          handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
-          next
-        end
+      create_thread_for_appeal(document_counts_by_id_hash, appeal_id, appeal)
+    end.map(&:join)
+  end
+
+  def create_thread_for_appeal(document_counts_by_id_hash, appeal_id, appeal)
+    Thread.new do
+      begin
+        set_document_count_value_for_appeal_id(document_counts_by_id_hash, appeal_id, appeal)
+      rescue StandardError => err
+        err = serialize_error(err)
+        handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
+        next
       end
     end
   end
-
   def handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
     document_counts_by_id_hash[appeal_id] = {
       error: err[:err], status: err[:code], count: nil
