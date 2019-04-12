@@ -14,15 +14,30 @@ class DocumentCountsByAppealIdHash
 
   private
 
+  # def build_document_counts_hash
+  #   document_counts_hash = {}
+
+  # end
+
   def build_document_counts_hash(document_counts_by_id_hash, appeal_ids)
-    appeal_ids.each do |appeal_id|
-      begin
-        set_document_count_value_for_appeal_id(document_counts_by_id_hash, appeal_id)
-      rescue StandardError => err
-        handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
-        next
-      end
+    # Collect appeal objects sequentially so we don't exhaust DB pool
+    appeals = appeal_ids.each_with_object({}) do |appeal_id, result|
+      result[appeal_id] = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
     end
+
+    # Spin up a new thread of each appeal and then call join on each thread
+    # Creating threads without calling join on them will cause the main thread
+    # to continue without waiting and possibly exit before the child threads have finished
+    appeals.map do |appeal_id, appeal|
+      Thread.new do
+        begin
+          set_document_count_value_for_appeal_id(document_counts_by_id_hash, appeal_id, appeal)
+        rescue StandardError => err
+          handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
+          next
+        end
+      end
+    end.map(&:join)
     document_counts_by_id_hash
   end
 
@@ -33,10 +48,9 @@ class DocumentCountsByAppealIdHash
     }
   end
 
-  def set_document_count_value_for_appeal_id(hash, appeal_id)
+  def set_document_count_value_for_appeal_id(hash, appeal_id, appeal)
     hash[appeal_id] = {
-      count: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
-        .number_of_documents,
+      count: appeal.number_of_documents,
       status: 200,
       error: nil
     }
