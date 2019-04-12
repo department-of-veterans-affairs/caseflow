@@ -100,7 +100,6 @@ RSpec.feature "List Schedule" do
 
       scenario "Correct hearing day is displayed" do
         visit "hearings/schedule"
-
       end
     end
 
@@ -109,7 +108,6 @@ RSpec.feature "List Schedule" do
 
       scenario "Correct hearing day is displayed" do
         visit "hearings/schedule"
-
       end
     end
   end

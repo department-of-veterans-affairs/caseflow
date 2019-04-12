@@ -136,8 +136,8 @@ class HearingDay < ApplicationRecord
         remaining_hearing_days.pluck(:id), user
       )
 
-      hearing_days_with_vacols_hearings = remaining_hearing_days.select do |hearing_day|
-        !vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil?
+      hearing_days_with_vacols_hearings = remaining_hearing_days.reject do |hearing_day|
+        vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil?
       end
 
       caseflow_assigned_hearing_days_and_hearings + hearing_days_with_vacols_hearings
