@@ -57,6 +57,61 @@ RSpec.feature "List Schedule" do
         expect(page).to_not have_content("Add Hearing Date")
       end
     end
+
+    context "Judge permissions" do
+      let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
+
+      scenario "No buttons are visible" do
+        visit "hearings/schedule"
+
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER)
+        expect(page).to_not have_content("Schedule Veterans")
+        expect(page).to_not have_content("Build Schedule")
+        expect(page).to_not have_content("Add Hearing Date")
+      end
+    end
+  end
+
+  context "Judge view" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
+
+    context "No hearing day or hearings assigned to judge" do
+      let!(:hearing_day) { create(:hearing_day) }
+
+      scenario "Correct hearing day is displayed" do
+        visit "hearings/schedule"
+
+        expect(page).to_not have_content(Hearing::HEARING_TYPES[HearingDay.first.request_type.to_sym])
+      end
+    end
+
+    context "Hearing day assigned to judge" do
+      let!(:hearing_day) { create(:hearing_day, judge: current_user) }
+
+      scenario "Correct hearing day is displayed" do
+        visit "hearings/schedule"
+
+        expect(page).to have_content(Hearing::HEARING_TYPES[HearingDay.first.request_type.to_sym])
+      end
+    end
+
+    context "Hearing day assigned to different judge with one legacy hearing assigned to judge" do
+      let!(:hearing_day) { create(:hearing_day) }
+
+      scenario "Correct hearing day is displayed" do
+        visit "hearings/schedule"
+
+      end
+    end
+
+    context "Hearing day assigned to different judge with one AMA hearing assigned to judge" do
+      let!(:hearing_day) { create(:hearing_day) }
+
+      scenario "Correct hearing day is displayed" do
+        visit "hearings/schedule"
+
+      end
+    end
   end
 
   context "VSO user view" do
