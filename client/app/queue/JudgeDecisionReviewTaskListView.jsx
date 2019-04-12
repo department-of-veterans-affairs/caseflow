@@ -21,8 +21,6 @@ import { judgeDecisionReviewTasksSelector } from './selectors';
 
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
-import { setMostRecentlyHeldHearingForAppeals } from './QueueActions';
-import { batchHearingBadgeRequests } from '../util/ApiUtil';
 
 const containerStyles = css({
   position: 'relative'
@@ -38,7 +36,6 @@ class JudgeDecisionReviewTaskListView extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
     this.props.resetErrorMessages();
-    batchHearingBadgeRequests(this.props, this.props.tasks);
   };
 
   render = () => {
@@ -105,8 +102,7 @@ const mapDispatchToProps = (dispatch) => (
     clearCaseSelectSearch,
     resetErrorMessages,
     resetSuccessMessages,
-    resetSaveState,
-    setMostRecentlyHeldHearingForAppeals
+    resetSaveState
   }, dispatch)
 );
 

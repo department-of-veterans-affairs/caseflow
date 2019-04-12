@@ -171,22 +171,4 @@ export const batchDocCountRequests = (props, tasks) => {
 
 };
 
-export const batchHearingBadgeRequests = (props, tasks) => {
-
-  const ids = mapTasksToExternalIds(tasks);
-
-  while (ids.length > 0) {
-
-    ApiUtil.get(`/appeals/${ids.splice(0, BATCH_REQUEST_SIZE)}/hearings_by_id`).then((response) => {
-      const resp = JSON.parse(response.text);
-
-      props.setMostRecentlyHeldHearingForAppeals(resp.most_recently_held_hearings_by_id);
-    }).
-      catch(() => {
-        throw new Error('error getting the hearings by id', ids);
-      });
-
-  }
-};
-
 export default ApiUtil;

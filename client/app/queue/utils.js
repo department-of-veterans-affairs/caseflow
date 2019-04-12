@@ -36,19 +36,18 @@ export const getUndecidedIssues = (issues) => _.filter(issues, (issue) => {
   }
 });
 
-export const prepareMostRecentlyHeldHearingsForStore = (mostRecentlyHeldHearingsById) => {
-  return _.map(mostRecentlyHeldHearingsById, (hearing, appealId) => {
-    return {
-      appealId,
+export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
+  return {
+    appealId,
+    hearing: {
       heldBy: hearing.held_by,
       viewedByJudge: hearing.viewed_by_judge,
       date: hearing.date,
       type: hearing.type,
       externalId: hearing.external_id,
       disposition: hearing.disposition
-    };
-  });
-
+    }
+  };
 };
 
 export const prepareTasksForStore = (tasks) =>

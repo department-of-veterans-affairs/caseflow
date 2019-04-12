@@ -3,11 +3,14 @@ import { css } from 'glamor';
 import _ from 'lodash';
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 import Tooltip from '../../components/Tooltip';
 import { COLORS } from '../../constants/AppConstants';
 
+import ApiUtil from '../../util/ApiUtil';
 import { DateString } from '../../util/DateUtil';
+import { setMostRecentlyHeldHearingForAppeal } from '../QueueActions';
 
 /**
  * This component can accept either a Hearing object or a Task object.
@@ -40,13 +43,16 @@ const listStyling = css({
 });
 
 class HearingBadge extends React.PureComponent {
+  componentDidMount = () => {
+    if (!this.props.mostRecentlyHeldHearingForAppeal && !this.props.hearing && this.props.externalId) {
+      ApiUtil.get(`/appeals/${this.props.externalId}/hearings`).then((response) => {
+        this.props.setMostRecentlyHeldHearingForAppeal(this.props.externalId, JSON.parse(response.text));
+      });
+    }
+  }
 
   render = () => {
-    const { externalId, mostRecentlyHeldHearingsById } = this.props;
-
-    const hearing =
-    mostRecentlyHeldHearingsById.filter((hearingObj) => hearingObj.appealId === externalId)[0] ||
-    this.props.hearing;
+    const hearing = this.props.mostRecentlyHeldHearingForAppeal || this.props.hearing;
 
     if (!hearing || !hearing.date) {
       return null;
@@ -87,8 +93,12 @@ const mapStateToProps = (state, ownProps) => {
   return {
     hearing,
     externalId,
-    mostRecentlyHeldHearingsById: state.queue.mostRecentlyHeldHearingsById
+    mostRecentlyHeldHearingForAppeal: state.queue.mostRecentlyHeldHearingForAppeal[externalId] || null
   };
 };
 
-export default connect(mapStateToProps)(HearingBadge);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setMostRecentlyHeldHearingForAppeal
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps)(HearingBadge);

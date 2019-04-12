@@ -2,7 +2,7 @@
 import { associateTasksWithAppeals,
   prepareAllTasksForStore,
   extractAppealsAndAmaTasks,
-  prepareMostRecentlyHeldHearingsForStore,
+  prepareMostRecentlyHeldHearingForStore,
   prepareTasksForStore } from './utils';
 import { ACTIONS } from './constants';
 import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
@@ -192,9 +192,9 @@ export const setAppealDocCount = (docCountsByAppealId) => ({
   }
 });
 
-export const setMostRecentlyHeldHearingForAppeals = (mostRecentlyHeldHearingsById) => ({
+export const setMostRecentlyHeldHearingForAppeal = (appealId, hearing) => ({
   type: ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL,
-  payload: prepareMostRecentlyHeldHearingsForStore(mostRecentlyHeldHearingsById)
+  payload: prepareMostRecentlyHeldHearingForStore(appealId, hearing)
 });
 
 export const setDecisionOptions = (opts) => (dispatch) => {

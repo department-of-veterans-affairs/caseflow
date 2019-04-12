@@ -101,6 +101,7 @@ Rails.application.routes.draw do
     member do
       get :veteran
       get :power_of_attorney
+      get :hearings
       resources :issues, only: [:create, :update, :destroy], param: :vacols_sequence_id
       resources :special_issues, only: [:create, :index]
       resources :advance_on_docket_motions, only: [:create]
@@ -110,7 +111,6 @@ Rails.application.routes.draw do
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
   match '/appeals/:appeal_ids/document_counts_by_id/' => 'appeals#document_counts_by_id', via: [:get]
-  match '/appeals/:appeal_ids/hearings_by_id/' => 'appeals#hearings_by_id', via: [:get]
 
   resources :beaam_appeals, only: [:index]
 

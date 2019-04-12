@@ -62,31 +62,26 @@ class AppealsController < ApplicationController
     }
   end
 
-  def hearings_by_id
+  def hearings
     log_hearings_request
-    render json: { most_recently_held_hearings_by_id: build_most_recently_held_hearings_hash }
-  end
 
-  def build_most_recently_held_hearings_hash
-    most_recently_held_hearings_by_id_hash = {}
-    params[:appeal_ids].split(",").each do |appeal_id|
-      begin
-        most_recently_held_hearings_by_id_hash[appeal_id] = HearingRepository
-          .build_hearing_object_for_appeal(most_recently_held_hearing(appeal_id))
-      rescue StandardError => error
-        most_recently_held_hearings_by_id_hash[appeal_id] = error
-        next
+    most_recently_held_hearing = appeal.hearings
+      .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
+      .max_by(&:scheduled_for)
+
+    render json:
+      if most_recently_held_hearing
+        {
+          held_by: most_recently_held_hearing.judge.present? ? most_recently_held_hearing.judge.full_name : "",
+          viewed_by_judge: !most_recently_held_hearing.hearing_views.empty?,
+          date: most_recently_held_hearing.scheduled_for,
+          type: most_recently_held_hearing.readable_request_type,
+          external_id: most_recently_held_hearing.external_id,
+          disposition: most_recently_held_hearing.disposition
+        }
+      else
+        {}
       end
-    end
-    most_recently_held_hearings_by_id_hash
-  end
-
-  def most_recently_held_hearing(appeal_id)
-    @most_recently_held_hearing =
-      Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
-        .hearings
-        .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
-        .max_by(&:scheduled_for)
   end
 
   # For legacy appeals, veteran address and birth/death dates are

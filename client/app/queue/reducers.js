@@ -25,7 +25,7 @@ export const initialState = {
   claimReviews: {},
   editingIssue: {},
   docCountsByAppealId: {},
-  mostRecentlyHeldHearingsById: [],
+  mostRecentlyHeldHearingForAppeal: {},
   newDocsForAppeal: {},
   newDocsForTask: {},
   specialIssues: {},
@@ -225,8 +225,10 @@ export const workQueueReducer = (state = initialState, action = {}) => {
 
   case ACTIONS.SET_MOST_RECENTLY_HELD_HEARING_FOR_APPEAL:
     return update(state, {
-      mostRecentlyHeldHearingsById: {
-        $set: state.mostRecentlyHeldHearingsById.concat(action.payload)
+      mostRecentlyHeldHearingForAppeal: {
+        [action.payload.appealId]: {
+          $set: action.payload.hearing
+        }
       }
     });
   case ACTIONS.SET_DECISION_OPTIONS:

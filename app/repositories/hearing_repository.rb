@@ -20,17 +20,6 @@ class HearingRepository
       hearings
     end
 
-    def build_hearing_object_for_appeal(hearing)
-      {
-        held_by: hearing&.judge.present? ? hearing.judge.full_name : "",
-        viewed_by_judge: hearing && !hearing.hearing_views.empty?,
-        date: hearing&.scheduled_for,
-        type: hearing&.readable_request_type,
-        external_id: hearing&.external_id,
-        disposition: hearing&.disposition
-      }
-    end
-
     def fetch_hearings_for_parent(hearing_day_id)
       # Implemented by call the array version of this method
       fetch_hearings_for_parents([hearing_day_id]).values.first || []

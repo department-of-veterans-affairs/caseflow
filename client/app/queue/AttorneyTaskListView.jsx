@@ -11,9 +11,9 @@ import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../components/Alert';
-import { batchDocCountRequests, batchHearingBadgeRequests } from '../util/ApiUtil';
+import { batchDocCountRequests } from '../util/ApiUtil';
 import { loadAppealDocCount, setAppealDocCount,
-  errorFetchingDocumentCount, setMostRecentlyHeldHearingForAppeals } from './QueueActions';
+  errorFetchingDocumentCount } from './QueueActions';
 
 import {
   completeTasksByAssigneeCssIdSelector,
@@ -57,7 +57,6 @@ class AttorneyTaskListView extends React.PureComponent {
       });
     }
     batchDocCountRequests(this.props, combinedTasks);
-    batchHearingBadgeRequests(this.props, combinedTasks);
 
   };
 
@@ -151,8 +150,7 @@ const mapDispatchToProps = (dispatch) => ({
     showErrorMessage,
     loadAppealDocCount,
     setAppealDocCount,
-    errorFetchingDocumentCount,
-    setMostRecentlyHeldHearingForAppeals
+    errorFetchingDocumentCount
   }, dispatch)
 });
 
