@@ -22,20 +22,28 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   end
 
   def details
-    render json: { veteran: veteran }
+    render json: { veteran: veteran, representative: poa }
   end
 
   private
+
+  def bgs
+    @bgs || BGSService.new
+  end
 
   def veteran
     @veteran ||= begin
       fail Caseflow::Error::InvalidSSN if ssn.blank? || ssn.length != 9 || ssn.scan(/\D/).any?
 
-      veteran = BGSService.new.fetch_veteran_by_ssn(ssn)
+      veteran = bgs.fetch_veteran_by_ssn(ssn)
       fail ActiveRecord::RecordNotFound unless veteran
 
       veteran
     end
+  end
+
+  def poa
+    @poa ||= bgs.fetch_poa_by_file_number(veteran[:file_number])
   end
 
   def include_addresses_in_response?

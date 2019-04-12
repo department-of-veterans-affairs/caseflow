@@ -45,6 +45,22 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           expect(response_body["veteran"]["file_number"]).to eq veteran.file_number
           expect(response_body["veteran"]["participant_id"]).to eq veteran.participant_id
         end
+
+        it "returns the veteran's poa", focus: true do
+          get :details
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)
+
+          default_bgs_poa = {
+            "representative_type" => "Attorney",
+            "representative_name" => "Clarence Darrow",
+            "participant_id" => "600153863"
+          }
+
+          expect(response_body["representative"]["representative_type"]).to eq default_bgs_poa["representative_type"]
+          expect(response_body["representative"]["representative_name"]).to eq default_bgs_poa["representative_name"]
+          expect(response_body["representative"]["participant_id"]).to eq default_bgs_poa["participant_id"]
+        end
       end
 
       context "but an invalid ssn" do
