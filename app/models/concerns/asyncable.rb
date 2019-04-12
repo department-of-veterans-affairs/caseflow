@@ -140,7 +140,7 @@ module Asyncable
   end
 
   def canceled!
-     update!(self.class.canceled_at_column => Time.zone.now)
+    update!(self.class.canceled_at_column => Time.zone.now)
   end
 
   # There are sometimes cases where no processing required, and we can mark submitted and processed all in one
