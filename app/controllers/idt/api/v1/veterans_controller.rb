@@ -4,12 +4,12 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
-  rescue_from StandardError do |e|
-    Raven.capture_exception(e)
-    if e.class.method_defined?(:serialize_response)
-      render(e.serialize_response)
+  rescue_from StandardError do |error|
+    Raven.capture_exception(error)
+    if error.class.method_defined?(:serialize_response)
+      render(error.serialize_response)
     else
-      render json: { message: "Unexpected error: #{e.message}" }, status: :internal_server_error
+      render json: { message: "Unexpected error: #{error.message}" }, status: :internal_server_error
     end
   end
 
