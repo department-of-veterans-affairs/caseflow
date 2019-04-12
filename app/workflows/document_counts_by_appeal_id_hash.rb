@@ -46,15 +46,16 @@ class DocumentCountsByAppealIdHash
       begin
         set_document_count_value_for_appeal_id(document_counts_by_id_hash, appeal_id, appeal)
       rescue StandardError => err
-        err = serialize_error(err)
         handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
         next
       end
     end
   end
+
   def handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
+    code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
     document_counts_by_id_hash[appeal_id] = {
-      error: err[:err], status: err[:code], count: nil
+      error: err.class.name, status: code, count: nil
     }
   end
 
@@ -67,12 +68,4 @@ class DocumentCountsByAppealIdHash
     hash
   end
 
-  def serialize_error(err)
-    error_type = err.class.name
-    code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-    {
-      code: code,
-      err: error_type
-    }
-  end
 end
