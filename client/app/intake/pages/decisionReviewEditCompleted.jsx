@@ -19,8 +19,6 @@ const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
     } else if (_.every(addedIssues, (ri) => ri.withdrawalPending)) {
       return 'withdrawn';
     }
-
-    return 'processed';
   };
 
   const leadMessageArr = [
@@ -142,10 +140,20 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
     const withdrawnRequestIssues = addedIssues.filter((ri) => ri.withdrawalPending);
+    const hasWithdrawnIssues = !_.isEmpty(withdrawnRequestIssues);
+    const pageTitle = () => {
+      if (issuesAfter.length === 0) {
+        return 'Review Removed';
+      } else if (hasWithdrawnIssues) {
+        return 'Review Withdrawn';
+      }
+
+      return 'Claim Issues Saved';
+    };
 
     return <div>
       <StatusMessage
-        title= {issuesAfter.length === 0 ? 'Review Removed' : 'Claim Issues Saved'}
+        title= {pageTitle()}
         type="success"
         leadMessageList={
           leadMessageList({
@@ -166,7 +174,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
         wrapInAppSegment={false}
       />
       { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
-      { withdrawnRequestIssues.length > 0 && <Fragment>
+      { hasWithdrawnIssues && <Fragment>
         <ul className="cf-issue-checklist cf-left-padding">
           <li>
             <strong>Withdrawn</strong>

@@ -627,7 +627,7 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_current_path(
           "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
         )
-
+        expect(page).to have_content("Review Withdrawn")
         expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.supplemental_claim} has been withdrawn.")
         expect(page).to have_content("Withdrawn\nPTSD denied")
 
