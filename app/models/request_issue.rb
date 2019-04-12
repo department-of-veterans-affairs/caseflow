@@ -162,6 +162,10 @@ class RequestIssue < ApplicationRecord
       active.or(ineligible)
     end
 
+    def active_or_ineligible_withdrawn
+      active_or_ineligible.or(withdrawn)
+    end
+
     def active_or_decided
       active.or(decided).order(id: :asc)
     end
@@ -274,6 +278,10 @@ class RequestIssue < ApplicationRecord
     return specials unless specials.empty?
   end
 
+  def withdrawal_date
+    closed_at if closed_status == "withdrawn"
+  end
+
   def ui_hash
     {
       id: id,
@@ -293,7 +301,8 @@ class RequestIssue < ApplicationRecord
       ineligible_due_to_id: ineligible_due_to_id,
       decision_review_title: review_title,
       title_of_active_review: title_of_active_review,
-      contested_decision_issue_id: contested_decision_issue_id
+      contested_decision_issue_id: contested_decision_issue_id,
+      withdrawal_date: withdrawal_date
     }
   end
 

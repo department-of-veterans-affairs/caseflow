@@ -1190,6 +1190,8 @@ feature "Higher Level Review Edit issues" do
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
         expect(withdrawn_issue.decision_review.end_product_establishments.first.synced_status).to eq("CAN")
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
+
+        visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
       end
     end
   end

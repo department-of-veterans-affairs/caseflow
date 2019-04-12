@@ -112,7 +112,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
-        vacolsIssue: issue.vacols_issue
+        vacolsIssue: issue.vacols_issue,
+        withdrawalDate: formatDateStr(issue.withdrawal_date)
       };
     }
 
@@ -126,7 +127,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         isUnidentified: issue.is_unidentified,
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
-        vacolsIssue: issue.vacols_issue
+        vacolsIssue: issue.vacols_issue,
+        withdrawalDate: formatDateStr(issue.withdrawal_date)
       };
     }
 
@@ -152,7 +154,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       untimelyExemptionNotes: issue.untimelyExemptionNotes,
       vacolsId: issue.vacols_id,
       vacolsSequenceId: issue.vacols_sequence_id,
-      vacolsIssue: issue.vacols_issue
+      vacolsIssue: issue.vacols_issue,
+      withdrawalDate: formatDateStr(issue.withdrawal_date)
     };
   });
 };

@@ -6,6 +6,7 @@ import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
 
 import { legacyIssue } from '../util/issues';
 
+
 class AddedIssue extends React.PureComponent {
   needsEligibilityCheck() {
     let { issue, requestIssues } = this.props;
@@ -106,6 +107,8 @@ class AddedIssue extends React.PureComponent {
         </div>
       }
       { issue.withdrawalPending && <p>Withdraw pending</p> }
+      { issue.withdrawalDate && <p>withdrawn on {issue.withdrawalDate}</p> }
+
     </div>;
   }
 
