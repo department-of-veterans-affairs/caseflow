@@ -64,7 +64,7 @@ module Asyncable
     end
 
     def canceled
-      where.not(arel_table[canceled_at_column]: nil)
+      where.not(canceled_at_column => nil)
     end
 
     def processable
@@ -82,7 +82,7 @@ module Asyncable
     end
 
     def attemptable
-      previously_attempted_ready_for_retry.or(never_attempted).where(arel_table[canceled_at_column]: nil)
+      previously_attempted_ready_for_retry.or(never_attempted).where(canceled_at_column => nil)
     end
 
     def order_by_oldest_submitted
@@ -108,6 +108,7 @@ module Asyncable
 
     def potentially_stuck
       processable
+        .where(canceled_at_column => nil)
         .or(attempted_without_being_submitted)
         .or(with_error)
         .order_by_oldest_submitted
@@ -138,6 +139,10 @@ module Asyncable
     update!(self.class.attempted_at_column => Time.zone.now)
   end
 
+  def canceled!
+     update!(self.class.canceled_at_column => Time.zone.now)
+  end
+
   # There are sometimes cases where no processing required, and we can mark submitted and processed all in one
   def no_processing_required!
     now = Time.zone.now
@@ -160,6 +165,10 @@ module Asyncable
 
   def submitted?
     !!self[self.class.submitted_at_column]
+  end
+
+  def canceled?
+    !!self[self.class.canceled_at_column]
   end
 
   def expired_without_processing?
