@@ -20,14 +20,16 @@ class AppealDocumentCount extends React.PureComponent {
       loadingText,
       externalId
     } = this.props;
-    const isLoadingOrError = loadingText && (docCountsByAppealId.loading || docCountsByAppealId.error);
+    const isLoading = loadingText && (docCountsByAppealId.loading);
+    const errorLoadingDocumentCount = _.get(docCountsByAppealId[externalId], 'error');
+    const documentCount = _.get(docCountsByAppealId[externalId], 'count', null);
 
     if (!_.isEmpty(docCountsByAppealId)) {
-      if (isLoadingOrError) {
-        return docCountsByAppealId.error || <span {...documentCountStyling}>Loading number of docs...</span>;
+      if (isLoading) {
+        return <span {...documentCountStyling}>Loading number of docs...</span>;
       }
 
-      return docCountsByAppealId[externalId] || null;
+      return errorLoadingDocumentCount || documentCount;
     }
 
     return null;

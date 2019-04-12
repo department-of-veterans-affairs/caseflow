@@ -43,11 +43,16 @@ class AppealsController < ApplicationController
   def build_document_counts_hash(document_counts_by_id_hash)
     params[:appeal_ids].split(",").each do |appeal_id|
       begin
-        document_counts_by_id_hash[appeal_id] =
-          Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
-          .number_of_documents
+        document_counts_by_id_hash[appeal_id] = {
+          count: Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+            .number_of_documents,
+          status: 200,
+          error: nil
+        }
       rescue StandardError => error
-        document_counts_by_id_hash[appeal_id] = error
+        document_counts_by_id_hash[appeal_id] = {
+          error: error, status: 500, count: nil
+        }
         next
       end
     end
