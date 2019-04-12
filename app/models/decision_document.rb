@@ -11,7 +11,7 @@ class DecisionDocument < ApplicationRecord
   has_many :end_product_establishments, as: :source
   has_many :effectuations, class_name: "BoardGrantEffectuation"
 
-  validates :citation_number, format: { with: /\AA\d{8}\Z/i }
+  validates :citation_number, format: { with: /\AA?\d{8}\Z/i }
 
   attr_writer :file
 
@@ -35,7 +35,7 @@ class DecisionDocument < ApplicationRecord
   end
 
   def submit_for_processing!(delay: 0)
-    update_decision_issue_decision_dates! if ama?
+    update_decision_issue_decision_dates! if appeal.is_a?(Appeal)
     return no_processing_required! unless upload_enabled?
 
     cache_file!
@@ -50,7 +50,7 @@ class DecisionDocument < ApplicationRecord
     attempted!
     upload_to_vbms!
 
-    if FeatureToggle.enabled?(:create_board_grant_effectuations) && ama?
+    if FeatureToggle.enabled?(:create_board_grant_effectuations) && appeal.is_a?(Appeal)
       create_board_grant_effectuations!
       process_board_grant_effectuations!
       appeal.create_remand_supplemental_claims!
@@ -132,9 +132,5 @@ class DecisionDocument < ApplicationRecord
     fail NoFileError unless @file
 
     S3Service.store_file(s3_location, Base64.decode64(@file))
-  end
-
-  def ama?
-    appeal.class.name == Appeal.name
   end
 end
