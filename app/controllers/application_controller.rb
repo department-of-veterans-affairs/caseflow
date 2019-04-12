@@ -61,15 +61,6 @@ class ApplicationController < ApplicationBaseController
     render err.serialize_response
   end
 
-  def serialize_error(err)
-    error_type = err.class.name
-    code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-    {
-      code: code,
-      err: error_type
-    }
-  end
-
   def current_user
     @current_user ||= begin
       user = User.from_session(session)

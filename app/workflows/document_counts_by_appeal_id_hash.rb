@@ -1,19 +1,21 @@
 # frozen_string_literal: true
 
 class DocumentCountsByAppealIdHash
+  include ActiveModel::Model
+
   def initialize(hash:, appeal_ids:)
     @hash = hash
     @appeal_ids = appeal_ids
   end
 
   def call
-    build_document_counts_hash(hash)
+    build_document_counts_hash(@hash, @appeal_ids)
   end
 
   private
 
-  def build_document_counts_hash(document_counts_by_id_hash)
-    params[:appeal_ids].split(",").each do |appeal_id|
+  def build_document_counts_hash(document_counts_by_id_hash, appeal_ids)
+    appeal_ids.each do |appeal_id|
       begin
         set_document_count_value_for_appeal_id(document_counts_by_id_hash, appeal_id)
       rescue StandardError => err
@@ -39,5 +41,14 @@ class DocumentCountsByAppealIdHash
       error: nil
     }
     hash
+  end
+
+  def serialize_error(err)
+    error_type = err.class.name
+    code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+    {
+      code: code,
+      err: error_type
+    }
   end
 end
