@@ -46,6 +46,10 @@ class BoardGrantEffectuation < ApplicationRecord
     def error_column
       :decision_sync_error
     end
+
+    def last_submitted_at_column
+      :decision_sync_last_submitted_at
+    end
   end
 
   def sync_decision_issues!

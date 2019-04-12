@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190411161143) do
+ActiveRecord::Schema.define(version: 20190412184430) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -138,6 +138,7 @@ ActiveRecord::Schema.define(version: 20190411161143) do
     t.bigint "decision_document_id", comment: "The ID of the decision document which triggered this effectuation."
     t.datetime "decision_sync_attempted_at", comment: "When the EP is cleared, an asyncronous job attempts to map the resulting rating issue back to the decision issue. Timestamp representing the time the job was last attempted."
     t.string "decision_sync_error", comment: "Async job processing last error message. See description for decision_sync_attempted_at for the decision sync job description."
+    t.datetime "decision_sync_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp. See description for decision_sync_attempted_at for the decision sync job description."
     t.datetime "decision_sync_submitted_at", comment: "Async job processing start timestamp. See description for decision_sync_attempted_at for the decision sync job description."
     t.bigint "end_product_establishment_id", comment: "The ID of the end product establishment created for this board grant effectuation."
