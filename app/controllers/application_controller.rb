@@ -40,8 +40,8 @@ class ApplicationController < ApplicationBaseController
       }
     end
   end
-
-  def handle_non_critical_error(endpoint, err)
+  
+  def handle_non_critical_error(endpoint, err, no_render = false)
     error_type = err.class.name
     if !err.class.method_defined? :serialize_response
       code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
@@ -58,8 +58,18 @@ class ApplicationController < ApplicationBaseController
         error_code: err.code
       }
     )
+    if !no_render
+      render err.serialize_response
+    else
+      err_obj(code, error_type)
+    end
+  end
 
-    render err.serialize_response
+  def err_obj(code, err)
+    {
+      code: code,
+      err: err
+    }
   end
 
   def current_user
