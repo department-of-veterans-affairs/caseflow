@@ -34,17 +34,22 @@ class Fakes::VBMSService
   end
 
   def self.load_vbms_ids_mappings
-    file_path = Rails.root.join("local", "vacols", "vbms_setup.csv")
+    # Due to multiple threads calling this block, we need to wait for the first thread to finish
+    # loading records into memory before other threads can continue
+    @semaphore ||= Mutex.new
 
-    return if !Rails.env.development? || !File.exist?(file_path) || @load_vbms_ids_mappings
+    @semaphore.synchronize do
+      file_path = Rails.root.join("local", "vacols", "vbms_setup.csv")
 
-    @load_vbms_ids_mappings = true
-    @document_records ||= {}
-    CSV.foreach(file_path, headers: true) do |row|
-      row_hash = row.to_h
-      vbms_id = row_hash["vbms_id"].gsub(/[^0-9]/, "")
-      @document_records[vbms_id] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
-      (@document_records[vbms_id] || []).each { |document| document.write_attribute(:file_number, vbms_id) }
+      return if !Rails.env.development? || !File.exist?(file_path) || @load_vbms_ids_mappings
+      @load_vbms_ids_mappings = true
+      @document_records ||= {}
+      CSV.foreach(file_path, headers: true) do |row|
+        row_hash = row.to_h
+        vbms_id = row_hash["vbms_id"].gsub(/[^0-9]/, "")
+        @document_records[vbms_id] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
+        (@document_records[vbms_id] || []).each { |document| document.write_attribute(:file_number, vbms_id) }
+      end
     end
   end
 
