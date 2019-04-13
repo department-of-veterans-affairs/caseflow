@@ -140,10 +140,10 @@ class Veteran < ApplicationRecord
   def multiple_phone_numbers?
     if !!access_error&.include?("NonUniqueResultException")
       bgs.bust_can_access_cache(file_number)
-      
-      return true
+
+      true
     else
-      return false
+      false
     end
   end
 

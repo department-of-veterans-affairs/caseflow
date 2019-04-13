@@ -161,7 +161,7 @@ RSpec.feature "Intake" do
         visit "/intake"
 
         safe_click ".Select"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
+        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
         find("#form-select").send_keys :enter
         safe_click ".cf-submit.usa-button"
 
@@ -170,6 +170,20 @@ RSpec.feature "Intake" do
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("The Veteran has multiple active phone numbers")
+
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+        visit "/intake"
+
+        safe_click ".Select"
+        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
+        find("#form-select").send_keys :enter
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review_request")
       end
     end
 
