@@ -187,6 +187,11 @@ class ExternalApi::BGSService
     end
   end
 
+  def bust_can_access_cache(vbms_id)
+    cache_key = "bgs_can_access_#{current_user.css_id}_#{current_user.station_id}_#{vbms_id}"
+    Rails.cache.delete(cache_key)
+  end
+
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 

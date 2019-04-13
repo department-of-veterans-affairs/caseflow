@@ -139,10 +139,8 @@ class Veteran < ApplicationRecord
   # This causes an error fetching the BGS record and needs to be fixed in SHARE
   def multiple_phone_numbers?
     if !!access_error&.include?("NonUniqueResultException")
-      # Clear memoization so BGS record gets fetched again after fixing the issue
-      @access_error = nil
-      @bgs_record = nil
-
+      bgs.bust_can_access_cache(file_number)
+      
       return true
     else
       return false
