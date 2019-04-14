@@ -4,6 +4,7 @@
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
+  include DecisionSyncable
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 14
@@ -115,26 +116,6 @@ class RequestIssue < ApplicationRecord
   }.freeze
 
   class << self
-    def last_submitted_at_column
-      :decision_sync_last_submitted_at
-    end
-
-    def submitted_at_column
-      :decision_sync_submitted_at
-    end
-
-    def attempted_at_column
-      :decision_sync_attempted_at
-    end
-
-    def processed_at_column
-      :decision_sync_processed_at
-    end
-
-    def error_column
-      :decision_sync_error
-    end
-
     def rating
       where.not(
         contested_rating_issue_reference_id: nil
@@ -195,6 +176,7 @@ class RequestIssue < ApplicationRecord
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
         decision_date: data[:decision_date],
         issue_category: data[:issue_category],
+        nonrating_issue_category: data[:issue_category],
         benefit_type: data[:benefit_type],
         notes: data[:notes],
         is_unidentified: data[:is_unidentified],
@@ -382,35 +364,39 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
-  def close!(status)
+  def close!(status:, closed_at_value: Time.zone.now)
     return unless closed_at.nil?
 
     transaction do
-      update!(closed_at: Time.zone.now, closed_status: status)
+      update!(closed_at: closed_at_value, closed_status: status)
       yield if block_given?
     end
   end
 
   def close_if_ineligible!
-    close!(:ineligible) if ineligible_reason?
+    close!(status: :ineligible) if ineligible_reason?
   end
 
   def close_decided_issue!
     return unless decision_issues.any?
 
-    close!(:decided)
+    close!(status: :decided)
   end
 
   def close_after_end_product_canceled!
     return unless end_product_establishment&.reload&.status_canceled?
 
-    close!(:end_product_canceled) do
+    close!(status: :end_product_canceled) do
       legacy_issue_optin&.flag_for_rollback!
     end
   end
 
+  def withdraw!(withdrawal_date)
+    close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
+  end
+
   def remove!
-    close!(:removed) do
+    close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
 
       # If the decision issue is not associated with any other request issue, also delete
@@ -567,7 +553,9 @@ class RequestIssue < ApplicationRecord
         disposition: contention_disposition.disposition,
         description: "#{contention_disposition.disposition}: #{description}",
         profile_date: end_product_establishment_associated_rating_profile_date,
+        rating_profile_date: end_product_establishment_associated_rating_profile_date,
         promulgation_date: end_product_establishment_associated_rating_promulgation_date,
+        rating_promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
@@ -622,8 +610,10 @@ class RequestIssue < ApplicationRecord
       disposition: contention_disposition.disposition,
       participant_id: rating_issue.participant_id,
       promulgation_date: rating_issue.promulgation_date,
+      rating_promulgation_date: rating_issue.promulgation_date,
       decision_text: rating_issue.decision_text,
       profile_date: rating_issue.profile_date,
+      rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
       end_product_last_action_date: end_product_establishment.result.last_action_date

@@ -1,4 +1,5 @@
 import React from 'react';
+import { css } from 'glamor';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -8,8 +9,10 @@ import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
-
+import COPY from '../../COPY.json';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
+
+const buttonPaddingStyle = css({ margin: '0 1rem' });
 
 export default class OrganizationUsers extends React.PureComponent {
   constructor(props) {
@@ -22,7 +25,8 @@ export default class OrganizationUsers extends React.PureComponent {
       loading: true,
       error: null,
       addingUser: null,
-      removingUser: {}
+      removingUser: {},
+      changingAdminRights: {}
     };
   }
 
@@ -40,7 +44,7 @@ export default class OrganizationUsers extends React.PureComponent {
       this.setState({
         loading: false,
         error: {
-          title: 'Failed to load users',
+          title: COPY.USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE,
           body: error.message
         }
       });
@@ -77,7 +81,7 @@ export default class OrganizationUsers extends React.PureComponent {
       this.setState({
         addingUser: null,
         error: {
-          title: 'Failed to add user',
+          title: COPY.USER_MANAGEMENT_ADD_USER_ERROR_TITLE,
           body: error.message
         }
       });
@@ -102,7 +106,41 @@ export default class OrganizationUsers extends React.PureComponent {
         removingUser: { ...this.state.removingUser,
           [user.id]: false },
         error: {
-          title: 'Failed to remove user',
+          title: COPY.USER_MANAGEMENT_REMOVE_USER_ERROR_TITLE,
+          body: error.message
+        }
+      });
+    });
+  }
+
+  modifyAdminRights = (user, adminFlag) => () => {
+    this.setState({
+      changingAdminRights: { ...this.state.changingAdminRights,
+        [user.id]: true }
+    });
+
+    const payload = { data: { admin: adminFlag } };
+
+    ApiUtil.patch(`/organizations/${this.props.organization}/users/${user.id}`, payload).then((response) => {
+      const resp = JSON.parse(response.text);
+      const updatedUser = resp.users.data[0];
+
+      // Replace the existing version of the user so it has the correct admin priveleges.
+      const updatedUserList = this.state.organizationUsers.map((existingUser) => {
+        return (existingUser.id === updatedUser.id) ? updatedUser : existingUser;
+      });
+
+      this.setState({
+        organizationUsers: updatedUserList,
+        changingAdminRights: { ...this.state.changingAdminRights,
+          [user.id]: false }
+      });
+    }, (error) => {
+      this.setState({
+        changingAdminRights: { ...this.state.changingAdminRights,
+          [user.id]: false },
+        error: {
+          title: COPY.USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE,
           body: error.message
         }
       });
@@ -112,8 +150,22 @@ export default class OrganizationUsers extends React.PureComponent {
   mainContent = () => {
     const listOfUsers = this.state.organizationUsers.map((user) => {
       return <li key={user.id}>{this.formatName(user)} &nbsp;
+        <span {...buttonPaddingStyle}>
+          { !user.attributes.admin && <Button
+            name={COPY.USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
+            id={`Make-user-admin-${user.id}`}
+            classNames={['usa-button-primary']}
+            loading={this.state.changingAdminRights[user.id]}
+            onClick={this.modifyAdminRights(user, true)} /> }
+          { user.attributes.admin && <Button
+            name={COPY.USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT}
+            id={`Remove-admin-rights-${user.id}`}
+            classNames={['usa-button-secondary']}
+            loading={this.state.changingAdminRights[user.id]}
+            onClick={this.modifyAdminRights(user, false)} /> }
+        </span>
         <Button
-          name="Remove user"
+          name={COPY.USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT}
           id={`Remove-user-${user.id}`}
           classNames={['usa-button-secondary']}
           loading={this.state.removingUser[user.id]}
@@ -123,14 +175,16 @@ export default class OrganizationUsers extends React.PureComponent {
 
     return <React.Fragment>
       <ul>{listOfUsers}</ul>
-      <h1>Add a user to the team:</h1>
+      <h1>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h1>
       <SearchableDropdown
-        name="Add user"
+        name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
         hideLabel
         searchable
         readOnly={Boolean(this.state.addingUser)}
         placeholder={
-          this.state.addingUser ? `Adding user ${this.formatName(this.state.addingUser)}` : 'Select user to add'
+          this.state.addingUser ?
+            `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
+            COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
         }
         value={null}
         onChange={this.addUser}
@@ -138,26 +192,23 @@ export default class OrganizationUsers extends React.PureComponent {
     </React.Fragment>;
   }
 
-  render = () => {
-
-    return <LoadingDataDisplay
-      createLoadPromise={this.loadingPromise}
-      loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
-        message: 'Loading user...'
-      }}
-      failStatusMessageProps={{
-        title: 'Unable to load users'
-      }}>
-      <AppSegment filledBackground>
-        { this.state.error && <Alert title={this.state.error.title} type="error">
-          {this.state.error.body}
-        </Alert>}
-        <div>
-          <h1>{this.state.organizationName} team</h1>
-          {this.mainContent()}
-        </div>
-      </AppSegment>
-    </LoadingDataDisplay>;
-  };
+  render = () => <LoadingDataDisplay
+    createLoadPromise={this.loadingPromise}
+    loadingComponentProps={{
+      spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
+      message: COPY.USER_MANAGEMENT_INITIAL_LOAD_LOADING_MESSAGE
+    }}
+    failStatusMessageProps={{
+      title: COPY.USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE
+    }}>
+    <AppSegment filledBackground>
+      { this.state.error && <Alert title={this.state.error.title} type="error">
+        {this.state.error.body}
+      </Alert>}
+      <div>
+        <h1>{this.state.organizationName} team</h1>
+        {this.mainContent()}
+      </div>
+    </AppSegment>
+  </LoadingDataDisplay>;
 }

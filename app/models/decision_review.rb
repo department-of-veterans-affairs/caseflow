@@ -46,6 +46,10 @@ class DecisionReview < ApplicationRecord
       :establishment_last_submitted_at
     end
 
+    def canceled_at_column
+      :establishment_canceled_at
+    end
+
     def ama_activation_date
       if FeatureToggle.enabled?(:use_ama_activation_date)
         Constants::DATES["AMA_ACTIVATION"].to_date
@@ -220,7 +224,7 @@ class DecisionReview < ApplicationRecord
       rsc.create_remand_issues!
       rsc.create_decision_review_task_if_required!
 
-      delay = rsc.receipt_date.future? ? rsc.receipt_date : 0
+      delay = rsc.receipt_date.future? ? (rsc.receipt_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
 
       unless rsc.processed? || rsc.receipt_date.future?
