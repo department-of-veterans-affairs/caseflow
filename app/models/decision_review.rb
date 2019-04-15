@@ -8,14 +8,12 @@ class DecisionReview < ApplicationRecord
 
   attr_reader :saving_review
 
-  has_many :request_issues, as: :decision_review
-  has_many :claimants, as: :decision_review
+  has_many :request_issues, as: :decision_review, dependent: :destroy
+  has_many :claimants, as: :decision_review, dependent: :destroy
   has_many :request_decision_issues, through: :request_issues
-  has_many :decision_issues, as: :decision_review
-  has_many :tasks, as: :appeal
+  has_many :decision_issues, as: :decision_review, dependent: :destroy
+  has_many :tasks, as: :appeal, dependent: :destroy
   has_one :intake, as: :detail
-
-  before_destroy :remove_issues!
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
     ratings_with_issues.map(&:serialize)
@@ -159,10 +157,6 @@ class DecisionReview < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
-  def remove_issues!
-    request_issues.destroy_all unless request_issues.empty?
   end
 
   def mark_rating_request_issues_to_reassociate!
