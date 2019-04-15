@@ -1183,6 +1183,9 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_current_path(
           "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
         )
+        expect(page).to have_content("Review Withdrawn")
+        expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been withdrawn.")
+        expect(page).to have_content("Withdrawn\nPTSD denied")
 
         withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
 
