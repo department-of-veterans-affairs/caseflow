@@ -31,6 +31,11 @@ class HearingRepository
         .group_by { |hearing| hearing.hearing_day_id.to_s }
     end
 
+    def fetch_hearings_for_parents_assigned_to_judge(hearing_day_ids, judge)
+      hearings_for(VACOLS::CaseHearing.hearings_for_hearing_days_assigned_to_judge(hearing_day_ids, judge))
+        .group_by { |hearing| hearing.hearing_day_id.to_s }
+    end
+
     def load_issues(hearings)
       children_hearings = hearings.select { |h| h.master_record == false }
       issues = VACOLS::CaseIssue.descriptions(children_hearings.map(&:appeal_vacols_id))
@@ -146,7 +151,7 @@ class HearingRepository
       uniq_case_hearings = case_hearings.uniq
       vacols_ids = uniq_case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
-      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids).includes(:appeal, :user)
+      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids).includes(:appeal, :user, :hearing_views)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       uniq_case_hearings.map do |vacols_record|
