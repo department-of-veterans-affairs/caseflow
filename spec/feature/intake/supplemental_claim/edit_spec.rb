@@ -660,6 +660,7 @@ feature "Supplemental Claim Edit issues" do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
+        sleep 1
         expect(page).to have_content("Requested issues\n2. Left knee granted")
         expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
