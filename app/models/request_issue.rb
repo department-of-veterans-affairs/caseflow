@@ -263,9 +263,8 @@ class RequestIssue < ApplicationRecord
     return specials unless specials.empty?
   end
 
-  def withdrawal_date(withdrawal_date)
-    withdrawn.where(closed_at: withdrawal_date.to_datetime)
-    # if closed_status == "withdrawn"
+  def withdrawal_date
+    closed_at
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -290,7 +289,7 @@ class RequestIssue < ApplicationRecord
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id,
       withdrawal_date: withdrawal_date,
-      closed_status: withdrawn
+      closed_status: :withdrawn
     }
   end
   # rubocop:enable Metrics/MethodLength
