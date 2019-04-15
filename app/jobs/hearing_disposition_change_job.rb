@@ -45,7 +45,6 @@ class HearingDispositionChangeJob < CaseflowJob
     task_count_for[label.to_sym] += 1
   end
 
-  # postponed hearings should be acted upon immediately and related tasks closed; don't take action here
   def update_task_by_hearing_disposition(task)
     label = disposition_label(task.hearing)
 

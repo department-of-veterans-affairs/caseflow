@@ -43,6 +43,7 @@ describe HearingDispositionChangeJob do
   end
 
   describe ".update_task_by_hearing_disposition" do
+    let(:attributes_date_fields) { %w[assigned_at created_at updated_at] }
     subject { HearingDispositionChangeJob.new.update_task_by_hearing_disposition(task) }
 
     context "when hearing has a disposition" do
@@ -83,9 +84,9 @@ describe HearingDispositionChangeJob do
       context "when the disposition is not an expected disposition" do
         let(:disposition) { "FAKE_DISPOSITION" }
         it "returns a label indicating that the hearing disposition is unknown and not change the task" do
-          attributes_before = task.attributes
+          attributes_before = task.attributes.except(*attributes_date_fields)
           expect(subject).to eq(:unknown_disposition)
-          expect(task.reload.attributes).to eq(attributes_before)
+          expect(task.reload.attributes.except(*attributes_date_fields)).to eq(attributes_before)
         end
       end
     end
@@ -113,9 +114,9 @@ describe HearingDispositionChangeJob do
         let(:scheduled_for) { 25.hours.ago }
 
         it "returns a label indicating that the hearing was recently held and does not change the task" do
-          attributes_before = task.attributes
+          attributes_before = task.attributes.except(*attributes_date_fields)
           expect(subject).to eq(:between_one_and_two_days_old)
-          expect(task.reload.attributes).to eq(attributes_before)
+          expect(task.reload.attributes.except(*attributes_date_fields)).to eq(attributes_before)
         end
       end
     end
