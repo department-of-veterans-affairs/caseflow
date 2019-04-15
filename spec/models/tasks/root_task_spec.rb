@@ -143,7 +143,7 @@ describe RootTask do
           )
         end
 
-        before { allow_any_instance_of(Vso).to receive(:should_write_ihp?).with(anything).and_return(false) }
+        before { allow_any_instance_of(Representative).to receive(:should_write_ihp?).with(anything).and_return(false) }
 
         it "creates no IHP tasks" do
           RootTask.create_root_and_sub_tasks!(appeal)
