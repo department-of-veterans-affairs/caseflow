@@ -8,6 +8,8 @@ describe UpdateAppellantRepresentationJob do
     let(:closed_task_count) { 1 }
     let(:correct_task_count) { 6 }
     let(:error_count) { 0 }
+    let(:changed_tasks_count) { new_task_count + closed_task_count + error_count }
+
     let(:vso_for_appeal) { {} }
     let(:vso_for_legacy_appeal) { {} }
 
@@ -34,12 +36,8 @@ describe UpdateAppellantRepresentationJob do
     end
 
     it "runs the job as expected" do
-      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:log_info).with(
-        anything,
-        new_task_count,
-        closed_task_count,
-        error_count
-      )
+      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
+      expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
 
       UpdateAppellantRepresentationJob.perform_now
     end
@@ -73,16 +71,11 @@ describe UpdateAppellantRepresentationJob do
       end
     end
 
-    it "sends the correct message to Slack" do
-      slack_msg = ""
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+    it "sends the correct number of messages to DataDog and not send a message to Slack" do
+      expect(DataDogService).to receive(:increment_counter).exactly(changed_tasks_count).times
+      expect_any_instance_of(SlackService).to_not receive(:send_notification)
 
       UpdateAppellantRepresentationJob.perform_now
-
-      expected_msg = "UpdateAppellantRepresentationJob completed after running for .*." \
-          " Created #{new_task_count} new tracking tasks and closed #{closed_task_count} existing tracking tasks." \
-          " Encountered errors for #{error_count} individual appeals."
-      expect(slack_msg).to match(/#{expected_msg}/)
     end
   end
 
@@ -126,27 +119,18 @@ describe UpdateAppellantRepresentationJob do
       end
     end
 
-    it "the job still runs to completion" do
-      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:log_info).with(
-        anything,
-        new_task_count,
-        closed_task_count,
-        error_count
-      )
+    it "the job still runs to completion but sends the errors to DataDog" do
+      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
+      expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
 
-      UpdateAppellantRepresentationJob.perform_now
-    end
-
-    it "message sent to Slack includes notice of failed appeals" do
-      slack_msg = ""
-      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+      observed_error_count = 0
+      allow_any_instance_of(UpdateAppellantRepresentationJob).to receive(:increment_task_count) do |_, task_effect|
+        observed_error_count += 1 if task_effect == "error"
+      end
 
       UpdateAppellantRepresentationJob.perform_now
 
-      expected_msg = "UpdateAppellantRepresentationJob completed after running for .*." \
-          " Created #{new_task_count} new tracking tasks and closed #{closed_task_count} existing tracking tasks." \
-          " Encountered errors for #{error_count} individual appeals."
-      expect(slack_msg).to match(/#{expected_msg}/)
+      expect(observed_error_count).to eq(error_count)
     end
   end
 
@@ -202,8 +186,6 @@ describe UpdateAppellantRepresentationJob do
       end
     end
   end
-
-  # context "when individual appeals throw errors" do
 end
 
 def create_appeal_and_vso
