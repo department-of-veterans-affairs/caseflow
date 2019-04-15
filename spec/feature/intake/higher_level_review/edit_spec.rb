@@ -1193,6 +1193,7 @@ feature "Higher Level Review Edit issues" do
 
       scenario "show withdrawn issue when page is reloaded" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
+
         click_intake_add_issue
         add_intake_rating_issue("Left knee granted")
 
@@ -1200,16 +1201,17 @@ feature "Higher Level Review Edit issues" do
 
         safe_click("#button-submit-update")
         expect(page).to have_content("Number of issues has changed")
+
         safe_click ".confirm"
         expect(page).to have_current_path(
           "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
         )
-
         # reload to verify that the new issues populate the form
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
         expect(page).to have_content("Left knee granted")
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
+
         expect(page).to_not have_content("Requested issues\n2. PTSD denied")
         expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/19/2018\nWithdraw pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")

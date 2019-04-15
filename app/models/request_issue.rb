@@ -147,7 +147,7 @@ class RequestIssue < ApplicationRecord
       eligible.where(closed_status: :withdrawn)
     end
 
-    def active_or_ineligible_withdrawn
+    def active_or_ineligible_or_withdrawn
       active_or_ineligible.or(withdrawn)
     end
 
@@ -263,8 +263,9 @@ class RequestIssue < ApplicationRecord
     return specials unless specials.empty?
   end
 
-  def withdrawal_date
-    closed_at if closed_status == "withdrawn"
+  def withdrawal_date(withdrawal_date)
+    withdrawn.where(closed_at: withdrawal_date.to_datetime)
+    # if closed_status == "withdrawn"
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -288,7 +289,8 @@ class RequestIssue < ApplicationRecord
       decision_review_title: review_title,
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id,
-      withdrawal_date: withdrawal_date
+      withdrawal_date: withdrawal_date,
+      closed_status: withdrawn
     }
   end
   # rubocop:enable Metrics/MethodLength
