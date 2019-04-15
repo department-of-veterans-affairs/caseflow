@@ -33,24 +33,25 @@ class Fakes::VBMSService
     attr_accessor :disposition_records
   end
 
-  def self.load_vbms_ids_mappings
+  def self.load_vbms_id_mapping(file_number)
+    return unless Rails.env.development?
     # Due to multiple threads calling this block, we need to wait for the first thread to finish
-    # loading records into memory before other threads can continue
+    # loading records before other threads can continue not to exhaust the connection pool
     @semaphore ||= Mutex.new
-
     @semaphore.synchronize do
-      file_path = Rails.root.join("local", "vacols", "vbms_setup.csv")
-
-      return if !Rails.env.development? || !File.exist?(file_path) || @load_vbms_ids_mappings
-      @load_vbms_ids_mappings = true
       @document_records ||= {}
-      CSV.foreach(file_path, headers: true) do |row|
-        row_hash = row.to_h
-        vbms_id = row_hash["vbms_id"].gsub(/[^0-9]/, "")
-        @document_records[vbms_id] = Fakes::Data::AppealData.document_mapping[row_hash["documents"]]
-        (@document_records[vbms_id] || []).each { |document| document.write_attribute(:file_number, vbms_id) }
+      return if @document_records[file_number].present?
+      row = vbms_ids_mapping_csv.find {|row| row['vbms_id'] == file_number + "S"}
+      return unless row
+      @document_records[file_number] = Fakes::Data::AppealData.document_mapping[row["documents"]]
+      (@document_records[file_number] || []).each do |document| 
+        document.write_attribute(:file_number, file_number)
       end
     end
+  end
+
+  def self.vbms_ids_mapping_csv
+    @vbms_ids_mapping_csv ||= CSV.foreach(Rails.root.join("local", "vacols", "vbms_setup.csv"), headers: true)
   end
 
   def self.hold_request!
@@ -85,7 +86,7 @@ class Fakes::VBMSService
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.fetch_documents_for(appeal, _user = nil)
-    load_vbms_ids_mappings
+    load_vbms_id_mapping(appeal.veteran_file_number)
 
     # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
     fetched_at_format = "%FT%T.%LZ"

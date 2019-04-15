@@ -29,6 +29,7 @@ ssh_forwarding:
 
 development:
   <<: *default
+  pool: 10
   database: caseflow_certification_development
 
 staging:
