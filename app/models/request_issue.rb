@@ -143,6 +143,10 @@ class RequestIssue < ApplicationRecord
       active.or(ineligible)
     end
 
+    def withdrawn
+      eligible.where(closed_status: :withdrawn)
+    end
+
     def active_or_ineligible_withdrawn
       active_or_ineligible.or(withdrawn)
     end
@@ -263,6 +267,7 @@ class RequestIssue < ApplicationRecord
     closed_at if closed_status == "withdrawn"
   end
 
+  # rubocop:disable Metrics/MethodLength
   def ui_hash
     {
       id: id,
@@ -286,6 +291,7 @@ class RequestIssue < ApplicationRecord
       withdrawal_date: withdrawal_date
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def approx_decision_date_of_issue_being_contested
     return if is_unidentified

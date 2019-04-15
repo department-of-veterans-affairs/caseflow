@@ -6,7 +6,6 @@ import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
 
 import { legacyIssue } from '../util/issues';
 
-
 class AddedIssue extends React.PureComponent {
   needsEligibilityCheck() {
     let { issue, requestIssues } = this.props;
