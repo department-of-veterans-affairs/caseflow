@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStr, formatDateStringForApi, formatDateStrUtc } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES.json';
 import { FORM_TYPES } from '../constants';
 
@@ -113,7 +113,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
         vacolsIssue: issue.vacols_issue,
-        withdrawalDate: formatDateStr(issue.withdrawal_date)
+        withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
 
@@ -128,7 +128,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
         vacolsIssue: issue.vacols_issue,
-        withdrawalDate: formatDateStr(issue.withdrawal_date)
+        withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
 
@@ -155,7 +155,7 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       vacolsId: issue.vacols_id,
       vacolsSequenceId: issue.vacols_sequence_id,
       vacolsIssue: issue.vacols_issue,
-      withdrawalDate: formatDateStr(issue.withdrawal_date)
+      withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
     };
   });
 };

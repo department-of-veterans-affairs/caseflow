@@ -531,14 +531,13 @@ feature "Appeal Edit issues" do
       expect(withdrawn_issue).to_not be_nil
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
 
+      sleep 1
       # reload to verify that the new issues populate the form
       visit "appeals/#{appeal.uuid}/edit/"
 
-      expect(page).to have_content("Requested issues\n1. Left knee granted")
       expect(page).to have_content(
         /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdrawn on/i
       )
-      # expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/19/2018\nWithdrawn on 02/07/2018")
       expect(page).to have_content("Please include the date the withdrawal was requested")
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
     end
