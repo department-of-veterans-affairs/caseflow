@@ -175,8 +175,8 @@ class ExternalApi::BGSService
   # higher than that of the current employee
   def can_access?(vbms_id)
     current_user = RequestStore[:current_user]
-    cache_key = "bgs_can_access_#{current_user.css_id}_#{current_user.station_id}_#{vbms_id}"
-    Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+
+    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 24.hours) do
       DBService.release_db_connections
 
       MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
@@ -187,9 +187,8 @@ class ExternalApi::BGSService
     end
   end
 
-  def bust_can_access_cache(vbms_id)
-    cache_key = "bgs_can_access_#{current_user.css_id}_#{current_user.station_id}_#{vbms_id}"
-    Rails.cache.delete(cache_key)
+  def bust_can_access_cache(user, vbms_id)
+    Rails.cache.delete(can_access_cache_key(user, vbms_id))
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
@@ -285,6 +284,10 @@ class ExternalApi::BGSService
   end
 
   private
+
+  def can_access_cache_key(user, vbms_id)
+    "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
+  end
 
   def init_client
     # Fetch current_user from global thread

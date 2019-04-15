@@ -171,6 +171,9 @@ RSpec.feature "Intake" do
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("The Veteran has multiple active phone numbers")
 
+        cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, "12341234")
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
         Fakes::BGSService.inaccessible_appeal_vbms_ids = []
         visit "/intake"
@@ -184,6 +187,7 @@ RSpec.feature "Intake" do
         click_on "Search"
 
         expect(page).to have_current_path("/intake/review_request")
+        expect(Rails.cache.exist?(cache_key)).to eq(true)
       end
     end
 

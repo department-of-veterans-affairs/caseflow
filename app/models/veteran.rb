@@ -139,7 +139,7 @@ class Veteran < ApplicationRecord
   # This causes an error fetching the BGS record and needs to be fixed in SHARE
   def multiple_phone_numbers?
     if !!access_error&.include?("NonUniqueResultException")
-      bgs.bust_can_access_cache(file_number)
+      bgs.bust_can_access_cache(RequestStore[:current_user], file_number)
 
       true
     else

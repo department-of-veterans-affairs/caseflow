@@ -509,16 +509,21 @@ class Fakes::BGSService
 
   def can_access?(vbms_id)
     current_user = RequestStore[:current_user]
-    cache_key = "bgs_can_access_#{current_user.css_id}_#{current_user.station_id}_#{vbms_id}"
-
-    Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+    if current_user
+      Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 1.minute) do
+        !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+      end
+    else
       !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
     end
   end
 
-  def bust_can_access_cache(vbms_id)
-    cache_key = "bgs_can_access_#{current_user.css_id}_#{current_user.station_id}_#{vbms_id}"
-    Rails.cache.delete(cache_key)
+  def bust_can_access_cache(user, vbms_id)
+    Rails.cache.delete(can_access_cache_key(user, vbms_id))
+  end
+
+  def can_access_cache_key(user, vbms_id)
+    "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
   end
 
   # TODO: add more test cases
