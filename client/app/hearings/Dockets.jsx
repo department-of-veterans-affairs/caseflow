@@ -219,8 +219,8 @@ export class Dockets extends React.Component {
     return <AppSegment extraClassNames="cf-hearings-schedule" filledBackground>
       <Alert
         type="warning"
-        title="Travel Board Changes May 13, 2019"
-        message="All travel board hearings scheduled May 13, 2019 and beyond must be viewed in VACOLS. Caseflow will no
+        title="Travel Board Changes May 20, 2019"
+        message="All travel board hearings scheduled May 20, 2019 and beyond must be viewed in VACOLS. Caseflow will no
           longer display travel board schedules or information after that date."
         styling={alertStyling}
       />

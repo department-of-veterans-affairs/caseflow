@@ -34,7 +34,7 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
                 staff.sattyid = tbmem4")
         .where("staff.sdomainid = #{id}")
         .where("tbstdate > ?", 1.year.ago.beginning_of_day)
-        .where("tbstdate < ?", Date.new(2019, 5, 12).beginning_of_day)
+        .where("tbstdate < ?", Date.new(2019, 5, 19).beginning_of_day)
     end
 
     def load_days_for_range(start_date, end_date)
