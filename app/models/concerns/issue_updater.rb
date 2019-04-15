@@ -92,7 +92,7 @@ module IssueUpdater
   end
 
   def fail_if_no_remand_reasons!(issue, remand_reasons_attrs)
-    if issue.disposition == "remanded" && remand_reasons_attrs.blank?
+    if issue.disposition == "remanded" && remand_reasons_attrs.empty?
       msg = "Remand reasons are missing for a remanded issue"
       fail Caseflow::Error::AttorneyJudgeCheckoutError, message: msg
     end

@@ -130,34 +130,38 @@ RSpec.describe "Hearing Day", :all_dbs, type: :request do
   end
 
   describe "Get hearing schedule for a date range" do
-    let!(:hearings) do
-      RequestStore[:current_user] = user
-      HearingDay.create(
-        [{ request_type: HearingDay::REQUEST_TYPES[:central], scheduled_for: "7-Jun-2019 09:00:00.000-4:00",
-           room: "1" },
-         { request_type: HearingDay::REQUEST_TYPES[:central], scheduled_for: "9-Jun-2019 13:00:00.000-4:00",
-           room: "3", judge_id: 105 },
-         { request_type: HearingDay::REQUEST_TYPES[:video], scheduled_for: "15-Jun-2019 08:30:00.000-4:00",
-           regional_office: "RO27", room: "4" }]
-      )
-      Generators::Vacols::TravelBoardSchedule.create(tbyear: 2019, tbstdate: "2019-01-30 00:00:00",
-                                                     tbenddate: "2019-02-03 00:00:00", tbmem1: "111")
-      Generators::Vacols::Staff.create(sattyid: "111")
-      Generators::Vacols::Staff.create(sattyid: "105", snamel: "Randall", snamef: "Tony")
-    end
-
     it "Get hearings for specified date range" do
-      hearings
+      RequestStore[:current_user] = user
+      judge = create(:user)
+      create(:hearing_day, scheduled_for: 2.months.from_now)
+      hearing_with_judge = create(
+        :hearing_day, scheduled_for: 3.months.from_now, judge_id: judge.id
+      )
+      video_hearing = create(
+        :hearing_day,
+        scheduled_for: 5.months.from_now,
+        regional_office: "RO27",
+        request_type: HearingDay::REQUEST_TYPES[:video]
+      )
+
       headers = {
         "ACCEPT" => "application/json"
       }
+
       get "/hearings/hearing_day", params: { start_date: "2019-01-01", end_date: "2019-06-15" }, headers: headers
+
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearings"].size).to eq(3)
-      # Passing locally, failing on Jenkins
-      # expect(JSON.parse(response.body)["hearings"][1]["judge_last_name"]).to eq("Randall")
-      # expect(JSON.parse(response.body)["hearings"][1]["judge_first_name"]).to eq("Tony")
-      # expect(JSON.parse(response.body)["hearings"][2]["regional_office"]).to eq("Louisville, KY")
+
+      hearings = JSON.parse(response.body)["hearings"]
+
+      expect(hearings.size).to eq(3)
+
+      hearing_with_judge_result = hearings.find { |hash| hash["id"] == hearing_with_judge.id }
+      expect(hearing_with_judge_result["judge_last_name"]).to eq("Roth")
+      expect(hearing_with_judge_result["judge_first_name"]).to eq("Lauren")
+
+      video_hearing_result = hearings.find { |hash| hash["id"] == video_hearing.id }
+      expect(video_hearing_result["regional_office"]).to eq("Louisville, KY")
     end
   end
 

@@ -100,7 +100,9 @@ describe AttorneyCaseReview, :all_dbs do
         expect(request_issue1.decision_issues[1].disposition).to eq "remanded"
         expect(request_issue1.decision_issues[1].description).to eq "something2"
 
-        expect(request_issue1.decision_issues[1].remand_reasons.size).to eq 3
+        decision_issue = request_issue1.decision_issues[1]
+        expect(RemandReason.where(decision_issue_id: decision_issue.id).count).to eq 3
+
         expect(request_issue1.decision_issues[1].remand_reasons[0].code).to eq "va_records"
         expect(request_issue1.decision_issues[1].remand_reasons[0].post_aoj).to eq false
 
@@ -114,7 +116,10 @@ describe AttorneyCaseReview, :all_dbs do
         expect(request_issue4.reload.decision_issues.size).to eq 1
         expect(request_issue3.reload.decision_issues.first).to eq request_issue4.decision_issues.first
         expect(request_issue5.reload.decision_issues.size).to eq 2
-        expect(request_issue5.decision_issues[1].remand_reasons.size).to eq 2
+
+        decision_issue = request_issue5.decision_issues[1]
+        expect(RemandReason.where(decision_issue_id: decision_issue.id).count).to eq 2
+
         expect(request_issue6.decision_issues.size).to eq 1
         expect(withdrawn_request_issue.decision_issues.size).to eq 1
         expect(withdrawn_request_issue.decision_issues[0].disposition).to eq "withdrawn"

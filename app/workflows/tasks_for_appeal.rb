@@ -50,7 +50,8 @@ class TasksForAppeal
       :appeal,
       :assigned_by,
       :assigned_to,
-      :parent
+      :parent,
+      :children
     ]
   end
 end

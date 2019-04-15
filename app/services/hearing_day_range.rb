@@ -9,16 +9,16 @@ class HearingDayRange
 
   def load_days
     if regional_office.nil?
-      HearingDay.where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+      HearingDay.includes(:judge).where("DATE(scheduled_for) between ? and ?", start_date, end_date)
     elsif regional_office == HearingDay::REQUEST_TYPES[:central]
-      HearingDay.where(
+      HearingDay.includes(:judge).where(
         "request_type = ? and DATE(scheduled_for) between ? and ?",
         HearingDay::REQUEST_TYPES[:central],
         start_date,
         end_date
       )
     else
-      HearingDay.where(
+      HearingDay.includes(:judge).where(
         "regional_office = ? and DATE(scheduled_for) between ? and ?",
         regional_office,
         start_date,
@@ -28,7 +28,7 @@ class HearingDayRange
   end
 
   def upcoming_days_for_judge(user)
-    hearing_days_in_range = HearingDay.includes(:hearings)
+    hearing_days_in_range = HearingDay.includes(:hearings, :judge)
       .where("DATE(scheduled_for) between ? and ?", start_date, end_date)
     vacols_hearings = HearingRepository.fetch_hearings_for_parents_assigned_to_judge(
       hearing_days_in_range.first(1000).pluck(:id), user
@@ -78,6 +78,7 @@ class HearingDayRange
     vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(total_video_and_co.pluck(:id))
 
     total_video_and_co
+      .includes(:hearings)
       .select { |hearing_day| !hearing_day.lock }
       .map do |hearing_day|
         all_hearings = (hearing_day.hearings || []) + (vacols_hearings_for_days[hearing_day.id.to_s] || [])
@@ -148,7 +149,7 @@ class HearingDayRange
   attr_reader :regional_office
 
   def hearing_days_in_range
-    HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
+    HearingDay.includes(:judge, hearings: [appeal: [tasks: :assigned_to]])
       .where("DATE(scheduled_for) between ? and ?", start_date, end_date)
   end
 end
