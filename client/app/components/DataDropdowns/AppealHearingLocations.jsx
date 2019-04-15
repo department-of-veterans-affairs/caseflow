@@ -84,7 +84,7 @@ class AppealHearingLocationsDropdown extends React.Component {
       appealId, regionalOffice, dropdownName
     } = this.props;
 
-    if (options || isFetching) {
+    if (options || isFetching || _.isUndefined(regionalOffice)) {
       return;
     }
 
@@ -152,7 +152,7 @@ class AppealHearingLocationsDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value, option.label)}
+        onChange={(option) => onChange((option || {}).value, (option || {}).label)}
         options={options}
         errorMessage={this.state.errorMsg || errorMessage}
         placeholder={placeholder} />

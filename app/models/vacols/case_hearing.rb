@@ -70,6 +70,14 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.where(vdkey: hearing_day_ids).where("hearing_date > ?", Date.new(2019, 1, 1))
     end
 
+    def hearings_for_hearing_days_assigned_to_judge(hearing_day_ids, judge)
+      id = connection.quote(judge.css_id.upcase)
+
+      select_hearings.where(vdkey: hearing_day_ids)
+        .where("hearing_date > ?", Date.new(2019, 1, 1))
+        .where("staff.sdomainid = #{id}")
+    end
+
     def for_appeal(appeal_vacols_id)
       select_hearings.where(folder_nr: appeal_vacols_id)
     end

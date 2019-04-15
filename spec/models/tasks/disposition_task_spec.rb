@@ -319,7 +319,7 @@ describe DispositionTask do
           expect(no_show_hearing_task.placed_on_hold_at).to_not be_nil
           expect(no_show_hearing_task.on_hold_expired?).to be_falsey
           expect(no_show_hearing_task.status).to eq Constants.TASK_STATUSES.on_hold
-          expect(no_show_hearing_task.on_hold_duration).to eq 25.days
+          expect(no_show_hearing_task.on_hold_duration).to eq 25
         end
       end
 
