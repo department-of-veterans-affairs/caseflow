@@ -134,6 +134,26 @@ describe UpdateAppellantRepresentationJob do
     end
   end
 
+  context "when the entire job fails" do
+    let(:error_msg) { "Some dummy error" }
+
+    before do
+      allow_any_instance_of(UpdateAppellantRepresentationJob).to receive(:appeals_to_update).and_raise(error_msg)
+    end
+
+    it "sends a message to Slack that includes the error" do
+      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
+
+      slack_msg = ""
+      allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg = first_arg }
+
+      UpdateAppellantRepresentationJob.perform_now
+
+      expected_msg = "UpdateAppellantRepresentationJob failed after running for .*. Fatal error: #{error_msg}"
+      expect(slack_msg).to match(/#{expected_msg}/)
+    end
+  end
+
   context "#when there are ama and legacy appeals" do
     let!(:legacy_appeals) do
       (1..legacy_appeal_count).map do |_|

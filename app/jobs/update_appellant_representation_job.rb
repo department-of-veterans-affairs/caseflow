@@ -17,20 +17,20 @@ class UpdateAppellantRepresentationJob < CaseflowJob
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
-    appeals_to_update.each do |a|
-      sync_record = a.record_synced_by_job.find_or_create_by(sync_job_name: UpdateAppellantRepresentationJob.name)
+    appeals_to_update.each do |appeal|
+      sync_record = appeal.record_synced_by_job.find_or_create_by(sync_job_name: UpdateAppellantRepresentationJob.name)
 
-      appeal_new_task_count, appeal_closed_task_count = TrackVeteranTask.sync_tracking_tasks(a)
+      appeal_new_task_count, appeal_closed_task_count = TrackVeteranTask.sync_tracking_tasks(appeal)
       sync_record.update!(processed_at: Time.zone.now)
 
-      increment_task_count("new", a.id, appeal_new_task_count)
-      increment_task_count("closed", a.id, appeal_closed_task_count)
+      increment_task_count("new", appeal.id, appeal_new_task_count)
+      increment_task_count("closed", appeal.id, appeal_closed_task_count)
 
       # TODO: Add an alert if we've been running for longer than x number of minutes?
     rescue StandardError => e
       # Rescue from errors when looping over appeals so that we attempt to sync tracking tasks for each appeal.
-      Raven.capture_exception(e, extra: { appeal_id: a.id })
-      increment_task_count("error", a.id)
+      Raven.capture_exception(e, extra: { appeal_id: appeal.id })
+      increment_task_count("error", appeal.id)
     end
 
     record_runtime(start_time)
