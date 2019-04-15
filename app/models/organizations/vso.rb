@@ -6,6 +6,7 @@ class Vso < Organization
   def user_has_access?(user)
     return false unless user.roles.include?("VSO")
 
+    # TODO: Do we need to rename User.vsos_user_represents?
     participant_ids = user.vsos_user_represents.map { |poa| poa[:participant_id] }
     participant_ids.include?(participant_id)
   end
@@ -15,7 +16,7 @@ class Vso < Organization
   end
 
   def should_write_ihp?(appeal)
-    ihp_writing_configs.include?(appeal.docket_type) && appeal.vsos.include?(self)
+    ihp_writing_configs.include?(appeal.docket_type) && appeal.representatives.include?(self)
   end
 
   private
