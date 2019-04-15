@@ -111,7 +111,7 @@ export class AddIssuesPage extends React.Component {
     );
 
     const issues = formatAddedIssues(intakeData, useAmaActivationDate);
-    const requestIssues = issues.filter((issue) => !issue.withdrawalPending);
+    const requestIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
     const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
     const allWithdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
@@ -232,7 +232,6 @@ export class AddIssuesPage extends React.Component {
         content: requestIssuesComponent() });
 
     if (hasWithdrawnIssues) {
-      // console.log('withdraw', intakeData.requestIssues[0].withdrawal_date);
       rowObjects = rowObjects.concat(
         {
           field: 'Withdrawn issues',

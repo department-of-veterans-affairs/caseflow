@@ -1215,8 +1215,8 @@ feature "Higher Level Review Edit issues" do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
-        expect(page).to_not have_content("Requested issues\n2. PTSD denied")
-        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/19/2018\nWithdraw pending")
+        expect(page).to_not have_content("Requested issues\n1. PTSD denied")
+        expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/19/2018\nWithdraw pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -1233,8 +1233,10 @@ feature "Higher Level Review Edit issues" do
 
         # reload to verify that the new issues populate the form
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-        expect(page).to have_content("Left knee granted")
-        expect(withdrawn_issue.withdrawal_date).to eq(1.day.ago.to_date.to_datetime)
+
+        expect(page).to have_content("Requested issues\n1. Left knee granted")
+        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/19/2018\nWithdrawn on 02/07/2018")
+        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
     end
   end

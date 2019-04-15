@@ -264,7 +264,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def withdrawal_date
-    closed_at
+    closed_at if withdrawn?
   end
 
   # rubocop:disable Metrics/MethodLength
@@ -288,8 +288,7 @@ class RequestIssue < ApplicationRecord
       decision_review_title: review_title,
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id,
-      withdrawal_date: withdrawal_date,
-      closed_status: :withdrawn
+      withdrawal_date: withdrawal_date
     }
   end
   # rubocop:enable Metrics/MethodLength

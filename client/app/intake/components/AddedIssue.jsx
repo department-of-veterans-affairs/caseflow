@@ -87,7 +87,7 @@ class AddedIssue extends React.PureComponent {
       }
     }
 
-    if (issue.withdrawalPending) {
+    if (issue.withdrawalPending || issue.withdrawalDate) {
       eligibleState.cssKlasses.push('withdrawn-issue');
     }
 
@@ -106,7 +106,7 @@ class AddedIssue extends React.PureComponent {
         </div>
       }
       { issue.withdrawalPending && <p>Withdraw pending</p> }
-      { issue.withdrawalDate && <p>withdrawn on {issue.withdrawalDate}</p> }
+      { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
 
     </div>;
   }
