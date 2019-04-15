@@ -1,18 +1,44 @@
 # frozen_string_literal: true
 
-describe FieldVso do
+describe PrivateBar do
+  describe ".create_for_user" do
+    let(:user_name) { "Mariano Rivera" }
+    let(:css_id) { "VACORIVEM" }
+    let(:user) { FactoryBot.create(:user, full_name: user_name, css_id: css_id) }
+    let(:participant_id) { 1_234_567 }
+
+    before do
+      allow_any_instance_of(BGSService).to receive(:get_participant_id_for_user).and_return(participant_id)
+    end
+
+    subject { PrivateBar.create_for_user(user) }
+
+    context "when the user has a participant_id" do
+      it "creates the organization with one user" do
+        org = subject
+
+        expect(org.name).to eq(user_name)
+        expect(org.url).to eq(css_id.downcase)
+        expect(org.participant_id).to eq(participant_id.to_s)
+
+        expect(org.users.length).to eq(1)
+        expect(org.users.first).to eq(user)
+      end
+    end
+  end
+
   describe ".should_write_ihp?" do
-    let(:vso) { FieldVso.create!(name: "Field VSO") }
+    let(:rep) { FactoryBot.create(:private_bar) }
     let(:docket) { nil }
     let(:appeal) { FactoryBot.create(:appeal, docket_type: docket) }
 
     before { allow_any_instance_of(Appeal).to receive(:vsos).and_return(poas) }
 
-    subject { vso.should_write_ihp?(appeal) }
+    subject { rep.should_write_ihp?(appeal) }
 
-    context "when there is no vso_configs record for this VSO" do
-      context "when VSO represents the appellant" do
-        let(:poas) { [vso] }
+    context "when there is no vso_configs record for this PrivateBar" do
+      context "when PrivateBar represents the appellant" do
+        let(:poas) { [rep] }
 
         context "when the appeal is on the direct_review docket" do
           let(:docket) { Constants.AMA_DOCKETS.direct_review }
@@ -36,7 +62,7 @@ describe FieldVso do
         end
       end
 
-      context "when VSO does not represent the appellant" do
+      context "when PrivateBar does not represent the appellant" do
         let(:poas) { [] }
 
         context "when the appeal is on the direct_review docket" do
