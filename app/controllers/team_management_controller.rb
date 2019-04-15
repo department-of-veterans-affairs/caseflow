@@ -10,6 +10,7 @@ class TeamManagementController < ApplicationController
         render json: {
           judge_teams: JudgeTeam.all.order(:id).map { |jt| serialize_org(jt) },
           vsos: Vso.all.order(:id).map { |vso| serialize_org(vso) },
+          private_bar: PrivateBar.all.order(:id).map { |vso| serialize_org(vso) },
           other_orgs: other_orgs.map { |org| serialize_org(org) }
         }
       end
@@ -50,6 +51,18 @@ class TeamManagementController < ApplicationController
     org = FieldVso.create!(update_params)
 
     Rails.logger.info("Creating FieldVso with parameters: #{update_params.inspect}")
+
+    render json: { org: serialize_org(org) }, status: :ok
+  end
+
+  def create_private_bar
+    user = User.find(params[:user_id])
+
+    fail(Caseflow::Error::DuplicatePrivateBar, user_id: user.id) if PrivateBar.for_user(user)
+
+    Rails.logger.info("Creating PrivateBar for user: #{user.inspect}")
+
+    org = PrivateBar.create_for_user(user)
 
     render json: { org: serialize_org(org) }, status: :ok
   end

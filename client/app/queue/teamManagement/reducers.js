@@ -4,6 +4,7 @@ import { update } from '../../util/ReducerUtil';
 export const initialState = {
   judgeTeams: [],
   vsos: [],
+  privateBar: [],
   otherOrgs: []
 };
 
@@ -13,6 +14,7 @@ const teamManagementReducer = (state = initialState, action = {}) => {
     return update(state, {
       judgeTeams: { $set: action.payload.judge_teams },
       vsos: { $set: action.payload.vsos },
+      privateBar: { $set: action.payload.private_bar },
       otherOrgs: { $set: action.payload.other_orgs }
     });
   case ACTIONS.ON_RECEIVE_NEW_JUDGE_TEAM:
@@ -22,6 +24,10 @@ const teamManagementReducer = (state = initialState, action = {}) => {
   case ACTIONS.ON_RECEIVE_NEW_VSO:
     return update(state, {
       vsos: { $set: state.vsos.concat(action.payload.org) }
+    });
+  case ACTIONS.ON_RECEIVE_NEW_PRIVATE_BAR:
+    return update(state, {
+      privateBar: { $set: state.privateBar.concat(action.payload.org) }
     });
   default:
     return state;

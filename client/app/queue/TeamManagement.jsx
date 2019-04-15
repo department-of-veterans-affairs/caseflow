@@ -28,6 +28,8 @@ class TeamManagement extends React.PureComponent {
 
   addIhpWritingVso = () => this.props.history.push('/team_management/add_vso');
 
+  addPrivateBar = () => this.props.history.push('/team_management/add_private_bar');
+
   render = () => {
     const {
       success,
@@ -62,6 +64,11 @@ class TeamManagement extends React.PureComponent {
               </OrgHeader>
               <OrgList orgs={this.props.vsos} showBgsParticipantId />
 
+              <OrgHeader>
+                Private Bar <Button name={COPY.TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON} onClick={this.addPrivateBar} />
+              </OrgHeader>
+              <OrgList orgs={this.props.privateBar} />
+
               <OrgHeader>Other teams</OrgHeader>
               <OrgList orgs={this.props.otherOrgs} />
             </tbody>
@@ -82,12 +89,14 @@ const mapStateToProps = (state) => {
   const {
     judgeTeams,
     vsos,
+    privateBar,
     otherOrgs
   } = state.teamManagement;
 
   return {
     judgeTeams,
     vsos,
+    privateBar,
     otherOrgs,
     success,
     error

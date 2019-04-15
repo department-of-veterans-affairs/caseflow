@@ -11,6 +11,8 @@ class UsersController < ApplicationController
       return render json: { attorneys: Attorney.list_all }
     when Constants::USER_ROLE_TYPES["hearing_coordinator"]
       return render json: { coordinators: User.list_hearing_coordinators }
+    when Constants::USER_ROLE_TYPES["vso_staff"]
+      return render json: { vso_staff: vso_staff }
     when "non_judges"
       return render json: { non_judges: json_users(User.where.not(id: JudgeTeam.all.map(&:judge).pluck(:id))) }
     end
@@ -19,6 +21,10 @@ class UsersController < ApplicationController
 
   def judge
     @judge ||= User.find_by(id: params[:judge_id])
+  end
+
+  def vso_staff
+    User.where("'VSO' = ANY(roles)")
   end
 
   private
