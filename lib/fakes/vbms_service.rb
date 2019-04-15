@@ -35,16 +35,19 @@ class Fakes::VBMSService
 
   def self.load_vbms_id_mapping(file_number)
     return unless Rails.env.development?
+
     # Due to multiple threads calling this block, we need to wait for the first thread to finish
     # loading records before other threads can continue not to exhaust the connection pool
     @semaphore ||= Mutex.new
     @semaphore.synchronize do
       @document_records ||= {}
       return if @document_records[file_number].present?
-      row = vbms_ids_mapping_csv.find {|row| row['vbms_id'] == file_number + "S"}
+
+      row = vbms_ids_mapping_csv.find { |csv_row| csv_row["vbms_id"] == file_number + "S" }
       return unless row
+
       @document_records[file_number] = Fakes::Data::AppealData.document_mapping[row["documents"]]
-      (@document_records[file_number] || []).each do |document| 
+      (@document_records[file_number] || []).each do |document|
         document.write_attribute(:file_number, file_number)
       end
     end
