@@ -17,12 +17,12 @@ FactoryBot.define do
 
     trait :requires_processing do
       decision_sync_submitted_at { (BoardGrantEffectuation.processing_retry_interval_hours + 1).hours.ago }
-      last_submitted_at { (BoardGrantEffectuation.processing_retry_interval_hours + 1).hours.ago }
+      decision_sync_last_submitted_at { (BoardGrantEffectuation.processing_retry_interval_hours + 1).hours.ago }
       decision_sync_processed_at { nil }
     end
 
     trait :processed do
-      processed_at { Time.zone.now }
+      decision_sync_processed_at { Time.zone.now }
     end
   end
 end
