@@ -98,7 +98,7 @@ class TasksController < ApplicationController
     # VSO users will be able to see other VSO's tasks because we don't store that membership information in Caseflow.
     if current_user.vso_employee?
       # Return all tasks assigned to the current user or ANY VSO.
-      tasks = appeal.tasks.select { |t| t.assigned_to.is_a?(Vso) || current_user == t.assigned_to }
+      tasks = appeal.tasks.select { |t| t.assigned_to.is_a?(Representative) || current_user == t.assigned_to }
     else
       # DecisionReviewTask tasks are meant to be viewed on the /decision_reviews/:line-of-business route only.
       # This change filters them out from the Queue page

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-describe Vso do
+describe Representative do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
 
   let(:vso) do
-    Vso.create(
+    Representative.create(
       participant_id: vso_participant_id
     )
   end
@@ -33,7 +33,7 @@ describe Vso do
 
   describe ".create!" do
     it "sets the role to VSO" do
-      vso = Vso.create!(name: "Veterans' Service Org")
+      vso = Representative.create!(name: "Veterans' Service Org")
       expect(vso.role).to eq("VSO")
     end
   end
@@ -63,7 +63,7 @@ describe Vso do
 
     context "when the users participant_id is associated with a different VSO" do
       let(:vso) do
-        Vso.create(
+        Representative.create(
           participant_id: "999"
         )
       end

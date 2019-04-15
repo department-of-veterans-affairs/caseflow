@@ -151,7 +151,7 @@ RSpec.feature "Case details" do
 
         before do
           OrganizationsUser.add_user_to_organization(vso_user, vso)
-          allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+          allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
           User.authenticate!(user: vso_user)
         end
 
