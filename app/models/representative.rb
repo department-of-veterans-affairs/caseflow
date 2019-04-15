@@ -1,13 +1,11 @@
 # frozen_string_literal: true
 
-<<<<<<< HEAD
-class Vso < Organization
+class Representative < Organization
   after_initialize :set_role
 
   def user_has_access?(user)
     return false unless user.roles.include?("VSO")
 
-    # TODO: Do we need to rename User.vsos_user_represents?
     participant_ids = user.vsos_user_represents.map { |poa| poa[:participant_id] }
     participant_ids.include?(participant_id)
   end
@@ -17,7 +15,7 @@ class Vso < Organization
   end
 
   def should_write_ihp?(appeal)
-    ihp_writing_configs.include?(appeal.docket_type) && appeal.representatives.include?(self)
+    ihp_writing_configs.include?(appeal.docket_type) && appeal.vsos.include?(self)
   end
 
   private
@@ -30,6 +28,3 @@ class Vso < Organization
     vso_config&.ihp_dockets || [Constants.AMA_DOCKETS.evidence_submission, Constants.AMA_DOCKETS.direct_review]
   end
 end
-=======
-class Vso < Representative; end
->>>>>>> master

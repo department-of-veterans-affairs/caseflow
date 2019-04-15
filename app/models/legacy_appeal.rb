@@ -337,7 +337,7 @@ class LegacyAppeal < ApplicationRecord
   delegate :vacols_representatives, to: :case_record
 
   def representatives
-    Vso.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
+    Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
   end
 
   def contested_claim
