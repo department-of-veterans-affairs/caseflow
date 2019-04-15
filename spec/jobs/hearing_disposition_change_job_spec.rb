@@ -66,10 +66,9 @@ describe HearingDispositionChangeJob do
 
       context "when disposition is postponed" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
-        it "returns a label matching the hearing disposition and not change the task" do
-          attributes_before = task.attributes
+        it "returns a label matching the hearing disposition and call DispositionTask.postpone!" do
+          expect(task).to receive(:postpone!).exactly(1).times
           expect(subject).to eq(disposition)
-          expect(task.attributes).to eq(attributes_before)
         end
       end
 
@@ -86,7 +85,7 @@ describe HearingDispositionChangeJob do
         it "returns a label indicating that the hearing disposition is unknown and not change the task" do
           attributes_before = task.attributes
           expect(subject).to eq(:unknown_disposition)
-          expect(task.attributes).to eq(attributes_before)
+          expect(task.reload.attributes).to eq(attributes_before)
         end
       end
     end
@@ -116,7 +115,7 @@ describe HearingDispositionChangeJob do
         it "returns a label indicating that the hearing was recently held and does not change the task" do
           attributes_before = task.attributes
           expect(subject).to eq(:between_one_and_two_days_old)
-          expect(task.attributes).to eq(attributes_before)
+          expect(task.reload.attributes).to eq(attributes_before)
         end
       end
     end

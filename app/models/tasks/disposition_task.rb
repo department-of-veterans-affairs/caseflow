@@ -10,6 +10,7 @@ class DispositionTask < GenericTask
   delegate :hearing, to: :hearing_task, allow_nil: true
 
   class HearingDispositionNotCanceled < StandardError; end
+  class HearingDispositionNotPostponed < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
   class HearingDispositionNotHeld < StandardError; end
 
@@ -75,6 +76,14 @@ class DispositionTask < GenericTask
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def postpone!
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.postponed
+      fail HearingDispositionNotPostponed
+    end
+
+    schedule_later
   end
 
   def no_show!

@@ -109,8 +109,9 @@ describe DispositionTask do
           expect(Hearing.count).to eq 1
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.status).to eq Constants.TASK_STATUSES.cancelled
-          expect(DispositionTask.first.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(HearingTask.first.cancelled?).to be_truthy
+          expect(HearingTask.last.on_hold?).to be_truthy
+          expect(DispositionTask.first.cancelled?).to be_truthy
           expect(ScheduleHearingTask.count).to eq 1
           expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
         end
@@ -124,7 +125,7 @@ describe DispositionTask do
           it "adds the instructions to both the DispositionTask and the ScheduleHearingTask" do
             subject
 
-            expect(DispositionTask.first.status).to eq Constants.TASK_STATUSES.cancelled
+            expect(DispositionTask.first.cancelled?).to be_truthy
             expect(DispositionTask.first.instructions).to eq [instructions_text]
             expect(ScheduleHearingTask.count).to eq 1
             expect(ScheduleHearingTask.first.instructions).to eq [instructions_text]
@@ -148,8 +149,8 @@ describe DispositionTask do
           expect(Hearing.count).to eq 1
           expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.status).to eq Constants.TASK_STATUSES.cancelled
-          expect(DispositionTask.first.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(HearingTask.first.cancelled?).to be_truthy
+          expect(DispositionTask.first.cancelled?).to be_truthy
           expect(ScheduleHearingTask.count).to eq 1
           expect(ScheduleHearingTask.first.parent.id).to eq HearingTask.last.id
           expect(HearingAdminActionIncarceratedVeteranTask.count).to eq 1
@@ -177,10 +178,10 @@ describe DispositionTask do
           expect(Hearing.last.hearing_location.facility_id).to eq "vba_370"
           expect(Hearing.last.scheduled_time.strftime("%I:%M%p")).to eq "12:30PM"
           expect(HearingTask.count).to eq 2
-          expect(HearingTask.first.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(HearingTask.first.cancelled?).to be_truthy
           expect(HearingTask.last.hearing_task_association.hearing.id).to eq Hearing.last.id
           expect(DispositionTask.count).to eq 2
-          expect(DispositionTask.first.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(DispositionTask.first.cancelled?).to be_truthy
         end
       end
     end
@@ -305,8 +306,8 @@ describe DispositionTask do
 
             expect { subject }.to_not raise_error
 
-            expect(disposition_task.cancelled?).to be_truthy
-            expect(hearing_task.cancelled?).to be_truthy
+            expect(disposition_task.reload.cancelled?).to be_truthy
+            expect(hearing_task.reload.cancelled?).to be_truthy
             expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
           end
 
@@ -398,6 +399,37 @@ describe DispositionTask do
       end
     end
 
+    describe ".postpone!" do
+      subject { disposition_task.postpone! }
+
+      context "the hearing's disposition is 'postponed'" do
+        let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+
+        it "creates a new HearingTask and ScheduleHearingTask" do
+          subject
+
+          expect(Hearing.count).to eq 1
+          expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.postponed
+          expect(HearingTask.count).to eq 2
+          expect(hearing_task.reload.cancelled?).to be_truthy
+          expect(HearingTask.last.on_hold?).to be_truthy
+          expect(disposition_task.reload.cancelled?).to be_truthy
+          expect(ScheduleHearingTask.count).to eq 2
+          expect(ScheduleHearingTask.last.parent.id).to eq HearingTask.last.id
+        end
+      end
+
+      context "the hearing's disposition is nil" do
+        let(:disposition) { nil }
+
+        it "raises an error" do
+          expect { subject }.to raise_error DispositionTask::HearingDispositionNotPostponed
+
+          expect(disposition_task.status).to eq Constants.TASK_STATUSES.in_progress
+        end
+      end
+    end
+
     describe ".no_show!" do
       subject { disposition_task.no_show! }
 
@@ -405,17 +437,17 @@ describe DispositionTask do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
 
         it "marks the disposition task as no_show" do
-          expect(disposition_task.status).to eq Constants.TASK_STATUSES.in_progress
+          expect(disposition_task.in_progress?).to be_truthy
           expect(NoShowHearingTask.count).to eq 0
 
           subject
 
-          expect(disposition_task.status).to eq Constants.TASK_STATUSES.on_hold
+          expect(disposition_task.reload.on_hold?).to be_truthy
           no_show_hearing_task = NoShowHearingTask.first
           expect(no_show_hearing_task).to_not be_nil
           expect(no_show_hearing_task.placed_on_hold_at).to_not be_nil
           expect(no_show_hearing_task.on_hold_expired?).to be_falsey
-          expect(no_show_hearing_task.status).to eq Constants.TASK_STATUSES.on_hold
+          expect(no_show_hearing_task.reload.on_hold?).to be_truthy
           expect(no_show_hearing_task.on_hold_duration).to eq 25
         end
       end
@@ -426,7 +458,7 @@ describe DispositionTask do
         it "raises an error" do
           expect { subject }.to raise_error DispositionTask::HearingDispositionNotNoShow
 
-          expect(disposition_task.status).to eq Constants.TASK_STATUSES.in_progress
+          expect(disposition_task.reload.in_progress?).to be_truthy
         end
       end
     end
@@ -459,7 +491,7 @@ describe DispositionTask do
               expect(window_task.appeal).to eq appeal
               expect(window_task.assigned_to).to eq MailTeam.singleton
               expect(window_task.timer_ends_at).to eq hearing_scheduled_for + 90.days
-              expect(disposition_task.on_hold?).to be_truthy
+              expect(disposition_task.reload.on_hold?).to be_truthy
             end
           end
 
@@ -509,8 +541,8 @@ describe DispositionTask do
 
             subject
 
-            expect(disposition_task.completed?).to be_truthy
-            expect(hearing_task.completed?).to be_truthy
+            expect(disposition_task.reload.completed?).to be_truthy
+            expect(hearing_task.reload.completed?).to be_truthy
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:transcription])
           end
         end

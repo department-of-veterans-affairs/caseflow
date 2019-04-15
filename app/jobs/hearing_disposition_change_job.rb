@@ -54,6 +54,8 @@ class HearingDispositionChangeJob < CaseflowJob
       task.hold!
     when Constants.HEARING_DISPOSITION_TYPES.cancelled
       task.cancel!
+    when Constants.HEARING_DISPOSITION_TYPES.postponed
+      task.postpone!
     when Constants.HEARING_DISPOSITION_TYPES.no_show
       task.no_show!
     when :stale
