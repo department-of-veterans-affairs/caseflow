@@ -68,6 +68,17 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       $unset: ['saveSuccessful', 'displayLockSuccessMessage']
     });
+  case ACTIONS.UPDATE_DOCKET_HEARING:
+    return update(state, {
+      hearings: {
+        [action.payload.hearingId]: {
+          $set: {
+            ...state.hearings[action.payload.hearingId],
+            ...action.payload.values
+          }
+        }
+      }
+    });
   case ACTIONS.CANCEL_HEARING_UPDATE:
     return update(state, {
       hearings: {

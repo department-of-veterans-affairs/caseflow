@@ -142,12 +142,10 @@ export class DailyDocketContainer extends React.Component {
 
   formatHearing = (hearing) => {
     return {
-      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
-      transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
-        hearing.transcriptRequested : hearing.editedTranscriptRequested,
-      notes: _.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes,
-      hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
-        ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
+      disposition: hearing.disposition,
+      transcript_requested: hearing.transcriptRequested,
+      notes: hearing.notes,
+      hearing_location_attributes: ApiUtil.convertToSnakeCase(hearing.location),
       scheduled_time: this.getScheduledTime(hearing),
       scheduled_for: this.getScheduledFor(hearing)
     };

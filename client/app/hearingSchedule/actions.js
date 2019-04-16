@@ -61,6 +61,14 @@ export const onReceiveAppealsReadyForHearing = (appeals) => ({
   }
 });
 
+export const onUpdateDocketHearing = (hearingId, values) => ({
+  type: ACTIONS.UPDATE_DOCKET_HEARING,
+  payload: {
+    hearingId,
+    values
+  }
+});
+
 export const onHearingNotesUpdate = (hearingId, notes) => ({
   type: ACTIONS.HEARING_NOTES_UPDATE,
   payload: {

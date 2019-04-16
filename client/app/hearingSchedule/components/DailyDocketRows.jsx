@@ -51,23 +51,8 @@ const Header = () => (
 );
 
 export default class DailyDocketHearingRows extends React.Component {
-
-  updateHearingNotes = (hearing) => (value) => this.props.onHearingNotesUpdate(hearing.id, value)
-
-  updateHearingDisposition = (hearing) => (value) => this.props.onHearingDispositionUpdate(hearing.id, value)
-
-  updateHearingTime = (hearing) => (value) => this.props.onHearingTimeUpdate(hearing.id, value)
-
-  updateTranscriptRequested = (hearing) => (value) => this.props.onTranscriptRequestedUpdate(hearing.id, value)
-
-  updateHearingLocation = (hearing) => (value) => this.props.onHearingLocationUpdate(hearing.id, value)
-
-  cancelHearingUpdate = (hearing) => () => this.props.cancelHearingUpdate(hearing)
-
-  saveHearing = (hearing) => () => this.props.saveHearing(hearing.id);
-
   render () {
-    const { hearings, readOnly, regionalOffice, openDispositionModal, user } = this.props;
+    const { hearings, readOnly, regionalOffice, openDispositionModal, user, saveHearing } = this.props;
 
     return <div {...rowsMargin}>
       <Header />
@@ -77,15 +62,12 @@ export default class DailyDocketHearingRows extends React.Component {
             hearing={hearing}
             index={index} />
         </div><div>
-          <HearingActions hearing={hearing} readOnly={readOnly} user={user} regionalOffice={regionalOffice}
-            openDispositionModal={openDispositionModal}
-            updateHearingNotes={this.updateHearingNotes(hearing)}
-            updateHearingDisposition={this.updateHearingDisposition(hearing)}
-            updateHearingTime={this.updateHearingTime(hearing)}
-            updateHearingLocation={this.updateHearingLocation(hearing)}
-            updateTranscriptRequested={this.updateTranscriptRequested(hearing)}
-            saveHearing={this.saveHearing(hearing)}
-            cancelHearingUpdate={this.cancelHearingUpdate(hearing)} />
+          <HearingActions hearingId={hearing.id}
+            readOnly={readOnly}
+            user={user}
+            saveHearing={saveHearing}
+            regionalOffice={regionalOffice}
+            openDispositionModal={openDispositionModal} />
         </div></div>
       ))}</div>
     </div>;
