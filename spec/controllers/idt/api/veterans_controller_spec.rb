@@ -20,7 +20,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
       end
 
       context "and a veteran's ssn" do
-        let(:veteran) { create(:veteran, file_number: Random.rand(999_999_999)) }
+        let(:veteran) { create(:veteran) }
         before do
           request.headers["SSN"] = veteran.ssn
         end
