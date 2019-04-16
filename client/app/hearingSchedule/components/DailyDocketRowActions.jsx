@@ -48,6 +48,18 @@ const DispositionDropdown = ({
   /></div>;
 };
 
+const Waive90DayHoldCheckbox = ({ hearing, readOnly, update }) => (
+  <div>
+    <b>Waive 90 Day Evidence Hold</b>
+    <Checkbox
+      label="Yes, Waive 90 Day Hold"
+      name={`${hearing.id}.evidenceWindowWaived`}
+      value={hearing.evidenceWindowWaived || false}
+      onChange={(evidenceWindowWaived) => update({ evidenceWindowWaived })}
+      disabled={readOnly} />
+  </div>
+);
+
 const TranscriptRequestedCheckbox = ({ hearing, readOnly, update }) => (
   <div>
     <b>Copy Requested by Appellant/Rep</b>
@@ -66,6 +78,49 @@ const HearingDetailsLink = ({ hearing }) => (
     <div {...staticSpacing}>
       <Link href={`/hearings/${hearing.externalId}/details`}>
         Edit Hearing Details
+        <span {...css({ position: 'absolute' })}>
+          {pencilSymbol()}
+        </span>
+      </Link>
+    </div>
+  </div>
+);
+
+const AodDropdown = ({ hearing, readOnly, update }) => {
+  return <SearchableDropdown
+    label="AOD"
+    readOnly={readOnly}
+    name={`${hearing.id}-aod`}
+    options={[{ value: 'granted',
+      label: 'Granted' },
+    { value: 'filed',
+      label: 'Filed' },
+    { value: 'none',
+      label: 'None' }]}
+    onChange={(aod) => update({ aod })}
+    value={hearing.aod}
+    searchable={false}
+  />;
+};
+
+const AodReasonDropdown = ({ hearing, readOnly, update }) => {
+  return <SearchableDropdown
+    label="AOD Reason"
+    readOnly={readOnly}
+    name={`${hearing.id}-aod`}
+    options={[]}
+    onChange={(aodReason) => update({ aodReason })}
+    value={hearing.aodReason}
+    searchable={false}
+  />;
+};
+
+const HearingPrepWorkSheetLink = ({ hearing }) => (
+  <div>
+    <b>Hearing Prep Worksheet</b><br />
+    <div {...staticSpacing}>
+      <Link href={`/hearings/${hearing.externalId}/worksheet`}>
+        Edit VLJ Hearing Worksheet
         <span {...css({ position: 'absolute' })}>
           {pencilSymbol()}
         </span>
@@ -196,27 +251,7 @@ class HearingActions extends React.Component {
     }, 0);
   }
 
-  getLeftColumn = () => {
-    const { hearing, user, readOnly, openDispositionModal } = this.props;
-
-    const inputProps = {
-      hearing,
-      readOnly,
-      update: this.update
-    };
-
-    return <div {...inputSpacing}>
-      <DispositionDropdown {...inputProps}
-        cancelUpdate={this.cancelUpdate}
-        saveHearing={this.saveHearing}
-        openDispositionModal={openDispositionModal} />
-      <TranscriptRequestedCheckbox {...inputProps} />
-      {user.userRoleAssign && <HearingDetailsLink hearing={hearing} />}
-      <NotesField {...inputProps} readOnly={user.userRoleVso} />
-    </div>;
-  }
-
-  getRightColumn = () => {
+  defaultRightColumn = () => {
     const { hearing, regionalOffice, readOnly } = this.props;
 
     const inputProps = {
@@ -236,6 +271,60 @@ class HearingActions extends React.Component {
           cancelUpdate={this.cancelUpdate}
           saveHearing={this.saveHearing} />
       }
+    </div>;
+  }
+
+  judgeRightColumn = () => {
+    const { hearing, readOnly } = this.props;
+
+    const inputProps = {
+      hearing,
+      readOnly,
+      update: this.update
+    };
+
+    return <div {...inputSpacing}>
+      <HearingPrepWorkSheetLink hearing={hearing} />
+      <AodDropdown {...inputProps} />
+      <AodReasonDropdown {...inputProps} />
+      {this.state.edited &&
+        <SaveButton
+          hearing={hearing}
+          cancelUpdate={this.cancelUpdate}
+          saveHearing={this.saveHearing} />
+      }
+    </div>;
+  }
+
+  getRightColumn = () => {
+    const { user } = this.props;
+
+    if (user.userInJudgeTeam) {
+      return this.judgeRightColumn();
+    }
+
+    return this.defaultRightColumn();
+  }
+
+  getLeftColumn = () => {
+    const { hearing, user, readOnly, openDispositionModal } = this.props;
+
+    const inputProps = {
+      hearing,
+      readOnly,
+      update: this.update
+    };
+
+    return <div {...inputSpacing}>
+      <DispositionDropdown {...inputProps}
+        cancelUpdate={this.cancelUpdate}
+        saveHearing={this.saveHearing}
+        openDispositionModal={openDispositionModal} />
+      {(user.userInJudgeTeam && hearing.docketName !== 'Legacy') &&
+        <Waive90DayHoldCheckbox {...inputProps} />}
+      <TranscriptRequestedCheckbox {...inputProps} />
+      {(user.userRoleAssign && !user.userInJudgeTeam) && <HearingDetailsLink hearing={hearing} />}
+      <NotesField {...inputProps} readOnly={user.userRoleVso} />
     </div>;
   }
 
