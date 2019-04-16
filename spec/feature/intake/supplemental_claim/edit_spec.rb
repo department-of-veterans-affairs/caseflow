@@ -638,7 +638,6 @@ feature "Supplemental Claim Edit issues" do
         expect(withdrawn_issue.decision_review.end_product_establishments.first.synced_status).to eq("CAN")
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
       end
-      
 
       scenario "show withdrawn issue when edit page is reloaded" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
