@@ -35,7 +35,7 @@ describe UpdateAppellantRepresentationJob do
       allow_any_instance_of(LegacyAppeal).to receive(:vsos) { |a| vso_for_legacy_appeal[a.id] }
     end
 
-    it "runs the job as expected", focus: true do
+    it "runs the job as expected" do
       expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
       expect(DataDogService).to receive(:emit_gauge).with(
         app_name: "caseflow_job",
