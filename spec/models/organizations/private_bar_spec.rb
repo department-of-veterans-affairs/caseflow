@@ -27,6 +27,30 @@ describe PrivateBar do
     end
   end
 
+  describe ".for_user" do
+    let(:user) { FactoryBot.create(:user) }
+
+    subject { PrivateBar.for_user(user) }
+
+    context "when a PrivateBar organization exists for the user" do
+      let(:private_bar) { FactoryBot.create(:private_bar) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, private_bar)
+      end
+
+      it "returns the PrivateBar organization that this user belongs to" do
+        expect(subject).to eq(private_bar)
+      end
+    end
+
+    context "when a PrivateBar organization does not exist for the user" do
+      it "returns nil" do
+        expect(subject).to eq(nil)
+      end
+    end
+  end
+
   describe ".should_write_ihp?" do
     let(:rep) { FactoryBot.create(:private_bar) }
     let(:docket) { nil }
