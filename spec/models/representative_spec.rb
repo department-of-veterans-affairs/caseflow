@@ -96,7 +96,7 @@ describe Representative do
     let(:docket) { nil }
     let(:appeal) { FactoryBot.create(:appeal, docket_type: docket) }
 
-    before { allow_any_instance_of(Appeal).to receive(:vsos).and_return(poas) }
+    before { allow_any_instance_of(Appeal).to receive(:representatives).and_return(poas) }
 
     subject { vso.should_write_ihp?(appeal) }
 
