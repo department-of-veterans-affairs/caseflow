@@ -73,7 +73,7 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def removed_or_withdrawn_issues
-    return [] unless allow_zero_request_issues? && withdrawn_issues?
+    return removed_issues unless allow_withdrawn_issues?
 
     removed_issues + withdrawn_issues
   end
@@ -144,7 +144,7 @@ class RequestIssuesUpdate < ApplicationRecord
     FeatureToggle.enabled?(:remove_decision_reviews, user: RequestStore.store[:current_user])
   end
 
-  def withdrawn_issues?
+  def allow_withdrawn_issues?
     FeatureToggle.enabled?(:withdraw_decision_review, user: RequestStore.store[:current_user])
   end
 
