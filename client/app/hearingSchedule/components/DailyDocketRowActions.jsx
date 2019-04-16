@@ -161,41 +161,54 @@ const inputSpacing = css({
 });
 
 export default class HearingActions extends React.Component {
-  render () {
-    const {
-      hearing, readOnly, regionalOffice, openDispositionModal, user,
-      cancelHearingUpdate, saveHearing, updateHearingTime, updateHearingNotes,
-      updateHearingLocation, updateHearingDisposition, updateTranscriptRequested
-    } = this.props;
+  getLeftColumn = () => {
+    const { hearing, user, updateHearingDisposition, cancelHearingUpdate, readOnly,
+      saveHearing, openDispositionModal, updateTranscriptRequested, updateHearingNotes } = this.props;
 
     const inputProps = {
       hearing,
       readOnly
     };
 
-    return <React.Fragment>
-      <div {...inputSpacing}>
-        <DispositionDropdown {...inputProps}
-          update={updateHearingDisposition}
+    return <div {...inputSpacing}>
+      <DispositionDropdown {...inputProps}
+        update={updateHearingDisposition}
+        cancelHearingUpdate={cancelHearingUpdate}
+        saveHearing={saveHearing}
+        openDispositionModal={openDispositionModal} />
+      <TranscriptRequestedCheckbox {...inputProps} update={updateTranscriptRequested} />
+      {user.userRoleAssign && <HearingDetailsLink hearing={hearing} />}
+      <NotesField {...inputProps} update={updateHearingNotes} readOnly={user.userRoleVso} />
+    </div>;
+  }
+
+  getRightColumn = () => {
+    const { hearing, updateHearingLocation, regionalOffice, readOnly,
+      updateHearingTime, cancelHearingUpdate, saveHearing } = this.props;
+
+    const inputProps = {
+      hearing,
+      readOnly
+    };
+
+    return <div {...inputSpacing}>
+      <StaticRegionalOffice hearing={hearing} />
+      <HearingLocationDropdown {...inputProps} update={updateHearingLocation} regionalOffice={regionalOffice} />
+      <StaticHearingDay hearing={hearing} />
+      <TimeRadioButtons {...inputProps} update={updateHearingTime} regionalOffice={regionalOffice} />
+      {hearing.edited &&
+        <SaveButton
+          hearing={hearing}
           cancelHearingUpdate={cancelHearingUpdate}
-          saveHearing={saveHearing}
-          openDispositionModal={openDispositionModal} />
-        <TranscriptRequestedCheckbox {...inputProps} update={updateTranscriptRequested} />
-        {user.userRoleAssign && <HearingDetailsLink hearing={hearing} />}
-        <NotesField {...inputProps} update={updateHearingNotes} readOnly={user.userRoleVso} />
-      </div>
-      <div {...inputSpacing}>
-        <StaticRegionalOffice hearing={hearing} />
-        <HearingLocationDropdown {...inputProps} update={updateHearingLocation} regionalOffice={regionalOffice} />
-        <StaticHearingDay hearing={hearing} />
-        <TimeRadioButtons {...inputProps} update={updateHearingTime} regionalOffice={regionalOffice} />
-        {hearing.edited &&
-          <SaveButton
-            hearing={hearing}
-            cancelHearingUpdate={cancelHearingUpdate}
-            saveHearing={saveHearing} />
-        }
-      </div>
+          saveHearing={saveHearing} />
+      }
+    </div>;
+  }
+
+  render () {
+    return <React.Fragment>
+      {this.getLeftColumn()}
+      {this.getRightColumn()}
     </React.Fragment>;
   }
 }

@@ -61,40 +61,27 @@ export default class DailyDocketHearingRows extends React.Component {
   saveHearing = (hearing) => () => this.props.saveHearing(hearing.id);
 
   render () {
-    const {
-      hearings, readOnly, regionalOffice, openDispositionModal, user
-    } = this.props;
+    const { hearings, readOnly, regionalOffice, openDispositionModal, user } = this.props;
 
     return <div>
       <Header />
-      <div>
-        {hearings.map((hearing, index) => (
-          <div {...docketRowStyle} key={`docket-row-${index}`}>
-            <div>
-              <HearingText
-                hearing={hearing}
-                index={index}
-              />
-            </div>
-            <div>
-              <HearingActions
-                hearing={hearing}
-                readOnly={readOnly}
-                user={user}
-                regionalOffice={regionalOffice}
-                openDispositionModal={openDispositionModal}
-                updateHearingNotes={this.updateHearingNotes(hearing)}
-                updateHearingDisposition={this.updateHearingDisposition(hearing)}
-                updateHearingTime={this.updateHearingTime(hearing)}
-                updateHearingLocation={this.updateHearingLocation(hearing)}
-                updateTranscriptRequested={this.updateTranscriptRequested(hearing)}
-                saveHearing={this.saveHearing(hearing)}
-                cancelHearingUpdate={this.cancelHearingUpdate(hearing)}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
+      <div>{hearings.map((hearing, index) => (
+        <div {...docketRowStyle} key={`docket-row-${index}`}><div>
+          <HearingText
+            hearing={hearing}
+            index={index} />
+        </div><div>
+          <HearingActions hearing={hearing} readOnly={readOnly} user={user} regionalOffice={regionalOffice}
+            openDispositionModal={openDispositionModal}
+            updateHearingNotes={this.updateHearingNotes(hearing)}
+            updateHearingDisposition={this.updateHearingDisposition(hearing)}
+            updateHearingTime={this.updateHearingTime(hearing)}
+            updateHearingLocation={this.updateHearingLocation(hearing)}
+            updateTranscriptRequested={this.updateTranscriptRequested(hearing)}
+            saveHearing={this.saveHearing(hearing)}
+            cancelHearingUpdate={this.cancelHearingUpdate(hearing)} />
+        </div></div>
+      ))}</div>
     </div>;
   }
 }
