@@ -322,7 +322,7 @@ class User < ApplicationRecord
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
       user.update!(attrs.merge(last_login_at: Time.zone.now))
-      session["pg_user_id"] =  user.id
+      session["pg_user_id"] = user.id
       user
     end
 
