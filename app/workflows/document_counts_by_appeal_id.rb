@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DocumentCountsByAppealIdHash
+class DocumentCountsByAppealId
   def initialize(hash:, appeal_ids:)
     @hash = hash
     @appeal_ids = appeal_ids

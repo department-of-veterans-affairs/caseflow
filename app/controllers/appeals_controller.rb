@@ -36,7 +36,7 @@ class AppealsController < ApplicationController
 
   def document_counts_by_id
     render json: {
-      document_counts_by_id: DocumentCountsByAppealIdHash.new(
+      document_counts_by_id: DocumentCountsByAppealId.new(
         hash: {}, appeal_ids: params[:appeal_ids].split(",")
       ).call
     }
