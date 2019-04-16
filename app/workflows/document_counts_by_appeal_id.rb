@@ -2,12 +2,17 @@
 
 class DocumentCountsByAppealId
   def initialize(appeal_ids:)
-    @hash = {}
+    @document_counts_by_appeal_id_hash = {}
     @appeal_ids = appeal_ids
+    @MAX_BATCH_SIZE = 5
   end
 
   def call
-    build_document_counts_hash(@hash, @appeal_ids)
+    if @appeal_ids.length > @MAX_BATCH_SIZE
+      fail Caseflow::Error::TooManyAppealIds
+    end
+
+    build_document_counts_hash(@appeal_ids)
   end
 
   private
@@ -17,14 +22,14 @@ class DocumentCountsByAppealId
 
   # end
 
-  def build_document_counts_hash(document_counts_by_id_hash, appeal_ids)
+  def build_document_counts_hash(appeal_ids)
     # Collect appeal objects sequentially so we don't exhaust DB pool
     appeals = collect_appeal_objects_sequentially(appeal_ids)
     # Spin up a new thread of each appeal and then call join on each thread
     # Creating threads without calling join on them will cause the main thread
     # to continue without waiting and possibly exit before the child threads have finished
-    create_thread_for_each_appeal(appeals, document_counts_by_id_hash).map(&:join)
-    document_counts_by_id_hash
+    create_thread_for_each_appeal(appeals).map(&:join)
+    @document_counts_by_appeal_id_hash
   end
 
   def collect_appeal_objects_sequentially(appeal_ids)
@@ -33,39 +38,39 @@ class DocumentCountsByAppealId
     end
   end
 
-  def create_thread_for_each_appeal(appeals, document_counts_by_id_hash)
+  def create_thread_for_each_appeal(appeals)
     appeals.map do |appeal_id, appeal|
-      create_thread_for_appeal(document_counts_by_id_hash, appeal_id, appeal)
+      create_thread_for_appeal(appeal_id, appeal)
     end.map(&:join)
   end
 
-  def create_thread_for_appeal(document_counts_by_id_hash, appeal_id, appeal)
+  def create_thread_for_appeal(appeal_id, appeal)
     Thread.new do
       begin
-        set_document_count_value_for_appeal_id(document_counts_by_id_hash, appeal_id, appeal)
+        set_document_count_value_for_appeal_id(appeal_id, appeal)
       rescue StandardError => err
-        handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
+        handle_document_count_error(err, appeal_id)
         next
       rescue Caseflow::Error::EfolderAccessForbidden => err
-        handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
+        handle_document_count_error(err, appeal_id)
         next
       end
     end
   end
 
-  def handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
+  def handle_document_count_error(err, appeal_id)
     code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-    document_counts_by_id_hash[appeal_id] = {
+    @document_counts_by_appeal_id_hash[appeal_id] = {
       error: err.class.name, status: code, count: nil
     }
   end
 
-  def set_document_count_value_for_appeal_id(hash, appeal_id, appeal)
-    hash[appeal_id] = {
+  def set_document_count_value_for_appeal_id(appeal_id, appeal)
+    @document_counts_by_appeal_id_hash[appeal_id] = {
       count: appeal.number_of_documents,
       status: 200,
       error: nil
     }
-    hash
+    @document_counts_by_appeal_id_hash
   end
 end
