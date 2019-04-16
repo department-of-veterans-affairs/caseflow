@@ -568,10 +568,10 @@ describe Veteran do
 
   describe ".find_or_create_by_file_number_or_ssn" do
     let(:file_number) { "123456789" }
-    let(:ssn) { file_number.to_s.reverse } # our fakes do this
 
     context "veteran exists in Caseflow" do
       let!(:veteran) { create(:veteran, file_number: file_number) }
+      let!(:ssn) { veteran.ssn }
 
       it "fetches based on file_number" do
         expect(described_class.find_or_create_by_file_number_or_ssn(file_number)).to eq(veteran)
@@ -596,6 +596,7 @@ describe Veteran do
 
     context "does not exist in Caseflow" do
       let!(:veteran) { create(:veteran, file_number: file_number) }
+      let!(:ssn) { veteran.ssn }
 
       before do
         veteran.destroy! # leaves it in BGS
@@ -618,6 +619,7 @@ describe Veteran do
 
     context "exists in BGS with different name than in Caseflow" do
       let!(:veteran) { create(:veteran, file_number: file_number) }
+      let!(:ssn) { veteran.ssn }
 
       before do
         Fakes::BGSService.veteran_records[veteran.file_number][:last_name] = "Changed"
