@@ -238,4 +238,11 @@ module Caseflow::Error
 
   class IdtApiError < StandardError; end
   class InvalidOneTimeKey < IdtApiError; end
+
+  class TooManyAppealIds < SerializableError
+    def initialize
+      @code = 500
+      @message = "The maximum appeal ids for this request is five"
+    end
+  end
 end

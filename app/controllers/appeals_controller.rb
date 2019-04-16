@@ -37,7 +37,9 @@ class AppealsController < ApplicationController
   def document_counts_by_id
     appeal_ids = params[:appeal_ids].split(",")
     appeal_count = appeal_ids.length
-    fail "The maximum appeal ids for this request is five" if appeal_count > 5
+    if appeal_count > 5
+      fail Caseflow::Error::TooManyAppealIds.new
+    end
 
     render json: {
       document_counts_by_id: DocumentCountsByAppealId.new(
