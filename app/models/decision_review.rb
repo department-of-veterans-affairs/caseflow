@@ -315,7 +315,9 @@ class DecisionReview < ApplicationRecord
   end
 
   def request_issues_ui_hash
-    request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible.map(&:ui_hash)
+    request_issues.includes(
+      :decision_review, :contested_decision_issue
+    ).active_or_ineligible_or_withdrawn.map(&:ui_hash)
   end
 
   def can_contest_rating_issues?
