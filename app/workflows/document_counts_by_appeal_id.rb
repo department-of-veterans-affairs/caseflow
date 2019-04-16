@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class DocumentCountsByAppealId
-  def initialize(hash:, appeal_ids:)
-    @hash = hash
+  def initialize(appeal_ids:)
+    @hash = {}
     @appeal_ids = appeal_ids
   end
 
@@ -44,6 +44,9 @@ class DocumentCountsByAppealId
       begin
         set_document_count_value_for_appeal_id(document_counts_by_id_hash, appeal_id, appeal)
       rescue StandardError => err
+        handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
+        next
+      rescue Caseflow::Error::EfolderAccessForbidden => err
         handle_document_count_error(err, document_counts_by_id_hash, appeal_id)
         next
       end
