@@ -20,7 +20,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
       end
 
       context "and a veteran's ssn" do
-        let(:veteran) { create(:veteran) }
+        let(:veteran) { create(:veteran, file_number: Random.rand(999_999_999)) }
         before do
           request.headers["SSN"] = veteran.ssn
         end
@@ -57,9 +57,9 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
             "participant_id" => "600153863"
           }
 
-          expect(response_body["representative"]["representative_type"]).to eq default_bgs_poa["representative_type"]
-          expect(response_body["representative"]["representative_name"]).to eq default_bgs_poa["representative_name"]
-          expect(response_body["representative"]["participant_id"]).to eq default_bgs_poa["participant_id"]
+          expect(response_body["power_of_attorney"]["representative_type"]).to eq default_bgs_poa["representative_type"]
+          expect(response_body["power_of_attorney"]["representative_name"]).to eq default_bgs_poa["representative_name"]
+          expect(response_body["power_of_attorney"]["participant_id"]).to eq default_bgs_poa["participant_id"]
         end
       end
 

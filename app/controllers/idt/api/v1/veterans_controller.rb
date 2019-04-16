@@ -22,7 +22,7 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   end
 
   def details
-    render json: { veteran: veteran, representative: poa }
+    render json: { veteran: veteran, power_of_attorney: poa }
   end
 
   private
