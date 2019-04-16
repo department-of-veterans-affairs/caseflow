@@ -639,7 +639,7 @@ feature "Supplemental Claim Edit issues" do
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
       end
 
-      scenario "show withdrawn issue when edit page is reloaded", skip: "Test fails on CircleCI" do
+      scenario "show withdrawn issue when edit page is reloaded" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
         click_intake_add_issue
