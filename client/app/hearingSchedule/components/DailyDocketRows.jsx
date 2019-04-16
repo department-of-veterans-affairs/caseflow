@@ -27,6 +27,12 @@ const docketRowStyle = css({
   }
 });
 
+const rowsMargin = css({
+  marginLeft: '-40px',
+  marginRight: '-40px',
+  marginBottom: '-40px'
+});
+
 const Header = () => (
   <div {...docketRowStyle}
     {...css({
@@ -63,7 +69,7 @@ export default class DailyDocketHearingRows extends React.Component {
   render () {
     const { hearings, readOnly, regionalOffice, openDispositionModal, user } = this.props;
 
-    return <div>
+    return <div {...rowsMargin}>
       <Header />
       <div>{hearings.map((hearing, index) => (
         <div {...docketRowStyle} key={`docket-row-${index}`}><div>
