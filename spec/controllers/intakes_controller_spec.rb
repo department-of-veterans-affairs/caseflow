@@ -15,7 +15,7 @@ RSpec.describe IntakesController do
   describe "#create" do
     let(:file_number) { "123456789" }
     let!(:veteran) { create(:veteran, file_number: file_number) }
-    let!(:ssn) { veteran.ssn }
+    let(:ssn) { veteran.ssn }
 
     it "should search by Veteran file number" do
       post :create, params: { file_number: file_number, form_type: "higher_level_review" }
