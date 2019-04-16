@@ -120,7 +120,7 @@ namespace :local do
 
       cases = VACOLS::Case.includes(
         :folder,
-        :representatives,
+        :vacols_representatives,
         :correspondent,
         :case_issues,
         :notes,
@@ -140,7 +140,7 @@ namespace :local do
       # to the Helpers::Sanitizers class.
       write_csv(VACOLS::Case, cases, sanitizer)
       write_csv(VACOLS::Folder, cases.map(&:folder), sanitizer)
-      write_csv(VACOLS::Representative, cases.map(&:representatives), sanitizer)
+      write_csv(VACOLS::Representative, cases.map(&:vacols_representatives), sanitizer)
       write_csv(VACOLS::Correspondent, cases.map(&:correspondent), sanitizer)
       write_csv(VACOLS::CaseIssue, cases.map(&:case_issues), sanitizer)
       write_csv(VACOLS::Note, cases.map(&:notes), sanitizer)
