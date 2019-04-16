@@ -117,7 +117,7 @@ RSpec.feature "Out of Service" do
     end
   end
 
-  context "Hearing Schedule" do
+  context "Hearings" do
     after do
       Rails.cache.write("hearing_schedule_out_of_service", false)
     end
@@ -126,7 +126,7 @@ RSpec.feature "Out of Service" do
       User.authenticate!(roles: ["Build HearSched"])
     end
 
-    scenario "When out of service is disabled, it shows hearing schedule page" do
+    scenario "When out of service is disabled, it shows hearings page" do
       visit "/hearings/schedule/build"
       expect(page).to have_content("Build Schedule")
       expect(page).to_not have_content("Technical Difficulties")

@@ -46,7 +46,7 @@ export class ReviewAssignmentsContainer extends React.Component {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+        spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
         message: 'We are assigning hearings...'
       }}
       failStatusMessageProps={{

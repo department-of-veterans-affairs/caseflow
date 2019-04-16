@@ -267,7 +267,7 @@ export class DailyDocketContainer extends React.Component {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createHearingPromise}
       loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+        spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
         message: 'Loading the daily docket...'
       }}
       failStatusMessageProps={{
