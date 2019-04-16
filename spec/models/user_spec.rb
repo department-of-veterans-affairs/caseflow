@@ -97,20 +97,6 @@ describe User do
     end
   end
 
-  context "#timezone" do
-    context "when ro is set" do
-      subject { user.timezone }
-      before { user.regional_office = "RO84" }
-      it { is_expected.to eq("America/New_York") }
-    end
-
-    context "when ro isn't set" do
-      subject { user.timezone }
-      before { user.regional_office = nil }
-      it { is_expected.to eq("America/Chicago") }
-    end
-  end
-
   context "CSUM/CSEM users with 'System Admin' function" do
     before { user.roles = ["System Admin"] }
     before { Functions.client.del("System Admin") }
