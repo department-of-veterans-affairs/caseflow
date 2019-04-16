@@ -134,7 +134,7 @@ class ScheduleHearingTask < GenericTask
 
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
-      location = if appeal.vsos.empty?
+      location = if appeal.representatives.empty?
                    LegacyAppeal::LOCATION_CODES[:case_storage]
                  else
                    LegacyAppeal::LOCATION_CODES[:service_organization]

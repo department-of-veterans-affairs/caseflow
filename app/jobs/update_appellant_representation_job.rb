@@ -8,7 +8,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
   queue_as :low_priority
 
   APP_NAME = "caseflow_job"
-  METRIC_GROUP_NAME = self.class.name.underscore
+  METRIC_GROUP_NAME = UpdateAppellantRepresentationJob.name.underscore
   TOTAL_NUMBER_OF_APPEALS_TO_UPDATE = 1000
 
   def perform

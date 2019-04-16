@@ -74,7 +74,7 @@ RSpec.feature "Hearings tasks workflows" do
       context "when the appellant is represented by a VSO" do
         before do
           FactoryBot.create(:vso)
-          allow_any_instance_of(LegacyAppeal).to receive(:vsos) { Representative.all }
+          allow_any_instance_of(LegacyAppeal).to receive(:representatives) { Representative.all }
         end
 
         it "marks all Caseflow tasks complete and sets the VACOLS location correctly" do
@@ -113,7 +113,7 @@ RSpec.feature "Hearings tasks workflows" do
       context "when the appellant is represented by a VSO" do
         before do
           FactoryBot.create(:vso)
-          allow_any_instance_of(Appeal).to receive(:vsos) { Representative.all }
+          allow_any_instance_of(Appeal).to receive(:representatives) { Representative.all }
         end
 
         context "when the VSO is not supposed to write an IHP for this appeal" do

@@ -280,7 +280,7 @@ class VACOLS::Case < VACOLS::Record
     self.class.batch_update_vacols_location(location, [bfkey])
   end
 
-  def representatives
+  def vacols_representatives
     result = VACOLS::Representative.where(repkey: bfkey)
     return result if result.present?
 
