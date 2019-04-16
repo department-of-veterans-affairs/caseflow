@@ -200,6 +200,8 @@ describe RequestIssuesUpdate do
             *existing_request_issues.map(&:id)
           )
 
+          expect(request_issues_update.withdrawn_request_issue_ids).to eq([])
+
           expect(request_issues_update.after_request_issue_ids).to contain_exactly(
             *(existing_request_issues.map(&:id) + [RequestIssue.last.id])
           )
