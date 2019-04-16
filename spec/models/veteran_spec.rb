@@ -512,7 +512,6 @@ describe Veteran do
 
   describe ".find_by_file_number_or_ssn" do
     let(:file_number) { "123456789" }
-    let(:ssn) { file_number.to_s.reverse } # our fakes do this
     let!(:veteran) { create(:veteran, file_number: file_number) }
 
     it "fetches based on file_number" do
@@ -520,7 +519,7 @@ describe Veteran do
     end
 
     it "fetches based on SSN" do
-      expect(described_class.find_by_file_number_or_ssn(ssn)).to eq(veteran)
+      expect(described_class.find_by_file_number_or_ssn(veteran.ssn)).to eq(veteran)
     end
 
     it "returns nil if a Veteran does not exist in BGS or Caseflow" do
@@ -543,7 +542,7 @@ describe Veteran do
 
         it "updates Caseflow cache when found by SSN" do
           expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
+          expect(described_class.find_by_file_number_or_ssn(veteran.ssn, sync_name: sync_name)).to eq(veteran)
           expect(veteran.reload.last_name).to eq "Changed"
         end
       end
@@ -559,7 +558,7 @@ describe Veteran do
 
         it "does not update Caseflow cache when found by SSN" do
           expect(described_class.find_by(file_number: file_number)[:last_name]).to eq "Smith"
-          expect(described_class.find_by_file_number_or_ssn(ssn, sync_name: sync_name)).to eq(veteran)
+          expect(described_class.find_by_file_number_or_ssn(veteran.ssn, sync_name: sync_name)).to eq(veteran)
           expect(veteran.reload.last_name).to eq "Smith"
         end
       end

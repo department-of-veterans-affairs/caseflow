@@ -587,7 +587,6 @@ class Fakes::BGSService
   end
 
   def fetch_file_number_by_ssn(ssn)
-    # reverse is a hack to return something different than what is passed.
     vet = fetch_veteran_by_ssn(ssn)
     vet && vet[:file_number]
   end
