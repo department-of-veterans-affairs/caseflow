@@ -200,6 +200,8 @@ describe RequestIssuesUpdate do
             *existing_request_issues.map(&:id)
           )
 
+          expect(request_issues_update.withdrawn_request_issue_ids).to eq([])
+
           expect(request_issues_update.after_request_issue_ids).to contain_exactly(
             *(existing_request_issues.map(&:id) + [RequestIssue.last.id])
           )
@@ -564,6 +566,40 @@ describe RequestIssuesUpdate do
       def raise_error_on_remove_contention
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
       end
+    end
+  end
+
+  fcontext "#establish!" do
+    before do
+      allow(Fakes::VBMSService).to receive(:remove_contention!).and_return(true)
+    end
+    let(:before_issue) { create(:request_issue_with_epe) }
+    let(:after_issue) { create(:request_issue_with_epe) }
+
+    let!(:riu) do
+      create(:request_issues_update, :requires_processing,
+             withdrawn_request_issue_ids: nil,
+             before_request_issue_ids: [before_issue.id],
+             after_request_issue_ids: [after_issue.id])
+    end
+
+    let!(:request_issue_contention) do
+      Generators::Contention.build(
+        claim_id: before_issue.end_product_establishment.reference_id,
+        text: "request issue"
+      )
+    end
+
+    let!(:after_issue_contention) do
+      Generators::Contention.build(
+        claim_id: after_issue.end_product_establishment.reference_id,
+        text: "request issue"
+      )
+    end
+
+    subject { riu.establish! }
+    it "should be successful" do
+      expect(subject).to_be true
     end
   end
 

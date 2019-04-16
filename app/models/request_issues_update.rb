@@ -73,8 +73,6 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def removed_or_withdrawn_issues
-    return removed_issues unless allow_withdrawn_issues?
-
     removed_issues + withdrawn_issues
   end
 
@@ -121,6 +119,8 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def withdrawn_issue_data
+    return [] unless @request_issues_data
+
     @request_issues_data.select { |ri| !ri[:withdrawal_date].nil? && ri[:request_issue_id] }
   end
 
@@ -142,10 +142,6 @@ class RequestIssuesUpdate < ApplicationRecord
 
   def allow_zero_request_issues?
     FeatureToggle.enabled?(:remove_decision_reviews, user: RequestStore.store[:current_user])
-  end
-
-  def allow_withdrawn_issues?
-    FeatureToggle.enabled?(:withdraw_decision_review, user: RequestStore.store[:current_user])
   end
 
   def fetch_before_issues
