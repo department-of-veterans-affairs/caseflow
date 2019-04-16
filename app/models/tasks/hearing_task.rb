@@ -41,7 +41,7 @@ class HearingTask < GenericTask
   def update_legacy_appeal_location
     location = if hearing&.held?
                  LegacyAppeal::LOCATION_CODES[:transcription]
-               elsif appeal.vsos.empty?
+               elsif appeal.representatives.empty?
                  LegacyAppeal::LOCATION_CODES[:case_storage]
                else
                  LegacyAppeal::LOCATION_CODES[:service_organization]
