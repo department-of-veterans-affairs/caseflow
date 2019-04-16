@@ -5,16 +5,13 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import Button from '../../components/Button';
 import Alert from '../../components/Alert';
-import Modal from '../../components/Modal';
-import DispositionModal from './DailyDocketDispositionModal';
+import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
 import StatusMessage from '../../components/StatusMessage';
-import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
 import { getHearingAppellantName } from './DailyDocketRowDisplayText';
 
 import DailyDocketRows from './DailyDocketRows';
+import DailyDocketEditLinks from './DailyDocketEditLinks';
 
 const alertStyling = css({
   marginBottom: '30px'
@@ -50,91 +47,6 @@ const Alerts = ({
            cannot be locked in Caseflow.`}
         message="VACOLS Hearing Day cannot be locked" />}
   </React.Fragment>
-);
-
-const EditDailyDocket = ({
-  dailyDocket, openModal, onDisplayLockModal, hasHearings,
-  onClickRemoveHearingDay, user
-}) => (
-  <React.Fragment>
-    <h1>Daily Docket ({moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY')})</h1><br />
-    <div {...css({
-      marginTop: '-35px',
-      marginBottom: '25px'
-    })}>
-      <Link linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
-      {user.userRoleAssign &&
-        <span>
-          <Button {...css({ marginLeft: '30px' })} linkStyling onClick={openModal} >
-            <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
-            <span {...css({
-              marginRight: '5px',
-              marginLeft: '20px'
-            })}>
-                Edit Hearing Day
-            </span>
-          </Button>
-          &nbsp;&nbsp;
-          <Button linkStyling onClick={onDisplayLockModal}>
-            <span {...css({ position: 'absolute',
-              '& > svg > g > g': { fill: '#0071bc' } })}>
-              {lockIcon()}
-            </span>
-            <span {...css({ marginRight: '5px',
-              marginLeft: '16px' })}>
-              {dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
-            </span>
-          </Button>
-          &nbsp;&nbsp;
-        </span>}
-      {(!hasHearings && user.userRoleBuild) &&
-        <Button
-          linkStyling
-          onClick={onClickRemoveHearingDay} >
-          {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
-        </Button>}
-      {dailyDocket.notes &&
-        <span {...css({ marginTop: '15px' })}>
-          <br /><strong>Notes: </strong>
-          <br />{dailyDocket.notes}
-        </span>}
-    </div>
-  </React.Fragment>
-);
-
-const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay, dailyDocket }) => (
-  <div>
-    <Modal
-      title="Remove Hearing Day"
-      closeHandler={onCancelRemoveHearingDay}
-      confirmButton={<Button classNames={['usa-button-secondary']} onClick={deleteHearingDay}>
-        Confirm
-      </Button>}
-      cancelButton={<Button linkStyling onClick={onCancelRemoveHearingDay}>Go back</Button>} >
-      {'Once the hearing day is removed, users will no longer be able to ' +
-        `schedule Veterans for this ${dailyDocket.requestType} hearing day on ` +
-        `${moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY')}.`}
-    </Modal>
-  </div>
-);
-
-const LockModal = ({ updateLockHearingDay, onCancelDisplayLockModal, dailyDocket }) => (
-  <div>
-    <Modal
-      title={dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
-      closeHandler={onCancelDisplayLockModal}
-      confirmButton={<Button
-        classNames={['usa-button-secondary']}
-        onClick={updateLockHearingDay(!dailyDocket.lock)}>
-          Confirm
-      </Button>}
-      cancelButton={<Button linkStyling onClick={onCancelDisplayLockModal}>Go back</Button>} >
-      {dailyDocket.lock && 'This hearing day is locked. Do you want to unlock the hearing day'}
-      {!dailyDocket.lock &&
-        'Completing this action will not allow more Veterans to be scheduled for this day. You can still ' +
-        'make changes to the existing slots.'}
-    </Modal>
-  </div>
 );
 
 export default class DailyDocket extends React.Component {
@@ -231,7 +143,7 @@ export default class DailyDocket extends React.Component {
 
       <div className="cf-app-segment">
         <div className="cf-push-left">
-          <EditDailyDocket
+          <DailyDocketEditLinks
             dailyDocket={dailyDocket}
             user={user}
             openModal={openModal}

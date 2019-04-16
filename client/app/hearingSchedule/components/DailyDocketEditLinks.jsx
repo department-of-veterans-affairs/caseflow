@@ -1,0 +1,58 @@
+import React from 'react';
+import moment from 'moment';
+import { css } from 'glamor';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Button from '../../components/Button';
+import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
+
+export default class DailyDocketEditLinks extends React.Component {
+
+  render () {
+    const { dailyDocket, openModal, onDisplayLockModal, hasHearings, onClickRemoveHearingDay, user } = this.props;
+
+    return <React.Fragment>
+      <h1>Daily Docket ({moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY')})</h1><br />
+      <div {...css({
+        marginTop: '-35px',
+        marginBottom: '25px'
+      })}>
+        <Link linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
+        {user.userRoleAssign &&
+          <span>
+            <Button {...css({ marginLeft: '30px' })} linkStyling onClick={openModal} >
+              <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+              <span {...css({
+                marginRight: '5px',
+                marginLeft: '20px'
+              })}>
+                  Edit Hearing Day
+              </span>
+            </Button>
+            &nbsp;&nbsp;
+            <Button linkStyling onClick={onDisplayLockModal}>
+              <span {...css({ position: 'absolute',
+                '& > svg > g > g': { fill: '#0071bc' } })}>
+                {lockIcon()}
+              </span>
+              <span {...css({ marginRight: '5px',
+                marginLeft: '16px' })}>
+                {dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+              </span>
+            </Button>
+            &nbsp;&nbsp;
+          </span>}
+        {(!hasHearings && user.userRoleBuild) &&
+          <Button
+            linkStyling
+            onClick={onClickRemoveHearingDay} >
+            {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
+          </Button>}
+        {dailyDocket.notes &&
+          <span {...css({ marginTop: '15px' })}>
+            <br /><strong>Notes: </strong>
+            <br />{dailyDocket.notes}
+          </span>}
+      </div>
+    </React.Fragment>;
+  }
+}
