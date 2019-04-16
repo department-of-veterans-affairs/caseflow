@@ -26,7 +26,7 @@ RSpec.feature "Add a Hearing Day" do
 
     scenario "Open modal but do not fill form, expect error" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       find("button", text: "Confirm").click
@@ -50,7 +50,7 @@ RSpec.feature "Add a Hearing Day" do
 
     scenario "Fill out all fields and confirm to save" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       fill_in "hearingDate", with: "01152019"
@@ -78,7 +78,7 @@ RSpec.feature "Add a Hearing Day" do
 
     scenario "Fill out all fields and confirm to save" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       fill_in "hearingDate", with: "04152019"

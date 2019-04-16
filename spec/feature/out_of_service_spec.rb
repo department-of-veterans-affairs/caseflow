@@ -119,7 +119,7 @@ RSpec.feature "Out of Service" do
 
   context "Hearings" do
     after do
-      Rails.cache.write("hearing_schedule_out_of_service", false)
+      Rails.cache.write("hearings_out_of_service", false)
     end
 
     let!(:current_user) do
