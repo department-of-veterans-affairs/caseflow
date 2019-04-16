@@ -38,7 +38,7 @@ class AppealsController < ApplicationController
     appeal_ids = params[:appeal_ids].split(",")
     appeal_count = appeal_ids.length
     if appeal_count > 5
-      fail Caseflow::Error::TooManyAppealIds.new
+      fail Caseflow::Error::TooManyAppealIds
     end
 
     render json: {
