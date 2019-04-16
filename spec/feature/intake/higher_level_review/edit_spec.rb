@@ -1164,7 +1164,7 @@ feature "Higher Level Review Edit issues" do
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }
 
-      scenario "withdraw an issue" do
+      scenario "withdraw a review" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit/"
 
         expect(page).to_not have_content("Withdrawn issues")
@@ -1174,12 +1174,16 @@ feature "Higher Level Review Edit issues" do
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
-        expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/19/2018\nWithdraw pending")
+        expect(page).to have_content("1. PTSD denied\nDecision date: 01/19/2018\nWithdraw pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
 
-        safe_click("#button-submit-update")
+        expect(page).to have_content("This review will be withdrawn.")
+        expect(page).to have_button("Withdraw", disabled: false)
+
+        click_edit_submit
+
         expect(page).to have_current_path(
           "/higher_level_reviews/#{rating_ep_claim_id}/edit/confirmation"
         )
