@@ -182,7 +182,7 @@ export default class HearingActions extends React.Component {
           openDispositionModal={openDispositionModal} />
         <TranscriptRequestedCheckbox {...inputProps} update={updateTranscriptRequested} />
         {user.userRoleAssign && <HearingDetailsLink hearing={hearing} />}
-        <NotesField {...inputProps} update={updateHearingNotes} readOnly={user.userRoleVso || readOnly} />
+        <NotesField {...inputProps} update={updateHearingNotes} readOnly={user.userRoleVso} />
       </div>
       <div {...inputSpacing}>
         <StaticRegionalOffice hearing={hearing} />
