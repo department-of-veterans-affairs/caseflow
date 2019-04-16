@@ -16,6 +16,10 @@ class NoShowHearingTask < GenericTask
     end
   end
 
+  def actions_available?(user)
+    actions_allowable?(user)
+  end
+
   def reschedule_hearing
     multi_transaction do
       update!(status: Constants.TASK_STATUSES.completed)

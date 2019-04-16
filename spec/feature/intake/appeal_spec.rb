@@ -6,15 +6,9 @@ feature "Appeal Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
-    FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
 
     Timecop.freeze(post_ramp_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma, users: [current_user.css_id])
   end
 
   let!(:current_user) do
@@ -562,7 +556,7 @@ feature "Appeal Intake" do
     expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
     expect(success_checklist).to_not have_content("A nonrating issue before AMA")
 
-    ineligible_checklist = find("ul.cf-ineligible-checklist")
+    ineligible_checklist = find("ul.cf-issue-checklist")
     expect(ineligible_checklist).to have_content("Non-RAMP Issue before AMA Activation is ineligible")
     expect(ineligible_checklist).to have_content("A nonrating issue before AMA is ineligible")
 
@@ -695,7 +689,7 @@ feature "Appeal Intake" do
       expect(
         RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
       ).to eq("appeal_to_appeal")
-      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      ineligible_checklist = find("ul.cf-issue-checklist")
       expect(ineligible_checklist).to have_content(
         "appeal decision issue #{Constants.INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal}"
       )
@@ -860,7 +854,7 @@ feature "Appeal Intake" do
 
         click_intake_finish
 
-        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        ineligible_checklist = find("ul.cf-issue-checklist")
         expect(ineligible_checklist).to have_content(
           "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
         )
@@ -896,7 +890,7 @@ feature "Appeal Intake" do
 
         click_intake_finish
 
-        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        ineligible_checklist = find("ul.cf-issue-checklist")
         expect(ineligible_checklist).to have_content(
           "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
         )

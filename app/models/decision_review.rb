@@ -8,14 +8,12 @@ class DecisionReview < ApplicationRecord
 
   attr_reader :saving_review
 
-  has_many :request_issues, as: :decision_review
-  has_many :claimants, as: :decision_review
+  has_many :request_issues, as: :decision_review, dependent: :destroy
+  has_many :claimants, as: :decision_review, dependent: :destroy
   has_many :request_decision_issues, through: :request_issues
-  has_many :decision_issues, as: :decision_review
-  has_many :tasks, as: :appeal
+  has_many :decision_issues, as: :decision_review, dependent: :destroy
+  has_many :tasks, as: :appeal, dependent: :destroy
   has_one :intake, as: :detail
-
-  before_destroy :remove_issues!
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
     ratings_with_issues.map(&:serialize)
@@ -46,6 +44,10 @@ class DecisionReview < ApplicationRecord
 
     def last_submitted_at_column
       :establishment_last_submitted_at
+    end
+
+    def canceled_at_column
+      :establishment_canceled_at
     end
 
     def ama_activation_date
@@ -157,10 +159,6 @@ class DecisionReview < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  def remove_issues!
-    request_issues.destroy_all unless request_issues.empty?
-  end
-
   def mark_rating_request_issues_to_reassociate!
     request_issues.select(&:rating?).each { |ri| ri.update!(rating_issue_associated_at: nil) }
   end
@@ -226,7 +224,7 @@ class DecisionReview < ApplicationRecord
       rsc.create_remand_issues!
       rsc.create_decision_review_task_if_required!
 
-      delay = rsc.receipt_date.future? ? rsc.receipt_date : 0
+      delay = rsc.receipt_date.future? ? (rsc.receipt_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
 
       unless rsc.processed? || rsc.receipt_date.future?

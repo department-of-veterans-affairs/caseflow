@@ -77,6 +77,10 @@ class WorkQueue::TaskSerializer
     object.appeal.number_of_issues
   end
 
+  attribute :external_hearing_id do |object|
+    object.hearing&.external_id if object.respond_to?(:hearing)
+  end
+
   attribute :available_hearing_locations do |object|
     object.appeal.available_hearing_locations
   end
@@ -88,13 +92,13 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :document_id do |object|
-    object.latest_attorney_case_review ? object.latest_attorney_case_review.document_id : nil
+    object.latest_attorney_case_review&.document_id
   end
 
   attribute :decision_prepared_by do |object|
     {
-      first_name: object.prepared_by_display_name ? object.prepared_by_display_name.first : nil,
-      last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
+      first_name: object.prepared_by_display_name&.first,
+      last_name: object.prepared_by_display_name&.last
     }
   end
 

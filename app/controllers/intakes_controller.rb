@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IntakesController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application, :check_intake_out_of_service
+  before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
 
   def index
     no_cache
@@ -12,10 +12,10 @@ class IntakesController < ApplicationController
   end
 
   def create
-    return render json: intake_in_progress.ui_hash(ama_enabled?) if intake_in_progress
+    return render json: intake_in_progress.ui_hash if intake_in_progress
 
     if new_intake.start!
-      render json: new_intake.ui_hash(ama_enabled?)
+      render json: new_intake.ui_hash
     else
       render json: {
         error_code: new_intake.error_code,
@@ -35,7 +35,7 @@ class IntakesController < ApplicationController
 
   def review
     if intake.review!(params)
-      render json: intake.ui_hash(ama_enabled?)
+      render json: intake.ui_hash
     else
       render json: { error_codes: intake.review_errors }, status: :unprocessable_entity
     end
@@ -53,7 +53,7 @@ class IntakesController < ApplicationController
       flash[:success] = success_message
       render json: { serverIntake: { redirect_to: intake.detail.business_line.tasks_url } }
     else
-      render json: intake.ui_hash(ama_enabled?)
+      render json: intake.ui_hash
     end
   rescue Caseflow::Error::DuplicateEp => error
     render json: {
@@ -84,7 +84,6 @@ class IntakesController < ApplicationController
       feedbackUrl: feedback_url,
       buildDate: build_date,
       featureToggles: {
-        intakeAma: FeatureToggle.enabled?(:intakeAma, user: current_user),
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
       }
     }
@@ -96,10 +95,6 @@ class IntakesController < ApplicationController
     raise
   end
 
-  def ama_enabled?
-    FeatureToggle.enabled?(:intakeAma, user: current_user)
-  end
-
   def set_application
     RequestStore.store[:application] = "intake"
   end
@@ -108,16 +103,12 @@ class IntakesController < ApplicationController
     verify_authorized_roles("Mail Intake", "Admin Intake")
   end
 
-  def verify_feature_enabled
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
-  end
-
   def check_intake_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("intake_out_of_service")
   end
 
   def intake_ui_hash
-    intake_in_progress ? intake_in_progress.ui_hash(FeatureToggle.enabled?(:intakeAma, user: current_user)) : {}
+    intake_in_progress ? intake_in_progress.ui_hash : {}
   end
 
   # TODO: This could be moved to the model.

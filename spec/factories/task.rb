@@ -102,6 +102,12 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do
+      type { ChangeHearingDispositionTask.name }
+      assigned_to { HearingAdmin.singleton }
+      appeal { create(:appeal) }
+    end
+
     factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
       type { JudgeDecisionReviewTask.name }
       appeal { create(:appeal) }

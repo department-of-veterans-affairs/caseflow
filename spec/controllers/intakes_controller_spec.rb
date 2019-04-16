@@ -3,7 +3,6 @@
 RSpec.describe IntakesController do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:intake)
     User.authenticate!(roles: ["Mail Intake"])
 
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
@@ -128,8 +127,6 @@ RSpec.describe IntakesController do
     end
 
     context "when intaking an AMA appeal" do
-      before { FeatureToggle.enable!(:intake, users: [current_user.css_id]) }
-
       it "should return the ui hash with ama_enabled being true" do
         intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
         intake.save!
@@ -139,8 +136,6 @@ RSpec.describe IntakesController do
     end
 
     context "when intaking an AMA appeal" do
-      before { FeatureToggle.disable!(:intake, users: [current_user.css_id]) }
-
       it "should return the ui hash with ama_enabled being false" do
         intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
         intake.save!
