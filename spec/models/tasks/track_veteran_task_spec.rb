@@ -70,12 +70,17 @@ describe TrackVeteranTask do
 
 
 
-      it "cancels all tasks of former VSO", focus: true do
+      it "cancels all tasks of former VSO" do
         # byebug
         subject
         # expect(ihp_org_task.assigned_to).to eq(old_vso)
         # expect(ihp_org_task.appeal_id).to eq(appeal.id)
         expect(ihp_org_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+
+      it "makes duplicates of active tasks for new representation" do
+        # subject
+        expect(subject).to eq([1, 1, 1])
       end
     end
     context "when the appeal has no VSOs" do
@@ -85,7 +90,7 @@ describe TrackVeteranTask do
         it "does not create or cancel any TrackVeteranTasks" do
           task_count_before = TrackVeteranTask.count
 
-          expect(subject).to eq([0, 0])
+          expect(subject).to eq([0, 0, 0])
           expect(TrackVeteranTask.count).to eq(task_count_before)
         end
       end
@@ -97,7 +102,7 @@ describe TrackVeteranTask do
         it "cancels old TrackVeteranTask, does not create any new tasks" do
           active_task_count_before = TrackVeteranTask.active.count
 
-          expect(subject).to eq([0, 1])
+          expect(subject).to eq([0, 1, 0])
           expect(TrackVeteranTask.active.count).to eq(active_task_count_before - 1)
         end
       end
@@ -111,7 +116,7 @@ describe TrackVeteranTask do
         it "creates 2 new TrackVeteranTasks" do
           task_count_before = TrackVeteranTask.count
 
-          expect(subject).to eq([2, 0])
+          expect(subject).to eq([2, 0, 0])
           expect(TrackVeteranTask.count).to eq(task_count_before + 2)
         end
       end
@@ -122,7 +127,7 @@ describe TrackVeteranTask do
         end
 
         it "cancels old TrackVeteranTask, creates 2 new tasks" do
-          expect(subject).to eq([2, 1])
+          expect(subject).to eq([2, 1, 0])
         end
       end
 
@@ -136,7 +141,7 @@ describe TrackVeteranTask do
         it "does not create or cancel any TrackVeteranTasks" do
           task_count_before = TrackVeteranTask.count
 
-          expect(subject).to eq([0, 0])
+          expect(subject).to eq([0, 0, 0])
           expect(TrackVeteranTask.count).to eq(task_count_before)
         end
       end

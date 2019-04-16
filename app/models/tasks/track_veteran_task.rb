@@ -33,16 +33,11 @@ class TrackVeteranTask < GenericTask
   def self.sync_tracking_tasks(appeal)
     new_task_count = 0
     closed_task_count = 0
+    copied_task_count= 0
 
-<<<<<<< HEAD
     active_tracking_tasks = appeal.tasks.active.where(type: TrackVeteranTask.name)
     cached_representatives = active_tracking_tasks.map(&:assigned_to)
     fresh_representatives = appeal.representatives
-=======
-    active_tracking_tasks = appeal.tasks.active.where(type: [TrackVeteranTask.name, InformalHearingPresentationTask.name])
-    cached_vsos = active_tracking_tasks.map(&:assigned_to)
-    fresh_vsos = appeal.vsos
->>>>>>> Passing: IHP task status = 'cancelled' by sync_tracking_tasks
 
     # Create a TrackVeteranTask for each VSO that does not already have one.
     new_representatives = fresh_representatives - cached_representatives
@@ -60,24 +55,44 @@ class TrackVeteranTask < GenericTask
 
     ### Close all other tasks for VSOs that are no longer representing the appellant
 
-    # byebug
-
     outdated_vsos.each do |old_vso|
-      # find all of their tasks for this appellant
-      old_vso_tasks = appeal.tasks.where(assigned_to_id: old_vso.id)
+      tasks = appeal.tasks.active.where(assigned_to_id: old_vso.id)
 
-      # byebug
-      # cancel them
+      tasks.each do |t|
 
-      old_vso_tasks.each do |t|
+        fresh_vsos.each do |new_vso|
+          new_vso_task = t.dup
+          new_vso_task.assigned_to_id = new_vso.id
+          success = new_vso_task.save
+
+          if success
+            copied_task_count +=1
+          end
+        end
+
         t.update!(status: Constants.TASK_STATUSES.cancelled)
-        # TODO (?): Increment closed_task_count?
-        # TODO create copies, assign to new vso?
       end
-
     end
 
-    [new_task_count, closed_task_count]
+
+    # byebug
+
+    # outdated_vsos.each do |old_vso|
+    #   # find all of their tasks for this appellant
+    #   old_vso_tasks = appeal.tasks.where(assigned_to_id: old_vso.id)
+    #
+    #   # byebug
+    #   # cancel them
+    #
+    #   old_vso_tasks.each do |t|
+    #     t.update!(status: Constants.TASK_STATUSES.cancelled)
+    #     # TODO (?): Increment closed_task_count?
+    #     # TODO create copies, assign to new vso?
+    #   end
+    #
+    # end
+
+    [new_task_count, closed_task_count, copied_task_count]
   end
 
   private
