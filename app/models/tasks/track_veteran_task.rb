@@ -52,6 +52,22 @@ class TrackVeteranTask < GenericTask
       closed_task_count += 1
     end
 
+    ### Close all other tasks for VSOs that are no longer representing the appellant
+    outdated_vsos.each do |old_vso|
+      # find all of their tasks for this appellant
+      old_vso_tasks = appeal.tasks.active.where(assigned_to: old_vso)
+
+      byebug
+      # cancel them
+
+      old_vso_tasks.each do |t|
+        t.update!(status: Constants.TASK_STATUSES.cancelled)
+        # TODO (?): Increment closed_task_count?
+        # TODO create copies, assign to new vso?
+      end
+
+    end
+
     [new_task_count, closed_task_count]
   end
 
