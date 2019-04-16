@@ -54,8 +54,9 @@ describe TrackVeteranTask do
       let!(:new_vso) { FactoryBot.create(:vso) }
       let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
 
-      let!(:ihp_org_task) { FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: old_vso)
-      }
+      let!(:ihp_org_task) do
+        FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: old_vso)
+      end
       let!(:tracking_task) do
         FactoryBot.create(
           :track_veteran_task,
@@ -65,16 +66,10 @@ describe TrackVeteranTask do
         )
       end
 
-      # let(:representing_vsos) { FactoryBot.create_list(:vso, 1) }
       before { allow_any_instance_of(Appeal).to receive(:vsos).and_return([new_vso]) }
 
-
-
       it "cancels all tasks of former VSO" do
-        # byebug
         subject
-        # expect(ihp_org_task.assigned_to).to eq(old_vso)
-        # expect(ihp_org_task.appeal_id).to eq(appeal.id)
         expect(ihp_org_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
 
