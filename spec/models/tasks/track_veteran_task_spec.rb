@@ -44,20 +44,19 @@ describe TrackVeteranTask do
   end
 
   describe ".sync_tracking_tasks" do
-    let(:appeal) { FactoryBot.create(:appeal) }
+    let!(:appeal) { FactoryBot.create(:appeal) }
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
 
     subject { TrackVeteranTask.sync_tracking_tasks(appeal) }
 
     context "When former represenative VSO is assigned non-Tracking tasks" do
-      let(:old_vso) { FactoryBot.create(:vso, name: "Remember Korea") }
-      let(:new_vso) { FactoryBot.create(:vso) }
-      let(:appeal) { FactoryBot.create(:appeal) }
+      let!(:old_vso) { FactoryBot.create(:vso, name: "Remember Korea") }
+      let!(:new_vso) { FactoryBot.create(:vso) }
       let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
 
-      let(:ihp_org_task) { FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: old_vso)
+      let!(:ihp_org_task) { FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: old_vso)
       }
-      let(:tracking_task) do
+      let!(:tracking_task) do
         FactoryBot.create(
           :track_veteran_task,
           parent: root_task,
@@ -67,14 +66,16 @@ describe TrackVeteranTask do
       end
 
       # let(:representing_vsos) { FactoryBot.create_list(:vso, 1) }
-      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return("LOLOLOL") }
+      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return([new_vso]) }
 
 
 
-      it "cancels all tasks of former VSO" do
+      it "cancels all tasks of former VSO", focus: true do
+        # byebug
+        subject
         # expect(ihp_org_task.assigned_to).to eq(old_vso)
         # expect(ihp_org_task.appeal_id).to eq(appeal.id)
-        expect(ihp_org_task.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(ihp_org_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
     end
     context "when the appeal has no VSOs" do
