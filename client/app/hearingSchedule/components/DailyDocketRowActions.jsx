@@ -184,10 +184,8 @@ class HearingActions extends React.Component {
   }
 
   saveHearing = () => {
+    this.props.saveHearing(this.props.hearingId);
     setTimeout(() => {
-      // this ensures we're updating with the latest hearing data
-      // after Redux update
-      this.props.saveHearing(this.props.hearingId);
       this.setState({
         initialState: {
           ...this.props.hearing,
