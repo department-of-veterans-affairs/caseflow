@@ -5,6 +5,39 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Button from '../../components/Button';
 import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
 
+const EditHearingDayLink = ({ openModal }) => (
+  <Button {...css({ marginLeft: '30px' })} linkStyling onClick={openModal} >
+    <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
+    <span {...css({
+      marginRight: '5px',
+      marginLeft: '20px'
+    })}>
+        Edit Hearing Day
+    </span>
+  </Button>
+);
+
+const LockHearingLink = ({ dailyDocket, onDisplayLockModal }) => (
+  <Button linkStyling onClick={onDisplayLockModal}>
+    <span {...css({ position: 'absolute',
+      '& > svg > g > g': { fill: '#0071bc' } })}>
+      {lockIcon()}
+    </span>
+    <span {...css({ marginRight: '5px',
+      marginLeft: '16px' })}>
+      {dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
+    </span>
+  </Button>
+);
+
+const RemoveHearingDayLink = ({ onClickRemoveHearingDay }) => (
+  <Button
+    linkStyling
+    onClick={onClickRemoveHearingDay} >
+    {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
+  </Button>
+);
+
 export default class DailyDocketEditLinks extends React.Component {
 
   render () {
@@ -19,38 +52,17 @@ export default class DailyDocketEditLinks extends React.Component {
         <Link linkStyling to="/schedule" >&lt; Back to schedule</Link>&nbsp;&nbsp;
         {user.userRoleAssign &&
           <span>
-            <Button {...css({ marginLeft: '30px' })} linkStyling onClick={openModal} >
-              <span {...css({ position: 'absolute' })}>{pencilSymbol()}</span>
-              <span {...css({
-                marginRight: '5px',
-                marginLeft: '20px'
-              })}>
-                  Edit Hearing Day
-              </span>
-            </Button>
+            <EditHearingDayLink openModal={openModal} />
             &nbsp;&nbsp;
-            <Button linkStyling onClick={onDisplayLockModal}>
-              <span {...css({ position: 'absolute',
-                '& > svg > g > g': { fill: '#0071bc' } })}>
-                {lockIcon()}
-              </span>
-              <span {...css({ marginRight: '5px',
-                marginLeft: '16px' })}>
-                {dailyDocket.lock ? 'Unlock Hearing Day' : 'Lock Hearing Day'}
-              </span>
-            </Button>
+            <LockHearingLink dailyDocket={dailyDocket} onDisplayLockModal={onDisplayLockModal} />
             &nbsp;&nbsp;
           </span>}
         {(!hasHearings && user.userRoleBuild) &&
-          <Button
-            linkStyling
-            onClick={onClickRemoveHearingDay} >
-            {crossSymbolHtml()}<span{...css({ marginLeft: '3px' })}>Remove Hearing Day</span>
-          </Button>}
+          <RemoveHearingDayLink onClickRemoveHearingDay={onClickRemoveHearingDay} />}
+
         {dailyDocket.notes &&
           <span {...css({ marginTop: '15px' })}>
-            <br /><strong>Notes: </strong>
-            <br />{dailyDocket.notes}
+            <br /><strong>Notes: </strong><br />{dailyDocket.notes}
           </span>}
       </div>
     </React.Fragment>;
