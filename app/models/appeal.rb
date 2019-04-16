@@ -159,8 +159,11 @@ class Appeal < DecisionReview
   end
 
   def latest_attorney_case_review
-    @latest_attorney_case_review ||=
-      AttorneyCaseReview.where(task_id: tasks.pluck(:id)).order(:created_at).last
+    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
+
+    @latest_attorney_case_review = AttorneyCaseReview
+      .where(task_id: tasks.pluck(:id))
+      .order(:created_at).last
   end
 
   def reviewing_judge_name
@@ -325,7 +328,7 @@ class Appeal < DecisionReview
 
   def vsos
     vso_participant_ids = power_of_attorneys.map(&:participant_id) - [nil]
-    Vso.where(participant_id: vso_participant_ids)
+    Representative.where(participant_id: vso_participant_ids)
   end
 
   def external_id
