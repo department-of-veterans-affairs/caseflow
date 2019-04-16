@@ -3,11 +3,8 @@
 class BulkTaskAssignmentsController < ApplicationController
   include Errors
 
-  before_action :verify_task_assignment_access, only: [:create]
-  skip_before_action :deny_vso_access, only: [:create]
-
   def create
-    # no legacy tasks for now (or ever?)
+    # only for caseflow tasks
     # - validate that User.find(params[:user_id]) can perform this action (different for Appeal vs LegacyAppeal?)
     # - get list of active bta.task_type tasks assigned to bta.organization)
     #   - sort tasks "oldest" to "newest" (on `created_at`?) (do in model?) maybe oldest appeal?
@@ -18,6 +15,20 @@ class BulkTaskAssignmentsController < ApplicationController
 
     bulk_task_assignment = BulkTaskAssignment.new(*bulk_task_assignment_params)
     return invalid_record_error(bulk_task_assignment) unless bulk_task_assignment.valid?
+
+    tasks = bulk_task_assignment.tasks_to_be_assigned
+
+    multi_transaction do
+      tasks.each do |task|
+        assign_params = {
+          assigned_to_type: "User",
+          assigned_to_id: bulk_task_assignment.assigned_to.id
+        }
+        GenericTask.create_child_task(task, current_user, assign_params)
+      end
+    end
+
+    true
   end
 
   private

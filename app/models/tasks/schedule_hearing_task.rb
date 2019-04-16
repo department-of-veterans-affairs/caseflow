@@ -25,6 +25,10 @@ class ScheduleHearingTask < GenericTask
       appeal_tasks + legacy_appeal_tasks(regional_office, incomplete_tasks)
     end
 
+    def can_be_bulk_assigned_by_user?(_user)
+      true
+    end
+
     private
 
     def legacy_appeal_tasks(regional_office, incomplete_tasks)
