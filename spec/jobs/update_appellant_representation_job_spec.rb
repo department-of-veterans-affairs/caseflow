@@ -31,13 +31,18 @@ describe UpdateAppellantRepresentationJob do
         vso_for_appeal[appeal.id] = []
       end
 
-      allow_any_instance_of(Appeal).to receive(:vsos) { |a| vso_for_appeal[a.id] }
-      allow_any_instance_of(LegacyAppeal).to receive(:vsos) { |a| vso_for_legacy_appeal[a.id] }
+      allow_any_instance_of(Appeal).to receive(:representatives) { |a| vso_for_appeal[a.id] }
+      allow_any_instance_of(LegacyAppeal).to receive(:representatives) { |a| vso_for_legacy_appeal[a.id] }
     end
 
     it "runs the job as expected" do
-      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
       expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job",
+        metric_group: "update_appellant_representation_job",
+        metric_name: "runtime",
+        metric_value: anything
+      )
 
       UpdateAppellantRepresentationJob.perform_now
     end
@@ -112,8 +117,8 @@ describe UpdateAppellantRepresentationJob do
         vso_for_appeal[appeal.id] = error_indicator
       end
 
-      allow_any_instance_of(Appeal).to receive(:vsos) do |a|
-        fail "No vsos for appeal ID #{a.id}" if error_indicator == vso_for_appeal[a.id]
+      allow_any_instance_of(Appeal).to receive(:representatives) do |a|
+        fail "No representatives for appeal ID #{a.id}" if error_indicator == vso_for_appeal[a.id]
 
         vso_for_appeal[a.id]
       end
