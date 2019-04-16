@@ -15,8 +15,8 @@ RSpec.describe IntakesController do
 
   describe "#create" do
     let(:file_number) { "123456789" }
-    let(:ssn) { file_number.to_s.reverse } # our fakes do this
     let!(:veteran) { create(:veteran, file_number: file_number) }
+    let!(:ssn) { veteran.ssn }
 
     it "should search by Veteran file number" do
       post :create, params: { file_number: file_number, form_type: "higher_level_review" }
