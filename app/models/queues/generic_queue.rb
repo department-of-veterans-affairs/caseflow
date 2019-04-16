@@ -29,9 +29,10 @@ class GenericQueue
 
   def task_includes
     [
-      :appeal,
+      { appeal: [:available_hearing_locations, :claimants] },
       :assigned_by,
-      :assigned_to
+      :assigned_to,
+      :children
     ]
   end
 end

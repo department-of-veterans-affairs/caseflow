@@ -24,6 +24,7 @@ class LegacyAppeal < ApplicationRecord
   has_one :special_issue_list, as: :appeal
   has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
+  has_many :claimants, -> { Claimant.none }
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -336,7 +337,7 @@ class LegacyAppeal < ApplicationRecord
   delegate :representatives, to: :case_record
 
   def vsos
-    Vso.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
+    Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
   end
 
   def contested_claim

@@ -123,6 +123,20 @@ class HearingDay < ApplicationRecord
       end
     end
 
+    def upcoming_days_for_judge(start_date, end_date, user)
+      hearing_days_in_range = HearingDay.includes(:hearings)
+        .where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+      vacols_hearings = HearingRepository.fetch_hearings_for_parents_assigned_to_judge(
+        hearing_days_in_range.first(1000).pluck(:id), user
+      )
+
+      hearing_days_in_range.select do |hearing_day|
+        hearing_day.judge == user ||
+          hearing_day.hearings.any? { |hearing| hearing.judge == user } ||
+          !vacols_hearings[hearing_day.id.to_s].nil?
+      end
+    end
+
     # rubocop:disable Metrics/AbcSize
     def upcoming_days_for_vso_user(start_date, end_date, user)
       hearing_days_with_ama_hearings = HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
@@ -167,6 +181,8 @@ class HearingDay < ApplicationRecord
     def list_upcoming_hearing_days(start_date, end_date, user, regional_office = nil)
       if user&.vso_employee?
         upcoming_days_for_vso_user(start_date, end_date, user)
+      elsif user&.can?("Hearing Prep")
+        upcoming_days_for_judge(start_date, end_date, user)
       else
         load_days(start_date, end_date, regional_office)
       end

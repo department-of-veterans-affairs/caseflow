@@ -190,7 +190,7 @@ RSpec.feature "Task queue" do
     let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso) }
     before do
       User.authenticate!(user: vso_employee)
-      allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+      allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       visit(vso.path)
     end
 
@@ -225,7 +225,7 @@ RSpec.feature "Task queue" do
       FactoryBot.create_list(:informal_hearing_presentation_task, assigned_count, :on_hold, assigned_to: vso)
       FactoryBot.create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
 
-      allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+      allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       User.authenticate!(user: vso_employee)
       visit(vso.path)
     end
