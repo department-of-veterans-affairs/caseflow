@@ -23,6 +23,22 @@ RSpec.describe HomeController, type: :controller do
       end
     end
 
+    context "when visitor is logged in" do
+      let!(:current_user) { User.authenticate! }
+
+      it "should set timezone based on regional office" do
+        @request.session[:regional_office] = "RO84"
+        get :index
+        expect(Time.zone.name).to eq "America/New_York"
+      end
+
+      it "should set to default timezone if no regional office" do
+        @request.session[:regional_office] = nil
+        get :index
+        expect(Time.zone.name).to eq "America/Chicago"
+      end
+    end
+
     context "when visitor is logged in, does not have a personal queue but does have case search access" do
       let!(:current_user) { User.authenticate! }
 

@@ -244,9 +244,11 @@ class ApplicationController < ApplicationBaseController
   end
 
   def set_timezone
-    if session[:regional_office]
-      Time.zone = (RegionalOffice::CITIES[session[:regional_office]] || {})[:timezone] || "America/Chicago"
-    end
+    Time.zone = timezone_based_on_ro || "America/Chicago"
+  end
+
+  def timezone_based_on_ro
+    (RegionalOffice::CITIES[session[:regional_office]] || {})[:timezone] if session[:regional_office]
   end
 
   # This is used in development mode to:
