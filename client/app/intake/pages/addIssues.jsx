@@ -111,9 +111,11 @@ export class AddIssuesPage extends React.Component {
     );
 
     const issues = formatAddedIssues(intakeData, useAmaActivationDate);
-    const requestIssues = issues.filter((issue) => !issue.withdrawalPending);
+    const requestIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
+    const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
-    const hasWithdrawnIssues = !_.isEmpty(issuesPendingWithdrawal);
+    const allWithdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
+    const hasWithdrawnIssues = !_.isEmpty(allWithdrawnIssues);
     const withdrawDatePlaceholder = formatDateStr(new Date());
 
     if (intakeData.isDtaError) {
@@ -187,7 +189,7 @@ export class AddIssuesPage extends React.Component {
 
     const withdrawnIssuesComponent = () => {
       return <div className="issues">
-        { issuesPendingWithdrawal.map((issue) => {
+        { allWithdrawnIssues.map((issue) => {
           return <div
             className="issue"
             data-key={`issue-${issue.index}`}
