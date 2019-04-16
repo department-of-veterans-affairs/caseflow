@@ -8,7 +8,7 @@ class WorkQueue::AppealSerializer
   attribute :assigned_judge
 
   attribute :issues do |object|
-    object.request_issues.active_or_decided.map do |issue|
+    object.request_issues.active_or_decided.includes(:remand_reasons).map do |issue|
       {
         id: issue.id,
         program: issue.benefit_type,

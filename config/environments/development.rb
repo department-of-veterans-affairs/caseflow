@@ -4,6 +4,7 @@ Rails.application.configure do
     Bullet.bullet_logger = true
     Bullet.console       = true
     Bullet.rails_logger  = true
+    Bullet.unused_eager_loading_enable = false
   end
   # Settings specified here will take precedence over those in config/application.rb.
 

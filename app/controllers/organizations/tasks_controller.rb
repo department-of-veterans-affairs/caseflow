@@ -11,7 +11,7 @@ class Organizations::TasksController < OrganizationsController
       organization_name: organization.name,
       tasks: json_tasks(tasks),
       id: organization.id,
-      is_vso: organization.is_a?(::Vso)
+      is_vso: organization.is_a?(::Representative)
     }
   end
 
@@ -31,6 +31,6 @@ class Organizations::TasksController < OrganizationsController
   end
 
   def serializer
-    organization.is_a?(::Vso) ? WorkQueue::OrganizationTaskSerializer : WorkQueue::TaskSerializer
+    organization.is_a?(::Representative) ? WorkQueue::OrganizationTaskSerializer : WorkQueue::TaskSerializer
   end
 end

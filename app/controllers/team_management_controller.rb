@@ -10,9 +10,7 @@ class TeamManagementController < ApplicationController
         render json: {
           judge_teams: JudgeTeam.all.order(:id).map { |jt| serialize_org(jt) },
           vsos: Vso.all.order(:id).map { |vso| serialize_org(vso) },
-          other_orgs: Organization.all.order(:id).reject { |o| o.is_a?(JudgeTeam) || o.is_a?(Vso) }.map do |o|
-            serialize_org(o)
-          end
+          other_orgs: other_orgs.map { |org| serialize_org(org) }
         }
       end
     end
@@ -64,6 +62,10 @@ class TeamManagementController < ApplicationController
 
   def update_params
     params.require(:organization).permit(:name, :participant_id, :url)
+  end
+
+  def other_orgs
+    Organization.all.order(:id).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(Representative) }
   end
 
   def serialize_org(org)
