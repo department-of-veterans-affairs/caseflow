@@ -280,7 +280,7 @@ describe RequestIssuesUpdate do
 
         let(:nonrating_request_issue_contention) do
           Generators::Contention.build(
-            claim_id: riu.reference_id,
+            claim_id: nonrating_end_product_establishment.reference_id,
             text: "Nonrating issue"
           )
         end
@@ -600,6 +600,7 @@ describe RequestIssuesUpdate do
     subject { riu.establish! }
 
     it "should be successful" do
+      expect(riu.withdrawn_request_issue_ids).to be_nil
       expect(subject).to be_truthy
     end
   end
