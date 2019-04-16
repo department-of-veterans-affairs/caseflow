@@ -36,8 +36,13 @@ describe UpdateAppellantRepresentationJob do
     end
 
     it "runs the job as expected" do
-      expect_any_instance_of(UpdateAppellantRepresentationJob).to receive(:record_runtime).exactly(1).times
       expect_any_instance_of(UpdateAppellantRepresentationJob).to_not receive(:log_error).with(anything, anything)
+      expect(DataDogService).to receive(:emit_gauge).with(
+        app_name: "caseflow_job",
+        metric_group: "update_appellant_representation_job",
+        metric_name: "runtime",
+        metric_value: anything
+      )
 
       UpdateAppellantRepresentationJob.perform_now
     end
