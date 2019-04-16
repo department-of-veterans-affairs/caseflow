@@ -30,7 +30,7 @@ class TasksForAppeal
   def tasks_assigned_to_user_or_any_other_vso_employee
     appeal.tasks
       .includes(*task_includes)
-      .select { |task| task.assigned_to.is_a?(Representative) || @user == task&.assigned_to }
+      .select { |task| task.assigned_to.is_a?(Representative) || user == task.assigned_to }
   end
 
   def all_tasks_except_for_decision_review_tasks
