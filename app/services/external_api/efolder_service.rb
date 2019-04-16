@@ -24,7 +24,7 @@ class ExternalApi::EfolderService
         return generate_response(response_attrs, vbms_id)
       end
 
-      sleep 1
+      sleep 3
       manifest_id = response_body["data"]["id"]
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
