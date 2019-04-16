@@ -32,6 +32,8 @@ class ClaimantValidator < ActiveModel::Validator
   end
 
   def validate_claimant_address(claimant)
+    return if claimant.decision_review.is_a?(Appeal)
+    return unless benefit_type_requires_payee_code?(claimant)
     return unless claimant.participant_id
     return if claimant.address
 
