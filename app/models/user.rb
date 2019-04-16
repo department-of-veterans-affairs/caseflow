@@ -129,10 +129,6 @@ class User < ApplicationRecord
     station_offices.is_a?(Array)
   end
 
-  def timezone
-    (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
-  end
-
   # If user has never logged in, we might not have their full name in Caseflow DB.
   # So if we do not yet have the full name saved in Caseflow's DB, then
   # we want to fetch it from VACOLS, save it to the DB, then return it
@@ -311,9 +307,10 @@ class User < ApplicationRecord
 
       return nil if user_session.nil?
 
+      pg_user_id = session["pg_user_id"]
       css_id = user_session["id"]
       station_id = user_session["station_id"]
-      user = find_by_css_id(css_id)
+      user = pg_user_id ? find_by(id: pg_user_id) : find_by_css_id(css_id)
 
       attrs = {
         station_id: station_id,
@@ -325,6 +322,7 @@ class User < ApplicationRecord
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
       user.update!(attrs.merge(last_login_at: Time.zone.now))
+      session["pg_user_id"] =  user.id
       user
     end
 
