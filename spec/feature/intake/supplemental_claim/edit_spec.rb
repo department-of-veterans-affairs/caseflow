@@ -638,6 +638,7 @@ feature "Supplemental Claim Edit issues" do
         expect(withdrawn_issue.decision_review.end_product_establishments.first.synced_status).to eq("CAN")
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
       end
+      
 
       scenario "show withdrawn issue when edit page is reloaded" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
@@ -660,8 +661,7 @@ feature "Supplemental Claim Edit issues" do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
-        sleep 1
-        expect(page).to have_content("Requested issues\n2. Left knee granted")
+        expect(page).to_not have_content("Requested issues\n1. PTSD denied")
         expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
