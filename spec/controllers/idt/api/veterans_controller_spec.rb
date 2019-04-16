@@ -76,7 +76,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
       end
 
       context "and no such veteran exists" do
-        before { request.headers["SSN"] = "123456789" }
+        before { request.headers["SSN"] = "000000000" }
 
         it "returns 404 not found" do
           get :details
