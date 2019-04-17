@@ -110,13 +110,55 @@ describe HearingDay do
         RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: FactoryBot.create(:staff).slogid)
       end
 
-      it "updates children hearings" do
+      it "updates children hearings with a new room" do
         subject
 
         updated_vacols_child_hearing = vacols_child_hearing.reload
         expect(updated_vacols_child_hearing[:room]).to eql "5"
         updated_caseflow_child_hearing = caseflow_child_hearing.reload
         expect(updated_caseflow_child_hearing.room).to eql "5"
+      end
+
+      it "only tries to update the room, because that's all that changed in the hearing day" do
+        expect_any_instance_of(LegacyHearing).to receive(:update!).with(room: "5")
+        expect_any_instance_of(Hearing).to receive(:update!).with(room: "5")
+
+        subject
+      end
+
+      context "both room and judge are changed" do
+        let!(:judge) { FactoryBot.create(:user) }
+        let!(:judge_role) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
+        let!(:hearing_hash) do
+          {
+            judge_id: judge.id,
+            request_type: HearingDay::REQUEST_TYPES[:video],
+            scheduled_for: Date.new(2019, 12, 7),
+            regional_office: "RO89",
+            room: "5",
+            lock: true
+          }
+        end
+
+        it "updates children hearings with a new room and judge" do
+          subject
+
+          updated_vacols_child_hearing = vacols_child_hearing.reload
+          expect(updated_vacols_child_hearing[:room]).to eql "5"
+          expect(updated_vacols_child_hearing.judge_id).to eql judge.vacols_attorney_id
+          updated_caseflow_child_hearing = caseflow_child_hearing.reload
+          expect(updated_caseflow_child_hearing.room).to eql "5"
+          expect(updated_caseflow_child_hearing.judge).to eql judge
+        end
+
+        it "only tries to update the room and the judge, because that's all that changed in the hearing day" do
+          expected_legacy_params = { room: "5", judge_id: judge.vacols_attorney_id.to_s }
+          expect_any_instance_of(LegacyHearing).to receive(:update!).with(**expected_legacy_params)
+          expected_ama_params = { room: "5", judge_id: judge.id }
+          expect_any_instance_of(Hearing).to receive(:update!).with(**expected_ama_params)
+
+          subject
+        end
       end
     end
   end
