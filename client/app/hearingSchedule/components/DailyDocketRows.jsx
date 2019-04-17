@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from 'glamor';
 
-import HearingActions from './DailyDocketRowActions';
+import DailyDocketRow from './DailyDocketRow';
 import HearingText from './DailyDocketRowDisplayText';
 
 const docketRowStyle = css({
@@ -77,7 +77,7 @@ export default class DailyDocketHearingRows extends React.Component {
             hearing={hearing}
             index={index} />
         </div><div>
-          <HearingActions hearing={hearing} readOnly={readOnly} user={user} regionalOffice={regionalOffice}
+          <DailyDocketRow hearing={hearing} readOnly={readOnly} user={user} regionalOffice={regionalOffice}
             openDispositionModal={openDispositionModal}
             updateHearingNotes={this.updateHearingNotes(hearing)}
             updateHearingDisposition={this.updateHearingDisposition(hearing)}

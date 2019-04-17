@@ -56,7 +56,7 @@ export default class DisplayText extends React.Component {
     const { hearing, index } = this.props;
 
     return <React.Fragment>
-      <div><strong>{index + 1}</strong></div>
+      <div><strong>{index + 1}.</strong></div>
       <AppellantInformation hearing={hearing} />
       <HearingTime hearing={hearing} />
     </React.Fragment>;
