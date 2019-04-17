@@ -66,7 +66,7 @@ describe TrackVeteranTask do
         )
       end
 
-      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return([new_vso]) }
+      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([new_vso]) }
 
       it "cancels all tasks of former VSO" do
         subject
@@ -74,8 +74,9 @@ describe TrackVeteranTask do
       end
 
       it "makes duplicates of active tasks for new representation" do
-        # subject
+        expect(new_vso.tasks.count).to eq(0)
         expect(subject).to eq([2, 2])
+        expect(new_vso.tasks.count).to eq(2)
       end
     end
     context "when the appeal has no VSOs" do
