@@ -94,7 +94,7 @@ class HearingDay < ApplicationRecord
 
   def only_changed(possibles_hash)
     changed_hash = {}
-    possibles_hash.keys.each do |key|
+    possibles_hash.each_key do |key|
       changed_hash[key] = possibles_hash[key] if saved_changes.key?(key)
     end
 
