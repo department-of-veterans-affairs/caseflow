@@ -75,7 +75,7 @@ describe TrackVeteranTask do
 
       it "makes duplicates of active tasks for new representation" do
         # subject
-        expect(subject).to eq([1, 1, 1])
+        expect(subject).to eq([2, 2])
       end
     end
     context "when the appeal has no VSOs" do
@@ -85,7 +85,7 @@ describe TrackVeteranTask do
         it "does not create or cancel any TrackVeteranTasks" do
           task_count_before = TrackVeteranTask.count
 
-          expect(subject).to eq([0, 0, 0])
+          expect(subject).to eq([0, 0])
           expect(TrackVeteranTask.count).to eq(task_count_before)
         end
       end
@@ -97,7 +97,7 @@ describe TrackVeteranTask do
         it "cancels old TrackVeteranTask, does not create any new tasks" do
           active_task_count_before = TrackVeteranTask.active.count
 
-          expect(subject).to eq([0, 1, 0])
+          expect(subject).to eq([0, 1])
           expect(TrackVeteranTask.active.count).to eq(active_task_count_before - 1)
         end
       end
@@ -108,10 +108,10 @@ describe TrackVeteranTask do
       before { allow_any_instance_of(Appeal).to receive(:representatives).and_return(representing_vsos) }
 
       context "when there are no existing TrackVeteranTasks" do
-        it "creates 2 new TrackVeteranTasks" do
+        it "creates 2 new TrackVeteranTasks and 2 IHP Tasks" do
           task_count_before = TrackVeteranTask.count
 
-          expect(subject).to eq([2, 0, 0])
+          expect(subject).to eq([4, 0])
           expect(TrackVeteranTask.count).to eq(task_count_before + 2)
         end
       end
@@ -121,8 +121,8 @@ describe TrackVeteranTask do
           FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: FactoryBot.create(:vso))
         end
 
-        it "cancels old TrackVeteranTask, creates 2 new tasks" do
-          expect(subject).to eq([2, 1, 0])
+        it "cancels old TrackVeteranTask, creates 2 new TrackVeteran and 2 new IHP tasks" do
+          expect(subject).to eq([4, 1])
         end
       end
 
@@ -136,7 +136,7 @@ describe TrackVeteranTask do
         it "does not create or cancel any TrackVeteranTasks" do
           task_count_before = TrackVeteranTask.count
 
-          expect(subject).to eq([0, 0, 0])
+          expect(subject).to eq([0, 0])
           expect(TrackVeteranTask.count).to eq(task_count_before)
         end
       end

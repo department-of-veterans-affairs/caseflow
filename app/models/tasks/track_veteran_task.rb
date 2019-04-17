@@ -33,17 +33,25 @@ class TrackVeteranTask < GenericTask
   def self.sync_tracking_tasks(appeal)
     new_task_count = 0
     closed_task_count = 0
-    copied_task_count = 0
+    vso_task_types = [TrackVeteranTask.name, InformalHearingPresentationTask.name]
 
-    active_tracking_tasks = appeal.tasks.active.where(type: TrackVeteranTask.name)
+    active_tracking_tasks = appeal.tasks.active.where(type: vso_task_types)
+
+
     cached_representatives = active_tracking_tasks.map(&:assigned_to)
     fresh_representatives = appeal.representatives
-
-    # Create a TrackVeteranTask for each VSO that does not already have one.
     new_representatives = fresh_representatives - cached_representatives
+    
+    # Create a TrackVeteranTask for each VSO that does not already have one.
     new_representatives.each do |new_vso|
-      TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: new_vso)
+      params = { appeal: appeal, parent: appeal.root_task, assigned_to: new_vso }
+      TrackVeteranTask.create!(**params)
       new_task_count += 1
+
+      if new_vso.should_write_ihp?(appeal)
+        InformalHearingPresentationTask.create!(**params)
+        new_task_count += 1
+      end
     end
 
     # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
@@ -53,26 +61,7 @@ class TrackVeteranTask < GenericTask
       closed_task_count += 1
     end
 
-    ### Close all other tasks for VSOs that are no longer representing the appellant
-    outdated_vsos.each do |old_vso|
-      tasks = appeal.tasks.active.where(assigned_to_id: old_vso.id)
-
-      tasks.each do |t|
-        fresh_vsos.each do |new_vso|
-          new_vso_task = t.dup
-          new_vso_task.assigned_to_id = new_vso.id
-          success = new_vso_task.save
-
-          if success
-            copied_task_count += 1
-          end
-        end
-
-        t.update!(status: Constants.TASK_STATUSES.cancelled)
-      end
-    end
-
-    [new_task_count, closed_task_count, copied_task_count]
+    [new_task_count, closed_task_count]
   end
 
   private
