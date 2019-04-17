@@ -14,7 +14,7 @@ FactoryBot.define do
           date_of_birth: "01/10/1935",
           date_of_death: nil,
           name_suffix: "II",
-          ssn: Random.rand(999_999_999).to_s,
+          ssn: "987654321",
           sex: "M",
           address_line1: "1234 Main Street",
           country: "USA",

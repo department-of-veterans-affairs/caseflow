@@ -22,20 +22,16 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   end
 
   def details
-    render json: { veteran: veteran, power_of_attorney: poa }
+    render json: json_veteran_details
   end
 
   private
-
-  def bgs
-    @bgs || BGSService.new
-  end
 
   def veteran
     @veteran ||= begin
       fail Caseflow::Error::InvalidSSN if ssn.blank? || ssn.length != 9 || ssn.scan(/\D/).any?
 
-      veteran = bgs.fetch_veteran_by_ssn(ssn)
+      veteran = Veteran.find_by_file_number_or_ssn(ssn)
       fail ActiveRecord::RecordNotFound unless veteran
 
       veteran
@@ -43,10 +39,15 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   end
 
   def poa
-    @poa ||= bgs.fetch_poa_by_file_number(veteran[:file_number])
+    @poa ||= BGSService.new.fetch_poa_by_file_number(veteran[:file_number])
   end
 
-  def include_addresses_in_response?
-    BvaDispatch.singleton.user_has_access?(user) || user.intake_user?
+  def json_veteran_details
+    ::Idt::V1::VeteranDetailsSerializer.new(
+      veteran,
+      params: {
+        poa: poa
+      }
+    ).serializable_hash[:data]
   end
 end
