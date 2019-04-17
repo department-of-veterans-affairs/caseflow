@@ -111,11 +111,21 @@ module IntakeHelpers
   end
   # rubocop: enable Metrics/ParameterLists
 
-  def start_claim_review(claim_review_type, veteran: create(:veteran), veteran_is_not_claimant: false)
+  def start_claim_review(
+    claim_review_type,
+    veteran: create(:veteran),
+    veteran_is_not_claimant: false,
+    benefit_type: "compensation"
+  )
     if claim_review_type == :supplemental_claim
-      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant)
+      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant, benefit_type: benefit_type)
     else
-      start_higher_level_review(veteran, veteran_is_not_claimant: veteran_is_not_claimant, informal_conference: true)
+      start_higher_level_review(
+        veteran,
+        veteran_is_not_claimant: veteran_is_not_claimant,
+        informal_conference: true,
+        benefit_type: benefit_type
+      )
     end
   end
 

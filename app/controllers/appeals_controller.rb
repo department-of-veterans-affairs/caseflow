@@ -112,6 +112,7 @@ class AppealsController < ApplicationController
   def update
     if request_issues_update.perform!
       flash[:removed] = review_removed_message if request_issues_update.after_issues.empty?
+
       render json: {
         issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
         issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
