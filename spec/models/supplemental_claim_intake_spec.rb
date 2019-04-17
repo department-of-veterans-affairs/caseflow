@@ -135,6 +135,20 @@ describe SupplementalClaimIntake do
           expect(detail.errors[:claimant]).to include("claimant_address_required")
           expect(detail.claimants).to be_empty
         end
+
+        context "when the benefit type is noncomp" do
+          let(:benefit_type) { "education" }
+
+          it "does not require address" do
+            expect(subject).to be_truthy
+            expect(intake.detail.claimants.count).to eq 1
+            expect(intake.detail.claimants.first).to have_attributes(
+              participant_id: "1234",
+              payee_code: nil,
+              decision_review: intake.detail
+            )
+          end
+        end
       end
 
       context "claimant is nil" do
