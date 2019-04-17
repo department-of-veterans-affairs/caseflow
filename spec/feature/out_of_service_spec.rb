@@ -133,7 +133,7 @@ RSpec.feature "Out of Service" do
     end
 
     scenario "When out of service is enabled, it shows out of service page" do
-      Rails.cache.write("hearing_schedule_out_of_service", true)
+      Rails.cache.write("hearings_out_of_service", true)
       visit "/hearings/schedule/build"
       expect(page).to have_content("Technical Difficulties")
       expect(page).to_not have_content("Build Schedule")
