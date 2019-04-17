@@ -23,6 +23,8 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         let(:file_number) { "123456789" }
         let(:ssn) { file_number.to_s.reverse } # our fakes do this
         let!(:veteran) { create(:veteran, file_number: file_number) }
+        let!(:power_of_attorney) { PowerOfAttorney.new(file_number: file_number) }
+        let!(:power_of_attorney_address) { power_of_attorney.bgs_representative_address }
 
         before do
           request.headers["SSN"] = ssn
@@ -51,17 +53,19 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         it "returns the veteran's poa" do
           get :details
           expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)
+          response_body = JSON.parse(response.body)["attributes"]["poa"]
+          response_address = response_body["representative_address"]
 
-          default_bgs_poa = {
-            "representative_type" => "Attorney",
-            "representative_name" => "Clarence Darrow",
-            "participant_id" => "600153863"
-          }
-
-          expect(response_body["attributes"]["poa"]["representative_type"]).to eq default_bgs_poa["representative_type"]
-          expect(response_body["attributes"]["poa"]["representative_name"]).to eq default_bgs_poa["representative_name"]
-          expect(response_body["attributes"]["poa"]["participant_id"]).to eq default_bgs_poa["participant_id"]
+          expect(response_body["representative_type"]).to eq power_of_attorney.bgs_representative_type
+          expect(response_body["representative_name"]).to eq power_of_attorney.bgs_representative_name
+          expect(response_body["participant_id"]).to eq power_of_attorney.bgs_participant_id
+          expect(response_address["address_line_1"]).to eq power_of_attorney_address[:address_line_1]
+          expect(response_address["address_line_2"]).to eq power_of_attorney_address[:address_line_2]
+          expect(response_address["address_line_3"]).to eq power_of_attorney_address[:address_line_3]
+          expect(response_address["country"]).to eq power_of_attorney_address[:country]
+          expect(response_address["zip"]).to eq power_of_attorney_address[:zip]
+          expect(response_address["state"]).to eq power_of_attorney_address[:state]
+          expect(response_address["city"]).to eq power_of_attorney_address[:city]
         end
       end
 
