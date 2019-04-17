@@ -311,7 +311,7 @@ class User < ApplicationRecord
 
       return nil if user_session.nil?
 
-      pg_user_id = session["pg_user_id"]
+      pg_user_id = session[:pg_user_id]
       css_id = user_session["id"]
       station_id = user_session["station_id"]
       user = pg_user_id ? find_by(id: pg_user_id) : find_by_css_id(css_id)
@@ -326,7 +326,7 @@ class User < ApplicationRecord
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
       user.update!(attrs.merge(last_login_at: Time.zone.now))
-      session["pg_user_id"] = user.id
+      session[:pg_user_id] = user.id
       user
     end
 
