@@ -37,11 +37,10 @@ class TrackVeteranTask < GenericTask
 
     active_tracking_tasks = appeal.tasks.active.where(type: vso_task_types)
 
-
     cached_representatives = active_tracking_tasks.map(&:assigned_to)
     fresh_representatives = appeal.representatives
     new_representatives = fresh_representatives - cached_representatives
-    
+
     # Create a TrackVeteranTask for each VSO that does not already have one.
     new_representatives.each do |new_vso|
       params = { appeal: appeal, parent: appeal.root_task, assigned_to: new_vso }
