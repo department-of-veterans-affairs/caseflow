@@ -107,7 +107,12 @@ export default class DailyDocket extends React.Component {
   render() {
 
     const regionalOffice = this.getRegionalOffice();
+    const docketHearings = this.dailyDocketHearings();
+    const prevHearings = this.previouslyScheduledHearings();
+
     const hasHearings = !_.isEmpty(this.props.hearings);
+    const hasDocketHearings = !_.isEmpty(docketHearings);
+    const hasPrevHearings = !_.isEmpty(prevHearings);
 
     const {
       dailyDocket, onClickRemoveHearingDay, displayRemoveHearingDayModal, displayLockModal, openModal,
@@ -160,7 +165,7 @@ export default class DailyDocket extends React.Component {
         </div>
       </div>
 
-      {hasHearings &&
+      {hasDocketHearings &&
         <DailyDocketRows
           hearings={this.dailyDocketHearings()}
           readOnly={user.userRoleView || user.userRoleVso}
@@ -175,18 +180,18 @@ export default class DailyDocket extends React.Component {
           regionalOffice={regionalOffice}
           user={user} />}
 
-      {!hasHearings &&
+      {!hasDocketHearings &&
         <div {...css({ marginTop: '75px' })}>
           <StatusMessage
             title= "No Veterans are scheduled for this hearing day."
             type="status" />
         </div>}
 
-      {!_.isEmpty(this.previouslyScheduledHearings()) &&
+      {hasPrevHearings &&
         <div {...css({ marginTop: '75px' })}>
           <h1>Previously Scheduled</h1>
           <DailyDocketRows
-            hearings={this.previouslyScheduledHearings()}
+            hearings={prevHearings}
             regionalOffice={regionalOffice}
             user={user}
             readOnly />
