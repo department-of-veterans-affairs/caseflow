@@ -332,7 +332,9 @@ describe HearingDay do
       FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case2)
     end
     let!(:hearing2) do
-      FactoryBot.create(:case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: parent_hearing.hearing_pkseq)
+      FactoryBot.create(
+        :case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: parent_hearing.hearing_pkseq
+      )
     end
 
     subject do
@@ -431,8 +433,7 @@ describe HearingDay do
     end
     let!(:staff) { FactoryBot.create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let(:hearing) do
-      FactoryBot.create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central],
-                            folder_nr: appeal.vacols_id)
+      FactoryBot.create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central], folder_nr: appeal.vacols_id)
     end
 
     context "get parent and children structure" do
