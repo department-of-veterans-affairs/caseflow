@@ -34,9 +34,21 @@ export class DailyDocketContainer extends React.Component {
     }
   };
 
+  formatHearing = (hearing) => {
+    return {
+      prepped: hearing.prepped,
+      notes: hearing.notes,
+      disposition: hearing.disposition,
+      aod: hearing.aod,
+      hold_open: hearing.hold_open,
+      transcript_requested: hearing.transcript_requested,
+      evidence_window_waived: hearing.evidence_window_waived
+    };
+  };
+
   saveHearing = (hearing) => () => {
     ApiUtil.patch(`/hearings/${hearing.external_id}`, { data: {
-      hearing
+      hearing: this.formatHearing(hearing)
     } }).
       then((response) => {
         this.props.handleSaveHearingSuccess(JSON.parse(response.text), this.props.date);
