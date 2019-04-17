@@ -45,7 +45,7 @@ const Header = ({ user }) => (
       '& > div > div': { verticalAlign: 'bottom' }
     })} className={user.userInJudgeTeam ? 'judge-view' : ''}>
     <div>
-      <div>{user.userInJudgeTeam && 'Prep'}</div>
+      <div>{user.userInJudgeTeam && <strong>Prep</strong>}</div>
       <div></div>
       <div><strong>Appellant/Veteran ID/Representative</strong></div>
       <div><strong>Time/RO(s)</strong></div>
