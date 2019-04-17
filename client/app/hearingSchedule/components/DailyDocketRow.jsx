@@ -2,8 +2,6 @@ import React from 'react';
 import _ from 'lodash';
 import { css } from 'glamor';
 import moment from 'moment';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import { getTimeWithoutTimeZone } from '../../util/DateUtil';
 
@@ -17,30 +15,28 @@ import HearingTime from './modalForms/HearingTime';
 import { pencilSymbol } from '../../components/RenderFunctions';
 
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
-import { onUpdateDocketHearing } from '../actions';
-import HearingText from './DailyDocketRowDisplayText';
 
 const staticSpacing = css({ marginTop: '5px' });
 
 const DispositionDropdown = ({
-  hearing, update, readOnly, cancelUpdate, openDispositionModal, saveHearing
+  hearing, update, readOnly, cancelHearingUpdate, openDispositionModal, saveHearing
 }) => {
 
   return <div><SearchableDropdown
     name="Disposition"
     strongLabel
     options={DISPOSITION_OPTIONS}
-    value={hearing.disposition}
+    value={hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition}
     onChange={(option) => {
       openDispositionModal({
         hearing,
         disposition: option.value,
         onConfirm: () => {
           if (option.value === 'postponed') {
-            cancelUpdate();
+            cancelHearingUpdate();
           }
 
-          update({ disposition: option.value });
+          update(option.value);
           saveHearing();
         }
       });
@@ -49,26 +45,15 @@ const DispositionDropdown = ({
   /></div>;
 };
 
-const Waive90DayHoldCheckbox = ({ hearing, readOnly, update }) => (
-  <div>
-    <b>Waive 90 Day Evidence Hold</b>
-    <Checkbox
-      label="Yes, Waive 90 Day Hold"
-      name={`${hearing.id}.evidenceWindowWaived`}
-      value={hearing.evidenceWindowWaived || false}
-      onChange={(evidenceWindowWaived) => update({ evidenceWindowWaived })}
-      disabled={readOnly} />
-  </div>
-);
-
 const TranscriptRequestedCheckbox = ({ hearing, readOnly, update }) => (
   <div>
     <b>Copy Requested by Appellant/Rep</b>
     <Checkbox
       label="Transcript Requested"
       name={`${hearing.id}.transcriptRequested`}
-      value={hearing.transcriptRequested || false}
-      onChange={(transcriptRequested) => update({ transcriptRequested })}
+      value={_.isUndefined(hearing.editedTranscriptRequested) ?
+        hearing.transcriptRequested || false : hearing.editedTranscriptRequested}
+      onChange={(transcriptRequested) => update(transcriptRequested)}
       disabled={readOnly} />
   </div>
 );
@@ -79,49 +64,6 @@ const HearingDetailsLink = ({ hearing }) => (
     <div {...staticSpacing}>
       <Link href={`/hearings/${hearing.externalId}/details`}>
         Edit Hearing Details
-        <span {...css({ position: 'absolute' })}>
-          {pencilSymbol()}
-        </span>
-      </Link>
-    </div>
-  </div>
-);
-
-const AodDropdown = ({ hearing, readOnly, update }) => {
-  return <SearchableDropdown
-    label="AOD"
-    readOnly={true || readOnly}
-    name={`${hearing.id}-aodReason`}
-    options={[{ value: 'granted',
-      label: 'Granted' },
-    { value: 'filed',
-      label: 'Filed' },
-    { value: 'none',
-      label: 'None' }]}
-    onChange={(aod) => update({ aod })}
-    value={hearing.aod}
-    searchable={false}
-  />;
-};
-
-const AodReasonDropdown = ({ hearing, readOnly, update }) => {
-  return <SearchableDropdown
-    label="AOD Reason"
-    readOnly={true || readOnly}
-    name={`${hearing.id}-aod`}
-    options={[]}
-    onChange={(aodReason) => update({ aodReason })}
-    value={hearing.aodReason}
-    searchable={false}
-  />;
-};
-
-const HearingPrepWorkSheetLink = ({ hearing }) => (
-  <div>
-    <b>Hearing Prep Worksheet</b><br />
-    <div {...staticSpacing}>
-      <Link href={`/hearings/${hearing.externalId}/worksheet`}>
-        Edit VLJ Hearing Worksheet
         <span {...css({ position: 'absolute' })}>
           {pencilSymbol()}
         </span>
@@ -144,14 +86,16 @@ const NotesField = ({ hearing, update, readOnly }) => (
     name="Notes"
     strongLabel
     disabled={readOnly}
-    onChange={(notes) => update({ notes })}
+    onChange={(notes) => update(notes)}
     textAreaStyling={css({ height: '50px' })}
-    value={hearing.notes || ''}
+    value={_.isUndefined(hearing.editedNotes) ? hearing.notes || '' : hearing.editedNotes}
   />
 );
 
 const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, update }) => {
-  const roIsDifferent = regionalOffice !== hearing.closestRegionalOffice;
+  const currentRegionalOffice = hearing.editedRegionalOffice || regionalOffice;
+
+  const roIsDifferent = currentRegionalOffice !== hearing.closestRegionalOffice;
   let staticHearingLocations = _.isEmpty(hearing.availableHearingLocations) ?
     [hearing.location] : _.values(hearing.availableHearingLocations);
 
@@ -162,11 +106,11 @@ const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, update }) 
   return <AppealHearingLocationsDropdown
     readOnly={readOnly}
     appealId={hearing.appealExternalId}
-    regionalOffice={regionalOffice}
+    regionalOffice={currentRegionalOffice}
     staticHearingLocations={staticHearingLocations}
     dynamic={_.isEmpty(hearing.availableHearingLocations) || roIsDifferent}
-    value={hearing.location ? hearing.location.facilityId : null}
-    onChange={(location) => update({ location })}
+    value={hearing.editedLocation || (hearing.location ? hearing.location.facilityId : null)}
+    onChange={(hearingLocation) => update(hearingLocation)}
   />;
 };
 
@@ -186,10 +130,10 @@ const TimeRadioButtons = ({ hearing, regionalOffice, update, readOnly }) => {
     regionalOffice={regionalOffice}
     value={value}
     readOnly={readOnly}
-    onChange={(editedTime) => update({ editedTime })} />;
+    onChange={(hearingTime) => update(hearingTime)} />;
 };
 
-const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
+const SaveButton = ({ hearing, cancelHearingUpdate, saveHearing }) => {
   return <div {...css({
     content: ' ',
     clear: 'both',
@@ -198,7 +142,7 @@ const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
     <Button
       styling={css({ float: 'left' })}
       linkStyling
-      onClick={cancelUpdate}>
+      onClick={cancelHearingUpdate}>
       Cancel
     </Button>
     <Button
@@ -216,141 +160,55 @@ const inputSpacing = css({
   }
 });
 
-class HearingActions extends React.Component {
-  constructor (props) {
-    super(props);
-
-    this.state = {
-      initialState: {
-        ...props.hearing,
-        editedTime: null
-      },
-      edited: false
-    };
-  }
-
-  update = (values) => {
-    this.props.update(values);
-    this.setState({ edited: true });
-  }
-
-  cancelUpdate = () => {
-    this.props.update(this.state.initialState);
-    this.setState({ edited: false });
-  }
-
-  saveHearing = () => {
-    this.props.saveHearing(this.props.hearingId);
-    setTimeout(() => {
-      this.setState({
-        initialState: { ...this.props.hearing },
-        edited: false
-      });
-    }, 0);
-  }
-
-  defaultRightColumn = () => {
-    const { hearing, regionalOffice, readOnly } = this.props;
-
-    const inputProps = {
-      hearing,
-      readOnly,
-      update: this.update
-    };
-
-    return <div {...inputSpacing}>
-      <StaticRegionalOffice hearing={hearing} />
-      <HearingLocationDropdown {...inputProps} regionalOffice={regionalOffice} />
-      <StaticHearingDay hearing={hearing} />
-      <TimeRadioButtons {...inputProps} regionalOffice={regionalOffice} />
-      {this.state.edited &&
-        <SaveButton
-          hearing={hearing}
-          cancelUpdate={this.cancelUpdate}
-          saveHearing={this.saveHearing} />
-      }
-    </div>;
-  }
-
-  judgeRightColumn = () => {
-    const { hearing, readOnly } = this.props;
-
-    const inputProps = {
-      hearing,
-      readOnly,
-      update: this.update
-    };
-
-    return <div {...inputSpacing}>
-      <HearingPrepWorkSheetLink hearing={hearing} />
-      <AodDropdown {...inputProps} />
-      <AodReasonDropdown {...inputProps} />
-      {this.state.edited &&
-        <SaveButton
-          hearing={hearing}
-          cancelUpdate={this.cancelUpdate}
-          saveHearing={this.saveHearing} />
-      }
-    </div>;
-  }
-
-  getRightColumn = () => {
-    const { user } = this.props;
-
-    if (user.userInJudgeTeam) {
-      return this.judgeRightColumn();
-    }
-
-    return this.defaultRightColumn();
-  }
-
+export default class HearingActions extends React.Component {
   getLeftColumn = () => {
-    const { hearing, user, readOnly, openDispositionModal } = this.props;
+    const { hearing, user, updateHearingDisposition, cancelHearingUpdate, readOnly,
+      saveHearing, openDispositionModal, updateTranscriptRequested, updateHearingNotes } = this.props;
 
     const inputProps = {
       hearing,
-      readOnly,
-      update: this.update
+      readOnly
     };
 
     return <div {...inputSpacing}>
       <DispositionDropdown {...inputProps}
-        cancelUpdate={this.cancelUpdate}
-        saveHearing={this.saveHearing}
+        update={updateHearingDisposition}
+        cancelHearingUpdate={cancelHearingUpdate}
+        saveHearing={saveHearing}
         openDispositionModal={openDispositionModal} />
-      {(user.userInJudgeTeam && hearing.docketName === 'hearing') &&
-        <Waive90DayHoldCheckbox {...inputProps} />}
-      <TranscriptRequestedCheckbox {...inputProps} />
-      {(user.userRoleAssign && !user.userInJudgeTeam) && <HearingDetailsLink hearing={hearing} />}
-      <NotesField {...inputProps} readOnly={user.userRoleVso} />
+      <TranscriptRequestedCheckbox {...inputProps} update={updateTranscriptRequested} />
+      {user.userRoleAssign && <HearingDetailsLink hearing={hearing} />}
+      <NotesField {...inputProps} update={updateHearingNotes} readOnly={user.userRoleVso} />
+    </div>;
+  }
+
+  getRightColumn = () => {
+    const { hearing, updateHearingLocation, regionalOffice, readOnly,
+      updateHearingTime, cancelHearingUpdate, saveHearing } = this.props;
+
+    const inputProps = {
+      hearing,
+      readOnly
+    };
+
+    return <div {...inputSpacing}>
+      <StaticRegionalOffice hearing={hearing} />
+      <HearingLocationDropdown {...inputProps} update={updateHearingLocation} regionalOffice={regionalOffice} />
+      <StaticHearingDay hearing={hearing} />
+      <TimeRadioButtons {...inputProps} update={updateHearingTime} regionalOffice={regionalOffice} />
+      {hearing.edited &&
+        <SaveButton
+          hearing={hearing}
+          cancelHearingUpdate={cancelHearingUpdate}
+          saveHearing={saveHearing} />
+      }
     </div>;
   }
 
   render () {
-    const { hearing, user, index, readOnly } = this.props;
-
     return <React.Fragment>
-      <div>
-        <HearingText
-          readOnly={readOnly}
-          update={this.update}
-          hearing={hearing}
-          user={user}
-          index={index} />
-      </div><div>
-        {this.getLeftColumn()}
-        {this.getRightColumn()}
-      </div>
+      {this.getLeftColumn()}
+      {this.getRightColumn()}
     </React.Fragment>;
   }
 }
-
-const mapStateToProps = (state, props) => ({
-  hearing: props.hearingId ? state.hearingSchedule.hearings[props.hearingId] : {}
-});
-
-const mapDispatchToProps = (dispatch, props) => bindActionCreators({
-  update: (values) => onUpdateDocketHearing(props.hearingId, values)
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(HearingActions);
