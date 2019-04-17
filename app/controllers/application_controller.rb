@@ -244,7 +244,8 @@ class ApplicationController < ApplicationBaseController
   end
 
   def set_timezone
-    Time.zone = current_user.timezone if current_user
+    Time.zone = session[:timezone] || current_user&.timezone
+    session[:timezone] ||= current_user&.timezone
   end
 
   # This is used in development mode to:
