@@ -4,6 +4,7 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   protect_from_forgery with: :exception
   before_action :verify_access
 
+  # :nocov:
   rescue_from StandardError do |error|
     Raven.capture_exception(error)
     if error.class.method_defined?(:serialize_response)
@@ -12,6 +13,7 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
       render json: { message: "Unexpected error: #{error.message}" }, status: :internal_server_error
     end
   end
+  # :nocov:
 
   rescue_from ActiveRecord::RecordNotFound do |_e|
     render(json: { message: "A veteran with that ssn or file number was not found." }, status: :not_found)
