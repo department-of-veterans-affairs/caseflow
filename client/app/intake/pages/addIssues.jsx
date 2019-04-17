@@ -98,11 +98,15 @@ export class AddIssuesPage extends React.Component {
     );
 
     const issues = formatAddedIssues(intakeData, useAmaActivationDate);
-    const requestIssues = issues.filter((issue) => !issue.withdrawalPending);
+    const requestIssues = issues.filter((issue) => !issue.withdrawalPending && !issue.withdrawalDate);
+    const previouslywithdrawnIssues = issues.filter((issue) => issue.withdrawalDate);
     const issuesPendingWithdrawal = issues.filter((issue) => issue.withdrawalPending);
-    const hasWithdrawnIssues = !_.isEmpty(issuesPendingWithdrawal);
+    const allWithdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
+    const hasWithdrawnIssues = !_.isEmpty(allWithdrawnIssues);
     const withdrawDatePlaceholder = formatDateStr(new Date());
-    const withdrawReview = _.every(issues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
+    const withdrawReview = !.isEmpty(issues) && _.every(
+      issues, (issue) => issue.withdrawalPending || issue.withdrawalDate
+    );
 
     const haveIssuesChanged = () => {
       if (issues.length !== this.state.originalIssueLength) {
@@ -195,7 +199,7 @@ export class AddIssuesPage extends React.Component {
     const withdrawnIssuesComponent = () => {
       return <div className="issues">
         { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
-        { issuesPendingWithdrawal.map((issue) => {
+        { allWithdrawnIssues.map((issue) => {
           return <div
             className="issue"
             data-key={`issue-${issue.index}`}

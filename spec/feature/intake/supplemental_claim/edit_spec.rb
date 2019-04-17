@@ -642,6 +642,54 @@ feature "Supplemental Claim Edit issues" do
         expect(withdrawn_issue.decision_review.end_product_establishments.first.synced_status).to eq("CAN")
         expect(Fakes::VBMSService).to have_received(:remove_contention!).once
       end
+
+      scenario "show withdrawn issue when edit page is reloaded" do
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+
+        click_intake_add_issue
+        add_intake_rating_issue("Left knee granted")
+
+        expect(page).to have_button("Save", disabled: false)
+
+        safe_click("#button-submit-update")
+        expect(page).to have_content("Number of issues has changed")
+
+        safe_click ".confirm"
+        expect(page).to have_current_path(
+          "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
+        )
+        # reload to verify that the new issues populate the form
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+        expect(page).to have_content("Left knee granted")
+
+        click_withdraw_intake_issue_dropdown("PTSD denied")
+
+        expect(page).to_not have_content("Requested issues\n1. PTSD denied")
+        expect(page).to have_content(
+          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+        )
+        expect(page).to have_content("Please include the date the withdrawal was requested")
+
+        fill_in "withdraw-date", with: withdraw_date
+
+        safe_click("#button-submit-update")
+        expect(page).to have_current_path(
+          "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
+        )
+        expect(page).to have_content("Review Withdrawn")
+
+        withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
+        expect(withdrawn_issue).to_not be_nil
+        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+
+        sleep 1
+        # reload to verify that the new issues populate the form
+        visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
+
+        expect(page).to have_content("Requested issues\n1. Left knee granted")
+        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/20/2018\nWithdrawn on")
+        expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+      end
     end
   end
 
