@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from 'glamor';
 
-import HearingActions from './DailyDocketRowActions';
+import DailyDocketRow from './DailyDocketRow';
 
 const docketRowStyle = css({
   borderBottom: '1px solid #ddd',
@@ -62,7 +62,7 @@ export default class DailyDocketHearingRows extends React.Component {
       <Header user={user} />
       <div>{hearings.map((hearing, index) => (
         <div {...docketRowStyle} key={`docket-row-${index}`} className={user.userInJudgeTeam ? 'judge-view' : ''}>
-          <HearingActions hearingId={hearing.id}
+          <DailyDocketRow hearingId={hearing.id}
             index={index}
             readOnly={readOnly}
             user={user}
