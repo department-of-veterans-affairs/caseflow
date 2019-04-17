@@ -117,7 +117,9 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, originalIssues
     ) || disableDueToIssueCount || invalidVeteran || !withdrawDateValid;
 
-    const withdrawReview = _.every(addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate);
+    const withdrawReview = !_.isEmpty(addedIssues) && _.every(
+      addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
+    );
 
     const saveButtonText = withdrawReview ? 'Withdraw' : 'Save';
 
