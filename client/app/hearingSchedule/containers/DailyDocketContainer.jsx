@@ -141,13 +141,19 @@ export class DailyDocketContainer extends React.Component {
   };
 
   formatHearing = (hearing) => {
+    const amaHearingValues = hearing.docketName === 'hearing' ? {
+      evidence_window_waived: hearing.evidenceWindowWaived
+    } : {};
+
     return {
       disposition: hearing.disposition,
       transcript_requested: hearing.transcriptRequested,
       notes: hearing.notes,
       hearing_location_attributes: ApiUtil.convertToSnakeCase(hearing.location),
       scheduled_time: this.getScheduledTime(hearing),
-      scheduled_for: this.getScheduledFor(hearing)
+      scheduled_for: this.getScheduledFor(hearing),
+      prepped: hearing.prepped,
+      ...amaHearingValues
     };
   };
 

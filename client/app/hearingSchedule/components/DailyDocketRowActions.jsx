@@ -18,6 +18,7 @@ import { pencilSymbol } from '../../components/RenderFunctions';
 
 import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 import { onUpdateDocketHearing } from '../actions';
+import HearingText from './DailyDocketRowDisplayText';
 
 const staticSpacing = css({ marginTop: '5px' });
 
@@ -89,8 +90,8 @@ const HearingDetailsLink = ({ hearing }) => (
 const AodDropdown = ({ hearing, readOnly, update }) => {
   return <SearchableDropdown
     label="AOD"
-    readOnly={readOnly}
-    name={`${hearing.id}-aod`}
+    readOnly={true || readOnly}
+    name={`${hearing.id}-aodReason`}
     options={[{ value: 'granted',
       label: 'Granted' },
     { value: 'filed',
@@ -106,7 +107,7 @@ const AodDropdown = ({ hearing, readOnly, update }) => {
 const AodReasonDropdown = ({ hearing, readOnly, update }) => {
   return <SearchableDropdown
     label="AOD Reason"
-    readOnly={readOnly}
+    readOnly={true || readOnly}
     name={`${hearing.id}-aod`}
     options={[]}
     onChange={(aodReason) => update({ aodReason })}
@@ -242,10 +243,7 @@ class HearingActions extends React.Component {
     this.props.saveHearing(this.props.hearingId);
     setTimeout(() => {
       this.setState({
-        initialState: {
-          ...this.props.hearing,
-          editedTime: null
-        },
+        initialState: { ...this.props.hearing },
         edited: false
       });
     }, 0);
@@ -320,7 +318,7 @@ class HearingActions extends React.Component {
         cancelUpdate={this.cancelUpdate}
         saveHearing={this.saveHearing}
         openDispositionModal={openDispositionModal} />
-      {(user.userInJudgeTeam && hearing.docketName !== 'Legacy') &&
+      {(user.userInJudgeTeam && hearing.docketName === 'hearing') &&
         <Waive90DayHoldCheckbox {...inputProps} />}
       <TranscriptRequestedCheckbox {...inputProps} />
       {(user.userRoleAssign && !user.userInJudgeTeam) && <HearingDetailsLink hearing={hearing} />}
@@ -329,9 +327,20 @@ class HearingActions extends React.Component {
   }
 
   render () {
+    const { hearing, user, index, readOnly } = this.props;
+
     return <React.Fragment>
-      {this.getLeftColumn()}
-      {this.getRightColumn()}
+      <div>
+        <HearingText
+          readOnly={readOnly}
+          update={this.update}
+          hearing={hearing}
+          user={user}
+          index={index} />
+      </div><div>
+        {this.getLeftColumn()}
+        {this.getRightColumn()}
+      </div>
     </React.Fragment>;
   }
 }

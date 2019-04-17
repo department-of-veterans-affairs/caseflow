@@ -1,7 +1,7 @@
 import React from 'react';
-
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
+import Checkbox from '../../components/Checkbox';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 
 export const getHearingAppellantName = (hearing) => {
@@ -51,11 +51,25 @@ const HearingTime = ({ hearing }) => {
   </div>;
 };
 
+const PreppedCheckbox = ({ hearing, update, readOnly }) => (
+  <div>
+    <Checkbox
+      label=" "
+      disabled={readOnly}
+      name={`${hearing.id}.prepped`}
+      value={hearing.prepped || false}
+      onChange={(prepped) => update({ prepped })} />
+  </div>
+);
+
 export default class DisplayText extends React.Component {
   render () {
-    const { hearing, index } = this.props;
+    const { hearing, index, user, update, readOnly } = this.props;
 
     return <React.Fragment>
+      <div>{user.userInJudgeTeam &&
+        <PreppedCheckbox hearing={hearing} update={update} readOnly={readOnly} />}
+      </div>
       <div><strong>{index + 1}</strong></div>
       <AppellantInformation hearing={hearing} />
       <HearingTime hearing={hearing} />

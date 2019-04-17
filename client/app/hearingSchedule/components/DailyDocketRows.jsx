@@ -2,7 +2,6 @@ import React from 'react';
 import { css } from 'glamor';
 
 import HearingActions from './DailyDocketRowActions';
-import HearingText from './DailyDocketRowDisplayText';
 
 const docketRowStyle = css({
   borderBottom: '1px solid #ddd',
@@ -16,14 +15,18 @@ const docketRowStyle = css({
   },
   '& > div:nth-child(1)': {
     width: '40%',
-    '& > div:nth-child(1)': { width: '10%' },
-    '& > div:nth-child(2)': { width: '50%' },
-    '& > div:nth-child(3)': { width: '40%' }
+    '& > div:nth-child(1)': { width: '15%' },
+    '& > div:nth-child(2)': { width: '5%' },
+    '& > div:nth-child(3)': { width: '50%' },
+    '& > div:nth-child(4)': { width: '25%' }
   },
   '& > div:nth-child(2)': {
     backgroundColor: '#f1f1f1',
     width: '60%',
     '& > div': { width: '50%' }
+  },
+  '&:not(.judge-view) > div:nth-child(1) > div:nth-child(1)': {
+    display: 'none'
   }
 });
 
@@ -33,15 +36,16 @@ const rowsMargin = css({
   marginBottom: '-40px'
 });
 
-const Header = () => (
+const Header = ({ user }) => (
   <div {...docketRowStyle}
     {...css({
       '& *': {
         background: 'none !important'
       },
       '& > div > div': { verticalAlign: 'bottom' }
-    })}>
+    })} className={user.userInJudgeTeam ? 'judge-view' : ''}>
     <div>
+      <div>{user.userInJudgeTeam && 'Prep'}</div>
       <div></div>
       <div><strong>Appellant/Veteran ID/Representative</strong></div>
       <div><strong>Time/RO(s)</strong></div>
@@ -55,20 +59,17 @@ export default class DailyDocketHearingRows extends React.Component {
     const { hearings, readOnly, regionalOffice, openDispositionModal, user, saveHearing } = this.props;
 
     return <div {...rowsMargin}>
-      <Header />
+      <Header user={user} />
       <div>{hearings.map((hearing, index) => (
-        <div {...docketRowStyle} key={`docket-row-${index}`}><div>
-          <HearingText
-            hearing={hearing}
-            index={index} />
-        </div><div>
+        <div {...docketRowStyle} key={`docket-row-${index}`} className={user.userInJudgeTeam ? 'judge-view' : ''}>
           <HearingActions hearingId={hearing.id}
+            index={index}
             readOnly={readOnly}
             user={user}
             saveHearing={saveHearing}
             regionalOffice={regionalOffice}
             openDispositionModal={openDispositionModal} />
-        </div></div>
+        </div>
       ))}</div>
     </div>;
   }
