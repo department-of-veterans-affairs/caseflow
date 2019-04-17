@@ -104,7 +104,7 @@ export class AddIssuesPage extends React.Component {
     const allWithdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
     const hasWithdrawnIssues = !_.isEmpty(allWithdrawnIssues);
     const withdrawDatePlaceholder = formatDateStr(new Date());
-    const withdrawReview = !.isEmpty(issues) && _.every(
+    const withdrawReview = !_.isEmpty(issues) && _.every(
       issues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
 
