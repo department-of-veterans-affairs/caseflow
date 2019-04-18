@@ -20,11 +20,7 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   end
 
   rescue_from Caseflow::Error::InvalidFileNumber do |_e|
-    render(json: { message: "Please enter a file number in the 'FILENUMBER' header" }, status: :unprocessable_entity)
-  end
-
-  rescue_from Caseflow::Error::InvalidSSN do |_e|
-    render(json: { message: "Please enter a valid 9 digit SSN in the 'SSN' header" }, status: :unprocessable_entity)
+    render(json: { message: "Enter a file number or ssn in the 'FILENUMBER' header" }, status: :unprocessable_entity)
   end
 
   def details
@@ -33,20 +29,11 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
 
   private
 
-  def file_number_or_ssn
-    if ssn.present?
-      fail Caseflow::Error::InvalidSSN if ssn.length != 9 || ssn.scan(/\D/).any?
-
-      return ssn
-    end
+  def veteran
     fail Caseflow::Error::InvalidFileNumber if file_number.blank?
 
-    file_number
-  end
-
-  def veteran
     @veteran ||= begin
-      veteran = Veteran.find_by_file_number_or_ssn(file_number_or_ssn)
+      veteran = Veteran.find_by_file_number_or_ssn(file_number)
       fail ActiveRecord::RecordNotFound unless veteran
 
       veteran

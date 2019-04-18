@@ -26,7 +26,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
 
       context "and a veteran's ssn" do
         before do
-          request.headers["SSN"] = ssn
+          request.headers["FILENUMBER"] = ssn
         end
 
         it "returns the veteran's details" do
@@ -110,30 +110,18 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         end
       end
 
-      context "but an invalid ssn" do
-        before { request.headers["SSN"] = "123acb456" }
-
-        it "returns 422 unprocessable entity " do
-          get :details
-          response_body = JSON.parse(response.body)
-
-          expect(response.status).to eq 422
-          expect(response_body["message"]).to eq "Please enter a valid 9 digit SSN in the 'SSN' header"
-        end
-      end
-
       context "but no ssn or file number" do
         it "returns 422 unprocessable entity " do
           get :details
           message = JSON.parse(response.body)["message"]
 
           expect(response.status).to eq 422
-          expect(message).to eq "Please enter a file number in the 'FILENUMBER' header"
+          expect(message).to eq "Enter a file number or ssn in the 'FILENUMBER' header"
         end
       end
 
       context "and no such veteran exists" do
-        before { request.headers["SSN"] = "000000000" }
+        before { request.headers["FILENUMBER"] = "000000000" }
 
         it "returns 404 not found" do
           get :details
