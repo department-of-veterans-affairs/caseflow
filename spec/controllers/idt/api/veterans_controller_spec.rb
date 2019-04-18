@@ -13,8 +13,9 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
 
     context "when request header contains valid token" do
       let(:role) { :attorney_role }
-      let(:file_number) { "123456789" }
-      let!(:veteran) { create(:veteran, file_number: file_number) }
+      let(:file_number) { "111222333" }
+      let!(:ssn) { file_number.to_s.reverse } # our fakes do this
+      let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
       let!(:power_of_attorney) { PowerOfAttorney.new(file_number: file_number) }
       let!(:power_of_attorney_address) { power_of_attorney.bgs_representative_address }
 
