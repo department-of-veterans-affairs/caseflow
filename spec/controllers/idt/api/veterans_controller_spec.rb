@@ -85,7 +85,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           response_body = JSON.parse(response.body)
 
           expect(response.status).to eq 404
-          expect(response_body["message"]).to eq "A veteran with that file number could not be found."
+          expect(response_body["message"]).to eq "Record not found"
         end
       end
     end

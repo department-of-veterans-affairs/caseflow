@@ -16,7 +16,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
   # :nocov:
 
   rescue_from ActiveRecord::RecordNotFound do |_e|
-    render(json: { message: "A veteran with that file number could not be found." }, status: :not_found)
+    render(json: { message: "Record not found" }, status: :not_found)
   end
 
   rescue_from Caseflow::Error::InvalidFileNumber do |_e|
