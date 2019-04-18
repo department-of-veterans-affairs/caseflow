@@ -16,11 +16,11 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   # :nocov:
 
   rescue_from ActiveRecord::RecordNotFound do |_e|
-    render(json: { message: "A veteran with that ssn or file number was not found." }, status: :not_found)
+    render(json: { message: "A veteran with that file number could not be found." }, status: :not_found)
   end
 
   rescue_from Caseflow::Error::InvalidFileNumber do |_e|
-    render(json: { message: "Enter a file number or ssn in the 'FILENUMBER' header" }, status: :unprocessable_entity)
+    render(json: { message: "Please enter a file number in the 'FILENUMBER' header" }, status: :unprocessable_entity)
   end
 
   def details
@@ -29,11 +29,15 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
 
   private
 
+  def bgs
+    @bgs ||= BGSService.new
+  end
+
   def veteran
     fail Caseflow::Error::InvalidFileNumber if file_number.blank?
 
     @veteran ||= begin
-      veteran = Veteran.find_by_file_number_or_ssn(file_number)
+      veteran = bgs.fetch_veteran_info(file_number)
       fail ActiveRecord::RecordNotFound unless veteran
 
       veteran
@@ -42,19 +46,12 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
 
   def poa
     @poa ||= begin
-      bgs = BGSService.new
-
       poa = bgs.fetch_poa_by_file_number(veteran[:file_number])
       poa.merge(bgs.find_address_by_participant_id(poa[:participant_id]))
     end
   end
 
   def json_veteran_details
-    ::Idt::V1::VeteranDetailsSerializer.new(
-      veteran,
-      params: {
-        poa: poa
-      }
-    ).serializable_hash[:data]
+    veteran.merge(poa: poa)
   end
 end

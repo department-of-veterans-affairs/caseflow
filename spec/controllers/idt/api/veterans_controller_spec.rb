@@ -14,7 +14,6 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
     context "when request header contains valid token" do
       let(:role) { :attorney_role }
       let(:file_number) { "123456789" }
-      let!(:ssn) { file_number.to_s.reverse } # our fakes do this
       let!(:veteran) { create(:veteran, file_number: file_number) }
       let!(:power_of_attorney) { PowerOfAttorney.new(file_number: file_number) }
       let!(:power_of_attorney_address) { power_of_attorney.bgs_representative_address }
@@ -22,49 +21,6 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
       before do
         create(:staff, role, sdomainid: user.css_id)
         request.headers["TOKEN"] = token
-      end
-
-      context "and a veteran's ssn" do
-        before do
-          request.headers["FILENUMBER"] = ssn
-        end
-
-        it "returns the veteran's details" do
-          get :details
-          expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)
-
-          expect(response_body["attributes"]["name"]["first_name"]).to eq veteran.first_name
-          expect(response_body["attributes"]["name"]["last_name"]).to eq veteran.last_name
-          expect(response_body["attributes"]["date_of_birth"]).to eq veteran.date_of_birth
-          expect(response_body["attributes"]["date_of_death"]).to eq veteran.date_of_death
-          expect(response_body["attributes"]["name_suffix"]).to eq veteran.name_suffix
-          expect(response_body["attributes"]["gender"]).to eq veteran.gender
-          expect(response_body["attributes"]["address_line_1"]).to eq veteran.address_line1
-          expect(response_body["attributes"]["country"]).to eq veteran.country
-          expect(response_body["attributes"]["zip"]).to eq veteran.zip_code
-          expect(response_body["attributes"]["state"]).to eq veteran.state
-          expect(response_body["attributes"]["city"]).to eq veteran.city
-          expect(response_body["attributes"]["file_number"]).to eq veteran.file_number
-          expect(response_body["attributes"]["participant_id"]).to eq veteran.participant_id
-        end
-
-        it "returns the veteran's poa" do
-          get :details
-          expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)["attributes"]["poa"]
-
-          expect(response_body["representative_type"]).to eq power_of_attorney.bgs_representative_type
-          expect(response_body["representative_name"]).to eq power_of_attorney.bgs_representative_name
-          expect(response_body["participant_id"]).to eq power_of_attorney.bgs_participant_id
-          expect(response_body["address_line_1"]).to eq power_of_attorney_address[:address_line_1]
-          expect(response_body["address_line_2"]).to eq power_of_attorney_address[:address_line_2]
-          expect(response_body["address_line_3"]).to eq power_of_attorney_address[:address_line_3]
-          expect(response_body["country"]).to eq power_of_attorney_address[:country]
-          expect(response_body["zip"]).to eq power_of_attorney_address[:zip]
-          expect(response_body["state"]).to eq power_of_attorney_address[:state]
-          expect(response_body["city"]).to eq power_of_attorney_address[:city]
-        end
       end
 
       context "and a veteran's file number" do
@@ -77,25 +33,25 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)
 
-          expect(response_body["attributes"]["name"]["first_name"]).to eq veteran.first_name
-          expect(response_body["attributes"]["name"]["last_name"]).to eq veteran.last_name
-          expect(response_body["attributes"]["date_of_birth"]).to eq veteran.date_of_birth
-          expect(response_body["attributes"]["date_of_death"]).to eq veteran.date_of_death
-          expect(response_body["attributes"]["name_suffix"]).to eq veteran.name_suffix
-          expect(response_body["attributes"]["gender"]).to eq veteran.gender
-          expect(response_body["attributes"]["address_line_1"]).to eq veteran.address_line1
-          expect(response_body["attributes"]["country"]).to eq veteran.country
-          expect(response_body["attributes"]["zip"]).to eq veteran.zip_code
-          expect(response_body["attributes"]["state"]).to eq veteran.state
-          expect(response_body["attributes"]["city"]).to eq veteran.city
-          expect(response_body["attributes"]["file_number"]).to eq veteran.file_number
-          expect(response_body["attributes"]["participant_id"]).to eq veteran.participant_id
+          expect(response_body["first_name"]).to eq veteran.first_name
+          expect(response_body["last_name"]).to eq veteran.last_name
+          expect(response_body["date_of_birth"]).to eq veteran.date_of_birth
+          expect(response_body["date_of_death"]).to eq veteran.date_of_death
+          expect(response_body["name_suffix"]).to eq veteran.name_suffix
+          expect(response_body["sex"]).to eq veteran.gender
+          expect(response_body["address_line1"]).to eq veteran.address_line1
+          expect(response_body["country"]).to eq veteran.country
+          expect(response_body["zip_code"]).to eq veteran.zip_code
+          expect(response_body["state"]).to eq veteran.state
+          expect(response_body["city"]).to eq veteran.city
+          expect(response_body["file_number"]).to eq veteran.file_number
+          expect(response_body["participant_id"]).to eq veteran.participant_id
         end
 
         it "returns the veteran's poa" do
           get :details
           expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)["attributes"]["poa"]
+          response_body = JSON.parse(response.body)["poa"]
 
           expect(response_body["representative_type"]).to eq power_of_attorney.bgs_representative_type
           expect(response_body["representative_name"]).to eq power_of_attorney.bgs_representative_name
@@ -110,13 +66,13 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         end
       end
 
-      context "but no ssn or file number" do
+      context "but no file number" do
         it "returns 422 unprocessable entity " do
           get :details
           message = JSON.parse(response.body)["message"]
 
           expect(response.status).to eq 422
-          expect(message).to eq "Enter a file number or ssn in the 'FILENUMBER' header"
+          expect(message).to eq "Please enter a file number in the 'FILENUMBER' header"
         end
       end
 
@@ -128,7 +84,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           response_body = JSON.parse(response.body)
 
           expect(response.status).to eq 404
-          expect(response_body["message"]).to eq "A veteran with that ssn or file number was not found."
+          expect(response_body["message"]).to eq "A veteran with that file number could not be found."
         end
       end
     end
