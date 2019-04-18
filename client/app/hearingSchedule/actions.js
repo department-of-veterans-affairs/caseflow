@@ -69,46 +69,6 @@ export const onUpdateDocketHearing = (hearingId, values) => ({
   }
 });
 
-export const onHearingNotesUpdate = (hearingId, notes) => ({
-  type: ACTIONS.HEARING_NOTES_UPDATE,
-  payload: {
-    hearingId,
-    notes
-  }
-});
-
-export const onTranscriptRequestedUpdate = (hearingId, transcriptRequested) => ({
-  type: ACTIONS.TRANSCRIPT_REQUESTED_UPDATE,
-  payload: {
-    hearingId,
-    transcriptRequested
-  }
-});
-
-export const onHearingDispositionUpdate = (hearingId, disposition) => ({
-  type: ACTIONS.HEARING_DISPOSITION_UPDATE,
-  payload: {
-    hearingId,
-    disposition
-  }
-});
-
-export const onHearingLocationUpdate = (hearingId, location) => ({
-  type: ACTIONS.HEARING_LOCATION_UPDATE,
-  payload: {
-    hearingId,
-    location
-  }
-});
-
-export const onHearingTimeUpdate = (hearingId, time) => ({
-  type: ACTIONS.HEARING_TIME_UPDATE,
-  payload: {
-    hearingId,
-    time
-  }
-});
-
 export const onInvalidForm = (hearingId, invalid) => ({
   type: ACTIONS.INVALID_FORM,
   payload: {

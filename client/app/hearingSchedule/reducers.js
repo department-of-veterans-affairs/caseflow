@@ -79,21 +79,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         }
       }
     });
-  case ACTIONS.CANCEL_HEARING_UPDATE:
-    return update(state, {
-      hearings: {
-        [action.payload.hearing.id]: {
-          $unset: [
-            'editedNotes',
-            'editedDisposition',
-            'editedTime',
-            'editedOptionalTime',
-            'editedRegionalOffice',
-            'editedLocation',
-            'edited'
-          ] }
-      }
-    });
   case ACTIONS.RECEIVE_UPCOMING_HEARING_DAYS:
     return update(state, {
       upcomingHearingDays: {
@@ -104,51 +89,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       appealsReadyForHearing: {
         $set: action.payload.appeals
-      }
-    });
-  case ACTIONS.HEARING_NOTES_UPDATE:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedNotes: { $set: action.payload.notes },
-          edited: { $set: true }
-        }
-      }
-    });
-  case ACTIONS.TRANSCRIPT_REQUESTED_UPDATE:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedTranscriptRequested: { $set: action.payload.transcriptRequested },
-          edited: { $set: true }
-        }
-      }
-    });
-  case ACTIONS.HEARING_DISPOSITION_UPDATE:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedDisposition: { $set: action.payload.disposition },
-          edited: { $set: true }
-        }
-      }
-    });
-  case ACTIONS.HEARING_LOCATION_UPDATE:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedLocation: { $set: action.payload.location },
-          edited: { $set: true }
-        }
-      }
-    });
-  case ACTIONS.HEARING_TIME_UPDATE:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          editedTime: { $set: action.payload.time },
-          edited: { $set: true }
-        }
       }
     });
   case ACTIONS.INVALID_FORM:
