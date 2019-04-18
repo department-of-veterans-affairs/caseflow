@@ -123,7 +123,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User has no assigned hearings" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      expect(page).to have_content("Edit VLJ Hearing Worksheet")
+      expect(page).to have_content("No Veterans are scheduled for this hearing day.")
       expect(page).to_not have_content("Edit Hearing Day")
       expect(page).to_not have_content("Lock Hearing Day")
       expect(page).to_not have_content("Hearing Details")
