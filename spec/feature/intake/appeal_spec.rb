@@ -722,7 +722,6 @@ feature "Appeal Intake" do
     safe_click ".close-modal"
     expect(page).to_not have_css("#modal_id-title")
     safe_click "#cancel-intake"
-
     safe_click ".confirm-cancel"
     expect(page).to have_content("Make sure you’ve selected an option below.")
     within_fieldset("Please select the reason you are canceling this intake.") do
