@@ -4,11 +4,11 @@ class DocumentCountsByAppealId
   def initialize(appeal_ids:)
     @document_counts_by_appeal_id_hash = {}
     @appeal_ids = appeal_ids
-    @MAX_BATCH_SIZE = 5
+    @max_batch_size = 5
   end
 
   def call
-    if @appeal_ids.length > @MAX_BATCH_SIZE
+    if @appeal_ids.length > @max_batch_size
       fail Caseflow::Error::TooManyAppealIds
     end
 
