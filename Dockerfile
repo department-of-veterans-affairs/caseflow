@@ -22,6 +22,8 @@ WORKDIR /caseflow
 # Build dependencies
 RUN apt -y update && \
     apt -y upgrade && \
+    mkdir -p /usr/share/man/man1 && \
+    mkdir /usr/share/man/man7 && \
     apt install -y ${BUILD} && \
     curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
