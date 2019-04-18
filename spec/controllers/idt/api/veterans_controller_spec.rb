@@ -19,6 +19,38 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
       let!(:power_of_attorney) { PowerOfAttorney.new(file_number: file_number) }
       let!(:power_of_attorney_address) { power_of_attorney.bgs_representative_address }
 
+      let(:veteran_hash) do
+        {
+          first_name: "Bob",
+          last_name: "Smith",
+          date_of_birth: "01/10/1935",
+          date_of_death: nil,
+          name_suffix: "II",
+          ssn: "987654321",
+          sex: "M",
+          address_line1: "1234 Main Street",
+          country: "USA",
+          zip_code: "12345",
+          state: "FL",
+          city: "Orlando",
+          file_number: "111222333"
+        }
+      end
+
+      let(:poa_hash) do
+        {
+          representative_type: "Attorney",
+          representative_name: "Clarence Darrow",
+          address_line_1: "9999 MISSION ST",
+          address_line_2: "UBER",
+          address_line_3: "APT 2",
+          city: "SAN FRANCISCO",
+          country: "USA",
+          state: "CA",
+          zip: "94103"
+        }
+      end
+
       before do
         create(:staff, role, sdomainid: user.css_id)
         request.headers["TOKEN"] = token
@@ -34,18 +66,19 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)
 
-          expect(response_body["first_name"]).to eq veteran.first_name
-          expect(response_body["last_name"]).to eq veteran.last_name
-          expect(response_body["date_of_birth"]).to eq veteran.date_of_birth
-          expect(response_body["date_of_death"]).to eq veteran.date_of_death
-          expect(response_body["name_suffix"]).to eq veteran.name_suffix
-          expect(response_body["sex"]).to eq veteran.gender
-          expect(response_body["address_line1"]).to eq veteran.address_line1
-          expect(response_body["country"]).to eq veteran.country
-          expect(response_body["zip_code"]).to eq veteran.zip_code
-          expect(response_body["state"]).to eq veteran.state
-          expect(response_body["city"]).to eq veteran.city
-          expect(response_body["file_number"]).to eq veteran.file_number
+          expect(response_body["first_name"]).to eq veteran_hash[:first_name]
+          expect(response_body["last_name"]).to eq veteran_hash[:last_name]
+          expect(response_body["date_of_birth"]).to eq veteran_hash[:date_of_birth]
+          expect(response_body["date_of_death"]).to eq veteran_hash[:date_of_death]
+          expect(response_body["name_suffix"]).to eq veteran_hash[:name_suffix]
+          expect(response_body["sex"]).to eq veteran_hash[:sex]
+          expect(response_body["address_line1"]).to eq veteran_hash[:address_line1]
+          expect(response_body["country"]).to eq veteran_hash[:country]
+          expect(response_body["zip_code"]).to eq veteran_hash[:zip_code]
+          expect(response_body["state"]).to eq veteran_hash[:state]
+          expect(response_body["city"]).to eq veteran_hash[:city]
+          expect(response_body["file_number"]).to eq veteran_hash[:file_number]
+          expect(response_body["participant_id"]).not_to be_nil
           expect(response_body["participant_id"]).to eq veteran.participant_id
         end
 
@@ -54,16 +87,17 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["poa"]
 
-          expect(response_body["representative_type"]).to eq power_of_attorney.bgs_representative_type
-          expect(response_body["representative_name"]).to eq power_of_attorney.bgs_representative_name
+          expect(response_body["representative_type"]).to eq poa_hash[:representative_type]
+          expect(response_body["representative_name"]).to eq poa_hash[:representative_name]
+          expect(response_body["participant_id"]).not_to be_nil
           expect(response_body["participant_id"]).to eq power_of_attorney.bgs_participant_id
-          expect(response_body["address_line_1"]).to eq power_of_attorney_address[:address_line_1]
-          expect(response_body["address_line_2"]).to eq power_of_attorney_address[:address_line_2]
-          expect(response_body["address_line_3"]).to eq power_of_attorney_address[:address_line_3]
-          expect(response_body["country"]).to eq power_of_attorney_address[:country]
-          expect(response_body["zip"]).to eq power_of_attorney_address[:zip]
-          expect(response_body["state"]).to eq power_of_attorney_address[:state]
-          expect(response_body["city"]).to eq power_of_attorney_address[:city]
+          expect(response_body["address_line_1"]).to eq poa_hash[:address_line_1]
+          expect(response_body["address_line_2"]).to eq poa_hash[:address_line_2]
+          expect(response_body["address_line_3"]).to eq poa_hash[:address_line_3]
+          expect(response_body["country"]).to eq poa_hash[:country]
+          expect(response_body["zip"]).to eq poa_hash[:zip]
+          expect(response_body["state"]).to eq poa_hash[:state]
+          expect(response_body["city"]).to eq poa_hash[:city]
         end
       end
 
