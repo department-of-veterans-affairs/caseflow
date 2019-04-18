@@ -119,16 +119,25 @@ class ColocatedTask < Task
                                                      all_tasks_closed_for_appeal?
 
     if all_colocated_tasks_for_legacy_appeal_complete
-      AppealRepository.update_location!(appeal, location_based_on_action)
+      new_vacols_location = location_based_on_action
+      # Don't change the location if the appeal is already in that location.
+      AppealRepository.update_location!(appeal, new_vacols_location) unless appeal.in_location?(new_vacols_location)
     end
   end
 
   def location_based_on_action
     case action.to_sym
-    when :translation, :schedule_hearing
-      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled && action == "schedule_hearing"
+    when :schedule_hearing
+      # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
+      # actually held.
+      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled
 
-      return LegacyAppeal::LOCATION_CODES[action.to_sym]
+      ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
+
+      # Do not actually change the location. Should already be CASEFLOW, so leave it as CASEFLOW.
+      LegacyAppeal::LOCATION_CODES[:caseflow]
+    when :translation
+      LegacyAppeal::LOCATION_CODES[action.to_sym]
     else
       assigned_by.vacols_uniq_id
     end
