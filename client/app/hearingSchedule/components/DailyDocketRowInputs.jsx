@@ -85,7 +85,8 @@ export const AodDropdown = ({ hearing, readOnly, update }) => {
   return <SearchableDropdown
     label="AOD"
     readOnly={true || readOnly}
-    name={`${hearing.id}-aodReason`}
+    name="aod"
+    strongLabel
     options={[{ value: 'granted',
       label: 'Granted' },
     { value: 'filed',
@@ -102,7 +103,8 @@ export const AodReasonDropdown = ({ hearing, readOnly, update }) => {
   return <SearchableDropdown
     label="AOD Reason"
     readOnly={true || readOnly}
-    name={`${hearing.id}-aod`}
+    name="aodReason"
+    strongLabel
     options={[]}
     onChange={(aodReason) => update({ aodReason })}
     value={hearing.aodReason}
@@ -186,9 +188,9 @@ export const TimeRadioButtons = ({ hearing, regionalOffice, update, readOnly }) 
 export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
   <div>
     <Checkbox
-      label=" "
+      label={<span style={{ fontSize: 0 }}>Accessibility hack</span>}
       disabled={readOnly}
-      name={`${hearing.id}.prepped`}
+      name="checkbox-prepped"
       value={hearing.prepped || false}
       onChange={(prepped) => update({ prepped })} />
   </div>

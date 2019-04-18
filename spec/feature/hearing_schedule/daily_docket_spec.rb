@@ -123,10 +123,28 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User has no assigned hearings" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      expect(page).to have_content("No Veterans are scheduled for this hearing day.")
+      expect(page).to have_content("Edit VLJ Hearing Worksheet")
       expect(page).to_not have_content("Edit Hearing Day")
       expect(page).to_not have_content("Lock Hearing Day")
       expect(page).to_not have_content("Hearing Details")
+    end
+  end
+
+  context "Daily docket for Judge user" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
+
+    scenario "User has hearing prep fields" do
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      find(".dropdown-aod")
+      find(".dropdown-aodReason")
+      find(".checkbox-wrapper-checkbox-prepped").click
+      find("label", text: "Transcript Requested").click
+      find("label", text: "Yes, Waive 90 Day Hold").click
+      fill_in "Notes", with: "This is a note about the hearing!"
+      click_button("Save")
+
+      expect(page).to have_content("You have successfully updated")
     end
   end
 end
