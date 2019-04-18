@@ -58,9 +58,7 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
       bgs = BGSService.new
 
       poa = bgs.fetch_poa_by_file_number(veteran[:file_number])
-      poa[:representative_address] = bgs.find_address_by_participant_id(poa[:participant_id])
-
-      poa
+      poa.merge(bgs.find_address_by_participant_id(poa[:participant_id]))
     end
   end
 

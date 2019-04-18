@@ -53,18 +53,17 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           get :details
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["attributes"]["poa"]
-          response_address = response_body["representative_address"]
 
           expect(response_body["representative_type"]).to eq power_of_attorney.bgs_representative_type
           expect(response_body["representative_name"]).to eq power_of_attorney.bgs_representative_name
           expect(response_body["participant_id"]).to eq power_of_attorney.bgs_participant_id
-          expect(response_address["address_line_1"]).to eq power_of_attorney_address[:address_line_1]
-          expect(response_address["address_line_2"]).to eq power_of_attorney_address[:address_line_2]
-          expect(response_address["address_line_3"]).to eq power_of_attorney_address[:address_line_3]
-          expect(response_address["country"]).to eq power_of_attorney_address[:country]
-          expect(response_address["zip"]).to eq power_of_attorney_address[:zip]
-          expect(response_address["state"]).to eq power_of_attorney_address[:state]
-          expect(response_address["city"]).to eq power_of_attorney_address[:city]
+          expect(response_body["address_line_1"]).to eq power_of_attorney_address[:address_line_1]
+          expect(response_body["address_line_2"]).to eq power_of_attorney_address[:address_line_2]
+          expect(response_body["address_line_3"]).to eq power_of_attorney_address[:address_line_3]
+          expect(response_body["country"]).to eq power_of_attorney_address[:country]
+          expect(response_body["zip"]).to eq power_of_attorney_address[:zip]
+          expect(response_body["state"]).to eq power_of_attorney_address[:state]
+          expect(response_body["city"]).to eq power_of_attorney_address[:city]
         end
       end
 
@@ -97,18 +96,17 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           get :details
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["attributes"]["poa"]
-          response_address = response_body["representative_address"]
 
           expect(response_body["representative_type"]).to eq power_of_attorney.bgs_representative_type
           expect(response_body["representative_name"]).to eq power_of_attorney.bgs_representative_name
           expect(response_body["participant_id"]).to eq power_of_attorney.bgs_participant_id
-          expect(response_address["address_line_1"]).to eq power_of_attorney_address[:address_line_1]
-          expect(response_address["address_line_2"]).to eq power_of_attorney_address[:address_line_2]
-          expect(response_address["address_line_3"]).to eq power_of_attorney_address[:address_line_3]
-          expect(response_address["country"]).to eq power_of_attorney_address[:country]
-          expect(response_address["zip"]).to eq power_of_attorney_address[:zip]
-          expect(response_address["state"]).to eq power_of_attorney_address[:state]
-          expect(response_address["city"]).to eq power_of_attorney_address[:city]
+          expect(response_body["address_line_1"]).to eq power_of_attorney_address[:address_line_1]
+          expect(response_body["address_line_2"]).to eq power_of_attorney_address[:address_line_2]
+          expect(response_body["address_line_3"]).to eq power_of_attorney_address[:address_line_3]
+          expect(response_body["country"]).to eq power_of_attorney_address[:country]
+          expect(response_body["zip"]).to eq power_of_attorney_address[:zip]
+          expect(response_body["state"]).to eq power_of_attorney_address[:state]
+          expect(response_body["city"]).to eq power_of_attorney_address[:city]
         end
       end
 
