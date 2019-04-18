@@ -108,6 +108,13 @@ describe UserRepository do
       it "should return an ID" do
         expect(subject).to eq "LKG564"
       end
+
+      it "should use cached value" do
+        expect(VACOLS::Staff).to receive(:find_by).once
+        UserRepository.user_info_from_vacols(css_id)[:uniq_id]
+         # call a second time, should get from the cache
+        UserRepository.user_info_from_vacols(css_id)[:uniq_id]
+      end
     end
 
     context "when user does not exist in VACOLS" do
@@ -125,6 +132,13 @@ describe UserRepository do
 
       it "should return judge status" do
         expect(subject[:judge_status]).to eq "acting judge"
+      end
+
+      it "should use cached value" do
+        expect(VACOLS::Staff).to receive(:find_by).once
+        UserRepository.user_info_for_idt(css_id)
+         # call a second time, should get from the cache
+        UserRepository.user_info_for_idt(css_id)
       end
     end
 

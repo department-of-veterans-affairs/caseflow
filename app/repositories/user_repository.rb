@@ -3,7 +3,7 @@
 class UserRepository
   class << self
     def user_info_from_vacols(css_id)
-      staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
+      staff_record = cached_staff_record(css_id)
       {
         uniq_id: vacols_uniq_id(staff_record),
         roles: vacols_roles(staff_record),
@@ -14,7 +14,7 @@ class UserRepository
     end
 
     def user_info_for_idt(css_id)
-      staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
+      staff_record = cached_staff_record(css_id)
       return {} unless staff_record
 
       {
@@ -81,6 +81,13 @@ class UserRepository
     end
 
     private
+
+    def cached_staff_record(css_id)
+      # Staff records rarely get updated so caching in Redis for 24 hours works
+      Rails.cache.fetch("#{Rails.env}_staff_record_#{css_id}") do
+        VACOLS::Staff.find_by(sdomainid: css_id)
+      end
+    end
 
     def roles_based_on_staff_fields(staff_record)
       case staff_record.svlj
