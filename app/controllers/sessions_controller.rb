@@ -61,12 +61,14 @@ class SessionsController < ApplicationController
 
   def remove_user_from_session
     session.delete(:regional_office)
+    session.delete(:user_pg_id)
     session.delete("user")
   end
 
   def add_user_to_session(user_id)
     user = User.find(user_id)
     session["user"] = user.to_session_hash
+    session[:user_pg_id] = user.id
     session[:regional_office] = user.users_regional_office
     RequestStore[:current_user] = user
   end

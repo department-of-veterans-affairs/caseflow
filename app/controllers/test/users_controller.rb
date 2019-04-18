@@ -83,6 +83,7 @@ class Test::UsersController < ApplicationController
     User.clear_current_user # for testing only
 
     session["user"] = User.authentication_service.get_user_session(params[:id])
+    session[:pg_user_id] = params[:id]
     head :ok
   end
 
@@ -94,6 +95,7 @@ class Test::UsersController < ApplicationController
     return head :not_found if user.nil?
 
     session["user"] = user.to_session_hash
+    session[:pg_user_id] = user.id
     # We keep track of current user to use when logging out
     session["global_admin"] = current_user.id
     RequestStore[:current_user] = user
