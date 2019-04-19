@@ -140,10 +140,14 @@ class Task < ApplicationRecord
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
+    params["instructions"] = flattened_instructions(params)
     update!(params)
 
     [self]
+  end
+
+  def flattened_instructions(params)
+    [instructions, params.dig(:instructions).presence].flatten.compact
   end
 
   def hide_from_queue_table_view
@@ -177,7 +181,12 @@ class Task < ApplicationRecord
   end
 
   def latest_attorney_case_review
-    AttorneyCaseReview.where(task_id: Task.where(appeal: appeal).pluck(:id)).order(:created_at).last
+    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
+
+    @latest_attorney_case_review = AttorneyCaseReview
+      .where(task_id: Task.where(appeal: appeal)
+      .pluck(:id))
+      .order(:created_at).last
   end
 
   def prepared_by_display_name

@@ -111,18 +111,25 @@ module IntakeHelpers
   end
   # rubocop: enable Metrics/ParameterLists
 
-  def start_claim_review(claim_review_type, veteran: create(:veteran), veteran_is_not_claimant: false)
+  def start_claim_review(
+    claim_review_type,
+    veteran: create(:veteran),
+    veteran_is_not_claimant: false,
+    benefit_type: "compensation"
+  )
     if claim_review_type == :supplemental_claim
-      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant)
+      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant, benefit_type: benefit_type)
     else
-      start_higher_level_review(veteran, veteran_is_not_claimant: veteran_is_not_claimant, informal_conference: true)
+      start_higher_level_review(
+        veteran,
+        veteran_is_not_claimant: veteran_is_not_claimant,
+        informal_conference: true,
+        benefit_type: benefit_type
+      )
     end
   end
 
   def setup_intake_flags
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-
     Timecop.freeze(Time.zone.today)
 
     # skip the sync call since all edit requests require resyncing
@@ -130,10 +137,6 @@ module IntakeHelpers
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
 
     User.authenticate!(roles: ["Admin Intake"])
-  end
-
-  def teardown_intake_flags
-    FeatureToggle.disable!(:intakeAma)
   end
 
   def search_page_title
@@ -246,6 +249,13 @@ module IntakeHelpers
     find("#issue-action-#{issue_num}").click
     find("#issue-action-#{issue_num}_remove").click
     click_remove_issue_confirmation
+  end
+
+  def click_withdraw_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
+    find("#issue-action-#{issue_num}").click
+    find("#issue-action-#{issue_num}_withdraw").click
   end
 
   def click_remove_intake_issue_by_text(text)

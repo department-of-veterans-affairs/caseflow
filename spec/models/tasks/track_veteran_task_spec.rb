@@ -49,7 +49,7 @@ describe TrackVeteranTask do
     subject { TrackVeteranTask.sync_tracking_tasks(appeal) }
 
     context "when the appeal has no VSOs" do
-      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return([]) }
+      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([]) }
 
       context "when there are no existing TrackVeteranTasks" do
         it "does not create or cancel any TrackVeteranTasks" do
@@ -75,7 +75,7 @@ describe TrackVeteranTask do
 
     context "when the appeal has two VSOs" do
       let(:representing_vsos) { FactoryBot.create_list(:vso, 2) }
-      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return(representing_vsos) }
+      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return(representing_vsos) }
 
       context "when there are no existing TrackVeteranTasks" do
         it "creates 2 new TrackVeteranTasks" do

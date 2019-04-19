@@ -102,6 +102,12 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do
+      type { ChangeHearingDispositionTask.name }
+      assigned_to { HearingAdmin.singleton }
+      appeal { create(:appeal) }
+    end
+
     factory :ama_judge_decision_review_task, class: JudgeDecisionReviewTask do
       type { JudgeDecisionReviewTask.name }
       appeal { create(:appeal) }
@@ -190,6 +196,12 @@ FactoryBot.define do
     factory :informal_hearing_presentation_task, class: InformalHearingPresentationTask do
       type { InformalHearingPresentationTask.name }
       appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
+    factory :appeal_task, class: DecisionReviewTask do
+      type { DecisionReviewTask.name }
+      appeal { create(:appeal, benefit_type: "education") }
       assigned_by { nil }
     end
 

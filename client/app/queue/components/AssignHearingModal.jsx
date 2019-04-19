@@ -30,7 +30,7 @@ import {
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
   appealWithDetailSelector,
-  actionableTasksForAppeal
+  scheduleHearingTasksForAppeal
 } from '../selectors';
 import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import { prepareAppealForStore } from '../utils';
@@ -381,10 +381,7 @@ class AssignHearingModal extends React.PureComponent {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  scheduleHearingTask: _.find(
-    actionableTasksForAppeal(state, { appealId: ownProps.appealId }),
-    (task) => task.type === 'ScheduleHearingTask' && task.status !== 'completed'
-  ),
+  scheduleHearingTask: scheduleHearingTasksForAppeal(state, { appealId: ownProps.appealId })[0],
   openHearing: _.find(
     appealWithDetailSelector(state, ownProps).hearings,
     (hearing) => hearing.disposition === null

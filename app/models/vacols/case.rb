@@ -6,7 +6,6 @@ class VACOLS::Case < VACOLS::Record
   self.primary_key = "bfkey"
 
   has_one    :folder,          foreign_key: :ticknum
-  has_many   :representatives, foreign_key: :repkey
   belongs_to :correspondent,   foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :case_issues,     foreign_key: :isskey
   has_many   :notes,           foreign_key: :tsktknm
@@ -279,6 +278,13 @@ class VACOLS::Case < VACOLS::Record
 
   def update_vacols_location!(location)
     self.class.batch_update_vacols_location(location, [bfkey])
+  end
+
+  def vacols_representatives
+    result = VACOLS::Representative.where(repkey: bfkey)
+    return result if result.present?
+
+    VACOLS::Representative.where(repcorkey: bfcorkey)
   end
 
   # rubocop:disable Metrics/MethodLength

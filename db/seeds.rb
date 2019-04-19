@@ -17,6 +17,10 @@ DEVELOPMENT_JUDGE_TEAMS = {
 }.freeze
 
 require "database_cleaner"
+
+# Explicitly include mail_task so we can create instances of MailTask's subclasses that are in the same file.
+require "mail_task"
+
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
@@ -62,7 +66,7 @@ class SeedDB
     create_field_vso_and_users
     create_org_queue_users
     create_qr_user
-    create_aod_user
+    create_aod_user_and_tasks
     create_privacy_user
     create_lit_support_user
     create_mail_team_user
@@ -100,6 +104,7 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
 
     create_no_show_hearings_task
+    create_change_hearing_disposition_task
   end
 
   def create_no_show_hearings_task
@@ -110,6 +115,21 @@ class SeedDB
     FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
     disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
     FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+  end
+
+  def create_change_hearing_disposition_task
+    hearings_member = User.find_or_create_by(css_id: "BVATWARNER", station_id: 101)
+    hearing_day = FactoryBot.create(:hearing_day, created_by: hearings_member, updated_by: hearings_member)
+    veteran = FactoryBot.create(:veteran, first_name: "Abellona", last_name: "Valtas", file_number: 123_456_789)
+    appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
+    root_task = FactoryBot.create(:root_task, appeal: appeal)
+    distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
+    parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
+    FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
+
+    hearing = FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day)
+    FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
+    FactoryBot.create(:change_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
   end
 
   def create_colocated_users
@@ -217,9 +237,21 @@ class SeedDB
     create_task_at_quality_review(qr_user, "Huilen Concepcion", "Ilva Urrutia")
   end
 
-  def create_aod_user
+  def create_aod_user_and_tasks
     u = User.create!(station_id: 101, css_id: "AOD_USER", full_name: "AOD team member")
     OrganizationsUser.add_user_to_organization(u, AodTeam.singleton)
+
+    root_task = FactoryBot.create(:root_task)
+    mail_task = ::AodMotionMailTask.create!(
+      appeal: root_task.appeal,
+      parent_id: root_task.id,
+      assigned_to: MailTeam.singleton
+    )
+    ::AodMotionMailTask.create!(
+      appeal: root_task.appeal,
+      parent_id: mail_task.id,
+      assigned_to: AodTeam.singleton
+    )
   end
 
   def create_privacy_user

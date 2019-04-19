@@ -9,14 +9,6 @@ RSpec.feature "Case Assignment flows" do
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge") }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
-  before do
-    FeatureToggle.enable! :attorney_assignment_to_colocated
-  end
-
-  after do
-    FeatureToggle.disable! :attorney_assignment_to_colocated
-  end
-
   context "given a valid legacy appeal and an attorney user" do
     let!(:appeals) do
       Array.new(3) do
@@ -64,7 +56,6 @@ RSpec.feature "Case Assignment flows" do
       expect(page).to have_content("You have assigned an administrative action (#{selected_opt_0})")
       expect(page.current_path).to eq "/queue"
 
-      visit "/queue"
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2))
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
@@ -130,7 +121,6 @@ RSpec.feature "Case Assignment flows" do
       expect(page).to have_content("You have assigned 2 administrative actions (#{selected_opt_1}, #{selected_opt_3})")
       expect(page.current_path).to eq "/queue"
 
-      visit "/queue"
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 1))
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 2))
     end

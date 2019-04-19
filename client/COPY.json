@@ -298,6 +298,7 @@
   "ASSIGN_TASK_TITLE": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
   "ASSIGN_TASK_SUCCESS_MESSAGE": "Task assigned to %s",
+  "REASSIGN_TASK_SUCCESS_MESSAGE": "Task reassigned to %s",
   "HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL": "You can continue to assign tasks to yourself and others using this queue.",
 
   "CREATE_MAIL_TASK_TITLE": "Create new mail task",
@@ -344,6 +345,19 @@
   "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
   "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
 
+  "USER_MANAGEMENT_INITIAL_LOAD_ERROR_TITLE": "Failed to load users",
+  "USER_MANAGEMENT_INITIAL_LOAD_LOADING_MESSAGE": "Loading users...",
+  "USER_MANAGEMENT_ADD_USER_ERROR_TITLE": "Failed to add user",
+  "USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE": "Adding user",
+  "USER_MANAGEMENT_REMOVE_USER_ERROR_TITLE": "Failed to remove user",
+  "USER_MANAGEMENT_ADMIN_RIGHTS_CHANGE_ERROR_TITLE": "Failed to modify user admin rights",
+  "USER_MANAGEMENT_GIVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Make user admin",
+  "USER_MANAGEMENT_REMOVE_USER_ADMIN_RIGHTS_BUTTON_TEXT": "Remove admin rights",
+  "USER_MANAGEMENT_REMOVE_USER_FROM_ORG_BUTTON_TEXT": "Remove user",
+  "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME": "Add user",
+  "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL": "Add a user to the team:",
+  "USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT": "Select user to add",
+
   "ACCESS_DENIED_TITLE": "Additional access needed",
   "UNAUTHORIZED_PAGE_ACCESS_MESSAGE": "You aren't authorized to use this part of Caseflow yet.",
   "CASE_DETAILS_LOADING_FAILURE_TITLE": "Unable to load this case",
@@ -379,6 +393,8 @@
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below or if the claimant's information needs updated, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
+  "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
+  "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
 
   "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
   "WITHDRAW_HEARING_MODAL_BODY": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled.",
@@ -386,7 +402,7 @@
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY": "%s has been removed from the hearing schedule and has been sent to the next appropriate location",
 
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_TITLE": "Schedule new hearing",
-  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY": "Withdrawing this hearing request will remove this veteran from the hearing pool.",
+  "RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY": "This will place the case in the list of veterans to be scheduled for a hearing.",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_TITLE": "You have successfully completed this case",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_BODY": "%s case has been removed from the transcription queue and has been sent to the next hearing management branch.",
 

@@ -38,6 +38,12 @@ describe AsyncableJobs do
            establishment_error: "bad problem")
   end
 
+  let!(:sc_canceled) do
+    create(:supplemental_claim,
+           veteran_file_number: veteran.file_number,
+           establishment_canceled_at: 2.days.ago)
+  end
+
   describe "#jobs" do
     it "returns an Array of model instances that consume Asyncable concern" do
       expect(subject.jobs).to be_a(Array)
@@ -47,6 +53,7 @@ describe AsyncableJobs do
       expect(subject.jobs).to include(sc_not_submitted)
       expect(subject.jobs).to include(sc_not_attempted_expired)
       expect(subject.jobs).to include(sc_not_attempted)
+      expect(subject.jobs).to_not include(sc_canceled)
     end
 
     it "sorts by the submited_at column, descending order" do

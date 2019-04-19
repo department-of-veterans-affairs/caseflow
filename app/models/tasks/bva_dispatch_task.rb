@@ -11,7 +11,7 @@ class BvaDispatchTask < GenericTask
     end
 
     def outcode(appeal, params, user)
-      if appeal.class.name == Appeal.name
+      if appeal.is_a?(Appeal)
         tasks = where(appeal: appeal, assigned_to: user)
         throw_error_if_no_tasks_or_if_task_is_completed(appeal, tasks, user)
         task = tasks[0]
@@ -21,7 +21,7 @@ class BvaDispatchTask < GenericTask
       params[:appeal_type] = appeal.class.name
       create_decision_document!(params)
 
-      if appeal.class.name == Appeal.name
+      if appeal.is_a?(Appeal)
         task.update!(status: Constants.TASK_STATUSES.completed)
         task.root_task.update!(status: Constants.TASK_STATUSES.completed)
         appeal.request_issues.each(&:close_decided_issue!)
@@ -36,7 +36,12 @@ class BvaDispatchTask < GenericTask
 
     def create_decision_document!(params)
       DecisionDocument.create!(params).tap do |decision_document|
-        delay = decision_document.decision_date.future? ? decision_document.decision_date : 0
+        delay = if decision_document.decision_date.future?
+                  decision_document.decision_date + DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours
+                else
+                  0
+                end
+
         decision_document.submit_for_processing!(delay: delay)
 
         unless decision_document.processed? || decision_document.decision_date.future?

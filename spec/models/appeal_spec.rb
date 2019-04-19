@@ -209,6 +209,20 @@ describe Appeal do
     end
   end
 
+  context "#latest_attorney_case_review" do
+    let(:appeal) { create(:appeal) }
+    let(:task1) { create(:ama_attorney_task, appeal: appeal) }
+    let(:task2) { create(:ama_attorney_task, appeal: appeal) }
+    let!(:attorney_case_review1) { create(:attorney_case_review, task: task1, created_at: 2.days.ago) }
+    let!(:attorney_case_review2) { create(:attorney_case_review, task: task2, created_at: 1.day.ago) }
+
+    subject { appeal.latest_attorney_case_review }
+
+    it "returns the latest record" do
+      expect(subject).to eq attorney_case_review2
+    end
+  end
+
   context "#contestable_issues" do
     subject { appeal.contestable_issues }
 
@@ -509,10 +523,10 @@ describe Appeal do
       end
     end
 
-    context "#vsos" do
-      it "returns all vsos this appeal has that exist in our DB" do
-        expect(appeal.vsos.count).to eq(1)
-        expect(appeal.vsos.first.name).to eq("Paralyzed Veterans Of America")
+    context "#representatives" do
+      it "returns all representatives this appeal has that exist in our DB" do
+        expect(appeal.representatives.count).to eq(1)
+        expect(appeal.representatives.first.name).to eq("Paralyzed Veterans Of America")
       end
 
       context "when there is no VSO" do
@@ -526,10 +540,10 @@ describe Appeal do
         let(:appeal) do
           create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_nil)])
         end
-        let!(:vsos) { Vso.create(name: "Test VSO") }
+        let!(:vso) { Vso.create(name: "Test VSO") }
 
         it "does not return VSOs with nil participant_id" do
-          expect(appeal.vsos).to eq([])
+          expect(appeal.representatives).to eq([])
         end
       end
     end

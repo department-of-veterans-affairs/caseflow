@@ -5,10 +5,6 @@
 json_config = <<EOS.strip_heredoc
   [
         {
-          feature: "intakeAma",
-          enable_all: true
-        },
-        {
           feature: "automatic_ramp_rollback",
           enable_all: true
         },
@@ -38,10 +34,6 @@ json_config = <<EOS.strip_heredoc
         },
         {
           feature: "queue_beaam_appeals",
-          enable_all: true
-        },
-        {
-          feature: "attorney_assignment_to_colocated",
           enable_all: true
         },
         {
