@@ -326,9 +326,9 @@ class Appeal < DecisionReview
     claimants.map(&:power_of_attorney)
   end
 
-  def vsos
+  def representatives
     vso_participant_ids = power_of_attorneys.map(&:participant_id) - [nil]
-    Vso.where(participant_id: vso_participant_ids)
+    Representative.where(participant_id: vso_participant_ids)
   end
 
   def external_id

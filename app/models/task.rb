@@ -139,10 +139,14 @@ class Task < ApplicationRecord
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
+    params["instructions"] = flattened_instructions(params)
     update!(params)
 
     [self]
+  end
+
+  def flattened_instructions(params)
+    [instructions, params.dig(:instructions).presence].flatten.compact
   end
 
   def hide_from_queue_table_view

@@ -334,14 +334,14 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  delegate :representatives, to: :case_record
+  delegate :vacols_representatives, to: :case_record
 
-  def vsos
-    Vso.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
+  def representatives
+    Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
   end
 
   def contested_claim
-    representatives.any? { |r| r.reptype == "C" }
+    vacols_representatives.any? { |r| r.reptype == "C" }
   end
 
   def claimant
@@ -368,12 +368,12 @@ class LegacyAppeal < ApplicationRecord
 
   # reptype C is a contested claimant
   def contested_claimants
-    representatives.where(reptype: "C").map(&:as_claimant)
+    vacols_representatives.where(reptype: "C").map(&:as_claimant)
   end
 
   # reptype D is contested claimant attorney, reptype E is contested claimant agent
   def contested_claimant_agents
-    representatives.where(reptype: %w[D E]).map(&:as_claimant)
+    vacols_representatives.where(reptype: %w[D E]).map(&:as_claimant)
   end
 
   def docket_name
