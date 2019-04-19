@@ -295,7 +295,8 @@ class User < ApplicationRecord
     def create_judge_in_vacols(first_name, last_name, vlj_id)
       return unless Rails.env.development? || Rails.env.demo?
 
-      UserRepository.create_judge_in_vacols(first_name, last_name, vlj_id)
+      sdomainid = ["BVA", first_name.first, last_name].join
+      VACOLS::Staff.create(snamef: first_name, snamel: last_name, sdomainid: sdomainid, sattyid: vlj_id)
     end
     # :nocov:
 

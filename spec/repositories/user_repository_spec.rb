@@ -112,7 +112,7 @@ describe UserRepository do
       it "should use cached value" do
         expect(VACOLS::Staff).to receive(:find_by).once
         UserRepository.user_info_from_vacols(css_id)[:uniq_id]
-         # call a second time, should get from the cache
+        # call a second time, should get from the cache
         UserRepository.user_info_from_vacols(css_id)[:uniq_id]
       end
     end
@@ -137,7 +137,7 @@ describe UserRepository do
       it "should use cached value" do
         expect(VACOLS::Staff).to receive(:find_by).once
         UserRepository.user_info_for_idt(css_id)
-         # call a second time, should get from the cache
+        # call a second time, should get from the cache
         UserRepository.user_info_for_idt(css_id)
       end
     end
