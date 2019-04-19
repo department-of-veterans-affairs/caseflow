@@ -38,6 +38,6 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
       params: {
         poa: poa
       }
-    ).serializable_hash[:data]
+    ).serializable_hash[:data][:attributes]
   end
 end

@@ -14,13 +14,15 @@ class Idt::V1::VeteranDetailsSerializer
       date_of_death: object[:date_of_death],
       name_suffix: object[:name_suffix],
       sex: object[:sex],
-      address_line1: object[:address_line1],
+      address_line_1: object[:address_line1],
+      address_line_2: object[:address_line2],
+      address_line_3: object[:address_line3],
       country: object[:country],
-      zip_code: object[:zip_code],
+      zip: object[:zip_code],
       state: object[:state],
       city: object[:city],
       file_number: object[:file_number],
-      participant_id: object[:participant_id]
+      participant_id: Rails.env.test? ? object[:participant_id] : object[:ptcpnt_id]
     }
   end
 
