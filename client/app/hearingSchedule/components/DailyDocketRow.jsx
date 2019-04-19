@@ -108,7 +108,7 @@ class HearingActions extends React.Component {
   }
 
   getRightColumn = () => {
-    const inputs = this.props.user.userInJudgeTeam ? this.judgeRightInputs() : this.defaultRightInputs();
+    const inputs = this.props.user.userRoleHearingPrep ? this.judgeRightInputs() : this.defaultRightInputs();
 
     return <div {...inputSpacing}>
       {inputs}
@@ -134,10 +134,10 @@ class HearingActions extends React.Component {
         cancelUpdate={this.cancelUpdate}
         saveHearing={this.saveHearing}
         openDispositionModal={openDispositionModal} />
-      {(user.userInJudgeTeam && hearing.docketName === 'hearing') &&
+      {(user.userRoleHearingPrep && hearing.docketName === 'hearing') &&
         <Waive90DayHoldCheckbox {...inputProps} />}
       <TranscriptRequestedCheckbox {...inputProps} />
-      {(user.userRoleAssign && !user.userInJudgeTeam) && <HearingDetailsLink hearing={hearing} />}
+      {(user.userRoleAssign && !user.userRoleHearingPrep) && <HearingDetailsLink hearing={hearing} />}
       <NotesField {...inputProps} readOnly={user.userRoleVso} />
     </div>;
   }

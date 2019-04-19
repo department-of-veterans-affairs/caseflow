@@ -22,7 +22,7 @@ export default class HearingScheduleApp extends React.PureComponent {
       userRoleBuild,
       userRoleView,
       userRoleVso,
-      userInJudgeTeam,
+      userRoleHearingPrep,
       userInHearingsOrganization
     } = this.props;
 
@@ -31,7 +31,7 @@ export default class HearingScheduleApp extends React.PureComponent {
       userRoleBuild,
       userRoleView,
       userRoleVso,
-      userInJudgeTeam,
+      userRoleHearingPrep,
       userInHearingsOrganization
     };
   };

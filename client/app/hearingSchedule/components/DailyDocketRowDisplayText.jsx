@@ -58,7 +58,7 @@ export default class DisplayText extends React.Component {
     const { hearing, index, user, update, readOnly } = this.props;
 
     return <React.Fragment>
-      <div>{user.userInJudgeTeam &&
+      <div>{user.userRoleHearingPrep &&
         <PreppedCheckbox hearing={hearing} update={update} readOnly={readOnly} />}
       </div>
       <div><strong>{index + 1}</strong></div>
