@@ -56,7 +56,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         request.headers["TOKEN"] = token
       end
 
-      context "and a veteran's file number" do
+      context "and a veteran's file number as a string" do
         before do
           request.headers["FILENUMBER"] = file_number
         end
@@ -98,6 +98,45 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
           expect(response_body["zip"]).to eq poa_hash[:zip]
           expect(response_body["state"]).to eq poa_hash[:state]
           expect(response_body["city"]).to eq poa_hash[:city]
+        end
+      end
+
+      context "and a veteran's file number as a number" do
+        before do
+          request.headers["FILENUMBER"] = 111_222_333
+        end
+
+        it "returns the veteran's details and poa" do
+          get :details
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["first_name"]).to eq veteran_hash[:first_name]
+          expect(response_body["last_name"]).to eq veteran_hash[:last_name]
+          expect(response_body["date_of_birth"]).to eq veteran_hash[:date_of_birth]
+          expect(response_body["date_of_death"]).to eq veteran_hash[:date_of_death]
+          expect(response_body["name_suffix"]).to eq veteran_hash[:name_suffix]
+          expect(response_body["sex"]).to eq veteran_hash[:sex]
+          expect(response_body["address_line1"]).to eq veteran_hash[:address_line1]
+          expect(response_body["country"]).to eq veteran_hash[:country]
+          expect(response_body["zip_code"]).to eq veteran_hash[:zip_code]
+          expect(response_body["state"]).to eq veteran_hash[:state]
+          expect(response_body["city"]).to eq veteran_hash[:city]
+          expect(response_body["file_number"]).to eq veteran_hash[:file_number]
+          expect(response_body["participant_id"]).not_to be_nil
+          expect(response_body["participant_id"]).to eq veteran.participant_id
+
+          expect(response_body["poa"]["representative_type"]).to eq poa_hash[:representative_type]
+          expect(response_body["poa"]["representative_name"]).to eq poa_hash[:representative_name]
+          expect(response_body["poa"]["participant_id"]).not_to be_nil
+          expect(response_body["poa"]["participant_id"]).to eq power_of_attorney.bgs_participant_id
+          expect(response_body["poa"]["address_line_1"]).to eq poa_hash[:address_line_1]
+          expect(response_body["poa"]["address_line_2"]).to eq poa_hash[:address_line_2]
+          expect(response_body["poa"]["address_line_3"]).to eq poa_hash[:address_line_3]
+          expect(response_body["poa"]["country"]).to eq poa_hash[:country]
+          expect(response_body["poa"]["zip"]).to eq poa_hash[:zip]
+          expect(response_body["poa"]["state"]).to eq poa_hash[:state]
+          expect(response_body["poa"]["city"]).to eq poa_hash[:city]
         end
       end
 

@@ -18,7 +18,7 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
     fail Caseflow::Error::InvalidFileNumber if file_number.blank?
 
     @veteran ||= begin
-      veteran = bgs.fetch_veteran_info(file_number)
+      veteran = bgs.fetch_veteran_info(file_number.to_s)
       fail ActiveRecord::RecordNotFound unless veteran
 
       veteran
