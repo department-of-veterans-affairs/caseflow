@@ -388,12 +388,12 @@ describe GenericTask do
   end
 
   describe ".place_on_timed_hold" do
-    let(:root_task){ create(:root_task) }
+    let(:root_task) { create(:root_task) }
     let(:task) { GenericTask.find(FactoryBot.create(:generic_task, parent: root_task).id) }
     let(:user) { FactoryBot.create(:user) }
-    let(:params) { { on_hold_duration: 15  } }
+    let(:params) { { on_hold_duration: 15 } }
 
-    subject { GenericTask.place_on_timed_hold(task, params)}
+    subject { GenericTask.place_on_timed_hold(task, params) }
 
     context "when placing a task on timed hold" do
       it "creates a timed hold task" do

@@ -80,9 +80,8 @@ class GenericTask < Task
     timed_hold_tasks.max(&:created_at)
   end
 
-  attr_accessor :timed_hold_tasks
   def timed_hold_tasks
-    @timed_hold_tasks ||= children.select { |t| t.is_a?(TimedHoldTask) && t.active? }
+    children.active.where(type: TimedHoldTask.name)
   end
 
   private
@@ -119,9 +118,9 @@ class GenericTask < Task
     def place_on_timed_hold(task, params)
       transaction do
         # Cancel any other hold tasks so we don't wind up with more than one
-        task.timed_hold_tasks.each do |t| 
+        task.timed_hold_tasks.each do |t|
           t.task_timers.each(&:processed!)
-          t.update!(status: Constants.TASK_STATUSES.cancelled) 
+          t.update!(status: Constants.TASK_STATUSES.cancelled)
         end
 
         TimedHoldTask.create!(
