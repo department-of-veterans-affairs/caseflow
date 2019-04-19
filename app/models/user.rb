@@ -180,7 +180,7 @@ class User < ApplicationRecord
   end
 
   def organization_queue_user?
-    FeatureToggle.enabled?(:organization_queue, user: self)
+    organizations.any?
   end
 
   def granted?(thing)
