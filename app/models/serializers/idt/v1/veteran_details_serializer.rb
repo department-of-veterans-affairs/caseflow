@@ -27,8 +27,4 @@ class Idt::V1::VeteranDetailsSerializer
   attribute :poa do |_veteran, params|
     params[:poa]
   end
-
-  def read_attribute_for_serialization(attr)
-    object[attr.to_s]
-  end
 end
