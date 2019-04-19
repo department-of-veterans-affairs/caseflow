@@ -64,7 +64,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         it "returns the veteran's details" do
           get :details
           expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)
+          response_body = JSON.parse(response.body)["attributes"]["claimant"]
 
           expect(response_body["first_name"]).to eq veteran_hash[:first_name]
           expect(response_body["last_name"]).to eq veteran_hash[:last_name]
@@ -85,7 +85,7 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         it "returns the veteran's poa" do
           get :details
           expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)["poa"]
+          response_body = JSON.parse(response.body)["attributes"]["poa"]
 
           expect(response_body["representative_type"]).to eq poa_hash[:representative_type]
           expect(response_body["representative_name"]).to eq poa_hash[:representative_name]
@@ -109,22 +109,22 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         it "returns the veteran's details and poa" do
           get :details
           expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)
+          response_body = JSON.parse(response.body)["attributes"]
 
-          expect(response_body["first_name"]).to eq veteran_hash[:first_name]
-          expect(response_body["last_name"]).to eq veteran_hash[:last_name]
-          expect(response_body["date_of_birth"]).to eq veteran_hash[:date_of_birth]
-          expect(response_body["date_of_death"]).to eq veteran_hash[:date_of_death]
-          expect(response_body["name_suffix"]).to eq veteran_hash[:name_suffix]
-          expect(response_body["sex"]).to eq veteran_hash[:sex]
-          expect(response_body["address_line1"]).to eq veteran_hash[:address_line1]
-          expect(response_body["country"]).to eq veteran_hash[:country]
-          expect(response_body["zip_code"]).to eq veteran_hash[:zip_code]
-          expect(response_body["state"]).to eq veteran_hash[:state]
-          expect(response_body["city"]).to eq veteran_hash[:city]
-          expect(response_body["file_number"]).to eq veteran_hash[:file_number]
-          expect(response_body["participant_id"]).not_to be_nil
-          expect(response_body["participant_id"]).to eq veteran.participant_id
+          expect(response_body["claimant"]["first_name"]).to eq veteran_hash[:first_name]
+          expect(response_body["claimant"]["last_name"]).to eq veteran_hash[:last_name]
+          expect(response_body["claimant"]["date_of_birth"]).to eq veteran_hash[:date_of_birth]
+          expect(response_body["claimant"]["date_of_death"]).to eq veteran_hash[:date_of_death]
+          expect(response_body["claimant"]["name_suffix"]).to eq veteran_hash[:name_suffix]
+          expect(response_body["claimant"]["sex"]).to eq veteran_hash[:sex]
+          expect(response_body["claimant"]["address_line1"]).to eq veteran_hash[:address_line1]
+          expect(response_body["claimant"]["country"]).to eq veteran_hash[:country]
+          expect(response_body["claimant"]["zip_code"]).to eq veteran_hash[:zip_code]
+          expect(response_body["claimant"]["state"]).to eq veteran_hash[:state]
+          expect(response_body["claimant"]["city"]).to eq veteran_hash[:city]
+          expect(response_body["claimant"]["file_number"]).to eq veteran_hash[:file_number]
+          expect(response_body["claimant"]["participant_id"]).not_to be_nil
+          expect(response_body["claimant"]["participant_id"]).to eq veteran.participant_id
 
           expect(response_body["poa"]["representative_type"]).to eq poa_hash[:representative_type]
           expect(response_body["poa"]["representative_name"]).to eq poa_hash[:representative_name]

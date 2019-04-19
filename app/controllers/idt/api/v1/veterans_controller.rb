@@ -33,6 +33,11 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
   end
 
   def json_veteran_details
-    veteran.merge(poa: poa)
+    ::Idt::V1::VeteranDetailsSerializer.new(
+      veteran,
+      params: {
+        poa: poa
+      }
+    ).serializable_hash[:data]
   end
 end
