@@ -46,6 +46,8 @@ export class FlashAlerts extends React.PureComponent {
         flashMsg = <Alert key={idx} title="Error" type="error" >{flash[1]}</Alert>;
       } else if (flash[0] === 'removed') {
         flashMsg = <Alert key={idx} title="Review Removed" type="success">{flash[1]}</Alert>;
+      } else if (flash[0] === 'withdrawn') {
+        flashMsg = <Alert key={idx} title="Edit Completed" type="success">{flash[1]}</Alert>;
       }
 
       return flashMsg;

@@ -57,16 +57,31 @@ class ClaimReviewController < ApplicationController
 
   def render_success
     if claim_review.processed_in_caseflow?
-      flash[:removed] = decisions_removed_message
-      render json: { redirect_to: claim_review.business_line.tasks_url,
-                     issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-                     issuesAfter: request_issues_update.after_issues.map(&:ui_hash) }
+      removed_or_withdrawn_issues
     else
       render json: {
         redirect_to: nil,
         issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        withdrawnIssues: nil
       }
+    end
+  end
+
+  def removed_or_withdrawn_issues
+    if request_issues_update.after_issues.empty?
+      flash[:removed] = decisions_removed_message
+      render json: { redirect_to: claim_review.business_line.tasks_url,
+                     issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+                     issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+                     withdrawnIssues: claim_review.business_line.tasks_url }
+
+    elsif request_issues_update.withdrawn_issues.delete_if(&:withdrawal_date)
+      flash[:withdrawn] = review_withdrawn_message
+      render json: { redirect_to: claim_review.business_line.tasks_url,
+                     issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+                     issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+                     withdrawnIssues: claim_review.business_line.tasks_url }
     end
   end
 
@@ -74,5 +89,9 @@ class ClaimReviewController < ApplicationController
     claimant_name = claim_review.veteran_full_name
     "You have successfully removed #{claim_review.class.review_title} for #{claimant_name}
     (ID: #{claim_review.veteran.ssn})."
+  end
+
+  def review_withdrawn_message
+    "You have successfully withdrawn a review."
   end
 end
