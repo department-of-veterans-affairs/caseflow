@@ -299,10 +299,7 @@ export class DailyDocketContainer extends React.Component {
         updateLockHearingDay={this.updateLockHearingDay}
         displayLockSuccessMessage={this.props.displayLockSuccessMessage}
         onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
-        userRoleBuild={this.props.userRoleBuild}
-        userRoleAssign={this.props.userRoleAssign}
-        userRoleView={this.props.userRoleView}
-        userRoleVso={this.props.userRoleVso}
+        user={this.props.user}
         dailyDocketServerError={this.props.dailyDocketServerError}
         onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
         notes={this.props.notes}

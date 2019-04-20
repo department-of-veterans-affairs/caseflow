@@ -123,18 +123,10 @@ class TasksController < ApplicationController
 
   private
 
-  def can_assign_task?
-    return true if create_params.first[:appeal].is_a?(Appeal)
-
-    super
-  end
-
   def verify_task_access
     if current_user.vso_employee? && task_class != InformalHearingPresentationTask
       fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
     end
-
-    redirect_to("/unauthorized") unless can_assign_task?
   end
 
   def queue_class
