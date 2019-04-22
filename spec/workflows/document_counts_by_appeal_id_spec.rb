@@ -13,5 +13,14 @@ describe DocumentCountsByAppealId do
         end .to raise_error(Caseflow::Error::TooManyAppealIds)
       end
     end
+    context "when there are less than 5 ids in the request" do
+      it "return the appropriate hash via private methods" do
+        expect do
+            DocumentCountsByAppealId.new(
+              appeal_ids: %w[123]
+            ).call
+          end .to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
   end
 end
