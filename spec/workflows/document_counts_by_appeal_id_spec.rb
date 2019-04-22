@@ -25,6 +25,6 @@ describe DocumentCountsByAppealId do
     end
   end
   def valid_appeal_id
-    3_575_931
+    "3575931"
   end
 end
