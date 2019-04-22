@@ -15,7 +15,7 @@ class Representative < Organization
   end
 
   def should_write_ihp?(appeal)
-    ihp_writing_configs.include?(appeal.docket_type) && appeal.representatives.include?(self)
+    appeal.is_a?(Appeal) && ihp_writing_configs.include?(appeal.docket_type) && appeal.representatives.include?(self)
   end
 
   private
