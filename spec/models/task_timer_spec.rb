@@ -20,7 +20,7 @@ describe TaskTimer do
     end
   end
 
-  describe "requires_processing", focus: true do
+  describe "requires_processing" do
     let(:task) { FactoryBot.create(:generic_task, status: task_status) }
     let!(:task_timer) { TaskTimer.create!(task: task).tap(&:submit_for_processing!) }
 
