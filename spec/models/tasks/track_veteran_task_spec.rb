@@ -75,7 +75,7 @@ describe TrackVeteranTask do
 
       it "makes duplicates of active tasks for new representation" do
         expect(new_vso.tasks.count).to eq(0)
-        expect(subject).to eq([2, 2])
+        expect(subject).to eq([1, 2])
         expect(new_vso.tasks.count).to eq(2)
       end
     end
@@ -112,7 +112,7 @@ describe TrackVeteranTask do
         it "creates 2 new TrackVeteranTasks and 2 IHP Tasks" do
           task_count_before = TrackVeteranTask.count
 
-          expect(subject).to eq([4, 0])
+          expect(subject).to eq([2, 0])
           expect(TrackVeteranTask.count).to eq(task_count_before + 2)
         end
       end
@@ -123,7 +123,7 @@ describe TrackVeteranTask do
         end
 
         it "cancels old TrackVeteranTask, creates 2 new TrackVeteran and 2 new IHP tasks" do
-          expect(subject).to eq([4, 1])
+          expect(subject).to eq([2, 1])
         end
       end
 

@@ -49,11 +49,10 @@ class TrackVeteranTask < GenericTask
 
       if new_vso.should_write_ihp?(appeal)
         InformalHearingPresentationTask.create!(**params)
-        new_task_count += 1
       end
     end
 
-    # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
+    # Close all TrackVeteranTasks and InformalHearingPresentationTasks for now-former VSO representatives.
     outdated_representatives = cached_representatives - fresh_representatives
     active_tracking_tasks.select { |t| outdated_representatives.include?(t.assigned_to) }.each do |task|
       task.update!(status: Constants.TASK_STATUSES.cancelled)
