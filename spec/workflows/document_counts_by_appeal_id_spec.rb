@@ -14,17 +14,20 @@ describe DocumentCountsByAppealId do
       end
     end
     context "when there are less than 5 ids in the request" do
+      let(:veteran1) { create(:veteran) }
+
+      let!(:ama_appeal) { create(:appeal, veteran: veteran1, number_of_claimants: 2) }
+
       it "return the appropriate hash via private methods" do
-        expect do
-          DocumentCountsByAppealId.new(
-            appeal_ids: %w[valid_appeal_id]
-          ).call
-          #   dont know why this error is being raised!
-        end .to raise_error(ActiveRecord::RecordNotFound)
+        result = DocumentCountsByAppealId.new(
+          appeal_ids: [ama_appeal.external_id]
+        ).call
+        count_hash = result[ama_appeal.external_id]
+        expect(count_hash).to_not eq(nil)
+        expect(count_hash[:count]).to eq(0)
+        expect(count_hash[:status]).to eq(200)
+        expect(count_hash[:error]).to eq(nil)
       end
     end
-  end
-  def valid_appeal_id
-    "3575931"
   end
 end
