@@ -15,7 +15,8 @@ class CacheManager
       "#{Rails.env}_list_of_judges_from_vacols",
       "#{Rails.env}_list_of_judges_from_vacols_with_name_and_id",
       "#{Rails.env}_list_of_attorneys_from_vacols",
-      "#{Rails.env}_list_of_hearing_coordinators_from_vacols"
+      "#{Rails.env}_list_of_hearing_coordinators_from_vacols",
+      "#{Rails.env}_staff_record_*"
     ],
     caseflow: [
       "EstablishClaim-*-cached-*",
