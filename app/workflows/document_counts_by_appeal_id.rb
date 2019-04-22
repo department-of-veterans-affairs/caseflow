@@ -54,15 +54,14 @@ class DocumentCountsByAppealId
     Raven.capture_exception(error)
     error = handle_non_critical_error("document_count", error)
     @document_counts_by_appeal_id_hash[appeal_id] = {
-      error: error.message, status: error.code, count: nil
+      error: error.message, status: error.code
     }
   end
 
   def set_document_count_value_for_appeal_id(appeal_id, appeal)
     @document_counts_by_appeal_id_hash[appeal_id] = {
       count: appeal.number_of_documents,
-      status: 200,
-      error: nil
+      status: 200
     }
     @document_counts_by_appeal_id_hash
   end
