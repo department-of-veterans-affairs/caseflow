@@ -149,7 +149,7 @@ export class DailyDocketContainer extends React.Component {
         null : ApiUtil.convertToSnakeCase(hearing.editedLocation),
       scheduled_time: hearing.editedTime,
       scheduled_for: this.formatEditedScheduledFor(hearing)
-    }, _.isUndefined);
+    }, _.isNil);
   };
 
   saveHearing = (hearing) => {
