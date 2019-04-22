@@ -8,8 +8,13 @@ class TaskTimer < ApplicationRecord
     task.appeal.veteran
   end
 
-  def requires_processing
-    # Only process timers for tasks that are active
-    task.active? ? super : false
+  def self.requires_processing
+    # Only process timers for tasks that are active.
+    # Inline original definition of the requires_processing function due to limitations of mixins.
+    active_tasks.processable.attemptable.unexpired.order_by_oldest_submitted
+  end
+
+  def self.active_tasks
+    joins(:task).where("tasks.status not in (?)", Task.inactive_statuses)
   end
 end

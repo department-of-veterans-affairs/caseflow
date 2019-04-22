@@ -22,21 +22,27 @@ describe TaskTimer do
 
   describe "requires_processing", focus: true do
     let(:task) { FactoryBot.create(:generic_task, status: task_status) }
-    let(:task_timer) { TaskTimer.create!(task: task).tap(&:submit_for_processing!) }
+    let!(:task_timer) { TaskTimer.create!(task: task).tap(&:submit_for_processing!) }
 
-    subject { task_timer.requires_processing }
+    before do
+      allow(TaskTimer).to receive(:processing_retry_interval_hours).and_return(0)
+    end
+
+    subject { TaskTimer.requires_processing }
 
     context "when the related task is closed" do
       let(:task_status) { Constants.TASK_STATUSES.cancelled }
-      it "returns false" do
-        expect(subject).to eq(false)
+      it "returns no task timers" do
+        expect(subject.length).to eq(0)
       end
     end
 
     context "when the related task is active" do
       let(:task_status) { Constants.TASK_STATUSES.in_progress }
-      it "returns true" do
-        expect(subject).to eq(true)
+      it "returns the correct task timer" do
+        processable_task_timers = subject
+        expect(processable_task_timers.length).to eq(1)
+        expect(processable_task_timers.first).to eq(task_timer)
       end
     end
   end
