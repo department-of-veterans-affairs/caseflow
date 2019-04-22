@@ -5,13 +5,6 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import FilterableTable from '../../components/FilterableTable';
-import Checkbox from '../../components/Checkbox';
-import HearingTime from './modalForms/HearingTime';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import TextareaField from '../../components/TextareaField';
-import Button from '../../components/Button';
 import Alert from '../../components/Alert';
 import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
 import StatusMessage from '../../components/StatusMessage';
@@ -163,35 +156,12 @@ export default class DailyDocket extends React.Component {
             hasHearings={hasHearings}
             onClickRemoveHearingDay={this.props.onClickRemoveHearingDay} />
         </div>
-      </div>
-      <span className="cf-push-right">
-        VLJ: {this.props.dailyDocket.judgeFirstName} {this.props.dailyDocket.judgeLastName} <br />
-        Coordinator: {this.props.dailyDocket.bvaPoc} <br />
-        Hearing type: {this.props.dailyDocket.requestType} <br />
-        Regional office: {this.props.dailyDocket.regionalOffice}<br />
-        Room number: {this.props.dailyDocket.room}
-      </span>
-      <div {...noMarginStyling}>
-        { !_.isEmpty(dailyDocketRows) && <FilterableTable
-          columns={dailyDocketColumns}
-          rowObjects={dailyDocketRows}
-          summary="dailyDocket"
-          bodyStyling={tableRowStyling}
-          slowReRendersAreOk />}
-      </div>
-      { _.isEmpty(dailyDocketRows) && <div {...topMarginStyling}>
-        <StatusMessage
-          title= "No Veterans are scheduled for this hearing day."
-          type="status" /></div>}
-      { !_.isEmpty(this.previouslyScheduledHearings(this.props.hearings)) && <div>
-        <h1>Previously Scheduled</h1>
-        <div {...noMarginStyling}>
-          <FilterableTable
-            columns={dailyDocketColumns}
-            rowObjects={this.getDailyDocketRows(this.previouslyScheduledHearings(), true)}
-            summary="dailyDocket"
-            bodyStyling={tableRowStyling}
-            slowReRendersAreOk />
+        <div className="cf-push-right">
+          VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName} <br />
+          Coordinator: {dailyDocket.bvaPoc} <br />
+          Hearing type: {dailyDocket.requestType} <br />
+          Regional office: {dailyDocket.regionalOffice}<br />
+          Room number: {dailyDocket.room}
         </div>
       </div>
 
