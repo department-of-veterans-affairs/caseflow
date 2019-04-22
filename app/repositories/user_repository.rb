@@ -36,7 +36,6 @@ class UserRepository
       true
     end
 
-    # :nocov:
     def css_ids_by_vlj_ids(vlj_ids)
       users = VACOLS::Staff.where(sattyid: vlj_ids)
 
@@ -51,6 +50,7 @@ class UserRepository
       results
     end
 
+    # :nocov:
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")
       first_name = name.first
