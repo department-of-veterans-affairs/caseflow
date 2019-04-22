@@ -560,4 +560,23 @@ describe User do
       end
     end
   end
+
+  describe ".organization_queue_user?" do
+    let(:user) { FactoryBot.create(:user) }
+
+    subject { user.organization_queue_user? }
+
+    context "when the current user is not a member of any organizations" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the user is a member of some organizations" do
+      before { OrganizationsUser.add_user_to_organization(user, FactoryBot.create(:organization)) }
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
 end

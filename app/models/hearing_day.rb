@@ -34,24 +34,10 @@ class HearingDay < ApplicationRecord
     "America/Anchorage" => 8
   }.freeze
 
-  # rubocop:disable Style/SymbolProc
-  after_update { |hearing_day| hearing_day.update_children_records }
-  # rubocop:enable Style/SymbolProc
+  after_update :update_children_records
 
   def central_office?
     request_type == REQUEST_TYPES[:central]
-  end
-
-  def update_children_records
-    vacols_hearings.each do |hearing|
-      hearing.update_caseflow_and_vacols(
-        room: room,
-        bva_poc: bva_poc,
-        judge_id: judge ? judge.vacols_attorney_id : nil
-      )
-    end
-
-    hearings.each { |hearing| hearing.update!(room: room, bva_poc: bva_poc, judge: judge) }
   end
 
   def confirm_no_children_records
@@ -88,6 +74,31 @@ class HearingDay < ApplicationRecord
     end
 
     SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
+  end
+
+  private
+
+  def update_children_records
+    vacols_hearings.each do |hearing|
+      hearing.update_caseflow_and_vacols(
+        **only_changed(room: room, bva_poc: bva_poc, judge_id: judge&.vacols_attorney_id)
+      )
+    end
+
+    hearings.each do |hearing|
+      hearing.update!(
+        **only_changed(room: room, bva_poc: bva_poc, judge_id: judge&.id)
+      )
+    end
+  end
+
+  def only_changed(possibles_hash)
+    changed_hash = {}
+    possibles_hash.each_key do |key|
+      changed_hash[key] = possibles_hash[key] if saved_changes.key?(key)
+    end
+
+    changed_hash
   end
 
   class << self
