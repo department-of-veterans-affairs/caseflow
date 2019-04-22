@@ -112,6 +112,12 @@ class AppealsController < ApplicationController
   def update
     if request_issues_update.perform!
       removed_or_withdrawn_issues_success
+
+      render json: {
+        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash)
+      }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
     end
@@ -169,33 +175,11 @@ class AppealsController < ApplicationController
     "You have successfully withdrawn a review."
   end
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   def removed_or_withdrawn_issues_success
     if request_issues_update.after_issues.empty?
       flash[:removed] = review_removed_message
-      render json: {
-        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
-        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash)
-      }
-    elsif !request_issues_update.withdrawn_issues.empty?
-      request_issues_update.withdrawn_issues.delete_if(&:withdrawal_date)
+    elsif request_issues_update.after_issues.sort == request_issues_update.withdrawn_issues.sort
       flash[:withdrawn] = review_withdrawn_message
-
-      render json: {
-        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
-        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash)
-      }
-    else
-      render json: {
-        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
-        withdrawnIssues: nil
-      }
     end
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 end
