@@ -8,6 +8,7 @@ class ApplicationController < ApplicationBaseController
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
   before_action :deny_vso_access, except: [:unauthorized]
+  include ApplicationHelper
 
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
@@ -41,25 +42,9 @@ class ApplicationController < ApplicationBaseController
     end
   end
 
-  def handle_non_critical_error(endpoint, err)
-    error_type = err.class.name
-    if !err.class.method_defined? :serialize_response
-      code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
-      err = Caseflow::Error::SerializableError.new(code: code, message: err.to_s)
-    end
-
-    DataDogService.increment_counter(
-      metric_group: "errors",
-      metric_name: "non_critical",
-      app_name: RequestStore[:application],
-      attrs: {
-        endpoint: endpoint,
-        error_type: error_type,
-        error_code: err.code
-      }
-    )
-
-    render err.serialize_response
+  def handle_non_critical_error(endpoint, error)
+    error = handle_non_critical_error(endpoint, error)
+    render error.serialize_response
   end
 
   def current_user

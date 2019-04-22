@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class DocumentCountsByAppealId
+  include ApplicationHelper
   def initialize(appeal_ids:)
     @document_counts_by_appeal_id_hash = {}
     @appeal_ids = appeal_ids
@@ -18,11 +19,11 @@ class DocumentCountsByAppealId
 
   def build_document_counts_hash(appeal_ids)
     # Collect appeal objects sequentially so we don't exhaust DB pool
-    appeals = collect_appeal_objects_sequentially(appeal_ids)
+    appeals_hash = collect_appeal_objects_sequentially(appeal_ids)
     # Spin up a new thread of each appeal and then call join on each thread
     # Creating threads without calling join on them will cause the main thread
     # to continue without waiting and possibly exit before the child threads have finished
-    create_thread_for_each_appeal(appeals)
+    create_thread_for_each_appeal(appeals_hash)
     @document_counts_by_appeal_id_hash
   end
 
@@ -32,8 +33,8 @@ class DocumentCountsByAppealId
     end
   end
 
-  def create_thread_for_each_appeal(appeals)
-    appeals.map do |appeal_id, appeal|
+  def create_thread_for_each_appeal(appeals_hash)
+    appeals_hash.map do |appeal_id, appeal|
       create_thread_for_appeal(appeal_id, appeal)
     end.map(&:join)
   end
@@ -42,20 +43,18 @@ class DocumentCountsByAppealId
     Thread.new do
       begin
         set_document_count_value_for_appeal_id(appeal_id, appeal)
-      rescue StandardError => err
-        handle_document_count_error(err, appeal_id)
-        next
-      rescue Caseflow::Error::EfolderAccessForbidden => err
-        handle_document_count_error(err, appeal_id)
+      rescue StandardError => error
+        handle_document_count_error(error, appeal_id)
         next
       end
     end
   end
 
-  def handle_document_count_error(err, appeal_id)
-    code = (err.class == ActiveRecord::RecordNotFound) ? 404 : 500
+  def handle_document_count_error(error, appeal_id)
+    Raven.capture_exception(error)
+    error = handle_non_critical_error("document_count", error)
     @document_counts_by_appeal_id_hash[appeal_id] = {
-      error: err.class.name, status: code, count: nil
+      error: error.message, status: error.code, count: nil
     }
   end
 
