@@ -17,11 +17,14 @@ describe DocumentCountsByAppealId do
       it "return the appropriate hash via private methods" do
         expect do
           DocumentCountsByAppealId.new(
-            appeal_ids: %w[3575931]
+            appeal_ids: %w[valid_appeal_id]
           ).call
-        #   dont know why this error is being raised!
+          #   dont know why this error is being raised!
         end .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
+  end
+  def valid_appeal_id
+    3575931
   end
 end
