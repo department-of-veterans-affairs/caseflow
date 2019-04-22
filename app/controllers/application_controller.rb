@@ -58,6 +58,7 @@ class ApplicationController < ApplicationBaseController
         error_code: err.code
       }
     )
+    
     render err.serialize_response
   end
 
