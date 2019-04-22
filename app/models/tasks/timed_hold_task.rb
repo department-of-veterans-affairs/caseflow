@@ -12,7 +12,7 @@ class TimedHoldTask < GenericTask
   validates :days_on_hold, presence: true, inclusion: { in: 1..100 }
 
   def when_timer_ends
-    update!(status: :completed)
+    update!(status: :completed) if active?
   end
 
   def timer_ends_at
@@ -23,7 +23,7 @@ class TimedHoldTask < GenericTask
     true
   end
 
-  def hide_from_case_snapshot
+  def hide_from_task_snapshot
     true
   end
 
