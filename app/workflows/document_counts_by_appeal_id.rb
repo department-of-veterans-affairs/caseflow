@@ -16,11 +16,6 @@ class DocumentCountsByAppealId
 
   private
 
-  # def build_document_counts_hash
-  #   document_counts_hash = {}
-
-  # end
-
   def build_document_counts_hash(appeal_ids)
     # Collect appeal objects sequentially so we don't exhaust DB pool
     appeals = collect_appeal_objects_sequentially(appeal_ids)
