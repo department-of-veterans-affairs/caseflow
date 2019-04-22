@@ -4,11 +4,10 @@ class DocumentCountsByAppealId
   def initialize(appeal_ids:)
     @document_counts_by_appeal_id_hash = {}
     @appeal_ids = appeal_ids
-    @max_batch_size = 5
   end
 
   def call
-    if @appeal_ids.length > @max_batch_size
+    if @appeal_ids.length > Constants::REQUEST_CONSTANTS["max_batch_size"]
       fail Caseflow::Error::TooManyAppealIds
     end
 
@@ -28,7 +27,7 @@ class DocumentCountsByAppealId
     # Spin up a new thread of each appeal and then call join on each thread
     # Creating threads without calling join on them will cause the main thread
     # to continue without waiting and possibly exit before the child threads have finished
-    create_thread_for_each_appeal(appeals).map(&:join)
+    create_thread_for_each_appeal(appeals)
     @document_counts_by_appeal_id_hash
   end
 
