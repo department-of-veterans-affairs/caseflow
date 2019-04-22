@@ -23,6 +23,7 @@ class VBMSError < RuntimeError
   class BadClaim < Caseflow::Error::VBMS; end
   class CannotDeleteContention < Caseflow::Error::VBMS; end
   class ClaimDateInvalid < Caseflow::Error::VBMS; end
+  class FilenumberDoesNotExist < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -82,6 +83,9 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/292533/
     "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid"
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/308951/
+    "File Number does not exist within the system." => "FilenumberDoesNotExist"
   }.freeze
 
   class << self
