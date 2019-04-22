@@ -68,6 +68,8 @@ class ClaimReviewController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def removed_or_withdrawn_issues
     if request_issues_update.after_issues.empty?
       flash[:removed] = decisions_removed_message
@@ -75,15 +77,24 @@ class ClaimReviewController < ApplicationController
                      issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
                      issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
                      withdrawnIssues: claim_review.business_line.tasks_url }
-
-    elsif request_issues_update.withdrawn_issues.delete_if(&:withdrawal_date)
+    elsif !request_issues_update.withdrawn_issues.empty?
+      request_issues_update.withdrawn_issues.delete_if(&:withdrawal_date)
       flash[:withdrawn] = review_withdrawn_message
       render json: { redirect_to: claim_review.business_line.tasks_url,
                      issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
                      issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
                      withdrawnIssues: claim_review.business_line.tasks_url }
+    else
+      render json: {
+        redirect_to: nil,
+        issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        withdrawnIssues: nil
+      }
     end
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def decisions_removed_message
     claimant_name = claim_review.veteran_full_name

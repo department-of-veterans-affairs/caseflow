@@ -1371,7 +1371,7 @@ feature "Higher Level Review Edit issues" do
       end
     end
 
-    context "show alert when issues are withdrawn" do
+    context "show alert when an issue is withdrawn" do
       before do
         education_org = create(:business_line, name: "Education", url: "education")
         OrganizationsUser.add_user_to_organization(current_user, education_org)
