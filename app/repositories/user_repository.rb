@@ -36,6 +36,7 @@ class UserRepository
       true
     end
 
+    # :nocov:
     def css_ids_by_vlj_ids(vlj_ids)
       users = VACOLS::Staff.where(sattyid: vlj_ids)
 
@@ -61,7 +62,6 @@ class UserRepository
       staff.first.try(:sdomainid)
     end
     # :nocov:
-    #
 
     def find_all_hearing_coordinators
       coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
