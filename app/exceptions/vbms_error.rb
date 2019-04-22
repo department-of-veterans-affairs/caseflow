@@ -82,7 +82,7 @@ class VBMSError < RuntimeError
     "The contention is connected to an issue in ratings and cannot be deleted." => "CannotDeleteContention",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/292533/
-    "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid"
+    "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/308951/
     "File Number does not exist within the system." => "FilenumberDoesNotExist"
