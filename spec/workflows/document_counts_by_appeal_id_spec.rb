@@ -16,10 +16,11 @@ describe DocumentCountsByAppealId do
     context "when there are less than 5 ids in the request" do
       it "return the appropriate hash via private methods" do
         expect do
-            DocumentCountsByAppealId.new(
-              appeal_ids: %w[123]
-            ).call
-          end .to raise_error(ActiveRecord::RecordNotFound)
+          DocumentCountsByAppealId.new(
+            appeal_ids: %w[3575931]
+          ).call
+        #   dont know why this error is being raised!
+        end .to raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
