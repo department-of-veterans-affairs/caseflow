@@ -24,9 +24,9 @@ gem "jquery-rails"
 gem "loofah", ">= 2.2.3"
 gem "moment_timezone-rails"
 gem "newrelic_rpm"
-# nokogiri versions before 1.8.3 are affected by CVE-2018-8048. Explicitly define nokogiri version here to avoid that.
-# https://github.com/sparklemotion/nokogiri/pull/1746
-gem "nokogiri", "1.8.5"
+# nokogiri versions before 1.10.3 are affected by CVE-2019-11068. Explicitly define nokogiri version here to avoid that.
+# https://github.com/sparklemotion/nokogiri/issues/1892
+gem "nokogiri", "1.10.3"
 gem "paper_trail", "8.1.2"
 # Used to speed up reporting
 gem "parallel"
