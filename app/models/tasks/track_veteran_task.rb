@@ -36,7 +36,6 @@ class TrackVeteranTask < GenericTask
     vso_task_types = [TrackVeteranTask.name, InformalHearingPresentationTask.name]
 
     active_tracking_tasks = appeal.tasks.active.where(type: vso_task_types)
-
     cached_representatives = active_tracking_tasks.map(&:assigned_to)
     fresh_representatives = appeal.representatives
     new_representatives = fresh_representatives - cached_representatives
