@@ -15,11 +15,6 @@ import {
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
-  onHearingNotesUpdate,
-  onHearingDispositionUpdate,
-  onTranscriptRequestedUpdate,
-  onHearingTimeUpdate,
-  onHearingLocationUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -127,9 +122,9 @@ export class DailyDocketContainer extends React.Component {
     const timezone = this.getHearingDate(hearing).timezone;
 
     return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
-  }
+  };
 
-  getScheduledFor = (hearing) => {
+  formatEditedScheduledFor = (hearing) => {
     if (hearing.editedTime) {
       const scheduledTimeObj = this.getTimezoneOffsetScheduledTimeObject(hearing);
 
@@ -137,20 +132,24 @@ export class DailyDocketContainer extends React.Component {
         format();
     }
 
-    return hearing.scheduledFor;
+    return null;
   };
 
   formatHearing = (hearing) => {
-    return {
-      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
-      transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
-        hearing.transcriptRequested : hearing.editedTranscriptRequested,
-      notes: _.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes,
-      hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
-        ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
-      scheduled_time: this.getScheduledTime(hearing),
-      scheduled_for: this.getScheduledFor(hearing)
-    };
+    const amaHearingValues = hearing.docketName === 'hearing' ? {
+      evidence_window_waived: hearing.evidenceWindowWaived
+    } : {};
+
+    return _.omitBy({
+      disposition: hearing.disposition,
+      transcript_requested: hearing.transcriptRequested,
+      notes: hearing.notes,
+      hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
+      scheduled_time: hearing.editedTime,
+      scheduled_for: this.formatEditedScheduledFor(hearing),
+      prepped: hearing.prepped,
+      ...amaHearingValues
+    }, _.isNil);
   };
 
   saveHearing = (hearing) => {
@@ -340,11 +339,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
-  onHearingNotesUpdate,
-  onHearingDispositionUpdate,
-  onHearingTimeUpdate,
-  onTranscriptRequestedUpdate,
-  onHearingLocationUpdate,
   onInvalidForm,
   selectHearingRoom,
   selectVlj,
