@@ -19,8 +19,7 @@ class AppealDocumentCount extends React.PureComponent {
       loadingText,
       externalId
     } = this.props;
-
-    // https://spectrum.chat/react/general/sharing-redux-state-across-multiple-browser-tabs-windows~954300ae-736a-4a35-bc49-e60897d9b49b
+    // see: https://bit.ly/2UwdQdS
     const docCountsInLocalStorage = JSON.parse(localStorage.getItem('docCountsByAppealId'));
     let docCountsByAppealId;
 
