@@ -9,15 +9,18 @@ class Pagination extends React.PureComponent {
   };
 
   // pagination button is zero-based but we are one-based so fake out the currentPage.
+  currentPageIndex = () => {
+    this.props.currentPage - 1;
+  }
 
   handleNext = () => {
-    const nextPageIndex = this.props.currentPage;
+    const nextPageIndex = this.currentPageIndex() + 1;
 
     this.props.updatePage(nextPageIndex);
   };
 
   handlePrevious = () => {
-    const previousPageIndex = this.props.currentPage - 2;
+    const previousPageIndex = this.currentPageIndex() - 1;
 
     this.props.updatePage(previousPageIndex);
   };
@@ -26,7 +29,7 @@ class Pagination extends React.PureComponent {
     return (
       <PaginationButton
         key={`pagination-button-${indexOfPage}`}
-        currentPage={this.props.currentPage - 1}
+        currentPage={this.currentPageIndex()}
         index={indexOfPage}
         handleChange={this.handleChange} />
     );
