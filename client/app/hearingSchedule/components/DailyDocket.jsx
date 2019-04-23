@@ -24,7 +24,7 @@ const Alerts = ({
 }) => (
   <React.Fragment>
     {user.userRoleHearingPrep &&
-      <Alert type="warning"
+      <Alert type="info"
         styling={alertStyling}
         title="New Hearing Schedule View"
         message={<span><p>{'We\'re piloting an updated version of caseflow hearing. ' +

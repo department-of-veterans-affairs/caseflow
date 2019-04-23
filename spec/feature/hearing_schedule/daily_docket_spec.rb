@@ -37,6 +37,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
+      expect(page).to have_content("Try it out and provide any feedback through our support channels.")
       find(".dropdown-Disposition").click
       find("#react-select-2--option-1").click
       click_button("Confirm")

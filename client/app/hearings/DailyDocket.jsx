@@ -423,7 +423,7 @@ export class DailyDocket extends React.PureComponent {
 
     return <div>
       <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
-        <Alert type="warning"
+        <Alert type="info"
           styling={alertStyling}
           title="New View of Hearing Schedule Coming Soon"
           message={<span><p>{'All travel board hearings scheduled May 20, 2019 and beyond ' +
