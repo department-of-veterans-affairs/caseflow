@@ -658,7 +658,7 @@ feature "Higher Level Review Edit issues" do
     scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
-      expect(page).to have_content("Add / Remove Issues")
+      expect(page).to have_content("Edit Issues")
 
       click_intake_add_issue
       add_intake_nonrating_issue(
@@ -818,7 +818,7 @@ feature "Higher Level Review Edit issues" do
     it "shows request issues and allows adding/removing issues" do
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
-      expect(page).to have_content("Add / Remove Issues")
+      expect(page).to have_content("Edit Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
@@ -1369,8 +1369,39 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("This review and all tasks associated with it will be removed.")
         click_intake_confirm
         sleep 1
+
         expect(current_path).to eq("/decision_reviews/education")
-        expect(page).to have_content("Review Removed")
+        expect(page).to have_content("Edit Completed")
+      end
+    end
+
+    context "show alert when entire review is withdrawn" do
+      before do
+        education_org = create(:business_line, name: "Education", url: "education")
+        OrganizationsUser.add_user_to_organization(current_user, education_org)
+        FeatureToggle.enable!(:decision_reviews)
+        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+      end
+
+      after do
+        FeatureToggle.disable!(:decision_reviews)
+      end
+
+      let(:withdraw_date) { 1.day.ago.to_date.mdY }
+      let!(:benefit_type) { "education" }
+
+      scenario "show alert message when all decision reviews are withdrawn" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+        click_withdraw_intake_issue_dropdown(1)
+        click_withdraw_intake_issue_dropdown(2)
+
+        fill_in "withdraw-date", with: withdraw_date
+        click_edit_submit
+        sleep 1
+
+        expect(current_path).to eq("/decision_reviews/education")
+        expect(page).to have_content("You have successfully withdrawn a review.")
       end
     end
 
