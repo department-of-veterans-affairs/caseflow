@@ -16,15 +16,26 @@ const documentCountStyling = css({
 class AppealDocumentCount extends React.PureComponent {
   render = () => {
     const {
-      docCountsByAppealId,
       loadingText,
       externalId
     } = this.props;
+
+    // https://spectrum.chat/react/general/sharing-redux-state-across-multiple-browser-tabs-windows~954300ae-736a-4a35-bc49-e60897d9b49b
+    const docCountsInLocalStorage = JSON.parse(localStorage.getItem('docCountsByAppealId'));
+    let docCountsByAppealId;
+
+    if (_.isEmpty(this.props.docCountsByAppealId) && docCountsInLocalStorage) {
+      docCountsByAppealId = docCountsInLocalStorage;
+    } else {
+      docCountsByAppealId = this.props.docCountsByAppealId;
+    }
+
     const isLoading = loadingText && (docCountsByAppealId.loading);
     const errorLoadingDocumentCount = _.get(docCountsByAppealId[externalId], 'error');
     const documentCount = _.get(docCountsByAppealId[externalId], 'count', null);
 
     if (!_.isEmpty(docCountsByAppealId)) {
+      localStorage.setItem('docCountsByAppealId', JSON.stringify(docCountsByAppealId));
       if (isLoading) {
         return <span {...documentCountStyling}>Loading number of docs...</span>;
       }
