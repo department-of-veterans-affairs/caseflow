@@ -127,9 +127,9 @@ export class DailyDocketContainer extends React.Component {
     const timezone = this.getHearingDate(hearing).timezone;
 
     return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
-  }
+  };
 
-  getScheduledFor = (hearing) => {
+  formatEditedScheduledFor = (hearing) => {
     if (hearing.editedTime) {
       const scheduledTimeObj = this.getTimezoneOffsetScheduledTimeObject(hearing);
 
@@ -137,20 +137,19 @@ export class DailyDocketContainer extends React.Component {
         format();
     }
 
-    return hearing.scheduledFor;
+    return null;
   };
 
   formatHearing = (hearing) => {
-    return {
-      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
-      transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
-        hearing.transcriptRequested : hearing.editedTranscriptRequested,
-      notes: _.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes,
-      hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
-        ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
-      scheduled_time: this.getScheduledTime(hearing),
-      scheduled_for: this.getScheduledFor(hearing)
-    };
+    return _.omitBy({
+      disposition: hearing.editedDisposition,
+      transcript_requested: hearing.editedTranscriptRequested,
+      notes: hearing.editedNotes,
+      hearing_location_attributes: _.isUndefined(hearing.editedLocation) ?
+        null : ApiUtil.convertToSnakeCase(hearing.editedLocation),
+      scheduled_time: hearing.editedTime,
+      scheduled_for: this.formatEditedScheduledFor(hearing)
+    }, _.isNil);
   };
 
   saveHearing = (hearing) => {
