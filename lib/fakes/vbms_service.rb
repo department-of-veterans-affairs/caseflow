@@ -44,12 +44,16 @@ class Fakes::VBMSService
       return if @document_records[file_number].present?
 
       row = vbms_ids_mapping_csv.find { |csv_row| csv_row["vbms_id"] == file_number + "S" }
-      return unless row
+      set_fake_documents_for_file_number(file_number, row)
+    end
+  end
 
-      @document_records[file_number] = Fakes::Data::AppealData.document_mapping[row["documents"]]
-      (@document_records[file_number] || []).each do |document|
-        document.write_attribute(:file_number, file_number)
-      end
+  def self.set_fake_documents_for_file_number(file_number, row)
+    return unless row
+
+    @document_records[file_number] = Fakes::Data::AppealData.document_mapping[row["documents"]]
+    (@document_records[file_number] || []).each do |document|
+      document.write_attribute(:file_number, file_number)
     end
   end
 
