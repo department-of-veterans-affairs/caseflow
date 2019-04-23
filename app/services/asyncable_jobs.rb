@@ -5,7 +5,7 @@ class AsyncableJobs
   attr_reader :page, :page_size, :total_jobs, :total_pages
 
   def self.models
-    @models ||= ActiveRecord::Base.descendants
+    ActiveRecord::Base.descendants
       .select { |c| c.included_modules.include?(Asyncable) }
       .reject(&:abstract_class?)
   end
