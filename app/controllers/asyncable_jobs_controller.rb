@@ -59,11 +59,11 @@ class AsyncableJobsController < ApplicationController
   end
 
   def page_size
-    50 # TODO: allowed param?
+    10 # TODO: allowed param?
   end
 
   def current_page
-    allowed_params[:page] || 1
+    (allowed_params[:page] || 1).to_i
   end
 
   def page_start
