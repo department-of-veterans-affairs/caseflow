@@ -182,12 +182,6 @@ export default class DailyDocket extends React.Component {
         <DailyDocketRows
           hearings={this.dailyDocketHearings()}
           readOnly={user.userRoleView || user.userRoleVso}
-          onHearingNotesUpdate={this.props.onHearingNotesUpdate}
-          onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
-          onHearingTimeUpdate={this.props.onHearingTimeUpdate}
-          onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
-          onHearingLocationUpdate={this.props.onHearingLocationUpdate}
-          cancelHearingUpdate={this.props.onCancelHearingUpdate}
           saveHearing={this.saveHearing}
           openDispositionModal={this.openDispositionModal}
           regionalOffice={regionalOffice}
