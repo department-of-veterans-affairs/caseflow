@@ -13,6 +13,7 @@ class DocumentCountsByAppealId
     end
 
     build_document_counts_hash(@appeal_ids)
+    @document_counts_by_appeal_id_hash
   end
 
   private
@@ -24,7 +25,6 @@ class DocumentCountsByAppealId
     # Creating threads without calling join on them will cause the main thread
     # to continue without waiting and possibly exit before the child threads have finished
     create_thread_for_each_appeal(appeals_hash)
-    @document_counts_by_appeal_id_hash
   end
 
   def collect_appeal_objects_sequentially(appeal_ids)
@@ -63,6 +63,5 @@ class DocumentCountsByAppealId
       count: appeal.number_of_documents,
       status: 200
     }
-    @document_counts_by_appeal_id_hash
   end
 end
