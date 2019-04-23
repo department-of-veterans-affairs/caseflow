@@ -111,7 +111,7 @@ class AppealsController < ApplicationController
 
   def update
     if request_issues_update.perform!
-      removed_or_withdrawn_issues_success
+      set_flash_success_message
 
       render json: {
         issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
@@ -175,7 +175,7 @@ class AppealsController < ApplicationController
     "You have successfully withdrawn a review."
   end
 
-  def removed_or_withdrawn_issues_success
+  def set_flash_success_message
     if request_issues_update.after_issues.empty?
       flash[:edited] = review_removed_message
     elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?

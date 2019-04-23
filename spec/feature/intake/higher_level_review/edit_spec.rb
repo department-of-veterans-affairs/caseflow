@@ -1397,7 +1397,7 @@ feature "Higher Level Review Edit issues" do
         sleep 1
 
         expect(current_path).to eq("/decision_reviews/education")
-        expect(page).to have_content("Edit Completed")
+        expect(page).to have_content("You have successfully withdrawn a review.")
       end
     end
 

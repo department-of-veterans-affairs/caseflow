@@ -63,9 +63,6 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
       },
       issuesBefore: {
         $set: formatRequestIssues(action.payload.responseObject.issuesBefore)
-      },
-      withdrawnIssues: {
-        $set: action.payload.responseObject.withdrawnIssues
       }
     });
   case ACTIONS.REQUEST_ISSUES_UPDATE_FAIL:

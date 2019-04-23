@@ -57,7 +57,7 @@ class ClaimReviewController < ApplicationController
 
   def render_success
     if claim_review.processed_in_caseflow?
-      removed_or_withdrawn_issues
+      set_flash_success_message
 
       render json: { redirect_to: claim_review.business_line.tasks_url,
                      issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
@@ -73,7 +73,7 @@ class ClaimReviewController < ApplicationController
     end
   end
 
-  def removed_or_withdrawn_issues
+  def set_flash_success_message
     if request_issues_update.after_issues.empty?
       flash[:edited] = decisions_removed_message
     elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?

@@ -495,7 +495,7 @@ feature "Appeal Edit issues" do
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
-      expect(page).to have_content("Edit Completed")
+      expect(page).to have_content("You have successfully withdrawn a review.")
 
       expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
     end
