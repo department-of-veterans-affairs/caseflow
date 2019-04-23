@@ -87,4 +87,14 @@ describe AsyncableJobs do
       expect(subject.models).to_not include(DecisionReview)
     end
   end
+
+  describe "#total_jobs" do
+    subject { described_class.new(page: 2, page_size: 4) }
+
+    it "paginates" do
+      expect(subject.jobs.length).to eq(2)
+      expect(subject.total_jobs).to eq(6)
+      expect(subject.total_pages).to eq(2)
+    end
+  end
 end
