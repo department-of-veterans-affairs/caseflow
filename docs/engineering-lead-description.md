@@ -19,6 +19,7 @@
 
 * Coordinates incident response norms and assists the on-call engineer where needed
 * Keeps the Support team, Product Leads and Engineers in sync during incidents
+* Promotes and leads post-mortem conversations to better understand system failures.
 
 ## Establishes Cross-Team Processes
 
