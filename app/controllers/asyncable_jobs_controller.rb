@@ -59,7 +59,7 @@ class AsyncableJobsController < ApplicationController
   end
 
   def page_size
-    10 # TODO: allowed param?
+    50 # TODO: allowed param?
   end
 
   def current_page

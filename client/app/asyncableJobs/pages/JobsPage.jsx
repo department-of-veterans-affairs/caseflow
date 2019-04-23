@@ -211,7 +211,7 @@ class AsyncableJobsPage extends React.PureComponent {
       let newPage = idx + 1;
 
       if (newPage !== this.props.pagination.current_page) {
-        let newUrl = `{window.location.href.split('?')[0]}?page=${newPage}`;
+        let newUrl = `${window.location.href.split('?')[0]}?page=${newPage}`;
 
         window.location = newUrl;
       }
