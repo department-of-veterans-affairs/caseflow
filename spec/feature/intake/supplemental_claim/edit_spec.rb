@@ -790,6 +790,7 @@ feature "Supplemental Claim Edit issues" do
         scenario "show alert message when all decision reviews are withdrawn" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
           click_withdraw_intake_issue_dropdown(1)
+          click_withdraw_intake_issue_dropdown(2)
           fill_in "withdraw-date", with: withdraw_date
           click_edit_submit
           sleep 1

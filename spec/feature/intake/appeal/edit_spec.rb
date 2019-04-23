@@ -477,7 +477,7 @@ feature "Appeal Edit issues" do
              assigned_at: last_week)
     end
 
-    scenario "withdraw entire review" do
+    scenario "withdraw entire review and show alert" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
@@ -494,6 +494,9 @@ feature "Appeal Edit issues" do
       click_edit_submit
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("Edit Completed")
+
       expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
     end
 
@@ -571,46 +574,6 @@ feature "Appeal Edit issues" do
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
-    end
-
-    fscenario "show alert message when an isssue is withdrawn" do
-      # reload to verify that the new issues populate the form
-      visit "appeals/#{appeal.uuid}/edit/"
-
-      expect(page).to_not have_content("Withdrawn issues")
-      expect(page).to_not have_content("Please include the date the withdrawal was requested")
-
-      click_withdraw_intake_issue_dropdown("PTSD denied")
-
-      expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
-      )
-      expect(page).to have_content("Please include the date the withdrawal was requested")
-      expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: "13/01/24"
-
-      expect(page).to have_button("Save", disabled: true)
-
-      fill_in "withdraw-date", with: withdraw_date
-
-      safe_click("#button-submit-update")
-
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-      # expect(page).to have_content("Edit Completed")
-
-      withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
-
-      expect(withdrawn_issue).to_not be_nil
-      expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
-
-      visit "appeals/#{appeal.uuid}/edit/"
-
-      click_withdraw_intake_issue_dropdown("Military Retired Pay")
-
-      fill_in "withdraw-date", with: withdraw_date
-
-      safe_click("#button-submit-update")
     end
   end
 
@@ -690,7 +653,7 @@ feature "Appeal Edit issues" do
           click_intake_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-          expect(page).to have_content("Review Removed")
+          expect(page).to have_content("Edit Completed")
         end
       end
 

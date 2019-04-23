@@ -1367,11 +1367,11 @@ feature "Higher Level Review Edit issues" do
         sleep 1
 
         expect(current_path).to eq("/decision_reviews/education")
-        expect(page).to have_content("Review Removed")
+        expect(page).to have_content("Edit Completed")
       end
     end
 
-    context "show alert when an issue is withdrawn" do
+    context "show alert when entire review is withdrawn" do
       before do
         education_org = create(:business_line, name: "Education", url: "education")
         OrganizationsUser.add_user_to_organization(current_user, education_org)
@@ -1388,7 +1388,10 @@ feature "Higher Level Review Edit issues" do
 
       scenario "show alert message when all decision reviews are withdrawn" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
         click_withdraw_intake_issue_dropdown(1)
+        click_withdraw_intake_issue_dropdown(2)
+
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
         sleep 1

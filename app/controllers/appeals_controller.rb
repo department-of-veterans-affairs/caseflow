@@ -177,9 +177,9 @@ class AppealsController < ApplicationController
 
   def removed_or_withdrawn_issues_success
     if request_issues_update.after_issues.empty?
-      flash[:removed] = review_removed_message
-    elsif request_issues_update.after_issues.sort == request_issues_update.withdrawn_issues.sort
-      flash[:withdrawn] = review_withdrawn_message
+      flash[:edited] = review_removed_message
+    elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
+      flash[:edited] = review_withdrawn_message
     end
   end
 end
