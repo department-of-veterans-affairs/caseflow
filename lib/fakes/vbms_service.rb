@@ -42,13 +42,12 @@ class Fakes::VBMSService
     @semaphore.synchronize do
       @document_records ||= {}
       return if @document_records[file_number].present?
-
-      row = vbms_ids_mapping_csv.find { |csv_row| csv_row["vbms_id"] == file_number + "S" }
-      set_fake_documents_for_file_number(file_number, row)
+      set_fake_documents_for_file_number(file_number)
     end
   end
 
-  def self.set_fake_documents_for_file_number(file_number, row)
+  def self.set_fake_documents_for_file_number(file_number)
+    row = vbms_ids_mapping_csv.find { |csv_row| csv_row["vbms_id"] == file_number + "S" }
     return unless row
 
     @document_records[file_number] = Fakes::Data::AppealData.document_mapping[row["documents"]]
