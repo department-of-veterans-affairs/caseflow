@@ -658,7 +658,7 @@ feature "Higher Level Review Edit issues" do
     scenario "the Add Issue modal skips directly to Nonrating Issue modal" do
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
-      expect(page).to have_content("Add / Remove Issues")
+      expect(page).to have_content("Edit Issues")
 
       click_intake_add_issue
       add_intake_nonrating_issue(
@@ -818,7 +818,7 @@ feature "Higher Level Review Edit issues" do
     it "shows request issues and allows adding/removing issues" do
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
-      expect(page).to have_content("Add / Remove Issues")
+      expect(page).to have_content("Edit Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.higher_level_review)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 10)")

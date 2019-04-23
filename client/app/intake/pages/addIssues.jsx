@@ -217,6 +217,8 @@ export class AddIssuesPage extends React.Component {
       </div>;
     };
 
+    const messageHeader = this.props.editPage ? 'Edit Issues' : 'Add / Remove Issues';
+
     const columns = [
       { valueName: 'field' },
       { valueName: 'content' }
@@ -278,7 +280,7 @@ export class AddIssuesPage extends React.Component {
         intakeData={intakeData}
         closeHandler={this.props.toggleIssueRemoveModal} />
       }
-      <h1 className="cf-txt-c">Add / Remove Issues</h1>
+      <h1 className="cf-txt-c">{messageHeader}</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
         <ErrorAlert errorCode={requestErrorCode} />
