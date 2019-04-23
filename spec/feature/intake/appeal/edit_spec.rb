@@ -477,7 +477,7 @@ feature "Appeal Edit issues" do
              assigned_at: last_week)
     end
 
-    scenario "withdraw entire review" do
+    scenario "withdraw entire review and show alert" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
@@ -494,6 +494,9 @@ feature "Appeal Edit issues" do
       click_edit_submit
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully withdrawn a review.")
+
       expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
     end
 
@@ -650,7 +653,7 @@ feature "Appeal Edit issues" do
           click_intake_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-          expect(page).to have_content("Review Removed")
+          expect(page).to have_content("Edit Completed")
         end
       end
 
