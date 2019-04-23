@@ -145,7 +145,7 @@ class LegacySelectDispositionsView extends React.PureComponent {
       columns.splice(1, 0, {
         header: 'Actions',
         valueFunction: (issue) => {
-          return <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
+          return <Link replace to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
             Edit Issue
           </Link>;
         }
@@ -189,7 +189,7 @@ class LegacySelectDispositionsView extends React.PureComponent {
         bodyStyling={tbodyStyling}
       />
       {appeal.isLegacyAppeal && <div {...marginLeft(1.5)}>
-        <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/add`}>Add Issue</Link>
+        <Link replace to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/add`}>Add Issue</Link>
       </div>}
     </QueueFlowPage>;
   };
