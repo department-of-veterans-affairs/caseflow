@@ -41,7 +41,7 @@ class Hearings::HearingDayController < HearingScheduleController
     end
 
     if current_user.can?("Hearing Prep")
-      hearings = hearings.select { |hearing| hearing.judge.css_id == current_user }
+      hearings = hearings.select { |hearing| hearing.assigned_to_judge?(current_user) }
     end
 
     render json: {
