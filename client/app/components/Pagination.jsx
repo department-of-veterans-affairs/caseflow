@@ -90,7 +90,7 @@ class Pagination extends React.PureComponent {
         pageButtons.push(lastPageButton);
       }
     } else {
-      pageButtons = [...Array(totalPages)].map((number, index) => 
+      pageButtons = [...Array(totalPages)].map((number, index) =>
         this.generatePaginationButton(index)
       );
     }
