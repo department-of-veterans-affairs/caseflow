@@ -4,16 +4,16 @@ class AsyncableJobs
   attr_accessor :jobs
   attr_reader :page, :page_size, :total_jobs, :total_pages
 
+  def self.models
+    @models ||= ActiveRecord::Base.descendants
+      .select { |c| c.included_modules.include?(Asyncable) }
+      .reject(&:abstract_class?)
+  end
+
   def initialize(page: 1, page_size: 50)
     @page = page
     @page_size = page_size
     @jobs = gather_jobs
-  end
-
-  def models
-    @models ||= ActiveRecord::Base.descendants
-      .select { |c| c.included_modules.include?(Asyncable) }
-      .reject(&:abstract_class?)
   end
 
   def find_by_error(msg)
@@ -25,7 +25,7 @@ class AsyncableJobs
 
   def gather_jobs
     expired_jobs = []
-    models.each do |klass|
+    self.class.models.each do |klass|
       expired_jobs << klass.potentially_stuck
     end
     jobs = expired_jobs.flatten.sort_by(&:sort_by_last_submitted_at)

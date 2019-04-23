@@ -5,7 +5,7 @@ class AsyncableJobsController < ApplicationController
 
   def index
     if allowed_params[:asyncable_job_klass]
-      @jobs = asyncable_job_klass.potentially_stuck
+      @jobs = asyncable_job_klass.potentially_stuck.limit(page_size).offset(page_start)
     end
   end
 
@@ -20,17 +20,56 @@ class AsyncableJobsController < ApplicationController
 
   private
 
-  helper_method :jobs, :job, :allowed_params
+  helper_method :jobs, :job, :allowed_params, :pagination
 
   def asyncable_job_klass
     klass = allowed_params[:asyncable_job_klass].constantize
-    fail ActiveRecord::RecordNotFound unless asyncable_jobs.models.include?(klass)
+    fail ActiveRecord::RecordNotFound unless AsyncableJobs.models.include?(klass)
 
     klass
   end
 
   def asyncable_jobs
-    @asyncable_jobs ||= AsyncableJobs.new
+    @asyncable_jobs ||= AsyncableJobs.new(page_size: page_size, page: current_page)
+  end
+
+  def pagination
+    {
+      page_size: page_size,
+      current_page: current_page,
+      total_pages: total_pages,
+      total_jobs: total_jobs
+    }
+  end
+
+  def total_jobs
+    @total_jobs ||= begin
+      if allowed_params[:asyncable_job_klass]
+        asyncable_job_klass.potentially_stuck.count
+      else
+        asyncable_jobs.total_jobs
+      end
+    end
+  end
+
+  def total_pages
+    total_pages = (total_jobs / page_size).to_i
+    total_pages += 1 if total_jobs % page_size
+    total_pages
+  end
+
+  def page_size
+    50 # TODO: allowed param?
+  end
+
+  def current_page
+    allowed_params[:page] || 1
+  end
+
+  def page_start
+    return 0 if current_page < 2
+
+    (current_page - 1) * page_size
   end
 
   def jobs
@@ -56,6 +95,6 @@ class AsyncableJobsController < ApplicationController
   end
 
   def allowed_params
-    params.permit(:asyncable_job_klass, :id)
+    params.permit(:asyncable_job_klass, :id, :page)
   end
 end

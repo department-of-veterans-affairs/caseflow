@@ -78,13 +78,13 @@ describe AsyncableJobs do
     end
   end
 
-  describe "#models" do
+  describe ".models" do
     it "returns list of Asyncable-consuming models" do
-      expect(subject.models).to include(HigherLevelReview)
+      expect(described_class.models).to include(HigherLevelReview)
     end
 
     it "rejects abstract classes" do
-      expect(subject.models).to_not include(DecisionReview)
+      expect(described_class.models).to_not include(DecisionReview)
     end
   end
 
