@@ -1169,11 +1169,11 @@ feature "Higher Level Review Edit issues" do
 
         expect(page).to_not have_content("Withdrawn issues")
         expect(page).to_not have_content("Please include the date the withdrawal was requested")
-        expect(page).to have_content("Requested issues\n1. PTSD denied")
+        expect(page).to have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
-        expect(page).to_not have_content("Requested issues\n1. PTSD denied")
-        expect(page).to have_content("1. PTSD denied\nDecision date: 01/19/2018\nWithdraw pending")
+        expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
+        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 01\/19\/2018\s*Withdraw pending/i)
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -1219,8 +1219,10 @@ feature "Higher Level Review Edit issues" do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
-        expect(page).to have_content("Requested issues\n1. Left knee granted")
-        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/19/2018\nWithdraw pending")
+        expect(page).to have_content(/Requested issues\s*[0-9]+\. Left knee granted/i)
+        expect(page).to have_content(
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 01\/19\/2018\s*Withdraw pending/i
+        )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -1239,7 +1241,9 @@ feature "Higher Level Review Edit issues" do
         # reload to verify that the new issues populate the form
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
-        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/19/2018\nWithdrawn on")
+        expect(page).to have_content(
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 01\/19\/2018\s*Withdrawn on/i
+        )
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
     end
