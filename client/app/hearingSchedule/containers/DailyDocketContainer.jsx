@@ -122,9 +122,9 @@ export class DailyDocketContainer extends React.Component {
     const timezone = this.getHearingDate(hearing).timezone;
 
     return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
-  }
+  };
 
-  getScheduledFor = (hearing) => {
+  formatEditedScheduledFor = (hearing) => {
     if (hearing.editedTime) {
       const scheduledTimeObj = this.getTimezoneOffsetScheduledTimeObject(hearing);
 
@@ -132,7 +132,7 @@ export class DailyDocketContainer extends React.Component {
         format();
     }
 
-    return hearing.scheduledFor;
+    return null;
   };
 
   formatHearing = (hearing) => {
@@ -140,16 +140,16 @@ export class DailyDocketContainer extends React.Component {
       evidence_window_waived: hearing.evidenceWindowWaived
     } : {};
 
-    return {
+    return _.omitBy({
       disposition: hearing.disposition,
       transcript_requested: hearing.transcriptRequested,
       notes: hearing.notes,
-      hearing_location_attributes: ApiUtil.convertToSnakeCase(hearing.location),
-      scheduled_time: this.getScheduledTime(hearing),
-      scheduled_for: this.getScheduledFor(hearing),
+      hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
+      scheduled_time: hearing.editedTime,
+      scheduled_for: this.formatEditedScheduledFor(hearing),
       prepped: hearing.prepped,
       ...amaHearingValues
-    };
+    }, _.isNil);
   };
 
   saveHearing = (hearing) => {

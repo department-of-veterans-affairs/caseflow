@@ -37,11 +37,11 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: 54955cfc95e528394bf1975285edc6bc23cfaf7d
-  ref: 54955cfc95e528394bf1975285edc6bc23cfaf7d
+  revision: 0232bb817e66c2956506755d6b99b172cb156d46
+  ref: 0232bb817e66c2956506755d6b99b172cb156d46
   specs:
     bgs (0.2)
-      nokogiri (~> 1.8.2)
+      nokogiri (~> 1.10)
       savon (~> 2.11)
 
 GIT
@@ -288,7 +288,7 @@ GEM
     memory_profiler (0.9.12)
     method_source (0.9.2)
     mini_mime (1.0.1)
-    mini_portile2 (2.3.0)
+    mini_portile2 (2.4.0)
     minitest (5.11.3)
     moment_timezone-rails (0.5.0)
     momentjs-rails (2.20.1)
@@ -304,8 +304,8 @@ GEM
     newrelic_rpm (6.0.0.351)
     nio4r (2.3.1)
     no_proxy_fix (0.1.2)
-    nokogiri (1.8.5)
-      mini_portile2 (~> 2.3.0)
+    nokogiri (1.10.3)
+      mini_portile2 (~> 2.4.0)
     nori (2.6.0)
     notiffany (0.1.1)
       nenv (~> 0.1)
@@ -564,7 +564,7 @@ DEPENDENCIES
   loofah (>= 2.2.3)
   moment_timezone-rails
   newrelic_rpm
-  nokogiri (= 1.8.5)
+  nokogiri (= 1.10.3)
   paper_trail (= 8.1.2)
   parallel
   paranoia (~> 2.2)
