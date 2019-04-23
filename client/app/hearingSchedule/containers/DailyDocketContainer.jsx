@@ -15,11 +15,6 @@ import {
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
-  onHearingNotesUpdate,
-  onHearingDispositionUpdate,
-  onTranscriptRequestedUpdate,
-  onHearingTimeUpdate,
-  onHearingLocationUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -141,14 +136,19 @@ export class DailyDocketContainer extends React.Component {
   };
 
   formatHearing = (hearing) => {
+    const amaHearingValues = hearing.docketName === 'hearing' ? {
+      evidence_window_waived: hearing.evidenceWindowWaived
+    } : {};
+
     return _.omitBy({
-      disposition: hearing.editedDisposition,
-      transcript_requested: hearing.editedTranscriptRequested,
-      notes: hearing.editedNotes,
-      hearing_location_attributes: _.isUndefined(hearing.editedLocation) ?
-        null : ApiUtil.convertToSnakeCase(hearing.editedLocation),
+      disposition: hearing.disposition,
+      transcript_requested: hearing.transcriptRequested,
+      notes: hearing.notes,
+      hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
       scheduled_time: hearing.editedTime,
-      scheduled_for: this.formatEditedScheduledFor(hearing)
+      scheduled_for: this.formatEditedScheduledFor(hearing),
+      prepped: hearing.prepped,
+      ...amaHearingValues
     }, _.isNil);
   };
 
@@ -339,11 +339,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
-  onHearingNotesUpdate,
-  onHearingDispositionUpdate,
-  onHearingTimeUpdate,
-  onTranscriptRequestedUpdate,
-  onHearingLocationUpdate,
   onInvalidForm,
   selectHearingRoom,
   selectVlj,
