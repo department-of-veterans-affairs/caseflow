@@ -15,6 +15,6 @@ class TaskTimer < ApplicationRecord
   end
 
   def self.with_active_tasks
-    joins(:task).where("tasks.status not in (?)", Task.inactive_statuses)
+    joins(:task).where("tasks.status not in (?)", Task.inactive_statuses).includes(:task)
   end
 end
