@@ -55,7 +55,7 @@ class Pagination extends React.PureComponent {
     // Create the range
     let currentCaseRange = `${beginningCaseNumber}-${endingCaseNumber}`;
     // Create the entire summary
-    const paginationSummary = `Viewing ${currentCaseRange} of ${totalCases} total cases`;
+    const paginationSummary = `Viewing ${currentCaseRange} of ${totalCases} total`;
     // Render the page buttons
     let pageButtons = [];
     let paginationButtons = [];
