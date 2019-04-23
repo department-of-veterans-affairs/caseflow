@@ -270,7 +270,7 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
 
-      expect(page).to have_content("Add / Remove Issues")
+      expect(page).to have_content("Edit Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
