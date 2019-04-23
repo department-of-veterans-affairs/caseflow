@@ -34,20 +34,25 @@ class TrackVeteranTask < GenericTask
     new_task_count = 0
     closed_task_count = 0
 
-    active_tracking_tasks = appeal.tasks.active.where(type: TrackVeteranTask.name)
-    cached_representatives = active_tracking_tasks.map(&:assigned_to)
+    tasks_to_sync = appeal.tasks.active.where(type: [TrackVeteranTask.name, InformalHearingPresentationTask.name])
+    cached_representatives = tasks_to_sync.map(&:assigned_to)
     fresh_representatives = appeal.representatives
+    new_representatives = fresh_representatives - cached_representatives
 
     # Create a TrackVeteranTask for each VSO that does not already have one.
-    new_representatives = fresh_representatives - cached_representatives
     new_representatives.each do |new_vso|
-      TrackVeteranTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: new_vso)
+      params = { appeal: appeal, parent: appeal.root_task, assigned_to: new_vso }
+      TrackVeteranTask.create!(**params)
       new_task_count += 1
+
+      if appeal.is_a?(Appeal) && new_vso.should_write_ihp?(appeal)
+        InformalHearingPresentationTask.create!(**params)
+      end
     end
 
-    # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
+    # Close all TrackVeteranTasks and InformalHearingPresentationTasks for now-former VSO representatives.
     outdated_representatives = cached_representatives - fresh_representatives
-    active_tracking_tasks.select { |t| outdated_representatives.include?(t.assigned_to) }.each do |task|
+    tasks_to_sync.select { |t| outdated_representatives.include?(t.assigned_to) }.each do |task|
       task.update!(status: Constants.TASK_STATUSES.cancelled)
       closed_task_count += 1
     end
