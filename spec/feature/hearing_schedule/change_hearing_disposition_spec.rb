@@ -47,7 +47,7 @@ RSpec.feature "Change hearing disposition" do
 
       step "change the hearing disposition to held" do
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown(prompt: "Select", text: "Held", container: ".cf-modal-body")
+        click_dropdown({ prompt: "Select", text: "Held" }, find(".cf-modal-body"))
         fill_in "Notes", with: instructions_text
         click_button("Submit")
         expect(page).to have_content("Successfully changed hearing disposition to Held")
@@ -85,7 +85,7 @@ RSpec.feature "Change hearing disposition" do
 
     step "change the hearing disposition to cancelled" do
       click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-      click_dropdown(prompt: "Select", text: "Cancelled", container: ".cf-modal-body")
+      click_dropdown({ prompt: "Select", text: "Cancelled" }, find(".cf-modal-body"))
       fill_in "Notes", with: instructions_text
       click_button("Submit")
       expect(page).to have_content("Successfully changed hearing disposition to Cancelled")
@@ -125,7 +125,7 @@ RSpec.feature "Change hearing disposition" do
 
       step "change the hearing disposition to postponed" do
         click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown(prompt: "Select", text: "Postponed", container: ".cf-modal-body")
+        click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
         fill_in "Notes", with: instructions_text
         click_button("Submit")
         expect(page).to have_content("Successfully changed hearing disposition to Postponed")
@@ -166,7 +166,7 @@ RSpec.feature "Change hearing disposition" do
 
     step "change the hearing disposition to no show" do
       click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-      click_dropdown(prompt: "Select", text: "No Show", container: ".cf-modal-body")
+      click_dropdown({ prompt: "Select", text: "No Show" }, find(".cf-modal-body"))
       fill_in "Notes", with: instructions_text
       click_button("Submit")
       expect(page).to have_content("Successfully changed hearing disposition to No Show")
@@ -215,7 +215,7 @@ RSpec.feature "Change hearing disposition" do
 
       step "assign the task to the other user" do
         click_dropdown(prompt: "Select an action", text: "Assign to person")
-        choices = click_dropdown(text: other_admin_full_name, container: ".cf-modal-body")
+        choices = click_dropdown({ text: other_admin_full_name }, find(".cf-modal-body"))
 
         # only hearing admin users can be assigned the task
         expect(choices).to include(*admin_full_names)
