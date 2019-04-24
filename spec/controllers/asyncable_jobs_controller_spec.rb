@@ -78,8 +78,15 @@ describe AsyncableJobsController, type: :controller do
           get :index, as: :html, params: { asyncable_job_klass: "HigherLevelReview" }
 
           expect(response.status).to eq 200
-          expect(response.body).to match(/HigherLevelReview/)
-          expect(response.body).to_not match(/SupplementalClaim/)
+          expect(response.body).to match(/"asyncableJobKlass":"HigherLevelReview"/)
+        end
+      end
+
+      context "#pagination" do
+        it "paginates based on asyncable_job_klass" do
+          get :index, as: :html, params: { asyncable_job_klass: "HigherLevelReview" }
+
+          expect(subject.send(:pagination)).to eq(total_pages: 1, total_jobs: 1, current_page: 1, page_size: 50)
         end
       end
 
