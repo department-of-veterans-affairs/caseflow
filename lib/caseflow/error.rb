@@ -12,6 +12,10 @@ module Caseflow::Error
     def serialize_response
       { json: { "errors": [{ "status": code, "title": message, "detail": message }] }, status: code }
     end
+
+    def to_simple_hash
+      { error: message, status: code }
+    end
   end
 
   class SerializableError < StandardError
