@@ -19,7 +19,6 @@ class AppealDocumentCount extends React.PureComponent {
       loadingText,
       externalId
     } = this.props;
-    // see: https://bit.ly/2UwdQdS
     const docCountsInLocalStorage = JSON.parse(localStorage.getItem('docCountsByAppealId'));
     let docCountsByAppealId;
 

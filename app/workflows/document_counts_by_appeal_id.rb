@@ -12,23 +12,23 @@ class DocumentCountsByAppealId
       fail Caseflow::Error::TooManyAppealIds
     end
 
-    build_document_counts_hash(@appeal_ids)
+    build_document_counts_hash
     @document_counts_by_appeal_id_hash
   end
 
   private
 
-  def build_document_counts_hash(appeal_ids)
+  def build_document_counts_hash
     # Collect appeal objects sequentially so we don't exhaust DB pool
-    appeals_hash = collect_appeal_objects_sequentially(appeal_ids)
+    appeals_hash = collect_appeal_objects_sequentially
     # Spin up a new thread of each appeal and then call join on each thread
     # Creating threads without calling join on them will cause the main thread
     # to continue without waiting and possibly exit before the child threads have finished
     create_thread_for_each_appeal(appeals_hash)
   end
 
-  def collect_appeal_objects_sequentially(appeal_ids)
-    appeal_ids.each_with_object({}) do |appeal_id, result|
+  def collect_appeal_objects_sequentially
+    @appeal_ids.each_with_object({}) do |appeal_id, result|
       result[appeal_id] = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
     end
   end
