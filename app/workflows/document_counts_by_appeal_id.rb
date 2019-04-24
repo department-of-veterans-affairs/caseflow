@@ -31,7 +31,12 @@ class DocumentCountsByAppealId
 
   def collect_appeal_objects_sequentially
     @appeal_ids.each_with_object({}) do |appeal_id, result|
-      result[appeal_id] = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+      begin
+        result[appeal_id] = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
+      rescue ActiveRecord::RecordNotFound => error
+        handle_document_count_error(error, appeal_id)
+        next
+      end
     end
   end
 
