@@ -37,7 +37,7 @@ feature "NonComp Dispositions Task Page" do
     num = find_dropdown_num_by_disposition(disposition)
     expect(page).to have_field(type: "textarea", with: description, disabled: true)
 
-    scroll_element_in_to_view(".dropdown-disposition-issue-#{num}")
+    scroll_to(".dropdown-disposition-issue-#{num}")
 
     within(".dropdown-disposition-issue-#{num}") do
       expect(find("span[class='Select-value-label']", text: disposition)).to_not be_nil
