@@ -19,8 +19,8 @@ RSpec.feature "List Schedule" do
       end
     end
 
-    context "System Admin permissions" do
-      let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["System Admin"]) }
+    context "System Admin permissions", focus: true do
+      let!(:current_user) { User.authenticate!(roles: ["System Admin"]) }
       let!(:hearing_day) { create(:hearing_day) }
 
       scenario "Correct days are displayed" do
