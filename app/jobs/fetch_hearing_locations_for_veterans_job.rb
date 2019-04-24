@@ -20,10 +20,10 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
           ON t.id = admin_actions.parent_id
           AND admin_actions.type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
           AND admin_actions.status NOT IN ('cancelled', 'completed')
-          WHERE t.appeal_type = '#{appeal_type.name}'
+          WHERE t.appeal_type = ?
           AND admin_actions.id IS NULL AND t.type = 'ScheduleHearingTask'
           AND t.status NOT IN ('cancelled', 'completed')
-        )")
+        )", appeal_type.name)
       .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
       .limit(QUERY_LIMIT)
   end
