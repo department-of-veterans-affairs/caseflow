@@ -43,9 +43,6 @@ class DocumentCountsByAppealId
       begin
         set_document_count_value_for_appeal_id(appeal_id, appeal)
       rescue StandardError => error
-        # We will send all these errors to Sentry for the time being
-        # until we are sure our code works
-        Raven.capture_exception(error)
         handle_document_count_error(error, appeal_id)
         next
       end
@@ -53,6 +50,9 @@ class DocumentCountsByAppealId
   end
 
   def handle_document_count_error(error, appeal_id)
+    # We will send all these errors to Sentry for the time being
+    # until we are sure our code works
+    Raven.capture_exception(error)
     error = ApplicationHelper.handle_non_critical_error("document_count", error)
     @document_counts_by_appeal_id_hash[appeal_id] = error.to_simple_hash
   end
