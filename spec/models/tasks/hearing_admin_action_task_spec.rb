@@ -3,11 +3,7 @@
 describe HearingAdminActionTask do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
-  let!(:schedule_hearing_task) do
-    create(:schedule_hearing_task,
-           appeal: appeal,
-           assigned_to: HearingsManagement.singleton)
-  end
+  let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
 
   describe "VerifyAddressTask after update" do
     let!(:verify_address_task) do

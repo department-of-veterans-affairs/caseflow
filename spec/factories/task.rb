@@ -145,7 +145,7 @@ FactoryBot.define do
     factory :schedule_hearing_task, class: ScheduleHearingTask do
       type { ScheduleHearingTask.name }
       appeal { create(:appeal) }
-      assigned_to { HearingsManagement.singleton }
+      assigned_to { Bva.singleton }
       parent { create(:hearing_task, appeal: appeal) }
     end
 

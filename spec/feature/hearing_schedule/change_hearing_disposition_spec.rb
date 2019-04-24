@@ -7,7 +7,15 @@ RSpec.feature "Change hearing disposition" do
   let(:hearing_admin_user) { FactoryBot.create(:user, full_name: current_full_name, station_id: 101) }
   let(:hearing_day) { FactoryBot.create(:hearing_day) }
   let(:veteran) { FactoryBot.create(:veteran, first_name: "Chibueze", last_name: "Vanscoy", file_number: 800_888_001) }
-  let(:appeal) { FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
+  let(:regional_office_code) { "RO39" } # Denver
+  let(:appeal) do
+    FactoryBot.create(
+      :appeal,
+      :hearing_docket,
+      closest_regional_office: regional_office_code,
+      veteran_file_number: veteran.file_number
+    )
+  end
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
   let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
@@ -90,7 +98,19 @@ RSpec.feature "Change hearing disposition" do
   end
 
   context "there's a hearings management user" do
-    let(:hearing_mgmt_user) { FactoryBot.create(:user, full_name: "Janaan Handal", station_id: 101) }
+    let!(:hearing_mgmt_user) do
+      FactoryBot.create(:user, full_name: "Janaan Handal", station_id: 101, roles: ["Build HearSched"])
+    end
+    let!(:hearing_day) do
+      create(
+        :hearing_day,
+        regional_office: regional_office_code,
+        request_type: HearingDay::REQUEST_TYPES[:video],
+        scheduled_for: Time.zone.today + 30.days
+      )
+    end
+    let!(:staff) { create(:staff, stafkey: regional_office_code, stc2: 2, stc3: 3, stc4: 4) }
+    let(:veteran_hearing_link_text) { "#{appeal.veteran_full_name} | #{appeal.veteran_file_number}" }
 
     before do
       OrganizationsUser.add_user_to_organization(hearing_mgmt_user, HearingsManagement.singleton)
@@ -116,17 +136,23 @@ RSpec.feature "Change hearing disposition" do
         expect(page).to have_content("Unassigned (0)")
       end
 
-      step "visit the hearings management organization queue and verify that the schedule hearing task is there" do
+      step "visit hearings schedule and verify that the schedule hearing task is there" do
         User.authenticate!(user: hearing_mgmt_user)
-        visit "/organizations/#{HearingsManagement.singleton.url}"
-        expect(page).to have_content("Unassigned (1)")
-        click_on veteran_link_text
+        visit "hearings/schedule/assign"
+        expect(page).to have_content("Regional Office")
+        click_dropdown(text: "Denver")
+        click_button("AMA Veterans Waiting")
+        click_on veteran_hearing_link_text
         expect(page).to have_content(ScheduleHearingTask.last.label)
       end
 
-      step "verify that the instructions are visible on the schedule hearing task" do
-        find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-        expect(page).to have_content(instructions_text)
+      step "verify that instructions and actions are available on the schedule hearing task" do
+        schedule_row = find("dd", text: ScheduleHearingTask.last.label).find(:xpath, "ancestor::tr")
+        schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(schedule_row).to have_content(instructions_text)
+        expect(schedule_row).to have_css(
+          ".Select-control .Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+        )
       end
     end
   end

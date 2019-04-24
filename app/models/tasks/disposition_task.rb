@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 ##
-# Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask is completed.
-# When the associated hearing's disposition is set, the appropriate tasks are set as children
+# Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask
+# is completed. When the associated hearing's disposition is set, the appropriate tasks are set as children
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
@@ -213,7 +213,6 @@ class DispositionTask < GenericTask
 
     schedule_task = ScheduleHearingTask.create!(
       appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
       instructions: instructions.present? ? [instructions] : nil,
       parent: new_hearing_task
     )
