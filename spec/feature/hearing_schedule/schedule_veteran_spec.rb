@@ -153,6 +153,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         veteran: create(:veteran)
       )
     end
+    let(:incarcerated_veteran_task_instructions) { "Incarcerated veteran task instructions" }
+    let(:contested_claimant_task_instructions) { "Contested claimant task instructions" }
 
     scenario "Can create multiple admin actions and reassign them" do
       visit "hearings/schedule/assign"
@@ -169,17 +171,39 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       # First admin action
       expect(page).to have_content("Submit admin action")
       click_dropdown(text: HearingAdminActionIncarceratedVeteranTask.label)
-      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 1"
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: incarcerated_veteran_task_instructions
 
       # Second admin action
       click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
       within all('div[id^="action_"]', count: 2)[1] do
         click_dropdown(text: HearingAdminActionContestedClaimantTask.label)
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 2"
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: contested_claimant_task_instructions
       end
 
       click_on "Assign Action"
-      expect(page).to have_content("You have assigned 2 administrative actions")
+
+      # The banner has the correct content
+      expect(page).to have_content(
+        format(
+          COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE,
+          "2",
+          "actions",
+          [HearingAdminActionIncarceratedVeteranTask.label, HearingAdminActionContestedClaimantTask.label].join(", ")
+        )
+      )
+
+      # The timeline has the correct content
+      incarcerated_row = find("dd", text: HearingAdminActionIncarceratedVeteranTask.label).find(:xpath, "ancestor::tr")
+      incarcerated_row.click_on(
+        COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+      )
+      expect(incarcerated_row).to have_content incarcerated_veteran_task_instructions
+
+      contested_row = find("dd", text: HearingAdminActionContestedClaimantTask.label).find(:xpath, "ancestor::tr")
+      contested_row.click_on(
+        COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+      )
+      expect(contested_row).to have_content contested_claimant_task_instructions
 
       within all("div", class: "Select", count: 2).first do
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])

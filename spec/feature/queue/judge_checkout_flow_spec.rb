@@ -123,9 +123,7 @@ RSpec.feature "Judge checkout flow" do
         click_on "#{appeal.veteran_full_name} (#{appeal.sanitized_vbms_id})"
 
         click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_LEGACY_CHECKOUT.label)
-
         click_label "vamc"
-
         click_on "Continue"
 
         # Ensure we can reload the flow and the special issue is saved
@@ -146,6 +144,10 @@ RSpec.feature "Judge checkout flow" do
 
         expect(page).to have_content("Review Dispositions")
         expect(page.find_all(".issue-disposition-dropdown").length).to eq 1
+
+        click_on "Edit Issue"
+        click_on "Delete Issue"
+        click_on "Delete issue"
 
         click_on "Continue"
         expect(page).to have_content("Evaluate Decision")
@@ -169,6 +171,11 @@ RSpec.feature "Judge checkout flow" do
         expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
 
         expect(VACOLS::Decass.find(appeal.vacols_id).de1touch).to eq "Y"
+
+        page.driver.go_back
+        appeal_id = LegacyAppeal.last.vacols_id
+
+        expect(page).to have_current_path("/queue/appeals/#{appeal_id}")
       end
     end
 
