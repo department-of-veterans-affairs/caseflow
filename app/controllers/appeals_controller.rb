@@ -93,7 +93,7 @@ class AppealsController < ApplicationController
             render json: { appeal: json_appeals(appeal)[:data] }
           end
         else
-          render(Caseflow::Error::ActionForbiddenError.new.serialize_response)
+          render_access_error
         end
       end
     end
@@ -181,5 +181,15 @@ class AppealsController < ApplicationController
     elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
       flash[:edited] = review_withdrawn_message
     end
+  end
+
+  def render_access_error
+    if appeal.veteran.multiple_phone_numbers?
+      return render(Caseflow::Error::ActionForbiddenError.new(
+        message: COPY::DUPLICATE_PHONE_NUMBER_TITLE
+      ).serialize_response)
+    end
+
+    render(Caseflow::Error::ActionForbiddenError.new(message: COPY::ACCESS_DENIED_MSG).serialize_response)
   end
 end
