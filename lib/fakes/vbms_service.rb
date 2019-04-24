@@ -39,7 +39,7 @@ class Fakes::VBMSService
     @semaphore ||= Mutex.new
     @semaphore.synchronize do
       @document_records ||= {}
-      load_fake_documents_for_file_number(file_number) if @document_records[file_number].empty?
+      load_fake_documents_for_file_number(file_number) if @document_records[file_number].blank?
     end
   end
 
