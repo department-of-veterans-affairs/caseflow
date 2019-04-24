@@ -120,8 +120,7 @@ class ColocatedTask < Task
 
     if all_colocated_tasks_for_legacy_appeal_complete
       new_vacols_location = location_based_on_action
-      # Don't change the location if the appeal is already in that location.
-      AppealRepository.update_location!(appeal, new_vacols_location) unless appeal.in_location?(new_vacols_location)
+      AppealRepository.update_location!(appeal, new_vacols_location)
     end
   end
 
