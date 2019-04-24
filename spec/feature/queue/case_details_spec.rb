@@ -312,6 +312,43 @@ RSpec.feature "Case details" do
         expect(page).not_to have_content("Select an action")
       end
     end
+
+    context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            correspondent: FactoryBot.create(:correspondent, sgender: "F")
+          )
+        )
+      end
+
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+      end
+
+      scenario "access the appeal's case details" do
+        visit "/queue/appeals/#{appeal.external_id}"
+
+        expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
+
+        cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, appeal.veteran_file_number)
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+        visit "/queue/appeals/#{appeal.external_id}"
+
+        expect(Rails.cache.exist?(cache_key)).to eq(true)
+      end
+    end
   end
 
   context "when an appeal has some number of documents" do
