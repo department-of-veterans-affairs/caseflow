@@ -19,6 +19,26 @@ RSpec.feature "List Schedule" do
       end
     end
 
+    context "System Admin permissions" do
+      let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["System Admin"]) }
+      let!(:hearing_day) { create(:hearing_day) }
+
+      scenario "Correct days are displayed" do
+        visit "hearings/schedule"
+
+        expect(page).to_not have_content(Hearing::HEARING_TYPES[HearingDay.first.request_type.to_sym])
+      end
+
+      scenario "All buttons are visible" do
+        visit "hearings/schedule"
+
+        expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
+        expect(page).to have_content("Schedule Veterans")
+        expect(page).to have_content("Build Schedule")
+        expect(page).to have_content("Add Hearing Date")
+      end
+    end
+
     context "Edit hearing schedule permissions" do
       let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Edit HearSched"]) }
 
