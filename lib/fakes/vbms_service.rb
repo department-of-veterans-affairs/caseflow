@@ -34,22 +34,20 @@ class Fakes::VBMSService
   end
 
   def self.load_vbms_id_mapping(file_number)
-    return unless Rails.env.development?
-
     # Due to multiple threads calling this block, we need to wait for the first thread to finish
     # loading records before other threads can continue not to exhaust the connection pool
     @semaphore ||= Mutex.new
     @semaphore.synchronize do
       @document_records ||= {}
-      return if @document_records[file_number].present?
+      load_fake_documents_for_file_number(file_number) if @document_records[file_number].blank?
+    end
+  end
 
-      row = vbms_ids_mapping_csv.find { |csv_row| csv_row["vbms_id"] == file_number + "S" }
-      return unless row
-
-      @document_records[file_number] = Fakes::Data::AppealData.document_mapping[row["documents"]]
-      (@document_records[file_number] || []).each do |document|
-        document.write_attribute(:file_number, file_number)
-      end
+  def self.load_fake_documents_for_file_number(file_number)
+    row = vbms_ids_mapping_csv.find { |csv_row| csv_row["vbms_id"] == file_number + "S" }
+    @document_records[file_number] = row && Fakes::Data::AppealData.document_mapping[row["documents"]]
+    (@document_records[file_number] || []).each do |document|
+      document.write_attribute(:file_number, file_number)
     end
   end
 
@@ -89,7 +87,7 @@ class Fakes::VBMSService
   # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.fetch_documents_for(appeal, _user = nil)
-    load_vbms_id_mapping(appeal.veteran_file_number)
+    load_vbms_id_mapping(appeal.veteran_file_number) if Rails.env.development?
 
     # User is intentionally unused. It is meant to mock EfolderService.fetch_documents_for()
     fetched_at_format = "%FT%T.%LZ"

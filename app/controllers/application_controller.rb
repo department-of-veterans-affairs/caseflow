@@ -8,7 +8,6 @@ class ApplicationController < ApplicationBaseController
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
   before_action :deny_vso_access, except: [:unauthorized]
-  include ApplicationHelper
 
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
@@ -43,7 +42,7 @@ class ApplicationController < ApplicationBaseController
   end
 
   def handle_non_critical_error(endpoint, error)
-    error = handle_non_critical_error(endpoint, error)
+    error = ApplicationHelper.handle_non_critical_error(endpoint, error)
     render error.serialize_response
   end
 
