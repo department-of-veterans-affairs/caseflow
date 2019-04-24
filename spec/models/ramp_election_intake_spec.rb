@@ -441,13 +441,12 @@ describe RampElectionIntake do
         create(:ramp_election, veteran_file_number: "64205555", notice_date: 5.days.ago)
       end
 
-      it "saves intake and sets detail to a new ramp election" do
+      it "creates a new RAMP Election and does not set detail to the existing RAMP Election" do
         expect(subject).to be_truthy
 
         expect(intake.detail).to have_attributes(
-          id: ramp_election.id,
           veteran_file_number: "64205555",
-          notice_date: 5.days.ago.to_date
+          notice_date: nil
         )
       end
     end
