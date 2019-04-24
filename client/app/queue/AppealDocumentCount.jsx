@@ -17,23 +17,15 @@ class AppealDocumentCount extends React.PureComponent {
   render = () => {
     const {
       loadingText,
-      externalId
+      externalId,
+      docCountsByAppealId
     } = this.props;
-    const docCountsInLocalStorage = JSON.parse(localStorage.getItem('docCountsByAppealId'));
-    let docCountsByAppealId;
-
-    if (_.isEmpty(this.props.docCountsByAppealId) && docCountsInLocalStorage) {
-      docCountsByAppealId = docCountsInLocalStorage;
-    } else {
-      docCountsByAppealId = this.props.docCountsByAppealId;
-    }
 
     const isLoading = loadingText && (docCountsByAppealId.loading);
     const errorLoadingDocumentCount = _.get(docCountsByAppealId[externalId], 'error');
     const documentCount = _.get(docCountsByAppealId[externalId], 'count', null);
 
     if (!_.isEmpty(docCountsByAppealId)) {
-      localStorage.setItem('docCountsByAppealId', JSON.stringify(docCountsByAppealId));
       if (isLoading) {
         return <span {...documentCountStyling}>Loading number of docs...</span>;
       }

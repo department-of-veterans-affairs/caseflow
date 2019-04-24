@@ -26,10 +26,12 @@ import { CATEGORIES, TASK_ACTIONS } from './constants';
 import { COLORS } from '../constants/AppConstants';
 import COPY from '../../COPY.json';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-
+import { batchDocCountRequests } from '../util/ApiUtil';
 import {
   appealWithDetailSelector
 } from './selectors';
+import { loadAppealDocCount, setAppealDocCount,
+  errorFetchingDocumentCount } from './QueueActions';
 
 // TODO: Pull this horizontal rule styling out somewhere.
 const horizontalRuleStyling = css({
@@ -63,6 +65,7 @@ class CaseDetailsView extends React.PureComponent {
         regionalOffice
       });
     }
+    batchDocCountRequests(this.props, null);
   }
 
   render = () => {
@@ -137,7 +140,10 @@ const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     resetErrorMessages,
     resetSuccessMessages,
-    setHearingDay
+    setHearingDay,
+    loadAppealDocCount,
+    setAppealDocCount,
+    errorFetchingDocumentCount
   }, dispatch)
 );
 

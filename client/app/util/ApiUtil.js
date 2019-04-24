@@ -152,7 +152,7 @@ export const batchDocCountRequests = (props, tasks) => {
     timeout: { response: RESPONSE_COMPLETE_LIMIT_MILLISECONDS }
   };
 
-  const ids = mapTasksToExternalIds(tasks);
+  const ids = tasks ? mapTasksToExternalIds(tasks) : [props.appealId];
 
   props.loadAppealDocCount(ids);
 
