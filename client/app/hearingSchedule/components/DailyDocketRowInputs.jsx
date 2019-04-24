@@ -190,7 +190,7 @@ export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
     <Checkbox
       label={<span style={{ fontSize: 0 }}>Accessibility hack</span>}
       disabled={readOnly}
-      name="checkbox-prepped"
+      name={`checked-prepped-${hearing.id}`}
       value={hearing.prepped || false}
       onChange={(prepped) => update({ prepped })} />
   </div>
