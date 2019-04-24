@@ -1,11 +1,8 @@
 # frozen_string_literal: true
 
 class DocumentCountsByAppealId
-  include ActiveModel::Model
-  attr_accessor :appeal_ids, :document_counts_by_appeal_id_hash
-
-  def initialize(attributes = {})
-    super
+  def initialize(appeal_ids:)
+    @appeal_ids = appeal_ids
     @document_counts_by_appeal_id_hash ||= {}
   end
 
@@ -19,6 +16,9 @@ class DocumentCountsByAppealId
   end
 
   private
+
+  attr_accessor :document_counts_by_appeal_id_hash
+  attr_reader :appeal_ids
 
   def build_document_counts_hash
     # Collect appeal objects sequentially so we don't exhaust DB pool
