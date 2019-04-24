@@ -12,7 +12,7 @@ class DocumentCountsByAppealId
     end
 
     build_document_counts_hash
-    @document_counts_by_appeal_id_hash
+    document_counts_by_appeal_id_hash
   end
 
   private
@@ -30,7 +30,7 @@ class DocumentCountsByAppealId
   end
 
   def collect_appeal_objects_sequentially
-    @appeal_ids.each_with_object({}) do |appeal_id, result|
+    appeal_ids.each_with_object({}) do |appeal_id, result|
       begin
         result[appeal_id] = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(appeal_id)
       rescue ActiveRecord::RecordNotFound => error
