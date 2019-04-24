@@ -448,6 +448,10 @@ describe RampElectionIntake do
           veteran_file_number: "64205555",
           notice_date: nil
         )
+
+        expect(intake.detail).to_not have_attributes(
+          id: ramp_election.id
+        )
       end
     end
 

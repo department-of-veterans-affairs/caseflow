@@ -163,8 +163,4 @@ class RampElectionIntake < Intake
       update!(detail: existing_ramp_election)
     end
   end
-
-  def veteran_ramp_elections
-    RampElection.where(veteran_file_number: veteran_file_number)
-  end
 end
