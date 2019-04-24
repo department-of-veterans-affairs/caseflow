@@ -192,7 +192,7 @@ class HearingDay < ApplicationRecord
     def list_upcoming_hearing_days(start_date, end_date, user, regional_office = nil)
       if user&.vso_employee?
         upcoming_days_for_vso_user(start_date, end_date, user)
-      elsif user&.can?("Hearing Prep")
+      elsif user&.roles && user.roles.include?("Hearing Prep")
         upcoming_days_for_judge(start_date, end_date, user)
       else
         load_days(start_date, end_date, regional_office)
