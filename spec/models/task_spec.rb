@@ -671,4 +671,19 @@ describe Task do
       end
     end
   end
+
+  describe "task timer relationship" do
+    let(:task) { FactoryBot.create(:generic_task) }
+    let(:task_id) { task.id }
+    let(:task_timer_count) { 4 }
+    let!(:task_timers) { Array.new(task_timer_count) { TaskTimer.create!(task: task) } }
+
+    it "returns and destroys related timers" do
+      expect(TaskTimer.where(task_id: task_id).count).to eq(task_timer_count)
+      expect(task.task_timers).to eq(task_timers)
+
+      task.destroy!
+      expect(TaskTimer.where(task_id: task_id).count).to eq(0)
+    end
+  end
 end

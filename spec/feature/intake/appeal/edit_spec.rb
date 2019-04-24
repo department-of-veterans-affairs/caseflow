@@ -477,7 +477,7 @@ feature "Appeal Edit issues" do
              assigned_at: last_week)
     end
 
-    scenario "withdraw entire review" do
+    scenario "withdraw entire review and show alert" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
@@ -494,6 +494,9 @@ feature "Appeal Edit issues" do
       click_edit_submit
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully withdrawn a review.")
+
       expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
     end
 
@@ -547,7 +550,7 @@ feature "Appeal Edit issues" do
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
-      expect(page).to_not have_content("Requested issues\n1. PTSD denied")
+      expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
         /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
       )
@@ -567,7 +570,7 @@ feature "Appeal Edit issues" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdrawn on/i
+        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 01\/20\/2018\s*Withdrawn on/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
@@ -650,7 +653,7 @@ feature "Appeal Edit issues" do
           click_intake_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-          expect(page).to have_content("Review Removed")
+          expect(page).to have_content("Edit Completed")
         end
       end
 

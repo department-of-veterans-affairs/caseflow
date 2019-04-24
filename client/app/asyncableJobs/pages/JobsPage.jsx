@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import Button from '../../components/Button';
 import Table from '../../components/Table';
+import Pagination from '../../components/Pagination';
 
 import ApiUtil from '../../util/ApiUtil';
 
@@ -114,18 +115,40 @@ class AsyncableJobsPage extends React.PureComponent {
     return moment(datetime).format(DATE_TIME_FORMAT);
   }
 
+  modelNameLinks = () => {
+    let links = [];
+
+    for (let modelName of this.props.models.sort()) {
+      let modelLink = <span key={modelName} className="cf-model-jobs-link">
+        <a href={`/asyncable_jobs/${modelName}/jobs`}>{modelName}</a>
+      </span>;
+
+      links.push(modelLink);
+    }
+
+    return links;
+  }
+
   render = () => {
     const rowObjects = this.props.jobs;
 
     if (rowObjects.length === 0) {
-      return 'Success! There are no pending jobs.';
+      return <div>
+        <h1>Success! There are no pending jobs.</h1>
+        <div>
+          <strong>Last updated:</strong> {moment(this.props.fetchedAt).format(DATE_TIME_FORMAT)}
+          &nbsp;&#183;&nbsp;
+          <a href="/jobs">All jobs</a>
+          <div>{this.modelNameLinks()}</div>
+        </div>
+      </div>;
     }
 
     const columns = [
       {
         header: 'Name',
-        valueFunction: (job) => {
-          return <a href={`/asyncable_jobs/${job.klass}/jobs`}>{job.klass}</a>;
+        valueFunction: (job, rowId) => {
+          return <a title={`row ${rowId}`} href={`/asyncable_jobs/${job.klass}/jobs`}>{job.klass}</a>;
         }
       },
       {
@@ -184,14 +207,33 @@ class AsyncableJobsPage extends React.PureComponent {
       return rowObject.restarted ? 'cf-success' : '';
     };
 
+    const pageUpdater = (idx) => {
+      let newPage = idx + 1;
+
+      if (newPage !== this.props.pagination.current_page) {
+        let newUrl = `${window.location.href.split('?')[0]}?page=${newPage}`;
+
+        window.location = newUrl;
+      }
+    };
+
     return <div className="cf-asyncable-jobs-table">
       <h1>{this.props.asyncableJobKlass} Jobs</h1>
       <div>
         <strong>Last updated:</strong> {moment(this.props.fetchedAt).format(DATE_TIME_FORMAT)}
         &nbsp;&#183;&nbsp;
         <a href="/jobs">All jobs</a>
+        <div>{this.modelNameLinks()}</div>
       </div>
+      <hr />
       <Table columns={columns} rowObjects={rowObjects} rowClassNames={rowClassNames} slowReRendersAreOk />
+      <Pagination
+        currentPage={this.props.pagination.current_page}
+        currentCases={rowObjects.length}
+        totalCases={this.props.pagination.total_jobs}
+        totalPages={this.props.pagination.total_pages}
+        pageSize={this.props.pagination.page_size}
+        updatePage={pageUpdater} />
     </div>;
   }
 }
@@ -200,6 +242,8 @@ const JobsPage = connect(
   (state) => ({
     jobs: state.jobs,
     fetchedAt: state.fetchedAt,
+    models: state.models,
+    pagination: state.pagination,
     asyncableJobKlass: state.asyncableJobKlass
   })
 )(AsyncableJobsPage);

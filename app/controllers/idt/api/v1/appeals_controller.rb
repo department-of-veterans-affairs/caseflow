@@ -6,21 +6,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   skip_before_action :verify_authenticity_token, only: [:outcode]
 
-  rescue_from StandardError do |e|
-    Raven.capture_exception(e)
-    if e.class.method_defined?(:serialize_response)
-      render(e.serialize_response)
-    else
-      render json: { message: "Unexpected error: #{e.message}" }, status: :internal_server_error
-    end
-  end
-
   rescue_from ActionController::ParameterMissing do |e|
     render(json: { message: e.message }, status: :bad_request)
-  end
-
-  rescue_from ActiveRecord::RecordNotFound do |_e|
-    render(json: { message: "Record not found" }, status: :not_found)
   end
 
   def list
