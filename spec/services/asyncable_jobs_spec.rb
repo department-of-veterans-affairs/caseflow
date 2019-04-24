@@ -78,13 +78,23 @@ describe AsyncableJobs do
     end
   end
 
-  describe "#models" do
+  describe ".models" do
     it "returns list of Asyncable-consuming models" do
-      expect(subject.models).to include(HigherLevelReview)
+      expect(described_class.models).to include(HigherLevelReview)
     end
 
     it "rejects abstract classes" do
-      expect(subject.models).to_not include(DecisionReview)
+      expect(described_class.models).to_not include(DecisionReview)
+    end
+  end
+
+  describe "#total_jobs" do
+    subject { described_class.new(page: 2, page_size: 4) }
+
+    it "paginates" do
+      expect(subject.jobs.length).to eq(2)
+      expect(subject.total_jobs).to eq(6)
+      expect(subject.total_pages).to eq(2)
     end
   end
 end

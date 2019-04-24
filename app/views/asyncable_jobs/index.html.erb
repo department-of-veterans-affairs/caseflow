@@ -7,6 +7,8 @@
     flash: flash,
     serverJobs: {
       jobs: jobs.map(&:asyncable_ui_hash),
+      models: AsyncableJobs.models.map(&:name),
+      pagination: pagination,
       fetchedAt: Time.zone.now,
       asyncableJobKlass: allowed_params[:asyncable_job_klass]
     }
