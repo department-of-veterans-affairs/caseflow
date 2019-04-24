@@ -132,10 +132,12 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
   context "Daily docket for Judge user" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
-    let!(:hearing) { create(:hearing, :with_tasks) }
+    let!(:hearing_day) { create(:hearing_day, judge: current_user) }
+    let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
 
     scenario "User has hearing prep fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to have_content("Try it out and provide any feedback through our support channels.")
       expect(page).to have_css(".dropdown-aod")
       expect(page).to have_css(".dropdown-aodReason")
       find(".checkbox-wrapper-checkbox-prepped").click
@@ -145,6 +147,16 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       click_button("Save")
 
       expect(page).to have_content("You have successfully updated")
+    end
+
+    context "and hearings are not assigned to judge" do
+      let!(:hearing_day) { create(:hearing_day) }
+
+      scenario "no hearings are shown" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+
+        expect(page).to have_content("No Veterans are scheduled for this hearing day.")
+      end
     end
   end
 end
