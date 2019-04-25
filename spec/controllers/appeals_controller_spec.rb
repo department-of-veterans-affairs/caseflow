@@ -201,7 +201,7 @@ RSpec.describe AppealsController, type: :controller do
     end
   end
 
-  describe "GET appeals/:id/document_count" do
+  describe "GET appeals/appeal_id/document_counts_by_id" do
     let(:appeal) { FactoryBot.create(:appeal) }
 
     context "when efolder returns an access forbidden error" do
