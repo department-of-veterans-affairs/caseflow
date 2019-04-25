@@ -7,8 +7,6 @@ RSpec.feature "Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ama_start_date)
 
     Fakes::BGSService.inaccessible_appeal_vbms_ids = []
@@ -85,9 +83,10 @@ RSpec.feature "Intake" do
     scenario "Search for a veteran that does not exist in BGS" do
       visit "/intake"
 
-      within_fieldset("Which form are you processing?") do
-        find("label", text: "RAMP Selection (VA Form 21-4138)").click
-      end
+      safe_click ".Select"
+      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
+      find("#form-select").send_keys :enter
+
       safe_click ".cf-submit.usa-button"
       expect(page).to have_css(".cf-submit[disabled]")
 
@@ -115,9 +114,9 @@ RSpec.feature "Intake" do
       expect_any_instance_of(Intake).to receive(:start!).and_raise("random error")
       visit "/intake"
 
-      within_fieldset("Which form are you processing?") do
-        find("label", text: "RAMP Opt-In Election Form").click
-      end
+      safe_click ".Select"
+      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
+      find("#form-select").send_keys :enter
       safe_click ".cf-submit.usa-button"
 
       expect(page).to have_content(search_page_title)
@@ -138,9 +137,9 @@ RSpec.feature "Intake" do
       scenario "Search for a veteran with a sensitivity error" do
         visit "/intake"
 
-        within_fieldset("Which form are you processing?") do
-          find("label", text: "RAMP Selection (VA Form 21-4138)").click
-        end
+        safe_click ".Select"
+        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
+        find("#form-select").send_keys :enter
         safe_click ".cf-submit.usa-button"
 
         fill_in search_bar_title, with: "12341234"
@@ -161,9 +160,9 @@ RSpec.feature "Intake" do
       scenario "Search for a veteran with multiple active phone numbers" do
         visit "/intake"
 
-        within_fieldset("Which form are you processing?") do
-          find("label", text: "RAMP Selection (VA Form 21-4138)").click
-        end
+        safe_click ".Select"
+        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
+        find("#form-select").send_keys :enter
         safe_click ".cf-submit.usa-button"
 
         fill_in search_bar_title, with: "12341234"
@@ -171,6 +170,24 @@ RSpec.feature "Intake" do
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("The Veteran has multiple active phone numbers")
+
+        cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, "12341234")
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+        visit "/intake"
+
+        safe_click ".Select"
+        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
+        find("#form-select").send_keys :enter
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review_request")
+        expect(Rails.cache.exist?(cache_key)).to eq(true)
       end
     end
 
@@ -188,9 +205,9 @@ RSpec.feature "Intake" do
       scenario "Search for a veteran with a validation error" do
         visit "/intake"
 
-        within_fieldset("Which form are you processing?") do
-          find("label", text: "RAMP Selection (VA Form 21-4138)").click
-        end
+        safe_click ".Select"
+        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
+        find("#form-select").send_keys :enter
         safe_click ".cf-submit.usa-button"
 
         fill_in search_bar_title, with: "12341234"
@@ -215,9 +232,10 @@ RSpec.feature "Intake" do
 
       visit "/intake"
 
-      within_fieldset("Which form are you processing?") do
-        find("label", text: "RAMP Opt-In Election Form").click
-      end
+      safe_click ".Select"
+      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
+      find("#form-select").send_keys :enter
+
       safe_click ".cf-submit.usa-button"
 
       fill_in search_bar_title, with: "12341234"
@@ -262,14 +280,8 @@ RSpec.feature "Intake" do
 
     context "BGS error" do
       before do
-        FeatureToggle.enable!(:intakeAma)
-
         allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships)
           .and_raise(BGS::ShareError, "bgs error")
-      end
-
-      after do
-        FeatureToggle.disable!(:intakeAma)
       end
 
       scenario "Cancel intake on error" do

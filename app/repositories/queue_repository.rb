@@ -109,7 +109,7 @@ class QueueRepository
     end
 
     def appeal_info_query(vacols_ids)
-      VACOLS::Case.includes(:folder, :correspondent, :representatives)
+      VACOLS::Case.includes(:folder, :correspondent, :case_issues)
         .find(vacols_ids)
     end
 

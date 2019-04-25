@@ -7,7 +7,6 @@ feature "Intake Edit Confirmation" do
   include IntakeHelpers
 
   before { setup_intake_flags }
-  after { teardown_intake_flags }
 
   let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
   let!(:intake) { create(:intake, :completed, detail: decision_review, user_id: current_user.id) }
@@ -94,9 +93,8 @@ feature "Intake Edit Confirmation" do
             click_edit_submit
             click_still_have_unidentified_issue_confirmation
             click_number_of_issues_changed_confirmation
-
             expect(page).to have_current_path("/#{edit_path}/confirmation")
-            expect(page).to have_content("There is still an unidentified issue")
+            expect(page).to have_content(COPY::INDENTIFIED_ALERT)
           end
         end
       end

@@ -11,7 +11,7 @@ class HearingRepository
                                       service: :vacols,
                                       name: "fetch_hearings_for_judge") do
         VACOLS::CaseHearing.hearings_for_judge(css_id) +
-          VACOLS::TravelBoardSchedule.hearings_for_judge(css_id)
+          VACOLS::TravelBoardSchedule.hearings_for_judge_before_hearing_prep_cutoff_date(css_id)
       end
       hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
 
@@ -28,6 +28,11 @@ class HearingRepository
     def fetch_hearings_for_parents(hearing_day_ids)
       # Get hash of hearings grouped by their hearing day ids
       hearings_for(VACOLS::CaseHearing.hearings_for_hearing_days(hearing_day_ids))
+        .group_by { |hearing| hearing.hearing_day_id.to_s }
+    end
+
+    def fetch_hearings_for_parents_assigned_to_judge(hearing_day_ids, judge)
+      hearings_for(VACOLS::CaseHearing.hearings_for_hearing_days_assigned_to_judge(hearing_day_ids, judge))
         .group_by { |hearing| hearing.hearing_day_id.to_s }
     end
 
@@ -146,7 +151,7 @@ class HearingRepository
       uniq_case_hearings = case_hearings.uniq
       vacols_ids = uniq_case_hearings.map { |record| record[:hearing_pkseq] }.compact
 
-      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids).includes(:appeal, :user)
+      fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids).includes(:appeal, :user, :hearing_views)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       uniq_case_hearings.map do |vacols_record|

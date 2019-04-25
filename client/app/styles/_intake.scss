@@ -7,12 +7,12 @@
 // specificity than the stock .cf component classes.
 .cf-app-intake {
   .cf-success-checklist,
-  .cf-ineligible-checklist {
+  .cf-issue-checklist {
     max-width: 800px;
     margin: 50px auto 65px;
   }
 
-  .cf-ineligible-checklist {
+  .cf-issue-checklist {
     list-style-type: none;
     margin-bottom: 20px;
 
@@ -180,11 +180,12 @@
 
         div {
           display: table-cell;
-          padding: 0.5em 0;
+          padding: 1em 0;
         }
 
         .issue-desc {
           width: 100%;
+          padding-right: 0.5em;
 
           .issue-num {
             padding-right: 0.25em;
@@ -197,6 +198,16 @@
 
           .issue-date {
             display: block;
+          }
+
+        }
+
+        .withdrawn-issue {
+          color: $color-gray-light;
+
+          p {
+            color: $color-gray-dark;
+            font-style: italic;
           }
         }
 

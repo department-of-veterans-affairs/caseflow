@@ -42,6 +42,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
+        get 'veterans', to: 'veterans#details'
       end
     end
   end
@@ -223,7 +224,7 @@ Rails.application.routes.draw do
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
-    resources :users, only: [:index, :create, :destroy], controller: 'organizations/users'
+    resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'

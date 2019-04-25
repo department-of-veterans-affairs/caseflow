@@ -76,7 +76,7 @@ class RampElectionIntake < Intake
     end
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       notice_date: ramp_election.notice_date,
       option_selected: ramp_election.option_selected,
@@ -141,7 +141,9 @@ class RampElectionIntake < Intake
   end
 
   def new_intake_ramp_election
-    @new_intake_ramp_election ||= matching_ramp_election_with_notice_date || veteran_ramp_elections.build
+    @new_intake_ramp_election ||= RampElection.new(
+      veteran_file_number: veteran_file_number
+    )
   end
 
   def existing_ramp_election
@@ -160,13 +162,5 @@ class RampElectionIntake < Intake
       detail.destroy!
       update!(detail: existing_ramp_election)
     end
-  end
-
-  def matching_ramp_election_with_notice_date
-    veteran_ramp_elections.where(established_at: nil).where.not(notice_date: nil).first
-  end
-
-  def veteran_ramp_elections
-    RampElection.where(veteran_file_number: veteran_file_number)
   end
 end

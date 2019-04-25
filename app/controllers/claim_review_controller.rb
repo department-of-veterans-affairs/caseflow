@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ClaimReviewController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
+  before_action :verify_access, :react_routed, :set_application
 
   def edit
     # force sync on initial edit call so that we have latest EP status.
@@ -11,7 +11,7 @@ class ClaimReviewController < ApplicationController
     # we call the serialization method here before the view does so we can rescue any data errors
     claim_review.ui_hash
   rescue RequestIssue::MissingDecisionDate => _err
-    flash[:error] = "One or more ratings may be locked on this Claim."
+    flash[:error] = "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours."
     render "errors/500", layout: "application", status: :unprocessable_entity
   end
 
@@ -55,22 +55,29 @@ class ClaimReviewController < ApplicationController
     verify_authorized_roles("Mail Intake", "Admin Intake")
   end
 
-  def verify_feature_enabled
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
-  end
-
   def render_success
     if claim_review.processed_in_caseflow?
-      flash[:removed] = decisions_removed_message
+      set_flash_success_message
+
       render json: { redirect_to: claim_review.business_line.tasks_url,
                      issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-                     issuesAfter: request_issues_update.after_issues.map(&:ui_hash) }
+                     issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+                     withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash) }
     else
       render json: {
         redirect_to: nil,
         issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        withdrawnIssues: nil
       }
+    end
+  end
+
+  def set_flash_success_message
+    if request_issues_update.after_issues.empty?
+      flash[:edited] = decisions_removed_message
+    elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
+      flash[:edited] = review_withdrawn_message
     end
   end
 
@@ -78,5 +85,9 @@ class ClaimReviewController < ApplicationController
     claimant_name = claim_review.veteran_full_name
     "You have successfully removed #{claim_review.class.review_title} for #{claimant_name}
     (ID: #{claim_review.veteran.ssn})."
+  end
+
+  def review_withdrawn_message
+    "You have successfully withdrawn a review."
   end
 end

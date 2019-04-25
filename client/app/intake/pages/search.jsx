@@ -10,6 +10,7 @@ import { invalidVeteranInstructions } from '../components/ErrorAlert';
 import { PAGE_PATHS, INTAKE_STATES, REQUEST_STATE } from '../constants';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
+import COPY from '../../../COPY.json';
 
 const steps = [
   <span>
@@ -41,11 +42,7 @@ const rampIneligibleInstructions = <div>
 const veteranNotFoundInstructions = <div>
   <p>Enter a valid Veteran ID or SSN and search again.</p>
   <p>
-    Note: If you are certain the Veteran ID or SSN is correct,
-    the claimant may not exist in the VBA Corporate Database.
-    If you have access, please add claimant to the Corporate
-    Database to continue processing this intake. If you do not
-    have access, please
+    {COPY.INTAKE_VETERAN_NOT_FOUND}
     <b>
       <a href="mailto:VACaseflowIntake@va.gov?Subject=Add%20claimant%20to%20Corporate%20Database"> email </a>
     </b>
@@ -130,7 +127,7 @@ class Search extends React.PureComponent {
       ramp_refiling_already_processed: {
         title: 'Selection Form already processed in Caseflow',
         body: 'Caseflow does not currently support more than one Selection Form for a Veteran. ' +
-         'Please contact Caseflow Support if you need additional assistance.'
+         'Please contact your management team if you need additional assistance.'
       },
       default: {
         title: 'Something went wrong'

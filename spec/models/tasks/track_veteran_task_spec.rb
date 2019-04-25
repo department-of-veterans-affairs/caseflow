@@ -44,12 +44,43 @@ describe TrackVeteranTask do
   end
 
   describe ".sync_tracking_tasks" do
-    let(:appeal) { FactoryBot.create(:appeal) }
+    let!(:appeal) { FactoryBot.create(:appeal) }
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
     subject { TrackVeteranTask.sync_tracking_tasks(appeal) }
 
+    context "When former represenative VSO is assigned non-Tracking tasks" do
+      let!(:old_vso) { FactoryBot.create(:vso, name: "Remember Korea") }
+      let!(:new_vso) { FactoryBot.create(:vso) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+      let!(:ihp_org_task) do
+        FactoryBot.create(:informal_hearing_presentation_task, appeal: appeal, assigned_to: old_vso)
+      end
+      let!(:tracking_task) do
+        FactoryBot.create(
+          :track_veteran_task,
+          parent: root_task,
+          appeal: root_task.appeal,
+          assigned_to: old_vso
+        )
+      end
+
+      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([new_vso]) }
+
+      it "cancels all tasks of former VSO" do
+        subject
+        expect(ihp_org_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+
+      it "makes duplicates of active tasks for new representation" do
+        expect(new_vso.tasks.count).to eq(0)
+        expect(subject).to eq([1, 2])
+        expect(new_vso.tasks.count).to eq(2)
+      end
+    end
     context "when the appeal has no VSOs" do
-      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return([]) }
+      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return([]) }
 
       context "when there are no existing TrackVeteranTasks" do
         it "does not create or cancel any TrackVeteranTasks" do
@@ -75,10 +106,10 @@ describe TrackVeteranTask do
 
     context "when the appeal has two VSOs" do
       let(:representing_vsos) { FactoryBot.create_list(:vso, 2) }
-      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return(representing_vsos) }
+      before { allow_any_instance_of(Appeal).to receive(:representatives).and_return(representing_vsos) }
 
       context "when there are no existing TrackVeteranTasks" do
-        it "creates 2 new TrackVeteranTasks" do
+        it "creates 2 new TrackVeteranTasks and 2 IHP Tasks" do
           task_count_before = TrackVeteranTask.count
 
           expect(subject).to eq([2, 0])
@@ -91,7 +122,7 @@ describe TrackVeteranTask do
           FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: FactoryBot.create(:vso))
         end
 
-        it "cancels old TrackVeteranTask, creates 2 new tasks" do
+        it "cancels old TrackVeteranTask, creates 2 new TrackVeteran and 2 new IHP tasks" do
           expect(subject).to eq([2, 1])
         end
       end

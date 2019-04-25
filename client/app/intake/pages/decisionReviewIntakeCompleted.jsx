@@ -11,6 +11,7 @@ import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
+import COPY from '../../../COPY.json';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -23,8 +24,7 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
       leadMessageArr.push(
         <Alert type="warning">
           <h2>Unidentified issue</h2>
-          <p>There is still an unidentified issue that needs to be resolved before sending the notice
-          letter. To edit, go to VBMS claim details and click the “Edit in Caseflow” button.</p>
+          <p>{COPY.INDENTIFIED_ALERT}</p>
           {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
             Unidentified issue: no issue matched for requested "{ri.description}"
           </p>)}
