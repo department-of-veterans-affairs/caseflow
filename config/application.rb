@@ -50,6 +50,8 @@ module CaseflowCertification
     config.efolder_key = ENV["EFOLDER_API_KEY"]
     config.active_job.queue_adapter = :shoryuken
 
+    config.vacols_db_name = "VACOLS"
+
     # config for which SQS endpoint we should use. Override this for local testing
     config.sqs_create_queues = false
     config.sqs_endpoint = nil

@@ -2,7 +2,7 @@
 
 class VACOLS::RemandReason < VACOLS::Record
   # :nocov:
-  self.table_name = "vacols.rmdrea"
+  self.table_name = "#{Rails.application.config.vacols_db_name}.rmdrea"
   self.primary_key = "rmdkey"
 
   class RemandReasonError < StandardError; end

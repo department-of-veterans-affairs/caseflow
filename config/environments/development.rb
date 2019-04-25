@@ -92,6 +92,8 @@ Rails.application.configure do
   config.efolder_url = "http://localhost:4000"
   config.efolder_key = "token"
 
+  config.vacols_db_name = "VACOLS_DEV"
+
   config.google_analytics_account = "UA-74789258-5"
 
   # configure pry
