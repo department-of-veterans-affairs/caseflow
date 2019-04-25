@@ -190,6 +190,6 @@ class AppealsController < ApplicationController
       ).serialize_response)
     end
 
-    render(Caseflow::Error::ActionForbiddenError.new(message: COPY::ACCESS_DENIED_MSG).serialize_response)
+    render(Caseflow::Error::ActionForbiddenError.new.serialize_response)
   end
 end
