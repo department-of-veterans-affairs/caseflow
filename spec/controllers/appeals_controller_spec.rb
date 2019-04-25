@@ -143,7 +143,7 @@ RSpec.describe AppealsController, type: :controller do
     end
   end
 
-  describe "GET appeals/appeal_id/document_count" do
+  describe "GET appeals/appeal_id/document_counts_by_id" do
     before { User.authenticate!(roles: ["System Admin"]) }
 
     context "when a legacy appeal has documents" do
@@ -160,10 +160,10 @@ RSpec.describe AppealsController, type: :controller do
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
       it "should return document count and not call vbms" do
-        get :document_count, params: { appeal_id: appeal.vacols_id }
+        get :document_counts_by_id, params: { appeal_ids: appeal.vacols_id }
 
         response_body = JSON.parse(response.body)
-        expect(response_body["document_count"]).to eq documents.length
+        expect(response_body["document_counts_by_id"][appeal.vacols_id]["count"]).to eq documents.length
       end
     end
 
@@ -183,17 +183,20 @@ RSpec.describe AppealsController, type: :controller do
       let(:appeal) { create(:appeal, veteran_file_number: file_number) }
 
       it "should return document count" do
-        get :document_count, params: { appeal_id: appeal.uuid }
-
+        get :document_counts_by_id, params: { appeal_ids: appeal.uuid }
         response_body = JSON.parse(response.body)
-        expect(response_body["document_count"]).to eq 2
+        expect(response_body["document_counts_by_id"][appeal.uuid]["count"]).to eq 2
       end
     end
 
     context "when appeal is not found" do
       it "should return status 404" do
-        get :document_count, params: { appeal_id: "123456" }
-        expect(response.status).to eq 404
+        id = "123456"
+        get :document_counts_by_id, params: { appeal_ids: id }
+        response_body = JSON.parse(response.body)
+        response_of_id = response_body["document_counts_by_id"][id];
+        expect(response_of_id["count"]).to eq nil
+        expect(response_of_id["status"]).to eq 404
       end
     end
   end
@@ -216,12 +219,11 @@ RSpec.describe AppealsController, type: :controller do
 
       it "responds with a 4xx and error message" do
         User.authenticate!(roles: ["System Admin"])
-        get :document_count, params: { appeal_id: appeal.external_id }
+        get :document_counts_by_id, params: { appeal_ids: appeal.external_id }
         response_body = JSON.parse(response.body)
-
-        expect(response.status).to eq(err_code)
-        expect(response_body["errors"].length).to eq(1)
-        expect(response_body["errors"][0]["title"]).to eq(err_msg)
+        response_of_id = response_body["document_counts_by_id"][appeal.external_id];
+        expect(response_of_id["status"]).to eq(err_code)
+        expect(response_of_id["error"]).to eq(err_msg)
       end
     end
 
@@ -232,12 +234,11 @@ RSpec.describe AppealsController, type: :controller do
 
       it "responds with a 500 and error message" do
         User.authenticate!(roles: ["System Admin"])
-        get :document_count, params: { appeal_id: appeal.external_id }
+        get :document_counts_by_id, params: { appeal_ids: appeal.external_id }
         response_body = JSON.parse(response.body)
-
-        expect(response.status).to eq(500)
-        expect(response_body["errors"].length).to eq(1)
-        expect(response_body["errors"][0]["title"]).to eq(err_msg)
+        response_of_id = response_body["document_counts_by_id"][appeal.external_id];
+        expect(response_of_id["status"]).to eq(500)
+        expect(response_of_id["error"]).to eq(err_msg)
       end
     end
   end
