@@ -227,7 +227,8 @@ class BulkAssignModal extends React.PureComponent {
     return (
       <div>
         {isBulkAssignEnabled && this.state.showModal && modal}
-        {isBulkAssignEnabled && bulkAssignButton}
+        {/* hide the button until the backend work is complete: */}
+        {/* {isBulkAssignEnabled && bulkAssignButton} */}
       </div>
     );
   }
