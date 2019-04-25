@@ -131,8 +131,6 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       compact().
       value();
 
-    console.log(remandReasons, 'remand reasons');
-
     return this.updateIssue(remandReasons);
   };
 
