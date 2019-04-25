@@ -67,63 +67,6 @@ const errorTextSpacing = css({
 });
 
 export default class ContestedIssues extends React.PureComponent {
-  decisionIssues = (requestIssue) => {
-    const {
-      decisionIssues,
-      openDecisionHandler,
-      openDeleteAddedDecisionIssueHandler
-    } = this.props;
-
-    return decisionIssues.filter((decisionIssue) => {
-      return decisionIssue.request_issue_ids.includes(requestIssue.id);
-    }).map((decisionIssue) => {
-      const linkedDecisionIssue = decisionIssue.request_issue_ids.length > 1;
-
-      return <div {...outerDiv} key={decisionIssue.id} className="decision-issue">
-        <div {...grayLine} />
-        <div {...decisionIssueDiv}>
-          <div {...flexContainer}>
-            Decision
-            <div>
-              {openDeleteAddedDecisionIssueHandler && <span>
-                <Button
-                  name="Delete"
-                  id={`delete-issue-${requestIssue.id}-${decisionIssue.id}`}
-                  onClick={() => {
-                    openDeleteAddedDecisionIssueHandler(requestIssue.id, decisionIssue);
-                  }}
-                  classNames={['cf-btn-link']}
-                />
-              </span>}
-              {openDecisionHandler && <span>
-                <Button
-                  name="Edit"
-                  id={`edit-issue-${requestIssue.id}-${decisionIssue.id}`}
-                  onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
-                  classNames={['cf-btn-link']}
-                />
-              </span>}
-            </div>
-          </div>
-          <div {...flexContainer}>
-            <span {...descriptionSpan}>
-              {decisionIssue.description}
-              { decisionIssue.diagnostic_code &&
-              <div>Diagnostic code: {decisionIssue.diagnostic_code}</div>
-              }
-            </span>
-            <span>
-              {ISSUE_DISPOSITIONS_BY_ID[decisionIssue.disposition]}
-            </span>
-          </div>
-          {linkedDecisionIssue && <div {...noteDiv} {...verticalSpaceDiv}>
-            <LinkSymbol /> Added to {decisionIssue.request_issue_ids.length} issues
-          </div>}
-        </div>
-      </div>;
-    });
-  }
-
   render = () => {
     const {
       requestIssues,
