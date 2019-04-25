@@ -162,6 +162,7 @@ RSpec.feature "RAMP Refiling Intake" do
       click_intake_continue
 
       expect(page).to have_content("Ineligible for Higher-Level Review")
+      expect(page).to have_content(COPY::INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT)
       expect(page).to have_button("Continue to next step", disabled: true)
       click_on "Begin next intake"
 
