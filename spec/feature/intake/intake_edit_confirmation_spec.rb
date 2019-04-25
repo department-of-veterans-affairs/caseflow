@@ -93,9 +93,8 @@ feature "Intake Edit Confirmation" do
             click_edit_submit
             click_still_have_unidentified_issue_confirmation
             click_number_of_issues_changed_confirmation
-
             expect(page).to have_current_path("/#{edit_path}/confirmation")
-            expect(page).to have_content("There is still an unidentified issue")
+            expect(page).to have_content(COPY::INDENTIFIED_ALERT)
           end
         end
       end

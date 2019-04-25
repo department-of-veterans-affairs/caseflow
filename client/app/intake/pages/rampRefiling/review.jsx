@@ -13,6 +13,7 @@ import { setReceiptDate, setOptionSelected } from '../../actions/intake';
 import { toggleIneligibleError } from '../../util';
 import { getIntakeStatus } from '../../selectors';
 import ErrorAlert from '../../components/ErrorAlert';
+import COPY from '../../../../COPY.json';
 
 class Review extends React.PureComponent {
   beginNextIntake = () => {
@@ -66,9 +67,7 @@ class Review extends React.PureComponent {
 
       { toggleIneligibleError(hasInvalidOption, optionSelected) &&
         <Alert title="Ineligible for Higher-Level Review" type="error" >
-          Contact the Veteran to verify their lane selection. If you are unable to reach
-          the Veteran, send a letter indicating that their selected lane is not available,
-          and that they may clarify their lane selection within 30 days. <br />
+          {COPY.INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT} <br />
           <Button
             name="begin-next-intake"
             onClick={this.beginNextIntake}
