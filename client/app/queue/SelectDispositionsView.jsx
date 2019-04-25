@@ -261,7 +261,7 @@ class SelectDispositionsView extends React.PureComponent {
     });
     const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
     const toDeleteHasConnectedIssue = connectedIssues.length > 0;
-    
+
     // In order to determine whether or not to display error styling and an error message for each issue,
     // determine if highlight is set to true and if there is not a decision issue
     const issueErrors = {};

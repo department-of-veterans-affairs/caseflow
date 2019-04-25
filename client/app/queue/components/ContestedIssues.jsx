@@ -6,6 +6,7 @@ import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_I
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
 import { LinkSymbol } from '../../components/RenderFunctions';
 import HearingWorksheetAmaIssues from '../../hearings/components/HearingWorksheetAmaIssues';
+import DecisionIssues from './DecisionIssues';
 
 const TEXT_INDENTATION = '10px';
 
@@ -167,7 +168,7 @@ export default class ContestedIssues extends React.PureComponent {
             <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>
           }
 
-          {this.decisionIssues(issue)}
+          {DecisionIssues.generateDecisionIssues(issue, this.props)}
           { openDecisionHandler &&
             <React.Fragment>
               <div {...buttonDiv}>

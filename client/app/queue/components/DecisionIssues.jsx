@@ -56,70 +56,13 @@ const noteDiv = css({
   color: COLORS.GREY
 });
 
-// export generateDecisionIssues = (requestIssue, decisionIssues, openDecisionHandler, openDeleteAddedDecisionIssueHandler) => {
-//   // const {
-//   //   decisionIssues,
-//   //   openDecisionHandler,
-//   //   openDeleteAddedDecisionIssueHandler
-//   // } = this.props;
-
-//   return decisionIssues.filter((decisionIssue) => {
-//     return decisionIssue.request_issue_ids.includes(requestIssue.id);
-//   }).map((decisionIssue) => {
-//     const linkedDecisionIssue = decisionIssue.request_issue_ids.length > 1;
-
-//     return <div {...outerDiv} key={decisionIssue.id} className="decision-issue">
-//       <div {...grayLine} />
-//       <div {...decisionIssueDiv}>
-//         <div {...flexContainer}>
-//           Decision
-//           <div>
-//             {openDeleteAddedDecisionIssueHandler && <span>
-//               <Button
-//                 name="Delete"
-//                 id={`delete-issue-${requestIssue.id}-${decisionIssue.id}`}
-//                 onClick={() => {
-//                   openDeleteAddedDecisionIssueHandler(requestIssue.id, decisionIssue);
-//                 }}
-//                 classNames={['cf-btn-link']}
-//               />
-//             </span>}
-//             {openDecisionHandler && <span>
-//               <Button
-//                 name="Edit"
-//                 id={`edit-issue-${requestIssue.id}-${decisionIssue.id}`}
-//                 onClick={openDecisionHandler(requestIssue.id, decisionIssue)}
-//                 classNames={['cf-btn-link']}
-//               />
-//             </span>}
-//           </div>
-//         </div>
-//         <div {...flexContainer}>
-//           <span {...descriptionSpan}>
-//             {decisionIssue.description}
-//             { decisionIssue.diagnostic_code &&
-//             <div>Diagnostic code: {decisionIssue.diagnostic_code}</div>
-//             }
-//           </span>
-//           <span>
-//             {ISSUE_DISPOSITIONS_BY_ID[decisionIssue.disposition]}
-//           </span>
-//         </div>
-//         {linkedDecisionIssue && <div {...noteDiv} {...verticalSpaceDiv}>
-//           <LinkSymbol /> Added to {decisionIssue.request_issue_ids.length} issues
-//         </div>}
-//       </div>
-//     </div>;
-//   });
-// };
-
 export default class DecisionIssues extends React.PureComponent {
-  decisionIssues = (requestIssue) => {
+  static generateDecisionIssues = (requestIssue, props) => {
     const {
       decisionIssues,
       openDecisionHandler,
       openDeleteAddedDecisionIssueHandler
-    } = this.props;
+    } = props;
 
     return decisionIssues.filter((decisionIssue) => {
       return decisionIssue.request_issue_ids.includes(requestIssue.id);
@@ -179,7 +122,7 @@ export default class DecisionIssues extends React.PureComponent {
     } = this.props;
 
     return <div>
-      {this.decisionIssues(requestIssue)}
+      {DecisionIssues.generateDecisionIssues(requestIssue, this.props)}
       { openDecisionHandler &&
         <React.Fragment>
           <div {...buttonDiv}>
