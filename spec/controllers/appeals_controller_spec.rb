@@ -194,7 +194,7 @@ RSpec.describe AppealsController, type: :controller do
         id = "123456"
         get :document_counts_by_id, params: { appeal_ids: id }
         response_body = JSON.parse(response.body)
-        response_of_id = response_body["document_counts_by_id"][id];
+        response_of_id = response_body["document_counts_by_id"][id]
         expect(response_of_id["count"]).to eq nil
         expect(response_of_id["status"]).to eq 404
       end
@@ -221,7 +221,7 @@ RSpec.describe AppealsController, type: :controller do
         User.authenticate!(roles: ["System Admin"])
         get :document_counts_by_id, params: { appeal_ids: appeal.external_id }
         response_body = JSON.parse(response.body)
-        response_of_id = response_body["document_counts_by_id"][appeal.external_id];
+        response_of_id = response_body["document_counts_by_id"][appeal.external_id]
         expect(response_of_id["status"]).to eq(err_code)
         expect(response_of_id["error"]).to eq(err_msg)
       end
@@ -236,7 +236,7 @@ RSpec.describe AppealsController, type: :controller do
         User.authenticate!(roles: ["System Admin"])
         get :document_counts_by_id, params: { appeal_ids: appeal.external_id }
         response_body = JSON.parse(response.body)
-        response_of_id = response_body["document_counts_by_id"][appeal.external_id];
+        response_of_id = response_body["document_counts_by_id"][appeal.external_id]
         expect(response_of_id["status"]).to eq(500)
         expect(response_of_id["error"]).to eq(err_msg)
       end
