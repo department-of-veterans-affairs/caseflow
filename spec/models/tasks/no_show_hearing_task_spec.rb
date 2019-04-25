@@ -6,8 +6,10 @@ describe NoShowHearingTask do
   let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
 
   describe ".create!" do
-    it "is automatically assigned to the HearingAdmin organization" do
-      expect(NoShowHearingTask.create!(appeal: appeal, parent: root_task).assigned_to).to eq(HearingAdmin.singleton)
+    it "is automatically assigned to the HearingsManagement organization" do
+      expect(
+        NoShowHearingTask.create!(appeal: appeal, parent: root_task).assigned_to
+      ).to eq(HearingsManagement.singleton)
     end
   end
 

@@ -93,7 +93,7 @@ class ScheduleHearingTask < GenericTask
   end
 
   def available_actions(user)
-    if (assigned_to && assigned_to == user) || HearingsManagement.singleton.user_has_access?(user)
+    if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
       return [
         Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,

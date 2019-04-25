@@ -155,33 +155,35 @@ RSpec.feature "Change hearing disposition" do
         )
       end
     end
-  end
 
-  scenario "change hearing disposition to no_show" do
-    step "visit the hearing admin organization queue and click on the veteran's name" do
-      visit "/organizations/#{HearingAdmin.singleton.url}"
-      expect(page).to have_content("Unassigned (1)")
-      click_on veteran_link_text
-    end
+    scenario "change hearing disposition to no_show" do
+      step "visit the hearings management organization queue and click on the veteran's name" do
+        visit "/organizations/#{HearingAdmin.singleton.url}"
+        expect(page).to have_content("Unassigned (1)")
+        click_on veteran_link_text
+      end
 
-    step "change the hearing disposition to no show" do
-      click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-      click_dropdown({ prompt: "Select", text: "No Show" }, find(".cf-modal-body"))
-      fill_in "Notes", with: instructions_text
-      click_button("Submit")
-      expect(page).to have_content("Successfully changed hearing disposition to No Show")
-    end
+      step "change the hearing disposition to no show" do
+        click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+        click_dropdown({ prompt: "Select", text: "No Show" }, find(".cf-modal-body"))
+        fill_in "Notes", with: instructions_text
+        click_button("Submit")
+        expect(page).to have_content("Successfully changed hearing disposition to No Show")
+      end
 
-    step "return to the hearing admin organization queue and verify that the task is no longer unassigned" do
-      click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
-      expect(page).to have_content("Unassigned (0)")
-    end
+      step "return to the hearing admin organization queue and verify that the task is no longer unassigned" do
+        click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
+        expect(page).to have_content("Unassigned (0)")
+      end
 
-    step "verify that there's a NoShowHearingTask with a hold in the assigned queue" do
-      click_on "Assigned (2)"
-      find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
-      no_show_active_row = find("dd", text: "NoShowHearingTask").find(:xpath, "ancestor::tr")
-      expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
+      step "verify that there's a NoShowHearingTask with a hold in the HearingsManagement org assigned queue" do
+        User.authenticate!(user: hearing_mgmt_user)
+        visit "/organizations/#{HearingsManagement.singleton.url}"
+        click_on "Assigned (1)"
+        find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
+        no_show_active_row = find("dd", text: "NoShowHearingTask").find(:xpath, "ancestor::tr")
+        expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
+      end
     end
   end
 

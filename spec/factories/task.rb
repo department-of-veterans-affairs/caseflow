@@ -152,7 +152,7 @@ FactoryBot.define do
     factory :no_show_hearing_task, class: NoShowHearingTask do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
-      assigned_to { HearingAdmin.singleton }
+      assigned_to { HearingsManagement.singleton }
       parent { create(:disposition_task, appeal: appeal) }
     end
 

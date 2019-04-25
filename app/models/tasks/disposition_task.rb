@@ -91,11 +91,7 @@ class DispositionTask < GenericTask
       fail HearingDispositionNotNoShow
     end
 
-    no_show_hearing_task = NoShowHearingTask.create!(
-      parent: self,
-      appeal: appeal,
-      assigned_to: HearingAdmin.singleton
-    )
+    no_show_hearing_task = NoShowHearingTask.create!(parent: self, appeal: appeal)
 
     no_show_hearing_task.update!(
       status: Constants.TASK_STATUSES.on_hold,
