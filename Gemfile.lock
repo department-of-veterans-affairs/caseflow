@@ -37,12 +37,13 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby-bgs.git
-  revision: fc4d89559799f60b34dc7407f8659c7961105548
-  ref: fc4d89559799f60b34dc7407f8659c7961105548
+  revision: e94aff758739c499978041953e6d50fe58057e89
+  ref: e94aff758739c499978041953e6d50fe58057e89
   specs:
     bgs (0.2)
+      httpclient
       nokogiri (~> 1.10)
-      savon (~> 2.11)
+      savon (~> 2.12)
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
@@ -531,7 +532,6 @@ PLATFORMS
 DEPENDENCIES
   aasm (= 4.11.0)
   activerecord-import
-  activerecord-jdbcsqlite3-adapter
   activerecord-oracle_enhanced-adapter
   acts_as_tree
   bgs!
