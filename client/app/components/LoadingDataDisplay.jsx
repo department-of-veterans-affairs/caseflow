@@ -55,12 +55,12 @@ class LoadingDataDisplay extends React.PureComponent {
           return;
         }
 
-        const errors = JSON.parse(response.response.text).errors;
+        const errors = response.response ? JSON.parse(response.response.text).errors : null;
 
         this.setState({
           promiseResult: PROMISE_RESULTS.FAILURE,
           statusCode: response.status,
-          error: errors[0].title
+          error: errors ? errors[0].title : null
         });
         window.clearInterval(this.intervalId);
         // eslint-disable-next-line no-console
