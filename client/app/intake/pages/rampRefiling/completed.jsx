@@ -5,6 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES, REVIEW_OPTIONS } from '../../constants';
 import { getIntakeStatus } from '../../selectors';
 import _ from 'lodash';
+import COPY from '../../../../COPY.json';
 
 class Completed extends React.PureComponent {
   render() {
@@ -31,7 +32,7 @@ class Completed extends React.PureComponent {
           'VA Form 21-4138 has been processed.';
 
       if (optionSelected === REVIEW_OPTIONS.APPEAL.key) {
-        const message = `${messageOpener} You can now begin intake for the next opt-in election.`;
+        const message = `${messageOpener} ${COPY.APPEAL_RECORD_SAVED_MESSAGE}`;
 
         return <StatusMessage
           title="Appeal record saved in Caseflow"
@@ -41,8 +42,7 @@ class Completed extends React.PureComponent {
         />;
       }
 
-      const message = `${messageOpener} Send the “RAMP Acknowledgement Letter,” listing all ` +
-          'eligible contentions, and ineligible contentions if applicable.';
+      const message = `${messageOpener} ${COPY.RAMP_COMPLETED_ALERT}`;
 
       return <StatusMessage
         title="Intake completed"
@@ -61,8 +61,8 @@ class Completed extends React.PureComponent {
       title="Ineligible RAMP request"
       type="status"
       leadMessageList={[
-        'The Veteran’s RAMP Selection Form did not include any issues that are eligible for ' +
-          'review under RAMP. Notify the Veteran using the “RAMP Ineligible Letter.”',
+        COPY.INELIGIBLE_RAMP_ALERT,
+
         'You can now begin intake for the next RAMP form.'
       ]}
       wrapInAppSegment={false}
