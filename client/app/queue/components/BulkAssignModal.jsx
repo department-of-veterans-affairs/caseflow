@@ -30,11 +30,13 @@ class BulkAssignModal extends React.PureComponent {
   componentDidMount() {
     let fetchedUsers;
 
-    ApiUtil.get(`/organizations/${this.props.organizationUrl}/users.json`).then((resp) => {
-      fetchedUsers = resp.body.organization_users.data;
+    if (this.props.organizationUrl) {
+      ApiUtil.get(`/organizations/${this.props.organizationUrl}/users.json`).then((resp) => {
+        fetchedUsers = resp.body.organization_users.data;
 
-      this.setState({ users: fetchedUsers });
-    });
+        this.setState({ users: fetchedUsers });
+      });
+    }
   }
 
   handleModalToggle = () => {
@@ -205,8 +207,8 @@ class BulkAssignModal extends React.PureComponent {
 
   render() {
     const isBulkAssignEnabled = this.props.enableBulkAssign && this.props.organizationUrl;
-    const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
-      Assign Tasks</Button>;
+    // const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
+    //   Assign Tasks</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.bulkAssignTasks}>
       Assign</Button>;
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
