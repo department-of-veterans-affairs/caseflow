@@ -465,7 +465,7 @@ RSpec.feature "Task queue" do
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
         find("button", text: "Send case").click
         expect(page).to have_content("Bob Smith's case has been sent to the Schedule hearing team")
-        expect(vacols_case.reload.bfcurloc).to eq("57")
+        expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
       end
 
       it "the case should be returned in the attorneys queue when canceled" do

@@ -205,10 +205,13 @@ describe ColocatedTask do
 
       context "when completing a schedule hearing task" do
         let(:action) { :schedule_hearing }
+        let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal_1) }
+
         it "should update location to schedule hearing in vacols" do
           expect(vacols_case.bfcurloc).to_not eq staff.slogid
           colocated_admin_action.update!(status: Constants.TASK_STATUSES.completed)
-          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:schedule_hearing]
+          expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+          expect(appeal_1.tasks.pluck(:type).to_a).to include(ScheduleHearingTask.name)
         end
       end
 
