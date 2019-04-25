@@ -114,14 +114,16 @@ class Veteran < ApplicationRecord
     # If the file number is nil, that's another way of saying the veteran wasn't found.
     result && result[:file_number] && result
   rescue BGS::ShareError => error
-    # Now that we are always checking find_flashes for access control before we fetch the
-    # veteran, we should never see this error. Reporting it to sentry if it happens
-    Raven.capture_exception(error)
     @access_error = error.message
 
-    # Set the veteran as inaccessible if a sensitivity error is thrown
-    raise error unless error.message.match?(/Sensitive File/)
+    # Now that we are always checking find_flashes for access control before we fetch the
+    # veteran, we should never see this error. Reporting it to sentry if it happens
+    unless error.message.match?(/Sensitive File/)
+      Raven.capture_exception(error)
+      raise ArgumentError
+    end
 
+    # Set the veteran as inaccessible if a sensitivity error is thrown
     @accessible = false
   end
 
