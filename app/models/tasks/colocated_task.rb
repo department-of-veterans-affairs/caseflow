@@ -119,8 +119,7 @@ class ColocatedTask < Task
                                                      all_tasks_closed_for_appeal?
 
     if all_colocated_tasks_for_legacy_appeal_complete
-      new_vacols_location = location_based_on_action
-      AppealRepository.update_location!(appeal, new_vacols_location)
+      AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
 
@@ -131,9 +130,9 @@ class ColocatedTask < Task
       # actually held.
       return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled
 
+      # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
       ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
 
-      # Do not actually change the location. Should already be CASEFLOW, so leave it as CASEFLOW.
       LegacyAppeal::LOCATION_CODES[:caseflow]
     when :translation
       LegacyAppeal::LOCATION_CODES[action.to_sym]
