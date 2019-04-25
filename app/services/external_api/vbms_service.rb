@@ -40,7 +40,7 @@ class ExternalApi::VBMSService
 
     begin
       documents = send_and_log_request(veteran_file_number, request)
-    rescue VBMS::FilenumberDoesNotExist
+    rescue VBMSError::FilenumberDoesNotExist
       alternative_file_number = ExternalApi::BGSService.new.fetch_veteran_info(veteran_file_number)[:claim_number]
 
       raise if alternative_file_number == veteran_file_number

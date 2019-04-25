@@ -25,9 +25,7 @@ class JudgeTask < Task
   end
 
   def previous_task
-    fail Caseflow::Error::TooManyChildTasks, task_id: id if children_attorney_tasks.length > 1
-
-    children_attorney_tasks[0]
+    children_attorney_tasks.order(:assigned_at).last
   end
 
   #:nocov:

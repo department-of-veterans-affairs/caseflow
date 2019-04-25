@@ -137,9 +137,10 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User has hearing prep fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to have_content("Try it out and provide any feedback through our support channels.")
       expect(page).to have_css(".dropdown-aod")
       expect(page).to have_css(".dropdown-aodReason")
-      find(".checkbox-wrapper-checkbox-prepped").click
+      find("[class^='checkbox-wrapper-checkbox-prepped']").click
       find("label", text: "Transcript Requested").click
       find("label", text: "Yes, Waive 90 Day Hold").click
       fill_in "Notes", with: "This is a note about the hearing!"

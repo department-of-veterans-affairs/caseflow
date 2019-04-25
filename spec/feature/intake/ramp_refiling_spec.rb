@@ -162,6 +162,7 @@ RSpec.feature "RAMP Refiling Intake" do
       click_intake_continue
 
       expect(page).to have_content("Ineligible for Higher-Level Review")
+      expect(page).to have_content(COPY::INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT)
       expect(page).to have_button("Continue to next step", disabled: true)
       click_on "Begin next intake"
 
@@ -320,6 +321,8 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click "#finish-intake"
 
       expect(page).to have_content("Appeal record saved in Caseflow")
+      expect(page).to have_content(COPY::APPEAL_RECORD_SAVED_MESSAGE)
+
       expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
       expect(ramp_refiling.issues.count).to eq(2)
       expect(ramp_refiling.issues.first.description).to eq("Left knee rating increase")
@@ -389,6 +392,8 @@ RSpec.feature "RAMP Refiling Intake" do
       Fakes::VBMSService.resume_request!
 
       expect(page).to have_content("Intake completed")
+
+      expect(page).to have_content(COPY::RAMP_COMPLETED_ALERT)
 
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
       expect(ramp_refiling.has_ineligible_issue).to eq(true)
@@ -480,6 +485,8 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click "#finish-intake"
 
       expect(page).to have_content("Ineligible RAMP request")
+
+      expect(page).to have_content(COPY::INELIGIBLE_RAMP_ALERT)
 
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
       expect(ramp_refiling.has_ineligible_issue).to eq(true)
