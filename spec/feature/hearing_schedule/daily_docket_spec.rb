@@ -37,7 +37,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
-      click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 0)
+      click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 1)
       click_button("Confirm")
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
       fill_in "Notes", with: "This is a note about the hearing!"
@@ -60,7 +60,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      click_dropdown(name: "#{hearing.external_id}-disposition", index: 0)
+      click_dropdown(name: "#{hearing.external_id}-disposition", index: 1)
       click_button("Confirm")
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "9:00").click

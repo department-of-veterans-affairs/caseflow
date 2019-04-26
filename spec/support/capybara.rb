@@ -17,6 +17,7 @@ else
 end
 
 Capybara.register_driver(:parallel_sniffybara) do |app|
+  Selenium::WebDriver::Chrome.driver_path = "tmp/chromedriver_2"
   chrome_options = ::Selenium::WebDriver::Chrome::Options.new
 
   chrome_options.add_preference(:download,
