@@ -84,7 +84,7 @@ describe TimedHoldTask do
     end
   end
 
-  describe ".create_from_parent", focus: true do
+  describe ".create_from_parent" do
     let(:parent) { FactoryBot.create(:generic_task) }
 
     let(:days_on_hold) { 4 }
