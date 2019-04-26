@@ -205,6 +205,7 @@ class TasksController < ApplicationController
       :on_hold_duration,
       :assigned_to_id,
       :instructions,
+      :action,
       reassign: [:assigned_to_id, :assigned_to_type, :instructions],
       business_payloads: [:description, values: {}]
     )
