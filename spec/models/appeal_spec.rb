@@ -662,7 +662,7 @@ describe Appeal do
     end
   end
 
-  context "#assigned_to_location", focus: true do
+  context "#assigned_to_location" do
     context "if the RootTask status is completed" do
       let(:appeal) { create(:appeal) }
 
