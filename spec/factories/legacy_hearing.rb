@@ -3,7 +3,19 @@
 FactoryBot.define do
   factory :legacy_hearing do
     transient do
-      hearing_day { create(:hearing_day) }
+      regional_office { nil }
+      hearing_day do
+        create(:hearing_day,
+               regional_office: regional_office,
+               request_type: regional_office.nil? ? "C" : "V")
+      end
+    end
+
+    hearing_location do
+      if regional_office.present?
+        venue = LegacyHearing.venues[regional_office]
+        HearingLocation.create(name: venue[:label])
+      end
     end
 
     scheduled_for { hearing_day.scheduled_for }
@@ -13,7 +25,8 @@ FactoryBot.define do
     end
 
     appeal do
-      create(:legacy_appeal, vacols_case: create(:case_with_form_9, case_issues:
+      create(:legacy_appeal, closest_regional_office: regional_office, vacols_case:
+        create(:case_with_form_9, case_issues:
         [create(:case_issue), create(:case_issue)], case_hearings: [case_hearing]))
     end
 

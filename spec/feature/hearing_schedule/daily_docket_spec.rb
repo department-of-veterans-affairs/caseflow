@@ -37,8 +37,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
-      find(".dropdown-Disposition").click
-      find("#react-select-2--option-1").click
+      click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 0)
       click_button("Confirm")
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
       fill_in "Notes", with: "This is a note about the hearing!"
@@ -61,8 +60,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      find(".dropdown-Disposition").click
-      find("#react-select-2--option-1").click
+      click_dropdown(name: "#{hearing.external_id}-disposition", index: 0)
       click_button("Confirm")
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "9:00").click
@@ -92,7 +90,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User cannot update disposition" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      find(".dropdown-Disposition").find(".is-disabled")
+      find(".dropdown-#{hearing.external_id}-disposition").find(".is-disabled")
     end
   end
 
@@ -106,7 +104,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       expect(page).to_not have_content("Lock Hearing Day")
       expect(page).to_not have_content("Hearing Details")
       expect(page).to have_field("Transcript Requested", disabled: true, visible: false)
-      find(".dropdown-Disposition").find(".is-disabled")
+      find(".dropdown-#{hearing.external_id}-disposition").find(".is-disabled")
       fill_in "Notes", with: "This is a note about the hearing!"
       click_button("Save")
 
