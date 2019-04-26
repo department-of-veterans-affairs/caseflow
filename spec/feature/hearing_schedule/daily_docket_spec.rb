@@ -90,7 +90,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User cannot update disposition" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      find(".dropdown-#{hearing.external_id}-disposition").find(".is-disabled")
+      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".is-disabled")
     end
   end
 
