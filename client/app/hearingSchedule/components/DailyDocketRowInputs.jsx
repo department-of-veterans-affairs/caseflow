@@ -21,7 +21,8 @@ export const DispositionDropdown = ({
 }) => {
 
   return <div><SearchableDropdown
-    name="Disposition"
+    name={`${hearing.externalId}-disposition`}
+    label="Disposition"
     strongLabel
     options={DISPOSITION_OPTIONS}
     value={hearing.disposition}
@@ -48,7 +49,7 @@ export const Waive90DayHoldCheckbox = ({ hearing, readOnly, update }) => (
     <b>Waive 90 Day Evidence Hold</b>
     <Checkbox
       label="Yes, Waive 90 Day Hold"
-      name={`${hearing.id}.evidenceWindowWaived`}
+      name={`${hearing.externalId}-evidenceWindowWaived`}
       value={hearing.evidenceWindowWaived || false}
       onChange={(evidenceWindowWaived) => update({ evidenceWindowWaived })}
       disabled={readOnly} />
@@ -60,7 +61,7 @@ export const TranscriptRequestedCheckbox = ({ hearing, readOnly, update }) => (
     <b>Copy Requested by Appellant/Rep</b>
     <Checkbox
       label="Transcript Requested"
-      name={`${hearing.id}.transcriptRequested`}
+      name={`${hearing.externalId}-transcriptRequested`}
       value={hearing.transcriptRequested || false}
       onChange={(transcriptRequested) => update({ transcriptRequested })}
       disabled={readOnly} />
@@ -85,7 +86,7 @@ export const AodDropdown = ({ hearing, readOnly, update }) => {
   return <SearchableDropdown
     label="AOD"
     readOnly={true || readOnly}
-    name="aod"
+    name={`${hearing.externalId}-aod`}
     strongLabel
     options={[{ value: 'granted',
       label: 'Granted' },
@@ -103,10 +104,10 @@ export const AodReasonDropdown = ({ hearing, readOnly, update }) => {
   return <SearchableDropdown
     label="AOD Reason"
     readOnly={true || readOnly}
-    name="aodReason"
+    name={`${hearing.externalId}-aodReason`}
     strongLabel
     options={[]}
-    onChange={(aodReason) => update({ aodReason })}
+    onChange={(option) => update({ aodReason: (option || {}).value })}
     value={hearing.aodReason}
     searchable={false}
   />;
@@ -135,16 +136,19 @@ export const StaticRegionalOffice = ({ hearing }) => (
   </div>
 );
 
-export const NotesField = ({ hearing, update, readOnly }) => (
-  <TextareaField
-    name="Notes"
+export const NotesField = ({ hearing, update, readOnly }) => {
+  const disabled = readOnly || ['postponed', 'cancelled'].indexOf(hearing.disposition) > -1;
+
+  return <TextareaField
+    label="Notes"
+    name={`${hearing.externalId}-notes`}
     strongLabel
-    disabled={readOnly}
+    disabled={disabled}
     onChange={(notes) => update({ notes })}
     textAreaStyling={css({ height: '50px' })}
     value={hearing.notes || ''}
-  />
-);
+  />;
+};
 
 export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, update }) => {
   const roIsDifferent = regionalOffice !== hearing.closestRegionalOffice;
@@ -169,14 +173,15 @@ export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, upd
 export const HoldOpenDropdown = ({ hearing, readOnly, update }) => (
   <SearchableDropdown
     label="Hold Open"
-    name={`${hearing.id}-hold_open`}
+    name={`${hearing.externalId}-holdOpen`}
+    strongLabel
     options={[0, 30, 60, 90].map((days) => ({
       value: days,
       label: `${days} days - ${moment(hearing.scheduledFor).add(days, 'days').
         format('MM/DD')}`
     }))}
     readOnly={readOnly}
-    onChange={(holdOpen) => update({ holdOpen })}
+    onChange={(option) => update({ holdOpen: (option || {}).value })}
     value={hearing.holdOpen}
     searchable={false} />
 );
@@ -205,7 +210,7 @@ export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
     <Checkbox
       label={<span style={{ fontSize: 0 }}>Accessibility hack</span>}
       disabled={readOnly}
-      name={`checkbox-prepped-${hearing.id}`}
+      name={`checkbox-prepped-${hearing.externalId}`}
       value={hearing.prepped || false}
       onChange={(prepped) => update({ prepped })} />
   </div>

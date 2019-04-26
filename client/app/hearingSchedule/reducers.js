@@ -50,7 +50,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
   case ACTIONS.RECEIVE_HEARING:
     return update(state, {
       hearings: {
-        [action.payload.hearing.id]: {
+        [action.payload.hearing.externalId]: {
           $set: action.payload.hearing
         }
       }
@@ -58,7 +58,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
   case ACTIONS.RECEIVE_SAVED_HEARING:
     return update(state, {
       hearings: {
-        [action.payload.hearing.id]: {
+        [action.payload.hearing.externalId]: {
           $set: action.payload.hearing
         }
       },

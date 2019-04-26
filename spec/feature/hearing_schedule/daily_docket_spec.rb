@@ -134,23 +134,34 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
     let!(:hearing_day) { create(:hearing_day, judge: current_user) }
     let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
+    let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: current_user, hearing_day: hearing_day) }
 
     scenario "User has hearing prep fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+
       expect(page).to have_content("Try it out and provide any feedback through our support channels.")
-      expect(page).to have_css(".dropdown-aod")
-      expect(page).to have_css(".dropdown-aodReason")
-      find("[class^='checkbox-wrapper-checkbox-prepped']").click
-      find("label", text: "Transcript Requested").click
-      find("label", text: "Yes, Waive 90 Day Hold").click
-      fill_in "Notes", with: "This is a note about the hearing!"
+      expect(page).to have_css(".dropdown-#{hearing.external_id}-aod")
+      expect(page).to have_css(".dropdown-#{hearing.external_id}-aodReason")
+      expect(page).to have_css(".dropdown-#{legacy_hearing.external_id}-holdOpen")
+
+      click_dropdown(name: "#{legacy_hearing.external_id}-holdOpen", index: 0)
+      find(".checkbox-wrapper-checkbox-prepped-#{legacy_hearing.external_id}").click
+      find("label", text: "Transcript Requested", match: :first).click
+      find("textarea", id: "#{legacy_hearing.external_id}-notes", match: :first)
+        .fill_in(with: "This is a note about the hearing!")
+      click_button("Save")
+
+      expect(page).to have_content("You have successfully updated")
+
+      find("label", text: "Yes, Waive 90 Day Hold", match: :first).click
       click_button("Save")
 
       expect(page).to have_content("You have successfully updated")
     end
 
     context "and hearings are not assigned to judge" do
-      let!(:hearing_day) { create(:hearing_day) }
+      let!(:hearing_day) { create(:hearing_day, judge: create(:user)) }
+      let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: create(:user), hearing_day: hearing_day) }
 
       scenario "no hearings are shown" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
