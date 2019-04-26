@@ -166,6 +166,21 @@ export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, upd
   />;
 };
 
+export const HoldOpenDropdown = ({ hearing, readOnly, update }) => (
+  <SearchableDropdown
+    label="Hold Open"
+    name={`${hearing.id}-hold_open`}
+    options={[0, 30, 60, 90].map((days) => ({
+      value: days,
+      label: `${days} days - ${moment(hearing.scheduledFor).add(days, 'days').
+        format('MM/DD')}`
+    }))}
+    readOnly={readOnly}
+    onChange={(holdOpen) => update({ holdOpen })}
+    value={hearing.holdOpen}
+    searchable={false} />
+);
+
 export const StaticHearingDay = ({ hearing }) => (
   <div>
     <b>Hearing Day</b><br />

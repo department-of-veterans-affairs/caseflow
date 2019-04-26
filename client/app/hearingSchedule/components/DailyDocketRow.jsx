@@ -11,7 +11,7 @@ import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
   NotesField, HearingLocationDropdown, StaticHearingDay, TimeRadioButtons,
-  Waive90DayHoldCheckbox
+  Waive90DayHoldCheckbox, HoldOpenDropdown
 } from './DailyDocketRowInputs';
 
 const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
@@ -103,7 +103,8 @@ class HearingActions extends React.Component {
     return <React.Fragment>
       <HearingPrepWorkSheetLink hearing={hearing} />
       <AodDropdown {...inputProps} />
-      <AodReasonDropdown {...inputProps} />
+      {hearing.docketName === 'hearing' && <AodReasonDropdown {...inputProps} />}
+      {hearing.docketName !== 'hearing' && <HoldOpenDropdown {...inputProps} />}
     </React.Fragment>;
   }
 
@@ -121,13 +122,9 @@ class HearingActions extends React.Component {
   }
 
   getLeftColumn = () => {
-    const { hearing, user, readOnly, openDispositionModal } = this.props;
+    const { hearing, user, openDispositionModal } = this.props;
 
-    const inputProps = {
-      hearing,
-      readOnly,
-      update: this.update
-    };
+    const inputProps = this.getInputProps();
 
     return <div {...inputSpacing}>
       <DispositionDropdown {...inputProps}
