@@ -104,7 +104,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       expect(page).to_not have_content("Lock Hearing Day")
       expect(page).to_not have_content("Hearing Details")
       expect(page).to have_field("Transcript Requested", disabled: true, visible: false)
-      find(".dropdown-#{hearing.external_id}-disposition").find(".is-disabled")
+      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".is-disabled")
       fill_in "Notes", with: "This is a note about the hearing!"
       click_button("Save")
 
