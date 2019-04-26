@@ -47,6 +47,7 @@ class TimedHoldTask < GenericTask
 
   # We cancel the siblings after we have created the new task so that the parent task stays on hold.
   def cancel_active_siblings
-    siblings.select(&:active?).each { |sibling_task| sibling_task.update!(status: Constants.TASK_STATUSES.cancelled) }
+    siblings.select { |sibling_task| sibling_task.active? && sibling_task.is_a?(TimedHoldTask) }
+      .each { |sibling_task| sibling_task.update!(status: Constants.TASK_STATUSES.cancelled) }
   end
 end

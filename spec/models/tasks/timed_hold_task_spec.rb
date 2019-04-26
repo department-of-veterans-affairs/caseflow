@@ -4,8 +4,8 @@ describe TimedHoldTask do
   let(:task) { FactoryBot.create(:timed_hold_task) }
 
   describe ".create!" do
-    let(:appeal) { FactoryBot.create(:appeal) }
     let(:parent) { FactoryBot.create(:generic_task) }
+    let(:appeal) { parent.appeal }
     let(:initial_args) do
       { appeal: appeal,
         assigned_to: FactoryBot.create(:user),
@@ -58,7 +58,7 @@ describe TimedHoldTask do
         end
       end
 
-      context "when there are closed sibling tasks" do
+      context "when there are closed sibling TimedHoldTasks" do
         let!(:cancelled_sibling) do
           FactoryBot.create(:timed_hold_task, **args.merge(status: Constants.TASK_STATUSES.cancelled))
         end
@@ -73,12 +73,24 @@ describe TimedHoldTask do
         end
       end
 
-      context "when there is an active sibling task" do
+      context "when there is an active sibling TimedHoldTask" do
         let!(:existing_timed_hold_task) { FactoryBot.create(:timed_hold_task, **args) }
 
-        it "cancels the existing sibling tasks" do
+        it "cancels the existing sibling task" do
           expect(subject.active?).to be_truthy
           expect(existing_timed_hold_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+        end
+      end
+
+      context "when there is an active sibling TimedHoldTask and an active sibling GenericTask" do
+        let!(:existing_generic_task_sibling) { FactoryBot.create(:generic_task, parent: parent, appeal: appeal) }
+        let!(:existing_timed_hold_task) { FactoryBot.create(:timed_hold_task, **args) }
+
+        it "cancels the TimedHoldTask but leaves the GenericTask alone" do
+          expect(subject.active?).to be_truthy
+          expect(parent.children.count).to eq(3)
+          expect(existing_timed_hold_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(existing_generic_task_sibling.reload.active?).to eq(true)
         end
       end
     end
