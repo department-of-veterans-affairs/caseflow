@@ -33,7 +33,7 @@ describe LegacyHearing do
   let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
   let(:regional_office) { "RO13" }
 
-  context "#location", focus: true do
+  context "#location" do
     subject { hearing.request_type_location }
 
     it { is_expected.to eq("Baltimore regional office") }
