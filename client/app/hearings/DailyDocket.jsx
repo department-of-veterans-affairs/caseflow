@@ -423,17 +423,6 @@ export class DailyDocket extends React.PureComponent {
 
     return <div>
       <AppSegment extraClassNames="cf-hearings" noMarginTop filledBackground>
-        <Alert type="info"
-          styling={alertStyling}
-          title="New View of Hearing Schedule Coming Soon"
-          message={<span><p>{'All travel board hearings scheduled May 20, 2019 and beyond ' +
-            'must be viewed in VACOLS. Caseflow will no longer display travel board schedules ' +
-            'or information after that date.'}</p><p>
-            <NonRouterLink button href="/hearings/schedule">
-              <span {...css({ color: '#fff' })}>Go to new hearing schedule view</span>
-            </NonRouterLink >
-          </p></span>} />
-
         { this.props.saveHearingSuccess && <Alert
           type="success"
           styling={alertStyling}
