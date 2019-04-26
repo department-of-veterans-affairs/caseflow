@@ -57,9 +57,7 @@ RSpec.feature "Task queue" do
     end
 
     let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
-    let(:attorney_on_hold_tasks) do
-      Task.where(status: :on_hold, assigned_to: attorney_user) + ColocatedTask.where(assigned_by: attorney_user)
-    end
+    let(:attorney_on_hold_task_count) { Task.where(status: :on_hold, assigned_to: attorney_user).count }
 
     before do
       User.authenticate!(user: attorney_user)
@@ -90,7 +88,7 @@ RSpec.feature "Task queue" do
       end
 
       it "shows the correct number of tasks on hold" do
-        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4))
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count))
       end
     end
 
@@ -145,7 +143,7 @@ RSpec.feature "Task queue" do
     it "shows tabs on the queue page" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, vacols_tasks.length))
-      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length))
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count))
       expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
     end
 
@@ -155,9 +153,9 @@ RSpec.feature "Task queue" do
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
 
       # On Hold tab
-      find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length)).click
+      find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count)).click
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
-      expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_tasks.length)
+      expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_task_count)
       appeal = attorney_task.appeal
       expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
     end
@@ -467,7 +465,7 @@ RSpec.feature "Task queue" do
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
         find("button", text: "Send case").click
         expect(page).to have_content("Bob Smith's case has been sent to the Schedule hearing team")
-        expect(vacols_case.reload.bfcurloc).to eq("57")
+        expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
       end
 
       it "the case should be returned in the attorneys queue when canceled" do
