@@ -39,12 +39,12 @@ class ExternalApi::VADotGovService
         address_line3: nil, city:, state:, zip_code:, country:
       )
       # rubocop:enable Metrics/ParameterLists
+
+      address = { address_line1: address_line1, address_line2: address_line2,
+                  address_line3: address_line3, city: city, state: state, zip_code: zip_code, country: country }
+
       response = send_va_dot_gov_request(
-        body: validate_request_body(
-          address_line1: address_line1, address_line2: address_line2,
-          address_line3: address_line3, city: city,
-          state: state, zip_code: zip_code, country: country
-        ),
+        body: validate_request_body(address),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json"
@@ -54,7 +54,7 @@ class ExternalApi::VADotGovService
       )
 
       resp_body = JSON.parse(response.body)
-      check_for_error(response_body: resp_body, code: response.code)
+      check_for_error(response_body: resp_body, code: response.code, query: address)
 
       validated_address_json(resp_body)
     end
@@ -151,7 +151,7 @@ class ExternalApi::VADotGovService
       )
       resp_body = JSON.parse(response.body)
 
-      check_for_error(response_body: resp_body, code: response.code)
+      check_for_error(response_body: resp_body, code: response.code, query: query)
 
       facilities = resp_body["data"]
       distances = resp_body["meta"]["distances"]
@@ -187,18 +187,18 @@ class ExternalApi::VADotGovService
       end
     end
 
-    def check_for_error(response_body:, code:)
+    def check_for_error(code:, response_body:, query: {})
       case code
       when 200 # rubocop:disable Lint/EmptyWhen
       when 429
-        fail Caseflow::Error::VaDotGovLimitError, code: code, message: response_body
+        fail Caseflow::Error::VaDotGovLimitError, code: code, message: { query: query, response: response_body }
       when 400
-        fail Caseflow::Error::VaDotGovRequestError, code: code, message: response_body
+        fail Caseflow::Error::VaDotGovRequestError, code: code, message: { query: query, response: response_body }
       when 500
-        fail Caseflow::Error::VaDotGovServerError, code: code, message: response_body
+        fail Caseflow::Error::VaDotGovServerError, code: code, message: { query: query, response: response_body }
       else
-        msg = "Error: #{response_body}, HTTP code: #{code}"
-        fail Caseflow::Error::VaDotGovServerError, code: code, message: msg
+        response = "Error: #{response_body}, HTTP code: #{code}"
+        fail Caseflow::Error::VaDotGovServerError, code: code, message: { query: query, response: response }
       end
     end
 
