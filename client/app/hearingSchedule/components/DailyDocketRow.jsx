@@ -74,6 +74,10 @@ class HearingActions extends React.Component {
     }, 0);
   }
 
+  isAmaHearing = () => this.props.hearing.docketName === 'hearing'
+
+  isLegacyHearing = () => this.props.hearing.docketName === 'legacy'
+
   getInputProps = () => {
     const { hearing, readOnly } = this.props;
 
@@ -103,8 +107,8 @@ class HearingActions extends React.Component {
     return <React.Fragment>
       <HearingPrepWorkSheetLink hearing={hearing} />
       <AodDropdown {...inputProps} />
-      {hearing.docketName === 'hearing' && <AodReasonDropdown {...inputProps} />}
-      {hearing.docketName !== 'hearing' && <HoldOpenDropdown {...inputProps} />}
+      {this.isAmaHearing() && <AodReasonDropdown {...inputProps} />}
+      {this.isLegacyHearing() && <HoldOpenDropdown {...inputProps} />}
     </React.Fragment>;
   }
 
@@ -131,7 +135,7 @@ class HearingActions extends React.Component {
         cancelUpdate={this.cancelUpdate}
         saveHearing={this.saveHearing}
         openDispositionModal={openDispositionModal} />
-      {(user.userRoleHearingPrep && hearing.docketName === 'hearing') &&
+      {(user.userRoleHearingPrep && this.isAmaHearing()) &&
         <Waive90DayHoldCheckbox {...inputProps} />}
       <TranscriptRequestedCheckbox {...inputProps} />
       {(user.userRoleAssign && !user.userRoleHearingPrep) && <HearingDetailsLink hearing={hearing} />}
