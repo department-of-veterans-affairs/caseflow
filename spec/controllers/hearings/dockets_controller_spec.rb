@@ -6,6 +6,14 @@ RSpec.describe Hearings::DocketsController, type: :controller do
   let!(:case_hearing) { create(:case_hearing, user: user, hearing_date: Time.zone.today, board_member: staff.sattyid) }
   let!(:legacy_hearing) { create(:legacy_hearing, case_hearing: case_hearing) }
   let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 1, judge_id: user.id) }
+  let!(:expected_hearing_day) do
+    {
+      requestType: HearingDayMapper.label_for_type(hearing_day.request_type),
+      coordinator: hearing_day.bva_poc,
+      room: hearing_day.room,
+      notes: hearing_day.notes
+    }
+  end
   let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day, judge_id: user.id) }
 
   describe "SHOW Daily Docket" do
@@ -13,8 +21,7 @@ RSpec.describe Hearings::DocketsController, type: :controller do
       get :show, params: { docket_date: legacy_hearing.scheduled_for }, format: "json"
       response_hearing = JSON.parse(response.body)
       expect(response.status).to eq 200
-      expected_hearing_day = legacy_hearing.quick_to_hash(user.id)
-      expect(response_hearing["hearingDay"]).to eq expected_hearing_day
+      expect(response_hearing["hearingDay"]).to eq expected_hearing_day.stringify_keys
       expect(response_hearing["dailyDocket"].length).to eq 1
     end
 
