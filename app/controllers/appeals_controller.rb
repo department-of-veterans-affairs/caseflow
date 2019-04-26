@@ -184,12 +184,12 @@ class AppealsController < ApplicationController
   end
 
   def render_access_error
-    if appeal.veteran.multiple_phone_numbers?
-      return render(Caseflow::Error::ActionForbiddenError.new(
-        message: COPY::DUPLICATE_PHONE_NUMBER_TITLE
-      ).serialize_response)
-    end
+    render(Caseflow::Error::ActionForbiddenError.new(
+      message: access_error_message
+    ).serialize_response)
+  end
 
-    render(Caseflow::Error::ActionForbiddenError.new.serialize_response)
+  def access_error_message
+    appeal.veteran.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
   end
 end
