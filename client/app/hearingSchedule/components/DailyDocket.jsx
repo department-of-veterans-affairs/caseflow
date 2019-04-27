@@ -6,7 +6,6 @@ import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../../components/Alert';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
 import StatusMessage from '../../components/StatusMessage';
 import { getHearingAppellantName } from './DailyDocketRowDisplayText';
@@ -19,20 +18,9 @@ const alertStyling = css({
 });
 
 const Alerts = ({
-  saveSuccessful, displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket, dailyDocketServerError,
-  user
+  saveSuccessful, displayLockSuccessMessage, onErrorHearingDayLock, dailyDocket, dailyDocketServerError
 }) => (
   <React.Fragment>
-    {user.userRoleHearingPrep &&
-      <Alert type="info"
-        styling={alertStyling}
-        title="New Hearing Schedule View"
-        message={<span><p>{'We\'re piloting an updated version of caseflow hearing. ' +
-          'Try it out and provide any feedback through our support channels. ' +
-          'Note: travel board is not supported in the updated version.'}</p><p>
-          <Link button href="/hearings/dockets"><span {...css({ color: '#fff' })}>Return to old view</span></Link>
-        </p></span>} />}
-
     {saveSuccessful &&
       <Alert type="success"
         styling={alertStyling}
@@ -153,7 +141,6 @@ export default class DailyDocket extends React.Component {
 
       <Alerts
         dailyDocket={dailyDocket}
-        user={user}
         saveSuccessful={this.props.saveSuccessful}
         displayLockSuccessMessage={this.props.displayLockSuccessMessage}
         dailyDocketServerError={this.props.dailyDocketServerError}
