@@ -4,21 +4,49 @@ describe NoShowHearingTask do
   let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
   let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
   let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
+  let(:hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
 
-  describe ".create!" do
-    it "is automatically assigned to the HearingsManagement organization" do
-      expect(
-        NoShowHearingTask.create!(appeal: appeal, parent: root_task).assigned_to
-      ).to eq(HearingsManagement.singleton)
+  context "create a new NoShowHearingTask" do
+    let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+    let(:task_params) { { appeal: appeal, parent: disposition_task } }
+
+    subject { NoShowHearingTask.create!(**task_params) }
+
+    it "is assigned to the HearingsManagement org by default" do
+      expect(subject.assigned_to_type).to eq "Organization"
+      expect(subject.assigned_to).to eq HearingsManagement.singleton
+    end
+
+    context "there is a hearings management org user" do
+      let!(:hearings_management_user) { FactoryBot.create(:hearings_coordinator) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)
+      end
+
+      it "has actions available to the hearings managment org member" do
+        expect(subject.available_actions_unwrapper(hearings_management_user).count).to be > 0
+      end
+    end
+
+    context "there is a hearing admin org user" do
+      let(:hearing_admin_user) { FactoryBot.create(:user, station_id: 101) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+      end
+
+      it "has no actions available" do
+        expect(subject.available_actions_unwrapper(hearing_admin_user).count).to eq 0
+      end
     end
   end
 
   describe ".reschedule_hearing" do
-    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
     let!(:completed_scheduling_task) do
-      FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
+      FactoryBot.create(:schedule_hearing_task, :completed, parent: hearing_task, appeal: appeal)
     end
-    let(:disposition_task) { FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal) }
+    let(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
     let(:no_show_hearing_task) do
       FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
     end
@@ -27,7 +55,7 @@ describe NoShowHearingTask do
       it "closes existing tasks and creates new HearingTask and ScheduleHearingTask" do
         expect { no_show_hearing_task.reschedule_hearing }.to_not raise_error
 
-        expect(parent_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
         expect(disposition_task.status).to eq(Constants.TASK_STATUSES.completed)
         expect(no_show_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
 
@@ -46,7 +74,7 @@ describe NoShowHearingTask do
       it "does not commit any changes to the database" do
         expect { no_show_hearing_task.reschedule_hearing }.to raise_error
 
-        expect(parent_hearing_task.reload.active?).to eq(true)
+        expect(hearing_task.reload.active?).to eq(true)
         expect(disposition_task.reload.active?).to eq(true)
         expect(no_show_hearing_task.reload.active?).to eq(true)
 
