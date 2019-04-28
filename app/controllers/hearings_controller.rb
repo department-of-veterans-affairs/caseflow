@@ -44,8 +44,8 @@ class HearingsController < ApplicationController
 
       render json: { hearing_locations: locations }
     rescue Caseflow::Error::VaDotGovAPIError => e
-      messages = e.message.dig(:messages) || []
-      render json: { message: messages[0].dig(:key) || e.message }, status: :bad_request
+      messages = e.message.dig("messages") || []
+      render json: { message: messages[0]&.dig("key") || e.message }, status: :bad_request
     rescue StandardError => e
       render json: { message: e.message }, status: :internal_server_error
     end

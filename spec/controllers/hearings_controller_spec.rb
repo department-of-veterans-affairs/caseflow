@@ -112,7 +112,7 @@ RSpec.describe HearingsController, type: :controller do
             as: :json,
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }
 
-        expect(response.status).to eq 400
+        expect(response.status).to eq 500
         expect(JSON.parse(response.body)["message"]).to eq "JSON::ParserError"
       end
     end
