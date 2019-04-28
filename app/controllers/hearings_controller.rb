@@ -47,7 +47,7 @@ class HearingsController < ApplicationController
       messages = e.message.try("messages") || []
       render json: { message: messages[0].try("key") || e.message }, status: :bad_request
     rescue StandardError => e
-      render json: { message: e.message }, status: e.code
+      render json: { message: e.message }, status: :internal_server_error
     end
   end
 
