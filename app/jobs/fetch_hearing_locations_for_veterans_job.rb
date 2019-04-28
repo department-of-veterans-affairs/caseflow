@@ -46,6 +46,7 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       rescue StandardError => error
         Raven.capture_exception(error, extra: { appeal_external_id: appeal.external_id })
         record_geomatched_appeal(appeal.external_id, "error")
+        break # break until Facilities API is working
       end
     end
   end
