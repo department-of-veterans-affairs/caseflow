@@ -303,9 +303,9 @@ describe FetchHearingLocationsForVeteransJob do
             )
           end
 
-          it "raises VADotGovServiceError" do
-            expect { FetchHearingLocationsForVeteransJob.perform_now }
-              .to raise_error(Caseflow::Error::VaDotGovAPIError)
+          it "sends error to Sentry" do
+            expect(Raven).to receive(:capture_exception)
+            FetchHearingLocationsForVeteransJob.perform_now
           end
         end
 
