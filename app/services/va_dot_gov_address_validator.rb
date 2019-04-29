@@ -3,8 +3,29 @@
 class VaDotGovAddressValidator
   attr_accessor :appeal
 
+  STATUSES = {
+    matched_available_hearing_locations: :matched_available_hearing_locations,
+    created_admin_action: :created_admin_action
+  }.freeze
+
   def initialize(appeal:)
     @appeal = appeal
+  end
+
+  def update_closest_ro_and_ahls
+    begin
+      va_dot_gov_address = validate
+    rescue Caseflow::Error::VaDotGovLimitError => error
+      raise error
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      return handle_error(error)
+    end
+
+    begin
+      create_available_hearing_locations(va_dot_gov_address: va_dot_gov_address)
+    rescue Caseflow::Error::VaDotGovValidatorError => error
+      handle_error(error)
+    end
   end
 
   def validate
@@ -36,33 +57,19 @@ class VaDotGovAddressValidator
     ro = fetch_and_update_ro(va_dot_gov_address: va_dot_gov_address)
     facility_ids = facility_ids_for_ro(ro[:closest_regional_office])
     AvailableHearingLocations.where(appeal: appeal).destroy_all
+    available_hearing_locations = []
 
     if facility_ids.length == 1
-      create_available_hearing_location(facility: ro[:facility])
+      available_hearing_locations << create_available_hearing_location(facility: ro[:facility])
     else
       sleep 1
       VADotGovService.get_distance(lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids)
         .each do |alternate_hearing_location|
-          create_available_hearing_location(facility: alternate_hearing_location)
+          available_hearing_locations << create_available_hearing_location(facility: alternate_hearing_location)
         end
     end
-  end
 
-  def update_closest_ro_and_ahls
-    begin
-      va_dot_gov_address = validate
-    rescue Caseflow::Error::VaDotGovLimitError => error
-      raise error
-    rescue Caseflow::Error::VaDotGovAPIError => error
-      handle_error(error)
-      return nil
-    end
-
-    begin
-      create_available_hearing_locations(va_dot_gov_address: va_dot_gov_address)
-    rescue Caseflow::Error::VaDotGovValidatorError => error
-      handle_error(error)
-    end
+    { status: STATUSES[:matched_available_hearing_locations], available_hearing_locations: available_hearing_locations }
   end
 
   private
@@ -213,15 +220,19 @@ class VaDotGovAddressValidator
     case error_key
     when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress", "InvalidRequestNonStreetAddress",
       "SpectrumServiceAddressError"
-      create_admin_action_for_schedule_hearing_task(
+      admin_action = create_admin_action_for_schedule_hearing_task(
         instructions: error_instructions_map[error_key],
         admin_action_type: HearingAdminActionVerifyAddressTask
       )
+
+      { status: STATUSES[:created_admin_action], admin_action: admin_action }
     when "ForeignVeteranCase"
-      create_admin_action_for_schedule_hearing_task(
+      admin_action = create_admin_action_for_schedule_hearing_task(
         instructions: error_instructions_map[error_key],
         admin_action_type: HearingAdminActionForeignVeteranCaseTask
       )
+
+      { status: STATUSES[:created_admin_action], admin_action: admin_action }
     else
       fail error
     end
