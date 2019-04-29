@@ -1398,9 +1398,8 @@ feature "Higher Level Review Edit issues" do
 
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
-        sleep 1
 
-        expect(current_path).to eq("/decision_reviews/education")
+        expect(page).to have_current_path("/decision_reviews/education")
         expect(page).to have_content("You have successfully withdrawn a review.")
       end
 
@@ -1410,9 +1409,8 @@ feature "Higher Level Review Edit issues" do
         click_withdraw_intake_issue_dropdown(1)
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
-        sleep 1
 
-        expect(current_path).to eq("/decision_reviews/education")
+        expect(page).to have_current_path("/decision_reviews/education")
         expect(page).to have_content("You have successfully withdrawn 1 issue.")
       end
 
@@ -1420,9 +1418,8 @@ feature "Higher Level Review Edit issues" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         click_remove_intake_issue_dropdown("1")
         click_edit_submit_and_confirm
-        sleep 1
 
-        expect(current_path).to eq("/decision_reviews/education")
+        expect(page).to have_current_path("/decision_reviews/education")
         expect(page).to have_content("You have successfully removed 1 issue.")
       end
 
@@ -1439,10 +1436,9 @@ feature "Higher Level Review Edit issues" do
         click_remove_intake_issue_dropdown(1)
         click_withdraw_intake_issue_dropdown(2)
         fill_in "withdraw-date", with: withdraw_date
-        safe_click("#button-submit-update")
-        sleep 1
+        click_edit_submit
 
-        expect(current_path).to eq("/decision_reviews/education")
+        expect(page).to have_current_path("/decision_reviews/education")
         expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
       end
     end

@@ -589,9 +589,7 @@ feature "Appeal Edit issues" do
 
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
-
-      safe_click("#button-submit-update")
-      safe_click ".confirm"
+      click_edit_submit_and_confirm
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
@@ -620,7 +618,7 @@ feature "Appeal Edit issues" do
 
       fill_in "withdraw-date", with: withdraw_date
 
-      safe_click("#button-submit-update")
+      click_edit_submit
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
