@@ -56,13 +56,14 @@ const Header = ({ user }) => (
 
 export default class DailyDocketHearingRows extends React.Component {
   render () {
-    const { hearings, readOnly, regionalOffice, openDispositionModal, user, saveHearing } = this.props;
+    const { hearings, readOnly, regionalOffice,
+      openDispositionModal, user, saveHearing } = this.props;
 
     return <div {...rowsMargin}>
       <Header user={user} />
       <div>{hearings.map((hearing, index) => (
         <div {...docketRowStyle} key={`docket-row-${index}`} className={user.userRoleHearingPrep ? 'judge-view' : ''}>
-          <DailyDocketRow hearingId={hearing.id}
+          <DailyDocketRow hearingId={hearing.externalId}
             index={index}
             readOnly={readOnly}
             user={user}

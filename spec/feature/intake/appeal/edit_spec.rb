@@ -460,11 +460,18 @@ feature "Appeal Edit issues" do
     before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
     after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
 
-    scenario "remove an issue with dropdown" do
+    scenario "remove an issue with dropdown and show alert message" do
       visit "appeals/#{appeal.uuid}/edit/"
       expect(page).to have_content("PTSD denied")
       click_remove_intake_issue_dropdown("PTSD denied")
+
       expect(page).to_not have_content("PTSD denied")
+
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully removed 1 issue.")
     end
 
     let(:withdraw_date) { 1.day.ago.to_date.mdY }
@@ -477,7 +484,7 @@ feature "Appeal Edit issues" do
              assigned_at: last_week)
     end
 
-    scenario "withdraw entire review" do
+    scenario "withdraw entire review and show alert" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
@@ -494,6 +501,9 @@ feature "Appeal Edit issues" do
       click_edit_submit
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully withdrawn a review.")
+
       expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
     end
 
@@ -525,6 +535,7 @@ feature "Appeal Edit issues" do
 
       expect(withdrawn_issue).to_not be_nil
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+      expect(page).to have_content("You have successfully withdrawn 1 issue.")
     end
 
     scenario "show withdrawn issue when appeal edit page is reloaded" do
@@ -571,6 +582,47 @@ feature "Appeal Edit issues" do
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+    end
+
+    scenario "show alert when issue is added, removed and withdrawn" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully added 1 issue")
+
+      # reload to verify that the new issues populate the form
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_intake_add_issue
+      add_intake_rating_issue("Back pain")
+
+      click_remove_intake_issue_dropdown(1)
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+
+      expect(page).to have_content(
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+      )
+      expect(page).to have_content("Please include the date the withdrawal was requested")
+
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: "13/01/24"
+
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: withdraw_date
+
+      click_edit_submit
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
     end
   end
 
@@ -650,7 +702,7 @@ feature "Appeal Edit issues" do
           click_intake_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-          expect(page).to have_content("Review Removed")
+          expect(page).to have_content("Edit Completed")
         end
       end
 
