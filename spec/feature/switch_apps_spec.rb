@@ -16,7 +16,7 @@ RSpec.feature "SwitchApps" do
     end
   end
 
-  context "A user with Queue and Hearing Schedule access" do
+  context "A user with Queue and Hearings access" do
     let!(:user) do
       User.authenticate!(user: create(:user, roles: ["Reader", "Build HearSched"]))
     end
@@ -27,9 +27,9 @@ RSpec.feature "SwitchApps" do
       expect(page).to have_content("Queue")
 
       find("a", text: "Switch product").click
-      find("a", text: "Caseflow Hearing Schedule").click
+      find("a", text: "Caseflow Hearings").click
 
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content("Welcome to Caseflow Hearings!")
     end
   end
 end
