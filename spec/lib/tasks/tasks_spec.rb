@@ -148,4 +148,83 @@ describe "task rake tasks" do
       end
     end
   end
+
+  describe "tasks:change_organization_assigned_to" do
+    let(:target_task) { ScheduleHearingTask }
+    let(:target_task_name) { target_task.name }
+    let(:target_task_factory) { :schedule_hearing_task }
+    let(:from_org) { HearingsManagement.singleton }
+    let(:to_org) { Bva.singleton }
+    let(:task_count) { 10 }
+
+    subject do
+      Rake::Task["tasks:change_organization_assigned_to"].reenable
+      Rake::Task["tasks:change_organization_assigned_to"].invoke(*args)
+    end
+
+    context "there are tasks to change" do
+      let(:subset_count) { 6 }
+      let!(:target_tasks) { FactoryBot.create_list(target_task_factory, task_count, assigned_to: from_org) }
+
+      context "no dry run variable is passed" do
+        let(:args) { [target_task_name, from_org.id, to_org.id] }
+
+        it "only describes what changes will be made" do
+          count = target_task.count
+          ids = target_task.all.pluck(:id)
+          expected_output = <<~OUTPUT
+            *** DRY RUN
+            *** pass 'false' as the fourth argument to execute
+            Would change assignee of #{count} #{target_task_name}s with ids #{ids.join(', ')} from #{from_org.name} to #{to_org.name}
+            Would revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{ids.join(',')}]
+          OUTPUT
+          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+          expect { subject }.to output(expected_output).to_stdout
+          expect(target_task.all.pluck(:assigned_to_id).uniq).to match_array [from_org.id]
+        end
+      end
+
+      context "dry run is set to false" do
+        let(:args) { [target_task_name, from_org.id, to_org.id, "false"] }
+
+        it "makes the requested changes" do
+          count = target_task.count
+          ids = target_task.all.pluck(:id)
+          expected_output = <<~OUTPUT
+            Changing assignee of #{count} #{target_task_name}s with ids #{ids.join(', ')} from #{from_org.name} to #{to_org.name}
+            Revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{ids.join(',')}]
+          OUTPUT
+          expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+          expect(Rails.logger).to receive(:info).with(
+            "Changing assignee of #{count} #{target_task_name}s with ids #{ids.join(', ')} " \
+            "from #{from_org.name} to #{to_org.name}"
+          )
+          expect { subject }.to output(expected_output).to_stdout
+          expect(target_task.all.pluck(:assigned_to_id).uniq).to match_array [to_org.id]
+        end
+      end
+    end
+
+    context "there are no tasks to change" do
+      let!(:target_tasks) { FactoryBot.create_list(target_task_factory, task_count, assigned_to: to_org) }
+      let(:args) { [target_task_name, from_org.id, to_org.id, "false"] }
+
+      it "tells the caller that there are no tasks to change" do
+        expected_output = "There aren't any #{target_task_name}s assigned to #{from_org.name} available to change."
+        expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+        expect { subject }.to raise_error(NoTasksToChange).with_message(expected_output)
+      end
+    end
+
+    context "a non task class is passed" do
+      let(:target_task) { JudgeTeam }
+      let(:args) { [target_task_name, from_org.id, to_org.id, "false"] }
+
+      it "warns about passing a class that's not a task" do
+        expected_output = "#{target_task_name} is not a valid Task type!"
+        expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+        expect { subject }.to raise_error(InvalidTaskType).with_message(expected_output)
+      end
+    end
+  end
 end
