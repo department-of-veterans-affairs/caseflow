@@ -5,11 +5,9 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
 gem "aasm", "4.11.0"
-# Use sqlite3 as the database for Active Record
-gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "54955cfc95e528394bf1975285edc6bc23cfaf7d"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e94aff758739c499978041953e6d50fe58057e89"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
@@ -24,9 +22,9 @@ gem "jquery-rails"
 gem "loofah", ">= 2.2.3"
 gem "moment_timezone-rails"
 gem "newrelic_rpm"
-# nokogiri versions before 1.8.3 are affected by CVE-2018-8048. Explicitly define nokogiri version here to avoid that.
-# https://github.com/sparklemotion/nokogiri/pull/1746
-gem "nokogiri", "1.8.5"
+# nokogiri versions before 1.10.3 are affected by CVE-2019-11068. Explicitly define nokogiri version here to avoid that.
+# https://github.com/sparklemotion/nokogiri/issues/1892
+gem "nokogiri", "1.10.3"
 gem "paper_trail", "8.1.2"
 # Used to speed up reporting
 gem "parallel"

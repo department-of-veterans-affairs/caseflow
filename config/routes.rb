@@ -42,6 +42,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
+        get 'veterans', to: 'veterans#details'
       end
     end
   end
@@ -216,6 +217,7 @@ Rails.application.routes.draw do
     member do
       post :reschedule
     end
+    resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
   end
   resources :judge_assign_tasks, only: [:create]
 

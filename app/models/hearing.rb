@@ -83,6 +83,12 @@ class Hearing < ApplicationRecord
     end
   end
 
+  def assigned_to_judge?(user)
+    return hearing_day&.judge == user if judge.nil?
+
+    judge == user
+  end
+
   def hearing_task?
     !hearing_task_association.nil?
   end

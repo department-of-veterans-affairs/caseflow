@@ -247,6 +247,8 @@ RSpec.describe TasksController, type: :controller do
       FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
+    subject { post :create, params: { tasks: params } }
+
     context "Attorney task" do
       context "when current user is a judge" do
         let(:ama_appeal) { create(:appeal) }
@@ -263,7 +265,8 @@ RSpec.describe TasksController, type: :controller do
         end
 
         it "should be successful" do
-          post :create, params: { tasks: params }
+          subject
+
           expect(response.status).to eq 200
 
           response_body = JSON.parse(response.body)["tasks"]["data"]
@@ -305,7 +308,8 @@ RSpec.describe TasksController, type: :controller do
         end
 
         it "should not be successful" do
-          post :create, params: { tasks: params }
+          subject
+
           expect(response.status).to eq 403
         end
       end
@@ -329,7 +333,8 @@ RSpec.describe TasksController, type: :controller do
         end
 
         it "should be successful" do
-          post :create, params: { tasks: params }
+          subject
+
           expect(response.status).to eq 200
         end
       end
@@ -339,12 +344,6 @@ RSpec.describe TasksController, type: :controller do
       before do
         u = FactoryBot.create(:user)
         OrganizationsUser.add_user_to_organization(u, Colocated.singleton)
-
-        FeatureToggle.enable!(:attorney_assignment_to_colocated)
-      end
-
-      after do
-        FeatureToggle.disable!(:attorney_assignment_to_colocated)
       end
 
       context "when current user is an attorney" do
@@ -373,7 +372,9 @@ RSpec.describe TasksController, type: :controller do
 
           it "should be successful" do
             expect(AppealRepository).to receive(:update_location!).exactly(1).times
-            post :create, params: { tasks: params }
+
+            subject
+
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(4)
@@ -420,7 +421,9 @@ RSpec.describe TasksController, type: :controller do
 
           it "should be successful" do
             expect(AppealRepository).to receive(:update_location!).exactly(1).times
-            post :create, params: { tasks: params }
+
+            subject
+
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(4)
@@ -455,7 +458,8 @@ RSpec.describe TasksController, type: :controller do
           end
 
           it "should be successful" do
-            post :create, params: { tasks: params }
+            subject
+
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(2)
@@ -477,7 +481,8 @@ RSpec.describe TasksController, type: :controller do
           end
 
           it "should be successful" do
-            post :create, params: { tasks: params }
+            subject
+
             expect(response.status).to eq 200
             response_body = JSON.parse(response.body)["tasks"]["data"]
             expect(response_body.size).to eq(2)
@@ -498,10 +503,65 @@ RSpec.describe TasksController, type: :controller do
           end
 
           it "should not be successful" do
-            post :create, params: { tasks: params }
+            subject
+
             expect(response.status).to eq 404
           end
         end
+      end
+    end
+
+    context "hearing user and hearing admin action tasks" do
+      let(:role) { :hearing_coordinator }
+      let!(:user) { create(:user, roles: ["Build HearSched"]) }
+      let!(:appeal) { FactoryBot.create(:appeal) }
+      let!(:schedule_hearing_task) { FactoryBot.create(:schedule_hearing_task, appeal: appeal) }
+      let(:incarcerated_instructions) { "Incarcerated veteran task instructions" }
+      let(:contested_instructions_1) { "Contested claimant task instructions" }
+      let(:contested_instructions_2) { "Instructions for another contested claimant task" }
+      let(:params) do
+        [
+          {
+            "instructions": incarcerated_instructions,
+            "type": "HearingAdminActionIncarceratedVeteranTask",
+            "external_id": appeal.external_id,
+            "parent_id": schedule_hearing_task.id.to_s
+          },
+          {
+            "instructions": contested_instructions_1,
+            "type": "HearingAdminActionContestedClaimantTask",
+            "external_id": appeal.external_id,
+            "parent_id": schedule_hearing_task.id.to_s
+          },
+          {
+            "instructions": contested_instructions_2,
+            "type": "HearingAdminActionContestedClaimantTask",
+            "external_id": appeal.external_id,
+            "parent_id": schedule_hearing_task.id.to_s
+          }
+        ]
+      end
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+      end
+
+      it "creates tasks with the correct types" do
+        expect(HearingAdminActionTask.count).to eq 0
+
+        subject
+
+        expect(HearingAdminActionTask.count).to eq 3
+        expect(HearingAdminActionTask.all.map(&:parent).uniq).to match_array([schedule_hearing_task])
+        expect(HearingAdminActionTask.all.map(&:appeal).uniq).to match_array([appeal])
+
+        expect(HearingAdminActionIncarceratedVeteranTask.count).to eq 1
+        expect(HearingAdminActionIncarceratedVeteranTask.first.instructions).to include incarcerated_instructions
+
+        expect(HearingAdminActionContestedClaimantTask.count).to eq 2
+        expect(
+          HearingAdminActionContestedClaimantTask.all.map(&:instructions).flatten
+        ).to match_array([contested_instructions_1, contested_instructions_2])
       end
     end
   end
@@ -657,7 +717,7 @@ RSpec.describe TasksController, type: :controller do
         expect(task["attributes"]["type"]).to eq("AttorneyLegacyTask")
         expect(task["attributes"]["user_id"]).to eq(attorney_user.css_id)
         expect(task["attributes"]["appeal_id"]).to eq(legacy_appeal.id)
-        expect(task["attributes"]["available_actions"].size).to eq 2
+        expect(task["attributes"]["available_actions"].size).to eq 3
       end
 
       context "when appeal is not assigned to current user" do

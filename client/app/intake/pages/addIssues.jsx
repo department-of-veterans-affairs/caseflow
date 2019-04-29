@@ -49,19 +49,6 @@ export class AddIssuesPage extends React.Component {
     };
   }
 
-  haveIssuesChanged = (currentIssues) => {
-    if (currentIssues.length !== this.state.originalIssueLength) {
-      return true;
-    }
-
-    // if any issues do not have ids, it means the issue was just added
-    if (currentIssues.filter((currentIssue) => !currentIssue.id).length > 0) {
-      return true;
-    }
-
-    return false;
-  }
-
   onClickAddIssue = (ratingIssueCount) => {
     if (!ratingIssueCount) {
       return this.props.toggleNonratingRequestIssueModal;
@@ -117,6 +104,28 @@ export class AddIssuesPage extends React.Component {
     const allWithdrawnIssues = previouslywithdrawnIssues.concat(issuesPendingWithdrawal);
     const hasWithdrawnIssues = !_.isEmpty(allWithdrawnIssues);
     const withdrawDatePlaceholder = formatDateStr(new Date());
+    const withdrawReview = !_.isEmpty(issues) && _.every(
+      issues, (issue) => issue.withdrawalPending || issue.withdrawalDate
+    );
+
+    const haveIssuesChanged = () => {
+      if (issues.length !== this.state.originalIssueLength) {
+        return true;
+      }
+
+      // If the entire review is withdrawn, then issues will have changed, but that
+      // will be communicated differently so haveIssuesChanged will not be set to true
+      if (!_.isEmpty(issuesPendingWithdrawal) && !withdrawReview) {
+        return true;
+      }
+
+      // if any issues do not have ids, it means the issue was just added
+      if (issues.filter((issue) => !issue.id).length > 0) {
+        return true;
+      }
+
+      return false;
+    };
 
     if (intakeData.isDtaError) {
       return <Redirect to={PAGE_PATHS.DTA_CLAIM} />;
@@ -189,6 +198,7 @@ export class AddIssuesPage extends React.Component {
 
     const withdrawnIssuesComponent = () => {
       return <div className="issues">
+        { withdrawReview && <p className="cf-red-text">{COPY.INTAKE_WITHDRAWN_BANNER}</p> }
         { allWithdrawnIssues.map((issue) => {
           return <div
             className="issue"
@@ -207,6 +217,8 @@ export class AddIssuesPage extends React.Component {
       </div>;
     };
 
+    const messageHeader = this.props.editPage ? 'Edit Issues' : 'Add / Remove Issues';
+
     const columns = [
       { valueName: 'field' },
       { valueName: 'content' }
@@ -217,7 +229,7 @@ export class AddIssuesPage extends React.Component {
       // no-op unless the issue banner needs to be displayed
     };
 
-    if (this.props.editPage && this.haveIssuesChanged(intakeData.addedIssues)) {
+    if (this.props.editPage && haveIssuesChanged()) {
       // flash a save message if user is on the edit page & issues have changed
       const issuesChangedBanner = <p>When you finish making changes, click "Save" to continue.</p>;
 
@@ -268,7 +280,7 @@ export class AddIssuesPage extends React.Component {
         intakeData={intakeData}
         closeHandler={this.props.toggleIssueRemoveModal} />
       }
-      <h1 className="cf-txt-c">Add / Remove Issues</h1>
+      <h1 className="cf-txt-c">{messageHeader}</h1>
 
       { requestState === REQUEST_STATE.FAILED &&
         <ErrorAlert errorCode={requestErrorCode} />

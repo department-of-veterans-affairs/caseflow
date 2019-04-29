@@ -270,7 +270,7 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
 
-      expect(page).to have_content("Add / Remove Issues")
+      expect(page).to have_content("Edit Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
@@ -608,7 +608,7 @@ feature "Supplemental Claim Edit issues" do
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }
 
-      scenario "withdraw an issue" do
+      scenario "withdraw a review" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
         expect(page).to_not have_content("Withdrawn issues")
@@ -618,12 +618,15 @@ feature "Supplemental Claim Edit issues" do
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
-        expect(page).to have_content("Withdrawn issues\n1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
+        expect(page).to have_content("1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
 
-        safe_click("#button-submit-update")
+        expect(page).to have_content("This review will be withdrawn.")
+        expect(page).to have_button("Withdraw", disabled: false)
+
+        click_edit_submit
         expect(page).to have_current_path(
           "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
         )
@@ -762,6 +765,39 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
+      end
+
+      context "show alert when issues are withdrawn" do
+        let(:supplemental_claim) do
+          # reload to get uuid
+          create(:supplemental_claim, veteran_file_number: veteran.file_number,
+                                      benefit_type: "education").reload
+        end
+
+        before do
+          education_org = create(:business_line, name: "Education", url: "education")
+          OrganizationsUser.add_user_to_organization(current_user, education_org)
+          FeatureToggle.enable!(:decision_reviews)
+          FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        end
+
+        after do
+          FeatureToggle.disable!(:decision_reviews)
+        end
+
+        let(:withdraw_date) { 1.day.ago.to_date.mdY }
+
+        scenario "show alert message when all decision reviews are withdrawn" do
+          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+          click_withdraw_intake_issue_dropdown(1)
+          click_withdraw_intake_issue_dropdown(2)
+          fill_in "withdraw-date", with: withdraw_date
+          click_edit_submit
+          sleep 1
+
+          expect(current_path).to eq("/decision_reviews/education")
+          expect(page).to have_content("You have successfully withdrawn a review.")
+        end
       end
 
       context "when review has no active tasks" do

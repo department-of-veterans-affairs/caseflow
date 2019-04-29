@@ -34,24 +34,10 @@ class HearingDay < ApplicationRecord
     "America/Anchorage" => 8
   }.freeze
 
-  # rubocop:disable Style/SymbolProc
-  after_update { |hearing_day| hearing_day.update_children_records }
-  # rubocop:enable Style/SymbolProc
+  after_update :update_children_records
 
   def central_office?
     request_type == REQUEST_TYPES[:central]
-  end
-
-  def update_children_records
-    vacols_hearings.each do |hearing|
-      hearing.update_caseflow_and_vacols(
-        room: room,
-        bva_poc: bva_poc,
-        judge_id: judge ? judge.vacols_attorney_id : nil
-      )
-    end
-
-    hearings.each { |hearing| hearing.update!(room: room, bva_poc: bva_poc, judge: judge) }
   end
 
   def confirm_no_children_records
@@ -88,6 +74,31 @@ class HearingDay < ApplicationRecord
     end
 
     SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
+  end
+
+  private
+
+  def update_children_records
+    vacols_hearings.each do |hearing|
+      hearing.update_caseflow_and_vacols(
+        **only_changed(room: room, bva_poc: bva_poc, judge_id: judge&.vacols_attorney_id)
+      )
+    end
+
+    hearings.each do |hearing|
+      hearing.update!(
+        **only_changed(room: room, bva_poc: bva_poc, judge_id: judge&.id)
+      )
+    end
+  end
+
+  def only_changed(possibles_hash)
+    changed_hash = {}
+    possibles_hash.each_key do |key|
+      changed_hash[key] = possibles_hash[key] if saved_changes.key?(key)
+    end
+
+    changed_hash
   end
 
   class << self
@@ -181,7 +192,7 @@ class HearingDay < ApplicationRecord
     def list_upcoming_hearing_days(start_date, end_date, user, regional_office = nil)
       if user&.vso_employee?
         upcoming_days_for_vso_user(start_date, end_date, user)
-      elsif user&.can?("Hearing Prep")
+      elsif user&.roles&.include?("Hearing Prep")
         upcoming_days_for_judge(start_date, end_date, user)
       else
         load_days(start_date, end_date, regional_office)

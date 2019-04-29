@@ -93,7 +93,7 @@ class AppealsController < ApplicationController
             render json: { appeal: json_appeals(appeal)[:data] }
           end
         else
-          render(Caseflow::Error::ActionForbiddenError.new.serialize_response)
+          render_access_error
         end
       end
     end
@@ -111,11 +111,12 @@ class AppealsController < ApplicationController
 
   def update
     if request_issues_update.perform!
-      flash[:removed] = review_removed_message if request_issues_update.after_issues.empty?
+      set_flash_success_message
 
       render json: {
         issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
@@ -168,5 +169,27 @@ class AppealsController < ApplicationController
     claimant_name = appeal.veteran_full_name
     "You have successfully removed #{appeal.class.review_title} for #{claimant_name}
     (ID: #{appeal.veteran_file_number})."
+  end
+
+  def review_withdrawn_message
+    "You have successfully withdrawn a review."
+  end
+
+  def set_flash_success_message
+    if request_issues_update.after_issues.empty?
+      flash[:edited] = review_removed_message
+    elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
+      flash[:edited] = review_withdrawn_message
+    end
+  end
+
+  def render_access_error
+    render(Caseflow::Error::ActionForbiddenError.new(
+      message: access_error_message
+    ).serialize_response)
+  end
+
+  def access_error_message
+    appeal.veteran.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
   end
 end

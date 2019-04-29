@@ -11,6 +11,7 @@ feature "Appeal Edit issues" do
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
+    OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
   end
 
   let(:veteran) do
@@ -23,6 +24,8 @@ feature "Appeal Edit issues" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let(:last_week) { Time.zone.now - 7.days }
   let(:receipt_date) { Time.zone.today - 20.days }
   let(:profile_date) { (receipt_date - 30.days).to_datetime }
 
@@ -466,6 +469,37 @@ feature "Appeal Edit issues" do
 
     let(:withdraw_date) { 1.day.ago.to_date.mdY }
 
+    let!(:in_progress_task) do
+      create(:appeal_task,
+             :in_progress,
+             appeal: appeal,
+             assigned_to: non_comp_org,
+             assigned_at: last_week)
+    end
+
+    scenario "withdraw entire review and show alert" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+      fill_in "withdraw-date", with: withdraw_date
+
+      expect(page).to_not have_content("This review will be withdrawn.")
+      expect(page).to have_button("Save", disabled: false)
+
+      click_withdraw_intake_issue_dropdown("Military Retired Pay - Military Retired Pay - nonrating description")
+
+      expect(page).to have_content("This review will be withdrawn.")
+      expect(page).to have_button("Withdraw", disabled: false)
+
+      click_edit_submit
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully withdrawn a review.")
+
+      expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+    end
+
     scenario "withdraw an issue" do
       visit "appeals/#{appeal.uuid}/edit/"
 
@@ -516,7 +550,7 @@ feature "Appeal Edit issues" do
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
-      expect(page).to_not have_content("Requested issues\n1. PTSD denied")
+      expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
       expect(page).to have_content(
         /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
       )
@@ -536,7 +570,7 @@ feature "Appeal Edit issues" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       expect(page).to have_content(
-        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdrawn on/i
+        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 01\/20\/2018\s*Withdrawn on/i
       )
       expect(page).to have_content("Please include the date the withdrawal was requested")
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
@@ -546,7 +580,6 @@ feature "Appeal Edit issues" do
   context "when remove decision reviews is enabled" do
     before do
       FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
     end
 
     after do
@@ -554,7 +587,6 @@ feature "Appeal Edit issues" do
     end
 
     let(:today) { Time.zone.now }
-    let(:last_week) { Time.zone.now - 7.days }
     let(:appeal) do
       # reload to get uuid
       create(:appeal, veteran_file_number: veteran.file_number).reload
@@ -563,9 +595,9 @@ feature "Appeal Edit issues" do
       [create(:request_issue, :nonrating, decision_review: appeal),
        create(:request_issue, :nonrating, decision_review: appeal)]
     end
-    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+
     let!(:completed_task) do
-      create(:higher_level_review_task,
+      create(:appeal_task,
              :completed,
              appeal: appeal,
              assigned_to: non_comp_org,
@@ -574,7 +606,7 @@ feature "Appeal Edit issues" do
 
     context "when review has multiple active tasks" do
       let!(:in_progress_task) do
-        create(:higher_level_review_task,
+        create(:appeal_task,
                :in_progress,
                appeal: appeal,
                assigned_to: non_comp_org,
@@ -621,7 +653,7 @@ feature "Appeal Edit issues" do
           click_intake_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-          expect(page).to have_content("Review Removed")
+          expect(page).to have_content("Edit Completed")
         end
       end
 
@@ -637,7 +669,7 @@ feature "Appeal Edit issues" do
 
       context "when appeal task is cancelled" do
         let!(:task) do
-          create(:higher_level_review_task,
+          create(:appeal_task,
                  status: Constants.TASK_STATUSES.cancelled,
                  appeal: appeal,
                  assigned_to: non_comp_org,

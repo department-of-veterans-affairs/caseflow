@@ -56,6 +56,14 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :timed_hold_task, class: TimedHoldTask do
+      type { TimedHoldTask.name }
+      appeal { create(:appeal) }
+      assigned_to { FactoryBot.create(:user) }
+      days_on_hold { rand(1..100) }
+      parent { FactoryBot.create(:generic_task) }
+    end
+
     factory :colocated_task do
       type { ColocatedTask.name }
 
@@ -196,6 +204,12 @@ FactoryBot.define do
     factory :informal_hearing_presentation_task, class: InformalHearingPresentationTask do
       type { InformalHearingPresentationTask.name }
       appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
+    factory :appeal_task, class: DecisionReviewTask do
+      type { DecisionReviewTask.name }
+      appeal { create(:appeal, benefit_type: "education") }
       assigned_by { nil }
     end
 
