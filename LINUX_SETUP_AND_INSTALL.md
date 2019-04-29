@@ -1,4 +1,7 @@
-# Developer Setup - Debian Systems
+# Developer Setup
+
+Largely written based on setting up an Ubuntu system, but the system has been
+successfully setup on Fedora, as well.
 
 ## Github
 
@@ -28,25 +31,24 @@ Setup rbenv & nodenv
 ### Install Databases
 
 Install redis. (Maybe not required? Give it a shot without.)  
-Configure to run on another port to avoid blocking the docker container.    
+Configure to run on another port to avoid blocking the docker container.  
 
 Install postgres client and developer libraries.  
 The postgres server is not needed. If you install it, configure it to run on a different port or you will block the docker container.    
 Add these postgres variables to your env:  
+
 ```
 export POSTGRES_HOST=localhost
 export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 ```
 
-Install sqlite3 client and dev libs. This may be deprecated shortly.
-
-[Install oracle](https://github.com/kubo/ruby-oci8/blob/master/docs/install-instant-client.md#install-oracle-instant-client-packages) (last known working at v12; follow _all the steps_ for the zip install. Requires instant-client, sdk, and sql\*plus packages. Don't skip the lib softlink)  
+[Install oracle](https://github.com/kubo/ruby-oci8/blob/master/docs/install-instant-client.md#install-oracle-instant-client-packages) (last known working at Oracle Instant Client v12; follow _all the steps_ for the zip install. Requires instant-client, sdk, and sql\*plus packages. Don't skip the lib softlink)  
 You probably have to create an Oracle account.  
 Add this to your env to squash oracle errors on startup:  
 `export NLS_LANG=AMERICAN_AMERICA.US7ASCII`  
 
-May need to have your user own the oracle directory?
+May need to have your user own the oracle /opt directory?
 
 ### Install Third Party Software
 
@@ -74,7 +76,7 @@ Navigate to the directory you'd like to clone this repo into and run:
 cd caseflow
 rbenv install $(cat .ruby-version)
 rbenv rehash
-# NB: install the version of bundler used to bundled the Gemfile.lock
+# NB: install the version of bundler used to bundle the Gemfile.lock
 BUNDLED_WITH= #[Gemfile.lock bundled-with]
 gem install bundler -v $BUNDLED_WITH
 # If when running gem install bundler above you get a permissions error, this means you have not propertly configured your rbenv.
@@ -115,7 +117,6 @@ docker ps # wait until health: starting becomes healthy
 docker-compose up -d appeals-localstack-aws
 docker-compose up -d appeals-postgres
 docker-compose up -d appeals-redis
-docker-compose up -d vacols-db-test
 # "Creating local caseflow dbs"
 bundle exec rake db:create db:schema:load
 # "Setting up development FACOLS"
@@ -124,6 +125,8 @@ docker exec --tty -i VACOLS_DB-development bash -c \
 # "Seeding FACOLS"
 RAILS_ENV=development bundle exec rake local:vacols:seed
 # "Setting up test FACOLS"
+docker-compose up -d vacols-db-test
+docker ps # wait until health: starting becomes healthy
 docker exec --tty -i VACOLS_DB-test bash -c \
   "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql" 
 # "Enabling feature flags"
