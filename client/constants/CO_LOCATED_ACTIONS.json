@@ -1,5 +1,6 @@
 {
   "SEND_TO_TEAM": "send_to_team",
+  "CHANGE_TASK_TYPE": "change_task_type",
   "COLOCATED_RETURN_TO_ATTORNEY": "send_to_attorney",
   "PLACE_HOLD": "place_hold"
 }

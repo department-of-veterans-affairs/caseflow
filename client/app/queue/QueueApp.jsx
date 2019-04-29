@@ -65,6 +65,7 @@ import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
+import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -198,6 +199,8 @@ class QueueApp extends React.PureComponent {
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
   routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
+
+  routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
 
   routedChangeHearingDisposition = (props) => <ChangeHearingDispositionModal {...props.match.params} />;
 
@@ -421,6 +424,11 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:appealId/tasks/:taskId/modal/send_colocated_task"
             title="Mark Task Complete | Caseflow"
             render={this.routedSendColocatedTaskModal} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/tasks/:taskId/modal/change_task_type"
+            title="Change Task Type | Caseflow"
+            render={this.routedChangeTaskTypeModal} />
           <PageRoute
             exact
             path="/organizations/:organization"
