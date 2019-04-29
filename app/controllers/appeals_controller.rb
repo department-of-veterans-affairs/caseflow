@@ -203,12 +203,12 @@ class AppealsController < ApplicationController
   end
 
   def set_flash_success_message
-    if request_issues_update.after_issues.empty?
-      flash[:edited] = review_removed_message
-    elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
-      flash[:edited] = review_withdrawn_message
-    elsif
-      flash[:edited] = review_edited_message
-    end
+    flash[:edited] = if request_issues_update.after_issues.empty?
+                       review_removed_message
+                     elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
+                       review_withdrawn_message
+                     else
+                       review_edited_message
+                     end
   end
 end

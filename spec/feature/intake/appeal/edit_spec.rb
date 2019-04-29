@@ -584,7 +584,7 @@ feature "Appeal Edit issues" do
       expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
     end
 
-    scenario "show alert when issue is added and withdrawn" do
+    scenario "show alert when issue is added, removed and withdrawn" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       click_intake_add_issue
@@ -603,6 +603,8 @@ feature "Appeal Edit issues" do
       click_intake_add_issue
       add_intake_rating_issue("Back pain")
 
+      click_remove_intake_issue_dropdown(1)
+
       click_withdraw_intake_issue_dropdown("PTSD denied")
 
       expect(page).to have_content(
@@ -618,13 +620,11 @@ feature "Appeal Edit issues" do
 
       fill_in "withdraw-date", with: withdraw_date
 
-      sleep 1
-
-      click_edit_submit_and_confirm
+      safe_click("#button-submit-update")
 
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
-      expect(page).to have_content("You have successfully added 1 issue and withdrawn 1 issue.")
+      expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
     end
   end
 
