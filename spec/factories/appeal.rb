@@ -77,6 +77,14 @@ FactoryBot.define do
       end
     end
 
+    trait :ready_for_distribution do
+      after(:create) do |appeal, _evaluator|
+        appeal.create_tasks_on_intake_success!
+        distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
+        distribution_tasks.each { |task| task.ready_for_distribution! }
+      end
+    end
+
     trait :outcoded do
       after(:create) do |appeal, _evaluator|
         appeal.create_tasks_on_intake_success!
