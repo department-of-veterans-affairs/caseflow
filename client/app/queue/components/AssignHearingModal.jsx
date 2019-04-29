@@ -63,7 +63,7 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    const { hearingDay, openHearing, appeal } = this.props;
+    const { openHearing, appeal } = this.props;
 
     if (openHearing) {
       this.props.showErrorMessage({
