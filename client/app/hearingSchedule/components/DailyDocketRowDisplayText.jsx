@@ -47,7 +47,7 @@ const HearingTime = ({ hearing }) => {
   }
 
   return <div>{getTime(hearing.scheduledFor)} /<br />
-    {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone)} <br />
+    {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone || 'America/New_York')} <br />
     {hearing.regionalOfficeName}
     <p>{hearing.currentIssueCount} issues</p>
   </div>;

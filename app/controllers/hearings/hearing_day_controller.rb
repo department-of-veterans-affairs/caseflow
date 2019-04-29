@@ -40,7 +40,7 @@ class Hearings::HearingDayController < HearingScheduleController
       hearings = hearings.select { |hearing| hearing.assigned_to_vso?(current_user) }
     end
 
-    if current_user.can?("Hearing Prep")
+    if current_user.roles.include?("Hearing Prep")
       hearings = hearings.select { |hearing| hearing.assigned_to_judge?(current_user) }
     end
 
