@@ -128,7 +128,7 @@ class ApplicationController < ApplicationBaseController
        current_user.can?("RO ViewHearSched") ||
        current_user.can?("VSO")
       urls << {
-        title: "Hearing Schedule",
+        title: "Hearings",
         link: "/hearings/schedule"
       }
     end
@@ -312,7 +312,7 @@ class ApplicationController < ApplicationBaseController
       "dispatch" => "Caseflow Dispatch",
       "certifications" => "Caseflow Certification",
       "reader" => "Caseflow Reader",
-      "schedule" => "Caseflow Hearing Schedule",
+      "schedule" => "Caseflow Hearings",
       "hearings" => "Caseflow Hearing Prep",
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"
