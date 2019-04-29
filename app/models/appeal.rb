@@ -139,12 +139,10 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_statuses = [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned]
-
-    active_tasks = tasks.where(status: active_statuses).where.not(type: TrackVeteranTask.name)
+    active_tasks = tasks.active_not_tracking
     return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
-    on_hold_tasks = tasks.where(status: Constants.TASK_STATUSES.on_hold).where.not(type: TrackVeteranTask.name)
+    on_hold_tasks = tasks.on_hold_not_tracking
     return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
     return most_recently_assigned_to_label(tasks) if tasks.any?
