@@ -73,12 +73,41 @@ class ClaimReviewController < ApplicationController
     end
   end
 
+  def withdrawn_issues
+    withdrawn = request_issues_update.withdrawn_issues
+
+    return if withdrawn.empty?
+
+    "withdrawn #{withdrawn.count} #{'issue'.pluralize(withdrawn.count)}"
+  end
+
+  def added_issues
+    new_issues = request_issues_update.after_issues - request_issues_update.before_issues
+    return if new_issues.empty?
+
+    "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)}"
+  end
+
+  def removed_issues
+    removed = request_issues_update.before_issues - request_issues_update.after_issues
+
+    return if removed.empty?
+
+    "removed #{removed.count} #{'issue'.pluralize(removed.count)}"
+  end
+
+  def review_edited_message
+    "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+  end
+
   def set_flash_success_message
-    if request_issues_update.after_issues.empty?
-      flash[:edited] = decisions_removed_message
-    elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
-      flash[:edited] = review_withdrawn_message
-    end
+    flash[:edited] = if request_issues_update.after_issues.empty?
+                       decisions_removed_message
+                     elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
+                       review_withdrawn_message
+                     else
+                       review_edited_message
+                     end
   end
 
   def decisions_removed_message
