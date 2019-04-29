@@ -96,7 +96,7 @@ namespace :tasks do
     target_tasks = if extras.any?
                      task_class.find(extras).select { |task| task.assigned_to_id = from_id }
                    else
-                     task_class.all.active.where(assigned_to_id: from_id)
+                     task_class.all.where(assigned_to_type: "Organization", assigned_to_id: from_id)
                    end
 
     if target_tasks.count == 0
