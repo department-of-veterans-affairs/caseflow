@@ -271,7 +271,7 @@ describe RootTask do
       end
 
       context "when a RootTask already exists for the appeal" do
-        let (:appeal) { FactoryBot.create(:appeal) }
+        let(:appeal) { FactoryBot.create(:appeal) }
 
         subject { RootTask.create!(appeal: appeal) }
 
@@ -280,14 +280,14 @@ describe RootTask do
         end
 
         context "when existing RootTask is active" do
-          let (:root_task_status) { Constants.TASK_STATUSES.on_hold }
+          let(:root_task_status) { Constants.TASK_STATUSES.on_hold }
           it "will raise an error" do
             expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
           end
         end
 
         context "when existing RootTask is inactive" do
-          let (:root_task_status) { Constants.TASK_STATUSES.completed }
+          let(:root_task_status) { Constants.TASK_STATUSES.completed }
           it "will raise an error" do
             expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
           end
