@@ -171,7 +171,7 @@ describe "task rake tasks" do
 
         it "only describes what changes will be made" do
           count = target_task.count
-          ids = target_task.all.pluck(:id)
+          ids = target_task.all.pluck(:id).sort
           expected_output = <<~OUTPUT
             *** DRY RUN
             *** pass 'false' as the fourth argument to execute
@@ -189,7 +189,7 @@ describe "task rake tasks" do
 
         it "makes the requested changes" do
           count = target_task.count
-          ids = target_task.all.pluck(:id)
+          ids = target_task.all.pluck(:id).sort
           expected_output = <<~OUTPUT
             Changing assignee of #{count} #{target_task_name}s with ids #{ids.join(', ')} from #{from_org.name} to #{to_org.name}
             Revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{ids.join(',')}]

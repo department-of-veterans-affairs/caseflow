@@ -104,7 +104,7 @@ namespace :tasks do
                             "to #{from_organization.name} available to change."
     end
 
-    ids = target_tasks.map(&:id)
+    ids = target_tasks.map(&:id).sort
     change = dry_run ? "Would change" : "Changing"
     revert = dry_run ? "Would revert" : "Revert"
     message = "#{change} assignee of #{target_tasks.count} #{task_class.name}s with ids #{ids.join(', ')} " \
