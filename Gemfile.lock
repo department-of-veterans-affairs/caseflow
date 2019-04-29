@@ -489,7 +489,6 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sqlite3 (1.4.0)
     stringex (2.8.5)
     strong_migrations (0.3.1)
       activerecord (>= 3.2.0)
@@ -595,7 +594,6 @@ DEPENDENCIES
   shoryuken (= 3.1.11)
   simplecov!
   sniffybara!
-  sqlite3
   stringex
   strong_migrations
   therubyracer
