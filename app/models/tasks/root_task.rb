@@ -52,7 +52,7 @@ class RootTask < GenericTask
   # since there should only ever be one root task for a single appeal.
   def verify_root_task_unique
     if appeal.tasks.where(
-      type: type,
+      type: type
     ).any?
       fail(
         Caseflow::Error::DuplicateOrgTask,
@@ -63,7 +63,6 @@ class RootTask < GenericTask
       )
     end
   end
-
 
   class << self
     def create_root_and_sub_tasks!(appeal)
