@@ -2,9 +2,7 @@ import * as React from 'react';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
-import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
-import { LinkSymbol } from '../../components/RenderFunctions';
 import HearingWorksheetAmaIssues from '../../hearings/components/HearingWorksheetAmaIssues';
 import DecisionIssues from './DecisionIssues';
 
@@ -25,36 +23,8 @@ const buttonDiv = css({
   margin: '20px 0'
 });
 
-const outerDiv = css({
-  marginLeft: '50px',
-  marginTop: '5px'
-});
-
-const decisionIssueDiv = css({
-  border: `2px solid ${COLORS.GREY_LIGHT}`,
-  borderRadius: '5px',
-  padding: '10px'
-});
-
 const verticalSpaceDiv = css({
   marginTop: '10px'
-});
-
-const descriptionSpan = css({
-  marginRight: '10px'
-});
-
-const grayLine = css({
-  width: '4px',
-  minHeight: '20px',
-  background: COLORS.GREY_LIGHT,
-  marginLeft: '20px',
-  marginBottom: '5px'
-});
-
-const flexContainer = css({
-  display: 'flex',
-  justifyContent: 'space-between'
 });
 
 const noteDiv = css({
