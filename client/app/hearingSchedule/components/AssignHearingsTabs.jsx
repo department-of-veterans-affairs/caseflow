@@ -310,12 +310,7 @@ export default class AssignHearingsTabs extends React.Component {
         name={appeal.externalId}
         href={(() => {
           const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
-          const timer = () => {
-            let time = getTime(selectedHearingDay.scheduledFor);
-
-            return time === '12:00 am ET' ? '' : time;
-          };
-          const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}&hearingTime=${timer()}`;
+          const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
 
           return `/queue/appeals/${appeal.externalId}/${qry}`;
         })()}>

@@ -93,10 +93,6 @@ class AssignHearingModal extends React.PureComponent {
         });
       }
     }
-
-    if (hearingDay.hearingTime) {
-      this.props.onHearingTimeChange(hearingDay.hearingTime);
-    }
   }
 
   submit = () => {
@@ -286,7 +282,6 @@ class AssignHearingModal extends React.PureComponent {
     const { hearingDay } = this.props;
 
     return {
-      hearingTime: hearingDay.hearingTime,
       hearingDate: hearingDay.hearingDate,
       regionalOffice: this.getRO()
     };
@@ -365,7 +360,7 @@ class AssignHearingModal extends React.PureComponent {
             strongLabel
             options={timeOptions}
             onChange={this.props.onHearingTimeChange}
-            value={selectedHearingTime || initVals.hearingTime} />
+            value={selectedHearingTime} />
         </span>
         {selectedHearingTime === 'other' && <SearchableDropdown
           name="optionalTime"
