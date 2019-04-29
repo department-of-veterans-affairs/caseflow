@@ -22,7 +22,7 @@ RSpec.feature "Remove a Hearing Day" do
              "to schedule Veterans for this Central hearing day"
       expect(page).to have_content(text)
       find("button", text: "Confirm").click
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
     end
   end
 end

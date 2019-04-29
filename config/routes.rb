@@ -217,6 +217,7 @@ Rails.application.routes.draw do
     member do
       post :reschedule
     end
+    resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
   end
   resources :judge_assign_tasks, only: [:create]
 
