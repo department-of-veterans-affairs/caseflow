@@ -20,7 +20,7 @@ Workflow management at the Board of Veterans' Appeals.
 Increases the speed with which attorneys and Veterans Law Judges (VLJs)
 review and annotate electronic case files.
 
-### Hearing Schedule
+### Hearings
 
 Scheduling and supporting Board of Veterans' Appeals hearings.
 
@@ -440,8 +440,8 @@ Rails.cache.write("dispatch_out_of_service", true)
 # enable for hearing prep only
 Rails.cache.write("hearing_prep_out_of_service", true)
 
-# enable for hearing schedule only
-Rails.cache.write("hearing_schedule_out_of_service", true)
+# enable for hearings only
+Rails.cache.write("hearings_out_of_service", true)
 
 # enable for reader only
 Rails.cache.write("reader_out_of_service", true)

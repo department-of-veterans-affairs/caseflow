@@ -50,7 +50,7 @@ class HearingDetailsContainer extends React.Component {
           this.getHearing()
         ])}
         loadingComponentProps={{
-          spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+          spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
           message: 'Loading the hearing details...'
         }}
         failStatusMessageProps={{
