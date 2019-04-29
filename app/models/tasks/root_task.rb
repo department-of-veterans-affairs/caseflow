@@ -28,13 +28,6 @@ class RootTask < GenericTask
     []
   end
 
-  def can_create_schedule_hearings_task?(user)
-    HearingsManagement.singleton.user_has_access?(user) &&
-      active? &&
-      legacy? &&
-      children.active.where(type: ScheduleHearingTask.name).empty?
-  end
-
   def actions_available?(_user)
     true
   end
