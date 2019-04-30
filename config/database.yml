@@ -7,7 +7,7 @@
 default: &default
   adapter: postgresql
   encoding: unicode
-  pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
+  pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 10 %>
   timeout: 5000
   variables:
     statement_timeout: 30_000 # 30 seconds
@@ -29,7 +29,6 @@ ssh_forwarding:
 
 development:
   <<: *default
-  pool: 10
   database: caseflow_certification_development
 
 staging:
