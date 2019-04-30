@@ -195,6 +195,11 @@ describe Issue do
       let(:codes) { %w[02 15 03 1234] }
       it { is_expected.to be_nil }
     end
+
+    context "when there are more levels than codes" do
+      let(:codes) { %w[01 01] }
+      it { is_expected.to eq("") }
+    end
   end
 
   context "#friendly_description_without_new_material" do
