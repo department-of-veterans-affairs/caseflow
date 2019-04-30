@@ -350,5 +350,11 @@ describe HearingDispositionChangeJob do
         subject
       end
     end
+
+    context "when there are no DispositionTasks to be processed" do
+      it "runs successfully but does not do any work" do
+        expect { subject }.to_not raise_error
+      end
+    end
   end
 end
