@@ -53,7 +53,7 @@ FactoryBot.define do
           :decision_issue,
           decision_review: request_issue.decision_review,
           participant_id: evaluator.veteran_participant_id,
-          profile_date: request_issue.contested_rating_issue_profile_date.to_date,
+          rating_profile_date: request_issue.contested_rating_issue_profile_date.to_date,
           end_product_last_action_date: request_issue.contested_rating_issue_profile_date.to_date,
           benefit_type: request_issue.decision_review.benefit_type,
           decision_text: "a rating decision issue"

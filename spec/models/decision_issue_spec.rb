@@ -18,8 +18,8 @@ describe DecisionIssue do
       description: description,
       request_issues: request_issues,
       benefit_type: benefit_type,
-      profile_date: profile_date,
-      promulgation_date: promulgation_date,
+      rating_profile_date: profile_date,
+      rating_promulgation_date: promulgation_date,
       end_product_last_action_date: end_product_last_action_date,
       caseflow_decision_date: caseflow_decision_date,
       diagnostic_code: diagnostic_code
@@ -127,7 +127,7 @@ describe DecisionIssue do
         description: description,
         request_issues: request_issues,
         benefit_type: benefit_type,
-        profile_date: profile_date,
+        rating_profile_date: profile_date,
         end_product_last_action_date: end_product_last_action_date,
         diagnostic_code: diagnostic_code
       )
