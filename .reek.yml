@@ -3,6 +3,9 @@ detectors:
   # You can disable smells completely
   DuplicateMethodCall:
     enabled:
+  TooManyMethods:
+    exclude:
+      - RootTask
   InstanceVariableAssumption:
     exclude:
       - Appeal
