@@ -4,16 +4,6 @@
 # Task to track when an appeal has been assigned to Privacy Team
 
 class PrivacyActTask < GenericTask
-  # def available_actions(user)
-  #   return super if assigned_to != user
-  #
-  #   [
-  #     Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-  #     Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-  #     Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-  #   ]
-  # end
-
   def available_actions(user)
     return [] unless user
 
