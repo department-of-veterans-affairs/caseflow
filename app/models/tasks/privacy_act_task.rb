@@ -16,9 +16,7 @@ class PrivacyActTask < GenericTask
     end
 
     if task_is_assigned_to_user_within_organization?(user)
-      return [
-        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
-      ]
+      return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
     end
 
     if task_is_assigned_to_users_organization?(user)
