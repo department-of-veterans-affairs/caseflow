@@ -129,7 +129,7 @@ describe BvaDispatchTask do
       end
 
       context "when decision_date is in the future" do
-        let(:decision_date) { Time.zone.today + 10.days }
+        let(:decision_date) { 1.day.from_now }
 
         it "sets a delay on the enqueued_job" do
           expect do
@@ -137,7 +137,11 @@ describe BvaDispatchTask do
           end.to_not have_enqueued_job(ProcessDecisionDocumentJob)
 
           decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
-          expect(decision_document.submitted_at).to eq(decision_date + 1.minute - 8.hours)
+          expect(decision_document.submitted_at).to eq(
+            decision_date.to_date +
+            DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours -
+            DecisionDocument.processing_retry_interval_hours.hours + 1.minute
+          )
         end
       end
     end

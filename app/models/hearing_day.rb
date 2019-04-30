@@ -34,24 +34,10 @@ class HearingDay < ApplicationRecord
     "America/Anchorage" => 8
   }.freeze
 
-  # rubocop:disable Style/SymbolProc
-  after_update { |hearing_day| hearing_day.update_children_records }
-  # rubocop:enable Style/SymbolProc
+  after_update :update_children_records
 
   def central_office?
     request_type == REQUEST_TYPES[:central]
-  end
-
-  def update_children_records
-    vacols_hearings.each do |hearing|
-      hearing.update_caseflow_and_vacols(
-        room: room,
-        bva_poc: bva_poc,
-        judge_id: judge ? judge.vacols_attorney_id : nil
-      )
-    end
-
-    hearings.each { |hearing| hearing.update!(room: room, bva_poc: bva_poc, judge: judge) }
   end
 
   def confirm_no_children_records
@@ -90,6 +76,31 @@ class HearingDay < ApplicationRecord
     SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
   end
 
+  private
+
+  def update_children_records
+    vacols_hearings.each do |hearing|
+      hearing.update_caseflow_and_vacols(
+        **only_changed(room: room, bva_poc: bva_poc, judge_id: judge&.vacols_attorney_id)
+      )
+    end
+
+    hearings.each do |hearing|
+      hearing.update!(
+        **only_changed(room: room, bva_poc: bva_poc, judge_id: judge&.id)
+      )
+    end
+  end
+
+  def only_changed(possibles_hash)
+    changed_hash = {}
+    possibles_hash.each_key do |key|
+      changed_hash[key] = possibles_hash[key] if saved_changes.key?(key)
+    end
+
+    changed_hash
+  end
+
   class << self
     def to_hash(hearing_day)
       if hearing_day.is_a?(HearingDay)
@@ -120,6 +131,20 @@ class HearingDay < ApplicationRecord
       updated_hearings.each do |hearing_hash|
         hearing_to_update = HearingDay.find(hearing_hash[:id])
         hearing_to_update.update!(judge: User.find_by_css_id_or_create_with_default_station_id(hearing_hash[:css_id]))
+      end
+    end
+
+    def upcoming_days_for_judge(start_date, end_date, user)
+      hearing_days_in_range = HearingDay.includes(:hearings)
+        .where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+      vacols_hearings = HearingRepository.fetch_hearings_for_parents_assigned_to_judge(
+        hearing_days_in_range.first(1000).pluck(:id), user
+      )
+
+      hearing_days_in_range.select do |hearing_day|
+        hearing_day.judge == user ||
+          hearing_day.hearings.any? { |hearing| hearing.judge == user } ||
+          !vacols_hearings[hearing_day.id.to_s].nil?
       end
     end
 
@@ -167,6 +192,8 @@ class HearingDay < ApplicationRecord
     def list_upcoming_hearing_days(start_date, end_date, user, regional_office = nil)
       if user&.vso_employee?
         upcoming_days_for_vso_user(start_date, end_date, user)
+      elsif user&.roles&.include?("Hearing Prep")
+        upcoming_days_for_judge(start_date, end_date, user)
       else
         load_days(start_date, end_date, regional_office)
       end

@@ -132,9 +132,23 @@ describe ClaimReview do
       )
     end
 
+    let!(:claim_review_canceled) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_canceled_at: 2.days.ago
+      )
+    end
+
     context ".unexpired" do
       it "matches reviews still inside the processing window" do
         expect(HigherLevelReview.unexpired).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".canceled" do
+      it "only returns canceled jobs" do
+        expect(HigherLevelReview.canceled).to eq([claim_review_canceled])
       end
     end
 
@@ -149,6 +163,7 @@ describe ClaimReview do
     context ".attemptable" do
       it "matches reviews that could be attempted" do
         expect(HigherLevelReview.attemptable).not_to include(claim_review_recently_attempted)
+        expect(HigherLevelReview.attemptable).not_to include(claim_review_canceled)
       end
     end
 

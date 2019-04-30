@@ -15,11 +15,6 @@ import {
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
-  onHearingNotesUpdate,
-  onHearingDispositionUpdate,
-  onTranscriptRequestedUpdate,
-  onHearingTimeUpdate,
-  onHearingLocationUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -96,7 +91,7 @@ export class DailyDocketContainer extends React.Component {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      const hearings = _.keyBy(resp.hearingDay.hearings, 'id');
+      const hearings = _.keyBy(resp.hearingDay.hearings, 'externalId');
       const dailyDocket = _.omit(resp.hearingDay, ['hearings']);
 
       this.props.onReceiveDailyDocket(dailyDocket, hearings);
@@ -127,9 +122,9 @@ export class DailyDocketContainer extends React.Component {
     const timezone = this.getHearingDate(hearing).timezone;
 
     return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
-  }
+  };
 
-  getScheduledFor = (hearing) => {
+  formatEditedScheduledFor = (hearing) => {
     if (hearing.editedTime) {
       const scheduledTimeObj = this.getTimezoneOffsetScheduledTimeObject(hearing);
 
@@ -137,20 +132,25 @@ export class DailyDocketContainer extends React.Component {
         format();
     }
 
-    return hearing.scheduledFor;
+    return null;
   };
 
   formatHearing = (hearing) => {
-    return {
-      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
-      transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
-        hearing.transcriptRequested : hearing.editedTranscriptRequested,
-      notes: _.isUndefined(hearing.editedNotes) ? hearing.notes : hearing.editedNotes,
-      hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
-        ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
-      scheduled_time: this.getScheduledTime(hearing),
-      scheduled_for: this.getScheduledFor(hearing)
-    };
+    const amaHearingValues = hearing.docketName === 'hearing' ? {
+      evidence_window_waived: hearing.evidenceWindowWaived
+    } : {};
+
+    return _.omitBy({
+      disposition: hearing.disposition,
+      transcript_requested: hearing.transcriptRequested,
+      notes: hearing.notes,
+      hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
+      scheduled_time: hearing.editedTime,
+      scheduled_for: this.formatEditedScheduledFor(hearing),
+      prepped: hearing.prepped,
+      hold_open: hearing.holdOpen,
+      ...amaHearingValues
+    }, _.isNil);
   };
 
   saveHearing = (hearing) => {
@@ -267,7 +267,7 @@ export class DailyDocketContainer extends React.Component {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createHearingPromise}
       loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+        spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
         message: 'Loading the daily docket...'
       }}
       failStatusMessageProps={{
@@ -299,10 +299,7 @@ export class DailyDocketContainer extends React.Component {
         updateLockHearingDay={this.updateLockHearingDay}
         displayLockSuccessMessage={this.props.displayLockSuccessMessage}
         onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
-        userRoleBuild={this.props.userRoleBuild}
-        userRoleAssign={this.props.userRoleAssign}
-        userRoleView={this.props.userRoleView}
-        userRoleVso={this.props.userRoleVso}
+        user={this.props.user}
         dailyDocketServerError={this.props.dailyDocketServerError}
         onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
         notes={this.props.notes}
@@ -343,11 +340,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
-  onHearingNotesUpdate,
-  onHearingDispositionUpdate,
-  onHearingTimeUpdate,
-  onTranscriptRequestedUpdate,
-  onHearingLocationUpdate,
   onInvalidForm,
   selectHearingRoom,
   selectVlj,

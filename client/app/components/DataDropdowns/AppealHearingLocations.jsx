@@ -84,7 +84,7 @@ class AppealHearingLocationsDropdown extends React.Component {
       appealId, regionalOffice, dropdownName
     } = this.props;
 
-    if (options || isFetching) {
+    if (options || isFetching || _.isUndefined(regionalOffice)) {
       return;
     }
 
@@ -117,7 +117,7 @@ class AppealHearingLocationsDropdown extends React.Component {
           errorReason = ' because their address from VBMS is ambiguous.';
           break;
         default:
-          errorReason = '.';
+          errorReason = '. Service is temporarily unavailable.';
         }
 
         const errorMsg = `Could not find hearing locations for this appellant${errorReason}`;
@@ -152,7 +152,7 @@ class AppealHearingLocationsDropdown extends React.Component {
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value, option.label)}
+        onChange={(option) => onChange((option || {}).value, (option || {}).label)}
         options={options}
         errorMessage={this.state.errorMsg || errorMessage}
         placeholder={placeholder} />

@@ -77,10 +77,16 @@ class Hearing < ApplicationRecord
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
       task.type = TrackVeteranTask.name &&
-                  task.assigned_to.is_a?(Vso) &&
+                  task.assigned_to.is_a?(Representative) &&
                   task.assigned_to.user_has_access?(user) &&
                   task.active?
     end
+  end
+
+  def assigned_to_judge?(user)
+    return hearing_day&.judge == user if judge.nil?
+
+    judge == user
   end
 
   def hearing_task?

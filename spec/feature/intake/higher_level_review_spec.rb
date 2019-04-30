@@ -909,7 +909,7 @@ feature "Higher-Level Review" do
       expect(success_checklist).to_not have_content("Already reviewed injury")
       expect(success_checklist).to_not have_content("Another Description for Active Duty Adjustments")
 
-      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      ineligible_checklist = find("ul.cf-issue-checklist")
       expect(ineligible_checklist).to have_content("Already reviewed injury is ineligible")
       expect(ineligible_checklist).to have_content("Another Description for Active Duty Adjustments is ineligible")
 
@@ -1120,7 +1120,7 @@ feature "Higher-Level Review" do
           RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
         ).to eq("appeal_to_higher_level_review")
 
-        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        ineligible_checklist = find("ul.cf-issue-checklist")
         expect(ineligible_checklist).to have_content(
           "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
         )
@@ -1359,7 +1359,7 @@ feature "Higher-Level Review" do
 
           click_intake_finish
 
-          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          ineligible_checklist = find("ul.cf-issue-checklist")
           expect(ineligible_checklist).to have_content(
             "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
           )
@@ -1408,7 +1408,7 @@ feature "Higher-Level Review" do
 
           click_intake_finish
 
-          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          ineligible_checklist = find("ul.cf-issue-checklist")
           expect(ineligible_checklist).to have_content(
             "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
           )

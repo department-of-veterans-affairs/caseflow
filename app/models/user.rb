@@ -17,8 +17,7 @@ class User < ApplicationRecord
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake",
-               "Hearing Schedule", "Case Details"].freeze
+               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake", "Case Details"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -180,7 +179,7 @@ class User < ApplicationRecord
   end
 
   def organization_queue_user?
-    FeatureToggle.enabled?(:organization_queue, user: self)
+    organizations.any?
   end
 
   def granted?(thing)
@@ -295,7 +294,8 @@ class User < ApplicationRecord
     def create_judge_in_vacols(first_name, last_name, vlj_id)
       return unless Rails.env.development? || Rails.env.demo?
 
-      UserRepository.create_judge_in_vacols(first_name, last_name, vlj_id)
+      sdomainid = ["BVA", first_name.first, last_name].join
+      VACOLS::Staff.create(snamef: first_name, snamel: last_name, sdomainid: sdomainid, sattyid: vlj_id)
     end
     # :nocov:
 

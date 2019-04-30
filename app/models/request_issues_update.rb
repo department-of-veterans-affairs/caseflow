@@ -119,6 +119,8 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def withdrawn_issue_data
+    return [] unless @request_issues_data
+
     @request_issues_data.select { |ri| !ri[:withdrawal_date].nil? && ri[:request_issue_id] }
   end
 
@@ -127,7 +129,7 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def validate_before_perform
-    if @request_issues_data.blank? && !allow_zero_request_issues
+    if @request_issues_data.blank? && !allow_zero_request_issues?
       @error_code = :request_issues_data_empty
     elsif !changes?
       @error_code = :no_changes
@@ -138,7 +140,7 @@ class RequestIssuesUpdate < ApplicationRecord
     !@error_code
   end
 
-  def allow_zero_request_issues
+  def allow_zero_request_issues?
     FeatureToggle.enabled?(:remove_decision_reviews, user: RequestStore.store[:current_user])
   end
 

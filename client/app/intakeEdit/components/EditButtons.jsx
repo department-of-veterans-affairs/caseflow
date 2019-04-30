@@ -117,6 +117,12 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, originalIssues
     ) || disableDueToIssueCount || invalidVeteran || !withdrawDateValid;
 
+    const withdrawReview = !_.isEmpty(addedIssues) && _.every(
+      addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
+    );
+
+    const saveButtonText = withdrawReview ? 'Withdraw' : 'Save';
+
     const removeVbmsCopy = 'This will remove the review and cancel all the End Products associated with it.';
 
     const removeCaseflowCopy = 'This review and all tasks associated with it will be removed.';
@@ -166,8 +172,9 @@ class SaveButtonUnconnected extends React.Component {
         loading={requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS ||
           requestStatus.requestIssuesUpdate === REQUEST_STATE.SUCCEEDED}
         disabled={saveDisabled}
+        redStyling={withdrawReview}
       >
-        Save
+        { saveButtonText }
       </Button>
     </span>;
   }

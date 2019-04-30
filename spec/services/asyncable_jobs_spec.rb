@@ -38,6 +38,12 @@ describe AsyncableJobs do
            establishment_error: "bad problem")
   end
 
+  let!(:sc_canceled) do
+    create(:supplemental_claim,
+           veteran_file_number: veteran.file_number,
+           establishment_canceled_at: 2.days.ago)
+  end
+
   describe "#jobs" do
     it "returns an Array of model instances that consume Asyncable concern" do
       expect(subject.jobs).to be_a(Array)
@@ -47,6 +53,7 @@ describe AsyncableJobs do
       expect(subject.jobs).to include(sc_not_submitted)
       expect(subject.jobs).to include(sc_not_attempted_expired)
       expect(subject.jobs).to include(sc_not_attempted)
+      expect(subject.jobs).to_not include(sc_canceled)
     end
 
     it "sorts by the submited_at column, descending order" do
@@ -71,13 +78,23 @@ describe AsyncableJobs do
     end
   end
 
-  describe "#models" do
+  describe ".models" do
     it "returns list of Asyncable-consuming models" do
-      expect(subject.models).to include(HigherLevelReview)
+      expect(described_class.models).to include(HigherLevelReview)
     end
 
     it "rejects abstract classes" do
-      expect(subject.models).to_not include(DecisionReview)
+      expect(described_class.models).to_not include(DecisionReview)
+    end
+  end
+
+  describe "#total_jobs" do
+    subject { described_class.new(page: 2, page_size: 4) }
+
+    it "paginates" do
+      expect(subject.jobs.length).to eq(2)
+      expect(subject.total_jobs).to eq(6)
+      expect(subject.total_pages).to eq(2)
     end
   end
 end

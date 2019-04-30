@@ -93,7 +93,7 @@ class ScheduleHearingTask < GenericTask
   end
 
   def available_actions(user)
-    if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
+    if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
       return [
         Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -129,12 +129,12 @@ class ScheduleHearingTask < GenericTask
   private
 
   def set_assignee
-    self.assigned_to = assigned_to.nil? ? HearingsManagement.singleton : assigned_to
+    self.assigned_to ||= Bva.singleton
   end
 
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
-      location = if appeal.vsos.empty?
+      location = if appeal.representatives.empty?
                    LegacyAppeal::LOCATION_CODES[:case_storage]
                  else
                    LegacyAppeal::LOCATION_CODES[:service_organization]

@@ -523,10 +523,10 @@ describe Appeal do
       end
     end
 
-    context "#vsos" do
-      it "returns all vsos this appeal has that exist in our DB" do
-        expect(appeal.vsos.count).to eq(1)
-        expect(appeal.vsos.first.name).to eq("Paralyzed Veterans Of America")
+    context "#representatives" do
+      it "returns all representatives this appeal has that exist in our DB" do
+        expect(appeal.representatives.count).to eq(1)
+        expect(appeal.representatives.first.name).to eq("Paralyzed Veterans Of America")
       end
 
       context "when there is no VSO" do
@@ -540,10 +540,10 @@ describe Appeal do
         let(:appeal) do
           create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_nil)])
         end
-        let!(:vsos) { Vso.create(name: "Test VSO") }
+        let!(:vso) { Vso.create(name: "Test VSO") }
 
         it "does not return VSOs with nil participant_id" do
-          expect(appeal.vsos).to eq([])
+          expect(appeal.representatives).to eq([])
         end
       end
     end
@@ -1016,7 +1016,6 @@ describe Appeal do
           :schedule_hearing_task,
           parent: hearing_task,
           appeal: appeal,
-          assigned_to: HearingsManagement.singleton,
           status: Constants.TASK_STATUSES.completed
         )
       end
@@ -1631,7 +1630,6 @@ describe Appeal do
           :schedule_hearing_task,
           parent: hearing_task,
           appeal: appeal,
-          assigned_to: HearingsManagement.singleton,
           status: Constants.TASK_STATUSES.completed
         )
       end

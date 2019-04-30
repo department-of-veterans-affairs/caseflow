@@ -6,7 +6,7 @@ class TasksController < ApplicationController
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
-  TASK_CLASSES = {
+  TASK_CLASSES_LOOKUP = {
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
@@ -57,9 +57,14 @@ class TasksController < ApplicationController
   #   assigned_to_id: 23
   #  }
   def create
-    return invalid_type_error unless task_class
+    return invalid_type_error unless task_classes_valid?
 
-    tasks = task_class.create_many_from_params(create_params, current_user)
+    tasks = []
+    param_groups = create_params.group_by { |param| param[:type] }
+    param_groups.each do |task_type, param_group|
+      tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
+    end
+    tasks.flatten!
 
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 
@@ -90,24 +95,8 @@ class TasksController < ApplicationController
 
   def for_appeal
     no_cache
-    RootTask.find_or_create_by!(appeal: appeal)
 
-    tasks = []
-
-    # Prevent VSOs from viewing tasks for this appeal assigned to anybody or team at the Board.
-    # VSO users will be able to see other VSO's tasks because we don't store that membership information in Caseflow.
-    if current_user.vso_employee?
-      # Return all tasks assigned to the current user or ANY VSO.
-      tasks = appeal.tasks.select { |t| t.assigned_to.is_a?(Vso) || current_user == t.assigned_to }
-    else
-      # DecisionReviewTask tasks are meant to be viewed on the /decision_reviews/:line-of-business route only.
-      # This change filters them out from the Queue page
-      tasks = appeal.tasks.not_decisions_review
-      if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-        legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
-        tasks = (legacy_appeal_tasks + tasks).uniq
-      end
-    end
+    tasks = TasksForAppeal.new(appeal: appeal, user: current_user, user_role: user_role).call
 
     render json: {
       tasks: json_tasks(tasks)[:data]
@@ -133,24 +122,16 @@ class TasksController < ApplicationController
     task.reschedule_hearing
 
     render json: {
-      tasks: json_tasks(task.appeal.tasks)[:data]
+      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
     }
   end
 
   private
 
-  def can_assign_task?
-    return true if create_params.first[:appeal].is_a?(Appeal)
-
-    super
-  end
-
   def verify_task_access
-    if current_user.vso_employee? && task_class != InformalHearingPresentationTask
+    if current_user.vso_employee? && task_classes.exclude?(InformalHearingPresentationTask.name.to_sym)
       fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
     end
-
-    redirect_to("/unauthorized") unless can_assign_task?
   end
 
   def queue_class
@@ -166,13 +147,21 @@ class TasksController < ApplicationController
   end
   helper_method :user
 
-  def task_class
+  def task_classes_valid?
+    valid_task_class_names = valid_task_classes.keys
+    (task_classes - valid_task_class_names).empty?
+  end
+
+  def task_classes
+    create_params.map { |param| param[:type]&.to_sym }.uniq.compact
+  end
+
+  def valid_task_classes
     additional_task_classes = Hash[
       *MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
       *HearingAdminActionTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten
     ]
-    classes = TASK_CLASSES.merge(additional_task_classes)
-    classes[create_params.first[:type].try(:to_sym)]
+    TASK_CLASSES_LOOKUP.merge(additional_task_classes)
   end
 
   def appeal
@@ -183,7 +172,7 @@ class TasksController < ApplicationController
     render json: {
       "errors": [
         "title": "Invalid Task Type Error",
-        "detail": "Task type is invalid, valid types: #{TASK_CLASSES.keys}"
+        "detail": "Task type is invalid, valid types: #{TASK_CLASSES_LOOKUP.keys}"
       ]
     }, status: :bad_request
   end
@@ -228,5 +217,14 @@ class TasksController < ApplicationController
     AmaAndLegacyTaskSerializer.new(
       tasks: tasks, params: params, ama_serializer: WorkQueue::TaskSerializer
     ).call
+  end
+
+  def task_includes
+    [
+      :appeal,
+      :assigned_by,
+      :assigned_to,
+      :parent
+    ]
   end
 end

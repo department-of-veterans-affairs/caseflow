@@ -22,6 +22,7 @@ export default class HearingScheduleApp extends React.PureComponent {
       userRoleBuild,
       userRoleView,
       userRoleVso,
+      userRoleHearingPrep,
       userInHearingsOrganization
     } = this.props;
 
@@ -30,6 +31,7 @@ export default class HearingScheduleApp extends React.PureComponent {
       userRoleBuild,
       userRoleView,
       userRoleVso,
+      userRoleHearingPrep,
       userInHearingsOrganization
     };
   };
@@ -48,7 +50,7 @@ export default class HearingScheduleApp extends React.PureComponent {
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.userPermissionProps()} />;
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
-  routeForDailyDocket = () => <DailyDocketContainer {...this.userPermissionProps()} />;
+  routeForDailyDocket = () => <DailyDocketContainer user={this.userPermissionProps()} />;
   routeForHearingDetails = ({ match: { params }, history }) =>
     <HearingDetailsContainer hearingId={params.hearingId} history={history} {...this.userPermissionProps()} />;
 
@@ -60,10 +62,10 @@ export default class HearingScheduleApp extends React.PureComponent {
       dropdownUrls={this.props.dropdownUrls}
       applicationUrls={this.props.applicationUrls}
       logoProps={{
-        overlapColor: LOGO_COLORS.HEARING_SCHEDULE.OVERLAP,
-        accentColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT
+        overlapColor: LOGO_COLORS.HEARINGS.OVERLAP,
+        accentColor: LOGO_COLORS.HEARINGS.ACCENT
       }}
-      appName="Hearing Schedule">
+      appName="Hearings">
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">
@@ -88,7 +90,7 @@ export default class HearingScheduleApp extends React.PureComponent {
           <PageRoute
             exact
             path="/schedule/build"
-            title="Caseflow Hearing Schedule"
+            title="Caseflow Hearings"
             breadcrumb="Build"
             component={BuildScheduleContainer}
           />

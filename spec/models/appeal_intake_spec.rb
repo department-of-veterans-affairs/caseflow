@@ -152,10 +152,14 @@ describe AppealIntake do
           allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
         end
 
-        it "adds claimant address required error" do
-          expect(subject).to be_falsey
-          expect(detail.errors[:claimant]).to include("claimant_address_required")
-          expect(detail.claimants).to be_empty
+        it "does not require the address" do
+          expect(subject).to be_truthy
+          expect(intake.detail.claimants.count).to eq 1
+          expect(intake.detail.claimants.first).to have_attributes(
+            participant_id: "1234",
+            payee_code: nil,
+            decision_review: intake.detail
+          )
         end
       end
 

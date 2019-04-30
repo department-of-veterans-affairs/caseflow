@@ -128,7 +128,7 @@ class ApplicationController < ApplicationBaseController
        current_user.can?("RO ViewHearSched") ||
        current_user.can?("VSO")
       urls << {
-        title: "Hearing Schedule",
+        title: "Hearings",
         link: "/hearings/schedule"
       }
     end
@@ -201,22 +201,6 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" if current_user&.vso_employee?
   end
 
-  # :nocov:
-  def can_assign_task?
-    if current_user.attorney_in_vacols?
-      # This feature toggle control access of attorneys to create admin actions for co-located users
-      feature_enabled?(:attorney_assignment_to_colocated) ||
-        current_user.organizations.pluck(:name).include?(QualityReview.singleton.name)
-    else
-      true
-    end
-  end
-
-  def verify_task_assignment_access
-    redirect_to("/unauthorized") unless can_assign_task?
-  end
-  # :nocov:
-
   def invalid_record_error(record)
     render json: {
       "errors": ["title": "Record is invalid", "detail": record.errors.full_messages.join(" ,")]
@@ -244,7 +228,8 @@ class ApplicationController < ApplicationBaseController
   end
 
   def set_timezone
-    Time.zone = current_user.timezone if current_user
+    Time.zone = session[:timezone] || current_user&.timezone
+    session[:timezone] ||= current_user&.timezone
   end
 
   # This is used in development mode to:
@@ -327,7 +312,7 @@ class ApplicationController < ApplicationBaseController
       "dispatch" => "Caseflow Dispatch",
       "certifications" => "Caseflow Certification",
       "reader" => "Caseflow Reader",
-      "schedule" => "Caseflow Hearing Schedule",
+      "schedule" => "Caseflow Hearings",
       "hearings" => "Caseflow Hearing Prep",
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"

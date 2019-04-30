@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { formatDateStr, formatDateStringForApi } from '../../util/DateUtil';
+import { formatDateStr, formatDateStringForApi, formatDateStrUtc } from '../../util/DateUtil';
 import DATES from '../../../constants/DATES.json';
 import { FORM_TYPES } from '../constants';
 
@@ -112,7 +112,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         untimelyExemptionNotes: issue.untimelyExemptionNotes,
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
-        vacolsIssue: issue.vacols_issue
+        vacolsIssue: issue.vacols_issue,
+        withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
 
@@ -126,7 +127,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
         isUnidentified: issue.is_unidentified,
         vacolsId: issue.vacols_id,
         vacolsSequenceId: issue.vacols_sequence_id,
-        vacolsIssue: issue.vacols_issue
+        vacolsIssue: issue.vacols_issue,
+        withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
       };
     }
 
@@ -152,7 +154,8 @@ export const formatRequestIssues = (requestIssues, contestableIssues) => {
       untimelyExemptionNotes: issue.untimelyExemptionNotes,
       vacolsId: issue.vacols_id,
       vacolsSequenceId: issue.vacols_sequence_id,
-      vacolsIssue: issue.vacols_issue
+      vacolsIssue: issue.vacols_issue,
+      withdrawalDate: formatDateStrUtc(issue.withdrawal_date)
     };
   });
 };
@@ -191,7 +194,7 @@ const formatUnidentifiedIssues = (state) => {
         decision_text: issue.description,
         notes: issue.notes,
         is_unidentified: true,
-        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null
+        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : issue.withdrawalDate
       };
     });
 };
@@ -318,7 +321,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         text: `Unidentified issue: no issue matched for "${issue.description}"`,
         notes: issue.notes,
         isUnidentified: true,
-        withdrawalPending: issue.withdrawalPending
+        withdrawalPending: issue.withdrawalPending,
+        withdrawalDate: issue.withdrawalDate
       };
     } else if (issue.isRating) {
       if (!issue.decisionDate && !issue.approxDecisionDate) {
@@ -347,7 +351,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         vacolsSequenceId: issue.vacolsSequenceId,
         vacolsIssue: issue.vacolsIssue,
         eligibleForSocOptIn: issue.eligibleForSocOptIn,
-        withdrawalPending: issue.withdrawalPending
+        withdrawalPending: issue.withdrawalPending,
+        withdrawalDate: issue.withdrawalDate
       };
     }
 
@@ -370,7 +375,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       vacolsIssue: issue.vacolsIssue,
       eligibleForSocOptIn: issue.eligibleForSocOptIn,
       decisionReviewTitle: issue.decisionReviewTitle,
-      withdrawalPending: issue.withdrawalPending
+      withdrawalPending: issue.withdrawalPending,
+      withdrawalDate: issue.withdrawalDate
     };
   });
 };

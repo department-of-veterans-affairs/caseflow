@@ -43,6 +43,7 @@ describe HearingDispositionChangeJob do
   end
 
   describe ".update_task_by_hearing_disposition" do
+    let(:attributes_date_fields) { %w[assigned_at created_at updated_at] }
     subject { HearingDispositionChangeJob.new.update_task_by_hearing_disposition(task) }
 
     context "when hearing has a disposition" do
@@ -66,10 +67,9 @@ describe HearingDispositionChangeJob do
 
       context "when disposition is postponed" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
-        it "returns a label matching the hearing disposition and not change the task" do
-          attributes_before = task.attributes
+        it "returns a label matching the hearing disposition and call DispositionTask.postpone!" do
+          expect(task).to receive(:postpone!).exactly(1).times
           expect(subject).to eq(disposition)
-          expect(task.attributes).to eq(attributes_before)
         end
       end
 
@@ -84,9 +84,9 @@ describe HearingDispositionChangeJob do
       context "when the disposition is not an expected disposition" do
         let(:disposition) { "FAKE_DISPOSITION" }
         it "returns a label indicating that the hearing disposition is unknown and not change the task" do
-          attributes_before = task.attributes
+          attributes_before = task.attributes.except(*attributes_date_fields)
           expect(subject).to eq(:unknown_disposition)
-          expect(task.attributes).to eq(attributes_before)
+          expect(task.reload.attributes.except(*attributes_date_fields)).to eq(attributes_before)
         end
       end
     end
@@ -97,10 +97,16 @@ describe HearingDispositionChangeJob do
       context "when hearing was scheduled to take place more than 2 days ago" do
         let(:scheduled_for) { 3.days.ago }
 
-        it "returns a label indicating that the hearing is stale and does not change the task" do
-          attributes_before = task.attributes
+        it "returns a label indicating that the hearing is stale, completes the task, and creates a new task" do
+          expect(ChangeHearingDispositionTask.count).to eq 0
+
           expect(subject).to eq(:stale)
-          expect(task.attributes).to eq(attributes_before)
+
+          expect(task.closed_at).to_not be_nil
+          expect(task.status).to eq Constants.TASK_STATUSES.completed
+          expect(ChangeHearingDispositionTask.count).to eq 1
+          expect(ChangeHearingDispositionTask.first.appeal).to eq task.appeal
+          expect(ChangeHearingDispositionTask.first.parent).to eq task.parent
         end
       end
 
@@ -108,9 +114,9 @@ describe HearingDispositionChangeJob do
         let(:scheduled_for) { 25.hours.ago }
 
         it "returns a label indicating that the hearing was recently held and does not change the task" do
-          attributes_before = task.attributes
+          attributes_before = task.attributes.except(*attributes_date_fields)
           expect(subject).to eq(:between_one_and_two_days_old)
-          expect(task.attributes).to eq(attributes_before)
+          expect(task.reload.attributes.except(*attributes_date_fields)).to eq(attributes_before)
         end
       end
     end
@@ -342,6 +348,12 @@ describe HearingDispositionChangeJob do
           receive(:log_info).with(anything, task_count_for, error_count, anything).exactly(1).times
         )
         subject
+      end
+    end
+
+    context "when there are no DispositionTasks to be processed" do
+      it "runs successfully but does not do any work" do
+        expect { subject }.to_not raise_error
       end
     end
   end

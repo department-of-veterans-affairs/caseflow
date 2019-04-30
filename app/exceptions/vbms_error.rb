@@ -23,6 +23,8 @@ class VBMSError < RuntimeError
   class BadClaim < Caseflow::Error::VBMS; end
   class CannotDeleteContention < Caseflow::Error::VBMS; end
   class ClaimDateInvalid < Caseflow::Error::VBMS; end
+  class FilenumberDoesNotExist < Caseflow::Error::VBMS; end
+  class MissingData < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -81,7 +83,13 @@ class VBMSError < RuntimeError
     "The contention is connected to an issue in ratings and cannot be deleted." => "CannotDeleteContention",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/292533/
-    "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid"
+    "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/308951/
+    "File Number does not exist within the system." => "FilenumberDoesNotExist",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
+    "missing required data" => "MissingData"
   }.freeze
 
   class << self
