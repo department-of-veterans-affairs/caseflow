@@ -11,6 +11,8 @@ services:
       - "u01_test:/u01/app/oracle/oradata"
       - "ORCL_test:/ORCL"
       - "u02_test:/u02"
+    environment:
+      - DB_SID=BVAP
     ports:
       - "1521:1521"
   
@@ -21,6 +23,8 @@ services:
     tty: true
     stdin_open: true
     command: bash -c "/home/oracle/setup/dockerInit.sh"
+    environment:
+      - DB_SID=BVAP
     volumes:
       - "u01_development:/u01/app/oracle/oradata"
       - "ORCL_development:/ORCL"
