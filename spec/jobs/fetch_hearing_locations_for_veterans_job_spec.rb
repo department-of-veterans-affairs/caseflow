@@ -25,20 +25,16 @@ describe FetchHearingLocationsForVeteransJob do
         let!(:vacols_case_2) do
           create(:case, bfcurloc: "CASEFLOW", bfregoff: "RO01", bfcorlid: "999999999S", bfhr: "2", bfdocind: "V")
         end
-        let!(:legacy_appeal_2) do
-          create(:legacy_appeal, vbms_id: "999999999S", vacols_case: vacols_case_2)
-        end
-        let!(:task_1) do
-          create(:schedule_hearing_task, appeal: legacy_appeal_2, assigned_to: HearingsManagement.singleton)
-        end
+        let!(:legacy_appeal_2) { create(:legacy_appeal, vbms_id: "999999999S", vacols_case: vacols_case_2) }
+        let!(:task_1) { create(:schedule_hearing_task, appeal: legacy_appeal_2) }
         # AMA appeal with schedule taks
         let!(:veteran_3) { create(:veteran, file_number: "000000000") }
         let!(:appeal) { create(:appeal, veteran_file_number: "000000000") }
-        let!(:task_2) { create(:schedule_hearing_task, appeal: appeal, assigned_to: HearingsManagement.singleton) }
+        let!(:task_2) { create(:schedule_hearing_task, appeal: appeal) }
         # AMA appeal with completed address admin action
         let!(:veteran_4) { create(:veteran, file_number: "222222222") }
         let!(:appeal_2) { create(:appeal, veteran_file_number: "222222222") }
-        let!(:task_3) { create(:schedule_hearing_task, appeal: appeal_2, assigned_to: HearingsManagement.singleton) }
+        let!(:task_3) { create(:schedule_hearing_task, appeal: appeal_2) }
         let!(:completed_admin_action) do
           HearingAdminActionVerifyAddressTask.create!(
             appeal: appeal_2,
@@ -53,13 +49,13 @@ describe FetchHearingLocationsForVeteransJob do
           (0..2).each do |number|
             create(:veteran, file_number: "23456781#{number}")
             app = create(:appeal, veteran_file_number: "23456781#{number}")
-            create(:schedule_hearing_task, appeal: app, assigned_to: HearingsManagement.singleton, status: "completed")
+            create(:schedule_hearing_task, appeal: app, status: "completed")
           end
 
           # task with Address admin action
           create(:veteran, file_number: "234567815")
           app_2 = create(:appeal, veteran_file_number: "234567815")
-          tsk = create(:schedule_hearing_task, appeal: app_2, assigned_to: HearingsManagement.singleton)
+          tsk = create(:schedule_hearing_task, appeal: app_2)
           HearingAdminActionVerifyAddressTask.create!(
             appeal: app_2,
             assigned_to: HearingsManagement.singleton,
@@ -69,7 +65,7 @@ describe FetchHearingLocationsForVeteransJob do
           # task with Foreign Case admin action
           create(:veteran, file_number: "234567816")
           app_3 = create(:appeal, veteran_file_number: "234567816")
-          tsk_2 = create(:schedule_hearing_task, appeal: app_3, assigned_to: HearingsManagement.singleton)
+          tsk_2 = create(:schedule_hearing_task, appeal: app_3)
           HearingAdminActionForeignVeteranCaseTask.create!(
             appeal: app_3,
             assigned_to: HearingsManagement.singleton,
@@ -230,9 +226,7 @@ describe FetchHearingLocationsForVeteransJob do
               create(:case, bfcurloc: "CASEFLOW", bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V")
             end
             let!(:legacy_appeal) { create(:legacy_appeal, vbms_id: "123456789S", vacols_case: vacols_case) }
-            let!(:task) do
-              create(:schedule_hearing_task, appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
-            end
+            let!(:task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
 
             it "creates an admin action" do
               FetchHearingLocationsForVeteransJob.perform_now

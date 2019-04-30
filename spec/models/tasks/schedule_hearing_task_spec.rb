@@ -1,38 +1,84 @@
 # frozen_string_literal: true
 
 describe ScheduleHearingTask do
-  before do
-    Time.zone = "Eastern Time (US & Canada)"
-    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
-    RequestStore[:current_user] = hearings_user
-  end
-
-  after do
-    FeatureToggle.disable!(:test_facols)
-  end
-
   let(:vacols_case) { FactoryBot.create(:case, bfcurloc: "57") }
-  let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-  let!(:hearings_user) { create(:hearings_coordinator) }
-  let(:staff) { create(:staff, sdomainid: "BVATWARNER", slogid: "TWARNER") }
-  let!(:hearings_org) { create(:hearings_management) }
-
+  let(:appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
+  let!(:hearings_management_user) { FactoryBot.create(:hearings_coordinator) }
   let(:test_hearing_date_vacols) do
     Time.use_zone("Eastern Time (US & Canada)") do
       Time.zone.local(2018, 11, 2, 6, 0, 0)
     end
   end
 
-  context "Create a ScheduleHearingTask with parent other than HearingTask type." do
-    let(:root_parent) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:schedule_hearing) do
-      FactoryBot.create(:schedule_hearing_task, parent: root_parent, assigned_to: HearingsManagement.singleton)
+  before do
+    Time.zone = "Eastern Time (US & Canada)"
+    OrganizationsUser.add_user_to_organization(hearings_management_user, HearingsManagement.singleton)
+    RequestStore[:current_user] = hearings_management_user
+  end
+
+  after do
+    FeatureToggle.disable!(:test_facols)
+  end
+
+  context "create a new ScheduleHearingTask" do
+    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
+
+    before do
+      FeatureToggle.enable!(:ama_acd_tasks)
     end
 
+    after do
+      FeatureToggle.disable!(:ama_acd_tasks)
+    end
+
+    subject do
+      RootTask.create_root_and_sub_tasks! appeal
+    end
+
+    it "is assigned to the Bva org by default" do
+      expect(ScheduleHearingTask.count).to eq 0
+
+      subject
+
+      expect(ScheduleHearingTask.count).to eq 1
+      task = ScheduleHearingTask.first
+
+      expect(task.assigned_to_type).to eq "Organization"
+      expect(task.assigned_to).to eq Bva.singleton
+    end
+
+    it "has actions available to the hearings managment org member" do
+      subject
+
+      task = ScheduleHearingTask.first
+      expect(task.available_actions_unwrapper(hearings_management_user).count).to be > 0
+    end
+
+    context "there is a hearing admin org user" do
+      let(:hearing_admin_user) { FactoryBot.create(:user, station_id: 101) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+      end
+
+      it "has no actions available" do
+        subject
+
+        task = ScheduleHearingTask.first
+        expect(task.available_actions_unwrapper(hearing_admin_user).count).to eq 0
+      end
+    end
+  end
+
+  context "create a ScheduleHearingTask with parent other than HearingTask type" do
+    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+    subject { FactoryBot.create(:schedule_hearing_task, parent: root_task) }
+
     it "creates a HearingTask in between the input parent and the ScheduleHearingTask" do
-      expect { schedule_hearing }.to_not raise_error
-      expect(schedule_hearing.parent).to be_a(HearingTask)
-      expect(schedule_hearing.parent.parent).to eq(root_parent)
+      expect { subject }.to_not raise_error
+      expect(subject.parent).to be_a(HearingTask)
+      expect(subject.parent.parent).to eq(root_task)
     end
   end
 
@@ -64,7 +110,7 @@ describe ScheduleHearingTask do
       end
 
       it "associates a caseflow hearing with the hearing day" do
-        schedule_hearing_task.update_from_params(update_params, hearings_user)
+        schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
         expect(Hearing.count).to eq(1)
         expect(Hearing.first.hearing_day).to eq(hearing_day)
@@ -72,7 +118,7 @@ describe ScheduleHearingTask do
       end
 
       it "creates a DispositionTask and associated object" do
-        schedule_hearing_task.update_from_params(update_params, hearings_user)
+        schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
         expect(DispositionTask.count).to eq(1)
         expect(DispositionTask.first.appeal).to eq(schedule_hearing_task.appeal)
@@ -93,12 +139,12 @@ describe ScheduleHearingTask do
         let(:vacols_case) { create(:case) }
         let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
         let(:schedule_hearing_task) do
-          create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user)
+          create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_management_user)
         end
 
         context "with no VSO" do
           it "completes the task and updates the location to case storage" do
-            schedule_hearing_task.update_from_params(update_params, hearings_user)
+            schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:case_storage])
@@ -126,7 +172,7 @@ describe ScheduleHearingTask do
           end
 
           it "completes the task and updates the location to service organization" do
-            schedule_hearing_task.update_from_params(update_params, hearings_user)
+            schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
             expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
             expect(vacols_case.reload.bfcurloc).to eq(LegacyAppeal::LOCATION_CODES[:service_organization])
@@ -139,11 +185,11 @@ describe ScheduleHearingTask do
       context "AMA appeal" do
         let(:appeal) { create(:appeal) }
         let(:schedule_hearing_task) do
-          create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user)
+          create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_management_user)
         end
 
         it "completes the task and creates an EvidenceSubmissionWindowTask" do
-          schedule_hearing_task.update_from_params(update_params, hearings_user)
+          schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
           expect(schedule_hearing_task.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(appeal.tasks.where(type: EvidenceSubmissionWindowTask.name).count).to eq(1)
@@ -254,7 +300,7 @@ describe ScheduleHearingTask do
       let(:appeal_for_veteran_at_ro) do
         create(:appeal, veteran: veteran_at_ro, closest_regional_office: regional_office)
       end
-      let!(:hearing_task) { create(:schedule_hearing_task, appeal: appeal_for_veteran_at_ro) }
+      let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal_for_veteran_at_ro) }
 
       let(:veteran_at_different_ro) { create(:veteran) }
       let(:appeal_for_veteran_at_different_ro) do
@@ -268,7 +314,7 @@ describe ScheduleHearingTask do
         tasks = ScheduleHearingTask.tasks_for_ro(regional_office)
 
         expect(tasks.count).to eq(1)
-        expect(tasks[0].id).to eq(hearing_task.id)
+        expect(tasks[0].id).to eq(schedule_hearing_task.id)
       end
     end
   end
