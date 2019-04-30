@@ -91,7 +91,7 @@ export class DailyDocketContainer extends React.Component {
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      const hearings = _.keyBy(resp.hearingDay.hearings, 'id');
+      const hearings = _.keyBy(resp.hearingDay.hearings, 'externalId');
       const dailyDocket = _.omit(resp.hearingDay, ['hearings']);
 
       this.props.onReceiveDailyDocket(dailyDocket, hearings);
@@ -148,6 +148,7 @@ export class DailyDocketContainer extends React.Component {
       scheduled_time: hearing.editedTime,
       scheduled_for: this.formatEditedScheduledFor(hearing),
       prepped: hearing.prepped,
+      hold_open: hearing.holdOpen,
       ...amaHearingValues
     }, _.isNil);
   };
@@ -266,7 +267,7 @@ export class DailyDocketContainer extends React.Component {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createHearingPromise}
       loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+        spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
         message: 'Loading the daily docket...'
       }}
       failStatusMessageProps={{

@@ -11,7 +11,7 @@ import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
   AodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
   NotesField, HearingLocationDropdown, StaticHearingDay, TimeRadioButtons,
-  Waive90DayHoldCheckbox
+  Waive90DayHoldCheckbox, HoldOpenDropdown
 } from './DailyDocketRowInputs';
 
 const SaveButton = ({ hearing, cancelUpdate, saveHearing }) => {
@@ -74,6 +74,10 @@ class HearingActions extends React.Component {
     }, 0);
   }
 
+  isAmaHearing = () => this.props.hearing.docketName === 'hearing'
+
+  isLegacyHearing = () => this.props.hearing.docketName === 'legacy'
+
   getInputProps = () => {
     const { hearing, readOnly } = this.props;
 
@@ -103,7 +107,8 @@ class HearingActions extends React.Component {
     return <React.Fragment>
       <HearingPrepWorkSheetLink hearing={hearing} />
       <AodDropdown {...inputProps} />
-      <AodReasonDropdown {...inputProps} />
+      {this.isAmaHearing() && <AodReasonDropdown {...inputProps} />}
+      {this.isLegacyHearing() && <HoldOpenDropdown {...inputProps} />}
     </React.Fragment>;
   }
 
@@ -121,20 +126,16 @@ class HearingActions extends React.Component {
   }
 
   getLeftColumn = () => {
-    const { hearing, user, readOnly, openDispositionModal } = this.props;
+    const { hearing, user, openDispositionModal } = this.props;
 
-    const inputProps = {
-      hearing,
-      readOnly,
-      update: this.update
-    };
+    const inputProps = this.getInputProps();
 
     return <div {...inputSpacing}>
       <DispositionDropdown {...inputProps}
         cancelUpdate={this.cancelUpdate}
         saveHearing={this.saveHearing}
         openDispositionModal={openDispositionModal} />
-      {(user.userRoleHearingPrep && hearing.docketName === 'hearing') &&
+      {(user.userRoleHearingPrep && this.isAmaHearing()) &&
         <Waive90DayHoldCheckbox {...inputProps} />}
       <TranscriptRequestedCheckbox {...inputProps} />
       {(user.userRoleAssign && !user.userRoleHearingPrep) && <HearingDetailsLink hearing={hearing} />}

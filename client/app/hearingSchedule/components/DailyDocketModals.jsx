@@ -86,7 +86,7 @@ export class DispositionModal extends React.Component {
 
   render () {
     const { hearing, disposition, onCancel } = this.props;
-    const hearingType = hearing.docketName === 'Legacy' &&
+    const hearingType = hearing.docketName === 'legacy' &&
       !hearing.dispositionEditable ? 'VACOLS' : 'CASEFLOW';
 
     return (

@@ -207,7 +207,7 @@
   "ASSIGN_WIDGET_ERROR_LOADING_ATTORNEYS": "Error loading attorneys",
   "ASSIGN_WIDGET_MODAL_TITLE": "Select a user",
 
-  "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Hearing Schedule!",
+  "HEARING_SCHEDULE_VIEW_PAGE_HEADER": "Welcome to Caseflow Hearings!",
   "HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER": "Board Hearing Schedule",
   "HEARING_SCHEDULE_VIEW_PAGE_APPLY_LINK": "Apply",
   "HEARING_SCHEDULE_VIEW_START_DATE_LABEL": "From:",
@@ -391,6 +391,7 @@
   "CORRECT_REQUEST_ISSUES_LINK": "Correct issues",
 
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
+  "DUPLICATE_PHONE_NUMBER_TITLE": "Veteran Record Alert",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below or if the claimant's information needs updated, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",

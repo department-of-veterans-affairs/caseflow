@@ -117,7 +117,7 @@ class AppealHearingLocationsDropdown extends React.Component {
           errorReason = ' because their address from VBMS is ambiguous.';
           break;
         default:
-          errorReason = '.';
+          errorReason = '. Service is temporarily unavailable.';
         }
 
         const errorMsg = `Could not find hearing locations for this appellant${errorReason}`;
