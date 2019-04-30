@@ -55,7 +55,7 @@ class TranscriptionTask < GenericTask
 
   def recreate_hearing
     # We need to close the parent task and all the sibling tasks as well as open up a new
-    # ScheduleHearingTask assigned to the hearing branch
+    # ScheduleHearingTask assigned to the Bva organization
     hearing_task.cancel_task_and_child_subtasks
 
     ScheduleHearingTask.create!(appeal: appeal, parent: hearing_task.parent)
