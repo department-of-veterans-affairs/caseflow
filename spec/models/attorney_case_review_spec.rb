@@ -42,7 +42,8 @@ describe AttorneyCaseReview do
            request_issue_ids: [request_issue1.id, request_issue2.id],
            remand_reasons: [
              { code: "va_records", post_aoj: false },
-             { code: "incorrect_notice_sent", post_aoj: true }
+             { code: "incorrect_notice_sent", post_aoj: true },
+             { code: "due_process_deficiency", post_aoj: false }
            ] },
          { disposition: "allowed", description: "something3",
            benefit_type: "compensation", diagnostic_code: "9999",
@@ -81,13 +82,16 @@ describe AttorneyCaseReview do
 
         expect(request_issue1.decision_issues[1].disposition).to eq "remanded"
         expect(request_issue1.decision_issues[1].description).to eq "something2"
-
-        expect(request_issue1.decision_issues[1].remand_reasons.size).to eq 2
+        
+        expect(request_issue1.decision_issues[1].remand_reasons.size).to eq 3
         expect(request_issue1.decision_issues[1].remand_reasons[0].code).to eq "va_records"
         expect(request_issue1.decision_issues[1].remand_reasons[0].post_aoj).to eq false
 
         expect(request_issue1.decision_issues[1].remand_reasons[1].code).to eq "incorrect_notice_sent"
         expect(request_issue1.decision_issues[1].remand_reasons[1].post_aoj).to eq true
+        
+        expect(request_issue1.decision_issues[1].remand_reasons[2].code).to eq "due_process_deficiency"
+        expect(request_issue1.decision_issues[1].remand_reasons[2].post_aoj).to eq false
 
         expect(request_issue3.reload.decision_issues.size).to eq 1
         expect(request_issue4.reload.decision_issues.size).to eq 1
@@ -95,6 +99,8 @@ describe AttorneyCaseReview do
         expect(request_issue5.reload.decision_issues.size).to eq 2
         expect(request_issue5.decision_issues[1].remand_reasons.size).to eq 2
         expect(request_issue6.decision_issues.size).to eq 1
+
+        
       end
     end
 
