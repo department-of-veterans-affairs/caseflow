@@ -2,7 +2,7 @@
 
 # Travel Board master schedule is in a table called TBSCHED
 class VACOLS::TravelBoardSchedule < VACOLS::Record
-  self.table_name = "#{Rails.application.config.vacols_db_name}.tbsched"
+  self.table_name = "tbsched"
 
   attribute :tbleg, :integer
 

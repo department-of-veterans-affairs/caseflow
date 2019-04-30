@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VACOLS::CaseHearing < VACOLS::Record
-  self.table_name = "#{Rails.application.config.vacols_db_name}.hearsched"
+  self.table_name = "hearsched"
   self.primary_key = "hearing_pkseq"
   self.sequence_name = "hearsched_pkseq"
 

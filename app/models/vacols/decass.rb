@@ -2,7 +2,7 @@
 
 class VACOLS::Decass < VACOLS::Record
   # :nocov:
-  self.table_name = "#{Rails.application.config.vacols_db_name}.decass"
+  self.table_name = "decass"
   self.primary_key = "defolder"
 
   validates :defolder, :deatty, :deteam, :deadusr, :deadtim, presence: true, on: :create

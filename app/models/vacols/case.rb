@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class VACOLS::Case < VACOLS::Record
-  self.table_name = "#{Rails.application.config.vacols_db_name}.brieff"
-  self.sequence_name = "#{Rails.application.config.vacols_db_name}.bfkeyseq"
+  self.table_name = "brieff"
+  self.sequence_name = "bfkeyseq"
   self.primary_key = "bfkey"
 
   has_one    :folder,          foreign_key: :ticknum
