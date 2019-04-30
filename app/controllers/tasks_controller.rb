@@ -19,7 +19,8 @@ class TasksController < ApplicationController
     TranslationTask: TranslationTask,
     HearingAdminActionTask: HearingAdminActionTask,
     MailTask: MailTask,
-    InformalHearingPresentationTask: InformalHearingPresentationTask
+    InformalHearingPresentationTask: InformalHearingPresentationTask,
+    PrivacyActTask: PrivacyActTask
   }.freeze
 
   def set_application

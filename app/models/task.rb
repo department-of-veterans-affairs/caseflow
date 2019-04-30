@@ -358,7 +358,7 @@ class Task < ApplicationRecord
     {
       selected: org,
       options: [{ label: org.name, value: org.id }],
-      type: GenericTask.name
+      type: PrivacyActTask.name
     }
   end
 
