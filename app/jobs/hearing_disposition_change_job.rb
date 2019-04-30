@@ -30,9 +30,9 @@ class HearingDispositionChangeJob < CaseflowJob
       error_count += 1
     end
 
-    log_info(start_time, @task_count_for, error_count, hearing_ids)
+    log_info(start_time, task_count_for, error_count, hearing_ids)
   rescue StandardError => error
-    log_info(start_time, @task_count_for, error_count, hearing_ids, error)
+    log_info(start_time, task_count_for, error_count, hearing_ids, error)
   end
 
   def task_count_for
