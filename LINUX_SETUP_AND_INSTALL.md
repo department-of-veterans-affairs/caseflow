@@ -15,6 +15,22 @@ We are using 2-factor authentication with Github so, for example, when you acces
 
 
 ## Machine setup
+
+### Basic Software
+
+**Ubuntu**
+
+```
+sudo apt-get install git
+```
+**Fedora**
+
+```
+sudo dnf install git-core zlib zlib-devel gcc-c++ patch readline \
+  readline-devel libyaml-devel libffi-devel openssl-devel make bzip2 \
+  autoconf automake libtool bison curl
+```
+
 ### Install Language Managers
 
 [Install rbenv](https://github.com/rbenv/rbenv-installer#rbenv-installer`)  
@@ -52,7 +68,9 @@ May need to have your user own the oracle /opt directory?
 
 ### Install Third Party Software
 
-Install PDFtk Server. Available for Ubuntu in the software manager.  
+Install PDFtk Server.  
+Available for Ubuntu in the software manager.  
+[Fedora Instructions](https://www.linuxglobal.com/pdftk-works-on-centos-7/)  
 
 Install docker-ce  
 Login docker, password in 1Password:  
