@@ -26,6 +26,7 @@ require "mail_task"
 # rubocop:disable Metrics/AbcSize
 class SeedDB
   def initialize
+    @lit_support_appeals = []
     @legacy_appeals = []
     @tasks = []
     @users = []
@@ -68,7 +69,7 @@ class SeedDB
     create_qr_user
     create_aod_user_and_tasks
     create_privacy_user
-    create_lit_support_user
+    create_lit_support_user_with_tasks
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -278,9 +279,34 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(u, PrivacyTeam.singleton)
   end
 
-  def create_lit_support_user
+  def create_lit_support_user_with_tasks
     u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Litigation Support team member")
     OrganizationsUser.add_user_to_organization(u, LitigationSupport.singleton)
+    dr = "direct_review"
+    notes = "Pain disorder with 100\% evaluation per examination"
+
+    [
+      { number_of_claimants: 1, veteran_file_number: "604969999", docket_type: dr, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "604969998", docket_type: dr, request_issue_count: 1 },
+      { number_of_claimants: 1, veteran_file_number: "604969997", docket_type: dr, request_issue_count: 1 }
+    ].each do |params|
+      @lit_support_appeals << FactoryBot.create(
+        :appeal,
+        number_of_claimants: params[:number_of_claimants],
+        veteran_file_number: params[:veteran_file_number],
+        docket_type: params[:docket_type],
+        request_issues: FactoryBot.create_list(
+          :request_issue, params[:request_issue_count], :nonrating, notes: notes
+        )
+      )
+    end
+    @lit_support_appeals.each do |lit_appeal| 
+      FactoryBot.create(:task,
+                      assigned_to: u,
+                      assigned_at: Time.zone.yesterday,
+                      appeal: lit_appeal,
+                      parent: create_root_task(lit_appeal))
+    end
   end
 
   def create_mail_team_user
