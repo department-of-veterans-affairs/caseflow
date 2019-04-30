@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190430151227) do
+ActiveRecord::Schema.define(version: 20190430152338) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -687,10 +687,10 @@ ActiveRecord::Schema.define(version: 20190430151227) do
 
   create_table "organizations", force: :cascade do |t|
     t.string "name"
-    t.string "participant_id"
-    t.string "role"
-    t.string "type"
-    t.string "url"
+    t.string "participant_id", comment: "Organizations BGS partipant id"
+    t.string "role", comment: "Role users in organization must have, if present"
+    t.string "type", comment: "Single table inheritance"
+    t.string "url", comment: "Unique portion of the organization queue url"
     t.index ["url"], name: "index_organizations_on_url", unique: true
   end
 
