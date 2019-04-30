@@ -5,7 +5,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
   application_attr :hearing_schedule
 
   QUERY_LIMIT = 500
-
   def create_schedule_hearing_tasks
     AppealRepository.create_schedule_hearing_tasks
   end
@@ -20,10 +19,10 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
           ON t.id = admin_actions.parent_id
           AND admin_actions.type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
           AND admin_actions.status NOT IN ('cancelled', 'completed')
-          WHERE t.appeal_type = '#{appeal_type.name}'
+          WHERE t.appeal_type = ?
           AND admin_actions.id IS NULL AND t.type = 'ScheduleHearingTask'
           AND t.status NOT IN ('cancelled', 'completed')
-        )")
+        )", appeal_type.name)
       .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
       .limit(QUERY_LIMIT)
   end
@@ -39,10 +38,28 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
 
     appeals.each do |appeal|
       begin
-        appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+        geomatch_result = appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+        record_geomatched_appeal(appeal.external_id, geomatch_result[:status])
       rescue Caseflow::Error::VaDotGovLimitError
+        record_geomatched_appeal(appeal.external_id, "limit_error")
         break
+      rescue StandardError => error
+        Raven.capture_exception(error, extra: { appeal_external_id: appeal.external_id })
+        record_geomatched_appeal(appeal.external_id, "error")
+        break # break until Facilities API is working
       end
     end
+  end
+
+  def record_geomatched_appeal(appeal_external_id, status)
+    DataDogService.increment_counter(
+      app_name: RequestStore[:application],
+      metric_group: "job",
+      metric_name: "geomatched_appeals",
+      attrs: {
+        status: status,
+        appeal_external_id: appeal_external_id
+      }
+    )
   end
 end

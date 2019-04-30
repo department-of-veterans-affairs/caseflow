@@ -270,7 +270,7 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_content("PTSD denied")
 
-      expect(page).to have_content("Add / Remove Issues")
+      expect(page).to have_content("Edit Issues")
       check_row("Form", Constants.INTAKE_FORM_NAMES.supplemental_claim)
       check_row("Benefit type", "Compensation")
       check_row("Claimant", "Bob Vance, Spouse (payee code 10)")
@@ -430,7 +430,7 @@ feature "Supplemental Claim Edit issues" do
 
       let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
 
-      it "does not remove & readd unedited issues" do
+      it "does not remove & read unedited issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "supplemental_claims/#{rating_ep_claim_id}/edit",
           supplemental_claim,
@@ -627,7 +627,6 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_button("Withdraw", disabled: false)
 
         click_edit_submit
-
         expect(page).to have_current_path(
           "/supplemental_claims/#{rating_ep_claim_id}/edit/confirmation"
         )
@@ -715,6 +714,8 @@ feature "Supplemental Claim Edit issues" do
     end
     let!(:existing_request_issues) do
       [create(:request_issue, :nonrating, decision_review: supplemental_claim),
+       create(:request_issue, :nonrating, decision_review: supplemental_claim),
+       create(:request_issue, :nonrating, decision_review: supplemental_claim),
        create(:request_issue, :nonrating, decision_review: supplemental_claim)]
     end
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
@@ -766,6 +767,78 @@ feature "Supplemental Claim Edit issues" do
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
+      end
+
+      context "show alert when issues are withdrawn" do
+        let(:supplemental_claim) do
+          # reload to get uuid
+          create(:supplemental_claim, veteran_file_number: veteran.file_number,
+                                      benefit_type: "education").reload
+        end
+
+        before do
+          education_org = create(:business_line, name: "Education", url: "education")
+          OrganizationsUser.add_user_to_organization(current_user, education_org)
+          FeatureToggle.enable!(:decision_reviews)
+          FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        end
+
+        after do
+          FeatureToggle.disable!(:decision_reviews)
+        end
+
+        let(:withdraw_date) { 1.day.ago.to_date.mdY }
+
+        scenario "show alert message when all decision reviews are withdrawn" do
+          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+          click_withdraw_intake_issue_dropdown(1)
+          click_withdraw_intake_issue_dropdown(2)
+          click_withdraw_intake_issue_dropdown(3)
+          click_withdraw_intake_issue_dropdown(4)
+          fill_in "withdraw-date", with: withdraw_date
+          click_edit_submit
+
+          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_content("You have successfully withdrawn a review.")
+        end
+
+        scenario "show alert message when a decision review is withdrawn" do
+          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+          click_withdraw_intake_issue_dropdown(1)
+          fill_in "withdraw-date", with: withdraw_date
+          click_edit_submit
+
+          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_content("You have successfully withdrawn 1 issue.")
+        end
+
+        scenario "show alert message when a decision review is removed" do
+          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+          click_remove_intake_issue_dropdown("1")
+          click_edit_submit_and_confirm
+
+          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_content("You have successfully removed 1 issue.")
+        end
+
+        scenario "show alert message when a decision review is added, removed and withdrawn" do
+          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+          click_intake_add_issue
+          expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
+          add_intake_nonrating_issue(
+            category: "Accrued",
+            description: "Description for Accrued",
+            date: 1.day.ago.to_date.mdY
+          )
+
+          click_remove_intake_issue_dropdown(1)
+          click_withdraw_intake_issue_dropdown(2)
+          fill_in "withdraw-date", with: withdraw_date
+          click_edit_submit
+
+          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
+        end
       end
 
       context "when review has no active tasks" do
