@@ -42,11 +42,11 @@ production:
 
 development_vacols:
   adapter: oracle_enhanced
-  username: VACOLS
-  password: VACOLS
+  username: VACOLS_DEV
+  password: VACOLS_DEV
   <% if ! ENV['DOCKERIZED'] %>
   host: localhost
-  port: 1522
+  port: 1521
   <% end %>
   database: <%= ENV['DEMO_DB'] || "BVAP.localdomain" %> 
 
