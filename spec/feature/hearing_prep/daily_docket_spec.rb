@@ -51,6 +51,7 @@ RSpec.feature "Hearing prep" do
     scenario "AMA daily docket saves to the backend" do
       visit "/hearings/dockets/" + Hearing.first.scheduled_for.to_date.to_s
       expect(page).to have_content("Daily Docket")
+      # expect(page).to have_content("All travel board hearings scheduled May 20, 2019 and beyond")
       fill_in "Notes", with: "This is a note about the hearing!"
       find(".checkbox-wrapper-#{hearing.id}-prep").find(".cf-form-checkbox").click
       find(".dropdown-#{hearing.id}-disposition").click

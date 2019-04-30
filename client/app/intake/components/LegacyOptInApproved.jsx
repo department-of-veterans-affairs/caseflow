@@ -5,7 +5,7 @@ const radioOptions = [
   { value: 'false',
     displayText: 'N/A' },
   { value: 'true',
-    displayText: 'Yes' }
+    displayText: 'Yes (SOC/SSOC Opt-in)' }
 ];
 
 export default class LegacyOptInApproved extends React.PureComponent {

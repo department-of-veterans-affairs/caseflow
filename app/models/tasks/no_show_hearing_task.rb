@@ -6,7 +6,7 @@ class NoShowHearingTask < GenericTask
   before_validation :set_assignee
 
   def available_actions(user)
-    if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
+    if (assigned_to &.== user) || task_is_assigned_to_users_organization?(user)
       [
         Constants.TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.to_h,
         Constants.TASK_ACTIONS.MARK_NO_SHOW_HEARING_COMPLETE.to_h
@@ -16,6 +16,7 @@ class NoShowHearingTask < GenericTask
     end
   end
 
+  # overriding to allow action on an on_hold task
   def actions_available?(user)
     actions_allowable?(user)
   end
@@ -37,6 +38,6 @@ class NoShowHearingTask < GenericTask
   private
 
   def set_assignee
-    self.assigned_to = assigned_to.nil? ? HearingAdmin.singleton : assigned_to
+    self.assigned_to ||= HearingsManagement.singleton
   end
 end

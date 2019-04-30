@@ -40,6 +40,10 @@ class Hearings::HearingDayController < HearingScheduleController
       hearings = hearings.select { |hearing| hearing.assigned_to_vso?(current_user) }
     end
 
+    if current_user.roles.include?("Hearing Prep")
+      hearings = hearings.select { |hearing| hearing.assigned_to_judge?(current_user) }
+    end
+
     render json: {
       hearing_day: json_hearing(hearing_day_hash).merge(
         hearings: hearings.map { |hearing| hearing.quick_to_hash(current_user.id) }

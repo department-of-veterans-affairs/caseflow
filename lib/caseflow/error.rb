@@ -139,14 +139,6 @@ module Caseflow::Error
     end
   end
 
-  class TooManyChildTasks < SerializableError
-    def initialize(args)
-      @task_id = args[:task_id]
-      @code = args[:code] || 500
-      @message = args[:message] || "JudgeTask #{@task_id} has too many children"
-    end
-  end
-
   class ChildTaskAssignedToSameUser < SerializableError
     def initialize
       @code = 500

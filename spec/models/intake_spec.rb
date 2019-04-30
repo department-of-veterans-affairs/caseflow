@@ -3,6 +3,8 @@
 describe Intake do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+
+    RequestStore[:current_user] = user
   end
 
   class TestIntake < Intake

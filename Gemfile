@@ -5,11 +5,9 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
 gem "aasm", "4.11.0"
-# Use sqlite3 as the database for Active Record
-gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "0232bb817e66c2956506755d6b99b172cb156d46"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e94aff758739c499978041953e6d50fe58057e89"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
@@ -58,7 +56,6 @@ gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
-gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
@@ -84,7 +81,6 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "chromedriver-helper"
   gem "danger", "~> 5.10"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 4.8"
@@ -104,6 +100,7 @@ group :test, :development, :demo do
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "mb-update-capybara-click"
   gem "timecop"
+  gem "webdrivers"
 end
 
 group :development do
