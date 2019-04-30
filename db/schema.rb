@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190412214706) do
+ActiveRecord::Schema.define(version: 20190430151227) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -691,6 +691,7 @@ ActiveRecord::Schema.define(version: 20190412214706) do
     t.string "role"
     t.string "type"
     t.string "url"
+    t.index ["url"], name: "index_organizations_on_url", unique: true
   end
 
   create_table "organizations_users", force: :cascade do |t|
