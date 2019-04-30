@@ -49,8 +49,6 @@ Rails.application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
-  config.vacols_db_name = "VACOLS_TEST"
-
   # Setup S3
   config.s3_enabled = false
 
