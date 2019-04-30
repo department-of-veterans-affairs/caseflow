@@ -14,6 +14,10 @@ class ChangeHearingDispositionTask < DispositionTask
     ]
   end
 
+  def actions_allowable?(user)
+    HearingAdmin.singleton.user_has_access?(user) && super
+  end
+
   private
 
   def set_assignee

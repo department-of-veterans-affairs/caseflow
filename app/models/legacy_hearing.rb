@@ -64,6 +64,12 @@ class LegacyHearing < ApplicationRecord
     end
   end
 
+  def assigned_to_judge?(user)
+    return hearing_day&.judge == user if judge.nil?
+
+    judge == user
+  end
+
   def venue
     self.class.venues[venue_key]
   end

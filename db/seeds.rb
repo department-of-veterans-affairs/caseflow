@@ -74,6 +74,25 @@ class SeedDB
     create_case_search_only_user
     create_judge_teams
     create_hearings_user_and_tasks
+    create_ama_distribution_tasks
+  end
+
+  def create_ama_distribution_tasks
+    veteran = FactoryBot.create(:veteran, first_name: "Julius", last_name: "Hodge")
+    appeal = FactoryBot.create(:appeal, veteran: veteran, docket_type: Constants.AMA_DOCKETS.evidence_submission)
+    FactoryBot.create(
+      :request_issue,
+      :nonrating,
+      notes: "Pain disorder with 100\% evaluation per examination",
+      decision_review: appeal
+    )
+
+    root_task = RootTask.create!(appeal: appeal)
+    RootTask.create_subtasks!(appeal, root_task)
+
+    # Completing the evidence submission task will mark the appeal ready for distribution
+    evidence_submission_task = EvidenceSubmissionWindowTask.find_by(appeal: appeal)
+    evidence_submission_task.when_timer_ends
   end
 
   def create_team_admin
@@ -520,7 +539,6 @@ class SeedDB
 
     ScheduleHearingTask.create!(
       appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
       parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     )
   end
