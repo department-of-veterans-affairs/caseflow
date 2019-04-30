@@ -41,7 +41,7 @@ RSpec.feature "TranscriptionTeam" do
       expect(root_task.children.where(type: HearingTask.name).count).to eq(2)
       open_hearing_task = root_task.children.find_by(type: HearingTask.name, status: Constants.TASK_STATUSES.on_hold)
       expect(open_hearing_task.children.first.type).to eq(ScheduleHearingTask.name)
-      expect(open_hearing_task.children.first.assigned_to).to eq(HearingsManagement.singleton)
+      expect(open_hearing_task.children.first.assigned_to).to eq(Bva.singleton)
     end
   end
 end

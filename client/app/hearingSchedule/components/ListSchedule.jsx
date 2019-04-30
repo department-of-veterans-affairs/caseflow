@@ -273,7 +273,7 @@ class ListSchedule extends React.Component {
             key={this.state.dateRangeKey}
             createLoadPromise={this.props.onApply}
             loadingComponentProps={{
-              spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+              spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
               message: 'Loading the hearing schedule...'
             }}
             failStatusMessageProps={{
