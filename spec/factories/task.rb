@@ -231,5 +231,12 @@ FactoryBot.define do
       parent { create(:root_task) }
       assigned_by { nil }
     end
+
+    factory :other_motion_mail_task, class: OtherMotionMailTask do
+      type { OtherMotionMailTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task) }
+      assigned_by { nil }
+    end
   end
 end

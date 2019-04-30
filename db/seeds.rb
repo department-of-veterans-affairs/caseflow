@@ -300,12 +300,12 @@ class SeedDB
         )
       )
     end
-    @lit_support_appeals.each do |lit_appeal| 
-      FactoryBot.create(:task,
-                      assigned_to: u,
-                      assigned_at: Time.zone.yesterday,
-                      appeal: lit_appeal,
-                      parent: create_root_task(lit_appeal))
+    @lit_support_appeals.each do |lit_appeal|
+      FactoryBot.create(:other_motion_mail_task, :in_progress,
+                        assigned_to: u,
+                        assigned_at: Time.zone.yesterday,
+                        appeal: lit_appeal,
+                        parent: create_root_task(lit_appeal))
     end
   end
 
