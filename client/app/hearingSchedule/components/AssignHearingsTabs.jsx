@@ -14,12 +14,6 @@ import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import StatusMessage from '../../components/StatusMessage';
 import { getFacilityType } from '../../components/DataDropdowns/AppealHearingLocations';
 
-const veteranNotAssignedStyle = css({ fontSize: '3rem' });
-const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
-  Please verify that this RO has veterans to assign a hearing</span>;
-const veteranNotAssignedTitleStyle = css({ fontSize: '4rem' });
-const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no schedulable veterans</span>;
-
 const filterDropdownFix = css({
   '& svg.table-icon + div': {
     position: 'absolute !important',
@@ -45,9 +39,9 @@ const AvailableVeteransTable = ({ rows, columns }) => {
   if (_.isEmpty(rows)) {
     return <div>
       <StatusMessage
-        title= {veteranNotAssignedTitle}
+        title= {COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER}
         type="alert"
-        messageText={veteranNotAssignedMessage}
+        messageText={COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE}
         wrapInAppSegment={false}
       />
     </div>;
