@@ -65,7 +65,7 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
       wrapInAppSegment={false}
     />;
   }
-  
+
   return <div>
     <Link to={`/schedule/docket/${selectedHearingDay.id}`}>
       {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }
@@ -77,7 +77,7 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
       slowReRendersAreOk
       bodyStyling={tableNumberStyling}
     />
-  </div>
+  </div>;
 };
 
 export default class AssignHearingsTabs extends React.Component {
