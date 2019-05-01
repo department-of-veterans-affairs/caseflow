@@ -250,10 +250,7 @@ class Task < ApplicationRecord
   end
 
   def self.child_task_assignee(_parent, params)
-
-    res = Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
-    binding.pry
-    res
+    Object.const_get(params[:assigned_to_type]).find(params[:assigned_to_id])
   end
 
   def self.child_assigned_by_id(parent, current_user)
