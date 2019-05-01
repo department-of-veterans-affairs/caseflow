@@ -176,7 +176,6 @@
 
       .issue {
         display: table-row;
-        border-bottom: 1px solid $color-gray-lighter;
 
         div {
           display: table-cell;
@@ -199,7 +198,6 @@
           .issue-date {
             display: block;
           }
-
         }
 
         .withdrawn-issue {
@@ -236,6 +234,31 @@
               padding-right: 0.25em;
             }
           }
+        }
+      }
+       .issue-edit-text {
+          display: table-row;
+          margin-top: 10px;
+          margin-bottom: 10px;
+        }
+
+      .issue-container {
+        border-bottom: 1px solid $color-gray-lighter;
+
+       .cf-form-textarea {
+           padding-left: 20px !important;
+           padding-right: 20px !important;
+
+        }
+
+        .issue-text-style {
+          background-color: $color-gray-lighter;
+
+        }
+
+        .issue-text-buttons {
+          text-align: right;
+          margin-right: 15px;
         }
       }
     }
