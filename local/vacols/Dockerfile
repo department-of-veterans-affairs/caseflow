@@ -8,7 +8,7 @@ COPY dockerInitWithSchema.sh /home/oracle/setup/dockerInitWithSchema.sh
 COPY loadSchema.sh /home/oracle/setup/loadSchema.sh
 
 ADD setup_vacols.sql /ORCL/
-ADD vacols_copy* /ORCL/
+ADD vacols_copy/* /ORCL/
 
 RUN mkdir -p /u01/app/oracle/oradata/BVAP
 
