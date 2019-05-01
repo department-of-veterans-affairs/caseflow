@@ -107,10 +107,10 @@ module Asyncable
     end
 
     def potentially_stuck
-      processable
-        .where(canceled_at_column => nil)
-        .or(attempted_without_being_submitted)
+      expired_without_processing
         .or(with_error)
+        .or(attempted_without_being_submitted)
+        .where(canceled_at_column => nil)
         .order_by_oldest_submitted
     end
   end
