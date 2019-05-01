@@ -29,9 +29,11 @@ RSpec.feature "Change hearing disposition" do
     User.authenticate!(user: hearing_admin_user)
   end
 
-  context "there are transcription and mail team members" do
+  context "there are hearing prep, transcription, and mail team members" do
     let(:mail_user) { FactoryBot.create(:user, full_name: "Chinelo Mbanefo") }
     let(:transcription_user) { FactoryBot.create(:user, full_name: "Li Hua Meng") }
+    let(:hearing_user) { FactoryBot.create(:user, full_name: "Lendvai Huot", roles: ["Hearing Prep"]) }
+    let(:hearing_day) { create(:hearing_day, judge: hearing_user, scheduled_for: 1.month.from_now) }
 
     before do
       OrganizationsUser.add_user_to_organization(mail_user, MailTeam.singleton)
@@ -72,6 +74,23 @@ RSpec.feature "Change hearing disposition" do
         expect(page).to have_content("Unassigned (1)")
         expect(page).to have_content veteran_link_text
         expect(page).to have_content "Transcription Task"
+      end
+
+      step "visit and verify that the new hearing disposition is in the hearing prep daily docket" do
+        User.authenticate!(user: hearing_user)
+        visit "/hearings/dockets/" + hearing.scheduled_for.to_date.to_s
+        expect(dropdown_selected_value(find(".dropdown-#{hearing.id}-disposition"))).to eq "Held"
+      end
+
+      step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
+        visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq "Held"
+      end
+
+      step "visit and verify that the new hearing disposition is on the hearing details page" do
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        disposition_div = find("h4", text: "DISPOSITION").first(:xpath, "ancestor::div")
+        expect(disposition_div).to have_css("div", text: "held")
       end
     end
   end
