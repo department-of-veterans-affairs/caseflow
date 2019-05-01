@@ -61,11 +61,21 @@ namespace :tasks do
     end
   end
 
+  # usage:
+  # Assign all HearingTasks assigned to org with id 1 to org with id 2 (dry run)
+  #   $ bundle exec rake tasks:change_organization_assigned_to[HearingTasks,1,2]"
+  # Assign all HearingTasks assigned to org with id 1 to org with id 2 (execute)
+  #   $ bundle exec rake tasks:change_organization_assigned_to[HearingTask,1,2,false]"
+  # Assign all HearingTasks matching passed ids and assigned to org with id 1 to org with id 2 (dry run)
+  #   $ bundle exec rake tasks:change_organization_assigned_to[HearingTask,1,2,12,13,14,15,16]"
+  # Assign all HearingTasks matching passed ids and assigned to org with id 1 to org with id 2 (execute)
+  #   $ bundle exec rake tasks:change_organization_assigned_to[HearingTask,1,2,false,12,13,14,15,16]"
   desc "change the user or organization that active tasks are assigned to"
   task :change_organization_assigned_to, [
     :task_type, :from_assigned_to_id, :to_assigned_to_id, :dry_run
   ] => :environment do |_, args|
-    Rails.logger.tagged("rake tasks:change_organization_assigned_to") do
+    logger_tag = "rake tasks:change_organization_assigned_to"
+    Rails.logger.tagged(logger_tag) do
       Rails.logger.info("Invoked with: #{args.to_a.join(', ')}")
     end
 
@@ -94,9 +104,9 @@ namespace :tasks do
     to_organization = Organization.find(to_id)
 
     target_tasks = if extras.any?
-                     task_class.find(extras).select { |task| task.assigned_to_id = from_id }
+                     task_class.where(id: extras, assigned_to: from_organization)
                    else
-                     task_class.all.where(assigned_to_type: "Organization", assigned_to_id: from_id)
+                     task_class.where(assigned_to: from_organization)
                    end
 
     if target_tasks.count == 0
@@ -114,10 +124,8 @@ namespace :tasks do
          "[#{task_class.name},#{to_id},#{from_id},false,#{ids.join(',')}]"
 
     if !dry_run
-      Rails.logger.tagged("rake tasks:change_organization_assigned_to") { Rails.logger.info(message) }
-      target_tasks.each do |task|
-        task.update!(assigned_to_id: to_id)
-      end
+      Rails.logger.tagged(logger_tag) { Rails.logger.info(message) }
+      target_tasks.update_all(assigned_to_id: to_id)
     end
   end
 end

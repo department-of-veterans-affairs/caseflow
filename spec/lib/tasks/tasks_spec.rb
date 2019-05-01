@@ -203,6 +203,82 @@ describe "task rake tasks" do
           expect(target_task.all.pluck(:assigned_to_id).uniq).to match_array [to_org.id]
         end
       end
+
+      context "id numbers are passed" do
+        context "dry run is set to false" do
+          let(:args) { [target_task_name, from_org.id, to_org.id, "false", *change_ids] }
+          let(:change_ids) { [] }
+
+          context "all the id numbers match existing tasks" do
+            let(:change_ids) { target_tasks.pluck(:id)[0..subset_count - 1] }
+
+            it "makes the requested changes" do
+              count = change_ids.count
+              expected_output = <<~OUTPUT
+                Changing assignee of #{count} #{target_task_name}s with ids #{change_ids.join(', ')} from #{from_org.name} to #{to_org.name}
+                Revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{change_ids.join(',')}]
+              OUTPUT
+              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              expect(Rails.logger).to receive(:info).with(
+                "Changing assignee of #{count} #{target_task_name}s with ids #{change_ids.join(', ')} " \
+                "from #{from_org.name} to #{to_org.name}"
+              )
+
+              expect { subject }.to output(expected_output).to_stdout
+
+              changed_tasks = target_task.find(change_ids)
+              expect(changed_tasks.count).to eq change_ids.count
+
+              all_ids = target_tasks.pluck(:id)
+              expect(target_task.where(id: all_ids, assigned_to: to_org).count).to eq subset_count
+              expect(target_task.where(id: all_ids, assigned_to: from_org).count).to eq task_count - subset_count
+            end
+          end
+
+          context "some of the id numbers do not match existing tasks" do
+            let!(:other_task) { FactoryBot.create(:ama_judge_decision_review_task) }
+            let(:matching_ids) { target_tasks.pluck(:id)[0..subset_count - 1] }
+            let(:change_ids) { matching_ids + [other_task.id] }
+
+            it "only changes the appropriate tasks" do
+              count = matching_ids.count
+              expected_output = <<~OUTPUT
+                Changing assignee of #{count} #{target_task_name}s with ids #{matching_ids.join(', ')} from #{from_org.name} to #{to_org.name}
+                Revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{matching_ids.join(',')}]
+              OUTPUT
+              expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+              expect(Rails.logger).to receive(:info).with(
+                "Changing assignee of #{count} #{target_task_name}s with ids #{matching_ids.join(', ')} " \
+                "from #{from_org.name} to #{to_org.name}"
+              )
+
+              expect { subject }.to output(expected_output).to_stdout
+            end
+          end
+        end
+
+        context "no dry run variable is passed" do
+          let(:args) { [target_task_name, from_org.id, to_org.id, *change_ids] }
+          let(:change_ids) { target_tasks.pluck(:id)[0..subset_count - 1] }
+
+          it "correctly describes what changes will be made" do
+            count = change_ids.count
+            expected_output = <<~OUTPUT
+              *** DRY RUN
+              *** pass 'false' as the fourth argument to execute
+              Would change assignee of #{count} #{target_task_name}s with ids #{change_ids.join(', ')} from #{from_org.name} to #{to_org.name}
+              Would revert with: bundle exec rake tasks:change_organization_assigned_to[#{target_task_name},#{to_org.id},#{from_org.id},false,#{change_ids.join(',')}]
+            OUTPUT
+            expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+
+            expect { subject }.to output(expected_output).to_stdout
+
+            all_ids = target_tasks.pluck(:id)
+            expect(target_task.where(id: all_ids, assigned_to: from_org).count).to eq task_count
+            expect(target_task.where(id: all_ids, assigned_to: to_org).count).to eq 0
+          end
+        end
+      end
     end
 
     context "there are no tasks to change" do
