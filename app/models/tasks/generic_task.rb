@@ -83,15 +83,6 @@ class GenericTask < Task
     assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
 
-  def assign_to_pulac_cerullo(user)
-    Task.create!(
-      type: type,
-      appeal: self.appeal,
-      assigned_by_id: user.id,
-      parent_id: self.id,
-      assigned_to: PulacCurello.singleton
-    )
-  end
 
   class << self
     def create_from_params(params, user)
