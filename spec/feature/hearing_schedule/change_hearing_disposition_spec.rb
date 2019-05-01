@@ -64,16 +64,18 @@ RSpec.feature "Change hearing disposition" do
         User.authenticate!(user: mail_user)
         visit "/organizations/#{MailTeam.singleton.url}"
         expect(page).to have_content("Unassigned (1)")
-        expect(page).to have_content veteran_link_text
         expect(page).to have_content "Evidence Submission Window Task"
+        click_on veteran_link_text
+        expect(page).to have_content ChangeHearingDispositionTask.name
       end
 
       step "visit and verify that the transcription task is in the transcription team queue" do
         User.authenticate!(user: transcription_user)
         visit "/organizations/#{TranscriptionTeam.singleton.url}"
         expect(page).to have_content("Unassigned (1)")
-        expect(page).to have_content veteran_link_text
         expect(page).to have_content "Transcription Task"
+        click_on veteran_link_text
+        expect(page).to have_content ChangeHearingDispositionTask.name
       end
 
       step "visit and verify that the new hearing disposition is in the hearing prep daily docket" do
@@ -249,6 +251,30 @@ RSpec.feature "Change hearing disposition" do
 
       step "the other user logs in and sees the task in their queue" do
         User.authenticate!(user: other_admin_user)
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_content(ChangeHearingDispositionTask.last.label)
+        find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to have_content(assign_instructions_text)
+      end
+    end
+
+    scenario "assign change hearing disposition task to self" do
+      step "visit the hearing admin organization queue and click on the veteran's name" do
+        visit "/organizations/#{HearingAdmin.singleton.url}"
+        expect(page).to have_content("Unassigned (1)")
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+      end
+
+      step "assign the task to self" do
+        click_dropdown(prompt: "Select an action", text: "Assign to person")
+
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: assign_instructions_text
+        click_on "Submit"
+        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % current_full_name
+      end
+
+      step "the task in my personal queue" do
         visit "/queue"
         click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
         expect(page).to have_content(ChangeHearingDispositionTask.last.label)
