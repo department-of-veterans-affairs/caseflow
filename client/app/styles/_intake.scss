@@ -236,18 +236,19 @@
           }
         }
       }
-       .issue-edit-text {
-          display: table-row;
-          margin-top: 10px;
-          margin-bottom: 10px;
-        }
+       
+      .issue-edit-text {
+        display: table-row;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
 
       .issue-container {
         border-bottom: 1px solid $color-gray-lighter;
 
-       .cf-form-textarea {
-           padding-left: 20px !important;
-           padding-right: 20px !important;
+        .cf-form-textarea {
+           padding-left: 20px;
+           padding-right: 20px;
 
         }
 
