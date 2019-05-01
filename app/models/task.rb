@@ -73,6 +73,11 @@ class Task < ApplicationRecord
   def available_actions_unwrapper(user)
     actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
 
+    # Add the cancel timed hold option to the set of actions here.
+    if actions.any? && on_timed_hold?
+      actions.push(build_action_hash(Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h, user))
+    end
+
     # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
     if actions.length > actions.pluck(:value).uniq.length
       fail Caseflow::Error::DuplicateTaskActionPaths, task_id: id, user_id: user.id, labels: actions.pluck(:label)
@@ -87,7 +92,7 @@ class Task < ApplicationRecord
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
   def actions_available?(user)
-    return false if status == Constants.TASK_STATUSES.on_hold
+    return false if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
 
     actions_allowable?(user)
   end
@@ -111,6 +116,27 @@ class Task < ApplicationRecord
 
   def children_attorney_tasks
     children.where(type: AttorneyTask.name)
+  end
+
+  def on_timed_hold?
+    !active_child_timed_hold_task.nil?
+  end
+
+  def active_child_timed_hold_task
+    on_hold? ? children.active.find_by(type: TimedHoldTask.name) : nil
+  end
+
+  def cancel_timed_hold
+    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def calculated_placed_on_hold_at
+    active_child_timed_hold_task&.timer_start_time
+  end
+
+  def calculated_on_hold_duration
+    timed_hold_task = active_child_timed_hold_task
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def self.recently_closed

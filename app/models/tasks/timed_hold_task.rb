@@ -12,6 +12,8 @@ class TimedHoldTask < GenericTask
   attr_accessor :days_on_hold
   validates :days_on_hold, presence: true, inclusion: { in: 1..100 }, on: :create
 
+  # TODO: Raise an error if this task has more than one timer.
+
   def self.create_from_parent(parent_task, days_on_hold:, assigned_by: nil, instructions: nil)
     create!(
       appeal: parent_task.appeal,
@@ -27,8 +29,18 @@ class TimedHoldTask < GenericTask
     update!(status: :completed) if active?
   end
 
+  # Function to set the end time for the related TaskTimer when this class is instantiated.
   def timer_ends_at
     created_at + days_on_hold.days
+  end
+
+  # Inspect the end time for related task timer.
+  def timer_end_time
+    task_timers.first&.submitted_at
+  end
+
+  def timer_start_time
+    task_timers.first&.created_at
   end
 
   def hide_from_case_timeline

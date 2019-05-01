@@ -33,6 +33,7 @@ import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import CancelTaskModal from './components/CancelTaskModal';
+import EndHoldModal from './components/EndHoldModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
 import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
@@ -196,6 +197,8 @@ class QueueApp extends React.PureComponent {
 
   routedCancelTaskModal = (props) => <CancelTaskModal {...props.match.params} />;
 
+  routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
+
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
   routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
@@ -332,6 +335,10 @@ class QueueApp extends React.PureComponent {
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.value}`}
             render={this.routedCreateChangeHearingDispositionTask} />
+          <Route
+            // TODO: Why isn't this rendering the modal on top of the case details page?
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.END_TIMED_HOLD.value}`}
+            render={this.routedEndHoldModal} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
