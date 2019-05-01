@@ -2,6 +2,6 @@
 
 class LitigationSupport < Organization
   def self.singleton
-    LitigationSupport.first || LitigationSupport.create(name: "Litigation Support", url: "lit-support")
+    LitigationSupport.first || LitigationSupport.create(name: Constants.LIT_SUPPORT.ORG_NAME, url: "lit-support")
   end
 end

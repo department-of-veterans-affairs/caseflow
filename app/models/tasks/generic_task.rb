@@ -28,19 +28,17 @@ class GenericTask < Task
       )
     end
   end
-
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   def available_actions(user)
     return [] unless user
 
+    base_actions = [
+      Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+      Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+    ]
     if assigned_to == user
-      return [
-        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
-        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-      ]
+      base_actions.push(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h)
+      return lit_support_user(user, base_actions)
     end
 
     if task_is_assigned_to_user_within_organization?(user)
@@ -50,23 +48,49 @@ class GenericTask < Task
     end
 
     if task_is_assigned_to_users_organization?(user)
-      return [
-        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-      ]
+      base_actions.push(Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h)
+      return mail_task_for_lit_support_org(base_actions)
     end
 
     []
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 
   private
 
+  def mail_tasks_for_lit_support
+    %w[ReconsiderationMotionMailTask ClearAndUnmistakeableErrorMailTask VacateMotionMailTask]
+  end
+
+  def appropriate_mail_tasks_for_lit_org
+    (mail_tasks_for_lit_support.include? type) && (assigned_to.name == Constants.LIT_SUPPORT.ORG_NAME)
+  end
+
+  def mail_task_for_lit_support_org(base_actions)
+    if appropriate_mail_tasks_for_lit_org
+      base_actions.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    end
+    base_actions
+  end
+
+  def lit_support_user(user, base_actions)
+    if user.roles.include? Constants.LIT_SUPPORT.USER_ROLE
+      base_actions.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    end
+    base_actions
+  end
+
   def task_is_assigned_to_users_organization?(user)
     assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+  end
+
+  def assign_to_pulac_cerullo(user)
+    Task.create!(
+      type: type,
+      appeal: self.appeal,
+      assigned_by_id: user.id,
+      parent_id: self.id,
+      assigned_to: PulacCurello.singleton
+    )
   end
 
   class << self
