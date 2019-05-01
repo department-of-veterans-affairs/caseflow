@@ -61,12 +61,12 @@ class GenericTask < Task
     %w[ReconsiderationMotionMailTask ClearAndUnmistakeableErrorMailTask VacateMotionMailTask]
   end
 
-  def appropriate_mail_tasks_and_assigned_to_lit_support
+  def mail_task_types_for_lit_support_and_assigned_to_lit_support
     (mail_task_types_for_lit_support.include? type) && (assigned_to.name == Constants.LIT_SUPPORT.ORG_NAME)
   end
 
   def mail_task_for_lit_support_org(base_actions)
-    if appropriate_mail_tasks_and_assigned_to_lit_support
+    if mail_task_types_for_lit_support_and_assigned_to_lit_support
       base_actions.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
     end
     base_actions
