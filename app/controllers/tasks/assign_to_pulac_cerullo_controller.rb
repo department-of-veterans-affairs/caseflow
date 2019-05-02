@@ -1,19 +1,18 @@
 # frozen_string_literal: true
 
-class MailTaskController < ApplicationController
+class Tasks::AssignToPulacCerulloController < ApplicationController
   def create
-    binding.pry
+    task = task_params
     Task.create!(
-      type: type,
-      appeal: appeal,
-      assigned_by_id: user.id,
-      parent_id: id,
+      type: task[:type],
+      appeal: Appeal.find_by(id: task[:appeal][:id]),
+      assigned_by_id: task[:assignedTo][:id],
+      parent_id: task[:id],
       assigned_to: PulacCurello.singleton
     )
   end
 
-  def mail_task_params
-    binding.pry
-    params.require("task", "appeal", "user").permit
+  def task_params
+    params[:task]
   end
 end

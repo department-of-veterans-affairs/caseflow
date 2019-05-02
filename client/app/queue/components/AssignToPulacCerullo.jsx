@@ -18,28 +18,19 @@ import QueueFlowModal from './QueueFlowModal';
 class AssignToPulacCerullo extends React.Component {
 
   submit = () => {
-    // event.preventDefault();
     const {
-      task,
-      appeal
+      task
     } = this.props;
     const payload = {
-      // TODO: need to assign this task to pulac on the backend
       data: {
-        tasks: [{
-          type: task.type,
-          external_id: appeal.external_id,
-          parent_id: task.taskId,
-          // the pulac curello org id is 21
-          assigned_to_id: 21
-        }]
+        task
       }
     };
     const successMsg = 'WORD';
 
-    debugger;
+    // debugger;
 
-    return this.props.requestSave('/tasks', payload, successMsg).
+    return this.props.requestSave('/assign_to_pulac_cerullo', payload, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
 
