@@ -181,17 +181,9 @@ describe FetchHearingLocationsForVeteransJob do
                  correspondent: create(:correspondent, saddrzip: "01002", saddrstt: "MA", saddrcnty: "USA"))
         end
         before do
-          message = {
-            "messages" => [
-              {
-                "key" => "AddressCouldNotBeFound"
-              }
-            ]
-          }
-
-          error = Caseflow::Error::VaDotGovServerError.new(code: "500", message: message)
           allow(VADotGovService).to receive(:send_va_dot_gov_request)
-            .with(hash_including(endpoint: "address_validation/v1/validate")).and_raise(error)
+            .with(hash_including(endpoint: "address_validation/v1/validate"))
+            .and_return(validate_response)
           allow(VADotGovService).to receive(:send_va_dot_gov_request)
             .with(hash_including(endpoint: "va_facilities/v0/facilities"))
             .and_return(distance_response)
@@ -205,6 +197,9 @@ describe FetchHearingLocationsForVeteransJob do
         end
 
         context "and Veteran has no zipcode" do
+          let(:validate_response) do
+            HTTPI::Response.new(500, [], mock_validate_body(message_key: "AddressCouldNotBeFound").to_json)
+          end
           let!(:vacols_case) do
             create(:case,
                    bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V",
@@ -383,8 +378,8 @@ describe FetchHearingLocationsForVeteransJob do
     }
   end
 
-  def mock_validate_body(lat: 38.768185, long: -77.450033, state: "MA", country_code: "US")
-    {
+  def mock_validate_body(lat: 38.768185, long: -77.450033, state: "MA", country_code: "US", message_key: nil)
+    response = {
       "address": {
         "county": {
           "name": "Manassas Park City"
@@ -407,6 +402,8 @@ describe FetchHearingLocationsForVeteransJob do
         "longitude": long
       }
     }
+    response["messages"] = [{ "key": message_key }] unless message_key.nil?
+    response
   end
 
   def mock_distance_body(distance: 0.0, id: "vba_301", data: nil, distances: nil)
