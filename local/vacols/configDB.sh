@@ -48,7 +48,17 @@ source $BASH_RC
 
 # configure database
 echo "Call configDBora.sh to configure database"
-/bin/bash -x /home/oracle/setup/configDBora.sh
+DB_RENAMER="/bin/bash -x /home/oracle/setup/configDBora.sh"
+RENAME_ATTEMPTS=0
+$DB_RENAMER
+while [ $? -ne 0 ]; do
+  $DB_RENAMER
+  RENAME_ATTEMPTS=$[RENAME_ATTEMPTS + 1]
+  if [ "$RENAME_ATTEMPTS" == "5" ]
+  then
+    break
+  fi
+done
 
 # remove passwd info
 echo "Remove password info"

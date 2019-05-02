@@ -72,12 +72,11 @@ then
       sqlplus / as sysdba 2>&1 <<EOF
       startup mount pfile=/u01/app/oracle/product/12.2.0/dbhome_1/dbs/initORCLCDB.ora;
       exit;
-      /
 EOF
 
   # nid change name
       echo "NID change db name"
-      echo "Y" | nid target=/ dbname=$DB_SID setname=yes
+      echo "Y" | nid target=/ dbname=$DB_SID
 
       if [ "$?" != "0" ]
       then
