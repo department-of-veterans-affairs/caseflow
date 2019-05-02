@@ -69,8 +69,8 @@ module Asyncable
 
     def processable
       where(arel_table[last_submitted_at_column].lteq(Time.zone.now))
-      .where(processed_at_column => nil)
-      .where(canceled_at_column => nil)
+        .where(processed_at_column => nil)
+        .where(canceled_at_column => nil)
     end
 
     def never_attempted
