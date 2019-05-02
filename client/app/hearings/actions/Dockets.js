@@ -324,7 +324,9 @@ export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (disp
   dispatch(setHearingPrepped(payload,
     CATEGORIES.HEARING_WORKSHEET_PAGE));
 
-  ApiUtil.patch(`/hearings/${hearingExternalId}`, { data: { prepped } }).
+  let data = { hearing: { prepped } };
+
+  ApiUtil.patch(`/hearings/${hearingExternalId}`, { data }).
     then(() => {
       // request was successful
     },
