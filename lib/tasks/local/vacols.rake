@@ -20,7 +20,7 @@ namespace :local do
             facols_is_ready = true
             break
           end
-        rescue StandardError => error 
+        rescue StandardError => error
           puts error
         end
         puts "Facols not ready. Sleeping 1 seconds..."
