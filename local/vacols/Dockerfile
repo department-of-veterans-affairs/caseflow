@@ -5,6 +5,9 @@ ENV DB_SID=BVAP
 USER oracle
 
 COPY dockerInitWithSchema.sh /home/oracle/setup/dockerInitWithSchema.sh
+COPY setupDB.sh /home/oracle/setup/setupDB.sh
+COPY configDB.sh /home/oracle/setup/configDB.sh
+COPY configDBora.sh /home/oracle/setup/configDBora.sh
 COPY loadSchema.sh /home/oracle/setup/loadSchema.sh
 
 ADD setup_vacols.sql /ORCL/
