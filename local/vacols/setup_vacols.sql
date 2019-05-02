@@ -1,4 +1,4 @@
-CONNECT sys/Oradoc_db1@BVAP as sysdba
+CONNECT sys/Oradoc_db1@//localhost:1521/BVAP as SYSDBA;
 
 ALTER SESSION set "_ORACLE_SCRIPT"=true;
 
