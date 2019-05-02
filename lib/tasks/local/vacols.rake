@@ -11,8 +11,11 @@ namespace :local do
 
       facols_is_ready = false
 
-      # rubocop:disable Lint/HandleExceptions
-      300.times do
+      vacols_db_config = VACOLS::Case.connection_config
+
+      60.times do
+        VACOLS::Case.establish_connection(vacols_db_config)
+
         begin
           if VACOLS::Case.count == 0 &&
              VACOLS::CaseHearing.select("VACOLS.HEARING_VENUE(vdkey)").where(folder_nr: "1").count == 0
@@ -21,11 +24,14 @@ namespace :local do
             break
           end
         rescue StandardError
+          begin
+            VACOLS::Case.connection.disconnect!
+          rescue StandardError => err
+            puts err
+          end
+          sleep 3
         end
-
-        sleep 1
       end
-      # rubocop:enable Lint/HandleExceptions
 
       unless facols_is_ready
         fail "Gave up waiting for FACOLS to get ready"
