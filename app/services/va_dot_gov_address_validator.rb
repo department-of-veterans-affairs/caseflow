@@ -198,8 +198,8 @@ class VaDotGovAddressValidator
   end
 
   def handle_error(error)
-    case error.class
-    when Caseflow::Error::VaDotGovInvalidInputError
+    case error
+    when Caseflow::Error::VaDotGovInvalidInputError, Caseflow::Error::VaDotGovAddressCouldNotBeFoundError
       admin_action = create_admin_action_for_schedule_hearing_task(
         instructions: "The appellant's address in VBMS does not exist or is invalid.",
         admin_action_type: HearingAdminActionVerifyAddressTask
