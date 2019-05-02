@@ -5,5 +5,5 @@ do
     echo "Schema loaded."
     break
   fi
-  sleep 3
+  sleep 1
 done
