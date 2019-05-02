@@ -187,7 +187,18 @@ class ExternalApi::VADotGovService
       end
     end
 
+    def check_body_messages(response_body:, code:)
+      response_body["messages"].each do |msg|
+        case msg["key"]
+        when "MultipleAddressError"
+          fail Caseflow::Error::VaDotGovAPIError, code: code, message: response_body
+        end
+      end
+    end
+
     def check_for_error(response_body:, code:)
+      check_body_messages(response_body, code)
+
       case code
       when 200 # rubocop:disable Lint/EmptyWhen
       when 429
