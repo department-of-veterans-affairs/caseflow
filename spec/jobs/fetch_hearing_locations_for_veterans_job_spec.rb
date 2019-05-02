@@ -174,67 +174,69 @@ describe FetchHearingLocationsForVeteransJob do
         end
       end
 
-      context "when va_dot_gov_service throws an Address error" do
-        let!(:vacols_case) do
-          create(:case,
-                 bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V",
-                 correspondent: create(:correspondent, saddrzip: "01002", saddrstt: "MA", saddrcnty: "USA"))
-        end
-        before do
-          allow(VADotGovService).to receive(:send_va_dot_gov_request)
-            .with(hash_including(endpoint: "address_validation/v1/validate"))
-            .and_return(validate_response)
-          allow(VADotGovService).to receive(:send_va_dot_gov_request)
-            .with(hash_including(endpoint: "va_facilities/v0/facilities"))
-            .and_return(distance_response)
-        end
-
-        it "finds closest RO based on zipcode" do
-          FetchHearingLocationsForVeteransJob.perform_now
-
-          expect(LegacyAppeal.first.closest_regional_office).to eq "RO01"
-          expect(LegacyAppeal.first.available_hearing_locations.count).to eq 1
-        end
-
-        context "and Veteran has no zipcode" do
+      %w[AddressCouldNotBeFound InvalidRequestStreetAddress].each do |error|
+        context "when va_dot_gov_service throws a #{error} error" do
           let(:validate_response) do
-            HTTPI::Response.new(500, [], mock_validate_body(message_key: "AddressCouldNotBeFound").to_json)
+            HTTPI::Response.new(500, [], mock_validate_body(message_key: error).to_json)
           end
           let!(:vacols_case) do
             create(:case,
                    bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V",
-                   correspondent: create(:correspondent, saddrzip: nil))
+                   correspondent: create(:correspondent, saddrzip: "01002", saddrstt: "MA", saddrcnty: "USA"))
           end
           before do
-            Fakes::BGSService.veteran_records = {
-              "123456789" => veteran_record(file_number: "123456789S", state: nil, zip_code: nil, country: nil)
-            }
+            allow(VADotGovService).to receive(:send_va_dot_gov_request)
+              .with(hash_including(endpoint: "address_validation/v1/validate"))
+              .and_return(validate_response)
+            allow(VADotGovService).to receive(:send_va_dot_gov_request)
+              .with(hash_including(endpoint: "va_facilities/v0/facilities"))
+              .and_return(distance_response)
           end
-          it "creates an ScheduleHearingTask and admin action" do
+
+          it "finds closest RO based on zipcode" do
             FetchHearingLocationsForVeteransJob.perform_now
-            tsk = ScheduleHearingTask.first
-            expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
+
+            expect(LegacyAppeal.first.closest_regional_office).to eq "RO01"
+            expect(LegacyAppeal.first.available_hearing_locations.count).to eq 1
           end
 
-          context "and appeal already has schedule hearing task and is in location CASEFLOW" do
+          context "and Veteran has no zipcode" do
             let!(:vacols_case) do
-              create(:case, bfcurloc: "CASEFLOW", bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V")
+              create(:case,
+                     bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V",
+                     correspondent: create(:correspondent, saddrzip: nil))
             end
-            let!(:legacy_appeal) { create(:legacy_appeal, vbms_id: "123456789S", vacols_case: vacols_case) }
-            let!(:task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
-
-            it "creates an admin action" do
-              FetchHearingLocationsForVeteransJob.perform_now
-              expect(ScheduleHearingTask.first.id).to eq task.id
-              expect(HearingAdminActionVerifyAddressTask.where(parent_id: task.id).count).to eq 1
+            before do
+              Fakes::BGSService.veteran_records = {
+                "123456789" => veteran_record(file_number: "123456789S", state: nil, zip_code: nil, country: nil)
+              }
             end
-          end
+            it "creates an ScheduleHearingTask and admin action" do
+              FetchHearingLocationsForVeteransJob.perform_now
+              tsk = ScheduleHearingTask.first
+              expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
+            end
 
-          context "and job has alreay been run on a veteran" do
-            it "only produces one admin action" do
-              FetchHearingLocationsForVeteransJob.perform_now
-              FetchHearingLocationsForVeteransJob.perform_now
-              expect(HearingAdminActionVerifyAddressTask.count).to eq 1
+            context "and appeal already has schedule hearing task and is in location CASEFLOW" do
+              let!(:vacols_case) do
+                create(:case, bfcurloc: "CASEFLOW", bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V")
+              end
+              let!(:legacy_appeal) { create(:legacy_appeal, vbms_id: "123456789S", vacols_case: vacols_case) }
+              let!(:task) { create(:schedule_hearing_task, appeal: legacy_appeal) }
+
+              it "creates an admin action" do
+                FetchHearingLocationsForVeteransJob.perform_now
+                expect(ScheduleHearingTask.first.id).to eq task.id
+                expect(HearingAdminActionVerifyAddressTask.where(parent_id: task.id).count).to eq 1
+              end
+            end
+
+            context "and job has alreay been run on a veteran" do
+              it "only produces one admin action" do
+                FetchHearingLocationsForVeteransJob.perform_now
+                FetchHearingLocationsForVeteransJob.perform_now
+                expect(HearingAdminActionVerifyAddressTask.count).to eq 1
+              end
             end
           end
         end
