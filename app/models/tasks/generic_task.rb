@@ -28,6 +28,7 @@ class GenericTask < Task
       )
     end
   end
+
   def available_actions(user)
     return [] unless user
 
@@ -82,7 +83,6 @@ class GenericTask < Task
   def task_is_assigned_to_users_organization?(user)
     assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
   end
-
 
   class << self
     def create_from_params(params, user)

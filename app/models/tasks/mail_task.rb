@@ -120,16 +120,6 @@ class ClearAndUnmistakeableErrorMailTask < MailTask
     COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL
   end
 
-  def assign_to_pulac_cerullo(user)
-    Task.create!(
-      type: type,
-      appeal: self.appeal,
-      assigned_by_id: user.id,
-      parent_id: self.id,
-      assigned_to: PulacCurello.singleton
-    )
-  end
-
   def self.default_assignee(_parent, _params)
     LitigationSupport.singleton
   end
@@ -306,16 +296,6 @@ class ReconsiderationMotionMailTask < MailTask
     COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL
   end
 
-  def assign_to_pulac_cerullo(user)
-    Task.create!(
-      type: type,
-      appeal: self.appeal,
-      assigned_by_id: user.id,
-      parent_id: self.id,
-      assigned_to: PulacCurello.singleton
-    )
-  end
-  
   def self.default_assignee(_parent, _params)
     LitigationSupport.singleton
   end
@@ -334,16 +314,6 @@ end
 class VacateMotionMailTask < MailTask
   def self.label
     COPY::VACATE_MOTION_MAIL_TASK_LABEL
-  end
-
-  def assign_to_pulac_cerullo(user)
-    Task.create!(
-      type: type,
-      appeal: self.appeal,
-      assigned_by_id: user.id,
-      parent_id: self.id,
-      assigned_to: PulacCurello.singleton
-    )
   end
 
   def self.default_assignee(_parent, _params)

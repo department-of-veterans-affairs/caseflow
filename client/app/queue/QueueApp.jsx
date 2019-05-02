@@ -65,6 +65,7 @@ import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
+import AssignToPulacCerullo from './components/AssignToPulacCerullo';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -188,6 +189,10 @@ class QueueApp extends React.PureComponent {
   routedCreateMailTask = (props) => <CreateMailTaskDialog {...props.match.params} />;
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
+
+  routedAssignToPulacCerullo = (props) => <AssignToPulacCerullo
+    nextStep="/queue"
+    modalType="assign_to_pulac_cerullo" {...props.match.params} />;
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
@@ -400,6 +405,12 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.MARK_COMPLETE.value}`}
             title="Mark Task Complete | Caseflow"
             render={this.routedCompleteTaskModal} />
+          <PageRoute
+            exact
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`}
+            title="Assign to Pulac Curello | Caseflow"
+            render={this.routedAssignToPulacCerullo} />
+
           <PageRoute
             exact
             path={'/queue/appeals/:appealId/tasks/:taskId/' +
