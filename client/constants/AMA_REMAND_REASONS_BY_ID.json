@@ -15,5 +15,8 @@
     "medical_examinations": "Medical examinations",
     "medical_opinions": "Medical opinions",
     "advisory_medical_opinion": "Advisory medical opinion"
+  },
+  "dueProcess": {
+    "due_process_deficiency" : "Other due process deficiency"
   }
 }
