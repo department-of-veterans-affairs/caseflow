@@ -12,6 +12,8 @@ import {
 
 import QueueFlowModal from './QueueFlowModal';
 
+const pulacCerulloId = 21;
+
 class AssignToPulacCerullo extends React.Component {
 
   submit = () => {
@@ -20,12 +22,18 @@ class AssignToPulacCerullo extends React.Component {
     } = this.props;
     const payload = {
       data: {
-        task
+        tasks: [{
+          type: task.type,
+          external_id: task.appeal.externalId,
+          parent_id: task.taskId,
+          assigned_to_id: pulacCerulloId,
+          assigned_to_type: 'Organization'
+        }]
       }
     };
     const successMsg = 'SAVED TO PULAC CURELLO';
 
-    return this.props.requestSave('/assign_to_pulac_cerullo', payload, successMsg).
+    return this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
         console.log('the succesful response', resp);
       }).

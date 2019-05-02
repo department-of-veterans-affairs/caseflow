@@ -219,7 +219,6 @@ Rails.application.routes.draw do
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
   end
-  post 'assign_to_pulac_cerullo', to: "tasks/assign_to_pulac_cerullo#create"
   resources :judge_assign_tasks, only: [:create]
 
   resources :distributions, only: [:new, :show]
