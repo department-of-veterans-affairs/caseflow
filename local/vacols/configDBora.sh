@@ -70,13 +70,14 @@ then
   then
   # mount db
       sqlplus / as sysdba 2>&1 <<EOF
+      shutdown immediate;
       startup mount pfile=/u01/app/oracle/product/12.2.0/dbhome_1/dbs/initORCLCDB.ora;
       exit;
 EOF
 
   # nid change name
       echo "NID change db name"
-      NID_OUT=`echo "Y" | timeout 30s nid target=/ dbname=$DB_SID 2>&1`
+      NID_OUT=`echo "Y" | timeout 45s nid target=/ dbname=$DB_SID 2>&1`
       NID_RETVAL=$?
       echo $NID_OUT
 
@@ -84,9 +85,10 @@ EOF
       then
         echo "Failed to change NID"
         sqlplus / as sysdba 2>&1 <<EOF
-          shut immediate;
+          shutdown immediate;
           exit;
 EOF
+        echo "Shutdown Oracle exited with $?"
         if echo $NID_OUT | grep "is the same as current name"; then
           echo "previous rename attempt was successful"
         else
