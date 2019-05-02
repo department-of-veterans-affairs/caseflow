@@ -26,7 +26,7 @@ class AssignToPulacCerullo extends React.Component {
         task
       }
     };
-    const successMsg = 'WORD';
+    const successMsg = 'SAVED TO PULAC CURELLO';
 
     // debugger;
 
