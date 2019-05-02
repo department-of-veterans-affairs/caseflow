@@ -70,6 +70,7 @@ feature "NonComp Record Request Page" do
     # click on completed task and verify that it is not editable
     click_link veteran.name
     expect(page).to have_content("Request to send Veteran record to the Board")
+    expect(page).to have_content("Case Review and Evaluation Branch")
     expect(page).to have_current_path("/#{task_url}")
     expect(page).not_to have_css("[id='isSent'][disabled]")
     expect(page).not_to have_button("Confirm")
