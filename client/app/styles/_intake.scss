@@ -249,12 +249,17 @@
         .cf-form-textarea {
           padding-left: 20px;
           padding-right: 20px;
+          padding-top: 20px;
 
+          textarea {
+            height: 10rem;
+            border: 1px solid $color-gray-light;
+          }
         }
 
         .issue-text-style {
           background-color: $color-gray-lighter;
-
+          margin-bottom: 10px;
         }
 
         .issue-text-buttons {

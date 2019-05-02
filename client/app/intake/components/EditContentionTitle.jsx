@@ -1,6 +1,5 @@
 import React from 'react';
 import COPY from '../../../COPY.json';
-import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import { css } from 'glamor';
@@ -11,6 +10,10 @@ const buttonStyling = css({
 
 const paragraphyStyling = css({
   paddingLeft: '30px'
+});
+
+const linkStyle = css({
+  paddingLeft: '0px'
 });
 
 export default class EditContentionTitle extends React.PureComponent {
@@ -35,13 +38,15 @@ render() {
   const title = `${this.props.issueIdx + 1}. Contention title `;
 
   return <div>
-    <div className="issue-edit-text">
-      <Link
+    {!this.state.showEditTitle && <div className="issue-edit-text">
+      <Button
         onClick={this.editContentionOnClick}
+        classNames={['cf-btn-link']}
+        styling={linkStyle}
       >
         {COPY.INTAKE_EDIT_TITLE}
-      </Link>
-    </div>
+      </Button>
+    </div>}
     {this.state.showEditTitle && <div className="issue-text-style">
       <TextareaField
         name={title}
@@ -51,11 +56,11 @@ render() {
         strongLabel
       />
       <p {...paragraphyStyling}>{this.props.issue.text}</p>
-      {this.props.issue.notes && <p {...paragraphyStyling}>Notes:{this.props.issue.notes}</p>}
+      {this.props.issue.notes && <p {...css({
+        fontStyle: 'italic',
+        paddingLeft: '30px' })}>Notes: {this.props.issue.notes}</p>}
       <div className="issue-text-buttons">
         {this.state.showEditTitle && <Button
-          name="add-issue"
-          legacyStyling={false}
           classNames={['cf-btn-link']}
           onClick={this.hideEditContentionTileOnClick}
         >
@@ -63,8 +68,7 @@ render() {
         </Button>
         }
         <Button
-          name="add-issue"
-          legacyStyling={false}
+          name="submit-issue"
           classNames={['cf-submit']}
           onClick={(value) => {
             this.setState({ value });
