@@ -37,49 +37,48 @@ hideEditContentionTileOnClick = () => {
 render() {
   const title = `${this.props.issueIdx + 1}. Contention title `;
 
-  return <div>
-    {!this.state.showEditTitle && <div className="issue-edit-text">
-      <Button
-        onClick={this.editContentionOnClick}
+  return <div>{!this.state.showEditTitle && <div className="issue-edit-text">
+    <Button
+      onClick={this.editContentionOnClick}
+      classNames={['cf-btn-link']}
+      styling={linkStyle}
+    >
+      {COPY.INTAKE_EDIT_TITLE}
+    </Button>
+  </div>}
+  {this.state.showEditTitle && <div className="issue-text-style">
+    <TextareaField
+      name={title}
+      onChange={(value) => {
+        this.setState({ value });
+      }}
+      strongLabel
+    />
+    <p {...paragraphyStyling}>{this.props.issue.text}</p>
+    {this.props.issue.notes && <p {...css({
+      fontStyle: 'italic',
+      paddingLeft: '30px' })}>Notes: {this.props.issue.notes}</p>}
+    <div className="issue-text-buttons">
+      {this.state.showEditTitle && <Button
         classNames={['cf-btn-link']}
-        styling={linkStyle}
+        onClick={this.hideEditContentionTileOnClick}
       >
-        {COPY.INTAKE_EDIT_TITLE}
+            Cancel
       </Button>
-    </div>}
-    {this.state.showEditTitle && <div className="issue-text-style">
-      <TextareaField
-        name={title}
-        onChange={(value) => {
+      }
+      <Button
+        name="submit-issue"
+        classNames={['cf-submit']}
+        onClick={(value) => {
           this.setState({ value });
         }}
-        strongLabel
-      />
-      <p {...paragraphyStyling}>{this.props.issue.text}</p>
-      {this.props.issue.notes && <p {...css({
-        fontStyle: 'italic',
-        paddingLeft: '30px' })}>Notes: {this.props.issue.notes}</p>}
-      <div className="issue-text-buttons">
-        {this.state.showEditTitle && <Button
-          classNames={['cf-btn-link']}
-          onClick={this.hideEditContentionTileOnClick}
-        >
-            Cancel
-        </Button>
-        }
-        <Button
-          name="submit-issue"
-          classNames={['cf-submit']}
-          onClick={(value) => {
-            this.setState({ value });
-          }}
-          styling={buttonStyling}
-        >
+        styling={buttonStyling}
+      >
             Submit
-        </Button>
-      </div>
+      </Button>
     </div>
-    }
+  </div>
+  }
   </div>;
 }
 }
