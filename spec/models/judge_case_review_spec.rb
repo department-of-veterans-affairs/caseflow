@@ -44,7 +44,7 @@ end
 
 describe JudgeCaseReview do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
   after do
@@ -53,11 +53,11 @@ describe JudgeCaseReview do
 
   context ".reached_monthly_limit_in_quality_reviews?" do
     before do
-      JudgeCaseReview.skip_callback(:create, :after, :select_case_for_quality_review)
+      JudgeCaseReview.skip_callback(:create, :after, :select_case_for_legacy_quality_review)
     end
 
     after do
-      JudgeCaseReview.set_callback(:create, :after, :select_case_for_quality_review)
+      JudgeCaseReview.set_callback(:create, :after, :select_case_for_legacy_quality_review)
     end
 
     subject { JudgeCaseReview.reached_monthly_limit_in_quality_reviews? }
@@ -83,27 +83,33 @@ describe JudgeCaseReview do
   end
 
   context ".create" do
+    let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
+    let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
     let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
     subject { JudgeCaseReview.complete(params) }
 
     context "when ama case review" do
       let(:probability) { JudgeCaseReview::QUALITY_REVIEW_SELECTION_PROBABILITY }
+      let(:task) { create(:ama_judge_decision_review_task) }
+      let(:request_issue) { create(:request_issue, decision_review: task.appeal) }
       let(:params) do
         {
           location: "bva_dispatch",
           judge: judge,
-          task_id: create(:ama_judge_task, assigned_by: attorney, assigned_to: judge).id,
+          task_id: task.id,
           attorney: attorney,
           complexity: "hard",
           quality: "does_not_meet_expectations",
           comment: "do this",
           factors_not_considered: %w[theory_contention relevant_records],
           areas_for_improvement: ["process_violations"],
-          issues: []
+          issues: [{ disposition: "allowed", description: "something1",
+                     benefit_type: "compensation", diagnostic_code: "9999",
+                     request_issue_ids: [request_issue.id] }]
         }
       end
 
-      it "should select the case for a quality review" do
+      it "should not select the case for a quality review" do
         allow_any_instance_of(JudgeCaseReview).to receive(:rand).and_return(probability / 2)
         expect(subject.valid?).to eq true
         expect(subject.location).to eq "bva_dispatch"
@@ -111,8 +117,6 @@ describe JudgeCaseReview do
     end
 
     context "when legacy case review" do
-      let(:judge) { User.create(css_id: "CFS123", station_id: User::BOARD_STATION_ID) }
-      let(:attorney) { User.create(css_id: "CFS456", station_id: "317") }
       let!(:decass) do
         create(:decass,
                deadtim: "2013-12-06".to_date,
@@ -212,7 +216,7 @@ describe JudgeCaseReview do
             expect(quality_review_record.qrsmem).to eq "AA"
             expect(quality_review_record.qrteam).to eq "BB"
             expect(quality_review_record.qrseldate).to eq VacolsHelper.local_date_with_utc_timezone
-            expect(quality_review_record.qryymm).to eq "1501"
+            expect(quality_review_record.qryymm).to eq "1901"
           end
         end
 
