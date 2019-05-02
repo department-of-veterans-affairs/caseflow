@@ -51,8 +51,10 @@ echo "Call configDBora.sh to configure database"
 DB_RENAMER="/bin/bash -x /home/oracle/setup/configDBora.sh"
 RENAME_ATTEMPTS=0
 $DB_RENAMER
-while [ $? -ne 0 ]; do
+RENAME_EXIT=$?
+while [ $RENAME_EXIT -ne 0 ]; do
   $DB_RENAMER
+  RENAME_EXIT=$?
   RENAME_ATTEMPTS=$[RENAME_ATTEMPTS + 1]
   if [ "$RENAME_ATTEMPTS" == "5" ]
   then

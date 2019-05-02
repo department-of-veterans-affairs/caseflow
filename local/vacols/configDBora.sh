@@ -70,6 +70,7 @@ then
   then
   # mount db
       sqlplus / as sysdba 2>&1 <<EOF
+      shut immediate;
       startup mount pfile=/u01/app/oracle/product/12.2.0/dbhome_1/dbs/initORCLCDB.ora;
       exit;
 EOF
@@ -81,6 +82,10 @@ EOF
       if [ "$?" != "0" ]
       then
         echo "Failed to change NID"
+        sqlplus / as sysdba 2>&1 <<EOF
+        shut immediate;
+        exit;
+EOF
         exit 1
       fi
 
