@@ -11,10 +11,10 @@ namespace :local do
 
       facols_is_ready = false
 
-      vacols_db_config = VACOLS::Case.connection_config
+#      vacols_db_config = VACOLS::Case.connection_config
 
       60.times do
-        VACOLS::Case.establish_connection(vacols_db_config)
+#        VACOLS::Case.establish_connection(vacols_db_config)
 
         begin
           if VACOLS::Case.count == 0 &&
@@ -23,12 +23,13 @@ namespace :local do
             facols_is_ready = true
             break
           end
-        rescue StandardError
-          begin
-            VACOLS::Case.connection.disconnect!
-          rescue StandardError => err
-            puts err
-          end
+        rescue StandardError => error
+          puts "Ping failed: #{error}"
+#          begin
+#            VACOLS::Case.connection.disconnect!
+#          rescue StandardError => error
+#            puts error
+#          end
           sleep 3
         end
       end
