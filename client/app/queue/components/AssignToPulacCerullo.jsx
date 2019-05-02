@@ -1,14 +1,11 @@
-/* eslint-disable no-debugger */
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 
 import {
-  taskById,
-  appealWithDetailSelector
+  taskById
 } from '../selectors';
-import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestSave
 } from '../uiReducer/uiActions';
@@ -28,13 +25,9 @@ class AssignToPulacCerullo extends React.Component {
     };
     const successMsg = 'SAVED TO PULAC CURELLO';
 
-    // debugger;
-
     return this.props.requestSave('/assign_to_pulac_cerullo', payload, successMsg).
       then((resp) => {
-        const response = JSON.parse(resp.text);
-
-        console.log('the succesful response', response);
+        console.log('the succesful response', resp);
       }).
       catch((err) => {
         console.log('the error trying to asisgn to pulac', err);
@@ -54,14 +47,11 @@ class AssignToPulacCerullo extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  task: taskById(state, { taskId: ownProps.taskId }),
-  appeal: appealWithDetailSelector(state, ownProps),
-  saveState: state.ui.saveState.savePending
+  task: taskById(state, { taskId: ownProps.taskId })
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestSave,
-  onReceiveAmaTasks
+  requestSave
 }, dispatch);
 
 export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(AssignToPulacCerullo)));

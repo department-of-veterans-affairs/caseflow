@@ -191,7 +191,6 @@ class QueueApp extends React.PureComponent {
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
   routedAssignToPulacCerullo = (props) => <AssignToPulacCerullo
-    nextStep="/queue"
     modalType="assign_to_pulac_cerullo" {...props.match.params} />;
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
