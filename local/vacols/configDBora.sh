@@ -77,7 +77,7 @@ EOF
 
   # nid change name
       echo "NID change db name"
-      echo "Y" | nid target=/ dbname=$DB_SID
+      echo "Y" | timeout 60s nid target=/ dbname=$DB_SID
 
       if [ "$?" != "0" ]
       then
