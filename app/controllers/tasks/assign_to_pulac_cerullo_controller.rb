@@ -13,8 +13,8 @@ class Tasks::AssignToPulacCerulloController < ApplicationController
       parent_id: parent_task_id,
       assigned_to: PulacCurello.singleton
     )
-    # dont know why its still showing up in the lit support organization queue
-    Task.find_by(id: parent_task_id).update!(status: "assigned")
+    #this got it out of the lit support users queue, not sure if this is correct though
+    Task.find_by(id: parent_task_id).update!(status: "assigned", assigned_to: PulacCurello.singleton)
     render json: {
       child_task_assigned_to_pulac_cerullo: child_task
     }
