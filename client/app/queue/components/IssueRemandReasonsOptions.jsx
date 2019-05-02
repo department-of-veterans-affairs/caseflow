@@ -247,7 +247,14 @@ class IssueRemandReasonsOptions extends React.PureComponent {
           name="medical-exam"
           options={REMAND_REASONS.medicalExam}
           {...checkboxGroupProps} />
+        <br />
+        <CheckboxGroup
+          label={<h3>Due Process</h3>}
+          name="due-process"
+          options={REMAND_REASONS.dueProcess}
+          {...checkboxGroupProps} />
       </div>
+
     </div>;
   }
 
