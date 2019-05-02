@@ -3,15 +3,17 @@
 class Tasks::AssignToPulacCerulloController < ApplicationController
   def create
     task = task_params
-    task_id = task[:appeal][:id]
+    task_appeal_id = task[:appeal][:id]
     assigned_by_id = task[:assignedTo][:id]
+    parent_task_id = task[:uniqueId]
     child_task = Task.create!(
       type: task[:type],
-      appeal: Appeal.find_by(id: task_id),
+      appeal: Appeal.find_by(id: task_appeal_id),
       assigned_by_id: assigned_by_id,
-      parent_id: task[:id],
+      parent_id: parent_task_id,
       assigned_to: PulacCurello.singleton
     )
+    Task.find_by(id: parent_task_id).update!(status: "assigned")
     render json: {
       child_task_assigned_to_pulac_cerullo: child_task
     }
