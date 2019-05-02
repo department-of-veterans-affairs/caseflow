@@ -6,7 +6,7 @@ RSpec.feature "Hearings tasks workflows" do
   let(:user) { FactoryBot.create(:user) }
 
   before do
-    OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
     User.authenticate!(user: user)
   end
 

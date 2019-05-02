@@ -280,7 +280,6 @@ describe DispositionTask do
         :schedule_hearing_task,
         parent: hearing_task,
         appeal: appeal,
-        assigned_to: HearingsManagement.singleton,
         status: Constants.TASK_STATUSES.completed
       )
     end
