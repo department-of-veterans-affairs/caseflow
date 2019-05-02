@@ -8,7 +8,7 @@ class Tasks::AssignToPulacCerulloController < ApplicationController
     parent_task_id = task[:uniqueId]
     child_task = Task.create!(
       type: task[:type],
-      appeal: Appeal.find_by(id: task_appeal_id),
+      appeal: appeal,
       assigned_by_id: assigned_by_id,
       parent_id: parent_task_id,
       assigned_to: PulacCurello.singleton
@@ -20,8 +20,13 @@ class Tasks::AssignToPulacCerulloController < ApplicationController
     }
 
   end
+  private
 
   def task_params
     params[:task]
+  end
+
+  def appeal
+    @appeal ||= Appeal.find_by(id: params[:task][:appeal][:id])
   end
 end
