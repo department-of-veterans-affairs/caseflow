@@ -77,19 +77,17 @@ EOF
 
   # nid change name
       echo "NID change db name"
-      echo "Y" | timeout 30s nid target=/ dbname=$DB_SID 2>&1 > /tmp/dbnewid.log
+      NID_OUT=`echo "Y" | timeout 30s nid target=/ dbname=$DB_SID 2>&1`
       NID_RETVAL=$?
-
-      cat /tmp/dbnewid.log
+      echo $NID_OUT
 
       if [ "$NID_RETVAL" != "0" ]
       then
         echo "Failed to change NID"
-        if grep 'is the same as current name' /tmp/dbnewid.log; then
+        if echo $NID_OUT | grep "is the same as current name"; then
           echo "previous rename attempt was successful"
           sqlplus / as sysdba 2>&1 <<EOF
             shut immediate;
-            startup mount;
             exit;
 EOF
         else
