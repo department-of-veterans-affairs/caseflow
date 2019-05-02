@@ -84,9 +84,16 @@ EOF
         echo "Failed to change NID"
         sqlplus / as sysdba 2>&1 <<EOF
         shut immediate;
+        startup mount;
         exit;
 EOF
-        exit 1
+        CURRENT_NAME=`sqlplus / as sysdba <<< 'select * from global_name;' | grep $DB_SID`
+        if [ "$CURRENT_NAME" == "${DB_SID}.LOCALDOMAIN" ]
+        then
+          echo "Rename successful"
+        else
+          exit 1
+        fi
       fi
 
   # update init.ora
