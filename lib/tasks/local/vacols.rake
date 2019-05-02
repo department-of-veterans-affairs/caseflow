@@ -12,7 +12,7 @@ namespace :local do
       facols_is_ready = false
 
       # rubocop:disable Lint/HandleExceptions
-      180.times do
+      900.times do
         begin
           if VACOLS::Case.count == 0 &&
              VACOLS::CaseHearing.select("VACOLS.HEARING_VENUE(vdkey)").where(folder_nr: "1").count == 0
@@ -22,8 +22,8 @@ namespace :local do
           end
         rescue StandardError
         end
-
-        sleep 1
+        puts "Facols not ready. Sleeping 30 seconds..."
+        sleep 30
       end
       # rubocop:enable Lint/HandleExceptions
 
