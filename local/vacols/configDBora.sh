@@ -70,7 +70,6 @@ then
   then
   # mount db
       sqlplus / as sysdba 2>&1 <<EOF
-      shut immediate;
       startup mount pfile=/u01/app/oracle/product/12.2.0/dbhome_1/dbs/initORCLCDB.ora;
       exit;
 EOF
@@ -84,12 +83,12 @@ EOF
       if [ "$NID_RETVAL" != "0" ]
       then
         echo "Failed to change NID"
+        sqlplus / as sysdba 2>&1 <<EOF
+          shut immediate;
+          exit;
+EOF
         if echo $NID_OUT | grep "is the same as current name"; then
           echo "previous rename attempt was successful"
-          sqlplus / as sysdba 2>&1 <<EOF
-            shut immediate;
-            exit;
-EOF
         else
           exit 1
         fi
