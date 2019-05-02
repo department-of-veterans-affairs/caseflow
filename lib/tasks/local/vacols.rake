@@ -20,10 +20,11 @@ namespace :local do
             facols_is_ready = true
             break
           end
-        rescue StandardError
+        rescue StandardError => error 
+          puts error
         end
-        puts "Facols not ready. Sleeping 30 seconds..."
-        sleep 30
+        puts "Facols not ready. Sleeping 1 seconds..."
+        sleep 1
       end
       # rubocop:enable Lint/HandleExceptions
 
