@@ -8,8 +8,8 @@ USAGE=$(cat <<-END
 
    This is a handy script which allows you to build FACOLS locally for your development.
    ${bold}You must first mfa using the issue_mfa.sh since it will download dependencies.${normal}
-   Example Usage (build but not push): ./buildPush.sh local
-   Example Usage (build and push): ./buildPush.sh remote
+   Example Usage (build but not push): ./build_push.sh local
+   Example Usage (build and push): ./build_push.sh remote
 
 END
 )
