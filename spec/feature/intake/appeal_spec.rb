@@ -216,7 +216,7 @@ feature "Appeal Intake" do
     expect(nonrating_request_issue).to have_attributes(
       contested_rating_issue_reference_id: nil,
       contested_rating_issue_profile_date: nil,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       benefit_type: "compensation"
     )
@@ -581,7 +581,7 @@ feature "Appeal Intake" do
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
       decision_review: appeal,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       decision_date: nonrating_date
     )
@@ -591,7 +591,7 @@ feature "Appeal Intake" do
     another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
       decision_review_type: "Appeal",
       decision_review_id: appeal.id,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Another Description for Active Duty Adjustments"
     )
 

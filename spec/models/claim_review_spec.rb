@@ -57,7 +57,7 @@ describe ClaimReview do
       :request_issue,
       decision_review: claim_review,
       nonrating_issue_description: "Issue text",
-      issue_category: "surgery",
+      nonrating_issue_category: "surgery",
       decision_date: 4.days.ago.to_date,
       benefit_type: benefit_type,
       ineligible_reason: ineligible_reason
@@ -69,7 +69,7 @@ describe ClaimReview do
       :request_issue,
       decision_review: claim_review,
       nonrating_issue_description: "some other issue",
-      issue_category: "something",
+      nonrating_issue_category: "something",
       decision_date: 3.days.ago.to_date,
       benefit_type: benefit_type
     )
