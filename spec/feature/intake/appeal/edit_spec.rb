@@ -635,13 +635,11 @@ feature "Appeal Edit issues" do
       visit "appeals/#{appeal.uuid}/edit"
       expect(page).to have_content("Edit contention title")
 
-      ri_contention_text = RequestIssue.find_by(contested_issue_description: "PTSD denied")
-
       within first(".issue-edit-text") do
         click_button("Edit contention title")
       end
 
-      expect(ri_contention_text).to_not be_nil
+      expect(page).to have_content("PTSD denied")
       expect(page).to have_button("Submit")
     end
   end

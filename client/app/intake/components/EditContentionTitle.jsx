@@ -4,18 +4,6 @@ import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import { css } from 'glamor';
 
-const buttonStyling = css({
-  marginBottom: '15px'
-});
-
-const paragraphyStyling = css({
-  paddingLeft: '30px'
-});
-
-const linkStyle = css({
-  paddingLeft: '0px'
-});
-
 export default class EditContentionTitle extends React.PureComponent {
 
   constructor(props) {
@@ -41,7 +29,6 @@ render() {
     <Button
       onClick={this.editContentionOnClick}
       classNames={['cf-btn-link']}
-      styling={linkStyle}
     >
       {COPY.INTAKE_EDIT_TITLE}
     </Button>
@@ -54,7 +41,7 @@ render() {
       }}
       strongLabel
     />
-    <p {...paragraphyStyling}>{this.props.issue.text}</p>
+    <p {...css({ paddingLeft: '30px' })}>{this.props.issue.text}</p>
     {this.props.issue.notes && <p {...css({
       fontStyle: 'italic',
       paddingLeft: '30px' })}>Notes: {this.props.issue.notes}</p>}
@@ -68,11 +55,10 @@ render() {
       }
       <Button
         name="submit-issue"
-        classNames={['cf-submit']}
+        classNames={['cf-submit', 'issue-edit-submit-button']}
         onClick={(value) => {
           this.setState({ value });
         }}
-        styling={buttonStyling}
       >
             Submit
       </Button>

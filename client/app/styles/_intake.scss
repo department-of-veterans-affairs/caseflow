@@ -241,6 +241,10 @@
         display: table-row;
         margin-top: 10px;
         margin-bottom: 10px;
+
+        button {
+          padding-left: 0px;
+        }
       }
 
       .issue-container {
@@ -265,6 +269,10 @@
         .issue-text-buttons {
           text-align: right;
           margin-right: 15px;
+        }
+
+        .issue-edit-submit-button {
+           margin-bottom: 15px;
         }
       }
     }
