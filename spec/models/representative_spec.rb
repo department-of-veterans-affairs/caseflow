@@ -33,7 +33,7 @@ describe Representative do
 
   describe ".create!" do
     it "sets the role to VSO" do
-      vso = Representative.create!(name: "Veterans' Service Org")
+      vso = Representative.create!(name: "Veterans' Service Org", url: "veterans-service-org")
       expect(vso.role).to eq("VSO")
     end
   end
