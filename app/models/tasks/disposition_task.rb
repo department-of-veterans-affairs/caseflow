@@ -33,7 +33,7 @@ class DispositionTask < GenericTask
   end
 
   def available_actions(user)
-    if JudgeTeam.for_judge(user) || HearingsManagement.singleton.user_has_access?(user)
+    if HearingsManagement.singleton.user_has_access?(user)
       [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
     else
       []
