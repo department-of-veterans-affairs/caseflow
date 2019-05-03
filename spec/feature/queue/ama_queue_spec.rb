@@ -351,11 +351,13 @@ RSpec.feature "AmaQueue" do
       let(:vso_participant_id) { "2452383" }
       let(:participant_ids) { [participant_id, participant_id_without_vso] }
       let(:url) { "vietnam-veterans" }
+      let(:name) { "Vietnam Veterans" }
 
       let!(:vso) do
         Vso.create(
           participant_id: vso_participant_id,
-          url: url
+          url: url,
+          name: name
         )
       end
 
