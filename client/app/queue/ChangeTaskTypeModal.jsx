@@ -11,7 +11,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { highlightInvalidFormItems, requestPatch } from './uiReducer/uiActions';
-import { setAppealAttrs, onReceiveTasks, deleteTask } from './QueueActions';
+import { setAppealAttrs, onReceiveAmaTasks } from './QueueActions';
 
 import {
   appealWithDetailSelector,
@@ -24,7 +24,7 @@ import {
 } from './constants';
 import COPY from '../../COPY.json';
 
-import { taskActionData, prepareAllTasksForStore } from './utils';
+import { taskActionData } from './utils';
 import QueueFlowModal from './components/QueueFlowModal';
 
 const actionTemplate = () => {
@@ -45,7 +45,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
   }
 
   updateActionField = (key, value) => {
-    const fields = [...this.state.action];
+    const fields = this.state.action;
 
     fields[key] = value;
     this.setState({ actions: fields });
@@ -54,15 +54,14 @@ class ChangeTaskTypeModal extends React.PureComponent {
   validateForm = () => Boolean(this.state.action.actionLabel) && Boolean(this.state.action.instructions);
 
   buildPayload = () => {
-    const { task, appeal } = this.props;
+    const { appeal } = this.props;
     const { action } = this.state;
 
     return {
       action: action.actionLabel,
       instructions: action.instructions,
       type: taskActionData(this.props).type || action.actionLabel,
-      external_id: appeal.externalId,
-      parent_id: task.isLegacy ? null : task.taskId
+      external_id: appeal.externalId
     };
   }
 
@@ -72,42 +71,23 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
     const payload = {
       data: {
-        tasks: this.buildPayload(),
+        task: this.buildPayload(),
         role: this.props.role
       }
     };
     const msgTitle = COPY.CHANGE_COLOCATED_TASK_TYPE_CONFIRMATION_TITLE;
-    const oldAction = taskActionData(this.props).options.find((option) => option.value === action.actionLabel);
+    const oldAction = taskActionData(this.props).options.find((option) => option.value === task.label);
+    const newAction = taskActionData(this.props).options.find((option) => option.value === action.actionLabel);
     const successMsg = {
-      title: sprintf(msgTitle, oldAction.label, action.label),
+      title: sprintf(msgTitle, oldAction.label, newAction.label),
       detail: COPY.CHANGE_COLOCATED_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
-    this.props.requestPatch('/tasks', payload, successMsg).
-      then((resp) => {
-        const response = JSON.parse(resp.text);
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+      then((response) => {
+        const amaTasks = JSON.parse(response.text).tasks.data;
 
-        console.log(response.tasks.data);
-
-        // // Remove any duplicate tasks returned by creating multiple admin actions
-        // const filteredTasks = _.sortedUniqBy(response.tasks.data, (amaTask) => {
-        //   if (amaTask.attributes.external_appeal_id === task.externalAppealId) {
-        //     return amaTask.attributes.external_appeal_id;
-        //   }
-
-        //   return amaTask.id;
-        // });
-        // const allTasks = prepareAllTasksForStore(filteredTasks);
-
-        // this.props.onReceiveTasks({
-        //   tasks: allTasks.tasks,
-        //   amaTasks: allTasks.amaTasks
-        // });
-
-        // if (task.isLegacy) {
-        //   this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
-        //   this.props.deleteTask(task.uniqueId);
-        // }
+        this.props.onReceiveAmaTasks({ amaTasks });
       }).
       catch(() => {
         // handle the error from the frontend
@@ -123,7 +103,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
         <div {...marginTop(4)}>
           <SearchableDropdown
             errorMessage={highlightFormItems && !actionLabel ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-            name={COPY.ADD_COLOCATED_TASK_ACTION_TYPE_LABEL}
+            name={COPY.CHANGE_COLOCATED_TASK_ACTION_TYPE_LABEL}
             placeholder="Select an action type"
             options={taskActionData(this.props).options}
             onChange={(option) => option && this.updateActionField('actionLabel', option.value)}
@@ -132,7 +112,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
         <div {...marginTop(4)}>
           <TextareaField
             errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-            name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            name={COPY.CHANGE_COLOCATED_TASK_INSTRUCTIONS_LABEL}
             onChange={(value) => this.updateActionField('instructions', value)}
             value={instructions} />
         </div>
@@ -147,13 +127,10 @@ class ChangeTaskTypeModal extends React.PureComponent {
     return <QueueFlowModal
       validateForm={this.validateForm}
       submit={this.submit}
-      title="Change task type"
+      title={COPY.CHANGE_COLOCATED_TASK_SUBHEAD}
+      button={COPY.CHANGE_COLOCATED_TASK_SUBHEAD}
       {...otherProps}
     >
-      <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
-        {COPY.ADD_COLOCATED_TASK_SUBHEAD}
-      </h1>
-      <hr />
       {error && <Alert title={error.title} type="error">
         {error.detail}
       </Alert>}
@@ -172,8 +149,7 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightInvalidFormItems,
   requestPatch,
-  onReceiveTasks,
-  deleteTask,
+  onReceiveAmaTasks,
   setAppealAttrs
 }, dispatch);
 
