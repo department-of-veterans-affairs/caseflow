@@ -50,11 +50,11 @@ describe JudgeTeam do
     # Limitation of the current approach is that users are effectively limited to being the admin of a single JudgeTeam.
     context "when user is admin of multiple JudgeTeams" do
       let!(:first_judge_team) { JudgeTeam.create_for_judge(user) }
-      let!(:second_judge_team) {
+      let!(:second_judge_team) do
         JudgeTeam.create!(name: "#{user.css_id}_2", url: "#{user.css_id.downcase}_2").tap do |org|
           OrganizationsUser.make_user_admin(user, org)
         end
-      }
+      end
 
       it "should return first judge team even when they admin two judge teams" do
         expect(JudgeTeam.for_judge(user)).to eq(first_judge_team)
