@@ -540,7 +540,12 @@ describe Appeal do
         let(:appeal) do
           create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_nil)])
         end
-        let!(:vso) { Vso.create(name: "Test VSO") }
+        let!(:vso) do
+          Vso.create(
+            name: "Test VSO",
+            url: "test-vso"
+          )
+        end
 
         it "does not return VSOs with nil participant_id" do
           expect(appeal.representatives).to eq([])
