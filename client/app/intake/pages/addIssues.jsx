@@ -304,6 +304,7 @@ export class AddIssuesPage extends React.Component {
               value={intakeData.withdrawalDate}
               onChange={this.withdrawalDateOnChange}
               placeholder={withdrawDatePlaceholder}
+              errorMessage={errorMessage}
             />
           </InlineForm>
         </div>
