@@ -47,7 +47,9 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
       }
     };
 
-    const successMsg = { title: sprintf(COPY.CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, 'XXX') };
+    const successMsg = {
+      title: sprintf(COPY.CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteranFullName)
+    };
 
     return this.props.requestSave(`/tasks/${task.taskId}/request_hearing_disposition_change`, payload, successMsg).
       then((resp) => {
