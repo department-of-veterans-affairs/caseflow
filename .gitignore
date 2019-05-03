@@ -53,3 +53,6 @@ docker-bin/oracle_libs/*
 oracle_libs/*
 
 config/build_version.yml
+
+# FACOLS build
+local/vacols/build_facols/*
