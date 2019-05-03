@@ -314,13 +314,13 @@ describe DecisionIssue do
     end
   end
 
-  context "#issue_category" do
-    subject { decision_issue.issue_category }
+  context "#nonrating_issue_category" do
+    subject { decision_issue.nonrating_issue_category }
 
     let(:request_issues) do
       [create(
         :request_issue,
-        issue_category: "test category",
+        nonrating_issue_category: "test category",
         nonrating_issue_description: "request issue description"
       )]
     end
