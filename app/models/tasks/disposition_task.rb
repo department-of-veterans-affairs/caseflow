@@ -33,7 +33,7 @@ class DispositionTask < GenericTask
   end
 
   def available_actions(user)
-    if JudgeTeam.for_judge(user) || HearingsManagement.singleton.user_has_access?(user)
+    if HearingsManagement.singleton.user_has_access?(user)
       [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
     else
       []
@@ -95,7 +95,8 @@ class DispositionTask < GenericTask
 
     no_show_hearing_task.update!(
       status: Constants.TASK_STATUSES.on_hold,
-      on_hold_duration: 25
+      on_hold_duration: 25,
+      instructions: ["Mail must be received within 14 days of the original hearing date."]
     )
   end
 

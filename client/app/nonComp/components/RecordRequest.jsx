@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Button from '../../components/Button';
 import { BOA_ADDRESS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import Checkbox from '../../components/Checkbox';
+import COPY from '../../../COPY.json';
 
 class RecordRequestUnconnected extends React.PureComponent {
   constructor(props) {
@@ -64,14 +65,16 @@ class RecordRequestUnconnected extends React.PureComponent {
         <hr />
         <div className="usa-width-full">
           <p>
-            The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals.
-            In order to decide that appeal, the Board will need the complete records from {businessLine}.
+            {COPY.NON_COMP_ADDRESS_MESSAGE} {businessLine}.
           </p>
           <p>
             Please take necessary steps to send this record to the Board.
           </p>
           <p>
             Mail to <strong>{BOA_ADDRESS}</strong>.
+          </p>
+          <p>
+           Attention: <strong>Case Review and Evaluation Branch</strong>.
           </p>
         </div>
       </div>
