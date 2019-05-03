@@ -63,9 +63,13 @@ class DispositionTask < GenericTask
     end
   end
 
-  def create_change_hearing_disposition_task_and_complete
+  def create_change_hearing_disposition_task_and_complete(instructions = nil)
     multi_transaction do
-      ChangeHearingDispositionTask.create!(appeal: appeal, parent: parent)
+      ChangeHearingDispositionTask.create!(
+        appeal: appeal,
+        parent: parent,
+        instructions: instructions.present? ? [instructions] : nil
+      )
       update!(status: Constants.TASK_STATUSES.completed)
     end
   end
@@ -113,6 +117,10 @@ class DispositionTask < GenericTask
   end
 
   private
+
+  def update_children_status
+    children.active.update_all(status: Constants.TASK_STATUSES.completed)
+  end
 
   def update_hearing_and_self(params:, payload_values:)
     case payload_values[:disposition]

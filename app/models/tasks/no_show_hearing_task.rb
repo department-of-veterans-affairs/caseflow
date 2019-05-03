@@ -9,7 +9,8 @@ class NoShowHearingTask < GenericTask
     if (assigned_to &.== user) || task_is_assigned_to_users_organization?(user)
       [
         Constants.TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.to_h,
-        Constants.TASK_ACTIONS.MARK_NO_SHOW_HEARING_COMPLETE.to_h
+        Constants.TASK_ACTIONS.MARK_NO_SHOW_HEARING_COMPLETE.to_h,
+        Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
       ]
     else
       []
