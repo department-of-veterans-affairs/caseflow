@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-feature "Appeal Edit issues" do
+ffeature "Appeal Edit issues" do
   include IntakeHelpers
 
   before do
@@ -636,7 +636,7 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("Edit contention title")
 
       within first(".issue-edit-text") do
-        click_button("Edit contention title")
+        click_edit_contention_issue
       end
 
       expect(page).to have_content("PTSD denied")

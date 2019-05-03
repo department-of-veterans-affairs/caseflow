@@ -28,7 +28,7 @@ render() {
   return <div>{!this.state.showEditTitle && <div className="issue-edit-text">
     <Button
       onClick={this.editContentionOnClick}
-      classNames={['cf-btn-link']}
+      classNames={['cf-btn-link', 'edit-contention-issue']}
     >
       {COPY.INTAKE_EDIT_TITLE}
     </Button>
