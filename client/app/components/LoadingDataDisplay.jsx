@@ -55,7 +55,11 @@ class LoadingDataDisplay extends React.PureComponent {
           return;
         }
 
-        const errors = response.response ? JSON.parse(response.response.text).errors : null;
+        let errors;
+
+        if (response.response && response.response.type === 'application/json') {
+          errors = JSON.parse(response.response.text).errors;
+        }
 
         this.setState({
           promiseResult: PROMISE_RESULTS.FAILURE,
