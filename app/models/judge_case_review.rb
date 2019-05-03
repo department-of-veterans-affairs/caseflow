@@ -12,7 +12,7 @@ class JudgeCaseReview < ApplicationRecord
   validates :complexity, :quality, presence: true, if: :bva_dispatch?
   validates :comment, length: { maximum: Constants::VACOLS_COLUMN_MAX_LENGTHS["DECASS"]["DEBMCOM"] }
 
-  after_create :select_case_for_quality_review
+  after_create :select_case_for_legacy_quality_review
 
   scope :this_month, -> { where(created_at: Time.zone.now.beginning_of_month..Time.zone.now.end_of_month) }
 
@@ -67,8 +67,8 @@ class JudgeCaseReview < ApplicationRecord
     judge.vacols_uniq_id
   end
 
-  def select_case_for_quality_review
-    return if self.class.reached_monthly_limit_in_quality_reviews?
+  def select_case_for_legacy_quality_review
+    return if !legacy? || self.class.reached_monthly_limit_in_quality_reviews?
 
     # We are using 25 sided die to randomly select a case for quality review
     # https://github.com/department-of-veterans-affairs/caseflow/issues/6407
