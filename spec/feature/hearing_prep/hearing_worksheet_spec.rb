@@ -124,12 +124,16 @@ RSpec.feature "Hearing prep" do
         fill_in "appellant-vet-rep-name", with: "This is a rep name"
         fill_in "appellant-vet-witness", with: "This is a witness"
         fill_in "worksheet-military-service", with: "This is military service"
+        find("label", text: "Hearing Prepped").click
 
         visit "/hearings/" + ama_hearing.external_id.to_s + "/worksheet"
+
         expect(page).to have_content("This is a rep name")
         expect(page).to have_content("This is a witness")
         expect(page).to have_content("These are the notes being taken here")
         expect(page).to have_content("This is military service")
+        # Temporarily commented out until we fix issue #10621
+        # expect(page).to have_field("Hearing Prepped", checked: true, visible: false)
       end
 
       scenario "Can save preliminary impressions for ama hearings" do
