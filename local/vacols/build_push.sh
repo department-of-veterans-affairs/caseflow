@@ -51,7 +51,7 @@ build(){
   cd build_facols
 
   echo -e "\tDownloading FACOLS Dependencies..."
-  aws s3 sync --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ ./
+  aws s3 sync --quiet --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ ./
 
   echo -e "\tChecking if Instant Client has been downloaded"
   if [ $? -eq 0 ]; then
@@ -63,13 +63,30 @@ build(){
 
   # Build Docker
   echo -e "\tCreating Caseflow App Docker Image"
+  echo "--------"
+  echo ""
 
-  docker build -t facols_local:${today} .
+  docker build --force-rm --no-cache --tag  facols_local:${today} .
+  docker_build_result=$?
+  echo ""
+  echo "--------"
+  if [[ $docker_build_result -eq 0 ]]; then
+    echo -e "\tCleaning Up..."
+    #cd ../ && rm -rf build_facols
+    docker_build="SUCCESS"
+    echo ""
+    echo "Building Caseflow Docker App: ${bold}${docker_build}${normal}"
+    return 0
+  else
+    docker_build="FAILED"
+    echo ""
+    echo "Building Caseflow Docker App: ${bold}${docker_build}${normal}"
+    echo "Please check above if there were execution errors."
+    return 1
+  fi
 
-  echo -e "\tCleaning Up..."
-  #cd ../ && rm -rf build_facols
 
-  echo "${bold}Building Caseflow Docker App: Completed${normal}"
+
 }
 
 push(){
@@ -86,11 +103,12 @@ push(){
 
 }
 
-if [[ $1 == "local" ]]; then
+if [[ "$1" == "local" ]]; then
   build
-elif [[ $1 == "remote" ]]; then
+
+elif [[ "$1" == "remote" ]]; then
   build
   if [[ $? -eq 0 ]]; then
-    push
+    echo "not not here"
   fi
 fi
