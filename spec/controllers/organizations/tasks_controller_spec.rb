@@ -7,12 +7,14 @@ RSpec.describe Organizations::TasksController, type: :controller do
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
   let(:url) { "american-legion" }
+  let(:name) { "American Legion" }
 
   let(:vso) do
     Vso.create(
       participant_id: vso_participant_id,
       url: url,
-      role: "VSO"
+      role: "VSO",
+      name: name
     )
   end
 
