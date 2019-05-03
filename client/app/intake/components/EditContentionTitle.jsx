@@ -41,10 +41,9 @@ render() {
       }}
       strongLabel
     />
-    <p {...css({ paddingLeft: '30px' })}>{this.props.issue.text}</p>
+    <p>{this.props.issue.text}</p>
     {this.props.issue.notes && <p {...css({
-      fontStyle: 'italic',
-      paddingLeft: '30px' })}>Notes: {this.props.issue.notes}</p>}
+      fontStyle: 'italic' })}>Notes: {this.props.issue.notes}</p>}
     <div className="issue-text-buttons">
       {this.state.showEditTitle && <Button
         classNames={['cf-btn-link']}
