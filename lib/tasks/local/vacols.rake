@@ -11,7 +11,6 @@ namespace :local do
 
       facols_is_ready = false
 
-      # rubocop:disable Lint/HandleExceptions
       180.times do
         begin
           if VACOLS::Case.count == 0 &&
@@ -20,15 +19,14 @@ namespace :local do
             facols_is_ready = true
             break
           end
-        rescue StandardError
+        rescue StandardError => error
+          puts error
+          sleep 1
         end
-        puts "Facols not ready. Sleeping 1 seconds..."
-        sleep 1
       end
-      # rubocop:enable Lint/HandleExceptions
 
       unless facols_is_ready
-        fail "Gave up waiting for FACOLS to get ready and we won't leave alone"
+        fail "Gave up waiting for FACOLS to get ready"
       end
     end
 

@@ -78,8 +78,8 @@ class DecisionIssue < ApplicationRecord
     processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
   end
 
-  def issue_category
-    associated_request_issue&.issue_category
+  def nonrating_issue_category
+    associated_request_issue&.nonrating_issue_category
   end
 
   def soft_delete_on_removed_request_issue

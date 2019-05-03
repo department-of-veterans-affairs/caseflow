@@ -29,7 +29,6 @@ class V2::AppealStatusSerializer
   attribute :status, &:status_hash
   attribute :alerts
   attribute :docket, &:docket_hash
-  attribute :issues
   attribute :events
   attribute :issues, &:issues_hash
 
