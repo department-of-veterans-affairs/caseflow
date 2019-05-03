@@ -105,6 +105,6 @@ test_vacols:
   database: "(DESCRIPTION=
     (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521)))
     (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
-    (CONNECT_DATA=(SERVICE_NAME=BVAP.localdomain))
+    (CONNECT_DATA=(SID=BVAP))
   )"
 
