@@ -95,7 +95,8 @@ class DispositionTask < GenericTask
 
     no_show_hearing_task.update!(
       status: Constants.TASK_STATUSES.on_hold,
-      on_hold_duration: 25
+      on_hold_duration: 25,
+      instructions: ["Mail must be received within 14 days of the original hearing date."]
     )
   end
 
