@@ -12,6 +12,7 @@ class VBMSError < RuntimeError
   class Transient < Caseflow::Error::VBMS; end
   class RatedIssueMissing < Caseflow::Error::VBMS; end
   class DocumentTooBig < Caseflow::Error::VBMS; end
+  class DocumentNotFound < Caseflow::Error::VBMS; end
   class Security < Caseflow::Error::VBMS; end
   class DownForMaintenance < Caseflow::Error::VBMS; end
   class BadPostalCode < Caseflow::Error::VBMS; end
@@ -24,6 +25,7 @@ class VBMSError < RuntimeError
   class CannotDeleteContention < Caseflow::Error::VBMS; end
   class ClaimDateInvalid < Caseflow::Error::VBMS; end
   class FilenumberDoesNotExist < Caseflow::Error::VBMS; end
+  class MissingData < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -85,7 +87,13 @@ class VBMSError < RuntimeError
     "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/308951/
-    "File Number does not exist within the system." => "FilenumberDoesNotExist"
+    "File Number does not exist within the system." => "FilenumberDoesNotExist",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3696/events/315030/
+    "Document not found" => "DocumentNotFound",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
+    "missing required data" => "MissingData"
   }.freeze
 
   class << self

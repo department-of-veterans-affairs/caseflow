@@ -12,8 +12,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
   before do
     OrganizationsUser.add_user_to_organization(current_user, HearingsManagement.singleton)
-    OrganizationsUser.add_user_to_organization(other_user, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(current_user, HearingAdmin.singleton)
+    OrganizationsUser.add_user_to_organization(other_user, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(other_user, HearingAdmin.singleton)
   end
 
@@ -57,7 +57,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       find("label", text: "9:00 am").click
       click_button("Schedule")
-      find_link("Back to Schedule Veterans").click
+      click_on "Back to Schedule Veterans"
       expect(page).to have_content("Schedule Veterans")
       click_button("Scheduled Veterans")
       expect(VACOLS::Case.where(bfcorlid: "123454787S"))
@@ -115,7 +115,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       find("label", text: "8:30 am").click
       expect(page).not_to have_content("Could not find hearing locations for this veteran", wait: 30)
       click_button("Schedule")
-      find_link("Back to Schedule Veterans").click
+      click_on "Back to Schedule Veterans"
       expect(page).to have_content("Schedule Veterans")
       click_button("Scheduled Veterans")
       expect(VACOLS::Case.where(bfcorlid: "123456789S"))
@@ -281,16 +281,15 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("has been marked complete")
 
       # Schedule veteran!
-      find("a", text: "Switch views").click
-      click_on "Hearing Management team"
+      visit "hearings/schedule/assign"
+      expect(page).to have_content("Regional Office")
+      click_dropdown(text: "Denver")
+      click_button("AMA Veterans Waiting")
 
       click_on "Bob Smith"
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
-      click_dropdown(text: "Denver")
-
-      within find(".dropdown-hearingDate") do
-        click_dropdown(index: 1)
-      end
+      click_dropdown({ text: "Denver" }, find(".dropdown-regionalOffice"))
+      click_dropdown({ index: 1 }, find(".dropdown-hearingDate"))
 
       find("label", text: "8:30 am").click
 
@@ -299,13 +298,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("You have successfully assigned")
 
       # Ensure the veteran appears on the scheduled page
-      visit "hearings/schedule/assign"
-      expect(page).to have_content("Regional Office")
-      click_dropdown(text: "Denver")
 
       expect(page).to have_content(appeal.docket_number)
 
       # Ensure the veteran is no longer in the veterans waiting to be scheduled
+      click_on "Back to Schedule Veterans"
+      expect(page).to have_content("Regional Office")
+      click_dropdown(text: "Denver")
       click_button("AMA Veterans Waiting")
       expect(page).to have_content("There are no schedulable veterans")
     end

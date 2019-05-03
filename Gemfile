@@ -56,7 +56,6 @@ gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
-gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
@@ -82,7 +81,6 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "chromedriver-helper"
   gem "danger", "~> 5.10"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 4.8"
@@ -102,6 +100,7 @@ group :test, :development, :demo do
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "mb-update-capybara-click"
   gem "timecop"
+  gem "webdrivers"
 end
 
 group :development do

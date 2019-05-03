@@ -111,6 +111,7 @@ RSpec.feature "List Schedule" do
       scenario "Correct hearing days are displayed" do
         visit "hearings/schedule"
 
+        expect(page).to have_content("Try it out and provide any feedback through our support channels.")
         expect(page).to have_content(Hearing::HEARING_TYPES[HearingDay.first.request_type.to_sym])
       end
     end
