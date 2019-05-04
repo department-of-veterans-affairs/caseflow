@@ -714,9 +714,9 @@ feature "Higher-Level Review" do
              request_issues: [previous_sc_request_issue],
              rating_issue_reference_id: "resultingscissue123",
              participant_id: veteran.participant_id,
-             promulgation_date: another_promulgation_date,
+             rating_promulgation_date: another_promulgation_date,
              decision_text: "supplemental claim decision issue",
-             profile_date: profile_date,
+             rating_profile_date: profile_date,
              end_product_last_action_date: profile_date,
              benefit_type: previous_supplemental_claim.benefit_type)
     end
