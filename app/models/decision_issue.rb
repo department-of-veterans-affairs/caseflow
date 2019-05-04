@@ -170,11 +170,7 @@ class DecisionIssue < ApplicationRecord
   # the decision date is approximate but we need it for timeliness checks.
   # see also ContestableIssue.approx_decision_date
   def approx_processed_in_vbms_decision_date
-    if promulgation_date
-      promulgation_date.to_date
-    else
-      end_product_last_action_date
-    end
+    rating_promulgation_date ? rating_promulgation_date.to_date : end_product_last_action_date
   end
 
   def calculate_and_set_description
