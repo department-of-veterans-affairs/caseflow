@@ -417,7 +417,7 @@ feature "Higher-Level Review" do
     expect(higher_level_review.request_issues.last).to have_attributes(
       contested_rating_issue_reference_id: nil,
       contested_rating_issue_profile_date: nil,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       decision_date: profile_date
     )
@@ -982,7 +982,7 @@ feature "Higher-Level Review" do
 
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
         decision_review: higher_level_review,
-        issue_category: "Active Duty Adjustments",
+        nonrating_issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "Description for Active Duty Adjustments",
         decision_date: profile_date,
         end_product_establishment_id: non_rating_end_product_establishment.id,
@@ -993,7 +993,7 @@ feature "Higher-Level Review" do
 
       another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
         decision_review: higher_level_review,
-        issue_category: "Active Duty Adjustments",
+        nonrating_issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "Another Description for Active Duty Adjustments",
         benefit_type: "compensation"
       )
@@ -1142,20 +1142,20 @@ feature "Higher-Level Review" do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        fill_in "Issue category", with: active_nonrating_request_issue.issue_category
+        fill_in "Issue category", with: active_nonrating_request_issue.nonrating_issue_category
         find("#issue-category").send_keys :enter
         expect(page).to have_content("Does issue 1 match any of the issues actively being reviewed?")
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
-        add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+        add_active_intake_nonrating_issue(active_nonrating_request_issue.nonrating_issue_category)
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category} -" \
                                      " #{active_nonrating_request_issue.description}" \
                                      " is ineligible because it's already under review as a Higher-Level Review")
 
         click_intake_finish
         expect(page).to have_content("Intake completed")
         expect(RequestIssue.find_by(decision_review: hlr,
-                                    issue_category: active_nonrating_request_issue.issue_category,
+                                    nonrating_issue_category: active_nonrating_request_issue.nonrating_issue_category,
                                     ineligible_due_to: active_nonrating_request_issue.id,
                                     ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
                                     nonrating_issue_description: active_nonrating_request_issue.description,
@@ -1241,7 +1241,7 @@ feature "Higher-Level Review" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    decision_review: hlr,
-                   issue_category: "Accrued",
+                   nonrating_issue_category: "Accrued",
                    benefit_type: hlr.benefit_type
                  )).to_not be_nil
         end
