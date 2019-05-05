@@ -159,7 +159,7 @@ RSpec.describe AppealsController, type: :controller do
       end
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
-      it "should return document count and not call vbms" do
+      it "should return document count" do
         get :document_counts_by_id, params: { appeal_ids: appeal.vacols_id }
 
         response_body = JSON.parse(response.body)
@@ -199,9 +199,7 @@ RSpec.describe AppealsController, type: :controller do
         expect(response_of_id["status"]).to eq 404
       end
     end
-  end
 
-  describe "GET appeals/appeal_id/document_counts_by_id" do
     let(:appeal) { FactoryBot.create(:appeal) }
 
     context "when efolder returns an access forbidden error" do
@@ -217,7 +215,7 @@ RSpec.describe AppealsController, type: :controller do
         end
       end
 
-      it "responds with a 4xx and error message" do
+      it "responds with a 403 and error message" do
         User.authenticate!(roles: ["System Admin"])
         get :document_counts_by_id, params: { appeal_ids: appeal.external_id }
         response_body = JSON.parse(response.body)
