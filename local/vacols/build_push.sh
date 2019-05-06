@@ -45,8 +45,7 @@ build(){
   echo "${bold}Building FACOLS from Base Oracle...${normal}"
 
   echo -e "\tCleaning Up Old dependencies and Bring Required Packages"
-  #rm -rf build_facols
-  #mkdir build_facols
+  rm -rf build_facols && mkdir build_facols
   cp Dockerfile setup_vacols.sql vacols_copy_* build_facols
   cd build_facols
 
@@ -72,7 +71,7 @@ build(){
   echo "--------"
   if [[ $docker_build_result -eq 0 ]]; then
     echo -e "\tCleaning Up..."
-    #cd ../ && rm -rf build_facols
+    cd ../ && rm -rf build_facols
     docker_build="SUCCESS"
     echo ""
     echo "Building Caseflow Docker App: ${bold}${docker_build}${normal}"
