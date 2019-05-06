@@ -96,7 +96,7 @@ feature "Appeal Edit issues" do
   let(:nonrating_request_issue_attributes) do
     {
       decision_review: appeal,
-      issue_category: "Military Retired Pay",
+      nonrating_issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
       decision_date: 1.month.ago
@@ -123,7 +123,7 @@ feature "Appeal Edit issues" do
     expect(page).to have_content(nonrating_request_issue.description)
 
     # remove an issue
-    nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.issue_category)
+    nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.nonrating_issue_category)
     click_remove_intake_issue(nonrating_intake_num)
     click_remove_issue_confirmation
     expect(page).not_to have_content(nonrating_request_issue.description)
@@ -457,8 +457,14 @@ feature "Appeal Edit issues" do
   end
 
   context "when withdraw decision reviews is enabled" do
-    before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
-    after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
+    before do
+      FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+      FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
+    end
+    after do
+      FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id])
+      FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
+    end
 
     scenario "remove an issue with dropdown and show alert message" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -623,6 +629,18 @@ feature "Appeal Edit issues" do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
       expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
+    end
+
+    scenario "edit contention text" do
+      visit "appeals/#{appeal.uuid}/edit"
+      expect(page).to have_content("Edit contention title")
+
+      within first(".issue-edit-text") do
+        click_edit_contention_issue
+      end
+
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_button("Submit")
     end
   end
 
