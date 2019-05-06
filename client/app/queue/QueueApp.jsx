@@ -65,7 +65,6 @@ import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
-import AssignToPulacCerullo from './components/AssignToPulacCerullo';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {
@@ -190,8 +189,7 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
-  routedAssignToPulacCerullo = (props) => <AssignToPulacCerullo
-    modalType="assign_to_pulac_cerullo" {...props.match.params} />;
+  routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
 
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
