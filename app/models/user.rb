@@ -17,8 +17,7 @@ class User < ApplicationRecord
   attr_writer :regional_office
 
   FUNCTIONS = ["Establish Claim", "Manage Claim Establishment", "Certify Appeal",
-               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake",
-               "Hearing Schedule", "Case Details"].freeze
+               "Reader", "Hearing Prep", "Mail Intake", "Admin Intake", "Case Details"].freeze
 
   # Because of the function character limit, we need to also alias some functions
   FUNCTION_ALIASES = {
@@ -209,7 +208,7 @@ class User < ApplicationRecord
 
   def to_session_hash
     skip_attrs = %w[full_name created_at updated_at last_login_at]
-    serializable_hash.merge("id" => css_id, "name" => full_name).except(*skip_attrs)
+    serializable_hash.merge("id" => css_id, "name" => full_name, "pg_user_id" => id).except(*skip_attrs)
   end
 
   def station_offices
@@ -312,9 +311,10 @@ class User < ApplicationRecord
 
       return nil if user_session.nil?
 
+      pg_user_id = user_session["pg_user_id"]
       css_id = user_session["id"]
       station_id = user_session["station_id"]
-      user = find_by_css_id(css_id)
+      user = pg_user_id ? find_by(id: pg_user_id) : find_by_css_id(css_id)
 
       attrs = {
         station_id: station_id,
@@ -326,6 +326,7 @@ class User < ApplicationRecord
 
       user ||= create!(attrs.merge(css_id: css_id.upcase))
       user.update!(attrs.merge(last_login_at: Time.zone.now))
+      user_session["pg_user_id"] = user.id
       user
     end
 

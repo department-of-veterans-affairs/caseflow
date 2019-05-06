@@ -121,7 +121,7 @@ feature "Supplemental Claim Edit issues" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
         decision_review: supplemental_claim,
-        issue_category: "Military Retired Pay",
+        nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
         contention_reference_id: "1234",
         benefit_type: benefit_type,
@@ -351,13 +351,13 @@ feature "Supplemental Claim Edit issues" do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        fill_in "Issue category", with: active_nonrating_request_issue.issue_category
+        fill_in "Issue category", with: active_nonrating_request_issue.nonrating_issue_category
         find("#issue-category").send_keys :enter
         expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
-        add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+        add_active_intake_nonrating_issue(active_nonrating_request_issue.nonrating_issue_category)
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category} -" \
                                      " #{active_nonrating_request_issue.description}" \
                                      " is ineligible because it's already under review as a Higher-Level Review")
 
@@ -370,7 +370,7 @@ feature "Supplemental Claim Edit issues" do
         expect(
           RequestIssue.find_by(
             decision_review: supplemental_claim,
-            issue_category: active_nonrating_request_issue.issue_category,
+            nonrating_issue_category: active_nonrating_request_issue.nonrating_issue_category,
             ineligible_due_to: active_nonrating_request_issue.id,
             ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
             nonrating_issue_description: active_nonrating_request_issue.description,
@@ -430,7 +430,7 @@ feature "Supplemental Claim Edit issues" do
 
       let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
 
-      it "does not remove & readd unedited issues" do
+      it "does not remove & read unedited issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "supplemental_claims/#{rating_ep_claim_id}/edit",
           supplemental_claim,
@@ -714,6 +714,8 @@ feature "Supplemental Claim Edit issues" do
     end
     let!(:existing_request_issues) do
       [create(:request_issue, :nonrating, decision_review: supplemental_claim),
+       create(:request_issue, :nonrating, decision_review: supplemental_claim),
+       create(:request_issue, :nonrating, decision_review: supplemental_claim),
        create(:request_issue, :nonrating, decision_review: supplemental_claim)]
     end
     let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
@@ -791,12 +793,51 @@ feature "Supplemental Claim Edit issues" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
           click_withdraw_intake_issue_dropdown(1)
           click_withdraw_intake_issue_dropdown(2)
+          click_withdraw_intake_issue_dropdown(3)
+          click_withdraw_intake_issue_dropdown(4)
           fill_in "withdraw-date", with: withdraw_date
           click_edit_submit
-          sleep 1
 
-          expect(current_path).to eq("/decision_reviews/education")
+          expect(page).to have_current_path("/decision_reviews/education")
           expect(page).to have_content("You have successfully withdrawn a review.")
+        end
+
+        scenario "show alert message when a decision review is withdrawn" do
+          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+          click_withdraw_intake_issue_dropdown(1)
+          fill_in "withdraw-date", with: withdraw_date
+          click_edit_submit
+
+          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_content("You have successfully withdrawn 1 issue.")
+        end
+
+        scenario "show alert message when a decision review is removed" do
+          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+          click_remove_intake_issue_dropdown("1")
+          click_edit_submit_and_confirm
+
+          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_content("You have successfully removed 1 issue.")
+        end
+
+        scenario "show alert message when a decision review is added, removed and withdrawn" do
+          visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
+          click_intake_add_issue
+          expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
+          add_intake_nonrating_issue(
+            category: "Accrued",
+            description: "Description for Accrued",
+            date: 1.day.ago.to_date.mdY
+          )
+
+          click_remove_intake_issue_dropdown(1)
+          click_withdraw_intake_issue_dropdown(2)
+          fill_in "withdraw-date", with: withdraw_date
+          click_edit_submit
+
+          expect(page).to have_current_path("/decision_reviews/education")
+          expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
         end
       end
 

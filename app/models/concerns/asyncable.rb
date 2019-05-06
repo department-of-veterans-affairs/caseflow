@@ -68,7 +68,9 @@ module Asyncable
     end
 
     def processable
-      where(arel_table[last_submitted_at_column].lteq(Time.zone.now)).where(processed_at_column => nil)
+      where(arel_table[last_submitted_at_column].lteq(Time.zone.now))
+        .where(processed_at_column => nil)
+        .where(canceled_at_column => nil)
     end
 
     def never_attempted
@@ -108,9 +110,9 @@ module Asyncable
 
     def potentially_stuck
       processable
-        .where(canceled_at_column => nil)
-        .or(attempted_without_being_submitted)
         .or(with_error)
+        .or(attempted_without_being_submitted)
+        .where(canceled_at_column => nil)
         .order_by_oldest_submitted
     end
   end

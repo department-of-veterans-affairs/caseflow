@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 ##
-# Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask is completed.
-# When the associated hearing's disposition is set, the appropriate tasks are set as children
+# Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask
+# is completed. When the associated hearing's disposition is set, the appropriate tasks are set as children
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
@@ -33,7 +33,7 @@ class DispositionTask < GenericTask
   end
 
   def available_actions(user)
-    if JudgeTeam.for_judge(user) || HearingsManagement.singleton.user_has_access?(user)
+    if HearingsManagement.singleton.user_has_access?(user)
       [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
     else
       []
@@ -91,15 +91,12 @@ class DispositionTask < GenericTask
       fail HearingDispositionNotNoShow
     end
 
-    no_show_hearing_task = NoShowHearingTask.create!(
-      parent: self,
-      appeal: appeal,
-      assigned_to: HearingAdmin.singleton
-    )
+    no_show_hearing_task = NoShowHearingTask.create!(parent: self, appeal: appeal)
 
     no_show_hearing_task.update!(
       status: Constants.TASK_STATUSES.on_hold,
-      on_hold_duration: 25
+      on_hold_duration: 25,
+      instructions: ["Mail must be received within 14 days of the original hearing date."]
     )
   end
 
@@ -213,7 +210,6 @@ class DispositionTask < GenericTask
 
     schedule_task = ScheduleHearingTask.create!(
       appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
       instructions: instructions.present? ? [instructions] : nil,
       parent: new_hearing_task
     )

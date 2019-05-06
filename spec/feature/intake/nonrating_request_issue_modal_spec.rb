@@ -53,7 +53,7 @@ feature "Nonrating Request Issue Modal" do
     sleep 1
 
     expect(RequestIssue.find_by(
-             issue_category: included_category
+             nonrating_issue_category: included_category
            )).to_not be_nil
   end
 

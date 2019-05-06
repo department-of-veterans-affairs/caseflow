@@ -40,8 +40,8 @@ export default class StyleLogos extends React.PureComponent {
         appName: 'Queue'
       },
       {
-        accentColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
-        overlapColor: LOGO_COLORS.HEARING_SCHEDULE.OVERLAP,
+        accentColor: LOGO_COLORS.HEARINGS.ACCENT,
+        overlapColor: LOGO_COLORS.HEARINGS.OVERLAP,
         appName: 'Hearing Schedule'
       },
       {

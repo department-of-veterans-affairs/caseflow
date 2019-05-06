@@ -2340,7 +2340,12 @@ describe LegacyAppeal do
       before do
         allow_any_instance_of(PowerOfAttorney).to receive(:bgs_participant_id).and_return(nil)
       end
-      let!(:vso) { Vso.create(name: "Test VSO") }
+      let!(:vso) do
+        Vso.create(
+          name: "Test VSO",
+          url: "test-vso"
+        )
+      end
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
       it "does not return VSOs with nil participant_id" do

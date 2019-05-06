@@ -20,7 +20,7 @@ Workflow management at the Board of Veterans' Appeals.
 Increases the speed with which attorneys and Veterans Law Judges (VLJs)
 review and annotate electronic case files.
 
-### Hearing Schedule
+### Hearings
 
 Scheduling and supporting Board of Veterans' Appeals hearings.
 
@@ -52,6 +52,8 @@ Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ)
 | Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
 
 ## Developer Setup
+
+[Linux System Instructions](LINUX_SETUP_AND_INSTALL.md)
 
 ### Install the Xcode commandline tools
 
@@ -144,22 +146,6 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 2) Unzip both packages into `[DIR]`
 
 3) Add `[DIR]` to your `PATH`
-
-#### Linux
-Note: This has only been tested on Debian based OS. However, it should also work
-for Fedora based OS.
-
- 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
-
- 1. Unzip both packages into `/opt/oracle/instantclient_11_2`
-
- 1. Setup both packages according to the Oracle documentation:
-
-```sh
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is still valid. It has recently changed for MAC. See above.
-cd /opt/oracle/instantclient_11_2
-sudo ln -s libclntsh.so.12.1 libclntsh.so
-```
 
 ### Clone this repo
 Navigate to the directory you'd like to clone this repo into and run:
@@ -440,8 +426,8 @@ Rails.cache.write("dispatch_out_of_service", true)
 # enable for hearing prep only
 Rails.cache.write("hearing_prep_out_of_service", true)
 
-# enable for hearing schedule only
-Rails.cache.write("hearing_schedule_out_of_service", true)
+# enable for hearings only
+Rails.cache.write("hearings_out_of_service", true)
 
 # enable for reader only
 Rails.cache.write("reader_out_of_service", true)

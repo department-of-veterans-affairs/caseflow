@@ -76,7 +76,13 @@ describe Hearing do
     subject { hearing.assigned_to_vso?(user) }
 
     context "when the hearing is not assigned a vso" do
-      let(:vso) { Vso.create(participant_id: "999") }
+      let(:vso) do
+        Vso.create(
+          participant_id: "999",
+          name: "Test VSO",
+          url: "test-vso"
+        )
+      end
 
       it { is_expected.to eq(false) }
     end

@@ -114,7 +114,8 @@ export default class CancelCertificationModal extends BaseForm {
       return;
     }
 
-    let data = this.prepareData();
+    let cancellationAttributes = this.prepareData();
+    let data = { certification_cancellation: cancellationAttributes };
 
     return ApiUtil.post('/certification_cancellations', { data }).
       then(() => {

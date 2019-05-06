@@ -726,7 +726,7 @@ class SeedDB
 
     eligible_request_issue = RequestIssue.create!(
       decision_review: higher_level_review,
-      issue_category: "Military Retired Pay",
+      nonrating_issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
       ineligible_reason: nil,
@@ -736,7 +736,7 @@ class SeedDB
 
     untimely_request_issue = RequestIssue.create!(
       decision_review: higher_level_review,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "12345",
       decision_date: Date.new(2018, 5, 1),
@@ -945,7 +945,7 @@ class SeedDB
           disposition: "allowed",
           decision_review: board_grant_task.appeal,
           request_issues: [request_issue],
-          promulgation_date: 2.months.ago,
+          rating_promulgation_date: 2.months.ago,
           benefit_type: request_issue.benefit_type
         )
       end
