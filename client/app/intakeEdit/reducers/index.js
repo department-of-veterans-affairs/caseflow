@@ -3,7 +3,7 @@ import { applyCommonReducers } from '../../intake/reducers/common';
 import { REQUEST_STATE } from '../../intake/constants';
 import { update } from '../../util/ReducerUtil';
 import { formatRequestIssues, formatContestableIssues } from '../../intake/util/issues';
-import { formatRelationships } from '../../intake/util';
+import { formatRelationships, getWithdrawDateError } from '../../intake/util';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverIntake, claimId, featureToggles } = props;
@@ -72,7 +72,8 @@ export const intakeEditReducer = (state = mapDataToInitialState(), action) => {
           $set: REQUEST_STATE.FAILED
         }
       },
-      requestIssuesUpdateErrorCode: { $set: action.payload.responseErrorCode }
+      // requestIssuesUpdateErrorCode: { $set: action.payload.responseErrorCode },
+      requestIssuesUpdateErrorCode:{$set: getWithdrawDateError(action.payload.responseErrorCodes, state)}   
     });
   default:
     return applyCommonReducers(state, action);

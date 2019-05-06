@@ -82,7 +82,8 @@ export class AddIssuesPage extends React.Component {
       intakeForms,
       formType,
       veteran,
-      featureToggles
+      featureToggles,
+      requestIssuesUpdateErrorCode
     } = this.props;
 
     if (!formType) {
@@ -219,6 +220,19 @@ export class AddIssuesPage extends React.Component {
 
     const messageHeader = this.props.editPage ? 'Edit Issues' : 'Add / Remove Issues';
 
+    const withdrawError = (value) => {
+     
+     if (value.withdrawalDateOnChange === value.receiptDate) {
+         return  `We cannot process your request. Please select a date after the receipt date.`;
+
+     } else if (value.withdrawalDateOnChange === value.withdrawDatePlaceholder) {
+
+        return `We cannot process your request. Please select a date prior to today's date.`;
+     }
+      return true;
+
+    }
+
     const columns = [
       { valueName: 'field' },
       { valueName: 'content' }
@@ -304,7 +318,7 @@ export class AddIssuesPage extends React.Component {
               value={intakeData.withdrawalDate}
               onChange={this.withdrawalDateOnChange}
               placeholder={withdrawDatePlaceholder}
-              errorMessage={errorMessage}
+              errorMessage={requestIssuesUpdateErrorCode}
             />
           </InlineForm>
         </div>
@@ -346,7 +360,8 @@ export const EditAddIssuesPage = connect(
     formType: state.formType,
     veteran: state.veteran,
     featureToggles: state.featureToggles,
-    editPage: true
+    editPage: true,
+    requestIssuesUpdateErrorCode: state.requestIssuesUpdateErrorCode
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
