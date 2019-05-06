@@ -515,7 +515,6 @@ export const taskActionData = (props) => {
   const relevantAction = props.task.availableActions.
     find((action) => props.history.location.pathname.endsWith(action.value));
 
-  console.log(props.task.availableActions, 'actions');
   if (relevantAction && relevantAction.data) {
     return (relevantAction.data);
   }

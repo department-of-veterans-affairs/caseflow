@@ -146,7 +146,6 @@ class AssignToView extends React.Component {
     if (!task || task.availableActions.length === 0) {
       return null;
     }
-    console.log(action, 'the action and the label?', sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label));
 
     return <QueueFlowModal
       title={(this.props.assigneeAlreadySelected && action) ?
