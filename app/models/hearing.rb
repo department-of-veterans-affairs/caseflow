@@ -10,7 +10,7 @@ class Hearing < ApplicationRecord
   has_one :hearing_task_association, as: :hearing
   has_many :hearing_issue_notes
 
-  validates_format_of :scheduled_for_time, :with /\d\d:\d\d/i
+  validates :scheduled_for_time, format: { with: /\d\d:\d\d/ }
 
   class HearingDayFull < StandardError; end
 
