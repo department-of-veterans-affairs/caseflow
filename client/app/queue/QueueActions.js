@@ -380,6 +380,17 @@ export const setSelectionOfTaskOfUser =
     }
   });
 
+export const bulkAssignTasks =
+  ({ assignedUser, regionalOffice, taskType, numberOfTasks }) => ({
+    type: ACTIONS.BULK_ASSIGN_TASKS,
+    payload: {
+      assignedUser,
+      regionalOffice,
+      taskType,
+      numberOfTasks
+    }
+  });
+
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId
 }) => (dispatch) => Promise.all(tasks.map((oldTask) => {

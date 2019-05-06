@@ -246,6 +246,7 @@ class Issue
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/PerceivedComplexity
   def friendly_description_for_codes(code_array)
     issue_description = code_array.reduce(Constants::ISSUE_INFO) do |levels, code|
       return nil unless levels[code]
@@ -262,6 +263,13 @@ class Issue
       child_levels
     end
 
+    # if there are more levels and codes there is the chance that issue description
+    # this shouldn't happen, but suspect this is happening and adding the log message.
+    if issue_description.is_a?(Hash)
+      Raven.capture_message("legacy appeal #{id} has an issue description that is a hash")
+      return ""
+    end
+
     if diagnostic_code
       diagnostic_code_description = Constants::DIAGNOSTIC_CODE_DESCRIPTIONS[diagnostic_code]
       return if diagnostic_code_description.nil?
@@ -273,6 +281,7 @@ class Issue
     issue_description
   end
   # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/PerceivedComplexity
 
   class << self
     def repository

@@ -6,6 +6,47 @@ require "faker"
 describe FetchHearingLocationsForVeteransJob do
   let!(:job) { FetchHearingLocationsForVeteransJob.new }
 
+  describe "find_appeals_ready_for_geomatching" do
+    let!(:legacy_appeal_with_ro_updated_one_day_ago) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let!(:hearing_location_updated_one_day_ago) do
+      create(:available_hearing_locations,
+             appeal_id: legacy_appeal_with_ro_updated_one_day_ago.id,
+             appeal_type: "LegacyAppeal",
+             city: "Holdrege",
+             state: "NE",
+             distance: 0,
+             facility_type: "va_health_facility",
+             updated_at: 1.day.ago)
+    end
+    let!(:task_with_ro_updated_one_day_ago) do
+      create(:schedule_hearing_task, appeal: legacy_appeal_with_ro_updated_one_day_ago)
+    end
+    let!(:legacy_appeal_with_ro_updated_thirty_days_ago) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let!(:hearing_location_updated_thirty_days_ago) do
+      create(:available_hearing_locations,
+             appeal_id: legacy_appeal_with_ro_updated_thirty_days_ago.id,
+             appeal_type: "LegacyAppeal",
+             city: "Holdrege",
+             state: "NE",
+             distance: 0,
+             facility_type: "va_health_facility",
+             updated_at: 30.days.ago)
+    end
+    let!(:task_with_ro_updated_thirty_days_ago) do
+      create(:schedule_hearing_task, appeal: legacy_appeal_with_ro_updated_thirty_days_ago)
+    end
+    let!(:legacy_appeal_without_ro) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let!(:task_without_ro) { create(:schedule_hearing_task, appeal: legacy_appeal_without_ro) }
+
+    it "returns appeals in the correct order" do
+      appeals_ready = job.find_appeals_ready_for_geomatching(LegacyAppeal)
+
+      expect(appeals_ready.first.id).to eql(legacy_appeal_without_ro.id)
+      expect(appeals_ready.second.id).to eql(legacy_appeal_with_ro_updated_thirty_days_ago.id)
+      expect(appeals_ready.third.id).to eql(legacy_appeal_with_ro_updated_one_day_ago.id)
+    end
+  end
+
   context "when there is a case in location 57 *without* an associated veteran" do
     let!(:bfcorlid) { "123456789S" }
     let!(:bfcorlid_file_number) { "123456789" }
