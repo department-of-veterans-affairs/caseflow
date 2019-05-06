@@ -78,17 +78,16 @@ export default class AssignHearings extends React.Component {
       upcomingHearingDays, selectedHearingDay,
       appealsReadyForHearing, selectedRegionalOffice
     } = this.props;
-    const hasUpcomingHearingDays = !_.isEmpty(upcomingHearingDays);
     const room = this.room();
 
     return (
       <React.Fragment>
-        {hasUpcomingHearingDays && <UpcomingHearingDaysNav
+        {<UpcomingHearingDaysNav
           upcomingHearingDays={upcomingHearingDays}
           selectedHearingDay={selectedHearingDay}
           onSelectedHearingDayChangeFactory={this.onSelectedHearingDayChangeFactory} />
         }
-        {(hasUpcomingHearingDays && appealsReadyForHearing && selectedHearingDay) &&
+        {appealsReadyForHearing &&
           <AssignHearingsTabs
             selectedRegionalOffice={selectedRegionalOffice}
             selectedHearingDay={selectedHearingDay}
