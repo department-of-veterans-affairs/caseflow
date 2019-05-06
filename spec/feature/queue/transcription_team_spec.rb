@@ -20,17 +20,17 @@ RSpec.feature "TranscriptionTeam" do
   describe "transcription team member completes a transcription task" do
     scenario "completes the task" do
       visit("/organizations/transcription")
-      click_on "Bob Smith"
+      click_on veteran_link_text
       click_dropdown(text: Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h[:label])
       click_on "Mark complete"
 
-      expect(page).to have_content("Bob Smith's case has been marked complete")
+      expect(page).to have_content("#{appeal.veteran_full_name}'s case has been marked complete")
       expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
     end
 
     scenario "cancels the task and sends appeal to hearings management" do
       visit("/organizations/transcription")
-      click_on "Bob Smith"
+      click_on veteran_link_text
       click_dropdown(text: Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h[:label])
       click_on "Submit"
 
