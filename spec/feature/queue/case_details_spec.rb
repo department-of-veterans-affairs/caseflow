@@ -696,6 +696,12 @@ RSpec.feature "Case details" do
           expect(page).to have_content(issue_text)
           expect(page).to have_content("Benefit type: Compensation")
           expect(page).to have_content("Diagnostic code: 5008")
+
+          issue_value = issue_description2
+          issue_text = issue_key + issue_value
+          expect(page).to have_content(issue_text)
+          expect(page).to have_content("Benefit type: Compensation")
+          expect(page).to have_content("Diagnostic code: 5008")
         end
       end
     end
