@@ -337,6 +337,14 @@ class Task < ApplicationRecord
     }
   end
 
+  def return_to_judge_data(_user = nil)
+    {
+      selected: root_task.children.find { |task| task.is_a?(JudgeTask) }&.assigned_to,
+      options: users_to_options(Judge.list_all),
+      type: JudgeDispatchReturnTask.name
+    }
+  end
+
   def assign_to_judge_data(_user = nil)
     {
       selected: root_task.children.find { |task| task.is_a?(JudgeTask) }&.assigned_to,

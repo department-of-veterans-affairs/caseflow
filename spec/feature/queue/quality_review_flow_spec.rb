@@ -80,7 +80,7 @@ RSpec.feature "Quality Review worflow" do
     click_on veteran_full_name
 
     find(".Select-control", text: "Select an action").click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.RETURN_TO_JUDGE.to_h[:label]).click
+    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.to_h[:label]).click
 
     expect(dropdown_selected_value(find(".cf-modal-body"))).to eq judge_user.full_name
     fill_in "taskInstructions", with: qr_instructions

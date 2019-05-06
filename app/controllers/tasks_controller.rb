@@ -15,6 +15,7 @@ class TasksController < ApplicationController
     QualityReviewTask: QualityReviewTask,
     JudgeAssignTask: JudgeAssignTask,
     JudgeQualityReviewTask: JudgeQualityReviewTask,
+    JudgeDispatchReturnTask: JudgeDispatchReturnTask,
     ScheduleHearingTask: ScheduleHearingTask,
     TranslationTask: TranslationTask,
     HearingAdminActionTask: HearingAdminActionTask,

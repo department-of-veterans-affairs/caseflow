@@ -126,6 +126,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :ama_judge_dispatch_return_task, class: JudgeDispatchReturnTask do
+      type { JudgeDispatchReturnTask.name }
+      appeal { create(:appeal) }
+    end
+
     factory :track_veteran_task, class: TrackVeteranTask do
       type { TrackVeteranTask.name }
       appeal { create(:appeal) }

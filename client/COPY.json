@@ -365,6 +365,7 @@
   "JUDGE_ASSIGN_TASK_LABEL": "assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "quality review",
+  "JUDGE_DISPATCH_RETURN_TASK_LABEL": "dispatch return",
 
   "IHP_TASK_LABEL": "Prepare Informal Hearing Presentation",
 
