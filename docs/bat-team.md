@@ -41,10 +41,16 @@ When a new Sentry alert appears in Slack, it should be investigated asap. If you
 emoji tag it with the :bat: emoji.
 
 If a Github ticket already exists for the underlying issue, the Sentry alert should be ignored for a week.
+
 If a Github ticket does not yet exist, create a Github ticket, with a link to the Sentry incident
-in the ticket description. The key evaluation is whether this incident reflects an immediate production issue,
+in the ticket description.
+
+The key evaluation is whether this incident reflects an immediate production issue,
 particularly affecting data integrity, or whether it can be picked up during normal sprint planning.
+If it's an immediate production issue, you should escalate to the tech lead for the affected feature,
+and consult with them about next steps. If it's an outtage of some kind, we should convene folks in #appeals-swat.
 The Bat Team should do just enough investigation to determine further action.
 
-Mark the Sentry alert in Slack with the green checkmark emoji when it has been triaged.
+Mark the Sentry alert in Slack with the green checkmark emoji when it has been triaged, and you can ignore the alert
+in Sentry for a week.
 
