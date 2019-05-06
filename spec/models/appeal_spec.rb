@@ -699,6 +699,19 @@ describe Appeal do
       end
     end
 
+    context "if there are TrackVeteranTasks" do
+      let!(:appeal) { create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal, status: :in_progress) }
+
+      before do
+        create(:track_veteran_task, appeal: appeal, status: :in_progress)
+      end
+
+      it "does not include TrackVeteranTasks in its determinations" do
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      end
+    end
+
     context "if there is an assignee" do
       let(:organization) { create(:organization) }
       let(:appeal_organization) { create(:appeal) }

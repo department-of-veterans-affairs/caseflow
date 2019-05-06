@@ -15,9 +15,7 @@ class HearingDispositionChangeJob < CaseflowJob
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
-    tasks = DispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold)
-
-    tasks.each do |task|
+    hearing_disposition_tasks.each do |task|
       # Skip task unless there is a hearing associated with the task and it was held more than a day ago.
       next unless task&.hearing&.scheduled_for &.< 24.hours.ago
 
@@ -33,6 +31,10 @@ class HearingDispositionChangeJob < CaseflowJob
     log_info(start_time, task_count_for, error_count, hearing_ids)
   rescue StandardError => error
     log_info(start_time, task_count_for, error_count, hearing_ids, error)
+  end
+
+  def hearing_disposition_tasks
+    Task.active.where(type: DispositionTask.name).where.not(status: Constants.TASK_STATUSES.on_hold)
   end
 
   def task_count_for
