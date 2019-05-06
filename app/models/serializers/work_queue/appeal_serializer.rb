@@ -44,9 +44,7 @@ class WorkQueue::AppealSerializer
     object.withdrawn?
   end
 
-  attribute :assigned_to_location do
-    object.assigned_to_location
-  end
+  attribute :assigned_to_location
 
   attribute :completed_hearing_on_previous_appeal? do
     false

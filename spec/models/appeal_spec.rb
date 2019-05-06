@@ -1615,7 +1615,7 @@ describe Appeal do
       end
     end
 
-  describe ".withdrawn?", focus: true do
+  describe ".withdrawn?" do
     context "when root task is cancelled" do
       let(:appeal) { FactoryBot.create(:appeal) }
       let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
@@ -1624,78 +1624,6 @@ describe Appeal do
         expect(appeal.withdrawn?).to eq(false)
         root_task.update!(status: Constants.TASK_STATUSES.cancelled)
         expect(appeal.withdrawn?).to eq(true)
-      end
-    end
-  end
-
-  describe ".sync_tracking_tasks" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    subject { appeal.sync_tracking_tasks }
-
-    context "when the appeal has no VSOs" do
-      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return([]) }
-
-      context "when there are no existing TrackVeteranTasks" do
-        it "does not create or cancel any TrackVeteranTasks" do
-          task_count_before = TrackVeteranTask.count
-
-          expect(subject).to eq([0, 0])
-          expect(TrackVeteranTask.count).to eq(task_count_before)
-        end
-      end
-    end
-
-    context "has a scheduled hearing" do
-      let(:root_task_status) { "in_progress" }
-      let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
-      let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
-      let(:hearing_scheduled_for) { Time.zone.today + 15.days }
-      let!(:hearing_day) do
-        create(:hearing_day,
-               request_type: HearingDay::REQUEST_TYPES[:video],
-               regional_office: "RO18",
-               scheduled_for: hearing_scheduled_for)
-      end
-
-      let!(:hearing) do
-        FactoryBot.create(
-          :hearing,
-          appeal: appeal,
-          disposition: nil,
-          evidence_window_waived: nil,
-          hearing_day: hearing_day
-        )
-      end
-      let!(:hearing_task_association) do
-        FactoryBot.create(
-          :hearing_task_association,
-          hearing: hearing,
-          hearing_task: hearing_task
-        )
-      end
-      let!(:schedule_hearing_task) do
-        FactoryBot.create(
-          :schedule_hearing_task,
-          parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.completed
-        )
-      end
-      let!(:disposition_task) do
-        FactoryBot.create(
-          :disposition_task,
-          parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.in_progress
-        )
-      end
-
-      it "has a scheduled hearing alert" do
-        expect(subject.count).to eq(1)
-        expect(subject[0][:type]).to eq("scheduled_hearing")
-        expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
-        expect(subject[0][:details][:type]).to eq("video")
       end
     end
   end
