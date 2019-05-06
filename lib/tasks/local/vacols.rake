@@ -31,12 +31,12 @@ namespace :local do
     end
 
     # rubocop:disable Metrics/MethodLength
-    def setup_facols(suffix)
-      puts "Stopping vacols-db-#{suffix} and removing existing volumes"
-      `docker-compose stop vacols-db-#{suffix}`
-      `docker-compose rm -f -v vacols-db-#{suffix}`
+    def setup_facols
+      puts "Stopping vacols-db and removing existing volumes"
+      `docker-compose stop vacols-db}`
+      `docker-compose rm -f -v vacols-db}`
       puts "Starting database, and logging to #{Rails.root.join('tmp', 'vacols.log')}"
-      `docker-compose up vacols-db-#{suffix} &> './tmp/vacols.log' &`
+      `docker-compose up vacols-db} &> './tmp/vacols.log' &`
 
       # Loop until setup is complete. At most 10 minutes
       puts "Waiting for the database to be ready"
@@ -54,7 +54,7 @@ namespace :local do
         oracle_wait_time = 180
         schema_complete = false
         oracle_wait_time.times do
-          output = `docker exec --tty -i VACOLS_DB-#{suffix} bash -c \
+          output = `docker exec --tty -i VACOLS_DB bash -c \
           "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql"`
           if !output.include?("SP2-0640: Not connected")
             schema_complete = true
@@ -76,7 +76,7 @@ namespace :local do
 
     desc "Starts and sets up a dockerized local VACOLS"
     task setup: :environment do
-      setup_facols(Rails.env)
+      setup_facols
     end
 
     desc "Seeds local VACOLS"

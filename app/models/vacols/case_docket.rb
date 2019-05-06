@@ -2,7 +2,7 @@
 
 class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
-  self.table_name = "vacols.brieff"
+  self.table_name = "brieff"
 
   class DocketNumberCentennialLoop < StandardError; end
 

@@ -118,7 +118,7 @@ ENV ORACLE_PWD=Oradoc_db1
 
 # Copy FACOLS files
 ADD setup_vacols.sql /opt/oracle/scripts/setup/
-ADD vacols_copy* /ORCL/
+ADD vacols_copy/* /ORCL/
 
 # Start everything up and install FACOLS then remove the setup files
 RUN $ORACLE_BASE/$RUN_FILE_1 && \
