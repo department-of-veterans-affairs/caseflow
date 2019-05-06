@@ -35,6 +35,10 @@ class Task < ApplicationRecord
 
   scope :inactive, -> { where(status: inactive_statuses) }
 
+  scope :on_hold, -> { where(status: Constants.TASK_STATUSES.on_hold) }
+
+  scope :not_tracking, -> { where.not(type: TrackVeteranTask.name) }
+
   scope :not_decisions_review, lambda {
                                  where.not(
                                    type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
