@@ -59,11 +59,14 @@ describe TaskTimerJob do
     timer = timer_for_task
     Timecop.travel(Time.zone.now + 1.day)
 
-    expect(TaskTimer.requires_processing.include?(error_timer)).to eq(true)
+    expect(TaskTimer.requires_processing).to include error_timer
 
     TaskTimerJob.perform_now
 
-    expect(timer.reload.processed_at).not_to eq(nil)
-    expect(error_timer.reload.processed_at).to eq(nil)
+    expect(timer.reload.processed_at).not_to be_nil
+    expect(timer.reload.attempted_at).not_to be_nil
+    expect(error_timer.reload.processed_at).to be_nil
+    expect(error_timer.error).to eq("RuntimeError")
+    expect(error_timer.attempted_at).to be_nil # because it was in a failed transaction
   end
 end

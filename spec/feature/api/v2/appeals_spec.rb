@@ -442,12 +442,6 @@ describe "Appeals API v2", type: :request do
       end
 
       allow_any_instance_of(RequestIssue).to receive(:decision_or_promulgation_date).and_return(rating_promulgated_date)
-
-      FeatureToggle.enable!(:api_appeal_status_v3)
-    end
-
-    after do
-      FeatureToggle.disable!(:api_appeal_status_v3)
     end
 
     it "returns list of hlr, sc, appeal for veteran with SSN" do
@@ -599,12 +593,6 @@ describe "Appeals API v2", type: :request do
       allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
         veteran_file_number
       end
-
-      FeatureToggle.enable!(:api_appeal_status_v3)
-    end
-
-    after do
-      FeatureToggle.disable!(:api_appeal_status_v3)
     end
 
     it "will filter out claims and appeal because no request issues" do
@@ -621,6 +609,85 @@ describe "Appeals API v2", type: :request do
       expect(response).to be_success
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(0)
+    end
+  end
+
+  context "Remanded SC filtered out" do
+    before do
+      Timecop.freeze(pre_ama_start_date)
+    end
+
+    let(:veteran_file_number) { "111223333" }
+    let(:receipt_date) { Time.zone.today - 20.days }
+    let(:benefit_type) { "compensation" }
+
+    let(:hlr_ep_clr_date) { receipt_date + 30 }
+    let!(:hlr_with_dta_error) do
+      create(:higher_level_review,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date)
+    end
+
+    let!(:request_issue1) do
+      create(:request_issue,
+             decision_review: hlr_with_dta_error,
+             benefit_type: benefit_type,
+             contested_rating_issue_diagnostic_code: "9999")
+    end
+
+    let!(:hlr_epe) do
+      create(:end_product_establishment, :cleared, source: hlr_with_dta_error)
+    end
+
+    let!(:hlr_decision_issue_with_dta_error) do
+      create(:decision_issue,
+             decision_review: hlr_with_dta_error,
+             disposition: DecisionIssue::DTA_ERROR_PMR,
+             rating_issue_reference_id: "rating1",
+             benefit_type: benefit_type,
+             end_product_last_action_date: hlr_ep_clr_date)
+    end
+
+    let!(:dta_sc) do
+      create(:supplemental_claim,
+             veteran_file_number: veteran_file_number,
+             decision_review_remanded: hlr_with_dta_error)
+    end
+
+    let!(:request_issue2) do
+      create(:request_issue,
+             decision_review: dta_sc,
+             benefit_type: benefit_type,
+             contested_rating_issue_diagnostic_code: "9999")
+    end
+
+    let!(:dta_ep) do
+      create(:end_product_establishment, :active, source: dta_sc)
+    end
+
+    before do
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
+        veteran_file_number
+      end
+    end
+
+    it "will have HLR and not remanded SC" do
+      headers = {
+        "ssn": veteran_file_number,
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v2/appeals", headers: headers
+
+      json = JSON.parse(response.body)
+
+      # test for the 200 status-code
+      expect(response).to be_success
+      # check to make sure the right amount of appeals are returned
+      expect(json["data"].length).to eq(1)
+      expect(json["data"].first["type"]).to eq("higherLevelReview")
+      expect(json["data"].first["id"]).to include("HLR")
+      expect(json["data"].first["attributes"]["active"]).to eq(true)
     end
   end
 end

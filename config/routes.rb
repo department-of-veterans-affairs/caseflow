@@ -42,6 +42,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
+        get 'veterans', to: 'veterans#details'
       end
     end
   end
@@ -212,13 +213,19 @@ Rails.application.routes.draw do
   get '/search', to: 'queue#index'
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create, :update]
+  resources :tasks, only: [:index, :create, :update] do
+    member do
+      post :reschedule
+    end
+    resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
+  end
+  resources :judge_assign_tasks, only: [:create]
 
   resources :distributions, only: [:new, :show]
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
-    resources :users, only: [:index, :create, :destroy], controller: 'organizations/users'
+    resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'

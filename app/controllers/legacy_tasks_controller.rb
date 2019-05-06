@@ -3,8 +3,6 @@
 class LegacyTasksController < ApplicationController
   include Errors
 
-  before_action :verify_task_assignment_access, only: [:create, :update]
-
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
   rescue_from Caseflow::Error::LegacyCaseAlreadyAssignedError do |e|
@@ -42,7 +40,6 @@ class LegacyTasksController < ApplicationController
     end
 
     task = JudgeCaseAssignmentToAttorney.create(legacy_task_params)
-
     return invalid_record_error(task) unless task.valid?
 
     render json: {
@@ -98,17 +95,10 @@ class LegacyTasksController < ApplicationController
   end
 
   def json_task(task)
-    ActiveModelSerializers::SerializableResource.new(
-      task,
-      serializer: ::WorkQueue::LegacyTaskSerializer
-    ).as_json
+    ::WorkQueue::LegacyTaskSerializer.new(task)
   end
 
   def json_tasks(tasks, role)
-    ActiveModelSerializers::SerializableResource.new(
-      tasks,
-      each_serializer: ::WorkQueue::LegacyTaskSerializer,
-      role: role
-    ).as_json
+    ::WorkQueue::LegacyTaskSerializer.new(tasks, is_collection: true, params: { role: role })
   end
 end

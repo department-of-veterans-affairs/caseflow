@@ -37,8 +37,8 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
-      find(".dropdown-Disposition").click
-      find("#react-select-2--option-1").click
+      click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 1)
+      click_button("Confirm")
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "8:30").click
@@ -60,8 +60,8 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      find(".dropdown-Disposition").click
-      find("#react-select-2--option-1").click
+      click_dropdown(name: "#{hearing.external_id}-disposition", index: 1)
+      click_button("Confirm")
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "9:00").click
       find("label", text: "Transcript Requested").click
@@ -90,7 +90,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User cannot update disposition" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      find(".dropdown-Disposition").find(".is-disabled")
+      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".is-disabled")
     end
   end
 
@@ -104,12 +104,67 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       expect(page).to_not have_content("Lock Hearing Day")
       expect(page).to_not have_content("Hearing Details")
       expect(page).to have_field("Transcript Requested", disabled: true, visible: false)
-      find(".dropdown-Disposition").find(".is-disabled")
+      expect(find(".dropdown-#{hearing.external_id}-disposition")).to have_css(".is-disabled")
       fill_in "Notes", with: "This is a note about the hearing!"
       click_button("Save")
 
       expect(page).to have_content("You have successfully updated")
       expect(page).to have_content("This is a note about the hearing!")
+    end
+  end
+
+  context "Daily docket for VSO user" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["VSO"]) }
+    let!(:hearing) { create(:hearing, :with_tasks) }
+    let!(:vso) { create(:vso) }
+    let!(:track_veteran_task) { create(:track_veteran_task, appeal: hearing.appeal, assigned_to: vso) }
+
+    scenario "User has no assigned hearings" do
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+      expect(page).to have_content("No Veterans are scheduled for this hearing day.")
+      expect(page).to_not have_content("Edit Hearing Day")
+      expect(page).to_not have_content("Lock Hearing Day")
+      expect(page).to_not have_content("Hearing Details")
+    end
+  end
+
+  context "Daily docket for Judge user" do
+    let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
+    let!(:hearing_day) { create(:hearing_day, judge: current_user) }
+    let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
+    let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: current_user, hearing_day: hearing_day) }
+
+    scenario "User has hearing prep fields" do
+      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+
+      expect(page).to have_css(".dropdown-#{hearing.external_id}-aod")
+      expect(page).to have_css(".dropdown-#{hearing.external_id}-aodReason")
+      expect(page).to have_css(".dropdown-#{legacy_hearing.external_id}-holdOpen")
+
+      click_dropdown(name: "#{legacy_hearing.external_id}-holdOpen", index: 0)
+      find(".checkbox-wrapper-checkbox-prepped-#{legacy_hearing.external_id}").click
+      find("label", text: "Transcript Requested", match: :first).click
+      find("textarea", id: "#{legacy_hearing.external_id}-notes", match: :first)
+        .fill_in(with: "This is a note about the hearing!")
+      click_button("Save")
+
+      expect(page).to have_content("You have successfully updated")
+
+      find("label", text: "Yes, Waive 90 Day Hold", match: :first).click
+      click_button("Save")
+
+      expect(page).to have_content("You have successfully updated")
+    end
+
+    context "and hearings are not assigned to judge" do
+      let!(:hearing_day) { create(:hearing_day, judge: create(:user)) }
+      let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: create(:user), hearing_day: hearing_day) }
+
+      scenario "no hearings are shown" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+
+        expect(page).to have_content("No Veterans are scheduled for this hearing day.")
+      end
     end
   end
 end

@@ -6,22 +6,24 @@ describe LegacyHearing do
   end
 
   let(:hearing) do
-    build(
+    create(
       :legacy_hearing,
       scheduled_for: scheduled_for,
       disposition: disposition,
       hold_open: hold_open,
-      request_type: request_type
+      request_type: request_type,
+      regional_office: regional_office
     )
   end
 
   let(:hearing2) do
-    build(
+    create(
       :legacy_hearing,
       scheduled_for: scheduled_for,
       disposition: disposition,
       hold_open: hold_open,
-      request_type: request_type
+      request_type: request_type,
+      regional_office: regional_office
     )
   end
 
@@ -29,6 +31,7 @@ describe LegacyHearing do
   let(:disposition) { nil }
   let(:hold_open) { nil }
   let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+  let(:regional_office) { "RO13" }
 
   context "#location" do
     subject { hearing.request_type_location }
@@ -78,7 +81,7 @@ describe LegacyHearing do
 
   context "#no_show?" do
     subject { hearing.no_show? }
-    let(:disposition) { :no_show }
+    let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
 
     it { is_expected.to be_truthy }
   end

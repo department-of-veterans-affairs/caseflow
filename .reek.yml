@@ -1,12 +1,29 @@
 ### Generic smell configuration
 detectors:
   # You can disable smells completely
+  DuplicateMethodCall:
+    enabled: false
+  TooManyMethods:
+    exclude:
+      - RootTask
+  InstanceVariableAssumption:
+    exclude:
+      - Appeal
+      - Task
   IrresponsibleModule:
+    enabled: false
+  MissingSafeMethod:
     enabled: false
   NilCheck:
     enabled: false
+  TooManyStatements:
+    enabled: false
   UtilityFunction:
     public_methods_only: true
+    exclude:
+      - HearingDispositionChangeJob
+      - Helpers::AppealHearingHelper#available_hearing_locations
+      - Helpers::AppealHearingHelper#hearings
 
 ### Directory specific configuration
 # You can configure smells on a per-directory base.

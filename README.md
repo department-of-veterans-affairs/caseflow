@@ -20,7 +20,7 @@ Workflow management at the Board of Veterans' Appeals.
 Increases the speed with which attorneys and Veterans Law Judges (VLJs)
 review and annotate electronic case files.
 
-### Hearing Schedule
+### Hearings
 
 Scheduling and supporting Board of Veterans' Appeals hearings.
 
@@ -52,6 +52,8 @@ Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ)
 | Commons | [caseflow-commons](https://github.com/department-of-veterans-affairs/caseflow-commons) | [Travis CI - Commons](https://travis-ci.org/department-of-veterans-affairs/caseflow-commons) |
 
 ## Developer Setup
+
+[Linux System Instructions](LINUX_SETUP_AND_INSTALL.md)
 
 ### Install the Xcode commandline tools
 
@@ -145,22 +147,6 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 3) Add `[DIR]` to your `PATH`
 
-#### Linux
-Note: This has only been tested on Debian based OS. However, it should also work
-for Fedora based OS.
-
- 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
-
- 1. Unzip both packages into `/opt/oracle/instantclient_11_2`
-
- 1. Setup both packages according to the Oracle documentation:
-
-```sh
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is still valid. It has recently changed for MAC. See above.
-cd /opt/oracle/instantclient_11_2
-sudo ln -s libclntsh.so.12.1 libclntsh.so
-```
-
 ### Clone this repo
 Navigate to the directory you'd like to clone this repo into and run:
 
@@ -240,25 +226,7 @@ bundle exec rails dbconsole # password is `postgres`
 To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
 
 ### Debugging FACOLS setup
-FACOLS (short for fake-VACOLS) is our name for the Oracle DB with mock VACOLS data that we run locally. Sometimes the above setup fails at FACOLS steps, or the app cannot connect to the FACOLS DB. Here are some frequently encountered scenarios.
-
-1) Running `rake local:vacols:setup` logs out:
-```
-[36mVACOLS_DB-development     |[0m tail: cannot open '/u01/app/oracle/diag/rdbms/bvap/BVAP/trace/alert_BVAP.log' for reading: No such file or directory
-[36mVACOLS_DB-development     |[0m tail: no files remaining
-[36mVACOLS_DB-development exited with code 1
-```
-Try running `docker-compose down --rmi all -v --remove-orphans` and then running the setup again.
-
-2) The app is failing to connect to the DB and you get timeout errors. Try restarting your docker containers. `docker-compose restart`.
-
-If all else fails you can rebuild your local development environment by running the two rake tasks in sequence:
-```
-bundle exec rake local:destroy
-bundle exec rake local:build
-```
-
-More detailed errors and resolutions are located in the [Oracle Debugging readme](docs/oracle-debugging.md).
+See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols).
 
 ### Manually seeding your local VACOLS container
 To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
@@ -369,15 +337,6 @@ In order to impersonate other user, the user will need to have Global Admin role
 On test/users page, switch to a user that has Global Admin role. `Log in as user` interface
 will show up where you will have to specify User ID and Station ID.
 
-To use intake features as the users, you'll need to toggle two features in a
-rails console `rails c`:
-
-```
-[1] FeatureToggle.enable!(:intakeAma)
-=> true
-[2] FeatureToggle.enable!(:intake)
-=> true
-```
 
 This page also contains links to different parts of the site to make dev-ing faster. Please
 add more links and users as needed.
@@ -420,6 +379,15 @@ command in a separate Terminal pane:
 cd client && yarn run dev:hot
 ```
 
+### Debugging tests in the browser
+
+By default, tests will run by launching an instance of Chrome for easier
+debugging. If you prefer to run the tests using a headless driver, set the `CI`
+env var to `true`. For example:
+```console
+CI=true bundle exec rspec spec/feature/queue/case_details_spec.rb:350
+```
+
 ### focus
 
 During development, it can be helpful to narrow the scope of tests being run. You can do this by
@@ -458,8 +426,8 @@ Rails.cache.write("dispatch_out_of_service", true)
 # enable for hearing prep only
 Rails.cache.write("hearing_prep_out_of_service", true)
 
-# enable for hearing schedule only
-Rails.cache.write("hearing_schedule_out_of_service", true)
+# enable for hearings only
+Rails.cache.write("hearings_out_of_service", true)
 
 # enable for reader only
 Rails.cache.write("reader_out_of_service", true)

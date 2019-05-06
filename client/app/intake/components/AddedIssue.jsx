@@ -19,9 +19,6 @@ class AddedIssue extends React.PureComponent {
 
     let existingRequestIssue = _.filter(requestIssues, { rating_issue_reference_id: issue.ratingIssueReferenceId })[0];
 
-    // leaving this here to make it easier to debug in future.
-    // console.log('existingRequestIssue', existingRequestIssue);
-
     if (existingRequestIssue && !existingRequestIssue.ineligible_reason) {
       return false;
     }
@@ -31,8 +28,6 @@ class AddedIssue extends React.PureComponent {
 
   getEligibility() {
     let { issue, formType, legacyOptInApproved } = this.props;
-
-    // console.log('getEligibility', formType, issue, legacyOptInApproved);
 
     let errorMsg = '';
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
@@ -84,14 +79,16 @@ class AddedIssue extends React.PureComponent {
       cssKlasses: ['issue-desc']
     };
 
-    // console.log('needsEligibilityCheck', issue, this.needsEligibilityCheck());
-
     if (this.needsEligibilityCheck()) {
       let eligibilityCheck = this.getEligibility();
 
       if (eligibilityCheck) {
         eligibleState = eligibilityCheck;
       }
+    }
+
+    if (issue.withdrawalPending || issue.withdrawalDate) {
+      eligibleState.cssKlasses.push('withdrawn-issue');
     }
 
     return <div className={eligibleState.cssKlasses.join(' ')}>
@@ -108,6 +105,9 @@ class AddedIssue extends React.PureComponent {
           <span className="desc">{ legacyIssue(issue, this.props.legacyAppeals).description }</span>
         </div>
       }
+      { issue.withdrawalPending && <p>Withdraw pending</p> }
+      { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
+
     </div>;
   }
 

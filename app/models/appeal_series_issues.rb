@@ -46,9 +46,9 @@ class AppealSeriesIssues
 
         {
           description: issues.first.friendly_description,
-          diagnostic_code: issues.first.diagnostic_code,
+          diagnosticCode: issues.first.diagnostic_code,
           active: active,
-          last_action: last_action[:type],
+          lastAction: last_action[:type],
           date: last_action[:date].try(:to_date)
         }
       end

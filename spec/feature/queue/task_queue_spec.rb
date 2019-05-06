@@ -57,9 +57,7 @@ RSpec.feature "Task queue" do
     end
 
     let(:vacols_tasks) { QueueRepository.tasks_for_user(attorney_user.css_id) }
-    let(:attorney_on_hold_tasks) do
-      Task.where(status: :on_hold, assigned_to: attorney_user) + ColocatedTask.where(assigned_by: attorney_user)
-    end
+    let(:attorney_on_hold_task_count) { Task.where(status: :on_hold, assigned_to: attorney_user).count }
 
     before do
       User.authenticate!(user: attorney_user)
@@ -90,7 +88,7 @@ RSpec.feature "Task queue" do
       end
 
       it "shows the correct number of tasks on hold" do
-        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 4))
+        expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count))
       end
     end
 
@@ -145,7 +143,7 @@ RSpec.feature "Task queue" do
     it "shows tabs on the queue page" do
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_TABLE_TITLE)
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, vacols_tasks.length))
-      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length))
+      expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count))
       expect(page).to have_content(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
     end
 
@@ -155,9 +153,9 @@ RSpec.feature "Task queue" do
       expect(find("tbody").find_all("tr").length).to eq(vacols_tasks.length)
 
       # On Hold tab
-      find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_tasks.length)).click
+      find("button", text: format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, attorney_on_hold_task_count)).click
       expect(page).to have_content(COPY::ATTORNEY_QUEUE_PAGE_ON_HOLD_TASKS_DESCRIPTION)
-      expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_tasks.length)
+      expect(find("tbody").find_all("tr").length).to eq(attorney_on_hold_task_count)
       appeal = attorney_task.appeal
       expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
     end
@@ -190,7 +188,7 @@ RSpec.feature "Task queue" do
     let!(:vso_task) { FactoryBot.create(:ama_vso_task, :in_progress, assigned_to: vso) }
     before do
       User.authenticate!(user: vso_employee)
-      allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+      allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       visit(vso.path)
     end
 
@@ -225,7 +223,7 @@ RSpec.feature "Task queue" do
       FactoryBot.create_list(:informal_hearing_presentation_task, assigned_count, :on_hold, assigned_to: vso)
       FactoryBot.create_list(:track_veteran_task, tracking_task_count, assigned_to: vso)
 
-      allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+      allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
       User.authenticate!(user: vso_employee)
       visit(vso.path)
     end
@@ -253,7 +251,8 @@ RSpec.feature "Task queue" do
   describe "Creating a mail task" do
     let(:mail_user) { FactoryBot.create(:user) }
     let(:mail_team) { MailTeam.singleton }
-    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:appeal) { root_task.appeal }
+    let(:instructions) { "Some instructions for how to complete the task" }
 
     before do
       OrganizationsUser.add_user_to_organization(mail_user, mail_team)
@@ -261,8 +260,7 @@ RSpec.feature "Task queue" do
     end
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let(:instructions) { "Some instructions for how to complete the task" }
+      let!(:root_task) { FactoryBot.create(:root_task) }
 
       it "should allow us to assign a mail task to a user" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -292,12 +290,32 @@ RSpec.feature "Task queue" do
     end
 
     context "when there is no active root task for the appeal" do
-      let!(:root_task) { FactoryBot.create(:root_task, :completed, appeal: appeal) }
+      let!(:root_task) { FactoryBot.create(:root_task, :completed) }
 
-      it "should allow us to assign a mail task to a user" do
-        visit("/queue/appeals/#{appeal.uuid}")
+      it "should allow us to create a mail task" do
+        visit "/queue/appeals/#{appeal.uuid}"
 
-        expect(page).to_not have_content(COPY::TASK_ACTION_DROPDOWN_BOX_LABEL)
+        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
+
+        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find("div", class: "Select-option", text: COPY::FOIA_REQUEST_MAIL_TASK_LABEL).click
+
+        fill_in("taskInstructions", with: instructions)
+        find("button", text: "Submit").click
+
+        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::FOIA_REQUEST_MAIL_TASK_LABEL)
+        expect(page).to have_content(success_msg)
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
+
+        mail_task = root_task.children[0]
+        expect(mail_task.class).to eq(FoiaRequestMailTask)
+        expect(mail_task.assigned_to).to eq(MailTeam.singleton)
+        expect(mail_task.children.length).to eq(1)
+
+        child_task = mail_task.children[0]
+        expect(child_task.class).to eq(FoiaRequestMailTask)
+        expect(child_task.assigned_to).to eq(PrivacyTeam.singleton)
+        expect(child_task.children.length).to eq(0)
       end
     end
   end
@@ -355,6 +373,25 @@ RSpec.feature "Task queue" do
     it "shows queue switcher dropdown" do
       expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
     end
+
+    context "when organization tasks include one associated with a LegacyAppeal that has been removed from VACOLS" do
+      let!(:tasks) do
+        Array.new(4) do
+          vacols_case = FactoryBot.create(:case)
+          legacy_appeal = FactoryBot.create(:legacy_appeal, vacols_case: vacols_case)
+          vacols_case.destroy!
+          FactoryBot.create(:generic_task, :in_progress, appeal: legacy_appeal, assigned_to: organization)
+        end
+      end
+
+      it "loads the task queue successfully" do
+        # Re-navigate to the organization queue so we pick up the above task creation.
+        visit(organization.path)
+
+        tasks.each { |t| expect(page).to have_content(t.appeal.veteran_file_number) }
+        expect(page).to_not have_content("Information cannot be found")
+      end
+    end
   end
 
   describe "VLJ support staff task action" do
@@ -398,6 +435,51 @@ RSpec.feature "Task queue" do
       find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
       expect(page).to have_content(Colocated.singleton.name)
       expect(page).to_not have_content(judgeteam.name)
+    end
+  end
+  describe "VLJ support staff schedule hearing action" do
+    let(:attorney) { FactoryBot.create(:user) }
+    let(:vacols_case) { create(:case) }
+    let!(:staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney.css_id) }
+    let(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case) }
+    let!(:vlj_support_staffer) { FactoryBot.create(:user) }
+
+    before do
+      OrganizationsUser.add_user_to_organization(vlj_support_staffer, Colocated.singleton)
+      User.authenticate!(user: vlj_support_staffer)
+    end
+
+    context "when a ColocatedTask has been assigned through the Colocated organization to an individual" do
+      before do
+        ColocatedTask.create_many_from_params([{
+                                                assigned_by: attorney,
+                                                action: :schedule_hearing,
+                                                appeal: appeal
+                                              }], attorney)
+      end
+
+      it "the location is updated to 57 when a user assigns a colocated task back to the hearing team" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        find(".Select-control", text: "Select an action…").click
+        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label).click
+        find("button", text: "Send case").click
+        expect(page).to have_content("Bob Smith's case has been sent to the Schedule hearing team")
+        expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
+      end
+
+      it "the case should be returned in the attorneys queue when canceled" do
+        visit("/queue/appeals/#{appeal.external_id}")
+        find(".Select-control", text: "Select an action…").click
+        expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.to_h[:label])
+        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
+        find("button", text: "Submit").click
+        expect(page).to have_content("Task for Bob Smith's case has been cancelled")
+        User.authenticate!(user: attorney)
+        visit("/queue")
+        expect(page).to have_content(appeal.veteran_file_number)
+      end
     end
   end
 
@@ -469,8 +551,9 @@ RSpec.feature "Task queue" do
         fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
-        # Expect to see a success message and have the task in the database
+        # Expect to see a success message, the correct number of remaining tasks and have the task in the database
         expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 0))
         expect(judge_task.children.length).to eq(1)
         expect(judge_task.children.first).to be_a(ColocatedTask)
       end
@@ -506,6 +589,24 @@ RSpec.feature "Task queue" do
         visit("/queue")
         expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 2))
       end
+
+      it "should be able to add admin actions from case details" do
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        visit("/queue")
+        click_on "#{legacy_review_task.veteran_full_name} (#{legacy_review_task.sanitized_vbms_id})"
+        # On case details page select the "Add admin action" option
+        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
+
+        # On case details page fill in the admin action
+        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        click_dropdown(text: action)
+        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
+
+        # Expect to see a success message and the correct number of remaining tasks
+        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 1))
+      end
     end
   end
 
@@ -525,6 +626,25 @@ RSpec.feature "Task queue" do
         expect(page).to have_content(format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name))
         expect(page.current_path).to eq("/queue")
         expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+    end
+
+    context "when a task is associated with a LegacyAppeal that has been removed from VACOLS" do
+      let(:user) { FactoryBot.create(:user) }
+      let(:vacols_case) { FactoryBot.create(:case) }
+      let(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: vacols_case) }
+      let!(:task) { FactoryBot.create(:generic_task, appeal: legacy_appeal, assigned_to: user) }
+
+      before do
+        vacols_case.destroy!
+        User.authenticate!(user: user)
+      end
+
+      it "loads the task queue successfully" do
+        visit("/queue")
+
+        expect(page).to have_content(legacy_appeal.veteran_file_number)
+        expect(page).to_not have_content("Information cannot be found")
       end
     end
   end

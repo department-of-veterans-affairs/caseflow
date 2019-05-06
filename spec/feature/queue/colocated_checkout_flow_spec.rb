@@ -133,7 +133,7 @@ RSpec.feature "Colocated checkout flows" do
       expect(colocated_action.instructions[1]).to eq instructions
     end
 
-    scenario "sends task to team" do
+    xscenario "sends task to team" do
       visit "/queue"
 
       appeal = translation_action.appeal
@@ -143,6 +143,7 @@ RSpec.feature "Colocated checkout flows" do
       vet_name = appeal.veteran_full_name
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
 
+      # current flake: https://circleci.com/gh/department-of-veterans-affairs/caseflow/53427
       click_dropdown(index: 0)
 
       expect(page).to have_content(

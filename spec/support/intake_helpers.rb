@@ -33,7 +33,7 @@ module IntakeHelpers
     if claim_participant_id
       create(
         :claimant,
-        review_request: higher_level_review,
+        decision_review: higher_level_review,
         participant_id: claim_participant_id,
         payee_code: "02"
       )
@@ -70,7 +70,7 @@ module IntakeHelpers
 
     if claim_participant_id
       Claimant.create!(
-        review_request: supplemental_claim,
+        decision_review: supplemental_claim,
         participant_id: claim_participant_id
       )
     end
@@ -101,7 +101,7 @@ module IntakeHelpers
     )
 
     Claimant.create!(
-      review_request: appeal,
+      decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
 
@@ -111,27 +111,32 @@ module IntakeHelpers
   end
   # rubocop: enable Metrics/ParameterLists
 
-  def start_claim_review(claim_review_type, veteran: create(:veteran), veteran_is_not_claimant: false)
+  def start_claim_review(
+    claim_review_type,
+    veteran: create(:veteran),
+    veteran_is_not_claimant: false,
+    benefit_type: "compensation"
+  )
     if claim_review_type == :supplemental_claim
-      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant)
+      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant, benefit_type: benefit_type)
     else
-      start_higher_level_review(veteran, veteran_is_not_claimant: veteran_is_not_claimant, informal_conference: true)
+      start_higher_level_review(
+        veteran,
+        veteran_is_not_claimant: veteran_is_not_claimant,
+        informal_conference: true,
+        benefit_type: benefit_type
+      )
     end
   end
 
   def setup_intake_flags
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-
     Timecop.freeze(Time.zone.today)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-  end
 
-  def teardown_intake_flags
-    FeatureToggle.disable!(:intakeAma)
+    User.authenticate!(roles: ["Admin Intake"])
   end
 
   def search_page_title
@@ -233,8 +238,24 @@ module IntakeHelpers
   end
 
   def click_remove_intake_issue(number)
+    number = number.strip if number.is_a?(String)
     issue_el = find_intake_issue_by_number(number)
     issue_el.find(".remove-issue").click
+  end
+
+  def click_remove_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
+    find("#issue-action-#{issue_num}").click
+    find("#issue-action-#{issue_num}_remove").click
+    click_remove_issue_confirmation
+  end
+
+  def click_withdraw_intake_issue_dropdown(text)
+    issue_el = find_intake_issue_by_text(text)
+    issue_num = issue_el[:"data-key"].sub(/^issue-/, "")
+    find("#issue-action-#{issue_num}").click
+    find("#issue-action-#{issue_num}_withdraw").click
   end
 
   def click_remove_intake_issue_by_text(text)
@@ -246,6 +267,10 @@ module IntakeHelpers
     safe_click ".remove-issue"
   end
 
+  def click_edit_contention_issue
+    safe_click ".edit-contention-issue"
+  end
+
   def click_number_of_issues_changed_confirmation
     safe_click "#Number-of-issues-has-changed-button-id-1"
   end
@@ -255,17 +280,17 @@ module IntakeHelpers
   end
 
   def find_intake_issue_by_number(number)
-    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
+    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
       if node.find(".issue-num").text.match?(/^#{number}\./)
-        return node
+        return node.find(".issue")
       end
     end
   end
 
   def find_intake_issue_by_text(text)
-    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
+    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
       if node.text.match?(/#{text}/)
-        return node
+        return node.find(".issue")
       end
     end
   end
@@ -275,6 +300,7 @@ module IntakeHelpers
   end
 
   def expect_ineligible_issue(number)
+    number = number.strip if number.is_a?(String)
     expect(find_intake_issue_by_number(number)).to have_css(".not-eligible")
   end
 
@@ -353,13 +379,15 @@ module IntakeHelpers
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
   end
 
-  def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
+  def setup_request_issue_with_nonrating_decision_issue(
+    decision_review, nonrating_issue_category: "Active Duty Adjustments"
+  )
     create(:request_issue,
            :with_nonrating_decision_issue,
            nonrating_issue_description: "Test nonrating decision issue",
            decision_review: decision_review,
            decision_date: decision_review.receipt_date - 1.day,
-           issue_category: issue_category,
+           nonrating_issue_category: nonrating_issue_category,
            veteran_participant_id: veteran.participant_id)
   end
 
@@ -385,31 +413,19 @@ module IntakeHelpers
                              rating_request_issue.contested_decision_issue_id])
   end
 
-  def setup_prior_claim_with_payee_code(appeal, veteran, prior_payee_code = "10")
-    prior_supplemental_claim = create(
-      :supplemental_claim,
-      veteran_file_number: veteran.file_number,
-      decision_review_remanded: appeal,
-      benefit_type: "insurance"
-    )
-
-    prior_sc_claimant = create(:claimant,
-                               review_request: prior_supplemental_claim,
-                               participant_id: appeal.claimants.first.participant_id,
-                               payee_code: appeal.claimants.first.payee_code)
+  def setup_prior_claim_with_payee_code(decision_review, veteran, prior_payee_code = "10")
+    same_claimant = decision_review.claimants.first
 
     Generators::EndProduct.build(
       veteran_file_number: veteran.file_number,
       bgs_attrs: {
         benefit_claim_id: "claim_id",
-        claimant_first_name: prior_sc_claimant.first_name,
-        claimant_last_name: prior_sc_claimant.last_name,
+        claimant_first_name: same_claimant.first_name,
+        claimant_last_name: same_claimant.last_name,
         payee_type_code: prior_payee_code,
         claim_date: 5.days.ago
       }
     )
-
-    prior_supplemental_claim
   end
 
   def setup_prior_decision_issue_chain(decision_review, request_issue, veteran, initial_date)
@@ -455,7 +471,7 @@ module IntakeHelpers
     click_intake_add_issue
     last_decision_date = (initial_date + 3.days).strftime("%m/%d/%Y")
     alternate_last_decision_date = (initial_date + 4.days).strftime("%m/%d/%Y")
-    text = "(Please select the most recent decision on "
+    text = "(Please select the most recent decision on"
     datetext = "#{text} #{last_decision_date})"
     multiple_datetext = "#{text} #{last_decision_date}, #{alternate_last_decision_date})"
 

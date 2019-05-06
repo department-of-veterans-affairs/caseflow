@@ -50,7 +50,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           expect(RequestStore[:current_user]).to eq user
           response_body = JSON.parse(response.body)["data"]
           ama_appeals = response_body
-            .select { |appeal| appeal["type"] == "appeals" }
+            .select { |appeal| appeal["attributes"]["type"] == "Appeal" }
             .sort_by { |appeal| appeal["attributes"]["file_number"] }
 
           expect(ama_appeals.size).to eq 1
@@ -186,7 +186,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           expect(RequestStore[:current_user]).to eq user
           response_body = JSON.parse(response.body)["data"]
           ama_appeals = response_body
-            .select { |appeal| appeal["type"] == "appeals" }
+            .select { |appeal| appeal["attributes"]["type"] == "Appeal" }
             .sort_by { |appeal| appeal["attributes"]["file_number"] }
 
           expect(ama_appeals.size).to eq 2
@@ -218,7 +218,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           get :list
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["data"]
-          ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+          ama_appeals = response_body.select { |appeal| appeal["attributes"]["type"] == "Appeal" }
           expect(ama_appeals.size).to eq 1
           expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
           expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
@@ -322,6 +322,15 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                 state: "CA",
                 zip: "20001"
               )
+
+              allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+                .with([ama_appeals.first.claimants.last.participant_id]).and_return(
+                  ama_appeals.first.claimants.last.participant_id => {
+                    representative_name: "POA Name",
+                    representative_type: "POA Attorney",
+                    participant_id: "600153863"
+                  }
+                )
             end
 
             it "succeeds and passes address info" do
@@ -330,7 +339,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
-                .to eq ama_appeals.first.claimants.first.address_line_1
+                .to eq ama_appeals.first.reload.claimants.first.address_line_1
               expect(response_body["attributes"]["appellants"][0]["address"]["city"])
                 .to eq ama_appeals.first.claimants.first.city
               expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
@@ -412,7 +421,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                 repkey: vacols_case.bfkey,
                 reptype: "C",
                 repfirst: "Contested",
-                replast: "Claimant"
+                replast: "Claimant",
+                repso: "A"
               )
             end
 
@@ -421,6 +431,34 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["contested_claimants"][0]["first_name"]).to eq("Contested")
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["code"])
+                .to eq(representative.repso)
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["name"])
+                .to eq(VACOLS::Case::REPRESENTATIVES[representative.repso][:full_name])
+            end
+          end
+
+          context "when contested claimant with unknown REPSO value (representative code)" do
+            let!(:representative) do
+              create(
+                :representative,
+                repkey: vacols_case.bfkey,
+                reptype: "C",
+                repfirst: "Contested",
+                replast: "Claimant",
+                repso: "5"
+              )
+            end
+
+            it "returns nil value for representative name" do
+              get :details, params: params
+              response_body = JSON.parse(response.body)["data"]
+
+              expect(response_body["attributes"]["contested_claimants"][0]["first_name"]).to eq("Contested")
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["code"])
+                .to eq representative.repso
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["name"])
+                .to be_nil
             end
           end
 

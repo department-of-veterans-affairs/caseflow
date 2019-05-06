@@ -75,11 +75,9 @@ class AppealsController < ApplicationController
   # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran
-    render json: { veteran:
-      ActiveModelSerializers::SerializableResource.new(
-        appeal,
-        serializer: ::WorkQueue::VeteranSerializer
-      ).as_json[:data][:attributes] }
+    render json: {
+      veteran: ::WorkQueue::VeteranSerializer.new(appeal).serializable_hash[:data][:attributes]
+    }
   end
 
   def show
@@ -87,11 +85,15 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        id = params[:appeal_id]
-        MetricsService.record("Get appeal information for ID #{id}",
-                              service: :queue,
-                              name: "AppealsController.show") do
-          render json: { appeal: json_appeals([appeal])[:data][0] }
+        if BGSService.new.can_access?(appeal.veteran_file_number)
+          id = params[:appeal_id]
+          MetricsService.record("Get appeal information for ID #{id}",
+                                service: :queue,
+                                name: "AppealsController.show") do
+            render json: { appeal: json_appeals(appeal)[:data] }
+          end
+        else
+          render_access_error
         end
       end
     end
@@ -109,9 +111,12 @@ class AppealsController < ApplicationController
 
   def update
     if request_issues_update.perform!
+      set_flash_success_message
+
       render json: {
         issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
@@ -152,10 +157,68 @@ class AppealsController < ApplicationController
     RequestStore.store[:application] = "queue"
   end
 
-  def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      user: current_user
-    ).as_json
+  def json_appeals(appeal)
+    if appeal.is_a?(Appeal)
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    elsif appeal.is_a?(LegacyAppeal)
+      WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    end
+  end
+
+  def review_removed_message
+    claimant_name = appeal.veteran_full_name
+    "You have successfully removed #{appeal.class.review_title} for #{claimant_name}
+    (ID: #{appeal.veteran_file_number})."
+  end
+
+  def review_withdrawn_message
+    "You have successfully withdrawn a review."
+  end
+
+  def withdrawn_issues
+    withdrawn = request_issues_update.withdrawn_issues
+
+    return if withdrawn.empty?
+
+    "withdrawn #{withdrawn.count} #{'issue'.pluralize(withdrawn.count)}"
+  end
+
+  def added_issues
+    new_issues = request_issues_update.after_issues - request_issues_update.before_issues
+    return if new_issues.empty?
+
+    "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)}"
+  end
+
+  def removed_issues
+    removed = request_issues_update.before_issues - request_issues_update.after_issues
+
+    return if removed.empty?
+
+    "removed #{removed.count} #{'issue'.pluralize(removed.count)}"
+  end
+
+  def review_edited_message
+    "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+  end
+
+  def set_flash_success_message
+    flash[:edited] = if request_issues_update.after_issues.empty?
+                       review_removed_message
+                     elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
+                       review_withdrawn_message
+                     else
+                       review_edited_message
+                     end
+  end
+
+  def render_access_error
+    render(Caseflow::Error::ActionForbiddenError.new(
+      message: access_error_message
+    ).serialize_response)
+  end
+
+  def access_error_message
+    appeal.veteran.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
   end
 end

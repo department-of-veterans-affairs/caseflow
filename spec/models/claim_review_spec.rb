@@ -57,7 +57,7 @@ describe ClaimReview do
       :request_issue,
       decision_review: claim_review,
       nonrating_issue_description: "Issue text",
-      issue_category: "surgery",
+      nonrating_issue_category: "surgery",
       decision_date: 4.days.ago.to_date,
       benefit_type: benefit_type,
       ineligible_reason: ineligible_reason
@@ -69,7 +69,7 @@ describe ClaimReview do
       :request_issue,
       decision_review: claim_review,
       nonrating_issue_description: "some other issue",
-      issue_category: "something",
+      nonrating_issue_category: "something",
       decision_date: 3.days.ago.to_date,
       benefit_type: benefit_type
     )
@@ -96,7 +96,7 @@ describe ClaimReview do
   let!(:claimant) do
     create(
       :claimant,
-      review_request: claim_review,
+      decision_review: claim_review,
       participant_id: veteran_participant_id,
       payee_code: "00"
     )
@@ -108,7 +108,7 @@ describe ClaimReview do
 
   context "async logic scopes" do
     let!(:claim_review_requiring_processing) do
-      create(:higher_level_review, receipt_date: receipt_date).tap(&:submit_for_processing!)
+      create(:higher_level_review, :requires_processing, receipt_date: receipt_date)
     end
 
     let!(:claim_review_processed) do
@@ -132,9 +132,23 @@ describe ClaimReview do
       )
     end
 
+    let!(:claim_review_canceled) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_canceled_at: 2.days.ago
+      )
+    end
+
     context ".unexpired" do
       it "matches reviews still inside the processing window" do
         expect(HigherLevelReview.unexpired).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".canceled" do
+      it "only returns canceled jobs" do
+        expect(HigherLevelReview.canceled).to eq([claim_review_canceled])
       end
     end
 
@@ -149,6 +163,7 @@ describe ClaimReview do
     context ".attemptable" do
       it "matches reviews that could be attempted" do
         expect(HigherLevelReview.attemptable).not_to include(claim_review_recently_attempted)
+        expect(HigherLevelReview.attemptable).not_to include(claim_review_canceled)
       end
     end
 
@@ -877,6 +892,25 @@ describe ClaimReview do
 
     it "returns the veteran" do
       expect(hlr.claim_veteran).to eq(veteran)
+    end
+  end
+
+  describe "#sync_end_product_establishments!" do
+    let!(:veteran) { create(:veteran) }
+    let!(:claim_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let!(:end_product_establishment) do
+      create(:end_product_establishment, source: claim_review, veteran_file_number: veteran.file_number)
+    end
+
+    before do
+      claim_review.create_issues!([rating_request_issue])
+      claim_review.establish!
+    end
+
+    it "syncs all EPEs" do
+      expect(claim_review.end_product_establishments.first.last_synced_at).to be_nil
+      claim_review.reload.sync_end_product_establishments!
+      expect(claim_review.end_product_establishments.first.last_synced_at).to_not be_nil
     end
   end
 end

@@ -11,6 +11,7 @@ class Task < ApplicationRecord
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
   has_many :attorney_case_reviews
+  has_many :task_timers, dependent: :destroy
 
   validates :assigned_to, :appeal, :type, :status, presence: true
 
@@ -33,6 +34,16 @@ class Task < ApplicationRecord
   scope :active, -> { where.not(status: inactive_statuses) }
 
   scope :inactive, -> { where(status: inactive_statuses) }
+
+  scope :on_hold, -> { where(status: Constants.TASK_STATUSES.on_hold) }
+
+  scope :not_tracking, -> { where.not(type: TrackVeteranTask.name) }
+
+  scope :not_decisions_review, lambda {
+                                 where.not(
+                                   type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
+                                 )
+                               }
 
   def available_actions(_user)
     []
@@ -133,22 +144,32 @@ class Task < ApplicationRecord
 
     return reassign(params[:reassign], current_user) if params[:reassign]
 
-    params["instructions"] = [instructions, params["instructions"]].flatten if params.key?("instructions")
+    params["instructions"] = flattened_instructions(params)
     update!(params)
 
     [self]
+  end
+
+  def flattened_instructions(params)
+    [instructions, params.dig(:instructions).presence].flatten.compact
   end
 
   def hide_from_queue_table_view
     false
   end
 
+  def duplicate_org_task
+    assigned_to.is_a?(Organization) && children.any? do |child_task|
+      User.name == child_task.assigned_to_type && type == child_task.type
+    end
+  end
+
   def hide_from_case_timeline
-    false
+    duplicate_org_task
   end
 
   def hide_from_task_snapshot
-    false
+    duplicate_org_task
   end
 
   def legacy?
@@ -164,7 +185,12 @@ class Task < ApplicationRecord
   end
 
   def latest_attorney_case_review
-    AttorneyCaseReview.where(task_id: Task.where(appeal: appeal).pluck(:id)).order(:created_at).last
+    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
+
+    @latest_attorney_case_review = AttorneyCaseReview
+      .where(task_id: Task.where(appeal: appeal)
+      .pluck(:id))
+      .order(:created_at).last
   end
 
   def prepared_by_display_name
@@ -252,6 +278,12 @@ class Task < ApplicationRecord
     [self, children.map(&:descendants)].flatten
   end
 
+  def ancestor_task_of_type(task_type)
+    return nil unless parent
+
+    parent.is_a?(task_type) ? parent : parent.ancestor_task_of_type(task_type)
+  end
+
   def previous_task
     nil
   end
@@ -259,7 +291,10 @@ class Task < ApplicationRecord
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
     descendant_ids = descendants.pluck(:id)
-    Task.active.where(id: descendant_ids).update_all(status: Constants.TASK_STATUSES.cancelled)
+    Task.active.where(id: descendant_ids).update_all(
+      status: Constants.TASK_STATUSES.cancelled,
+      closed_at: Time.zone.now
+    )
   end
 
   def assign_to_organization_data(_user = nil)
@@ -328,7 +363,7 @@ class Task < ApplicationRecord
     {
       selected: org,
       options: [{ label: org.name, value: org.id }],
-      type: GenericTask.name
+      type: PrivacyActTask.name
     }
   end
 

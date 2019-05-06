@@ -11,7 +11,7 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative, :hearing_day_id
-  vacols_attr_accessor :regional_office_key, :master_record
+  vacols_attr_accessor :master_record
   vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
   vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
   vacols_attr_accessor :appellant_zip, :appellant_country, :room, :bva_poc, :judge_id
@@ -55,6 +55,21 @@ class LegacyHearing < ApplicationRecord
     user
   end
 
+  def assigned_to_vso?(user)
+    appeal.tasks.any? do |task|
+      task.type = TrackVeteranTask.name &&
+                  task.assigned_to.is_a?(Representative) &&
+                  task.assigned_to.user_has_access?(user) &&
+                  task.active?
+    end
+  end
+
+  def assigned_to_judge?(user)
+    return hearing_day&.judge == user if judge.nil?
+
+    judge == user
+  end
+
   def venue
     self.class.venues[venue_key]
   end
@@ -63,11 +78,45 @@ class LegacyHearing < ApplicationRecord
     vacols_id
   end
 
+  def hearing_day
+    # access with caution. this retrieves the hearing_day_id from vacols
+    # then looks up the HearingDay in Caseflow
+    @hearing_day ||= HearingDay.find_by_id(hearing_day_id)
+  end
+
+  def regional_office_key
+    return (venue_key || appeal&.regional_office_key) if request_type == "T" || hearing_day.nil?
+
+    hearing_day&.regional_office
+  end
+
+  def regional_office
+    @regional_office ||= begin
+                            RegionalOffice.find!(regional_office_key)
+                         rescue RegionalOffice::NotFoundError
+                           nil
+                          end
+  end
+
+  def regional_office_name
+    return if regional_office_key.nil?
+
+    "#{regional_office.city}, #{regional_office.state}"
+  end
+
+  def regional_office_timezone
+    return if regional_office_key.nil?
+
+    HearingMapper.timezone(regional_office_key)
+  end
+
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
     elsif venue
       venue[:label]
+    elsif hearing_location
+      hearing_location.name
     end
   end
 
@@ -76,11 +125,11 @@ class LegacyHearing < ApplicationRecord
   end
 
   def no_show?
-    disposition == :no_show
+    disposition == Constants.HEARING_DISPOSITION_TYPES.no_show
   end
 
   def held?
-    disposition == :held
+    disposition == Constants.HEARING_DISPOSITION_TYPES.held
   end
 
   def scheduled_pending?
@@ -114,10 +163,6 @@ class LegacyHearing < ApplicationRecord
     end
   end
 
-  def regional_office_timezone
-    HearingMapper.timezone(regional_office_key)
-  end
-
   def readable_location
     if request_type == LegacyHearing::CO_HEARING
       return "Washington DC"
@@ -147,7 +192,6 @@ class LegacyHearing < ApplicationRecord
       representative: representative,
       representative_name: representative_name,
       vdkey: vdkey,
-      regional_office_key: regional_office_key,
       master_record: master_record,
       veteran_first_name: veteran_first_name,
       veteran_middle_initial: veteran_middle_initial,
@@ -162,7 +206,7 @@ class LegacyHearing < ApplicationRecord
   cache_attribute :cached_number_of_documents do
     begin
       number_of_documents
-    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError
       nil
     end
   end
@@ -232,6 +276,8 @@ class LegacyHearing < ApplicationRecord
     )
   end
   # rubocop:enable Metrics/MethodLength
+
+  alias quick_to_hash to_hash
 
   def fetch_veteran_age
     veteran_age

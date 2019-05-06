@@ -418,7 +418,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           decision_review: previous_review,
-          end_product_establishment: create(:end_product_establishment, code: "030HLRR")
+          contested_rating_issue_reference_id: "123"
         )
       end
       let(:decision_issue) do
@@ -660,12 +660,6 @@ describe EndProductEstablishment do
       ]
     end
 
-    context "returns true if inactive" do
-      let(:synced_status) { EndProduct::INACTIVE_STATUSES.first }
-
-      it { is_expected.to eq(true) }
-    end
-
     context "when matching end product has not yet been established" do
       it "raises EstablishedEndProductNotFound error" do
         expect { subject }.to raise_error(EndProductEstablishment::EstablishedEndProductNotFound)
@@ -680,6 +674,12 @@ describe EndProductEstablishment do
           veteran_file_number: veteran_file_number,
           bgs_attrs: { status_type_code: status_type_code }
         )
+      end
+
+      context "returns true if inactive" do
+        let(:synced_status) { EndProduct::INACTIVE_STATUSES.first }
+
+        it { is_expected.to eq(true) }
       end
 
       context "when BGS throws an error" do
@@ -908,8 +908,9 @@ describe EndProductEstablishment do
       it "submits each request issue and starts decision sync job" do
         subject
 
-        # delay in processing should be 1 day for rating, immediatly for nonrating
-        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        # delay in processing should be 1 day for rating (minus the processing offset of 12.hours)
+        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        # immediatly for nonrating
         expect(nonrating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
 
         expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(rating_issue)
@@ -931,8 +932,8 @@ describe EndProductEstablishment do
       it "submits each effectuation and starts decision sync job" do
         subject
 
-        # delay in processing should be 1 day
-        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        # delay in processing should be 1 day (minus the processing offset of 12.hours)
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
         expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end
@@ -958,7 +959,7 @@ describe EndProductEstablishment do
       context "when source is a higher level review" do
         let!(:claimant) do
           Claimant.create!(
-            review_request: source,
+            decision_review: source,
             participant_id: veteran.participant_id,
             payee_code: "10"
           )

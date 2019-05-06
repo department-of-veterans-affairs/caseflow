@@ -85,6 +85,7 @@ export const prepareTasksForStore = (tasks) =>
       taskId: task.id,
       label: task.attributes.label,
       documentId: task.attributes.document_id,
+      externalHearingId: task.attributes.external_hearing_id,
       workProduct: null,
       previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
       placedOnHoldAt: task.attributes.placed_on_hold_at,
@@ -528,4 +529,11 @@ export const nullToFalse = (key, obj) => {
   }
 
   return obj;
+};
+
+export const sortTaskList = (taskList) => {
+  return taskList.sort((prev, next) => {
+    return new Date(next.closedAt || next.createdAt).getTime() -
+    new Date(prev.closedAt || prev.createdAt).getTime();
+  });
 };

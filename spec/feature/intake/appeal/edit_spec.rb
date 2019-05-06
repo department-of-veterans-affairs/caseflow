@@ -6,18 +6,12 @@ feature "Appeal Edit issues" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-
     Timecop.freeze(post_ama_start_date)
 
     # skip the sync call since all edit requests require resyncing
     # currently, we're not mocking out vbms and bgs
     allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
+    OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
   end
 
   let(:veteran) do
@@ -30,6 +24,8 @@ feature "Appeal Edit issues" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
+  let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+  let(:last_week) { Time.zone.now - 7.days }
   let(:receipt_date) { Time.zone.today - 20.days }
   let(:profile_date) { (receipt_date - 30.days).to_datetime }
 
@@ -83,6 +79,7 @@ feature "Appeal Edit issues" do
   end
 
   let(:legacy_opt_in_approved) { false }
+
   let!(:appeal) do
     create(:appeal,
            veteran_file_number: veteran.file_number,
@@ -92,10 +89,14 @@ feature "Appeal Edit issues" do
            legacy_opt_in_approved: legacy_opt_in_approved).tap(&:create_tasks_on_intake_success!)
   end
 
+  let!(:appeal_intake) do
+    create(:intake, user: current_user, detail: appeal, veteran_file_number: veteran.file_number)
+  end
+
   let(:nonrating_request_issue_attributes) do
     {
       decision_review: appeal,
-      issue_category: "Military Retired Pay",
+      nonrating_issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
       decision_date: 1.month.ago
@@ -122,7 +123,7 @@ feature "Appeal Edit issues" do
     expect(page).to have_content(nonrating_request_issue.description)
 
     # remove an issue
-    nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.issue_category)
+    nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.nonrating_issue_category)
     click_remove_intake_issue(nonrating_intake_num)
     click_remove_issue_confirmation
     expect(page).not_to have_content(nonrating_request_issue.description)
@@ -217,8 +218,12 @@ feature "Appeal Edit issues" do
   end
 
   context "with multiple request issues with same data fields" do
-    let!(:duplicate_nonrating_request_issue) { create(:request_issue, nonrating_request_issue_attributes) }
-    let!(:duplicate_rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
+    let!(:duplicate_nonrating_request_issue) do
+      create(:request_issue, nonrating_request_issue_attributes.merge(contention_reference_id: "4444"))
+    end
+    let!(:duplicate_rating_request_issue) do
+      create(:request_issue, rating_request_issue_attributes.merge(contention_reference_id: "5555"))
+    end
 
     scenario "saves by id" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -350,6 +355,95 @@ feature "Appeal Edit issues" do
     end
   end
 
+  context "Veteran is invalid" do
+    let!(:veteran) do
+      create(:veteran,
+             first_name: "Ed",
+             last_name: "Merica",
+             bgs_veteran_record: {
+               sex: nil,
+               ssn: nil,
+               country: nil,
+               address_line1: "this address is more than 20 chars"
+             })
+    end
+
+    let!(:rating_request_issue) { nil }
+
+    scenario "adding an issue with a vbms benefit type" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      # Add issue that is not a VBMS issue
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        benefit_type: "Education",
+        category: "Accrued",
+        description: "Description for Accrued",
+        date: 1.day.ago.to_date.mdY
+      )
+      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: false)
+
+      # Add a rating issue
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+      expect(page).to have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
+      expect(page).to have_content(
+        "the corporate database, then retry establishing the EP in Caseflow: ssn, country"
+      )
+      expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
+      expect(page).to have_button("Save", disabled: true)
+
+      click_remove_intake_issue_by_text("Left knee granted")
+      click_remove_issue_confirmation
+      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: false)
+
+      # Add a compensation nonrating issue
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        benefit_type: "Compensation",
+        category: "Apportionment",
+        description: "Description for Apportionment",
+        date: 2.days.ago.to_date.mdY
+      )
+      expect(page).to have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: true)
+    end
+  end
+
+  context "appeal is non-comp benefit type" do
+    let!(:request_issue) { create(:request_issue, benefit_type: "education") }
+
+    scenario "adding an issue with a non-comp benefit type" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      # Add issue that is not a VBMS issue
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      add_intake_nonrating_issue(
+        benefit_type: "Education",
+        category: "Accrued",
+        description: "Description for Accrued",
+        date: 1.day.ago.to_date.mdY
+      )
+
+      expect(page).to_not have_content("The Veteran's profile has missing or invalid information")
+      expect(page).to have_button("Save", disabled: false)
+
+      click_edit_submit_and_confirm
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+      expect(page).to_not have_content("Unable to load this case")
+      expect(RequestIssue.find_by(
+               benefit_type: "education",
+               veteran_participant_id: nil
+             )).to_not be_nil
+    end
+  end
+
   context "appeal is outcoded" do
     let(:appeal) { create(:appeal, :outcoded, veteran: veteran) }
 
@@ -362,10 +456,197 @@ feature "Appeal Edit issues" do
     end
   end
 
+  context "when withdraw decision reviews is enabled" do
+    before do
+      FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+      FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
+    end
+    after do
+      FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id])
+      FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
+    end
+
+    scenario "remove an issue with dropdown and show alert message" do
+      visit "appeals/#{appeal.uuid}/edit/"
+      expect(page).to have_content("PTSD denied")
+      click_remove_intake_issue_dropdown("PTSD denied")
+
+      expect(page).to_not have_content("PTSD denied")
+
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully removed 1 issue.")
+    end
+
+    let(:withdraw_date) { 1.day.ago.to_date.mdY }
+
+    let!(:in_progress_task) do
+      create(:appeal_task,
+             :in_progress,
+             appeal: appeal,
+             assigned_to: non_comp_org,
+             assigned_at: last_week)
+    end
+
+    scenario "withdraw entire review and show alert" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+      fill_in "withdraw-date", with: withdraw_date
+
+      expect(page).to_not have_content("This review will be withdrawn.")
+      expect(page).to have_button("Save", disabled: false)
+
+      click_withdraw_intake_issue_dropdown("Military Retired Pay - Military Retired Pay - nonrating description")
+
+      expect(page).to have_content("This review will be withdrawn.")
+      expect(page).to have_button("Withdraw", disabled: false)
+
+      click_edit_submit
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully withdrawn a review.")
+
+      expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+    end
+
+    scenario "withdraw an issue" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to_not have_content("Withdrawn issues")
+      expect(page).to_not have_content("Please include the date the withdrawal was requested")
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+
+      expect(page).to have_content(
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+      )
+      expect(page).to have_content("Please include the date the withdrawal was requested")
+
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: "13/01/24"
+
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: withdraw_date
+
+      safe_click("#button-submit-update")
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
+
+      expect(withdrawn_issue).to_not be_nil
+      expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+      expect(page).to have_content("You have successfully withdrawn 1 issue.")
+    end
+
+    scenario "show withdrawn issue when appeal edit page is reloaded" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+
+      expect(page).to have_button("Save", disabled: false)
+
+      safe_click("#button-submit-update")
+      expect(page).to have_content("Number of issues has changed")
+
+      safe_click ".confirm"
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      # reload to verify that the new issues populate the form
+      visit "appeals/#{appeal.uuid}/edit/"
+      expect(page).to have_content("Left knee granted")
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+
+      expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
+      expect(page).to have_content(
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+      )
+      expect(page).to have_content("Please include the date the withdrawal was requested")
+
+      fill_in "withdraw-date", with: withdraw_date
+
+      safe_click("#button-submit-update")
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      withdrawn_issue = RequestIssue.where(closed_status: "withdrawn").first
+      expect(withdrawn_issue).to_not be_nil
+      expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+
+      sleep 1
+      # reload to verify that the new issues populate the form
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      expect(page).to have_content(
+        /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 01\/20\/2018\s*Withdrawn on/i
+      )
+      expect(page).to have_content("Please include the date the withdrawal was requested")
+      expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
+    end
+
+    scenario "show alert when issue is added, removed and withdrawn" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_intake_add_issue
+      add_intake_rating_issue("Left knee granted")
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully added 1 issue")
+
+      # reload to verify that the new issues populate the form
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_intake_add_issue
+      add_intake_rating_issue("Back pain")
+
+      click_remove_intake_issue_dropdown(1)
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+
+      expect(page).to have_content(
+        /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+      )
+      expect(page).to have_content("Please include the date the withdrawal was requested")
+
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: "13/01/24"
+
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: withdraw_date
+
+      click_edit_submit
+
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+      expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
+    end
+
+    scenario "edit contention text" do
+      visit "appeals/#{appeal.uuid}/edit"
+      expect(page).to have_content("Edit contention title")
+
+      within first(".issue-edit-text") do
+        click_edit_contention_issue
+      end
+
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_button("Submit")
+    end
+  end
+
   context "when remove decision reviews is enabled" do
     before do
       FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
-      OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
     end
 
     after do
@@ -373,7 +654,6 @@ feature "Appeal Edit issues" do
     end
 
     let(:today) { Time.zone.now }
-    let(:last_week) { Time.zone.now - 7.days }
     let(:appeal) do
       # reload to get uuid
       create(:appeal, veteran_file_number: veteran.file_number).reload
@@ -382,9 +662,9 @@ feature "Appeal Edit issues" do
       [create(:request_issue, :nonrating, decision_review: appeal),
        create(:request_issue, :nonrating, decision_review: appeal)]
     end
-    let!(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
+
     let!(:completed_task) do
-      create(:higher_level_review_task,
+      create(:appeal_task,
              :completed,
              appeal: appeal,
              assigned_to: non_comp_org,
@@ -393,7 +673,7 @@ feature "Appeal Edit issues" do
 
     context "when review has multiple active tasks" do
       let!(:in_progress_task) do
-        create(:higher_level_review_task,
+        create(:appeal_task,
                :in_progress,
                appeal: appeal,
                assigned_to: non_comp_org,
@@ -423,6 +703,27 @@ feature "Appeal Edit issues" do
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       end
 
+      context "when appeal is non-comp benefit type" do
+        let!(:request_issue) { create(:request_issue, benefit_type: "education") }
+
+        scenario "remove all non-comp decision reviews" do
+          visit "appeals/#{appeal.uuid}/edit"
+          # remove all request issues
+          appeal.request_issues.length.times do
+            click_remove_intake_issue(1)
+            click_remove_issue_confirmation
+          end
+
+          click_edit_submit
+          expect(page).to have_content("Remove review?")
+          expect(page).to have_content("This review and all tasks associated with it will be removed.")
+          click_intake_confirm
+
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+          expect(page).to have_content("Edit Completed")
+        end
+      end
+
       context "when review has no active tasks" do
         scenario "no tasks are cancelled when all request issues are removed" do
           visit "appeals/#{appeal.uuid}/edit"
@@ -430,6 +731,34 @@ feature "Appeal Edit issues" do
           click_remove_issue_confirmation
           click_edit_submit_and_confirm
           expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      context "when appeal task is cancelled" do
+        let!(:task) do
+          create(:appeal_task,
+                 status: Constants.TASK_STATUSES.cancelled,
+                 appeal: appeal,
+                 assigned_to: non_comp_org,
+                 closed_at: Time.zone.now)
+        end
+
+        scenario "show timestamp when all request issues are cancelled" do
+          visit "appeals/#{appeal.uuid}/edit"
+          # remove all request issues
+          appeal.request_issues.length.times do
+            click_remove_intake_issue(1)
+            click_remove_issue_confirmation
+          end
+
+          click_edit_submit_and_confirm
+          expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+          visit "appeals/#{appeal.uuid}/edit"
+          expect(page).not_to have_content(existing_request_issues.first.description)
+          expect(page).not_to have_content(existing_request_issues.second.description)
+          expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+          expect(task.closed_at).to eq(Time.zone.now)
         end
       end
     end

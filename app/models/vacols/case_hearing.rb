@@ -14,10 +14,10 @@ class VACOLS::CaseHearing < VACOLS::Record
   HEARING_TYPES = %w[V T C].freeze
 
   HEARING_DISPOSITIONS = {
-    H: :held,
-    C: :cancelled,
-    P: :postponed,
-    N: :no_show
+    H: Constants.HEARING_DISPOSITION_TYPES.held,
+    C: Constants.HEARING_DISPOSITION_TYPES.cancelled,
+    P: Constants.HEARING_DISPOSITION_TYPES.postponed,
+    N: Constants.HEARING_DISPOSITION_TYPES.no_show
   }.freeze
 
   HEARING_AODS = {
@@ -70,6 +70,14 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.where(vdkey: hearing_day_ids).where("hearing_date > ?", Date.new(2019, 1, 1))
     end
 
+    def hearings_for_hearing_days_assigned_to_judge(hearing_day_ids, judge)
+      id = connection.quote(judge.css_id.upcase)
+
+      select_hearings.where(vdkey: hearing_day_ids)
+        .where("hearing_date > ?", Date.new(2019, 1, 1))
+        .where("staff.sdomainid = #{id}")
+    end
+
     def for_appeal(appeal_vacols_id)
       select_hearings.where(folder_nr: appeal_vacols_id)
     end
@@ -88,12 +96,12 @@ class VACOLS::CaseHearing < VACOLS::Record
       select_hearings.find_by(hearing_pkseq: pkseq)
     end
 
-    def load_days_for_range(start_date, end_date)
+    def load_video_days_for_range(start_date, end_date)
       select_schedule_days.where("trunc(hearing_date) between ? and ?", VacolsHelper.day_only_str(start_date),
                                  VacolsHelper.day_only_str(end_date)).order(:hearing_date)
     end
 
-    def load_days_for_regional_office(regional_office, start_date, end_date)
+    def load_video_days_for_regional_office(regional_office, start_date, end_date)
       select_schedule_days.where("folder_nr = ? and trunc(hearing_date) between ? and ?",
                                  "VIDEO #{regional_office}", VacolsHelper.day_only_str(start_date),
                                  VacolsHelper.day_only_str(end_date)).order(:hearing_date)

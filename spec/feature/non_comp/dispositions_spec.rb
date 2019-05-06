@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
 require "rails_helper"
+require "support/intake_helpers"
 
 feature "NonComp Dispositions Task Page" do
+  include IntakeHelpers
+
   before do
     FeatureToggle.enable!(:decision_reviews)
   end
@@ -20,7 +23,18 @@ feature "NonComp Dispositions Task Page" do
     find("#disposition-issue-#{num}").send_keys :enter
   end
 
-  def find_disabled_disposition(num, disposition, description = nil)
+  def find_dropdown_num_by_disposition(disposition)
+    nodes = find_all(".cf-form-dropdown")
+
+    nodes.each do |node|
+      if node.text.match?(/#{disposition}/)
+        return nodes.index(node)
+      end
+    end
+  end
+
+  def find_disabled_disposition(disposition, description = nil)
+    num = find_dropdown_num_by_disposition(disposition)
     expect(page).to have_field(type: "textarea", with: description, disabled: true)
 
     scroll_element_in_to_view(".dropdown-disposition-issue-#{num}")
@@ -43,6 +57,7 @@ feature "NonComp Dispositions Task Page" do
     let(:decision_review) do
       create(
         :higher_level_review,
+        number_of_claimants: 1,
         end_product_establishments: [epe],
         veteran_file_number: veteran.file_number,
         benefit_type: non_comp_org.url
@@ -70,12 +85,14 @@ feature "NonComp Dispositions Task Page" do
     before do
       User.stub = user
       OrganizationsUser.add_user_to_organization(user, non_comp_org)
+      setup_prior_claim_with_payee_code(decision_review, veteran, "00")
     end
 
     context "decision_review is a Supplemental Claim" do
       let(:decision_review) do
         create(
           :supplemental_claim,
+          number_of_claimants: 1,
           end_product_establishments: [epe],
           veteran_file_number: veteran.file_number,
           benefit_type: non_comp_org.url
@@ -146,15 +163,16 @@ feature "NonComp Dispositions Task Page" do
       expect(dissues.find_by(disposition: "Denied", description: "denied")).to_not be_nil
 
       # verify that going to the completed task does not allow edits
-      click_link veteran.name
+      click_link veteran.name.to_s
       expect(page).to have_content("Review each issue and assign the appropriate dispositions")
       expect(page).to have_current_path("/#{dispositions_url}")
       expect(page).not_to have_button("Complete")
       expect(page).not_to have_link("Edit Issues")
 
-      find_disabled_disposition(0, "Granted")
-      find_disabled_disposition(1, "DTA Error", "test description")
-      find_disabled_disposition(2, "Denied", "denied")
+      find_disabled_disposition("Granted")
+      find_disabled_disposition("DTA Error", "test description")
+      find_disabled_disposition("Denied", "denied")
+
       # decision date should be saved
       expect(page).to have_css("input[value='#{arbitrary_decision_date}']")
     end
@@ -177,15 +195,9 @@ feature "NonComp Dispositions Task Page" do
 
     context "with user enabled for intake" do
       before do
-        FeatureToggle.enable!(:intake)
-
         # allow user to have access to intake
         user.update(roles: user.roles << "Mail Intake")
         Functions.grant!("Mail Intake", users: [user.css_id])
-      end
-
-      after do
-        FeatureToggle.disable!(:intake)
       end
 
       scenario "goes back to intake" do

@@ -1,11 +1,14 @@
 # frozen_string_literal: true
 
-class WorkQueue::AppealSerializer < ActiveModel::Serializer
+class WorkQueue::AppealSerializer
+  include FastJsonapi::ObjectSerializer
+  extend Helpers::AppealHearingHelper
+
   attribute :assigned_attorney
   attribute :assigned_judge
 
-  attribute :issues do
-    object.request_issues.active_or_decided.map do |issue|
+  attribute :issues do |object|
+    object.request_issues.active_or_decided.includes(:remand_reasons).map do |issue|
       {
         id: issue.id,
         program: issue.benefit_type,
@@ -17,7 +20,7 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     end
   end
 
-  attribute :decision_issues do
+  attribute :decision_issues do |object|
     object.decision_issues.uniq.map do |issue|
       {
         id: issue.id,
@@ -31,24 +34,11 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     end
   end
 
-  attribute :can_edit_request_issues do
-    @instance_options[:user]&.can_edit_request_issues?(object)
+  attribute :can_edit_request_issues do |object, params|
+    params[:user]&.can_edit_request_issues?(object)
   end
 
-  attribute :hearings do
-    object.hearings.map do |hearing|
-      {
-        held_by: hearing.judge.present? ? hearing.judge.full_name : "",
-        # this assumes only the assigned judge will view the hearing worksheet. otherwise,
-        # we should check `hearing.hearing_views.map(&:user_id).include? judge.css_id`
-        viewed_by_judge: !hearing.hearing_views.empty?,
-        date: hearing.scheduled_for,
-        type: hearing.readable_request_type,
-        external_id: hearing.external_id,
-        disposition: hearing.disposition
-      }
-    end
-  end
+  attribute(:hearings) { |object| hearings(object) }
 
   attribute :withdrawn do
     object.withdrawn?
@@ -62,77 +52,41 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
     false
   end
 
-  attribute :appellant_full_name do
+  attribute :appellant_full_name do |object|
     object.claimants[0].name if object.claimants&.any?
   end
 
-  attribute :appellant_address do
+  attribute :appellant_address do |object|
     if object.claimants&.any?
       object.claimants[0].address
     end
   end
 
-  attribute :appellant_relationship do
+  attribute :appellant_relationship do |object|
     object.claimants[0].relationship if object.claimants&.any?
   end
 
-  attribute :veteran_file_number do
-    object.veteran_file_number
-  end
+  attribute :veteran_file_number
 
-  attribute :veteran_full_name do
+  attribute :veteran_full_name do |object|
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
-  attribute :closest_regional_office do
-    object.closest_regional_office
-  end
+  attribute :closest_regional_office
 
-  attribute :available_hearing_locations do
-    locations = object.available_hearing_locations || []
+  attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
-    locations.map do |ahl|
-      {
-        name: ahl.name,
-        address: ahl.address,
-        city: ahl.city,
-        state: ahl.state,
-        distance: ahl.distance,
-        facility_id: ahl.facility_id,
-        facility_type: ahl.facility_type,
-        classification: ahl.classification,
-        zip_code: ahl.zip_code
-      }
-    end
-  end
-
-  attribute :external_id do
-    object.uuid
-  end
+  attribute :external_id, &:uuid
 
   attribute :type do
     "Original"
   end
 
-  attribute :aod do
-    object.advanced_on_docket
-  end
-
-  attribute :docket_name do
-    object.docket_name
-  end
-
-  attribute :docket_number do
-    object.docket_number
-  end
-
-  attribute :decision_date do
-    object.decision_date
-  end
-
-  attribute :nod_date do
-    object.receipt_date
-  end
+  attribute :aod, &:advanced_on_docket
+  attribute :docket_name
+  attribute :docket_number
+  attribute :decision_date
+  attribute :nod_date, &:receipt_date
 
   attribute :certification_date do
     nil
@@ -145,35 +99,30 @@ class WorkQueue::AppealSerializer < ActiveModel::Serializer
   attribute :regional_office do
   end
 
-  attribute :caseflow_veteran_id do
+  attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end
 
-  attribute :document_id do
-    latest_attorney_case_review&.document_id
+  attribute :document_id do |object|
+    object.latest_attorney_case_review&.document_id
   end
 
-  attribute :attorney_case_review_id do
-    latest_attorney_case_review&.id
+  attribute :attorney_case_review_id do |object|
+    object.latest_attorney_case_review&.id
   end
 
-  attribute :attorney_case_rewrite_details do
+  attribute :attorney_case_rewrite_details do |object|
     {
-      overtime: latest_attorney_case_review&.overtime,
-      note_from_attorney: latest_attorney_case_review&.note,
-      untimely_evidence: latest_attorney_case_review&.untimely_evidence
+      overtime: object.latest_attorney_case_review&.overtime,
+      note_from_attorney: object.latest_attorney_case_review&.note,
+      untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
     }
   end
 
-  attribute :can_edit_document_id do
+  attribute :can_edit_document_id do |object, params|
     AmaDocumentIdPolicy.new(
-      user: @instance_options[:user],
-      case_review: latest_attorney_case_review
+      user: params[:user],
+      case_review: object.latest_attorney_case_review
     ).editable?
-  end
-
-  def latest_attorney_case_review
-    @latest_attorney_case_review ||=
-      AttorneyCaseReview.where(task_id: Task.where(appeal: object).pluck(:id)).order(:created_at).last
   end
 end

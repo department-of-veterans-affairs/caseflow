@@ -36,7 +36,7 @@ describe SupplementalClaimIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
       )
@@ -123,6 +123,32 @@ describe SupplementalClaimIntake do
           payee_code: "10",
           decision_review: intake.detail
         )
+      end
+
+      context "claimant is missing address" do
+        before do
+          allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
+        end
+
+        it "adds claimant address required error" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("claimant_address_required")
+          expect(detail.claimants).to be_empty
+        end
+
+        context "when the benefit type is noncomp" do
+          let(:benefit_type) { "education" }
+
+          it "does not require address" do
+            expect(subject).to be_truthy
+            expect(intake.detail.claimants.count).to eq 1
+            expect(intake.detail.claimants.first).to have_attributes(
+              participant_id: "1234",
+              payee_code: nil,
+              decision_review: intake.detail
+            )
+          end
+        end
       end
 
       context "claimant is nil" do
@@ -217,7 +243,7 @@ describe SupplementalClaimIntake do
     let!(:claimant) do
       create(
         :claimant,
-        review_request: detail,
+        decision_review: detail,
         payee_code: "00",
         participant_id: "1234"
       )
@@ -370,8 +396,10 @@ describe SupplementalClaimIntake do
       it "clears pending status" do
         allow(detail).to receive(:establish!).and_raise(unknown_error)
 
-        expect { subject }.to raise_exception(unknown_error)
-        expect(intake.completion_status).to be_nil
+        subject
+
+        expect(intake.completion_status).to eq("success")
+        expect(intake.detail.establishment_error).to eq(unknown_error.inspect)
       end
     end
   end

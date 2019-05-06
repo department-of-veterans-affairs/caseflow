@@ -55,7 +55,7 @@ describe Task do
     end
 
     context "when on_hold task is assigned to an organization" do
-      let(:organization) { Organization.create! }
+      let(:organization) { Organization.create!(name: "Other organization", url: "other") }
       let(:task) { FactoryBot.create(:task, :on_hold, type: "Task", assigned_to: organization) }
       context "when task has no child tasks" do
         it "should not update any attribute of the task" do
@@ -136,6 +136,27 @@ describe Task do
 
       it "should return the most recent attorney case review" do
         expect(task.prepared_by_display_name).to eq(%w[Bob Smith])
+      end
+    end
+  end
+
+  describe "#duplicate_org_task" do
+    let(:root_task) { create(:root_task) }
+    let(:qr_user) { create(:user) }
+    let!(:quality_review_organization_task) do
+      create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
+    end
+    let!(:quality_review_task) do
+      create(:qr_task, assigned_to: qr_user, parent: quality_review_organization_task)
+    end
+
+    context "when there are duplicate organization tasks" do
+      it "returns true when there is a duplicate task assigned to an organization" do
+        expect(quality_review_organization_task.duplicate_org_task).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(quality_review_task.duplicate_org_task).to eq(false)
       end
     end
   end
@@ -352,6 +373,17 @@ describe Task do
           expect(e.labels).to match_array(labels)
         end
       end
+    end
+  end
+
+  describe ".not_decisions_review" do
+    let!(:veteran_record_request_task) { create(:veteran_record_request_task) }
+    let!(:task) { create(:generic_task) }
+
+    it "filters out subclasses of DecisionReviewTask" do
+      tasks = described_class.not_decisions_review.all
+      expect(tasks).to_not include(veteran_record_request_task)
+      expect(tasks).to include(task)
     end
   end
 
@@ -637,6 +669,21 @@ describe Task do
       it "fills in the assigner name with placeholder text" do
         expect(subject[:message_detail]).to eq(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, "the assigner"))
       end
+    end
+  end
+
+  describe "task timer relationship" do
+    let(:task) { FactoryBot.create(:generic_task) }
+    let(:task_id) { task.id }
+    let(:task_timer_count) { 4 }
+    let!(:task_timers) { Array.new(task_timer_count) { TaskTimer.create!(task: task) } }
+
+    it "returns and destroys related timers" do
+      expect(TaskTimer.where(task_id: task_id).count).to eq(task_timer_count)
+      expect(task.task_timers).to eq(task_timers)
+
+      task.destroy!
+      expect(TaskTimer.where(task_id: task_id).count).to eq(0)
     end
   end
 end

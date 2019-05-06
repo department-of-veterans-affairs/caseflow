@@ -100,16 +100,16 @@ FactoryBot.define do
     after(:create) do |appeal, evaluator|
       if !appeal.claimants.empty?
         appeal.claimants.each do |claimant|
-          claimant.review_request = appeal
+          claimant.decision_review = appeal
           claimant.save
         end
       elsif evaluator.number_of_claimants
-        appeal.claimants = create_list(:claimant, evaluator.number_of_claimants, review_request: appeal)
+        appeal.claimants = create_list(:claimant, evaluator.number_of_claimants, decision_review: appeal)
       else
         appeal.claimants = [create(
           :claimant,
           participant_id: appeal.veteran.participant_id,
-          review_request: appeal,
+          decision_review: appeal,
           payee_code: "00"
         )]
       end

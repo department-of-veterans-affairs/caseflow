@@ -2,16 +2,19 @@
 
 RSpec.describe Organizations::TasksController, type: :controller do
   include PowerOfAttorneyMapper
+  include TaskHelpers
 
   let(:participant_id) { "123456" }
   let(:vso_participant_id) { "789" }
   let(:url) { "american-legion" }
+  let(:name) { "American Legion" }
 
   let(:vso) do
     Vso.create(
       participant_id: vso_participant_id,
       url: url,
-      role: "VSO"
+      role: "VSO",
+      name: name
     )
   end
 
@@ -45,18 +48,19 @@ RSpec.describe Organizations::TasksController, type: :controller do
 
   describe "GET organization/:organization_id/tasks" do
     let!(:tasks) do
+      appeal = create_legacy_appeal_with_hearings
       [
         create(
           :task,
-          appeal: create(:appeal, veteran: create(:veteran)),
-          appeal_type: "Appeal",
+          appeal: appeal,
+          appeal_type: "LegacyAppeal",
           type: :GenericTask,
           assigned_to: vso
         ),
         create(
           :task,
-          appeal: create(:appeal, veteran: create(:veteran)),
-          appeal_type: "Appeal",
+          appeal: appeal,
+          appeal_type: "LegacyAppeal",
           type: :GenericTask,
           assigned_to: vso
         )
@@ -68,7 +72,9 @@ RSpec.describe Organizations::TasksController, type: :controller do
         get :index, params: { organization_url: url }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
+
         expect(response_body.size).to eq 2
+        expect(response_body[0]["attributes"]["available_hearing_locations"]).to be_empty
       end
     end
 

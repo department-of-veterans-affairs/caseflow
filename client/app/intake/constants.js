@@ -114,6 +114,8 @@ export const ACTIONS = {
   SET_ISSUE_SELECTED: 'SET_ISSUE_SELECTED',
   ADD_ISSUE: 'ADD_ISSUE',
   REMOVE_ISSUE: 'REMOVE_ISSUE',
+  WITHDRAW_ISSUE: 'WITHDRAW_ISSUE',
+  SET_ISSUE_WITHDRAWAL_DATE: 'SET_ISSUE_WITHDRAWAL_DATE',
   ADD_NONRATING_REQUEST_ISSUE: 'ADD_NONRATING_REQUEST_ISSUE',
   NEW_NONRATING_REQUEST_ISSUE: 'NEW_NONRATING_REQUEST_ISSUE',
   SET_ISSUE_CATEGORY: 'SET_ISSUE_CATEGORY',
@@ -281,3 +283,5 @@ const getValidPayeeCodes = (isDeceased) => {
 // wrap in singleton so these are calculated once
 export const DECEASED_PAYEE_CODES = (() => getValidPayeeCodes(true))();
 export const LIVING_PAYEE_CODES = (() => getValidPayeeCodes(false))();
+
+export const VBMS_BENEFIT_TYPES = ['compensation', 'pension'];

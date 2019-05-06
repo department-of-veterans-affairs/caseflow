@@ -24,6 +24,7 @@ export class TaskSnapshot extends React.PureComponent {
   render = () => {
     const {
       appeal,
+      hideDropdown,
       tasks
     } = this.props;
 
@@ -32,12 +33,12 @@ export class TaskSnapshot extends React.PureComponent {
     if (tasks.length) {
       sectionBody = <table {...tableStyling}>
         <tbody>
-          { <TaskRows appeal={appeal} taskList={tasks} timeline={false} /> }
+          { <TaskRows appeal={appeal} taskList={tasks} timeline={false} hideDropdown={hideDropdown} /> }
         </tbody>
       </table>;
     }
 
-    return <div className="usa-grid" {...css({ marginTop: '3rem' })}>
+    return <div className="usa-grid" id="currently-active-tasks" {...css({ marginTop: '3rem' })}>
       <h2 {...sectionHeadingStyling}>
         <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.TASK_SNAPSHOT_ACTIVE_TASKS_LABEL}</a>
         { <AddNewTaskButton appealId={appeal.externalId} /> }

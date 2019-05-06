@@ -37,7 +37,7 @@ describe DecisionReviewProcessJob do
 
     subject
 
-    expect(claim_review.error).to eq(vbms_error.to_s)
+    expect(claim_review.error).to eq(vbms_error.inspect)
     expect(@raven_called).to eq(true)
     expect(Raven).to have_received(:extra_context).with(id: 123, class: "AClaimReview")
   end
@@ -47,6 +47,22 @@ describe DecisionReviewProcessJob do
 
     expect(subject).to eq(true)
     expect(claim_review.error).to be_nil
+  end
+
+  context "transient VBMS error" do
+    let(:vbms_error) do
+      VBMSError.from_vbms_http_error(VBMS::HTTPError.new("500", "FAILED FOR UNKNOWN REASONS"))
+    end
+
+    it "does not alert Sentry" do
+      capture_raven_log
+      allow(claim_review).to receive(:establish!).and_raise(vbms_error)
+
+      subject
+
+      expect(claim_review.error).to eq(vbms_error.inspect)
+      expect(@raven_called).to be_falsey
+    end
   end
 
   def capture_raven_log

@@ -7,10 +7,10 @@ class ClaimReview < DecisionReview
   include HasBusinessLine
 
   has_many :end_product_establishments, as: :source
-  has_one :intake, as: :detail
 
   with_options if: :saving_review do
     validate :validate_receipt_date
+    validate :validate_veteran
     validates :receipt_date, :benefit_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
@@ -126,6 +126,14 @@ class ClaimReview < DecisionReview
     end
   end
 
+  def sync_end_product_establishments!
+    # re-use the same veteran object so we only cache End Products once.
+    end_product_establishments.each do |epe|
+      epe.veteran = veteran
+      epe.sync!
+    end
+  end
+
   def cleared_ep?
     end_product_establishments.any? { |ep| ep.status_cleared?(sync: true) }
   end
@@ -194,6 +202,14 @@ class ClaimReview < DecisionReview
     fetch_issues_status(issue_list)
   end
 
+  def contention_records(epe)
+    epe.request_issues.active
+  end
+
+  def all_contention_records(epe)
+    epe.request_issues
+  end
+
   private
 
   def incomplete_tasks?
@@ -232,5 +248,12 @@ class ClaimReview < DecisionReview
 
   def issue_active_status(_issue)
     active?
+  end
+
+  def validate_veteran
+    return unless intake
+    return if processed_in_caseflow? || intake.veteran.valid?(:bgs)
+
+    errors.add(:veteran, "veteran_not_valid")
   end
 end

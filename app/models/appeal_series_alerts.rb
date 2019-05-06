@@ -136,7 +136,7 @@ class AppealSeriesAlerts
     soc_opt_in_due_date = appeal_series.appeals.map(&:soc_opt_in_due_date).compact.max
     return unless soc_opt_in_due_date
 
-    if FeatureToggle.enabled?(:api_appeal_status_v3) && appeal_series.active? && Time.zone.today <= soc_opt_in_due_date
+    if appeal_series.active? && Time.zone.today <= soc_opt_in_due_date
       {
         type: :ama_opt_in_eligible,
         details: {

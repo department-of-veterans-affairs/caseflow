@@ -6,6 +6,7 @@ import {
   convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
+  getClaimantError,
   getPageError,
   formatRelationships,
   getDefaultPayeeCode
@@ -70,6 +71,15 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
+    },
+    veteranValid: {
+      $set: serverIntake.veteranValid
+    },
+    veteranInvalidFields: {
+      $set: {
+        veteranMissingFields: serverIntake.veteranInvalidFields.veteran_missing_fields.join(', '),
+        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
+      }
     }
   });
 };
@@ -98,6 +108,8 @@ export const mapDataToInitialHigherLevelReview = (data = { serverIntake: {} }) =
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
     legacyAppeals: [],
+    veteranValid: null,
+    veteranInvalidFields: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -252,7 +264,7 @@ export const higherLevelReviewReducer = (state = mapDataToInitialHigherLevelRevi
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
       },
       claimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
+        $set: getClaimantError(action.payload.responseErrorCodes)
       },
       payeeCodeError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')

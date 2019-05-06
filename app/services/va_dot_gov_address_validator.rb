@@ -3,8 +3,29 @@
 class VaDotGovAddressValidator
   attr_accessor :appeal
 
+  STATUSES = {
+    matched_available_hearing_locations: :matched_available_hearing_locations,
+    created_admin_action: :created_admin_action
+  }.freeze
+
   def initialize(appeal:)
     @appeal = appeal
+  end
+
+  def update_closest_ro_and_ahls
+    begin
+      va_dot_gov_address = validate
+    rescue Caseflow::Error::VaDotGovLimitError => error
+      raise error
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      return handle_error(error)
+    end
+
+    begin
+      create_available_hearing_locations(va_dot_gov_address: va_dot_gov_address)
+    rescue Caseflow::Error::VaDotGovValidatorError => error
+      handle_error(error)
+    end
   end
 
   def validate
@@ -36,33 +57,19 @@ class VaDotGovAddressValidator
     ro = fetch_and_update_ro(va_dot_gov_address: va_dot_gov_address)
     facility_ids = facility_ids_for_ro(ro[:closest_regional_office])
     AvailableHearingLocations.where(appeal: appeal).destroy_all
+    available_hearing_locations = []
 
     if facility_ids.length == 1
-      create_available_hearing_location(facility: ro[:facility])
+      available_hearing_locations << create_available_hearing_location(facility: ro[:facility])
     else
       sleep 1
       VADotGovService.get_distance(lat: va_dot_gov_address[:lat], long: va_dot_gov_address[:long], ids: facility_ids)
         .each do |alternate_hearing_location|
-          create_available_hearing_location(facility: alternate_hearing_location)
+          available_hearing_locations << create_available_hearing_location(facility: alternate_hearing_location)
         end
     end
-  end
 
-  def update_closest_ro_and_ahls
-    begin
-      va_dot_gov_address = validate
-    rescue Caseflow::Error::VaDotGovLimitError => error
-      raise error
-    rescue Caseflow::Error::VaDotGovAPIError => error
-      handle_error(error)
-      return nil
-    end
-
-    begin
-      create_available_hearing_locations(va_dot_gov_address: va_dot_gov_address)
-    rescue Caseflow::Error::VaDotGovValidatorError => error
-      handle_error(error)
-    end
+    { status: STATUSES[:matched_available_hearing_locations], available_hearing_locations: available_hearing_locations }
   end
 
   private
@@ -98,10 +105,15 @@ class VaDotGovAddressValidator
   def fetch_and_update_ro(va_dot_gov_address:)
     state_code = get_state_code(va_dot_gov_address)
     facility_ids = ro_facility_ids_for_state(state_code)
+    facility_ids = include_san_antonio_satellite_office(facility_ids) if state_code == "TX"
 
     distances = VADotGovService.get_distance(ids: facility_ids, lat: va_dot_gov_address[:lat],
                                              long: va_dot_gov_address[:long])
-    closest_ro = RegionalOffice::CITIES.find { |_k, v| v[:facility_locator_id] == distances[0][:facility_id] }[0]
+
+    closest_facility_id = distances[0][:facility_id]
+    closest_facility_id = map_san_antonio_satellite_office_to_houston(closest_facility_id) if state_code == "TX"
+
+    closest_ro = get_regional_office_from_facility_id(closest_facility_id)
 
     appeal.update(closest_regional_office: except_delaware(closest_ro))
 
@@ -111,6 +123,24 @@ class VaDotGovAddressValidator
   def facility_ids_for_ro(regional_office_id)
     (RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
       []) << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
+  end
+
+  def include_san_antonio_satellite_office(facility_ids)
+    # veterans whose closest AHL is San Antonio should have Houston as the RO
+    # even though Waco may be closer. This is a RO/AHL policy quirk.
+    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
+
+    facility_ids << "vha_671BY"
+  end
+
+  def map_san_antonio_satellite_office_to_houston(facility_id)
+    return "vba_362" if facility_id == "vha_671BY"
+
+    facility_id
+  end
+
+  def get_regional_office_from_facility_id(facility_id)
+    RegionalOffice::CITIES.find { |_key, regional_office| regional_office[:facility_locator_id] == facility_id }[0]
   end
 
   def ro_facility_ids_for_state(state_code)
@@ -172,7 +202,8 @@ class VaDotGovAddressValidator
       "AddressCouldNotBeFound" => "The appellant's address in VBMS could not be found on a map.",
       "InvalidRequestStreetAddress" => "The appellant's address in VBMS does not exist or is invalid.",
       "ForeignVeteranCase" => "The appellant's address in VBMS is outside of US territories.",
-      "InvalidRequestNonStreetAddress" => "The appellant's address in VBMS is incomplete." }
+      "InvalidRequestNonStreetAddress" => "The appellant's address in VBMS is incomplete.",
+      "SpectrumServiceAddressError" => "The appellant's address in VBMS could not be found on a map." }
   end
 
   def get_error_key(error)
@@ -187,16 +218,21 @@ class VaDotGovAddressValidator
     error_key = get_error_key(error)
 
     case error_key
-    when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress", "InvalidRequestNonStreetAddress"
-      create_admin_action_for_schedule_hearing_task(
+    when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress", "InvalidRequestNonStreetAddress",
+      "SpectrumServiceAddressError"
+      admin_action = create_admin_action_for_schedule_hearing_task(
         instructions: error_instructions_map[error_key],
         admin_action_type: HearingAdminActionVerifyAddressTask
       )
+
+      { status: STATUSES[:created_admin_action], admin_action: admin_action }
     when "ForeignVeteranCase"
-      create_admin_action_for_schedule_hearing_task(
+      admin_action = create_admin_action_for_schedule_hearing_task(
         instructions: error_instructions_map[error_key],
         admin_action_type: HearingAdminActionForeignVeteranCaseTask
       )
+
+      { status: STATUSES[:created_admin_action], admin_action: admin_action }
     else
       fail error
     end

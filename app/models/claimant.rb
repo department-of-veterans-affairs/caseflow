@@ -3,7 +3,6 @@
 class Claimant < ApplicationRecord
   include AssociatedBgsRecord
 
-  belongs_to :review_request, polymorphic: true
   belongs_to :decision_review, polymorphic: true
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
   validates_with ClaimantValidator
@@ -11,11 +10,8 @@ class Claimant < ApplicationRecord
   bgs_attr_accessor :first_name, :last_name, :middle_name, :relationship
 
   validates :participant_id,
-            uniqueness: { scope: [:review_request_id, :review_request_type],
+            uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
-
-  # TODO: this is a temporary callback in order to synchronize columns. Remove after data is migrated
-  before_save :set_decision_review
 
   def self.create_from_intake_data!(participant_id:, payee_code:)
     create!(
@@ -58,14 +54,19 @@ class Claimant < ApplicationRecord
     general_info.merge(name_info)
   end
 
+  def bgs_payee_code
+    return unless bgs_record
+
+    bgs_record[:payee_code]
+  end
+
+  def bgs_record
+    @bgs_record ||= fetch_bgs_record
+  end
+
   private
 
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: participant_id)
-  end
-
-  # Remove after data is migrated
-  def set_decision_review
-    self.decision_review = review_request
   end
 end

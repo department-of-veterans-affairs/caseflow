@@ -42,7 +42,8 @@ describe AttorneyCaseReview do
            request_issue_ids: [request_issue1.id, request_issue2.id],
            remand_reasons: [
              { code: "va_records", post_aoj: false },
-             { code: "incorrect_notice_sent", post_aoj: true }
+             { code: "incorrect_notice_sent", post_aoj: true },
+             { code: "due_process_deficiency", post_aoj: false }
            ] },
          { disposition: "allowed", description: "something3",
            benefit_type: "compensation", diagnostic_code: "9999",
@@ -65,10 +66,14 @@ describe AttorneyCaseReview do
       it "should create and delete decision issues" do
         subject
         old_decision_issue_ids = [decision_issue1.id, decision_issue2.id, decision_issue3.id, decision_issue4.id]
-        old_remand_reasons_ids = [remand_reason1.id, remand_reason2.id]
         expect(DecisionIssue.where(id: old_decision_issue_ids)).to eq []
         expect(RequestDecisionIssue.where(decision_issue_id: old_decision_issue_ids)).to eq []
-        expect(RemandReason.where(id: old_remand_reasons_ids)).to eq []
+
+        # Ensure soft deleted records are there
+        expect(DecisionIssue.unscoped.where(id: old_decision_issue_ids).size).to eq old_decision_issue_ids.size
+        deleted_request_decision_issues = RequestDecisionIssue.unscoped.where(decision_issue_id: old_decision_issue_ids)
+        expect(deleted_request_decision_issues.size).to eq old_decision_issue_ids.size
+
         expect(request_issue1.reload.decision_issues.size).to eq 2
         expect(request_issue2.reload.decision_issues.size).to eq 2
         expect(request_issue1.decision_issues).to eq request_issue2.decision_issues
@@ -78,12 +83,15 @@ describe AttorneyCaseReview do
         expect(request_issue1.decision_issues[1].disposition).to eq "remanded"
         expect(request_issue1.decision_issues[1].description).to eq "something2"
 
-        expect(request_issue1.decision_issues[1].remand_reasons.size).to eq 2
+        expect(request_issue1.decision_issues[1].remand_reasons.size).to eq 3
         expect(request_issue1.decision_issues[1].remand_reasons[0].code).to eq "va_records"
         expect(request_issue1.decision_issues[1].remand_reasons[0].post_aoj).to eq false
 
         expect(request_issue1.decision_issues[1].remand_reasons[1].code).to eq "incorrect_notice_sent"
         expect(request_issue1.decision_issues[1].remand_reasons[1].post_aoj).to eq true
+
+        expect(request_issue1.decision_issues[1].remand_reasons[2].code).to eq "due_process_deficiency"
+        expect(request_issue1.decision_issues[1].remand_reasons[2].post_aoj).to eq false
 
         expect(request_issue3.reload.decision_issues.size).to eq 1
         expect(request_issue4.reload.decision_issues.size).to eq 1
@@ -154,6 +162,16 @@ describe AttorneyCaseReview do
       end
 
       it "should raise AttorneyJudgeCheckoutError" do
+        expect { subject }.to raise_error(Caseflow::Error::AttorneyJudgeCheckoutError)
+        expect(AttorneyCaseReview.count).to eq 0
+      end
+    end
+
+    context "when no decision issues are sent and all request issues are closed" do
+      let(:issues) { [] }
+
+      it "should raise AttorneyJudgeCheckoutError" do
+        appeal.reload.request_issues.each { |issue| issue.close!(status: :decided) }
         expect { subject }.to raise_error(Caseflow::Error::AttorneyJudgeCheckoutError)
         expect(AttorneyCaseReview.count).to eq 0
       end

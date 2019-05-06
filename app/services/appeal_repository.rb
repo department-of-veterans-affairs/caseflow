@@ -21,7 +21,8 @@ class AppealRepository
     # Make a single request to VACOLS to grab all of the rows we want here?
     legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
 
-    # Load the VACOLS case records associated with legacy tasks into memory in a single batch.
+    # Load the VACOLS case records associated with legacy tasks into memory in a single batch. Ignore appeals that no
+    # longer appear in VACOLS.
     cases = (vacols_records_for_appeals(legacy_appeal_ids) || []).group_by(&:id)
 
     aod = legacy_appeal_ids.in_groups_of(1000, false).reduce({}) do |acc, group|
@@ -32,20 +33,24 @@ class AppealRepository
     tasks.each do |t|
       next unless t.appeal.is_a?(LegacyAppeal)
 
-      case_record = cases[t.appeal.vacols_id.to_s].first
+      case_record = cases[t.appeal.vacols_id.to_s]&.first
       set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
       t.appeal.aod = aod[t.appeal.vacols_id.to_s]
     end
   end
 
-  def self.find_case_record(id)
+  def self.find_case_record(id, ignore_misses: false)
     # Oracle cannot load more than 1000 records at a time
     if id.is_a?(Array)
       id.in_groups_of(1000, false).map do |group|
-        VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(group)
+        if ignore_misses
+          VACOLS::Case.includes(:correspondent, :case_issues, folder: [:outcoder]).where(bfkey: group)
+        else
+          VACOLS::Case.includes(:correspondent, :case_issues, folder: [:outcoder]).find(group)
+        end
       end.flatten
     else
-      VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(id)
+      VACOLS::Case.includes(:correspondent, :case_issues, folder: [:outcoder]).find(id)
     end
   end
 
@@ -53,7 +58,7 @@ class AppealRepository
     MetricsService.record("VACOLS: eager_load_legacy_appeals_batch",
                           service: :vacols,
                           name: "eager_load_legacy_appeals_batch") do
-      find_case_record(ids)
+      find_case_record(ids, ignore_misses: true)
     end
   end
 
@@ -76,7 +81,7 @@ class AppealRepository
     cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
                                   service: :vacols,
                                   name: "appeals_by_vbms_id") do
-      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives, :case_issues)
+      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :case_issues)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -129,7 +134,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent, :representatives)
+        .includes(:folder, :correspondent)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -319,7 +324,10 @@ class AppealRepository
     VACOLS::Case.where(bfhr: "1", bfcurloc: "57").or(VACOLS::Case.where(bfhr: "2", bfdocind: "V", bfcurloc: "57"))
       .joins(:folder).order("folder.tinum")
       .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
-        case_record.case_hearings.any? { |hearing| hearing.hearing_disp.nil? }
+        case_record.case_hearings.any? do |hearing|
+          # VACOLS contains non-BVA hearings information, we want to confirm the appeal has no scheduled BVA hearings
+          hearing.hearing_disp.nil? && HearingDay::REQUEST_TYPES.value?(hearing.hearing_type)
+        end
       end
   end
 
@@ -327,7 +335,7 @@ class AppealRepository
     ScheduleHearingTask.where(appeal_type: LegacyAppeal.name)
       .joins("LEFT JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
       .where("status <> ? AND type = ?", Constants.TASK_STATUSES.completed.to_sym, ScheduleHearingTask.name)
-      .select("legacy_appeals.vacols_id").uniq
+      .select("legacy_appeals.vacols_id").pluck(:vacols_id).uniq
   end
 
   def self.create_schedule_hearing_tasks
@@ -590,7 +598,7 @@ class AppealRepository
 
     previous_active_location = case_record.previous_active_location
 
-    fail not_valid_to_reopen_err unless %w[50 53 54 70 96 97 98].include? previous_active_location
+    fail not_valid_to_reopen_err unless %w[50 53 54 62 70 96 97 98].include? previous_active_location
     fail not_valid_to_reopen_err if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
     follow_up_appeal_key = "#{case_record.bfkey}P"

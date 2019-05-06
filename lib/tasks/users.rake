@@ -35,4 +35,16 @@ namespace :users do
       reporter.report.each { |ln| puts ln }
     end
   end
+
+  desc "deduplicates all user records merging all records with the same css_id with the capitalized one"
+  task merge: :environment do
+    users = User.all
+    css_ids = users.map(&:css_id).map(&:upcase)
+    dupes = css_ids.select { |e| css_ids.count(e) > 1 }.uniq
+    dupes.each do |css_id|
+      puts "Duplicate: #{css_id}"
+      dedup_service = UserDedupService.new(css_id)
+      dedup_service.merge_all_users_with_uppercased_user
+    end
+  end
 end

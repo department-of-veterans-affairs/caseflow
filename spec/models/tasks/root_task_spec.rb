@@ -143,7 +143,7 @@ describe RootTask do
           )
         end
 
-        before { allow_any_instance_of(Vso).to receive(:should_write_ihp?).with(anything).and_return(false) }
+        before { allow_any_instance_of(Representative).to receive(:should_write_ihp?).with(anything).and_return(false) }
 
         it "creates no IHP tasks" do
           RootTask.create_root_and_sub_tasks!(appeal)
@@ -267,6 +267,30 @@ describe RootTask do
           expect_any_instance_of(RootTask).to receive(:set_assignee).exactly(1).times
 
           RootTask.create(appeal: FactoryBot.create(:appeal))
+        end
+      end
+
+      context "when a RootTask already exists for the appeal" do
+        let(:appeal) { FactoryBot.create(:appeal) }
+
+        subject { RootTask.create!(appeal: appeal) }
+
+        before do
+          FactoryBot.create(:root_task, appeal: appeal, status: root_task_status)
+        end
+
+        context "when existing RootTask is active" do
+          let(:root_task_status) { Constants.TASK_STATUSES.on_hold }
+          it "will raise an error" do
+            expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+          end
+        end
+
+        context "when existing RootTask is inactive" do
+          let(:root_task_status) { Constants.TASK_STATUSES.completed }
+          it "will raise an error" do
+            expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+          end
         end
       end
     end

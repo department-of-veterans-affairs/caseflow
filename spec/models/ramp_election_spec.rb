@@ -195,6 +195,19 @@ describe RampElection do
             expect(error.error_code).to eq("duplicate_ep")
           end
         end
+
+        context "when the error is caught by VBMSError wrapper" do
+          let(:vbms_error) do
+            VBMSError::DuplicateEP.new("A duplicate claim for this EP code already exists in CorpDB.")
+          end
+
+          it "raises a parsed EstablishClaimFailedInVBMS error" do
+            expect { subject }.to raise_error do |error|
+              expect(error).to be_a(Caseflow::Error::EstablishClaimFailedInVBMS)
+              expect(error.error_code).to eq("duplicate_ep")
+            end
+          end
+        end
       end
     end
   end

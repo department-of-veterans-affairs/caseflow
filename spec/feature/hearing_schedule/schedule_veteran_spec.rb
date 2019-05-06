@@ -12,8 +12,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
   before do
     OrganizationsUser.add_user_to_organization(current_user, HearingsManagement.singleton)
-    OrganizationsUser.add_user_to_organization(other_user, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(current_user, HearingAdmin.singleton)
+    OrganizationsUser.add_user_to_organization(other_user, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(other_user, HearingAdmin.singleton)
   end
 
@@ -38,6 +38,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     let!(:veteran) { create(:veteran, file_number: "123454787") }
+    let!(:hearing_location_dropdown_label) { "Suggested Hearing Location" }
 
     scenario "Schedule Veteran for central hearing" do
       visit "hearings/schedule/assign"
@@ -50,10 +51,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Currently active tasks", wait: 30)
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
+
+      # Wait for the contents of the dropdown to finish loading before clicking into the dropdown.
+      expect(page).to have_content(hearing_location_dropdown_label)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       find("label", text: "9:00 am").click
       click_button("Schedule")
-      find_link("Back to Schedule Veterans").click
+      click_on "Back to Schedule Veterans"
       expect(page).to have_content("Schedule Veterans")
       click_button("Scheduled Veterans")
       expect(VACOLS::Case.where(bfcorlid: "123454787S"))
@@ -111,7 +115,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       find("label", text: "8:30 am").click
       expect(page).not_to have_content("Could not find hearing locations for this veteran", wait: 30)
       click_button("Schedule")
-      find_link("Back to Schedule Veterans").click
+      click_on "Back to Schedule Veterans"
       expect(page).to have_content("Schedule Veterans")
       click_button("Scheduled Veterans")
       expect(VACOLS::Case.where(bfcorlid: "123456789S"))
@@ -149,6 +153,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         veteran: create(:veteran)
       )
     end
+    let(:incarcerated_veteran_task_instructions) { "Incarcerated veteran task instructions" }
+    let(:contested_claimant_task_instructions) { "Contested claimant task instructions" }
 
     scenario "Can create multiple admin actions and reassign them" do
       visit "hearings/schedule/assign"
@@ -165,17 +171,39 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       # First admin action
       expect(page).to have_content("Submit admin action")
       click_dropdown(text: HearingAdminActionIncarceratedVeteranTask.label)
-      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 1"
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: incarcerated_veteran_task_instructions
 
       # Second admin action
       click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
       within all('div[id^="action_"]', count: 2)[1] do
         click_dropdown(text: HearingAdminActionContestedClaimantTask.label)
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Action 2"
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: contested_claimant_task_instructions
       end
 
       click_on "Assign Action"
-      expect(page).to have_content("You have assigned 2 administrative actions")
+
+      # The banner has the correct content
+      expect(page).to have_content(
+        format(
+          COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE,
+          "2",
+          "actions",
+          [HearingAdminActionIncarceratedVeteranTask.label, HearingAdminActionContestedClaimantTask.label].join(", ")
+        )
+      )
+
+      # The timeline has the correct content
+      incarcerated_row = find("dd", text: HearingAdminActionIncarceratedVeteranTask.label).find(:xpath, "ancestor::tr")
+      incarcerated_row.click_on(
+        COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+      )
+      expect(incarcerated_row).to have_content incarcerated_veteran_task_instructions
+
+      contested_row = find("dd", text: HearingAdminActionContestedClaimantTask.label).find(:xpath, "ancestor::tr")
+      contested_row.click_on(
+        COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+      )
+      expect(contested_row).to have_content contested_claimant_task_instructions
 
       within all("div", class: "Select", count: 2).first do
         click_dropdown(text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label])
@@ -253,16 +281,15 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("has been marked complete")
 
       # Schedule veteran!
-      find("a", text: "Switch views").click
-      click_on "Hearing Management team"
+      visit "hearings/schedule/assign"
+      expect(page).to have_content("Regional Office")
+      click_dropdown(text: "Denver")
+      click_button("AMA Veterans Waiting")
 
       click_on "Bob Smith"
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
-      click_dropdown(text: "Denver")
-
-      within find(".dropdown-hearingDate") do
-        click_dropdown(index: 1)
-      end
+      click_dropdown({ text: "Denver" }, find(".dropdown-regionalOffice"))
+      click_dropdown({ index: 1 }, find(".dropdown-hearingDate"))
 
       find("label", text: "8:30 am").click
 
@@ -271,13 +298,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("You have successfully assigned")
 
       # Ensure the veteran appears on the scheduled page
-      visit "hearings/schedule/assign"
-      expect(page).to have_content("Regional Office")
-      click_dropdown(text: "Denver")
 
       expect(page).to have_content(appeal.docket_number)
 
       # Ensure the veteran is no longer in the veterans waiting to be scheduled
+      click_on "Back to Schedule Veterans"
+      expect(page).to have_content("Regional Office")
+      click_dropdown(text: "Denver")
       click_button("AMA Veterans Waiting")
       expect(page).to have_content("There are no schedulable veterans")
     end

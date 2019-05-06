@@ -5,6 +5,7 @@
 # This task is closed when an appeal has been completely resolved.
 
 class RootTask < GenericTask
+  before_create :verify_root_task_unique
   # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
   after_initialize :set_assignee, if: -> { assigned_to_id.nil? }
 
@@ -28,19 +29,32 @@ class RootTask < GenericTask
     []
   end
 
-  def can_create_schedule_hearings_task?(user)
-    HearingsManagement.singleton.user_has_access?(user) &&
-      active? &&
-      legacy? &&
-      children.active.where(type: ScheduleHearingTask.name).empty?
+  def actions_available?(_user)
+    true
   end
 
-  def actions_available?(_user)
+  def actions_allowable?(_user)
     true
   end
 
   def assigned_to_label
     COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+  end
+
+  # Use the existence of a root task, active or inactive, to prevent duplicates
+  # since there should only ever be one root task for a single appeal.
+  def verify_root_task_unique
+    if appeal.tasks.where(
+      type: type
+    ).any?
+      fail(
+        Caseflow::Error::DuplicateOrgTask,
+        appeal_id: appeal.id,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name,
+        parent_id: parent&.id
+      )
+    end
   end
 
   class << self
@@ -55,7 +69,7 @@ class RootTask < GenericTask
     end
 
     def create_ihp_tasks!(appeal, parent)
-      appeal.vsos.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
+      appeal.representatives.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
         # For some RAMP appeals, this method may run twice.
         existing_task = InformalHearingPresentationTask.find_by(
           appeal: appeal,
@@ -73,7 +87,7 @@ class RootTask < GenericTask
     # private
 
     def create_vso_tracking_tasks(appeal, parent)
-      appeal.vsos.map do |vso_organization|
+      appeal.representatives.map do |vso_organization|
         TrackVeteranTask.create!(
           appeal: appeal,
           parent: parent,

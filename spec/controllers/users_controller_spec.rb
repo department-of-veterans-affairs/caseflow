@@ -36,6 +36,8 @@ RSpec.describe UsersController, type: :controller do
     let(:solo_attorneys) { FactoryBot.create_list(:user, solo_count) }
 
     before do
+      create(:staff, :judge_role, user: judge.user)
+
       [team_attorneys, solo_attorneys].flatten.each do |attorney|
         create(:staff, :attorney_role, user: attorney)
       end
@@ -59,11 +61,11 @@ RSpec.describe UsersController, type: :controller do
     context "when judge ID is not passed" do
       subject { get :index, params: { role: "Attorney" } }
 
-      it "should return a list of all attorneys" do
+      it "should return a list of all attorneys and judges" do
         subject
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)
-        expect(response_body["attorneys"].size).to eq team_member_count + solo_count + 1
+        expect(response_body["attorneys"].size).to eq team_member_count + solo_count + 2
       end
     end
   end

@@ -6,6 +6,7 @@ import {
   convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
+  getClaimantError,
   getPageError,
   formatRelationships
 } from '../util';
@@ -65,6 +66,15 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
+    },
+    veteranValid: {
+      $set: serverIntake.veteranValid
+    },
+    veteranInvalidFields: {
+      $set: {
+        veteranMissingFields: serverIntake.veteranInvalidFields.veteran_missing_fields.join(', '),
+        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
+      }
     }
   });
 };
@@ -96,6 +106,8 @@ export const mapDataToInitialAppeal = (data = { serverIntake: {} }) => (
     reviewIntakeError: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
+    veteranValid: null,
+    veteranInvalidFields: null,
     requestStatus: {
       submitReview: REQUEST_STATE.NOT_STARTED
     }
@@ -210,7 +222,7 @@ export const appealReducer = (state = mapDataToInitialAppeal(), action) => {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
       },
       claimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
+        $set: getClaimantError(action.payload.responseErrorCodes)
       },
       legacyOptInApprovedError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'legacy_opt_in_approved')

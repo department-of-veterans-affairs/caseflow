@@ -6,7 +6,8 @@ describe HigherLevelReview do
   end
 
   let(:veteran_file_number) { "64205555" }
-  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number) }
+  let(:ssn) { "64205555" }
+  let!(:veteran) { Generators::Veteran.build(file_number: veteran_file_number, ssn: ssn) }
   let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
   let(:benefit_type) { "compensation" }
   let(:informal_conference) { nil }
@@ -29,8 +30,38 @@ describe HigherLevelReview do
     )
   end
 
+  let!(:intake) do
+    create(:intake, user: current_user, detail: higher_level_review, veteran_file_number: veteran_file_number)
+  end
+
+  let(:current_user) do
+    User.authenticate!(roles: ["Admin Intake"])
+  end
+
   context "#valid?" do
     subject { higher_level_review.valid? }
+
+    context "invalid Veteran" do
+      before { higher_level_review.start_review! }
+      let(:ssn) { nil }
+      let(:informal_conference) { true }
+      let(:same_office) { false }
+
+      context "processed in VBMS" do
+        let(:benefit_type) { "compensation" }
+
+        it "adds an error" do
+          expect(subject).to eq false
+          expect(higher_level_review.errors[:veteran]).to include("veteran_not_valid")
+        end
+      end
+
+      context "processed in Caseflow" do
+        let(:benefit_type) { "education" }
+
+        it { is_expected.to be_truthy }
+      end
+    end
 
     context "receipt_date" do
       context "when it is nil" do
@@ -166,7 +197,7 @@ describe HigherLevelReview do
   end
 
   context "#on_decision_issues_sync_processed" do
-    subject { higher_level_review.on_decision_issues_sync_processed(epe) }
+    subject { higher_level_review.on_decision_issues_sync_processed }
 
     let(:epe) do
       create(:end_product_establishment,
@@ -183,8 +214,8 @@ describe HigherLevelReview do
                  decision_review: higher_level_review,
                  disposition: DecisionIssue::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
-                 profile_date: profile_date,
-                 promulgation_date: promulgation_date,
+                 rating_profile_date: profile_date,
+                 rating_promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type,
                  request_issues: [create(:request_issue, end_product_establishment: epe)]),
@@ -192,8 +223,8 @@ describe HigherLevelReview do
                  decision_review: higher_level_review,
                  disposition: DecisionIssue::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
-                 profile_date: profile_date,
-                 promulgation_date: promulgation_date,
+                 rating_profile_date: profile_date,
+                 rating_promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type,
                  request_issues: [create(:request_issue, end_product_establishment: epe)]),
@@ -207,7 +238,7 @@ describe HigherLevelReview do
 
       let!(:claimant) do
         Claimant.create!(
-          review_request: higher_level_review,
+          decision_review: higher_level_review,
           participant_id: veteran.participant_id,
           payee_code: "10"
         )
@@ -244,9 +275,9 @@ describe HigherLevelReview do
           decision_review: supplemental_claim,
           contested_decision_issue_id: decision_issues.first.id,
           contested_rating_issue_reference_id: "rating1",
-          contested_rating_issue_profile_date: decision_issues.first.profile_date.to_s,
+          contested_rating_issue_profile_date: decision_issues.first.rating_profile_date.to_s,
           contested_issue_description: decision_issues.first.description,
-          issue_category: decision_issues.first.issue_category,
+          nonrating_issue_category: decision_issues.first.nonrating_issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.first.approx_decision_date
         )
@@ -260,9 +291,9 @@ describe HigherLevelReview do
           decision_review: supplemental_claim,
           contested_decision_issue_id: decision_issues.second.id,
           contested_rating_issue_reference_id: "rating2",
-          contested_rating_issue_profile_date: decision_issues.second.profile_date.to_s,
+          contested_rating_issue_profile_date: decision_issues.second.rating_profile_date.to_s,
           contested_issue_description: decision_issues.second.description,
-          issue_category: decision_issues.second.issue_category,
+          nonrating_issue_category: decision_issues.second.nonrating_issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.second.approx_decision_date
         )
@@ -293,14 +324,18 @@ describe HigherLevelReview do
 
         context "when decision date is in the future" do
           let(:caseflow_decision_date) { 1.day.from_now }
-          it "creates a DTA Supplemental claim, but does not start processing until the claim_date" do
+          it "creates a DTA Supplemental claim, but does not start processing until hours after the claim_date" do
             subject
             dta_sc = SupplementalClaim.find_by(
               receipt_date: caseflow_decision_date,
               decision_review_remanded: higher_level_review
             )
             expect(dta_sc).to_not be_nil
-            expect(dta_sc.establishment_submitted_at).to eq(caseflow_decision_date.to_date.to_datetime + 1.minute)
+            expect(dta_sc.establishment_submitted_at).to eq(
+              caseflow_decision_date.to_date +
+              DecisionReview::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours -
+              SupplementalClaim.processing_retry_interval_hours.hours + 1.minute
+            )
             expect do
               subject
             end.to_not have_enqueued_job(DecisionReviewProcessJob)
@@ -334,8 +369,8 @@ describe HigherLevelReview do
         create(:decision_issue,
                decision_review: hlr,
                disposition: "not a dta error",
-               profile_date: promulgation_date,
-               promulgation_date: promulgation_date)
+               rating_profile_date: promulgation_date,
+               rating_promulgation_date: promulgation_date)
       end
 
       it "has a request event and a decision event" do
@@ -475,14 +510,14 @@ describe HigherLevelReview do
         expect(issue).to_not be_nil
 
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to be_nil
+        expect(issue[:lastAction]).to be_nil
         expect(issue[:date]).to be_nil
         expect(issue[:description]).to eq("Dental or oral condition")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(true)
-        expect(issue2[:last_action]).to be_nil
+        expect(issue2[:lastAction]).to be_nil
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
@@ -536,14 +571,14 @@ describe HigherLevelReview do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to be_nil
+        expect(issue[:lastAction]).to be_nil
         expect(issue[:date]).to be_nil
         expect(issue[:description]).to eq("Dental or oral condition")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(true)
-        expect(issue[:last_action]).to be_nil
+        expect(issue[:lastAction]).to be_nil
         expect(issue[:date]).to be_nil
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end
@@ -607,14 +642,14 @@ describe HigherLevelReview do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "9999" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(false)
-        expect(issue[:last_action]).to eq("allowed")
+        expect(issue[:lastAction]).to eq("allowed")
         expect(issue[:date]).to eq(dta_sc_decision_date.to_date)
         expect(issue[:description]).to eq("Dental or oral condition")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode] == "8877" }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
-        expect(issue2[:last_action]).to eq("denied")
+        expect(issue2[:lastAction]).to eq("denied")
         expect(issue2[:date]).to eq(hlr_decision_date.to_date)
         expect(issue2[:description]).to eq("Undiagnosed hemic or lymphatic condition")
       end

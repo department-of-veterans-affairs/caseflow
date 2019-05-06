@@ -7,18 +7,24 @@ FactoryBot.define do
     contested_rating_issue_diagnostic_code { "5008" }
 
     factory :request_issue_with_epe do
-      end_product_establishment { create(:end_product_establishment) }
+      end_product_establishment { create(:end_product_establishment, source: decision_review) }
     end
 
     trait :rating do
       sequence(:contested_rating_issue_reference_id) { |n| "rating_issue#{n}" }
       contested_rating_issue_profile_date { Time.zone.today }
+      decision_date { Time.zone.today }
     end
 
     trait :nonrating do
-      issue_category { "Apportionment" }
+      nonrating_issue_category { "Apportionment" }
       decision_date { 2.months.ago }
       nonrating_issue_description { "nonrating issue description" }
+    end
+
+    trait :unidentified do
+      is_unidentified { true }
+      unidentified_issue_text { "unidentified issue description" }
     end
 
     trait :removed do
@@ -31,6 +37,12 @@ FactoryBot.define do
       closed_status { :decided }
     end
 
+    trait :requires_processing do
+      decision_sync_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
+      decision_sync_last_submitted_at { (RequestIssue.processing_retry_interval_hours + 1).hours.ago }
+      decision_sync_processed_at { nil }
+    end
+
     trait :with_rating_decision_issue do
       transient do
         veteran_participant_id { nil }
@@ -41,7 +53,7 @@ FactoryBot.define do
           :decision_issue,
           decision_review: request_issue.decision_review,
           participant_id: evaluator.veteran_participant_id,
-          profile_date: request_issue.contested_rating_issue_profile_date.to_date,
+          rating_profile_date: request_issue.contested_rating_issue_profile_date.to_date,
           end_product_last_action_date: request_issue.contested_rating_issue_profile_date.to_date,
           benefit_type: request_issue.decision_review.benefit_type,
           decision_text: "a rating decision issue"

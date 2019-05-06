@@ -7,6 +7,11 @@ module FeatureHelper
     find(:xpath, "//tbody/tr[@id='table-row-#{vacols_id}']/td[#{header_index}]")
   end
 
+  def click_queue_switcher(text)
+    find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+    click_on text
+  end
+
   # in the `options` hash...
   # required:
   #   `index` (the selection's position in the list) OR `text` (the value of the selection)
@@ -19,7 +24,7 @@ module FeatureHelper
     selector = ""
     keyword_args = {}
 
-    dropdown.click
+    dropdown_choices = dropdown_click dropdown
     yield if block_given?
 
     keyword_args[:wait] = options[:wait] if options[:wait].present? && options[:wait] > 0
@@ -32,6 +37,8 @@ module FeatureHelper
     end
 
     try_clicking_dropdown_menu_item(dropdown, selector, keyword_args)
+
+    dropdown_choices
   end
 
   def dropdown_selected_value(container = page)
@@ -57,6 +64,11 @@ module FeatureHelper
   end
 
   private
+
+  def dropdown_click(dropdown)
+    dropdown.click
+    dropdown.sibling(".Select-menu-outer")&.text&.split("\n") || []
+  end
 
   def find_dropdown(options, container)
     selector = ".Select-control"

@@ -51,27 +51,33 @@ export default class HearingTime extends React.Component {
     return _.isUndefined(selectedOption);
   }
 
-  getTimeOptions = () => {
+  getTimeOptions = (readOnly) => {
     const { regionalOffice } = this.props;
 
     if (regionalOffice === 'C') {
       return [
         { displayText: '9:00 am',
-          value: '9:00' },
+          value: '9:00',
+          disabled: readOnly },
         { displayText: '1:00 pm',
-          value: '13:00' },
+          value: '13:00',
+          disabled: readOnly },
         { displayText: 'Other',
-          value: 'other' }
+          value: 'other',
+          disabled: readOnly }
       ];
     }
 
     return [
       { displayText: '8:30 am',
-        value: '8:30' },
+        value: '8:30',
+        disabled: readOnly },
       { displayText: '12:30 pm',
-        value: '12:30' },
+        value: '12:30',
+        disabled: readOnly },
       { displayText: 'Other',
-        value: 'other' }
+        value: 'other',
+        disabled: readOnly }
     ];
   }
 
@@ -92,12 +98,11 @@ export default class HearingTime extends React.Component {
       <React.Fragment>
         <span {...formStyling}>
           <RadioField
-            disabled={readOnly}
             errorMessage={errorMessage}
             name={`hearingTime${this.state.index}`}
             label="Time"
             strongLabel
-            options={this.getTimeOptions()}
+            options={this.getTimeOptions(readOnly)}
             onChange={this.onRadioChange}
             value={this.state.isOther ? 'other' : value} />
         </span>

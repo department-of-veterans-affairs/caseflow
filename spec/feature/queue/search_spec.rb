@@ -75,7 +75,7 @@ RSpec.feature "Search" do
           let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
           let!(:eligible_request_issue) { create(:request_issue, decision_review: higher_level_review) }
 
-          before do
+          def perform_search
             visit "/search"
             fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
             click_on "Search"
@@ -83,17 +83,20 @@ RSpec.feature "Search" do
 
           context "has a higher level review" do
             it "shows the HLR / SCs table" do
+              perform_search
               expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
             end
 
             it "shows a higher level review" do
-              expect(find(".cf-other-reviews-table > tbody")).to have_content("Higher Level Review")
+              perform_search
+              expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
             end
 
             context "and has no end products" do
               it "shows no end products" do
+                perform_search
                 expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
-                expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_NO_EPS_NOTE)
+                expect(page).to have_css(".cf-other-reviews-table > tbody", text: COPY::OTHER_REVIEWS_TABLE_NO_EPS_NOTE)
               end
             end
 
@@ -133,12 +136,14 @@ RSpec.feature "Search" do
 
               context "when the EPs have not been established" do
                 it "shows that the EP is establishing if it has not been established" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content(
-                    COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+                  perform_search
+                  expect(page).to have_css(
+                    ".cf-other-reviews-table > tbody",
+                    text: COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
                   )
-                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Canceled")
-                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Cleared")
-                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Ready to work")
+                  expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Canceled")
+                  expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Cleared")
+                  expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Ready to work")
                 end
               end
 
@@ -150,29 +155,29 @@ RSpec.feature "Search" do
                 end
 
                 it "shows that the EP has an establishment error" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content(
-                    COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
+                  perform_search
+                  expect(page).to have_css(
+                    ".cf-other-reviews-table > tbody",
+                    text: COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
                   )
                 end
               end
 
               context "the EP has been established" do
                 before do
-                  end_product_establishment_1.commit!
-                  end_product_establishment_2.commit!
-                  end_product_establishment_3.commit!
-                  end_product_establishment_4.commit!
-                  higher_level_review.establish!
+                  higher_level_review.reload.establish!
                 end
 
                 it "shows the end product status" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Canceled")
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Ready to work")
+                  perform_search
+                  expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Canceled")
+                  expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Cleared")
+                  expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Ready to work")
                 end
 
                 it "if the end products have synced_status codes we don't recognize, show the status code" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content("LOL")
+                  perform_search
+                  expect(page).to have_css(".cf-other-reviews-table > tbody", text: "LOL")
                 end
               end
             end
@@ -180,12 +185,15 @@ RSpec.feature "Search" do
 
           context "has a supplemental claim" do
             it "shows the HLR / SCs table" do
+              perform_search
               expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
             end
 
             it "shows a supplemental claim and that it's 'tracked in caseflow'" do
-              expect(find(".cf-other-reviews-table > tbody")).to have_content(
-                COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE
+              perform_search
+              expect(page).to have_css(
+                ".cf-other-reviews-table > tbody",
+                text: COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE
               )
             end
           end
@@ -223,7 +231,7 @@ RSpec.feature "Search" do
 
         it "table row displays a badge if a case has a hearing" do
           expect(page).to have_selector(".cf-hearing-badge")
-          expect(find(".cf-hearing-badge")).to have_content("H")
+          expect(page).to have_css(".cf-hearing-badge", text: "H")
         end
 
         it "shows information for the most recently held hearing" do
@@ -330,7 +338,7 @@ RSpec.feature "Search" do
 
       it "clicking on the x in the search bar clears the search bar" do
         click_on "button-clear-search"
-        expect(find("#searchBarEmptyList")).to have_content("")
+        expect(page).to have_css("#searchBarEmptyList", text: "")
       end
 
       it "clicking on docket number sends us to the case details page" do

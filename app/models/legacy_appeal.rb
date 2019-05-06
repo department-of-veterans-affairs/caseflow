@@ -20,8 +20,11 @@ class LegacyAppeal < ApplicationRecord
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
+  has_many :decision_documents, as: :appeal
   has_one :special_issue_list, as: :appeal
+  has_many :record_synced_by_job, as: :record
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
+  has_many :claimants, -> { Claimant.none }
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -131,6 +134,7 @@ class LegacyAppeal < ApplicationRecord
     omo_office: "20",
     caseflow: "CASEFLOW",
     quality_review: "48",
+    transcription: "33",
     translation: "14",
     schedule_hearing: "57",
     case_storage: "81",
@@ -159,7 +163,7 @@ class LegacyAppeal < ApplicationRecord
   cache_attribute :cached_number_of_documents_after_certification do
     begin
       number_of_documents_after_certification
-    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError
       nil
     end
   end
@@ -330,14 +334,14 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  delegate :representatives, to: :case_record
+  delegate :vacols_representatives, to: :case_record
 
-  def vsos
-    Vso.where(participant_id: [power_of_attorney.bgs_participant_id])
+  def representatives
+    Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
   end
 
   def contested_claim
-    representatives.any? { |r| r.reptype == "C" }
+    vacols_representatives.any? { |r| r.reptype == "C" }
   end
 
   def claimant
@@ -364,16 +368,20 @@ class LegacyAppeal < ApplicationRecord
 
   # reptype C is a contested claimant
   def contested_claimants
-    representatives.where(reptype: "C").map(&:as_claimant)
+    vacols_representatives.where(reptype: "C").map(&:as_claimant)
   end
 
   # reptype D is contested claimant attorney, reptype E is contested claimant agent
   def contested_claimant_agents
-    representatives.where(reptype: %w[D E]).map(&:as_claimant)
+    vacols_representatives.where(reptype: %w[D E]).map(&:as_claimant)
   end
 
   def docket_name
     "legacy"
+  end
+
+  def root_task
+    RootTask.find_by(appeal: self)
   end
 
   # TODO: delegate this to veteran

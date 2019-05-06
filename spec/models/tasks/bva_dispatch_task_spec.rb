@@ -45,6 +45,8 @@ describe BvaDispatchTask do
   describe ".outcode" do
     let(:user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
+    let(:the_case) { FactoryBot.create(:case) }
+    let!(:legacy_appeal) { FactoryBot.create(:legacy_appeal, vacols_case: the_case) }
     let(:citation_number) { "A18123456" }
     let(:file) { "JVBERi0xLjMNCiXi48/TDQoNCjEgMCBvYmoNCjw8DQovVHlwZSAvQ2F0YW" }
     let(:decision_date) { Date.new(1989, 12, 13).to_s }
@@ -93,6 +95,29 @@ describe BvaDispatchTask do
         end
       end
 
+      context "when :decision_document_upload feature is enabled and it's legacy appeal" do
+        let(:params_legacy) do
+          p = params.clone
+          p[:appeal_id] = legacy_appeal.id
+          p
+        end
+
+        it "should not complete the BvaDispatchTask and the task assigned to the BvaDispatch org" do
+          expect do
+            BvaDispatchTask.outcode(legacy_appeal, params_legacy, user)
+          end.to have_enqueued_job(ProcessDecisionDocumentJob).exactly(:once)
+
+          tasks = BvaDispatchTask.where(appeal: legacy_appeal, assigned_to: user)
+          expect(tasks.length).to eq(0)
+
+          decision_document = DecisionDocument.find_by(appeal_id: legacy_appeal.id)
+          expect(decision_document).to_not eq nil
+          expect(decision_document.document_type).to eq "BVA Decision"
+          expect(decision_document.source).to eq "BVA"
+          expect(decision_document.submitted_at).to eq(Time.zone.now)
+        end
+      end
+
       context "when :decision_document_upload is disabled" do
         before { FeatureToggle.disable!(:decision_document_upload) }
 
@@ -104,7 +129,7 @@ describe BvaDispatchTask do
       end
 
       context "when decision_date is in the future" do
-        let(:decision_date) { Time.zone.today + 10.days }
+        let(:decision_date) { 1.day.from_now }
 
         it "sets a delay on the enqueued_job" do
           expect do
@@ -112,7 +137,11 @@ describe BvaDispatchTask do
           end.to_not have_enqueued_job(ProcessDecisionDocumentJob)
 
           decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
-          expect(decision_document.submitted_at).to be >= decision_date
+          expect(decision_document.submitted_at).to eq(
+            decision_date.to_date +
+            DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours -
+            DecisionDocument.processing_retry_interval_hours.hours + 1.minute
+          )
         end
       end
     end

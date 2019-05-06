@@ -58,6 +58,7 @@ describe User do
         "id" => css_id.upcase,
         "station_id" => "310",
         "css_id" => css_id.upcase,
+        "pg_user_id" => user.id,
         "email" => nil,
         "roles" => [],
         "selected_regional_office" => nil,
@@ -443,6 +444,7 @@ describe User do
       end
 
       it do
+        expect(User).to receive(:find_by_css_id)
         is_expected.to be_an_instance_of(User)
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
@@ -454,6 +456,13 @@ describe User do
       it "persists user to DB" do
         expect(User.find(subject.id)).to be_truthy
       end
+
+      it "searches by user id when it is in session" do
+        user = create(:user)
+        expect(User).to_not receive(:find_by_css_id)
+        session["user"]["pg_user_id"] = user.id
+        expect(subject).to eq user
+      end
     end
 
     context "returns nil when no user in session" do
@@ -461,29 +470,20 @@ describe User do
       it { is_expected.to be_nil }
     end
 
-    context "2 users exist with different case css id" do
-      let(:station_id) { 123 }
-      let!(:user1) { create(:user, css_id: "foobar", station_id: station_id) }
-      let!(:user2) { create(:user, css_id: "FOOBAR", station_id: station_id) }
+    context "user exists with different station_id" do
+      let(:station_id) { "123" }
+      let(:new_station_id) { "456" }
+      let!(:existing_user) { create(:user, css_id: "foobar", station_id: station_id) }
 
       before do
-        session["user"]["station_id"] = station_id
+        session["user"]["station_id"] = new_station_id
+        session["user"]["id"] = existing_user.css_id
       end
 
-      context "css id is lower" do
-        before { session["user"]["id"] = user1.css_id }
+      it "updates station_id from session" do
+        subject
 
-        it "prefers exact case match" do
-          expect(subject.css_id).to eq user1.css_id
-        end
-      end
-
-      context "css is UPPER" do
-        before { session["user"]["id"] = user2.css_id }
-
-        it "prefers exact case match" do
-          expect(subject.css_id).to eq user2.css_id
-        end
+        expect(existing_user.reload.station_id).to eq(new_station_id)
       end
     end
   end
@@ -566,6 +566,25 @@ describe User do
       end
       it "should return a list of all teams user is an admin for" do
         expect(user.administered_teams).to include(*admin_orgs)
+      end
+    end
+  end
+
+  describe ".organization_queue_user?" do
+    let(:user) { FactoryBot.create(:user) }
+
+    subject { user.organization_queue_user? }
+
+    context "when the current user is not a member of any organizations" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the user is a member of some organizations" do
+      before { OrganizationsUser.add_user_to_organization(user, FactoryBot.create(:organization)) }
+      it "returns true" do
+        expect(subject).to eq(true)
       end
     end
   end

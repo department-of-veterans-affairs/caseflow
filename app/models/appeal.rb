@@ -15,11 +15,12 @@ class Appeal < DecisionReview
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
 
   # decision_documents is effectively a has_one until post decisional motions are supported
-  has_many :decision_documents
+  has_many :decision_documents, as: :appeal
   has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
+  has_many :record_synced_by_job, as: :record
 
   validate :validate_receipt_date
   with_options on: :intake_review do
@@ -142,10 +143,10 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+    active_tasks = tasks.active.not_tracking
     return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
-    on_hold_tasks = tasks.where(status: Constants.TASK_STATUSES.on_hold)
+    on_hold_tasks = tasks.on_hold.not_tracking
     return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
     return most_recently_assigned_to_label(tasks) if tasks.any?
@@ -159,6 +160,14 @@ class Appeal < DecisionReview
 
   def every_request_issue_has_decision?
     eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
+  end
+
+  def latest_attorney_case_review
+    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
+
+    @latest_attorney_case_review = AttorneyCaseReview
+      .where(task_id: tasks.pluck(:id))
+      .order(:created_at).last
   end
 
   def reviewing_judge_name
@@ -208,31 +217,6 @@ class Appeal < DecisionReview
 
   def ready_for_distribution_at
     tasks.select { |t| t.type == "DistributionTask" }.map(&:assigned_at).max
-  end
-
-  def sync_tracking_tasks
-    new_task_count = 0
-    closed_task_count = 0
-
-    active_tracking_tasks = tasks.active.where(type: TrackVeteranTask.name)
-    cached_vsos = active_tracking_tasks.map(&:assigned_to)
-    fresh_vsos = vsos
-
-    # Create a TrackVeteranTask for each VSO that does not already have one.
-    new_vsos = fresh_vsos - cached_vsos
-    new_vsos.each do |new_vso|
-      TrackVeteranTask.create!(appeal: self, parent: root_task, assigned_to: new_vso)
-      new_task_count += 1
-    end
-
-    # Close all TrackVeteranTasks for VSOs that are no longer representing the appellant.
-    outdated_vsos = cached_vsos - fresh_vsos
-    active_tracking_tasks.select { |t| outdated_vsos.include?(t.assigned_to) }.each do |task|
-      task.update!(status: Constants.TASK_STATUSES.cancelled)
-      closed_task_count += 1
-    end
-
-    [new_task_count, closed_task_count]
   end
 
   def veteran_name
@@ -296,7 +280,13 @@ class Appeal < DecisionReview
     claimants.first
   end
 
-  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
+  delegate :first_name,
+           :last_name,
+           :middle_name,
+           :name_suffix,
+           :city,
+           :zip,
+           :state, to: :appellant, prefix: true, allow_nil: true
 
   def cavc
     "not implemented for AMA"
@@ -324,10 +314,6 @@ class Appeal < DecisionReview
     request_issues.reload
   end
 
-  def serializer_class
-    ::WorkQueue::AppealSerializer
-  end
-
   def docket_number
     return "Missing Docket Number" unless receipt_date
 
@@ -344,9 +330,9 @@ class Appeal < DecisionReview
     claimants.map(&:power_of_attorney)
   end
 
-  def vsos
-    vso_participant_ids = power_of_attorneys.map(&:participant_id)
-    Vso.where(participant_id: vso_participant_ids)
+  def representatives
+    vso_participant_ids = power_of_attorneys.map(&:participant_id) - [nil]
+    Representative.where(participant_id: vso_participant_ids)
   end
 
   def external_id
@@ -379,7 +365,7 @@ class Appeal < DecisionReview
   end
 
   def root_task
-    RootTask.find_by(appeal_id: id)
+    RootTask.find_by(appeal: self)
   end
 
   # needed for appeal status api
@@ -482,6 +468,8 @@ class Appeal < DecisionReview
       {
         type: "video"
       }
+    when :scheduled_hearing
+      api_scheduled_hearing_status_details
     when :decision_in_progress
       {
         decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
@@ -511,6 +499,31 @@ class Appeal < DecisionReview
     end
   end
 
+  def api_scheduled_hearing_status_details
+    {
+      type: api_scheduled_hearing_type,
+      date: scheduled_hearing.scheduled_for.to_date,
+      location: scheduled_hearing.try(:hearing_location).try(&:name)
+    }
+  end
+
+  def scheduled_hearing
+    # Appeal Status api assumes that there can be multiple hearings that have happened in the past but only
+    # one that is currently scheduled. Will get this by getting the hearing whose scheduled date is in the future.
+    @scheduled_hearing ||= hearings.find { |hearing| hearing.scheduled_for >= Time.zone.today }
+  end
+
+  def api_scheduled_hearing_type
+    return unless scheduled_hearing
+
+    hearing_types_for_status_details = {
+      V: "video",
+      C: "central_office"
+    }.freeze
+
+    hearing_types_for_status_details[scheduled_hearing.request_type.to_sym]
+  end
+
   def remanded_sc_decision_issues
     issue_list = []
     remand_supplemental_claims.each do |sc|
@@ -527,8 +540,7 @@ class Appeal < DecisionReview
   end
 
   def hearing_pending?
-    # This isn't available yet.
-    # tasks.active.where(type: DispositionTask.name).any?
+    scheduled_hearing.present?
   end
 
   def evidence_submission_hold_pending?
@@ -640,7 +652,7 @@ class Appeal < DecisionReview
     return if active_status?
     return if decision_issues.any?
 
-    root_task.closed_at.to_date
+    root_task.closed_at&.to_date
   end
 
   def events

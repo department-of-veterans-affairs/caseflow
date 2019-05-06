@@ -6,18 +6,11 @@ feature "Supplemental Claim Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-
     Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
@@ -59,11 +52,12 @@ feature "Supplemental Claim Intake" do
   end
 
   let(:profile_date) { (receipt_date - 15.days).to_datetime }
+  let(:promulgation_date) { receipt_date - 5.days }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -352,13 +346,13 @@ feature "Supplemental Claim Intake" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      decision_date: nil,
+      decision_date: promulgation_date,
       rating_issue_associated_at: Time.zone.now
     )
     expect(supplemental_claim.request_issues.last).to have_attributes(
       contested_rating_issue_reference_id: nil,
       contested_rating_issue_profile_date: nil,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       decision_date: profile_date.to_date
     )
@@ -389,6 +383,7 @@ feature "Supplemental Claim Intake" do
     click_intake_continue
 
     expect(page).to have_content("Something went wrong")
+    expect(page).to have_content("Error code")
     expect(page).to have_current_path("/intake/review_request")
   end
 
@@ -415,7 +410,7 @@ feature "Supplemental Claim Intake" do
     )
 
     Claimant.create!(
-      review_request: supplemental_claim,
+      decision_review: supplemental_claim,
       participant_id: test_veteran.participant_id
     )
 
@@ -620,7 +615,7 @@ feature "Supplemental Claim Intake" do
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
-        "7. Issue before AMA Activation from RAMP Decision date:"
+        "7. Issue before AMA Activation from RAMP\nDecision date:"
       )
       expect(page).to_not have_content(
         "7. Issue before AMA Activation from RAMP Decision date: #{ineligible_constants.before_ama}"
@@ -648,7 +643,7 @@ feature "Supplemental Claim Intake" do
       expect(success_checklist).to have_content("Non-RAMP Issue before AMA Activation")
       expect(success_checklist).to have_content("A nonrating issue before AMA")
 
-      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      ineligible_checklist = find("ul.cf-issue-checklist")
       expect(ineligible_checklist).to_not have_content("Non-RAMP Issue before AMA Activation is ineligible")
       expect(ineligible_checklist).to_not have_content("A nonrating issue before AMA is ineligible")
 
@@ -689,7 +684,7 @@ feature "Supplemental Claim Intake" do
 
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
-               issue_category: "Active Duty Adjustments",
+               nonrating_issue_category: "Active Duty Adjustments",
                nonrating_issue_description: "Description for Active Duty Adjustments",
                decision_date: profile_date.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
@@ -822,7 +817,7 @@ feature "Supplemental Claim Intake" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    decision_review: sc,
-                   issue_category: "Accrued",
+                   nonrating_issue_category: "Accrued",
                    benefit_type: sc.benefit_type
                  )).to_not be_nil
         end
@@ -925,12 +920,12 @@ feature "Supplemental Claim Intake" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+            "#{intake_constants.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
           )
 
           click_intake_finish
 
-          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          ineligible_checklist = find("ul.cf-issue-checklist")
           expect(ineligible_checklist).to have_content(
             "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
           )
@@ -967,7 +962,7 @@ feature "Supplemental Claim Intake" do
 
           click_intake_finish
 
-          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          ineligible_checklist = find("ul.cf-issue-checklist")
           expect(ineligible_checklist).to have_content(
             "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
           )

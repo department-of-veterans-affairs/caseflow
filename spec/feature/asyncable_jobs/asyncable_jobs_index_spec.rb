@@ -42,6 +42,11 @@ feature "Asyncable Jobs index" do
   let!(:request_issues_update) do
     create(:request_issues_update, last_submitted_at: 6.days.ago, submitted_at: 6.days.ago)
   end
+  let!(:request_issues) do
+    50.times do
+      create(:request_issue, decision_sync_last_submitted_at: 1.day.ago) # fewer days to sort others first
+    end
+  end
 
   describe "index page" do
     it "shows jobs that look potentially stuck" do
@@ -78,9 +83,20 @@ feature "Asyncable Jobs index" do
       expect(hlr.establishment_submitted_at).to be_within(1.second).of 8.days.ago
     end
 
+    it "allows user to page through jobs" do
+      visit "/jobs"
+
+      expect(page).to have_content("Viewing 1-50 of 54 total")
+
+      find("[name=page-button-1]").click
+
+      expect(current_url).to match(/\?page=2/)
+      expect(page).to have_content("Viewing 51-54 of 54 total")
+    end
+
     context "zero unprocessed jobs" do
       before do
-        AsyncableJobs.new.jobs.each(&:processed!)
+        AsyncableJobs.new(page_size: 100).jobs.each(&:clear_error!).each(&:processed!)
       end
 
       it "shows nice message" do

@@ -6,7 +6,6 @@ feature "Intake Confirmation Page" do
   include IntakeHelpers
 
   before { setup_intake_flags }
-  after { teardown_intake_flags }
 
   let!(:current_user) { User.authenticate!(roles: ["Mail Intake"]) }
   let(:before_ama_date) { 3.years.ago }

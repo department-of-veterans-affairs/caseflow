@@ -33,7 +33,7 @@ module Caseflow::Error
   class FetchHearingLocationsJobError < SerializableError; end
 
   class ActionForbiddenError < SerializableError
-    def initialize(args)
+    def initialize(args = {})
       @code = args[:code] || 403
       @message = args[:message] || "Action forbidden"
     end
@@ -136,14 +136,6 @@ module Caseflow::Error
     def initialize(args)
       @code = args[:code] || 400
       @message = args[:message]
-    end
-  end
-
-  class TooManyChildTasks < SerializableError
-    def initialize(args)
-      @task_id = args[:task_id]
-      @code = args[:code] || 500
-      @message = args[:message] || "JudgeTask #{@task_id} has too many children"
     end
   end
 

@@ -12,7 +12,7 @@ import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { highlightInvalidFormItems, requestSave } from './uiReducer/uiActions';
-import { onReceiveAmaTasks, setAppealAttrs } from './QueueActions';
+import { setAppealAttrs, onReceiveTasks, deleteTask } from './QueueActions';
 
 import {
   appealWithDetailSelector,
@@ -26,7 +26,7 @@ import {
 import COPY from '../../COPY.json';
 import Button from '../components/Button';
 
-import { taskActionData } from './utils';
+import { taskActionData, prepareAllTasksForStore } from './utils';
 import QueueFlowPage from './components/QueueFlowPage';
 
 const adminActionTemplate = () => {
@@ -91,7 +91,8 @@ class AddColocatedTaskView extends React.PureComponent {
     const { task } = this.props;
     const payload = {
       data: {
-        tasks: this.buildPayload()
+        tasks: this.buildPayload(),
+        role: this.props.role
       }
     };
     const msgTitle = COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE;
@@ -106,12 +107,26 @@ class AddColocatedTaskView extends React.PureComponent {
 
     this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
+        const response = JSON.parse(resp.text);
+
+        // Remove any duplicate tasks returned by creating multiple admin actions
+        const filteredTasks = _.sortedUniqBy(response.tasks.data, (amaTask) => {
+          if (amaTask.attributes.external_appeal_id === task.externalAppealId) {
+            return amaTask.attributes.external_appeal_id;
+          }
+
+          return amaTask.id;
+        });
+        const allTasks = prepareAllTasksForStore(filteredTasks);
+
+        this.props.onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        });
+
         if (task.isLegacy) {
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
-        } else {
-          const response = JSON.parse(resp.text);
-
-          this.props.onReceiveAmaTasks(response.tasks.data);
+          this.props.deleteTask(task.uniqueId);
         }
       }).
       catch(() => {
@@ -205,7 +220,8 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightInvalidFormItems,
   requestSave,
-  onReceiveAmaTasks,
+  onReceiveTasks,
+  deleteTask,
   setAppealAttrs
 }, dispatch);
 

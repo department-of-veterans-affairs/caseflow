@@ -6,12 +6,10 @@ class VBMSCaseflowLogger
     case event
     when :request
       status = data[:response_code]
-      name = data[:request].class.name.split("::").last
 
       if status != 200
         Rails.logger.error(
-          "VBMS HTTP Error #{status} " \
-          "(#{name}) #{data[:response_body]}"
+          "VBMS HTTP Error #{status} (#{data.pretty_inspect})"
         )
       end
     end
@@ -42,9 +40,7 @@ class ExternalApi::VBMSService
 
     begin
       documents = send_and_log_request(veteran_file_number, request)
-    rescue VBMS::HTTPError => e
-      raise unless e.body.include?("File Number does not exist within the system.")
-
+    rescue VBMSError::FilenumberDoesNotExist
       alternative_file_number = ExternalApi::BGSService.new.fetch_veteran_info(veteran_file_number)[:claim_number]
 
       raise if alternative_file_number == veteran_file_number
@@ -177,6 +173,14 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::GetDispositions.new(claim_id: claim_id)
 
     send_and_log_request(claim_id, request)
+  end
+
+  def self.list_document_types
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::ListTypeCategory.new
+
+    send_and_log_request(nil, request)
   end
 
   def self.vbms_client_with_user(user)

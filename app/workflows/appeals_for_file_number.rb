@@ -10,7 +10,7 @@ class AppealsForFileNumber
   def call
     @appeals = user.vso_employee? ? vso_appeals_for_file_number : appeals_for_file_number
 
-    json_appeals[:data]
+    json_appeals
   end
 
   private
@@ -44,9 +44,15 @@ class AppealsForFileNumber
   end
 
   def json_appeals
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      user: user
-    ).as_json
+    ama_appeals, legacy_appeals = appeals.partition { |appeal| appeal.is_a?(Appeal) }
+    ama_hash = WorkQueue::AppealSerializer.new(
+      ama_appeals, is_collection: true, params: { user: user }
+    ).serializable_hash
+
+    legacy_hash = WorkQueue::LegacyAppealSerializer.new(
+      legacy_appeals, is_collection: true, params: { user: user }
+    ).serializable_hash
+
+    ama_hash[:data].concat(legacy_hash[:data])
   end
 end

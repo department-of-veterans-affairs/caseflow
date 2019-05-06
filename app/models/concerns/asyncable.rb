@@ -25,6 +25,7 @@ module Asyncable
   class_methods do
     REQUIRES_PROCESSING_WINDOW_DAYS = 4
     DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 3
+    PROCESS_DELAY_VBMS_OFFSET_HOURS = 7
 
     def processing_retry_interval_hours
       self::DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS
@@ -54,16 +55,28 @@ module Asyncable
       :error
     end
 
+    def canceled_at_column
+      :canceled_at
+    end
+
     def unexpired
       where(arel_table[last_submitted_at_column].gt(requires_processing_until))
     end
 
+    def canceled
+      where.not(canceled_at_column => nil)
+    end
+
     def processable
-      where(arel_table[last_submitted_at_column].lteq(Time.zone.now)).where(processed_at_column => nil)
+      where(arel_table[last_submitted_at_column].lteq(Time.zone.now))
+        .where(processed_at_column => nil)
+        .where(canceled_at_column => nil)
     end
 
     def never_attempted
-      where(attempted_at_column => nil)
+      where(attempted_at_column => nil).where(
+        arel_table[last_submitted_at_column].lteq(processing_retry_interval_hours.hours.ago)
+      )
     end
 
     def previously_attempted_ready_for_retry
@@ -71,7 +84,7 @@ module Asyncable
     end
 
     def attemptable
-      previously_attempted_ready_for_retry.or(never_attempted)
+      previously_attempted_ready_for_retry.or(never_attempted).where(canceled_at_column => nil)
     end
 
     def order_by_oldest_submitted
@@ -91,9 +104,15 @@ module Asyncable
       where(arel_table[attempted_at_column].lteq(Time.zone.now)).where(last_submitted_at_column => nil)
     end
 
+    def with_error
+      where.not(error_column => nil)
+    end
+
     def potentially_stuck
       processable
+        .or(with_error)
         .or(attempted_without_being_submitted)
+        .where(canceled_at_column => nil)
         .order_by_oldest_submitted
     end
   end
@@ -101,6 +120,11 @@ module Asyncable
   def submit_for_processing!(delay: 0)
     # One minute offset to prevent "this date is in the future" errors with external services
     when_to_start = delay.try(:to_datetime) ? delay.to_datetime + 1.minute : Time.zone.now + delay
+
+    # Add the `processing_retry_interval_hours` to the delay time, since it should not be considered
+    if delay != 0
+      when_to_start -= self.class.processing_retry_interval_hours.hours
+    end
 
     update!(
       self.class.last_submitted_at_column => when_to_start,
@@ -115,6 +139,10 @@ module Asyncable
 
   def attempted!
     update!(self.class.attempted_at_column => Time.zone.now)
+  end
+
+  def canceled!
+    update!(self.class.canceled_at_column => Time.zone.now)
   end
 
   # There are sometimes cases where no processing required, and we can mark submitted and processed all in one
@@ -139,6 +167,10 @@ module Asyncable
 
   def submitted?
     !!self[self.class.submitted_at_column]
+  end
+
+  def canceled?
+    !!self[self.class.canceled_at_column]
   end
 
   def expired_without_processing?
@@ -175,6 +207,7 @@ module Asyncable
       self.class.last_submitted_at_column => Time.zone.now,
       self.class.processed_at_column => nil,
       self.class.attempted_at_column => nil,
+      self.class.canceled_at_column => nil,
       self.class.error_column => nil
     )
   end

@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import ListSchedule from '../components/ListSchedule';
 import { hearingSchedStyling } from '../components/ListScheduleDateSearch';
@@ -8,6 +9,8 @@ import {
   onViewStartDateChange,
   onViewEndDateChange,
   onReceiveHearingSchedule,
+  onInputInvalidDates,
+  onResetInvalidDates,
   onSelectedHearingDayChange,
   selectRequestType,
   selectVlj,
@@ -54,10 +57,21 @@ export class ListScheduleContainer extends React.Component {
     this.props.onResetDeleteSuccessful();
   };
 
+  componentDidUpdate = (prevProps) => {
+    if (!((_.isNil(prevProps.invalidDates) && this.props.invalidDates) || _.isNil(this.props.invalidDates))) {
+      this.props.onResetInvalidDates();
+    }
+  };
+
   loadHearingSchedule = () => {
     let requestUrl = '/hearings/hearing_day.json';
 
     if (this.props.startDate && this.props.endDate) {
+      if (!moment(this.props.startDate, dateFormatString, true).isValid() ||
+        !moment(this.props.endDate, dateFormatString, true).isValid()) {
+        return this.props.onInputInvalidDates();
+      }
+
       requestUrl = `${requestUrl}?start_date=${this.props.startDate}&end_date=${this.props.endDate}`;
     }
 
@@ -144,9 +158,10 @@ export class ListScheduleContainer extends React.Component {
         <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
           {this.getAlertMessage()}
         </Alert>}
+        { this.props.invalidDates && <Alert type="error" title="Please enter valid dates." /> }
         <AppSegment filledBackground>
           <h1 className="cf-push-left">
-            {this.props.userRoleView ? COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_RO :
+            {this.props.userRoleView || this.props.userRoleVso ? COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER_NONBOARD_USER :
               COPY.HEARING_SCHEDULE_VIEW_PAGE_HEADER}
           </h1>
           {this.props.userRoleBuild &&
@@ -163,6 +178,7 @@ export class ListScheduleContainer extends React.Component {
             hearingSchedule={this.props.hearingSchedule}
             onApply={this.createHearingPromise}
             openModal={this.openModal}
+            userRoleHearingPrep={this.props.userRoleHearingPrep}
             userRoleBuild={this.props.userRoleBuild} />
           {this.state.modalOpen &&
             <HearingDayAddModal
@@ -186,13 +202,16 @@ const mapStateToProps = (state) => ({
   coordinator: state.hearingSchedule.coordinator,
   notes: state.hearingSchedule.notes,
   roomRequired: state.hearingSchedule.roomRequired,
-  successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete
+  successfulHearingDayDelete: state.hearingSchedule.successfulHearingDayDelete,
+  invalidDates: state.hearingSchedule.invalidDates
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onViewStartDateChange,
   onViewEndDateChange,
   onReceiveHearingSchedule,
+  onInputInvalidDates,
+  onResetInvalidDates,
   onSelectedHearingDayChange,
   selectRequestType,
   selectVlj,
@@ -206,7 +225,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 ListScheduleContainer.propTypes = {
   userRoleAssign: PropTypes.bool,
   userRoleBuild: PropTypes.bool,
-  userRoleView: PropTypes.bool
+  userRoleView: PropTypes.bool,
+  userRoleVso: PropTypes.bool
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ListScheduleContainer));

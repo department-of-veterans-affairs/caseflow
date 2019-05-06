@@ -5,7 +5,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - RAILS_ENV: test
@@ -16,13 +16,13 @@ jobs:
           - POSTGRES_USER: root
       # This is the circleci provided Postgres container. We can
       # configure it via environment variables.
-      - image: circleci/postgres:10.2
+      - image: circleci/postgres:9.5
         environment:
           - POSTGRES_USER: root
             POSTGRES_DB: caseflow_certification_test
 
       # This is our homespun VACOLS container. An oracle db with some special sauce.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:version_4
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:20190502
 
       # This is the circleci provided Redis container.
       - image: circleci/redis:4.0.10
@@ -150,7 +150,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
     steps:
@@ -212,7 +212,7 @@ jobs:
       # The first image listed is the image that all steps run inside of.
       # This can be modified by steps, or can be built as a separate
       # customized container.
-      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:ruby-2.5.1
+      - image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/circleci:2.5.3-node-browsers
         environment:
           - DBUS_SESSION_BUS_ADDRESS: /dev/null
           - NODE_ENV: test

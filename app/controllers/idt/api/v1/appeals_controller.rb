@@ -6,21 +6,8 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   skip_before_action :verify_authenticity_token, only: [:outcode]
 
-  rescue_from StandardError do |e|
-    Raven.capture_exception(e)
-    if e.class.method_defined?(:serialize_response)
-      render(e.serialize_response)
-    else
-      render json: { message: "Unexpected error: #{e.message}" }, status: :internal_server_error
-    end
-  end
-
   rescue_from ActionController::ParameterMissing do |e|
     render(json: { message: e.message }, status: :bad_request)
-  end
-
-  rescue_from ActiveRecord::RecordNotFound do |_e|
-    render(json: { message: "Record not found" }, status: :not_found)
   end
 
   def list
@@ -74,12 +61,13 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
   end
 
   def json_appeal_details
-    ActiveModelSerializers::SerializableResource.new(
+    ::Idt::V1::AppealDetailsSerializer.new(
       appeal,
-      serializer: ::Idt::V1::AppealDetailsSerializer,
-      include_addresses: include_addresses_in_response?,
-      base_url: request.base_url
-    ).as_json
+      params: {
+        include_addresses: include_addresses_in_response?,
+        base_url: request.base_url
+      }
+    )
   end
 
   def include_addresses_in_response?
@@ -88,18 +76,14 @@ class Idt::Api::V1::AppealsController < Idt::Api::V1::BaseController
 
   def json_appeals_with_tasks(tasks)
     tasks.map do |task|
-      ActiveModelSerializers::SerializableResource.new(
+      ::Idt::V1::AppealSerializer.new(
         task.appeal,
-        serializer: ::Idt::V1::AppealSerializer,
-        task: task
-      ).as_json[:data]
+        params: { task: task }
+      ).serializable_hash[:data]
     end
   end
 
   def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::Idt::V1::AppealSerializer
-    ).as_json
+    ::Idt::V1::AppealSerializer.new(appeals, is_collection: true)
   end
 end

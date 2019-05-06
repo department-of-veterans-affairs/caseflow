@@ -152,30 +152,76 @@ describe JudgeTask do
   end
 
   describe ".previous_task" do
-    it "should return the only child" do
-      parent = FactoryBot.create(:ama_judge_task, assigned_to: judge)
-      child = FactoryBot.create(:ama_attorney_task, assigned_to: attorney, status: "completed", parent: parent)
-
-      expect(parent.previous_task.id).to eq(child.id)
+    let(:parent) { FactoryBot.create(:ama_judge_task, assigned_to: judge) }
+    let!(:child) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        assigned_to: attorney,
+        assigned_by: judge,
+        status: Constants.TASK_STATUSES.completed,
+        parent: parent
+      ).becomes(AttorneyTask)
     end
 
-    it "should throw an exception if there are too many children" do
-      parent = FactoryBot.create(:ama_judge_task, assigned_to: judge)
-      FactoryBot.create(:ama_attorney_task, assigned_to: attorney, status: "completed", parent: parent)
-      FactoryBot.create(:ama_attorney_task, assigned_to: attorney, status: "completed", parent: parent)
+    subject { parent.previous_task }
 
-      expect { parent.previous_task }.to raise_error(Caseflow::Error::TooManyChildTasks)
+    context "when there is only one child attorney task" do
+      it "returns the only child" do
+        expect(subject).to eq(child)
+      end
+    end
+
+    context "when there are two child attorney tasks that have been assigned" do
+      let!(:older_child_task) do
+        child.tap do |t|
+          t.assigned_at = Time.zone.now - 6.days
+          t.save!
+        end
+      end
+
+      let!(:newer_child_task) do
+        child.tap do |t|
+          t.assigned_at = Time.zone.now - 1.day
+          t.save!
+        end
+      end
+
+      it "should return the most recently assigned attorney task" do
+        expect(subject).to eq(newer_child_task)
+      end
     end
   end
 
-  describe ".when_child_task_completed" do
-    let(:attorney_task) { FactoryBot.create(:ama_attorney_task) }
+  describe "when child task completed" do
+    let(:judge_task) { FactoryBot.create(:ama_judge_task) }
 
-    it "changes the task type" do
-      parent = attorney_task.parent
-      expect(parent.type).to eq JudgeAssignTask.name
-      parent.when_child_task_completed
-      expect(parent.type).to eq JudgeDecisionReviewTask.name
+    subject { child_task.update!(status: Constants.TASK_STATUSES.completed) }
+
+    context "when child task is an attorney task" do
+      let(:child_task) do
+        FactoryBot.create(
+          :ama_attorney_task,
+          assigned_by: judge,
+          assigned_to: attorney,
+          parent: judge_task
+        ).becomes(AttorneyTask)
+      end
+
+      it "changes the judge task type to decision review" do
+        expect(judge_task.type).to eq(JudgeAssignTask.name)
+        subject
+        expect(Task.find(judge_task.id).type).to eq(JudgeDecisionReviewTask.name)
+      end
+    end
+
+    context "when child task is an VLJ support staff admin action" do
+      let(:child_task) { FactoryBot.create(:colocated_task, assigned_by: judge, parent: judge_task) }
+
+      it "does not change the judge task type" do
+        expect(judge_task.type).to eq(JudgeAssignTask.name)
+        subject
+        expect(Task.find(judge_task.id).type).to eq(JudgeAssignTask.name)
+      end
     end
   end
 

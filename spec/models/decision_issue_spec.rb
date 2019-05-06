@@ -18,8 +18,8 @@ describe DecisionIssue do
       description: description,
       request_issues: request_issues,
       benefit_type: benefit_type,
-      profile_date: profile_date,
-      promulgation_date: promulgation_date,
+      rating_profile_date: profile_date,
+      rating_promulgation_date: promulgation_date,
       end_product_last_action_date: end_product_last_action_date,
       caseflow_decision_date: caseflow_decision_date,
       diagnostic_code: diagnostic_code
@@ -127,7 +127,7 @@ describe DecisionIssue do
         description: description,
         request_issues: request_issues,
         benefit_type: benefit_type,
-        profile_date: profile_date,
+        rating_profile_date: profile_date,
         end_product_last_action_date: end_product_last_action_date,
         diagnostic_code: diagnostic_code
       )
@@ -314,13 +314,13 @@ describe DecisionIssue do
     end
   end
 
-  context "#issue_category" do
-    subject { decision_issue.issue_category }
+  context "#nonrating_issue_category" do
+    subject { decision_issue.nonrating_issue_category }
 
     let(:request_issues) do
       [create(
         :request_issue,
-        issue_category: "test category",
+        nonrating_issue_category: "test category",
         nonrating_issue_description: "request issue description"
       )]
     end
@@ -369,7 +369,7 @@ describe DecisionIssue do
         let(:decision_review) { create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number) }
         let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
-        context "when there is a prior claim by the same cliamant on the same veteran" do
+        context "when there is a prior claim by the same claimant on the same veteran" do
           let(:prior_payee_code) { "10" }
           before do
             setup_prior_claim_with_payee_code(decision_review, veteran, prior_payee_code)
@@ -391,15 +391,37 @@ describe DecisionIssue do
         end
 
         context "when there is no prior claim by the claimant" do
-          it "rasies an error" do
-            expect { subject }.to raise_error(DecisionIssue::AppealDTAPayeeCodeError)
+          context "when there is a bgs payee code" do
+            before { allow_any_instance_of(Claimant).to receive(:bgs_payee_code).and_return("12") }
 
-            # verify that both appeal and newly created dta sc have errors
-            expect(SupplementalClaim.find_by(
-                     veteran_file_number: decision_review.veteran_file_number,
-                     establishment_error: "No payee code"
-                   )).to_not be_nil
-            expect(decision_review.establishment_error).to eq("DTA SC creation failed")
+            it "creates a new supplemental claim" do
+              expect(subject).to have_attributes(
+                veteran_file_number: decision_review.veteran_file_number,
+                decision_review_remanded: decision_review,
+                benefit_type: "compensation"
+              )
+              expect(subject.claimants.count).to eq(1)
+              expect(subject.claimants.first).to have_attributes(
+                participant_id: decision_review.claimant_participant_id,
+                payee_code: "12",
+                decision_review: subject
+              )
+            end
+          end
+
+          context "when there is no bgs payee code" do
+            before { allow_any_instance_of(Claimant).to receive(:bgs_payee_code).and_return(nil) }
+
+            it "raises an error" do
+              expect { subject }.to raise_error(DecisionIssue::AppealDTAPayeeCodeError)
+
+              # verify that both appeal and newly created dta sc have errors
+              expect(SupplementalClaim.find_by(
+                       veteran_file_number: decision_review.veteran_file_number,
+                       establishment_error: "No payee code"
+                     )).to_not be_nil
+              expect(decision_review.establishment_error).to eq("DTA SC creation failed")
+            end
           end
         end
       end

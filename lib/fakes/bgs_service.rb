@@ -192,7 +192,7 @@ class Fakes::BGSService
         sc
       when "has_higher_level_review_with_vbms_claim_id"
         claim_id = "600118951"
-        contention_reference_id = 1234
+        contention_reference_id = veteran.file_number[0..4] + "1234"
         hlr = HigherLevelReview.find_or_create_by!(
           veteran_file_number: veteran.file_number
         )
@@ -508,7 +508,22 @@ class Fakes::BGSService
   # rubocop:enable Metrics/MethodLength
 
   def can_access?(vbms_id)
-    !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+    current_user = RequestStore[:current_user]
+    if current_user
+      Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 1.minute) do
+        !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+      end
+    else
+      !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+    end
+  end
+
+  def bust_can_access_cache(user, vbms_id)
+    Rails.cache.delete(can_access_cache_key(user, vbms_id))
+  end
+
+  def can_access_cache_key(user, vbms_id)
+    "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
   end
 
   # TODO: add more test cases
@@ -590,12 +605,23 @@ class Fakes::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     ratings = (self.class.rating_records || {})[participant_id]
 
+    # mimic errors
+    if participant_id == "locked_rating"
+      return { reject_reason: "Locked Rating" }
+    elsif participant_id == "backfilled_rating"
+      return { reject_reason: "Converted or Backfilled Rating" }
+    end
+
     # Simulate the error bgs throws if participant doesn't exist or doesn't have any ratings
     unless ratings
       fail Savon::Error, "java.lang.IndexOutOfBoundsException: Index: 0, Size: 0"
     end
 
-    ratings = ratings.select do |r|
+    build_ratings_in_range(ratings, start_date, end_date)
+  end
+
+  def build_ratings_in_range(all_ratings, start_date, end_date)
+    ratings = all_ratings.select do |r|
       start_date <= r[:prmlgn_dt] && end_date >= r[:prmlgn_dt]
     end
 
@@ -716,7 +742,8 @@ class Fakes::BGSService
 
   def default_claimant_info
     {
-      relationship: "Spouse"
+      relationship: "Spouse",
+      payee_code: "10"
     }
   end
 

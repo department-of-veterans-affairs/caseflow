@@ -14,12 +14,17 @@ class GenericTask < Task
   def verify_org_task_unique
     return if !active?
 
-    if appeal.tasks.active.where(type: type, assigned_to: assigned_to).any? && assigned_to.is_a?(Organization)
+    if appeal.tasks.active.where(
+      type: type,
+      assigned_to: assigned_to,
+      parent: parent
+    ).any? && assigned_to.is_a?(Organization)
       fail(
         Caseflow::Error::DuplicateOrgTask,
         appeal_id: appeal.id,
         task_type: self.class.name,
-        assignee_type: assigned_to.class.name
+        assignee_type: assigned_to.class.name,
+        parent_id: parent&.id
       )
     end
   end
@@ -79,18 +84,14 @@ class GenericTask < Task
     end
 
     def create_child_task(parent, current_user, params)
-      transaction do
-        parent.update!(status: Constants.TASK_STATUSES.on_hold)
-
-        Task.create!(
-          type: name,
-          appeal: parent.appeal,
-          assigned_by_id: child_assigned_by_id(parent, current_user),
-          parent_id: parent.id,
-          assigned_to: child_task_assignee(parent, params),
-          instructions: params[:instructions]
-        )
-      end
+      Task.create!(
+        type: name,
+        appeal: parent.appeal,
+        assigned_by_id: child_assigned_by_id(parent, current_user),
+        parent_id: parent.id,
+        assigned_to: child_task_assignee(parent, params),
+        instructions: params[:instructions]
+      )
     end
   end
 end

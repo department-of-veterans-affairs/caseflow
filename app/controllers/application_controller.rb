@@ -12,7 +12,7 @@ class ApplicationController < ApplicationBaseController
   rescue_from StandardError do |e|
     fail e unless e.class.method_defined?(:serialize_response)
 
-    Raven.capture_exception(e)
+    Raven.capture_exception(e, extra: { error_uuid: error_uuid })
     render(e.serialize_response)
   end
 
@@ -22,7 +22,7 @@ class ApplicationController < ApplicationBaseController
 
   rescue_from Caseflow::Error::VacolsRepositoryError do |e|
     Rails.logger.error "Vacols error occured: #{e.message}"
-    Raven.capture_exception(e)
+    Raven.capture_exception(e, extra: { error_uuid: error_uuid })
     if e.class.method_defined?(:serialize_response)
       render(e.serialize_response)
     else
@@ -110,6 +110,7 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :logo_path
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def application_urls
     urls = [{
       title: "Queue",
@@ -122,9 +123,12 @@ class ApplicationController < ApplicationBaseController
         link: "/hearings/dockets"
       }
     end
-    if current_user.can?("Build HearSched") || current_user.can?("Edit HearSched")
+    if current_user.can?("Build HearSched") ||
+       current_user.can?("Edit HearSched") ||
+       current_user.can?("RO ViewHearSched") ||
+       current_user.can?("VSO")
       urls << {
-        title: "Hearing Schedule",
+        title: "Hearings",
         link: "/hearings/schedule"
       }
     end
@@ -132,6 +136,7 @@ class ApplicationController < ApplicationBaseController
     # Only return the URL list if the user has applications to switch between
     (urls.length > 1) ? urls : nil
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
   helper_method :application_urls
 
   def dropdown_urls
@@ -196,22 +201,6 @@ class ApplicationController < ApplicationBaseController
     redirect_to "/unauthorized" if current_user&.vso_employee?
   end
 
-  # :nocov:
-  def can_assign_task?
-    if current_user.attorney_in_vacols?
-      # This feature toggle control access of attorneys to create admin actions for co-located users
-      feature_enabled?(:attorney_assignment_to_colocated) ||
-        current_user.organizations.pluck(:name).include?(QualityReview.singleton.name)
-    else
-      true
-    end
-  end
-
-  def verify_task_assignment_access
-    redirect_to("/unauthorized") unless can_assign_task?
-  end
-  # :nocov:
-
   def invalid_record_error(record)
     render json: {
       "errors": ["title": "Record is invalid", "detail": record.errors.full_messages.join(" ,")]
@@ -239,7 +228,8 @@ class ApplicationController < ApplicationBaseController
   end
 
   def set_timezone
-    Time.zone = current_user.timezone if current_user
+    Time.zone = session[:timezone] || current_user&.timezone
+    session[:timezone] ||= current_user&.timezone
   end
 
   # This is used in development mode to:
@@ -300,24 +290,29 @@ class ApplicationController < ApplicationBaseController
   end
 
   def on_vbms_error(error)
-    Raven.capture_exception(error)
+    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
     respond_to do |format|
       format.html do
         render "errors/500", layout: "application", status: :internal_server_error
       end
 
       format.json do
-        render json: { errors: [:vbms_error] }, status: :internal_server_error
+        render json: { errors: [:vbms_error], error_uuid: error_uuid }, status: :internal_server_error
       end
     end
   end
+
+  def error_uuid
+    @error_uuid ||= SecureRandom.uuid
+  end
+  helper_method :error_uuid
 
   def feedback_subject
     feedback_hash = {
       "dispatch" => "Caseflow Dispatch",
       "certifications" => "Caseflow Certification",
       "reader" => "Caseflow Reader",
-      "schedule" => "Caseflow Hearing Schedule",
+      "schedule" => "Caseflow Hearings",
       "hearings" => "Caseflow Hearing Prep",
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"

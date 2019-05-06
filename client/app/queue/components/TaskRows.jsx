@@ -8,7 +8,7 @@ import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
 import { GrayDot, GreenCheckmark } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
-import { taskIsOnHold } from '../utils';
+import { taskIsOnHold, sortTaskList } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -124,7 +124,7 @@ class TaskRows extends React.PureComponent {
       <dd>{assignee}</dd></div> : null;
   }
 
-  getAbbrevName = ({ firstName, lastName } : { firstName: string, lastName: string }) => {
+  getAbbrevName = ({ firstName, lastName }) => {
     return `${firstName.substring(0, 1)}. ${lastName}`;
   }
 
@@ -206,6 +206,8 @@ class TaskRows extends React.PureComponent {
       taskList,
       timeline
     } = this.props;
+    const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
+    const sortedTaskList = sortTaskList(taskList);
 
     let timelineContainerText;
 
@@ -219,16 +221,20 @@ class TaskRows extends React.PureComponent {
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
-        <td {...taskTimeTimelineContainerStyling}></td>
-        <td {...taskInfoWithIconTimelineContainer} {...greyDotStyling}><GrayDot />
+        <td {...taskTimeTimelineContainerStyling}>
+          {isLegacyAppealWithDecisionDate ? moment(appeal.decisionDate).format('MM/DD/YYYY') : ''}
+        </td>
+        <td {...taskInfoWithIconTimelineContainer}
+          {...(isLegacyAppealWithDecisionDate ? {} : greyDotStyling)}>
+          {isLegacyAppealWithDecisionDate ? <GreenCheckmark /> : <GrayDot /> }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-            <div {...grayLineTimelineStyling}{...css({ top: '25px !important' })} />}</td>
+            <div {...grayLineTimelineStyling}
+              {...(isLegacyAppealWithDecisionDate ? {} : css({ top: '25px !important' }))} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
-          { timelineContainerText
-          } <br />
+          { timelineContainerText } <br />
         </td>
       </tr> }
-      { taskList.map((task, index) =>
+      { sortedTaskList.map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
@@ -289,4 +295,4 @@ const mapStateToProps = () => {
   };
 };
 
-export default (withRouter(connect(mapStateToProps, null)(TaskRows)): React.ComponentType<>);
+export default (withRouter(connect(mapStateToProps, null)(TaskRows)));
