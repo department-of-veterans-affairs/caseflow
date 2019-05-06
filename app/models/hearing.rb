@@ -149,7 +149,7 @@ class Hearing < ApplicationRecord
     time.to_s
   end
 
-  def centeral_office_time
+  def central_office_time
     time.central_office_time
   end
 
