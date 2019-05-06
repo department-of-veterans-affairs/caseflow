@@ -249,7 +249,7 @@ describe Appeal do
     let!(:past_decision_issue) do
       create(:decision_issue,
              decision_review: another_review,
-             profile_date: receipt_date - 1.day,
+             rating_profile_date: receipt_date - 1.day,
              benefit_type: another_review.benefit_type,
              decision_text: "something decided in the past",
              description: "past issue",
@@ -260,8 +260,8 @@ describe Appeal do
     let!(:future_decision_issue) do
       create(:decision_issue,
              decision_review: another_review,
-             profile_date: receipt_date + 1.day,
-             promulgation_date: receipt_date + 1.day,
+             rating_profile_date: receipt_date + 1.day,
+             rating_promulgation_date: receipt_date + 1.day,
              benefit_type: another_review.benefit_type,
              decision_text: "something was decided in the future",
              description: "future issue",
