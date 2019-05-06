@@ -134,6 +134,10 @@ class Appeal < DecisionReview
     "Original"
   end
 
+  def withdrawn?
+    root_task.status == Constants.TASK_STATUSES.cancelled
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
@@ -550,10 +554,6 @@ class Appeal < DecisionReview
 
   def distributed_to_a_judge?
     tasks.any? { |t| t.is_a?(JudgeTask) }
-  end
-
-  def withdrawn?
-    # will implement when available
   end
 
   def alerts

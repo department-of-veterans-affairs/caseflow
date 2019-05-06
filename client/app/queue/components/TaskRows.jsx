@@ -209,6 +209,16 @@ class TaskRows extends React.PureComponent {
     const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
     const sortedTaskList = sortTaskList(taskList);
 
+    let timelineContainerText;
+
+    if (appeal.withdrawn) {
+      timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
+    } else if (appeal.decisionDate) {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
+    } else {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
+    }
+
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}>
@@ -221,9 +231,7 @@ class TaskRows extends React.PureComponent {
             <div {...grayLineTimelineStyling}
               {...(isLegacyAppealWithDecisionDate ? {} : css({ top: '25px !important' }))} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
-          { appeal.decisionDate ?
-            COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
-          } <br />
+          { timelineContainerText } <br />
         </td>
       </tr> }
       { sortedTaskList.map((task, index) =>

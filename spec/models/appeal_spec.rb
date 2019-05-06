@@ -1615,6 +1615,37 @@ describe Appeal do
       end
     end
 
+  describe ".withdrawn?", focus: true do
+    context "when root task is cancelled" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+      it "is withdrawn" do
+        expect(appeal.withdrawn?).to eq(false)
+        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+        expect(appeal.withdrawn?).to eq(true)
+      end
+    end
+  end
+
+  describe ".sync_tracking_tasks" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    subject { appeal.sync_tracking_tasks }
+
+    context "when the appeal has no VSOs" do
+      before { allow_any_instance_of(Appeal).to receive(:vsos).and_return([]) }
+
+      context "when there are no existing TrackVeteranTasks" do
+        it "does not create or cancel any TrackVeteranTasks" do
+          task_count_before = TrackVeteranTask.count
+
+          expect(subject).to eq([0, 0])
+          expect(TrackVeteranTask.count).to eq(task_count_before)
+        end
+      end
+    end
+
     context "has a scheduled hearing" do
       let(:root_task_status) { "in_progress" }
       let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
