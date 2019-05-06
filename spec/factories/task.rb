@@ -56,6 +56,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :privacy_act_task, class: PrivacyActTask do
+      type { PrivacyActTask.name }
+      appeal { create(:appeal) }
+    end
+
     factory :timed_hold_task, class: TimedHoldTask do
       type { TimedHoldTask.name }
       appeal { create(:appeal) }
