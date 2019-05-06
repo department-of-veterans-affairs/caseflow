@@ -214,8 +214,8 @@ describe HigherLevelReview do
                  decision_review: higher_level_review,
                  disposition: DecisionIssue::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
-                 profile_date: profile_date,
-                 promulgation_date: promulgation_date,
+                 rating_profile_date: profile_date,
+                 rating_promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type,
                  request_issues: [create(:request_issue, end_product_establishment: epe)]),
@@ -223,8 +223,8 @@ describe HigherLevelReview do
                  decision_review: higher_level_review,
                  disposition: DecisionIssue::DTA_ERROR_FED_RECS,
                  rating_issue_reference_id: "rating2",
-                 profile_date: profile_date,
-                 promulgation_date: promulgation_date,
+                 rating_profile_date: profile_date,
+                 rating_promulgation_date: promulgation_date,
                  caseflow_decision_date: caseflow_decision_date,
                  benefit_type: benefit_type,
                  request_issues: [create(:request_issue, end_product_establishment: epe)]),
@@ -275,9 +275,9 @@ describe HigherLevelReview do
           decision_review: supplemental_claim,
           contested_decision_issue_id: decision_issues.first.id,
           contested_rating_issue_reference_id: "rating1",
-          contested_rating_issue_profile_date: decision_issues.first.profile_date.to_s,
+          contested_rating_issue_profile_date: decision_issues.first.rating_profile_date.to_s,
           contested_issue_description: decision_issues.first.description,
-          issue_category: decision_issues.first.issue_category,
+          nonrating_issue_category: decision_issues.first.nonrating_issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.first.approx_decision_date
         )
@@ -291,9 +291,9 @@ describe HigherLevelReview do
           decision_review: supplemental_claim,
           contested_decision_issue_id: decision_issues.second.id,
           contested_rating_issue_reference_id: "rating2",
-          contested_rating_issue_profile_date: decision_issues.second.profile_date.to_s,
+          contested_rating_issue_profile_date: decision_issues.second.rating_profile_date.to_s,
           contested_issue_description: decision_issues.second.description,
-          issue_category: decision_issues.second.issue_category,
+          nonrating_issue_category: decision_issues.second.nonrating_issue_category,
           benefit_type: higher_level_review.benefit_type,
           decision_date: decision_issues.second.approx_decision_date
         )
@@ -369,8 +369,8 @@ describe HigherLevelReview do
         create(:decision_issue,
                decision_review: hlr,
                disposition: "not a dta error",
-               profile_date: promulgation_date,
-               promulgation_date: promulgation_date)
+               rating_profile_date: promulgation_date,
+               rating_promulgation_date: promulgation_date)
       end
 
       it "has a request event and a decision event" do

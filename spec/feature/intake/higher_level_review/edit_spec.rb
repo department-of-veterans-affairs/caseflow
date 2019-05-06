@@ -132,7 +132,7 @@ feature "Higher Level Review Edit issues" do
       create(
         :request_issue,
         decision_review: higher_level_review,
-        issue_category: "Military Retired Pay",
+        nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "eligible nonrating description",
         contention_reference_id: "1234",
         ineligible_reason: nil,
@@ -146,7 +146,7 @@ feature "Higher Level Review Edit issues" do
         :request_issue,
         decision_review: higher_level_review,
         decision_date: 2.years.ago,
-        issue_category: "Active Duty Adjustments",
+        nonrating_issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "untimely nonrating description",
         contention_reference_id: "12345",
         benefit_type: "compensation",
@@ -489,7 +489,7 @@ feature "Higher Level Review Edit issues" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
         decision_review: higher_level_review,
-        issue_category: "Military Retired Pay",
+        nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
         contention_reference_id: "1234",
         benefit_type: "compensation",
@@ -563,12 +563,12 @@ feature "Higher Level Review Edit issues" do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        click_dropdown(text: active_nonrating_request_issue.issue_category)
+        click_dropdown(text: active_nonrating_request_issue.nonrating_issue_category)
         expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
-        add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+        add_active_intake_nonrating_issue(active_nonrating_request_issue.nonrating_issue_category)
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category} -" \
                                      " #{active_nonrating_request_issue.description}" \
                                      " is ineligible because it's already under review as a Higher-Level Review")
 
@@ -581,7 +581,7 @@ feature "Higher Level Review Edit issues" do
         expect(
           RequestIssue.find_by(
             decision_review: higher_level_review,
-            issue_category: active_nonrating_request_issue.issue_category,
+            nonrating_issue_category: active_nonrating_request_issue.nonrating_issue_category,
             ineligible_due_to: active_nonrating_request_issue.id,
             closed_status: :ineligible,
             ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
@@ -611,7 +611,7 @@ feature "Higher Level Review Edit issues" do
         visit "higher_level_reviews/#{nonrating_ep_claim_id}/edit"
         click_intake_add_issue
         click_intake_no_matching_issues
-        click_dropdown(text: active_nonrating_request_issue.issue_category)
+        click_dropdown(text: active_nonrating_request_issue.nonrating_issue_category)
 
         expect(page).to have_content("Does issue 2 match any of these issue categories?")
         expect(page).to_not have_content("Does issue match any of the issues actively being reviewed?")
@@ -678,7 +678,7 @@ feature "Higher Level Review Edit issues" do
       create(
         :request_issue,
         decision_review: higher_level_review,
-        issue_category: "Accrued",
+        nonrating_issue_category: "Accrued",
         decision_date: 1.month.ago,
         nonrating_issue_description: "test description"
       )
@@ -920,7 +920,7 @@ feature "Higher Level Review Edit issues" do
       # assert server has updated data for nonrating and unidentified issues
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
         decision_review: higher_level_review,
-        issue_category: "Active Duty Adjustments",
+        nonrating_issue_category: "Active Duty Adjustments",
         decision_date: profile_date,
         nonrating_issue_description: "Description for Active Duty Adjustments"
       )
@@ -929,7 +929,7 @@ feature "Higher Level Review Edit issues" do
 
       another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
         decision_review: higher_level_review,
-        issue_category: "Active Duty Adjustments",
+        nonrating_issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "Another Description for Active Duty Adjustments"
       )
 
