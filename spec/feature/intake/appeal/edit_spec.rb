@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-ffeature "Appeal Edit issues" do
+feature "Appeal Edit issues" do
   include IntakeHelpers
 
   before do
