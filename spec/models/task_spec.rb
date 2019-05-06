@@ -55,7 +55,7 @@ describe Task do
     end
 
     context "when on_hold task is assigned to an organization" do
-      let(:organization) { Organization.create! }
+      let(:organization) { Organization.create!(name: "Other organization", url: "other") }
       let(:task) { FactoryBot.create(:task, :on_hold, type: "Task", assigned_to: organization) }
       context "when task has no child tasks" do
         it "should not update any attribute of the task" do

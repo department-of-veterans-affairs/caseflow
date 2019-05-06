@@ -32,7 +32,7 @@ class ContestableIssue
     def from_decision_issue(decision_issue, contesting_decision_review)
       new(
         rating_issue_reference_id: decision_issue.rating_issue_reference_id,
-        rating_issue_profile_date: decision_issue.profile_date.try(:to_date),
+        rating_issue_profile_date: decision_issue.rating_profile_date.try(:to_date),
         approx_decision_date: decision_issue.approx_decision_date,
         description: decision_issue.description,
         decision_issue: decision_issue,
