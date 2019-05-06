@@ -11,10 +11,14 @@ class TranscriptionTask < GenericTask
 
   def available_actions(user)
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
-      return [Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h, Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h]
+      [
+        Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h,
+        Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h,
+        Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
+      ]
+    else
+      []
     end
-
-    []
   end
 
   def complete_transcription_data(_user)
