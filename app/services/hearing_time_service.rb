@@ -61,7 +61,7 @@ class HearingTimeService
     hearing_time = DateTime.now.change(
       hour: time_hash[:hour],
       min: time_hash[:min],
-      offset: Time.now.in_time_zone('America/New_York').strftime('%z')
+      offset: Time.now.in_time_zone(hearing.regional_office_timezone).strftime('%z')
     )
 
     co_time = hearing_time.in_time_zone('America/New_York')
