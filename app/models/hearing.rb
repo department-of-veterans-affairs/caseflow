@@ -10,6 +10,8 @@ class Hearing < ApplicationRecord
   has_one :hearing_task_association, as: :hearing
   has_many :hearing_issue_notes
 
+  validates_format_of :scheduled_for_time, :with /\d\d:\d\d/i
+
   class HearingDayFull < StandardError; end
 
   accepts_nested_attributes_for :hearing_issue_notes
@@ -139,6 +141,18 @@ class Hearing < ApplicationRecord
     RegionalOffice::CITIES[regional_office_key][:timezone]
   end
 
+  def time
+    @time ||= HearingTimeService.new(hearing: self)
+  end
+
+  def local_time
+    time.to_s
+  end
+
+  def centeral_office_time
+    time.central_office_time
+  end
+
   def current_issue_count
     request_issues.size
   end
@@ -164,6 +178,8 @@ class Hearing < ApplicationRecord
         :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
+        :local_time,
+        :central_office_time,
         :readable_request_type,
         :scheduled_for,
         :appeal_external_id,
@@ -201,6 +217,8 @@ class Hearing < ApplicationRecord
         :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
+        :local_time,
+        :central_office_time,
         :readable_request_type,
         :scheduled_for,
         :veteran_age,
