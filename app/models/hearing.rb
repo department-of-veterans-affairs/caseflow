@@ -10,7 +10,7 @@ class Hearing < ApplicationRecord
   has_one :hearing_task_association, as: :hearing
   has_many :hearing_issue_notes
 
-  validates :scheduled_for_time, format: { with: /\d\d:\d\d/ }
+  validates :scheduled_for_time, format: { with: /\A\d\d:\d\d\z/ }
 
   class HearingDayFull < StandardError; end
 
@@ -150,7 +150,7 @@ class Hearing < ApplicationRecord
   end
 
   def central_office_time
-    time.central_office_time
+    time.central_office_time_string
   end
 
   def current_issue_count

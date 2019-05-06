@@ -119,7 +119,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def central_office_time
-    time.central_office_time
+    time.central_office_time_string
   end
 
   def request_type_location
