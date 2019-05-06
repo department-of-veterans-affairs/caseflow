@@ -37,12 +37,14 @@ for the next team.
 Each Bat Team member should take responsibility for one or more Slack channels and monitor for Sentry alerts. These
 come from the production Caseflow system.
 
-When a new Sentry alert appears in Slack, it should be investigated asap. If a Github ticket already exists for
-the underlying issue, the Sentry alert should be ignored for a week. If a Github ticket does not yet exist,
-a Github ticket should be created, with a link to the Sentry incident in the ticket description. The key
-evaluation is whether this incident reflects an immediate production issue, particularly affecting
-data integrity, or whether it can be picked up during normal sprint planning. The Bat Team should do just
-enough investigation to determine further action.
+When a new Sentry alert appears in Slack, it should be investigated asap. If you cannot investigate it immediately,
+emoji tag it with the :bat: emoji.
+
+If a Github ticket already exists for the underlying issue, the Sentry alert should be ignored for a week.
+If a Github ticket does not yet exist, create a Github ticket, with a link to the Sentry incident
+in the ticket description. The key evaluation is whether this incident reflects an immediate production issue,
+particularly affecting data integrity, or whether it can be picked up during normal sprint planning.
+The Bat Team should do just enough investigation to determine further action.
 
 Mark the Sentry alert in Slack with the green checkmark emoji when it has been triaged.
 
