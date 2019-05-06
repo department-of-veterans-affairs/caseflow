@@ -42,7 +42,7 @@ ready:
 	h=`docker-compose ps | grep healthy`; while [ "$$h" == "" ]; do h=`docker-compose ps | grep healthy`; echo $$h; sleep 1; done
 
 up:
-	docker-compose up -d
+	cd local/vacols/ && ./build_push.sh local && cd ../../ && docker-compose up -d
 
 run: up ready
 	foreman start
