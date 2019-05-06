@@ -66,7 +66,7 @@ build(){
   echo "--------"
   echo ""
 
-  docker build --force-rm --no-cache --tag  facols_local:${today} .
+  docker build --force-rm --no-cache --tag  vacols_db:latest .
   docker_build_result=$?
   echo ""
   echo "--------"
@@ -91,8 +91,8 @@ build(){
 
 push(){
   eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
-
-  docker tag facols_local:${today} 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today}
+  docker tag vacols_db:latest vacols_db:${today}
+  docker tag vacols_db:${today} 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today}
   if docker push 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today} ; then
     echo "${bold}Success. ${normal}The latest docker image has been pushed."
     echo "${bold}REMEMBER TO CHANGE THE CIRCLE CI CONFIG to use this image.${normal}"

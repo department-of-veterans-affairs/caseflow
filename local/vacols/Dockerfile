@@ -122,7 +122,7 @@ ADD vacols_copy/* /ORCL/
 
 # Start everything up and install FACOLS then remove the setup files
 RUN $ORACLE_BASE/$RUN_FILE_1 && \
-    rm -rf /opt/oracle/scripts/setup/setup_vacols.sql 
+    rm -rf /opt/oracle/scripts/setup/setup_vacols.sql
 
 # Define default command to start Oracle Database.
 CMD exec $ORACLE_BASE/$RUN_FILE

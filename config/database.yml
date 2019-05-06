@@ -48,7 +48,7 @@ development_vacols:
   host: localhost
   port: 1521
   <% end %>
-  database: <%= ENV['DEMO_DB'] || "BVAP.localdomain" %>
+  database: <%= ENV['DEMO_DB'] || "BVAP" %>
 
 demo_vacols:
   adapter: sqlite3
