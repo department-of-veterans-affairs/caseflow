@@ -942,7 +942,7 @@ class SeedDB
           disposition: "allowed",
           decision_review: board_grant_task.appeal,
           request_issues: [request_issue],
-          promulgation_date: 2.months.ago,
+          rating_promulgation_date: 2.months.ago,
           benefit_type: request_issue.benefit_type
         )
       end

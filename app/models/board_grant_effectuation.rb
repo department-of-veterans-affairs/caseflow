@@ -58,9 +58,7 @@ class BoardGrantEffectuation < ApplicationRecord
     return unless matching_rating_issue
 
     granted_decision_issue.update!(
-      promulgation_date: matching_rating_issue.promulgation_date,
       rating_promulgation_date: matching_rating_issue.promulgation_date,
-      profile_date: matching_rating_issue.profile_date,
       rating_profile_date: matching_rating_issue.profile_date,
       decision_text: matching_rating_issue.decision_text,
       rating_issue_reference_id: matching_rating_issue.reference_id

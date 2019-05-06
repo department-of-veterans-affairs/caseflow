@@ -37,8 +37,8 @@ describe ContestableIssue do
       :decision_issue,
       decision_review: create(:appeal),
       rating_issue_reference_id: "rating1",
-      promulgation_date: promulgation_date,
-      profile_date: profile_date,
+      rating_promulgation_date: promulgation_date,
+      rating_profile_date: profile_date,
       description: "this is a good decision",
       benefit_type: benefit_type,
       caseflow_decision_date: caseflow_decision_date
