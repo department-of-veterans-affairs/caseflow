@@ -688,10 +688,14 @@ RSpec.feature "Case details" do
           )
         end
 
-        it "should display sorted issues" do
+        it "should display sorted issues with appropriate key value pairs" do
           visit "/queue/appeals/#{appeal.uuid}"
-          text = issue_description + "\nDiagnostic code: 5008\nIssue\nBenefit type: Compensation\n" + issue_description2
-          expect(page).to have_content(text)
+          issue_key = "Issue: "
+          issue_value = issue_description
+          issue_text = issue_key + issue_value
+          expect(page).to have_content(issue_text)
+          expect(page).to have_content("Benefit type: Compensation")
+          expect(page).to have_content("Diagnostic code: 5008")
         end
       end
     end
