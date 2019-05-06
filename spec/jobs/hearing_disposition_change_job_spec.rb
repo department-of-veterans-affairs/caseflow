@@ -42,6 +42,32 @@ describe HearingDispositionChangeJob do
     FactoryBot.create(:disposition_task, appeal: appeal, parent: parent_hearing_task)
   end
 
+  describe ".hearing_disposition_tasks" do
+    subject { HearingDispositionChangeJob.new.hearing_disposition_tasks }
+
+    # Property: Class that subclasses DispositionTask.
+    context "when there are ChangeHearingDispositionTasks" do
+      let!(:disposition_tasks) do
+        FactoryBot.create_list(:disposition_task, 6, parent: FactoryBot.create(:hearing_task))
+      end
+      let!(:change_disposition_tasks) do
+        FactoryBot.create_list(:change_hearing_disposition_task, 3, parent: FactoryBot.create(:hearing_task))
+      end
+
+      it "only returns the DispositionTasks" do
+        # Confirm that the ChangeHearingDispositionTasks are in the database.
+        expect(ChangeHearingDispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold).count).to(
+          eq(change_disposition_tasks.length)
+        )
+
+        tasks = subject
+
+        expect(tasks.length).to eq(disposition_tasks.length)
+        expect(tasks.pluck(:type).uniq).to eq([DispositionTask.name])
+      end
+    end
+  end
+
   describe ".update_task_by_hearing_disposition" do
     let(:attributes_date_fields) { %w[assigned_at created_at updated_at] }
     subject { HearingDispositionChangeJob.new.update_task_by_hearing_disposition(task) }
