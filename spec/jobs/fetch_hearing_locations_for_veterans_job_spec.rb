@@ -231,7 +231,7 @@ describe FetchHearingLocationsForVeteransJob do
               end
             end
 
-            context "and job has alreay been run on a veteran" do
+            context "and job has already been run on a veteran" do
               it "only produces one admin action" do
                 FetchHearingLocationsForVeteransJob.perform_now
                 FetchHearingLocationsForVeteransJob.perform_now
