@@ -27,6 +27,9 @@ to the needs of production support that week.
 The team does async Slack standup reports each day, listing what happened yesterday, their plans for today,
 and any blockers they are experiencing. The role of the engineering lead is to remove those blockers.
 
+The team does a retrospective each Friday to reflect on the week and determine any recommendations
+for the next team.
+
 ## Protocols
 
 ### Sentry and Slack
