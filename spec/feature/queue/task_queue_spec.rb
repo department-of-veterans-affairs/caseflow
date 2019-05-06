@@ -126,7 +126,7 @@ RSpec.feature "Task queue" do
       end
     end
 
-    it "supports custom sorting", focus: true do
+    it "supports custom sorting" do
       docket_number_column_header = page.find(:xpath, "//thead/tr/th[4]/span/span[1]")
       docket_number_column_header.click
       docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[5]/span[3]")
