@@ -96,7 +96,7 @@ feature "Appeal Edit issues" do
   let(:nonrating_request_issue_attributes) do
     {
       decision_review: appeal,
-      issue_category: "Military Retired Pay",
+      nonrating_issue_category: "Military Retired Pay",
       nonrating_issue_description: "nonrating description",
       contention_reference_id: "1234",
       decision_date: 1.month.ago
@@ -123,7 +123,7 @@ feature "Appeal Edit issues" do
     expect(page).to have_content(nonrating_request_issue.description)
 
     # remove an issue
-    nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.issue_category)
+    nonrating_intake_num = find_intake_issue_number_by_text(nonrating_request_issue.nonrating_issue_category)
     click_remove_intake_issue(nonrating_intake_num)
     click_remove_issue_confirmation
     expect(page).not_to have_content(nonrating_request_issue.description)

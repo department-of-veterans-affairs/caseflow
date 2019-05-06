@@ -56,6 +56,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :privacy_act_task, class: PrivacyActTask do
+      type { PrivacyActTask.name }
+      appeal { create(:appeal) }
+    end
+
     factory :timed_hold_task, class: TimedHoldTask do
       type { TimedHoldTask.name }
       appeal { create(:appeal) }
@@ -145,14 +150,14 @@ FactoryBot.define do
     factory :schedule_hearing_task, class: ScheduleHearingTask do
       type { ScheduleHearingTask.name }
       appeal { create(:appeal) }
-      assigned_to { HearingsManagement.singleton }
+      assigned_to { Bva.singleton }
       parent { create(:hearing_task, appeal: appeal) }
     end
 
     factory :no_show_hearing_task, class: NoShowHearingTask do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
-      assigned_to { HearingAdmin.singleton }
+      assigned_to { HearingsManagement.singleton }
       parent { create(:disposition_task, appeal: appeal) }
     end
 

@@ -42,6 +42,32 @@ describe HearingDispositionChangeJob do
     FactoryBot.create(:disposition_task, appeal: appeal, parent: parent_hearing_task)
   end
 
+  describe ".hearing_disposition_tasks" do
+    subject { HearingDispositionChangeJob.new.hearing_disposition_tasks }
+
+    # Property: Class that subclasses DispositionTask.
+    context "when there are ChangeHearingDispositionTasks" do
+      let!(:disposition_tasks) do
+        FactoryBot.create_list(:disposition_task, 6, parent: FactoryBot.create(:hearing_task))
+      end
+      let!(:change_disposition_tasks) do
+        FactoryBot.create_list(:change_hearing_disposition_task, 3, parent: FactoryBot.create(:hearing_task))
+      end
+
+      it "only returns the DispositionTasks" do
+        # Confirm that the ChangeHearingDispositionTasks are in the database.
+        expect(ChangeHearingDispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold).count).to(
+          eq(change_disposition_tasks.length)
+        )
+
+        tasks = subject
+
+        expect(tasks.length).to eq(disposition_tasks.length)
+        expect(tasks.pluck(:type).uniq).to eq([DispositionTask.name])
+      end
+    end
+  end
+
   describe ".update_task_by_hearing_disposition" do
     let(:attributes_date_fields) { %w[assigned_at created_at updated_at] }
     subject { HearingDispositionChangeJob.new.update_task_by_hearing_disposition(task) }
@@ -212,7 +238,9 @@ describe HearingDispositionChangeJob do
     context "when there is an error outside of the loop" do
       let(:error_msg) { "FAKE ERROR MESSAGE HERE" }
 
-      before { allow(DispositionTask).to receive(:active).and_raise(error_msg) }
+      before do
+        expect_any_instance_of(HearingDispositionChangeJob).to receive(:hearing_disposition_tasks).and_raise(error_msg)
+      end
 
       it "sends the correct number of arguments to log_info" do
         args = Array.new(5, anything)
@@ -348,6 +376,12 @@ describe HearingDispositionChangeJob do
           receive(:log_info).with(anything, task_count_for, error_count, anything).exactly(1).times
         )
         subject
+      end
+    end
+
+    context "when there are no DispositionTasks to be processed" do
+      it "runs successfully but does not do any work" do
+        expect { subject }.to_not raise_error
       end
     end
   end

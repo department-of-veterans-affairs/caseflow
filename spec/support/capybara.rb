@@ -3,6 +3,7 @@
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "selenium-webdriver"
+require "webdrivers"
 
 Sniffybara::Driver.configuration_file = File.expand_path("VA-axe-configuration.json", __dir__)
 
@@ -71,5 +72,3 @@ Capybara.default_max_wait_time = 5
 # Capybara uses puma by default, but for some reason, some of our tests don't
 # pass with puma. See: https://github.com/teamcapybara/capybara/issues/2170
 Capybara.server = :webrick
-
-Chromedriver.set_version "2.45"
