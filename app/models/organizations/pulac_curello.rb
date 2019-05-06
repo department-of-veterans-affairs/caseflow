@@ -2,6 +2,6 @@
 
 class PulacCurello < Organization
   def self.singleton
-    PulacCurello.first || PulacCurello.create(name: "Pulac Curello", url: "pulac-curello")
+    PulacCurello.first || PulacCurello.create(name: Constants.LIT_SUPPORT.PULAC_CURELLO , url: "pulac-curello")
   end
 end
