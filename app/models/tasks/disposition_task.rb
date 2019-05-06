@@ -33,10 +33,12 @@ class DispositionTask < GenericTask
   end
 
   def available_actions(user)
+    hearing_admin_actions = available_hearing_admin_actions(user)
+
     if HearingsManagement.singleton.user_has_access?(user)
-      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h] | hearing_admin_actions
     else
-      []
+      hearing_admin_actions
     end
   end
 
