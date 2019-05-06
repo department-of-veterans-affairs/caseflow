@@ -242,6 +242,49 @@ describe FetchHearingLocationsForVeteransJob do
         end
       end
 
+      context "when va_dot_gov_service returns a MultipleAddressError error" do
+        let(:validate_response) do
+          HTTPI::Response.new(500, [], mock_validate_body(message_key: "MultipleAddressError").to_json)
+        end
+        let!(:vacols_case) do
+          create(:case,
+                 bfcurloc: 57, bfregoff: "RO01", bfcorlid: "123456789S", bfhr: "2", bfdocind: "V",
+                 correspondent: create(:correspondent, saddrzip: nil))
+        end
+
+        before do
+          allow(VADotGovService).to receive(:send_va_dot_gov_request)
+            .with(hash_including(endpoint: "address_validation/v1/validate"))
+            .and_return(validate_response)
+          allow(VADotGovService).to receive(:send_va_dot_gov_request)
+            .with(hash_including(endpoint: "va_facilities/v0/facilities"))
+            .and_return(distance_response)
+        end
+
+        it "finds closest RO based on zipcode" do
+          FetchHearingLocationsForVeteransJob.perform_now
+
+          expect(LegacyAppeal.first.closest_regional_office).to eq "RO01"
+          expect(LegacyAppeal.first.available_hearing_locations.count).to eq 1
+        end
+
+        context "and Veteran has no zipcode" do
+          before do
+            Fakes::BGSService.veteran_records = {
+              "123456789" => veteran_record(file_number: "123456789S", state: nil, zip_code: nil, country: nil)
+            }
+          end
+
+          it "only captures error" do
+            expect(Raven).to receive(:capture_exception)
+              .with(kind_of(Caseflow::Error::VaDotGovMultipleAddressError), anything)
+            FetchHearingLocationsForVeteransJob.perform_now
+            expect(LegacyAppeal.first.closest_regional_office).to be_nil
+            expect(LegacyAppeal.first.available_hearing_locations.count).to eq 0
+          end
+        end
+      end
+
       context "when veterans' states or country vary" do
         let(:veteran) { create(:veteran, file_number: bfcorlid_file_number) }
         let(:veteran_state) { "NH" }
