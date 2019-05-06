@@ -23,13 +23,13 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
           AND admin_actions.id IS NULL AND t.type = 'ScheduleHearingTask'
           AND t.status NOT IN ('cancelled', 'completed')
         )", appeal_type.name)
-      .where("available_hearing_locations.updated_at < ? OR available_hearing_locations.id IS NULL", 1.week.ago)
+      .order("available_hearing_locations.updated_at nulls first")
       .limit(QUERY_LIMIT)
   end
 
   def appeals
-    @appeals ||= (find_appeals_ready_for_geomatching(LegacyAppeal) +
-                 find_appeals_ready_for_geomatching(Appeal))[0..QUERY_LIMIT]
+    @appeals ||= find_appeals_ready_for_geomatching(LegacyAppeal)[0..(QUERY_LIMIT / 2).to_int] +
+                 find_appeals_ready_for_geomatching(Appeal)[0..(QUERY_LIMIT / 2).to_int]
   end
 
   def perform

@@ -103,9 +103,9 @@ class SupplementalClaim < ClaimReview
         decision_review: self,
         contested_decision_issue_id: remand_decision_issue.id,
         contested_rating_issue_reference_id: remand_decision_issue.rating_issue_reference_id,
-        contested_rating_issue_profile_date: remand_decision_issue.profile_date,
+        contested_rating_issue_profile_date: remand_decision_issue.rating_profile_date,
         contested_issue_description: remand_decision_issue.description,
-        issue_category: remand_decision_issue.issue_category,
+        nonrating_issue_category: remand_decision_issue.nonrating_issue_category,
         benefit_type: benefit_type,
         decision_date: remand_decision_issue.approx_decision_date
       )
