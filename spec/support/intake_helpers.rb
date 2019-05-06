@@ -267,6 +267,10 @@ module IntakeHelpers
     safe_click ".remove-issue"
   end
 
+  def click_edit_contention_issue
+    safe_click ".edit-contention-issue"
+  end
+
   def click_number_of_issues_changed_confirmation
     safe_click "#Number-of-issues-has-changed-button-id-1"
   end
@@ -276,17 +280,17 @@ module IntakeHelpers
   end
 
   def find_intake_issue_by_number(number)
-    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
+    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
       if node.find(".issue-num").text.match?(/^#{number}\./)
-        return node
+        return node.find(".issue")
       end
     end
   end
 
   def find_intake_issue_by_text(text)
-    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
+    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
       if node.text.match?(/#{text}/)
-        return node
+        return node.find(".issue")
       end
     end
   end
