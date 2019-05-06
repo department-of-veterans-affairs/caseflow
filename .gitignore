@@ -56,3 +56,6 @@ config/build_version.yml
 
 # FACOLS build
 local/vacols/build_facols/*
+
+# makefile
+Makefile
