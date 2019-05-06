@@ -238,7 +238,9 @@ describe HearingDispositionChangeJob do
     context "when there is an error outside of the loop" do
       let(:error_msg) { "FAKE ERROR MESSAGE HERE" }
 
-      before { allow(DispositionTask).to receive(:active).and_raise(error_msg) }
+      before do
+        expect_any_instance_of(HearingDispositionChangeJob).to receive(:hearing_disposition_tasks).and_raise(error_msg)
+      end
 
       it "sends the correct number of arguments to log_info" do
         args = Array.new(5, anything)
