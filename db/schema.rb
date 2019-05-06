@@ -687,10 +687,11 @@ ActiveRecord::Schema.define(version: 20190430225016) do
 
   create_table "organizations", force: :cascade do |t|
     t.string "name"
-    t.string "participant_id"
-    t.string "role"
-    t.string "type"
-    t.string "url"
+    t.string "participant_id", comment: "Organizations BGS partipant id"
+    t.string "role", comment: "Role users in organization must have, if present"
+    t.string "type", comment: "Single table inheritance"
+    t.string "url", comment: "Unique portion of the organization queue url"
+    t.index ["url"], name: "index_organizations_on_url", unique: true
   end
 
   create_table "organizations_users", force: :cascade do |t|
