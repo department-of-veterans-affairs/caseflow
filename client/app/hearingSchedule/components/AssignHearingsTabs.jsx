@@ -5,6 +5,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import LEGACY_APPEAL_TYPES_BY_ID from '../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
+import COPY from '../../../COPY.json';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
@@ -12,12 +13,6 @@ import { renderAppealType } from '../../queue/utils';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import StatusMessage from '../../components/StatusMessage';
 import { getFacilityType } from '../../components/DataDropdowns/AppealHearingLocations';
-
-const veteranNotAssignedStyle = css({ fontSize: '3rem' });
-const veteranNotAssignedMessage = <span {...veteranNotAssignedStyle}>
-  Please verify that this RO has veterans to assign a hearing</span>;
-const veteranNotAssignedTitleStyle = css({ fontSize: '4rem' });
-const veteranNotAssignedTitle = <span {...veteranNotAssignedTitleStyle}>There are no schedulable veterans</span>;
 
 const filterDropdownFix = css({
   '& svg.table-icon + div': {
@@ -44,9 +39,9 @@ const AvailableVeteransTable = ({ rows, columns }) => {
   if (_.isEmpty(rows)) {
     return <div>
       <StatusMessage
-        title= {veteranNotAssignedTitle}
+        title= {COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER}
         type="alert"
-        messageText={veteranNotAssignedMessage}
+        messageText={COPY.ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE}
         wrapInAppSegment={false}
       />
     </div>;
@@ -61,10 +56,20 @@ const AvailableVeteransTable = ({ rows, columns }) => {
   />;
 };
 
-const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => (
-  <div>
+const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
+  if (_.isNil(selectedHearingDay)) {
+    return <StatusMessage
+      title={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER}
+      type="alert"
+      messageText={COPY.ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE}
+      wrapInAppSegment={false}
+    />;
+  }
+
+  return <div>
     <Link to={`/schedule/docket/${selectedHearingDay.id}`}>
-      {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }</Link>
+      {`View the Daily Docket for ${moment(selectedHearingDay.scheduledFor).format('M/DD/YYYY')}` }
+    </Link>
     <Table
       columns={columns}
       rowObjects={rows}
@@ -72,8 +77,8 @@ const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => (
       slowReRendersAreOk
       bodyStyling={tableNumberStyling}
     />
-  </div>
-);
+  </div>;
+};
 
 export default class AssignHearingsTabs extends React.Component {
 
@@ -310,12 +315,7 @@ export default class AssignHearingsTabs extends React.Component {
         name={appeal.externalId}
         href={(() => {
           const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
-          const timer = () => {
-            let time = getTime(selectedHearingDay.scheduledFor);
-
-            return time === '12:00 am ET' ? '' : time;
-          };
-          const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}&hearingTime=${timer()}`;
+          const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
 
           return `/queue/appeals/${appeal.externalId}/${qry}`;
         })()}>
@@ -365,18 +365,18 @@ export default class AssignHearingsTabs extends React.Component {
   render() {
     const { selectedHearingDay, appealsReadyForHearing, room } = this.props;
 
-    const availableSlots = selectedHearingDay.totalSlots - Object.keys(selectedHearingDay.hearings).length;
+    const hearingsForSelected = _.get(selectedHearingDay, 'hearings', []);
+    const availableSlots = _.get(selectedHearingDay, 'totalSlots', 0) - Object.keys(hearingsForSelected).length;
 
-    const upcomingHearings = _.orderBy(Object.values(selectedHearingDay.hearings),
-      (hearing) => hearing.scheduledFor, 'asc');
+    const upcomingHearings = _.orderBy(Object.values(hearingsForSelected), (hearing) => hearing.scheduledFor, 'asc');
     const amaAppeals = _.filter(appealsReadyForHearing, (appeal) => this.isAmaAppeal(appeal));
     const legacyAppeals = _.filter(appealsReadyForHearing, (appeal) => !this.isAmaAppeal(appeal));
 
     return <div className="usa-width-three-fourths" {...filterDropdownFix}>
-      <h1>
+      {!_.isNil(selectedHearingDay) && <h1>
         {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
           ${room} (${availableSlots} slots remaining)`}
-      </h1>
+      </h1>}
       <TabWindow
         name="scheduledHearings-tabwindow"
         tabs={[
