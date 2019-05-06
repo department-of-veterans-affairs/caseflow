@@ -7,17 +7,7 @@ describe Organization do
       let(:url_out) { "my-url-goes-here" }
 
       it "converts those characters before saving to the database" do
-        org = Organization.create!(url: url_in)
-        expect(org.url).to eq(url_out)
-      end
-    end
-
-    context "when there is no input URL" do
-      let(:url_in) { nil }
-      let(:url_out) { nil }
-
-      it "saves to the database with a null URL" do
-        org = Organization.create!(url: url_in)
+        org = Organization.create!(url: url_in, name: "Foo")
         expect(org.url).to eq(url_out)
       end
     end

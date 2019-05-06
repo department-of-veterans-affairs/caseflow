@@ -83,7 +83,7 @@ describe RequestIssue do
       decision_review: review,
       nonrating_issue_description: "a nonrating request issue description",
       contested_issue_description: nonrating_contested_issue_description,
-      issue_category: "a category",
+      nonrating_issue_category: "a category",
       decision_date: 1.day.ago,
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
@@ -544,7 +544,7 @@ describe RequestIssue do
       {
         rating_issue_reference_id: rating_issue_reference_id,
         decision_text: "decision text",
-        issue_category: issue_category,
+        nonrating_issue_category: nonrating_issue_category,
         is_unidentified: is_unidentified,
         decision_date: Time.zone.today,
         notes: "notes",
@@ -561,7 +561,7 @@ describe RequestIssue do
 
     let(:rating_issue_reference_id) { nil }
     let(:contested_decision_issue_id) { nil }
-    let(:issue_category) { nil }
+    let(:nonrating_issue_category) { nil }
     let(:is_unidentified) { nil }
 
     it do
@@ -606,12 +606,12 @@ describe RequestIssue do
       end
     end
 
-    context "when issue_category is set" do
-      let(:issue_category) { "other" }
+    context "when nonrating_issue_category is set" do
+      let(:nonrating_issue_category) { "other" }
 
       it do
         is_expected.to have_attributes(
-          issue_category: "other",
+          nonrating_issue_category: "other",
           contested_issue_description: nil,
           nonrating_issue_description: "decision text",
           unidentified_issue_text: nil
@@ -1284,9 +1284,9 @@ describe RequestIssue do
                 rating_issue_reference_id: contested_rating_issue_reference_id,
                 disposition: "allowed",
                 participant_id: veteran.participant_id,
-                promulgation_date: ratings.promulgation_date,
+                rating_promulgation_date: ratings.promulgation_date,
                 decision_text: "Left knee granted",
-                profile_date: ratings.profile_date,
+                rating_profile_date: ratings.profile_date,
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
                 benefit_type: "compensation",
@@ -1346,8 +1346,8 @@ describe RequestIssue do
                 disposition: "allowed",
                 description: "allowed: #{request_issue.description}",
                 decision_review_type: "HigherLevelReview",
-                profile_date: ratings.profile_date,
-                promulgation_date: ratings.promulgation_date,
+                rating_profile_date: ratings.profile_date,
+                rating_promulgation_date: ratings.promulgation_date,
                 decision_review_id: review.id,
                 benefit_type: "compensation",
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date

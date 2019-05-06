@@ -448,6 +448,8 @@ describe DispositionTask do
           expect(no_show_hearing_task.on_hold_expired?).to be_falsey
           expect(no_show_hearing_task.reload.on_hold?).to be_truthy
           expect(no_show_hearing_task.on_hold_duration).to eq 25
+          instructions_text = "Mail must be received within 14 days of the original hearing date."
+          expect(no_show_hearing_task.instructions).to eq [instructions_text]
         end
       end
 

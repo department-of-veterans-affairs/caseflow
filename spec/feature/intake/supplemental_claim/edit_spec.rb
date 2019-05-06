@@ -121,7 +121,7 @@ feature "Supplemental Claim Edit issues" do
     let!(:nonrating_request_issue) do
       RequestIssue.create!(
         decision_review: supplemental_claim,
-        issue_category: "Military Retired Pay",
+        nonrating_issue_category: "Military Retired Pay",
         nonrating_issue_description: "nonrating description",
         contention_reference_id: "1234",
         benefit_type: benefit_type,
@@ -351,13 +351,13 @@ feature "Supplemental Claim Edit issues" do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        fill_in "Issue category", with: active_nonrating_request_issue.issue_category
+        fill_in "Issue category", with: active_nonrating_request_issue.nonrating_issue_category
         find("#issue-category").send_keys :enter
         expect(page).to have_content("Does issue 2 match any of the issues actively being reviewed?")
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
-        add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+        add_active_intake_nonrating_issue(active_nonrating_request_issue.nonrating_issue_category)
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category} -" \
                                      " #{active_nonrating_request_issue.description}" \
                                      " is ineligible because it's already under review as a Higher-Level Review")
 
@@ -370,7 +370,7 @@ feature "Supplemental Claim Edit issues" do
         expect(
           RequestIssue.find_by(
             decision_review: supplemental_claim,
-            issue_category: active_nonrating_request_issue.issue_category,
+            nonrating_issue_category: active_nonrating_request_issue.nonrating_issue_category,
             ineligible_due_to: active_nonrating_request_issue.id,
             ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
             nonrating_issue_description: active_nonrating_request_issue.description,
