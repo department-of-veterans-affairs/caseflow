@@ -250,8 +250,9 @@ RSpec.feature "Attorney checkout flow" do
       click_on "(#{appeal.veteran_file_number})"
 
       expect(page).to have_content "Correct issues"
-      expect(page).to have_content("Added to 2 issues", count: 2)
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+
+      expect(page).to have_content("Added to 2 issues", count: 2)
 
       expect(page).to have_content(decision_issue_text)
 
