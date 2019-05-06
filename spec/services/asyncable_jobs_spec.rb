@@ -41,6 +41,7 @@ describe AsyncableJobs do
   let!(:sc_canceled) do
     create(:supplemental_claim,
            veteran_file_number: veteran.file_number,
+           establishment_error: "bad problem",
            establishment_canceled_at: 2.days.ago)
   end
 
