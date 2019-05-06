@@ -1,8 +1,6 @@
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
@@ -124,9 +122,7 @@ class TaskRows extends React.PureComponent {
       <dd>{assignee}</dd></div> : null;
   }
 
-  getAbbrevName = ({ firstName, lastName }) => {
-    return `${firstName.substring(0, 1)}. ${lastName}`;
-  }
+  getAbbrevName = ({ firstName, lastName }) => `${firstName.substring(0, 1)}. ${lastName}`;
 
   assignedByListItem = (task) => {
     const assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
@@ -289,10 +285,4 @@ class TaskRows extends React.PureComponent {
   }
 }
 
-const mapStateToProps = () => {
-
-  return {
-  };
-};
-
-export default (withRouter(connect(mapStateToProps, null)(TaskRows)));
+export default TaskRows;
