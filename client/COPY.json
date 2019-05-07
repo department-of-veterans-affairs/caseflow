@@ -395,6 +395,7 @@
 
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "DUPLICATE_PHONE_NUMBER_TITLE": "Veteran Record Alert",
+  "DUPLICATE_PHONE_NUMBER_MESSAGE": "Please contact VLJ Support to request that this veteran's information be updated to remove duplicate phone numbers currently on file to resolve this error.",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below or if the claimant's information needs updated, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
@@ -436,5 +437,5 @@
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER": "There are no schedulable veterans",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE": "Please verify that this RO has veterans to assign a hearing",
   "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER": "This RO has no available hearing days",
-  "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE": "Please contact your supervisor for further assistance. You can  see the list of schedulable Veterans by clicking on their respective tabs"
+  "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE": "Please contact your supervisor for further assistance. You can see the list of schedulable Veterans by clicking on their respective tabs"
 }
