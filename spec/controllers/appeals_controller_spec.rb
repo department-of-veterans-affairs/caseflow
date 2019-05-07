@@ -147,7 +147,6 @@ RSpec.describe AppealsController, type: :controller do
     before { User.authenticate!(roles: ["System Admin"]) }
 
     context "when a legacy appeal has documents" do
-
       let(:documents) do
         [
           create(:document, type: "SSOC", received_at: 6.days.ago),
