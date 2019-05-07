@@ -80,8 +80,8 @@ class RampRefiling < RampReview
 
     # If an error occurs with creating the contentions in VBMS, swallow the error and don't save
     # the ramp refiling as being processed, we'll retry later.
-  rescue StandardError => e
-    Raven.capture_exception(e)
+  rescue StandardError => error
+    Raven.capture_exception(error)
     false
   end
 

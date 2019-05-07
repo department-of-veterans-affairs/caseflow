@@ -279,7 +279,7 @@ class EndProduct
 
       begin
         Date.iso8601(date)
-      rescue ArgumentError => _err
+      rescue ArgumentError
         Date.strptime(date, "%m/%d/%Y")
       end
     end
