@@ -228,24 +228,27 @@ export class AddIssuesPage extends React.Component {
 
     const withdrawError = () => {
 
-      const currentDate = new Date(intakeData.withdrawalDate);
+      const withdrawalDate = new Date(intakeData.withdrawalDate);
 
-      const newDate = new Date();
+      const currentDate = new Date();
 
       const receiptDate = new Date(intakeData.receiptDate);
 
       const formName = _.find(FORM_TYPES, { key: formType }).shortName;
 
+      let message;
+
       if (validateDate(intakeData.withdrawalDate)) {
 
-        if (currentDate < receiptDate) {
-          return `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
+        if (withdrawalDate < receiptDate) {
+          message = `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
 
-        } else if (currentDate > newDate) {
+        } else if (withdrawalDate > currentDate) {
 
-          return 'We cannot process your request. Please select a date prior to today\'s date.';
+          message = 'We cannot process your request. Please select a date prior to today\'s date.';
         }
 
+        return message;
       }
 
     };
@@ -377,8 +380,7 @@ export const EditAddIssuesPage = connect(
     formType: state.formType,
     veteran: state.veteran,
     featureToggles: state.featureToggles,
-    editPage: true,
-    withdrawDateError: state.withdrawDateError
+    editPage: true
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
