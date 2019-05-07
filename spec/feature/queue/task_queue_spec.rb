@@ -127,9 +127,9 @@ RSpec.feature "Task queue" do
     end
 
     it "supports custom sorting" do
-      docket_number_column_header = page.find(:xpath, "//thead/tr/th[3]/span/span[1]")
+      docket_number_column_header = page.find(:xpath, "//thead/tr/th[4]/span/span[1]")
       docket_number_column_header.click
-      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[4]/span[3]")
+      docket_number_column_vals = page.find_all(:xpath, "//tbody/tr/td[5]/span[3]")
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
       docket_number_column_header.click
       expect(docket_number_column_vals.map(&:text)).to eq vacols_tasks.map(&:docket_number).sort.reverse
