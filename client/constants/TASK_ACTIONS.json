@@ -10,6 +10,7 @@
     "CANCEL_TASK": { "label": "Cancel task", "value": "modal/cancel_task", "func": "cancel_task_data" },
     "COLOCATED_RETURN_TO_ATTORNEY": { "label": "Send back to attorney", "value": "modal/mark_task_complete" },
     "COMPLETE_TRANSCRIPTION": { "label": "Mark as complete: Transcribed", "value": "modal/mark_task_complete", "func": "complete_transcription_data" },
+    "CREATE_CHANGE_HEARING_DISPOSITION_TASK": { "label": "Send for hearing disposition change", "value": "modal/create_change_hearing_disposition_task" },
     "CREATE_MAIL_TASK": { "label": "Create mail task", "value": "modal/create_mail_task", "func": "mail_assign_to_organization_data" },
     "JUDGE_LEGACY_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/special_issues"  },
     "JUDGE_AMA_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/dispositions"  },
