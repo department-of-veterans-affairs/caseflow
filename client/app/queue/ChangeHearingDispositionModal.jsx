@@ -17,7 +17,7 @@ import {
 import { onReceiveAmaTasks } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
-import TextareaField from '../components/TextareaField';
+import TextareaNotesField from '../components/TextareaNotesField';
 import QueueFlowModal from './components/QueueFlowModal';
 
 import {
@@ -122,10 +122,8 @@ class ChangeHearingDispositionModal extends React.Component {
         onChange={(option) => this.setState({ selectedValue: option ? option.value : null })}
         options={dispositionOptions} />
       <br />
-      <TextareaField
-        name="Notes"
+      <TextareaNotesField
         errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-        id="taskInstructions"
         onChange={(value) => this.setState({ instructions: value })}
         value={this.state.instructions} />
 
