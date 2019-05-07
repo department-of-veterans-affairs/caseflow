@@ -145,8 +145,6 @@ class AssignHearingsContainer extends React.PureComponent {
             message: 'Loading appeals to be scheduled for hearings...'
           }}>
 
-          {(_.isEmpty(this.props.upcomingHearingDays) && roValue) && this.getNoUpcomingError()}
-
           <AssignHearings
             selectedRegionalOffice={this.props.selectedRegionalOffice.value}
             upcomingHearingDays={this.props.upcomingHearingDays}
