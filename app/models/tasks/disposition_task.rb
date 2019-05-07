@@ -121,7 +121,7 @@ class DispositionTask < GenericTask
   private
 
   def update_children_status_after_closed
-    children.active.update_all(status: Constants.TASK_STATUSES.completed)
+    children.active.update_all(status: status)
   end
 
   def update_hearing_and_self(params:, payload_values:)
