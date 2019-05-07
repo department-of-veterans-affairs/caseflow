@@ -13,7 +13,7 @@ class HearingAdminActionTask < GenericTask
     if params[:assigned_to_type] && params[:assigned_to_id]
       super(parent, params)
     else
-      HearingAdmin.singleton
+      HearingsManagement.singleton
     end
   end
 
@@ -41,6 +41,10 @@ class HearingAdminActionTask < GenericTask
     else
       []
     end
+  end
+
+  def actions_allowable?(user)
+    HearingsManagement.singleton.user_has_access?(user) && super
   end
 
   def assign_to_user_data(user = nil)

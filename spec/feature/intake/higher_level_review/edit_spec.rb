@@ -1398,10 +1398,48 @@ feature "Higher Level Review Edit issues" do
 
         fill_in "withdraw-date", with: withdraw_date
         click_edit_submit
-        sleep 1
 
-        expect(current_path).to eq("/decision_reviews/education")
+        expect(page).to have_current_path("/decision_reviews/education")
         expect(page).to have_content("You have successfully withdrawn a review.")
+      end
+
+      scenario "show alert message when a decision review is withdrawn" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+        click_withdraw_intake_issue_dropdown(1)
+        fill_in "withdraw-date", with: withdraw_date
+        click_edit_submit
+
+        expect(page).to have_current_path("/decision_reviews/education")
+        expect(page).to have_content("You have successfully withdrawn 1 issue.")
+      end
+
+      scenario "show alert message when a decision review is removed" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        click_remove_intake_issue_dropdown("1")
+        click_edit_submit_and_confirm
+
+        expect(page).to have_current_path("/decision_reviews/education")
+        expect(page).to have_content("You have successfully removed 1 issue.")
+      end
+
+      scenario "show alert message when a decision review is added, removed and withdrawn" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        click_intake_add_issue
+        expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
+        add_intake_nonrating_issue(
+          category: "Accrued",
+          description: "Description for Accrued",
+          date: 1.day.ago.to_date.mdY
+        )
+
+        click_remove_intake_issue_dropdown(1)
+        click_withdraw_intake_issue_dropdown(2)
+        fill_in "withdraw-date", with: withdraw_date
+        click_edit_submit
+
+        expect(page).to have_current_path("/decision_reviews/education")
+        expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
       end
     end
 
