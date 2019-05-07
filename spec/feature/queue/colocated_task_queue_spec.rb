@@ -222,10 +222,8 @@ RSpec.feature "ColocatedTask" do
           selected_opt_0
         )
       )
-      expect(page).to have_current_path("/queue")
 
       # Ensure the task has been updated
-      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       expect(page).to have_content(selected_opt_0)
       click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
       expect(page).to have_content(instructions)

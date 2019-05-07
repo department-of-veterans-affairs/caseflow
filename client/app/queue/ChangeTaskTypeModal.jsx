@@ -124,6 +124,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
       submit={this.submit}
       title={COPY.CHANGE_COLOCATED_TASK_SUBHEAD}
       button={COPY.CHANGE_COLOCATED_TASK_SUBHEAD}
+      pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
       {...otherProps}
     >
       {error && <Alert title={error.title} type="error">
