@@ -97,9 +97,7 @@ describe DecisionReview do
     context "when there are no request issues" do
       before { higher_level_review.request_issues.each(&:destroy!) }
 
-      it "returns false" do
-        expect(subject).to eq(false)
-      end
+      it { is_expected.to eq(false) }
     end
   end
 
