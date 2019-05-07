@@ -12,12 +12,14 @@ class HearingsController < ApplicationController
 
   def update
     if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(HearingTimeService.handle_time_params(update_params_legacy))
+      params = HearingTimeService.build_params_with_time(hearing, update_params_legacy)
+      hearing.update_caseflow_and_vacols(params)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
       HearingRepository.load_vacols_data(hearing)
     else
       Transcription.find_or_create_by(hearing: hearing)
-      hearing.update!(HearingTimeService.handle_time_params(update_params))
+      params = HearingTimeService.build_params_with_time(hearing, update_params)
+      hearing.update!(params)
     end
 
     render json: hearing.to_hash(current_user.id)
@@ -89,8 +91,9 @@ class HearingsController < ApplicationController
                                      :transcript_requested,
                                      :prepped,
                                      :scheduled_for,
-                                     :hour,
-                                     :min,
+                                     scheduled_for_time: [
+                                       :hour, :min
+                                     ],
                                      hearing_location_attributes: [
                                        :city, :state, :address,
                                        :facility_id, :facility_type,
@@ -99,7 +102,6 @@ class HearingsController < ApplicationController
                                      ])
   end
 
-  # rubocop:disable Metrics/MethodLength
   def update_params
     params.require("hearing").permit(:notes,
                                      :disposition,
@@ -107,13 +109,14 @@ class HearingsController < ApplicationController
                                      :transcript_requested,
                                      :transcript_sent_date,
                                      :prepped,
-                                     :scheduled_time,
                                      :judge_id,
                                      :room,
                                      :bva_poc,
-                                     :hour,
-                                     :min,
                                      :evidence_window_waived,
+                                     :scheduled_for,
+                                     scheduled_for_time: [
+                                       :hour, :min
+                                     ],
                                      hearing_location_attributes: [
                                        :city, :state, :address,
                                        :facility_id, :facility_type,
@@ -127,5 +130,4 @@ class HearingsController < ApplicationController
                                        :transcriber, :uploaded_to_vbms_date
                                      ])
   end
-  # rubocop:enable Metrics/MethodLength
 end
