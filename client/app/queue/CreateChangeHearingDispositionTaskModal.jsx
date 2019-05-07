@@ -13,7 +13,7 @@ import {
 
 import { onReceiveAmaTasks } from './QueueActions';
 
-import TextareaNotesField from '../components/TextareaNotesField';
+import TextareaField from '../components/TextareaField';
 import QueueFlowModal from './components/QueueFlowModal';
 
 import {
@@ -79,8 +79,10 @@ class CreateChangeHearingDispositionTaskModal extends React.Component {
     >
       <p>{COPY.CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_BODY}</p>
 
-      <TextareaNotesField
+      <TextareaField
+        name="Notes"
         errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+        id="taskInstructions"
         onChange={(value) => this.setState({ instructions: value })}
         value={this.state.instructions} />
 
