@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import { css } from 'glamor';
 import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
@@ -17,11 +16,7 @@ import {
   appealWithDetailSelector,
   taskById
 } from './selectors';
-import {
-  fullWidth,
-  marginBottom,
-  marginTop
-} from './constants';
+import { marginTop } from './constants';
 import COPY from '../../COPY.json';
 
 import { taskActionData } from './utils';
