@@ -168,4 +168,67 @@ RSpec.feature "ColocatedTask" do
       expect(page).to have_content(appeal.veteran.name.formatted(:readable_full))
     end
   end
+
+  describe "vlj support staff changes task type" do
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:appeal) { root_task.appeal }
+    let!(:colocated_task) do
+      FactoryBot.create(
+        :ama_colocated_task,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: vlj_support_staff,
+        action: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last
+      )
+    end
+
+    it "should update the task type" do
+      # Visit case details page for VLJ support staff.
+      User.authenticate!(user: vlj_support_staff)
+      visit "/queue"
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+
+      # Navigate to the change task type modal
+      find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
+
+      expect(page).to have_content(COPY::CHANGE_COLOCATED_TASK_SUBHEAD)
+      opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length - 1)
+      selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+
+      # Ensure all admin actions are available
+      find(".Select-control", text: "Select an action type").click do
+        visible_options = page.find_all(".Select-option")
+        expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
+      end
+
+      # Attempt to change task type without including instuctions.
+      find("div", class: "Select-option", text: selected_opt_0).click
+      find("button", text: COPY::CHANGE_COLOCATED_TASK_SUBHEAD).click
+
+      # Instructions field is required
+      expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+
+      # Add instructions and try again
+      instructions = generate_words(5)
+      fill_in("instructions", with: instructions)
+      find("button", text: COPY::CHANGE_COLOCATED_TASK_SUBHEAD).click
+
+      # We should see a success message and be redirected to our queue page.
+      expect(page).to have_content(
+        format(
+          COPY::CHANGE_COLOCATED_TASK_TYPE_CONFIRMATION_TITLE,
+          Constants::CO_LOCATED_ADMIN_ACTIONS.values.last,
+          selected_opt_0
+        )
+      )
+      expect(page).to have_current_path("/queue")
+
+      # Ensure the task has been updated
+      click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+      expect(page).to have_content(selected_opt_0)
+      click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+      expect(page).to have_content(instructions)
+    end
+  end
 end
