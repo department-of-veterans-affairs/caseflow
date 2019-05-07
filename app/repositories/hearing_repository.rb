@@ -228,7 +228,9 @@ class HearingRepository
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
         hearing_day_id: vacols_record.vdkey,
-        master_record: false
+        master_record: false,
+        bva_poc: vacols_record.vdbvapoc,
+        judge_id: vacols_record.board_member
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
