@@ -33,8 +33,7 @@ class ClaimReview < DecisionReview
       claim_review
     end
 
-    # Does not include decision reviews where all request issues were removed
-    def find_all_by_file_number(file_number)
+    def find_all_visible_by_file_number(file_number)
       HigherLevelReview.where(veteran_file_number: file_number).reject(&:removed?) +
         SupplementalClaim.where(veteran_file_number: file_number).reject(&:removed?)
     end

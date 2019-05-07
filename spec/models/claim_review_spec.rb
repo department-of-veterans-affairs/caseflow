@@ -830,14 +830,14 @@ describe ClaimReview do
     end
   end
 
-  describe "#find_all_by_file_number" do
+  describe "#find_all_visible_by_file_number" do
     let!(:removed_hlr) { create(:higher_level_review, veteran_file_number: veteran_file_number) }
     let!(:removed_sc) { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
     let!(:removed_hlr_issue) { create(:request_issue, :removed, decision_review: removed_hlr) }
     let!(:removed_sc_issue) { create(:request_issue, :removed, decision_review: removed_sc) }
 
     it "finds higher level reviews and supplemental claims" do
-      expect(ClaimReview.find_all_by_file_number(veteran_file_number).length).to eq(2)
+      expect(ClaimReview.find_all_visible_by_file_number(veteran_file_number).length).to eq(2)
     end
   end
 
