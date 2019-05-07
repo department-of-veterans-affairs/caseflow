@@ -57,9 +57,9 @@ class DecisionDocument < ApplicationRecord
     end
 
     processed!
-  rescue StandardError => err
-    update_error!(err.to_s)
-    raise err
+  rescue StandardError => error
+    update_error!(error.to_s)
+    raise error
   end
 
   # Used by EndProductEstablishment to determine what modifier to use for the effectuation EPs

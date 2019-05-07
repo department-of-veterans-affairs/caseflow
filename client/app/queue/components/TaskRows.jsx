@@ -1,8 +1,6 @@
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
@@ -124,9 +122,7 @@ class TaskRows extends React.PureComponent {
       <dd>{assignee}</dd></div> : null;
   }
 
-  getAbbrevName = ({ firstName, lastName }) => {
-    return `${firstName.substring(0, 1)}. ${lastName}`;
-  }
+  getAbbrevName = ({ firstName, lastName }) => `${firstName.substring(0, 1)}. ${lastName}`;
 
   assignedByListItem = (task) => {
     const assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
@@ -209,6 +205,16 @@ class TaskRows extends React.PureComponent {
     const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
     const sortedTaskList = sortTaskList(taskList);
 
+    let timelineContainerText;
+
+    if (appeal.withdrawn) {
+      timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
+    } else if (appeal.decisionDate) {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
+    } else {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
+    }
+
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}>
@@ -221,9 +227,7 @@ class TaskRows extends React.PureComponent {
             <div {...grayLineTimelineStyling}
               {...(isLegacyAppealWithDecisionDate ? {} : css({ top: '25px !important' }))} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
-          { appeal.decisionDate ?
-            COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
-          } <br />
+          { timelineContainerText } <br />
         </td>
       </tr> }
       { sortedTaskList.map((task, index) =>
@@ -281,10 +285,4 @@ class TaskRows extends React.PureComponent {
   }
 }
 
-const mapStateToProps = () => {
-
-  return {
-  };
-};
-
-export default (withRouter(connect(mapStateToProps, null)(TaskRows)));
+export default TaskRows;

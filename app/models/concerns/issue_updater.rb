@@ -11,8 +11,8 @@ module IssueUpdater
     create_decision_issues!
     fail_if_not_all_request_issues_have_decision!
     fail_if_appeal_has_no_decision_issues!
-  rescue ActiveRecord::RecordInvalid => e
-    raise Caseflow::Error::AttorneyJudgeCheckoutError, message: e.message
+  rescue ActiveRecord::RecordInvalid => error
+    raise Caseflow::Error::AttorneyJudgeCheckoutError, message: error.message
   end
 
   def update_issue_dispositions_in_vacols!

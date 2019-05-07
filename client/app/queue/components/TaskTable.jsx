@@ -14,6 +14,7 @@ import { bindActionCreators } from 'redux';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
+import BulkAssignModal from './BulkAssignModal';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
@@ -21,7 +22,7 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
-import { setSelectionOfTaskOfUser } from '../QueueActions';
+import { setSelectionOfTaskOfUser, bulkAssignTasks } from '../QueueActions';
 import { renderAppealType, taskHasCompletedHold } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
@@ -33,6 +34,7 @@ import {
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -357,6 +359,11 @@ export class TaskTableUnconnected extends React.PureComponent {
 
     return (
       <div>
+        <BulkAssignModal
+          enableBulkAssign={this.props.organizationName === 'Hearing Admin'}
+          organizationUrl={ORGANIZATION_NAMES[this.props.organizationName]}
+          tasks={tasks}
+          assignTasks={this.props.bulkAssignTasks} />
         <QueueTable
           columns={this.getQueueColumns}
           rowObjects={tasks}
@@ -374,12 +381,14 @@ export class TaskTableUnconnected extends React.PureComponent {
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
-  userRole: state.ui.userRole
+  userRole: state.ui.userRole,
+  tasksAssignedByBulk: state.queue.tasksAssignedByBulk
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setSelectionOfTaskOfUser
+    setSelectionOfTaskOfUser,
+    bulkAssignTasks
   }, dispatch)
 );
 
