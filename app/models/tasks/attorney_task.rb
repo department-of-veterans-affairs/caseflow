@@ -41,6 +41,10 @@ class AttorneyTask < Task
     super
   end
 
+  def label
+    COPY::ATTORNEY_TASK_LABEL
+  end
+
   private
 
   def child_attorney_tasks_are_completed
