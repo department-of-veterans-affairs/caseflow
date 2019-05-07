@@ -11,8 +11,8 @@ class DistributionsController < ApplicationController
     distribution = Distribution.create!(judge: current_user)
     enqueue_distribution_job(distribution)
     render_single(distribution)
-  rescue ActiveRecord::RecordInvalid => invalid
-    errors = invalid.record.errors.details.values.flatten.map { |e| e[:error] }
+  rescue ActiveRecord::RecordInvalid => error
+    errors = error.record.errors.details.values.flatten.map { |e| e[:error] }
     return render_single(pending_distribution) if errors.include? :pending_distribution
 
     render_403_error(errors)

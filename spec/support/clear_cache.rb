@@ -18,9 +18,9 @@ RSpec.configure do |config|
   config.after(:each) do
     Rails.cache.clear
     REDIS_NAMESPACES.each { |namespace| delete_matched(namespace: namespace) }
-  rescue Errno::ENOENT, Errno::ENOTEMPTY => err
+  rescue Errno::ENOENT, Errno::ENOTEMPTY => error
     # flakey at CircleCI. Don't fail tests because of this.
-    Rails.logger.error(err)
+    Rails.logger.error(error)
   end
 end
 

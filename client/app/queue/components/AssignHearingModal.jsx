@@ -63,7 +63,7 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    const { hearingDay, openHearing, appeal } = this.props;
+    const { openHearing, appeal } = this.props;
 
     if (openHearing) {
       this.props.showErrorMessage({
@@ -92,10 +92,6 @@ class AssignHearingModal extends React.PureComponent {
           facilityType: location.facilityType
         });
       }
-    }
-
-    if (hearingDay.hearingTime) {
-      this.props.onHearingTimeChange(hearingDay.hearingTime);
     }
   }
 
@@ -286,7 +282,6 @@ class AssignHearingModal extends React.PureComponent {
     const { hearingDay } = this.props;
 
     return {
-      hearingTime: hearingDay.hearingTime,
       hearingDate: hearingDay.hearingDate,
       regionalOffice: this.getRO()
     };
@@ -365,7 +360,7 @@ class AssignHearingModal extends React.PureComponent {
             strongLabel
             options={timeOptions}
             onChange={this.props.onHearingTimeChange}
-            value={selectedHearingTime || initVals.hearingTime} />
+            value={selectedHearingTime} />
         </span>
         {selectedHearingTime === 'other' && <SearchableDropdown
           name="optionalTime"
