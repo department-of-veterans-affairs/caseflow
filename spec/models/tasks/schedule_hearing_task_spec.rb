@@ -61,11 +61,11 @@ describe ScheduleHearingTask do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
       end
 
-      it "has no actions available" do
+      it "has one action available to the hearing admin org member" do
         subject
 
         task = ScheduleHearingTask.first
-        expect(task.available_actions_unwrapper(hearing_admin_user).count).to eq 0
+        expect(task.available_actions_unwrapper(hearing_admin_user).count).to eq 1
       end
     end
   end
