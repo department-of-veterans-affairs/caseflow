@@ -306,7 +306,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def removed?
-    request_issues.any? && request_issues.all? { |ri| ri.removed? }
+    request_issues.any? && request_issues.all?(&:removed?)
   end
 
   private
