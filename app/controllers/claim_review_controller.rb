@@ -10,7 +10,7 @@ class ClaimReviewController < ApplicationController
 
     # we call the serialization method here before the view does so we can rescue any data errors
     claim_review.ui_hash
-  rescue RequestIssue::MissingDecisionDate => _err
+  rescue RequestIssue::MissingDecisionDate
     flash[:error] = "VBMS or SHARE: One or more ratings may be locked on this Claim. Please try again in 24 hours."
     render "errors/500", layout: "application", status: :unprocessable_entity
   end
