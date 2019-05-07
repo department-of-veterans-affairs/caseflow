@@ -51,15 +51,6 @@ export const getReceiptDateError = (responseErrorCodes, state) => (
   }[_.get(responseErrorCodes.receipt_date, 0)]
 );
 
-
-export const getWithdrawDateError = (responseErrorCodes, state) => (
-  {
-    in_future:
-      `We cannot process your request. Please select a date prior to today's date.`,
-    before_receipt_date: `We cannot process your request. Please select a date after the receipt date.`
-  }[_.get(responseErrorCodes.receipt_date, 0)]
-);
-
 export const toggleIneligibleError = (hasInvalidOption, selectedOption) => (
   hasInvalidOption && Boolean(selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW.key ||
     selectedOption === REVIEW_OPTIONS.HIGHER_LEVEL_REVIEW_WITH_HEARING.key)

@@ -16,8 +16,8 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
-import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
-import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
+import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
+import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
 import Table from '../../components/Table';
 import {
@@ -82,8 +82,7 @@ export class AddIssuesPage extends React.Component {
       intakeForms,
       formType,
       veteran,
-      featureToggles,
-      requestIssuesUpdateErrorCode
+      featureToggles
     } = this.props;
 
     if (!formType) {
@@ -220,18 +219,29 @@ export class AddIssuesPage extends React.Component {
 
     const messageHeader = this.props.editPage ? 'Edit Issues' : 'Add / Remove Issues';
 
-    const withdrawError = (value) => {
-     
-     if (value.withdrawalDateOnChange === value.receiptDate) {
-         return  `We cannot process your request. Please select a date after the receipt date.`;
+    const withdrawError = () => {
 
-     } else if (value.withdrawalDateOnChange === value.withdrawDatePlaceholder) {
+      const currentDate = new Date(intakeData.withdrawalDate);
 
-        return `We cannot process your request. Please select a date prior to today's date.`;
-     }
-      return true;
+      const newDate = new Date();
 
-    }
+      const receiptDate = new Date(intakeData.receiptDate);
+
+      const formName = _.find(FORM_TYPES, { key: formType }).shortName;
+
+      if (validateDate(intakeData.withdrawalDate)) {
+
+        if (currentDate < receiptDate) {
+          return `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
+
+        } else if (currentDate > newDate) {
+
+          return 'We cannot process your request. Please select a date prior to today\'s date.';
+        }
+
+      }
+
+    };
 
     const columns = [
       { valueName: 'field' },
@@ -318,7 +328,7 @@ export class AddIssuesPage extends React.Component {
               value={intakeData.withdrawalDate}
               onChange={this.withdrawalDateOnChange}
               placeholder={withdrawDatePlaceholder}
-              errorMessage={requestIssuesUpdateErrorCode}
+              dateErrorMessage={withdrawError()}
             />
           </InlineForm>
         </div>
@@ -361,7 +371,7 @@ export const EditAddIssuesPage = connect(
     veteran: state.veteran,
     featureToggles: state.featureToggles,
     editPage: true,
-    requestIssuesUpdateErrorCode: state.requestIssuesUpdateErrorCode
+    withdrawDateError: state.withdrawDateError
   }),
   (dispatch) => bindActionCreators({
     toggleAddIssuesModal,
