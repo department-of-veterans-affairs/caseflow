@@ -108,6 +108,6 @@ if [[ "$1" == "local" ]]; then
 elif [[ "$1" == "remote" ]]; then
   build
   if [[ $? -eq 0 ]]; then
-    echo "not not here"
+    push
   fi
 fi
