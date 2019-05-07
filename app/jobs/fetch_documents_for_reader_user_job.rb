@@ -32,10 +32,10 @@ class FetchDocumentsForReaderUserJob < ApplicationJob
 
     fetch_documents_for_appeals(legacy_appeals + ama_appeals + attorney_user_appeals)
     log_info
-  rescue StandardError => e
+  rescue StandardError => error
     log_error
     # raising an exception here triggers a retry through shoryuken
-    raise e
+    raise error
   end
 
   def setup_debug_context(reader_user)
