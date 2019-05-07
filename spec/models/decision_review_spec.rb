@@ -82,7 +82,7 @@ describe DecisionReview do
     subject { higher_level_review.removed? }
 
     let!(:removed_ri) { create(:request_issue, :removed, decision_review: higher_level_review) }
-    let!(:active_ri) { create(:request_issue, :removed, decision_review: higher_level_review) }
+    let!(:active_ri) { create(:request_issue, decision_review: higher_level_review) }
 
     context "when a subset of request issues are removed" do
       it { is_expected.to eq(false) }
