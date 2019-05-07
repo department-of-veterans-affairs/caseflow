@@ -152,6 +152,7 @@ const TaskTableTab = ({ description, tasks, includeNewDocsIcon, useOnHoldDate })
   <TaskTable
     includeHearingBadge
     includeDetailsLink
+    includeTask
     includeType
     includeDocketNumber
     includeIssueCount
