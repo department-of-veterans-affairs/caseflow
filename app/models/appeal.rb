@@ -553,7 +553,7 @@ class Appeal < DecisionReview
   end
 
   def withdrawn?
-    # will implement when available
+    root_task&.status == Constants.TASK_STATUSES.cancelled
   end
 
   def alerts
