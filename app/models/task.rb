@@ -373,10 +373,6 @@ class Task < ApplicationRecord
     }
   end
 
-  def change_task_type_data(_user = nil)
-    add_admin_action_data
-  end
-
   def add_admin_action_data(_user = nil)
     {
       redirect_after: "/queue",

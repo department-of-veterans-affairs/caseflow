@@ -83,6 +83,10 @@ class ColocatedTask < Task
     active?
   end
 
+  def change_task_type_data(_user = nil)
+    add_admin_action_data
+  end
+
   private
 
   def ama_translation_actions(core_actions)
