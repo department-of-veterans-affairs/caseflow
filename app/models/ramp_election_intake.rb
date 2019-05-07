@@ -92,9 +92,9 @@ class RampElectionIntake < Intake
     if ramp_election.create_or_connect_end_product! == :connected
       update!(error_code: "connected_preexisting_ep")
     end
-  rescue StandardError => e
+  rescue StandardError => error
     abort_completion!
-    raise e
+    raise error
   end
 
   def create_ramp_closed_appeals!

@@ -37,9 +37,9 @@ class Distribution < ApplicationRecord
       legacy_distribution
       update(status: "completed", completed_at: Time.zone.now, statistics: legacy_statistics)
     end
-  rescue StandardError => e
+  rescue StandardError => error
     update(status: "error")
-    raise e
+    raise error
   end
 
   def self.pending_for_judge(judge)

@@ -213,8 +213,8 @@ describe HearingDispositionChangeJob do
       # Throw and then catch the error so it has a stack trace.
       let(:error) do
         fail StandardError, err_msg
-      rescue StandardError => e
-        e
+      rescue StandardError => error
+        error
       end
 
       it "logs an error message and sends the correct message to slack" do

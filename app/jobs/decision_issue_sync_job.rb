@@ -11,15 +11,15 @@ class DecisionIssueSyncJob < CaseflowJob
 
     begin
       request_issue_or_effectuation.sync_decision_issues!
-    rescue Rating::NilRatingProfileListError, Rating::LockedRatingError, Rating::BackfilledRatingError => err
-      request_issue_or_effectuation.update_error!(err.class.to_s)
+    rescue Rating::NilRatingProfileListError, Rating::LockedRatingError, Rating::BackfilledRatingError => error
+      request_issue_or_effectuation.update_error!(error.class.to_s)
       # no Raven report, just noise. This just means nothing new has happened.
-    rescue Errno::ETIMEDOUT => err
-      Rails.logger.error err
+    rescue Errno::ETIMEDOUT => error
+      Rails.logger.error error
       # no Raven report. We'll try again later.
-    rescue StandardError => err
-      request_issue_or_effectuation.update_error!(err.to_s)
-      Raven.capture_exception(err)
+    rescue StandardError => error
+      request_issue_or_effectuation.update_error!(error.to_s)
+      Raven.capture_exception(error)
     end
   end
 end
