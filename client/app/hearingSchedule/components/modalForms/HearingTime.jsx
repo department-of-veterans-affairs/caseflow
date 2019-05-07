@@ -6,8 +6,9 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
 import { TIME_OPTIONS } from '../../../hearings/constants/constants';
 import _ from 'lodash';
 
-export const getDiplayTime = (scheduledForTime, timezone) => {
-  const val = _.find(TIME_OPTIONS, (opt) => opt.value === scheduledForTime).value;
+export const getDisplayTime = (scheduledForTime, timezone) => {
+  const option = _.find(TIME_OPTIONS, ['value', scheduledForTime]);
+  const val = _.isUndefined(option) ? '' : option.value;
 
   if (timezone) {
     const tz = moment().tz(timezone).

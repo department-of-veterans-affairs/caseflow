@@ -10,7 +10,7 @@ class Hearing < ApplicationRecord
   has_one :hearing_task_association, as: :hearing
   has_many :hearing_issue_notes
 
-  validates :scheduled_for_time, format: { with: /\A\d\d:\d\d\z/ }
+  validates :scheduled_for_time, allow_blank: true, format: { with: /\A\d\d:\d\d\z/ }
 
   class HearingDayFull < StandardError; end
 
@@ -117,10 +117,7 @@ class Hearing < ApplicationRecord
     DateTime.new.in_time_zone(regional_office_timezone).change(
       year: hearing_day.scheduled_for.year,
       month: hearing_day.scheduled_for.month,
-      day: hearing_day.scheduled_for.day,
-      hour: scheduled_time.hour,
-      min: scheduled_time.min,
-      sec: scheduled_time.sec
+      day: hearing_day.scheduled_for.day
     )
   end
 
@@ -178,7 +175,6 @@ class Hearing < ApplicationRecord
         :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
-        :local_time,
         :readable_request_type,
         :scheduled_for,
         :scheduled_for_time,

@@ -550,7 +550,7 @@ ActiveRecord::Schema.define(version: 20190506182925) do
     t.string "representative_name"
     t.string "room"
     t.string "scheduled_for_time"
-    t.time "scheduled_time", null: false
+    t.time "scheduled_time"
     t.text "summary"
     t.boolean "transcript_requested"
     t.date "transcript_sent_date"

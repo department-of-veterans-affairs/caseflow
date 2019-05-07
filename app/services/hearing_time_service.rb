@@ -3,15 +3,16 @@
 class HearingTimeService
   class << self
     def build_params_with_time(hearing, update_params)
-      return update_params if update_params[:scheduled_for_time].nil?
-
-      update_params.merge(
-        time_params(
-          hearing,
-          scheduled_for: update_params[:scheduled_for],
+      if hearing.is_a?(LegacyHearing) && update_params[:scheduled_for_time].present?
+        scheduled_for = vacols_formatted_datetime(
+          scheduled_for: update_params[:scheduled_for] || hearing.scheduled_for,
           scheduled_for_time: update_params[:scheduled_for_time]
         )
-      )
+
+        remove_non_vacols_params(update_params).merge(scheduled_for: scheduled_for)
+      else
+        update_params
+      end
     end
 
     def vacols_formatted_datetime(scheduled_for:, scheduled_for_time:)
@@ -25,21 +26,8 @@ class HearingTimeService
       VacolsHelper.format_datetime_with_utc_timezone(hearing_datetime)
     end
 
-    private
-
-    def time_params(hearing, scheduled_for:, scheduled_for_time:)
-      if hearing.is_a?(LegacyHearing)
-        hour, min = scheduled_for_time.split(":")
-        scheduled_for = vacols_formatted_datetime(
-          scheduled_for: scheduled_for || hearing.scheduled_for,
-          hour: hour,
-          min: min
-        )
-
-        { scheduled_for: scheduled_for }
-      else
-        { scheduled_for_time: scheduled_for_time }
-      end
+    def remove_non_vacols_params(params)
+      params.reject { |param| param.to_sym == :scheduled_for_time }
     end
   end
 
@@ -60,16 +48,16 @@ class HearingTimeService
   end
 
   def central_office_time_string
-    hour_min = to_s.split(":")
+    hour, min = to_s.split(":")
     hearing_time = DateTime.current.change(
-      hour: hour_min[0],
-      min: hour_min[1],
+      hour: hour.to_i,
+      min: min.to_i,
       offset: Time.now.in_time_zone(@hearing.regional_office_timezone).strftime("%z")
     )
 
     co_time = hearing_time.in_time_zone("America/New_York")
 
-    "#{co_time.hour}:#{co_time.min}"
+    "#{pad_time(co_time.hour)}:#{pad_time(co_time.min)}"
   end
 
   private
@@ -77,10 +65,14 @@ class HearingTimeService
   def time_string_from_scheduled_time
     # we are deprecating the use of the scheduled_time datetime column in
     # favor of the scheduled_for_time string column
-    "#{@hearing.scheduled_time.hour}:#{@hearing.scheduled_time.min}"
+    "#{pad_time(@hearing.scheduled_time.hour)}:#{pad_time(@hearing.scheduled_time.min)}"
   end
 
   def time_string_from_vacols_hearing_date
-    "#{@hearing.scheduled_for.hour}:#{@hearing.scheduled_for.min}"
+    "#{pad_time(@hearing.scheduled_for.hour)}:#{pad_time(@hearing.scheduled_for.min)}"
+  end
+
+  def pad_time(time)
+    "0#{time}".chars.last(2).join
   end
 end
