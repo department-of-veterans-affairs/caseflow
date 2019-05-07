@@ -63,7 +63,16 @@ describe GenericTask do
     context "task has an active hearing task ancestor" do
       let(:appeal) { FactoryBot.create(:appeal) }
       let!(:hearing_task) { FactoryBot.create(:hearing_task, appeal: appeal) }
-      let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+      let(:disposition_task_type) { :disposition_task }
+      let(:disposition_task_status) { Constants.TASK_STATUSES.assigned }
+      let!(:disposition_task) do
+        FactoryBot.create(
+          disposition_task_type,
+          parent: hearing_task,
+          appeal: appeal,
+          status: disposition_task_status
+        )
+      end
       let!(:task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
 
       context "user is a member of hearings management" do
@@ -83,6 +92,22 @@ describe GenericTask do
 
         it "returns a create change hearing disposition task action" do
           expect(subject).to eq [Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h]
+        end
+      end
+
+      context "hearing task has an inactive child disposition task" do
+        let(:disposition_task_status) { Constants.TASK_STATUSES.cancelled }
+
+        it "returns no actions" do
+          expect(subject).to eq []
+        end
+      end
+
+      context "hearing task has only an active child change hearing disposition task" do
+        let(:disposition_task_type) { :change_hearing_disposition_task }
+
+        it "returns no actions" do
+          expect(subject).to eq []
         end
       end
     end

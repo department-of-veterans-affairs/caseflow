@@ -51,9 +51,13 @@ class HearingTask < GenericTask
   end
 
   def create_change_hearing_disposition_task_and_complete_children(instructions = nil)
-    disposition_task = children.active.find_by(type: [DispositionTask.name, ChangeHearingDispositionTask.name])
+    any_disposition_task = children.active.find_by(type: [DispositionTask.name, ChangeHearingDispositionTask.name])
 
-    disposition_task&.create_change_hearing_disposition_task_and_complete instructions
+    any_disposition_task&.create_change_hearing_disposition_task_and_complete(instructions)
+  end
+
+  def disposition_task
+    children.active.detect { |child| child.type == DispositionTask.name }
   end
 
   private

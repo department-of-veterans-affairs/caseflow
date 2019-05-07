@@ -19,4 +19,41 @@ describe HearingTask do
       subject
     end
   end
+
+  describe "#disposition_task" do
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: root_task.appeal) }
+    let(:disposition_task_type) { :disposition_task }
+    let(:disposition_task_status) { Constants.TASK_STATUSES.assigned }
+    let!(:disposition_task) do
+      FactoryBot.create(
+        disposition_task_type,
+        parent: hearing_task,
+        appeal: root_task.appeal,
+        status: disposition_task_status
+      )
+    end
+
+    subject { hearing_task.disposition_task }
+
+    it "returns the disposition task" do
+      expect(subject).to eq disposition_task
+    end
+
+    context "the disposition task is not active" do
+      let(:disposition_task_status) { Constants.TASK_STATUSES.cancelled }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+
+    context "it's a ChangeHearingDispositionTask" do
+      let(:disposition_task_type) { :change_hearing_disposition_task }
+
+      it "returns nil" do
+        expect(subject).to be_nil
+      end
+    end
+  end
 end

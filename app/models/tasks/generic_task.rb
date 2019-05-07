@@ -64,8 +64,9 @@ class GenericTask < Task
   # rubocop:enable Metrics/AbcSize
 
   def available_hearing_admin_actions(user)
-    ancestor_hearing_task = ancestor_task_of_type(HearingTask)
-    if HearingAdmin.singleton.user_has_access?(user) && ancestor_hearing_task && ancestor_hearing_task.active?
+    user_has_access = HearingAdmin.singleton.user_has_access?(user)
+    hearing_task = ancestor_task_of_type(HearingTask)
+    if user_has_access && hearing_task&.active? && hearing_task&.disposition_task&.present?
       [
         Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
       ]

@@ -339,15 +339,10 @@ RSpec.feature "Change hearing disposition" do
     context "schedule hearing task" do
       let!(:task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
 
-      it "can create a change hearing disposition task" do
+      it "cannot create a change hearing disposition task" do
         visit("/queue/appeals/#{appeal.uuid}")
         expect(page).to have_content(ScheduleHearingTask.last.label)
-        click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
-        fill_in "Notes", with: instructions_text
-        click_button "Submit"
-        expect(page).to have_content(
-          format(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteran_full_name)
-        )
+        expect(page).to_not have_css(".Select-control")
       end
 
       context "hearing admin task" do
@@ -355,15 +350,10 @@ RSpec.feature "Change hearing disposition" do
           FactoryBot.create(:hearing_admin_action_incarcerated_veteran_task, parent: task, appeal: appeal)
         end
 
-        it "can create a change hearing disposition task" do
+        it "cannot create a change hearing disposition task" do
           visit("/queue/appeals/#{appeal.uuid}")
           expect(page).to have_content(HearingAdminActionIncarceratedVeteranTask.last.label)
-          click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
-          fill_in "Notes", with: instructions_text
-          click_button "Submit"
-          expect(page).to have_content(
-            format(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteran_full_name)
-          )
+          expect(page).to_not have_css(".Select-control")
         end
       end
     end
