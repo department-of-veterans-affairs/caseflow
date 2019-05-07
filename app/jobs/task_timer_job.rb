@@ -24,10 +24,10 @@ class TaskTimerJob < CaseflowJob
       task_timer.task.when_timer_ends
       task_timer.processed!
     end
-  rescue StandardError => e
+  rescue StandardError => error
     # Ensure errors are sent to Sentry, but don't block the job from continuing.
     # The next time the job runs, we'll process the unprocessed task timers again.
-    task_timer.update_error!(e.inspect)
-    Raven.capture_exception(e)
+    task_timer.update_error!(error.inspect)
+    Raven.capture_exception(error)
   end
 end

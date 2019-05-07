@@ -15,9 +15,9 @@ class UploadDocumentToVbms
     submit_for_processing!
     upload_to_vbms!
     set_processed_at_to_current_time
-  rescue StandardError => err
-    save_rescued_error!(err.to_s)
-    raise err
+  rescue StandardError => error
+    save_rescued_error!(error.to_s)
+    raise error
   end
 
   # We have to always download the file from s3 to make sure it exists locally
