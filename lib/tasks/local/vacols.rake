@@ -14,7 +14,7 @@ namespace :local do
       180.times do
         begin
           if VACOLS::Case.count == 0 &&
-             VACOLS::CaseHearing.select("VACOLS.HEARING_VENUE(vdkey)").where(folder_nr: "1").count == 0
+             VACOLS::CaseHearing.select("HEARING_VENUE(vdkey)").where(folder_nr: "1").count == 0
             puts "FACOLS is ready."
             facols_is_ready = true
             break
