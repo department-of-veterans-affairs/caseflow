@@ -147,7 +147,6 @@ RSpec.describe AppealsController, type: :controller do
     before { User.authenticate!(roles: ["System Admin"]) }
 
     context "when a legacy appeal has documents" do
-     
 
       let(:documents) do
         [
@@ -230,7 +229,7 @@ RSpec.describe AppealsController, type: :controller do
       let(:err_msg) { "Some application error" }
 
       before { allow(Fakes::VBMSService).to receive(:quick_document_count_for_appeal) { fail err_msg } }
-  
+
       it "responds with a 500 and error message" do
         User.authenticate!(roles: ["System Admin"])
         get :document_count, params: { appeal_id: appeal.external_id }
