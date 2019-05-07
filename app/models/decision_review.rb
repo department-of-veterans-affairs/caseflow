@@ -305,6 +305,10 @@ class DecisionReview < ApplicationRecord
     "#{request_issues.count} issues"
   end
 
+  def removed?
+    request_issues.any? && request_issues.all? { |ri| ri.removed? }
+  end
+
   private
 
   def veteran_invalid_fields

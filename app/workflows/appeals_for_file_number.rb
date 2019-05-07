@@ -22,7 +22,7 @@ class AppealsForFileNumber
                           service: :queue,
                           name: "AppealsForFileNumber.appeals_for_file_number") do
 
-      appeals = Appeal.where(veteran_file_number: file_number).to_a
+      appeals = Appeal.where(veteran_file_number: file_number).select{|dr| !dr.removed? }.to_a
       # rubocop:disable Lint/HandleExceptions
       begin
         appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(file_number))
