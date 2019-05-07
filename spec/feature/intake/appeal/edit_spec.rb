@@ -457,8 +457,14 @@ feature "Appeal Edit issues" do
   end
 
   context "when withdraw decision reviews is enabled" do
-    before { FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id]) }
-    after { FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id]) }
+    before do
+      FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+      FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
+    end
+    after do
+      FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id])
+      FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
+    end
 
     scenario "remove an issue with dropdown and show alert message" do
       visit "appeals/#{appeal.uuid}/edit/"
@@ -625,7 +631,19 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
     end
 
-    fscenario "show alert when issue is withdrawn before receipt date" do
+    scenario "edit contention text" do
+      visit "appeals/#{appeal.uuid}/edit"
+      expect(page).to have_content("Edit contention title")
+
+      within first(".issue-edit-text") do
+        click_edit_contention_issue
+      end
+
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_button("Submit")
+    end
+
+    scenario "show alert when issue is withdrawn before receipt date" do
       visit "appeals/#{appeal.uuid}/edit/"
 
       click_withdraw_intake_issue_dropdown("PTSD denied")
