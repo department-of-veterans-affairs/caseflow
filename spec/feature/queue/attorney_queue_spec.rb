@@ -54,6 +54,12 @@ RSpec.feature "Attorney queue" do
 
         expect(find("tbody").find_all("tr").length).to eq(1)
       end
+
+      it "displays a Task(s) column" do
+        visit("/queue")
+
+        expect(page).to have_content(format(COPY::CASE_LIST_TABLE_TASKS_COLUMN_TITLE), 1)
+      end
     end
   end
 end
