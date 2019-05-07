@@ -35,15 +35,15 @@ class ChangeTaskTypeModal extends React.PureComponent {
     super(props);
 
     this.state = {
-      action: [actionTemplate()]
+      action: actionTemplate()
     };
   }
 
   updateActionField = (key, value) => {
-    const fields = this.state.action;
+    const action = { ...this.state.action };
 
-    fields[key] = value;
-    this.setState({ actions: fields });
+    action[key] = value;
+    this.setState({ action });
   }
 
   validateForm = () => Boolean(this.state.action.actionLabel) && Boolean(this.state.action.instructions);

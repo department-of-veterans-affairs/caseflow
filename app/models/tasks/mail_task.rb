@@ -79,6 +79,14 @@ class MailTask < GenericTask
   def label
     self.class.label
   end
+
+  def change_task_type_data(_user = nil)
+    mail_assign_to_organization_data
+  end
+
+  def available_actions(user)
+    super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+  end
 end
 
 class AddressChangeMailTask < MailTask
