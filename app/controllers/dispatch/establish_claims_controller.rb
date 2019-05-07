@@ -55,8 +55,8 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
     render json: {}
   rescue EstablishClaim::InvalidEndProductError
     render json: { error_code: "end_product_invalid" }, status: :unprocessable_entity
-  rescue Caseflow::Error::EstablishClaimFailedInVBMS => e
-    render json: { error_code: e.error_code }, status: :unprocessable_entity
+  rescue Caseflow::Error::EstablishClaimFailedInVBMS => error
+    render json: { error_code: error.error_code }, status: :unprocessable_entity
   end
 
   # This POST updates VACOLS & VBMS Note
