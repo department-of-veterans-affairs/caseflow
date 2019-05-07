@@ -265,7 +265,7 @@ export const judgeDecisionReviewTasksSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task) => {
     if (task.appealType === 'Appeal') {
-      return (['review', 'quality review'].includes(task.label)) &&
+      return (['review', 'quality review', 'dispatch return'].includes(task.label)) &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
