@@ -114,7 +114,7 @@ class LegacyHearing < ApplicationRecord
     @time ||= HearingTimeService.new(hearing: self)
   end
 
-  def local_time
+  def scheduled_for_time
     time.to_s
   end
 
@@ -242,7 +242,6 @@ class LegacyHearing < ApplicationRecord
     serializable_hash(
       methods: [
         :disposition_editable,
-        :scheduled_for,
         :readable_request_type,
         :disposition,
         :aod,
@@ -257,7 +256,8 @@ class LegacyHearing < ApplicationRecord
         :hearing_day_id,
         :regional_office_name,
         :regional_office_timezone,
-        :local_time,
+        :scheduled_for,
+        :scheduled_for_time,
         :central_office_time,
         :venue,
         :veteran_first_name,

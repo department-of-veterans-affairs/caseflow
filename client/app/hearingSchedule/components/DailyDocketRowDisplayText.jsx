@@ -1,8 +1,7 @@
 import React from 'react';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-
-import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
+import { getDisplayTime } from './modalForms/HearingTime';
 
 import { PreppedCheckbox } from './DailyDocketRowInputs';
 
@@ -40,14 +39,20 @@ const AppellantInformation = ({ hearing }) => {
 };
 
 const HearingTime = ({ hearing }) => {
+  const localTime = getDisplayTime(
+    hearing.scheduledForTime || hearing.tmpScheduledForTime,
+    hearing.regionalOfficeTimezone || 'America/New_York'
+  );
+  const coTime = getDisplayTime(hearing.centralOfficeTime, 'America/New_York');
+
   if (hearing.readableRequestType === 'Central') {
-    return <div>{getTime(hearing.scheduledFor)} <br />
+    return <div>{coTime}<br />
       {hearing.regionalOfficeName}
     </div>;
   }
 
-  return <div>{getTime(hearing.scheduledFor)} /<br />
-    {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone || 'America/New_York')} <br />
+  return <div>{coTime} /<br />
+    {localTime} <br />
     {hearing.regionalOfficeName}
     <p>{hearing.currentIssueCount} issues</p>
   </div>;

@@ -85,15 +85,10 @@ class HearingsController < ApplicationController
 
   def update_params_legacy
     params.require("hearing").permit(:notes,
-                                     :disposition,
-                                     :hold_open,
-                                     :aod,
-                                     :transcript_requested,
-                                     :prepped,
+                                     :disposition, :hold_open,
+                                     :aod, :transcript_requested, :prepped,
                                      :scheduled_for,
-                                     scheduled_for_time: [
-                                       :hour, :min
-                                     ],
+                                     :scheduled_for_time,
                                      hearing_location_attributes: [
                                        :city, :state, :address,
                                        :facility_id, :facility_type,
@@ -104,19 +99,12 @@ class HearingsController < ApplicationController
 
   def update_params
     params.require("hearing").permit(:notes,
-                                     :disposition,
-                                     :hold_open,
-                                     :transcript_requested,
-                                     :transcript_sent_date,
-                                     :prepped,
-                                     :judge_id,
-                                     :room,
-                                     :bva_poc,
+                                     :disposition, :hold_open,
+                                     :transcript_requested, :transcript_sent_date,
+                                     :prepped, :judge_id, :room, :bva_poc,
                                      :evidence_window_waived,
                                      :scheduled_for,
-                                     scheduled_for_time: [
-                                       :hour, :min
-                                     ],
+                                     :scheduled_for_time,
                                      hearing_location_attributes: [
                                        :city, :state, :address,
                                        :facility_id, :facility_type,

@@ -10,7 +10,7 @@ import {
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../../components/DataDropdowns';
-import HearingTime, { getAssignHearingTime } from './HearingTime';
+import HearingTime from './HearingTime';
 
 import { onChangeFormData } from '../../../components/common/actions';
 
@@ -22,12 +22,12 @@ class AssignHearingForm extends React.Component {
   */
   componentWillMount() {
 
-    const { initialRegionalOffice, initialHearingDate, initialHearingTime } = this.props;
+    const { initialRegionalOffice, initialHearingDate, initialScheduledForTime } = this.props;
 
     const values = {
       regionalOffice: initialRegionalOffice || null,
       hearingLocation: null,
-      hearingTime: initialHearingTime || null,
+      scheduledForTime: initialScheduledForTime || null,
       hearingDay: initialHearingDate || null
     };
 
@@ -48,13 +48,13 @@ class AssignHearingForm extends React.Component {
       hearingDay: values.hearingDay && values.hearingDay.hearingId ?
         false : 'Please select a hearing date',
       hearingLocation: values.hearingLocation ? false : 'Please select a hearing location',
-      hearingTime: values.hearingTime ? false : 'Please select a hearing time'
+      scheduledForTime: values.scheduledForTime ? false : 'Please select a hearing time'
     };
 
     return {
       ...errorMessages,
       hasErrorMessages: (errorMessages.hearingDay || errorMessages.hearingLocation ||
-        errorMessages.hearingTime) !== false
+        errorMessages.scheduledForTime) !== false
     };
   }
 
@@ -65,8 +65,7 @@ class AssignHearingForm extends React.Component {
     };
 
     return {
-      hearing_time: (values.hearingDay && values.hearingDay.hearingDate) && values.hearingTime ?
-        getAssignHearingTime(values.hearingTime, values.hearingDay) : null,
+      scheduled_for_time: values.scheduledForTime,
       hearing_day_id: values.hearingDay ? values.hearingDay.hearingId : null,
       hearing_location: values.hearingLocation ? ApiUtil.convertToSnakeCase(values.hearingLocation) : null
     };
@@ -84,7 +83,7 @@ class AssignHearingForm extends React.Component {
     const newValues = {
       regionalOffice,
       hearingLocation: null,
-      hearingTime: null,
+      scheduledForTime: null,
       hearingDay: null
     };
 
@@ -93,8 +92,8 @@ class AssignHearingForm extends React.Component {
 
   render() {
     const { appeal, showErrorMessages, values } = this.props;
-    const { regionalOffice, hearingLocation, hearingDay, hearingTime, errorMessages } = values;
-    const availableHearingLocations = _.sortBy(appeal.availableHearingLocations || [], 'distance');
+    const { regionalOffice, hearingLocation, hearingDay, scheduledForTime, errorMessages } = values;
+    const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
 
     return (
       <div>
@@ -124,11 +123,11 @@ class AssignHearingForm extends React.Component {
             validateValueOnMount
           />
           <HearingTime
-            errorMessage={showErrorMessages ? errorMessages.hearingTime : ''}
-            key={`hearingTime__${regionalOffice}`}
+            errorMessage={showErrorMessages ? errorMessages.scheduledForTime : ''}
+            key={`scheduledForTime__${regionalOffice}`}
             regionalOffice={regionalOffice}
-            value={hearingTime}
-            onChange={(value) => this.onChange({ hearingTime: value })}
+            value={scheduledForTime}
+            onChange={(value) => this.onChange({ scheduledForTime: value })}
           />
         </React.Fragment>}
       </div>

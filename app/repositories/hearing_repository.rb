@@ -75,10 +75,10 @@ class HearingRepository
       end
     end
 
-    def create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
+    def create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
       VACOLS::CaseHearing.create_child_hearing!(
         folder_nr: appeal.vacols_id,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_datetime),
+        hearing_date: scheduled_for,
         vdkey: hearing_day.id,
         hearing_type: hearing_day.request_type,
         room: hearing_day.room,
@@ -94,18 +94,15 @@ class HearingRepository
       hearing
     end
 
-    def slot_new_hearing(hearing_day_id, scheduled_time:, appeal:, hearing_location_attrs: nil)
+    def slot_new_hearing(hearing_day_id, scheduled_for_time:, appeal:, hearing_location_attrs: nil)
       hearing_day = HearingDay.find(hearing_day_id)
       fail HearingDayFull if hearing_day.hearing_day_full?
 
-      hearing_datetime = hearing_day.scheduled_for.to_datetime.change(
-        hour: scheduled_time["h"].to_i,
-        min: scheduled_time["m"].to_i,
-        offset: scheduled_time["offset"]
-      )
-
       hearing = if appeal.is_a?(LegacyAppeal)
-                  vacols_hearing = create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
+                  scheduled_for = HearingTimeService.vacols_formatted_datetime(
+                    scheduled_for: hearing_day.scheduled_for, scheduled_for_time: scheduled_for_time
+                  )
+                  vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
                   AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
                   vacols_hearing
                 else
@@ -113,7 +110,7 @@ class HearingRepository
                     appeal: appeal,
                     hearing_day_id: hearing_day.id,
                     hearing_location_attributes: hearing_location_attrs || {},
-                    scheduled_time: hearing_datetime
+                    scheduled_for_time: scheduled_for_time
                   )
                 end
 

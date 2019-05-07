@@ -145,7 +145,7 @@ class Hearing < ApplicationRecord
     @time ||= HearingTimeService.new(hearing: self)
   end
 
-  def local_time
+  def tmp_scheduled_for_time
     time.to_s
   end
 
@@ -179,9 +179,11 @@ class Hearing < ApplicationRecord
         :regional_office_name,
         :regional_office_timezone,
         :local_time,
-        :central_office_time,
         :readable_request_type,
         :scheduled_for,
+        :scheduled_for_time,
+        :tmp_scheduled_for_time,
+        :central_office_time,
         :appeal_external_id,
         :veteran_file_number,
         :evidence_window_waived,
@@ -217,10 +219,11 @@ class Hearing < ApplicationRecord
         :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
-        :local_time,
+        :scheduled_for,
+        :tmp_scheduled_for_time,
+        :scheduled_for_time,
         :central_office_time,
         :readable_request_type,
-        :scheduled_for,
         :veteran_age,
         :veteran_gender,
         :appeal_external_id,

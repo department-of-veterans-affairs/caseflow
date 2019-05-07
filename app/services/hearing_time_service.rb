@@ -14,22 +14,31 @@ class HearingTimeService
       )
     end
 
+    def vacols_formatted_datetime(scheduled_for:, scheduled_for_time:)
+      hour, min = scheduled_for_time.split(":")
+
+      hearing_datetime = scheduled_for.to_datetime.change(
+        hour: hour.to_i,
+        min: min.to_i
+      )
+
+      VacolsHelper.format_datetime_with_utc_timezone(hearing_datetime)
+    end
+
     private
 
     def time_params(hearing, scheduled_for:, scheduled_for_time:)
-      hour = scheduled_for_time[:hour]
-      min = scheduled_for_time[:min]
-
       if hearing.is_a?(LegacyHearing)
-        scheduled_for = hearing.time.vacols_formatted_datetime(
-          scheduled_for: scheduled_for,
+        hour, min = scheduled_for_time.split(":")
+        scheduled_for = vacols_formatted_datetime(
+          scheduled_for: scheduled_for || hearing.scheduled_for,
           hour: hour,
           min: min
         )
 
         { scheduled_for: scheduled_for }
       else
-        { scheduled_for_time: "#{hour}:#{min}" }
+        { scheduled_for_time: scheduled_for_time }
       end
     end
   end
@@ -44,15 +53,6 @@ class HearingTimeService
     else
       @hearing.scheduled_for_time || time_string_from_scheduled_time
     end
-  end
-
-  def vacols_formatted_datetime(scheduled_for: nil, hour:, min:)
-    hearing_datetime = (scheduled_for || @hearing.scheduled_for).to_datetime.change(
-      hour: hour.to_i,
-      min: min.to_i
-    )
-
-    VacolsHelper.format_datetime_with_utc_timezone(hearing_datetime)
   end
 
   def date

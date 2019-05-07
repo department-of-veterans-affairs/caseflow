@@ -150,13 +150,13 @@ class DispositionTask < GenericTask
     end
   end
 
-  def reschedule(hearing_day_id:, hearing_time:, hearing_location: nil)
+  def reschedule(hearing_day_id:, scheduled_for_time:, hearing_location: nil)
     new_hearing_task = hearing_task.cancel_and_recreate
 
     new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
                                                      appeal: appeal,
                                                      hearing_location_attrs: hearing_location&.to_hash,
-                                                     scheduled_time: hearing_time.stringify_keys)
+                                                     scheduled_for_time: scheduled_for_time)
     self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
   end
 
@@ -193,7 +193,7 @@ class DispositionTask < GenericTask
     when "reschedule"
       new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
       reschedule(
-        hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
+        hearing_day_id: new_hearing_attrs[:hearing_day_id], scheduled_for_time: new_hearing_attrs[:scheduled_for_time],
         hearing_location: new_hearing_attrs[:hearing_location]
       )
     when "schedule_later"
