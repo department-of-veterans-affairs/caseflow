@@ -27,15 +27,15 @@ class UpdateAppellantRepresentationJob < CaseflowJob
       increment_task_count("closed", appeal.id, closed_task_count)
 
       # TODO: Add an alert if we've been running for longer than x number of minutes?
-    rescue StandardError => e
+    rescue StandardError => error
       # Rescue from errors when looping over appeals so that we attempt to sync tracking tasks for each appeal.
-      Raven.capture_exception(e, extra: { appeal_id: appeal.id })
+      Raven.capture_exception(error, extra: { appeal_id: appeal.id })
       increment_task_count("error", appeal.id)
     end
 
     record_runtime(start_time)
-  rescue StandardError => e
-    log_error(start_time, e)
+  rescue StandardError => error
+    log_error(start_time, error)
   end
 
   def appeals_to_update

@@ -43,9 +43,9 @@ class RampRefilingIntake < Intake
     complete_with_status!(:success)
 
     detail.update!(established_at: Time.zone.now) unless detail.established_at
-  rescue StandardError => e
+  rescue StandardError => error
     abort_completion!
-    raise e
+    raise error
   end
 
   def review_errors
