@@ -45,11 +45,11 @@ class HearingsController < ApplicationController
       locations = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
 
       render json: { hearing_locations: locations }
-    rescue Caseflow::Error::VaDotGovAPIError => e
-      messages = e.message.dig("messages") || []
-      render json: { message: messages[0]&.dig("key") || e.message }, status: :bad_request
-    rescue StandardError => e
-      render json: { message: e.message }, status: :internal_server_error
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      messages = error.message.dig("messages") || []
+      render json: { message: messages[0]&.dig("key") || error.message }, status: :bad_request
+    rescue StandardError => error
+      render json: { message: error.message }, status: :internal_server_error
     end
   end
 

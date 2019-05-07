@@ -699,6 +699,19 @@ describe Appeal do
       end
     end
 
+    context "if there are TrackVeteranTasks" do
+      let!(:appeal) { create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal, status: :in_progress) }
+
+      before do
+        create(:track_veteran_task, appeal: appeal, status: :in_progress)
+      end
+
+      it "does not include TrackVeteranTasks in its determinations" do
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      end
+    end
+
     context "if there is an assignee" do
       let(:organization) { create(:organization) }
       let(:appeal_organization) { create(:appeal) }
@@ -1652,6 +1665,19 @@ describe Appeal do
         expect(subject[0][:type]).to eq("scheduled_hearing")
         expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
         expect(subject[0][:details][:type]).to eq("video")
+      end
+    end
+  end
+
+  describe ".withdrawn?" do
+    context "when root task is cancelled" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+      it "is withdrawn" do
+        expect(appeal.withdrawn?).to eq(false)
+        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+        expect(appeal.withdrawn?).to eq(true)
       end
     end
   end

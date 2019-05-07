@@ -236,9 +236,9 @@ class Intake < ApplicationRecord
 
   def create_end_product_and_contentions
     detail.create_end_products_and_contentions!
-  rescue StandardError => e
+  rescue StandardError => error
     abort_completion!
-    raise e
+    raise error
   end
 
   def veteran_invalid_fields

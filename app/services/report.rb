@@ -24,12 +24,12 @@ class Report
         begin
           record = load_record row
           csv << self.class.table_row(record) if include_record? record
-        rescue StandardError => e
+        rescue StandardError => error
           Rails.logger.error <<-EOS.strip_heredoc
             event=report.case.exception
             bfkey=#{row.bfkey}
-            message=#{e.message}
-            traceback=#{e.backtrace}
+            message=#{error.message}
+            traceback=#{error.backtrace}
           EOS
         end
         cleanup_record record unless record.nil?
