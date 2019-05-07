@@ -33,10 +33,12 @@ class DispositionTask < GenericTask
   end
 
   def available_actions(user)
+    hearing_admin_actions = available_hearing_admin_actions(user)
+
     if HearingsManagement.singleton.user_has_access?(user)
-      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
+      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h] | hearing_admin_actions
     else
-      []
+      hearing_admin_actions
     end
   end
 
@@ -63,9 +65,13 @@ class DispositionTask < GenericTask
     end
   end
 
-  def create_change_hearing_disposition_task_and_complete
+  def create_change_hearing_disposition_task_and_complete(instructions = nil)
     multi_transaction do
-      ChangeHearingDispositionTask.create!(appeal: appeal, parent: parent)
+      ChangeHearingDispositionTask.create!(
+        appeal: appeal,
+        parent: parent,
+        instructions: instructions.present? ? [instructions] : nil
+      )
       update!(status: Constants.TASK_STATUSES.completed)
     end
   end
@@ -113,6 +119,10 @@ class DispositionTask < GenericTask
   end
 
   private
+
+  def update_children_status_after_closed
+    children.active.update_all(status: status)
+  end
 
   def update_hearing_and_self(params:, payload_values:)
     case payload_values[:disposition]

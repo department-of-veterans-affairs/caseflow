@@ -19,6 +19,12 @@ describe AttorneyTask do
       )
     end
 
+    it "returns the correct label" do
+      expect(AttorneyTask.new.label).to eq(
+        COPY::ATTORNEY_TASK_LABEL
+      )
+    end
+
     context "there are no sibling tasks" do
       it "is valid" do
         expect(subject.valid?).to eq true
