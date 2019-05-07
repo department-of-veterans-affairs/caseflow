@@ -307,12 +307,6 @@ class SeedDB
         parent_id: root.id,
         appeal: root.appeal
       )
-      FactoryBot.create(
-        :bva_dispatch_task,
-        assigned_to: u,
-        parent_id: parent.id,
-        appeal: parent.appeal
-      )
     end
   end
 
