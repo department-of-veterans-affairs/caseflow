@@ -574,7 +574,8 @@ RSpec.describe TasksController, type: :controller do
     let(:admin_action) { create(task_type, assigned_by: assigned_by_user, assigned_to: assigned_to_user) }
     let!(:authenticated_staff) { create(:staff, :colocated_role, sdomainid: authenticated_user.css_id) }
     let!(:assigned_by_staff) { create(:staff, :attorney_role, sdomainid: assigned_by_user.css_id) }
-
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:colocated_task) { FactoryBot.create(:colocated_task, parent: root_task) }
     before do
       User.stub = authenticated_user
     end

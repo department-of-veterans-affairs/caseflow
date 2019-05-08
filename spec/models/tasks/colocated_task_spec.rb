@@ -291,7 +291,7 @@ describe ColocatedTask do
 
   describe ".available_actions_unwrapper" do
     let(:colocated_user) { FactoryBot.create(:user) }
-    let(:colocated_task) do
+    let(:colocated_task_with_parent) do
       # We expect all ColocatedTasks that are assigned to individuals to have parent tasks assigned to the organization.
       org_task = FactoryBot.create(:colocated_task, assigned_by: attorney, assigned_to: Colocated.singleton)
       FactoryBot.create(
@@ -303,10 +303,10 @@ describe ColocatedTask do
     end
 
     it "should vary depending on status of task" do
-      expect(colocated_task.available_actions_unwrapper(colocated_user).count).to_not eq(0)
-
-      colocated_task.update!(status: Constants.TASK_STATUSES.completed)
-      expect(colocated_task.available_actions_unwrapper(colocated_user).count).to eq(0)
+      expect(colocated_task_with_parent.available_actions_unwrapper(colocated_user).count).to_not eq(0)
+      colocated_task_with_parent.update!(status: Constants.TASK_STATUSES.completed)
+      binding.pry
+      expect(colocated_task_with_parent.available_actions_unwrapper(colocated_user).count).to eq(0)
     end
 
     context "when current user is Colocated admin but not task assignee" do
@@ -314,8 +314,8 @@ describe ColocatedTask do
       before { OrganizationsUser.make_user_admin(colocated_admin, colocated_org) }
 
       it "should include only the reassign action" do
-        expect(colocated_task.available_actions_unwrapper(colocated_admin).count).to eq(1)
-        expect(colocated_task.available_actions_unwrapper(colocated_admin).first[:label]).to(
+        expect(colocated_task_with_parent.available_actions_unwrapper(colocated_admin).count).to eq(1)
+        expect(colocated_task_with_parent.available_actions_unwrapper(colocated_admin).first[:label]).to(
           eq(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.label)
         )
       end
