@@ -78,6 +78,29 @@ describe DecisionReview do
     ]
   end
 
+  context "#removed?" do
+    subject { higher_level_review.removed? }
+
+    let!(:removed_ri) { create(:request_issue, :removed, decision_review: higher_level_review) }
+    let!(:active_ri) { create(:request_issue, decision_review: higher_level_review) }
+
+    context "when a subset of request issues are removed" do
+      it { is_expected.to eq(false) }
+    end
+
+    context "when all request issues are removed" do
+      before { higher_level_review.request_issues.each(&:remove!) }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when there are no request issues" do
+      before { higher_level_review.request_issues.each(&:destroy!) }
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
   context "#contestable_issues" do
     subject { higher_level_review.contestable_issues }
 

@@ -87,11 +87,11 @@ class IntakesController < ApplicationController
         useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
       }
     }
-  rescue StandardError => e
-    Raven.capture_exception(e)
+  rescue StandardError => error
+    Raven.capture_exception(error)
     # cancel intake so user doesn't get stuck
     intake_in_progress&.cancel!(reason: "system_error")
-    flash[:error] = e.message + ". Intake has been cancelled, please retry."
+    flash[:error] = error.message + ". Intake has been cancelled, please retry."
     raise
   end
 
