@@ -27,21 +27,22 @@ class HearingTimeService
     def vacols_formatted_datetime(scheduled_for:, scheduled_time_string:)
       hour, min = scheduled_time_string.split(":")
 
-      hearing_datetime = scheduled_for.to_datetime.change(
+      time = scheduled_for.to_datetime.change(
         hour: hour.to_i,
         min: min.to_i
       )
 
-      VacolsHelper.format_datetime_with_utc_timezone(hearing_datetime)
+      Time.utc(time.year, time.month, time.day, time.hour, time.min, time.sec)
     end
-
-    private
 
     def time_to_string(time)
       return time if time.is_a?(String)
 
-      "#{pad_time(time.hour)}:#{pad_time(time.min)}"
+      datetime = time.to_datetime
+      "#{pad_time(datetime.hour)}:#{pad_time(datetime.min)}"
     end
+
+    private
 
     def pad_time(time)
       "0#{time}".chars.last(2).join
@@ -57,20 +58,20 @@ class HearingTimeService
   end
 
   def to_s
-    return time_to_string(@hearing.scheduled_for) if @hearing.is_a?(LegacyHearing)
+    return self.class.time_to_string(@hearing.scheduled_for) if @hearing.is_a?(LegacyHearing)
 
-    time_to_string(@hearing.scheduled_time)
+    self.class.time_to_string(@hearing.scheduled_time)
   end
 
   def to_datetime
-    @hearing.scheduled_time if @hearing.is_a(Hearing)
+    @hearing.scheduled_time if @hearing.is_a?(Hearing)
 
-    time_string = to_s
+    time = @hearing.scheduled_for.to_datetime
     # format consistent with Hearing scheduled_time column
-    Time.zone.parse("2000-01-01 #{time_string}:00")
+    Time.utc(2000, 1, 1, time.hour, time.min, time.sec)
   end
 
-  def central_office_time_string
+  def central_office_time
     hour, min = to_s.split(":")
     hearing_time = DateTime.current.change(
       hour: hour.to_i,
@@ -80,6 +81,6 @@ class HearingTimeService
 
     co_time = hearing_time.in_time_zone("America/New_York")
 
-    time_to_string(co_time)
+    self.class.time_to_string(co_time)
   end
 end
