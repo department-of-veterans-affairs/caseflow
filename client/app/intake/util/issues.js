@@ -376,7 +376,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       eligibleForSocOptIn: issue.eligibleForSocOptIn,
       decisionReviewTitle: issue.decisionReviewTitle,
       withdrawalPending: issue.withdrawalPending,
-      withdrawalDate: issue.withdrawalDate
+      withdrawalDate: issue.withdrawalDate,
+      category: issue.category
     };
   });
 };

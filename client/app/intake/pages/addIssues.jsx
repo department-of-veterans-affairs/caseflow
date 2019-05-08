@@ -184,7 +184,7 @@ export class AddIssuesPage extends React.Component {
                   }
                 </div>
               </div>
-              {editContentionText && <EditContentionTitle
+              {editContentionText && formType !== FORM_TYPES.APPEAL.key && issue.category && <EditContentionTitle
                 issue= {issue}
                 issueIdx={issue.index} />}
             </div>;

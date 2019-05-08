@@ -234,7 +234,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def description
-    return updated_description if updated_description
+    return edited_description if edited_description
     return contested_issue_description if contested_issue_description
     return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
     return unidentified_issue_text if is_unidentified?
@@ -289,7 +289,7 @@ class RequestIssue < ApplicationRecord
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id,
       withdrawal_date: withdrawal_date,
-      updated_description: updated_description
+      contested_issue_description: contested_issue_description
     }
   end
   # rubocop:enable Metrics/MethodLength
