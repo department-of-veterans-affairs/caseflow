@@ -3,6 +3,18 @@
   border: 1px solid $color-gray-lighter;
   padding: 2rem;
   margin: 2rem -2rem;
+
+  .cf-inline-form {
+    line-height: 2em;
+
+    .cf-date-error {
+      input {
+        border: 3px solid $color-secondary-dark;
+      }
+
+    }
+
+  }
 }
 
 .cf-review-details {
