@@ -268,8 +268,8 @@ export const judgeDecisionReviewTasksSelector = createSelector(
     if (task.appealType === 'Appeal') {
       return (
         [COPY.JUDGE_DECISION_REVIEW_TASK_LABEL,
-         COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL,
-         COPY.JUDGE_DISPATCH_RETURN_TASK_LABEL].includes(task.label)) &&
+          COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL,
+          COPY.JUDGE_DISPATCH_RETURN_TASK_LABEL].includes(task.label)) &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
