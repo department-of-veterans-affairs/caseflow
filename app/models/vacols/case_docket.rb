@@ -235,9 +235,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       .count
   end
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, dry_run = false)
     fail DocketNumberCentennialLoop if Time.zone.now.year >= 2030
 
@@ -288,13 +285,7 @@ class VACOLS::CaseDocket < VACOLS::Record
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
-  # rubocop:disable Metrics/MethodLength
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     conn = connection
 
@@ -337,9 +328,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
   # :nocov:
 end
