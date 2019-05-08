@@ -60,7 +60,7 @@ const HearingTime = ({ hearing }) => {
 
 export default class DisplayText extends React.Component {
   render () {
-    const { hearing, index, user, update, readOnly } = this.props;
+    const { hearing, index, user, update, readOnly, initialState } = this.props;
 
     return <React.Fragment>
       <div>{user.userRoleHearingPrep &&
@@ -68,7 +68,7 @@ export default class DisplayText extends React.Component {
       </div>
       <div><strong>{index + 1}</strong></div>
       <AppellantInformation hearing={hearing} />
-      <HearingTime hearing={hearing} />
+      <HearingTime hearing={initialState} />
     </React.Fragment>;
   }
 }

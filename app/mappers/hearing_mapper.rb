@@ -12,7 +12,7 @@ module HearingMapper
   class << self
     def hearing_fields_to_vacols_codes(hearing_info)
       {
-        scheduled_for: VacolsHelper.format_datetime_with_utc_timezone(hearing_info[:scheduled_for]),
+        scheduled_for: hearing_info[:scheduled_for],
         notes: notes_to_vacols_format(hearing_info[:notes]),
         disposition: disposition_to_vacols_format(hearing_info[:disposition], hearing_info.keys),
         hold_open: hold_open_to_vacols_format(hearing_info[:hold_open]),

@@ -7,8 +7,7 @@ import { TIME_OPTIONS } from '../../../hearings/constants/constants';
 import _ from 'lodash';
 
 export const getDisplayTime = (scheduledForTime, timezone) => {
-  const option = _.find(TIME_OPTIONS, ['value', scheduledForTime]);
-  const val = _.isUndefined(option) ? '' : option.value;
+  const val = scheduledForTime ? moment(scheduledForTime, 'HH:mm').format('h:mm a') : '';
 
   if (timezone) {
     const tz = moment().tz(timezone).
