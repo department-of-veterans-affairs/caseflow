@@ -314,6 +314,7 @@
   "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending",
   "CASE_TIMELINE_JUDGE_TASK": "Decision signed by judge",
   "CASE_TIMELINE_ATTORNEY_TASK": "Decision drafted by attorney",
+  "CASE_TIMELINE_APPEAL_WITHDRAWN": "Appeal withdrawn",
 
   "DECISION_ISSUE_MODAL_TITLE": "Describe what the Veteran is appealing and what you decided.",
   "DECISION_ISSUE_MODAL_SUB_TITLE": "You can also add additional decisions to better address the Veteran's concerns or situation.",
@@ -371,6 +372,7 @@
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
   "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",
   "APPEAL_WITHDRAWAL_MAIL_TASK_LABEL": "Withdrawal of appeal",
+  "ATTORNEY_TASK_LABEL": "Draft decision",
   "CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL": "CUE-related",
   "CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL": "Congressional interest",
   "CONTROLLED_CORRESPONDENCE_MAIL_TASK_LABEL": "Controlled correspondence",
