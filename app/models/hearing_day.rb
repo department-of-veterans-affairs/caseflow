@@ -81,7 +81,7 @@ class HearingDay < ApplicationRecord
   def update_children_records
     vacols_hearings.each do |hearing|
       hearing.update_caseflow_and_vacols(
-        **only_changed(room: room, bva_poc: bva_poc, judge_id: judge&.vacols_attorney_id)
+        **only_changed(room: room, bva_poc: bva_poc, judge_id: judge&.id)
       )
     end
 
