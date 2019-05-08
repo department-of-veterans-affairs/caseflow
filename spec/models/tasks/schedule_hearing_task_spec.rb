@@ -61,7 +61,7 @@ describe ScheduleHearingTask do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
       end
 
-      it "has no actions available" do
+      it "has no actions available to the hearing admin org member" do
         subject
 
         task = ScheduleHearingTask.first

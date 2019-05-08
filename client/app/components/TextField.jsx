@@ -26,14 +26,18 @@ export default class TextField extends React.Component {
       maxLength,
       max,
       autoComplete,
-      useAriaLabel
+      useAriaLabel,
+      dateErrorMessage
     } = this.props;
 
     let textInputClass = className.concat(
       invisible ? ' cf-invisible' : ''
     ).concat(
       errorMessage ? 'usa-input-error' : ''
-    );
+    ).
+      concat(
+        dateErrorMessage ? 'cf-date-error' : ''
+      );
 
     // Use empty string instead of null or undefined,
     // otherwise React displays the following error:
@@ -54,6 +58,7 @@ export default class TextField extends React.Component {
     const ariaLabelObj = useAriaLabel ? { 'aria-label': name } : {};
 
     return <div className={textInputClass.join(' ')}>
+      {dateErrorMessage && <span className="usa-input-error-message">{dateErrorMessage}</span>}
       {label !== false &&
         <label htmlFor={name}>
           {
@@ -102,6 +107,7 @@ TextField.defaultProps = {
 };
 
 TextField.propTypes = {
+  dateErrorMessage: PropTypes.string,
   errorMessage: PropTypes.string,
   className: PropTypes.arrayOf(PropTypes.string),
   invisible: PropTypes.bool,
