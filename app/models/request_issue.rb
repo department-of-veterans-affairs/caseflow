@@ -237,6 +237,7 @@ class RequestIssue < ApplicationRecord
     return contested_issue_description if contested_issue_description
     return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
     return unidentified_issue_text if is_unidentified?
+    return rating_issue_description if !rating_issue_description.nil?
   end
 
   # If the request issue is unidentified, we want to prompt the VBMS/SHARE user to correct the issue.
@@ -287,7 +288,8 @@ class RequestIssue < ApplicationRecord
       decision_review_title: review_title,
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id,
-      withdrawal_date: withdrawal_date
+      withdrawal_date: withdrawal_date,
+      rating_issue_description: rating_issue_description
     }
   end
   # rubocop:enable Metrics/MethodLength
