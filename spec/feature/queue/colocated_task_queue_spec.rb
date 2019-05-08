@@ -224,7 +224,8 @@ RSpec.feature "ColocatedTask" do
       )
 
       # Ensure the task has been updated
-      expect(page).to have_content(selected_opt_0)
+      # TODO: Currently fails, wating for the back end implementation
+      expect(page).to have_content(format("TASK\n%<label>s", label: selected_opt_0))
       click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
       expect(page).to have_content(instructions)
     end

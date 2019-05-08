@@ -57,36 +57,66 @@ RSpec.feature "MailTasks" do
     end
   end
 
-  describe "Changing a mail team task type" do
-    context "when task is incorrect" do
+  describe "Changing a mail team task type", focus: true do
+    context "when task does not need to be reassigned" do
       let(:root_task) { FactoryBot.create(:root_task) }
-      let(:OldTaskType) { MailTask.descendants.to_a.last }
+      let(:old_task_type) { DeathCertificateMailTask }
+      let(:new_task_type) { AddressChangeMailTask }
 
-      let(:mail_team_task) do
-        OldTaskType.create!(
+      let!(:mail_task) do
+        old_task_type.create!(
           appeal: root_task.appeal,
           parent_id: root_task.id,
-          assigned_to: MailTeam.singleton
+          assigned_to: user
         )
       end
 
-      it "successfully updates the task type" do
-        visit("queue/appeals/#{mail_team_task.appeal.external_id}")
+      before { OrganizationsUser.add_user_to_organization(user, Colocated.singleton) }
 
-        prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
-        text = Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.label
-        click_dropdown(prompt: prompt, text: text)
-        fill_in("taskInstructions", with: "instructions")
-        click_button("Submit")
+      it "should update the task type" do
+        # Visit case details page for VLJ support staff.
+        visit "/queue"
+        click_on "#{root_task.appeal.veteran_full_name} (#{root_task.appeal.veteran_file_number})"
 
-        expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
-        expect(page.current_path).to eq("/queue")
+        # Navigate to the change task type modal
+        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
 
-        new_tasks = aod_team_task.children
-        expect(new_tasks.length).to eq(1)
+        expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
 
-        new_task = new_tasks.first
-        expect(new_task.assigned_to).to eq(user)
+        # Ensure all admin actions are available
+        mail_tasks = MailTask.subclass_routing_options
+        find(".Select-control", text: "Select an action type").click do
+          visible_options = page.find_all(".Select-option")
+          expect(visible_options.length).to eq mail_tasks.length
+        end
+
+        # Attempt to change task type without including instuctions.
+        find("div", class: "Select-option", text: new_task_type.label).click
+        find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
+
+        # Instructions field is required
+        expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+
+        # Add instructions and try again
+        instructions = generate_words(5)
+        fill_in("instructions", with: instructions)
+        find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
+
+        # We should see a success message but remain on the case details page
+        expect(page).to have_content(
+          format(
+            COPY::CHANGE_TASK_TYPE_CONFIRMATION_TITLE,
+            old_task_type.label,
+            new_task_type.label
+          )
+        )
+
+        # Ensure the task has been updated
+        # TODO: Currently fails, wating for the back end implementation
+        expect(page).to have_content(format("TASK\n%<label>s", label: new_task_type.label))
+        click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+        expect(page).to have_content(instructions)
       end
     end
   end

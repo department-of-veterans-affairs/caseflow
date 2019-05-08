@@ -81,7 +81,13 @@ class MailTask < GenericTask
   end
 
   def change_task_type_data(_user = nil)
-    mail_assign_to_organization_data
+    {
+      redirect_after: "/queue",
+      selected: nil,
+      options: MailTask.subclasses.sort_by(&:label).map do |subclass|
+        { value: subclass.name, label: subclass.label }
+      end
+    }
   end
 
   def available_actions(user)
