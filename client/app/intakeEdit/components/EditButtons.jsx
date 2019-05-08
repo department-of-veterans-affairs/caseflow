@@ -96,7 +96,8 @@ class SaveButtonUnconnected extends React.Component {
       removeDecisionReviews,
       veteranValid,
       processedInCaseflow,
-      withdrawalDate
+      withdrawalDate,
+      receiptDate
     } = this.props;
 
     let disableDueToIssueCount = false;
@@ -109,9 +110,11 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
     );
 
+    const withdrawDateError = new Date(withdrawalDate) < new Date(receiptDate) || new Date(withdrawalDate) > new Date();
+
     const withdrawDateValid = _.every(
       addedIssues, (issue) => !issue.withdrawalPending
-    ) || validateDate(withdrawalDate);
+    ) || (validateDate(withdrawalDate) && !withdrawDateError);
 
     const saveDisabled = _.isEqual(
       addedIssues, originalIssues
@@ -192,6 +195,7 @@ const SaveButton = connect(
     veteranValid: state.veteranValid,
     processedInCaseflow: state.processedInCaseflow,
     withdrawalDate: state.withdrawalDate,
+    receiptDate: state.receiptDate,
     state
   }),
   (dispatch) => bindActionCreators({
