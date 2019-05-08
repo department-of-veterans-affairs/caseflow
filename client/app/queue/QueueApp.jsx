@@ -43,6 +43,7 @@ import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddVsoModal from './AddVsoModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
+import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -65,7 +66,6 @@ import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
-import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 
 class QueueApp extends React.PureComponent {
   componentDidMount = () => {

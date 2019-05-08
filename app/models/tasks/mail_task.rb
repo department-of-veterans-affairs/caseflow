@@ -91,7 +91,7 @@ class MailTask < GenericTask
   end
 
   def available_actions(user)
-    super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+    super(user) # .unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
   end
 end
 
