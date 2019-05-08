@@ -6,15 +6,7 @@
 
 class BvaDispatchTask < GenericTask
   def available_actions(user)
-    return super if assigned_to != user
-
-    [
-      Constants.TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.to_h,
-      Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
-      Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-      Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-      Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-    ]
+    super.unshift(Constants.TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.to_h)
   end
 
   class << self
