@@ -62,9 +62,29 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     end
     let!(:legacy_hearing) { create(:legacy_hearing) }
 
-    scenario "User can update nothing" do
+    scenario "User can edit Judge" do
       visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
-      expect(page).to have_content("This is a Legacy Case Hearing")
+
+      expect(page).to have_field("judgeDropdown", disabled: false)
+      expect(page).to have_field("hearingCoordinatorDropdown", disabled: false)
+      expect(page).to have_field("hearingRoomDropdown", disabled: false)
+      expect(page).to have_field("Notes", disabled: false)
+      expect(page).to have_no_selector("label", text: "Yes, Waive 90 Day Evidence Hold")
+    end
+
+    scenario "User can not edit transcription" do
+      visit "hearings/" + legacy_hearing.external_id.to_s + "/details"
+
+      expect(page).to have_no_field("taskNumber")
+      expect(page).to have_no_field("transcriber")
+      expect(page).to have_no_field("sentToTranscriberDate")
+      expect(page).to have_no_field("expectedReturnDate")
+      expect(page).to have_no_field("uploadedToVbmsDate")
+      expect(page).to have_no_field("problemType")
+      expect(page).to have_no_field("problemNoticeSentDate")
+      expect(page).to have_no_field("requestedRemedy")
+      expect(page).to have_no_field("copySentDate")
+      expect(page).to have_no_field("copyRequested")
     end
   end
 end
