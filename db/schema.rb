@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190508001228) do
+ActiveRecord::Schema.define(version: 20190508141826) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -822,11 +822,11 @@ ActiveRecord::Schema.define(version: 20190508001228) do
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
     t.datetime "rating_issue_associated_at", comment: "Timestamp when a contention and its contested rating issue are associated in VBMS."
-    t.string "rating_issue_description", comment: "Description of the edited contested rating or decision issue. Will be either a rating issue's decision text or a decision issue's description."
     t.string "unidentified_issue_text", comment: "User entered description if the request issue is neither a rating or a nonrating issue"
     t.boolean "untimely_exemption", comment: "If the contested issue's decision date was more than a year before the receipt date, it is considered untimely (unless it is a Supplemental Claim). However, an exemption to the timeliness can be requested. If so, it is indicated here."
     t.text "untimely_exemption_notes", comment: "Notes related to the untimeliness exemption requested."
     t.datetime "updated_at", comment: "Automatic timestamp whenever the record changes."
+    t.string "updated_description", comment: "The updated description for the contested issue, optionally entered by the user."
     t.string "vacols_id", comment: "The vacols_id of the legacy appeal that had an issue found to match the request issue."
     t.integer "vacols_sequence_id", comment: "The vacols_sequence_id, for the specific issue on the legacy appeal which the Claims Assistant determined to match the request issue on the Decision Review. A combination of the vacols_id (for the legacy appeal), and vacols_sequence_id (for which issue on the legacy appeal), is required to identify the issue being opted-in."
     t.string "veteran_participant_id", comment: "The veteran participant ID. This should be unique in upstream systems and used in the future to reconcile duplicates."
