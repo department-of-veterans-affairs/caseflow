@@ -171,6 +171,31 @@ describe TimedHoldTask do
     end
   end
 
+  context "start and end times" do
+    let(:days_on_hold) { 18 }
+    let(:user) { FactoryBot.create(:user) }
+    let!(:parent) { FactoryBot.create(:generic_task, assigned_to: user) }
+    let!(:task) do
+      TimedHoldTask.create!(appeal: parent.appeal, assigned_to: user, days_on_hold: days_on_hold, parent: parent)
+    end
+
+    it "has one task timer" do
+      expect(task.task_timers.count).to eq 1
+    end
+
+    describe ".timer_end_time" do
+      it "returns the expected end time" do
+        expect(task.timer_end_time).to eq task.task_timers.first.submitted_at
+      end
+    end
+
+    describe ".timer_start_time" do
+      it "returns the expected start time" do
+        expect(task.timer_start_time).to eq task.task_timers.first.created_at
+      end
+    end
+  end
+
   describe ".hide_from_case_timeline" do
     it "is always hidden from case timeline" do
       expect(task.hide_from_case_timeline).to eq(true)

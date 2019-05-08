@@ -67,8 +67,8 @@ class Task < ApplicationRecord
     active? && children.empty?
   end
 
-  # available_actions() returns an array of options from selected by the subclass
-  # from TASK_ACTIONS that looks something like:
+  # available_actions() returns an array of options selected by
+  # the subclass from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
     actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []

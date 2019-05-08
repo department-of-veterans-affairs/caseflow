@@ -1,24 +1,22 @@
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-
-import { taskById } from '../selectors';
 import { onReceiveAmaTasks } from '../QueueActions';
-import { requestSave } from '../uiReducer/uiActions';
 import QueueFlowModal from './QueueFlowModal';
+import { requestSave } from '../uiReducer/uiActions';
+import COPY from '../../../COPY.json';
+import { taskById } from '../selectors';
+import { withRouter } from 'react-router-dom';
 
 class EndHoldModal extends React.Component {
   submit = () => {
     const { task } = this.props;
 
-    // TODO: Where do these fields come from?
     const successMsg = {
-      title: 'success',
-      detail: 'Ended hold early successfully'
+      title: COPY.END_HOLD_SUCCESS_MESSAGE_TITLE
     };
 
-    return this.props.requestSave(`/tasks/${task.taskId}/end_hold`, successMsg).
+    return this.props.requestSave(`/tasks/${task.taskId}/end_hold`, {}, successMsg).
       then((resp) => {
         const response = JSON.parse(resp.text);
 
@@ -27,12 +25,11 @@ class EndHoldModal extends React.Component {
   }
 
   render = () => <QueueFlowModal
-    title="End hold early"
-    // TODO: Set this to the case details page.
-    pathAfterSubmit="/queue"
+    title={COPY.END_HOLD_MODAL_TITLE}
+    pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
     submit={this.submit}
   >
-    <div>Do you want to end the hold early?</div>
+    <p>{COPY.END_HOLD_MODAL_BODY}</p>
   </QueueFlowModal>;
 }
 
@@ -45,4 +42,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
-export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(EndHoldModal)));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(EndHoldModal));

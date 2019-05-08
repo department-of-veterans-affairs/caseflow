@@ -264,10 +264,10 @@ describe Task do
   end
 
   describe ".available_actions_unwrapper" do
-    context "when task/user combination result in multiple available actions with same path" do
-      let(:user) { FactoryBot.create(:user) }
-      let(:task) { FactoryBot.create(:generic_task) }
+    let(:user) { FactoryBot.create(:user) }
+    let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
 
+    context "when task/user combination result in multiple available actions with same path" do
       let(:path) { "modal/path_to_modal" }
       let(:labels) { ["First option", "Second option"] }
 
@@ -288,6 +288,24 @@ describe Task do
           expect(e.user_id).to eq(user.id)
           expect(e.labels).to match_array(labels)
         end
+      end
+    end
+
+    context "without a timed hold task" do
+      it "doesn't include end timed hold in the returned actions" do
+        actions = task.available_actions_unwrapper(user)
+        expect(actions).to_not include task.build_action_hash(Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h, user)
+      end
+    end
+
+    context "with a timed hold task" do
+      let!(:timed_hold_task) do
+        FactoryBot.create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
+      end
+
+      it "includes end timed hold in the returned actions" do
+        actions = task.available_actions_unwrapper(user)
+        expect(actions).to include task.build_action_hash(Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h, user)
       end
     end
   end

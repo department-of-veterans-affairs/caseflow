@@ -437,6 +437,7 @@ RSpec.feature "Task queue" do
       expect(page).to_not have_content(judgeteam.name)
     end
   end
+
   describe "VLJ support staff schedule hearing action" do
     let(:attorney) { FactoryBot.create(:user) }
     let(:vacols_case) { create(:case) }
@@ -645,6 +646,63 @@ RSpec.feature "Task queue" do
 
         expect(page).to have_content(legacy_appeal.veteran_file_number)
         expect(page).to_not have_content("Information cannot be found")
+      end
+    end
+  end
+
+  describe "a task with a child TimedHoldTask" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:veteran) { FactoryBot.create(:veteran, first_name: "Maisie", last_name: "Varesko", file_number: 201_905_061) }
+    let(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+    let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
+    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+    let!(:transcription_task) do
+      FactoryBot.create(:transcription_task, parent: disposition_task, appeal: appeal, assigned_to: user)
+    end
+    let(:days_on_hold) { 18 }
+    let!(:timed_hold_task) do
+      TimedHoldTask.create_from_parent(transcription_task, days_on_hold: days_on_hold)
+    end
+
+    before do
+      OrganizationsUser.add_user_to_organization(user, TranscriptionTeam.singleton)
+      User.authenticate!(user: user)
+    end
+
+    it "can remove the hold from the task" do
+      step "visit queue and go to the case details page" do
+        visit "/queue"
+        click_on "On hold (1)"
+        click_on veteran_link_text
+        expect(page).to have_content "Currently active tasks"
+      end
+
+      schedule_row = find("dd", text: TranscriptionTask.last.label).find(:xpath, "ancestor::tr")
+
+      step "select the end timed hold option from the action dropdown" do
+        expect(schedule_row).to have_content("DAYS ON HOLD 0 of #{days_on_hold}", normalize_ws: true)
+        available_options = click_dropdown({ text: Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h[:label] }, schedule_row)
+        # the dropdown has the default options in addition to the end timed hold action
+        default_options = transcription_task.available_actions(user).map { |option| option[:label] }
+        expect(available_options.count).to eq default_options.count + 1
+        expect(available_options).to include(*default_options)
+      end
+
+      step "submit the end timed hold form" do
+        click_button "Submit"
+        expect(page).to have_content "Success!"
+        expect(schedule_row).to have_content("DAYS WAITING 0", normalize_ws: true)
+      end
+    end
+
+    it "hold is removed when the parent task is updated" do
+      step "visit queue and go to the case details page" do
+        visit "/queue"
+        click_on "On hold (1)"
+        click_on veteran_link_text
+        expect(page).to have_content "Currently active tasks"
       end
     end
   end

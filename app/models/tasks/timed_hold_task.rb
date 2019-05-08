@@ -43,6 +43,10 @@ class TimedHoldTask < GenericTask
     task_timers.first&.created_at
   end
 
+  def hide_from_queue_table_view
+    true
+  end
+
   def hide_from_case_timeline
     true
   end
