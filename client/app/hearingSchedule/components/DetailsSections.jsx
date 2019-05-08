@@ -307,44 +307,40 @@ const TranscriptionRequest = ({
   </div>
 );
 
-const Sections = ({ transcription, hearing, disabled, setHearing, setTranscription }) => {
-  const isLegacy = hearing.docketName !== 'hearing';
+const Sections = ({ transcription, hearing, disabled, setHearing, setTranscription, isLegacy }) => (
+  <React.Fragment>
+    <Details
+      hearing={hearing}
+      set={setHearing}
+      readOnly={disabled}
+      isLegacy={isLegacy} />
+    <div className="cf-help-divider" />
 
-  return (
-    <React.Fragment>
-      <Details
-        hearing={hearing}
-        set={setHearing}
-        readOnly={disabled}
-        isLegacy={isLegacy} />
-      <div className="cf-help-divider" />
+    {!isLegacy &&
+      <div>
+        <h2>Transcription Details</h2>
+        <TranscriptionDetails
+          transcription={transcription}
+          set={setTranscription}
+          readOnly={disabled} />
+        <div className="cf-help-divider" />
 
-      {!isLegacy &&
-        <div>
-          <h2>Transcription Details</h2>
-          <TranscriptionDetails
-            transcription={transcription}
-            set={setTranscription}
-            readOnly={disabled} />
-          <div className="cf-help-divider" />
+        <h2>Transcription Problem</h2>
+        <TranscriptionProblem
+          transcription={transcription}
+          set={setTranscription}
+          readOnly={disabled} />
+        <div className="cf-help-divider" />
 
-          <h2>Transcription Problem</h2>
-          <TranscriptionProblem
-            transcription={transcription}
-            set={setTranscription}
-            readOnly={disabled} />
-          <div className="cf-help-divider" />
-
-          <h2>Transcription Request</h2>
-          <TranscriptionRequest
-            hearing={hearing}
-            set={setHearing}
-            readOnly={disabled} />
-          <div className="cf-help-divider" />
-        </div>
-      }
-    </React.Fragment>
-  );
-};
+        <h2>Transcription Request</h2>
+        <TranscriptionRequest
+          hearing={hearing}
+          set={setHearing}
+          readOnly={disabled} />
+        <div className="cf-help-divider" />
+      </div>
+    }
+  </React.Fragment>
+);
 
 export default Sections;

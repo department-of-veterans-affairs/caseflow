@@ -42,6 +42,7 @@ class HearingDetails extends React.Component {
 
     this.state = {
       disabled: this.props.disabled,
+      isLegacy: this.props.hearing.docketName !== 'hearing',
       updated: false,
       loading: false,
       success: false,
@@ -165,6 +166,7 @@ class HearingDetails extends React.Component {
             setHearing={this.setHearing}
             transcription={transcriptionDetailsForm || {}}
             hearing={hearingDetailsForm || {}}
+            isLegacy={this.state.isLegacy}
             disabled={disabled} />
           <div>
             <a
