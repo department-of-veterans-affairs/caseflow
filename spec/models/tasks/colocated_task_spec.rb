@@ -305,7 +305,6 @@ describe ColocatedTask do
     it "should vary depending on status of task" do
       expect(colocated_task.available_actions_unwrapper(colocated_user).count).to_not eq(0)
       colocated_task.update!(status: Constants.TASK_STATUSES.completed)
-      binding.pry
       expect(colocated_task.available_actions_unwrapper(colocated_user).count).to eq(0)
     end
 
