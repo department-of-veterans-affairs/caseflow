@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AttorneyTask do
   let!(:attorney) { create(:user) }
   let!(:judge) { create(:user) }
@@ -14,6 +16,12 @@ describe AttorneyTask do
         appeal: appeal,
         parent: parent,
         status: Constants.TASK_STATUSES.assigned
+      )
+    end
+
+    it "returns the correct label" do
+      expect(AttorneyTask.new.label).to eq(
+        COPY::ATTORNEY_TASK_LABEL
       )
     end
 

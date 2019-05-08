@@ -30,7 +30,7 @@ const roSelectionStyling = css({ marginTop: '10px' });
 
 const UpcomingHearingDaysNav = ({
   upcomingHearingDays, selectedHearingDay,
-  onSelectedHearingDayChangeFactory, room
+  onSelectedHearingDayChangeFactory
 }) => (
   <div className="usa-width-one-fourth" {...roSelectionStyling}>
     <h3>Hearings to Schedule</h3>
@@ -48,7 +48,7 @@ const UpcomingHearingDaysNav = ({
               onClick={onSelectedHearingDayChangeFactory(hearingDay)}
               linkStyling>
               {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
-              ${room}`}
+              ${hearingDay.room}`}
             </Button>
           </li>;
         })}
@@ -78,18 +78,16 @@ export default class AssignHearings extends React.Component {
       upcomingHearingDays, selectedHearingDay,
       appealsReadyForHearing, selectedRegionalOffice
     } = this.props;
-    const hasUpcomingHearingDays = !_.isEmpty(upcomingHearingDays);
     const room = this.room();
 
     return (
       <React.Fragment>
-        {hasUpcomingHearingDays && <UpcomingHearingDaysNav
+        {<UpcomingHearingDaysNav
           upcomingHearingDays={upcomingHearingDays}
           selectedHearingDay={selectedHearingDay}
-          onSelectedHearingDayChangeFactory={this.onSelectedHearingDayChangeFactory}
-          room={room} />
+          onSelectedHearingDayChangeFactory={this.onSelectedHearingDayChangeFactory} />
         }
-        {(hasUpcomingHearingDays && appealsReadyForHearing && selectedHearingDay) &&
+        {appealsReadyForHearing &&
           <AssignHearingsTabs
             selectedRegionalOffice={selectedRegionalOffice}
             selectedHearingDay={selectedHearingDay}

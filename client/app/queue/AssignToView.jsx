@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,8 +15,8 @@ import { onReceiveAmaTasks } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
+import QueueFlowModal from './components/QueueFlowModal';
 
-import editModalBase from './components/EditModalBase';
 import {
   requestPatch,
   requestSave
@@ -25,40 +24,13 @@ import {
 
 import { taskActionData } from './utils';
 
-import type { State } from './types/state';
-import type { Appeal, Task } from './types/models';
-
-type Params = {|
-  appealId: string,
-  taskId: string,
-  task: Task,
-  isReassignAction: boolean,
-  isTeamAssign: boolean,
-  returnToCaseDetails: boolean,
-  assigneeAlreadySelected: boolean,
-  history: Object
-|};
-
-type Props = Params & {|
-  appeal: Appeal,
-  highlightFormItems: boolean,
-  requestPatch: typeof requestPatch,
-  requestSave: typeof requestSave,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks
-|};
-
-type ViewState = {|
-  selectedValue: ?string,
-  instructions: ?string
-|};
-
 const selectedAction = (props) => {
   const actionData = taskActionData(props);
 
   return actionData.selected ? actionData.options.find((option) => option.value === actionData.selected.id) : null;
 };
 
-class AssignToView extends React.Component<Props, ViewState> {
+class AssignToView extends React.Component {
   constructor(props) {
     super(props);
 
@@ -119,6 +91,9 @@ class AssignToView extends React.Component<Props, ViewState> {
         const response = JSON.parse(resp.text);
 
         this.props.onReceiveAmaTasks(response.tasks.data);
+      }).
+      catch(() => {
+        // handle the error from the frontend
       });
   }
 
@@ -148,7 +123,7 @@ class AssignToView extends React.Component<Props, ViewState> {
       }
     };
 
-    const successMsg = { title: `Task reassigned to ${this.getAssignee()}` };
+    const successMsg = { title: sprintf(COPY.REASSIGN_TASK_SUCCESS_MESSAGE, this.getAssignee()) };
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
       then((resp) => {
@@ -165,11 +140,21 @@ class AssignToView extends React.Component<Props, ViewState> {
       task
     } = this.props;
 
+    const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
+    const actionData = taskActionData(this.props);
+
     if (!task || task.availableActions.length === 0) {
       return null;
     }
 
-    return <React.Fragment>
+    return <QueueFlowModal
+      title={(this.props.assigneeAlreadySelected && action) ?
+        sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) :
+        COPY.ASSIGN_TASK_TITLE}
+      pathAfterSubmit = {(actionData && actionData.redirect_after) || '/queue'}
+      submit={this.submit}
+      validateForm={this.validateForm}
+    >
       { !assigneeAlreadySelected && <React.Fragment>
         <SearchableDropdown
           name="Assign to selector"
@@ -188,11 +173,11 @@ class AssignToView extends React.Component<Props, ViewState> {
         id="taskInstructions"
         onChange={(value) => this.setState({ instructions: value })}
         value={this.state.instructions} />
-    </React.Fragment>;
+    </QueueFlowModal>;
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state, ownProps) => {
   const {
     highlightFormItems
   } = state.ui;
@@ -210,22 +195,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
-const propsToText = (props) => {
-  // I think the editModalBase higher order component is still calling this after all of the actions have run and the
-  // task's available actions have been updated to reflect the updated status of the task.
-  const action = props.task && props.task.availableActions.length > 0 ? selectedAction(props) : null;
-  const title = (props.assigneeAlreadySelected && action) ?
-    sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) :
-    COPY.ASSIGN_TASK_TITLE;
-  const actionData = taskActionData(props);
-  const pathAfterSubmit = (actionData && actionData.redirect_after) || '/queue';
-
-  return {
-    title,
-    pathAfterSubmit
-  };
-};
-
-export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AssignToView, { propsToText })
-)): React.ComponentType<Params>);
+export default (withRouter(connect(mapStateToProps, mapDispatchToProps)(AssignToView)));

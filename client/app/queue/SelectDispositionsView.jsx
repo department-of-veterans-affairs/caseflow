@@ -6,7 +6,6 @@ import _ from 'lodash';
 import { css } from 'glamor';
 
 import Button from '../components/Button';
-import decisionViewBase from './components/DecisionViewBase';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
@@ -30,6 +29,7 @@ import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
 import uuid from 'uuid';
+import QueueFlowPage from './components/QueueFlowPage';
 
 const connectedIssueDiv = css({
   display: 'flex',
@@ -162,7 +162,7 @@ class SelectDispositionsView extends React.PureComponent {
     const { decisionIssue } = this.state;
 
     return decisionIssue.benefit_type && decisionIssue.disposition &&
-      decisionIssue.description && decisionIssue.diagnostic_code;
+      decisionIssue.description;
   }
 
   saveDecision = () => {
@@ -246,7 +246,7 @@ class SelectDispositionsView extends React.PureComponent {
   }
 
   render = () => {
-    const { appeal, highlight } = this.props;
+    const { appeal, highlight, ...otherProps } = this.props;
 
     const {
       highlightModal,
@@ -263,7 +263,12 @@ class SelectDispositionsView extends React.PureComponent {
     const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
     const toDeleteHasConnectedIssue = connectedIssues.length > 0;
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      validateForm={this.validateForm}
+      getNextStepUrl={this.getNextStepUrl}
+      getPrevStepUrl={this.getPrevStepUrl}
+      {...otherProps}
+    >
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
       <p>{COPY.DECISION_ISSUE_PAGE_EXPLANATION}</p>
       <hr />
@@ -345,7 +350,6 @@ class SelectDispositionsView extends React.PureComponent {
         />
         <h3>{COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}</h3>
         <SearchableDropdown
-          errorMessage={highlightModal && !decisionIssue.diagnostic_code ? 'This field is required' : null}
           name="Diagnostic code"
           placeholder={COPY.DECISION_ISSUE_MODAL_DIAGNOSTIC_CODE}
           hideLabel
@@ -418,7 +422,7 @@ class SelectDispositionsView extends React.PureComponent {
             )
         }
       </Modal>}
-    </React.Fragment>;
+    </QueueFlowPage>;
   };
 }
 
@@ -441,4 +445,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   editStagedAppeal
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(SelectDispositionsView));
+export default connect(mapStateToProps, mapDispatchToProps)(SelectDispositionsView);

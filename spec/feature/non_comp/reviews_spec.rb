@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 feature "NonComp Reviews Queue" do
   before do
     FeatureToggle.enable!(:decision_reviews)
@@ -37,7 +39,7 @@ feature "NonComp Reviews Queue" do
                :in_progress,
                appeal: appeal,
                assigned_to: non_comp_org,
-               assigned_at: today)
+               assigned_at: 1.day.ago)
       ]
     end
 
@@ -81,7 +83,7 @@ feature "NonComp Reviews Queue" do
       # ordered by assigned_at descending
 
       expect(page).to have_content(
-        /#{veteran_b.name} .+? #{veteran_c.name} .+? #{veteran_a.name}/
+        /#{veteran_b.name}.+\s#{veteran_c.name}.+\s#{veteran_a.name}/
       )
 
       click_on "Completed tasks"
@@ -90,19 +92,11 @@ feature "NonComp Reviews Queue" do
 
       # ordered by closed_at descending
       expect(page).to have_content(
-        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review #{veteran_a.name} 5\d+ 0 [\d\/]+/
+        /#{veteran_b.name} 5\d+ 0 [\d\/]+ Higher-Level Review\s#{veteran_a.name} 5\d+ 0 [\d\/]+/
       )
     end
 
     context "with user enabled for intake" do
-      before do
-        FeatureToggle.enable!(:intake)
-      end
-
-      after do
-        FeatureToggle.disable!(:intake)
-      end
-
       scenario "goes back to intake" do
         # allow user to have access to intake
         user.update(roles: user.roles << "Mail Intake")

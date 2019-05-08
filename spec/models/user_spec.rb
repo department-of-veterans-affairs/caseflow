@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe User do
-  let(:session) { { "user" => { "id" => "123", "station_id" => "310", "name" => "Tom Brady" } } }
+  let(:css_id) { "TomBrady" }
+  let(:session) { { "user" => { "id" => css_id, "station_id" => "310", "name" => "Tom Brady" } } }
   let(:user) { User.from_session(session) }
 
   before(:all) do
@@ -14,6 +17,23 @@ describe User do
 
   before do
     Fakes::AuthenticationService.user_session = nil
+  end
+
+  context ".find_by_css_id" do
+    let!(:user) { create(:user, css_id: "FOOBAR") }
+
+    it "searches case insensitively" do
+      expect(User.find_by_css_id("fooBaR")).to eq(user)
+    end
+  end
+
+  context ".find_by_css_id_or_create_with_default_station_id" do
+    subject { User.find_by_css_id_or_create_with_default_station_id(css_id) }
+
+    it "forces the css id to UPCASE" do
+      expect(css_id.upcase).to_not eq(css_id)
+      expect(subject.css_id).to eq(css_id.upcase)
+    end
   end
 
   context "#regional_office" do
@@ -35,13 +55,14 @@ describe User do
 
     let(:result) do
       {
-        "id" => "123",
+        "id" => css_id.upcase,
         "station_id" => "310",
-        "css_id" => "123",
+        "css_id" => css_id.upcase,
+        "pg_user_id" => user.id,
         "email" => nil,
         "roles" => [],
         "selected_regional_office" => nil,
-        :display_name => "123",
+        :display_name => css_id.upcase,
         "name" => "Tom Brady"
       }
     end
@@ -108,12 +129,12 @@ describe User do
         session["user"]["id"] = "Shaner"
         user.regional_office = "RO77"
       end
-      it { is_expected.to eq("Shaner (RO77)") }
+      it { is_expected.to eq("SHANER (RO77)") }
     end
 
     context "when just username is set" do
       before { session["user"]["id"] = "Shaner" }
-      it { is_expected.to eq("Shaner") }
+      it { is_expected.to eq("SHANER") }
     end
   end
 
@@ -138,18 +159,18 @@ describe User do
 
     context "when roles don't contain the thing but user is granted the function" do
       before { session["user"]["roles"] = ["Do the other thing!"] }
-      before { Functions.grant!("Do the thing", users: ["123"]) }
+      before { Functions.grant!("Do the thing", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
 
     context "when roles contains the thing but user is denied" do
       before { session["user"]["roles"] = ["Do the thing"] }
-      before { Functions.deny!("Do the thing", users: ["123"]) }
+      before { Functions.deny!("Do the thing", users: [css_id.upcase]) }
       it { is_expected.to be_falsey }
     end
 
     context "when system admin and roles don't contain the thing" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: [css_id.upcase]) }
       before { session["user"]["roles"] = ["Do the other thing"] }
       it { is_expected.to be_truthy }
     end
@@ -170,7 +191,7 @@ describe User do
     end
 
     context "when user with roles that contain admin" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
   end
@@ -296,12 +317,12 @@ describe User do
     end
 
     context "when user with roles that contain admin" do
-      before { Functions.grant!("System Admin", users: ["123"]) }
+      before { Functions.grant!("System Admin", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
 
     context "when user with grant that contain Admin Intake" do
-      before { Functions.grant!("Admin Intake", users: ["123"]) }
+      before { Functions.grant!("Admin Intake", users: [css_id.upcase]) }
       it { is_expected.to be_truthy }
     end
 
@@ -415,23 +436,55 @@ describe User do
         session["user"]["roles"] = ["Do the thing"]
         session[:regional_office] = "283"
         session["user"]["name"] = "Anne Merica"
+        Timecop.freeze(Time.zone.now)
+      end
+
+      after do
+        Timecop.return
       end
 
       it do
+        expect(User).to receive(:find_by_css_id)
         is_expected.to be_an_instance_of(User)
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
         expect(subject.full_name).to eq("Anne Merica")
+        expect(subject.css_id).to eq("TOMBRADY")
+        expect(subject.last_login_at).to eq(Time.zone.now)
       end
 
       it "persists user to DB" do
         expect(User.find(subject.id)).to be_truthy
+      end
+
+      it "searches by user id when it is in session" do
+        user = create(:user)
+        expect(User).to_not receive(:find_by_css_id)
+        session["user"]["pg_user_id"] = user.id
+        expect(subject).to eq user
       end
     end
 
     context "returns nil when no user in session" do
       before { session["user"] = nil }
       it { is_expected.to be_nil }
+    end
+
+    context "user exists with different station_id" do
+      let(:station_id) { "123" }
+      let(:new_station_id) { "456" }
+      let!(:existing_user) { create(:user, css_id: "foobar", station_id: station_id) }
+
+      before do
+        session["user"]["station_id"] = new_station_id
+        session["user"]["id"] = existing_user.css_id
+      end
+
+      it "updates station_id from session" do
+        subject
+
+        expect(existing_user.reload.station_id).to eq(new_station_id)
+      end
     end
   end
 
@@ -513,6 +566,25 @@ describe User do
       end
       it "should return a list of all teams user is an admin for" do
         expect(user.administered_teams).to include(*admin_orgs)
+      end
+    end
+  end
+
+  describe ".organization_queue_user?" do
+    let(:user) { FactoryBot.create(:user) }
+
+    subject { user.organization_queue_user? }
+
+    context "when the current user is not a member of any organizations" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the user is a member of some organizations" do
+      before { OrganizationsUser.add_user_to_organization(user, FactoryBot.create(:organization)) }
+      it "returns true" do
+        expect(subject).to eq(true)
       end
     end
   end

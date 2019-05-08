@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe LegacyIssueOptin do
   let(:remand_issue) { create(:case_issue, :disposition_remanded, issseq: 1) }
   let(:remand_case) do

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.feature "Privacy team tasks and queue" do
   describe "Assigning ColocatedTask to Privacy team" do
     let(:attorney) { FactoryBot.create(:user) }
@@ -15,7 +17,8 @@ RSpec.feature "Privacy team tasks and queue" do
         appeal: appeal,
         parent: root_task,
         assigned_by: attorney,
-        assigned_to: vlj_support_staff
+        assigned_to: vlj_support_staff,
+        action: "foia"
       )
     end
 
@@ -39,7 +42,7 @@ RSpec.feature "Privacy team tasks and queue" do
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
 
         # Assignee dropdown selector should be hidden.
-        expect(find_all(".Select-control").count).to eq(0)
+        expect(find_all(".cf-modal-body .Select-control").count).to eq(0)
         fill_in("taskInstructions", with: instructions_text)
         find("button", text: "Submit").click
 
@@ -66,7 +69,7 @@ RSpec.feature "Privacy team tasks and queue" do
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.label).click
 
         # Assignee dropdown selector should be hidden.
-        expect(find_all(".Select-control").count).to eq(0)
+        expect(find_all(".cf-modal-body .Select-control").count).to eq(0)
         fill_in("taskInstructions", with: instructions_text)
         find("button", text: "Submit").click
 

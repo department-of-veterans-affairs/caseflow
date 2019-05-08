@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearings::DocketsController < HearingsController
   before_action :verify_access
 
@@ -46,7 +48,7 @@ class Hearings::DocketsController < HearingsController
     daily_docket = judge.upcoming_hearings_on(date, is_fetching_issues: true).map do |hearing|
       next if hearing.class.name == "Hearings::MasterRecord"
 
-      hearing.to_hash(current_user.id)
+      hearing.quick_to_hash(current_user.id)
     end
     daily_docket.compact
   end

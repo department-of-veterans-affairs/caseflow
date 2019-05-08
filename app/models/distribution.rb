@@ -1,6 +1,9 @@
+# frozen_string_literal: true
+
 class Distribution < ApplicationRecord
   include ActiveModel::Serializers::JSON
   include LegacyCaseDistribution
+  include AmaCaseDistribution
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
@@ -14,10 +17,9 @@ class Distribution < ApplicationRecord
   enum status: { pending: "pending", started: "started", error: "error", completed: "completed" }
 
   before_create :mark_as_pending
-  after_commit :enqueue_distribution_job, on: :create
 
   CASES_PER_ATTORNEY = 3
-  ALTERNATIVE_BATCH_SIZE = 5
+  ALTERNATIVE_BATCH_SIZE = 15
 
   def distribute!
     return unless %w[pending error].include? status
@@ -28,12 +30,16 @@ class Distribution < ApplicationRecord
 
     update(status: "started")
 
-    legacy_distribution
-
-    update(status: "completed", completed_at: Time.zone.now, statistics: legacy_statistics)
-  rescue StandardError => e
+    if FeatureToggle.enabled?(:ama_auto_case_distribution, user: RequestStore.store[:current_user])
+      ama_distribution
+      update(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
+    else
+      legacy_distribution
+      update(status: "completed", completed_at: Time.zone.now, statistics: legacy_statistics)
+    end
+  rescue StandardError => error
     update(status: "error")
-    raise e
+    raise error
   end
 
   def self.pending_for_judge(judge)
@@ -50,14 +56,6 @@ class Distribution < ApplicationRecord
     self.status = "pending"
   end
 
-  def enqueue_distribution_job
-    if Rails.env.development? || Rails.env.test?
-      StartDistributionJob.perform_now(self)
-    else
-      StartDistributionJob.perform_later(self, RequestStore[:current_user])
-    end
-  end
-
   def validate_user_is_judge
     errors.add(:judge, :not_judge) unless judge.judge_in_vacols?
   end
@@ -67,7 +65,7 @@ class Distribution < ApplicationRecord
   end
 
   def validate_days_waiting_of_unassigned_cases
-    errors.add(:judge, :unassigned_cases_waiting_too_long) if judge_cases_waiting_longer_than_two_weeks
+    errors.add(:judge, :unassigned_cases_waiting_too_long) if judge_cases_waiting_longer_than_thirty_days
   end
 
   def validate_judge_has_no_pending_distributions
@@ -90,16 +88,16 @@ class Distribution < ApplicationRecord
     judge_tasks.length + judge_legacy_tasks.length <= 8
   end
 
-  def judge_cases_waiting_longer_than_two_weeks
-    return true if judge_tasks.any? { |task| longer_than_two_weeks_ago(task.assigned_at) }
+  def judge_cases_waiting_longer_than_thirty_days
+    return true if judge_tasks.any? { |task| longer_than_thirty_days_ago(task.assigned_at) }
 
-    judge_legacy_tasks.any? { |task| longer_than_two_weeks_ago(task.assigned_to_location_date.try(:to_date)) }
+    judge_legacy_tasks.any? { |task| longer_than_thirty_days_ago(task.assigned_to_location_date.try(:to_date)) }
   end
 
-  def longer_than_two_weeks_ago(date)
+  def longer_than_thirty_days_ago(date)
     return false if date.nil?
 
-    date.beginning_of_day < 14.days.ago.beginning_of_day
+    date.beginning_of_day < 30.days.ago.beginning_of_day
   end
 
   def assigned_tasks
@@ -110,14 +108,15 @@ class Distribution < ApplicationRecord
   end
 
   def batch_size
-    JudgeTeam.for_judge(judge)
-      .try(:non_admins)
-      .try(:count)
-      .try(:*, CASES_PER_ATTORNEY) || ALTERNATIVE_BATCH_SIZE
+    team_batch_size = JudgeTeam.for_judge(judge)&.non_admin_users&.size
+
+    return ALTERNATIVE_BATCH_SIZE if team_batch_size.nil? || team_batch_size == 0
+
+    team_batch_size * CASES_PER_ATTORNEY
   end
 
   def total_batch_size
-    JudgeTeam.all.map(&:non_admins).flatten.count * CASES_PER_ATTORNEY
+    JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size * CASES_PER_ATTORNEY
   end
 
   def distributed_cases_count

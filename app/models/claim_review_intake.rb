@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class ClaimReviewIntake < DecisionReviewIntake
   attr_reader :request_params
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       benefit_type: detail.benefit_type,
       processed_in_caseflow: detail.processed_in_caseflow?
@@ -18,22 +20,8 @@ class ClaimReviewIntake < DecisionReviewIntake
       create_claimant!
       detail.save!
     end
-  rescue ActiveRecord::RecordInvalid => _err
-    # propagate the error from invalid column to the user-visible reason
-    if detail.errors.messages[:benefit_type].include?(ClaimantValidator::PAYEE_CODE_REQUIRED)
-      payee_code_error = ClaimantValidator::BLANK
-    end
-
-    if detail.errors.messages[:veteran_is_not_claimant].include?(ClaimantValidator::CLAIMANT_REQUIRED)
-      claimant_error = ClaimantValidator::BLANK
-    end
-
-    detail.validate
-    detail.errors[:payee_code] << payee_code_error if payee_code_error
-    detail.errors[:claimant] << claimant_error if claimant_error
-
-    false
-    # we just swallow the exception otherwise, since we want the validation errors to return to client
+  rescue ActiveRecord::RecordInvalid
+    set_review_errors
   end
 
   def complete!(request_params)
@@ -53,17 +41,19 @@ class ClaimReviewIntake < DecisionReviewIntake
 
   def create_claimant!
     if request_params[:veteran_is_not_claimant] == true
-      Claimant.create!(
-        participant_id: request_params[:claimant],
-        payee_code: need_payee_code? ? request_params[:payee_code] : nil,
-        review_request: detail
-      )
+      participant_id = request_params[:claimant]
+      payee_code = need_payee_code? ? request_params[:payee_code] : nil
     else
-      Claimant.create!(
-        participant_id: veteran.participant_id,
-        payee_code: nil,
-        review_request: detail
-      )
+      participant_id = veteran.participant_id
+      payee_code = nil
+    end
+
+    Claimant.find_or_initialize_by(
+      participant_id: participant_id,
+      decision_review: detail
+    ).tap do |claimant|
+      claimant.payee_code = payee_code
+      claimant.save!
     end
     update_person!
   end

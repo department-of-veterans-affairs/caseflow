@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe RoundRobinAssigner do
   class RoundRobinAssignedTask < Task
     include RoundRobinAssigner
@@ -65,7 +67,7 @@ describe RoundRobinAssigner do
     end
 
     context "when the list_of_assignees is a populated array" do
-      let(:assignees) { %w[Harry Hermione Ron] }
+      let(:assignees) { %w[Harry Hermione Ron].map(&:upcase) }
       let(:iterations) { 4 }
       let(:total_distribution_count) { iterations * assignees.length }
 

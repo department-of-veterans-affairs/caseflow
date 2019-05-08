@@ -1,11 +1,9 @@
+# frozen_string_literal: true
+
 # bundle exec rails runner scripts/enable_features_dev.rb
 
 json_config = <<EOS.strip_heredoc
   [
-        {
-          feature: "intakeAma",
-          enable_all: true
-        },
         {
           feature: "automatic_ramp_rollback",
           enable_all: true
@@ -39,10 +37,6 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "attorney_assignment_to_colocated",
-          enable_all: true
-        },
-        {
           feature: "idt_ama_appeals",
           enable_all: true
         },
@@ -51,15 +45,19 @@ json_config = <<EOS.strip_heredoc
           enable_all: true
         },
         {
-          feature: "ama_decision_issues",
-          enable_all: true
-        },
-        {
           feature: "use_representative_info_from_bgs",
           enable_all: true
         },
         {
+          feature: "use_ama_activation_date",
+          enable_all: true
+        },
+        {
           feature: "ama_auto_case_distribution",
+          enable_all: true
+        },
+        {
+          feature: "ama_acd_tasks",
           enable_all: true
         },
         {

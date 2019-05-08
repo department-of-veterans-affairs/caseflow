@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDocket do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
@@ -9,7 +11,7 @@ describe HearingDocket do
   end
 
   let!(:hearing) do
-    Generators::LegacyHearing.create(appeal: appeal)
+    create(:legacy_hearing, appeal: appeal)
   end
 
   let(:docket) do
@@ -31,8 +33,8 @@ describe HearingDocket do
 
     let(:hearings) do
       [
-        Generators::LegacyHearing.create(scheduled_for: 5.minutes.ago),
-        Generators::LegacyHearing.create(scheduled_for: 10.minutes.ago)
+        create(:legacy_hearing, scheduled_for: 5.minutes.ago),
+        create(:legacy_hearing, scheduled_for: 10.minutes.ago)
       ]
     end
 
@@ -45,7 +47,7 @@ describe HearingDocket do
     subject { docket.slots }
 
     context "should use the default number of slots for the regional office" do
-      it { is_expected.to eq 4 }
+      it { is_expected.to eq 10 }
     end
   end
 
@@ -59,7 +61,7 @@ describe HearingDocket do
       expect(subject[:hearings_count]).to eq(docket.hearings_count)
       expect(subject[:request_type]).to eq(docket.request_type)
       expect(subject[:regional_office_names]).to eq(docket.regional_office_names)
-      expect(subject[:slots]).to eq 4
+      expect(subject[:slots]).to eq 10
     end
   end
 

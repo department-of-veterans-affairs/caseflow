@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 require "bgs"
 require "fakes/end_product_store"
@@ -32,6 +34,7 @@ class Fakes::BGSService
     CSV.foreach(file_path, headers: true) do |row|
       row_hash = row.to_h
       veteran = Generators::Veteran.build(file_number: row_hash["vbms_id"].chop)
+      ama_begin_date = DecisionReview.ama_activation_date
 
       case row_hash["bgs_key"]
       when "has_rating"
@@ -44,7 +47,7 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          promulgation_date: Time.zone.today - 60,
+          promulgation_date: ama_begin_date + 2.days,
           issues: [
             { decision_text: "Left knee" },
             { decision_text: "PTSD" }
@@ -61,8 +64,8 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          profile_date: Time.zone.today - 100,
-          promulgation_date: Time.zone.today - 90,
+          profile_date: ama_begin_date + 3.days,
+          promulgation_date: ama_begin_date + 7.days,
           issues: [
             { decision_text: "Left knee" },
             { decision_text: "Right knee" },
@@ -73,9 +76,8 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          # 2019/2/14 is AMA activation date
-          profile_date: Date.new(2019, 2, 14) - 10.days,
-          promulgation_date: Date.new(2019, 2, 14) - 5.days,
+          profile_date: ama_begin_date - 10.days,
+          promulgation_date: ama_begin_date - 5.days,
           issues: [
             { decision_text: "Issue before AMA not from a RAMP Review", reference_id: "before_ama_ref_id" },
             { decision_text: "Issue before AMA from a RAMP Review",
@@ -83,11 +85,11 @@ class Fakes::BGSService
               reference_id: "ramp_reference_id" }
           ]
         )
+        ramp_begin_date = Date.new(2017, 11, 1)
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          # 2017/11/1 is RAMP begin date
-          profile_date: Date.new(2017, 11, 1) - 20.days,
-          promulgation_date: Date.new(2017, 11, 1) - 15.days,
+          profile_date: ramp_begin_date - 20.days,
+          promulgation_date: ramp_begin_date - 15.days,
           issues: [
             { decision_text: "Issue before test AMA not from a RAMP Review", reference_id: "before_test_ama_ref_id" },
             { decision_text: "Issue before test AMA from a RAMP Review",
@@ -114,7 +116,7 @@ class Fakes::BGSService
           payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
-          review_request: hlr,
+          decision_review: hlr,
           benefit_type: "compensation",
           end_product_establishment: epe,
           contested_rating_issue_reference_id: in_active_review_reference_id
@@ -137,13 +139,13 @@ class Fakes::BGSService
           payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
-          review_request: previous_hlr,
+          decision_review: previous_hlr,
           benefit_type: "compensation",
           end_product_establishment: cleared_epe,
-          rating_issue_reference_id: completed_review_reference_id,
+          contested_rating_issue_reference_id: completed_review_reference_id,
           contention_reference_id: 999
         ) do |reqi|
-          reqi.rating_issue_profile_date = Time.zone.today - 100
+          reqi.contested_rating_issue_profile_date = Time.zone.today - 100
         end
         Generators::EndProduct.build(
           veteran_file_number: veteran.file_number,
@@ -152,7 +154,7 @@ class Fakes::BGSService
 
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          promulgation_date: Time.zone.today - 60,
+          promulgation_date: ama_begin_date + 10.days,
           issues: [
             { decision_text: "Lorem ipsum dolor sit amet, paulo scaevola abhorreant mei te, ex est mazim ornatus, at pro causae maiestatis." },
             { decision_text: "Inani movet maiestatis nec no, verear periculis signiferumque in sit." },
@@ -163,7 +165,7 @@ class Fakes::BGSService
         )
         Generators::Rating.build(
           participant_id: veteran.participant_id,
-          promulgation_date: Time.zone.today - 60,
+          promulgation_date: ama_begin_date + 12.days,
           issues: [
             { decision_text: "In mei labore oportere mediocritatem, vel ex dicta quidam corpora, fierent explicari liberavisse ei quo." },
             { decision_text: "Vel malis impetus ne, vim cibo appareat scripserit ne, qui lucilius consectetuer ex." },
@@ -190,7 +192,7 @@ class Fakes::BGSService
         sc
       when "has_higher_level_review_with_vbms_claim_id"
         claim_id = "600118951"
-        contention_reference_id = 1234
+        contention_reference_id = veteran.file_number[0..4] + "1234"
         hlr = HigherLevelReview.find_or_create_by!(
           veteran_file_number: veteran.file_number
         )
@@ -201,7 +203,7 @@ class Fakes::BGSService
           payee_code: EndProduct::DEFAULT_PAYEE_CODE
         )
         RequestIssue.find_or_create_by!(
-          review_request: hlr,
+          decision_review: hlr,
           benefit_type: "compensation",
           end_product_establishment: epe,
           contention_reference_id: contention_reference_id
@@ -506,7 +508,22 @@ class Fakes::BGSService
   # rubocop:enable Metrics/MethodLength
 
   def can_access?(vbms_id)
-    !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+    current_user = RequestStore[:current_user]
+    if current_user
+      Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 1.minute) do
+        !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+      end
+    else
+      !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
+    end
+  end
+
+  def bust_can_access_cache(user, vbms_id)
+    Rails.cache.delete(can_access_cache_key(user, vbms_id))
+  end
+
+  def can_access_cache_key(user, vbms_id)
+    "bgs_can_access_#{user.css_id}_#{user.station_id}_#{vbms_id}"
   end
 
   # TODO: add more test cases
@@ -555,6 +572,19 @@ class Fakes::BGSService
   end
   # rubocop:enable Metrics/MethodLength
 
+  def fetch_limited_poas_by_claim_ids(claim_ids)
+    result = {}
+    Array.wrap(claim_ids).each do |claim_id|
+      if claim_id.include? "HAS_LIMITED_POA_WITH_ACCESS"
+        result[claim_id] = { limited_poa_code: "OU3", limited_poa_access: "Y" }
+      elsif claim_id.include? "HAS_LIMITED_POA_WITHOUT_ACCESS"
+        result[claim_id] = { limited_poa_code: "007", limited_poa_access: "N" }
+      end
+    end
+
+    result.empty? ? nil : result
+  end
+
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
@@ -575,12 +605,23 @@ class Fakes::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     ratings = (self.class.rating_records || {})[participant_id]
 
+    # mimic errors
+    if participant_id == "locked_rating"
+      return { reject_reason: "Locked Rating" }
+    elsif participant_id == "backfilled_rating"
+      return { reject_reason: "Converted or Backfilled Rating" }
+    end
+
     # Simulate the error bgs throws if participant doesn't exist or doesn't have any ratings
     unless ratings
       fail Savon::Error, "java.lang.IndexOutOfBoundsException: Index: 0, Size: 0"
     end
 
-    ratings = ratings.select do |r|
+    build_ratings_in_range(ratings, start_date, end_date)
+  end
+
+  def build_ratings_in_range(all_ratings, start_date, end_date)
+    ratings = all_ratings.select do |r|
       start_date <= r[:prmlgn_dt] && end_date >= r[:prmlgn_dt]
     end
 
@@ -696,12 +737,13 @@ class Fakes::BGSService
 
   private
 
-  VSO_PARTICIPANT_ID = "4623321".freeze
-  DEFAULT_PARTICIPANT_ID = "781162".freeze
+  VSO_PARTICIPANT_ID = "4623321"
+  DEFAULT_PARTICIPANT_ID = "781162"
 
   def default_claimant_info
     {
-      relationship: "Spouse"
+      relationship: "Spouse",
+      payee_code: "10"
     }
   end
 

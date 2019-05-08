@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe GenericTask do
   describe ".available_actions" do
     let(:task) { nil }
@@ -11,10 +13,11 @@ describe GenericTask do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
       end
-      it "should return team assign, person reassign, and mark complete actions" do
+      it "should return team assign, person reassign, complete, and cancel actions" do
         expect(subject).to eq(expected_actions)
       end
     end
@@ -36,12 +39,76 @@ describe GenericTask do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
       end
       before { allow_any_instance_of(Organization).to receive(:user_has_access?).and_return(true) }
       it "should return team assign, person assign, and mark complete actions" do
         expect(subject).to eq(expected_actions)
+      end
+    end
+  end
+
+  describe ".available_hearing_admin_actions" do
+    let!(:task) { FactoryBot.create(:generic_task) }
+    let(:user) { FactoryBot.create(:user) }
+
+    subject { task.available_hearing_admin_actions(user) }
+
+    it "returns no actions when task doesn't have an active hearing task ancestor" do
+      expect(subject).to eq []
+    end
+
+    context "task has an active hearing task ancestor" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let!(:hearing_task) { FactoryBot.create(:hearing_task, appeal: appeal) }
+      let(:disposition_task_type) { :disposition_task }
+      let(:disposition_task_status) { Constants.TASK_STATUSES.assigned }
+      let!(:disposition_task) do
+        FactoryBot.create(
+          disposition_task_type,
+          parent: hearing_task,
+          appeal: appeal,
+          status: disposition_task_status
+        )
+      end
+      let!(:task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+
+      context "user is a member of hearings management" do
+        before do
+          OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        end
+
+        it "returns no actions when user is not a member of hearing admin" do
+          expect(subject).to eq []
+        end
+      end
+
+      context "user is member of hearing admin" do
+        before do
+          OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+        end
+
+        it "returns a create change hearing disposition task action" do
+          expect(subject).to eq [Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h]
+        end
+      end
+
+      context "hearing task has an inactive child disposition task" do
+        let(:disposition_task_status) { Constants.TASK_STATUSES.cancelled }
+
+        it "returns no actions" do
+          expect(subject).to eq []
+        end
+      end
+
+      context "hearing task has only an active child change hearing disposition task" do
+        let(:disposition_task_type) { :change_hearing_disposition_task }
+
+        it "returns no actions" do
+          expect(subject).to eq []
+        end
       end
     end
   end
@@ -303,8 +370,8 @@ describe GenericTask do
 
       it "should change status of old task to completed but not complete parent task" do
         expect { subject }.to_not raise_error
-        expect(task.status).to eq(Constants.TASK_STATUSES.completed)
-        expect(task.parent.status).to_not eq(Constants.TASK_STATUSES.completed)
+        expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
+        expect(task.parent.status).to_not eq(Constants.TASK_STATUSES.cancelled)
       end
     end
 
@@ -327,9 +394,9 @@ describe GenericTask do
 
       it "incomplete children tasks are adopted by new task and completed tasks are not" do
         expect { subject }.to_not raise_error
-        expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
-        new_task = task.parent.children.where.not(status: Constants.TASK_STATUSES.completed).first
+        new_task = task.parent.children.active.first
         expect(new_task.children.length).to eq(incomplete_children_cnt)
 
         task.reload
@@ -342,6 +409,16 @@ describe GenericTask do
     context "when attempting to create two tasks for different appeals assigned to the same organization" do
       let(:organization) { FactoryBot.create(:organization) }
       let(:appeals) { FactoryBot.create_list(:appeal, 2) }
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:root_task_2) { FactoryBot.create(:root_task) }
+      let(:root_task_3) { FactoryBot.create(:root_task) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
+        BvaDispatchTask.create_from_root_task(root_task)
+        QualityReviewTask.create_from_root_task(root_task_3).update!(status: "completed")
+      end
+
       it "should succeed" do
         expect do
           appeals.each do |a|
@@ -353,6 +430,21 @@ describe GenericTask do
             )
           end
         end.to_not raise_error
+      end
+
+      it "should not fail when the parent tasks are different" do
+        # not specifying the error due to warning from capybara about false positives
+        expect { BvaDispatchTask.create_from_root_task(root_task_2) }.to_not raise_error
+      end
+
+      it "should not fail when the duplicate task is completed" do
+        expect do
+          QualityReviewTask.create_from_root_task(root_task_3)
+        end.to_not raise_error
+      end
+
+      it "should fail when organization-level BvaDispatchTask already exists with the same parent" do
+        expect { BvaDispatchTask.create_from_root_task(root_task) }.to raise_error(Caseflow::Error::DuplicateOrgTask)
       end
     end
   end

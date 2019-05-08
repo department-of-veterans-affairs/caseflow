@@ -9,13 +9,15 @@
     canEditAod: AodTeam.singleton.user_has_access?(current_user),
     caseSearchHomePage: case_search_home_page,
     dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
     feedbackUrl: feedback_url,
+    flash: flash,
     buildDate: build_date,
+    hasCaseDetailsRole: (current_user.roles.include? "Case Details"),
     featureToggles: {
       judge_case_review_checkout: FeatureToggle.enabled?(:judge_case_review_checkout, user: current_user),
       automatic_case_distribution: FeatureToggle.enabled?(:automatic_case_distribution, user: current_user),
-      attorney_assignment_to_colocated: FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: current_user),
-      ama_decision_issues: FeatureToggle.enabled?(:ama_decision_issues, user: current_user)
+      attorney_assignment_to_colocated: FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: current_user)
     }
   }) %>
 <% end %>

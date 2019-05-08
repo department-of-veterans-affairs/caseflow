@@ -7,12 +7,12 @@
 // specificity than the stock .cf component classes.
 .cf-app-intake {
   .cf-success-checklist,
-  .cf-ineligible-checklist {
+  .cf-issue-checklist {
     max-width: 800px;
     margin: 50px auto 65px;
   }
 
-  .cf-ineligible-checklist {
+  .cf-issue-checklist {
     list-style-type: none;
     margin-bottom: 20px;
 
@@ -80,6 +80,14 @@
 
   label {
     margin-bottom: 8px;
+  }
+}
+
+.intake-issue-flash {
+  background-color: $color-primary-alt-lightest;
+
+  td {
+    background-color: $color-primary-alt-lightest;
   }
 }
 
@@ -168,15 +176,15 @@
 
       .issue {
         display: table-row;
-        border-bottom: 1px solid $color-gray-lighter;
 
         div {
           display: table-cell;
-          padding: 0.5em 0;
+          padding: 1em 0;
         }
 
         .issue-desc {
           width: 100%;
+          padding-right: 0.5em;
 
           .issue-num {
             padding-right: 0.25em;
@@ -189,6 +197,15 @@
 
           .issue-date {
             display: block;
+          }
+        }
+
+        .withdrawn-issue {
+          color: $color-gray-light;
+
+          p {
+            color: $color-gray-dark;
+            font-style: italic;
           }
         }
 
@@ -209,12 +226,57 @@
 
         .issue-action {
           padding: 0;
+          width: 140px;
+          display: block;
 
           button {
             i {
               padding-right: 0.25em;
             }
           }
+        }
+      }
+
+      .issue-edit-text {
+        display: table-row;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+        button {
+          padding-left: 0;
+        }
+      }
+
+      .issue-container {
+        border-bottom: 1px solid $color-gray-lighter;
+
+        .cf-form-textarea {
+          padding-left: 20px;
+          padding-right: 20px;
+          padding-top: 20px;
+
+          textarea {
+            height: 10rem;
+            border: 1px solid $color-gray-light;
+          }
+        }
+
+        .issue-text-style {
+          background-color: $color-gray-lighter;
+          margin-bottom: 10px;
+
+          p {
+            padding-left: 30px;
+          }
+        }
+
+        .issue-text-buttons {
+          text-align: right;
+          margin-right: 15px;
+        }
+
+        .issue-edit-submit-button {
+          margin-bottom: 15px;
         }
       }
     }

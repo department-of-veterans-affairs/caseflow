@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Generators::LegacyAppeal
   extend Generators::Base
 
@@ -35,7 +37,7 @@ class Generators::LegacyAppeal
         appellant_city: "Huntingdon",
         appellant_state: "TN",
         docket_number: 4198,
-        case_record: OpenStruct.new(representatives: [OpenStruct.new(reptype: "C")])
+        case_record: OpenStruct.new(vacols_representatives: [OpenStruct.new(reptype: "C")])
       }
     end
     # rubocop:enable Metrics/MethodLength

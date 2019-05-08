@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module HearingMapper
   class InvalidHoldOpenError < StandardError; end
   class InvalidAodError < StandardError; end
@@ -54,7 +56,7 @@ module HearingMapper
 
     def timezone(regional_office_key)
       regional_office = RegionalOffice::CITIES[regional_office_key] ||
-                        RegionalOffice::SATELLITE_OFFICES[regional_office_key]
+                        RegionalOffice::SATELLITE_OFFICES[regional_office_key] || {}
       regional_office[:timezone]
     end
 
@@ -81,7 +83,7 @@ module HearingMapper
     end
 
     def disposition_to_vacols_format(value, keys)
-      vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value.try(:to_sym))
+      vacols_code = VACOLS::CaseHearing::HEARING_DISPOSITIONS.key(value)
       # disposition cannot be nil
       fail(InvalidDispositionError) if keys.include?(:disposition) && (value.blank? || vacols_code.blank?)
 

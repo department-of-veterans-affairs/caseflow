@@ -8,12 +8,12 @@ import COPY from '../../COPY.json';
 import { onReceiveAmaTasks } from './QueueActions';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
-import editModalBase from './components/EditModalBase';
 import { requestSave } from './uiReducer/uiActions';
 import {
   taskById,
   appealWithDetailSelector
 } from './selectors';
+import QueueFlowModal from './components/QueueFlowModal';
 
 class CreateMailTaskDialog extends React.Component {
   constructor(props) {
@@ -53,6 +53,9 @@ class CreateMailTaskDialog extends React.Component {
         const response = JSON.parse(resp.text);
 
         this.props.onReceiveAmaTasks(response.tasks.data);
+      }).
+      catch(() => {
+        // handle the error from the frontend
       });
   }
 
@@ -78,7 +81,12 @@ class CreateMailTaskDialog extends React.Component {
       return null;
     }
 
-    return <React.Fragment>
+    return <QueueFlowModal
+      submit={this.submit}
+      validateForm={this.validateForm}
+      title={COPY.CREATE_MAIL_TASK_TITLE}
+      pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
+    >
       <SearchableDropdown
         name="Correspondence type selector"
         searchable
@@ -95,7 +103,7 @@ class CreateMailTaskDialog extends React.Component {
         id="taskInstructions"
         onChange={(value) => this.setState({ instructions: value })}
         value={this.state.instructions} />
-    </React.Fragment>;
+    </QueueFlowModal>;
   }
 }
 
@@ -114,13 +122,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
-const propsToText = (props) => {
-  return {
-    title: COPY.CREATE_MAIL_TASK_TITLE,
-    pathAfterSubmit: `/queue/appeals/${props.appealId}`
-  };
-};
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(CreateMailTaskDialog, { propsToText })
-));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateMailTaskDialog));

@@ -1,9 +1,12 @@
+# frozen_string_literal: true
+
 # BoardGrantEffectuation represents the work item of updating records in response to a granted issue on a Board appeal.
 # Some are represented as contentions on an EP in VBMS. Others are tracked via Caseflow tasks.
 
 class BoardGrantEffectuation < ApplicationRecord
   include HasBusinessLine
   include Asyncable
+  include DecisionSyncable
 
   belongs_to :appeal
   belongs_to :granted_decision_issue, class_name: "DecisionIssue"
@@ -23,28 +26,8 @@ class BoardGrantEffectuation < ApplicationRecord
   delegate :contention_text, to: :granted_decision_issue
   delegate :veteran, to: :appeal
 
-  class << self
-    # We don't need to retry these as frequently
-    def processing_retry_interval_hours
-      12
-    end
-
-    def submitted_at_column
-      :decision_sync_submitted_at
-    end
-
-    def attempted_at_column
-      :decision_sync_attempted_at
-    end
-
-    def processed_at_column
-      :decision_sync_processed_at
-    end
-
-    def error_column
-      :decision_sync_error
-    end
-  end
+  # don't need to try as frequently as default 3 hours
+  DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
   def sync_decision_issues!
     return if processed?
@@ -53,6 +36,7 @@ class BoardGrantEffectuation < ApplicationRecord
     return unless associated_rating
 
     update_from_matching_rating_issue!
+    clear_error!
     processed!
   end
 
@@ -74,8 +58,8 @@ class BoardGrantEffectuation < ApplicationRecord
     return unless matching_rating_issue
 
     granted_decision_issue.update!(
-      promulgation_date: matching_rating_issue.promulgation_date,
-      profile_date: matching_rating_issue.profile_date,
+      rating_promulgation_date: matching_rating_issue.promulgation_date,
+      rating_profile_date: matching_rating_issue.profile_date,
       decision_text: matching_rating_issue.decision_text,
       rating_issue_reference_id: matching_rating_issue.reference_id
     )

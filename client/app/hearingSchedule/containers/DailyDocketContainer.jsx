@@ -8,18 +8,13 @@ import DailyDocket from '../components/DailyDocket';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
+import { getTimeWithoutTimeZone } from '../../util/DateUtil';
 import {
   onReceiveDailyDocket,
+  onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
-  onHearingNotesUpdate,
-  onHearingDispositionUpdate,
-  onHearingDateUpdate,
-  onTranscriptRequestedUpdate,
-  onHearingTimeUpdate,
-  onHearingLocationUpdate,
-  onHearingRegionalOfficeUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -36,10 +31,11 @@ import {
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
   onResetLockHearingAfterError,
-  onHearingOptionalTime
+  onInvalidForm
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
+import { getAssignHearingTime } from '../components/modalForms/HearingTime';
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
@@ -76,115 +72,97 @@ export class DailyDocketContainer extends React.Component {
     this.props.onResetLockHearingAfterError();
   };
 
+  loadHearingDetails = (hearings) => {
+    _.each(hearings, (hearing) => {
+      ApiUtil.get(`/hearings/${hearing.externalId}`).then((response) => {
+        const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
+
+        this.props.onReceiveHearing(resp);
+      }).
+        catch((error) => {
+          console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
+        });
+    });
+  }
+
   loadHearingDay = () => {
     const requestUrl = `/hearings/hearing_day/${this.props.match.params.hearingDayId}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      const hearings = _.keyBy(resp.hearingDay.hearings, 'id');
-      const hearingDayOptions = _.keyBy(resp.hearingDay.hearingDayOptions, 'id');
-      const dailyDocket = _.omit(resp.hearingDay, ['hearings', 'hearingDayOptions']);
+      const hearings = _.keyBy(resp.hearingDay.hearings, 'externalId');
+      const dailyDocket = _.omit(resp.hearingDay, ['hearings']);
 
-      this.props.onReceiveDailyDocket(dailyDocket, hearings, hearingDayOptions);
+      this.props.onReceiveDailyDocket(dailyDocket, hearings);
+
+      this.loadHearingDetails(resp.hearingDay.hearings);
     });
   };
 
-  getTime = (hearing) => {
-    if (hearing.editedTime) {
-      return this.formatTime(hearing.scheduledFor, hearing.editedTime);
-    }
-
-    const timeObject = moment(hearing.scheduledFor);
-
+  getHearingDate = (hearing) => {
     return {
-      // eslint-disable-next-line id-length
-      h: timeObject.hours(),
-      // eslint-disable-next-line id-length
-      m: timeObject.minutes(),
-      offset: timeObject.format('Z')
+      timezone: hearing.readableRequestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone,
+      scheduledFor: hearing.scheduledFor
     };
+  }
 
-  };
+  getTimezoneOffsetScheduledTimeObject = (hearing) => {
+    const hearingTime = this.getScheduledTime(hearing);
+    const hearingDay = this.getHearingDate(hearing);
 
-  formatTime = (hearingDate, hearingTime) => {
-    return {
-      // eslint-disable-next-line id-length
-      h: hearingTime.split(':')[0],
-      // eslint-disable-next-line id-length
-      m: hearingTime.split(':')[1],
-      offset: moment.tz(hearingDate, 'America/New_York').format('Z')
-    };
-  };
+    return getAssignHearingTime(hearingTime, hearingDay);
+  }
 
   getScheduledTime = (hearing) => {
-    let scheduledTime = null;
-
     if (hearing.editedTime) {
-      if (hearing.editedTime === 'other') {
-        scheduledTime = hearing.editedOptionalTime;
-      } else {
-        scheduledTime = hearing.editedTime;
-      }
-    } else {
-      scheduledTime = hearing.scheduledTime;
+      return hearing.editedTime;
     }
 
-    return scheduledTime;
+    const timezone = this.getHearingDate(hearing).timezone;
+
+    return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
   };
 
-  getScheduledFor = (hearing) => {
-    let scheduledFor = null;
-
+  formatEditedScheduledFor = (hearing) => {
     if (hearing.editedTime) {
-      if (hearing.editedTime === 'other') {
-        scheduledFor = moment(hearing.scheduledFor).
-          set(this.formatTime(hearing.scheduledFor, hearing.editedOptionalTime));
-      } else {
-        scheduledFor = moment(hearing.scheduledFor).set(this.getTime(hearing));
-      }
-    } else {
-      scheduledFor = hearing.scheduledFor;
+      const scheduledTimeObj = this.getTimezoneOffsetScheduledTimeObject(hearing);
+
+      return moment(hearing.scheduledFor).set(scheduledTimeObj).
+        format();
     }
 
-    return scheduledFor;
-  };
-
-  formatMasterRecordUpdated = (hearing) => {
-    const time = this.getTime(hearing);
-
-    return hearing.editedDate ? {
-      id: hearing.editedDate.hearingId,
-      time,
-      hearing_location_attributes: hearing.editedLocation ? ApiUtil.convertToSnakeCase(hearing.editedLocation) : null
-    } : null;
+    return null;
   };
 
   formatHearing = (hearing) => {
-    return {
-      disposition: hearing.editedDisposition ? hearing.editedDisposition : hearing.disposition,
-      transcript_requested: _.isUndefined(hearing.editedTranscriptRequested) ?
-        hearing.transcriptRequested : hearing.editedTranscriptRequested,
-      notes: hearing.editedNotes ? hearing.editedNotes : hearing.notes,
-      hearing_location_attributes: (hearing.editedLocation && !hearing.editedDate) ?
-        ApiUtil.convertToSnakeCase(hearing.editedLocation) : null,
-      scheduled_time: this.getScheduledTime(hearing),
-      scheduled_for: this.getScheduledFor(hearing)
-    };
+    const amaHearingValues = hearing.docketName === 'hearing' ? {
+      evidence_window_waived: hearing.evidenceWindowWaived
+    } : {};
+
+    return _.omitBy({
+      disposition: hearing.disposition,
+      transcript_requested: hearing.transcriptRequested,
+      notes: hearing.notes,
+      hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
+      scheduled_time: hearing.editedTime,
+      scheduled_for: this.formatEditedScheduledFor(hearing),
+      prepped: hearing.prepped,
+      hold_open: hearing.holdOpen,
+      ...amaHearingValues
+    }, _.isNil);
   };
 
   saveHearing = (hearing) => {
-    const formattedHearing = this.formatHearing(hearing);
-    const formattedMasterRecordUpdated = this.formatMasterRecordUpdated(hearing);
-
     ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
-      hearing: formattedHearing,
-      master_record_updated: formattedMasterRecordUpdated
+      hearing: this.formatHearing(hearing)
     } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
         this.props.onReceiveSavedHearing(resp);
+      }, (err) => {
+        this.props.handleDailyDocketServerError(err);
       });
   };
 
@@ -246,7 +224,7 @@ export class DailyDocketContainer extends React.Component {
 
           editedHearingDay.requestType = this.props.dailyDocket.requestType;
 
-          this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings, this.props.hearingDayOptions);
+          this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings);
         }, () => {
           this.setState({ serverError: true });
         });
@@ -289,7 +267,7 @@ export class DailyDocketContainer extends React.Component {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createHearingPromise}
       loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+        spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
         message: 'Loading the daily docket...'
       }}
       failStatusMessageProps={{
@@ -301,15 +279,11 @@ export class DailyDocketContainer extends React.Component {
       <DailyDocket
         dailyDocket={this.props.dailyDocket}
         hearings={this.props.hearings}
-        hearingDayOptions={this.props.hearingDayOptions}
         onHearingNotesUpdate={this.props.onHearingNotesUpdate}
         onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
-        onHearingDateUpdate={this.props.onHearingDateUpdate}
         onHearingTimeUpdate={this.props.onHearingTimeUpdate}
-        onHearingOptionalTime={this.props.onHearingOptionalTime}
         onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
         onHearingLocationUpdate={this.props.onHearingLocationUpdate}
-        onHearingRegionalOfficeUpdate={this.props.onHearingRegionalOfficeUpdate}
         saveHearing={this.saveHearing}
         saveSuccessful={this.props.saveSuccessful}
         onResetSaveSuccessful={this.props.onResetSaveSuccessful}
@@ -325,12 +299,13 @@ export class DailyDocketContainer extends React.Component {
         updateLockHearingDay={this.updateLockHearingDay}
         displayLockSuccessMessage={this.props.displayLockSuccessMessage}
         onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
-        userRoleBuild={this.props.userRoleBuild}
+        user={this.props.user}
         dailyDocketServerError={this.props.dailyDocketServerError}
         onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
         notes={this.props.notes}
         onErrorHearingDayLock={this.props.onErrorHearingDayLock}
         onResetLockHearingAfterError={this.props.onResetLockHearingAfterError}
+        onInvalidForm={this.props.onInvalidForm}
       />
       {this.state.modalOpen &&
       <HearingDayEditModal
@@ -346,7 +321,6 @@ export class DailyDocketContainer extends React.Component {
 const mapStateToProps = (state) => ({
   dailyDocket: state.hearingSchedule.dailyDocket,
   hearings: state.hearingSchedule.hearings,
-  hearingDayOptions: state.hearingSchedule.hearingDayOptions,
   saveSuccessful: state.hearingSchedule.saveSuccessful,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
@@ -362,16 +336,11 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveDailyDocket,
+  onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
-  onHearingNotesUpdate,
-  onHearingDispositionUpdate,
-  onHearingDateUpdate,
-  onHearingTimeUpdate,
-  onTranscriptRequestedUpdate,
-  onHearingLocationUpdate,
-  onHearingRegionalOfficeUpdate,
+  onInvalidForm,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -387,8 +356,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError,
-  onHearingOptionalTime
+  onResetLockHearingAfterError
 }, dispatch);
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

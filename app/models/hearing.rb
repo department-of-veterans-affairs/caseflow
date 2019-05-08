@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hearing < ApplicationRecord
   belongs_to :hearing_day
   belongs_to :appeal
@@ -5,7 +7,10 @@ class Hearing < ApplicationRecord
   has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
+  has_one :hearing_task_association, as: :hearing
   has_many :hearing_issue_notes
+
+  class HearingDayFull < StandardError; end
 
   accepts_nested_attributes_for :hearing_issue_notes
   accepts_nested_attributes_for :transcription
@@ -23,6 +28,7 @@ class Hearing < ApplicationRecord
   delegate :appellant_last_name, to: :appeal
   delegate :appellant_city, to: :appeal
   delegate :appellant_state, to: :appeal
+  delegate :appellant_zip, to: :appeal
   delegate :veteran_age, to: :appeal
   delegate :veteran_gender, to: :appeal
   delegate :veteran_file_number, to: :appeal
@@ -30,19 +36,23 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :veteran_available_hearing_locations, to: :appeal
-  delegate :veteran_closest_regional_office, to: :appeal
-  delegate :representative_name, to: :appeal, prefix: true
+  delegate :available_hearing_locations, :closest_regional_office, to: :appeal
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
+  delegate :hearing_day_full?, to: :hearing_day
 
   after_create :update_fields_from_hearing_day
+  before_create :check_available_slots
 
   HEARING_TYPES = {
     V: "Video",
     T: "Travel",
     C: "Central"
   }.freeze
+
+  def check_available_slots
+    fail HearingDayFull if hearing_day_full?
+  end
 
   def update_fields_from_hearing_day
     update!(judge: hearing_day.judge, room: hearing_day.room, bva_poc: hearing_day.bva_poc)
@@ -64,6 +74,43 @@ class Hearing < ApplicationRecord
     false
   end
 
+  def assigned_to_vso?(user)
+    appeal.tasks.any? do |task|
+      task.type = TrackVeteranTask.name &&
+                  task.assigned_to.is_a?(Representative) &&
+                  task.assigned_to.user_has_access?(user) &&
+                  task.active?
+    end
+  end
+
+  def assigned_to_judge?(user)
+    return hearing_day&.judge == user if judge.nil?
+
+    judge == user
+  end
+
+  def hearing_task?
+    !hearing_task_association.nil?
+  end
+
+  def disposition_task
+    if hearing_task?
+      hearing_task_association.hearing_task.children.detect { |child| child.type == DispositionTask.name }
+    end
+  end
+
+  def disposition_task_in_progress
+    disposition_task ? disposition_task.active_with_no_children? : false
+  end
+
+  def disposition_editable
+    disposition_task_in_progress || !hearing_task?
+  end
+
+  def representative
+    appeal.representative_name
+  end
+
   def scheduled_for
     DateTime.new.in_time_zone(regional_office_timezone).change(
       year: hearing_day.scheduled_for.year,
@@ -77,33 +124,23 @@ class Hearing < ApplicationRecord
 
   def worksheet_issues
     request_issues.map do |request_issue|
-      HearingIssueNote.select("*").joins(:request_issue)
+      HearingIssueNote.joins(:request_issue)
         .find_or_create_by(request_issue: request_issue, hearing: self).to_hash
     end
   end
 
-  #:nocov:
-  # This is all fake data that will be refactored in a future PR.
   def regional_office_name
     RegionalOffice::CITIES[regional_office_key][:label] unless regional_office_key.nil?
   end
 
   def regional_office_timezone
-    RegionalOffice::CITIES[regional_office_key][:timezone] unless regional_office_key.nil?
-    "America/New_York"
+    return "America/New_York" if regional_office_key.nil?
+
+    RegionalOffice::CITIES[regional_office_key][:timezone]
   end
 
   def current_issue_count
-    1
-  end
-  #:nocov:
-
-  def slot_new_hearing(hearing_day_id, hearing_location_attrs: nil, **_args)
-    # These fields are needed for the legacy hearing's version of this method
-    Hearing.create!(hearing_day_id: hearing_day_id,
-                    scheduled_time: scheduled_time,
-                    hearing_location_attributes: hearing_location_attrs,
-                    appeal: appeal)
+    request_issues.size
   end
 
   def external_id
@@ -118,6 +155,38 @@ class Hearing < ApplicationRecord
   end
 
   # rubocop:disable Metrics/MethodLength
+  def quick_to_hash(_current_user_id)
+    serializable_hash(
+      methods: [
+        :external_id,
+        :veteran_first_name,
+        :veteran_last_name,
+        :regional_office_key,
+        :regional_office_name,
+        :regional_office_timezone,
+        :readable_request_type,
+        :scheduled_for,
+        :appeal_external_id,
+        :veteran_file_number,
+        :evidence_window_waived,
+        :bva_poc,
+        :room,
+        :transcription,
+        :docket_number,
+        :docket_name,
+        :current_issue_count,
+        :location,
+        :worksheet_issues,
+        :closest_regional_office,
+        :available_hearing_locations,
+        :disposition_editable
+      ],
+      except: [:military_service]
+    )
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  # rubocop:disable Metrics/MethodLength
   def to_hash(_current_user_id)
     serializable_hash(
       methods: [
@@ -128,6 +197,7 @@ class Hearing < ApplicationRecord
         :appellant_last_name,
         :appellant_city,
         :appellant_state,
+        :appellant_zip,
         :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
@@ -145,11 +215,12 @@ class Hearing < ApplicationRecord
         :docket_name,
         :military_service,
         :current_issue_count,
-        :appeal_representative_name,
+        :representative,
         :location,
         :worksheet_issues,
-        :veteran_closest_regional_office,
-        :veteran_available_hearing_locations
+        :closest_regional_office,
+        :available_hearing_locations,
+        :disposition_editable
       ]
     )
   end

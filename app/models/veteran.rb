@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Represents a veteran with values fetched from BGS
 #
 # TODO: How do we deal with differences between the BGS vet values and the
@@ -14,7 +16,7 @@ class Veteran < ApplicationRecord
                     :military_postal_type_code, :military_post_office_type_code,
                     :service, :date_of_birth, :date_of_death
 
-  validates :ssn, :sex, :first_name, :last_name, presence: true, on: :bgs
+  validates :ssn, :first_name, :last_name, presence: true, on: :bgs
   validates :address_line1, :address_line2, :address_line3, length: { maximum: 20 }, on: :bgs
   with_options if: :alive? do
     validates :address_line1, :country, presence: true, on: :bgs
@@ -38,8 +40,8 @@ class Veteran < ApplicationRecord
   COUNTRIES_REQUIRING_ZIP = %w[USA CANADA].freeze
 
   # C&P Live = '1', C&P Death = '2'
-  BENEFIT_TYPE_CODE_LIVE = "1".freeze
-  BENEFIT_TYPE_CODE_DEATH = "2".freeze
+  BENEFIT_TYPE_CODE_LIVE = "1"
+  BENEFIT_TYPE_CODE_DEATH = "2"
 
   # TODO: get middle initial from BGS
   def name
@@ -112,18 +114,39 @@ class Veteran < ApplicationRecord
     # If the file number is nil, that's another way of saying the veteran wasn't found.
     result && result[:file_number] && result
   rescue BGS::ShareError => error
+    @access_error = error.message
+
     # Now that we are always checking find_flashes for access control before we fetch the
     # veteran, we should never see this error. Reporting it to sentry if it happens
-    Raven.capture_exception(error)
+    unless error.message.match?(/Sensitive File/)
+      Raven.capture_exception(error)
+      raise error
+    end
 
     # Set the veteran as inaccessible if a sensitivity error is thrown
-    raise error unless error.message.match?(/Sensitive File/)
-
     @accessible = false
   end
 
   def accessible?
     bgs.can_access?(file_number)
+  end
+
+  def access_error
+    @access_error ||= nil if bgs_record.is_a?(Hash)
+  rescue BGS::ShareError => error
+    error.message
+  end
+
+  # When two Veteran records get merged for data clean up, it can lead to multiple active phone numbers
+  # This causes an error fetching the BGS record and needs to be fixed in SHARE
+  def multiple_phone_numbers?
+    if !!access_error&.include?("NonUniqueResultException")
+      bgs.bust_can_access_cache(RequestStore[:current_user], file_number)
+
+      true
+    else
+      false
+    end
   end
 
   def relationships
@@ -238,39 +261,56 @@ class Veteran < ApplicationRecord
       # Check to see if veteran is accessible to make sure bgs_record is
       # a hash and not :not_found. Also if it's not found, bgs_record returns
       # a symbol that will blow up, so check if bgs_record is a hash first.
-      if sync_name && veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
-        veteran.update!(
-          first_name: veteran.bgs_record[:first_name],
-          last_name: veteran.bgs_record[:last_name],
-          middle_name: veteran.bgs_record[:middle_name],
-          name_suffix: veteran.bgs_record[:name_suffix]
+      if sync_name
+        Rails.logger.warn(
+          %(
+          find_and_maybe_backfill_name veteran:#{file_number} accessible:#{veteran.accessible?}
+          )
         )
+
+        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
+          veteran.update!(
+            first_name: veteran.bgs_record[:first_name],
+            last_name: veteran.bgs_record[:last_name],
+            middle_name: veteran.bgs_record[:middle_name],
+            name_suffix: veteran.bgs_record[:name_suffix]
+          )
+        end
       end
       veteran
     end
 
+    # rubocop:disable Metrics/MethodLength
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
 
-      return nil unless veteran.found?
+      unless veteran.found?
+        Rails.logger.warn(
+          %(create_by_file_number file_number:#{file_number} found:false accessible:#{veteran.accessible?})
+        )
+        return nil
+      end
+
+      Rails.logger.warn(
+        %(create_by_file_number file_number:#{file_number} found:true accessible:#{veteran.accessible?})
+      )
+
+      return veteran unless veteran.accessible?
 
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
-        v.update!(participant_id: v.ptcpnt_id)
-        # Check to see if veteran is accessible to make sure
-        # bgs_record is a hash and not :not_found
-        if v.accessible?
-          v.update!(
-            first_name: v.bgs_record[:first_name],
-            last_name: v.bgs_record[:last_name],
-            middle_name: v.bgs_record[:middle_name],
-            name_suffix: v.bgs_record[:name_suffix]
-          )
-        end
+        v.update!(
+          participant_id: v.ptcpnt_id,
+          first_name: v.bgs_record[:first_name],
+          last_name: v.bgs_record[:last_name],
+          middle_name: v.bgs_record[:middle_name],
+          name_suffix: v.bgs_record[:name_suffix]
+        )
       end
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
+    # rubocop:enable Metrics/MethodLength
 
     def before_create_veteran_by_file_number
       # noop - used to simulate race conditions

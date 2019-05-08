@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe BoardGrantEffectuationTask do
   let(:task_status) { "assigned" }
   let(:task) { create(:board_grant_effectuation_task, status: task_status).becomes(described_class) }
@@ -41,10 +43,10 @@ describe BoardGrantEffectuationTask do
     context "appeal with request issues in multiple business lines" do
       let!(:insurance_business_line) { create(:business_line, url: "insurance") }
       let!(:education_request_issue) do
-        create(:request_issue, :nonrating, review_request: appeal, benefit_type: "education")
+        create(:request_issue, :nonrating, decision_review: appeal, benefit_type: "education")
       end
       let!(:insurance_request_issue) do
-        create(:request_issue, :nonrating, review_request: appeal, benefit_type: "insurance")
+        create(:request_issue, :nonrating, decision_review: appeal, benefit_type: "insurance")
       end
       let(:insurance_task) do
         create(:task, appeal: appeal, assigned_to: insurance_business_line).becomes(described_class)
@@ -64,8 +66,8 @@ describe BoardGrantEffectuationTask do
     context "appeal with request issues in one business line" do
       let!(:education_request_issues) do
         [
-          create(:request_issue, :nonrating, review_request: appeal, benefit_type: "education"),
-          create(:request_issue, :nonrating, review_request: appeal, benefit_type: "education")
+          create(:request_issue, :nonrating, decision_review: appeal, benefit_type: "education"),
+          create(:request_issue, :nonrating, decision_review: appeal, benefit_type: "education")
         ]
       end
 

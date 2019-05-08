@@ -19,9 +19,6 @@ class AddedIssue extends React.PureComponent {
 
     let existingRequestIssue = _.filter(requestIssues, { rating_issue_reference_id: issue.ratingIssueReferenceId })[0];
 
-    // leaving this here to make it easier to debug in future.
-    // console.log('existingRequestIssue', existingRequestIssue);
-
     if (existingRequestIssue && !existingRequestIssue.ineligible_reason) {
       return false;
     }
@@ -32,8 +29,6 @@ class AddedIssue extends React.PureComponent {
   getEligibility() {
     let { issue, formType, legacyOptInApproved } = this.props;
 
-    // console.log('getEligibility', formType, issue, legacyOptInApproved);
-
     let errorMsg = '';
     const cssKlassesWithError = ['issue-desc', 'not-eligible'];
 
@@ -42,10 +37,10 @@ class AddedIssue extends React.PureComponent {
         cssKlasses: cssKlassesWithError.concat(['issue-unidentified']) };
     }
     if (issue.titleOfActiveReview ||
-      (issue.reviewRequestTitle && issue.ineligibleReason === 'duplicate_of_nonrating_issue_in_active_review')
+      (issue.decisionReviewTitle && issue.ineligibleReason === 'duplicate_of_nonrating_issue_in_active_review')
     ) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.duplicate_of_rating_issue_in_active_review.replace(
-        '{review_title}', issue.titleOfActiveReview || issue.reviewRequestTitle
+        '{review_title}', issue.titleOfActiveReview || issue.decisionReviewTitle
       );
     } else if (issue.ineligibleReason) {
       errorMsg = INELIGIBLE_REQUEST_ISSUES[issue.ineligibleReason];
@@ -67,7 +62,7 @@ class AddedIssue extends React.PureComponent {
       } else if (issue.eligibleForSocOptIn === false) {
         errorMsg = INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible;
       }
-    } else if (issue.beforeAma) {
+    } else if (issue.beforeAma && formType !== 'supplemental_claim') {
       errorMsg = INELIGIBLE_REQUEST_ISSUES.before_ama;
     }
 
@@ -84,14 +79,16 @@ class AddedIssue extends React.PureComponent {
       cssKlasses: ['issue-desc']
     };
 
-    // console.log('needsEligibilityCheck', issue, this.needsEligibilityCheck());
-
     if (this.needsEligibilityCheck()) {
       let eligibilityCheck = this.getEligibility();
 
       if (eligibilityCheck) {
         eligibleState = eligibilityCheck;
       }
+    }
+
+    if (issue.withdrawalPending || issue.withdrawalDate) {
+      eligibleState.cssKlasses.push('withdrawn-issue');
     }
 
     return <div className={eligibleState.cssKlasses.join(' ')}>
@@ -108,6 +105,9 @@ class AddedIssue extends React.PureComponent {
           <span className="desc">{ legacyIssue(issue, this.props.legacyAppeals).description }</span>
         </div>
       }
+      { issue.withdrawalPending && <p>Withdraw pending</p> }
+      { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
+
     </div>;
   }
 

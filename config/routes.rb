@@ -39,8 +39,10 @@ Rails.application.routes.draw do
         get 'appeals', to: 'appeals#list'
         get 'appeals/:appeal_id', to: 'appeals#details'
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
+        post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
+        get 'veterans', to: 'veterans#details'
       end
     end
   end
@@ -99,7 +101,6 @@ Rails.application.routes.draw do
   resources :appeals, param: :appeal_id, only: [:index, :show, :edit] do
     member do
       get :document_count
-      get :new_documents
       get :veteran
       get :power_of_attorney
       get :hearings
@@ -160,6 +161,7 @@ Rails.application.routes.draw do
     get "/", to: 'intakes#index'
     get "/manager", to: 'intake_manager#index'
     get "/manager/flagged_for_review", to: 'intake_manager#flagged_for_review'
+    get "/manager/users/:user_css_id", to: 'intake_manager#user_stats'
   end
 
   resources :intakes, path: "/intake", only: [:index, :create, :destroy] do
@@ -202,16 +204,29 @@ Rails.application.routes.draw do
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
 
+  resources :team_management, only: [:index, :update]
+  get '/team_management(*rest)', to: 'team_management#index'
+  post '/team_management/judge_team/:user_id', to: 'team_management#create_judge_team'
+  post '/team_management/national_vso', to: 'team_management#create_national_vso'
+  post '/team_management/field_vso', to: 'team_management#create_field_vso'
+
   get '/search', to: 'queue#index'
 
   resources :legacy_tasks, only: [:create, :update]
-  resources :tasks, only: [:index, :create, :update]
+  resources :tasks, only: [:index, :create, :update] do
+    member do
+      post :reschedule
+      post :request_hearing_disposition_change
+    end
+    resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
+  end
+  resources :judge_assign_tasks, only: [:create]
 
   resources :distributions, only: [:new, :show]
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
-    resources :users, only: [:index, :create, :destroy], controller: 'organizations/users'
+    resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'

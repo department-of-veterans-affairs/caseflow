@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BeaamAppealsController < ApplicationController
   before_action :verify_beaam_access
 
@@ -15,9 +17,6 @@ class BeaamAppealsController < ApplicationController
   end
 
   def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      each_serializer: ::WorkQueue::BeaamSerializer
-    ).as_json
+    ::WorkQueue::BeaamSerializer.new(appeals, is_collection: true)
   end
 end

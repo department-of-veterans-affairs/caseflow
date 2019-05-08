@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HearingsController < ApplicationController
   before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
@@ -9,8 +11,6 @@ class HearingsController < ApplicationController
   end
 
   def update
-    slot_new_hearing if postponed?
-
     if hearing.is_a?(LegacyHearing)
       hearing.update_caseflow_and_vacols(update_params_legacy)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
@@ -35,35 +35,23 @@ class HearingsController < ApplicationController
     begin
       HearingDayMapper.validate_regional_office(params["regional_office"])
 
-      veteran = Veteran.find_by(file_number: params["veteran_file_number"])
+      appeal = Appeal.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(params["appeal_id"])
 
       facility_ids = (RegionalOffice::CITIES[params["regional_office"]][:alternate_locations] ||
                      []) << RegionalOffice::CITIES[params["regional_office"]][:facility_locator_id]
 
-      va_dot_gov_address = veteran.validate_address
+      locations = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
 
-      render json: { hearing_locations: VADotGovService.get_distance(lat: va_dot_gov_address[:lat],
-                                                                     long: va_dot_gov_address[:long],
-                                                                     ids: facility_ids) }
-    rescue Caseflow::Error::VaDotGovAPIError => e
-      render json: { message: e.message, status: "ERROR" }
+      render json: { hearing_locations: locations }
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      messages = error.message.dig("messages") || []
+      render json: { message: messages[0]&.dig("key") || error.message }, status: :bad_request
+    rescue StandardError => error
+      render json: { message: error.message }, status: :internal_server_error
     end
   end
 
   private
-
-  def slot_new_hearing
-    hearing.slot_new_hearing(
-      master_record_params["id"],
-      scheduled_time: master_record_params["time"]&.stringify_keys,
-      appeal: hearing.appeal,
-      hearing_location_attrs: master_record_params["hearing_location_attributes"]&.to_hash
-    )
-  end
-
-  def postponed?
-    params["master_record_updated"].present?
-  end
 
   def check_hearing_prep_out_of_service
     render "out_of_service", layout: "application" if Rails.cache.read("hearing_prep_out_of_service")
@@ -86,7 +74,7 @@ class HearingsController < ApplicationController
   end
 
   def verify_access_to_hearing_prep_or_schedule
-    verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched")
+    verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched")
   end
 
   def set_application
@@ -107,17 +95,6 @@ class HearingsController < ApplicationController
                                        :classification, :name, :distance,
                                        :zip_code
                                      ])
-  end
-
-  def master_record_params
-    params.require("master_record_updated").permit(:id,
-                                                   time: [:h, :m, :offset],
-                                                   hearing_location_attributes: [
-                                                     :city, :state, :address,
-                                                     :facility_id, :facility_type,
-                                                     :classification, :name, :distance,
-                                                     :zip_code
-                                                   ])
   end
 
   # rubocop:disable Metrics/MethodLength

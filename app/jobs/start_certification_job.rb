@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StartCertificationJob < ApplicationJob
   queue_as :high_priority
   attr_accessor :certification
@@ -15,9 +17,9 @@ class StartCertificationJob < ApplicationJob
     end
     fetch_power_of_attorney! if @certification.certification_status == :started
     update_data_complete
-  rescue StandardError => e
-    Rails.logger.info "StartCertificationJob failed: #{e.message}"
-    Rails.logger.info e.backtrace.join("\n")
+  rescue StandardError => error
+    Rails.logger.info "StartCertificationJob failed: #{error.message}"
+    Rails.logger.info error.backtrace.join("\n")
     update_data_failed
   end
 

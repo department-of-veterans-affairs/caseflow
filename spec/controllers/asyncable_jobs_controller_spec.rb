@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AsyncableJobsController, type: :controller do
   before do
     User.stub = user
@@ -35,7 +37,7 @@ describe AsyncableJobsController, type: :controller do
       end
       let!(:request_issue) do
         create(:request_issue,
-               review_request: hlr,
+               decision_review: hlr,
                decision_sync_submitted_at: 7.days.ago,
                decision_sync_attempted_at: 7.days.ago)
       end
@@ -76,8 +78,15 @@ describe AsyncableJobsController, type: :controller do
           get :index, as: :html, params: { asyncable_job_klass: "HigherLevelReview" }
 
           expect(response.status).to eq 200
-          expect(response.body).to match(/HigherLevelReview/)
-          expect(response.body).to_not match(/SupplementalClaim/)
+          expect(response.body).to match(/"asyncableJobKlass":"HigherLevelReview"/)
+        end
+      end
+
+      context "#pagination" do
+        it "paginates based on asyncable_job_klass" do
+          get :index, as: :html, params: { asyncable_job_klass: "HigherLevelReview" }
+
+          expect(subject.send(:pagination)).to eq(total_pages: 1, total_jobs: 1, current_page: 1, page_size: 50)
         end
       end
 

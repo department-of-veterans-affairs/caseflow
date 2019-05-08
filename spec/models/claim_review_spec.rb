@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe ClaimReview do
   before do
     Timecop.freeze(Time.utc(2018, 4, 24, 12, 0, 0))
@@ -30,7 +32,7 @@ describe ClaimReview do
   let(:rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "decision text",
@@ -42,7 +44,7 @@ describe ClaimReview do
   let(:second_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       contested_rating_issue_reference_id: "reference-id2",
       contested_rating_issue_profile_date: Date.new(2018, 4, 30),
       contested_issue_description: "another decision text",
@@ -53,9 +55,9 @@ describe ClaimReview do
   let(:non_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       nonrating_issue_description: "Issue text",
-      issue_category: "surgery",
+      nonrating_issue_category: "surgery",
       decision_date: 4.days.ago.to_date,
       benefit_type: benefit_type,
       ineligible_reason: ineligible_reason
@@ -65,9 +67,9 @@ describe ClaimReview do
   let(:second_non_rating_request_issue) do
     build(
       :request_issue,
-      review_request: claim_review,
+      decision_review: claim_review,
       nonrating_issue_description: "some other issue",
-      issue_category: "something",
+      nonrating_issue_category: "something",
       decision_date: 3.days.ago.to_date,
       benefit_type: benefit_type
     )
@@ -94,7 +96,7 @@ describe ClaimReview do
   let!(:claimant) do
     create(
       :claimant,
-      review_request: claim_review,
+      decision_review: claim_review,
       participant_id: veteran_participant_id,
       payee_code: "00"
     )
@@ -106,7 +108,7 @@ describe ClaimReview do
 
   context "async logic scopes" do
     let!(:claim_review_requiring_processing) do
-      create(:higher_level_review, receipt_date: receipt_date).tap(&:submit_for_processing!)
+      create(:higher_level_review, :requires_processing, receipt_date: receipt_date)
     end
 
     let!(:claim_review_processed) do
@@ -130,9 +132,23 @@ describe ClaimReview do
       )
     end
 
+    let!(:claim_review_canceled) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_canceled_at: 2.days.ago
+      )
+    end
+
     context ".unexpired" do
       it "matches reviews still inside the processing window" do
         expect(HigherLevelReview.unexpired).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".canceled" do
+      it "only returns canceled jobs" do
+        expect(HigherLevelReview.canceled).to eq([claim_review_canceled])
       end
     end
 
@@ -147,6 +163,7 @@ describe ClaimReview do
     context ".attemptable" do
       it "matches reviews that could be attempted" do
         expect(HigherLevelReview.attemptable).not_to include(claim_review_recently_attempted)
+        expect(HigherLevelReview.attemptable).not_to include(claim_review_canceled)
       end
     end
 
@@ -159,6 +176,50 @@ describe ClaimReview do
     context ".expired_without_processing" do
       it "matches reviews unfinished but outside the retry window" do
         expect(HigherLevelReview.expired_without_processing).to eq([claim_review_attempts_ended])
+      end
+    end
+  end
+
+  context "#active?" do
+    subject { claim_review.active? }
+
+    context "when it is processed in Caseflow and has completed tasks" do
+      let(:benefit_type) { "nca" }
+      let!(:completed_task) { create(:task, :completed, appeal: claim_review) }
+
+      it { is_expected.to be false }
+
+      context "when there are any incomplete tasks" do
+        let!(:in_progress_task) { create(:task, :in_progress, appeal: claim_review) }
+
+        it "returns true" do
+          expect(subject).to eq(true)
+        end
+      end
+    end
+
+    context "when it is processed in VBMS and has a cleared EPE" do
+      let(:benefit_type) { "compensation" }
+      let!(:cleared_epe) do
+        create(:end_product_establishment,
+               :cleared,
+               code: rating_request_issue.end_product_code,
+               source: claim_review,
+               veteran_file_number: claim_review.veteran.file_number)
+      end
+
+      it { is_expected.to be false }
+
+      context "when there is at least one active end product establishment" do
+        let!(:active_epe) do
+          create(:end_product_establishment,
+                 :active,
+                 code: rating_request_issue.end_product_code,
+                 source: claim_review,
+                 veteran_file_number: claim_review.veteran.file_number)
+        end
+
+        it { is_expected.to be true }
       end
     end
   end
@@ -428,7 +489,9 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: veteran_participant_id
+            claimant_participant_id: veteran_participant_id,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -695,7 +758,9 @@ describe ClaimReview do
             end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: veteran_participant_id
+            claimant_participant_id: veteran_participant_id,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -728,7 +793,9 @@ describe ClaimReview do
             end_product_code: "030HLRNR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
-            claimant_participant_id: veteran_participant_id
+            claimant_participant_id: veteran_participant_id,
+            limited_poa_code: nil,
+            limited_poa_access: nil
           },
           veteran_hash: veteran.to_vbms_hash,
           user: user
@@ -763,9 +830,14 @@ describe ClaimReview do
     end
   end
 
-  describe "#find_all_by_file_number" do
+  describe "#find_all_visible_by_file_number" do
+    let!(:removed_hlr) { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+    let!(:removed_sc) { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
+    let!(:removed_hlr_issue) { create(:request_issue, :removed, decision_review: removed_hlr) }
+    let!(:removed_sc_issue) { create(:request_issue, :removed, decision_review: removed_sc) }
+
     it "finds higher level reviews and supplemental claims" do
-      expect(ClaimReview.find_all_by_file_number(veteran_file_number).length).to eq(2)
+      expect(ClaimReview.find_all_visible_by_file_number(veteran_file_number).length).to eq(2)
     end
   end
 
@@ -825,6 +897,25 @@ describe ClaimReview do
 
     it "returns the veteran" do
       expect(hlr.claim_veteran).to eq(veteran)
+    end
+  end
+
+  describe "#sync_end_product_establishments!" do
+    let!(:veteran) { create(:veteran) }
+    let!(:claim_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
+    let!(:end_product_establishment) do
+      create(:end_product_establishment, source: claim_review, veteran_file_number: veteran.file_number)
+    end
+
+    before do
+      claim_review.create_issues!([rating_request_issue])
+      claim_review.establish!
+    end
+
+    it "syncs all EPEs" do
+      expect(claim_review.end_product_establishments.first.last_synced_at).to be_nil
+      claim_review.reload.sync_end_product_establishments!
+      expect(claim_review.end_product_establishments.first.last_synced_at).to_not be_nil
     end
   end
 end

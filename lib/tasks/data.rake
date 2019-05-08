@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Requires the following environment variables to be set:
 # - VACOLS_PASSWORD
 # - VACOLS_USERNAME

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Test Users for Demo" do
@@ -6,10 +8,8 @@ RSpec.feature "Test Users for Demo" do
     ENV["DEPLOY_ENV"] = "development"
     BGSService.end_product_records = { default: BGSService.all_grants }
 
-    User.create(station_id: "283", css_id: User::FUNCTIONS.sample)
-    User.create(station_id: "ABC", css_id: User::FUNCTIONS.sample)
-    User.create(station_id: "283", css_id: "ANNE MERICA")
-    User.authenticate!
+    3.times { create(:user) }
+    User.authenticate! # creates the DSUSER account
   end
 
   scenario "We can switch between users in the database in demo mode" do

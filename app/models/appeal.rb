@@ -1,22 +1,32 @@
+# frozen_string_literal: true
+
+##
+# An appeal filed by a Veteran or appellant to the Board of Veterans' Appeals for VA decisions on claims for benefits.
+# This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
+# which went into effect Feb 19, 2019.
+
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
-  include DocumentConcern
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :hearings
+  has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
 
   # decision_documents is effectively a has_one until post decisional motions are supported
-  has_many :decision_documents
+  has_many :decision_documents, as: :appeal
+  has_many :vbms_uploaded_documents
   has_many :remand_supplemental_claims, as: :decision_review_remanded, class_name: "SupplementalClaim"
 
   has_one :special_issue_list
+  has_many :record_synced_by_job, as: :record
 
+  validate :validate_receipt_date
   with_options on: :intake_review do
     validates :receipt_date, :docket_type, presence: { message: "blank" }
     validates :veteran_is_not_claimant, inclusion: { in: [true, false], message: "blank" }
-    validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }, if: :legacy_opt_in_enabled?
+    validates :legacy_opt_in_approved, inclusion: { in: [true, false], message: "blank" }
     validates_associated :claimants
   end
 
@@ -31,9 +41,7 @@ class Appeal < DecisionReview
       .where("advance_on_docket_motions.granted = ?", true)
       .or(join_aod_motions
         .where("people.date_of_birth <= ?", 75.years.ago))
-    # TODO: this method returns duplicate results when appeals match both clauses in the `or`.
-    # adding .distinct here throws an error when combined with other scopes using .order.
-    # ensure results are distinct.
+      .group("appeals.id")
   }
 
   # rubocop:disable Metrics/LineLength
@@ -50,13 +58,22 @@ class Appeal < DecisionReview
       .group("appeals.id")
       .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
               DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+      .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
+              MailTask.blocking_subclasses, Task.inactive_statuses, 0)
+  }
+
+  scope :non_ihp, lambda {
+    joins(:tasks)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? then 1 end) = ?",
+              InformalHearingPresentationTask.name, 0)
   }
 
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status != ? then 1 end) >= ?",
-              RootTask.name, Constants.TASK_STATUSES.completed, 1)
+      .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
+              RootTask.name, Task.inactive_statuses, 1)
   }
 
   scope :ordered_by_distribution_ready_date, lambda {
@@ -78,8 +95,12 @@ class Appeal < DecisionReview
     )
   end
 
+  def va_dot_gov_address_validator
+    @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
+  end
+
   delegate :documents, :manifest_vbms_fetched_at, :number_of_documents,
-           :new_documents_for_user, :manifest_vva_fetched_at, to: :document_fetcher
+           :manifest_vva_fetched_at, to: :document_fetcher
 
   def self.find_appeal_by_id_or_find_or_create_legacy_appeal_by_vacols_id(id)
     if UUID_REGEX.match?(id)
@@ -89,8 +110,12 @@ class Appeal < DecisionReview
     end
   end
 
-  def self.non_priority_decisions_in_the_last_year
-    all_nonpriority.joins(:decision_documents).where("receipt_date > ?", 1.year.ago).count
+  def self.nonpriority_decisions_per_year
+    appeal_ids = all_nonpriority
+      .joins(:decision_documents)
+      .where("decision_date > ?", 1.year.ago)
+      .select("appeals.id")
+    where(id: appeal_ids).count
   end
 
   def ui_hash
@@ -111,36 +136,34 @@ class Appeal < DecisionReview
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
-  # rubocop:disable Metrics/PerceivedComplexity
-  def location_code
-    location_code = nil
+  def assigned_to_location
+    return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    if root_task && root_task.status == Constants.TASK_STATUSES.completed
-      location_code = COPY::CASE_LIST_TABLE_POST_DECISION_LABEL
-    else
-      active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
-      if active_tasks == [root_task]
-        location_code = COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
-      elsif !active_tasks.empty?
-        most_recent_assignee = active_tasks.order(updated_at: :desc).first.assigned_to
-        location_code = if most_recent_assignee.is_a?(Organization)
-                          most_recent_assignee.name
-                        else
-                          most_recent_assignee.css_id
-                        end
-      end
-    end
+    active_tasks = tasks.active.not_tracking
+    return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
-    location_code
+    on_hold_tasks = tasks.on_hold.not_tracking
+    return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
+
+    return most_recently_assigned_to_label(tasks) if tasks.any?
+
+    status_hash[:type].to_s.titleize
   end
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def attorney_case_reviews
-    tasks.map(&:attorney_case_reviews).flatten
+    tasks.includes(:attorney_case_reviews).flat_map(&:attorney_case_reviews)
   end
 
   def every_request_issue_has_decision?
     eligible_request_issues.all? { |request_issue| request_issue.decision_issues.present? }
+  end
+
+  def latest_attorney_case_review
+    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
+
+    @latest_attorney_case_review = AttorneyCaseReview
+      .where(task_id: tasks.pluck(:id))
+      .order(:created_at).last
   end
 
   def reviewing_judge_name
@@ -151,7 +174,7 @@ class Appeal < DecisionReview
   def eligible_request_issues
     # It's possible that two users create issues around the same time and the sequencer gets thrown off
     # (https://stackoverflow.com/questions/5818463/rails-created-at-timestamp-order-disagrees-with-id-order)
-    open_request_issues.select(&:eligible?).sort_by(&:id)
+    request_issues.active.all.sort_by(&:id)
   end
 
   def issues
@@ -173,19 +196,19 @@ class Appeal < DecisionReview
   end
 
   def hearing_docket?
-    docket_type == "hearing"
+    docket_type == Constants.AMA_DOCKETS.hearing
   end
 
   def evidence_submission_docket?
-    docket_type == "evidence_submission"
+    docket_type == Constants.AMA_DOCKETS.evidence_submission
   end
 
   def direct_review_docket?
-    docket_type == "direct_review"
+    docket_type == Constants.AMA_DOCKETS.direct_review
   end
 
   def active?
-    tasks.where(type: RootTask.name).where.not(status: Constants.TASK_STATUSES.completed).any?
+    tasks.active.where(type: RootTask.name).any?
   end
 
   def ready_for_distribution_at
@@ -218,9 +241,20 @@ class Appeal < DecisionReview
            :gender,
            :date_of_birth,
            :age,
-           :closest_regional_office,
            :available_hearing_locations,
            :country, to: :veteran, prefix: true
+
+  def veteran_if_exists
+    @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
+  end
+
+  def veteran_closest_regional_office
+    veteran_if_exists&.closest_regional_office
+  end
+
+  def veteran_available_hearing_locations
+    veteran_if_exists&.available_hearing_locations
+  end
 
   delegate :city,
            :state, to: :appellant, prefix: true
@@ -233,8 +267,7 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
-  delegate :closest_regional_office,
-           :first_name,
+  delegate :first_name,
            :last_name,
            :name_suffix,
            :ssn, to: :veteran, prefix: true, allow_nil: true
@@ -243,7 +276,13 @@ class Appeal < DecisionReview
     claimants.first
   end
 
-  delegate :first_name, :last_name, :middle_name, :name_suffix, to: :appellant, prefix: true, allow_nil: true
+  delegate :first_name,
+           :last_name,
+           :middle_name,
+           :name_suffix,
+           :city,
+           :zip,
+           :state, to: :appellant, prefix: true, allow_nil: true
 
   def cavc
     "not implemented for AMA"
@@ -271,10 +310,6 @@ class Appeal < DecisionReview
     request_issues.reload
   end
 
-  def serializer_class
-    ::WorkQueue::AppealSerializer
-  end
-
   def docket_number
     return "Missing Docket Number" unless receipt_date
 
@@ -291,9 +326,9 @@ class Appeal < DecisionReview
     claimants.map(&:power_of_attorney)
   end
 
-  def vsos
-    vso_participant_ids = power_of_attorneys.map(&:participant_id)
-    Vso.where(participant_id: vso_participant_ids)
+  def representatives
+    vso_participant_ids = power_of_attorneys.map(&:participant_id) - [nil]
+    Representative.where(participant_id: vso_participant_ids)
   end
 
   def external_id
@@ -326,14 +361,7 @@ class Appeal < DecisionReview
   end
 
   def root_task
-    RootTask.find_by(appeal_id: id)
-  end
-
-  def create_remand_supplemental_claims!
-    decision_issues.remanded.each(&:find_or_create_remand_supplemental_claim!)
-    remand_supplemental_claims.each(&:create_remand_issues!)
-    remand_supplemental_claims.each(&:create_decision_review_task_if_required!)
-    remand_supplemental_claims.each(&:start_processing_job!)
+    RootTask.find_by(appeal: self)
   end
 
   # needed for appeal status api
@@ -346,19 +374,18 @@ class Appeal < DecisionReview
   end
 
   def active_status?
-    active? || active_ep? || active_remanded_claims?
+    # For the appeal status api, and Appeal is considered open
+    # as long as there are active remand claim or effectuation
+    # tracked in VBMS.
+    active? || active_effectuation_ep? || active_remanded_claims?
   end
 
-  def active_ep?
+  def active_effectuation_ep?
     decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
   end
 
-  def active_remanded_claims?
-    remand_supplemental_claims.any?(&:active?)
-  end
-
   def location
-    if active_ep? || active_remanded_claims?
+    if active_effectuation_ep? || active_remanded_claims?
       "aoj"
     else
       "bva"
@@ -388,32 +415,34 @@ class Appeal < DecisionReview
       :evidentiary_period
     elsif at_vso?
       :at_vso
-    elsif !distributed_to_a_judge?
-      :on_docket
-    elsif distributed_to_a_judge? && decision_issues.empty?
+    elsif distributed_to_a_judge?
       :decision_in_progress
+    else
+      :on_docket
     end
   end
 
   def fetch_post_decision_status
-    if !remanded_issues? && effectuation_ep? && !active_ep?
+    if remand_supplemental_claims.any?
+      active_remanded_claims? ? :ama_remand : :post_bva_dta_decision
+    elsif effectuation_ep? && !active_effectuation_ep?
       :bva_decision_effectuation
-    elsif remanded_sc_with_ep && !remanded_sc_with_ep.active?
-      :post_bva_dta_decision
-    elsif remanded_issues?
-      :ama_remand
-    elsif decision_issues.any? && !remanded_issues?
-      :bva_decision
+    elsif decision_issues.any?
+      # there is a period of time where there are decision issues but no
+      # decision document and the decisions issues do not have decision date yet
+      # wait until the document is available before showing there is a decision
+      decision_document ? :bva_decision : :decision_in_progress
     elsif withdrawn?
       :withdrawn
-    else decision_issues.empty?
-         :other_close
+    else
+      :other_close
     end
   end
   # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable CyclomaticComplexity
   def fetch_details_for_status
     case fetch_status
     when :bva_decision
@@ -428,25 +457,32 @@ class Appeal < DecisionReview
       post_bva_dta_decision_status_details
     when :bva_decision_effectuation
       {
-        bvaDecisionDate: decision_event_date,
-        aojDecisionDate: decision_effectuation_event_date
+        bva_decision_date: decision_event_date,
+        aoj_decision_date: decision_effectuation_event_date
       }
     when :pending_hearing_scheduling
       {
         type: "video"
       }
+    when :scheduled_hearing
+      api_scheduled_hearing_status_details
+    when :decision_in_progress
+      {
+        decision_timeliness: AppealSeries::DECISION_TIMELINESS.dup
+      }
     else
       {}
     end
   end
+  # rubocop:enable CyclomaticComplexity
   # rubocop:enable Metrics/MethodLength
 
   def post_bva_dta_decision_status_details
     issue_list = remanded_sc_decision_issues
     {
       issues: api_issues_for_status_details_issues(issue_list),
-      bvaDecisionDate: decision_event_date,
-      aojDecisionDate: dta_descision_event_date
+      bva_decision_date: decision_event_date,
+      aoj_decision_date: remand_decision_event_date
     }
   end
 
@@ -457,6 +493,31 @@ class Appeal < DecisionReview
         disposition: issue.api_status_disposition
       }
     end
+  end
+
+  def api_scheduled_hearing_status_details
+    {
+      type: api_scheduled_hearing_type,
+      date: scheduled_hearing.scheduled_for.to_date,
+      location: scheduled_hearing.try(:hearing_location).try(&:name)
+    }
+  end
+
+  def scheduled_hearing
+    # Appeal Status api assumes that there can be multiple hearings that have happened in the past but only
+    # one that is currently scheduled. Will get this by getting the hearing whose scheduled date is in the future.
+    @scheduled_hearing ||= hearings.find { |hearing| hearing.scheduled_for >= Time.zone.today }
+  end
+
+  def api_scheduled_hearing_type
+    return unless scheduled_hearing
+
+    hearing_types_for_status_details = {
+      V: "video",
+      C: "central_office"
+    }.freeze
+
+    hearing_types_for_status_details[scheduled_hearing.request_type.to_sym]
   end
 
   def remanded_sc_decision_issues
@@ -471,44 +532,51 @@ class Appeal < DecisionReview
   end
 
   def pending_schedule_hearing_task?
-    tasks.any? { |t| t.is_a?(ScheduleHearingTask) && !t.completed? }
+    tasks.active.where(type: ScheduleHearingTask.name).any?
   end
 
   def hearing_pending?
-    # This isn't available yet.
-    # tasks.any? { |t| t.is_a?(HoldHearingTask) && !t.completed? }
+    scheduled_hearing.present?
   end
 
   def evidence_submission_hold_pending?
-    tasks.any? { |t| t.is_a?(EvidenceSubmissionWindowTask) && !t.completed? }
+    tasks.active.where(type: EvidenceSubmissionWindowTask.name).any?
   end
 
   def at_vso?
     # This task is always open, this can be used once that task is completed
-    # tasks.any? { |t| t.is_a?(InformalHearingPresentationTask) && !t.completed? }
+    # tasks.active.where(type: InformalHearingPresentationTask.name).any?
   end
 
   def distributed_to_a_judge?
     tasks.any? { |t| t.is_a?(JudgeTask) }
   end
 
-  def remanded_issues?
-    decision_issues.any? { |di| di.disposition == "remanded" }
-  end
-
-  def remanded_sc_with_ep
-    @remanded_sc_with_ep ||= remand_supplemental_claims.find(&:processed_in_vbms?)
-  end
-
   def withdrawn?
-    # will implement when available
+    root_task&.status == Constants.TASK_STATUSES.cancelled
   end
 
   def alerts
-    # to be implemented
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
+  end
+
+  def aoj
+    return if request_issues.empty?
+
+    return "other" unless all_request_issues_same_aoj?
+
+    request_issues.first.api_aoj_from_benefit_type
+  end
+
+  def all_request_issues_same_aoj?
+    request_issues.all? do |ri|
+      ri.api_aoj_from_benefit_type == request_issues.first.api_aoj_from_benefit_type
+    end
   end
 
   def program
+    return if request_issues.empty?
+
     if request_issues.all? { |ri| ri.benefit_type == request_issues.first.benefit_type }
       request_issues.first.benefit_type
     else
@@ -540,11 +608,10 @@ class Appeal < DecisionReview
 
   def docket_switch_deadline
     return unless receipt_date
-    return unless request_issues.open.any?
-    return if request_issues.any? { |ri| !ri.closed? && ri.decision_or_promulgation_date.nil? }
+    return unless request_issues.active_or_ineligible.any?
+    return if request_issues.active_or_ineligible.any? { |ri| ri.decision_or_promulgation_date.nil? }
 
-    open_request_issues = request_issues.find_all { |ri| !ri.closed? }
-    oldest = open_request_issues.min_by(&:decision_or_promulgation_date)
+    oldest = request_issues.active_or_ineligible.min_by(&:decision_or_promulgation_date)
     deadline_from_oldest_request_issue = oldest.decision_or_promulgation_date + 365.days
     deadline_from_receipt = receipt_date + 60.days
 
@@ -567,13 +634,7 @@ class Appeal < DecisionReview
     judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
     return unless judge_tasks.any?
 
-    judge_tasks.min_by(&:created_at).created_at
-  end
-
-  def decision_event_date
-    return unless decision_issues.any?
-
-    decision_issues.first.approx_decision_date
+    judge_tasks.min_by(&:created_at).created_at.to_date
   end
 
   def effectuation_ep?
@@ -581,25 +642,17 @@ class Appeal < DecisionReview
   end
 
   def decision_effectuation_event_date
-    return if remanded_issues?
     return unless effectuation_ep?
-    return if active_ep?
+    return if active_effectuation_ep?
 
-    decision_document.end_product_establishments.first.last_synced_at
-  end
-
-  def dta_descision_event_date
-    return unless remanded_sc_with_ep
-    return if remanded_sc_with_ep.active?
-
-    remanded_sc_with_ep.decision_event_date
+    decision_document.end_product_establishments.first.last_synced_at.to_date
   end
 
   def other_close_event_date
     return if active_status?
     return if decision_issues.any?
 
-    root_task.completed_at
+    root_task.closed_at&.to_date
   end
 
   def events
@@ -607,32 +660,36 @@ class Appeal < DecisionReview
   end
 
   def issues_hash
-    issue_list = decision_issues.empty? ? request_issues.open : fetch_all_decision_issues
+    issue_list = decision_issues.empty? ? request_issues.active.all : fetch_all_decision_issues
+
+    return [] if issue_list.empty?
 
     fetch_issues_status(issue_list)
   end
 
   def fetch_all_decision_issues
-    return decision_issues unless remanded_issues?
-    # only include the remanded issues they are still being worked on
-    return decision_issues if remanded_issues? && active_remanded_claims?
+    return decision_issues unless decision_issues.remanded.any?
+    # only include the remanded issues if they are still being worked on
+    return decision_issues if active_remanded_claims?
 
-    # if there were remanded issues and there is a decision available
-    # for them, include the decisions from the remanded SC and do not
-    # include the original remanded decision
-    di_list = decision_issues.not_remanded
+    super
+  end
 
-    remand_sc_decisions = []
-    remand_supplemental_claims.each do |sc|
-      sc.decision_issues.each do |di|
-        remand_sc_decisions << di
-      end
-    end
+  def cavc_due_date
+    decision_event_date + 120.days if decision_event_date
+  end
 
-    (di_list + remand_sc_decisions).uniq
+  def available_review_options
+    return ["cavc"] if request_issues.any? { |ri| ri.benefit_type == "fiduciary" }
+
+    %w[supplemental_claim cavc]
   end
 
   private
+
+  def most_recently_assigned_to_label(tasks)
+    tasks.order(:updated_at).last.assigned_to_label
+  end
 
   def maybe_create_translation_task
     veteran_state_code = veteran&.state
@@ -668,7 +725,7 @@ class Appeal < DecisionReview
   def contestable_decision_issues
     return [] unless receipt_date
 
-    DecisionIssue.where(participant_id: veteran.participant_id)
+    DecisionIssue.includes(:decision_review).where(participant_id: veteran.participant_id)
       .select(&:finalized?)
       .select do |issue|
         issue.approx_decision_date && issue.approx_decision_date < receipt_date

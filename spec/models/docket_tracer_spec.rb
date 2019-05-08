@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DocketSnapshot do
   before do
     Timecop.freeze(Time.utc(2015, 1, 30, 12, 0, 0))
@@ -46,7 +48,7 @@ describe DocketSnapshot do
       expect(subject[:ahead]).to eq(13_456)
       expect(subject[:ready]).to eq(8456)
       expect(subject[:month]).to eq(11.months.ago.to_date.beginning_of_month)
-      expect(subject[:docket_month]).to eq(11.months.ago.to_date.beginning_of_month)
+      expect(subject[:docketMonth]).to eq(11.months.ago.to_date.beginning_of_month)
       expect(subject[:eta]).to eq(nil)
     end
   end

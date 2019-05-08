@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe LegacyAppeal do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -446,63 +448,6 @@ describe LegacyAppeal do
 
       it "should return number of documents" do
         expect(subject).to eq 3
-      end
-    end
-
-    context "Number of documents from caseflow" do
-      subject { appeal.number_of_documents_from_caseflow }
-
-      it "should return number of documents" do
-        documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
-        expect(subject).to eq 3
-      end
-    end
-  end
-
-  context "#new_documents_from_caseflow" do
-    before do
-      documents.each { |document| document.update(file_number: appeal.sanitized_vbms_id) }
-    end
-
-    let(:user) { create(:user) }
-
-    let!(:documents) do
-      [
-        Generators::Document.create(upload_date: 5.days.ago),
-        Generators::Document.create(upload_date: 5.days.ago)
-      ]
-    end
-
-    let!(:appeal) { Generators::LegacyAppeal.create }
-    let!(:vacols_case) { create(:case, documents: documents) }
-
-    subject { appeal.new_documents_from_caseflow(user) }
-
-    context "when appeal has no appeal view" do
-      it "should return all documents" do
-        expect(subject).to match_array(documents)
-      end
-    end
-
-    context "when appeal has an appeal view newer than documents" do
-      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-
-      it "should return no documents" do
-        expect(subject).to eq([])
-      end
-
-      context "when one document is missing a received at date" do
-        it "should return no documents" do
-          documents[0].update(upload_date: nil)
-          expect(subject).to eq([])
-        end
-      end
-
-      context "when one document is newer than the appeal view date" do
-        it "should return the newer document" do
-          documents[0].update(upload_date: -2.days.ago)
-          expect(subject).to eq([documents[0]])
-        end
       end
     end
   end
@@ -2219,77 +2164,62 @@ describe LegacyAppeal do
   end
 
   context "#contested_claimants" do
+    subject { appeal.contested_claimants }
+    let!(:vacols_case) { create(:case, bfso: "L", bfcorkey: "CK439252") }
+    let!(:representative) do
+      create(:representative,
+             repkey: repkey,
+             repcorkey: repcorkey,
+             reptype: "C",
+             repso: "V",
+             repfirst: "Contested",
+             repmi: "H",
+             replast: "Claimant",
+             repaddr1: "123 Oak St.",
+             repaddr2: "Suite 222",
+             repcity: "New York",
+             repst: "NY",
+             repzip: "10000")
+    end
+    let(:result) do
+      [
+        {
+          type: "Claimant",
+          first_name: "Contested",
+          middle_name: "H",
+          last_name: "Claimant",
+          name_suffix: nil,
+          address: {
+            address_line_1: "123 Oak St.",
+            address_line_2: "Suite 222",
+            city: "New York",
+            state: "NY",
+            zip: "10000"
+          },
+          representative: { code: "V", name: "Vietnam Veterans of America" }
+        }
+      ]
+    end
+
     context "when there are contested claimants" do
-      let(:correspondent) do
-        create(:correspondent,
-               snamef: "Bobby",
-               snamemi: "F",
-               snamel: "Veteran",
-               saddrst1: "123 K St. NW",
-               saddrst2: "Suite 456",
-               saddrcty: "Washington",
-               saddrstt: "DC",
-               saddrcnty: nil,
-               saddrzip: "20001",
-               sspare1: "Claimant",
-               sspare2: "Tommy",
-               sspare3: "G")
+      context "and representative is found by repkey" do
+        let(:repkey) { vacols_case.bfkey }
+        let(:repcorkey) { "CF99999" }
+
+        it { is_expected.to eq(result) }
       end
 
-      let!(:representative) do
-        create(:representative,
-               repkey: vacols_case.bfkey,
-               reptype: "C",
-               repfirst: "Contested",
-               repmi: "H",
-               replast: "Claimant",
-               repaddr1: "123 Oak St.",
-               repaddr2: "Suite 222",
-               repcity: "New York",
-               repst: "NY",
-               repzip: "10000")
-      end
-      let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "L") }
+      context "and representative is found by repcorkey" do
+        let(:repkey) { "12345" }
+        let(:repcorkey) { vacols_case.bfcorkey }
 
-      it "the contested claimant is returned" do
-        expect(appeal.contested_claimants).to eq([
-                                                   {
-                                                     type: "Claimant",
-                                                     first_name: "Contested",
-                                                     middle_name: "H",
-                                                     last_name: "Claimant",
-                                                     name_suffix: nil,
-                                                     address: {
-                                                       address_line_1: "123 Oak St.",
-                                                       address_line_2: "Suite 222",
-                                                       city: "New York",
-                                                       state: "NY",
-                                                       zip: "10000"
-                                                     }
-                                                   }
-                                                 ])
+        it { is_expected.to eq(result) }
       end
     end
   end
 
   context "#contested_claimant_agents" do
     context "when there are contested claimant agents" do
-      let(:correspondent) do
-        create(:correspondent,
-               snamef: "Bobby",
-               snamemi: "F",
-               snamel: "Veteran",
-               saddrst1: "123 K St. NW",
-               saddrst2: "Suite 456",
-               saddrcty: "Washington",
-               saddrstt: "DC",
-               saddrcnty: nil,
-               saddrzip: "20001",
-               sspare1: "Claimant",
-               sspare2: "Tommy",
-               sspare3: "G")
-      end
-
       let!(:representative) do
         create(:representative,
                repkey: vacols_case.bfkey,
@@ -2303,7 +2233,7 @@ describe LegacyAppeal do
                repst: "NY",
                repzip: "10000")
       end
-      let!(:vacols_case) { create(:case, correspondent: correspondent, bfso: "L") }
+      let!(:vacols_case) { create(:case, bfso: "L") }
 
       it "the contested claimant is returned" do
         expect(appeal.contested_claimant_agents).to eq([
@@ -2319,9 +2249,107 @@ describe LegacyAppeal do
                                                              city: "New York",
                                                              state: "NY",
                                                              zip: "10000"
-                                                           }
+                                                           },
+                                                           representative: { code: nil, name: nil }
                                                          }
                                                        ])
+      end
+    end
+  end
+
+  context "#assigned_to_location" do
+    context "if the case is complete" do
+      let!(:vacols_case) { create(:case, :status_complete) }
+
+      it "returns nil" do
+        expect(appeal.assigned_to_location).to eq(nil)
+      end
+    end
+
+    context "if the case has not been worked in caseflow" do
+      let(:location_code) { "96" }
+      let!(:vacols_case) { create(:case, bfcurloc: location_code) }
+
+      it "returns the location code" do
+        expect(appeal.assigned_to_location).to eq(location_code)
+      end
+    end
+
+    context "if the case has been worked in caseflow" do
+      let!(:vacols_case) { create(:case, bfcurloc: "CASEFLOW") }
+
+      it "if there are no active tasks it returns 'CASEFLOW' (fallback case)" do
+        expect(appeal.assigned_to_location).to eq("CASEFLOW")
+      end
+
+      context "if the only active case is a RootTask" do
+        before do
+          create(:root_task, appeal: appeal)
+        end
+
+        it "returns Case storage" do
+          expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        end
+      end
+
+      context "if there is an assignee" do
+        context "if the most recent assignee is an organization" do
+          let(:organization) { create(:organization) }
+
+          before do
+            organization_root_task = create(:root_task, appeal: appeal)
+            create(:generic_task, assigned_to: organization, appeal: appeal, parent: organization_root_task)
+          end
+
+          it "it returns the organization name" do
+            expect(appeal.assigned_to_location).to eq(organization.name)
+          end
+        end
+
+        context "if the most recent assignee is not an organization" do
+          let(:user) { create(:user) }
+
+          before do
+            user_root_task = create(:root_task, appeal: appeal)
+            create(:generic_task, assigned_to: user, appeal: appeal, parent: user_root_task)
+          end
+
+          it "it returns the id" do
+            expect(appeal.assigned_to_location).to eq(user.css_id)
+          end
+        end
+
+        context "if the task is on hold but there isn't an assignee" do
+          let(:pre_ama) { Date.new(2018, 1, 1) }
+
+          before do
+            on_hold_root = create(:root_task, appeal: appeal, updated_at: pre_ama - 1)
+            create(:generic_task, status: :on_hold, appeal: appeal, parent: on_hold_root, updated_at: pre_ama + 1)
+          end
+
+          it "it returns something" do
+            expect(appeal.assigned_to_location).not_to eq(nil)
+          end
+        end
+      end
+    end
+  end
+
+  context "#representatives" do
+    context "when there is no VSO" do
+      before do
+        allow_any_instance_of(PowerOfAttorney).to receive(:bgs_participant_id).and_return(nil)
+      end
+      let!(:vso) do
+        Vso.create(
+          name: "Test VSO",
+          url: "test-vso"
+        )
+      end
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+
+      it "does not return VSOs with nil participant_id" do
+        expect(appeal.representatives).to eq([])
       end
     end
   end

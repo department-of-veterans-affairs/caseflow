@@ -6,16 +6,11 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 import { TASK_ACTIONS } from './constants';
 
-import NewFile from './components/NewFile';
 import AppealDocumentCount from './AppealDocumentCount';
 import { css } from 'glamor';
 
 const documentCountSizeStyling = css({
   fontSize: '.9em'
-});
-
-const newFileIconStyling = css({
-  paddingLeft: '.75rem'
 });
 
 export default class ReaderLink extends React.PureComponent {
@@ -30,8 +25,7 @@ export default class ReaderLink extends React.PureComponent {
       appealId,
       appeal,
       docCountWithinLink,
-      docCountBelowLink,
-      cached
+      docCountBelowLink
     } = this.props;
     const linkProps = {};
 
@@ -52,11 +46,10 @@ export default class ReaderLink extends React.PureComponent {
 
     return <React.Fragment>
       <Link {...linkProps} onClick={this.readerLinkAnalytics}>
-          View { docCountWithinLink && <AppealDocumentCount appeal={appeal} cached={cached} /> } docs
-        <span {...newFileIconStyling}><NewFile externalAppealId={appeal.externalId} cached={cached} /></span></Link>
+          View { docCountWithinLink && <AppealDocumentCount appeal={appeal} /> } docs</Link>
       { docCountBelowLink &&
             <div {...documentCountSizeStyling}>
-              <AppealDocumentCount loadingText appeal={appeal} cached={cached} />
+              <AppealDocumentCount loadingText appeal={appeal} />
             </div>
       }
     </React.Fragment>;
@@ -66,15 +59,17 @@ export default class ReaderLink extends React.PureComponent {
 ReaderLink.propTypes = {
   analyticsSource: PropTypes.string,
   appeal: PropTypes.object.isRequired,
+  task: PropTypes.object,
   docCountWithinLink: PropTypes.bool,
   docCountBelowLink: PropTypes.bool,
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,
   appealId: PropTypes.string.isRequired,
-  cached: PropTypes.bool
+  newDocsIcon: PropTypes.bool
 };
 
 ReaderLink.defaultProps = {
   docCountWithinLink: false,
-  docCountBelowLink: false
+  docCountBelowLink: false,
+  task: null
 };

@@ -1,24 +1,19 @@
-// @flow
+/* eslint-disable no-console */
 import { ACTIONS } from './uiConstants';
 import ApiUtil from '../../util/ApiUtil';
-
-import type {
-  UiStateMessage,
-  Dispatch
-} from '../types/state';
 
 export const resetErrorMessages = () => ({
   type: ACTIONS.RESET_ERROR_MESSAGES
 });
 
-export const setCanEditAod = (canEditAod: Boolean) => ({
+export const setCanEditAod = (canEditAod) => ({
   type: ACTIONS.SET_CAN_EDIT_AOD,
   payload: {
     canEditAod
   }
 });
 
-export const showErrorMessage = (errorMessage: UiStateMessage) => ({
+export const showErrorMessage = (errorMessage) => ({
   type: ACTIONS.SHOW_ERROR_MESSAGE,
   payload: {
     errorMessage
@@ -33,7 +28,7 @@ export const resetSuccessMessages = () => ({
   type: ACTIONS.RESET_SUCCESS_MESSAGES
 });
 
-export const showSuccessMessage = (message: UiStateMessage) => ({
+export const showSuccessMessage = (message) => ({
   type: ACTIONS.SHOW_SUCCESS_MESSAGE,
   payload: {
     message
@@ -44,28 +39,28 @@ export const hideSuccessMessage = () => ({
   type: ACTIONS.HIDE_SUCCESS_MESSAGE
 });
 
-export const highlightInvalidFormItems = (highlight: boolean) => ({
+export const highlightInvalidFormItems = (highlight) => ({
   type: ACTIONS.HIGHLIGHT_INVALID_FORM_ITEMS,
   payload: {
     highlight
   }
 });
 
-export const setSelectingJudge = (selectingJudge: boolean) => ({
+export const setSelectingJudge = (selectingJudge) => ({
   type: ACTIONS.SET_SELECTING_JUDGE,
   payload: {
     selectingJudge
   }
 });
 
-const saveSuccess = (message: UiStateMessage, response: Object) => (dispatch: Dispatch) => {
+const saveSuccess = (message, response) => (dispatch) => {
   dispatch(showSuccessMessage(message));
   dispatch({ type: ACTIONS.SAVE_SUCCESS });
 
   return Promise.resolve(response);
 };
 
-const saveFailure = (err: Object) => (dispatch: Dispatch) => {
+const saveFailure = (err) => (dispatch) => {
   const { response } = err;
   let uiErrorMessage;
 
@@ -91,8 +86,8 @@ const saveFailure = (err: Object) => (dispatch: Dispatch) => {
 };
 
 export const requestSave = (
-  url: string, params: Object, successMessage: UiStateMessage, verb: string = 'post'
-): Function => (dispatch: Dispatch) => {
+  url, params, successMessage, verb = 'post'
+) => (dispatch) => {
   dispatch(hideErrorMessage());
   dispatch(hideSuccessMessage());
 
@@ -106,11 +101,11 @@ export const requestSave = (
     catch((err) => dispatch(saveFailure(err)));
 };
 
-export const requestPatch = (url: string, params: Object, successMessage: UiStateMessage) =>
+export const requestPatch = (url, params, successMessage) =>
   requestSave(url, params, successMessage, 'patch');
-export const requestUpdate = (url: string, params: Object, successMessage: UiStateMessage) =>
+export const requestUpdate = (url, params, successMessage) =>
   requestSave(url, params, successMessage, 'put');
-export const requestDelete = (url: string, params: Object, successMessage: UiStateMessage) =>
+export const requestDelete = (url, params, successMessage) =>
   requestSave(url, params, successMessage, 'delete');
 
 export const setSavePending = () => ({
@@ -121,37 +116,37 @@ export const resetSaveState = () => ({
   type: ACTIONS.RESET_SAVE_STATE
 });
 
-export const showModal = (modalType: string) => ({
+export const showModal = (modalType) => ({
   type: ACTIONS.SHOW_MODAL,
   payload: { modalType }
 });
 
-export const hideModal = (modalType: string) => ({
+export const hideModal = (modalType) => ({
   type: ACTIONS.HIDE_MODAL,
   payload: { modalType }
 });
 
-export const setFeatureToggles = (featureToggles: Object) => ({
+export const setFeatureToggles = (featureToggles) => ({
   type: ACTIONS.SET_FEATURE_TOGGLES,
   payload: { featureToggles }
 });
 
-export const setUserRole = (userRole: string) => ({
+export const setUserRole = (userRole) => ({
   type: ACTIONS.SET_USER_ROLE,
   payload: { userRole }
 });
 
-export const setUserCssId = (cssId: ?string) => ({
+export const setUserCssId = (cssId) => ({
   type: ACTIONS.SET_USER_CSS_ID,
   payload: { cssId }
 });
 
-export const setOrganizations = (organizations: Array<Object>) => ({
+export const setOrganizations = (organizations) => ({
   type: ACTIONS.SET_ORGANIZATIONS,
   payload: { organizations }
 });
 
-export const setActiveOrganization = (id: number, name: string, isVso: boolean) => ({
+export const setActiveOrganization = (id, name, isVso) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
   payload: {
     id,
@@ -160,31 +155,29 @@ export const setActiveOrganization = (id: number, name: string, isVso: boolean) 
   }
 });
 
-export const setUserId = (userId: number) => ({
+export const setUserId = (userId) => ({
   type: ACTIONS.SET_USER_ID,
   payload: { userId }
 });
 
-export const setUserIsVsoEmployee = (userIsVsoEmployee: ?boolean) => ({
+export const setUserIsVsoEmployee = (userIsVsoEmployee) => ({
   type: ACTIONS.SET_USER_IS_VSO_EMPLOYEE,
   payload: { userIsVsoEmployee }
 });
 
-export const setFeedbackUrl = (feedbackUrl: string) => ({
+export const setFeedbackUrl = (feedbackUrl) => ({
   type: ACTIONS.SET_FEEDBACK_URL,
   payload: { feedbackUrl }
 });
 
-type targetAssignee = { assigneeId: string };
-
-export const setSelectedAssignee = ({ assigneeId }: targetAssignee) => ({
+export const setSelectedAssignee = ({ assigneeId }) => ({
   type: ACTIONS.SET_SELECTED_ASSIGNEE,
   payload: {
     assigneeId
   }
 });
 
-export const setSelectedAssigneeSecondary = ({ assigneeId }: targetAssignee) => ({
+export const setSelectedAssigneeSecondary = ({ assigneeId }) => ({
   type: ACTIONS.SET_SELECTED_ASSIGNEE_SECONDARY,
   payload: {
     assigneeId
@@ -203,7 +196,7 @@ export const hideVeteranCaseList = () => ({
   type: ACTIONS.HIDE_VETERAN_CASE_LIST
 });
 
-export const setHearingDay = (hearingDay: Object) => ({
+export const setHearingDay = (hearingDay) => ({
   type: ACTIONS.SET_HEARING_DAY,
   payload: hearingDay
 });

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -8,7 +9,6 @@ import moment from 'moment';
 import scrollToComponent from 'react-scroll-to-component';
 import { sprintf } from 'sprintf-js';
 
-import decisionViewBase from './components/DecisionViewBase';
 import RadioField from '../components/RadioField';
 import CheckboxGroup from '../components/CheckboxGroup';
 import Checkbox from '../components/Checkbox';
@@ -34,6 +34,7 @@ import {
   JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH
 } from './constants';
 import DispatchSuccessDetail from './components/DispatchSuccessDetail';
+import QueueFlowPage from './components/QueueFlowPage';
 
 const setWidth = (width) => css({
   width,
@@ -71,7 +72,6 @@ class EvaluateDecisionView extends React.PureComponent {
   qualityIsDeficient = () => ['needs_improvements', 'does_not_meet_expectations'].includes(this.state.quality);
 
   // todo: consoldate w/IssueRemandReasonOptions.scrollTo
-  // moving these into DecisionViewBase didn't work for some reason :\
   scrollTo = (dest = this, opts) => scrollToComponent(dest, _.defaults(opts, {
     align: 'top',
     duration: 1500,
@@ -132,8 +132,7 @@ class EvaluateDecisionView extends React.PureComponent {
       checkoutFlow,
       decision,
       userRole,
-      appealId,
-      amaDecisionIssues
+      appealId
     } = this.props;
 
     let loc = 'bva_dispatch';
@@ -143,7 +142,7 @@ class EvaluateDecisionView extends React.PureComponent {
       loc = 'omo_office';
       successMsg = sprintf(COPY.JUDGE_CHECKOUT_OMO_SUCCESS_MESSAGE_TITLE, appeal.veteranFullName);
     }
-    const issuesToPass = !appeal.isLegacyAppeal && amaDecisionIssues ? appeal.decisionIssues : appeal.issues;
+    const issuesToPass = appeal.isLegacyAppeal ? appeal.issues : appeal.decisionIssues;
     const payload = buildCaseReviewPayload(checkoutFlow, decision, userRole, issuesToPass, {
       location: loc,
       attorney_id: appeal.isLegacyAppeal ? task.assignedBy.pgId : appeal.assignedAttorney.id,
@@ -159,6 +158,9 @@ class EvaluateDecisionView extends React.PureComponent {
       then(() => this.props.deleteAppeal(appealId), (response) => {
         // eslint-disable-next-line no-console
         console.log(response);
+      }).
+      catch(() => {
+        // handle the error from the frontend
       });
   }
 
@@ -189,7 +191,8 @@ class EvaluateDecisionView extends React.PureComponent {
       task,
       appealId,
       highlight,
-      error
+      error,
+      ...otherProps
     } = this.props;
 
     const dateAssigned = moment(task.previousTaskAssignedOn);
@@ -197,7 +200,13 @@ class EvaluateDecisionView extends React.PureComponent {
     const daysWorked = decisionSubmitted.startOf('day').
       diff(dateAssigned, 'days');
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      appealId={appealId}
+      validateForm={this.validateForm}
+      goToNextStep={this.goToNextStep}
+      getPrevStepUrl={this.getPrevStepUrl}
+      {...otherProps}
+    >
       <CaseTitle
         heading={appeal.veteranFullName}
         appealId={appealId}
@@ -314,7 +323,7 @@ class EvaluateDecisionView extends React.PureComponent {
         maxlength={JUDGE_CASE_REVIEW_COMMENT_MAX_LENGTH}
         value={this.state.comment}
         onChange={(comment) => this.setState({ comment })} />
-    </React.Fragment>;
+    </QueueFlowPage>;
   };
 }
 
@@ -333,8 +342,7 @@ const mapStateToProps = (state, ownProps) => {
     task: taskById(state, { taskId: ownProps.taskId }),
     decision: state.queue.stagedChanges.taskDecision,
     userRole: state.ui.userRole,
-    error: state.ui.messages.error,
-    amaDecisionIssues: state.ui.featureToggles.ama_decision_issues || !_.isEmpty(appeal.decisionIssues)
+    error: state.ui.messages.error
   };
 };
 
@@ -343,4 +351,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(EvaluateDecisionView));
+export default connect(mapStateToProps, mapDispatchToProps)(EvaluateDecisionView);

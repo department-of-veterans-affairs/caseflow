@@ -543,6 +543,27 @@ svg title {
   border-bottom: 7px solid $color-gray-light;
 }
 
+// =====================================*
+// Application continuous progress bar  *
+// =====================================*/
+.cf-continuous-progress-bar {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: $color-gray-light;
+  margin: auto;
+
+  >div {
+    height: 100%;
+    border-radius: 2px;
+    background: $color-gray-dark;
+  }
+
+  >.cf-continuous-progress-bar-warning {
+    background: $color-secondary;
+  }
+}
+
 // ===========================*
 // Application navigation bar  *
 // ============================*/
@@ -672,6 +693,12 @@ form {
   }
 }
 
+.usa-button-red {
+  background-color: $color-red;
+  box-shadow: inset 0 0 0 2px $color-white;
+  color: $color-white;
+}
+
 // Make a link look like a button */
 .cf-link-btn {
   display: inline-block;
@@ -770,54 +797,6 @@ form {
     background: transparent;
   }
 }
-
-//--- Table styles ---*/
-.usa-table-borderless {
-  width: 100%;
-
-  th,
-  td {
-    border-bottom-color: $color-gray-lighter;
-  }
-
-  td {
-    &:first-child {
-      padding-left: 0;
-    }
-  }
-}
-
-.cf-filter-option-row {
-  margin: 0;
-
-  button {
-    background-color: $color-white;
-    border-bottom: 1px solid $color-gray-lighter;
-    border-radius: 0;
-    color: $color-gray-dark;
-    font-weight: inherit;
-    margin: 0;
-    padding: 15px 10px;
-    text-align: left;
-    width: 100%;
-
-    &:hover {
-      background-color: $color-gray;
-      color: $color-white;
-    }
-  }
-
-  label {
-    padding: 10px;
-    margin: 0;
-  }
-}
-
-.cf-clear-filters-link {
-  margin: 0;
-  padding: 0 1rem;
-}
-
 
 // ===========================*
 // Form-related states

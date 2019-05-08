@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class TeamQuota < ApplicationRecord
   DEFAULT_USER_COUNT = 1
 

@@ -59,5 +59,27 @@ module CaseflowCertification
 
     # it's a safe assumption we're running on us-gov-west-1
     ENV["AWS_REGION"] ||= "us-gov-west-1"
+
+    # :nocov:
+    if %w[development ssh_forwarding staging].include?(Rails.env)
+      # configure pry
+      silence_warnings do
+        begin
+          require 'pry'
+          config.console = Pry
+          unless defined? Pry::ExtendCommandBundle
+            Pry::ExtendCommandBundle = Module.new
+          end
+          require "rails/console/app"
+          require "rails/console/helpers"
+          require_relative "../lib/helpers/console_methods"
+
+          TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods
+          TOPLEVEL_BINDING.eval('self').extend ConsoleMethods
+        rescue LoadError
+        end
+      end
+    end
+    # :nocov:
   end
 end

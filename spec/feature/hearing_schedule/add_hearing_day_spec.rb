@@ -1,19 +1,18 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Add a Hearing Day" do
   let!(:current_user) do
-    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
-    User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
-  end
-
-  let!(:hearings_user) do
-    create(:hearings_management)
+    user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
+    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    User.authenticate!(user: user)
   end
 
   context "Verify Initial Modal State And Basic Errors" do
     scenario "When opening modal verify initial fields present" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       expect(page).to have_content("Select Hearing Date")
@@ -27,7 +26,7 @@ RSpec.feature "Add a Hearing Day" do
 
     scenario "Open modal but do not fill form, expect error" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       find("button", text: "Confirm").click
@@ -40,7 +39,7 @@ RSpec.feature "Add a Hearing Day" do
   context "When adding a Central Office Hearing" do
     scenario "When opening modal and selecting Central Office verify correct fields present" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       click_dropdown(index: "C", text: "Central")
@@ -51,7 +50,7 @@ RSpec.feature "Add a Hearing Day" do
 
     scenario "Fill out all fields and confirm to save" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       fill_in "hearingDate", with: "01152019"
@@ -68,7 +67,7 @@ RSpec.feature "Add a Hearing Day" do
   context "Add a Video Hearing Day" do
     scenario "When opening modal and selecting Central Office verify correct fields present" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       click_dropdown(index: "V", text: "Video")
@@ -79,7 +78,7 @@ RSpec.feature "Add a Hearing Day" do
 
     scenario "Fill out all fields and confirm to save" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       fill_in "hearingDate", with: "04152019"
@@ -97,7 +96,7 @@ RSpec.feature "Add a Hearing Day" do
 
     scenario "Leave Regional Office without a selection, expect error" do
       visit "hearings/schedule"
-      expect(page).to have_content("Welcome to Hearing Schedule!")
+      expect(page).to have_content(COPY::HEARING_SCHEDULE_VIEW_PAGE_HEADER)
       find("button", text: "Add Hearing Date").click
       expect(page).to have_content("Add Hearing Day")
       fill_in "hearingDate", with: "04152019"

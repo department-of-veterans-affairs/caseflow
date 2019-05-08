@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -26,7 +25,6 @@ import {
   prepareAppealIssuesForStore
 } from './utils';
 
-import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
@@ -40,6 +38,7 @@ import {
 import COPY from '../../COPY.json';
 import ISSUE_INFO from '../../constants/ISSUE_INFO.json';
 import DIAGNOSTIC_CODE_DESCRIPTIONS from '../../constants/DIAGNOSTIC_CODE_DESCRIPTIONS.json';
+import QueueFlowPage from './components/QueueFlowPage';
 
 const marginTop = css({ marginTop: '5rem' });
 const dropdownMarginTop = css({ marginTop: '2rem' });
@@ -47,41 +46,7 @@ const smallTopMargin = css({ marginTop: '1rem' });
 const smallBottomMargin = css({ marginBottom: '1rem' });
 const noLeftPadding = css({ paddingLeft: 0 });
 
-import type {
-  Appeal,
-  Issue
-} from './types/models';
-import type { UiStateMessage } from './types/state';
-
-type Props = {|
-  action: "add" | "edit",
-  issueId: string,
-  appealId: string,
-  nextStep: string,
-  prevStep: string
-|};
-
-type Params = Props & {|
-  issue: Issue,
-  appeal: Appeal,
-  highlight: boolean,
-  error: ?UiStateMessage,
-  deleteIssueModal: boolean,
-  // dispatch
-  showModal: typeof showModal,
-  hideModal: typeof hideModal,
-  requestSave: typeof requestSave,
-  requestUpdate: typeof requestUpdate,
-  requestDelete: typeof requestDelete,
-  startEditingAppealIssue: Function,
-  saveEditedAppealIssue: typeof saveEditedAppealIssue,
-  cancelEditingAppealIssue: typeof cancelEditingAppealIssue,
-  deleteEditingAppealIssue: typeof deleteEditingAppealIssue,
-  updateEditingAppealIssue: typeof updateEditingAppealIssue,
-  highlightInvalidFormItems: typeof highlightInvalidFormItems
-|};
-
-class AddEditIssueView extends React.Component<Params> {
+class AddEditIssueView extends React.Component {
   componentDidMount = () => {
     const { issueId, appealId } = this.props;
 
@@ -159,30 +124,19 @@ class AddEditIssueView extends React.Component<Params> {
       );
     }
 
-    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text)));
+    requestPromise.then((resp) => this.updateIssuesFromServer(JSON.parse(resp.text))).
+      catch(() => {
+        // handle the error from the frontend
+      });
   };
 
   updateIssuesFromServer = (response) => {
     const { appeal } = this.props;
-    const serverIssues = response.issues;
-
-    const issues = _.map(serverIssues, (issue) => {
-      // preserve locally-updated dispositions
-      const disposition = _.get(
-        _.find(appeal.issues, (iss) => iss.id === (issue.id || issue.vacols_sequence_id)),
-        'disposition'
-      );
-
-      return {
-        ...issue,
-        disposition
-      };
-    });
 
     this.props.saveEditedAppealIssue(this.props.appealId, {
       issues: prepareAppealIssuesForStore({
         attributes: {
-          issues,
+          issues: response.issues,
           docket_name: appeal.docketName
         }
       })
@@ -211,7 +165,7 @@ class AddEditIssueView extends React.Component<Params> {
     value
   }));
 
-  renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value: string) => ({
+  renderIssueAttrs = (attrs = {}) => _.map(attrs, (obj, value) => ({
     label: obj.description,
     value
   }));
@@ -243,7 +197,8 @@ class AddEditIssueView extends React.Component<Params> {
       action,
       highlight,
       error,
-      deleteIssueModal
+      deleteIssueModal,
+      ...otherProps
     } = this.props;
 
     const programs = ISSUE_INFO;
@@ -259,7 +214,11 @@ class AddEditIssueView extends React.Component<Params> {
       diagCode: highlight && this.issueLevelsConfigHasDiagCode() && !_.find(issue.codes, (code) => code.length === 4)
     };
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      validateForm={this.validateForm}
+      goToNextStep={this.goToNextStep}
+      {...otherProps}
+    >
       {deleteIssueModal && <div className="cf-modal-scroll">
         <Modal
           title="Delete Issue?"
@@ -368,7 +327,7 @@ class AddEditIssueView extends React.Component<Params> {
         value={_.get(this.props.issue, 'note', '')}
         maxLength={ISSUE_DESCRIPTION_MAX_LENGTH}
         onChange={(value) => this.updateIssue({ note: value })} />
-    </React.Fragment>;
+    </QueueFlowPage>;
   };
 }
 
@@ -394,4 +353,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestSave
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(AddEditIssueView));
+export default connect(mapStateToProps, mapDispatchToProps)(AddEditIssueView);

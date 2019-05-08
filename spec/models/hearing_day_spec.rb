@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingDay do
   context "#create" do
     let(:hearing) do
@@ -19,9 +21,11 @@ describe HearingDay do
 
     context "add a hearing with only required attributes - VACOLS" do
       let(:hearing_hash) do
-        { request_type: HearingDay::REQUEST_TYPES[:central],
+        {
+          request_type: HearingDay::REQUEST_TYPES[:central],
           scheduled_for: test_hearing_date_vacols,
-          room: "1" }
+          room: "1"
+        }
       end
 
       it "creates hearing with required attributes" do
@@ -34,9 +38,11 @@ describe HearingDay do
 
     context "add a hearing with only required attributes - Caseflow" do
       let(:hearing_hash) do
-        { request_type: HearingDay::REQUEST_TYPES[:central],
+        {
+          request_type: HearingDay::REQUEST_TYPES[:central],
           scheduled_for: test_hearing_date_caseflow,
-          room: "1" }
+          room: "1"
+        }
       end
 
       it "creates hearing with required attributes" do
@@ -49,10 +55,12 @@ describe HearingDay do
 
     context "add a video hearing - Caseflow" do
       let(:hearing_hash) do
-        { request_type: HearingDay::REQUEST_TYPES[:central],
+        {
+          request_type: HearingDay::REQUEST_TYPES[:central],
           scheduled_for: test_hearing_date_caseflow,
           regional_office: "RO89",
-          room: "5" }
+          room: "5"
+        }
       end
 
       it "creates a video hearing" do
@@ -66,17 +74,24 @@ describe HearingDay do
   end
 
   context "update hearing" do
-    let(:hearing_day) { create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video]) }
+    let!(:hearing_day) do
+      FactoryBot.create(:hearing_day, request_type: HearingDay::REQUEST_TYPES[:video], regional_office: "RO18")
+    end
     let(:hearing_hash) do
-      { request_type: HearingDay::REQUEST_TYPES[:video],
+      {
+        request_type: HearingDay::REQUEST_TYPES[:video],
         scheduled_for: Date.new(2019, 12, 7),
         regional_office: "RO89",
         room: "5",
-        lock: true }
+        lock: true
+      }
     end
 
+    subject { hearing_day.update!(hearing_hash) }
+
     it "updates attributes" do
-      HearingDay.find(hearing_day.id).update!(hearing_hash)
+      subject
+
       updated_hearing_day = HearingDay.find(hearing_day.id).reload
       expect(updated_hearing_day.request_type).to eql(HearingDay::REQUEST_TYPES[:video])
       expect(updated_hearing_day.scheduled_for).to eql(Date.new(2019, 12, 7))
@@ -86,28 +101,120 @@ describe HearingDay do
     end
 
     context "updates attributes in children hearings" do
-      before do
-        RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: create(:staff).slogid)
+      let!(:vacols_child_hearing) do
+        FactoryBot.create(:case_hearing, vdkey: hearing_day.id, folder_nr: FactoryBot.create(:case).bfkey)
       end
-      let!(:vacols_child_hearing) { create(:case_hearing, vdkey: hearing_day.id, folder_nr: create(:case).bfkey) }
-      let!(:caseflow_child_hearing) { create(:hearing, hearing_day: hearing_day, room: "5") }
+      let!(:caseflow_child_hearing) { FactoryBot.create(:hearing, hearing_day_id: hearing_day.id) }
 
-      it "updates children hearings" do
-        HearingDay.find(hearing_day.id).update!(hearing_hash)
+      before do
+        RequestStore.store[:current_user] = OpenStruct.new(vacols_uniq_id: FactoryBot.create(:staff).slogid)
+      end
+
+      it "updates children hearings with a new room" do
+        subject
+
         updated_vacols_child_hearing = vacols_child_hearing.reload
         expect(updated_vacols_child_hearing[:room]).to eql "5"
         updated_caseflow_child_hearing = caseflow_child_hearing.reload
         expect(updated_caseflow_child_hearing.room).to eql "5"
       end
+
+      it "only tries to update the room, because that's all that changed in the hearing day" do
+        expect_any_instance_of(LegacyHearing).to receive(:update!).with(room: "5")
+        expect_any_instance_of(Hearing).to receive(:update!).with(room: "5")
+
+        subject
+      end
+
+      context "both room and judge are changed" do
+        let!(:judge) { FactoryBot.create(:user) }
+        let!(:judge_role) { FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id) }
+        let!(:hearing_hash) do
+          {
+            judge_id: judge.id,
+            request_type: HearingDay::REQUEST_TYPES[:video],
+            scheduled_for: Date.new(2019, 12, 7),
+            regional_office: "RO89",
+            room: "5",
+            lock: true
+          }
+        end
+
+        it "updates children hearings with a new room and judge" do
+          subject
+
+          updated_vacols_child_hearing = vacols_child_hearing.reload
+          expect(updated_vacols_child_hearing[:room]).to eql "5"
+          expect(updated_vacols_child_hearing.judge_id).to eql judge.vacols_attorney_id
+          updated_caseflow_child_hearing = caseflow_child_hearing.reload
+          expect(updated_caseflow_child_hearing.room).to eql "5"
+          expect(updated_caseflow_child_hearing.judge).to eql judge
+        end
+
+        it "only tries to update the room and the judge, because that's all that changed in the hearing day" do
+          expected_legacy_params = { room: "5", judge_id: judge.vacols_attorney_id.to_s }
+          expect_any_instance_of(LegacyHearing).to receive(:update!).with(**expected_legacy_params)
+          expected_ama_params = { room: "5", judge_id: judge.id }
+          expect_any_instance_of(Hearing).to receive(:update!).with(**expected_ama_params)
+
+          subject
+        end
+      end
     end
   end
 
   context "confirm_no_children_records" do
-    let!(:hearing_day) { create(:hearing_day) }
-    let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+    let!(:hearing_day) { FactoryBot.create(:hearing_day) }
+    let!(:hearing) { FactoryBot.create(:hearing, hearing_day: hearing_day) }
 
     it "returns an error if there are children records" do
-      expect { hearing_day.confirm_no_children_records }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
+      expect { hearing_day.reload.confirm_no_children_records }.to raise_error(HearingDay::HearingDayHasChildrenRecords)
+    end
+  end
+
+  context "hearing day full" do
+    context "the hearing day has 12 scheduled hearings" do
+      let!(:hearing_day) { FactoryBot.create(:hearing_day) }
+
+      before do
+        6.times do
+          FactoryBot.create(:hearing, hearing_day: hearing_day)
+          FactoryBot.create(:case_hearing, vdkey: hearing_day.id)
+        end
+      end
+
+      subject { hearing_day.reload.hearing_day_full? }
+
+      it do
+        expect(subject).to eql(true)
+      end
+    end
+
+    context "the hearing day has 12 closed hearings" do
+      let!(:hearing_day) { FactoryBot.create(:hearing_day) }
+
+      before do
+        6.times do
+          FactoryBot.create(:hearing, hearing_day: hearing_day, disposition: "postponed")
+          FactoryBot.create(:case_hearing, vdkey: hearing_day.id, hearing_disp: "C")
+        end
+      end
+
+      subject { hearing_day.reload.hearing_day_full? }
+
+      it do
+        expect(subject).to eql(false)
+      end
+    end
+
+    context "the hearing day is locked" do
+      let!(:hearing_day) { FactoryBot.create(:hearing_day, lock: true) }
+
+      subject { hearing_day.reload.hearing_day_full? }
+
+      it do
+        expect(subject).to eql(true)
+      end
     end
   end
 
@@ -115,7 +222,7 @@ describe HearingDay do
     let(:schedule_period) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
       Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
-      create(:ro_schedule_period)
+      FactoryBot.create(:ro_schedule_period)
     end
 
     context "generate and persist hearing schedule" do
@@ -123,56 +230,56 @@ describe HearingDay do
         HearingDay.create_schedule(schedule_period.algorithm_assignments)
       end
 
-      subject { VACOLS::CaseHearing.load_days_for_range(schedule_period.start_date, schedule_period.end_date) }
+      subject { HearingDay.load_days(schedule_period.start_date, schedule_period.end_date) }
 
       it do
-        expect(subject.size).to eql(358)
+        expect(subject.size).to eql(442)
       end
     end
   end
 
   context "load Video days for a range date" do
     let!(:hearings) do
-      [create(:case_hearing),
-       create(:case_hearing)]
+      [FactoryBot.create(:case_hearing),
+       FactoryBot.create(:case_hearing)]
     end
 
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "RO13") }
 
     it "gets hearings for a date range" do
-      expect(subject[:vacols_hearings].size).to eq 2
+      expect(subject.size).to eq 2
     end
   end
 
   context "load Central Office days for a range date" do
     let!(:hearings) do
-      [create(:hearing_day, scheduled_for: Time.zone.today),
-       create(:hearing_day, scheduled_for: Time.zone.today + 1.day),
-       create(:hearing_day, scheduled_for: Time.zone.today + 2.days)]
+      [FactoryBot.create(:hearing_day, scheduled_for: Time.zone.today),
+       FactoryBot.create(:hearing_day, scheduled_for: Time.zone.today + 1.day),
+       FactoryBot.create(:hearing_day, scheduled_for: Time.zone.today + 2.days)]
     end
 
     subject { HearingDay.load_days(Time.zone.today, Time.zone.today + 2.days, HearingDay::REQUEST_TYPES[:central]) }
 
     it "should load all three hearing days" do
-      expect(subject[:caseflow_hearings].size).to eq 3
+      expect(subject.size).to eq 3
     end
   end
 
   context "Video Hearing parent and child rows for a date range" do
     let(:vacols_case) do
-      create(
+      FactoryBot.create(
         :case,
-        folder: create(:folder, tinum: "docket-number"),
+        folder: FactoryBot.create(:folder, tinum: "docket-number"),
         bfregoff: "RO13",
         bfcurloc: "57"
       )
     end
     let(:appeal) do
-      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
+      FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
-    let!(:staff) { create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
+    let!(:staff) { FactoryBot.create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
     let(:hearing) do
-      create(:case_hearing, folder_nr: appeal.vacols_id)
+      FactoryBot.create(:case_hearing, folder_nr: appeal.vacols_id)
     end
     let(:parent_hearing) do
       VACOLS::CaseHearing.find(hearing.vdkey)
@@ -180,8 +287,8 @@ describe HearingDay do
 
     context "get parent and children structure" do
       subject do
-        HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                   hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
+        HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                        hearing.hearing_date.beginning_of_day + 10, staff.stafkey)
       end
 
       it "returns nested hash structure" do
@@ -195,26 +302,26 @@ describe HearingDay do
 
   context "Video Hearings returns video hearings that are not postponed or cancelled" do
     let(:vacols_case) do
-      create(
+      FactoryBot.create(
         :case,
-        folder: create(:folder, tinum: "docket-number"),
+        folder: FactoryBot.create(:folder, tinum: "docket-number"),
         bfregoff: "RO13",
         bfcurloc: "57",
         bfdocind: HearingDay::REQUEST_TYPES[:video]
       )
     end
     let(:appeal) do
-      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
+      FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
-    let!(:staff) { create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
+    let!(:staff) { FactoryBot.create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
     let!(:hearing) do
-      create(:case_hearing, folder_nr: appeal.vacols_id)
+      FactoryBot.create(:case_hearing, folder_nr: appeal.vacols_id)
     end
     let(:parent_hearing) do
       VACOLS::CaseHearing.find(hearing.vdkey)
     end
     let(:vacols_case2) do
-      create(
+      FactoryBot.create(
         :case,
         bfregoff: "RO13",
         bfcurloc: "57",
@@ -222,15 +329,17 @@ describe HearingDay do
       )
     end
     let(:appeal2) do
-      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case2)
+      FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case2)
     end
     let!(:hearing2) do
-      create(:case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: parent_hearing.hearing_pkseq)
+      FactoryBot.create(
+        :case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: parent_hearing.hearing_pkseq
+      )
     end
 
     subject do
-      HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                 hearing.hearing_date.beginning_of_day + 1.day, staff.stafkey)
+      HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                      hearing.hearing_date.beginning_of_day + 1.day, staff.stafkey)
     end
 
     context "get video hearings neither postponed or cancelled" do
@@ -245,31 +354,31 @@ describe HearingDay do
 
     context "When there are multiple hearings and multiple days" do
       let(:appeal_today) do
-        create(
-          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        FactoryBot.create(
+          :legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)
         )
       end
       let!(:second_hearing_today) do
-        create(:case_hearing, vdkey: parent_hearing.hearing_pkseq, folder_nr: appeal_today.vacols_id)
+        FactoryBot.create(:case_hearing, vdkey: parent_hearing.hearing_pkseq, folder_nr: appeal_today.vacols_id)
       end
       let(:appeal_tomorrow) do
-        create(
-          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        FactoryBot.create(
+          :legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)
         )
       end
       let!(:hearing_tomorrow) do
-        create(
+        FactoryBot.create(
           :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
         )
       end
       let!(:ama_hearing_day) do
-        create(:hearing_day,
-               request_type: HearingDay::REQUEST_TYPES[:video],
-               scheduled_for: Time.zone.now,
-               regional_office: staff.stafkey)
+        FactoryBot.create(:hearing_day,
+                          request_type: HearingDay::REQUEST_TYPES[:video],
+                          scheduled_for: Time.zone.now,
+                          regional_office: staff.stafkey)
       end
-      let!(:ama_appeal) { create(:appeal) }
-      let!(:ama_hearing) { create(:hearing, hearing_day: ama_hearing_day, appeal: ama_appeal) }
+      let!(:ama_appeal) { FactoryBot.create(:appeal) }
+      let!(:ama_hearing) { FactoryBot.create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal) }
 
       it "returns hearings are mapped to days" do
         expect(subject.size).to eq 3
@@ -289,17 +398,17 @@ describe HearingDay do
       end
 
       let(:appeal_today) do
-        create(
-          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        FactoryBot.create(
+          :legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)
         )
       end
       let(:appeal_tomorrow) do
-        create(
-          :legacy_appeal, :with_veteran, vacols_case: create(:case)
+        FactoryBot.create(
+          :legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)
         )
       end
       let!(:hearing_tomorrow) do
-        create(
+        FactoryBot.create(
           :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
         )
       end
@@ -312,27 +421,26 @@ describe HearingDay do
 
   context "Central Office parent and child rows for a date range" do
     let(:vacols_case) do
-      create(
+      FactoryBot.create(
         :case,
-        folder: create(:folder, tinum: "docket-number"),
+        folder: FactoryBot.create(:folder, tinum: "docket-number"),
         bfregoff: "RO04",
         bfcurloc: "57"
       )
     end
     let(:appeal) do
-      create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
+      FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
-    let!(:staff) { create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
+    let!(:staff) { FactoryBot.create(:staff, stafkey: "RO04", stc2: 2, stc3: 3, stc4: 4) }
     let(:hearing) do
-      create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central],
-                            folder_nr: appeal.vacols_id)
+      FactoryBot.create(:case_hearing, hearing_type: HearingDay::REQUEST_TYPES[:central], folder_nr: appeal.vacols_id)
     end
 
     context "get parent and children structure" do
       subject do
-        HearingDay.hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
-                                                   hearing.hearing_date.beginning_of_day + 10,
-                                                   HearingDay::REQUEST_TYPES[:central])
+        HearingDay.open_hearing_days_with_hearings_hash((hearing.hearing_date - 1).beginning_of_day,
+                                                        hearing.hearing_date.beginning_of_day + 10,
+                                                        HearingDay::REQUEST_TYPES[:central])
       end
 
       it "returns nested hash structure" do

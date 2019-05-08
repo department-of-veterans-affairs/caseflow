@@ -1,3 +1,11 @@
+# frozen_string_literal: true
+
+##
+# Task tracking work done by attorneys at BVA. Attorneys are assigned tasks by judges.
+# Attorney tasks include:
+#   - writing draft decisions for judges
+#   - adding admin actions (like translating documents)
+
 class AttorneyTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
@@ -18,17 +26,29 @@ class AttorneyTask < Task
                             else
                               Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
                             end
-    [review_decision_label, Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
+    [
+      review_decision_label,
+      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
+    ]
   end
 
   def timeline_title
     COPY::CASE_TIMELINE_ATTORNEY_TASK
   end
 
+  def update_parent_status
+    parent.begin_decision_review_phase if parent&.is_a?(JudgeAssignTask)
+    super
+  end
+
+  def label
+    COPY::ATTORNEY_TASK_LABEL
+  end
+
   private
 
   def child_attorney_tasks_are_completed
-    if parent&.children_attorney_tasks&.any? { |task| task.status != Constants.TASK_STATUSES.completed }
+    if parent&.children_attorney_tasks&.active&.any?
       errors.add(:parent, "has open child tasks")
     end
   end

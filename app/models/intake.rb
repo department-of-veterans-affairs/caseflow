@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Intake < ApplicationRecord
   class FormTypeNotSupported < StandardError; end
 
@@ -17,6 +19,7 @@ class Intake < ApplicationRecord
   ERROR_CODES = {
     invalid_file_number: "invalid_file_number",
     veteran_not_found: "veteran_not_found",
+    veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_valid: "veteran_not_valid",
     duplicate_intake_in_progress: "duplicate_intake_in_progress"
@@ -82,6 +85,22 @@ class Intake < ApplicationRecord
       )
   end
 
+  def self.user_stats(user, n_days = 60)
+    stats = {}
+    Intake.select("intakes.*, date(completed_at) as day_completed")
+      .where(user: user)
+      .where("completed_at > ?", Time.zone.now.end_of_day - n_days.days)
+      .where(completion_status: "success")
+      .order("day_completed").each do |intake|
+      completed = intake[:day_completed].iso8601
+      type = intake.detail_type.underscore.to_sym
+      stats[completed] ||= { type => 0, date: completed }
+      stats[completed][type] ||= 0
+      stats[completed][type] += 1
+    end
+    stats.sort.map { |entry| entry[1] }.reverse
+  end
+
   def pending?
     !!completion_started_at && completion_started_at > COMPLETION_TIMEOUT.ago
   end
@@ -96,12 +115,14 @@ class Intake < ApplicationRecord
     if validate_start
       self.class.close_expired_intakes!
 
-      update(
+      after_validated_pre_start!
+
+      update!(
         started_at: Time.zone.now,
         detail: find_or_build_initial_detail
       )
     else
-      update(
+      update!(
         started_at: Time.zone.now,
         completed_at: Time.zone.now,
         completion_status: :error
@@ -173,11 +194,7 @@ class Intake < ApplicationRecord
       self.error_code = :veteran_not_found
 
     elsif !veteran.accessible?
-      self.error_code = :veteran_not_accessible
-
-    elsif !veteran.valid?(:bgs)
-      self.error_code = :veteran_not_valid
-      @error_data = veteran_invalid_fields
+      set_veteran_accessible_error
 
     elsif duplicate_intake_in_progress
       self.error_code = :duplicate_intake_in_progress
@@ -200,7 +217,7 @@ class Intake < ApplicationRecord
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     {
       id: id,
       form_type: form_type,
@@ -209,7 +226,7 @@ class Intake < ApplicationRecord
       veteran_form_name: veteran&.name&.formatted(:form),
       veteran_is_deceased: veteran&.deceased?,
       completed_at: completed_at,
-      relationships: ama_enabled && veteran&.relationships&.map(&:ui_hash)
+      relationships: veteran&.relationships&.map(&:ui_hash)
     }
   end
 
@@ -219,12 +236,39 @@ class Intake < ApplicationRecord
 
   def create_end_product_and_contentions
     detail.create_end_products_and_contentions!
-  rescue StandardError => e
+  rescue StandardError => error
     abort_completion!
-    raise e
+    raise error
+  end
+
+  def veteran_invalid_fields
+    missing_fields = veteran.errors.details
+      .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
+      .keys
+
+    address_too_long = veteran.errors.details.any? do |field_name, errors|
+      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
+        errors.any? { |e| e[:error] == :too_long }
+    end
+
+    {
+      veteran_missing_fields: missing_fields,
+      veteran_address_too_long: address_too_long
+    }
   end
 
   private
+
+  def set_veteran_accessible_error
+    return unless !veteran.accessible?
+
+    self.error_code = veteran.multiple_phone_numbers? ? :veteran_has_multiple_phone_numbers : :veteran_not_accessible
+  end
+
+  # Optional step called after the intake is validated and not-yet-marked as started
+  def after_validated_pre_start!
+    nil
+  end
 
   def update_person!
     # Update the person when a claimant is created
@@ -247,21 +291,5 @@ class Intake < ApplicationRecord
 
   def find_or_build_initial_detail
     fail Caseflow::Error::MustImplementInSubclass
-  end
-
-  def veteran_invalid_fields
-    missing_fields = veteran.errors.details
-      .select { |_, errors| errors.any? { |e| e[:error] == :blank } }
-      .keys
-
-    address_too_long = veteran.errors.details.any? do |field_name, errors|
-      [:address_line1, :address_line2, :address_line3].include?(field_name) &&
-        errors.any? { |e| e[:error] == :too_long }
-    end
-
-    {
-      veteran_missing_fields: missing_fields,
-      veteran_address_too_long: address_too_long
-    }
   end
 end

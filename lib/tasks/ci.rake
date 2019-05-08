@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rainbow"
 
 CODE_COVERAGE_THRESHOLD = 90
@@ -18,7 +20,7 @@ namespace :ci do
   task default: :all
 
   desc "Run all non-spec CI scripts"
-  task other: %w[ci:verify_code_coverage lint security mocha]
+  task other: %w[ci:verify_code_coverage lint security_caseflow mocha]
 
   desc "Verify code coverge (via simplecov) after tests have been run in parallel"
   task :verify_code_coverage do
@@ -26,44 +28,6 @@ namespace :ci do
     require "simplecov"
 
     result = SimpleCov::ResultMerger.merged_result
-
-    if result.covered_percentages.empty?
-      puts Rainbow("No valid coverage results were found").red
-      exit!(1)
-    end
-
-    # Rebuild HTML file with correct merged results
-    result.format!
-
-    if result.covered_percentages.any? { |c| c < CODE_COVERAGE_THRESHOLD }
-      puts Rainbow("File #{result.least_covered_file} is only #{result.covered_percentages.min.to_i}% covered.\
-                   This is below the expected minimum coverage per file of #{CODE_COVERAGE_THRESHOLD}%\n").red
-      exit!(1)
-    else
-      puts Rainbow("Code coverage threshold met\n").green
-    end
-  end
-
-  desc "Verify code coverage (via simplecov) on travis, skips if testing is incomplete"
-  task :travis_verify_code_coverage do
-    puts "\nVerifying code coverage"
-    require "simplecov"
-
-    test_categories = %w[unit api certification dispatch reader other queue]
-
-    merged_results = test_categories.inject({}) do |merged, category|
-      path = File.join("coverage/", ".#{category}.resultset.json")
-
-      unless File.exist?(path)
-        puts Rainbow("Missing code coverage result for #{category} tests. Testing isn't complete.").yellow
-        exit!(0)
-      end
-
-      json = JSON.parse(File.read(path))
-      SimpleCov::RawCoverage.merge_resultsets(merged, json[category]["coverage"])
-    end
-
-    result = SimpleCov::Result.new(merged_results)
 
     if result.covered_percentages.empty?
       puts Rainbow("No valid coverage results were found").red

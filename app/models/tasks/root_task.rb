@@ -1,5 +1,13 @@
+# frozen_string_literal: true
+
+##
+# Root task that tracks an appeal all the way through the appeal lifecycle.
+# This task is closed when an appeal has been completely resolved.
+
 class RootTask < GenericTask
-  after_initialize :set_assignee
+  before_create :verify_root_task_unique
+  # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
+  after_initialize :set_assignee, if: -> { assigned_to_id.nil? }
 
   def set_assignee
     self.assigned_to = Bva.singleton
@@ -7,9 +15,8 @@ class RootTask < GenericTask
 
   def when_child_task_completed; end
 
-  def update_children_status
-    children.where(type: TrackVeteranTask.name).where.not(status: Constants.TASK_STATUSES.completed)
-      .update_all(status: Constants.TASK_STATUSES.completed)
+  def update_children_status_after_closed
+    children.active.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
   end
 
   def hide_from_task_snapshot
@@ -22,22 +29,39 @@ class RootTask < GenericTask
     []
   end
 
-  def can_create_schedule_hearings_task?(user)
-    HearingsManagement.singleton.user_has_access?(user) &&
-      !completed? &&
-      legacy? &&
-      children.where(type: ScheduleHearingTask.name).where.not(status: Constants.TASK_STATUSES.completed).empty?
-  end
-
   def actions_available?(_user)
     true
+  end
+
+  def actions_allowable?(_user)
+    true
+  end
+
+  def assigned_to_label
+    COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
+  end
+
+  # Use the existence of a root task, active or inactive, to prevent duplicates
+  # since there should only ever be one root task for a single appeal.
+  def verify_root_task_unique
+    if appeal.tasks.where(
+      type: type
+    ).any?
+      fail(
+        Caseflow::Error::DuplicateOrgTask,
+        appeal_id: appeal.id,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name,
+        parent_id: parent&.id
+      )
+    end
   end
 
   class << self
     def create_root_and_sub_tasks!(appeal)
       root_task = create!(appeal: appeal)
       create_vso_tracking_tasks(appeal, root_task)
-      if FeatureToggle.enabled?(:ama_auto_case_distribution)
+      if FeatureToggle.enabled?(:ama_acd_tasks)
         create_subtasks!(appeal, root_task)
       else
         create_ihp_tasks!(appeal, root_task)
@@ -45,8 +69,13 @@ class RootTask < GenericTask
     end
 
     def create_ihp_tasks!(appeal, parent)
-      appeal.vsos.map do |vso_organization|
-        InformalHearingPresentationTask.create!(
+      appeal.representatives.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
+        # For some RAMP appeals, this method may run twice.
+        existing_task = InformalHearingPresentationTask.find_by(
+          appeal: appeal,
+          assigned_to: vso_organization
+        )
+        existing_task || InformalHearingPresentationTask.create!(
           appeal: appeal,
           parent: parent,
           assigned_to: vso_organization
@@ -54,10 +83,11 @@ class RootTask < GenericTask
       end
     end
 
-    private
+    # TODO: make this private again after RAMPs are refilled
+    # private
 
     def create_vso_tracking_tasks(appeal, parent)
-      appeal.vsos.map do |vso_organization|
+      appeal.representatives.map do |vso_organization|
         TrackVeteranTask.create!(
           appeal: appeal,
           parent: parent,
@@ -84,11 +114,7 @@ class RootTask < GenericTask
     end
 
     def create_hearing_schedule_task!(appeal, parent)
-      ScheduleHearingTask.create!(
-        appeal: appeal,
-        parent: parent,
-        assigned_to: HearingsManagement.singleton
-      )
+      ScheduleHearingTask.create!(appeal: appeal, parent: parent)
     end
 
     def create_subtasks!(appeal, parent)

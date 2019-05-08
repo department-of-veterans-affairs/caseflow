@@ -1,4 +1,5 @@
-require "rails_helper"
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 describe DecisionIssue do
@@ -17,7 +18,8 @@ describe DecisionIssue do
       description: description,
       request_issues: request_issues,
       benefit_type: benefit_type,
-      profile_date: profile_date,
+      rating_profile_date: profile_date,
+      rating_promulgation_date: promulgation_date,
       end_product_last_action_date: end_product_last_action_date,
       caseflow_decision_date: caseflow_decision_date,
       diagnostic_code: diagnostic_code
@@ -25,6 +27,7 @@ describe DecisionIssue do
   end
 
   let(:profile_date) { 20.days.ago }
+  let(:promulgation_date) { 19.days.ago }
   let(:caseflow_decision_date) { 20.days.ago }
   let(:benefit_type) { "compensation" }
   let(:end_product_last_action_date) { 10.days.ago }
@@ -36,8 +39,49 @@ describe DecisionIssue do
   let(:decision_date) { 10.days.ago }
   let(:decision_review) { create(:supplemental_claim, benefit_type: benefit_type) }
 
+  context "scopes" do
+    let!(:ri_contesting_decision_issue) { create(:request_issue, contested_decision_issue_id: decision_issue.id) }
+    let!(:uncontested_di) { create(:decision_issue, disposition: "other") }
+    let!(:uncontested_remand_di) { create(:decision_issue, disposition: "remanded") }
+    let!(:uncontested_dta_di) { create(:decision_issue, disposition: "DTA Error - Fed Recs") }
+    let!(:granted_di) { create(:decision_issue, disposition: "DTA Error - Fed Recs") }
+
+    context ".contested" do
+      it "matches decision issue that has been contested" do
+        expect(DecisionIssue.contested).to eq([decision_issue])
+        expect(DecisionIssue.contested).to_not include(uncontested_di)
+      end
+    end
+
+    context ".uncontested" do
+      it "matches decision issues that has not been contested" do
+        expect(DecisionIssue.uncontested).to include(uncontested_di, uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.uncontested).to_not include(decision_issue)
+      end
+    end
+
+    context ".remanded" do
+      it "includes decision issues with remand and dta error dispositions" do
+        expect(DecisionIssue.remanded).to include(uncontested_remand_di, uncontested_dta_di)
+        expect(DecisionIssue.remanded).to_not include(decision_issue, uncontested_di)
+      end
+    end
+
+    context ".not_remanded" do
+      it "includes decision issues with remand and dta error dispositions" do
+        expect(DecisionIssue.not_remanded).to include(decision_issue, uncontested_di)
+        expect(DecisionIssue.not_remanded).to_not include(uncontested_remand_di, uncontested_dta_di)
+      end
+    end
+  end
+
   context "#save" do
     subject { decision_issue.save }
+
+    it "sets created at" do
+      subject
+      expect(decision_issue).to have_attributes(created_at: Time.zone.now)
+    end
 
     context "when description is not set" do
       let(:description) { nil }
@@ -83,7 +127,7 @@ describe DecisionIssue do
         description: description,
         request_issues: request_issues,
         benefit_type: benefit_type,
-        profile_date: profile_date,
+        rating_profile_date: profile_date,
         end_product_last_action_date: end_product_last_action_date,
         diagnostic_code: diagnostic_code
       )
@@ -224,20 +268,29 @@ describe DecisionIssue do
     subject { decision_issue.approx_decision_date }
 
     let(:profile_date) { 5.days.ago }
+    let(:promulgation_date) { 4.days.ago }
     let(:end_product_last_action_date) { 6.days.ago }
     let(:caseflow_decision_date) { 7.days.ago }
 
     context "when the decision review is processed in caseflow" do
-      context "when there is no profile date" do
-        let(:profile_date) { nil }
+      context "when there is no promulgation date" do
+        let(:promulgation_date) { nil }
         it "returns the end_product_last_action_date" do
           expect(subject).to eq(end_product_last_action_date.to_date)
         end
+
+        context "when there is no last action date" do
+          let(:decision_review) { create(:appeal) }
+          let(:end_product_last_action_date) { nil }
+          it "returns the caseflow decision date" do
+            expect(subject).to eq(caseflow_decision_date.to_date)
+          end
+        end
       end
 
-      context "when there is a profile date" do
-        it "returns the profile_date to_date" do
-          expect(subject).to eq(profile_date.to_date)
+      context "when there is a promulgation date" do
+        it "returns the promulgation_date to_date" do
+          expect(subject).to eq(promulgation_date.to_date)
         end
       end
     end
@@ -261,13 +314,13 @@ describe DecisionIssue do
     end
   end
 
-  context "#issue_category" do
-    subject { decision_issue.issue_category }
+  context "#nonrating_issue_category" do
+    subject { decision_issue.nonrating_issue_category }
 
     let(:request_issues) do
       [create(
         :request_issue,
-        issue_category: "test category",
+        nonrating_issue_category: "test category",
         nonrating_issue_description: "request issue description"
       )]
     end
@@ -316,7 +369,7 @@ describe DecisionIssue do
         let(:decision_review) { create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number) }
         let!(:decision_document) { create(:decision_document, decision_date: decision_date, appeal: decision_review) }
 
-        context "when there is a prior claim by the same cliamant on the same veteran" do
+        context "when there is a prior claim by the same claimant on the same veteran" do
           let(:prior_payee_code) { "10" }
           before do
             setup_prior_claim_with_payee_code(decision_review, veteran, prior_payee_code)
@@ -331,21 +384,44 @@ describe DecisionIssue do
             expect(subject.claimants.count).to eq(1)
             expect(subject.claimants.first).to have_attributes(
               participant_id: decision_review.claimant_participant_id,
-              payee_code: prior_payee_code
+              payee_code: prior_payee_code,
+              decision_review: subject
             )
           end
         end
 
         context "when there is no prior claim by the claimant" do
-          it "rasies an error" do
-            expect { subject }.to raise_error(DecisionIssue::AppealDTAPayeeCodeError)
+          context "when there is a bgs payee code" do
+            before { allow_any_instance_of(Claimant).to receive(:bgs_payee_code).and_return("12") }
 
-            # verify that both appeal and newly created dta sc have errors
-            expect(SupplementalClaim.find_by(
-                     veteran_file_number: decision_review.veteran_file_number,
-                     establishment_error: "No payee code"
-                   )).to_not be_nil
-            expect(decision_review.establishment_error).to eq("DTA SC creation failed")
+            it "creates a new supplemental claim" do
+              expect(subject).to have_attributes(
+                veteran_file_number: decision_review.veteran_file_number,
+                decision_review_remanded: decision_review,
+                benefit_type: "compensation"
+              )
+              expect(subject.claimants.count).to eq(1)
+              expect(subject.claimants.first).to have_attributes(
+                participant_id: decision_review.claimant_participant_id,
+                payee_code: "12",
+                decision_review: subject
+              )
+            end
+          end
+
+          context "when there is no bgs payee code" do
+            before { allow_any_instance_of(Claimant).to receive(:bgs_payee_code).and_return(nil) }
+
+            it "raises an error" do
+              expect { subject }.to raise_error(DecisionIssue::AppealDTAPayeeCodeError)
+
+              # verify that both appeal and newly created dta sc have errors
+              expect(SupplementalClaim.find_by(
+                       veteran_file_number: decision_review.veteran_file_number,
+                       establishment_error: "No payee code"
+                     )).to_not be_nil
+              expect(decision_review.establishment_error).to eq("DTA SC creation failed")
+            end
           end
         end
       end

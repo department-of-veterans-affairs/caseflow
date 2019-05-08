@@ -26,6 +26,7 @@ export default class Button extends React.Component {
       onClick,
       linkStyling,
       dangerStyling,
+      redStyling,
       willNeverBeLoading,
       type,
       styling,
@@ -67,7 +68,8 @@ export default class Button extends React.Component {
       'hidden-field': loading,
       'cf-btn-link': linkStyling,
       'usa-button-secondary': dangerStyling,
-      'usa-button': !dangerStyling
+      'usa-button': !dangerStyling,
+      'usa-button-red': redStyling
     });
 
     const button = <button

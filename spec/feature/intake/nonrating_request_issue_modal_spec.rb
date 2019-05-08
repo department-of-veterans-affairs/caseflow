@@ -1,16 +1,12 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Nonrating Request Issue Modal" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-    Timecop.freeze(Time.utc(2018, 11, 28))
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
+    Timecop.freeze(post_ama_start_date)
   end
 
   let(:veteran_file_number) { "123412345" }
@@ -47,7 +43,7 @@ feature "Nonrating Request Issue Modal" do
     add_intake_nonrating_issue(
       category: included_category,
       description: "I am a description",
-      date: "04/19/2018"
+      date: Time.zone.today.mdY
     )
     click_intake_finish
 
@@ -57,7 +53,7 @@ feature "Nonrating Request Issue Modal" do
     sleep 1
 
     expect(RequestIssue.find_by(
-             issue_category: included_category
+             nonrating_issue_category: included_category
            )).to_not be_nil
   end
 

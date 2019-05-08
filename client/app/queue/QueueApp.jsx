@@ -1,4 +1,4 @@
-// @flow
+/* eslint-disable max-lines */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -34,10 +34,16 @@ import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
+import PostponeHearingModal from './components/PostponeHearingModal';
+import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
+import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispositionTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
+import AddJudgeTeamModal from './AddJudgeTeamModal';
+import AddVsoModal from './AddVsoModal';
+import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -51,6 +57,7 @@ import BeaamAppealListView from './BeaamAppealListView';
 import OrganizationQueue from './OrganizationQueue';
 import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
+import TeamManagement from './TeamManagement';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -58,33 +65,9 @@ import COPY from '../../COPY.json';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
-import type { State } from './types/state';
+import { FlashAlerts } from '../nonComp/components/Alerts';
 
-type Props = {|
-  userDisplayName: string,
-  feedbackUrl: string,
-  userId: number,
-  userRole: string,
-  userCssId: string,
-  dropdownUrls: Array<string>,
-  buildDate?: string,
-  reviewActionType: string,
-  userIsVsoEmployee?: boolean,
-  caseSearchHomePage?: boolean,
-  canEditAod: Boolean,
-  featureToggles: Object,
-  organizations: Array<Object>,
-  // Action creators
-  setCanEditAod: typeof setCanEditAod,
-  setFeatureToggles: typeof setFeatureToggles,
-  setUserRole: typeof setUserRole,
-  setUserCssId: typeof setUserCssId,
-  setUserIsVsoEmployee: typeof setUserIsVsoEmployee,
-  setFeedbackUrl: typeof setFeedbackUrl,
-  setOrganizations: typeof setOrganizations
-|};
-
-class QueueApp extends React.PureComponent<Props> {
+class QueueApp extends React.PureComponent {
   componentDidMount = () => {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setFeatureToggles(this.props.featureToggles);
@@ -93,6 +76,10 @@ class QueueApp extends React.PureComponent<Props> {
     this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
+    if (this.props.hasCaseDetailsRole &&
+    document.getElementById('page-title').innerHTML === 'Queue') {
+      document.getElementById('page-title').innerHTML = 'Search';
+    }
   }
 
   routedSearchResults = (props) => <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />;
@@ -123,7 +110,8 @@ class QueueApp extends React.PureComponent<Props> {
       <JudgeDecisionReviewTaskListView {...this.props} />}
   </QueueLoadingScreen>;
 
-  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId} />;
+  routedQueueDetail = (props) => <CaseDetailsView appealId={props.match.params.appealId}
+    hasCaseDetailsRole={this.props.hasCaseDetailsRole} />;
 
   routedQueueDetailWithLoadingScreen = (props) => <CaseDetailsLoadingScreen
     {...this.propsForQueueLoadingScreen()}
@@ -186,7 +174,7 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedEvaluateDecision = (props) => <EvaluateDecisionView nextStep="/queue" {...props.match.params} />;
 
-  routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} />;
+  routedAddColocatedTask = (props) => <AddColocatedTaskView {...props.match.params} role={this.props.userRole} />;
 
   routedColocatedPlaceHold = (props) => <ColocatedPlaceHoldView nextStep="/queue" {...props.match.params} />;
 
@@ -210,6 +198,13 @@ class QueueApp extends React.PureComponent<Props> {
 
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
+  routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
+
+  routedChangeHearingDisposition = (props) => <ChangeHearingDispositionModal {...props.match.params} />;
+
+  routedCreateChangeHearingDispositionTask = (props) =>
+    <CreateChangeHearingDispositionTaskModal {...props.match.params} />
+
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
 
@@ -219,6 +214,14 @@ class QueueApp extends React.PureComponent<Props> {
   </OrganizationQueueLoadingScreen>
 
   routedOrganizationUsers = (props) => <OrganizationUsers {...props.match.params} />;
+
+  routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
+
+  routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
+
+  routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
+
+  routedPostponeHearingTaskModal = (props) => <PostponeHearingTaskModal {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
@@ -237,18 +240,20 @@ class QueueApp extends React.PureComponent<Props> {
   render = () => <BrowserRouter>
     <NavigationBar
       wideApp
-      defaultUrl={this.props.caseSearchHomePage ? '/search' : '/queue'}
+      defaultUrl={this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
+      applicationUrls={this.props.applicationUrls}
       logoProps={{
         overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
         accentColor: LOGO_COLORS.QUEUE.ACCENT
       }}
       rightNavElement={<CaseSearchLink />}
-      appName="">
+      appName="Queue">
       <AppFrame wideApp>
         <ScrollToTop />
         <div className="cf-wide-app">
+          {this.props.flash && <FlashAlerts flash={this.props.flash} />}
           <PageRoute
             exact
             path="/search"
@@ -292,6 +297,9 @@ class QueueApp extends React.PureComponent<Props> {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_ATTORNEY.value}`}
             render={this.routedAssignToAttorney} />
           <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.value}`}
+            render={this.routedReassignToUser} />
+          <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.value}`}
             render={this.routedAssignToUser} />
           <Route
@@ -304,6 +312,9 @@ class QueueApp extends React.PureComponent<Props> {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_TO_TRANSLATION.value}`}
             render={this.routedAssignToSingleTeam} />
           <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.value}`}
+            render={this.routedPostponeHearingTaskModal} />
+          <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_TEAM.value}`}
             render={this.routedAssignToTeam} />
           <Route
@@ -315,6 +326,12 @@ class QueueApp extends React.PureComponent<Props> {
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
             render={this.routedAssignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.value}`}
+            render={this.routedChangeHearingDisposition} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.value}`}
+            render={this.routedCreateChangeHearingDispositionTask} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
@@ -366,7 +383,8 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedSelectDispositions} />
           <PageRoute
             exact
-            path="/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
+            path=
+              "/queue/appeals/:appealId/tasks/:taskId/:checkoutFlow(draft_decision|dispatch_decision)/special_issues"
             title={`Draft Decision | ${COPY.SPECIAL_ISSUES_PAGE_TITLE}`}
             render={this.routedSelectSpecialIssues} />
           <PageRoute
@@ -391,14 +409,20 @@ class QueueApp extends React.PureComponent<Props> {
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.WITHDRAW_HEARING.value}`}
-            title="Withdraw Hearing | Caseflow"
+            path={'/queue/appeals/:appealId/tasks/:taskId/' +
+              `(${TASK_ACTIONS.WITHDRAW_HEARING.value}|${TASK_ACTIONS.CANCEL_TASK.value})`}
+            title="Cancel task | Caseflow"
             render={this.routedCancelTaskModal} />
           <PageRoute
             exact
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SCHEDULE_VETERAN.value}`}
             title="Assign Hearing | Caseflow"
             render={this.routedAssignHearingModal} />
+          <PageRoute
+            exact
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.POSTPONE_HEARING.value}`}
+            title="Postpone Hearing | Caseflow"
+            render={this.routedPostponeHearingModal} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId/tasks/:taskId/modal/send_colocated_task"
@@ -414,6 +438,16 @@ class QueueApp extends React.PureComponent<Props> {
             path="/organizations/:organization/users"
             title="Organization Users | Caseflow"
             render={this.routedOrganizationUsers} />
+          <Route
+            path="/team_management/add_judge_team"
+            render={this.routedAddJudgeTeam} />
+          <Route
+            path="/team_management/add_vso"
+            render={this.routedAddVsoModal} />
+          <PageRoute
+            path="/team_management"
+            title="Team Management | Caseflow"
+            render={this.routedTeamManagement} />
         </div>
       </AppFrame>
       <Footer
@@ -435,7 +469,7 @@ QueueApp.propTypes = {
   buildDate: PropTypes.string
 };
 
-const mapStateToProps = (state: State) => ({
+const mapStateToProps = (state) => ({
   reviewActionType: state.queue.stagedChanges.taskDecision.type
 });
 

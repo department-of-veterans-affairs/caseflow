@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Task do
   describe ".when_child_task_completed" do
     context "when on_hold task is assigned to a person" do
@@ -53,7 +55,7 @@ describe Task do
     end
 
     context "when on_hold task is assigned to an organization" do
-      let(:organization) { Organization.create! }
+      let(:organization) { Organization.create!(name: "Other organization", url: "other") }
       let(:task) { FactoryBot.create(:task, :on_hold, type: "Task", assigned_to: organization) }
       context "when task has no child tasks" do
         it "should not update any attribute of the task" do
@@ -104,29 +106,14 @@ describe Task do
 
     context "when user is an assignee" do
       let(:user) { create(:user) }
-      let(:task) { create(:task, type: "Task", assigned_to: user) }
-
-      it { is_expected.to be_truthy }
-    end
-
-    context "when user is a task parent assignee" do
-      let(:user) { create(:user) }
-      let(:parent) { create(:task, type: "Task", assigned_to: user) }
-      let(:task) { create(:task, type: "Task", parent: parent) }
-
-      it { is_expected.to be_truthy }
-    end
-
-    context "when user is any judge" do
-      let(:user) { create(:user, css_id: "BVABDANIEL") }
-      let(:task) { create(:task, type: "Task", assigned_to: user) }
+      let(:task) { create(:generic_task, assigned_to: user).becomes(GenericTask) }
 
       it { is_expected.to be_truthy }
     end
 
     context "when user does not have access" do
       let(:user) { create(:user) }
-      let(:task) { create(:task, type: "Task", assigned_to: create(:user)) }
+      let(:task) { create(:generic_task, assigned_to: create(:user)) }
 
       it { is_expected.to be(false) }
     end
@@ -149,6 +136,27 @@ describe Task do
 
       it "should return the most recent attorney case review" do
         expect(task.prepared_by_display_name).to eq(%w[Bob Smith])
+      end
+    end
+  end
+
+  describe "#duplicate_org_task" do
+    let(:root_task) { create(:root_task) }
+    let(:qr_user) { create(:user) }
+    let!(:quality_review_organization_task) do
+      create(:qr_task, assigned_to: QualityReview.singleton, parent: root_task)
+    end
+    let!(:quality_review_task) do
+      create(:qr_task, assigned_to: qr_user, parent: quality_review_organization_task)
+    end
+
+    context "when there are duplicate organization tasks" do
+      it "returns true when there is a duplicate task assigned to an organization" do
+        expect(quality_review_organization_task.duplicate_org_task).to eq(true)
+      end
+
+      it "returns false otherwise" do
+        expect(quality_review_task.duplicate_org_task).to eq(false)
       end
     end
   end
@@ -261,6 +269,21 @@ describe Task do
     end
   end
 
+  describe "#cancel_task_and_child_subtasks" do
+    let(:appeal) { create(:appeal) }
+    let!(:top_level_task) { create(:task, appeal: appeal) }
+    let!(:second_level_tasks) { create_list(:task, 2, appeal: appeal, parent: top_level_task) }
+    let!(:third_level_task) { create_list(:task, 2, appeal: appeal, parent: second_level_tasks.first) }
+
+    it "cancels all tasks and child subtasks" do
+      top_level_task.cancel_task_and_child_subtasks
+
+      [top_level_task, *second_level_tasks, *third_level_task].each do |task|
+        expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+      end
+    end
+  end
+
   describe ".root_task" do
     context "when sub-sub-sub...task has a root task" do
       let(:root_task) { FactoryBot.create(:root_task) }
@@ -298,6 +321,32 @@ describe Task do
     end
   end
 
+  describe ".descendants" do
+    let(:parent_task) { FactoryBot.create(:generic_task) }
+
+    subject { parent_task.descendants }
+
+    context "when a task has some descendants" do
+      let(:children_count) { 6 }
+      let(:grandkids_per_child) { 4 }
+      let(:children) { FactoryBot.create_list(:generic_task, children_count, parent: parent_task) }
+
+      before { children.each { |t| FactoryBot.create_list(:generic_task, grandkids_per_child, parent: t) } }
+
+      it "returns a list of all descendants and itself" do
+        total_grandkid_count = children_count * grandkids_per_child
+        total_descendant_count = 1 + children_count + total_grandkid_count
+        expect(subject.length).to eq(total_descendant_count)
+      end
+    end
+
+    context "when a task has no descendants" do
+      it "returns only itself" do
+        expect(subject.length).to eq(1)
+      end
+    end
+  end
+
   describe ".available_actions_unwrapper" do
     context "when task/user combination result in multiple available actions with same path" do
       let(:user) { FactoryBot.create(:user) }
@@ -324,6 +373,17 @@ describe Task do
           expect(e.labels).to match_array(labels)
         end
       end
+    end
+  end
+
+  describe ".not_decisions_review" do
+    let!(:veteran_record_request_task) { create(:veteran_record_request_task) }
+    let!(:task) { create(:generic_task) }
+
+    it "filters out subclasses of DecisionReviewTask" do
+      tasks = described_class.not_decisions_review.all
+      expect(tasks).to_not include(veteran_record_request_task)
+      expect(tasks).to include(task)
     end
   end
 
@@ -518,9 +578,7 @@ describe Task do
       end
 
       it "should not throw an error" do
-        expect { AttorneyTask.verify_user_can_create!(user, task) }.to_not raise_error(
-          Caseflow::Error::ActionForbiddenError
-        )
+        expect { AttorneyTask.verify_user_can_create!(user, task) }.to_not raise_error
       end
 
       context "when task is completed" do
@@ -599,6 +657,33 @@ describe Task do
         task.update!(status: status)
         expect(task.closed_at).to_not eq(nil)
       end
+    end
+  end
+
+  describe ".cancel_task_data" do
+    let(:task) { FactoryBot.create(:generic_task, assigned_by_id: assigner_id) }
+    subject { task.cancel_task_data }
+
+    context "when the task has no assigner" do
+      let(:assigner_id) { nil }
+      it "fills in the assigner name with placeholder text" do
+        expect(subject[:message_detail]).to eq(format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, "the assigner"))
+      end
+    end
+  end
+
+  describe "task timer relationship" do
+    let(:task) { FactoryBot.create(:generic_task) }
+    let(:task_id) { task.id }
+    let(:task_timer_count) { 4 }
+    let!(:task_timers) { Array.new(task_timer_count) { TaskTimer.create!(task: task) } }
+
+    it "returns and destroys related timers" do
+      expect(TaskTimer.where(task_id: task_id).count).to eq(task_timer_count)
+      expect(task.task_timers).to eq(task_timers)
+
+      task.destroy!
+      expect(TaskTimer.where(task_id: task_id).count).to eq(0)
     end
   end
 end

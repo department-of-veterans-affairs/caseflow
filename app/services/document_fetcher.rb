@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DocumentFetcher
   include ActiveModel::Model
 
@@ -17,17 +19,6 @@ class DocumentFetcher
 
   def find_or_create_documents!
     @find_or_create_documents ||= save!
-  end
-
-  def new_documents_for_user(user)
-    appeal_view = appeal.appeal_views.find_by(user: user)
-    return documents if !appeal_view
-
-    documents.select do |doc|
-      next if doc.upload_date.nil?
-
-      doc.upload_date > appeal_view.last_viewed_at
-    end
   end
 
   private

@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -13,29 +12,11 @@ import { onReceiveAmaTasks } from '../QueueActions';
 import {
   requestPatch
 } from '../uiReducer/uiActions';
-import editModalBase from './EditModalBase';
 import { taskActionData } from '../utils';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import QueueFlowModal from './QueueFlowModal';
 
-import type { State } from '../types/state';
-import type { Task, Appeal } from '../types/models';
-
-type Params = {|
-  task: Task,
-  taskId: string,
-  appeal: Appeal,
-  appealId: string,
-  modalType: string,
-|};
-
-type Props = Params & {|
-  saveState: boolean,
-  history: Object,
-  hearingDay: Object,
-  requestPatch: typeof requestPatch,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks
-|};
-
-class CancelTaskModal extends React.Component<Props> {
+class CancelTaskModal extends React.Component {
   submit = () => {
     const {
       task,
@@ -44,10 +25,11 @@ class CancelTaskModal extends React.Component<Props> {
     const payload = {
       data: {
         task: {
-          status: 'canceled'
+          status: TASK_STATUSES.cancelled
         }
       }
     };
+
     const hearingScheduleLink = taskActionData(this.props).back_to_hearing_schedule ?
       <p>
         <Link href={`/hearings/schedule/assign?roValue=${hearingDay.regionalOffice}`}>Back to Hearing Schedule </Link>
@@ -68,11 +50,17 @@ class CancelTaskModal extends React.Component<Props> {
   render = () => {
     const taskData = taskActionData(this.props);
 
-    return <div>{taskData && taskData.modal_body}</div>;
+    return <QueueFlowModal
+      title={taskData ? taskData.modal_title : ''}
+      pathAfterSubmit={(taskData && taskData.redirect_after) || '/queue'}
+      submit={this.submit}
+    >
+      <div>{taskData && taskData.modal_body}</div>
+    </QueueFlowModal>;
   };
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => ({
+const mapStateToProps = (state, ownProps) => ({
   task: taskById(state, { taskId: ownProps.taskId }),
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
@@ -84,18 +72,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
-const propsToText = (props) => {
-  const taskData = taskActionData(props);
-  const pathAfterSubmit = (taskData && taskData.redirect_after) || '/queue';
-
-  return {
-    title: taskData ? taskData.modal_title : '',
-    pathAfterSubmit
-  };
-};
-
 export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(editModalBase(
-    CancelTaskModal, { propsToText }
-  ))
-): React.ComponentType<Params>);
+  connect(mapStateToProps, mapDispatchToProps)(
+    CancelTaskModal
+  )
+));

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HearingSchedule::AssignJudgesToHearingDays do
   let(:schedule_period) do
     create(:blank_judge_schedule_period, start_date: Date.parse("2018-04-01"),
@@ -115,11 +117,11 @@ describe HearingSchedule::AssignJudgesToHearingDays do
 
         expect(subject.judges.count).to eq(3)
         subject.judges do |_css_id, judge|
-          expect(judge[:non_availabilities].include?(start_date)).to be_truthy
-          expect(judge[:non_availabilities].include?(end_date)).to be_truthy
+          expect(judge[:non_availabilities]).to include start_date
+          expect(judge[:non_availabilities]).to include end_date
 
-          expect(judge[:non_availabilities].include?(start_date2)).to be_truthy
-          expect(judge[:non_availabilities].include?(end_date2)).to be_truthy
+          expect(judge[:non_availabilities]).to include start_date2
+          expect(judge[:non_availabilities]).to include end_date2
           expect(judge[:non_availabilities].count).to eq(22)
         end
       end
@@ -185,8 +187,7 @@ describe HearingSchedule::AssignJudgesToHearingDays do
     subject { assign_judges_to_hearing_days }
 
     it "expect judge to have non-available days", skip: "This test is flaky." do
-      expect(subject.judges[judge.sdomainid][:non_availabilities]
-        .include?(co_hearing_day.hearing_date.to_date)).to be(true)
+      expect(subject.judges[judge.sdomainid][:non_availabilities]).to include co_hearing_day.hearing_date.to_date
     end
   end
 

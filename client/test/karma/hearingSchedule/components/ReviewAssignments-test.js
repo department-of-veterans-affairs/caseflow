@@ -27,7 +27,7 @@ describe('ReviewAssignments', () => {
       schedulePeriod={{ type: 'JudgeSchedulePeriod' }}
     /></MemoryRouter>);
 
-    expect(wrapper.text()).to.include('Please confirm VACOLS upload');
+    expect(wrapper.text()).to.include('Please confirm Caseflow upload');
   });
 
   it('redirects if the schedule period is finalized', () => {

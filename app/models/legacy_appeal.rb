@@ -1,3 +1,11 @@
+# frozen_string_literal: true
+
+##
+# An appeal that a Veteran or appellant for VA decisions on claims for benefits, filed under the laws and policies
+# guiding appeals before the Veterans Appeals Improvement and Modernization Act (AMA).
+# The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
+# Legacy appeals have VACOLS and BGS as dependencies.
+
 # rubocop:disable Metrics/ClassLength
 class LegacyAppeal < ApplicationRecord
   include AppealConcern
@@ -5,7 +13,6 @@ class LegacyAppeal < ApplicationRecord
   include CachedAttributes
   include AddressMapper
   include Taskable
-  include DocumentConcern
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -13,7 +20,11 @@ class LegacyAppeal < ApplicationRecord
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
   has_many :tasks, as: :appeal
+  has_many :decision_documents, as: :appeal
   has_one :special_issue_list, as: :appeal
+  has_many :record_synced_by_job, as: :record
+  has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
+  has_many :claimants, -> { Claimant.none }
   accepts_nested_attributes_for :worksheet_issues, allow_destroy: true
 
   class UnknownLocationError < StandardError; end
@@ -108,14 +119,12 @@ class LegacyAppeal < ApplicationRecord
   }.freeze
   # rubocop:enable Metrics/LineLength
 
-  # TODO: the type code should be the base value, and should be
-  #       converted to be human readable, not vis-versa
-  # TODO: integrate with Constants::LEGACY_APPEAL_TYPES_BY_ID
+  # Codes for Appeals Status API
   TYPE_CODES = {
     "Original" => "original",
     "Post Remand" => "post_remand",
     "Reconsideration" => "reconsideration",
-    "Court Remand" => "cavc_remand",
+    "Court Remand" => "post_cavc_remand",
     "Clear and Unmistakable Error" => "cue"
   }.freeze
 
@@ -125,6 +134,7 @@ class LegacyAppeal < ApplicationRecord
     omo_office: "20",
     caseflow: "CASEFLOW",
     quality_review: "48",
+    transcription: "33",
     translation: "14",
     schedule_hearing: "57",
     case_storage: "81",
@@ -137,7 +147,11 @@ class LegacyAppeal < ApplicationRecord
     )
   end
 
-  delegate :documents, :new_documents_for_user, :number_of_documents,
+  def va_dot_gov_address_validator
+    @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
+  end
+
+  delegate :documents, :number_of_documents,
            :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
 
   def number_of_documents_after_certification
@@ -149,7 +163,7 @@ class LegacyAppeal < ApplicationRecord
   cache_attribute :cached_number_of_documents_after_certification do
     begin
       number_of_documents_after_certification
-    rescue Caseflow::Error::EfolderError, VBMS::HTTPError
+    rescue Caseflow::Error::EfolderError, VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError
       nil
     end
   end
@@ -186,20 +200,16 @@ class LegacyAppeal < ApplicationRecord
     (decision_date + 120.days).to_date
   end
 
+  def appellant
+    claimant
+  end
+
   def appellant_is_not_veteran
     !!appellant_first_name
   end
 
   def veteran_if_exists
     @veteran_if_exists ||= Veteran.find_by_file_number(veteran_file_number)
-  end
-
-  def veteran_closest_regional_office
-    veteran_if_exists&.closest_regional_office
-  end
-
-  def veteran_available_hearing_locations
-    veteran_if_exists&.available_hearing_locations
   end
 
   def veteran
@@ -324,14 +334,14 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  delegate :representatives, to: :case_record
+  delegate :vacols_representatives, to: :case_record
 
-  def vsos
-    Vso.where(participant_id: [power_of_attorney.bgs_participant_id])
+  def representatives
+    Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
   end
 
   def contested_claim
-    representatives.any? { |r| r.reptype == "C" }
+    vacols_representatives.any? { |r| r.reptype == "C" }
   end
 
   def claimant
@@ -350,7 +360,7 @@ class LegacyAppeal < ApplicationRecord
         middle_name: veteran_middle_initial,
         last_name: veteran_last_name,
         name_suffix: veteran_name_suffix,
-        address: get_address_from_corres_entry(case_record.correspondent),
+        address: get_address_from_veteran_record(veteran) || get_address_from_corres_entry(case_record.correspondent),
         representative: representative_to_hash
       }
     end
@@ -358,16 +368,20 @@ class LegacyAppeal < ApplicationRecord
 
   # reptype C is a contested claimant
   def contested_claimants
-    representatives.where(reptype: "C").map(&:as_claimant)
+    vacols_representatives.where(reptype: "C").map(&:as_claimant)
   end
 
   # reptype D is contested claimant attorney, reptype E is contested claimant agent
   def contested_claimant_agents
-    representatives.where(reptype: %w[D E]).map(&:as_claimant)
+    vacols_representatives.where(reptype: %w[D E]).map(&:as_claimant)
   end
 
   def docket_name
     "legacy"
+  end
+
+  def root_task
+    RootTask.find_by(appeal: self)
   end
 
   # TODO: delegate this to veteran
@@ -716,7 +730,35 @@ class LegacyAppeal < ApplicationRecord
     vacols_id
   end
 
+  def assigned_to_location
+    return location_code unless location_code_is_caseflow?
+    return active_tasks.most_recently_assigned.assigned_to_label if active_tasks.any?
+    return on_hold_tasks.most_recently_assigned.assigned_to_label if on_hold_tasks.any?
+
+    # shouldn't happen because if all tasks are closed the task returns to the assigning attorney
+    if tasks.any?
+      Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but has only closed tasks")
+      return tasks.most_recently_assigned.assigned_to_label
+    end
+
+    # shouldn't happen because setting location to "CASEFLOW" only happens when a task is created
+    Raven.capture_message("legacy appeal #{external_id} has been worked in caseflow but is open and has no tasks")
+    location_code
+  end
+
   private
+
+  def active_tasks
+    tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+  end
+
+  def on_hold_tasks
+    tasks.where(status: Constants.TASK_STATUSES.on_hold)
+  end
+
+  def location_code_is_caseflow?
+    location_code == LOCATION_CODES[:caseflow]
+  end
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
@@ -897,6 +939,10 @@ class LegacyAppeal < ApplicationRecord
       VACOLS::Case::BVA_DISPOSITION_CODES.map do |code|
         Constants::VACOLS_DISPOSITIONS_BY_ID[code]
       end
+    end
+
+    def nonpriority_decisions_per_year
+      repository.nonpriority_decisions_per_year
     end
 
     private

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # EndProductEstablishment represents an end product that Caseflow has either established or attempted to
 # establish (if the establishment was successful `established_at` will be set). The purpose of the
 # end product is determined by the `source`.
@@ -14,8 +16,11 @@ class EndProductEstablishment < ApplicationRecord
   belongs_to :source, polymorphic: true
   belongs_to :user
 
-  CANCELED_STATUS = "CAN".freeze
-  CLEARED_STATUS = "CLR".freeze
+  # allow @veteran to be assigned to save upstream calls
+  attr_writer :veteran
+
+  CANCELED_STATUS = "CAN"
+  CLEARED_STATUS = "CLR"
 
   # benefit_type_code => program_type_code
   PROGRAM_TYPE_CODES = {
@@ -27,13 +32,12 @@ class EndProductEstablishment < ApplicationRecord
   class ContentionCreationFailed < StandardError; end
   class InvalidEndProductError < StandardError; end
   class NoAvailableModifiers < StandardError; end
+  class ContentionNotFound < StandardError; end
 
   class << self
     def order_by_sync_priority
       active.order("last_synced_at IS NOT NULL, last_synced_at ASC")
     end
-
-    private
 
     def established
       where.not("established_at IS NULL")
@@ -63,7 +67,7 @@ class EndProductEstablishment < ApplicationRecord
         modifier: end_product_to_establish.modifier
       )
     end
-  rescue VBMS::HTTPError => error
+  rescue VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
@@ -75,20 +79,23 @@ class EndProductEstablishment < ApplicationRecord
 
     set_establishment_values_from_source
 
-    contentions = records_ready_for_contentions.map do |issue|
-      contention = { description: issue.contention_text }
-      issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
-      contention
-    end
+    contentions = build_contentions(records_ready_for_contentions)
+
+    # VBMS returns all the contentions on the claim, old and new, so keep track
+    # of existing contentions we know about. That way if text matches we can avoid false positives.
+    existing_contention_reference_ids = all_contention_records.pluck(:contention_reference_id).compact.uniq.map(&:to_s)
 
     # Currently not making any assumptions about the order in which VBMS returns
     # the created contentions. Instead find the issue by matching text.
 
-    # We don't care about duplicate text; we just care that every request issue
-    # has a contention.
+    # We don't care about duplicate text; we just care that every request issue has a contention.
     create_contentions_in_vbms(contentions).each do |contention|
+      next if existing_contention_reference_ids.include?(contention.id)
+
       record = records_ready_for_contentions.find do |r|
-        r.contention_text == contention.text && r.contention_reference_id.nil?
+        contention.claim_id == reference_id &&
+          r.contention_text == contention.text &&
+          r.contention_reference_id.nil?
       end
 
       record&.update!(contention_reference_id: contention.id)
@@ -97,9 +104,21 @@ class EndProductEstablishment < ApplicationRecord
     fail ContentionCreationFailed if records_ready_for_contentions.any? { |r| r.contention_reference_id.nil? }
   end
 
-  def remove_contention!(for_object)
-    VBMSService.remove_contention!(contention_for_object(for_object))
-    for_object.update!(removed_at: Time.zone.now)
+  def build_contentions(records_ready_for_contentions)
+    records_ready_for_contentions.map do |issue|
+      contention = { description: issue.contention_text }
+      issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
+      contention
+    end
+  end
+
+  def remove_contention!(request_issue)
+    contention = contention_for_object(request_issue)
+
+    fail ContentionNotFound, request_issue.contention_reference_id unless contention
+
+    VBMSService.remove_contention!(contention)
+    request_issue.update!(contention_removed_at: Time.zone.now)
   end
 
   # Committing an end product establishment is a way to signify that any other actions performed
@@ -127,20 +146,32 @@ class EndProductEstablishment < ApplicationRecord
 
   delegate :contentions, to: :cached_result
 
+  def limited_poa_on_established_claim
+    result&.limited_poa
+  end
+
   def description
     reference_id && cached_result.description_with_routing
   end
 
+  def rating?
+    RequestIssue::END_PRODUCT_CODES.find_all_values_for(:rating).include?(code)
+  end
+
   # Find an end product that has the traits of the end product that should be created.
-  def preexisting_end_product
-    @preexisting_end_product ||= veteran.end_products.find { |ep| end_product_to_establish.matches?(ep) }
+  def active_preexisting_end_product
+    preexisting_end_products.find(&:active?)
+  end
+
+  def preexisting_end_products
+    @preexisting_end_products ||= veteran.end_products.select { |ep| end_product_to_establish.matches?(ep) }
   end
 
   def cancel_unused_end_product!
     # do not cancel ramp reviews for now
     return if source.is_a?(RampReview)
 
-    if active_request_issues.empty?
+    if request_issues.active.empty?
       cancel!
     end
   end
@@ -149,7 +180,8 @@ class EndProductEstablishment < ApplicationRecord
     # There is no need to sync end_product_status if the status
     # is already inactive since an EP can never leave that state
     return true unless status_active?
-    fail EstablishedEndProductNotFound unless result
+
+    fail EstablishedEndProductNotFound, id unless result
 
     # load contentions now, in case "source" needs them.
     # this VBMS call is slow and will cause the transaction below
@@ -164,10 +196,10 @@ class EndProductEstablishment < ApplicationRecord
       sync_source!
       close_request_issues_if_canceled!
     end
-  rescue EstablishedEndProductNotFound => e
-    raise e
-  rescue StandardError => e
-    raise ::BGSSyncError.from_bgs_error(e, self)
+  rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
+    raise error
+  rescue StandardError => error
+    raise ::BGSSyncError.from_bgs_error(error, self)
   end
 
   def fetch_dispositions_from_vbms
@@ -194,7 +226,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def status_active?(sync: false)
     sync! if sync
-    !EndProduct::INACTIVE_STATUSES.include?(synced_status)
+    synced_status.nil? || !EndProduct::INACTIVE_STATUSES.include?(synced_status)
   end
 
   def associate_rating_request_issues!
@@ -202,10 +234,10 @@ class EndProductEstablishment < ApplicationRecord
 
     VBMSService.associate_rating_request_issues!(
       claim_id: reference_id,
-      rating_issue_contention_map: rating_issue_contention_map(rating_request_issues)
+      rating_issue_contention_map: rating_issue_contention_map(rating_request_issues_to_associate)
     )
 
-    RequestIssue.where(id: rating_request_issues.map(&:id)).update_all(
+    RequestIssue.where(id: rating_request_issues_to_associate.map(&:id)).update_all(
       rating_issue_associated_at: Time.zone.now
     )
   end
@@ -227,13 +259,9 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def request_issues
-    return [] unless source.try(:request_issues)
+    return RequestIssue.none unless source.try(:request_issues)
 
-    source.request_issues.select { |ri| ri.end_product_establishment == self }
-  end
-
-  def active_request_issues
-    request_issues.select { |request_issue| request_issue.removed_at.nil? && request_issue.status_active? }
+    source.request_issues.where(end_product_establishment_id: id)
   end
 
   def associated_rating
@@ -257,7 +285,7 @@ class EndProductEstablishment < ApplicationRecord
 
   def on_decision_issue_sync_processed(processing_request_issue)
     if decision_issues_sync_complete?(processing_request_issue)
-      source.on_decision_issues_sync_processed(self)
+      source.on_decision_issues_sync_processed
     end
   end
 
@@ -290,30 +318,30 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def sync_status
-    if request_issues.any?(&:decision_sync_error)
+    if request_issues.all.any?(&:decision_sync_error)
       COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS_ERROR
-    elsif request_issues.any?(&:submitted_not_processed?)
+    elsif request_issues.all.any?(&:submitted_not_processed?)
       COPY::OTHER_REVIEWS_TABLE_SYNCING_DECISIONS
     end
   end
 
-  # All records that create contentions should be an instance of ApplicationRecord with
-  # a contention_reference_id column, and contention_text method
-  # TODO: this can be refactored to ask the source instead of using a case statement
   def calculate_records_ready_for_contentions
     select_ready_for_contentions(contention_records)
   end
 
+  # All records that create contentions should be an instance of ApplicationRecord with
+  # a contention_reference_id column, and contention_text method
   def contention_records
-    case source
-    when ClaimReview then eligible_request_issues
-    when DecisionDocument then source.effectuations.where(end_product_establishment: self)
-    end
+    source.contention_records(self)
+  end
+
+  def all_contention_records
+    source.all_contention_records(self)
   end
 
   def decision_issues_sync_complete?(processing_request_issue)
-    other_request_issues = request_issues.reject { |i| i.id == processing_request_issue.id }
-    other_request_issues.all?(&:processed?)
+    other_request_issues = request_issues.all.reject { |i| i.id == processing_request_issue.id }
+    other_request_issues.all? { |i| i.closed? || i.processed? }
   end
 
   def potential_decision_ratings
@@ -334,7 +362,7 @@ class EndProductEstablishment < ApplicationRecord
   def close_request_issues_if_canceled!
     return unless status_canceled?
 
-    request_issues.each(&:close_after_end_product_canceled!)
+    request_issues.all.find_each(&:close_after_end_product_canceled!)
   end
 
   def fetch_associated_rating
@@ -343,24 +371,12 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def open_request_issues
-    request_issues.reject(&:closed?)
-  end
-
-  def rating_request_issues
-    open_request_issues.select(&:rating?)
+  def rating_request_issues_to_associate
+    request_issues.active.all.select(&:associated_rating_issue?)
   end
 
   def unassociated_rating_request_issues
-    eligible_rating_request_issues.select { |ri| ri.rating_issue_associated_at.nil? }
-  end
-
-  def eligible_request_issues
-    open_request_issues.select(&:eligible?)
-  end
-
-  def eligible_rating_request_issues
-    eligible_request_issues.select(&:rating?)
+    request_issues.active.rating.all.select { |ri| ri.associated_rating_issue? && ri.rating_issue_associated_at.nil? }
   end
 
   def select_ready_for_contentions(records)
@@ -414,7 +430,9 @@ class EndProductEstablishment < ApplicationRecord
       modifier: the_modifier,
       suppress_acknowledgement_letter: false,
       gulf_war_registry: false,
-      station_of_jurisdiction: station
+      station_of_jurisdiction: station,
+      limited_poa_code: limited_poa_code,
+      limited_poa_access: limited_poa_access
     )
   end
 

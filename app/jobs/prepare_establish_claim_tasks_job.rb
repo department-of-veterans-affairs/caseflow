@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PrepareEstablishClaimTasksJob < ApplicationJob
   queue_as :low_priority
   application_attr :dispatch
@@ -6,7 +8,7 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
     RequestStore.store[:current_user] = User.system_user
 
     prepare_establish_claims
-    count_unfinished_jobs
+    unfinished_jobs_report
   end
 
   def prepare_establish_claims
@@ -23,9 +25,11 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
     log_info(count)
   end
 
-  def count_unfinished_jobs
-    jobs = AsyncableJobs.new.jobs
-    msg = "Jobs: #{jobs.count} unfinished asyncable jobs exist in the queue"
+  def unfinished_jobs_report
+    jobs = AsyncableJobs.new.jobs.select(&:expired_without_processing?)
+    job_reporter = AsyncableJobsReporter.new(jobs: jobs)
+    msg = "Expired Jobs: #{jobs.count} expired unfinished asyncable jobs exist in the queue.\n"
+    msg += job_reporter.summarize
     Rails.logger.info msg
     SlackService.new(url: url).send_notification(msg)
   end

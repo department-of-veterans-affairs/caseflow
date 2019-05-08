@@ -5,8 +5,9 @@ import Button from '../../../components/Button';
 import CancelButton from '../../components/CancelButton';
 import IssueCounter from '../../components/IssueCounter';
 import { completeIntake } from '../../actions/decisionReview';
-import { REQUEST_STATE } from '../../constants';
+import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../constants';
 import { issueCountSelector } from '../../selectors';
+import _ from 'lodash';
 
 const mapStateToProps = (state) => {
   return {
@@ -15,6 +16,10 @@ const mapStateToProps = (state) => {
 };
 
 const IssueCounterConnected = connect(mapStateToProps)(IssueCounter);
+
+const invalidVeteran = (appeal) => !appeal.veteranValid && (_.some(
+  appeal.addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
+);
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
@@ -25,17 +30,20 @@ class FinishNextButton extends React.PureComponent {
         }
       }
     );
-  }
+  };
 
-  render = () =>
-    <Button
+  render() {
+    const disableSubmit = (!this.props.issueCount && !this.props.addedIssues) || invalidVeteran(this.props.appeal);
+
+    return <Button
       name="finish-intake"
       onClick={this.handleClick}
       loading={this.props.requestState === REQUEST_STATE.IN_PROGRESS}
-      disabled={!this.props.issueCount && !this.props.addedIssues}
+      disabled={disableSubmit}
     >
-      Establish appeal
+        Establish appeal
     </Button>;
+  }
 }
 
 const FinishNextButtonConnected = connect(
@@ -58,4 +66,3 @@ export class FinishButtons extends React.PureComponent {
       <IssueCounterConnected />
     </div>
 }
-

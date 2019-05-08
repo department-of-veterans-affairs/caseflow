@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe HigherLevelReviewIntake do
   before do
     Time.zone = "Eastern Time (US & Canada)"
@@ -21,6 +23,41 @@ describe HigherLevelReviewIntake do
     )
   end
 
+  context "#start!" do
+    subject { intake.start! }
+
+    let!(:active_epe) do
+      create(
+        :end_product_establishment,
+        :active,
+        veteran_file_number: veteran_file_number,
+        established_at: Time.zone.yesterday
+      )
+    end
+
+    let!(:canceled_epe) do
+      create(
+        :end_product_establishment,
+        :canceled,
+        veteran_file_number: veteran_file_number,
+        established_at: Time.zone.yesterday
+      )
+    end
+
+    before do
+      @synced = []
+      allow_any_instance_of(EndProductEstablishment).to receive(:sync_source!) do |epe|
+        @synced << epe.id
+      end
+    end
+
+    it "syncs all active EPEs" do
+      subject
+
+      expect(@synced).to eq [active_epe.id]
+    end
+  end
+
   context "#cancel!" do
     subject { intake.cancel!(reason: "system_error", other: nil) }
 
@@ -33,7 +70,7 @@ describe HigherLevelReviewIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
       )
@@ -41,7 +78,7 @@ describe HigherLevelReviewIntake do
 
     let!(:request_issue) do
       RequestIssue.new(
-        review_request: detail,
+        decision_review: detail,
         contested_rating_issue_profile_date: Time.zone.local(2018, 4, 5),
         contested_rating_issue_reference_id: "issue1",
         contested_issue_description: "description",
@@ -73,6 +110,7 @@ describe HigherLevelReviewIntake do
     let(:claimant) { nil }
     let(:payee_code) { nil }
     let(:veteran_is_not_claimant) { false }
+    let(:legacy_opt_in_approved) { false }
 
     let(:detail) do
       HigherLevelReview.create!(
@@ -89,7 +127,8 @@ describe HigherLevelReviewIntake do
         same_office: same_office,
         claimant: claimant,
         payee_code: payee_code,
-        veteran_is_not_claimant: veteran_is_not_claimant
+        veteran_is_not_claimant: veteran_is_not_claimant,
+        legacy_opt_in_approved: legacy_opt_in_approved
       )
     end
 
@@ -100,7 +139,8 @@ describe HigherLevelReviewIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: intake.veteran.participant_id,
-          payee_code: nil
+          payee_code: nil,
+          decision_review: intake.detail
         )
       end
     end
@@ -116,8 +156,35 @@ describe HigherLevelReviewIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: "1234",
-          payee_code: "10"
+          payee_code: "10",
+          decision_review: intake.detail
         )
+      end
+
+      context "claimant is missing address" do
+        before do
+          allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
+        end
+
+        it "adds claimant address required error" do
+          expect(subject).to be_falsey
+          expect(detail.errors[:claimant]).to include("claimant_address_required")
+          expect(detail.claimants).to be_empty
+        end
+
+        context "when the benefit type is noncomp" do
+          let(:benefit_type) { "education" }
+
+          it "does not require address" do
+            expect(subject).to be_truthy
+            expect(intake.detail.claimants.count).to eq 1
+            expect(intake.detail.claimants.first).to have_attributes(
+              participant_id: "1234",
+              payee_code: nil,
+              decision_review: intake.detail
+            )
+          end
+        end
       end
 
       context "claimant is nil" do
@@ -134,7 +201,7 @@ describe HigherLevelReviewIntake do
 
       context "And payee code is nil" do
         let(:payee_code) { nil }
-        # Check that the review_request validations still work
+        # Check that the decision_review validations still work
         let(:receipt_date) { 3.days.from_now }
 
         context "And benefit type is compensation" do
@@ -169,7 +236,8 @@ describe HigherLevelReviewIntake do
           expect(intake.detail.claimants.count).to eq 1
           expect(intake.detail.claimants.first).to have_attributes(
             participant_id: "1234",
-            payee_code: nil
+            payee_code: nil,
+            decision_review: intake.detail
           )
         end
       end
@@ -210,7 +278,7 @@ describe HigherLevelReviewIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: veteran.participant_id,
         payee_code: "00"
       )
@@ -378,8 +446,10 @@ describe HigherLevelReviewIntake do
       it "clears pending status" do
         allow(detail).to receive(:establish!).and_raise(unknown_error)
 
-        expect { subject }.to raise_exception(unknown_error)
-        expect(intake.completion_status).to be_nil
+        subject
+
+        expect(intake.completion_status).to eq("success")
+        expect(intake.detail.establishment_error).to eq(unknown_error.inspect)
       end
     end
   end

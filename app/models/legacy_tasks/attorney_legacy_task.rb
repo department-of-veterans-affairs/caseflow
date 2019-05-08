@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttorneyLegacyTask < LegacyTask
   def available_actions(current_user, role)
     return [] if role != "attorney" || current_user != assigned_to
@@ -8,11 +10,8 @@ class AttorneyLegacyTask < LegacyTask
     return [] unless task_id
 
     actions = [Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
-               Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h]
-
-    if FeatureToggle.enabled?(:attorney_assignment_to_colocated, user: assigned_to)
-      actions.push(Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h)
-    end
+               Constants.TASK_ACTIONS.SUBMIT_OMO_REQUEST_FOR_REVIEW.to_h,
+               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h]
 
     actions
   end

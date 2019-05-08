@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "ostruct"
 require "csv"
 
@@ -77,6 +79,11 @@ class Fakes::VBMSService
   end
   # rubocop:enable Metrics/CyclomaticComplexity
 
+  def self.quick_document_count_for_appeal(appeal, user)
+    response = fetch_documents_for(appeal, user)
+    response[:documents]&.size
+  end
+
   def self.fetch_documents_for(appeal, _user = nil)
     load_vbms_ids_mappings
 
@@ -121,7 +128,7 @@ class Fakes::VBMSService
     Rails.logger.info("Submitting claim to VBMS...")
     Rails.logger.info("Veteran data:\n #{veteran_hash}")
     Rails.logger.info("Claim data:\n #{claim_hash}")
-    Rails.logger.info("User:\n #{user}")
+    Rails.logger.info("User:\n #{user.inspect}")
 
     self.end_product_claim_ids_by_file_number ||= {}
 
@@ -162,15 +169,16 @@ class Fakes::VBMSService
     Rails.logger.info("File number: #{veteran_file_number}")
     Rails.logger.info("Claim id:\n #{claim_id}")
     Rails.logger.info("Contentions: #{contentions.inspect}")
-    Rails.logger.info("User:\n #{user}")
+    Rails.logger.info("User:\n #{user.inspect}")
 
     # Used to simulate a contention that fails to be created in VBMS
     contentions.delete(description: "FAIL ME")
 
-    # return fake list of contentions
-    contentions.map do |contention|
+    # generate new contentions and return list of all contentions on the claim.
+    contentions.each do |contention|
       Generators::Contention.build(text: contention[:description], claim_id: claim_id)
     end
+    Fakes::VBMSService.contention_records[claim_id]
   end
 
   def self.associate_rating_request_issues!(claim_id:, rating_issue_contention_map:)

@@ -1,14 +1,12 @@
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
 import { GrayDot, GreenCheckmark } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
-import { taskIsOnHold } from '../utils';
+import { taskIsOnHold, sortTaskList } from '../utils';
 import StringUtil from '../../util/StringUtil';
 import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
@@ -108,11 +106,6 @@ class TaskRows extends React.PureComponent {
       <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
-  dueDateListItem = (task) => {
-    return task.dueOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_DUE_DATE_LABEL}</dt>
-      <dd><DateString date={task.dueOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
-  }
-
   daysWaitingListItem = (task) => {
     if (task.closedAt) {
       return null;
@@ -129,9 +122,7 @@ class TaskRows extends React.PureComponent {
       <dd>{assignee}</dd></div> : null;
   }
 
-  getAbbrevName = ({ firstName, lastName } : { firstName: string, lastName: string }) => {
-    return `${firstName.substring(0, 1)}. ${lastName}`;
-  }
+  getAbbrevName = ({ firstName, lastName }) => `${firstName.substring(0, 1)}. ${lastName}`;
 
   assignedByListItem = (task) => {
     const assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
@@ -211,25 +202,40 @@ class TaskRows extends React.PureComponent {
       taskList,
       timeline
     } = this.props;
+    const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
+    const sortedTaskList = sortTaskList(taskList);
+
+    let timelineContainerText;
+
+    if (appeal.withdrawn) {
+      timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
+    } else if (appeal.decisionDate) {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
+    } else {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
+    }
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
-        <td {...taskTimeTimelineContainerStyling}></td>
-        <td {...taskInfoWithIconTimelineContainer} {...greyDotStyling}><GrayDot />
+        <td {...taskTimeTimelineContainerStyling}>
+          {isLegacyAppealWithDecisionDate ? moment(appeal.decisionDate).format('MM/DD/YYYY') : ''}
+        </td>
+        <td {...taskInfoWithIconTimelineContainer}
+          {...(isLegacyAppealWithDecisionDate ? {} : greyDotStyling)}>
+          {isLegacyAppealWithDecisionDate ? <GreenCheckmark /> : <GrayDot /> }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-            <div {...grayLineTimelineStyling}{...css({ top: '25px !important' })} />}</td>
+            <div {...grayLineTimelineStyling}
+              {...(isLegacyAppealWithDecisionDate ? {} : css({ top: '25px !important' }))} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
-          { appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
-          } <br />
+          { timelineContainerText } <br />
         </td>
       </tr> }
-      { taskList.map((task, index) =>
+      { sortedTaskList.map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
               { this.assignedOnListItem(task) }
               { this.closedAtListItem(task) }
-              { this.dueDateListItem(task) }
               { !task.closedAt && this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
@@ -279,10 +285,4 @@ class TaskRows extends React.PureComponent {
   }
 }
 
-const mapStateToProps = () => {
-
-  return {
-  };
-};
-
-export default (withRouter(connect(mapStateToProps, null)(TaskRows)): React.ComponentType<>);
+export default TaskRows;

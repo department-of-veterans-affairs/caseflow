@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # rubocop:disable Metrics/ClassLength
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
@@ -19,27 +21,44 @@ class AppealRepository
     # Make a single request to VACOLS to grab all of the rows we want here?
     legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
 
-    # Load the VACOLS case records associated with legacy tasks into memory in a single batch.
-    cases = vacols_records_for_appeals(legacy_appeal_ids) || []
+    # Load the VACOLS case records associated with legacy tasks into memory in a single batch. Ignore appeals that no
+    # longer appear in VACOLS.
+    cases = (vacols_records_for_appeals(legacy_appeal_ids) || []).group_by(&:id)
+
+    aod = legacy_appeal_ids.in_groups_of(1000, false).reduce({}) do |acc, group|
+      acc.merge(VACOLS::Case.aod(group))
+    end
 
     # Associate the cases we pulled from VACOLS to the appeals of the tasks.
     tasks.each do |t|
-      if t.appeal.is_a?(LegacyAppeal)
-        case_record = cases.detect { |cr| cr.id == t.appeal.vacols_id }
-        set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
-      end
+      next unless t.appeal.is_a?(LegacyAppeal)
+
+      case_record = cases[t.appeal.vacols_id.to_s]&.first
+      set_vacols_values(appeal: t.appeal, case_record: case_record) if case_record
+      t.appeal.aod = aod[t.appeal.vacols_id.to_s]
     end
   end
 
-  def self.find_case_record(id)
-    VACOLS::Case.includes(:folder, :correspondent, :representatives, :case_issues).find(id)
+  def self.find_case_record(id, ignore_misses: false)
+    # Oracle cannot load more than 1000 records at a time
+    if id.is_a?(Array)
+      id.in_groups_of(1000, false).map do |group|
+        if ignore_misses
+          VACOLS::Case.includes(:correspondent, :case_issues, folder: [:outcoder]).where(bfkey: group)
+        else
+          VACOLS::Case.includes(:correspondent, :case_issues, folder: [:outcoder]).find(group)
+        end
+      end.flatten
+    else
+      VACOLS::Case.includes(:correspondent, :case_issues, folder: [:outcoder]).find(id)
+    end
   end
 
   def self.vacols_records_for_appeals(ids)
     MetricsService.record("VACOLS: eager_load_legacy_appeals_batch",
                           service: :vacols,
                           name: "eager_load_legacy_appeals_batch") do
-      find_case_record(ids)
+      find_case_record(ids, ignore_misses: true)
     end
   end
 
@@ -62,7 +81,7 @@ class AppealRepository
     cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
                                   service: :vacols,
                                   name: "appeals_by_vbms_id") do
-      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :representatives)
+      VACOLS::Case.where(bfcorlid: vbms_id).includes(:folder, :correspondent, :case_issues)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -115,7 +134,7 @@ class AppealRepository
       VACOLS::Case.where(bfcorlid: vbms_id)
         .where.not(bfd19: nil)
         .where("bfddec is NULL or bfmpro = 'REM'")
-        .includes(:folder, :correspondent, :representatives)
+        .includes(:folder, :correspondent)
     end
 
     cases.map { |case_record| build_appeal(case_record, true) }
@@ -301,45 +320,41 @@ class AppealRepository
     end
   end
 
-  def self.appeals_ready_for_hearing_schedule(regional_office)
-    if regional_office == HearingDay::REQUEST_TYPES[:central]
-      return appeals_ready_for_co_hearing_schedule
-    end
-
-    cavc_cases = VACOLS::Case.joins(:folder)
-      .where(bfregoff: regional_office, bfcurloc: "57", bfac: "7", bfdocind: "V", bfhr: "2")
-      .order("folder.tinum").limit(100).includes(:correspondent, :case_issues, folder: [:outcoder])
-    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD).joins(:folder).where("aod = 1").where(
-      bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V"
-    ).order("folder.tinum").limit(100).includes(:correspondent, :case_issues, folder: [:outcoder])
-    other_cases = VACOLS::Case.joins(:folder)
-      .where(bfregoff: regional_office, bfhr: "2", bfcurloc: "57", bfdocind: "V")
-      .order("folder.tinum").limit(100).includes(:correspondent, :case_issues, folder: [:outcoder])
-
-    aod_vacols_ids = aod_cases.pluck(:bfkey)
-
-    (cavc_cases + aod_cases + other_cases).uniq.map do |case_record|
-      build_appeal(case_record, true).tap do |appeal|
-        appeal.aod = aod_vacols_ids.include?(appeal.vacols_id)
+  def self.cases_that_need_hearings
+    VACOLS::Case.where(bfhr: "1", bfcurloc: "57").or(VACOLS::Case.where(bfhr: "2", bfdocind: "V", bfcurloc: "57"))
+      .joins(:folder).order("folder.tinum")
+      .includes(:correspondent, :case_issues, :case_hearings, folder: [:outcoder]).reject do |case_record|
+        case_record.case_hearings.any? do |hearing|
+          # VACOLS contains non-BVA hearings information, we want to confirm the appeal has no scheduled BVA hearings
+          hearing.hearing_disp.nil? && HearingDay::REQUEST_TYPES.value?(hearing.hearing_type)
+        end
       end
-    end
   end
 
-  def self.appeals_ready_for_co_hearing_schedule
-    cavc_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57", bfac: "7").order("folder.tinum")
-      .limit(100).includes(:correspondent, :case_issues, folder: [:outcoder])
-    aod_cases = VACOLS::Case.joins(VACOLS::Case::JOIN_AOD)
-      .joins(:folder).where("aod = 1").where(bfhr: "1", bfcurloc: "57").order("folder.tinum")
-      .limit(100).includes(:correspondent, :case_issues, folder: [:outcoder])
-    other_cases = VACOLS::Case.joins(:folder).where(bfhr: "1", bfcurloc: "57").order("folder.tinum")
-      .limit(100).includes(:correspondent, :case_issues, folder: [:outcoder])
+  def self.vacols_ids_with_schedule_tasks
+    ScheduleHearingTask.where(appeal_type: LegacyAppeal.name)
+      .joins("LEFT JOIN legacy_appeals ON appeal_id = legacy_appeals.id")
+      .where("status <> ? AND type = ?", Constants.TASK_STATUSES.completed.to_sym, ScheduleHearingTask.name)
+      .select("legacy_appeals.vacols_id").pluck(:vacols_id).uniq
+  end
 
-    aod_vacols_ids = aod_cases.pluck(:bfkey)
+  def self.create_schedule_hearing_tasks
+    # Create legacy appeals where needed
+    ids = cases_that_need_hearings.pluck(:bfkey, :bfcorlid)
 
-    (cavc_cases + aod_cases + other_cases).uniq.map do |case_record|
-      build_appeal(case_record, true).tap do |appeal|
-        appeal.aod = aod_vacols_ids.include?(appeal.vacols_id)
+    missing_ids = ids - LegacyAppeal.where(vacols_id: ids.map(&:first)).pluck(:vacols_id, :vbms_id)
+    missing_ids.each do |id|
+      LegacyAppeal.find_or_create_by!(vacols_id: id.first) do |appeal|
+        appeal.vbms_id = id.second
       end
+    end
+
+    # Create the schedule hearing tasks
+    LegacyAppeal.where(vacols_id: ids.map(&:first) - vacols_ids_with_schedule_tasks).each do |appeal|
+      root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+      ScheduleHearingTask.create!(appeal: appeal, parent: root_task)
+
+      update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
     end
   end
 
@@ -513,7 +528,7 @@ class AppealRepository
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
   def self.reopen_undecided_appeal!(appeal:, user:, safeguards:, reopen_issues: true)
     case_record = appeal.case_record
     folder_record = case_record.folder
@@ -569,7 +584,7 @@ class AppealRepository
       end
     end
   end
-  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
   def self.reopen_remand!(appeal:, user:, disposition_code:)
@@ -583,7 +598,7 @@ class AppealRepository
 
     previous_active_location = case_record.previous_active_location
 
-    fail not_valid_to_reopen_err unless %w[50 53 54 70 96 97 98].include? previous_active_location
+    fail not_valid_to_reopen_err unless %w[50 53 54 62 70 96 97 98].include? previous_active_location
     fail not_valid_to_reopen_err if disposition_code == "P" && %w[53 43].include?(previous_active_location)
 
     follow_up_appeal_key = "#{case_record.bfkey}P"
@@ -709,6 +724,22 @@ class AppealRepository
                           name: "docket_counts_by_month",
                           service: :vacols) do
       VACOLS::CaseDocket.docket_counts_by_month
+    end
+  end
+
+  def self.age_of_n_oldest_priority_appeals(num)
+    MetricsService.record("VACOLS: age_of_n_oldest_priority_appeals",
+                          name: "age_of_n_oldest_priority_appeals",
+                          service: :vacols) do
+      VACOLS::CaseDocket.age_of_n_oldest_priority_appeals(num)
+    end
+  end
+
+  def self.nonpriority_decisions_per_year
+    MetricsService.record("VACOLS: nonpriority_decisions_per_year",
+                          name: "nonpriority_decisions_per_year",
+                          service: :vacols) do
+      VACOLS::CaseDocket.nonpriority_decisions_per_year
     end
   end
 

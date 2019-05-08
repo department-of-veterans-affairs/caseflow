@@ -141,11 +141,9 @@ class AssignHearingsContainer extends React.PureComponent {
           key={roValue || 0}
           createLoadPromise={this.createLoadPromise}
           loadingComponentProps={{
-            spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+            spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
             message: 'Loading appeals to be scheduled for hearings...'
           }}>
-
-          {(_.isEmpty(this.props.upcomingHearingDays) && roValue) && this.getNoUpcomingError()}
 
           <AssignHearings
             selectedRegionalOffice={this.props.selectedRegionalOffice.value}

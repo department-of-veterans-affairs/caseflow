@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe JudgeTeam do
   let(:judge) { FactoryBot.create(:user) }
 
@@ -12,7 +14,7 @@ describe JudgeTeam do
         expect(judge.organizations.length).to eq(1)
         expect(judge.administered_teams.length).to eq(1)
         expect(judge.administered_teams.first.class).to eq(JudgeTeam)
-        expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase)
+        expect(judge.administered_teams.first.url).to eq(judge.css_id.downcase.parameterize.dasherize)
       end
     end
   end
@@ -48,7 +50,11 @@ describe JudgeTeam do
     # Limitation of the current approach is that users are effectively limited to being the admin of a single JudgeTeam.
     context "when user is admin of multiple JudgeTeams" do
       let!(:first_judge_team) { JudgeTeam.create_for_judge(user) }
-      let!(:second_judge_team) { JudgeTeam.create_for_judge(user) }
+      let!(:second_judge_team) do
+        JudgeTeam.create!(name: "#{user.css_id}_2", url: "#{user.css_id.downcase}_2").tap do |org|
+          OrganizationsUser.make_user_admin(user, org)
+        end
+      end
 
       it "should return first judge team even when they admin two judge teams" do
         expect(JudgeTeam.for_judge(user)).to eq(first_judge_team)

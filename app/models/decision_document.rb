@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionDocument < ApplicationRecord
   include Asyncable
   include UploadableDocument
@@ -5,15 +7,15 @@ class DecisionDocument < ApplicationRecord
   class NoFileError < StandardError; end
   class NotYetSubmitted < StandardError; end
 
-  belongs_to :appeal
+  belongs_to :appeal, polymorphic: true
   has_many :end_product_establishments, as: :source
   has_many :effectuations, class_name: "BoardGrantEffectuation"
 
-  validates :citation_number, format: { with: /\AA\d{8}\Z/i }
+  validates :citation_number, format: { with: /\AA?\d{8}\Z/i }
 
   attr_writer :file
 
-  S3_SUB_BUCKET = "decisions".freeze
+  S3_SUB_BUCKET = "decisions"
 
   delegate :veteran, to: :appeal
 
@@ -32,7 +34,8 @@ class DecisionDocument < ApplicationRecord
     output_location
   end
 
-  def submit_for_processing!
+  def submit_for_processing!(delay: 0)
+    update_decision_issue_decision_dates! if appeal.is_a?(Appeal)
     return no_processing_required! unless upload_enabled?
 
     cache_file!
@@ -47,16 +50,16 @@ class DecisionDocument < ApplicationRecord
     attempted!
     upload_to_vbms!
 
-    if FeatureToggle.enabled?(:create_board_grant_effectuations)
+    if FeatureToggle.enabled?(:create_board_grant_effectuations) && appeal.is_a?(Appeal)
       create_board_grant_effectuations!
       process_board_grant_effectuations!
       appeal.create_remand_supplemental_claims!
     end
 
     processed!
-  rescue StandardError => err
-    update_error!(err.to_s)
-    raise err
+  rescue StandardError => error
+    update_error!(error.to_s)
+    raise error
   end
 
   # Used by EndProductEstablishment to determine what modifier to use for the effectuation EPs
@@ -68,6 +71,14 @@ class DecisionDocument < ApplicationRecord
   # to be called any time a corresponding board grant end product change statuses.
   def on_sync(end_product_establishment)
     end_product_establishment.sync_decision_issues! if end_product_establishment.status_cleared?
+  end
+
+  def contention_records(epe)
+    effectuations.where(end_product_establishment: epe)
+  end
+
+  def all_contention_records(epe)
+    contention_records(epe)
   end
 
   private
@@ -83,6 +94,14 @@ class DecisionDocument < ApplicationRecord
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
       end_product_establishment.commit!
+    end
+  end
+
+  def update_decision_issue_decision_dates!
+    transaction do
+      appeal.decision_issues.each do |di|
+        di.update!(caseflow_decision_date: decision_date) unless di.caseflow_decision_date
+      end
     end
   end
 

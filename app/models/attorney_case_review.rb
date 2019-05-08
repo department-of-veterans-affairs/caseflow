@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttorneyCaseReview < ApplicationRecord
   include CaseReviewConcern
   include IssueUpdater
@@ -8,6 +10,7 @@ class AttorneyCaseReview < ApplicationRecord
   belongs_to :task
 
   validates :attorney, :document_type, :task_id, :reviewing_judge, :document_id, :work_product, presence: true
+  validates :untimely_evidence, inclusion: { in: [true, false] }
   validates :overtime, inclusion: { in: [true, false] }
   validates :work_product, inclusion: { in: QueueMapper::WORK_PRODUCTS.values }
   validates :note, length: { maximum: Constants::VACOLS_COLUMN_MAX_LENGTHS["DECASS"]["DEATCOM"] }

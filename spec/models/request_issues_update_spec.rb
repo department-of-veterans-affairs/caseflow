@@ -1,7 +1,17 @@
+# frozen_string_literal: true
+
 describe RequestIssuesUpdate do
   before do
     Time.zone = "America/New_York"
     Timecop.freeze(Time.utc(2018, 5, 20))
+  end
+
+  def allow_associate_rating_request_issues
+    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+  end
+
+  def allow_remove_contention
+    allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
   end
 
   # TODO: make it simpler to set up a completed claim review, with end product data
@@ -43,7 +53,7 @@ describe RequestIssuesUpdate do
   let!(:existing_request_issues) do
     [
       RequestIssue.new(
-        review_request: review,
+        decision_review: review,
         contested_rating_issue_profile_date: Time.zone.local(2017, 4, 5),
         contested_rating_issue_reference_id: "issue1",
         contention_reference_id: request_issue_contentions[0].id,
@@ -51,7 +61,7 @@ describe RequestIssuesUpdate do
         rating_issue_associated_at: 5.days.ago
       ),
       RequestIssue.new(
-        review_request: review,
+        decision_review: review,
         contested_rating_issue_profile_date: Time.zone.local(2017, 4, 6),
         contested_rating_issue_reference_id: "issue2",
         contention_reference_id: request_issue_contentions[1].id,
@@ -95,7 +105,7 @@ describe RequestIssuesUpdate do
     end
 
     let(:existing_request_issue_id) do
-      review.request_issues.find { |issue| issue.contested_rating_issue_reference_id == "issue1" }.id
+      existing_request_issues.first.id
     end
 
     context "#veteran" do
@@ -190,6 +200,8 @@ describe RequestIssuesUpdate do
             *existing_request_issues.map(&:id)
           )
 
+          expect(request_issues_update.withdrawn_request_issue_ids).to eq([])
+
           expect(request_issues_update.after_request_issue_ids).to contain_exactly(
             *(existing_request_issues.map(&:id) + [RequestIssue.last.id])
           )
@@ -230,7 +242,7 @@ describe RequestIssuesUpdate do
           let(:request_issues_data) do
             review.request_issues.map { |issue| { request_issue_id: issue.id } } + [{
               decision_text: "Nonrating issue",
-              issue_category: "Apportionment",
+              nonrating_issue_category: "Apportionment",
               decision_date: 1.month.ago
             }]
           end
@@ -289,8 +301,8 @@ describe RequestIssuesUpdate do
           )
 
           removed_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
-          expect(removed_issue.review_request).to_not be_nil
-          expect(removed_issue.removed_at).to_not be_nil
+          expect(removed_issue.decision_review).to_not be_nil
+          expect(removed_issue.contention_removed_at).to_not be_nil
           expect(removed_issue).to be_closed
           expect(removed_issue).to be_removed
           expect(removed_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
@@ -299,7 +311,7 @@ describe RequestIssuesUpdate do
 
           new_map = rating_end_product_establishment.reload.send(
             :rating_issue_contention_map,
-            review.reload.open_request_issues
+            review.reload.request_issues.active
           )
 
           expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
@@ -317,11 +329,11 @@ describe RequestIssuesUpdate do
         it "cancels end products with no request issues" do
           create(
             :request_issue,
-            review_request: review,
+            decision_review: review,
             end_product_establishment: nonrating_end_product_establishment,
             contention_reference_id: nonrating_request_issue_contention.id,
             nonrating_issue_description: nonrating_request_issue_contention.text,
-            issue_category: "Apportionment"
+            nonrating_issue_category: "Apportionment"
           )
 
           expect_any_instance_of(Fakes::BGSService).to receive(:cancel_end_product).with(
@@ -401,6 +413,75 @@ describe RequestIssuesUpdate do
         end
       end
 
+      context "when an issue is withdrawn" do
+        let(:request_issues_data) do
+          [{ request_issue_id: existing_legacy_opt_in_request_issue_id, withdrawal_date: Time.zone.now },
+           { request_issue_id: existing_request_issue_id }]
+        end
+
+        it "withdraws issue, removes contention, and does not rollback legacy issue opt in" do
+          allow_remove_contention
+          allow_associate_rating_request_issues
+
+          expect(subject).to be_truthy
+
+          request_issues_update.reload
+          expect(request_issues_update.before_request_issue_ids).to contain_exactly(
+            *existing_request_issues.map(&:id)
+          )
+
+          expect(request_issues_update.after_request_issue_ids).to contain_exactly(
+            *existing_request_issues.map(&:id)
+          )
+
+          expect(request_issues_update.withdrawn_request_issue_ids).to contain_exactly(
+            existing_legacy_opt_in_request_issue_id
+          )
+
+          withdrawn_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
+          expect(withdrawn_issue.decision_review).to_not be_nil
+          expect(withdrawn_issue.contention_removed_at).to_not be_nil
+          expect(withdrawn_issue).to be_closed
+          expect(withdrawn_issue).to be_withdrawn
+          expect(withdrawn_issue.legacy_issue_optin.rollback_processed_at).to be_nil
+
+          expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
+
+          new_map = rating_end_product_establishment.reload.send(
+            :rating_issue_contention_map,
+            review.reload.request_issues.active
+          )
+
+          expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+            claim_id: rating_end_product_establishment.reference_id,
+            rating_issue_contention_map: new_map
+          )
+
+          expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
+
+          # ep should not be canceled because 1 rating request issue still exists
+          expect(rating_end_product_establishment.reload.synced_status).to eq(nil)
+        end
+
+        context "when an issue is withdrawn and there are no more active issues" do
+          let(:request_issues_data) do
+            [{ request_issue_id: existing_legacy_opt_in_request_issue_id, withdrawal_date: Time.zone.now }]
+          end
+
+          let!(:in_progress_task) do
+            create(:higher_level_review_task,
+                   :in_progress,
+                   appeal: review)
+          end
+
+          it "closes the end product establishment and cancels any active tasks" do
+            expect(subject).to be_truthy
+            expect(rating_end_product_establishment.reload.synced_status).to eq("CAN")
+            expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
+          end
+        end
+      end
+
       context "when create_contentions raises VBMS service error" do
         let(:request_issues_data) { request_issues_data_with_new_issue }
 
@@ -410,7 +491,7 @@ describe RequestIssuesUpdate do
 
           subject
 
-          expect(request_issues_update.error).to eq(vbms_error.to_s)
+          expect(request_issues_update.error).to eq(vbms_error.inspect)
           expect(@raven_called).to eq(true)
         end
       end
@@ -424,8 +505,49 @@ describe RequestIssuesUpdate do
 
           subject
 
-          expect(request_issues_update.error).to eq(vbms_error.to_s)
+          expect(request_issues_update.error).to eq(vbms_error.inspect)
           expect(@raven_called).to eq(true)
+        end
+      end
+
+      context "when we add and remove unidentified issues" do
+        let(:request_issues_data) do
+          request_issues = []
+          10.times do
+            issue = create(:request_issue, :unidentified, decision_review: review)
+            request_issues << { is_unidentified: true, decision_text: issue.unidentified_issue_text }
+          end
+          request_issues
+        end
+
+        it "does not re-use contention_reference_id" do
+          # start with existing rating request issues
+          expect(review.reload.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(2)
+          subject
+          review.reload
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(12)
+          # only unidentified are left
+          expect(review.request_issues.active.count).to eq(10)
+        end
+      end
+
+      context "when we remove and add the same rating issue" do
+        let(:request_issues_data) do
+          existing_request_issues.map do |ri|
+            {
+              rating_issue_reference_id: ri.contested_rating_issue_reference_id,
+              rating_issue_profile_date: ri.contested_rating_issue_profile_date,
+              decision_text: ri.contested_issue_description
+            }
+          end
+        end
+
+        it "does not re-use contention_reference_id" do
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(2)
+          subject
+          review.reload
+          expect(review.request_issues.pluck(:contention_reference_id).compact.uniq.count).to eq(4)
+          expect(review.request_issues.active.count).to eq(2)
         end
       end
 
@@ -441,23 +563,51 @@ describe RequestIssuesUpdate do
         allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
       end
 
-      def allow_associate_rating_request_issues
-        allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-      end
-
       def raise_error_on_remove_contention
         allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
       end
+    end
+  end
 
-      def allow_remove_contention
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
-      end
+  context "#establish!" do
+    let!(:before_issue) { create(:request_issue_with_epe, decision_review: review, contention_reference_id: "1") }
+    let!(:after_issue) { create(:request_issue_with_epe, decision_review: review, contention_reference_id: "2") }
+
+    let!(:riu) do
+      create(:request_issues_update, :requires_processing,
+             review: review,
+             withdrawn_request_issue_ids: nil,
+             before_request_issue_ids: [before_issue.id],
+             after_request_issue_ids: [after_issue.id])
+    end
+
+    let!(:before_issue_contention) do
+      Generators::Contention.build(
+        claim_id: before_issue.end_product_establishment.reference_id,
+        text: "request issue",
+        id: "1"
+      )
+    end
+
+    let!(:after_issue_contention) do
+      Generators::Contention.build(
+        claim_id: after_issue.end_product_establishment.reference_id,
+        text: "request issue",
+        id: "2"
+      )
+    end
+
+    subject { riu.establish! }
+
+    it "should be successful" do
+      expect(riu.withdrawn_request_issue_ids).to be_nil
+      expect(subject).to be_truthy
     end
   end
 
   context "async logic scopes" do
     let!(:riu_requiring_processing) do
-      create(:request_issues_update).tap(&:submit_for_processing!)
+      create(:request_issues_update, :requires_processing)
     end
 
     let!(:riu_processed) do

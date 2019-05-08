@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionIssue < ApplicationRecord
   validates :benefit_type, inclusion: { in: Constants::BENEFIT_TYPES.keys.map(&:to_s) }
   validates :disposition, presence: true
@@ -19,6 +21,23 @@ class DecisionIssue < ApplicationRecord
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_one :contesting_request_issue, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"
 
+  # NOTE: These are the string identifiers for the DTA error dispositions returned from VBMS.
+  # The characters an encoding is precise so don't change these unless you know they match VBMS values.
+  DTA_ERROR_PMR = "DTA Error - PMRs"
+  DTA_ERROR_FED_RECS = "DTA Error - Fed Recs"
+  DTA_ERROR_OTHER_RECS = "DTA Error - Other Recs"
+  DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO"
+  DTA_ERROR = "DTA Error"
+  REMAND = "remanded"
+  REMAND_DISPOSITIONS = [
+    REMAND, DTA_ERROR_PMR, DTA_ERROR_FED_RECS, DTA_ERROR_OTHER_RECS, DTA_ERROR_EXAM_MO, DTA_ERROR
+  ].freeze
+
+  # We are using default scope here because we'd like to soft delete decision issues
+  # for debugging purposes and to make it easier for developers to filter out
+  # soft deleted records
+  default_scope { where(deleted_at: nil) }
+
   class AppealDTAPayeeCodeError < StandardError
     def initialize(appeal_id)
       super("Can't create a SC DTA for appeal #{appeal_id} due to missing payee code")
@@ -33,25 +52,39 @@ class DecisionIssue < ApplicationRecord
     end
 
     def remanded
-      where(disposition: "remanded")
+      where(disposition: REMAND_DISPOSITIONS)
     end
 
     def not_remanded
-      where.not(disposition: "remanded")
+      where.not(disposition: REMAND_DISPOSITIONS)
+    end
+
+    def contested
+      joins("INNER JOIN request_issues on request_issues.contested_decision_issue_id = decision_issues.id")
+    end
+
+    def uncontested
+      joins("LEFT JOIN request_issues on decision_issues.id = request_issues.contested_decision_issue_id")
+        .where("request_issues.contested_decision_issue_id IS NULL")
     end
   end
 
+  def soft_delete
+    update(deleted_at: Time.zone.now)
+    request_decision_issues.update_all(deleted_at: Time.zone.now)
+  end
+
   def approx_decision_date
-    processed_in_caseflow? ? caseflow_decision_date : claim_review_approx_decision_date
+    processed_in_caseflow? ? caseflow_decision_date : approx_processed_in_vbms_decision_date
   end
 
-  def issue_category
-    associated_request_issue&.issue_category
+  def nonrating_issue_category
+    associated_request_issue&.nonrating_issue_category
   end
 
-  def destroy_on_removed_request_issue(request_issue_id)
-    # destroy if the request issue is deleted and there are no other request issues associated
-    destroy if request_issues.length == 1 && request_issues.first.id == request_issue_id
+  def soft_delete_on_removed_request_issue
+    # mark as deleted if the request issue is deleted and there are no other request issues associated
+    update(deleted_at: Time.zone.now) if request_issues.length == 1
   end
 
   # Since nonrating issues require specialization to process, if any associated request issue is nonrating
@@ -70,8 +103,7 @@ class DecisionIssue < ApplicationRecord
       requestIssueId: request_issues&.first&.id,
       description: description,
       disposition: disposition,
-      promulgationDate: promulgation_date,
-      caseflowDecisionDate: caseflow_decision_date
+      approxDecisionDate: approx_decision_date
     }
   end
 
@@ -90,9 +122,7 @@ class DecisionIssue < ApplicationRecord
   def api_status_active?
     # this is still being worked on so for the purposes of communicating
     # to the veteran, this decision issue is still considered active
-    return true if decision_review.is_a?(Appeal) && disposition == "remanded"
-
-    false
+    disposition && REMAND_DISPOSITIONS.include?(disposition)
   end
 
   def api_status_last_action
@@ -102,7 +132,7 @@ class DecisionIssue < ApplicationRecord
   end
 
   def api_status_last_action_date
-    approx_decision_date
+    approx_decision_date.try(&:to_date)
   end
 
   def api_status_disposition
@@ -115,6 +145,12 @@ class DecisionIssue < ApplicationRecord
     return description if description
 
     "#{benefit_type.capitalize} issue"
+  end
+
+  def associated_request_issue
+    return unless request_issues.any?
+
+    request_issues.first
   end
 
   private
@@ -131,14 +167,10 @@ class DecisionIssue < ApplicationRecord
     decision_review.processed_in_caseflow?
   end
 
-  def claim_review_approx_decision_date
-    # there's an end_product_last_action_date when decision issues are created from eps
-    # but only a promulgation date when decision issues are created from noncomp
-    if profile_date
-      profile_date.to_date
-    else
-      end_product_last_action_date || (promulgation_date&.to_date)
-    end
+  # the decision date is approximate but we need it for timeliness checks.
+  # see also ContestableIssue.approx_decision_date
+  def approx_processed_in_vbms_decision_date
+    rating_promulgation_date ? rating_promulgation_date.to_date : end_product_last_action_date
   end
 
   def calculate_and_set_description
@@ -150,12 +182,6 @@ class DecisionIssue < ApplicationRecord
     return nil unless associated_request_issue
 
     "#{disposition}: #{associated_request_issue.description}"
-  end
-
-  def associated_request_issue
-    return unless request_issues.any?
-
-    request_issues.first
   end
 
   def veteran_file_number
@@ -170,13 +196,11 @@ class DecisionIssue < ApplicationRecord
     latest_ep = decision_review.veteran
       .find_latest_end_product_by_claimant(decision_review.claimants.first)
 
-    if latest_ep.nil? || latest_ep.payee_code.nil?
-      # mark appeal as failed
-      decision_review.update_error!("DTA SC creation failed")
-      fail AppealDTAPayeeCodeError, decision_review.id
-    end
+    latest_ep&.payee_code
+  end
 
-    latest_ep.payee_code
+  def dta_payee_code
+    decision_review.payee_code || prior_payee_code || decision_review.claimants.first.bgs_payee_code
   end
 
   def find_remand_supplemental_claim
@@ -199,16 +223,18 @@ class DecisionIssue < ApplicationRecord
       veteran_is_not_claimant: decision_review.veteran_is_not_claimant,
       receipt_date: approx_decision_date
     )
+    fail AppealDTAPayeeCodeError, decision_review.id unless dta_payee_code
 
     sc.create_claimants!(
       participant_id: decision_review.claimant_participant_id,
-      payee_code: prior_payee_code
+      payee_code: dta_payee_code
     )
 
     sc
   rescue AppealDTAPayeeCodeError
     # mark SC as failed
     sc.update_error!("No payee code")
+    decision_review.update_error!("DTA SC creation failed")
     raise
   end
 end

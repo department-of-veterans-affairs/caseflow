@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RampReview < ApplicationRecord
   belongs_to :user
   has_one :intake, as: :detail
@@ -56,7 +58,7 @@ class RampReview < ApplicationRecord
     HIGHER_LEVEL_REVIEW_OPTIONS.include?(option_selected)
   end
 
-  def on_decision_issues_sync_processed(end_product_establishment)
+  def on_decision_issues_sync_processed
     # no-op, can be overwritten
   end
 
@@ -66,7 +68,7 @@ class RampReview < ApplicationRecord
   #
   # Returns a symbol designating whether the end product was created or connected
   def create_or_connect_end_product!
-    return connect_end_product! if end_product_establishment.preexisting_end_product
+    return connect_end_product! if end_product_establishment.active_preexisting_end_product
 
     establish_end_product!(commit: true) && :created
   end
@@ -81,6 +83,11 @@ class RampReview < ApplicationRecord
 
   def end_product_active?
     end_product_establishment.status_active?(sync: true)
+  rescue EndProductEstablishment::EstablishedEndProductNotFound
+    return true if end_product_establishment.active_preexisting_end_product
+    return false if end_product_establishment.preexisting_end_products
+
+    raise
   end
 
   def establish_end_product!(commit:)
@@ -113,7 +120,6 @@ class RampReview < ApplicationRecord
   def new_end_product_establishment
     @new_end_product_establishment ||= EndProductEstablishment.new(
       veteran_file_number: veteran_file_number,
-      reference_id: end_product_reference_id,
       claim_date: receipt_date,
       code: end_product_code,
       payee_code: payee_code,
@@ -126,13 +132,23 @@ class RampReview < ApplicationRecord
     )
   end
 
+  # Find the matching end product that was active in the right timeframe if an EndProductEstablishment is not saved
+  def matching_end_product
+    return if end_product_establishment.preexisting_end_products.empty?
+
+    end_product_establishment.preexisting_end_products.detect do |ep|
+      ep.last_action_date.nil? || ep.last_action_date > established_at
+    end
+  end
+
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
   end
 
   def connect_end_product!
+    end_product_establishment.update!(reference_id: end_product_establishment.active_preexisting_end_product.claim_id)
+
     update!(
-      end_product_reference_id: end_product_establishment.preexisting_end_product.claim_id,
       established_at: Time.zone.now
     ) && :connected
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe GenericQueue do
   describe "#tasks" do
     let(:atty) { FactoryBot.create(:user) }

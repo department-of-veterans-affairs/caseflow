@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class EstablishClaim < Dispatch::Task
   include CachedAttributes
 
-  ADMIN_FUNCTION = "Manage Claim Establishment".freeze
+  ADMIN_FUNCTION = "Manage Claim Establishment"
 
   class InvalidEndProductError < StandardError; end
 
@@ -80,7 +82,7 @@ class EstablishClaim < Dispatch::Task
         review!(outgoing_reference_id: result.claim_id)
       end
     end
-  rescue VBMS::HTTPError => error
+  rescue VBMS::HTTPError, Caseflow::Error::VBMS, VBMSError => error
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
@@ -162,8 +164,8 @@ class EstablishClaim < Dispatch::Task
 
     begin
       appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
-    rescue VBMS::ClientError => e
-      Rails.logger.info "Failed EstablishClaim (id = #{id}), Error: #{e}"
+    rescue VBMS::ClientError, VBMSError => error
+      Rails.logger.info "Failed EstablishClaim (id = #{id}), Error: #{error}"
       return :failed
     end
 

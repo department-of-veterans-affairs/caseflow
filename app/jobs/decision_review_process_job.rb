@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job will call establish! on a DecisionReview
 # or anything that acts like a DecisionReview
 class DecisionReviewProcessJob < CaseflowJob
@@ -11,11 +13,16 @@ class DecisionReviewProcessJob < CaseflowJob
 
     return_value = nil
 
+    Raven.extra_context(class: decision_review.class.to_s, id: decision_review.id)
+
     begin
       return_value = decision_review.establish!
-    rescue VBMS::ClientError => err
-      decision_review.update_error!(err.to_s)
-      Raven.capture_exception(err)
+    rescue VBMSError::Transient => error
+      decision_review.update_error!(error.inspect)
+      # no need to tell Sentry about it
+    rescue StandardError => error
+      decision_review.update_error!(error.inspect)
+      Raven.capture_exception(error)
     end
 
     RequestStore.store[:current_user] = current_user

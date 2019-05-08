@@ -1,28 +1,30 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :case_hearing, class: VACOLS::CaseHearing do
-    hearing_type HearingDay::REQUEST_TYPES[:video]
+    hearing_type { HearingDay::REQUEST_TYPES[:video] }
     hearing_date { Time.zone.today }
-    room 1
+    room { 1 }
     folder_nr { create(:case).bfkey }
 
     transient do
-      user nil
+      user { nil }
     end
 
     trait :disposition_held do
-      hearing_disp "H"
+      hearing_disp { "H" }
     end
 
     trait :disposition_cancelled do
-      hearing_disp "C"
+      hearing_disp { "C" }
     end
 
     trait :disposition_postponed do
-      hearing_disp "P"
+      hearing_disp { "P" }
     end
 
     trait :disposition_no_show do
-      hearing_disp "N"
+      hearing_disp { "N" }
     end
 
     after(:create) do |hearing, _evaluator|
@@ -49,7 +51,9 @@ FactoryBot.define do
       end
 
       if evaluator.user
-        hearing.board_member = create(:staff, :attorney_judge_role, user: evaluator.user).sattyid
+        existing_staff_record = VACOLS::Staff.where(sdomainid: evaluator.user.css_id, svlj: %w[A J], sactive: "A").first
+        staff_record = existing_staff_record || create(:staff, :attorney_judge_role, user: evaluator.user)
+        hearing.board_member = staff_record.sattyid
       end
     end
   end

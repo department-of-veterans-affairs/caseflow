@@ -11,6 +11,7 @@ import { legacyIssue } from '../util/issues';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
+import COPY from '../../../COPY.json';
 
 const leadMessageList = ({ veteran, formName, requestIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -23,8 +24,7 @@ const leadMessageList = ({ veteran, formName, requestIssues }) => {
       leadMessageArr.push(
         <Alert type="warning">
           <h2>Unidentified issue</h2>
-          <p>There is still an unidentified issue that needs to be resolved before sending the notice
-          letter. To edit, go to VBMS claim details and click the “Edit in Caseflow” button.</p>
+          <p>{COPY.INDENTIFIED_ALERT}</p>
           {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
             Unidentified issue: no issue matched for requested "{ri.description}"
           </p>)}
@@ -117,8 +117,6 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       informalConference,
       legacyAppeals
     } = completedReview;
-    const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
-    const vacolsOptInIssues = requestIssues.filter((ri) => ri.vacolsId && !ri.ineligibleReason);
 
     switch (intakeStatus) {
     case INTAKE_STATES.NONE:
@@ -126,11 +124,18 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
     case INTAKE_STATES.STARTED:
       return <Redirect to={PAGE_PATHS.REVIEW} />;
     case INTAKE_STATES.REVIEWED:
-      return <Redirect to={PAGE_PATHS.FINISH} />;
+      if (formType === FORM_TYPES.RAMP_ELECTION.key || formType === FORM_TYPES.RAMP_REFILING.key) {
+        return <Redirect to={PAGE_PATHS.FINISH} />;
+      }
+
+      return <Redirect to={PAGE_PATHS.ADD_ISSUES} />;
     default:
     }
 
-    if (completedReview.processedInCaseflow && formType !== 'appeal') {
+    const ineligibleRequestIssues = requestIssues.filter((ri) => ri.ineligibleReason);
+    const vacolsOptInIssues = requestIssues.filter((ri) => ri.vacolsId && !ri.ineligibleReason);
+
+    if (completedReview.processedInCaseflow && formType !== FORM_TYPES.APPEAL.key) {
       // we do not use Redirect because state no longer matters,
       // and because we are likely not in a relative URL path any more.
       window.location = completedReview.redirectTo;

@@ -35,7 +35,7 @@ services:
       - "6379:6379"
 
   appeals-postgres:
-    image: postgres:9.3.14
+    image: postgres:9.5
     container_name: appeals-db
     ports:
       - "5432:5432"

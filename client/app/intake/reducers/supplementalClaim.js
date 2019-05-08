@@ -6,6 +6,7 @@ import {
   convertStringToBoolean,
   getReceiptDateError,
   getBlankOptionError,
+  getClaimantError,
   getPageError,
   formatRelationships,
   getDefaultPayeeCode
@@ -64,6 +65,15 @@ const updateFromServerIntake = (state, serverIntake) => {
     },
     relationships: {
       $set: formatRelationships(serverIntake.relationships)
+    },
+    veteranValid: {
+      $set: serverIntake.veteranValid
+    },
+    veteranInvalidFields: {
+      $set: {
+        veteranMissingFields: serverIntake.veteranInvalidFields.veteran_missing_fields.join(', '),
+        veteranAddressTooLong: serverIntake.veteranInvalidFields.veteran_address_too_long
+      }
     }
   });
 };
@@ -88,6 +98,8 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     legacyOptInApproved: null,
     legacyOptInApprovedError: null,
     legacyAppeals: [],
+    veteranValid: null,
+    veteranInvalidFields: null,
     isStarted: false,
     isReviewed: false,
     isComplete: false,
@@ -95,6 +107,7 @@ export const mapDataToInitialSupplementalClaim = (data = { serverIntake: {} }) =
     nonRatingRequestIssues: { },
     contestableIssues: { },
     reviewIntakeError: null,
+    errorUUID: null,
     completeIntakeErrorCode: null,
     completeIntakeErrorData: null,
     redirectTo: null,
@@ -221,7 +234,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'veteran_is_not_claimant')
       },
       claimantError: {
-        $set: getBlankOptionError(action.payload.responseErrorCodes, 'claimant')
+        $set: getClaimantError(action.payload.responseErrorCodes)
       },
       payeeCodeError: {
         $set: getBlankOptionError(action.payload.responseErrorCodes, 'payee_code')
@@ -232,6 +245,9 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
         },
         reviewIntakeError: {
           $set: getPageError(action.payload.responseErrorCodes)
+        },
+        errorUUID: {
+          $set: action.payload.errorUUID
         }
       }
     });
@@ -274,7 +290,7 @@ export const supplementalClaimReducer = (state = mapDataToInitialSupplementalCla
   case ACTIONS.SET_ISSUE_SELECTED:
     return update(state, {
       ratings: {
-        [action.payload.profileDate]: {
+        [action.payload.approxDecisionDate]: {
           issues: {
             [action.payload.issueId]: {
               isSelected: {

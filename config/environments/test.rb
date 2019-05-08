@@ -1,8 +1,11 @@
 require "fileutils"
 Rails.application.configure do
   config.after_initialize do
-    Bullet.enable        = true
+    Bullet.enable        = false
     Bullet.bullet_logger = true
+    Bullet.rails_logger  = true
+    Bullet.raise = true
+    Bullet.unused_eager_loading_enable = false
   end
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -81,5 +84,5 @@ Rails.application.configure do
   # Allow health check to pushgateway
   ENV["ENABLE_PUSHGATEWAY_HEALTHCHECK"] = "true"
 
-  config.active_job.queue_adapter = :inline
+  config.active_job.queue_adapter = :test
 end

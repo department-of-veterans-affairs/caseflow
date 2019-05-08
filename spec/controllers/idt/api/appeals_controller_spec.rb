@@ -1,40 +1,15 @@
+# frozen_string_literal: true
+
 RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   describe "GET /idt/api/v1/appeals" do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
-
     let(:token) do
       key, token = Idt::Token.generate_one_time_key_and_proposed_token
       Idt::Token.activate_proposed_token(key, user.css_id)
       token
     end
 
-    context "when request header does not contain token" do
-      it "response should error" do
-        get :list
-        expect(response.status).to eq 400
-      end
-    end
-
-    context "when request header contains invalid token" do
-      before { request.headers["TOKEN"] = "3289fn893rnqi8hf3nf" }
-
-      it "responds with an error" do
-        get :list
-        expect(response.status).to eq 403
-      end
-    end
-
-    context "when request header contains inactive token" do
-      before do
-        _key, t = Idt::Token.generate_one_time_key_and_proposed_token
-        request.headers["TOKEN"] = t
-      end
-
-      it "responds with an error" do
-        get :list
-        expect(response.status).to eq 403
-      end
-    end
+    it_behaves_like "IDT access verification", :get, :list
 
     context "when request header contains valid token" do
       context "and user is a judge" do
@@ -75,7 +50,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           expect(RequestStore[:current_user]).to eq user
           response_body = JSON.parse(response.body)["data"]
           ama_appeals = response_body
-            .select { |appeal| appeal["type"] == "appeals" }
+            .select { |appeal| appeal["attributes"]["type"] == "Appeal" }
             .sort_by { |appeal| appeal["attributes"]["file_number"] }
 
           expect(ama_appeals.size).to eq 1
@@ -211,7 +186,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           expect(RequestStore[:current_user]).to eq user
           response_body = JSON.parse(response.body)["data"]
           ama_appeals = response_body
-            .select { |appeal| appeal["type"] == "appeals" }
+            .select { |appeal| appeal["attributes"]["type"] == "Appeal" }
             .sort_by { |appeal| appeal["attributes"]["file_number"] }
 
           expect(ama_appeals.size).to eq 2
@@ -243,7 +218,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           get :list
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["data"]
-          ama_appeals = response_body.select { |appeal| appeal["type"] == "appeals" }
+          ama_appeals = response_body.select { |appeal| appeal["attributes"]["type"] == "Appeal" }
           expect(ama_appeals.size).to eq 1
           expect(ama_appeals.first["attributes"]["docket_number"]).to eq tasks.first.appeal.docket_number
           expect(ama_appeals.first["attributes"]["veteran_first_name"]).to eq veteran1.reload.name.first_name
@@ -289,8 +264,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           end
 
           let(:params) { { appeal_id: ama_appeals.first.uuid } }
-          let!(:request_issue1) { create(:request_issue, review_request: ama_appeals.first) }
-          let!(:request_issue2) { create(:request_issue, review_request: ama_appeals.first) }
+          let!(:request_issue1) { create(:request_issue, decision_review: ama_appeals.first) }
+          let!(:request_issue2) { create(:request_issue, decision_review: ama_appeals.first) }
 
           context "and addresses should not be queried" do
             before do
@@ -316,9 +291,9 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               expect(response_body["attributes"]["issues"].first["program"]).to eq "Compensation"
               expect(response_body["attributes"]["issues"].second["program"]).to eq "Compensation"
               expect(response_body["attributes"]["status"]).to eq nil
-              expect(response_body["attributes"]["veteran_is_deceased"]).to eq true
+              expect(response_body["attributes"]["veteran_is_deceased"]).to eq false
               expect(response_body["attributes"]["veteran_ssn"]).to eq ama_appeals.first.veteran_ssn
-              expect(response_body["attributes"]["veteran_death_date"]).to eq "05/25/2016"
+              expect(response_body["attributes"]["veteran_death_date"]).to eq nil
               expect(response_body["attributes"]["appellant_is_not_veteran"]).to eq true
               expect(response_body["attributes"]["appellants"][0]["first_name"])
                 .to eq ama_appeals.first.appellant_first_name
@@ -347,6 +322,15 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                 state: "CA",
                 zip: "20001"
               )
+
+              allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids)
+                .with([ama_appeals.first.claimants.last.participant_id]).and_return(
+                  ama_appeals.first.claimants.last.participant_id => {
+                    representative_name: "POA Name",
+                    representative_type: "POA Attorney",
+                    participant_id: "600153863"
+                  }
+                )
             end
 
             it "succeeds and passes address info" do
@@ -355,7 +339,7 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["appellants"][0]["address"]["address_line_1"])
-                .to eq ama_appeals.first.claimants.first.address_line_1
+                .to eq ama_appeals.first.reload.claimants.first.address_line_1
               expect(response_body["attributes"]["appellants"][0]["address"]["city"])
                 .to eq ama_appeals.first.claimants.first.city
               expect(response_body["attributes"]["appellants"][0]["representative"]["address"])
@@ -437,7 +421,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
                 repkey: vacols_case.bfkey,
                 reptype: "C",
                 repfirst: "Contested",
-                replast: "Claimant"
+                replast: "Claimant",
+                repso: "A"
               )
             end
 
@@ -446,6 +431,34 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
               response_body = JSON.parse(response.body)["data"]
 
               expect(response_body["attributes"]["contested_claimants"][0]["first_name"]).to eq("Contested")
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["code"])
+                .to eq(representative.repso)
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["name"])
+                .to eq(VACOLS::Case::REPRESENTATIVES[representative.repso][:full_name])
+            end
+          end
+
+          context "when contested claimant with unknown REPSO value (representative code)" do
+            let!(:representative) do
+              create(
+                :representative,
+                repkey: vacols_case.bfkey,
+                reptype: "C",
+                repfirst: "Contested",
+                replast: "Claimant",
+                repso: "5"
+              )
+            end
+
+            it "returns nil value for representative name" do
+              get :details, params: params
+              response_body = JSON.parse(response.body)["data"]
+
+              expect(response_body["attributes"]["contested_claimants"][0]["first_name"]).to eq("Contested")
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["code"])
+                .to eq representative.repso
+              expect(response_body["attributes"]["contested_claimants"][0]["representative"]["name"])
+                .to be_nil
             end
           end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RampRefiling < RampReview
   class ContentionCreationFailed < StandardError; end
 
@@ -47,11 +49,6 @@ class RampRefiling < RampReview
 
   private
 
-  # TODO: add end product status to ramp_refiling
-  def end_product_status
-    nil
-  end
-
   def ramp_elections
     RampElection.established.where(veteran_file_number: veteran_file_number).all
   end
@@ -83,8 +80,8 @@ class RampRefiling < RampReview
 
     # If an error occurs with creating the contentions in VBMS, swallow the error and don't save
     # the ramp refiling as being processed, we'll retry later.
-  rescue StandardError => e
-    Raven.capture_exception(e)
+  rescue StandardError => error
+    Raven.capture_exception(error)
     false
   end
 

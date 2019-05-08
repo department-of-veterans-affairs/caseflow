@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 require "support/intake_helpers"
 
@@ -5,6 +7,10 @@ describe Appeal do
   include IntakeHelpers
 
   let!(:appeal) { create(:appeal) }
+
+  before do
+    Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
+  end
 
   context "priority and non-priority appeals" do
     let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
@@ -15,21 +21,21 @@ describe Appeal do
     context "#all_priority" do
       subject { Appeal.all_priority }
       it "returns aod appeals due to age and motion" do
-        expect(subject.include?(aod_age_appeal)).to eq(true)
-        expect(subject.include?(aod_motion_appeal)).to eq(true)
-        expect(subject.include?(appeal)).to eq(false)
-        expect(subject.include?(denied_aod_motion_appeal)).to eq(false)
-        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(false)
+        expect(subject).to include aod_age_appeal
+        expect(subject).to include aod_motion_appeal
+        expect(subject).to_not include appeal
+        expect(subject).to_not include denied_aod_motion_appeal
+        expect(subject).to_not include inapplicable_aod_motion_appeal
       end
     end
 
     context "#all_nonpriority" do
       subject { Appeal.all_nonpriority }
       it "returns non aod appeals" do
-        expect(subject.include?(appeal)).to eq(true)
-        expect(subject.include?(aod_motion_appeal)).to eq(false)
-        expect(subject.include?(denied_aod_motion_appeal)).to eq(true)
-        expect(subject.include?(inapplicable_aod_motion_appeal)).to eq(true)
+        expect(subject).to include appeal
+        expect(subject).to_not include aod_motion_appeal
+        expect(subject).to include denied_aod_motion_appeal
+        expect(subject).to include inapplicable_aod_motion_appeal
       end
     end
   end
@@ -40,8 +46,8 @@ describe Appeal do
 
     subject { Appeal.active }
     it "returns only active appeals" do
-      expect(subject.include?(active_appeal)).to eq(true)
-      expect(subject.include?(inactive_appeal)).to eq(false)
+      expect(subject).to include active_appeal
+      expect(subject).to_not include inactive_appeal
     end
   end
 
@@ -51,10 +57,10 @@ describe Appeal do
     let!(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
 
     before do
-      FeatureToggle.enable!(:ama_auto_case_distribution)
+      FeatureToggle.enable!(:ama_acd_tasks)
     end
     after do
-      FeatureToggle.disable!(:ama_auto_case_distribution)
+      FeatureToggle.disable!(:ama_acd_tasks)
     end
     subject { Appeal.ready_for_distribution }
 
@@ -63,25 +69,74 @@ describe Appeal do
         RootTask.create_root_and_sub_tasks!(appeal)
       end
 
-      expect(subject.include?(direct_review_appeal)).to eq(true)
-      expect(subject.include?(evidence_submission_appeal)).to eq(false)
-      # TODO: support hearing appeals
-      # expect(subject.include?(hearing_appeal)).to eq(false)
+      expect(subject).to include direct_review_appeal
+      expect(subject).to_not include evidence_submission_appeal
+      expect(subject).to_not include hearing_appeal
+    end
+
+    context "if mail tasks exist" do
+      let(:blocking_mail_task_class) { CongressionalInterestMailTask }
+      let(:nonblocking_mail_task_class) { AodMotionMailTask }
+      let(:user) { FactoryBot.create(:user) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
+      end
+
+      let!(:blocked_appeal) do
+        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
+        blocking_mail_task_class.create_from_params({
+                                                      appeal: appeal,
+                                                      parent_id: appeal.root_task.id
+                                                    }, user)
+        appeal
+      end
+      let!(:nonblocked_appeal) do
+        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
+        nonblocking_mail_task_class.create_from_params({
+                                                         appeal: appeal,
+                                                         parent_id: appeal.root_task.id
+                                                       }, user)
+        appeal
+      end
+      let!(:nonblocked_appeal2) do
+        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
+        blocking_mail_task_class.create_from_params({
+                                                      appeal: appeal,
+                                                      parent_id: appeal.root_task.id
+                                                    }, user)
+        MailTask.find_by(appeal: appeal).update!(status: "completed")
+        appeal
+      end
+
+      it "does not return appeals with open blocking mail tasks" do
+        expect(subject).to_not include blocked_appeal
+      end
+      it "returns appeals with open nonblocking mail tasks" do
+        expect(subject).to include nonblocked_appeal
+      end
+      it "does not return appeals with completed blocking mail tasks " do
+        expect(subject).to include nonblocked_appeal2
+      end
     end
   end
 
   context "ready appeals sorted by date" do
-    let!(:first_appeal) { create(:appeal, :with_tasks) }
-    let!(:second_appeal) { create(:appeal, :with_tasks) }
+    it "returns appeals with distribution tasks ordered by when they became ready for distribution" do
+      first_appeal = create(:appeal, :with_tasks)
+      first_appeal.tasks.each { |task| task.update!(assigned_at: 2.days.ago, type: "DistributionTask") }
+      second_appeal = create(:appeal, :with_tasks)
+      second_appeal.tasks.each { |task| task.update!(assigned_at: 5.days.ago, type: "DistributionTask") }
 
-    subject { Appeal.ordered_by_distribution_ready_date }
+      sorted_appeals = Appeal.ordered_by_distribution_ready_date
 
-    it "returns appeals ordered by when they became ready for distribution" do
-      expect(subject.find_index(first_appeal) < subject.find_index(second_appeal)).to eq(true)
+      expect(sorted_appeals[0]).to eq second_appeal
     end
   end
 
   context "#create_remand_supplemental_claims!" do
+    before { setup_prior_claim_with_payee_code(appeal, veteran) }
+
     let(:veteran) { create(:veteran) }
     let(:appeal) do
       create(:appeal, number_of_claimants: 1, veteran_file_number: veteran.file_number)
@@ -111,13 +166,10 @@ describe Appeal do
 
     let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
 
-    let!(:prior_sc_with_payee_code) { setup_prior_claim_with_payee_code(appeal, veteran) }
-
     it "creates supplemental claim, request issues, and starts processing" do
       subject
 
       remanded_supplemental_claims = SupplementalClaim.where(decision_review_remanded: appeal)
-        .where.not(id: prior_sc_with_payee_code.id)
 
       expect(remanded_supplemental_claims.count).to eq(2)
 
@@ -157,50 +209,17 @@ describe Appeal do
     end
   end
 
-  context "#new_documents_from_caseflow" do
-    before do
-      documents.each { |document| document.update(file_number: appeal.veteran_file_number) }
-    end
+  context "#latest_attorney_case_review" do
+    let(:appeal) { create(:appeal) }
+    let(:task1) { create(:ama_attorney_task, appeal: appeal) }
+    let(:task2) { create(:ama_attorney_task, appeal: appeal) }
+    let!(:attorney_case_review1) { create(:attorney_case_review, task: task1, created_at: 2.days.ago) }
+    let!(:attorney_case_review2) { create(:attorney_case_review, task: task2, created_at: 1.day.ago) }
 
-    let(:user) { create(:user) }
+    subject { appeal.latest_attorney_case_review }
 
-    let!(:documents) do
-      [
-        Generators::Document.create(upload_date: 5.days.ago),
-        Generators::Document.create(upload_date: 5.days.ago)
-      ]
-    end
-
-    let!(:appeal) { create(:appeal) }
-
-    subject { appeal.new_documents_from_caseflow(user) }
-
-    context "when appeal has no appeal view" do
-      it "should return all documents" do
-        expect(subject).to match_array(documents)
-      end
-    end
-
-    context "when appeal has an appeal view newer than documents" do
-      let!(:appeal_view) { AppealView.create(appeal: appeal, user: user, last_viewed_at: Time.zone.now) }
-
-      it "should return no documents" do
-        expect(subject).to eq([])
-      end
-
-      context "when one document is missing a received at date" do
-        it "should return no documents" do
-          documents[0].update(upload_date: nil)
-          expect(subject).to eq([])
-        end
-      end
-
-      context "when one document is newer than the appeal view date" do
-        it "should return the newer document" do
-          documents[0].update(upload_date: -2.days.ago)
-          expect(subject).to eq([documents[0]])
-        end
-      end
+    it "returns the latest record" do
+      expect(subject).to eq attorney_case_review2
     end
   end
 
@@ -230,7 +249,7 @@ describe Appeal do
     let!(:past_decision_issue) do
       create(:decision_issue,
              decision_review: another_review,
-             profile_date: receipt_date - 1.day,
+             rating_profile_date: receipt_date - 1.day,
              benefit_type: another_review.benefit_type,
              decision_text: "something decided in the past",
              description: "past issue",
@@ -241,7 +260,8 @@ describe Appeal do
     let!(:future_decision_issue) do
       create(:decision_issue,
              decision_review: another_review,
-             profile_date: receipt_date + 1.day,
+             rating_profile_date: receipt_date + 1.day,
+             rating_promulgation_date: receipt_date + 1.day,
              benefit_type: another_review.benefit_type,
              decision_text: "something was decided in the future",
              description: "future issue",
@@ -251,13 +271,22 @@ describe Appeal do
 
     it "does not return Decision Issues in the future" do
       expect(subject.count).to eq(1)
-      expect(subject.first.decision_issue_id).to eq(past_decision_issue.id)
+      expect(subject.first.decision_issue.id).to eq(past_decision_issue.id)
     end
   end
 
   context "async logic scopes" do
-    let!(:appeal_requiring_processing) do
+    let!(:appeal_requiring_processing_newly_submitted) do
       create(:appeal).tap(&:submit_for_processing!)
+    end
+
+    let!(:appeal_requiring_processing) do
+      create(:appeal).tap do |appeal|
+        appeal.submit_for_processing!
+        appeal.update!(
+          establishment_last_submitted_at: (Appeal.processing_retry_interval_hours + 1).hours.ago
+        )
+      end
     end
 
     let!(:appeal_processed) do
@@ -281,14 +310,16 @@ describe Appeal do
 
     context ".unexpired" do
       it "matches appeals still inside the processing window" do
-        expect(Appeal.unexpired).to eq([appeal_requiring_processing])
+        expect(Appeal.unexpired).to match_array(
+          [appeal_requiring_processing, appeal_requiring_processing_newly_submitted]
+        )
       end
     end
 
     context ".processable" do
       it "matches appeals eligible for processing" do
         expect(Appeal.processable).to match_array(
-          [appeal_requiring_processing, appeal_attempts_ended]
+          [appeal_requiring_processing, appeal_attempts_ended, appeal_requiring_processing_newly_submitted]
         )
       end
     end
@@ -300,8 +331,8 @@ describe Appeal do
     end
 
     context ".requires_processing" do
-      it "matches appeals that must still be processed" do
-        expect(Appeal.requires_processing).to eq([appeal_requiring_processing])
+      it "matches appeals that need to be reprocessed" do
+        expect(Appeal.requires_processing).to match_array([appeal_requiring_processing])
       end
     end
 
@@ -492,10 +523,33 @@ describe Appeal do
       end
     end
 
-    context "#vsos" do
-      it "returns all vsos this appeal has that exist in our DB" do
-        expect(appeal.vsos.count).to eq(1)
-        expect(appeal.vsos.first.name).to eq("Paralyzed Veterans Of America")
+    context "#representatives" do
+      it "returns all representatives this appeal has that exist in our DB" do
+        expect(appeal.representatives.count).to eq(1)
+        expect(appeal.representatives.first.name).to eq("Paralyzed Veterans Of America")
+      end
+
+      context "when there is no VSO" do
+        let(:participant_id_with_nil) { "1234" }
+        before do
+          allow_any_instance_of(BGSService).to receive(:fetch_poas_by_participant_ids)
+            .with([participant_id_with_nil]).and_return(
+              participant_id_with_pva => nil
+            )
+        end
+        let(:appeal) do
+          create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_nil)])
+        end
+        let!(:vso) do
+          Vso.create(
+            name: "Test VSO",
+            url: "test-vso"
+          )
+        end
+
+        it "does not return VSOs with nil participant_id" do
+          expect(appeal.representatives).to eq([])
+        end
       end
     end
   end
@@ -613,7 +667,7 @@ describe Appeal do
     end
   end
 
-  context "#location_code" do
+  context "#assigned_to_location" do
     context "if the RootTask status is completed" do
       let(:appeal) { create(:appeal) }
 
@@ -622,14 +676,14 @@ describe Appeal do
       end
 
       it "returns Post-decision" do
-        expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_POST_DECISION_LABEL)
       end
     end
 
     context "if there are no active tasks" do
       let(:appeal) { create(:appeal) }
-      it "returns nil" do
-        expect(appeal.location_code).to eq(nil)
+      it "returns 'other close'" do
+        expect(appeal.assigned_to_location).to eq(:other_close.to_s.titleize)
       end
     end
 
@@ -641,7 +695,20 @@ describe Appeal do
       end
 
       it "returns Case storage" do
-        expect(appeal.location_code).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      end
+    end
+
+    context "if there are TrackVeteranTasks" do
+      let!(:appeal) { create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal, status: :in_progress) }
+
+      before do
+        create(:track_veteran_task, appeal: appeal, status: :in_progress)
+      end
+
+      it "does not include TrackVeteranTasks in its determinations" do
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
       end
     end
 
@@ -650,6 +717,8 @@ describe Appeal do
       let(:appeal_organization) { create(:appeal) }
       let(:user) { create(:user) }
       let(:appeal_user) { create(:appeal) }
+      let(:appeal_on_hold) { create(:appeal) }
+      let(:today) { Time.zone.today }
 
       before do
         organization_root_task = create(:root_task, appeal: appeal_organization)
@@ -657,14 +726,21 @@ describe Appeal do
 
         user_root_task = create(:root_task, appeal: appeal_user)
         create(:generic_task, assigned_to: user, appeal: appeal_user, parent: user_root_task)
+
+        on_hold_root = create(:root_task, appeal: appeal_on_hold, updated_at: today - 1)
+        create(:generic_task, status: :on_hold, appeal: appeal_on_hold, parent: on_hold_root, updated_at: today + 1)
       end
 
       it "if the most recent assignee is an organization it returns the organization name" do
-        expect(appeal_organization.location_code).to eq(organization.name)
+        expect(appeal_organization.assigned_to_location).to eq(organization.name)
       end
 
       it "if the most recent assignee is not an organization it returns the id" do
-        expect(appeal_user.location_code).to eq(user.css_id)
+        expect(appeal_user.assigned_to_location).to eq(user.css_id)
+      end
+
+      it "if the task is on hold but there isn't an assignee it returns something" do
+        expect(appeal_on_hold.assigned_to_location).not_to eq(nil)
       end
     end
   end
@@ -850,37 +926,27 @@ describe Appeal do
     end
   end
 
-  context "#non_priority_decisions_in_the_last_year" do
+  context "#nonpriority_decisions_per_year" do
     let!(:newer_decisions) do
-      (0..10).map do |num|
-        doc = create(:decision_document)
-        doc.appeal.update(
-          docket_type: "direct_review",
-          receipt_date: (num * 20).days.ago
-        )
+      (0...18).map do |num|
+        doc = create(:decision_document, decision_date: (num * 20).days.ago)
+        doc.appeal.update(docket_type: "direct_review")
         doc.appeal
       end
     end
     let!(:older_decisions) do
-      (0..10).map do |num|
-        doc = create(:decision_document)
-        doc.appeal.update(
-          docket_type: "direct_review",
-          receipt_date: (366 + (num * 20)).days.ago
-        )
+      (0...2).map do |num|
+        doc = create(:decision_document, decision_date: (366 + (num * 20)).days.ago)
+        doc.appeal.update(docket_type: "direct_review")
         doc.appeal
       end
     end
 
     context "non-priority decision list" do
-      subject { Appeal.non_priority_decisions_in_the_last_year }
+      subject { Appeal.nonpriority_decisions_per_year }
 
       it "returns decisions from the last year" do
-        expect(subject.include?(newer_decisions))
-      end
-
-      it "does not return decisions from more than a year ago" do
-        expect(subject.include?(older_decisions))
+        expect(subject).to eq(18)
       end
     end
   end
@@ -927,7 +993,7 @@ describe Appeal do
     context "hearing to be scheduled" do
       let(:schedule_hearing_status) { "in_progress" }
       let!(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
       end
 
       it "is waiting for hearing to be scheduled" do
@@ -937,10 +1003,62 @@ describe Appeal do
       end
     end
 
+    context "hearing is scheduled" do
+      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let(:hearing_scheduled_for) { Time.zone.today + 15.days }
+      let(:hearing_day) do
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               regional_office: "RO18",
+               scheduled_for: hearing_scheduled_for)
+      end
+
+      let(:hearing) do
+        FactoryBot.create(
+          :hearing,
+          appeal: appeal,
+          disposition: nil,
+          evidence_window_waived: nil,
+          hearing_day: hearing_day
+        )
+      end
+      let!(:hearing_task_association) do
+        FactoryBot.create(
+          :hearing_task_association,
+          hearing: hearing,
+          hearing_task: hearing_task
+        )
+      end
+      let!(:schedule_hearing_task) do
+        FactoryBot.create(
+          :schedule_hearing_task,
+          parent: hearing_task,
+          appeal: appeal,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+      let!(:disposition_task) do
+        FactoryBot.create(
+          :disposition_task,
+          parent: hearing_task,
+          appeal: appeal,
+          status: Constants.TASK_STATUSES.in_progress
+        )
+      end
+
+      it "status is scheduled_hearing with hearing details" do
+        status = appeal.status_hash
+        expect(status[:type]).to eq(:scheduled_hearing)
+        expect(status[:details][:type]).to eq("video")
+        expect(status[:details][:date]).to eq(hearing_scheduled_for.to_date)
+        expect(status[:details][:location]).to be_nil
+      end
+    end
+
     context "in an evidence submission window" do
       let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
       end
       let(:evidence_hold_task_status) { "in_progress" }
       let!(:evidence_submission_task) do
@@ -963,7 +1081,7 @@ describe Appeal do
     context "assigned to judge" do
       let(:schedule_hearing_status) { "completed" }
       let!(:schedule_hearing_task) do
-        ScheduleHearingTask.create!(appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
+        create(:schedule_hearing_task, appeal: appeal, assigned_to: hearings_user, status: schedule_hearing_status)
       end
       let(:evidence_hold_task_status) { "completed" }
       let!(:evidence_submission_task) do
@@ -979,11 +1097,11 @@ describe Appeal do
       it "waiting for a decision" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:decision_in_progress)
-        expect(status[:details]).to be_empty
+        expect(status[:details][:decision_timeliness]).to eq([1, 2])
       end
     end
 
-    context "have a decision with no remands or effection" do
+    context "have a decision with no remands or effectuation, no decision document" do
       let(:judge_review_task_status) { "completed" }
       let!(:judge_review_task) do
         create(:ama_judge_decision_review_task,
@@ -995,11 +1113,21 @@ describe Appeal do
                decision_review: appeal, disposition: "allowed")
       end
 
-      it "has a decision" do
+      it "status is still in progress since because no decision document" do
         status = appeal.status_hash
-        expect(status[:type]).to eq(:bva_decision)
-        expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
-        expect(status[:details][:issues].first[:disposition]).to eq("allowed")
+        expect(status[:type]).to eq(:decision_in_progress)
+        expect(status[:details][:decision_timeliness]).to eq([1, 2])
+      end
+
+      context "decision document created" do
+        let!(:decision_document) { create(:decision_document, appeal: appeal) }
+
+        it "status is bva_decision" do
+          status = appeal.status_hash
+          expect(status[:type]).to eq(:bva_decision)
+          expect(status[:details][:issues].first[:description]).to eq("Dental or oral condition")
+          expect(status[:details][:issues].first[:disposition]).to eq("allowed")
+        end
       end
     end
 
@@ -1024,12 +1152,12 @@ describe Appeal do
       it "effectuation had an ep" do
         status = appeal.status_hash
         expect(status[:type]).to eq(:bva_decision_effectuation)
-        expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
-        expect(status[:details][:aojDecisionDate]).to eq((receipt_date + 100.days).to_date)
+        expect(status[:details][:bva_decision_date].to_date).to eq((receipt_date + 60.days).to_date)
+        expect(status[:details][:aoj_decision_date].to_date).to eq((receipt_date + 100.days).to_date)
       end
     end
 
-    context "has a remand" do
+    context "has an active remand" do
       let(:root_task_status) { "completed" }
       let(:judge_review_task_status) { "completed" }
       let!(:judge_review_task) do
@@ -1039,17 +1167,23 @@ describe Appeal do
       let!(:not_remanded_decision_issue) { create(:decision_issue, decision_review: appeal) }
       let!(:remanded_decision_issue) do
         create(:decision_issue,
-               decision_review: appeal, disposition: "remanded", benefit_type: "nca", diagnostic_code: nil)
+               decision_review: appeal,
+               disposition: "remanded",
+               benefit_type: "nca",
+               diagnostic_code: nil,
+               caseflow_decision_date: 1.day.ago)
       end
 
-      it "it only has a remand that was processed in caseflow" do
+      it "it has status ama_remand" do
+        appeal.create_remand_supplemental_claims!
+        appeal.remand_supplemental_claims.each(&:reload)
         status = appeal.status_hash
         expect(status[:type]).to eq(:ama_remand)
         expect(status[:details][:issues].count).to eq(2)
       end
     end
 
-    context "has more than one remanded decision" do
+    context "has multiple remands" do
       let(:root_task_status) { "completed" }
       let(:judge_review_task_status) { "completed" }
       let!(:judge_review_task) do
@@ -1075,26 +1209,68 @@ describe Appeal do
                diagnostic_code: "9912",
                caseflow_decision_date: receipt_date + 60.days)
       end
-      let(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
-      let!(:remanded_ep) do
-        create(:end_product_establishment,
-               :cleared, source: remanded_sc, last_synced_at: receipt_date + 100.days)
+      let!(:remanded_sc) do
+        create(
+          :supplemental_claim,
+          veteran_file_number: appeal.veteran_file_number,
+          decision_review_remanded: appeal,
+          benefit_type: remanded_issue.benefit_type
+        )
       end
       let!(:remanded_sc_decision) do
         create(:decision_issue,
                decision_review: remanded_sc,
+               disposition: "granted",
+               diagnostic_code: "9915",
+               caseflow_decision_date: receipt_date + 101.days)
+      end
+      let!(:remanded_sc_with_ep) do
+        create(
+          :supplemental_claim,
+          veteran_file_number: appeal.veteran_file_number,
+          decision_review_remanded: appeal,
+          benefit_type: remanded_issue_with_ep.benefit_type
+        )
+      end
+      let!(:remanded_ep) do
+        create(:end_product_establishment,
+               :cleared, source: remanded_sc_with_ep, last_synced_at: receipt_date + 100.days)
+      end
+      let!(:remanded_sc_with_ep_decision) do
+        create(:decision_issue,
+               decision_review: remanded_sc_with_ep,
                disposition: "denied",
                diagnostic_code: "9912",
                end_product_last_action_date: receipt_date + 100.days)
       end
 
-      it "has a remand processed in vbms" do
-        status = appeal.status_hash
-        expect(status[:type]).to eq(:post_bva_dta_decision)
-        expect(status[:details][:issues].first[:description]).to eq("Partial loss of hard palate")
-        expect(status[:details][:issues].first[:disposition]).to eq("denied")
-        expect(status[:details][:bvaDecisionDate]).to eq((receipt_date + 60.days).to_date)
-        expect(status[:details][:aojDecisionDate]).to eq((receipt_date + 100.days).to_date)
+      context "they are all complete" do
+        let!(:remanded_sc_task) { create(:task, :completed, appeal: remanded_sc) }
+        it "has post_bva_dta_decision status,shows the latest decision date, and remand dedision issues" do
+          status = appeal.status_hash
+          expect(status[:type]).to eq(:post_bva_dta_decision)
+          expect(status[:details][:issues]).to include(
+            { description: "Partial loss of upper jaw", disposition: "granted" },
+            description: "Partial loss of hard palate", disposition: "denied"
+          )
+          expect(status[:details][:bva_decision_date]).to eq((receipt_date + 60.days).to_date)
+          expect(status[:details][:aoj_decision_date]).to eq((receipt_date + 101.days).to_date)
+        end
+      end
+
+      context "they are not all complete" do
+        let!(:remanded_sc_task) { create(:task, :in_progress, appeal: remanded_sc) }
+        it "has ama_remand status, no decision dates, and shows appeals decision issues" do
+          status = appeal.status_hash
+          expect(status[:type]).to eq(:ama_remand)
+          expect(status[:details][:issues]).to include(
+            { description: "Dental or oral condition", disposition: "allowed" },
+            { description: "Partial loss of hard palate", disposition: "remanded" },
+            description: "Partial loss of hard palate", disposition: "remanded"
+          )
+          expect(status[:details][:bva_decision_date]).to be_nil
+          expect(status[:details][:aoj_decision_date]).to be_nil
+        end
       end
     end
   end
@@ -1185,12 +1361,21 @@ describe Appeal do
     let(:october_docket_date) { Time.new("2018", "10", "01").utc }
     let(:receipt_date) { october_docket_date + 20.days }
 
-    let(:promulgation_date1) { receipt_date - 50.days }
-    let(:request_issue1) { create(:request_issue) }
-    let(:promulgation_date2) { receipt_date - 60.days }
-    let(:request_issue2) { create(:request_issue) }
-    let(:promulgation_date3) { receipt_date - 100.days }
-    let(:removed_request_issue) { create(:request_issue, :removed, closed_at: receipt_date) }
+    let(:decision_date1) { receipt_date - 50.days }
+    let(:request_issue1) { create(:request_issue, :nonrating, decision_date: decision_date1) }
+
+    let(:decision_date2) { receipt_date - 60.days }
+    let(:request_issue2) { create(:request_issue, :nonrating, decision_date: decision_date2) }
+
+    let(:decision_date3) { receipt_date - 100.days }
+    let(:removed_request_issue) do
+      create(
+        :request_issue,
+        :nonrating,
+        decision_date: decision_date3,
+        closed_at: receipt_date
+      )
+    end
 
     let(:docket_type) { "direct_review" }
     let!(:appeal) do
@@ -1203,31 +1388,20 @@ describe Appeal do
     let!(:root_task) { create(:root_task, :in_progress, appeal: appeal) }
 
     context "all request issues have a decision or promulgation date" do
-      before do
-        Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
-
-        allow(request_issue1).to receive(:decision_or_promulgation_date).and_return(promulgation_date1)
-        allow(request_issue2).to receive(:decision_or_promulgation_date).and_return(promulgation_date2)
-        allow(removed_request_issue).to receive(:decision_or_promulgation_date).and_return(promulgation_date3)
-      end
-
       it "is direct review, in Oct month, has docket switch deadline and is eligible to switch" do
         docket = appeal.docket_hash
 
         expect(docket).not_to be_nil
         expect(docket[:type]).to eq("directReview")
         expect(docket[:month]).to eq(october_docket_date.to_date)
-        expect(docket[:switchDueDate]).to eq((promulgation_date2 + 365.days))
+        expect(docket[:switchDueDate]).to eq((decision_date2 + 365.days).to_date)
         expect(docket[:eligibleToSwitch]).to eq(true)
       end
     end
 
     context "cannot get decision or promulgation date for an open request issue" do
-      before do
-        Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
-
-        allow(request_issue2).to receive(:decision_or_promulgation_date).and_return(promulgation_date2)
-      end
+      let(:decision_date1) { nil }
+      let(:decision_date3) { nil }
 
       it "is direct review, in Oct month, has no switch deadline and is not eligible to switch" do
         docket = appeal.docket_hash
@@ -1253,6 +1427,13 @@ describe Appeal do
              benefit_type: "pension", contested_rating_issue_diagnostic_code: nil)
     end
 
+    let(:request_issue3) do
+      create(:request_issue,
+             benefit_type: "pension",
+             contested_rating_issue_diagnostic_code: nil,
+             ineligible_reason: :untimely)
+    end
+
     let!(:appeal) do
       create(:appeal, receipt_date: receipt_date,
                       request_issues: [request_issue1, request_issue2])
@@ -1264,19 +1445,19 @@ describe Appeal do
       it "is status of the request issues" do
         issue_statuses = appeal.issues_hash
 
-        expect(issue_statuses.empty?).to eq(false)
+        expect(issue_statuses.count).to eq(2)
 
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to be_nil
+        expect(issue[:lastAction]).to be_nil
         expect(issue[:date]).to be_nil
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(true)
-        expect(issue2[:last_action]).to be_nil
+        expect(issue2[:lastAction]).to be_nil
         expect(issue2[:date]).to be_nil
         expect(issue2[:description]).to eq("Pension issue")
       end
@@ -1308,15 +1489,15 @@ describe Appeal do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(true)
-        expect(issue[:last_action]).to eq("remand")
-        expect(issue[:date]).to eq(decision_date.to_date)
+        expect(issue[:lastAction]).to eq("remand")
+        expect(issue[:date].to_date).to eq(decision_date.to_date)
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
-        expect(issue2[:last_action]).to eq("allowed")
-        expect(issue2[:date]).to eq(decision_date.to_date)
+        expect(issue2[:lastAction]).to eq("allowed")
+        expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
       end
     end
@@ -1353,16 +1534,150 @@ describe Appeal do
         issue = issue_statuses.find { |i| i[:diagnosticCode] == "5002" }
         expect(issue).to_not be_nil
         expect(issue[:active]).to eq(false)
-        expect(issue[:last_action]).to eq("denied")
-        expect(issue[:date]).to eq(remand_sc_decision_date.to_date)
+        expect(issue[:lastAction]).to eq("denied")
+        expect(issue[:date].to_date).to eq(remand_sc_decision_date.to_date)
         expect(issue[:description]).to eq("Rheumatoid arthritis")
 
         issue2 = issue_statuses.find { |i| i[:diagnosticCode].nil? }
         expect(issue2).to_not be_nil
         expect(issue2[:active]).to eq(false)
-        expect(issue2[:last_action]).to eq("allowed")
-        expect(issue2[:date]).to eq(decision_date.to_date)
+        expect(issue2[:lastAction]).to eq("allowed")
+        expect(issue2[:date].to_date).to eq(decision_date.to_date)
         expect(issue2[:description]).to eq("Pension issue")
+      end
+    end
+  end
+
+  context "#alerts" do
+    subject { appeal.alerts }
+    let(:receipt_date) { Time.zone.today - 10.days }
+    let!(:appeal) { create(:appeal, :hearing_docket, receipt_date: receipt_date) }
+
+    context "has a remand and effectuation tracked in VBMS" do
+      # the effectuation
+      let(:decision_date) { receipt_date + 30.days }
+      let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
+      let!(:decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal, disposition: "allowed", caseflow_decision_date: decision_date)
+      end
+      let(:effectuation_ep_cleared_date) { receipt_date + 250.days }
+      let!(:effectuation_ep) do
+        create(:end_product_establishment,
+               :cleared, source: decision_document, last_synced_at: effectuation_ep_cleared_date)
+      end
+      # the remand
+      let!(:remanded_decision_issue) do
+        create(:decision_issue,
+               decision_review: appeal,
+               disposition: "remanded",
+               benefit_type: "compensation",
+               caseflow_decision_date: decision_date)
+      end
+      let!(:remanded_sc) { create(:supplemental_claim, decision_review_remanded: appeal) }
+      let(:remanded_ep_clr_date) { receipt_date + 200.days }
+      let!(:remanded_ep) { create(:end_product_establishment, :cleared, source: remanded_sc) }
+      let!(:remanded_sc_decision_issue) do
+        create(:decision_issue,
+               decision_review: remanded_sc,
+               end_product_last_action_date: remanded_ep_clr_date)
+      end
+
+      it "has 3 ama_post_decision alerts" do
+        expect(subject.count).to eq(3)
+
+        expect(subject[0][:type]).to eq("ama_post_decision")
+        expect(subject[0][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
+        expect(subject[0][:details][:dueDate].to_date).to eq((decision_date + 365.days).to_date)
+        expect(subject[0][:details][:cavcDueDate].to_date).to eq((decision_date + 120.days).to_date)
+
+        expect(subject[1][:type]).to eq("ama_post_decision")
+        expect(subject[1][:details][:availableOptions]).to eq(%w[supplemental_claim higher_level_review appeal])
+        expect(subject[1][:details][:dueDate].to_date).to eq((remanded_ep_clr_date + 365.days).to_date)
+        expect(subject[1][:details][:cavcDueDate].to_date).to eq((remanded_ep_clr_date + 120.days).to_date)
+
+        expect(subject[2][:type]).to eq("ama_post_decision")
+        expect(subject[2][:details][:availableOptions]).to eq(%w[supplemental_claim cavc])
+        expect(subject[2][:details][:dueDate].to_date).to eq((effectuation_ep_cleared_date + 365.days).to_date)
+        expect(subject[2][:details][:cavcDueDate].to_date).to eq((effectuation_ep_cleared_date + 120.days).to_date)
+      end
+    end
+
+    context "has an open evidence submission task" do
+      let!(:evidence_submission_task) do
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, status: "in_progress", assigned_to: Bva.singleton)
+      end
+
+      it "has an evidentiary_period alert" do
+        expect(subject.count).to eq(1)
+        expect(subject[0][:type]).to eq("evidentiary_period")
+        expect(subject[0][:details][:due_date]).to eq((receipt_date + 90.days).to_date)
+      end
+    end
+
+    context "has a scheduled hearing" do
+      let(:root_task_status) { "in_progress" }
+      let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
+      let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: appeal_root_task, appeal: appeal) }
+      let(:hearing_scheduled_for) { Time.zone.today + 15.days }
+      let!(:hearing_day) do
+        create(:hearing_day,
+               request_type: HearingDay::REQUEST_TYPES[:video],
+               regional_office: "RO18",
+               scheduled_for: hearing_scheduled_for)
+      end
+
+      let!(:hearing) do
+        FactoryBot.create(
+          :hearing,
+          appeal: appeal,
+          disposition: nil,
+          evidence_window_waived: nil,
+          hearing_day: hearing_day
+        )
+      end
+      let!(:hearing_task_association) do
+        FactoryBot.create(
+          :hearing_task_association,
+          hearing: hearing,
+          hearing_task: hearing_task
+        )
+      end
+      let!(:schedule_hearing_task) do
+        FactoryBot.create(
+          :schedule_hearing_task,
+          parent: hearing_task,
+          appeal: appeal,
+          status: Constants.TASK_STATUSES.completed
+        )
+      end
+      let!(:disposition_task) do
+        FactoryBot.create(
+          :disposition_task,
+          parent: hearing_task,
+          appeal: appeal,
+          status: Constants.TASK_STATUSES.in_progress
+        )
+      end
+
+      it "has a scheduled hearing alert" do
+        expect(subject.count).to eq(1)
+        expect(subject[0][:type]).to eq("scheduled_hearing")
+        expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
+        expect(subject[0][:details][:type]).to eq("video")
+      end
+    end
+  end
+
+  describe ".withdrawn?" do
+    context "when root task is cancelled" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+      it "is withdrawn" do
+        expect(appeal.withdrawn?).to eq(false)
+        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+        expect(appeal.withdrawn?).to eq(true)
       end
     end
   end

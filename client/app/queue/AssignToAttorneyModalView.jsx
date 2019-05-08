@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -14,27 +13,9 @@ import {
   reassignTasksToUser
 } from './QueueActions';
 
-import type { State } from './types/state';
-import type { Task } from './types/models';
-
-type Params = {|
-  appealId: number,
-  userId: string,
-  taskId: string
-|};
-
-type Props = Params & {|
-  // From state
-  task: Task,
-
-  // From dispatch
-  initialAssignTasksToUser: typeof initialAssignTasksToUser,
-  reassignTasksToUser: typeof reassignTasksToUser
-|};
-
-class AssignToAttorneyModalView extends React.PureComponent<Props> {
+class AssignToAttorneyModalView extends React.PureComponent {
   handleAssignment = (
-    { tasks, assigneeId }: { tasks: Array<Task>, assigneeId: string }
+    { tasks, assigneeId }
   ) => {
     const previousAssigneeId = tasks[0].assignedTo.id.toString();
 
@@ -70,7 +51,7 @@ class AssignToAttorneyModalView extends React.PureComponent<Props> {
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Object) => {
+const mapStateToProps = (state, ownProps) => {
   return {
     task: taskById(state, { taskId: ownProps.taskId })
   };
@@ -84,4 +65,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 export default (connect(
   mapStateToProps,
   mapDispatchToProps
-)(AssignToAttorneyModalView): React.ComponentType<Props>);
+)(AssignToAttorneyModalView));

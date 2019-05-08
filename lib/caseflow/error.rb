@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Caseflow::Error
   module ErrorSerializer
     extend ActiveSupport::Concern
@@ -26,13 +28,16 @@ module Caseflow::Error
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
-
-  class FetchHearingLocationsJobError < SerializableError; end
+  class VaDotGovAddressCouldNotBeFoundError < VaDotGovAPIError; end
+  class VaDotGovInvalidInputError < VaDotGovAPIError; end
+  class VaDotGovMultipleAddressError < VaDotGovAPIError; end
+  class VaDotGovNullAddressError < StandardError; end
+  class VaDotGovForeignVeteranError < StandardError; end
 
   class FetchHearingLocationsJobError < SerializableError; end
 
   class ActionForbiddenError < SerializableError
-    def initialize(args)
+    def initialize(args = {})
       @code = args[:code] || 403
       @message = args[:message] || "Action forbidden"
     end
@@ -43,6 +48,14 @@ module Caseflow::Error
       @task_id = args[:task_id]
       @code = args[:code] || 500
       @message = args[:message] || "Could not find root task for task with ID #{@task_id}"
+    end
+  end
+
+  class InvalidParentTask < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 500
+      @message = args[:message] || "Invalid parent type for task #{@task_type}"
     end
   end
 
@@ -130,21 +143,6 @@ module Caseflow::Error
     end
   end
 
-  class DocumentUploadFailedInVBMS < SerializableError
-    def initialize(args)
-      @code = args[:code] || 502
-      @message = args[:message]
-    end
-  end
-
-  class TooManyChildTasks < SerializableError
-    def initialize(args)
-      @task_id = args[:task_id]
-      @code = args[:code] || 500
-      @message = args[:message] || "JudgeTask #{@task_id} has too many children"
-    end
-  end
-
   class ChildTaskAssignedToSameUser < SerializableError
     def initialize
       @code = 500
@@ -156,6 +154,14 @@ module Caseflow::Error
     def initialize
       @code = 500
       @message = "Appeal is not active at the Board. Send mail to appropriate Regional Office in mail portal"
+    end
+  end
+
+  class DuplicateJudgeTeam < SerializableError
+    def initialize(args)
+      @user_id = args[:user_id]
+      @code = args[:code] || 400
+      @message = args[:message] || "User #{@user_id} already has a JudgeTeam. Cannot create another JudgeTeam for user."
     end
   end
 

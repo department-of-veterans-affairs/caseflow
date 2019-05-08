@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe "Appeals API v2", type: :request do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -20,7 +22,7 @@ describe "Appeals API v2", type: :request do
 
   let(:api_key) { ApiKey.create!(consumer_name: "Testington Roboterson") }
 
-  context "Appeal list" do
+  context "Legacy Appeal list" do
     before do
       DocketSnapshot.create
     end
@@ -349,7 +351,6 @@ describe "Appeals API v2", type: :request do
   end
 
   context "All HLR, SC and Appeals" do
-    Time.zone = "America/New_York"
     before do
       Timecop.freeze(Time.utc(2018, 11, 28))
     end
@@ -376,7 +377,7 @@ describe "Appeals API v2", type: :request do
 
     let!(:hlr_request_issue) do
       create(:request_issue,
-             review_request: hlr,
+             decision_review: hlr,
              benefit_type: benefit_type,
              contested_rating_issue_diagnostic_code: nil)
     end
@@ -396,7 +397,7 @@ describe "Appeals API v2", type: :request do
 
     let!(:sc_request_issue) do
       create(:request_issue,
-             review_request: supplemental_claim_review,
+             decision_review: supplemental_claim_review,
              benefit_type: "pension",
              contested_rating_issue_diagnostic_code: "9999")
     end
@@ -441,12 +442,6 @@ describe "Appeals API v2", type: :request do
       end
 
       allow_any_instance_of(RequestIssue).to receive(:decision_or_promulgation_date).and_return(rating_promulgated_date)
-
-      FeatureToggle.enable!(:api_appeal_status_v3)
-    end
-
-    after do
-      FeatureToggle.disable!(:api_appeal_status_v3)
     end
 
     it "returns list of hlr, sc, appeal for veteran with SSN" do
@@ -464,7 +459,7 @@ describe "Appeals API v2", type: :request do
       # check to make sure the right amount of appeals are returned
       expect(json["data"].length).to eq(3)
 
-      # check the attribtues on the hlr
+      # check the attributes on the hlr
       expect(json["data"].first["type"]).to eq("higherLevelReview")
       expect(json["data"].first["id"]).to include("HLR")
       expect(json["data"].first["attributes"]["appealIds"].length).to eq(1)
@@ -476,7 +471,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"].first["attributes"]["description"]).to eq("1 compensation issue")
       expect(json["data"].first["attributes"]["aod"]).to be_nil
       expect(json["data"].first["attributes"]["location"]).to eq("aoj")
-      expect(json["data"].first["attributes"]["alerts"]).to be_nil
+      expect(json["data"].first["attributes"]["alerts"].count).to eq(0)
       expect(json["data"].first["attributes"]["aoj"]).to eq("vba")
       expect(json["data"].first["attributes"]["programArea"]).to eq("compensation")
       expect(json["data"].first["attributes"]["docket"]).to be_nil
@@ -506,7 +501,7 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][1]["attributes"]["description"]).to eq("Dental or oral condition")
       expect(json["data"][1]["attributes"]["aod"]).to be_nil
       expect(json["data"][1]["attributes"]["location"]).to eq("aoj")
-      expect(json["data"][1]["attributes"]["alerts"]).to be_nil
+      expect(json["data"][1]["attributes"]["alerts"].count).to eq(1)
       expect(json["data"][1]["attributes"]["aoj"]).to eq("vba")
       expect(json["data"][1]["attributes"]["programArea"]).to eq("pension")
       expect(json["data"][1]["attributes"]["docket"]).to be_nil
@@ -543,8 +538,8 @@ describe "Appeals API v2", type: :request do
       expect(json["data"][2]["attributes"]["description"]).to eq("2 issues")
       expect(json["data"][2]["attributes"]["aod"]).to eq(false)
       expect(json["data"][2]["attributes"]["location"]).to eq("bva")
-      expect(json["data"][2]["attributes"]["alerts"]).to be_nil
-      expect(json["data"][2]["attributes"]["aoj"]).to eq("other")
+      expect(json["data"][2]["attributes"]["alerts"].count).to eq(0)
+      expect(json["data"][2]["attributes"]["aoj"]).to eq("vba")
       expect(json["data"][2]["attributes"]["programArea"]).to eq("multiple")
       expect(json["data"][2]["attributes"]["docket"]["type"]).to eq("evidenceSubmission")
       expect(json["data"][2]["attributes"]["docket"]["month"]).to eq(Date.new(2018, 9, 1).to_s)
@@ -562,6 +557,137 @@ describe "Appeals API v2", type: :request do
       event_type = json["data"][2]["attributes"]["events"].first
       expect(event_type["type"]).to eq("ama_nod")
       expect(event_type["date"]).to eq(receipt_date.to_s)
+    end
+  end
+
+  context "HLR, SC and Appeal get filter out" do
+    before do
+      Timecop.freeze(Time.utc(2018, 11, 28))
+    end
+
+    let(:veteran_file_number) { "111223333" }
+    let(:receipt_date) { Date.new(2018, 9, 20) }
+
+    let!(:hlr) do
+      create(:higher_level_review,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             benefit_type: "compensation")
+    end
+
+    let!(:supplemental_claim_review) do
+      create(:supplemental_claim,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             benefit_type: "pension")
+    end
+
+    let!(:appeal) do
+      create(:appeal,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date,
+             docket_type: "evidence_submission")
+    end
+
+    before do
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
+        veteran_file_number
+      end
+    end
+
+    it "will filter out claims and appeal because no request issues" do
+      headers = {
+        "ssn": veteran_file_number,
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v2/appeals", headers: headers
+
+      json = JSON.parse(response.body)
+
+      # test for the 200 status-code
+      expect(response).to be_success
+      # check to make sure the right amount of appeals are returned
+      expect(json["data"].length).to eq(0)
+    end
+  end
+
+  context "Remanded SC filtered out" do
+    before do
+      Timecop.freeze(pre_ama_start_date)
+    end
+
+    let(:veteran_file_number) { "111223333" }
+    let(:receipt_date) { Time.zone.today - 20.days }
+    let(:benefit_type) { "compensation" }
+
+    let(:hlr_ep_clr_date) { receipt_date + 30 }
+    let!(:hlr_with_dta_error) do
+      create(:higher_level_review,
+             veteran_file_number: veteran_file_number,
+             receipt_date: receipt_date)
+    end
+
+    let!(:request_issue1) do
+      create(:request_issue,
+             decision_review: hlr_with_dta_error,
+             benefit_type: benefit_type,
+             contested_rating_issue_diagnostic_code: "9999")
+    end
+
+    let!(:hlr_epe) do
+      create(:end_product_establishment, :cleared, source: hlr_with_dta_error)
+    end
+
+    let!(:hlr_decision_issue_with_dta_error) do
+      create(:decision_issue,
+             decision_review: hlr_with_dta_error,
+             disposition: DecisionIssue::DTA_ERROR_PMR,
+             rating_issue_reference_id: "rating1",
+             benefit_type: benefit_type,
+             end_product_last_action_date: hlr_ep_clr_date)
+    end
+
+    let!(:dta_sc) do
+      create(:supplemental_claim,
+             veteran_file_number: veteran_file_number,
+             decision_review_remanded: hlr_with_dta_error)
+    end
+
+    let!(:request_issue2) do
+      create(:request_issue,
+             decision_review: dta_sc,
+             benefit_type: benefit_type,
+             contested_rating_issue_diagnostic_code: "9999")
+    end
+
+    let!(:dta_ep) do
+      create(:end_product_establishment, :active, source: dta_sc)
+    end
+
+    before do
+      allow_any_instance_of(Fakes::BGSService).to receive(:fetch_file_number_by_ssn) do |_bgs|
+        veteran_file_number
+      end
+    end
+
+    it "will have HLR and not remanded SC" do
+      headers = {
+        "ssn": veteran_file_number,
+        "Authorization": "Token token=#{api_key.key_string}"
+      }
+
+      get "/api/v2/appeals", headers: headers
+
+      json = JSON.parse(response.body)
+
+      # test for the 200 status-code
+      expect(response).to be_success
+      # check to make sure the right amount of appeals are returned
+      expect(json["data"].length).to eq(1)
+      expect(json["data"].first["type"]).to eq("higherLevelReview")
+      expect(json["data"].first["id"]).to include("HLR")
+      expect(json["data"].first["attributes"]["active"]).to eq(true)
     end
   end
 end

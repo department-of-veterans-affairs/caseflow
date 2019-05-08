@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class QueueRepository
   class << self
     # :nocov:
@@ -107,7 +109,7 @@ class QueueRepository
     end
 
     def appeal_info_query(vacols_ids)
-      VACOLS::Case.includes(:folder, :correspondent, :representatives)
+      VACOLS::Case.includes(:folder, :correspondent, :case_issues)
         .find(vacols_ids)
     end
 
@@ -139,7 +141,7 @@ class QueueRepository
                                       attrs.merge(modifying_user: judge.vacols_uniq_id, work_product: nil))
         end
 
-        create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id))
+        create_decass_record(attrs.merge(adding_user: judge.vacols_uniq_id, modifying_user: judge.vacols_uniq_id))
       end
     end
 

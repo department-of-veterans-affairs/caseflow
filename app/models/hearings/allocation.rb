@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Allocation < ApplicationRecord
   belongs_to :schedule_period
 

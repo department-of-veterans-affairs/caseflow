@@ -1,21 +1,14 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Appeal Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
-    FeatureToggle.enable!(:intakeAma, users: [current_user.css_id])
-    FeatureToggle.enable!(:intake_legacy_opt_in, users: [current_user.css_id])
 
-    Time.zone = "America/New_York"
     Timecop.freeze(post_ramp_start_date)
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma, users: [current_user.css_id])
-    FeatureToggle.disable!(:intake_legacy_opt_in, users: [current_user.css_id])
   end
 
   let!(:current_user) do
@@ -24,12 +17,14 @@ feature "Appeal Intake" do
 
   let(:veteran_file_number) { "223344555" }
 
+  let(:date_of_death) { nil }
   let!(:veteran) do
     Generators::Veteran.build(
       file_number: veteran_file_number,
       first_name: "Ed",
       last_name: "Merica",
-      participant_id: "55443322"
+      participant_id: "55443322",
+      date_of_death: date_of_death
     )
   end
 
@@ -40,20 +35,24 @@ feature "Appeal Intake" do
                               participant_id: "44444444")
   end
 
-  let(:future_date) { Time.zone.now + 30.days }
+  let(:future_date) { (Time.zone.now + 30.days).to_date }
 
-  let(:receipt_date) { post_ramp_start_date - 30.days }
+  let(:receipt_date) { (post_ramp_start_date - 30.days).to_date }
 
   let(:untimely_days) { 372.days }
 
-  let(:profile_date) { post_ramp_start_date.to_datetime - 35.days }
+  let(:profile_date) { (post_ramp_start_date - 35.days).to_datetime }
 
-  let(:untimely_date) { receipt_date - untimely_days - 1.day }
+  let(:nonrating_date) { Time.zone.yesterday }
+
+  let(:untimely_date) { (receipt_date - untimely_days - 1.day).to_date }
+
+  let(:promulgation_date) { receipt_date - 5.days }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -87,6 +86,17 @@ feature "Appeal Intake" do
 
   let(:no_ratings_err) { Rating::NilRatingProfileListError.new("none!") }
 
+  context "veteran is deceased" do
+    let(:date_of_death) { Time.zone.today - 1.day }
+
+    scenario "veteran cannot be claimant" do
+      # save the veteran first, otherwise creating an appeal will create a new veteran
+      veteran.save!
+      create(:appeal, veteran_file_number: veteran.file_number)
+      check_deceased_veteran_claimant(AppealIntake.new(veteran_file_number: veteran.file_number, user: current_user))
+    end
+  end
+
   it "cancels an intake in progress when there is a NilRatingProfileListError" do
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_ratings_in_range).and_raise(no_ratings_err)
     start_appeal(veteran)
@@ -119,13 +129,13 @@ feature "Appeal Intake" do
     click_on "Search"
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: future_date.strftime("%D")
+    fill_in "What is the Receipt Date of this form?", with: future_date.mdY
     click_intake_continue
 
     expect(page).to have_content("Receipt date cannot be in the future.")
     expect(page).to have_content("Please select an option.")
 
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.strftime("%D")
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
@@ -172,7 +182,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: profile_date.strftime("%D")
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("2 issues")
@@ -199,18 +209,18 @@ feature "Appeal Intake" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      decision_date: nil,
+      decision_date: promulgation_date,
       benefit_type: "compensation"
     )
 
     expect(nonrating_request_issue).to have_attributes(
       contested_rating_issue_reference_id: nil,
       contested_rating_issue_profile_date: nil,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       benefit_type: "compensation"
     )
-    expect(nonrating_request_issue.decision_date.to_date).to eq(profile_date.to_date)
+    expect(nonrating_request_issue.decision_date.to_date).to eq(nonrating_date)
   end
 
   it "Shows a review error when something goes wrong" do
@@ -219,7 +229,7 @@ feature "Appeal Intake" do
 
     visit "/intake"
 
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.strftime("%D")
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Which review option did the Veteran request?") do
       find("label", text: "Evidence Submission", match: :prefer_exact).click
@@ -257,7 +267,7 @@ feature "Appeal Intake" do
     )
 
     Claimant.create!(
-      review_request: appeal,
+      decision_review: appeal,
       participant_id: test_veteran.participant_id
     )
 
@@ -276,7 +286,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("1 issue")
@@ -298,7 +308,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: nonrating_date.mdY
     )
 
     click_intake_finish
@@ -315,20 +325,22 @@ feature "Appeal Intake" do
     complete_appeal
   end
 
-  context "ratings with disabiliity codes" do
+  context "ratings with diagnostic codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       appeal, = start_appeal(veteran)
       visit "/intake"
       click_intake_continue
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.appeal,
         appeal
       )
@@ -346,7 +358,7 @@ feature "Appeal Intake" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "04/19/2018"
+        date: nonrating_date.mdY
       )
 
       expect(page).to have_content("1 issue")
@@ -358,9 +370,12 @@ feature "Appeal Intake" do
   scenario "Add / Remove Issues page" do
     duplicate_reference_id = "xyz789"
     old_reference_id = "old1234"
+    promulgation_date = receipt_date - 40.days
+    rating_date = promulgation_date.mdY
+
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 40.days,
+      promulgation_date: promulgation_date,
       profile_date: receipt_date - 50.days,
       issues: [
         { reference_id: "xyz123", decision_text: "Left knee granted 2" },
@@ -405,6 +420,7 @@ feature "Appeal Intake" do
 
     # clicking the add issues button should bring up the modal
     click_intake_add_issue
+    expect(page).to have_content("Past decisions from #{rating_date}")
     expect(page).to have_content("Add issue 1")
     expect(page).to have_content("Does issue 1 match any of these issues")
     expect(page).to have_content("Left knee granted 2")
@@ -446,7 +462,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: profile_date.strftime("%D")
+      date: nonrating_date.mdY
     )
     expect(page).to have_content("2 issues")
 
@@ -486,7 +502,6 @@ feature "Appeal Intake" do
     add_intake_rating_issue("Really old injury")
     add_untimely_exemption_response("No")
     expect(page).to have_content("5 issues")
-    expect(page).to have_content("I am an exemption note")
     expect(page).to have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
     expect_ineligible_issue(5)
 
@@ -496,11 +511,10 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Another Description for Active Duty Adjustments",
-      date: untimely_date.strftime("%D")
+      date: untimely_date.mdY
     )
-    add_untimely_exemption_response("No", "I am an untimely exemption")
+    add_untimely_exemption_response("No")
     expect(page).to have_content("6 issues")
-    expect(page).to have_content("I am an untimely exemption")
     expect(page).to have_content(
       "Another Description for Active Duty Adjustments #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}"
     )
@@ -517,7 +531,7 @@ feature "Appeal Intake" do
     # Eligible because it comes from a RAMP decision
     click_intake_add_issue
     add_intake_rating_issue("Issue before AMA Activation from RAMP")
-    expect(page).to have_content("8. Issue before AMA Activation from RAMP Decision date:")
+    expect(page).to have_content("8. Issue before AMA Activation from RAMP\nDecision date:")
 
     # nonrating before_ama
     click_intake_add_issue
@@ -525,7 +539,7 @@ feature "Appeal Intake" do
     add_intake_nonrating_issue(
       category: "Drill Pay Adjustments",
       description: "A nonrating issue before AMA",
-      date: pre_ramp_start_date.strftime("%D")
+      date: pre_ramp_start_date.to_date.mdY
     )
     expect(page).to have_content(
       "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
@@ -542,7 +556,7 @@ feature "Appeal Intake" do
     expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
     expect(success_checklist).to_not have_content("A nonrating issue before AMA")
 
-    ineligible_checklist = find("ul.cf-ineligible-checklist")
+    ineligible_checklist = find("ul.cf-issue-checklist")
     expect(ineligible_checklist).to have_content("Non-RAMP Issue before AMA Activation is ineligible")
     expect(ineligible_checklist).to have_content("A nonrating issue before AMA is ineligible")
 
@@ -553,32 +567,31 @@ feature "Appeal Intake" do
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_rating_issue_reference_id: "xyz123",
              contested_issue_description: "Left knee granted 2",
              notes: "I am an issue note"
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_issue_description: "Really old injury",
-             untimely_exemption: false,
-             untimely_exemption_notes: "I am an exemption note"
+             untimely_exemption: false
            )).to_not be_nil
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
-      review_request: appeal,
-      issue_category: "Active Duty Adjustments",
+      decision_review: appeal,
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
-      decision_date: profile_date
+      decision_date: nonrating_date
     )
 
     expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
 
     another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
-      review_request_type: "Appeal",
-      review_request_id: appeal.id,
-      issue_category: "Active Duty Adjustments",
+      decision_review_type: "Appeal",
+      decision_review_id: appeal.id,
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Another Description for Active Duty Adjustments"
     )
 
@@ -587,33 +600,35 @@ feature "Appeal Intake" do
     expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              unidentified_issue_text: "This is an unidentified issue",
              is_unidentified: true
            )).to_not be_nil
 
     # Issues before AMA
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_issue_description: "Non-RAMP Issue before AMA Activation",
-             ineligible_reason: :before_ama
+             ineligible_reason: :before_ama,
+             closed_status: :ineligible
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              contested_issue_description: "Issue before AMA Activation from RAMP",
              ineligible_reason: nil,
              ramp_claim_id: "ramp_claim_id"
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              nonrating_issue_description: "A nonrating issue before AMA",
-             ineligible_reason: :before_ama
+             ineligible_reason: :before_ama,
+             closed_status: :ineligible
            )).to_not be_nil
 
     expect(RequestIssue.find_by(
-             review_request: appeal,
+             decision_review: appeal,
              nonrating_issue_description: "A nonrating issue before AMA",
              decision_date: pre_ramp_start_date
            )).to_not be_nil
@@ -634,21 +649,24 @@ feature "Appeal Intake" do
     let!(:previous_appeal_request_issue) do
       create(
         :request_issue,
-        review_request: previous_appeal,
-        contested_rating_issue_reference_id: appeal_reference_id
+        decision_review: previous_appeal,
+        contested_rating_issue_reference_id: appeal_reference_id,
+        closed_at: 2.months.ago
       )
     end
 
     let!(:previous_appeal_decision_issue) do
-      create(:decision_issue,
-             decision_review: previous_appeal,
-             request_issues: [previous_appeal_request_issue],
-             rating_issue_reference_id: appeal_reference_id,
-             participant_id: veteran.participant_id,
-             description: "appeal decision issue",
-             decision_text: "appeal decision issue",
-             benefit_type: "compensation",
-             caseflow_decision_date: profile_date)
+      create(
+        :decision_issue,
+        decision_review: previous_appeal,
+        request_issues: [previous_appeal_request_issue],
+        rating_issue_reference_id: appeal_reference_id,
+        participant_id: veteran.participant_id,
+        description: "appeal decision issue",
+        decision_text: "appeal decision issue",
+        benefit_type: "compensation",
+        caseflow_decision_date: profile_date
+      )
     end
 
     scenario "the issue is ineligible" do
@@ -671,7 +689,7 @@ feature "Appeal Intake" do
       expect(
         RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
       ).to eq("appeal_to_appeal")
-      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      ineligible_checklist = find("ul.cf-issue-checklist")
       expect(ineligible_checklist).to have_content(
         "appeal decision issue #{Constants.INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal}"
       )
@@ -704,7 +722,6 @@ feature "Appeal Intake" do
     safe_click ".close-modal"
     expect(page).to_not have_css("#modal_id-title")
     safe_click "#cancel-intake"
-
     safe_click ".confirm-cancel"
     expect(page).to have_content("Make sure you’ve selected an option below.")
     within_fieldset("Please select the reason you are canceling this intake.") do
@@ -736,7 +753,7 @@ feature "Appeal Intake" do
       benefit_type: "Education",
       category: "Accrued",
       description: "Description for Accrued",
-      date: profile_date.strftime("%D")
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("Description for Accrued")
@@ -747,7 +764,7 @@ feature "Appeal Intake" do
       benefit_type: "Vocational Rehabilitation and Employment",
       category: "Basic Eligibility",
       description: "Description for basic eligibility",
-      date: profile_date.strftime("%D")
+      date: nonrating_date.mdY
     )
 
     expect(page).to have_content("Description for basic eligibility")
@@ -805,7 +822,7 @@ feature "Appeal Intake" do
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",
-          date: profile_date.strftime("%D"),
+          date: nonrating_date.mdY,
           legacy_issues: true
         )
 
@@ -831,12 +848,12 @@ feature "Appeal Intake" do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
         )
 
         click_intake_finish
 
-        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        ineligible_checklist = find("ul.cf-issue-checklist")
         expect(ineligible_checklist).to have_content(
           "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
         )
@@ -872,7 +889,7 @@ feature "Appeal Intake" do
 
         click_intake_finish
 
-        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        ineligible_checklist = find("ul.cf-issue-checklist")
         expect(ineligible_checklist).to have_content(
           "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
         )
@@ -886,19 +903,6 @@ feature "Appeal Intake" do
 
         expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
       end
-    end
-
-    scenario "adding issue with legacy opt in disabled" do
-      allow(FeatureToggle).to receive(:enabled?).and_call_original
-      allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
-
-      start_appeal(veteran)
-      visit "/intake/add_issues"
-
-      click_intake_add_issue
-      expect(page).to have_content("Add this issue")
-      add_intake_rating_issue("Left knee granted")
-      expect(page).to have_content("Left knee granted")
     end
   end
 
@@ -934,9 +938,26 @@ feature "Appeal Intake" do
 
       visit "/intake/add_issues"
       click_intake_add_issue
-      expect(page).to have_content(decision_issue_date.strftime("%m/%d/%Y"))
+      expect(page).to have_content(decision_issue_date.mdY)
       expect(page).to have_content("granted issue")
       expect(page).to have_content("dismissed issue")
+    end
+  end
+
+  context "has a chain of prior decision issues" do
+    let(:start_date) { Time.zone.today - 300.days }
+    before do
+      prior_appeal = create(:appeal, :outcoded, veteran: veteran)
+      request_issue = create(:request_issue,
+                             contested_rating_issue_reference_id: "old123",
+                             contested_rating_issue_profile_date: untimely_rating.profile_date,
+                             decision_review: prior_appeal)
+      setup_prior_decision_issue_chain(prior_appeal, request_issue, veteran, start_date)
+    end
+
+    it "disables prior contestable issues" do
+      start_appeal(veteran)
+      check_decision_issue_chain(start_date)
     end
   end
 end

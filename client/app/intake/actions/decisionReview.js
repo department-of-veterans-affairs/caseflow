@@ -36,6 +36,7 @@ export const submitReview = (intakeId, intakeData, intakeType) => (dispatch) => 
         dispatch({
           type: ACTIONS.SUBMIT_REVIEW_FAIL,
           payload: {
+            errorUUID: responseObject.error_uuid,
             responseErrorCodes
           },
           meta: {
@@ -136,10 +137,10 @@ export const setPayeeCode = (payeeCode) => ({
   }
 });
 
-export const setIssueSelected = (profileDate, issueId, isSelected) => ({
+export const setIssueSelected = (approxDecisionDate, issueId, isSelected) => ({
   type: ACTIONS.SET_ISSUE_SELECTED,
   payload: {
-    profileDate,
+    approxDecisionDate,
     issueId,
     isSelected
   },

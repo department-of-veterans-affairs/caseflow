@@ -1,18 +1,29 @@
+# frozen_string_literal: true
+
 require "json"
 
 class ExternalApi::EfolderService
-  TRIES = 300
+  def self.quick_document_count_for_appeal(appeal, user)
+    response = generate_efolder_request(appeal.veteran_file_number.to_s, user, 1)
+    response[:documents]&.size
+    # We expect to fail fast. generate_efolder_request() raises an error if we have not gotten a positive response from
+    # Efolder after we are done retrying. Since we only retry once, it is more likely that we will raise that error.
+    # Since this function is only used to get the text that the front-end will display, we catch that error to avoid
+    # returning a 504 response to the front-end and showing the error text.
+  rescue Caseflow::Error::DocumentRetrievalError
+    "Try again later..."
+  end
 
   def self.fetch_documents_for(appeal, user)
     generate_efolder_request(appeal.veteran_file_number.to_s, user)
   end
 
-  def self.generate_efolder_request(vbms_id, user)
+  def self.generate_efolder_request(vbms_id, user, retry_attempts_count = 300)
     headers = { "FILE-NUMBER" => vbms_id }
     response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
     response_attrs = {}
 
-    TRIES.times do
+    retry_attempts_count.times do
       response_body = JSON.parse(response.body)
 
       check_for_error(response_body: response_body, code: response.code, vbms_id: vbms_id, user_id: user.id)
@@ -27,7 +38,7 @@ class ExternalApi::EfolderService
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    msg = "Failed to fetch manifest after #{TRIES} seconds for #{vbms_id}, \
+    msg = "Failed to fetch manifest after #{retry_attempts_count} seconds for #{vbms_id}, \
       user_id: #{user.id}, response attributes: #{response_attrs}"
     fail Caseflow::Error::DocumentRetrievalError, code: 504, message: msg
   end

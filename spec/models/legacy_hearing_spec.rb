@@ -1,33 +1,37 @@
+# frozen_string_literal: true
+
 describe LegacyHearing do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
     RequestStore[:current_user] = OpenStruct.new(css_id: "Test user", station_id: "101", uniq_id: "1234")
   end
 
   let(:hearing) do
-    build(
+    create(
       :legacy_hearing,
       scheduled_for: scheduled_for,
       disposition: disposition,
       hold_open: hold_open,
-      request_type: request_type
+      request_type: request_type,
+      regional_office: regional_office
     )
   end
 
   let(:hearing2) do
-    build(
+    create(
       :legacy_hearing,
       scheduled_for: scheduled_for,
       disposition: disposition,
       hold_open: hold_open,
-      request_type: request_type
+      request_type: request_type,
+      regional_office: regional_office
     )
   end
 
-  let(:scheduled_for) { 1.day.ago }
+  let(:scheduled_for) { Time.zone.yesterday }
   let(:disposition) { nil }
   let(:hold_open) { nil }
   let(:request_type) { HearingDay::REQUEST_TYPES[:video] }
+  let(:regional_office) { "RO13" }
 
   context "#location" do
     subject { hearing.request_type_location }
@@ -41,9 +45,43 @@ describe LegacyHearing do
     end
   end
 
+  context "#disposition_editable" do
+    subject { hearing.disposition_editable }
+
+    context "when the hearing does not have a hearing_task_association" do
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the hearing has an open disposition task" do
+      let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
+      let!(:disposition_task) { create(:disposition_task, parent: hearing_task_association.hearing_task) }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when the hearing has a cancelled disposition task" do
+      let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
+      let!(:disposition_task) do
+        create(:disposition_task,
+               parent: hearing_task_association.hearing_task,
+               status: Constants.TASK_STATUSES.cancelled)
+      end
+
+      it { is_expected.to eq(false) }
+    end
+
+    context "when the hearing has a disposition task with children" do
+      let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
+      let!(:disposition_task) { create(:disposition_task, parent: hearing_task_association.hearing_task) }
+      let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
+
+      it { is_expected.to eq(false) }
+    end
+  end
+
   context "#no_show?" do
     subject { hearing.no_show? }
-    let(:disposition) { :no_show }
+    let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
 
     it { is_expected.to be_truthy }
   end

@@ -4,9 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import ApiUtil from '../util/ApiUtil';
-import _ from 'lodash';
 
-import { setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
+import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
 import { css } from 'glamor';
 import { COLORS } from '../constants/AppConstants';
@@ -17,14 +16,16 @@ const documentCountStyling = css({
 
 class AppealDocumentCount extends React.PureComponent {
   componentDidMount = () => {
-    this.props.setAppealDocCount(this.props.externalId, null);
-
     const {
       appeal,
-      cached
+      docCountForAppeal
     } = this.props;
 
     if (appeal.isPaperCase) {
+      return;
+    }
+
+    if (docCountForAppeal && docCountForAppeal.docCountText) {
       return;
     }
 
@@ -33,34 +34,38 @@ class AppealDocumentCount extends React.PureComponent {
       timeout: { response: 5 * 60 * 1000 }
     };
 
-    const endpoint = `document_count${cached ? '?cached' : ''}`;
+    this.props.loadAppealDocCount(this.props.externalId);
 
-    ApiUtil.get(`/appeals/${this.props.externalId}/${endpoint}`, requestOptions).then((response) => {
+    ApiUtil.get(`/appeals/${this.props.externalId}/document_count`, requestOptions).then((response) => {
       const resp = JSON.parse(response.text);
 
       this.props.setAppealDocCount(this.props.externalId, resp.document_count);
-    }, (error) => {
-      this.props.errorFetchingDocumentCount(this.props.externalId, error);
+    }, () => {
+      this.props.errorFetchingDocumentCount(this.props.externalId);
     });
   }
 
   render = () => {
-    if (_.isNil(this.props.docCountForAppeal)) {
-      if (this.props.loadingText) {
-        return <span {...documentCountStyling}>Loading number of docs...</span>;
-      }
+    const {
+      docCountForAppeal,
+      loadingText
+    } = this.props;
 
-      return null;
+    if (docCountForAppeal) {
+      if (docCountForAppeal.docCountText) {
+        return docCountForAppeal.docCountText;
+      } else if (loadingText && (docCountForAppeal.loading || docCountForAppeal.error)) {
+        return docCountForAppeal.error || <span {...documentCountStyling}>Loading number of docs...</span>;
+      }
     }
 
-    return this.props.docCountForAppeal;
+    return null;
   }
 }
 
 AppealDocumentCount.propTypes = {
   appeal: PropTypes.object.isRequired,
-  loadingText: PropTypes.bool,
-  cached: PropTypes.bool
+  loadingText: PropTypes.bool
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -73,6 +78,7 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
+  loadAppealDocCount,
   setAppealDocCount,
   errorFetchingDocumentCount
 }, dispatch);

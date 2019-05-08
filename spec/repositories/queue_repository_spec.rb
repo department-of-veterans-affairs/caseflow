@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe QueueRepository do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -40,6 +42,7 @@ describe QueueRepository do
         expect(decass.deatty).to eq attorney_staff.sattyid
         expect(decass.deteam).to eq attorney_staff.stitle[0..2]
         expect(decass.deadusr).to eq judge_staff.slogid
+        expect(decass.demdusr).to eq judge_staff.slogid
         expect(decass.deadtim).to eq VacolsHelper.local_date_with_utc_timezone
         expect(decass.dedeadline).to eq VacolsHelper.local_date_with_utc_timezone + 30.days
         expect(decass.deassign).to eq VacolsHelper.local_date_with_utc_timezone

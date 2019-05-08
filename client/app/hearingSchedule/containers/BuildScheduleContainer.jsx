@@ -9,15 +9,15 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import BuildSchedule from '../components/BuildSchedule';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
-const vacolsLoadingMessage = 'We are uploading to VACOLS. Please don\'t click the back or refresh buttons until ' +
+const vacolsLoadingMessage = 'We are uploading to Caseflow. Please don\'t click the back or refresh buttons until ' +
   'the upload is finished.';
 const pastScheduleLoadingMessage = 'Loading past schedule uploads...';
 
-const vacolsLoadingErrorTitle = { title: 'We could not complete your VACOLS upload' };
+const vacolsLoadingErrorTitle = { title: 'We could not complete your Caseflow upload' };
 const pastScheduleLoadingErrorTitle = { title: 'We could not load past schedule uploads' };
 
 const vacolsLoadingErrorMsg = <div>
-  We encountered an error uploading to VACOLS. Please use the 'Go Back' link to try again.
+  We encountered an error uploading to Caseflow. Please use the 'Go Back' link to try again.
   if the problem persists you can check the status of our applications or submit a help
   request using the links in the footer.<br></br><br></br>
   <span><Link to="/schedule/build/upload"> Go Back</Link></span>
@@ -73,7 +73,7 @@ class BuildScheduleContainer extends React.PureComponent {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createLoadPromise}
       loadingComponentProps={{
-        spinnerColor: LOGO_COLORS.HEARING_SCHEDULE.ACCENT,
+        spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
         message: loadingMessage
       }}
       failStatusMessageProps={errorTitle}

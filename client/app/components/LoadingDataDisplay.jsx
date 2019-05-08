@@ -3,16 +3,23 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import LoadingScreen from './LoadingScreen';
 import StatusMessage from './StatusMessage';
+import COPY from '../../COPY.json';
 
 const PROMISE_RESULTS = {
   SUCCESS: 'SUCCESS',
   FAILURE: 'FAILURE'
 };
 
-const accessDeniedTitle = { title: 'Additional access needed' };
+const accessDeniedTitle = { title: COPY.ACCESS_DENIED_TITLE };
 const accessDeniedMsg = <div>
         It looks like you do not have the necessary level of access to view this information.<br />
         Please check with your application administrator before trying again.</div>;
+
+const duplicateNumberTitle = { title: COPY.DUPLICATE_PHONE_NUMBER_TITLE };
+const duplicateNumberMsg = <div>
+        Duplicate phone numbers documented.<br />
+        Please contact VLJ Support to request that this veteran's information be updated to remove duplicate
+        phone numbers currently on file to resolve this error. </div>;
 
 const itemNotFoundTitle = { title: 'Information cannot be found' };
 const itemNotFoundMsg = <div>
@@ -48,8 +55,17 @@ class LoadingDataDisplay extends React.PureComponent {
           return;
         }
 
-        this.setState({ promiseResult: PROMISE_RESULTS.FAILURE,
-          statusCode: response.status });
+        let errors;
+
+        if (response.response && response.response.type === 'application/json') {
+          errors = JSON.parse(response.response.text).errors;
+        }
+
+        this.setState({
+          promiseResult: PROMISE_RESULTS.FAILURE,
+          statusCode: response.status,
+          error: errors ? errors[0].title : null
+        });
         window.clearInterval(this.intervalId);
         // eslint-disable-next-line no-console
         console.log(response);
@@ -78,10 +94,10 @@ class LoadingDataDisplay extends React.PureComponent {
     }
   }
 
-  errorTitleHelper = (statusCode) => {
+  errorTitleHelper = (statusCode, error) => {
     switch (statusCode) {
     case 403:
-      return accessDeniedTitle;
+      return error === COPY.DUPLICATE_PHONE_NUMBER_TITLE ? duplicateNumberTitle : accessDeniedTitle;
     case 404:
       return itemNotFoundTitle;
     default:
@@ -89,10 +105,10 @@ class LoadingDataDisplay extends React.PureComponent {
     }
   }
 
-  errorMsgHelper = (statusCode) => {
+  errorMsgHelper = (statusCode, error) => {
     switch (statusCode) {
     case 403:
-      return accessDeniedMsg;
+      return error === COPY.DUPLICATE_PHONE_NUMBER_TITLE ? duplicateNumberMsg : accessDeniedMsg;
     case 404:
       return itemNotFoundMsg;
     default:
@@ -110,8 +126,8 @@ class LoadingDataDisplay extends React.PureComponent {
     // Because we put this first, we'll show the error state if the timeout has elapsed,
     // even if the promise did eventually resolve.
     if (this.state.promiseResult === PROMISE_RESULTS.FAILURE || isTimedOut) {
-      return <ErrorComponent {...this.errorTitleHelper(this.state.statusCode)}>
-        {this.errorMsgHelper(this.state.statusCode)}
+      return <ErrorComponent {...this.errorTitleHelper(this.state.statusCode, this.state.error)}>
+        {this.errorMsgHelper(this.state.statusCode, this.state.error)}
       </ErrorComponent>;
     }
 

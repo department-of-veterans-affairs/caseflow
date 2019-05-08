@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HigherLevelReviewIntake < ClaimReviewIntake
   enum error_code: Intake::ERROR_CODES
 
@@ -5,7 +7,7 @@ class HigherLevelReviewIntake < ClaimReviewIntake
     HigherLevelReview.new(veteran_file_number: veteran_file_number)
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       same_office: detail.same_office,
       informal_conference: detail.informal_conference

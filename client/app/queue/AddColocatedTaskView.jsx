@@ -1,19 +1,18 @@
-// @flow
 import * as React from 'react';
 import pluralize from 'pluralize';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
 import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
-import decisionViewBase from './components/DecisionViewBase';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
 import Alert from '../components/Alert';
 
 import { highlightInvalidFormItems, requestSave } from './uiReducer/uiActions';
-import { onReceiveAmaTasks, setAppealAttrs } from './QueueActions';
+import { setAppealAttrs, onReceiveTasks, deleteTask } from './QueueActions';
 
 import {
   appealWithDetailSelector,
@@ -27,38 +26,8 @@ import {
 import COPY from '../../COPY.json';
 import Button from '../components/Button';
 
-import { taskActionData } from './utils';
-
-import type { Appeal, Task } from './types/models';
-import type { UiStateMessage } from './types/state';
-
-type AdminActionType = {|
-  actionLabel: ?string,
-  instructions: string,
-  key: string
-|};
-
-type ComponentState = {|
-  adminActions: Array<AdminActionType>
-|};
-
-type Params = {|
-  appealId: string,
-  taskId: string
-|};
-
-type Props = Params & {|
-  // store
-  highlightFormItems: boolean,
-  error: ?UiStateMessage,
-  appeal: Appeal,
-  task: Task,
-  // dispatch
-  highlightInvalidFormItems: typeof highlightInvalidFormItems,
-  requestSave: typeof requestSave,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks,
-  setAppealAttrs: typeof setAppealAttrs
-|};
+import { taskActionData, prepareAllTasksForStore } from './utils';
+import QueueFlowPage from './components/QueueFlowPage';
 
 const adminActionTemplate = () => {
   return {
@@ -68,7 +37,7 @@ const adminActionTemplate = () => {
   };
 };
 
-class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
+class AddColocatedTaskView extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -122,7 +91,8 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
     const { task } = this.props;
     const payload = {
       data: {
-        tasks: this.buildPayload()
+        tasks: this.buildPayload(),
+        role: this.props.role
       }
     };
     const msgTitle = COPY.ADD_COLOCATED_TASK_CONFIRMATION_TITLE;
@@ -137,13 +107,30 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
 
     this.props.requestSave('/tasks', payload, successMsg).
       then((resp) => {
+        const response = JSON.parse(resp.text);
+
+        // Remove any duplicate tasks returned by creating multiple admin actions
+        const filteredTasks = _.sortedUniqBy(response.tasks.data, (amaTask) => {
+          if (amaTask.attributes.external_appeal_id === task.externalAppealId) {
+            return amaTask.attributes.external_appeal_id;
+          }
+
+          return amaTask.id;
+        });
+        const allTasks = prepareAllTasksForStore(filteredTasks);
+
+        this.props.onReceiveTasks({
+          tasks: allTasks.tasks,
+          amaTasks: allTasks.amaTasks
+        });
+
         if (task.isLegacy) {
           this.props.setAppealAttrs(task.externalAppealId, { location: 'CASEFLOW' });
-        } else {
-          const response = JSON.parse(resp.text);
-
-          this.props.onReceiveAmaTasks(response.tasks.data);
+          this.props.deleteTask(task.uniqueId);
         }
+      }).
+      catch(() => {
+        // handle the error from the frontend
       });
   }
 
@@ -200,10 +187,17 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
   }
 
   render = () => {
-    const { error } = this.props;
+    const { error, ...otherProps } = this.props;
     const { adminActions } = this.state;
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      validateForm={this.validateForm}
+      goToNextStep={this.goToNextStep}
+      getNextStepUrl={this.getNextStepUrl}
+      continueBtnText={COPY.ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL}
+      hideCancelButton
+      {...otherProps}
+    >
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         {COPY.ADD_COLOCATED_TASK_SUBHEAD}
       </h1>
@@ -212,7 +206,7 @@ class AddColocatedTaskView extends React.PureComponent<Props, ComponentState> {
         {error.detail}
       </Alert>}
       { this.actionFormList(adminActions) }
-    </React.Fragment>;
+    </QueueFlowPage>;
   }
 }
 
@@ -226,13 +220,9 @@ const mapStateToProps = (state, ownProps) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightInvalidFormItems,
   requestSave,
-  onReceiveAmaTasks,
+  onReceiveTasks,
+  deleteTask,
   setAppealAttrs
 }, dispatch);
 
-const WrappedComponent = decisionViewBase(AddColocatedTaskView, {
-  hideCancelButton: true,
-  continueBtnText: COPY.ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
-});
-
-export default (connect(mapStateToProps, mapDispatchToProps)(WrappedComponent): React.ComponentType<Params>);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(AddColocatedTaskView));

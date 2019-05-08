@@ -1,9 +1,16 @@
+# frozen_string_literal: true
+
 RSpec.describe IntakesController do
   before do
     Fakes::Initializer.load!
-    FeatureToggle.enable!(:intake)
     User.authenticate!(roles: ["Mail Intake"])
+
+    allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
+    allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
+    allow(bgs).to receive(:fetch_veteran_info).and_call_original
   end
+
+  let(:bgs) { BGSService.new }
 
   describe "#create" do
     let(:file_number) { "123456789" }
@@ -20,6 +27,59 @@ RSpec.describe IntakesController do
       post :create, params: { file_number: ssn, form_type: "higher_level_review" }
       expect(response.status).to eq(200)
       expect(Intake.last.veteran_file_number).to eq(file_number)
+    end
+
+    context "veteran name is out of sync with BGS" do
+      let!(:veteran) { create(:veteran, file_number: file_number, first_name: nil, last_name: nil) }
+      before { Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica") }
+
+      it "will update the Veteran name in Caseflow" do
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+        expect(response.status).to eq(200)
+        vet = Veteran.find_by_file_number_or_ssn(file_number)
+        expect(vet).to_not be_nil
+        expect(vet.first_name).to eq "Ed"
+        expect(vet.last_name).to eq "Merica"
+        expect(bgs).to have_received(:fetch_veteran_info).exactly(2).times
+      end
+    end
+
+    context "veteran in BGS but not yet in Caseflow" do
+      let(:file_number) { "999887777" }
+      let!(:veteran) {} # no-op
+      before { Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica") }
+
+      it "will create the Veteran in Caseflow" do
+        expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+        expect(response.status).to eq(200)
+        vet = Veteran.find_by_file_number_or_ssn(file_number)
+        expect(vet).to_not be_nil
+        expect(vet.first_name).to eq "Ed"
+        expect(vet.last_name).to eq "Merica"
+        expect(bgs).to have_received(:fetch_veteran_info).exactly(1).times
+      end
+    end
+
+    context "veteran in BGS and not accessible to user" do
+      before do
+        Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica")
+        allow_any_instance_of(Veteran).to receive(:accessible?).and_return(false)
+      end
+
+      let(:file_number) { "999887777" }
+      let!(:veteran) {} # no-op
+
+      it "does not create Veteran db record in Caseflow" do
+        expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
+        expect(Intake.find_by(veteran_file_number: file_number)).to be_nil
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+        expect(response.status).to eq(422)
+        expect(controller.send(:new_intake).error_code).to eq("veteran_not_accessible")
+        expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
+        expect(Intake.find_by(veteran_file_number: file_number)).to_not be_nil
+        expect(bgs).to have_received(:fetch_veteran_info).exactly(1).times
+      end
     end
   end
 
@@ -67,8 +127,6 @@ RSpec.describe IntakesController do
     end
 
     context "when intaking an AMA appeal" do
-      before { FeatureToggle.enable!(:intake, users: [current_user.css_id]) }
-
       it "should return the ui hash with ama_enabled being true" do
         intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
         intake.save!
@@ -78,8 +136,6 @@ RSpec.describe IntakesController do
     end
 
     context "when intaking an AMA appeal" do
-      before { FeatureToggle.disable!(:intake, users: [current_user.css_id]) }
-
       it "should return the ui hash with ama_enabled being false" do
         intake = Intake.new(user_id: current_user.id, started_at: Time.zone.now)
         intake.save!

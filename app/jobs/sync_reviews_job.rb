@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This job will sync end products & contentions that we created for decision reviews
 class SyncReviewsJob < CaseflowJob
   queue_as :low_priority
@@ -29,9 +31,9 @@ class SyncReviewsJob < CaseflowJob
   def perform_ramp_refiling_reprocessing
     RampRefiling.need_to_reprocess.each do |ramp_refiling|
       ramp_refiling.create_end_product_and_contentions!
-    rescue StandardError => e
+    rescue StandardError => error
       # Rescue and capture errors so they don't cause the job to stop
-      Raven.capture_exception(e, extra: { ramp_refiling_id: ramp_refiling.id })
+      Raven.capture_exception(error, extra: { ramp_refiling_id: ramp_refiling.id })
     end
   end
 
@@ -56,7 +58,7 @@ class SyncReviewsJob < CaseflowJob
 
   def reprocess_decision_documents(limit)
     DecisionDocument.requires_processing.limit(limit).each do |decision_document|
-      ProcessDecisionDocumentJob.perform_later(decision_document)
+      ProcessDecisionDocumentJob.perform_later(decision_document.id)
     end
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
 
@@ -45,7 +47,7 @@ class DecisionReviewsController < ApplicationController
 
   def in_progress_tasks
     apply_task_serializer(
-      business_line.tasks.includes([:assigned_to, :appeal]).order(assigned_at: :desc).reject(&:completed?)
+      business_line.tasks.active.includes([:assigned_to, :appeal]).order(assigned_at: :desc)
     )
   end
 

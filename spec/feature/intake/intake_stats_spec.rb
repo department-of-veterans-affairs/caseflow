@@ -1,4 +1,4 @@
-require "rails_helper"
+# frozen_string_literal: true
 
 RSpec.feature "Intake Stats Dashboard" do
   before do
@@ -31,8 +31,7 @@ RSpec.feature "Intake Stats Dashboard" do
            notice_date: 5.days.ago,
            receipt_date: 45.minutes.ago,
            option_selected: :higher_level_review,
-           established_at: Time.zone.now,
-           end_product_status: "HELLA_ACTIVE").issues.create!(description: "this is the only issue here")
+           established_at: Time.zone.now).issues.create!(description: "this is the only issue here")
 
     election_for_closed_appeals = create(
       :ramp_election,
@@ -106,58 +105,58 @@ RSpec.feature "Intake Stats Dashboard" do
     expect(CalculateIntakeStatsJob).to receive(:perform_later).twice
     visit "/intake/stats"
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January (so far)")
-    expect(find("#ramp-elections-sent")).to have_content("Total 4")
-    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews Returned 1")
-    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews with Informal Conference Returned 1")
-    expect(find("#ramp-elections-sent")).to have_content("Supplemental Claims Returned 0")
-    expect(find("#ramp-elections-sent")).to have_content("Total Returned 2")
-    expect(find("#ramp-elections-sent")).to have_content("Percentage Returned 50 %")
-    expect(find("#ramp-elections-sent")).to have_content("Average Response Time 4.00 days")
+    expect(find("#ramp-elections-sent")).to have_content("Total\n4")
+    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews Returned\n1")
+    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews with Informal Conference Returned\n1")
+    expect(find("#ramp-elections-sent")).to have_content("Supplemental Claims Returned\n0")
+    expect(find("#ramp-elections-sent")).to have_content("Total Returned\n2")
+    expect(find("#ramp-elections-sent")).to have_content("Percentage Returned\n50 %")
+    expect(find("#ramp-elections-sent")).to have_content("Average Response Time\n4.00 days")
 
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January (so far)")
-    expect(find("#ramp-elections-received")).to have_content("Total 4")
-    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews 2")
-    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews with Informal Conference 1")
-    expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
-    expect(find("#ramp-elections-received")).to have_content("Total Issues 4")
-    expect(find("#ramp-elections-received")).to have_content("Average Response Time 5.00 days")
-    expect(find("#ramp-elections-received")).to have_content("Average Time since Notice of Disagreement 364.00 days")
-    expect(find("#ramp-elections-received")).to have_content("Average Control Time 12.00 hours")
+    expect(find("#ramp-elections-received")).to have_content("Total\n4")
+    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews\n2")
+    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews with Informal Conference\n1")
+    expect(find("#ramp-elections-received")).to have_content("Supplemental Claims\n1")
+    expect(find("#ramp-elections-received")).to have_content("Total Issues\n4")
+    expect(find("#ramp-elections-received")).to have_content("Average Response Time\n5.00 days")
+    expect(find("#ramp-elections-received")).to have_content("Average Time since Notice of Disagreement\n364.00 days")
+    expect(find("#ramp-elections-received")).to have_content("Average Control Time\n12.00 hours")
 
     expect(find("#ramp-elections-processed")).to have_content("RAMP Elections Processed for January (so far)")
-    expect(find("#ramp-elections-processed")).to have_content("Total 2")
-    expect(find("#ramp-elections-processed")).to have_content("Eligible 1")
-    expect(find("#ramp-elections-processed")).to have_content("Ineligible 1")
-    expect(find("#ramp-elections-processed")).to have_content("Percent Ineligible 50")
-    expect(find("#ramp-elections-processed")).to have_content("Ineligible - Ineligible Appeals 0")
-    expect(find("#ramp-elections-processed")).to have_content("Ineligible - No Appeals 1")
-    expect(find("#ramp-elections-processed")).to have_content("Ineligible - Duplicate 0")
+    expect(find("#ramp-elections-processed")).to have_content("Total\n2")
+    expect(find("#ramp-elections-processed")).to have_content("Eligible\n1")
+    expect(find("#ramp-elections-processed")).to have_content("Ineligible\n1")
+    expect(find("#ramp-elections-processed")).to have_content("Percent Ineligible\n50")
+    expect(find("#ramp-elections-processed")).to have_content("Ineligible - Ineligible Appeals\n0")
+    expect(find("#ramp-elections-processed")).to have_content("Ineligible - No Appeals\n1")
+    expect(find("#ramp-elections-processed")).to have_content("Ineligible - Duplicate\n0")
 
     expect(find("#ramp-refilings-received")).to have_content("RAMP Refilings Received for January (so far)")
-    expect(find("#ramp-refilings-received")).to have_content("Total 4")
-    expect(find("#ramp-refilings-received")).to have_content("Higher-Level Reviews 1")
-    expect(find("#ramp-refilings-received")).to have_content("Higher-Level Reviews with Informal Conference 1")
-    expect(find("#ramp-refilings-received")).to have_content("Supplemental Claims 1")
-    expect(find("#ramp-refilings-received")).to have_content("Appeals 1")
+    expect(find("#ramp-refilings-received")).to have_content("Total\n4")
+    expect(find("#ramp-refilings-received")).to have_content("Higher-Level Reviews\n1")
+    expect(find("#ramp-refilings-received")).to have_content("Higher-Level Reviews with Informal Conference\n1")
+    expect(find("#ramp-refilings-received")).to have_content("Supplemental Claims\n1")
+    expect(find("#ramp-refilings-received")).to have_content("Appeals\n1")
 
     expect(CalculateIntakeStatsJob).to receive(:perform_later)
 
     click_on "Daily"
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for January 7")
-    expect(find("#ramp-elections-sent")).to have_content("Total 0")
-    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews Returned 0")
-    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews with Informal Conference Returned 0")
-    expect(find("#ramp-elections-sent")).to have_content("Supplemental Claims Returned 0")
-    expect(find("#ramp-elections-sent")).to have_content("Total Returned 0")
-    expect(find("#ramp-elections-sent")).to have_content("Percentage Returned ?? %")
-    expect(find("#ramp-elections-sent")).to have_content("Average Response Time ?? sec")
+    expect(find("#ramp-elections-sent")).to have_content("Total\n0")
+    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews Returned\n0")
+    expect(find("#ramp-elections-sent")).to have_content("Higher-Level Reviews with Informal Conference Returned\n0")
+    expect(find("#ramp-elections-sent")).to have_content("Supplemental Claims Returned\n0")
+    expect(find("#ramp-elections-sent")).to have_content("Total Returned\n0")
+    expect(find("#ramp-elections-sent")).to have_content("Percentage Returned\n?? %")
+    expect(find("#ramp-elections-sent")).to have_content("Average Response Time\n?? sec")
 
     expect(find("#ramp-elections-received")).to have_content("RAMP Elections Received for January 7")
-    expect(find("#ramp-elections-received")).to have_content("Total 3")
-    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews 2")
-    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews with Informal Conference 0")
-    expect(find("#ramp-elections-received")).to have_content("Supplemental Claims 1")
-    expect(find("#ramp-elections-received")).to have_content("Average Response Time 6.00 days")
+    expect(find("#ramp-elections-received")).to have_content("Total\n3")
+    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews\n2")
+    expect(find("#ramp-elections-received")).to have_content("Higher-Level Reviews with Informal Conference\n0")
+    expect(find("#ramp-elections-received")).to have_content("Supplemental Claims\n1")
+    expect(find("#ramp-elections-received")).to have_content("Average Response Time\n6.00 days")
 
     click_on "By Fiscal Year"
     expect(find("#ramp-elections-sent")).to have_content("RAMP Elections Sent for FY 2020 (so far)")

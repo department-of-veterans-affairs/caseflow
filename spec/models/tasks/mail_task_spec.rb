@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe MailTask do
   let(:user) { FactoryBot.create(:user) }
   let(:mail_team) { MailTeam.singleton }
@@ -172,8 +174,8 @@ describe MailTask do
       context "when the appeal has a pending hearing task" do
         before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
 
-        it "should route to hearings management branch" do
-          expect(subject).to eq(HearingsManagement.singleton)
+        it "should route to hearing admin branch" do
+          expect(subject).to eq(HearingAdmin.singleton)
         end
       end
 
@@ -246,8 +248,8 @@ describe MailTask do
       context "when the appeal has a pending hearing task" do
         before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
 
-        it "should route to hearings management branch" do
-          expect(subject).to eq(HearingsManagement.singleton)
+        it "should route to hearing admin branch" do
+          expect(subject).to eq(HearingAdmin.singleton)
         end
       end
 
@@ -298,8 +300,8 @@ describe MailTask do
       context "when the appeal has a pending hearing task" do
         before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
 
-        it "should route to hearings management branch" do
-          expect(subject).to eq(HearingsManagement.singleton)
+        it "should route to hearing admin branch" do
+          expect(subject).to eq(HearingAdmin.singleton)
         end
       end
 
@@ -332,8 +334,8 @@ describe MailTask do
       context "when the appeal has a pending hearing task" do
         before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
 
-        it "should route to hearings management branch" do
-          expect(subject).to eq(HearingsManagement.singleton)
+        it "should route to hearing admin branch" do
+          expect(subject).to eq(HearingAdmin.singleton)
         end
       end
 
@@ -374,8 +376,8 @@ describe MailTask do
       context "when the appeal has a pending hearing task" do
         before { allow(task_class).to receive(:pending_hearing_task?).and_return(true) }
 
-        it "should route to hearings management branch" do
-          expect(subject).to eq(HearingsManagement.singleton)
+        it "should route to hearing admin branch" do
+          expect(subject).to eq(HearingAdmin.singleton)
         end
       end
 

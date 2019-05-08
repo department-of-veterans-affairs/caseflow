@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 feature "NonComp Record Request Page" do
   before do
     FeatureToggle.enable!(:decision_reviews)
-    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+    Timecop.freeze(post_ama_start_date)
   end
 
   after do
@@ -68,6 +70,7 @@ feature "NonComp Record Request Page" do
     # click on completed task and verify that it is not editable
     click_link veteran.name
     expect(page).to have_content("Request to send Veteran record to the Board")
+    expect(page).to have_content("Case Review and Evaluation Branch")
     expect(page).to have_current_path("/#{task_url}")
     expect(page).not_to have_css("[id='isSent'][disabled]")
     expect(page).not_to have_button("Confirm")

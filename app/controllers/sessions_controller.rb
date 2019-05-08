@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 class SessionsController < ApplicationController
   skip_before_action :verify_authentication
+  skip_before_action :deny_vso_access
 
   def new
     # :nocov:
@@ -46,9 +49,26 @@ class SessionsController < ApplicationController
 
   # :nocov:
   def destroy
+    remove_user_from_session
+    if session["global_admin"]
+      add_user_to_session(session["global_admin"])
+      session.delete("global_admin")
+      redirect_to "/test/users"
+    else
+      redirect_to "/"
+    end
+  end
+
+  def remove_user_from_session
     session.delete(:regional_office)
     session.delete("user")
-    redirect_to "/"
+  end
+
+  def add_user_to_session(user_id)
+    user = User.find(user_id)
+    session["user"] = user.to_session_hash
+    session[:regional_office] = user.users_regional_office
+    RequestStore[:current_user] = user
   end
   # :nocov:
 end

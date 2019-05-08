@@ -1,22 +1,22 @@
-class AppealsController < ApplicationController
-  include Errors
+# frozen_string_literal: true
 
+class AppealsController < ApplicationController
   before_action :react_routed
-  before_action :set_application, only: [:document_count, :new_documents]
+  before_action :set_application, only: [:document_count]
   # Only whitelist endpoints VSOs should have access to.
-  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran]
+  skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
 
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
         veteran_file_number = request.headers["HTTP_VETERAN_ID"]
-        file_number_not_found_error && return unless veteran_file_number
 
-        render json: {
-          appeals: get_appeals_for_file_number(veteran_file_number),
-          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
-        }
+        result = CaseSearchResultsForVeteranFileNumber.new(
+          file_number: veteran_file_number, user: current_user
+        ).call
+
+        render_search_results_as_json(result)
       end
     end
   end
@@ -25,35 +25,21 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        caseflow_veteran_id = params[:caseflow_veteran_id]
-        veteran_file_number = Veteran.find(caseflow_veteran_id).file_number
+        result = CaseSearchResultsForCaseflowVeteranId.new(
+          caseflow_veteran_id: params[:caseflow_veteran_id], user: current_user
+        ).call
 
-        render json: {
-          appeals: get_appeals_for_file_number(veteran_file_number),
-          claim_reviews: ClaimReview.find_all_by_file_number(veteran_file_number).map(&:search_table_ui_hash)
-        }
+        render_search_results_as_json(result)
       end
     end
   end
 
   def document_count
-    if params[:cached]
-      render json: { document_count: appeal.number_of_documents_from_caseflow }
-      return
-    end
-    render json: { document_count: appeal.number_of_documents }
-  rescue StandardError => e
-    handle_non_critical_error("document_count", e)
-  end
-
-  def new_documents
-    if params[:cached]
-      render json: { new_documents: appeal.new_documents_from_caseflow(current_user) }
-      return
-    end
-    render json: { new_documents: appeal.new_documents_for_user(current_user) }
-  rescue StandardError => e
-    handle_non_critical_error("new_documents", e)
+    render json: { document_count: EFolderService.quick_document_count_for_appeal(appeal, current_user) }
+  rescue Caseflow::Error::EfolderAccessForbidden => error
+    render(error.serialize_response)
+  rescue StandardError => error
+    handle_non_critical_error("document_count", error)
   end
 
   def power_of_attorney
@@ -64,8 +50,9 @@ class AppealsController < ApplicationController
     }
   end
 
-  # :nocov:
   def hearings
+    log_hearings_request
+
     most_recently_held_hearing = appeal.hearings
       .select { |hearing| hearing.disposition.to_s == Constants.HEARING_DISPOSITION_TYPES.held }
       .max_by(&:scheduled_for)
@@ -84,16 +71,13 @@ class AppealsController < ApplicationController
         {}
       end
   end
-  # :nocov:
 
   # For legacy appeals, veteran address and birth/death dates are
   # the only data that is being pulled from BGS, the rest are from VACOLS for now
   def veteran
-    render json: { veteran:
-      ActiveModelSerializers::SerializableResource.new(
-        appeal,
-        serializer: ::WorkQueue::VeteranSerializer
-      ).as_json[:data][:attributes] }
+    render json: {
+      veteran: ::WorkQueue::VeteranSerializer.new(appeal).serializable_hash[:data][:attributes]
+    }
   end
 
   def show
@@ -101,11 +85,15 @@ class AppealsController < ApplicationController
     respond_to do |format|
       format.html { render template: "queue/index" }
       format.json do
-        id = params[:appeal_id]
-        MetricsService.record("Get appeal information for ID #{id}",
-                              service: :queue,
-                              name: "AppealsController.show") do
-          render json: { appeal: json_appeals([appeal])[:data][0] }
+        if BGSService.new.can_access?(appeal.veteran_file_number)
+          id = params[:appeal_id]
+          MetricsService.record("Get appeal information for ID #{id}",
+                                service: :queue,
+                                name: "AppealsController.show") do
+            render json: { appeal: json_appeals(appeal)[:data] }
+          end
+        else
+          render_access_error
         end
       end
     end
@@ -123,9 +111,12 @@ class AppealsController < ApplicationController
 
   def update
     if request_issues_update.perform!
+      set_flash_success_message
+
       render json: {
         issuesBefore: request_issues_update.before_issues.map(&:ui_hash),
-        issuesAfter: request_issues_update.after_issues.map(&:ui_hash)
+        issuesAfter: request_issues_update.after_issues.map(&:ui_hash),
+        withdrawnIssues: request_issues_update.withdrawn_issues.map(&:ui_hash)
       }
     else
       render json: { error_code: request_issues_update.error_code }, status: :unprocessable_entity
@@ -133,6 +124,26 @@ class AppealsController < ApplicationController
   end
 
   private
+
+  # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
+  # :reek:FeatureEnvy
+  def render_search_results_as_json(result)
+    if result.success?
+      render json: result.extra[:search_results]
+    else
+      render json: result.to_h, status: result.extra[:status]
+    end
+  end
+
+  def log_hearings_request
+    # Log requests to this endpoint to try to investigate cause addressed by this rollback:
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/9271
+    DataDogService.increment_counter(
+      metric_group: "request_counter",
+      metric_name: "hearings_for_appeal",
+      app_name: RequestStore[:application]
+    )
+  end
 
   def request_issues_update
     @request_issues_update ||= RequestIssuesUpdate.new(
@@ -146,67 +157,68 @@ class AppealsController < ApplicationController
     RequestStore.store[:application] = "queue"
   end
 
-  def get_appeals_for_file_number(file_number)
-    return get_vso_appeals_for_file_number(file_number) if current_user.vso_employee?
-
-    MetricsService.record("VACOLS: Get appeal information for file_number #{file_number}",
-                          service: :queue,
-                          name: "AppealsController.index") do
-
-      appeals = Appeal.where(veteran_file_number: file_number).to_a
-      # rubocop:disable Lint/HandleExceptions
-      begin
-        appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(file_number))
-      rescue ActiveRecord::RecordNotFound
-      end
-      # rubocop:enable Lint/HandleExceptions
-
-      json_appeals(appeals)[:data]
+  def json_appeals(appeal)
+    if appeal.is_a?(Appeal)
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    elsif appeal.is_a?(LegacyAppeal)
+      WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
     end
   end
 
-  def get_vso_appeals_for_file_number(file_number)
-    return file_access_prohibited_error if !BGSService.new.can_access?(file_number)
-
-    MetricsService.record("VACOLS: Get vso appeals information for file_number #{file_number}",
-                          service: :queue,
-                          name: "AppealsController.get_vso_appeals_for_file_number") do
-      vso_participant_ids = current_user.vsos_user_represents.map { |poa| poa[:participant_id] }
-
-      veteran = Veteran.find_by(file_number: file_number)
-
-      appeals = if veteran
-                  veteran.accessible_appeals_for_poa(vso_participant_ids)
-                else
-                  []
-                end
-
-      json_appeals(appeals)[:data]
-    end
+  def review_removed_message
+    claimant_name = appeal.veteran_full_name
+    "You have successfully removed #{appeal.class.review_title} for #{claimant_name}
+    (ID: #{appeal.veteran_file_number})."
   end
 
-  def file_access_prohibited_error
-    render json: {
-      "errors": [
-        "title": "Access to Veteran file prohibited",
-        "detail": "User is prohibited from accessing files associated with provided Veteran ID"
-      ]
-    }, status: :forbidden
+  def review_withdrawn_message
+    "You have successfully withdrawn a review."
   end
 
-  def file_number_not_found_error
-    render json: {
-      "errors": [
-        "title": "Must include Veteran ID",
-        "detail": "Veteran ID should be included as HTTP_VETERAN_ID element of request headers"
-      ]
-    }, status: :bad_request
+  def withdrawn_issues
+    withdrawn = request_issues_update.withdrawn_issues
+
+    return if withdrawn.empty?
+
+    "withdrawn #{withdrawn.count} #{'issue'.pluralize(withdrawn.count)}"
   end
 
-  def json_appeals(appeals)
-    ActiveModelSerializers::SerializableResource.new(
-      appeals,
-      user: current_user
-    ).as_json
+  def added_issues
+    new_issues = request_issues_update.after_issues - request_issues_update.before_issues
+    return if new_issues.empty?
+
+    "added #{new_issues.count} #{'issue'.pluralize(new_issues.count)}"
+  end
+
+  def removed_issues
+    removed = request_issues_update.before_issues - request_issues_update.after_issues
+
+    return if removed.empty?
+
+    "removed #{removed.count} #{'issue'.pluralize(removed.count)}"
+  end
+
+  def review_edited_message
+    "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
+  end
+
+  def set_flash_success_message
+    flash[:edited] = if request_issues_update.after_issues.empty?
+                       review_removed_message
+                     elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
+                       review_withdrawn_message
+                     else
+                       review_edited_message
+                     end
+  end
+
+  def render_access_error
+    render(Caseflow::Error::ActionForbiddenError.new(
+      message: access_error_message
+    ).serialize_response)
+  end
+
+  def access_error_message
+    appeal.veteran.multiple_phone_numbers? ? COPY::DUPLICATE_PHONE_NUMBER_TITLE : COPY::ACCESS_DENIED_TITLE
   end
 end

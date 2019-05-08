@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class UserRepository
   class << self
     def user_info_from_vacols(css_id)
-      staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
+      staff_record = cached_staff_record(css_id)
       {
         uniq_id: vacols_uniq_id(staff_record),
         roles: vacols_roles(staff_record),
@@ -12,7 +14,7 @@ class UserRepository
     end
 
     def user_info_for_idt(css_id)
-      staff_record = VACOLS::Staff.find_by(sdomainid: css_id)
+      staff_record = cached_staff_record(css_id)
       return {} unless staff_record
 
       {
@@ -48,15 +50,7 @@ class UserRepository
       results
     end
 
-    # This method is only used in dev/demo mode to test the judge spreadsheet functionality in hearing scheduling
     # :nocov:
-    def create_judge_in_vacols(first_name, last_name, vlj_id)
-      return unless Rails.env.development? || Rails.env.demo?
-
-      css_id = ["BVA", first_name.first, last_name].join
-      VACOLS::Staff.create(snamef: first_name, snamel: last_name, sdomainid: css_id, sattyid: vlj_id)
-    end
-
     def css_id_by_full_name(full_name)
       name = full_name.split(" ")
       first_name = name.first
@@ -68,7 +62,6 @@ class UserRepository
       staff.first.try(:sdomainid)
     end
     # :nocov:
-    #
 
     def find_all_hearing_coordinators
       coordinator_records = VACOLS::Staff.where(sdept: "HRG", sactive: "A")
@@ -79,6 +72,13 @@ class UserRepository
     end
 
     private
+
+    def cached_staff_record(css_id)
+      # Staff records rarely get updated so caching in Redis for 24 hours
+      Rails.cache.fetch("#{Rails.env}_staff_record_#{css_id}") do
+        VACOLS::Staff.find_by(sdomainid: css_id)
+      end
+    end
 
     def roles_based_on_staff_fields(staff_record)
       case staff_record.svlj

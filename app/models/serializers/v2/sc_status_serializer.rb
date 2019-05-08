@@ -1,11 +1,12 @@
-class V2::SCStatusSerializer < ActiveModel::Serializer
-  type :supplemental_claim
+# frozen_string_literal: true
 
-  def id
-    object.review_status_id
-  end
+class V2::SCStatusSerializer
+  include FastJsonapi::ObjectSerializer
+  set_key_transform :camel_lower
+  set_type :supplemental_claim
+  set_id :review_status_id
 
-  attribute :linked_review_ids, key: :appeal_ids
+  attribute :appeal_ids, &:linked_review_ids
 
   attribute :updated do
     Time.zone.now.in_time_zone("Eastern Time (US & Canada)").round.iso8601
@@ -15,7 +16,7 @@ class V2::SCStatusSerializer < ActiveModel::Serializer
     false
   end
 
-  attribute :active?, key: :active
+  attribute :active, &:active?
   attribute :description
 
   attribute :location do
@@ -23,10 +24,10 @@ class V2::SCStatusSerializer < ActiveModel::Serializer
   end
 
   attribute :aoj
-  attribute :program, key: :program_area
-  attribute :status_hash, key: :status
+  attribute :program_area, &:program
+  attribute :status, &:status_hash
   attribute :alerts
-  attribute :issues_hash, key: :issues
+  attribute :issues, &:issues_hash
   attribute :events
 
   # Stubbed attributes

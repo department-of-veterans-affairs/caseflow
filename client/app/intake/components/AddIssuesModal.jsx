@@ -20,7 +20,7 @@ class AddIssuesModal extends React.Component {
     super(props);
 
     this.state = {
-      profileDate: '',
+      approxDecisionDate: '',
       selectedContestableIssueIndex: '',
       notes: ''
     };
@@ -90,27 +90,44 @@ class AddIssuesModal extends React.Component {
     const addedIssues = intakeData.addedIssues ? intakeData.addedIssues : [];
 
     const contestableIssuesSections = _.map(intakeData.contestableIssues,
-      (contestableIssuesByIndex, date) => {
+      (contestableIssuesByIndex, approxDecisionDate) => {
         const radioOptions = _.map(contestableIssuesByIndex, (issue) => {
           const foundIndex = _.findIndex(addedIssues, { index: issue.index });
-          const text = foundIndex === -1 ?
+          let text = foundIndex === -1 ?
             issue.description :
             `${issue.description} (already selected for issue ${foundIndex + 1})`;
+
+          let hasLaterIssueInChain = false;
+
+          // if current decisionIssueId is not in any of the latest issues, it is a prior decision
+          let foundLatestIssueIds = issue.latestIssuesInChain.filter((latestIssue) => {
+            return latestIssue.id === issue.decisionIssueId;
+          });
+
+          if (foundLatestIssueIds.length === 0) {
+            hasLaterIssueInChain = true;
+            let dates = _.uniq(issue.latestIssuesInChain.map((latestIssue) => {
+              return formatDateStr(latestIssue.approxDecisionDate);
+            })).join(', ');
+
+            text = `${text} (Please select the most recent decision on ` +
+                   `${dates})`;
+          }
 
           return {
             displayText: text,
             value: issue.index,
-            disabled: foundIndex !== -1
+            disabled: (foundIndex !== -1) || hasLaterIssueInChain
           };
         }
         );
 
         return <RadioField
           vertical
-          label={<h3>Past decisions from { formatDateStr(date) }</h3>}
+          label={<h3>Past decisions from { formatDateStr(approxDecisionDate) }</h3>}
           name="rating-radio"
           options={radioOptions}
-          key={date}
+          key={approxDecisionDate}
           value={this.state.selectedContestableIssueIndex}
           onChange={this.radioOnChange}
         />;

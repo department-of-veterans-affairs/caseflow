@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 class Hearings::HearingDayController < HearingScheduleController
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
+  skip_before_action :deny_vso_access, only: [:index, :show]
 
   # show schedule days for date range provided
   def index
@@ -7,7 +10,7 @@ class Hearings::HearingDayController < HearingScheduleController
     end_date = validate_end_date(params[:end_date])
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearings = HearingDay.load_days(start_date, end_date, regional_office)
+    hearing_days = HearingDay.list_upcoming_hearing_days(start_date, end_date, current_user, regional_office)
 
     respond_to do |format|
       format.html do
@@ -15,7 +18,7 @@ class Hearings::HearingDayController < HearingScheduleController
       end
       format.json do
         render json: {
-          hearings: json_hearings(HearingDay.array_to_hash(hearings[:vacols_hearings] + hearings[:caseflow_hearings])),
+          hearings: json_hearings(HearingDay.array_to_hash(hearing_days)),
           startDate: start_date,
           endDate: end_date
         }
@@ -27,22 +30,23 @@ class Hearings::HearingDayController < HearingScheduleController
     hearing_day = HearingDay.find_hearing_day(nil, params[:id])
     hearing_day_hash = HearingDay.to_hash(hearing_day)
 
-    hearings, regional_office = fetch_hearings(hearing_day_hash, params[:id]).values_at(:hearings, :regional_office)
-
-    hearing_day_options = HearingDay.hearing_days_with_hearings_hash(
-      Time.zone.today.beginning_of_day,
-      Time.zone.today.beginning_of_day + 365.days,
-      regional_office
-    )
+    hearings = HearingRepository.fetch_hearings_for_parent(hearing_day_id)
 
     if hearing_day.is_a?(HearingDay)
       hearings += hearing_day.hearings
     end
 
+    if current_user.vso_employee?
+      hearings = hearings.select { |hearing| hearing.assigned_to_vso?(current_user) }
+    end
+
+    if current_user.roles.include?("Hearing Prep")
+      hearings = hearings.select { |hearing| hearing.assigned_to_judge?(current_user) }
+    end
+
     render json: {
       hearing_day: json_hearing(hearing_day_hash).merge(
-        hearings: hearings.map { |hearing| hearing.to_hash(current_user.id) },
-        hearing_day_options: hearing_day_options
+        hearings: hearings.map { |hearing| hearing.quick_to_hash(current_user.id) }
       )
     }
   end
@@ -50,7 +54,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def index_with_hearings
     regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
 
-    hearing_days_with_hearings = HearingDay.hearing_days_with_hearings_hash(
+    hearing_days_with_hearings = HearingDay.open_hearing_days_with_hearings_hash(
       Time.zone.today.beginning_of_day,
       Time.zone.today.beginning_of_day + 182.days,
       regional_office,
@@ -91,20 +95,6 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def hearing_day_id
     params[:id]
-  end
-
-  def fetch_hearings(hearing_day, id)
-    unless hearing_day[:request_type] == "V" || hearing_day[:request_type] == "C"
-      return {
-        hearings: [],
-        regional_office: nil
-      }
-    end
-
-    {
-      hearings: HearingRepository.fetch_hearings_for_parent(id),
-      regional_office: (hearing_day[:request_type] == "C") ? "C" : hearing_day[:regional_office]
-    }
   end
 
   def update_params
@@ -153,15 +143,6 @@ class Hearings::HearingDayController < HearingScheduleController
     }, status: :not_found
   end
 
-  def json_created_hearings(hearings)
-    json_hash = ActiveModelSerializers::SerializableResource.new(
-      hearings,
-      each_serializer: ::Hearings::HearingDaySerializer
-    ).as_json
-
-    format_for_client(json_hash)
-  end
-
   def json_hearings(hearings)
     hearings.each_with_object([]) do |hearing, result|
       result << json_hearing(hearing)
@@ -173,24 +154,13 @@ class Hearings::HearingDayController < HearingScheduleController
       converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
                      elsif k == "regional_office" && !v.nil?
+                       converted["regional_office_key"] = v
                        HearingDayMapper.city_for_regional_office(v)
                      elsif k == "request_type"
                        HearingDayMapper.label_for_type(v)
                      else
                        v
                      end
-    end
-  end
-
-  def format_for_client(json_hash)
-    if json_hash[:data].is_a?(Array)
-      hearing_array = []
-      json_hash[:data].each do |hearing_hash|
-        hearing_array.push({ id: hearing_hash[:id] }.merge(hearing_hash[:attributes]))
-      end
-      hearing_array
-    else
-      { id: json_hash[:data][:id] }.merge(json_hash[:data][:attributes])
     end
   end
 

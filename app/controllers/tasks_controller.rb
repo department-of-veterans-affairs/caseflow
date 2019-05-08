@@ -1,10 +1,13 @@
+# frozen_string_literal: true
+
 class TasksController < ApplicationController
   include Errors
 
   before_action :verify_task_access, only: [:create]
   skip_before_action :deny_vso_access, only: [:create, :index, :update, :for_appeal]
 
-  TASK_CLASSES = {
+  TASK_CLASSES_LOOKUP = {
+    ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,
@@ -16,7 +19,8 @@ class TasksController < ApplicationController
     TranslationTask: TranslationTask,
     HearingAdminActionTask: HearingAdminActionTask,
     MailTask: MailTask,
-    InformalHearingPresentationTask: InformalHearingPresentationTask
+    InformalHearingPresentationTask: InformalHearingPresentationTask,
+    PrivacyActTask: PrivacyActTask
   }.freeze
 
   def set_application
@@ -54,9 +58,14 @@ class TasksController < ApplicationController
   #   assigned_to_id: 23
   #  }
   def create
-    return invalid_type_error unless task_class
+    return invalid_type_error unless task_classes_valid?
 
-    tasks = task_class.create_many_from_params(create_params, current_user)
+    tasks = []
+    param_groups = create_params.group_by { |param| param[:type] }
+    param_groups.each do |task_type, param_group|
+      tasks << valid_task_classes[task_type.to_sym].create_many_from_params(param_group, current_user)
+    end
+    tasks.flatten!
 
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 
@@ -87,23 +96,8 @@ class TasksController < ApplicationController
 
   def for_appeal
     no_cache
-    RootTask.find_or_create_by!(appeal: appeal)
 
-    # This is a temporary solution for legacy hearings. We need them to exist on the case details
-    # page, but have no good way to create them before a page load. So we need to check here if we
-    # need to create a hearing task and if so, create it.
-    ScheduleHearingTask.find_or_create_if_eligible(appeal)
-
-    # VSO users should only get tasks assigned to them or their organization.
-    if current_user.vso_employee?
-      return json_vso_tasks
-    end
-
-    tasks = appeal.tasks
-    if %w[attorney judge].include?(user_role) && appeal.is_a?(LegacyAppeal)
-      legacy_appeal_tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
-      tasks = (legacy_appeal_tasks + tasks).uniq
-    end
+    tasks = TasksForAppeal.new(appeal: appeal, user: current_user, user_role: user_role).call
 
     render json: {
       tasks: json_tasks(tasks)[:data]
@@ -112,32 +106,47 @@ class TasksController < ApplicationController
 
   def ready_for_hearing_schedule
     ro = HearingDayMapper.validate_regional_office(params[:ro])
+    tasks = ScheduleHearingTask.tasks_for_ro(ro)
+    AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    params = { user: current_user, role: user_role }
+
+    render json: AmaAndLegacyTaskSerializer.new(
+      tasks: tasks, params: params, ama_serializer: WorkQueue::RegionalOfficeTaskSerializer
+    ).call
+  end
+
+  def reschedule
+    if !task.is_a?(NoShowHearingTask)
+      fail(Caseflow::Error::ActionForbiddenError, message: COPY::NO_SHOW_HEARING_TASK_RESCHEDULE_FORBIDDEN_ERROR)
+    end
+
+    task.reschedule_hearing
 
     render json: {
-      data: ScheduleHearingTask.tasks_for_ro(ro).map do |task|
-        ActiveModelSerializers::SerializableResource.new(
-          task,
-          user: current_user,
-          role: user_role
-        ).as_json[:data]
-      end
+      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
+    }
+  end
+
+  def request_hearing_disposition_change
+    hearing_task = task.ancestor_task_of_type(HearingTask)
+
+    if hearing_task.blank?
+      fail(Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+    end
+
+    hearing_task.create_change_hearing_disposition_task_and_complete_children create_params&.first&.dig(:instructions)
+
+    render json: {
+      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
     }
   end
 
   private
 
-  def can_assign_task?
-    return true if create_params.first[:appeal].is_a?(Appeal)
-
-    super
-  end
-
   def verify_task_access
-    if current_user.vso_employee? && task_class != InformalHearingPresentationTask
+    if current_user.vso_employee? && task_classes.exclude?(InformalHearingPresentationTask.name.to_sym)
       fail Caseflow::Error::ActionForbiddenError, message: "VSOs cannot create that task."
     end
-
-    redirect_to("/unauthorized") unless can_assign_task?
   end
 
   def queue_class
@@ -153,13 +162,21 @@ class TasksController < ApplicationController
   end
   helper_method :user
 
-  def task_class
+  def task_classes_valid?
+    valid_task_class_names = valid_task_classes.keys
+    (task_classes - valid_task_class_names).empty?
+  end
+
+  def task_classes
+    create_params.map { |param| param[:type]&.to_sym }.uniq.compact
+  end
+
+  def valid_task_classes
     additional_task_classes = Hash[
       *MailTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten,
       *HearingAdminActionTask.subclasses.map { |subclass| [subclass.to_s.to_sym, subclass] }.flatten
     ]
-    classes = TASK_CLASSES.merge(additional_task_classes)
-    classes[create_params.first[:type].try(:to_sym)]
+    TASK_CLASSES_LOOKUP.merge(additional_task_classes)
   end
 
   def appeal
@@ -170,7 +187,7 @@ class TasksController < ApplicationController
     render json: {
       "errors": [
         "title": "Invalid Task Type Error",
-        "detail": "Task type is invalid, valid types: #{TASK_CLASSES.keys}"
+        "detail": "Task type is invalid, valid types: #{TASK_CLASSES_LOOKUP.keys}"
       ]
     }, status: :bad_request
   end
@@ -208,21 +225,21 @@ class TasksController < ApplicationController
     )
   end
 
-  def json_vso_tasks
-    # For now we just return tasks that are assigned to the user. In the future,
-    # we will add tasks that are assigned to the user's organization.
-    tasks = GenericQueue.new(user: current_user).tasks
+  def json_tasks(tasks)
+    tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    params = { user: current_user, role: user_role }
 
-    render json: {
-      tasks: json_tasks(tasks)[:data]
-    }
+    AmaAndLegacyTaskSerializer.new(
+      tasks: tasks, params: params, ama_serializer: WorkQueue::TaskSerializer
+    ).call
   end
 
-  def json_tasks(tasks)
-    ActiveModelSerializers::SerializableResource.new(
-      AppealRepository.eager_load_legacy_appeals_for_tasks(tasks),
-      user: current_user,
-      role: user_role
-    ).as_json
+  def task_includes
+    [
+      :appeal,
+      :assigned_by,
+      :assigned_to,
+      :parent
+    ]
   end
 end

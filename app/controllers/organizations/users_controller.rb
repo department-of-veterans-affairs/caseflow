@@ -1,4 +1,10 @@
+# frozen_string_literal: true
+
 class Organizations::UsersController < OrganizationsController
+  # We are skipping the verification step when requesting json in order to allow the list of
+  # hearing admin users to be sent to the front-end when enabling the bulk assign task feature
+  # skip_before_action :verify_organization_access, only: [:index]
+
   def index
     respond_to do |format|
       format.html { render template: "queue/index" }
@@ -10,7 +16,7 @@ class Organizations::UsersController < OrganizationsController
 
         render json: {
           organization_name: organization.name,
-          organization_users: json_users(organization_users),
+          organization_users: json_administered_users(organization_users),
           remaining_users: json_users(remaining_users)
         }
       end
@@ -20,7 +26,21 @@ class Organizations::UsersController < OrganizationsController
   def create
     OrganizationsUser.add_user_to_organization(user_to_modify, organization)
 
-    render json: { users: json_users([user_to_modify]) }, status: :ok
+    render json: { users: json_administered_users([user_to_modify]) }, status: :ok
+  end
+
+  def update
+    no_cache
+
+    if params.key?(:admin)
+      if params[:admin] == true
+        OrganizationsUser.make_user_admin(user_to_modify, organization)
+      else
+        OrganizationsUser.remove_admin_rights_from_user(user_to_modify, organization)
+      end
+    end
+
+    render json: { users: json_administered_users([user_to_modify]) }, status: :ok
   end
 
   def destroy
@@ -52,9 +72,18 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def json_users(users)
-    ActiveModelSerializers::SerializableResource.new(
+    ::WorkQueue::UserSerializer.new(users, is_collection: true)
+  end
+
+  # def requesting_json
+  #   request.format.json?
+  # end
+
+  def json_administered_users(users)
+    ::WorkQueue::AdministeredUserSerializer.new(
       users,
-      each_serializer: ::WorkQueue::UserSerializer
-    ).as_json
+      is_collection: true,
+      params: { organization: organization }
+    )
   end
 end

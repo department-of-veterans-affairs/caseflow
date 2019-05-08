@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe DBService do
   context ".request" do
     subject do

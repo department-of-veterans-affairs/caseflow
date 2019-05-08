@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+##
+# Task for a judge to review decisions.
+
 class JudgeDecisionReviewTask < JudgeTask
   def additional_available_actions(_user)
     judge_checkout_label = if ama?

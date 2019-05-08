@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe EndProductEstablishment do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -30,6 +32,8 @@ describe EndProductEstablishment do
   let(:benefit_type_code) { "2" }
   let(:doc_reference_id) { nil }
   let(:development_item_reference_id) { nil }
+  let(:limited_poa_code) { "ABC" }
+  let(:limited_poa_access) { true }
 
   let(:end_product_establishment) do
     EndProductEstablishment.new(
@@ -47,7 +51,9 @@ describe EndProductEstablishment do
       doc_reference_id: doc_reference_id,
       development_item_reference_id: development_item_reference_id,
       established_at: 30.days.ago,
-      user: current_user
+      user: current_user,
+      limited_poa_code: limited_poa_code,
+      limited_poa_access: limited_poa_access
     )
   end
 
@@ -116,7 +122,9 @@ describe EndProductEstablishment do
             date: 2.days.ago.to_date,
             suppress_acknowledgement_letter: false,
             gulf_war_registry: false,
-            claimant_participant_id: "11223344"
+            claimant_participant_id: "11223344",
+            limited_poa_code: "ABC",
+            limited_poa_access: true
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -132,7 +140,7 @@ describe EndProductEstablishment do
         it "creates an ep with the next valid modifier" do
           subject
           expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
-            claim_hash: {
+            claim_hash: hash_including(
               benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
               payee_code: "00",
               predischarge: false,
@@ -144,8 +152,10 @@ describe EndProductEstablishment do
               date: 2.days.ago.to_date,
               suppress_acknowledgement_letter: false,
               gulf_war_registry: false,
-              claimant_participant_id: "11223344"
-            },
+              claimant_participant_id: "11223344",
+              limited_poa_code: "ABC",
+              limited_poa_access: true
+            ),
             veteran_hash: veteran.reload.to_vbms_hash,
             user: current_user
           )
@@ -214,7 +224,9 @@ describe EndProductEstablishment do
             end_product_label: "Higher-Level Review Rating",
             end_product_code: "030HLRR",
             gulf_war_registry: false,
-            suppress_acknowledgement_letter: false
+            suppress_acknowledgement_letter: false,
+            limited_poa_code: "ABC",
+            limited_poa_access: true
           },
           veteran_hash: veteran.reload.to_vbms_hash,
           user: current_user
@@ -249,7 +261,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           contested_issue_description: "this is a big decision"
@@ -257,7 +269,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           vacols_id: vacols_id,
@@ -267,7 +279,7 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30),
           contested_issue_description: "description too long for bgs" * 20
@@ -277,7 +289,7 @@ describe EndProductEstablishment do
           end_product_establishment: end_product_establishment,
           is_unidentified: true,
           unidentified_issue_text: "identity unknown",
-          review_request: source,
+          decision_review: source,
           contested_rating_issue_reference_id: "reference-id",
           contested_rating_issue_profile_date: Date.new(2018, 4, 30)
         )
@@ -355,7 +367,7 @@ describe EndProductEstablishment do
             :request_issue,
             :rating,
             end_product_establishment: end_product_establishment,
-            review_request: source,
+            decision_review: source,
             ineligible_reason: :duplicate_of_rating_issue_in_active_review
           )
         ]
@@ -374,7 +386,7 @@ describe EndProductEstablishment do
             :request_issue,
             :rating,
             end_product_establishment: end_product_establishment,
-            review_request: source,
+            decision_review: source,
             contention_reference_id: contention_ref_id
           )
         ]
@@ -386,6 +398,40 @@ describe EndProductEstablishment do
           claim_id: reference_id,
           rating_issue_contention_map: { request_issues[0].contested_rating_issue_reference_id => contention_ref_id }
         )
+      end
+    end
+
+    context "request issue is rating but has no associated_rating_issue" do
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            contested_rating_issue_reference_id: nil,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contention_reference_id: contention_ref_id,
+            contested_decision_issue_id: decision_issue.id
+          )
+        ]
+      end
+      let(:original_request_issue) do
+        create(
+          :request_issue,
+          decision_review: previous_review,
+          contested_rating_issue_reference_id: "123"
+        )
+      end
+      let(:decision_issue) do
+        create(:decision_issue,
+               decision_review: previous_review,
+               request_issues: [original_request_issue])
+      end
+      let(:previous_review) { create(:higher_level_review) }
+
+      it "skips rating request issues with no associated rating issue" do
+        subject
+        expect(request_issues.first.rating?).to be true
+        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
   end
@@ -467,30 +513,31 @@ describe EndProductEstablishment do
     end
 
     let(:reference_id) { "stevenasmith" }
-    let(:contention_ref_id) { 1234 }
+    let(:request_issue_contention_reference_id) { contention_reference_id }
+    let(:contention_reference_id) { "1234" }
 
-    let(:for_object) do
+    let(:request_issue) do
       RequestIssue.new(
-        review_request: source,
+        decision_review: source,
         contested_rating_issue_reference_id: "reference-id",
         contested_rating_issue_profile_date: Date.new(2018, 4, 30),
         contested_issue_description: "this is a big decision",
         benefit_type: "compensation",
-        contention_reference_id: contention_ref_id
+        contention_reference_id: request_issue_contention_reference_id
       )
     end
 
     let!(:contention) do
-      Generators::Contention.build(id: contention_ref_id, claim_id: reference_id, text: "Left knee")
+      Generators::Contention.build(id: contention_reference_id, claim_id: reference_id, text: "Left knee")
     end
 
-    subject { end_product_establishment.remove_contention!(for_object) }
+    subject { end_product_establishment.remove_contention!(request_issue) }
 
     it "calls VBMS with the appropriate arguments to remove the contention" do
       subject
 
       expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
-      expect(for_object.removed_at).to eq(Time.zone.now)
+      expect(request_issue.contention_removed_at).to eq(Time.zone.now)
     end
 
     context "when VBMS throws an error" do
@@ -500,7 +547,15 @@ describe EndProductEstablishment do
 
       it "does not remove contentions" do
         expect { subject }.to raise_error(vbms_error)
-        expect(for_object.removed_at).to be_nil
+        expect(request_issue.contention_removed_at).to be_nil
+      end
+    end
+
+    context "when contention does not exist" do
+      let(:request_issue_contention_reference_id) { "9999" }
+
+      it "raises ContentionNotFound error" do
+        expect { subject }.to raise_error(EndProductEstablishment::ContentionNotFound)
       end
     end
   end
@@ -529,6 +584,19 @@ describe EndProductEstablishment do
       let(:reference_id) { matching_ep.claim_id }
 
       it { is_expected.to have_attributes(claim_id: matching_ep.claim_id) }
+    end
+  end
+
+  context "#rating?" do
+    subject { end_product_establishment.rating? }
+    context "when the end product code is a rating code" do
+      let(:code) { "030HLRRPMC" }
+      it { is_expected.to be true }
+    end
+
+    context "when the end product code is not rating code" do
+      let(:code) { "Something" }
+      it { is_expected.to be_falsey }
     end
   end
 
@@ -587,15 +655,9 @@ describe EndProductEstablishment do
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source
+          decision_review: source
         )
       ]
-    end
-
-    context "returns true if inactive" do
-      let(:synced_status) { EndProduct::INACTIVE_STATUSES.first }
-
-      it { is_expected.to eq(true) }
     end
 
     context "when matching end product has not yet been established" do
@@ -614,12 +676,18 @@ describe EndProductEstablishment do
         )
       end
 
+      context "returns true if inactive" do
+        let(:synced_status) { EndProduct::INACTIVE_STATUSES.first }
+
+        it { is_expected.to eq(true) }
+      end
+
       context "when BGS throws an error" do
         before do
           allow_any_instance_of(BGSService).to receive(:get_end_products).and_raise(BGS::ShareError.new("E"))
         end
 
-        it "re-raises  error" do
+        it "re-raises error" do
           expect { subject }.to raise_error(::BGSSyncError)
         end
       end
@@ -693,25 +761,24 @@ describe EndProductEstablishment do
 
   context "#cancel_unused_end_product!" do
     subject { end_product_establishment.cancel_unused_end_product! }
-    let(:removed_at) { nil }
+    let(:closed_at) { nil }
     let!(:request_issues) do
       [
         create(
           :request_issue,
           end_product_establishment: end_product_establishment,
-          review_request: source,
-          removed_at: removed_at
+          decision_review: source,
+          closed_at: closed_at
         )
       ]
     end
 
     context "when there are no active request issues" do
-      let(:removed_at) { 1.day.ago }
-      it "cancels the end product and closes request issues" do
+      let(:closed_at) { 1.day.ago }
+
+      it "cancels the end product" do
         subject
         expect(end_product_establishment.reload.synced_status).to eq("CAN")
-        expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
-        expect(request_issues.first.closed_status).to eq("end_product_canceled")
       end
     end
 
@@ -823,7 +890,7 @@ describe EndProductEstablishment do
           :request_issue,
           :rating,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           decision_sync_submitted_at: nil
         )
       end
@@ -832,7 +899,7 @@ describe EndProductEstablishment do
           :request_issue,
           :nonrating,
           end_product_establishment: end_product_establishment,
-          review_request: source,
+          decision_review: source,
           decision_sync_submitted_at: nil
         )
       end
@@ -841,8 +908,9 @@ describe EndProductEstablishment do
       it "submits each request issue and starts decision sync job" do
         subject
 
-        # delay in processing should be 1 day for rating, immediatly for nonrating
-        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        # delay in processing should be 1 day for rating (minus the processing offset of 12.hours)
+        expect(rating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
+        # immediatly for nonrating
         expect(nonrating_issue.reload.decision_sync_submitted_at).to eq(Time.zone.now)
 
         expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(rating_issue)
@@ -864,8 +932,8 @@ describe EndProductEstablishment do
       it "submits each effectuation and starts decision sync job" do
         subject
 
-        # delay in processing should be 1 day
-        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 1.day)
+        # delay in processing should be 1 day (minus the processing offset of 12.hours)
+        expect(board_grant_effectuation.reload.decision_sync_submitted_at).to eq(Time.zone.now + 12.hours)
         expect(DecisionIssueSyncJob).to_not have_been_enqueued.with(board_grant_effectuation)
       end
     end
@@ -876,18 +944,22 @@ describe EndProductEstablishment do
     let(:processed_at) { Time.zone.now }
 
     let(:processing_request_issue) do
-      create(:request_issue, review_request: source)
+      create(:request_issue, decision_review: source)
     end
 
     let!(:processed_request_issue) do
-      create(:request_issue, review_request: source, decision_sync_processed_at: Time.zone.now)
+      create(:request_issue, decision_review: source, decision_sync_processed_at: Time.zone.now)
+    end
+
+    let!(:closed_request_issue) do
+      create(:request_issue, :removed, decision_review: source)
     end
 
     context "when decision issues are all synced" do
       context "when source is a higher level review" do
         let!(:claimant) do
           Claimant.create!(
-            review_request: source,
+            decision_review: source,
             participant_id: veteran.participant_id,
             payee_code: "10"
           )
@@ -896,7 +968,7 @@ describe EndProductEstablishment do
         let!(:decision_issue) do
           create(:decision_issue,
                  decision_review: source,
-                 disposition: HigherLevelReview::DTA_ERROR_PMR,
+                 disposition: DecisionIssue::DTA_ERROR_PMR,
                  rating_issue_reference_id: "rating1",
                  end_product_last_action_date: 5.days.ago.to_date)
         end
@@ -923,7 +995,7 @@ describe EndProductEstablishment do
 
     context "when decision issues are not all synced" do
       let!(:not_processed_request_issue) do
-        create(:request_issue, review_request: source)
+        create(:request_issue, decision_review: source)
       end
 
       it "does nothing" do
@@ -960,7 +1032,7 @@ describe EndProductEstablishment do
           let!(:pending_request_issue) do
             create(
               :request_issue,
-              review_request: epe.source,
+              decision_review: epe.source,
               end_product_establishment: epe
             )
           end
@@ -971,7 +1043,7 @@ describe EndProductEstablishment do
             let!(:pending_request_issue) do
               create(
                 :request_issue,
-                review_request: epe.source,
+                decision_review: epe.source,
                 end_product_establishment: epe,
                 decision_sync_submitted_at: Time.zone.now + 1.second
               )
@@ -983,7 +1055,7 @@ describe EndProductEstablishment do
               let!(:errored_request_issue) do
                 create(
                   :request_issue,
-                  review_request: epe.source,
+                  decision_review: epe.source,
                   end_product_establishment: epe,
                   decision_sync_submitted_at: Time.zone.now,
                   decision_sync_error: "oh no"

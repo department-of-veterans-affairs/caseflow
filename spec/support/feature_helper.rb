@@ -1,8 +1,15 @@
+# frozen_string_literal: true
+
 module FeatureHelper
   def find_table_cell(vacols_id, row_header)
     header = find(:xpath, "//thead/tr/th", text: row_header)
     header_index = /.*\[(\d+)\]$/.match(header.path)[1] # select out the last index
     find(:xpath, "//tbody/tr[@id='table-row-#{vacols_id}']/td[#{header_index}]")
+  end
+
+  def click_queue_switcher(text)
+    find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+    click_on text
   end
 
   # in the `options` hash...
@@ -17,7 +24,7 @@ module FeatureHelper
     selector = ""
     keyword_args = {}
 
-    dropdown.click
+    dropdown_choices = dropdown_click dropdown
     yield if block_given?
 
     keyword_args[:wait] = options[:wait] if options[:wait].present? && options[:wait] > 0
@@ -29,7 +36,9 @@ module FeatureHelper
       selector = "div[id$='--option-#{options[:index]}']"
     end
 
-    dropdown.sibling(".Select-menu-outer").find(selector, **keyword_args).click
+    try_clicking_dropdown_menu_item(dropdown, selector, keyword_args)
+
+    dropdown_choices
   end
 
   def dropdown_selected_value(container = page)
@@ -56,6 +65,11 @@ module FeatureHelper
 
   private
 
+  def dropdown_click(dropdown)
+    dropdown.click
+    dropdown.sibling(".Select-menu-outer")&.text&.split("\n") || []
+  end
+
   def find_dropdown(options, container)
     selector = ".Select-control"
     keyword_args = {}
@@ -69,6 +83,29 @@ module FeatureHelper
     keyword_args[:wait] = options[:wait] if options[:wait].present? && options[:wait] > 0
 
     container.find(selector, **keyword_args)
+  end
+
+  # sometimes the dropdown menu hasn't appeared after the first click
+  def try_clicking_dropdown_menu_item(dropdown, selector, keyword_args)
+    tries = 3
+    until dropdown_menu_visible?(dropdown) || tries <= 0
+      dropdown.click
+      tries -= 1
+    end
+
+    click_dropdown_menu_item(dropdown, selector, keyword_args)
+  end
+
+  def dropdown_menu_visible?(dropdown)
+    dropdown.sibling(".Select-menu-outer")
+  rescue Capybara::ElementNotFound
+    false
+  else
+    true
+  end
+
+  def click_dropdown_menu_item(dropdown, selector, keyword_args)
+    dropdown.sibling(".Select-menu-outer").find(selector, **keyword_args).click
   end
 
   def generate_text(length)

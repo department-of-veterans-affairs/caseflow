@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :board_grant_effectuation do
     granted_decision_issue do
@@ -14,11 +16,13 @@ FactoryBot.define do
     end
 
     trait :requires_processing do
-      submitted_at { Time.zone.now - 1.minute }
+      decision_sync_submitted_at { (BoardGrantEffectuation.processing_retry_interval_hours + 1).hours.ago }
+      decision_sync_last_submitted_at { (BoardGrantEffectuation.processing_retry_interval_hours + 1).hours.ago }
+      decision_sync_processed_at { nil }
     end
 
     trait :processed do
-      processed_at { Time.zone.now }
+      decision_sync_processed_at { Time.zone.now }
     end
   end
 end

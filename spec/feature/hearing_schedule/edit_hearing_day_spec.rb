@@ -1,13 +1,12 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Edit a Hearing Day" do
   let!(:current_user) do
-    OrganizationsUser.add_user_to_organization(hearings_user, HearingsManagement.singleton)
-    User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"])
-  end
-
-  let!(:hearings_user) do
-    create(:hearings_management)
+    user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
+    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+    User.authenticate!(user: user)
   end
 
   let!(:judge) do
@@ -16,7 +15,7 @@ RSpec.feature "Edit a Hearing Day" do
   end
 
   let!(:hearing_day) do
-    create(:hearing_day, scheduled_for: Date.new(2019, 3, 15), request_type: "C", room: "2", judge_id: judge.id)
+    create(:hearing_day, request_type: "C", room: "2", judge_id: judge.id)
   end
 
   let!(:coordinator) do
@@ -26,7 +25,7 @@ RSpec.feature "Edit a Hearing Day" do
   context "When editing a Hearing Day" do
     scenario "Verify initial fields present when modal opened" do
       visit "hearings/schedule"
-      find_link("Fri 3/15/2019").click
+      find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
       expect(page).to have_content("Edit Hearing Day")
       expect(page).to have_content("No Veterans are scheduled for this hearing day.")
       find("button", text: "Edit Hearing Day").click
@@ -43,7 +42,7 @@ RSpec.feature "Edit a Hearing Day" do
 
   scenario "Verify room dropdown enabled when checkbox clicked" do
     visit "hearings/schedule"
-    find_link("Fri 3/15/2019").click
+    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
     expect(page).to have_content("Edit Hearing Day")
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
@@ -62,7 +61,7 @@ RSpec.feature "Edit a Hearing Day" do
 
   scenario "Verify VLJ dropdown enabled when checkbox clicked" do
     visit "hearings/schedule"
-    find_link("Fri 3/15/2019").click
+    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
     expect(page).to have_content("Edit Hearing Day")
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click
@@ -81,7 +80,7 @@ RSpec.feature "Edit a Hearing Day" do
 
   scenario "Verify Coordinator dropdown enabled when checkbox clicked" do
     visit "hearings/schedule"
-    find_link("Fri 3/15/2019").click
+    find_link(hearing_day.scheduled_for.strftime("%a%_m/%d/%Y")).click
     expect(page).to have_content("Edit Hearing Day")
     expect(page).to have_content("No Veterans are scheduled for this hearing day.")
     find("button", text: "Edit Hearing Day").click

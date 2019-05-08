@@ -1,24 +1,16 @@
+# frozen_string_literal: true
+
 require "support/intake_helpers"
 
 feature "Higher-Level Review" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-    FeatureToggle.enable!(:intakeAma)
-    FeatureToggle.enable!(:intake_legacy_opt_in)
-
-    Time.zone = "America/New_York"
-    Timecop.freeze(Time.utc(2018, 11, 28))
+    Timecop.freeze(post_ramp_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:intakeAma)
-    FeatureToggle.disable!(:intake_legacy_opt_in)
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
@@ -26,8 +18,12 @@ feature "Higher-Level Review" do
 
   let(:veteran_file_number) { "123412345" }
 
+  let(:date_of_death) { nil }
   let(:veteran) do
-    Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
+    Generators::Veteran.build(file_number: veteran_file_number,
+                              first_name: "Ed",
+                              last_name: "Merica",
+                              date_of_death: date_of_death)
   end
 
   let(:veteran_no_ratings) do
@@ -39,7 +35,9 @@ feature "Higher-Level Review" do
 
   let(:inaccessible) { false }
 
-  let(:receipt_date) { Date.new(2018, 9, 20) }
+  let(:receipt_date) { Time.zone.today - 5.days }
+
+  let(:promulgation_date) { receipt_date - 10.days }
 
   let(:benefit_type) { "compensation" }
 
@@ -49,12 +47,12 @@ feature "Higher-Level Review" do
     User.authenticate!(roles: ["Mail Intake"])
   end
 
-  let(:profile_date) { Time.zone.local(2018, 9, 15) }
+  let(:profile_date) { (receipt_date - 8.days).to_datetime }
 
   let!(:rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.days,
+      promulgation_date: promulgation_date,
       profile_date: profile_date,
       issues: [
         { reference_id: "abc123", decision_text: "Left knee granted" },
@@ -99,6 +97,17 @@ feature "Higher-Level Review" do
     )
   end
 
+  context "veteran is deceased" do
+    let(:date_of_death) { Time.zone.today - 1.day }
+
+    scenario "veteran cannot be claimant" do
+      create(:higher_level_review, veteran_file_number: veteran.file_number)
+      check_deceased_veteran_claimant(
+        HigherLevelReviewIntake.new(veteran_file_number: veteran.file_number, user: current_user)
+      )
+    end
+  end
+
   it "Creates an end product and contentions for it" do
     # Testing one relationship, tests 2 relationships in HRL and nil in Appeal
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
@@ -134,33 +143,33 @@ feature "Higher-Level Review" do
 
     expect(page).to have_current_path("/intake/review_request")
 
-    fill_in "What is the Receipt Date of this form?", with: "12/15/2018"
+    fill_in "What is the Receipt Date of this form?", with: Time.zone.tomorrow.mdY
     click_intake_continue
 
     expect(page).to have_content(
       "Receipt date cannot be in the future."
     )
     expect(page).to have_content(
-      "What is the Benefit Type? Please select an option."
+      "What is the Benefit Type?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Was an informal conference requested? Please select an option."
+      "Was an informal conference requested?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Was an interview by the same office requested? Please select an option."
+      "Was an interview by the same office requested?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Is the claimant someone other than the Veteran? Please select an option."
+      "Is the claimant someone other than the Veteran?\nPlease select an option."
     )
     expect(page).to have_content(
-      "Did they agree to withdraw their issues from the legacy system? Please select an option."
+      "Did they agree to withdraw their issues from the legacy system?\nPlease select an option."
     )
 
     within_fieldset("What is the Benefit Type?") do
       find("label", text: "Fiduciary", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: "09/20/2018"
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -193,10 +202,10 @@ feature "Higher-Level Review" do
     click_intake_continue
 
     expect(page).to have_content(
-      "If you do not see the claimant in the options below, and you have access, "
+      "If you do not see the claimant in the options below or if the claimant's information needs updated,"
     )
     expect(page).to have_content(
-      "What is the payee code for this claimant? Please select an option."
+      "What is the payee code for this claimant?\nPlease select an option."
     )
 
     find("label", text: "Bob Vance, Spouse", match: :prefer_exact).click
@@ -258,7 +267,7 @@ feature "Higher-Level Review" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "10/27/2018"
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("2 issues")
@@ -401,16 +410,16 @@ feature "Higher-Level Review" do
       contested_rating_issue_reference_id: "def456",
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
-      decision_date: nil,
+      decision_date: promulgation_date,
       rating_issue_associated_at: Time.zone.now
     )
 
     expect(higher_level_review.request_issues.last).to have_attributes(
       contested_rating_issue_reference_id: nil,
       contested_rating_issue_profile_date: nil,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
-      decision_date: 1.month.ago.to_date
+      decision_date: profile_date
     )
 
     # skip the sync call since all edit requests require resyncing
@@ -420,7 +429,7 @@ feature "Higher-Level Review" do
 
     expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
     expect(page).to have_content("Ed Merica (#{veteran_file_number})")
-    expect(page).to have_content("09/20/2018")
+    expect(page).to have_content(receipt_date.mdY)
     expect(find("#table-row-4")).to have_content("Yes")
     expect(find("#table-row-5")).to have_content("No")
     expect(page).to have_content("PTSD denied")
@@ -450,7 +459,7 @@ feature "Higher-Level Review" do
       find("label", text: "Compensation", match: :prefer_exact).click
     end
 
-    fill_in "What is the Receipt Date of this form?", with: receipt_date.strftime("%D")
+    fill_in "What is the Receipt Date of this form?", with: receipt_date.mdY
 
     within_fieldset("Was an informal conference requested?") do
       find("label", text: "Yes", match: :prefer_exact).click
@@ -525,7 +534,7 @@ feature "Higher-Level Review" do
     )
 
     Claimant.create!(
-      review_request: higher_level_review,
+      decision_review: higher_level_review,
       participant_id: claim_participant_id || test_veteran.participant_id,
       payee_code: claim_participant_id ? "02" : "00"
     )
@@ -545,7 +554,7 @@ feature "Higher-Level Review" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: profile_date.mdY
     )
 
     expect(page).to have_content("1 issue")
@@ -567,7 +576,7 @@ feature "Higher-Level Review" do
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
-      date: "04/19/2018"
+      date: profile_date.mdY
     )
 
     click_intake_finish
@@ -587,17 +596,19 @@ feature "Higher-Level Review" do
   context "ratings with disabiliity codes" do
     let(:disabiliity_receive_date) { receipt_date + 2.days }
     let(:disability_profile_date) { profile_date - 1.day }
-    let!(:ratings_with_disability_codes) do
-      generate_ratings_with_disabilities(veteran,
-                                         disabiliity_receive_date,
-                                         disability_profile_date)
+    let!(:ratings_with_diagnostic_codes) do
+      generate_ratings_with_disabilities(
+        veteran,
+        disabiliity_receive_date,
+        disability_profile_date
+      )
     end
 
-    scenario "saves disability codes" do
+    scenario "saves diagnostic codes" do
       hlr, = start_higher_level_review(veteran)
       visit "/intake"
       click_intake_continue
-      save_and_check_request_issues_with_disability_codes(
+      save_and_check_request_issues_with_diagnostic_codes(
         Constants.INTAKE_FORM_NAMES.higher_level_review,
         hlr
       )
@@ -675,9 +686,10 @@ feature "Higher-Level Review" do
     let!(:previous_request_issue) do
       create(
         :request_issue,
-        review_request: previous_higher_level_review,
+        decision_review: previous_higher_level_review,
         contested_rating_issue_reference_id: higher_level_review_reference_id,
-        contention_reference_id: contention_reference_id
+        contention_reference_id: contention_reference_id,
+        closed_at: 2.months.ago
       )
     end
 
@@ -690,7 +702,7 @@ feature "Higher-Level Review" do
     let!(:previous_sc_request_issue) do
       create(
         :request_issue,
-        review_request: previous_supplemental_claim,
+        decision_review: previous_supplemental_claim,
         contested_rating_issue_reference_id: supplemental_claim_reference_id,
         contention_reference_id: supplemental_claim_contention_reference_id
       )
@@ -700,11 +712,11 @@ feature "Higher-Level Review" do
       create(:decision_issue,
              decision_review: previous_supplemental_claim,
              request_issues: [previous_sc_request_issue],
-             rating_issue_reference_id: supplemental_claim_reference_id,
+             rating_issue_reference_id: "resultingscissue123",
              participant_id: veteran.participant_id,
-             promulgation_date: another_promulgation_date,
+             rating_promulgation_date: another_promulgation_date,
              decision_text: "supplemental claim decision issue",
-             profile_date: profile_date,
+             rating_profile_date: profile_date,
              end_product_last_action_date: profile_date,
              benefit_type: previous_supplemental_claim.benefit_type)
     end
@@ -719,11 +731,20 @@ feature "Higher-Level Review" do
         add_intake_nonrating_issue(
           category: "Active Duty Adjustments",
           description: "Description for Active Duty Adjustments",
-          date: "04/19/2018"
+          date: profile_date.mdY
         )
 
         expect(page).to have_content("1 issue")
       end
+    end
+
+    scenario "Add Issues modal uses promulgation date" do
+      start_higher_level_review(veteran)
+      visit "/intake/add_issues"
+      click_intake_add_issue
+      rating_date = promulgation_date.mdY
+
+      expect(page).to have_content("Past decisions from #{rating_date}")
     end
 
     scenario "HLR comp" do
@@ -790,7 +811,7 @@ feature "Higher-Level Review" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: "10/27/2018"
+        date: profile_date.mdY
       )
       expect(page).to have_content("2 issues")
       # this nonrating request issue is timely
@@ -825,7 +846,6 @@ feature "Higher-Level Review" do
       add_intake_rating_issue("Really old injury")
       add_untimely_exemption_response("No")
       expect(page).to have_content("5 issues")
-      expect(page).to have_content("I am an exemption note")
       expect(page).to have_content("5. Really old injury #{ineligible_constants.untimely}")
 
       # add untimely nonrating request issue
@@ -836,9 +856,8 @@ feature "Higher-Level Review" do
         description: "Another Description for Active Duty Adjustments",
         date: "04/19/2016"
       )
-      add_untimely_exemption_response("No", "I am a nonrating exemption note")
+      add_untimely_exemption_response("No")
       expect(page).to have_content("6 issues")
-      expect(page).to have_content("I am a nonrating exemption note")
       expect(page).to have_content(
         "Another Description for Active Duty Adjustments #{ineligible_constants.untimely}"
       )
@@ -862,7 +881,7 @@ feature "Higher-Level Review" do
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
       expect(page).to have_content(
-        "9. Issue before AMA Activation from RAMP Decision date:"
+        "9. Issue before AMA Activation from RAMP\nDecision date:"
       )
 
       # Add decision issue
@@ -875,7 +894,7 @@ feature "Higher-Level Review" do
       add_intake_nonrating_issue(
         category: "Drill Pay Adjustments",
         description: "A nonrating issue before AMA",
-        date: "10/19/2017"
+        date: pre_ramp_start_date.to_date.mdY
       )
       expect(page).to have_content(
         "A nonrating issue before AMA #{ineligible_constants.before_ama}"
@@ -890,18 +909,20 @@ feature "Higher-Level Review" do
       expect(success_checklist).to_not have_content("Already reviewed injury")
       expect(success_checklist).to_not have_content("Another Description for Active Duty Adjustments")
 
-      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      ineligible_checklist = find("ul.cf-issue-checklist")
       expect(ineligible_checklist).to have_content("Already reviewed injury is ineligible")
       expect(ineligible_checklist).to have_content("Another Description for Active Duty Adjustments is ineligible")
 
       # make sure that database is populated
-      expect(HigherLevelReview.find_by(
-               id: higher_level_review.id,
-               veteran_file_number: veteran.file_number,
-               establishment_submitted_at: Time.zone.now,
-               establishment_processed_at: Time.zone.now,
-               establishment_error: nil
-             )).to_not be_nil
+      expect(
+        HigherLevelReview.find_by(
+          id: higher_level_review.id,
+          veteran_file_number: veteran.file_number,
+          establishment_submitted_at: Time.zone.now,
+          establishment_processed_at: Time.zone.now,
+          establishment_error: nil
+        )
+      ).to_not be_nil
 
       end_product_establishment = EndProductEstablishment.find_by(
         source: higher_level_review,
@@ -925,39 +946,45 @@ feature "Higher-Level Review" do
       expect(non_rating_end_product_establishment).to_not be_nil
 
       # make sure request issue is contesting decision issue
-      expect(RequestIssue.find_by(
-               review_request: higher_level_review,
-               contested_decision_issue_id: decision_issue.id,
-               contested_issue_description: "supplemental claim decision issue",
-               end_product_establishment_id: end_product_establishment.id,
-               notes: "decision issue with note",
-               benefit_type: "compensation"
-             )).to_not be_nil
+      expect(
+        RequestIssue.find_by(
+          decision_review: higher_level_review,
+          contested_decision_issue_id: decision_issue.id,
+          contested_issue_description: "supplemental claim decision issue",
+          end_product_establishment_id: end_product_establishment.id,
+          notes: "decision issue with note",
+          benefit_type: "compensation"
+        )
+      ).to_not be_nil
 
-      expect(RequestIssue.find_by(
-               review_request: higher_level_review,
-               contested_rating_issue_reference_id: "xyz123",
-               contested_issue_description: "Left knee granted 2",
-               end_product_establishment_id: end_product_establishment.id,
-               notes: "I am an issue note",
-               benefit_type: "compensation"
-             )).to_not be_nil
+      expect(
+        RequestIssue.find_by(
+          decision_review: higher_level_review,
+          contested_rating_issue_reference_id: "xyz123",
+          contested_issue_description: "Left knee granted 2",
+          end_product_establishment_id: end_product_establishment.id,
+          notes: "I am an issue note",
+          benefit_type: "compensation"
+        )
+      ).to_not be_nil
 
-      expect(RequestIssue.find_by(
-               review_request: higher_level_review,
-               contested_issue_description: "Really old injury",
-               end_product_establishment_id: nil,
-               untimely_exemption: false,
-               untimely_exemption_notes: "I am an exemption note",
-               benefit_type: "compensation",
-               ineligible_reason: "untimely"
-             )).to_not be_nil
+      expect(
+        RequestIssue.find_by(
+          decision_review: higher_level_review,
+          contested_issue_description: "Really old injury",
+          end_product_establishment_id: nil,
+          untimely_exemption: false,
+          benefit_type: "compensation",
+          ineligible_reason: "untimely",
+          closed_status: :ineligible
+        )
+      ).to_not be_nil
 
       active_duty_adjustments_request_issue = RequestIssue.find_by!(
-        review_request: higher_level_review,
-        issue_category: "Active Duty Adjustments",
+        decision_review: higher_level_review,
+        nonrating_issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "Description for Active Duty Adjustments",
-        decision_date: 1.month.ago,
+        decision_date: profile_date,
         end_product_establishment_id: non_rating_end_product_establishment.id,
         benefit_type: "compensation"
       )
@@ -965,8 +992,8 @@ feature "Higher-Level Review" do
       expect(active_duty_adjustments_request_issue.untimely?).to eq(false)
 
       another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
-        review_request: higher_level_review,
-        issue_category: "Active Duty Adjustments",
+        decision_review: higher_level_review,
+        nonrating_issue_category: "Active Duty Adjustments",
         nonrating_issue_description: "Another Description for Active Duty Adjustments",
         benefit_type: "compensation"
       )
@@ -976,7 +1003,7 @@ feature "Higher-Level Review" do
       expect(another_active_duty_adjustments_request_issue.untimely_exemption_notes).to_not be_nil
 
       expect(RequestIssue.find_by(
-               review_request: higher_level_review,
+               decision_review: higher_level_review,
                unidentified_issue_text: "This is an unidentified issue",
                is_unidentified: true,
                end_product_establishment_id: end_product_establishment.id,
@@ -985,15 +1012,16 @@ feature "Higher-Level Review" do
 
       # Issues before AMA
       expect(RequestIssue.find_by(
-               review_request: higher_level_review,
+               decision_review: higher_level_review,
                contested_issue_description: "Non-RAMP Issue before AMA Activation",
                end_product_establishment_id: nil,
                ineligible_reason: :before_ama,
+               closed_status: :ineligible,
                benefit_type: "compensation"
              )).to_not be_nil
 
       expect(RequestIssue.find_by(
-               review_request: higher_level_review,
+               decision_review: higher_level_review,
                contested_issue_description: "Issue before AMA Activation from RAMP",
                ineligible_reason: nil,
                ramp_claim_id: "ramp_claim_id",
@@ -1002,9 +1030,10 @@ feature "Higher-Level Review" do
              )).to_not be_nil
 
       expect(RequestIssue.find_by(
-               review_request: higher_level_review,
+               decision_review: higher_level_review,
                nonrating_issue_description: "A nonrating issue before AMA",
                ineligible_reason: :before_ama,
+               closed_status: :ineligible,
                end_product_establishment_id: nil,
                benefit_type: "compensation"
              )).to_not be_nil
@@ -1051,8 +1080,9 @@ feature "Higher-Level Review" do
       let!(:previous_appeal_request_issue) do
         create(
           :request_issue,
-          review_request: previous_appeal,
-          contested_rating_issue_reference_id: appeal_reference_id
+          decision_review: previous_appeal,
+          contested_rating_issue_reference_id: appeal_reference_id,
+          closed_at: 2.months.ago
         )
       end
       let!(:previous_appeal_decision_issue) do
@@ -1090,7 +1120,7 @@ feature "Higher-Level Review" do
           RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
         ).to eq("appeal_to_higher_level_review")
 
-        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        ineligible_checklist = find("ul.cf-issue-checklist")
         expect(ineligible_checklist).to have_content(
           "appeal decision issue #{ineligible_constants.appeal_to_higher_level_review}"
         )
@@ -1103,7 +1133,7 @@ feature "Higher-Level Review" do
         create(:request_issue_with_epe,
                :nonrating,
                veteran_participant_id: veteran.participant_id,
-               review_request: another_higher_level_review)
+               decision_review: another_higher_level_review)
       end
 
       scenario "shows ineligibility message and saves conflicting request issue id" do
@@ -1112,20 +1142,20 @@ feature "Higher-Level Review" do
         click_intake_add_issue
         click_intake_no_matching_issues
 
-        fill_in "Issue category", with: active_nonrating_request_issue.issue_category
+        fill_in "Issue category", with: active_nonrating_request_issue.nonrating_issue_category
         find("#issue-category").send_keys :enter
         expect(page).to have_content("Does issue 1 match any of the issues actively being reviewed?")
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category}: " \
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category}: " \
                                      "#{active_nonrating_request_issue.description}")
-        add_active_intake_nonrating_issue(active_nonrating_request_issue.issue_category)
-        expect(page).to have_content("#{active_nonrating_request_issue.issue_category} -" \
+        add_active_intake_nonrating_issue(active_nonrating_request_issue.nonrating_issue_category)
+        expect(page).to have_content("#{active_nonrating_request_issue.nonrating_issue_category} -" \
                                      " #{active_nonrating_request_issue.description}" \
                                      " is ineligible because it's already under review as a Higher-Level Review")
 
         click_intake_finish
         expect(page).to have_content("Intake completed")
-        expect(RequestIssue.find_by(review_request: hlr,
-                                    issue_category: active_nonrating_request_issue.issue_category,
+        expect(RequestIssue.find_by(decision_review: hlr,
+                                    nonrating_issue_category: active_nonrating_request_issue.nonrating_issue_category,
                                     ineligible_due_to: active_nonrating_request_issue.id,
                                     ineligible_reason: "duplicate_of_nonrating_issue_in_active_review",
                                     nonrating_issue_description: active_nonrating_request_issue.description,
@@ -1195,7 +1225,7 @@ feature "Higher-Level Review" do
           add_intake_nonrating_issue(
             category: "Accrued",
             description: "I am a description",
-            date: "10/25/2017"
+            date: profile_date.mdY
           )
           expect(page).to_not have_content("Establish EP")
           expect(page).to have_content("Establish Higher-Level Review")
@@ -1210,8 +1240,8 @@ feature "Higher-Level Review" do
 
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
-                   review_request: hlr,
-                   issue_category: "Accrued",
+                   decision_review: hlr,
+                   nonrating_issue_category: "Accrued",
                    benefit_type: hlr.benefit_type
                  )).to_not be_nil
         end
@@ -1288,7 +1318,7 @@ feature "Higher-Level Review" do
           add_intake_nonrating_issue(
             category: "Active Duty Adjustments",
             description: "Description for Active Duty Adjustments",
-            date: "10/25/2017",
+            date: (profile_date - untimely_days).mdY,
             legacy_issues: true
           )
 
@@ -1305,7 +1335,7 @@ feature "Higher-Level Review" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{intake_constants.adding_this_issue_vacols_optin}: Service connection, ankylosis of hip"
+            "#{intake_constants.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
           )
 
           # add before_ama ratings
@@ -1329,7 +1359,7 @@ feature "Higher-Level Review" do
 
           click_intake_finish
 
-          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          ineligible_checklist = find("ul.cf-issue-checklist")
           expect(ineligible_checklist).to have_content(
             "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
           )
@@ -1378,7 +1408,7 @@ feature "Higher-Level Review" do
 
           click_intake_finish
 
-          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          ineligible_checklist = find("ul.cf-issue-checklist")
           expect(ineligible_checklist).to have_content(
             "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
           )
@@ -1393,19 +1423,23 @@ feature "Higher-Level Review" do
           expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
         end
       end
+    end
+  end
 
-      scenario "adding issue with legacy opt in disabled" do
-        allow(FeatureToggle).to receive(:enabled?).and_call_original
-        allow(FeatureToggle).to receive(:enabled?).with(:intake_legacy_opt_in, user: current_user).and_return(false)
+  context "has a chain of prior decision issues" do
+    let(:start_date) { Time.zone.today - 300.days }
+    before do
+      prior_hlr = create(:higher_level_review, veteran_file_number: veteran.file_number)
+      request_issue = create(:request_issue,
+                             contested_rating_issue_reference_id: "old123",
+                             contested_rating_issue_profile_date: untimely_ratings.profile_date,
+                             decision_review: prior_hlr)
+      setup_prior_decision_issue_chain(prior_hlr, request_issue, veteran, start_date)
+    end
 
-        start_higher_level_review(veteran)
-        visit "/intake/add_issues"
-
-        click_intake_add_issue
-        expect(page).to have_content("Add this issue")
-        add_intake_rating_issue(/^Left knee granted$/)
-        expect(page).to have_content("Left knee granted")
-      end
+    it "disables prior contestable issues" do
+      start_higher_level_review(veteran)
+      check_decision_issue_chain(start_date)
     end
   end
 end

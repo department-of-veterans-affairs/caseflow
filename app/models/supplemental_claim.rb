@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SupplementalClaim < ClaimReview
   END_PRODUCT_MODIFIERS = %w[040 041 042 043 044 045 046 047 048 049].freeze
 
@@ -36,10 +38,6 @@ class SupplementalClaim < ClaimReview
     Array.wrap(review_status_id)
   end
 
-  def active?
-    end_product_establishments.any? { |ep| ep.status_active?(sync: false) }
-  end
-
   def status_hash
     # need to implement. returns the details object for the status
 
@@ -47,17 +45,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def alerts
-    # need to implement. add logic to return alert enum
-  end
-
-  def decision_event_date
-    return unless decision_issues.any?
-
-    if end_product_establishments.any?
-      decision_issues.first.approx_decision_date
-    else
-      decision_issues.first.promulgation_date
-    end
+    @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end
 
   def other_close_event_date
@@ -65,7 +53,7 @@ class SupplementalClaim < ClaimReview
     return unless decision_issues.empty?
     return unless end_product_establishments.any?
 
-    end_product_establishments.first.last_synced_at
+    end_product_establishments.first.last_synced_at.to_date
   end
 
   def events
@@ -74,6 +62,14 @@ class SupplementalClaim < ClaimReview
 
   def fetch_all_decision_issues_for_api_status
     decision_issues
+  end
+
+  def available_review_options
+    # the decision review options available to contest the decision for this claim
+    # need to check if decision_review_remanded is contested claim somehow and only return ["appeal"]
+    return %w[higher_level_review appeal] if benefit_type == "fiduciary"
+
+    %w[supplemental_claim higher_level_review appeal]
   end
 
   private
@@ -86,28 +82,30 @@ class SupplementalClaim < ClaimReview
     decision_review_remanded? ? "397" : super
   end
 
-  def new_end_product_establishment(ep_code)
+  def new_end_product_establishment(issue)
     end_product_establishments.build(
       veteran_file_number: veteran_file_number,
       claim_date: receipt_date,
       payee_code: payee_code || EndProduct::DEFAULT_PAYEE_CODE,
-      code: ep_code,
+      code: issue.end_product_code,
       claimant_participant_id: claimant_participant_id,
       station: end_product_station,
       benefit_type_code: veteran.benefit_type_code,
-      user: end_product_created_by
+      user: end_product_created_by,
+      limited_poa_code: issue.limited_poa_code,
+      limited_poa_access: issue.limited_poa_access
     )
   end
 
   def build_request_issues_from_remand
     remanded_decision_issues_needing_request_issues.map do |remand_decision_issue|
       RequestIssue.new(
-        review_request: self,
+        decision_review: self,
         contested_decision_issue_id: remand_decision_issue.id,
         contested_rating_issue_reference_id: remand_decision_issue.rating_issue_reference_id,
-        contested_rating_issue_profile_date: remand_decision_issue.profile_date,
+        contested_rating_issue_profile_date: remand_decision_issue.rating_profile_date,
         contested_issue_description: remand_decision_issue.description,
-        issue_category: remand_decision_issue.issue_category,
+        nonrating_issue_category: remand_decision_issue.nonrating_issue_category,
         benefit_type: benefit_type,
         decision_date: remand_decision_issue.approx_decision_date
       )
@@ -115,11 +113,7 @@ class SupplementalClaim < ClaimReview
   end
 
   def remanded_decision_issues_needing_request_issues
-    remanded_decision_issues.reject(&:contesting_request_issue)
-  end
-
-  def remanded_decision_issues
-    decision_review_remanded.decision_issues.remanded.where(benefit_type: benefit_type)
+    decision_review_remanded.decision_issues.remanded.uncontested.where(benefit_type: benefit_type)
   end
 
   def fetch_status
@@ -139,6 +133,10 @@ class SupplementalClaim < ClaimReview
     else
       {}
     end
+  end
+
+  def fetch_all_decision_issues
+    decision_issues
   end
 
   def api_issues_for_status_details_issues

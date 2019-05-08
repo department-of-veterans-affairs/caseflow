@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { css } from 'glamor';
 import _ from 'lodash';
 
-import decisionViewBase from './components/DecisionViewBase';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import IssueList from './components/IssueList';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
@@ -29,6 +28,7 @@ import {
 } from './constants';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import { getUndecidedIssues } from './utils';
+import QueueFlowPage from './components/QueueFlowPage';
 
 const tableStyling = css({
   '& tr': {
@@ -145,7 +145,9 @@ class LegacySelectDispositionsView extends React.PureComponent {
       columns.splice(1, 0, {
         header: 'Actions',
         valueFunction: (issue) => {
-          return <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/edit/${issue.id}`}>
+          return <Link
+            replace to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/edit/${issue.id}`}
+          >
             Edit Issue
           </Link>;
         }
@@ -162,10 +164,17 @@ class LegacySelectDispositionsView extends React.PureComponent {
       taskId,
       checkoutFlow,
       appeal,
-      appeal: { issues }
+      appeal: { issues },
+      ...otherProps
     } = this.props;
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      getNextStepUrl={this.getNextStepUrl}
+      getPrevStepUrl={this.getPrevStepUrl}
+      validateForm={this.validateForm}
+      appealId={appealId}
+      {...otherProps}
+    >
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         {this.getPageName()}
       </h1>
@@ -182,9 +191,11 @@ class LegacySelectDispositionsView extends React.PureComponent {
         bodyStyling={tbodyStyling}
       />
       {appeal.isLegacyAppeal && <div {...marginLeft(1.5)}>
-        <Link to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/add`}>Add Issue</Link>
+        <Link
+          replace to={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions/add`}
+        >Add Issue</Link>
       </div>}
-    </React.Fragment>;
+    </QueueFlowPage>;
   };
 }
 
@@ -208,4 +219,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   hideSuccessMessage
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(decisionViewBase(LegacySelectDispositionsView));
+export default connect(mapStateToProps, mapDispatchToProps)(LegacySelectDispositionsView);

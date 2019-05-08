@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module TimeableTask
   extend ActiveSupport::Concern
 
@@ -7,7 +9,10 @@ module TimeableTask
       fail Caseflow::Error::MissingTimerMethod unless method_defined?(:timer_ends_at)
 
       super(args).tap do |task|
-        TaskTimer.create!(task: task, last_submitted_at: task.timer_ends_at)
+        timer = TaskTimer.new(task: task)
+        timer.submit_for_processing!(delay: task.timer_ends_at)
+        # if timer_ends_at is in the past, we automatically trigger processing now.
+        timer.restart! if timer.expired_without_processing?
       end
     end
   end

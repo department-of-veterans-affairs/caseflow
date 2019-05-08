@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CaseReviewsController < ApplicationController
   rescue_from Caseflow::Error::UserRepositoryError do |e|
     handle_non_critical_error("case_reviews", e)
@@ -49,6 +51,7 @@ class CaseReviewsController < ApplicationController
                                    :document_id,
                                    :work_product,
                                    :overtime,
+                                   :untimely_evidence,
                                    :note,
                                    issues: issues_params)
       .merge(attorney: current_user, task_id: params[:task_id])
@@ -68,9 +71,7 @@ class CaseReviewsController < ApplicationController
   end
 
   def issues_params
-    # This is a combined list of params from the old and new issue editing methods.
-    # If new params like request_issue_ids exist in the request, we default to
-    # using the new issue editing flow.
+    # This is a combined list of params for ama and legacy appeals
     [
       :id,
       :disposition,

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe RootTask do
   context ".create_root_and_sub_tasks!" do
     let(:participant_id_with_pva) { "1234" }
@@ -43,14 +45,14 @@ describe RootTask do
 
     context "when a direct docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       context "when it has no vso representation" do
         let(:appeal) do
-          create(:appeal, docket_type: "direct_docket", claimants: [
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
                    create(:claimant, participant_id: participant_id_with_no_vso)
                  ])
         end
@@ -68,7 +70,7 @@ describe RootTask do
 
       context "when it has an ihp-writing vso" do
         let(:appeal) do
-          create(:appeal, docket_type: "direct_docket", claimants: [
+          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
                    create(:claimant, participant_id: participant_id_with_pva),
                    create(:claimant, participant_id: participant_id_with_aml)
                  ])
@@ -94,10 +96,10 @@ describe RootTask do
 
     context "when an evidence submission docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "evidence_submission", claimants: [
@@ -114,10 +116,10 @@ describe RootTask do
 
     context "when a hearing docket appeal is created" do
       before do
-        FeatureToggle.enable!(:ama_auto_case_distribution)
+        FeatureToggle.enable!(:ama_acd_tasks)
       end
       after do
-        FeatureToggle.disable!(:ama_auto_case_distribution)
+        FeatureToggle.disable!(:ama_acd_tasks)
       end
       let(:appeal) do
         create(:appeal, docket_type: "hearing", claimants: [
@@ -128,7 +130,25 @@ describe RootTask do
       it "blocks distribution with schedule hearing task" do
         RootTask.create_root_and_sub_tasks!(appeal)
         expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
-        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
+        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("HearingTask")
+        expect(ScheduleHearingTask.find_by(appeal: appeal).parent.parent.class.name).to eq("DistributionTask")
+      end
+
+      context "when VSO does not writes IHPs for hearing docket cases" do
+        let(:appeal) do
+          FactoryBot.create(
+            :appeal,
+            docket_type: Constants.AMA_DOCKETS.hearing,
+            claimants: [FactoryBot.create(:claimant, participant_id: participant_id_with_pva)]
+          )
+        end
+
+        before { allow_any_instance_of(Representative).to receive(:should_write_ihp?).with(anything).and_return(false) }
+
+        it "creates no IHP tasks" do
+          RootTask.create_root_and_sub_tasks!(appeal)
+          expect(InformalHearingPresentationTask.find_by(appeal: appeal)).to be_nil
+        end
       end
     end
 
@@ -149,6 +169,19 @@ describe RootTask do
         expect(InformalHearingPresentationTask.count).to eq(2)
         expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
         expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
+      end
+
+      it "does not create a task for a VSO if one already exists for that appeal" do
+        InformalHearingPresentationTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: vva
+        )
+        RootTask.create_root_and_sub_tasks!(appeal)
+
+        expect(InformalHearingPresentationTask.count).to eq(2)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(vva)
+        expect(InformalHearingPresentationTask.second.assigned_to).to eq(pva)
       end
 
       it "creates RootTask assigned to Bva organization" do
@@ -188,11 +221,11 @@ describe RootTask do
     end
   end
 
-  describe ".update_children_status" do
+  describe ".update_children_status_after_closed" do
     let!(:root_task) { FactoryBot.create(:root_task) }
     let!(:appeal) { root_task.appeal }
 
-    subject { root_task.update_children_status }
+    subject { root_task.update_children_status_after_closed }
 
     context "when there are multiple children tasks" do
       let!(:generic_task) { FactoryBot.create(:generic_task, appeal: appeal, parent: root_task) }
@@ -202,6 +235,63 @@ describe RootTask do
         expect { subject }.to_not raise_error
         expect(tracking_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(generic_task.reload.status).to_not eq(Constants.TASK_STATUSES.completed)
+      end
+    end
+  end
+
+  describe ".set_assignee" do
+    context "when retrieving an existing RootTask" do
+      let!(:root_task) { FactoryBot.create(:root_task, assigned_to: assignee) }
+      context "when the assignee is already set" do
+        let(:assignee) { Bva.singleton }
+
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to_not receive(:set_assignee)
+
+          RootTask.find(root_task.id)
+        end
+      end
+    end
+
+    context "when creating a new RootTask" do
+      context "when the assignee is already set" do
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to_not receive(:set_assignee)
+
+          RootTask.create(appeal: FactoryBot.create(:appeal), assigned_to: Bva.singleton)
+        end
+      end
+
+      context "when the assignee is not set" do
+        it "should not be called" do
+          expect_any_instance_of(RootTask).to receive(:set_assignee).exactly(1).times
+
+          RootTask.create(appeal: FactoryBot.create(:appeal))
+        end
+      end
+
+      context "when a RootTask already exists for the appeal" do
+        let(:appeal) { FactoryBot.create(:appeal) }
+
+        subject { RootTask.create!(appeal: appeal) }
+
+        before do
+          FactoryBot.create(:root_task, appeal: appeal, status: root_task_status)
+        end
+
+        context "when existing RootTask is active" do
+          let(:root_task_status) { Constants.TASK_STATUSES.on_hold }
+          it "will raise an error" do
+            expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+          end
+        end
+
+        context "when existing RootTask is inactive" do
+          let(:root_task_status) { Constants.TASK_STATUSES.completed }
+          it "will raise an error" do
+            expect { subject }.to raise_error(Caseflow::Error::DuplicateOrgTask)
+          end
+        end
       end
     end
   end

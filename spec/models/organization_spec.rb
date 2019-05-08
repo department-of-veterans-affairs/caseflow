@@ -1,4 +1,18 @@
+# frozen_string_literal: true
+
 describe Organization do
+  describe ".create" do
+    context "when the input URL has uppercase letters and spaces" do
+      let(:url_in) { "My URL_goes here" }
+      let(:url_out) { "my-url-goes-here" }
+
+      it "converts those characters before saving to the database" do
+        org = Organization.create!(url: url_in, name: "Foo")
+        expect(org.url).to eq(url_out)
+      end
+    end
+  end
+
   describe "#user_has_access" do
     let(:org) { create(:organization) }
     let(:user) { create(:user) }

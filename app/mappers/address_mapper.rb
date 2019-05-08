@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AddressMapper
   def get_address_from_bgs_address(bgs_address)
     return {} unless bgs_address
@@ -23,6 +25,20 @@ module AddressMapper
       state: corres_entry.saddrstt,
       country: corres_entry.saddrcnty,
       zip: corres_entry.saddrzip
+    }
+  end
+
+  def get_address_from_veteran_record(veteran)
+    return nil unless veteran
+
+    {
+      address_line_1: veteran.address_line1,
+      address_line_2: veteran.address_line2,
+      address_line_3: veteran.address_line3,
+      city: veteran.city,
+      state: veteran.state,
+      country: veteran.country,
+      zip: veteran.zip_code
     }
   end
 

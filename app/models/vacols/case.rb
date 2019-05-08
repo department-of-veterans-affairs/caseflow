@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 class VACOLS::Case < VACOLS::Record
   self.table_name = "vacols.brieff"
   self.sequence_name = "vacols.bfkeyseq"
   self.primary_key = "bfkey"
 
   has_one    :folder,          foreign_key: :ticknum
-  has_many   :representatives, foreign_key: :repkey
   belongs_to :correspondent,   foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :case_issues,     foreign_key: :isskey
   has_many   :notes,           foreign_key: :tsktknm
@@ -121,7 +122,7 @@ class VACOLS::Case < VACOLS::Record
       group by ISSKEY
     )
     on ISSKEY = BFKEY
-  ".freeze
+  "
 
   JOIN_AOD = "
     left join (
@@ -146,7 +147,7 @@ class VACOLS::Case < VACOLS::Record
       on AOD_HEARINGS.FOLDER_NR = BRIEFF.BFKEY
     )
     on AODKEY = BFKEY
-  ".freeze
+  "
 
   JOIN_SPECIALTY_CASE_TEAM_ISSUES = "
     left join (
@@ -211,7 +212,7 @@ class VACOLS::Case < VACOLS::Record
       from ISSUES
       group by ISSKEY
     ) SCT on SCT.ISSKEY = BRIEFF.BFKEY
-  ".freeze
+  "
 
   JOIN_REMAND_RETURN = "
     left join (
@@ -223,7 +224,7 @@ class VACOLS::Case < VACOLS::Record
       group by BRIEFF.BFKEY
     )
     on REM_RETURN_KEY = BFKEY
-  ".freeze
+  "
 
   WHERE_PAPERLESS_REMAND_LOC97 = "
     BFMPRO = 'REM'
@@ -234,7 +235,7 @@ class VACOLS::Case < VACOLS::Record
 
     and TIVBMS = 'Y'
     -- Only include VBMS cases.
-  ".freeze
+  "
 
   WHERE_PAPERLESS_FULLGRANT_AFTER_DATE = %{
     BFMPRO = 'HIS'
@@ -250,7 +251,7 @@ class VACOLS::Case < VACOLS::Record
 
     and ISSUE_CNT_REMAND = 0
     -- Check that there are no remanded issues. Denials can be included.
-  }.freeze
+  }
 
   # These scopes query VACOLS and cannot be covered by automated tests.
   # :nocov:
@@ -277,6 +278,13 @@ class VACOLS::Case < VACOLS::Record
 
   def update_vacols_location!(location)
     self.class.batch_update_vacols_location(location, [bfkey])
+  end
+
+  def vacols_representatives
+    result = VACOLS::Representative.where(repkey: bfkey)
+    return result if result.present?
+
+    VACOLS::Representative.where(repcorkey: bfcorkey)
   end
 
   # rubocop:disable Metrics/MethodLength

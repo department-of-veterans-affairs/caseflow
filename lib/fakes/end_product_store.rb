@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class Fakes::EndProductStore
-  REDIS_NS ||= "end_product_records_#{Rails.env}".freeze
+  REDIS_NS ||= "end_product_records_#{Rails.env}"
 
   def self.cache_store
     @cache_store ||= begin
@@ -36,5 +38,11 @@ class Fakes::EndProductStore
 
   def deflate_and_store(veteran_id, end_products)
     self.class.cache_store.set(veteran_id, end_products.to_json)
+  end
+
+  def update_ep_status(veteran_id, claim_id, new_status)
+    eps = fetch_and_inflate(veteran_id)
+    eps[claim_id.to_sym][:status_type_code] = new_status
+    deflate_and_store(veteran_id, eps)
   end
 end

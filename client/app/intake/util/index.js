@@ -1,10 +1,21 @@
 import _ from 'lodash';
 import { REVIEW_OPTIONS } from '../constants';
-import { formatDateStringForApi } from '../../util/DateUtil';
+import DATES from '../../../constants/DATES.json';
+import { formatDateStringForApi, formatDateStr } from '../../util/DateUtil';
 
 export const getBlankOptionError = (responseErrorCodes, field) => (
   (_.get(responseErrorCodes[field], 0) === 'blank') && 'Please select an option.'
 );
+
+export const getClaimantError = (responseErrorCodes) => {
+  const errorCode = _.get(responseErrorCodes.claimant, 0);
+
+  if (errorCode === 'blank') {
+    return 'Please select an option.';
+  } else if (errorCode === 'claimant_address_required') {
+    return "Please update the claimant's address.";
+  }
+};
 
 export const getPageError = (responseErrorCodes) => (
   (_.get(responseErrorCodes.other, 0) === 'unknown_error') && 'Unknown error.'
@@ -23,6 +34,10 @@ export const convertStringToBoolean = (string) => {
   return null;
 };
 
+export const benefitTypeProcessedInVBMS = (benefitType) => {
+  return (benefitType === 'compensation' || benefitType === 'pension');
+};
+
 export const getReceiptDateError = (responseErrorCodes, state) => (
   {
     blank:
@@ -30,7 +45,7 @@ export const getReceiptDateError = (responseErrorCodes, state) => (
     in_future:
       'Receipt date cannot be in the future.',
     before_ramp: 'Receipt Date cannot be earlier than RAMP start date, 11/01/2017.',
-    before_ama: 'Receipt Date cannot be earlier than the AMA pilot start date.',
+    before_ama: `Receipt Date cannot be prior to ${formatDateStr(DATES.AMA_ACTIVATION)}.`,
     before_ramp_receipt_date: 'Receipt date cannot be earlier than the original ' +
       `RAMP election receipt date of ${state.electionReceiptDate}`
   }[_.get(responseErrorCodes.receipt_date, 0)]

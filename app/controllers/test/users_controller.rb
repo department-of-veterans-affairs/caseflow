@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rake"
 
 Rake::Task.clear # necessary to avoid tasks being loaded several times in dev mode
@@ -54,7 +56,7 @@ class Test::UsersController < ApplicationController
       }
     },
     {
-      name: "Hearing Schedule",
+      name: "Hearings",
       links: {
         current_schedule: "/hearings/schedule"
       }
@@ -92,8 +94,10 @@ class Test::UsersController < ApplicationController
     return head :not_found if user.nil?
 
     session["user"] = user.to_session_hash
+    # We keep track of current user to use when logging out
+    session["global_admin"] = current_user.id
     RequestStore[:current_user] = user
-    session[:regional_office] = user.selected_regional_office || user.regional_office
+    session[:regional_office] = user.users_regional_office
     head :ok
   end
 

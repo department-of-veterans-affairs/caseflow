@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Search" do
@@ -71,9 +73,9 @@ RSpec.feature "Search" do
         context "and it also has appeals" do
           let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
           let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
-          let!(:eligible_request_issue) { create(:request_issue, review_request: higher_level_review) }
+          let!(:eligible_request_issue) { create(:request_issue, decision_review: higher_level_review) }
 
-          before do
+          def perform_search
             visit "/search"
             fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
             click_on "Search"
@@ -81,17 +83,37 @@ RSpec.feature "Search" do
 
           context "has a higher level review" do
             it "shows the HLR / SCs table" do
+              perform_search
               expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
             end
 
             it "shows a higher level review" do
-              expect(find(".cf-other-reviews-table > tbody")).to have_content("Higher Level Review")
+              perform_search
+              expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
             end
 
             context "and has no end products" do
               it "shows no end products" do
+                perform_search
                 expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
-                expect(find(".cf-other-reviews-table > tbody")).to have_content(COPY::OTHER_REVIEWS_TABLE_NO_EPS_NOTE)
+                expect(page).to have_css(".cf-other-reviews-table > tbody", text: COPY::OTHER_REVIEWS_TABLE_NO_EPS_NOTE)
+              end
+            end
+
+            context "has removed decision reviews" do
+              before do
+                higher_level_review.request_issues.each(&:remove!)
+              end
+
+              let!(:caseflow_appeal) { create(:appeal, veteran: higher_level_review.veteran) }
+              let!(:removed_request_issue) { create(:request_issue, :removed, decision_review: caseflow_appeal) }
+
+              it "does not show removed decision reviews" do
+                perform_search
+
+                expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Supplemental Claim")
+                expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
+                expect(page).to_not have_css(".cf-case-list-table > tbody", text: "Original")
               end
             end
 
@@ -131,12 +153,14 @@ RSpec.feature "Search" do
 
               context "when the EPs have not been established" do
                 it "shows that the EP is establishing if it has not been established" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content(
-                    COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
+                  perform_search
+                  expect(page).to have_css(
+                    ".cf-other-reviews-table > tbody",
+                    text: COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
                   )
-                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Canceled")
-                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Cleared")
-                  expect(find(".cf-other-reviews-table > tbody")).to_not have_content("Ready to work")
+                  expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Canceled")
+                  expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Cleared")
+                  expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Ready to work")
                 end
               end
 
@@ -148,29 +172,29 @@ RSpec.feature "Search" do
                 end
 
                 it "shows that the EP has an establishment error" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content(
-                    COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
+                  perform_search
+                  expect(page).to have_css(
+                    ".cf-other-reviews-table > tbody",
+                    text: COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
                   )
                 end
               end
 
               context "the EP has been established" do
                 before do
-                  end_product_establishment_1.commit!
-                  end_product_establishment_2.commit!
-                  end_product_establishment_3.commit!
-                  end_product_establishment_4.commit!
-                  higher_level_review.establish!
+                  higher_level_review.reload.establish!
                 end
 
                 it "shows the end product status" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Canceled")
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Cleared")
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content("Ready to work")
+                  perform_search
+                  expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Canceled")
+                  expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Cleared")
+                  expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Ready to work")
                 end
 
                 it "if the end products have synced_status codes we don't recognize, show the status code" do
-                  expect(find(".cf-other-reviews-table > tbody")).to have_content("LOL")
+                  perform_search
+                  expect(page).to have_css(".cf-other-reviews-table > tbody", text: "LOL")
                 end
               end
             end
@@ -178,12 +202,15 @@ RSpec.feature "Search" do
 
           context "has a supplemental claim" do
             it "shows the HLR / SCs table" do
+              perform_search
               expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
             end
 
             it "shows a supplemental claim and that it's 'tracked in caseflow'" do
-              expect(find(".cf-other-reviews-table > tbody")).to have_content(
-                COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE
+              perform_search
+              expect(page).to have_css(
+                ".cf-other-reviews-table > tbody",
+                text: COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE
               )
             end
           end
@@ -191,61 +218,61 @@ RSpec.feature "Search" do
       end
     end
 
-    # context "queue case search for appeals that have hearings" do
-    #   context "a case in the search view has a hearing" do
-    #     let!(:today) { Time.zone.today }
-    #     let!(:hearings) do
-    #       [
-    #         create(:case_hearing, :disposition_held, hearing_date: today - 4.days),
-    #         create(:case_hearing, :disposition_no_show, hearing_date: today - 3.days),
-    #         create(:case_hearing, :disposition_postponed, hearing_date: today - 2.days)
-    #       ]
-    #     end
+    context "queue case search for appeals that have hearings" do
+      context "a case in the search view has a hearing" do
+        let!(:today) { Time.zone.today }
+        let!(:hearings) do
+          [
+            create(:case_hearing, :disposition_held, hearing_date: today - 4.days),
+            create(:case_hearing, :disposition_no_show, hearing_date: today - 3.days),
+            create(:case_hearing, :disposition_postponed, hearing_date: today - 2.days)
+          ]
+        end
 
-    #     let!(:appeal_with_hearing) do
-    #       FactoryBot.create(
-    #         :legacy_appeal,
-    #         :with_veteran,
-    #         vacols_case: FactoryBot.create(
-    #           :case,
-    #           case_hearings: hearings
-    #         )
-    #       )
-    #     end
+        let!(:appeal_with_hearing) do
+          FactoryBot.create(
+            :legacy_appeal,
+            :with_veteran,
+            vacols_case: FactoryBot.create(
+              :case,
+              case_hearings: hearings
+            )
+          )
+        end
 
-    #     before do
-    #       visit "/search"
-    #       fill_in "searchBarEmptyList", with: appeal_with_hearing.sanitized_vbms_id
-    #       click_on "Search"
-    #     end
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal_with_hearing.sanitized_vbms_id
+          click_on "Search"
+        end
 
-    #     it "table row displays a badge if a case has a hearing" do
-    #       expect(page).to have_selector(".cf-hearing-badge")
-    #       expect(find(".cf-hearing-badge")).to have_content("H")
-    #     end
+        it "table row displays a badge if a case has a hearing" do
+          expect(page).to have_selector(".cf-hearing-badge")
+          expect(page).to have_css(".cf-hearing-badge", text: "H")
+        end
 
-    #     it "shows information for the most recently held hearing" do
-    #       expect(page).to have_css(
-    #         ".__react_component_tooltip div ul li:nth-child(3) strong span",
-    #         visible: :hidden,
-    #         text: 4.days.ago.strftime("%m/%d/%y")
-    #       )
-    #     end
-    #   end
+        it "shows information for the most recently held hearing" do
+          expect(page).to have_css(
+            ".__react_component_tooltip div ul li:nth-child(3) strong span",
+            visible: :hidden,
+            text: 4.days.ago.strftime("%m/%d/%y")
+          )
+        end
+      end
 
-    #   context "no cases in the search view have hearings" do
-    #     before do
-    #       visit "/search"
-    #       fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
-    #       click_on "Search"
-    #     end
+      context "no cases in the search view have hearings" do
+        before do
+          visit "/search"
+          fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+          click_on "Search"
+        end
 
-    #     it "table does not display a column for a badge if no cases have hearings" do
-    #       docket_column_header = find("table.cf-case-list-table > thead > tr > th:first-child > span")
-    #       expect(docket_column_header).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
-    #     end
-    #   end
-    # end
+        it "table does not display a column for a badge if no cases have hearings" do
+          docket_column_header = find("table.cf-case-list-table > thead > tr > th:first-child > span")
+          expect(docket_column_header).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
+        end
+      end
+    end
 
     context "when no appeals found" do
       before do
@@ -274,25 +301,28 @@ RSpec.feature "Search" do
       end
     end
 
-    context "when backend encounters an error" do
-      before do
-        allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
+    context "when VSO employee does not have access to the file number" do
+      it "displays a helpful error message on same page" do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
-      end
 
-      it "displays error message on same page" do
-        expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
+        expect(page).to have_content("You do not have access to this claims file number")
       end
+    end
 
-      it "searching in search bar produces another error" do
-        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
+    context "when VSO employee searches for file number that does not match any veteran" do
+      it "displays a helpful error message on same page" do
+        vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
+        User.authenticate!(user: vso_user)
+        visit "/search"
+        fill_in "searchBarEmptyList", with: "123456789"
         click_on "Search"
 
-        expect(page).to have_content(
-          format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
-        )
+        expect(page).to have_content("Could not find a Veteran matching the file number")
       end
     end
 
@@ -325,7 +355,7 @@ RSpec.feature "Search" do
 
       it "clicking on the x in the search bar clears the search bar" do
         click_on "button-clear-search"
-        expect(find("#searchBarEmptyList")).to have_content("")
+        expect(page).to have_css("#searchBarEmptyList", text: "")
       end
 
       it "clicking on docket number sends us to the case details page" do
@@ -423,30 +453,14 @@ RSpec.feature "Search" do
       end
     end
 
-    context "when backend encounters an error" do
-      before do
+    context "when backend returns non-serialized error" do
+      it "displays generic server error message" do
         allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(StandardError)
         visit "/search"
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
-      end
 
-      it "displays error message" do
         expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, appeal.sanitized_vbms_id))
-      end
-
-      it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: veteran_with_no_appeals.file_number
-        click_on "Search"
-        expect(page).to have_content(
-          format(COPY::CASE_SEARCH_ERROR_UNKNOWN_ERROR_HEADING, veteran_with_no_appeals.file_number)
-        )
-      end
-
-      it "clicking on the x in the search bar returns browser to queue list page" do
-        click_on "button-clear-search"
-        expect(page).to have_content(search_homepage_title)
-        expect(page).to have_content(search_homepage_subtitle)
       end
     end
 

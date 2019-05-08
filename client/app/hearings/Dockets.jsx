@@ -3,10 +3,12 @@ import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import Alert from '../components/Alert';
 import Table from '../components/Table';
 import TabWindow from '../components/TabWindow';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import NonRouterLink from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { getDateTime } from './util/DateUtil';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { css } from 'glamor';
@@ -44,6 +46,10 @@ const tableBorder = css({
   border: '1px solid #dadbdc',
   marginTop: '0px',
   borderTop: '0px'
+});
+
+const alertStyling = css({
+  marginBottom: '30px'
 });
 
 const tableBodyStyling = css({
@@ -212,6 +218,17 @@ export class Dockets extends React.Component {
     ];
 
     return <AppSegment extraClassNames="cf-hearings-schedule" filledBackground>
+      <Alert type="info"
+        styling={alertStyling}
+        title="New View of Hearing Schedule Coming Soon"
+        message={<span><p>{'All travel board hearings scheduled May 20, 2019 and beyond ' +
+            'must be viewed in VACOLS. Caseflow will no longer display travel board schedules ' +
+            'or information after that date.'}</p><p>
+          <NonRouterLink button href="/hearings/schedule">
+            <span {...css({ color: '#fff' })}>Go to new hearing schedule view</span>
+          </NonRouterLink >
+        </p></span>} />
+
       <div className="cf-hearings-title-and-judge">
         <h1>Your Hearing Days</h1>
         <span>VLJ: {this.props.veteranLawJudge.full_name}</span>

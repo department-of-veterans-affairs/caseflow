@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppealEvents
   include ActiveModel::Model
 
@@ -153,7 +155,7 @@ class AppealEvents
   end
 
   def dta_decision_event
-    AppealEvent.new(type: :dta_decision, date: appeal.dta_descision_event_date)
+    AppealEvent.new(type: :dta_decision, date: appeal.remand_decision_event_date)
   end
 
   def hlr_other_close_event
@@ -173,7 +175,8 @@ class AppealEvents
   end
 
   def bva_decision_effectuation_event
-    AppealEvent.new(type: :bva_decision_effectuation, date: appeal.decision_effectuation_event_date)
+    AppealEvent.new(type: :bva_decision_effectuation,
+                    date: appeal.decision_issues.remanded.any? ? nil : appeal.decision_effectuation_event_date)
   end
 
   def other_close_event

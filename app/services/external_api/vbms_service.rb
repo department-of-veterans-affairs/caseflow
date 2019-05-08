@@ -1,15 +1,15 @@
+# frozen_string_literal: true
+
 # :nocov:
 class VBMSCaseflowLogger
   def log(event, data)
     case event
     when :request
       status = data[:response_code]
-      name = data[:request].class.name.split("::").last
 
       if status != 200
         Rails.logger.error(
-          "VBMS HTTP Error #{status} " \
-          "(#{name}) #{data[:response_body]}"
+          "VBMS HTTP Error #{status} (#{data.pretty_inspect})"
         )
       end
     end
@@ -40,9 +40,7 @@ class ExternalApi::VBMSService
 
     begin
       documents = send_and_log_request(veteran_file_number, request)
-    rescue VBMS::HTTPError => e
-      raise unless e.body.include?("File Number does not exist within the system.")
-
+    rescue VBMSError::FilenumberDoesNotExist
       alternative_file_number = ExternalApi::BGSService.new.fetch_veteran_info(veteran_file_number)[:claim_number]
 
       raise if alternative_file_number == veteran_file_number
@@ -84,7 +82,7 @@ class ExternalApi::VBMSService
       content_hash: content_hash,
       filename: filename,
       file_number: appeal.veteran_file_number,
-      va_receive_date: uploadable_document.upload_date,
+      va_receive_date: Time.zone.now,
       doc_type: uploadable_document.document_type_id,
       source: uploadable_document.source,
       subject: uploadable_document.document_type,
@@ -177,6 +175,14 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
+  def self.list_document_types
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::ListTypeCategory.new
+
+    send_and_log_request(nil, request)
+  end
+
   def self.vbms_client_with_user(user)
     return @vbms_client if user.nil?
 
@@ -204,9 +210,9 @@ class ExternalApi::VBMSService
                           name: name) do
       (override_vbms_client || @vbms_client).send_request(request)
     end
-  rescue VBMS::ClientError => e
-    Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
+  rescue VBMS::ClientError => error
+    Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
 
-    raise e
+    raise VBMSError.from_vbms_http_error(error)
   end
 end

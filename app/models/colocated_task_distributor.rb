@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class ColocatedTaskDistributor < RoundRobinTaskDistributor
-  def initialize(list_of_assignees: Colocated.singleton.non_admins.sort_by(&:id).pluck(:css_id),
+  def initialize(assignee_pool: Colocated.singleton.non_admins.sort_by(&:id),
                  task_class: Task)
     super
   end
@@ -7,8 +9,8 @@ class ColocatedTaskDistributor < RoundRobinTaskDistributor
   def next_assignee(options = {})
     open_assignee = options.dig(:appeal)
       &.tasks
-      &.where&.not(status: Constants.TASK_STATUSES.completed)
-      &.find_by(assigned_to: User.where(css_id: list_of_assignees))
+      &.active
+      &.find_by(assigned_to: assignee_pool)
       &.assigned_to
 
     open_assignee || super()

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AppealEvent do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
@@ -55,7 +57,9 @@ describe AppealEvent do
     subject { appeal_event.hearing = hearing }
 
     context "when disposition is supported" do
-      let(:hearing) { LegacyHearing.new(scheduled_for: 4.days.ago, disposition: :no_show) }
+      let(:hearing) do
+        LegacyHearing.new(scheduled_for: 4.days.ago, disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
+      end
 
       it "sets type and date based off of hearing" do
         subject
@@ -66,7 +70,9 @@ describe AppealEvent do
     end
 
     context "when disposition is not supported" do
-      let(:hearing) { LegacyHearing.new(scheduled_for: 4.days.ago, disposition: :postponed) }
+      let(:hearing) do
+        LegacyHearing.new(scheduled_for: 4.days.ago, disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
+      end
 
       it "sets type to falsey" do
         subject

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe BoardGrantEffectuation do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
@@ -77,8 +79,8 @@ describe BoardGrantEffectuation do
         it "Updates the granted decision issue" do
           subject
           expect(granted_decision_issue).to have_attributes(
-            promulgation_date: rating.promulgation_date,
-            profile_date: rating.profile_date,
+            rating_promulgation_date: rating.promulgation_date,
+            rating_profile_date: rating.profile_date,
             decision_text: "PTSD denied",
             rating_issue_reference_id: "ref_id1"
           )
@@ -93,12 +95,22 @@ describe BoardGrantEffectuation do
           subject
           expect(board_grant_effectuation).to be_attempted
           expect(granted_decision_issue).to have_attributes(
-            promulgation_date: nil,
-            profile_date: nil,
+            rating_promulgation_date: nil,
+            rating_profile_date: nil,
             decision_text: nil,
             rating_issue_reference_id: nil
           )
           expect(board_grant_effectuation).to be_processed
+        end
+      end
+
+      context "when previous attempt failed" do
+        let(:contention_reference_id) { "1111" }
+
+        it "clears error" do
+          board_grant_effectuation.decision_sync_error = "previous error"
+          subject
+          expect(board_grant_effectuation.decision_sync_error).to be_nil
         end
       end
     end

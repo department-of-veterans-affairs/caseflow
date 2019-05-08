@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # ephemeral class used for caching Rating Issues for client,
 # and for creating DecisionIssues when a Rating Issue has contention_reference_ids
 
@@ -5,7 +7,7 @@ class RatingIssue
   include ActiveModel::Model
 
   attr_accessor :reference_id, :decision_text, :profile_date, :associated_end_products,
-                :promulgation_date, :participant_id, :rba_contentions_data, :disability_code,
+                :promulgation_date, :participant_id, :rba_contentions_data, :diagnostic_code,
                 :benefit_type
 
   class << self
@@ -18,7 +20,7 @@ class RatingIssue
         associated_end_products: rating.associated_end_products,
         promulgation_date: rating.promulgation_date,
         participant_id: rating.participant_id,
-        disability_code: bgs_data[:dgnstc_tc],
+        diagnostic_code: bgs_data[:dgnstc_tc],
         benefit_type: rating.pension? ? :pension : :compensation
       )
     end
@@ -32,7 +34,7 @@ class RatingIssue
         promulgation_date: serialized_hash[:promulgation_date],
         profile_date: serialized_hash[:profile_date],
         rba_contentions_data: serialized_hash[:rba_contentions_data],
-        disability_code: serialized_hash[:disability_code],
+        diagnostic_code: serialized_hash[:diagnostic_code],
         benefit_type: serialized_hash[:benefit_type]
       )
     end
@@ -66,20 +68,11 @@ class RatingIssue
       promulgation_date: promulgation_date,
       profile_date: profile_date,
       ramp_claim_id: ramp_claim_id,
-      title_of_active_review: title_of_active_review,
       rba_contentions_data: rba_contentions_data,
       associated_end_products: associated_end_products.map(&:serialize),
-      disability_code: disability_code,
+      diagnostic_code: diagnostic_code,
       benefit_type: benefit_type
     }
-  end
-
-  def title_of_active_review
-    return unless reference_id
-
-    request_issue = RequestIssue.find_active_by_contested_rating_issue_reference_id(reference_id)
-
-    request_issue&.review_title
   end
 
   def decision_issue
@@ -96,6 +89,9 @@ class RatingIssue
     @contention_reference_ids ||= calculate_contention_reference_ids
   end
 
+  # TODO: if request issues are found to be the source of a rating issue that with no matching decision issue,
+  # that means we did not create a decision issue somewhere. This is a problem and we should probably throw an
+  # error in this scenario. For now we will assume this does not happen.
   def source_request_issues
     return [] if contention_reference_ids.empty?
 

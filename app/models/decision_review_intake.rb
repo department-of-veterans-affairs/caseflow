@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 class DecisionReviewIntake < Intake
   include RunAsyncable
 
-  def ui_hash(ama_enabled)
+  # rubocop:disable Metrics/AbcSize
+  def ui_hash
     super.merge(
       receipt_date: detail.receipt_date,
       claimant: detail.claimant_participant_id,
@@ -10,17 +13,20 @@ class DecisionReviewIntake < Intake
       legacy_opt_in_approved: detail.legacy_opt_in_approved,
       legacyAppeals: detail.serialized_legacy_appeals,
       ratings: detail.serialized_ratings,
-      requestIssues: detail.request_issues.open.map(&:ui_hash),
+      requestIssues: detail.request_issues.active_or_ineligible.map(&:ui_hash),
       activeNonratingRequestIssues: detail.active_nonrating_request_issues.map(&:ui_hash),
-      contestableIssuesByDate: detail.contestable_issues.map(&:serialize)
+      contestableIssuesByDate: detail.contestable_issues.map(&:serialize),
+      veteranValid: veteran&.valid?(:bgs),
+      veteranInvalidFields: veteran_invalid_fields
     )
   rescue Rating::NilRatingProfileListError, Rating::LockedRatingError
     cancel!(reason: "system_error")
     raise
   end
+  # rubocop:enable Metrics/AbcSize
 
   def cancel_detail!
-    detail.remove_claimants!
+    detail&.remove_claimants!
     super
   end
 
@@ -43,5 +49,57 @@ class DecisionReviewIntake < Intake
 
   def build_issues(request_issues_data)
     request_issues_data.map { |data| RequestIssue.from_intake_data(data, decision_review: detail) }
+  end
+
+  private
+
+  def set_review_errors
+    fetch_claimant_errors
+    detail.validate
+    set_claimant_errors
+    false
+    # we just swallow the exception otherwise, since we want the validation errors to return to client
+  end
+
+  def fetch_claimant_errors
+    payee_code_error
+    claimant_required_error
+    claimant_address_error
+  end
+
+  def set_claimant_errors
+    detail.errors[:payee_code] << payee_code_error if payee_code_error
+    detail.errors[:claimant] << claimant_required_error if claimant_required_error
+    detail.errors[:claimant] << claimant_address_error if claimant_address_error
+  end
+
+  def claimant_address_error
+    @claimant_address_error ||=
+      detail.errors.messages[:claimant].include?(
+        ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
+      ) && ClaimantValidator::CLAIMANT_ADDRESS_REQUIRED
+  end
+
+  def claimant_required_error
+    @claimant_required_error ||=
+      detail.errors.messages[:veteran_is_not_claimant].include?(
+        ClaimantValidator::CLAIMANT_REQUIRED
+      ) && ClaimantValidator::BLANK
+  end
+
+  def payee_code_error
+    @payee_code_error ||=
+      detail.errors.messages[:benefit_type].include?(
+        ClaimantValidator::PAYEE_CODE_REQUIRED
+      ) && ClaimantValidator::BLANK
+  end
+
+  # run during start!
+  def after_validated_pre_start!
+    epes = EndProductEstablishment.established.where(veteran_file_number: veteran.file_number)
+    epes.each do |epe|
+      epe.veteran = veteran
+      epe.sync!
+    end
   end
 end

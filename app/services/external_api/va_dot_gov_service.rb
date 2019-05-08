@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "json"
 
 class ExternalApi::VADotGovService
@@ -185,7 +187,24 @@ class ExternalApi::VADotGovService
       end
     end
 
+    def check_body_messages(response_body:, code:)
+      (response_body["messages"] || []).each do |msg|
+        case msg["key"]
+        when "AddressCouldNotBeFound", "SpectrumServiceAddressError"
+          fail Caseflow::Error::VaDotGovAddressCouldNotBeFoundError, code: code, message: response_body
+        when "DualAddressError", "InsufficientInputData", "InvalidRequestCountry",
+          "InvalidRequestNonStreetAddress", "InvalidRequestPostalCode", "InvalidRequestState",
+          "InvalidRequestStreetAddress"
+          fail Caseflow::Error::VaDotGovInvalidInputError, code: code, message: response_body
+        when "MultipleAddressError"
+          fail Caseflow::Error::VaDotGovMultipleAddressError, code: code, message: response_body
+        end
+      end
+    end
+
     def check_for_error(response_body:, code:)
+      check_body_messages(response_body: response_body, code: code)
+
       case code
       when 200 # rubocop:disable Lint/EmptyWhen
       when 429

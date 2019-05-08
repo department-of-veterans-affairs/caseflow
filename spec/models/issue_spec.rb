@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Issue do
   let(:vacols_id) { "12345678" }
   let(:disposition) { :allowed }
@@ -182,6 +184,11 @@ describe Issue do
   context "#friendly_description" do
     subject { issue.friendly_description }
 
+    before do
+      @raven_called = false
+      allow(Raven).to receive(:capture_message) { @raven_called = true }
+    end
+
     it { is_expected.to eq("Service connection, limitation of thigh motion (flexion)") }
 
     context "when there is an unknown issue code" do
@@ -192,6 +199,14 @@ describe Issue do
     context "when there is an unknown diagnostic code" do
       let(:codes) { %w[02 15 03 1234] }
       it { is_expected.to be_nil }
+    end
+
+    context "when there are more levels than codes" do
+      let(:codes) { %w[01 01] }
+      it {
+        is_expected.to eq("")
+        expect(@raven_called).to eq(true)
+      }
     end
   end
 

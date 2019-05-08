@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { onReceiveDropdownData, onFetchDropdownData } from '../common/actions';
 import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
+import LoadingLabel from './LoadingLabel';
 
 import SearchableDropdown from '../SearchableDropdown';
 
@@ -46,16 +47,19 @@ class HearingCoordinatorDropdown extends React.Component {
   }
 
   render() {
-    const { name, label, onChange, readOnly, errorMessage, placeholder } = this.props;
+    const {
+      name, label, onChange, readOnly, errorMessage, placeholder,
+      hearingCoordinators: { isFetching }
+    } = this.props;
 
     return (
       <SearchableDropdown
         name={name}
-        label={label}
+        label={isFetching ? <LoadingLabel text="Loading hearing coordinators..." /> : label}
         strongLabel
         readOnly={readOnly}
         value={this.getSelectedOption()}
-        onChange={(option) => onChange(option.value, option.label)}
+        onChange={(option) => onChange((option || {}).value, (option || {}).label)}
         options={this.props.hearingCoordinators.options}
         errorMessage={errorMessage}
         placeholder={placeholder} />

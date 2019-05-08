@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe AppealIntake do
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
@@ -43,7 +45,7 @@ describe AppealIntake do
 
     let!(:claimant) do
       Claimant.create!(
-        review_request: detail,
+        decision_review: detail,
         participant_id: "1234",
         payee_code: "10"
       )
@@ -51,7 +53,7 @@ describe AppealIntake do
 
     let!(:request_issue) do
       RequestIssue.new(
-        review_request: detail,
+        decision_review: detail,
         contested_rating_issue_profile_date: Time.zone.local(2018, 4, 30),
         contested_rating_issue_reference_id: "issue1",
         contested_issue_description: "description",
@@ -112,7 +114,8 @@ describe AppealIntake do
       expect(intake.detail.claimants.count).to eq 1
       expect(intake.detail.claimants.first).to have_attributes(
         participant_id: intake.veteran.participant_id,
-        payee_code: nil
+        payee_code: nil,
+        decision_review: intake.detail
       )
     end
 
@@ -139,8 +142,25 @@ describe AppealIntake do
         expect(intake.detail.claimants.count).to eq 1
         expect(intake.detail.claimants.first).to have_attributes(
           participant_id: "1234",
-          payee_code: nil
+          payee_code: nil,
+          decision_review: intake.detail
         )
+      end
+
+      context "claimant is missing address" do
+        before do
+          allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
+        end
+
+        it "does not require the address" do
+          expect(subject).to be_truthy
+          expect(intake.detail.claimants.count).to eq 1
+          expect(intake.detail.claimants.first).to have_attributes(
+            participant_id: "1234",
+            payee_code: nil,
+            decision_review: intake.detail
+          )
+        end
       end
 
       context "claimant is nil" do
@@ -171,7 +191,7 @@ describe AppealIntake do
           decision_text: "decision text"
         },
         { decision_text: "nonrating request issue decision text",
-          issue_category: "test issue category",
+          nonrating_issue_category: "test issue category",
           benefit_type: "compensation",
           decision_date: "2018-12-25" }
       ]
@@ -198,7 +218,7 @@ describe AppealIntake do
         contested_issue_description: "decision text"
       )
       expect(intake.detail.request_issues.second).to have_attributes(
-        issue_category: "test issue category",
+        nonrating_issue_category: "test issue category",
         decision_date: Date.new(2018, 12, 25),
         nonrating_issue_description: "nonrating request issue decision text"
       )

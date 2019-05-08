@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 feature "NonComp Board Grant Task Page" do
   before do
     FeatureToggle.enable!(:decision_reviews)
-    Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+    Timecop.freeze(post_ama_start_date)
   end
 
   after do
@@ -32,7 +34,7 @@ feature "NonComp Board Grant Task Page" do
       request_issue = create(:request_issue,
                              :nonrating,
                              veteran_participant_id: veteran.participant_id,
-                             review_request: appeal,
+                             decision_review: appeal,
                              benefit_type: nca_org.url)
 
       request_issue.create_decision_issue_from_params(
@@ -118,7 +120,7 @@ feature "NonComp Board Grant Task Page" do
         request_issue = create(:request_issue,
                                :nonrating,
                                veteran_participant_id: veteran.participant_id,
-                               review_request: appeal,
+                               decision_review: appeal,
                                benefit_type: vha_org.url)
 
         request_issue.create_decision_issue_from_params(
@@ -144,6 +146,7 @@ feature "NonComp Board Grant Task Page" do
       expect(page).to have_content("Decision")
       expect(page).to have_content(veteran.name)
       expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
+      expect(page).to have_content(prior_date.strftime("%m/%d/%Y"))
 
       # expect to have the two granted decision issues
       expect(page).to have_content("GRANTED", count: 2)

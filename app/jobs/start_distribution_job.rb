@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StartDistributionJob < ApplicationJob
   queue_as :high_priority
   application_attr :queue
@@ -5,9 +7,9 @@ class StartDistributionJob < ApplicationJob
   def perform(distribution, user = nil)
     RequestStore.store[:current_user] = user if user
     distribution.distribute!
-  rescue StandardError => e
-    Rails.logger.info "StartDistributionJob failed: #{e.message}"
-    Rails.logger.info e.backtrace.join("\n")
+  rescue StandardError => error
+    Rails.logger.info "StartDistributionJob failed: #{error.message}"
+    Rails.logger.info error.backtrace.join("\n")
   end
 
   # :nocov:

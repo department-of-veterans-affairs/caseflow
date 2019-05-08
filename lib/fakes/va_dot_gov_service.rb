@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Fakes::VADotGovService < ExternalApi::VADotGovService
   def self.send_va_dot_gov_request(endpoint:, query: {}, **_args)
     if endpoint == facilities_endpoint
@@ -28,12 +30,12 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
     {
       "address": {
         "county": {
-          "name": "Manassas Park City",
-          "countyFipsCode": "51685"
+          "name": "Deltona",
+          "countyFipsCode": "32738"
         },
         "stateProvince": {
-          "name": "Virginia",
-          "code": "VA"
+          "name": "Florida",
+          "code": "FL"
         },
         "country": {
           "name": "United States",
@@ -42,11 +44,11 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
           "iso2Code": "US",
           "iso3Code": "USA"
         },
-        "addressLine1": "8633 Union Pl",
+        "addressLine1": "8633 Fordham St.",
         "addressLine2": "",
         "addressLine3": "",
-        "city": "Manassas Park",
-        "zipCode5": "20111",
+        "city": "Deltona",
+        "zipCode5": "32738",
         "zipCode4": "2434"
       },
       "geocode": {

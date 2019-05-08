@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,31 +10,12 @@ import {
 import { setAppealAod } from './QueueActions';
 
 import SearchableDropdown from '../components/SearchableDropdown';
-import editModalBase from './components/EditModalBase';
 import { requestSave } from './uiReducer/uiActions';
-
-import type { State } from './types/state';
-import type { Appeal } from './types/models';
-
-type Params = {|
-  appealId: string
-|};
-
-type Props = Params & {|
-  appeal: Appeal,
-  highlightFormItems: boolean,
-  requestSave: typeof requestSave,
-  setAppealAod: typeof setAppealAod
-|};
-
-type ViewState = {|
-  granted: ?string,
-  reason: ?string
-|};
+import QueueFlowModal from './components/QueueFlowModal';
 
 const GRANTED = 'granted';
 
-class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
+class AdvancedOnDocketMotionView extends React.Component {
   constructor(props) {
     super(props);
 
@@ -70,6 +50,9 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
         if (this.state.granted === GRANTED) {
           this.props.setAppealAod(appeal.externalId);
         }
+      }).
+      catch(() => {
+        // handle the error from the frontend
       });
   }
 
@@ -78,7 +61,11 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
       highlightFormItems
     } = this.props;
 
-    return <React.Fragment>
+    return <QueueFlowModal
+      title={COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE}
+      submit={this.submit}
+      validateForm={this.validateForm}
+    >
       <h3>{COPY.ADVANCE_ON_DOCKET_MOTION_DISPOSITION_DROPDOWN}</h3>
       <SearchableDropdown
         name="AOD Motion Disposition"
@@ -113,11 +100,11 @@ class AdvancedOnDocketMotionView extends React.Component<Props, ViewState> {
           { label: 'Other',
             value: 'other' }
         ]} />
-    </React.Fragment>;
+    </QueueFlowModal>;
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state, ownProps) => {
   const {
     highlightFormItems
   } = state.ui;
@@ -133,6 +120,4 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setAppealAod
 }, dispatch);
 
-export default (connect(mapStateToProps, mapDispatchToProps)(
-  editModalBase(AdvancedOnDocketMotionView, { title: COPY.ADVANCE_ON_DOCKET_MOTION_PAGE_TITLE })
-): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(AdvancedOnDocketMotionView));

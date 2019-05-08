@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 RSpec.feature "Certification Stats Dashboard" do
@@ -59,27 +61,27 @@ RSpec.feature "Certification Stats Dashboard" do
   scenario "Switching tab intervals" do
     visit "/certification/stats"
     expect(page).to have_content("Activity for 12:00–12:59 EST (so far)")
-    expect(page).to have_content("Certifications Started 1")
-    expect(page).to have_content("Certifications Completed 1")
-    expect(page).to have_content("Overall 100 %")
-    expect(page).to have_content("Missing Document ?? %")
-    expect(page).to have_content("Overall (median) 15.00 min")
-    expect(page).to have_content("Missing Document (median) ??")
-    expect(page).to have_content("Any Document 0 %")
+    expect(page).to have_content("Certifications Started\n1")
+    expect(page).to have_content("Certifications Completed\n1")
+    expect(page).to have_content("Overall\n100 %")
+    expect(page).to have_content("Missing Document\n?? %")
+    expect(page).to have_content("Overall (median)\n15.00 min")
+    expect(page).to have_content("Missing Document (median)\n??")
+    expect(page).to have_content("Any Document\n0 %")
 
     click_on "Daily"
     expect(page).to have_content("Activity for January 1 (so far)")
-    expect(page).to have_content("Certifications Started 4")
-    expect(page).to have_content("Certifications Completed 3")
-    expect(page).to have_content("Overall 75 %")
-    expect(page).to have_content("Missing Document 50 %")
-    expect(page).to have_content("Overall (median) 1.00 hours")
-    expect(page).to have_content("Missing Document (median) 2.00 hours")
-    expect(page).to have_content("Any Document 50 %")
-    expect(page).to have_content("NOD 50 %")
-    expect(page).to have_content("SOC 0 %")
-    expect(page).to have_content("SSOC 33 %")
-    expect(page).to have_content("Form 9 0 %")
+    expect(page).to have_content("Certifications Started\n4")
+    expect(page).to have_content("Certifications Completed\n3")
+    expect(page).to have_content("Overall\n75 %")
+    expect(page).to have_content("Missing Document\n50 %")
+    expect(page).to have_content("Overall (median)\n1.00 hours")
+    expect(page).to have_content("Missing Document (median)\n2.00 hours")
+    expect(page).to have_content("Any Document\n50 %")
+    expect(page).to have_content("NOD\n50 %")
+    expect(page).to have_content("SOC\n0 %")
+    expect(page).to have_content("SSOC\n33 %")
+    expect(page).to have_content("Form 9\n0 %")
   end
 
   # The stats tests don't play well with Selenium Chrome
@@ -115,18 +117,18 @@ RSpec.feature "Certification Stats Dashboard" do
     page.execute_script("window.Dashboard.mouseoverEvents = false;")
 
     expect(page).to have_content("Activity for January 1 (so far)")
-    expect(page).to have_content("Certifications Started 6")
-    expect(page).to have_content("Certifications Completed 3")
-    expect(page).to have_content("Overall 50 %")
-    expect(page).to have_content("Missing Document 25 %")
-    expect(page).to have_content("Overall (median) 1.00 hours")
-    expect(page).to have_content("Missing Document (median) 2.00 hours")
+    expect(page).to have_content("Certifications Started\n6")
+    expect(page).to have_content("Certifications Completed\n3")
+    expect(page).to have_content("Overall\n50 %")
+    expect(page).to have_content("Missing Document\n25 %")
+    expect(page).to have_content("Overall (median)\n1.00 hours")
+    expect(page).to have_content("Missing Document (median)\n2.00 hours")
 
-    expect(page).to have_content("Any Document 67 %")
-    expect(page).to have_content("NOD 33 %")
-    expect(page).to have_content("SOC 17 %")
-    expect(page).to have_content("SSOC 40 %")
-    expect(page).to have_content("Form 9 0 %")
+    expect(page).to have_content("Any Document\n67 %")
+    expect(page).to have_content("NOD\n33 %")
+    expect(page).to have_content("SOC\n17 %")
+    expect(page).to have_content("SSOC\n40 %")
+    expect(page).to have_content("Form 9\n0 %")
   end
 
   scenario "Toggle median to 95th percentile and navigate to past periods",

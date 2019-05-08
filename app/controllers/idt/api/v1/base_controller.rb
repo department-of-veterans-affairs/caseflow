@@ -1,6 +1,27 @@
+# frozen_string_literal: true
+
 class Idt::Api::V1::BaseController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :validate_token
+
+  # :nocov:
+  rescue_from StandardError do |error|
+    Raven.capture_exception(error)
+    if error.class.method_defined?(:serialize_response)
+      render(error.serialize_response)
+    else
+      render json: { message: "Unexpected error: #{error.message}" }, status: :internal_server_error
+    end
+  end
+  # :nocov:
+
+  rescue_from ActiveRecord::RecordNotFound do |_e|
+    render(json: { message: "Record not found" }, status: :not_found)
+  end
+
+  rescue_from Caseflow::Error::InvalidFileNumber do |_e|
+    render(json: { message: "Please enter a file number in the 'FILENUMBER' header" }, status: :unprocessable_entity)
+  end
 
   def validate_token
     return render json: { message: "Missing token" }, status: :bad_request unless token

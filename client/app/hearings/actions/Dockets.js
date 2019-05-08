@@ -4,6 +4,7 @@ import { CATEGORIES, ACTIONS, debounceMs } from '../analytics';
 import moment from 'moment';
 import { now } from '../util/DateUtil';
 import { DOCKETS_TAB_INDEX_MAPPING } from '../Dockets';
+import _ from 'lodash';
 
 export const selectDocketsPageTabIndex = (tabIndex) => ({
   type: Constants.SELECT_DOCKETS_PAGE_TAB_INDEX,
@@ -69,6 +70,33 @@ export const handleDocketServerError = (err) => ({
   payload: {
     err
   }
+});
+
+export const handleSaveHearingSuccess = (hearing, date) => ({
+  type: Constants.HANDLE_SAVE_HEARING_SUCCESS,
+  payload: {
+    hearing,
+    date
+  }
+});
+
+export const handleUpdateHearingSuccess = (hearing, date) => ({
+  type: Constants.HANDLE_UPDATE_HEARING_SUCCESS,
+  payload: {
+    hearing,
+    date
+  }
+});
+
+export const handleSaveHearingError = (err) => ({
+  type: Constants.HANDLE_SAVE_HEARING_ERROR,
+  payload: {
+    err
+  }
+});
+
+export const resetSaveHearingSuccess = () => ({
+  type: Constants.RESET_SAVE_HEARING_SUCCESS
 });
 
 export const onRepNameChange = (repName) => ({
@@ -227,13 +255,6 @@ export const setWorksheetTimeSaved = (timeSaved) => ({
   }
 });
 
-export const setDocketTimeSaved = (timeSaved) => ({
-  type: Constants.SET_DOCKET_TIME_SAVED,
-  payload: {
-    timeSaved
-  }
-});
-
 export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   type: Constants.SET_WORKSHEET_SAVE_FAILED_STATUS,
   payload: {
@@ -275,6 +296,17 @@ export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
     ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
       then((response) => {
         dispatch(populateDailyDocket(response.body.hearingDay, response.body.dailyDocket, date));
+
+        _.each(response.body.dailyDocket, (hearing) => {
+          ApiUtil.get(`/hearings/${hearing.external_id}`).then((hearingrResponse) => {
+            const resp = JSON.parse(hearingrResponse.text);
+
+            dispatch(handleUpdateHearingSuccess(resp, date));
+          }).
+            catch((error) => {
+              console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
+            });
+        });
       }, (err) => {
         dispatch(handleDocketServerError(err));
       });
@@ -292,7 +324,9 @@ export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (disp
   dispatch(setHearingPrepped(payload,
     CATEGORIES.HEARING_WORKSHEET_PAGE));
 
-  ApiUtil.patch(`/hearings/${hearingExternalId}`, { data: { prepped } }).
+  let data = { hearing: { prepped } };
+
+  ApiUtil.patch(`/hearings/${hearingExternalId}`, { data }).
     then(() => {
       // request was successful
     },
@@ -302,53 +336,4 @@ export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (disp
       // request failed, resetting value
       dispatch(setHearingPrepped(payload, CATEGORIES.HEARING_WORKSHEET_PAGE, false));
     });
-};
-
-export const saveDocket = (docket, date) => (dispatch) => () => {
-  const hearingsToSave = docket.filter((hearing) => hearing.edited);
-
-  if (hearingsToSave.length === 0) {
-    dispatch(setDocketTimeSaved(now()));
-
-    return;
-  }
-
-  dispatch({
-    type: Constants.TOGGLE_DOCKET_SAVING,
-    payload: { saving: true }
-  });
-  dispatch({
-    type: Constants.SET_DOCKET_SAVE_FAILED,
-    payload: { saveFailed: false }
-  });
-
-  let apiRequests = [];
-
-  hearingsToSave.forEach((hearing) => {
-    const promise = new Promise((resolve) => {
-      ApiUtil.patch(`/hearings/${hearing.external_id}`, { data: { hearing } }).
-        then(() => {
-          dispatch({ type: Constants.SET_EDITED_FLAG_TO_FALSE,
-            payload: { date,
-              hearingId: hearing.id } });
-        },
-        () => {
-          dispatch({ type: Constants.SET_DOCKET_SAVE_FAILED,
-            payload: { saveFailed: true } });
-        }).
-        finally(() => {
-          resolve();
-        });
-    });
-
-    apiRequests.push(promise);
-  });
-
-  Promise.all(apiRequests).then(() => {
-    dispatch(setDocketTimeSaved(now()));
-    dispatch({
-      type: Constants.TOGGLE_DOCKET_SAVING,
-      payload: { saving: false }
-    });
-  });
 };

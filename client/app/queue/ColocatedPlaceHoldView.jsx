@@ -1,4 +1,3 @@
-// @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,7 +16,6 @@ import {
 import { onReceiveAmaTasks } from './QueueActions';
 import { requestPatch } from './uiReducer/uiActions';
 
-import decisionViewBase from './components/DecisionViewBase';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextField from '../components/TextField';
 import Alert from '../components/Alert';
@@ -29,31 +27,9 @@ import {
   marginTop,
   COLOCATED_HOLD_DURATIONS
 } from './constants';
+import QueueFlowPage from './components/QueueFlowPage';
 
-import type { State, UiStateMessage } from './types/state';
-import type { Task, Appeal } from './types/models';
-
-type ViewState = {|
-  hold: string,
-  customHold: ?number,
-  instructions: string
-|};
-
-type Params = {|
-  taskId: string,
-  appealId: string
-|};
-
-type Props = Params & {|
-  task: Task,
-  appeal: Appeal,
-  error: ?UiStateMessage,
-  highlightFormItems: boolean,
-  requestPatch: typeof requestPatch,
-  onReceiveAmaTasks: typeof onReceiveAmaTasks
-|};
-
-class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
+class ColocatedPlaceHoldView extends React.Component {
   constructor(props) {
     super(props);
 
@@ -112,7 +88,8 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       task,
       error,
       appeal,
-      highlightFormItems
+      highlightFormItems,
+      ...otherProps
     } = this.props;
     const columnStyling = css({
       width: '50%',
@@ -122,7 +99,13 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
       'usa-input-error': highlightFormItems && !this.state.hold
     });
 
-    return <React.Fragment>
+    return <QueueFlowPage
+      validateForm={this.validateForm}
+      goToNextStep={this.goToNextStep}
+      continueBtnText={COPY.COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY}
+      hideCancelButton
+      {...otherProps}
+    >
       <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
         {sprintf(COPY.COLOCATED_ACTION_PLACE_HOLD_HEAD, appeal.veteranFullName, appeal.veteranFileNumber)}
       </h1>
@@ -172,11 +155,11 @@ class ColocatedPlaceHoldView extends React.Component<Props, ViewState> {
         value={this.state.instructions}
         onChange={(instructions) => this.setState({ instructions })}
         styling={marginTop(2)} />
-    </React.Fragment>;
+    </QueueFlowPage>;
   }
 }
 
-const mapStateToProps = (state: State, ownProps: Params) => {
+const mapStateToProps = (state, ownProps) => {
   const {
     highlightFormItems,
     messages: { error }
@@ -195,11 +178,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveAmaTasks
 }, dispatch);
 
-const WrappedComponent = decisionViewBase(ColocatedPlaceHoldView, {
-  hideCancelButton: true,
-  continueBtnText: COPY.COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY
-});
-
 export default (withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(WrappedComponent)
-): React.ComponentType<Params>);
+  connect(mapStateToProps, mapDispatchToProps)(ColocatedPlaceHoldView)
+));

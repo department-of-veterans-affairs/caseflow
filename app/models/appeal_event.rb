@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AppealEvent
   include ActiveModel::Model
 
@@ -48,8 +50,8 @@ class AppealEvent
   }.freeze
 
   EVENT_TYPE_FOR_HEARING_DISPOSITIONS = {
-    hearing_held: :held,
-    hearing_no_show: :no_show
+    hearing_held: Constants.HEARING_DISPOSITION_TYPES.held,
+    hearing_no_show: Constants.HEARING_DISPOSITION_TYPES.no_show
   }.freeze
 
   EVENT_TYPE_FOR_ISSUE_DISPOSITIONS = {

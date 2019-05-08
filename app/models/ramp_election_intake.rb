@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RampElectionIntake < Intake
   include CachedAttributes
 
@@ -74,7 +76,7 @@ class RampElectionIntake < Intake
     end
   end
 
-  def ui_hash(ama_enabled)
+  def ui_hash
     super.merge(
       notice_date: ramp_election.notice_date,
       option_selected: ramp_election.option_selected,
@@ -90,9 +92,9 @@ class RampElectionIntake < Intake
     if ramp_election.create_or_connect_end_product! == :connected
       update!(error_code: "connected_preexisting_ep")
     end
-  rescue StandardError => e
+  rescue StandardError => error
     abort_completion!
-    raise e
+    raise error
   end
 
   def create_ramp_closed_appeals!
@@ -123,7 +125,11 @@ class RampElectionIntake < Intake
   end
 
   def validate_detail_on_start
-    if active_veteran_appeals.empty?
+    if !veteran.valid?(:bgs)
+      self.error_code = :veteran_not_valid
+      @error_data = veteran_invalid_fields
+
+    elsif active_veteran_appeals.empty?
       self.error_code = :no_active_appeals
 
     elsif active_compensation_appeals.empty?
@@ -135,7 +141,9 @@ class RampElectionIntake < Intake
   end
 
   def new_intake_ramp_election
-    @new_intake_ramp_election ||= matching_ramp_election_with_notice_date || veteran_ramp_elections.build
+    @new_intake_ramp_election ||= RampElection.new(
+      veteran_file_number: veteran_file_number
+    )
   end
 
   def existing_ramp_election
@@ -154,13 +162,5 @@ class RampElectionIntake < Intake
       detail.destroy!
       update!(detail: existing_ramp_election)
     end
-  end
-
-  def matching_ramp_election_with_notice_date
-    veteran_ramp_elections.where(established_at: nil).where.not(notice_date: nil).first
-  end
-
-  def veteran_ramp_elections
-    RampElection.where(veteran_file_number: veteran_file_number)
   end
 end

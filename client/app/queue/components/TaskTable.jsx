@@ -1,4 +1,10 @@
-// @flow
+/**
+ * Base class for all task tables in Caseflow. Used primarily throughout Queue but also used
+ * in a few other places. Task tables can:
+ *   - be filtered by column
+ *   - be placed inside tabs
+ */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -8,16 +14,16 @@ import { bindActionCreators } from 'redux';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
+import BulkAssignModal from './BulkAssignModal';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
+import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
-import { setSelectionOfTaskOfUser } from '../QueueActions';
-import {
-  renderAppealType
-} from '../utils';
+import { setSelectionOfTaskOfUser, bulkAssignTasks } from '../QueueActions';
+import { renderAppealType, taskHasCompletedHold } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
@@ -28,47 +34,12 @@ import {
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
 
-import type { TaskWithAppeal } from '../types/models';
+export class TaskTableUnconnected extends React.PureComponent {
+  getKeyForRow = (rowNumber, object) => object.uniqueId
 
-type Params = {|
-  includeHearingBadge?: boolean,
-  includeSelect?: boolean,
-  includeDetailsLink?: boolean,
-  includeTask?: boolean,
-  includeRegionalOffice?: boolean,
-  includeDocumentId?: boolean,
-  includeType?: boolean,
-  includeAssignedTo?: boolean,
-  includeDocketNumber?: boolean,
-  includeCompletedDate?: boolean,
-  includeCompletedToName?: boolean,
-  includeIssueCount?: boolean,
-  includeDueDate?: boolean,
-  includeDaysWaiting?: boolean,
-  includeDaysOnHold?: boolean,
-  includeReaderLink?: boolean,
-  includeDocumentCount?: boolean,
-  requireDasRecord?: boolean,
-  tasks: Array<TaskWithAppeal>,
-  customColumns?: Array<Function>,
-  getKeyForRow?: Function,
-  userId?: string,
-  defaultSortIdx?: number,
-|};
-
-type Props = Params & {|
-  setSelectionOfTaskOfUser: Function,
-  isTaskAssignedToUserSelected?: Object,
-  userIsVsoEmployee: boolean,
-  userRole: string,
-  defaultSortIdx: number
-|};
-
-export class TaskTableUnconnected extends React.PureComponent<Props> {
-  getKeyForRow = (rowNumber: number, object: TaskWithAppeal) => object.uniqueId
-
-  isTaskSelected = (uniqueId: string) => {
+  isTaskSelected = (uniqueId) => {
     if (!this.props.isTaskAssignedToUserSelected) {
       return false;
     }
@@ -78,7 +49,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return isTaskSelected[uniqueId] || false;
   }
 
-  taskHasDASRecord = (task: TaskWithAppeal) => {
+  taskHasDASRecord = (task) => {
     if (task.appeal.isLegacyAppeal && this.props.requireDasRecord) {
       return task.taskId;
     }
@@ -86,19 +57,19 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return true;
   }
 
-  collapseColumnIfNoDASRecord = (task: TaskWithAppeal) => this.taskHasDASRecord(task) ? 1 : 0
+  collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
 
   caseHearingColumn = () => {
     return this.props.includeHearingBadge ? {
       header: '',
-      valueFunction: (task: TaskWithAppeal) => <HearingBadge task={task} />
+      valueFunction: (task) => <HearingBadge task={task} />
     } : null;
   }
 
   caseSelectColumn = () => {
     return this.props.includeSelect ? {
       header: COPY.CASE_LIST_TABLE_SELECT_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => <Checkbox
+      valueFunction: (task) => <Checkbox
         name={task.uniqueId}
         hideLabel
         value={this.isTaskSelected(task.uniqueId)}
@@ -113,12 +84,12 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseDetailsColumn = () => {
     return this.props.includeDetailsLink ? {
       header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => <CaseDetailsLink
+      valueFunction: (task) => <CaseDetailsLink
         task={task}
         appeal={task.appeal}
         userRole={this.props.userRole}
         disabled={!this.taskHasDASRecord(task)} />,
-      getSortValue: (task: TaskWithAppeal) => {
+      getSortValue: (task) => {
         const vetName = task.appeal.veteranFullName.split(' ');
         // only take last, first names. ignore middle names/initials
 
@@ -127,7 +98,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     } : null;
   }
 
-  actionNameOfTask = (task: TaskWithAppeal) => CO_LOCATED_ADMIN_ACTIONS[task.label] || _.startCase(task.label)
+  actionNameOfTask = (task) => CO_LOCATED_ADMIN_ACTIONS[task.label] || _.startCase(task.label)
 
   caseTaskColumn = () => {
     return this.props.includeTask ? {
@@ -139,15 +110,15 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
       label: 'Filter by task',
       valueName: 'label',
-      valueFunction: (task: TaskWithAppeal) => this.actionNameOfTask(task),
-      getSortValue: (task: TaskWithAppeal) => this.actionNameOfTask(task)
+      valueFunction: (task) => this.actionNameOfTask(task),
+      getSortValue: (task) => this.actionNameOfTask(task)
     } : null;
   }
 
   caseDocumentIdColumn = () => {
     return this.props.includeDocumentId ? {
       header: COPY.CASE_LIST_TABLE_DOCUMENT_ID_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => {
+      valueFunction: (task) => {
         const firstName = task.decisionPreparedBy ? task.decisionPreparedBy.firstName : task.assignedBy.firstName;
         const lastName = task.decisionPreparedBy ? task.decisionPreparedBy.lastName : task.assignedBy.lastName;
 
@@ -173,11 +144,11 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       anyFiltersAreSet: true,
       label: 'Filter by type',
       valueName: 'caseType',
-      valueFunction: (task: TaskWithAppeal) => this.taskHasDASRecord(task) ?
+      valueFunction: (task) => this.taskHasDASRecord(task) ?
         renderAppealType(task.appeal) :
         <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
-      span: (task: TaskWithAppeal) => this.taskHasDASRecord(task) ? 1 : 5,
-      getSortValue: (task: TaskWithAppeal) => {
+      span: (task) => this.taskHasDASRecord(task) ? 1 : 5,
+      getSortValue: (task) => {
         // We append a * before the docket number if it's a priority case since * comes before
         // numbers in sort order, this forces these cases to the top of the sort.
         if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
@@ -192,8 +163,13 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseAssignedToColumn = () => {
     return this.props.includeAssignedTo ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => task.assignedTo.name,
-      getSortValue: (task: TaskWithAppeal) => task.assignedTo.name
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'assignedTo.name',
+      anyFiltersAreSet: true,
+      label: 'Filter by assignee',
+      valueFunction: (task) => task.assignedTo.name,
+      getSortValue: (task) => task.assignedTo.name
     } : null;
   }
 
@@ -207,7 +183,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       anyFiltersAreSet: true,
       label: 'Filter by docket name',
       valueName: 'docketName',
-      valueFunction: (task: TaskWithAppeal) => {
+      valueFunction: (task) => {
         if (!this.taskHasDASRecord(task)) {
           return null;
         }
@@ -218,7 +194,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task: TaskWithAppeal) => {
+      getSortValue: (task) => {
         if (!this.taskHasDASRecord(task)) {
           return null;
         }
@@ -231,9 +207,9 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseIssueCountColumn = () => {
     return this.props.includeIssueCount ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null,
+      valueFunction: (task) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null,
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task: TaskWithAppeal) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null
+      getSortValue: (task) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null
     } : null;
   }
 
@@ -241,7 +217,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return this.props.includeDueDate ? {
       header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
       tooltip: <React.Fragment>Calendar days this case <br /> has been assigned to you</React.Fragment>,
-      valueFunction: (task: TaskWithAppeal) => {
+      align: 'center',
+      valueFunction: (task) => {
         if (!this.taskHasDASRecord(task)) {
           return null;
         }
@@ -251,11 +228,10 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
         return <React.Fragment>
           {daysWaiting} {pluralize('day', daysWaiting)}
-          { task.dueOn && <React.Fragment> | <DateString date={task.dueOn} /></React.Fragment> }
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task: TaskWithAppeal) => moment().startOf('day').
+      getSortValue: (task) => moment().startOf('day').
         diff(moment(task.assignedOn), 'days')
     } : null;
   }
@@ -265,33 +241,47 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
       header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
       tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
-      valueFunction: (task: TaskWithAppeal) => moment().startOf('day').
-        diff(moment(task.assignedOn), 'days'),
-      getSortValue: (task: TaskWithAppeal) => moment().startOf('day').
+      align: 'center',
+      valueFunction: (task) => {
+        return <React.Fragment>
+          <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>{moment().startOf('day').
+            diff(moment(task.assignedOn), 'days')}</span>
+          { taskHasCompletedHold(task) ? <ContinuousProgressBar level={moment().startOf('day').
+            diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
+        </React.Fragment>;
+      },
+      getSortValue: (task) => moment().startOf('day').
         diff(moment(task.assignedOn), 'days')
     } : null;
   }
 
   caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
-    valueFunction: (task: TaskWithAppeal) => <OnHoldLabel task={task} />,
-    getSortValue: (task: TaskWithAppeal) => numDaysOnHold(task)
+    align: 'center',
+    valueFunction: (task) => {
+      return <React.Fragment>
+        <OnHoldLabel task={task} />
+        <ContinuousProgressBar limit={task.onHoldDuration} level={moment().startOf('day').
+          diff(task.placedOnHoldAt, 'days')} />
+      </React.Fragment>;
+    },
+    getSortValue: (task) => numDaysOnHold(task)
   } : null)
 
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? {
       header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => task.closedAt ? <DateString date={task.closedAt} /> : null,
-      getSortValue: (task: TaskWithAppeal) => task.closedAt ? <DateString date={task.closedAt} /> : null
+      valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
+      getSortValue: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null
     } : null;
   }
 
   completedToNameColumn = () => {
     return this.props.includeCompletedToName ? {
       header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) =>
+      valueFunction: (task) =>
         task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
-      getSortValue: (task: TaskWithAppeal) => task.assignedBy ? task.assignedBy.lastName : null
+      getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
     } : null;
   }
 
@@ -299,7 +289,7 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
     return !this.props.userIsVsoEmployee && this.props.includeReaderLink ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
       span: this.collapseColumnIfNoDASRecord,
-      valueFunction: (task: TaskWithAppeal) => {
+      valueFunction: (task) => {
         if (!this.taskHasDASRecord(task)) {
           return null;
         }
@@ -308,7 +298,8 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
           analyticsSource={CATEGORIES.QUEUE_TABLE}
           redirectUrl={window.location.pathname}
           appeal={task.appeal}
-          cached
+          newDocsIcon={this.props.includeNewDocsIcon}
+          task={task}
           docCountBelowLink />;
       }
     } : null;
@@ -317,12 +308,17 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
   caseRegionalOfficeColumn = () => {
     return this.props.includeRegionalOffice ? {
       header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
-      valueFunction: (task: TaskWithAppeal) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
-      getSortValue: (task: TaskWithAppeal) => task.closestRegionalOffice
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'closestRegionalOffice',
+      anyFiltersAreSet: true,
+      label: 'Filter by regional office',
+      valueFunction: (task) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
+      getSortValue: (task) => task.closestRegionalOffice
     } : null;
   }
 
-  getQueueColumns = () : Array<{ header: string, span?: Function, valueFunction: Function, getSortValue?: Function }> =>
+  getQueueColumns = () =>
     _.orderBy((this.props.customColumns || []).concat(
       _.compact([
         this.caseHearingColumn(),
@@ -363,12 +359,18 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 
     return (
       <div>
+        <BulkAssignModal
+          enableBulkAssign={this.props.organizationName === 'Hearing Admin'}
+          organizationUrl={ORGANIZATION_NAMES[this.props.organizationName]}
+          tasks={tasks}
+          assignTasks={this.props.bulkAssignTasks} />
         <QueueTable
           columns={this.getQueueColumns}
           rowObjects={tasks}
           getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
           defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
           alternateColumnNames={COLUMN_NAMES}
+          enablePagination
           rowClassNames={(task) =>
             this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
       </div>
@@ -379,13 +381,15 @@ export class TaskTableUnconnected extends React.PureComponent<Props> {
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
-  userRole: state.ui.userRole
+  userRole: state.ui.userRole,
+  tasksAssignedByBulk: state.queue.tasksAssignedByBulk
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setSelectionOfTaskOfUser
+    setSelectionOfTaskOfUser,
+    bulkAssignTasks
   }, dispatch)
 );
 
-export default (connect(mapStateToProps, mapDispatchToProps)(TaskTableUnconnected): React.ComponentType<Params>);
+export default (connect(mapStateToProps, mapDispatchToProps)(TaskTableUnconnected));
