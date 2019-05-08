@@ -15,7 +15,7 @@ class RootTask < GenericTask
 
   def when_child_task_completed; end
 
-  def update_children_status
+  def update_children_status_after_closed
     children.active.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
   end
 

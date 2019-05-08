@@ -211,6 +211,12 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
+    factory :hearing_admin_action_incarcerated_veteran_task, class: HearingAdminActionIncarceratedVeteranTask do
+      type { HearingAdminActionIncarceratedVeteranTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
     factory :informal_hearing_presentation_task, class: InformalHearingPresentationTask do
       type { InformalHearingPresentationTask.name }
       appeal { create(:appeal) }
