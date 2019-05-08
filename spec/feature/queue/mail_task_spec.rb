@@ -57,7 +57,7 @@ RSpec.feature "MailTasks" do
     end
   end
 
-  describe "Changing a mail team task type", focus: true do
+  describe "Changing a mail team task type" do
     context "when task does not need to be reassigned" do
       let(:root_task) { FactoryBot.create(:root_task) }
       let(:old_task_type) { DeathCertificateMailTask }
