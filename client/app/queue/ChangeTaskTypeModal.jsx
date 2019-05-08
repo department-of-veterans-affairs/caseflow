@@ -70,12 +70,12 @@ class ChangeTaskTypeModal extends React.PureComponent {
         role: this.props.role
       }
     };
-    const msgTitle = COPY.CHANGE_COLOCATED_TASK_TYPE_CONFIRMATION_TITLE;
-    const oldAction = taskActionData(this.props).options.find((option) => option.value === task.label);
+    const msgTitle = COPY.CHANGE_TASK_TYPE_CONFIRMATION_TITLE;
+    const oldAction = taskActionData(this.props).options.find((option) => option.value === task.type);
     const newAction = taskActionData(this.props).options.find((option) => option.value === action.actionLabel);
     const successMsg = {
       title: sprintf(msgTitle, oldAction.label, newAction.label),
-      detail: COPY.CHANGE_COLOCATED_TASK_TYPE_CONFIRMATION_DETAIL
+      detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
@@ -98,7 +98,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
         <div {...marginTop(4)}>
           <SearchableDropdown
             errorMessage={highlightFormItems && !actionLabel ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-            name={COPY.CHANGE_COLOCATED_TASK_ACTION_TYPE_LABEL}
+            name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
             placeholder="Select an action type"
             options={taskActionData(this.props).options}
             onChange={(option) => option && this.updateActionField('actionLabel', option.value)}
@@ -107,7 +107,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
         <div {...marginTop(4)}>
           <TextareaField
             errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-            name={COPY.CHANGE_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+            name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
             onChange={(value) => this.updateActionField('instructions', value)}
             value={instructions} />
         </div>
@@ -122,8 +122,8 @@ class ChangeTaskTypeModal extends React.PureComponent {
     return <QueueFlowModal
       validateForm={this.validateForm}
       submit={this.submit}
-      title={COPY.CHANGE_COLOCATED_TASK_SUBHEAD}
-      button={COPY.CHANGE_COLOCATED_TASK_SUBHEAD}
+      title={COPY.CHANGE_TASK_TYPE_SUBHEAD}
+      button={COPY.CHANGE_TASK_TYPE_SUBHEAD}
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
       {...otherProps}
     >

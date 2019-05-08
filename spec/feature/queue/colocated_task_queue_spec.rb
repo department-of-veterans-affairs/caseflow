@@ -192,7 +192,7 @@ RSpec.feature "ColocatedTask" do
       find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h[:label]).click
 
-      expect(page).to have_content(COPY::CHANGE_COLOCATED_TASK_SUBHEAD)
+      expect(page).to have_content(COPY::CHANGE_TASK_TYPE_SUBHEAD)
       opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length - 1)
       selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
 
@@ -204,7 +204,7 @@ RSpec.feature "ColocatedTask" do
 
       # Attempt to change task type without including instuctions.
       find("div", class: "Select-option", text: selected_opt_0).click
-      find("button", text: COPY::CHANGE_COLOCATED_TASK_SUBHEAD).click
+      find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # Instructions field is required
       expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
@@ -212,12 +212,12 @@ RSpec.feature "ColocatedTask" do
       # Add instructions and try again
       instructions = generate_words(5)
       fill_in("instructions", with: instructions)
-      find("button", text: COPY::CHANGE_COLOCATED_TASK_SUBHEAD).click
+      find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
-      # We should see a success message and be redirected to our queue page.
+      # We should see a success message but remain on the case details page
       expect(page).to have_content(
         format(
-          COPY::CHANGE_COLOCATED_TASK_TYPE_CONFIRMATION_TITLE,
+          COPY::CHANGE_TASK_TYPE_CONFIRMATION_TITLE,
           Constants::CO_LOCATED_ADMIN_ACTIONS.values.last,
           selected_opt_0
         )
