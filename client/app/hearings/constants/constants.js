@@ -68,11 +68,11 @@ export const VIDEO_HEARING = 'Video';
 export const CENTRAL_OFFICE_HEARING = 'Central';
 
 export const TIME_OPTIONS = [{
-  value: '08:30',
+  value: '8:30',
   label: '8:30 am ' },
-{ value: '09:00',
+{ value: '9:00',
   label: '9:00 am ' },
-{ value: '09:30',
+{ value: '9:30',
   label: '9:30 am ' },
 { value: '10:00',
   label: '10:00 am ' },

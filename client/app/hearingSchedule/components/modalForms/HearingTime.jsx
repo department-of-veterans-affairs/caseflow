@@ -6,17 +6,15 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
 import { TIME_OPTIONS } from '../../../hearings/constants/constants';
 import _ from 'lodash';
 
-export const getDisplayTime = (scheduledForTime, timezone) => {
-  const val = scheduledForTime ? moment(scheduledForTime, 'HH:mm').format('h:mm a') : '';
+export const getAssignHearingTime = (time, day) => {
 
-  if (timezone) {
-    const tz = moment().tz(timezone).
-      format('z');
-
-    return `${val} ${tz}`;
-  }
-
-  return val;
+  return {
+    // eslint-disable-next-line id-length
+    h: time.split(':')[0],
+    // eslint-disable-next-line id-length
+    m: time.split(':')[1],
+    offset: moment.tz(day.hearingDate || day.scheduledFor, day.timezone || 'America/New_York').format('Z')
+  };
 };
 
 const formStyling = css({
@@ -59,7 +57,7 @@ export default class HearingTime extends React.Component {
     if (regionalOffice === 'C') {
       return [
         { displayText: '9:00 am',
-          value: '09:00',
+          value: '9:00',
           disabled: readOnly },
         { displayText: '1:00 pm',
           value: '13:00',
@@ -72,7 +70,7 @@ export default class HearingTime extends React.Component {
 
     return [
       { displayText: '8:30 am',
-        value: '08:30',
+        value: '8:30',
         disabled: readOnly },
       { displayText: '12:30 pm',
         value: '12:30',

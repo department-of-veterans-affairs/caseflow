@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import moment from 'moment';
 
+import { getTimeWithoutTimeZone } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
@@ -35,9 +36,7 @@ export const DispositionDropdown = ({
           }
 
           update({ disposition: option.value });
-
-          // give redux time to update
-          setTimeout(() => saveHearing(), 0);
+          saveHearing();
         }
       });
     }}
@@ -195,11 +194,15 @@ export const StaticHearingDay = ({ hearing }) => (
 );
 
 export const TimeRadioButtons = ({ hearing, regionalOffice, update, readOnly }) => {
+  const timezone = hearing.readableRequestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
+
+  const value = hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
+
   return <HearingTime
     regionalOffice={regionalOffice}
-    value={hearing.scheduledForTime || hearing.tmpScheduledForTime}
+    value={value}
     readOnly={readOnly}
-    onChange={(scheduledForTime) => update({ scheduledForTime })} />;
+    onChange={(editedTime) => update({ editedTime })} />;
 };
 
 export const PreppedCheckbox = ({ hearing, update, readOnly }) => (

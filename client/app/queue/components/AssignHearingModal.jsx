@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { css } from 'glamor';
 import {
   resetErrorMessages,
   showErrorMessage,
@@ -20,6 +21,12 @@ import { formatDateStr } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
 import { withRouter } from 'react-router-dom';
+import RadioField from '../../components/RadioField';
+import {
+  HearingDateDropdown,
+  RegionalOfficeDropdown,
+  AppealHearingLocationsDropdown
+} from '../../components/DataDropdowns';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import {
   appealWithDetailSelector,
@@ -28,21 +35,35 @@ import {
 import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import { prepareAppealForStore } from '../utils';
 import _ from 'lodash';
-import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants/constants';
+import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING, TIME_OPTIONS } from '../../hearings/constants/constants';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import moment from 'moment';
 import QueueFlowModal from './QueueFlowModal';
-import AssignHearingForm from '../../hearingSchedule/components/modalForms/AssignHearingForm';
+
+const formStyling = css({
+  '& .cf-form-radio-option:not(:last-child)': {
+    display: 'inline-block',
+    marginRight: '25px'
+  },
+  marginBottom: 0
+});
 
 class AssignHearingModal extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      showErrorMessages: false
+      invalid: {
+        time: null,
+        day: null,
+        regionalOffice: null,
+        location: null
+      }
     };
   }
 
   componentDidMount = () => {
-    const { openHearing } = this.props;
+    const { openHearing, appeal } = this.props;
 
     if (openHearing) {
       this.props.showErrorMessage({
@@ -50,6 +71,27 @@ class AssignHearingModal extends React.PureComponent {
         detail: `This appeal has an open hearing on ${formatDateStr(openHearing.date)}. ` +
                 'You cannot schedule another hearing.'
       });
+
+      return;
+    }
+
+    if (appeal.availableHearingLocations) {
+      const sortedLocations = _.orderBy(appeal.availableHearingLocations, ['distance'], ['asc']);
+      const location = sortedLocations[0];
+
+      if (location) {
+        this.props.onHearingLocationChange({
+          name: location.name,
+          address: location.address,
+          city: location.city,
+          state: location.state,
+          zipCode: location.zipCode,
+          distance: location.distance,
+          classification: location.classification,
+          facilityId: location.facilityId,
+          facilityType: location.facilityType
+        });
+      }
     }
   }
 
@@ -62,24 +104,52 @@ class AssignHearingModal extends React.PureComponent {
   };
 
   validateForm = () => {
-    const { assignHearingForm, openHearing } = this.props;
+    const {
+      selectedHearingDay,
+      selectedRegionalOffice,
+      selectedHearingTime,
+      selectedOptionalTime
+      // selectedHearingLocation
+    } = this.props;
 
-    if (openHearing) {
+    const validTime = (selectedHearingTime === 'other' && selectedOptionalTime) ||
+      (selectedHearingTime !== 'other' && Boolean(selectedHearingTime));
+
+    const invalid = {
+      day: selectedHearingDay && selectedHearingDay.hearingId ? null : 'Please select a hearing day',
+      regionalOffice: selectedRegionalOffice ? null : 'Please select a regional office',
+      time: validTime ? null : 'Please pick a hearing time'
+      // location: selectedHearingLocation ? null : 'Please select a hearing location'
+    };
+
+    this.setState({ invalid });
+
+    const invalidVals = _.values(invalid);
+
+    for (let i = 0; i < invalidVals.length; i++) {
+      if (invalidVals[i]) {
+        return false;
+      }
+    }
+
+    if (this.props.openHearing) {
       return false;
     }
 
-    const { errorMessages: { hasErrorMessages } } = assignHearingForm;
-
-    this.setState({ showErrorMessages: hasErrorMessages });
-
-    return !hasErrorMessages;
+    return true;
   };
 
   completeScheduleHearingTask = () => {
 
     const {
-      appeal, scheduleHearingTask, history, assignHearingForm
+      appeal,
+      scheduleHearingTask, history,
+      selectedHearingDay, selectedRegionalOffice,
+      selectedHearingLocation
     } = this.props;
+
+    const appealHearingLocations = appeal.availableHearingLocations || [];
+    const hearingLocation = selectedHearingLocation || appealHearingLocations[0];
 
     const payload = {
       data: {
@@ -88,7 +158,10 @@ class AssignHearingModal extends React.PureComponent {
           business_payloads: {
             description: 'Update Task',
             values: {
-              ...assignHearingForm.apiFormattedValues
+              regional_office_value: selectedRegionalOffice,
+              hearing_day_id: selectedHearingDay.hearingId,
+              hearing_time: this.getHearingTime(),
+              hearing_location: ApiUtil.convertToSnakeCase(hearingLocation)
             }
           }
         }
@@ -125,14 +198,40 @@ class AssignHearingModal extends React.PureComponent {
     });
   }
 
+  getTimeOptions = () => {
+    const { selectedRegionalOffice } = this.props;
+
+    if (selectedRegionalOffice === 'C') {
+      return [
+        { displayText: '9:00 am',
+          value: '9:00' },
+        { displayText: '1:00 pm',
+          value: '13:00' },
+        { displayText: 'Other',
+          value: 'other' }
+      ];
+    }
+
+    return [
+      { displayText: '8:30 am',
+        value: '8:30' },
+      { displayText: '12:30 pm',
+        value: '12:30' },
+      { displayText: 'Other',
+        value: 'other' }
+    ];
+  };
+
   getRO = () => {
     const { appeal, hearingDay } = this.props;
 
     if (hearingDay.regionalOffice) {
       return hearingDay.regionalOffice;
+    } else if (appeal.regionalOffice) {
+      return appeal.regionalOffice.key;
     }
 
-    return appeal.closestRegionalOffice;
+    return '';
   }
 
   getHearingType = () => {
@@ -142,12 +241,12 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   getSuccessMsg = () => {
-    const { appeal, assignHearingForm } = this.props;
+    const { appeal, selectedHearingDay, selectedRegionalOffice } = this.props;
 
-    const hearingDateStr = formatDateStr(assignHearingForm.hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
+    const hearingDateStr = formatDateStr(selectedHearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = `You have successfully assigned ${appeal.veteranFullName} ` +
                   `to a ${this.getHearingType()} hearing on ${hearingDateStr}.`;
-    const href = `/hearings/schedule/assign?roValue=${assignHearingForm.regionalOffice}`;
+    const href = `/hearings/schedule/assign?roValue=${selectedRegionalOffice}`;
 
     const detail = (
       <p>
@@ -161,21 +260,54 @@ class AssignHearingModal extends React.PureComponent {
       detail };
   }
 
+  getHearingTime = () => {
+    const { selectedHearingTime, selectedOptionalTime, selectedHearingDay } = this.props;
+
+    if (!selectedHearingTime && !selectedOptionalTime) {
+      return null;
+    }
+
+    const hearingTime = selectedHearingTime === 'other' ? selectedOptionalTime.value : selectedHearingTime;
+
+    return {
+      // eslint-disable-next-line id-length
+      h: hearingTime.split(':')[0],
+      // eslint-disable-next-line id-length
+      m: hearingTime.split(':')[1],
+      offset: moment.tz(selectedHearingDay.hearingDate, 'America/New_York').format('Z')
+    };
+  }
+
   getInitialValues = () => {
     const { hearingDay } = this.props;
 
     return {
-      initialHearingDate: hearingDay.hearingDate,
-      initialRegionalOffice: this.getRO()
+      hearingDate: hearingDay.hearingDate,
+      regionalOffice: this.getRO()
     };
   };
 
   render = () => {
     const {
-      appeal, openHearing
+      selectedHearingDay, selectedRegionalOffice, appeal,
+      selectedHearingTime, openHearing, selectedHearingLocation,
+      selectedOptionalTime
     } = this.props;
 
+    const { invalid } = this.state;
+
+    const initVals = this.getInitialValues();
+    const timeOptions = this.getTimeOptions();
     const { address_line_1, city, state, zip } = appeal.appellantAddress || {};
+
+    const currentRegionalOffice = selectedRegionalOffice || initVals.regionalOffice;
+    const roIsDifferent = appeal.closestRegionalOffice !== currentRegionalOffice;
+    let staticHearingLocations = _.isEmpty(appeal.availableHearingLocations) ?
+      null : appeal.availableHearingLocations;
+
+    if (roIsDifferent) {
+      staticHearingLocations = null;
+    }
 
     if (openHearing) {
       return null;
@@ -194,10 +326,50 @@ class AssignHearingModal extends React.PureComponent {
           {address_line_1}<br />
           {`${city}, ${state} ${zip}`}
         </p>
-        <AssignHearingForm
-          appeal={appeal}
-          showErrorMessages={this.state.showErrorMessages}
-          {...this.getInitialValues()} />
+        <RegionalOfficeDropdown
+          onChange={this.props.onRegionalOfficeChange}
+          errorMessage={invalid.regionalOffice}
+          value={selectedRegionalOffice || initVals.regionalOffice}
+          validateValueOnMount />
+
+        {selectedRegionalOffice && <AppealHearingLocationsDropdown
+          errorMessage={invalid.location}
+          label="Suggested Hearing Location"
+          key={`ahl-dropdown__${currentRegionalOffice || ''}`}
+          regionalOffice={currentRegionalOffice}
+          appealId={appeal.externalId}
+          dynamic={staticHearingLocations === null || roIsDifferent}
+          staticHearingLocations={staticHearingLocations}
+          onChange={this.props.onHearingLocationChange}
+          value={selectedHearingLocation}
+        />}
+
+        {selectedRegionalOffice && <HearingDateDropdown
+          errorMessage={invalid.day}
+          key={selectedRegionalOffice}
+          regionalOffice={selectedRegionalOffice}
+          onChange={this.props.onHearingDayChange}
+          value={selectedHearingDay || initVals.hearingDate}
+          validateValueOnMount
+        />}
+        <span {...formStyling}>
+          <RadioField
+            errorMessage={invalid.time}
+            name="time"
+            label="Time"
+            strongLabel
+            options={timeOptions}
+            onChange={this.props.onHearingTimeChange}
+            value={selectedHearingTime} />
+        </span>
+        {selectedHearingTime === 'other' && <SearchableDropdown
+          name="optionalTime"
+          placeholder="Select a time"
+          options={TIME_OPTIONS}
+          value={selectedOptionalTime || initVals.hearingDate}
+          onChange={(value, label) => this.onHearingOptionalTime({ value,
+            label })}
+          hideLabel />}
       </div>
     </QueueFlowModal>;
   }
@@ -209,7 +381,6 @@ const mapStateToProps = (state, ownProps) => ({
     appealWithDetailSelector(state, ownProps).hearings,
     (hearing) => hearing.disposition === null
   ),
-  assignHearingForm: state.components.forms.assignHearing,
   appeal: appealWithDetailSelector(state, ownProps),
   saveState: state.ui.saveState.savePending,
   selectedRegionalOffice: state.components.selectedRegionalOffice,

@@ -10,8 +10,6 @@ class Hearing < ApplicationRecord
   has_one :hearing_task_association, as: :hearing
   has_many :hearing_issue_notes
 
-  validates :scheduled_for_time, allow_blank: true, format: { with: /\A\d\d:\d\d\z/ }
-
   class HearingDayFull < StandardError; end
 
   accepts_nested_attributes_for :hearing_issue_notes
@@ -117,7 +115,10 @@ class Hearing < ApplicationRecord
     DateTime.new.in_time_zone(regional_office_timezone).change(
       year: hearing_day.scheduled_for.year,
       month: hearing_day.scheduled_for.month,
-      day: hearing_day.scheduled_for.day
+      day: hearing_day.scheduled_for.day,
+      hour: scheduled_time.hour,
+      min: scheduled_time.min,
+      sec: scheduled_time.sec
     )
   end
 
@@ -136,18 +137,6 @@ class Hearing < ApplicationRecord
     return "America/New_York" if regional_office_key.nil?
 
     RegionalOffice::CITIES[regional_office_key][:timezone]
-  end
-
-  def time
-    @time ||= HearingTimeService.new(hearing: self)
-  end
-
-  def tmp_scheduled_for_time
-    time.to_s
-  end
-
-  def central_office_time
-    time.central_office_time_string
   end
 
   def current_issue_count
@@ -177,9 +166,6 @@ class Hearing < ApplicationRecord
         :regional_office_timezone,
         :readable_request_type,
         :scheduled_for,
-        :scheduled_for_time,
-        :tmp_scheduled_for_time,
-        :central_office_time,
         :appeal_external_id,
         :veteran_file_number,
         :evidence_window_waived,
@@ -215,11 +201,8 @@ class Hearing < ApplicationRecord
         :regional_office_key,
         :regional_office_name,
         :regional_office_timezone,
-        :scheduled_for,
-        :tmp_scheduled_for_time,
-        :scheduled_for_time,
-        :central_office_time,
         :readable_request_type,
+        :scheduled_for,
         :veteran_age,
         :veteran_gender,
         :appeal_external_id,

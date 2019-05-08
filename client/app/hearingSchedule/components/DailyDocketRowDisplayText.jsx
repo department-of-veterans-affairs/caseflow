@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
-import { getDisplayTime } from './modalForms/HearingTime';
+
+import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 
 import { PreppedCheckbox } from './DailyDocketRowInputs';
 
@@ -39,20 +40,14 @@ const AppellantInformation = ({ hearing }) => {
 };
 
 const HearingTime = ({ hearing }) => {
-  const localTime = getDisplayTime(
-    hearing.scheduledForTime || hearing.tmpScheduledForTime,
-    hearing.regionalOfficeTimezone || 'America/New_York'
-  );
-  const coTime = getDisplayTime(hearing.centralOfficeTime, 'America/New_York');
-
   if (hearing.readableRequestType === 'Central') {
-    return <div>{coTime}<br />
+    return <div>{getTime(hearing.scheduledFor)} <br />
       {hearing.regionalOfficeName}
     </div>;
   }
 
-  return <div>{coTime} /<br />
-    {localTime} <br />
+  return <div>{getTime(hearing.scheduledFor)} /<br />
+    {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone || 'America/New_York')} <br />
     {hearing.regionalOfficeName}
     <p>{hearing.currentIssueCount} issues</p>
   </div>;
@@ -60,7 +55,7 @@ const HearingTime = ({ hearing }) => {
 
 export default class DisplayText extends React.Component {
   render () {
-    const { hearing, index, user, update, readOnly, initialState } = this.props;
+    const { hearing, index, user, update, readOnly } = this.props;
 
     return <React.Fragment>
       <div>{user.userRoleHearingPrep &&
@@ -68,7 +63,7 @@ export default class DisplayText extends React.Component {
       </div>
       <div><strong>{index + 1}</strong></div>
       <AppellantInformation hearing={hearing} />
-      <HearingTime hearing={initialState} />
+      <HearingTime hearing={hearing} />
     </React.Fragment>;
   }
 }

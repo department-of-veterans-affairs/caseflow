@@ -94,7 +94,18 @@ export default class DailyDocket extends React.Component {
     this.setState({ editedDispositionModalProps: null });
   }
 
+  saveHearing = (hearingId) => {
+    setTimeout(() => {
+      // this ensures we're updating with the latest hearing data
+      // after Redux update
+      const hearing = this.props.hearings[hearingId];
+
+      this.props.saveHearing(hearing);
+    }, 0);
+  }
+
   render() {
+
     const regionalOffice = this.getRegionalOffice();
     const docketHearings = this.dailyDocketHearings();
     const prevHearings = this.previouslyScheduledHearings();
@@ -105,7 +116,7 @@ export default class DailyDocket extends React.Component {
 
     const {
       dailyDocket, onClickRemoveHearingDay, displayRemoveHearingDayModal, displayLockModal, openModal,
-      deleteHearingDay, updateLockHearingDay, onCancelDisplayLockModal, user, saveHearing
+      deleteHearingDay, updateLockHearingDay, onCancelDisplayLockModal, user
     } = this.props;
 
     const { editedDispositionModalProps } = this.state;
@@ -158,7 +169,7 @@ export default class DailyDocket extends React.Component {
         <DailyDocketRows
           hearings={this.dailyDocketHearings()}
           readOnly={user.userRoleView || user.userRoleVso}
-          saveHearing={saveHearing}
+          saveHearing={this.saveHearing}
           openDispositionModal={this.openDispositionModal}
           regionalOffice={regionalOffice}
           user={user} />}

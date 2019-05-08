@@ -110,18 +110,6 @@ class LegacyHearing < ApplicationRecord
     HearingMapper.timezone(regional_office_key)
   end
 
-  def time
-    @time ||= HearingTimeService.new(hearing: self)
-  end
-
-  def scheduled_for_time
-    time.to_s
-  end
-
-  def central_office_time
-    time.central_office_time_string
-  end
-
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
@@ -242,6 +230,7 @@ class LegacyHearing < ApplicationRecord
     serializable_hash(
       methods: [
         :disposition_editable,
+        :scheduled_for,
         :readable_request_type,
         :disposition,
         :aod,
@@ -256,9 +245,6 @@ class LegacyHearing < ApplicationRecord
         :hearing_day_id,
         :regional_office_name,
         :regional_office_timezone,
-        :scheduled_for,
-        :scheduled_for_time,
-        :central_office_time,
         :venue,
         :veteran_first_name,
         :veteran_last_name,
