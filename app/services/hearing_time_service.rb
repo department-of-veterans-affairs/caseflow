@@ -1,22 +1,31 @@
 # frozen_string_literal: true
 
+# Service to handle hearing time updates consistently between VACOLS and Caseflow
+# using scheduled_time_string
+
 class HearingTimeService
   class << self
-    def build_params_with_time(hearing, update_params)
-      if hearing.is_a?(LegacyHearing) && update_params[:scheduled_for_time].present?
-        scheduled_for = vacols_formatted_datetime(
-          scheduled_for: update_params[:scheduled_for] || hearing.scheduled_for,
-          scheduled_for_time: update_params[:scheduled_for_time]
-        )
+    def build_legacy_params_with_time(hearing, update_params)
+      # takes hearing update_legacy_params from controller and adds
+      # vacols-formatted datetime
+      return update_params if update_params[:scheduled_time_string].nil?
 
-        remove_non_vacols_params(update_params).merge(scheduled_for: scheduled_for)
-      else
-        update_params
-      end
+      scheduled_for = vacols_formatted_datetime(
+        scheduled_for: update_params[:scheduled_for] || hearing.scheduled_for,
+        scheduled_time_string: update_params[:scheduled_time_string]
+      )
+
+      remove_time_string_params(update_params).merge(scheduled_for: scheduled_for)
     end
 
-    def vacols_formatted_datetime(scheduled_for:, scheduled_for_time:)
-      hour, min = scheduled_for_time.split(":")
+    def build_params_with_time(_hearing, update_params)
+      return update_params if update_params[:scheduled_time_string].nil?
+
+      remove_time_string_params(update_params).merge(scheduled_time: update_params[:scheduled_time_string])
+    end
+
+    def vacols_formatted_datetime(scheduled_for:, scheduled_time_string:)
+      hour, min = scheduled_time_string.split(":")
 
       hearing_datetime = scheduled_for.to_datetime.change(
         hour: hour.to_i,
@@ -26,8 +35,20 @@ class HearingTimeService
       VacolsHelper.format_datetime_with_utc_timezone(hearing_datetime)
     end
 
-    def remove_non_vacols_params(params)
-      params.reject { |param| param.to_sym == :scheduled_for_time }
+    private
+
+    def time_to_string(time)
+      return time if time.is_a?(String)
+
+      "#{pad_time(time.hour)}:#{pad_time(time.min)}"
+    end
+
+    def pad_time(time)
+      "0#{time}".chars.last(2).join
+    end
+
+    def remove_time_string_params(params)
+      params.reject { |param| param.to_sym == :scheduled_time_string }
     end
   end
 
@@ -36,15 +57,17 @@ class HearingTimeService
   end
 
   def to_s
-    if @hearing.is_a?(LegacyHearing)
-      time_string_from_vacols_hearing_date
-    else
-      @hearing.scheduled_for_time || time_string_from_scheduled_time
-    end
+    return time_to_string(@hearing.scheduled_for) if @hearing.is_a?(LegacyHearing)
+
+    time_to_string(@hearing.scheduled_time)
   end
 
-  def date
-    @hearing.scheduled_for.to_date
+  def to_datetime
+    @hearing.scheduled_time if @hearing.is_a(Hearing)
+
+    time_string = to_s
+    # format consistent with Hearing scheduled_time column
+    Time.zone.parse("2000-01-01 #{time_string}:00")
   end
 
   def central_office_time_string
@@ -57,22 +80,6 @@ class HearingTimeService
 
     co_time = hearing_time.in_time_zone("America/New_York")
 
-    "#{pad_time(co_time.hour)}:#{pad_time(co_time.min)}"
-  end
-
-  private
-
-  def time_string_from_scheduled_time
-    # we are deprecating the use of the scheduled_time datetime column in
-    # favor of the scheduled_for_time string column
-    "#{pad_time(@hearing.scheduled_time.hour)}:#{pad_time(@hearing.scheduled_time.min)}"
-  end
-
-  def time_string_from_vacols_hearing_date
-    "#{pad_time(@hearing.scheduled_for.hour)}:#{pad_time(@hearing.scheduled_for.min)}"
-  end
-
-  def pad_time(time)
-    "0#{time}".chars.last(2).join
+    time_to_string(co_time)
   end
 end

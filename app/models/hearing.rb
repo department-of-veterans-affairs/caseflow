@@ -122,6 +122,18 @@ class Hearing < ApplicationRecord
     )
   end
 
+  def time
+    @time ||= HearingTimeService.new(hearing: self)
+  end
+
+  def scheduled_time_string
+    time.to_s
+  end
+
+  def central_office_time_string
+    time.central_office_time
+  end
+
   def worksheet_issues
     request_issues.map do |request_issue|
       HearingIssueNote.joins(:request_issue)
