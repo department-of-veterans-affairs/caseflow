@@ -3,8 +3,20 @@
 namespace :local do
   desc "build local development environment"
   task :build do
-    system("bundle exec rake local:vacols:wait_for_connection") || abort
+    puts "Building docker services from configuration"
+    system("cd local/vacols/ && ./build_push.sh local") || abort
+    system("cd ../../")
 
+    puts "Starting docker containers in the background"
+    system("docker-compose up -d") || abort
+
+    puts "Waiting for our FACOLS containers to be ready"
+    180.times do
+      break if `docker-compose ps | grep 'health: starting'`.strip.chomp.empty?
+
+      print "."
+      sleep 1
+    end
     # Add a new line so that this scipt's output is more readable.
     puts ""
 
