@@ -136,7 +136,6 @@ class AppealSeries < ApplicationRecord
     end
   end
 
-  # rubocop:disable CyclomaticComplexity
   def fetch_status
     case latest_appeal.status
     when "Advance"
@@ -190,7 +189,6 @@ class AppealSeries < ApplicationRecord
     end
   end
 
-  # rubocop:disable MethodLength
   def disambiguate_status_complete
     case latest_appeal.disposition
     when "Allowed", "Denied"
@@ -216,7 +214,6 @@ class AppealSeries < ApplicationRecord
       :other_close
     end
   end
-  # rubocop:enable MethodLength
 
   def disambiguate_status_remand
     post_decision_ssocs = latest_appeal.ssoc_dates.select { |ssoc| ssoc > latest_appeal.decision_date }
@@ -225,7 +222,6 @@ class AppealSeries < ApplicationRecord
     :remand
   end
 
-  # rubocop:disable MethodLength
   def details_for_status
     case status
     when :scheduled_hearing
@@ -267,6 +263,4 @@ class AppealSeries < ApplicationRecord
       {}
     end
   end
-  # rubocop:enable MethodLength
-  # rubocop:enable CyclomaticComplexity
 end
