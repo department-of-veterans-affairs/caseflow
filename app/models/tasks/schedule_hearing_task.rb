@@ -93,15 +93,17 @@ class ScheduleHearingTask < GenericTask
   end
 
   def available_actions(user)
+    hearing_admin_actions = available_hearing_admin_actions(user)
+
     if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
       return [
         Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
-      ]
+      ] | hearing_admin_actions
     end
 
-    []
+    hearing_admin_actions
   end
 
   def add_admin_action_data(_user)

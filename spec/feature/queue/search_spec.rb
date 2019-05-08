@@ -100,6 +100,23 @@ RSpec.feature "Search" do
               end
             end
 
+            context "has removed decision reviews" do
+              before do
+                higher_level_review.request_issues.each(&:remove!)
+              end
+
+              let!(:caseflow_appeal) { create(:appeal, veteran: higher_level_review.veteran) }
+              let!(:removed_request_issue) { create(:request_issue, :removed, decision_review: caseflow_appeal) }
+
+              it "does not show removed decision reviews" do
+                perform_search
+
+                expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Supplemental Claim")
+                expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
+                expect(page).to_not have_css(".cf-case-list-table > tbody", text: "Original")
+              end
+            end
+
             context "and has end products" do
               let!(:end_product_establishment_1) do
                 create(

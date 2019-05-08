@@ -36,8 +36,8 @@ describe NoShowHearingTask do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
       end
 
-      it "has no actions available" do
-        expect(subject.available_actions_unwrapper(hearing_admin_user).count).to eq 0
+      it "has one action available to the hearing admin user" do
+        expect(subject.available_actions_unwrapper(hearing_admin_user).count).to eq 1
       end
     end
   end
@@ -72,7 +72,7 @@ describe NoShowHearingTask do
     context "when an operation fails" do
       before { allow(ScheduleHearingTask).to receive(:create!).and_raise(StandardError) }
       it "does not commit any changes to the database" do
-        expect { no_show_hearing_task.reschedule_hearing }.to raise_error
+        expect { no_show_hearing_task.reschedule_hearing }.to raise_error(StandardError)
 
         expect(hearing_task.reload.active?).to eq(true)
         expect(disposition_task.reload.active?).to eq(true)
