@@ -322,16 +322,7 @@ class ApplicationController < ApplicationBaseController
   end
 
   def feedback_url(redirect = nil)
-    # :nocov:
-    unless ENV["CASEFLOW_FEEDBACK_URL"]
-      return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
-    end
-
-    # :nocov:
-
-    redirect_url = redirect || request.original_url
-    param_object = { redirect: redirect_url, subject: feedback_subject }
-    ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
+    return "/feedback"
   end
   helper_method :feedback_url
 

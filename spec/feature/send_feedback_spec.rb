@@ -11,9 +11,9 @@ RSpec.feature "Send feedback" do
 
     expect(page).to have_link("Send feedback")
 
-    href = find_link("Send feedback")["href"]
-    expect(href).to include ENV["CASEFLOW_FEEDBACK_URL"]
-    expect(href).to include "subject=Caseflow+Certification"
-    expect(href).to include "redirect="
+    new_window = window_opened_by { click_on 'Send feedback' }
+    within_window new_window do
+      expect(page).to have_link("YourIT")
+    end
   end
 end

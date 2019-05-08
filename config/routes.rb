@@ -254,6 +254,8 @@ Rails.application.routes.draw do
 
   get "unauthorized" => "application#unauthorized"
 
+  get "feedback" => "application#feedback"
+
   %w( 404 500 ).each do |code|
     get code, :to => "errors#show", :status_code => code
   end
