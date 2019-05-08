@@ -145,7 +145,7 @@ describe ColocatedTask do
     let(:colocated_admin_action) do
       atty = FactoryBot.create(:user)
       FactoryBot.create(:staff, :attorney_role, sdomainid: atty.css_id)
-      ColocatedTask.find(FactoryBot.create(:colocated_task, assigned_by: atty,  parent: create(:ama_attorney_task)).id)
+      ColocatedTask.find(FactoryBot.create(:colocated_task, assigned_by: atty, parent: create(:ama_attorney_task)).id)
     end
 
     context "when status is updated to on-hold" do
