@@ -51,6 +51,7 @@ export default class DateSelector extends React.Component {
       type,
       validationError,
       value,
+      dateErrorMessage,
       ...passthroughProps
     } = _.omit(this.props, 'onChange');
 
@@ -67,6 +68,7 @@ export default class DateSelector extends React.Component {
       required={required}
       {...passthroughProps}
       max="9999-12-31"
+      dateErrorMessage={dateErrorMessage}
     />;
 
   }
@@ -74,6 +76,7 @@ export default class DateSelector extends React.Component {
 
 DateSelector.propTypes = {
   errorMessage: PropTypes.string,
+  dateErrorMessage: PropTypes.string,
   invisible: PropTypes.bool,
   label: PropTypes.oneOfType([
     PropTypes.string,

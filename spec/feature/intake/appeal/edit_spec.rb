@@ -642,6 +642,28 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("PTSD denied")
       expect(page).to have_button("Submit")
     end
+
+    scenario "show alert when issue is withdrawn before receipt date" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+      fill_in "withdraw-date", with: 50.days.ago.to_date.mdY
+
+      expect(page).to have_content(
+        "We cannot process your request. Please select a date after the Appeal's receipt date."
+      )
+      expect(page).to have_button("Save", disabled: true)
+    end
+
+    scenario "show alert when issue is withdrawn after current date" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+      fill_in "withdraw-date", with: 2.years.from_now.to_date.mdY
+
+      expect(page).to have_content("We cannot process your request. Please select a date prior to today's date.")
+      expect(page).to have_button("Save", disabled: true)
+    end
   end
 
   context "when remove decision reviews is enabled" do
