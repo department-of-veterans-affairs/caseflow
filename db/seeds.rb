@@ -301,7 +301,7 @@ class SeedDB
         notes: "Pain disorder with 100\% evaluation per examination",
         decision_review: root.appeal
       )
-      parent = FactoryBot.create(
+      FactoryBot.create(
         :bva_dispatch_task,
         assigned_to: BvaDispatch.singleton,
         parent_id: root.id,

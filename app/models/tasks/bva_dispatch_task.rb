@@ -17,13 +17,10 @@ class BvaDispatchTask < GenericTask
     ]
   end
 
-
   class << self
     def create_from_root_task(root_task)
       create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
     end
-
-
 
     def outcode(appeal, params, user)
       if appeal.is_a?(Appeal)
