@@ -305,6 +305,10 @@ class DecisionReview < ApplicationRecord
     "#{request_issues.count} issues"
   end
 
+  def removed?
+    request_issues.any? && request_issues.all?(&:removed?)
+  end
+
   private
 
   def veteran_invalid_fields
@@ -381,8 +385,8 @@ class DecisionReview < ApplicationRecord
     veteran.ratings.reject { |rating| rating.issues.empty? }
 
     # return empty list when there are no ratings
-  rescue Rating::BackfilledRatingError, Rating::LockedRatingError => e
-    Raven.capture_exception(e)
+  rescue Rating::BackfilledRatingError, Rating::LockedRatingError => error
+    Raven.capture_exception(error)
     []
   end
 

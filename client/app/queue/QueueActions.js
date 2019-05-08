@@ -185,11 +185,11 @@ export const getAppealValue = (appealId, endpoint, name) => (dispatch) => {
   });
 };
 
-export const setAppealDocCount = (appealId, docCount) => ({
+export const setAppealDocCount = (appealId, docCountText) => ({
   type: ACTIONS.SET_APPEAL_DOC_COUNT,
   payload: {
     appealId,
-    docCount
+    docCountText
   }
 });
 
@@ -377,6 +377,17 @@ export const setSelectionOfTaskOfUser =
       userId,
       taskId,
       selected
+    }
+  });
+
+export const bulkAssignTasks =
+  ({ assignedUser, regionalOffice, taskType, numberOfTasks }) => ({
+    type: ACTIONS.BULK_ASSIGN_TASKS,
+    payload: {
+      assignedUser,
+      regionalOffice,
+      taskType,
+      numberOfTasks
     }
   });
 

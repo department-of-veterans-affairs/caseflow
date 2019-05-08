@@ -29,9 +29,11 @@ RSpec.feature "Change hearing disposition" do
     User.authenticate!(user: hearing_admin_user)
   end
 
-  context "there are transcription and mail team members" do
+  context "there are hearing prep, transcription, and mail team members" do
     let(:mail_user) { FactoryBot.create(:user, full_name: "Chinelo Mbanefo") }
     let(:transcription_user) { FactoryBot.create(:user, full_name: "Li Hua Meng") }
+    let(:hearing_user) { FactoryBot.create(:user, full_name: "Lendvai Huot", roles: ["Hearing Prep"]) }
+    let(:hearing_day) { create(:hearing_day, judge: hearing_user, scheduled_for: 1.month.from_now) }
 
     before do
       OrganizationsUser.add_user_to_organization(mail_user, MailTeam.singleton)
@@ -62,16 +64,35 @@ RSpec.feature "Change hearing disposition" do
         User.authenticate!(user: mail_user)
         visit "/organizations/#{MailTeam.singleton.url}"
         expect(page).to have_content("Unassigned (1)")
-        expect(page).to have_content veteran_link_text
         expect(page).to have_content "Evidence Submission Window Task"
+        click_on veteran_link_text
+        expect(page).to have_content ChangeHearingDispositionTask.name
       end
 
       step "visit and verify that the transcription task is in the transcription team queue" do
         User.authenticate!(user: transcription_user)
         visit "/organizations/#{TranscriptionTeam.singleton.url}"
         expect(page).to have_content("Unassigned (1)")
-        expect(page).to have_content veteran_link_text
         expect(page).to have_content "Transcription Task"
+        click_on veteran_link_text
+        expect(page).to have_content ChangeHearingDispositionTask.name
+      end
+
+      step "visit and verify that the new hearing disposition is in the hearing prep daily docket" do
+        User.authenticate!(user: hearing_user)
+        visit "/hearings/dockets/" + hearing.scheduled_for.to_date.to_s
+        expect(dropdown_selected_value(find(".dropdown-#{hearing.id}-disposition"))).to eq "Held"
+      end
+
+      step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
+        visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+        expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq "Held"
+      end
+
+      step "visit and verify that the new hearing disposition is on the hearing details page" do
+        visit "hearings/" + hearing.external_id.to_s + "/details"
+        disposition_div = find("h4", text: "DISPOSITION").first(:xpath, "ancestor::div")
+        expect(disposition_div).to have_css("div", text: "held")
       end
     end
   end
@@ -235,6 +256,105 @@ RSpec.feature "Change hearing disposition" do
         expect(page).to have_content(ChangeHearingDispositionTask.last.label)
         find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content(assign_instructions_text)
+      end
+    end
+
+    scenario "assign change hearing disposition task to self" do
+      step "visit the hearing admin organization queue and click on the veteran's name" do
+        visit "/organizations/#{HearingAdmin.singleton.url}"
+        expect(page).to have_content("Unassigned (1)")
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+      end
+
+      step "assign the task to self" do
+        click_dropdown(prompt: "Select an action", text: "Assign to person")
+
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: assign_instructions_text
+        click_on "Submit"
+        expect(page).to have_content COPY::REASSIGN_TASK_SUCCESS_MESSAGE % current_full_name
+      end
+
+      step "the task in my personal queue" do
+        visit "/queue"
+        click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
+        expect(page).to have_content(ChangeHearingDispositionTask.last.label)
+        find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+        expect(page).to have_content(assign_instructions_text)
+      end
+    end
+  end
+
+  describe "create change hearing disposition task action is available to hearing admin user" do
+    let(:instructions_text) { "my instructions." }
+
+    before do
+      change_task.destroy!
+    end
+
+    context "disposition task" do
+      let!(:task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+
+      it "can create a change hearing disposition task" do
+        visit("/queue/appeals/#{appeal.uuid}")
+        expect(page).to have_content(DispositionTask.last.label)
+        click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
+        fill_in "Notes", with: instructions_text
+        click_button "Submit"
+        expect(page).to have_content(
+          format(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteran_full_name)
+        )
+      end
+
+      context "transcription task" do
+        let!(:child_task) { FactoryBot.create(:transcription_task, parent: task, appeal: appeal) }
+
+        it "can create a change hearing disposition task" do
+          visit("/queue/appeals/#{appeal.uuid}")
+          expect(page).to have_content(TranscriptionTask.last.label)
+          click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
+          fill_in "Notes", with: instructions_text
+          click_button "Submit"
+          expect(page).to have_content(
+            format(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteran_full_name)
+          )
+        end
+      end
+
+      context "no show hearing task" do
+        let!(:child_task) { FactoryBot.create(:no_show_hearing_task, parent: task, appeal: appeal) }
+
+        it "can create a change hearing disposition task" do
+          visit("/queue/appeals/#{appeal.uuid}")
+          expect(page).to have_content(NoShowHearingTask.last.label)
+          click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
+          fill_in "Notes", with: instructions_text
+          click_button "Submit"
+          expect(page).to have_content(
+            format(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteran_full_name)
+          )
+        end
+      end
+    end
+
+    context "schedule hearing task" do
+      let!(:task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
+
+      it "cannot create a change hearing disposition task" do
+        visit("/queue/appeals/#{appeal.uuid}")
+        expect(page).to have_content(ScheduleHearingTask.last.label)
+        expect(page).to_not have_css(".Select-control")
+      end
+
+      context "hearing admin task" do
+        let!(:child_task) do
+          FactoryBot.create(:hearing_admin_action_incarcerated_veteran_task, parent: task, appeal: appeal)
+        end
+
+        it "cannot create a change hearing disposition task" do
+          visit("/queue/appeals/#{appeal.uuid}")
+          expect(page).to have_content(HearingAdminActionIncarceratedVeteranTask.last.label)
+          expect(page).to_not have_css(".Select-control")
+        end
       end
     end
   end

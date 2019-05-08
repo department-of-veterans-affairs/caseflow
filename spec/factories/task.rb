@@ -56,6 +56,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :privacy_act_task, class: PrivacyActTask do
+      type { PrivacyActTask.name }
+      appeal { create(:appeal) }
+    end
+
     factory :timed_hold_task, class: TimedHoldTask do
       type { TimedHoldTask.name }
       appeal { create(:appeal) }
@@ -197,6 +202,12 @@ FactoryBot.define do
 
     factory :hearing_admin_action_task, class: HearingAdminActionTask do
       type { HearingAdminActionTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
+    factory :hearing_admin_action_incarcerated_veteran_task, class: HearingAdminActionIncarceratedVeteranTask do
+      type { HearingAdminActionIncarceratedVeteranTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
     end
