@@ -4,7 +4,6 @@ require "benchmark"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
-  # rubocop:disable Metrics/MethodLength
   def self.record(description, service: nil, name: "unknown")
     return_value = nil
     app = RequestStore[:application] || "other"
@@ -51,7 +50,6 @@ class MetricsService
       increment_datadog_counter("request_attempt", service, name, app)
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
     DataDogService.increment_counter(
