@@ -310,6 +310,25 @@ describe Task do
     end
   end
 
+  describe ".update_children_status_after_closed" do
+    let(:user) { FactoryBot.create(:user) }
+    let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
+
+    context "there is an active timed hold task child" do
+      let!(:timed_hold_task) do
+        FactoryBot.create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
+      end
+
+      subject { task.update!(status: Constants.TASK_STATUSES.completed) }
+
+      it "closes the child timed hold task" do
+        subject
+
+        expect(timed_hold_task.reload.active?).to be_falsey
+      end
+    end
+  end
+
   describe ".not_decisions_review" do
     let!(:veteran_record_request_task) { create(:veteran_record_request_task) }
     let!(:task) { create(:generic_task) }

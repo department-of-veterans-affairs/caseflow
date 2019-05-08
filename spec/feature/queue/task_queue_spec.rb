@@ -652,7 +652,7 @@ RSpec.feature "Task queue" do
 
   describe "a task with a child TimedHoldTask" do
     let(:user) { FactoryBot.create(:user) }
-    let(:veteran) { FactoryBot.create(:veteran, first_name: "Maisie", last_name: "Varesko", file_number: 201_905_061) }
+    let(:veteran) { FactoryBot.create(:veteran, first_name: "Julita", last_name: "Van Sant", file_number: 201_905_061) }
     let(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
@@ -703,6 +703,27 @@ RSpec.feature "Task queue" do
         click_on "On hold (1)"
         click_on veteran_link_text
         expect(page).to have_content "Currently active tasks"
+      end
+
+      schedule_row = find("dd", text: TranscriptionTask.last.label).find(:xpath, "ancestor::tr")
+
+      step "select and submit the complete transcription action" do
+        click_dropdown({ text: Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h[:label] }, schedule_row)
+        expect(page).to have_content "Mark as complete"
+        fill_in "completeTaskInstructions", with: "These are my instructions"
+        click_button "Mark complete"
+        expect(page).to have_content "#{appeal.veteran_full_name}'s case has been marked complete"
+      end
+
+      step "verify that the transcription task is completed" do
+        click_on "Completed"
+        click_on veteran_link_text
+        expect(page).to have_content("Currently active tasks")
+        expect(page).to have_content("No active tasks")
+      end
+
+      step "verify that the associated TimedHoldTask has been canceled" do
+        expect(timed_hold_task.reload.active?).to be_falsey
       end
     end
   end

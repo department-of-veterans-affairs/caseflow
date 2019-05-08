@@ -368,7 +368,9 @@ class Task < ApplicationRecord
     parent.when_child_task_completed
   end
 
-  def update_children_status_after_closed; end
+  def update_children_status_after_closed
+    children.active.find_by(type: TimedHoldTask.name)&.update!(status: status)
+  end
 
   def task_just_closed?
     saved_change_to_attribute?("status") && !active?
