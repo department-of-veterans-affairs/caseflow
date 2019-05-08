@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Reader::DocumentsController < Reader::ApplicationController
-  # rubocop:disable Metrics/MethodLength
   def index
     respond_to do |format|
       format.html { return render "reader/appeal/index" }
@@ -27,7 +26,6 @@ class Reader::DocumentsController < Reader::ApplicationController
 
     render error.serialize_response
   end
-  # rubocop:enable Metrics/MethodLength
 
   def show
     render "reader/appeal/index"
