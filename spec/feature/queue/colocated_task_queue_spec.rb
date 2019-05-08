@@ -169,7 +169,7 @@ RSpec.feature "ColocatedTask" do
     end
   end
 
-  describe "vlj support staff changes task type", focus: true do
+  describe "vlj support staff changes task type" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:appeal) { root_task.appeal }
     let!(:colocated_task) do
