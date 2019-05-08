@@ -84,7 +84,8 @@ export class AddIssuesPage extends React.Component {
       intakeForms,
       formType,
       veteran,
-      featureToggles
+      featureToggles,
+      editPage
     } = this.props;
 
     if (!formType) {
@@ -224,7 +225,7 @@ export class AddIssuesPage extends React.Component {
       </div>;
     };
 
-    const messageHeader = this.props.editPage ? 'Edit Issues' : 'Add / Remove Issues';
+    const messageHeader = editPage ? 'Edit Issues' : 'Add / Remove Issues';
 
     const columns = [
       { valueName: 'field' },
@@ -236,7 +237,7 @@ export class AddIssuesPage extends React.Component {
       // no-op unless the issue banner needs to be displayed
     };
 
-    if (this.props.editPage && haveIssuesChanged()) {
+    if (editPage && haveIssuesChanged()) {
       // flash a save message if user is on the edit page & issues have changed
       const issuesChangedBanner = <p>When you finish making changes, click "Save" to continue.</p>;
 
