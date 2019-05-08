@@ -227,6 +227,7 @@ To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/
 
 You can also use Psequel (instead of SQL Developer) with the following setup (user and password is postgres):
 
+<img width="1659" alt="Screenshot 2019-02-11 12 19 42" src="https://user-images.githubusercontent.com/46791771/57386802-1fd1ac00-7183-11e9-8333-63249df033d2.png">
 
 ### Debugging FACOLS setup
 See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols).
