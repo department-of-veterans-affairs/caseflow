@@ -99,6 +99,37 @@ describe EndProductEstablishment do
       end
     end
 
+    context "when a Veteran's address is updated after initially fetching the BGS record" do
+      it "uses the new address for establishing a claim" do
+        # first fetch Veteran's info
+        expect(veteran.to_vbms_hash).to include(address_line1: "1234 FAKE ST")
+        Fakes::BGSService.veteran_records[veteran.file_number][:address_line1] = "Changed"
+
+        subject
+
+        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          claim_hash: {
+            benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
+            payee_code: "00",
+            predischarge: false,
+            claim_type: "Claim",
+            end_product_modifier: "030",
+            end_product_code: "030HLRR",
+            end_product_label: "Higher-Level Review Rating",
+            station_of_jurisdiction: "397",
+            date: 2.days.ago.to_date,
+            suppress_acknowledgement_letter: false,
+            gulf_war_registry: false,
+            claimant_participant_id: "11223344",
+            limited_poa_code: "ABC",
+            limited_poa_access: true
+          },
+          veteran_hash: hash_including(address_line1: "Changed"),
+          user: current_user
+        )
+      end
+    end
+
     context "when eps with a valid modifiers already exist" do
       let!(:past_created_ep) do
         Generators::EndProduct.build(
