@@ -57,10 +57,10 @@ clean:
 	rm -rf tmp/capybara
 
 vacols:
-	docker exec --tty -i VACOLS_DB-development bash
+	docker exec --tty -i VACOLS_DB bash
 
 facols:
-	sqlplus "VACOLS/VACOLS@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1522))(CONNECT_DATA=(SID=BVAP)))"
+	sqlplus "VACOLS/VACOLS@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
 	bundle exec rake local:destroy local:build
