@@ -96,10 +96,8 @@ class Generators::Vacols::Case
         bfdcertool: "2017-05-24 00:00:00 UTC"
       }
     end
+    # rubocop:enable Metrics/MethodLength
 
-    # rubocop:disable Metrics/CyclomaticComplexity
-    # rubocop:disable Metrics/AbcSize
-    # rubocop:disable Metrics/PerceivedComplexity
     def create(attrs = {})
       custom_case_attrs = attrs[:case_attrs].nil? ? {} : attrs[:case_attrs]
       custom_case_attrs = case_attrs.merge(custom_case_attrs)
@@ -143,9 +141,5 @@ class Generators::Vacols::Case
 
       VACOLS::Case.create(custom_case_attrs)
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
-    # rubocop:enable Metrics/AbcSize
-    # rubocop:enable Metrics/PerceivedComplexity
-    # rubocop:enable Metrics/MethodLength
   end
 end
