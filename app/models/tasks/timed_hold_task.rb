@@ -11,7 +11,6 @@ class TimedHoldTask < GenericTask
 
   attr_accessor :days_on_hold
   validates :days_on_hold, presence: true, inclusion: { in: 1..100 }, on: :create
-  validates :task_timers, length: { maximum: 1, message: "only one task timer can be added" }
 
   def self.create_from_parent(parent_task, days_on_hold:, assigned_by: nil, instructions: nil)
     create!(

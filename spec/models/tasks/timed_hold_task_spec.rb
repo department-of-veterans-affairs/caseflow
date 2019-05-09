@@ -207,22 +207,4 @@ describe TimedHoldTask do
       expect(task.hide_from_task_snapshot).to eq(true)
     end
   end
-
-  context "a task with more than one active timer" do
-    let(:days_on_hold) { 18 }
-    let(:user) { FactoryBot.create(:user) }
-    let!(:parent) { FactoryBot.create(:generic_task, assigned_to: user) }
-    let!(:task) do
-      TimedHoldTask.create!(appeal: parent.appeal, assigned_to: user, days_on_hold: days_on_hold, parent: parent)
-    end
-
-    subject { TaskTimer.create!(task: task) }
-
-    it "adding a new timer raises an error" do
-      subject
-
-      expect(task.reload.valid?).to be_falsey
-      expect(task.reload.errors[:task_timers]).to include("only one task timer can be added")
-    end
-  end
 end
