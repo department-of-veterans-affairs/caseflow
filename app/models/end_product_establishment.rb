@@ -399,6 +399,8 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def establish_claim_in_vbms(end_product)
+    veteran.unload_bgs_record
+
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
       veteran_hash: veteran.to_vbms_hash,
