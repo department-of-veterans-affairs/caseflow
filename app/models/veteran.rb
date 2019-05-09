@@ -326,7 +326,8 @@ class Veteran < ApplicationRecord
   end
 
   def unload_bgs_record
-    instance_variable_set(:@bgs_record_loaded, false)
+    @bgs_record_loaded = false
+    # instance_variable_set(:@bgs_record_loaded, false)
   end
 
   private
