@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
@@ -126,7 +125,7 @@ class RequestIssue < ApplicationRecord
       where(
         contested_rating_issue_reference_id: nil,
         is_unidentified: [nil, false]
-      ).where.not(issue_category: nil)
+      ).where.not(nonrating_issue_category: nil)
     end
 
     def eligible
@@ -180,11 +179,10 @@ class RequestIssue < ApplicationRecord
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
-        nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
+        nonrating_issue_description: data[:nonrating_issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
         decision_date: data[:decision_date],
-        issue_category: data[:issue_category],
-        nonrating_issue_category: data[:issue_category],
+        nonrating_issue_category: data[:nonrating_issue_category],
         benefit_type: data[:benefit_type],
         notes: data[:notes],
         is_unidentified: data[:is_unidentified],
@@ -236,7 +234,7 @@ class RequestIssue < ApplicationRecord
 
   def description
     return contested_issue_description if contested_issue_description
-    return "#{issue_category} - #{nonrating_issue_description}" if nonrating?
+    return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
     return unidentified_issue_text if is_unidentified?
   end
 
@@ -267,7 +265,6 @@ class RequestIssue < ApplicationRecord
     closed_at if withdrawn?
   end
 
-  # rubocop:disable Metrics/MethodLength
   def ui_hash
     {
       id: id,
@@ -276,7 +273,7 @@ class RequestIssue < ApplicationRecord
       description: description,
       contention_text: contention_text,
       approx_decision_date: approx_decision_date_of_issue_being_contested,
-      category: issue_category,
+      category: nonrating_issue_category,
       notes: notes,
       is_unidentified: is_unidentified,
       ramp_claim_id: ramp_claim_id,
@@ -291,7 +288,6 @@ class RequestIssue < ApplicationRecord
       withdrawal_date: withdrawal_date
     }
   end
-  # rubocop:enable Metrics/MethodLength
 
   def approx_decision_date_of_issue_being_contested
     return if is_unidentified
@@ -567,9 +563,7 @@ class RequestIssue < ApplicationRecord
         participant_id: decision_review.veteran.participant_id,
         disposition: contention_disposition.disposition,
         description: "#{contention_disposition.disposition}: #{description}",
-        profile_date: end_product_establishment_associated_rating_profile_date,
         rating_profile_date: end_product_establishment_associated_rating_profile_date,
-        promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         rating_promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
@@ -624,10 +618,8 @@ class RequestIssue < ApplicationRecord
       rating_issue_reference_id: rating_issue.reference_id,
       disposition: contention_disposition.disposition,
       participant_id: rating_issue.participant_id,
-      promulgation_date: rating_issue.promulgation_date,
       rating_promulgation_date: rating_issue.promulgation_date,
       decision_text: rating_issue.decision_text,
-      profile_date: rating_issue.profile_date,
       rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
@@ -649,8 +641,6 @@ class RequestIssue < ApplicationRecord
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def check_for_eligible_previous_review!
     return unless eligible?
     return unless contested_issue
@@ -671,8 +661,6 @@ class RequestIssue < ApplicationRecord
 
     self.ineligible_due_to_id = contested_issue.source_request_issues.first&.id if ineligible_reason
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
     return unless eligible? && should_check_for_before_ama?
@@ -785,4 +773,3 @@ class RequestIssue < ApplicationRecord
     decision_review.tasks.active.any?
   end
 end
-# rubocop:enable Metrics/ClassLength

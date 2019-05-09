@@ -11,8 +11,8 @@ class DistributionsController < ApplicationController
     distribution = Distribution.create!(judge: current_user)
     enqueue_distribution_job(distribution)
     render_single(distribution)
-  rescue ActiveRecord::RecordInvalid => invalid
-    errors = invalid.record.errors.details.values.flatten.map { |e| e[:error] }
+  rescue ActiveRecord::RecordInvalid => error
+    errors = error.record.errors.details.values.flatten.map { |e| e[:error] }
     return render_single(pending_distribution) if errors.include? :pending_distribution
 
     render_403_error(errors)
@@ -59,7 +59,6 @@ class DistributionsController < ApplicationController
     }, status: :forbidden
   end
 
-  # rubocop:disable Metrics/MethodLength
   def json_error(error)
     case error
     when :not_judge
@@ -78,9 +77,8 @@ class DistributionsController < ApplicationController
       {
         "error": error,
         "title": "Cases in your queue are waiting to be assigned",
-        # rubocop:disable Metrics/LineLength
-        "detail": "Please assign all cases that have been waiting in your assignment queue for more than 30 days before requesting more."
-        # rubocop:enable Metrics/LineLength
+        "detail": "Please assign all cases that have been waiting in your " \
+                  "assignment queue for more than 30 days before requesting more."
       }
     when :different_user
       {
@@ -102,7 +100,6 @@ class DistributionsController < ApplicationController
       }
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def feature_enabled?
     FeatureToggle.enabled?(:automatic_case_distribution, user: current_user)

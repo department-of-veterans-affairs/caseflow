@@ -175,6 +175,14 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
+  def self.list_document_types
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::ListTypeCategory.new
+
+    send_and_log_request(nil, request)
+  end
+
   def self.vbms_client_with_user(user)
     return @vbms_client if user.nil?
 
@@ -202,9 +210,9 @@ class ExternalApi::VBMSService
                           name: name) do
       (override_vbms_client || @vbms_client).send_request(request)
     end
-  rescue VBMS::ClientError => e
-    Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
+  rescue VBMS::ClientError => error
+    Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
 
-    raise VBMSError.from_vbms_http_error(e)
+    raise VBMSError.from_vbms_http_error(error)
   end
 end

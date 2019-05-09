@@ -20,7 +20,7 @@ class ClaimReviewIntake < DecisionReviewIntake
       create_claimant!
       detail.save!
     end
-  rescue ActiveRecord::RecordInvalid => _err
+  rescue ActiveRecord::RecordInvalid
     set_review_errors
   end
 

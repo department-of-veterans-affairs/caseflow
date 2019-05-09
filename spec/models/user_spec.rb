@@ -58,6 +58,7 @@ describe User do
         "id" => css_id.upcase,
         "station_id" => "310",
         "css_id" => css_id.upcase,
+        "pg_user_id" => user.id,
         "email" => nil,
         "roles" => [],
         "selected_regional_office" => nil,
@@ -443,6 +444,7 @@ describe User do
       end
 
       it do
+        expect(User).to receive(:find_by_css_id)
         is_expected.to be_an_instance_of(User)
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
@@ -453,6 +455,13 @@ describe User do
 
       it "persists user to DB" do
         expect(User.find(subject.id)).to be_truthy
+      end
+
+      it "searches by user id when it is in session" do
+        user = create(:user)
+        expect(User).to_not receive(:find_by_css_id)
+        session["user"]["pg_user_id"] = user.id
+        expect(subject).to eq user
       end
     end
 

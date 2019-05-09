@@ -23,14 +23,14 @@ class VaDotGovAddressValidator
 
     begin
       create_available_hearing_locations(va_dot_gov_address: va_dot_gov_address)
-    rescue Caseflow::Error::VaDotGovValidatorError => error
+    rescue StandardError => error
       handle_error(error)
     end
   end
 
   def validate
     if address.nil?
-      fail Caseflow::Error::VaDotGovValidatorError, code: 500, message: "InvalidRequestStreetAddress"
+      fail Caseflow::Error::VaDotGovNullAddressError
     end
 
     begin
@@ -173,7 +173,7 @@ class VaDotGovAddressValidator
     )
   end
 
-  def get_state_code(va_dot_gov_address) # rubocop:disable Metrics/CyclomaticComplexity
+  def get_state_code(va_dot_gov_address)
     return "DC" if appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
 
     state_code = case va_dot_gov_address[:country_code]
@@ -189,46 +189,26 @@ class VaDotGovAddressValidator
                  when "US", "USA"
                    va_dot_gov_address[:state_code]
                  else
-                   fail Caseflow::Error::VaDotGovValidatorError, code: 500, message: "ForeignVeteranCase"
+                   fail Caseflow::Error::VaDotGovForeignVeteranError
                  end
 
     return state_code if valid_states.include?(state_code)
 
-    fail Caseflow::Error::VaDotGovValidatorError, code: 500, message: "ForeignVeteranCase"
-  end
-
-  def error_instructions_map
-    { "DualAddressError" => "The appellant's address in VBMS is ambiguous.",
-      "AddressCouldNotBeFound" => "The appellant's address in VBMS could not be found on a map.",
-      "InvalidRequestStreetAddress" => "The appellant's address in VBMS does not exist or is invalid.",
-      "ForeignVeteranCase" => "The appellant's address in VBMS is outside of US territories.",
-      "InvalidRequestNonStreetAddress" => "The appellant's address in VBMS is incomplete.",
-      "SpectrumServiceAddressError" => "The appellant's address in VBMS could not be found on a map." }
-  end
-
-  def get_error_key(error)
-    if error.message.is_a?(String)
-      error.message
-    elsif error.message["messages"] && error.message["messages"][0]
-      error.message["messages"][0]["key"]
-    end
+    fail Caseflow::Error::VaDotGovForeignVeteranError
   end
 
   def handle_error(error)
-    error_key = get_error_key(error)
-
-    case error_key
-    when "DualAddressError", "AddressCouldNotBeFound", "InvalidRequestStreetAddress", "InvalidRequestNonStreetAddress",
-      "SpectrumServiceAddressError"
+    case error
+    when Caseflow::Error::VaDotGovInvalidInputError, Caseflow::Error::VaDotGovAddressCouldNotBeFoundError
       admin_action = create_admin_action_for_schedule_hearing_task(
-        instructions: error_instructions_map[error_key],
+        instructions: "The appellant's address in VBMS does not exist or is invalid.",
         admin_action_type: HearingAdminActionVerifyAddressTask
       )
 
       { status: STATUSES[:created_admin_action], admin_action: admin_action }
-    when "ForeignVeteranCase"
+    when Caseflow::Error::VaDotGovForeignVeteranError
       admin_action = create_admin_action_for_schedule_hearing_task(
-        instructions: error_instructions_map[error_key],
+        instructions: "The appellant's address in VBMS is outside of US territories.",
         admin_action_type: HearingAdminActionForeignVeteranCaseTask
       )
 

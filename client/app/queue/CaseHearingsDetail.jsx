@@ -37,22 +37,36 @@ class CaseHearingsDetail extends React.PureComponent {
     {
       label: 'Disposition',
       value: <React.Fragment>
-        {hearing.disposition && StringUtil.snakeCaseToCapitalized(hearing.disposition)}&nbsp;&nbsp;
-        {hearing.viewedByJudge && !userIsVsoEmployee &&
-        <Tooltip id="hearing-worksheet-tip" text={COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP}>
-          <Link rel="noopener" target="_blank" href={`/hearings/${hearing.externalId}/worksheet/print?keep_open=true`}>
-            {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
-          </Link>
-        </Tooltip>}
+        {hearing.disposition && StringUtil.snakeCaseToCapitalized(hearing.disposition)}
       </React.Fragment>
-    },
-    {
-      label: 'Date',
-      value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
-    }, {
-      label: 'Judge',
-      value: hearing.heldBy
     }];
+
+    if (hearing.viewedByJudge && !userIsVsoEmployee) {
+      hearingAttrs.push(
+        {
+          label: '',
+          value: <Tooltip id="hearing-worksheet-tip" text={COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_TOOLTIP}>
+            <Link
+              rel="noopener"
+              target="_blank"
+              href={`/hearings/${hearing.externalId}/worksheet/print?keep_open=true`}>
+              {COPY.CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY}
+            </Link>
+          </Tooltip>
+        }
+      );
+    }
+
+    hearingAttrs.push(
+      {
+        label: 'Date',
+        value: <DateString date={hearing.date} dateFormat="M/D/YY" style={marginRight} />
+      },
+      {
+        label: 'Judge',
+        value: hearing.heldBy
+      }
+    );
 
     if (!userIsVsoEmployee) {
       hearingAttrs.push(

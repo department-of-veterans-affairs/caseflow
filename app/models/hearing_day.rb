@@ -148,7 +148,6 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    # rubocop:disable Metrics/AbcSize
     def upcoming_days_for_vso_user(start_date, end_date, user)
       hearing_days_with_ama_hearings = HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
         .where("DATE(scheduled_for) between ? and ?", start_date, end_date).select do |hearing_day|
@@ -175,7 +174,6 @@ class HearingDay < ApplicationRecord
 
       hearing_days_with_ama_hearings + hearing_days_with_vacols_hearings
     end
-    # rubocop:enable Metrics/AbcSize
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?

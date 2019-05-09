@@ -19,7 +19,8 @@ class TasksController < ApplicationController
     TranslationTask: TranslationTask,
     HearingAdminActionTask: HearingAdminActionTask,
     MailTask: MailTask,
-    InformalHearingPresentationTask: InformalHearingPresentationTask
+    InformalHearingPresentationTask: InformalHearingPresentationTask,
+    PrivacyActTask: PrivacyActTask
   }.freeze
 
   def set_application
@@ -116,10 +117,24 @@ class TasksController < ApplicationController
 
   def reschedule
     if !task.is_a?(NoShowHearingTask)
-      fail(Caseflow::Error::ActionForbiddenError, message: "Can only reschedule NoShowHearingTasks")
+      fail(Caseflow::Error::ActionForbiddenError, message: COPY::NO_SHOW_HEARING_TASK_RESCHEDULE_FORBIDDEN_ERROR)
     end
 
     task.reschedule_hearing
+
+    render json: {
+      tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]
+    }
+  end
+
+  def request_hearing_disposition_change
+    hearing_task = task.ancestor_task_of_type(HearingTask)
+
+    if hearing_task.blank?
+      fail(Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+    end
+
+    hearing_task.create_change_hearing_disposition_task_and_complete_children create_params&.first&.dig(:instructions)
 
     render json: {
       tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]

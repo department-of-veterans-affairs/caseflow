@@ -50,6 +50,69 @@ describe GenericTask do
     end
   end
 
+  describe ".available_hearing_admin_actions" do
+    let!(:task) { FactoryBot.create(:generic_task) }
+    let(:user) { FactoryBot.create(:user) }
+
+    subject { task.available_hearing_admin_actions(user) }
+
+    it "returns no actions when task doesn't have an active hearing task ancestor" do
+      expect(subject).to eq []
+    end
+
+    context "task has an active hearing task ancestor" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let!(:hearing_task) { FactoryBot.create(:hearing_task, appeal: appeal) }
+      let(:disposition_task_type) { :disposition_task }
+      let(:disposition_task_status) { Constants.TASK_STATUSES.assigned }
+      let!(:disposition_task) do
+        FactoryBot.create(
+          disposition_task_type,
+          parent: hearing_task,
+          appeal: appeal,
+          status: disposition_task_status
+        )
+      end
+      let!(:task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
+
+      context "user is a member of hearings management" do
+        before do
+          OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        end
+
+        it "returns no actions when user is not a member of hearing admin" do
+          expect(subject).to eq []
+        end
+      end
+
+      context "user is member of hearing admin" do
+        before do
+          OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+        end
+
+        it "returns a create change hearing disposition task action" do
+          expect(subject).to eq [Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h]
+        end
+      end
+
+      context "hearing task has an inactive child disposition task" do
+        let(:disposition_task_status) { Constants.TASK_STATUSES.cancelled }
+
+        it "returns no actions" do
+          expect(subject).to eq []
+        end
+      end
+
+      context "hearing task has only an active child change hearing disposition task" do
+        let(:disposition_task_type) { :change_hearing_disposition_task }
+
+        it "returns no actions" do
+          expect(subject).to eq []
+        end
+      end
+    end
+  end
+
   describe ".available_actions_unwrapper" do
     let(:user) { FactoryBot.create(:user) }
     let(:task) { GenericTask.find(FactoryBot.create(:generic_task, assigned_to: assignee, status: status).id) }

@@ -45,6 +45,7 @@ export const initialState = {
   attorneysOfJudge: [],
   attorneyAppealsLoadingState: {},
   isTaskAssignedToUserSelected: {},
+  tasksAssignedByBulk: {},
   pendingDistribution: null,
   attorneys: {},
   organizationId: null,
@@ -223,7 +224,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
       docCountForAppeal: {
         [action.payload.appealId]: {
           $set: {
-            docCount: action.payload.docCount,
+            docCountText: action.payload.docCountText,
             loading: false
           }
         }
@@ -416,6 +417,17 @@ export const workQueueReducer = (state = initialState, action = {}) => {
       }
     });
   }
+  case ACTIONS.BULK_ASSIGN_TASKS:
+    return update(state, {
+      tasksAssignedByBulk: {
+        $set: {
+          assignedUser: action.payload.assignedUser,
+          regionalOffice: action.payload.regionalOffice,
+          taskType: action.payload.taskType,
+          numberOfTasks: action.payload.numberOfTasks
+        }
+      }
+    });
   case ACTIONS.SET_PENDING_DISTRIBUTION:
     return update(state, {
       pendingDistribution: {

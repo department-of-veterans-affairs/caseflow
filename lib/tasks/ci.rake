@@ -51,7 +51,9 @@ namespace :ci do
     require "simplecov"
     $stdout.sync = true
 
-    api_url = "https://circleci.com/api/v1.1/project/github/#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/#{ENV['CIRCLE_BUILD_NUM']}/artifacts" # rubocop:disable Metrics/LineLength
+    api_url = "https://circleci.com/api/v1.1/project/github/" \
+              "#{ENV['CIRCLE_PROJECT_USERNAME']}/#{ENV['CIRCLE_PROJECT_REPONAME']}/" \
+              "#{ENV['CIRCLE_BUILD_NUM']}/artifacts"
     coverage_dir = "~/coverage/combined"
     SimpleCov.coverage_dir(coverage_dir)
     # Set the merge_timeout very large so that we don't exclude results

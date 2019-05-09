@@ -53,6 +53,8 @@ Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ)
 
 ## Developer Setup
 
+[Linux System Instructions](LINUX_SETUP_AND_INSTALL.md)
+
 ### Install the Xcode commandline tools
 
     xcode-select --install
@@ -145,22 +147,6 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 
 3) Add `[DIR]` to your `PATH`
 
-#### Linux
-Note: This has only been tested on Debian based OS. However, it should also work
-for Fedora based OS.
-
- 1. Download the ["Instant Client Package - Basic" and "Instant Client Package - SDK"](https://www.oracle.com/technetwork/database/database-technologies/instant-client/downloads/index.html) for Linux 32 or 64bit (depending on your Ruby architecture)
-
- 1. Unzip both packages into `/opt/oracle/instantclient_11_2`
-
- 1. Setup both packages according to the Oracle documentation:
-
-```sh
-export LD_LIBRARY_PATH=/opt/oracle/instantclient_11_2 <-- Not sure if this is still valid. It has recently changed for MAC. See above.
-cd /opt/oracle/instantclient_11_2
-sudo ln -s libclntsh.so.12.1 libclntsh.so
-```
-
 ### Clone this repo
 Navigate to the directory you'd like to clone this repo into and run:
 
@@ -238,6 +224,10 @@ bundle exec rails dbconsole # password is `postgres`
 ```
 
 To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
+
+You can also use Psequel (instead of SQL Developer) with the following setup (user and password is postgres):
+
+<img width="1659" alt="Screenshot 2019-02-11 12 19 42" src="https://user-images.githubusercontent.com/46791771/57386802-1fd1ac00-7183-11e9-8333-63249df033d2.png">
 
 ### Debugging FACOLS setup
 See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols).
