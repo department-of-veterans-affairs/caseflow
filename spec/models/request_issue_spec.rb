@@ -644,10 +644,19 @@ describe RequestIssue do
       it { is_expected.to eq("a rating request issue") }
     end
 
-    context "when description is updated" do
+    context "when description is edited" do
       let(:request_issue) { rating_request_issue }
       let(:edited_description) { "edited description" }
       it { is_expected.to eq(edited_description) }
+    end
+
+    context "when description returns empty string" do
+      let(:request_issue) { rating_request_issue }
+      let(:edited_description) { "" }
+
+      it "should return an empty string" do
+        expect(edited_description).to eq("")
+      end
     end
 
     context "when nonrating" do

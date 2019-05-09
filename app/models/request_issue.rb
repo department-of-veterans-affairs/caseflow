@@ -234,7 +234,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def description
-    return edited_description if edited_description
+    return edited_description if edited_description.present?
     return contested_issue_description if contested_issue_description
     return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
     return unidentified_issue_text if is_unidentified?

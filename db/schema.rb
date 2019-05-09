@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190508215805) do
+ActiveRecord::Schema.define(version: 20190509155449) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -813,7 +813,7 @@ ActiveRecord::Schema.define(version: 20190508215805) do
     t.datetime "decision_sync_last_submitted_at", comment: "Async job processing most recent start timestamp"
     t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp"
     t.datetime "decision_sync_submitted_at", comment: "Async job processing start timestamp"
-    t.string "edited_description", comment: "The updated description for the contested issue, optionally entered by the user."
+    t.string "edited_description", comment: "The edited description for the contested issue, optionally entered by the user."
     t.integer "end_product_establishment_id", comment: "The ID of the End Product Establishment created for this request issue."
     t.bigint "ineligible_due_to_id", comment: "If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
     t.string "ineligible_reason", comment: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."

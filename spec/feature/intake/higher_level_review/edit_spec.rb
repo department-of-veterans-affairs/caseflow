@@ -1381,10 +1381,12 @@ feature "Higher Level Review Edit issues" do
         OrganizationsUser.add_user_to_organization(current_user, education_org)
         FeatureToggle.enable!(:decision_reviews)
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
       end
 
       after do
         FeatureToggle.disable!(:decision_reviews)
+        FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
       end
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }
@@ -1440,6 +1442,19 @@ feature "Higher Level Review Edit issues" do
 
         expect(page).to have_current_path("/decision_reviews/education")
         expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
+      end
+
+      scenario "edit contention text" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+        expect(page).to have_content("Edit contention title")
+
+        within first(".issue-edit-text") do
+          click_edit_contention_issue
+        end
+
+        expect(page).to have_content("Apportionment")
+        expect(page).to have_button("Submit")
       end
     end
 
