@@ -236,7 +236,8 @@ class QueueRepository
     end
 
     def decass_complexity_rating(vacols_id)
-      VACOLS::Case.select("VACOLS.DECASS_COMPLEX(bfkey) as complexity_rating")
+      query = "#{Rails.application.config.vacols_db_name}.DECASS_COMPLEX(bfkey) as complexity_rating"
+      VACOLS::Case.select(query)
         .find_by(bfkey: vacols_id)
         .try(:complexity_rating)
     end
