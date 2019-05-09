@@ -49,11 +49,11 @@ feature "correcting issues" do
       appeal = appeal_with_shared_decision_issues
       create_judge_decision_review_task_for(appeal)
       visit_appeals_page_as_judge(appeal)
-
+      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
       expect(page).to have_content "Added to 2 issues"
       expect(page).to have_content "decision with id 1"
       expect(page).to have_content "decision with id 2"
-
+      page.go_back
       request_issue = RequestIssue.find_by(notes: "with a shared decision issue")
       remove_request_issue_as_a_judge(request_issue)
       expect(page).to have_link "Correct issues"
@@ -63,8 +63,10 @@ feature "correcting issues" do
       expect(request_issue.reload.decision_review).to_not be_nil
       expect(request_issue).to be_closed
       expect(request_issue).to be_removed
+
       expect(page).to_not have_content "Added to 2 issues"
       expect(page).to_not have_content "decision with id 2"
+      click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
       expect(page).to have_content "decision with id 1"
       expect(page).to have_content "another shared decision issue"
     end
