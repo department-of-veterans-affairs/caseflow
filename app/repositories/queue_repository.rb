@@ -25,7 +25,6 @@ class QueueRepository
       end
     end
 
-    # rubocop:disable Metrics/MethodLength
     def appeals_by_vacols_ids(vacols_ids)
       appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
                                       service: :vacols,
@@ -57,7 +56,6 @@ class QueueRepository
       appeals.map(&:save)
       appeals
     end
-    # rubocop:enable Metrics/MethodLength
 
     def reassign_case_to_judge!(vacols_id:, created_in_vacols_date:, judge_vacols_user_id:, decass_attrs:)
       decass_record = find_decass_record(vacols_id, created_in_vacols_date)
@@ -238,7 +236,7 @@ class QueueRepository
     end
 
     def decass_complexity_rating(vacols_id)
-      VACOLS::Case.select("VACOLS.DECASS_COMPLEX(bfkey) as complexity_rating")
+      VACOLS::Case.select("DECASS_COMPLEX(bfkey) as complexity_rating")
         .find_by(bfkey: vacols_id)
         .try(:complexity_rating)
     end

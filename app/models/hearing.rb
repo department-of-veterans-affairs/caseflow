@@ -154,7 +154,6 @@ class Hearing < ApplicationRecord
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def quick_to_hash(_current_user_id)
     serializable_hash(
       methods: [
@@ -184,9 +183,7 @@ class Hearing < ApplicationRecord
       except: [:military_service]
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength
   def to_hash(_current_user_id)
     serializable_hash(
       methods: [
@@ -224,7 +221,6 @@ class Hearing < ApplicationRecord
       ]
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(

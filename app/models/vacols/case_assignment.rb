@@ -2,7 +2,7 @@
 
 class VACOLS::CaseAssignment < VACOLS::Record
   # :nocov:
-  self.table_name = "vacols.brieff"
+  self.table_name = "brieff"
 
   has_one :staff, foreign_key: :slogid, primary_key: :bfcurloc
   has_one :case_decision, foreign_key: :defolder, primary_key: :bfkey

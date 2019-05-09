@@ -2,9 +2,9 @@ import React from 'react';
 import { css } from 'glamor';
 
 import { getIssueDiagnosticCodeLabel } from '../utils';
+import AmaIssueList from '../../components/AmaIssueList';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 import CaseDetailsDescriptionList from './CaseDetailsDescriptionList';
-import ContestedIssues from './ContestedIssues';
 import { dispositionLabelForDescription } from './LegacyIssueListItem';
 
 const singleIssueContainerStyling = css({
@@ -25,10 +25,9 @@ const headingStyling = css({
 
 export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal) {
-    return <ContestedIssues
+    return <AmaIssueList
       requestIssues={props.issues}
-      decisionIssues={props.decisionIssues}
-    />;
+      decisionIssues={props.decisionIssues} />;
   }
 
   return <React.Fragment>

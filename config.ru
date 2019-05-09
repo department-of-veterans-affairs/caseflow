@@ -37,11 +37,9 @@ date_pattern = '\d+-\d+-\d+'
 # '/idt/api/v1/appeals/39e82104-e590-4b2e-8d23-6182db0809f8' -> '/idt/api/v1/appeals/:uuid'
 uuid_pattern = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"
 
-# rubocop:disable Style/PercentLiteralDelimiters
-id_regex = %r'/(?:#{numeric_id_pattern}|#{certification_id_pattern})(/|$)'
-date_regex = %r'/#{date_pattern}(/|$)'
-uuid_regex = %r'/#{uuid_pattern}(/|$)'
-# rubocop:enable Style/PercentLiteralDelimiters
+id_regex = %r{/(?:#{numeric_id_pattern}|#{certification_id_pattern})(/|$)}
+date_regex = %r{/#{date_pattern}(/|$)}
+uuid_regex = %r{/#{uuid_pattern}(/|$)}
 
 label_builder = lambda do |env, code|
   {
