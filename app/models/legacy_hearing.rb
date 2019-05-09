@@ -237,6 +237,8 @@ class LegacyHearing < ApplicationRecord
       methods: [
         :disposition_editable,
         :scheduled_for,
+        :scheduled_time_string,
+        :central_office_time_string,
         :readable_request_type,
         :disposition,
         :aod,
