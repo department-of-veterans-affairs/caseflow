@@ -114,17 +114,7 @@ class LegacyHearing < ApplicationRecord
     @time ||= HearingTimeService.new(hearing: self)
   end
 
-  def scheduled_time
-    time.to_datetime
-  end
-
-  def scheduled_time_string
-    time.to_s
-  end
-
-  def central_office_time_string
-    time.central_office_time
-  end
+  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string, to: :time
 
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]

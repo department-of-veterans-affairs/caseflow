@@ -1,16 +1,17 @@
 # frozen_string_literal: true
 
 # Service to handle hearing time updates consistently between VACOLS and Caseflow
-# using scheduled_time_string
+# using scheduled_time_string parameter.
+# scheduled_time_string is always local time
 
 class HearingTimeService
   class << self
     def build_legacy_params_with_time(hearing, update_params)
       # takes hearing update_legacy_params from controller and adds
-      # vacols-formatted datetime
+      # vacols-formatted scheduled_for
       return update_params if update_params[:scheduled_time_string].nil?
 
-      scheduled_for = vacols_formatted_datetime(
+      scheduled_for = legacy_formatted_scheduled_for(
         scheduled_for: update_params[:scheduled_for] || hearing.scheduled_for,
         scheduled_time_string: update_params[:scheduled_time_string]
       )
@@ -24,15 +25,14 @@ class HearingTimeService
       remove_time_string_params(update_params).merge(scheduled_time: update_params[:scheduled_time_string])
     end
 
-    def vacols_formatted_datetime(scheduled_for:, scheduled_time_string:)
+    def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
       hour, min = scheduled_time_string.split(":")
 
-      time = scheduled_for.to_datetime.change(
+      scheduled_for.to_datetime.change(
         hour: hour.to_i,
-        min: min.to_i
+        min: min.to_i,
+        offset: timezone_to_offset("America/New_York")
       )
-
-      Time.utc(time.year, time.month, time.day, time.hour, time.min, time.sec)
     end
 
     def time_to_string(time)
@@ -40,6 +40,10 @@ class HearingTimeService
 
       datetime = time.to_datetime
       "#{pad_time(datetime.hour)}:#{pad_time(datetime.min)}"
+    end
+
+    def timezone_to_offset(timezone)
+      Time.now.in_time_zone(timezone).strftime("%z")
     end
 
     private
@@ -57,30 +61,28 @@ class HearingTimeService
     @hearing = hearing
   end
 
-  def to_s
-    return self.class.time_to_string(@hearing.scheduled_for) if @hearing.is_a?(LegacyHearing)
-
-    self.class.time_to_string(@hearing.scheduled_time)
+  def scheduled_time_string
+    self.class.time_to_string(local_time)
   end
 
-  def to_datetime
-    @hearing.scheduled_time if @hearing.is_a?(Hearing)
+  def central_office_time_string
+    self.class.time_to_string(central_office_time)
+  end
 
-    time = @hearing.scheduled_for.to_datetime
-    # format consistent with Hearing scheduled_time column
-    Time.utc(2000, 1, 1, time.hour, time.min, time.sec)
+  def local_time
+    return @hearing.scheduled_for if @hearing.is_a?(Hearing)
+
+    # scheduled_for returns hearing time in ET, convert back to local time
+    @hearing.scheduled_for.in_time_zone(@hearing.regional_office_timezone)
   end
 
   def central_office_time
-    hour, min = to_s.split(":")
-    hearing_time = DateTime.current.change(
-      hour: hour.to_i,
-      min: min.to_i,
-      offset: Time.now.in_time_zone(@hearing.regional_office_timezone).strftime("%z")
-    )
+    local_time.in_time_zone("America/New_York")
+  end
 
-    co_time = hearing_time.in_time_zone("America/New_York")
+  def scheduled_time
+    return @hearing.scheduled_time if @hearing.is_a?(Hearing)
 
-    self.class.time_to_string(co_time)
+    Time.zone.local_to_utc(local_time).change(year: 2000, month: 1, day: 1)
   end
 end

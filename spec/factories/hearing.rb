@@ -10,6 +10,7 @@ FactoryBot.define do
     hearing_day do
       create(:hearing_day,
              regional_office: regional_office,
+             scheduled_for: Time.zone.now,
              request_type: regional_office.nil? ? "C" : "V")
     end
     scheduled_time { "8:30AM" }
