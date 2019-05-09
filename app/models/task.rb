@@ -22,6 +22,7 @@ class Task < ApplicationRecord
   before_update :set_timestamps
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
+  after_update :cancel_timed_hold, unless: :task_just_placed_on_hold?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -125,7 +126,7 @@ class Task < ApplicationRecord
   end
 
   def active_child_timed_hold_task
-    on_hold? ? children.active.find_by(type: TimedHoldTask.name) : nil
+    children.active.find_by(type: TimedHoldTask.name)
   end
 
   def cancel_timed_hold
@@ -366,9 +367,7 @@ class Task < ApplicationRecord
     parent.when_child_task_completed
   end
 
-  def update_children_status_after_closed
-    children.active.find_by(type: TimedHoldTask.name)&.update!(status: status)
-  end
+  def update_children_status_after_closed; end
 
   def task_just_closed?
     saved_change_to_attribute?("status") && !active?
@@ -376,6 +375,10 @@ class Task < ApplicationRecord
 
   def task_just_closed_and_has_parent?
     task_just_closed? && parent
+  end
+
+  def task_just_placed_on_hold?
+    saved_change_to_attribute?(:placed_on_hold_at)
   end
 
   def update_status_if_children_tasks_are_complete

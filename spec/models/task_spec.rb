@@ -310,7 +310,7 @@ describe Task do
     end
   end
 
-  describe ".update_children_status_after_closed" do
+  describe "timed hold task is cancelled when parent is updated" do
     let(:user) { FactoryBot.create(:user) }
     let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
 
@@ -319,12 +319,30 @@ describe Task do
         FactoryBot.create(:timed_hold_task, appeal: task.appeal, assigned_to: user, days_on_hold: 18, parent: task)
       end
 
-      subject { task.update!(status: Constants.TASK_STATUSES.completed) }
+      context "status is updated" do
+        subject { task.update!(status: Constants.TASK_STATUSES.completed) }
 
-      it "closes the child timed hold task" do
-        subject
+        it "cancels the child timed hold task" do
+          expect(timed_hold_task.reload.active?).to be_truthy
 
-        expect(timed_hold_task.reload.active?).to be_falsey
+          subject
+
+          expect(timed_hold_task.reload.cancelled?).to be_truthy
+        end
+      end
+
+      context "instructions are updated" do
+        subject { task.update!(instructions: ["These are my new instructions"]) }
+
+        it "cancels the child timed hold task" do
+          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(task.reload.on_hold?).to be_truthy
+
+          subject
+
+          expect(timed_hold_task.reload.cancelled?).to be_truthy
+          expect(task.reload.on_hold?).to be_falsey
+        end
       end
     end
   end
