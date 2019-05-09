@@ -321,8 +321,8 @@ class ApplicationController < ApplicationBaseController
     subject.nil? ? "Caseflow" : feedback_hash[subject]
   end
 
-  def feedback_url(redirect = nil)
-    return "/feedback"
+  def feedback_url
+    "/feedback"
   end
   helper_method :feedback_url
 

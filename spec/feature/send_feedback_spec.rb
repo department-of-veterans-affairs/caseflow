@@ -10,10 +10,7 @@ RSpec.feature "Send feedback" do
     visit "certifications/new/#{appeal.vacols_id}"
 
     expect(page).to have_link("Send feedback")
-
-    new_window = window_opened_by { click_on 'Send feedback' }
-    within_window new_window do
-      expect(page).to have_link("YourIT")
-    end
+    click_on "Send feedback"
+    expect(page).to have_link("YourIT")
   end
 end
