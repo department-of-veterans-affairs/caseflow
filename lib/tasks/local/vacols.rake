@@ -14,7 +14,7 @@ namespace :local do
       180.times do
         begin
           if VACOLS::Case.count == 0 &&
-             VACOLS::CaseHearing.select("HEARING_VENUE(vdkey)").where(folder_nr: "1").count == 0
+             VACOLS::CaseHearing.select("VACOLS.HEARING_VENUE(vdkey)").where(folder_nr: "1").count == 0
             puts "FACOLS is ready."
             facols_is_ready = true
             break
@@ -28,6 +28,55 @@ namespace :local do
       unless facols_is_ready
         fail "Gave up waiting for FACOLS to get ready"
       end
+    end
+
+    # rubocop:disable Metrics/MethodLength
+    def setup_facols(suffix)
+      puts "Stopping vacols-db-#{suffix} and removing existing volumes"
+      `docker-compose stop vacols-db-#{suffix}`
+      `docker-compose rm -f -v vacols-db-#{suffix}`
+      puts "Starting database, and logging to #{Rails.root.join('tmp', 'vacols.log')}"
+      `docker-compose up vacols-db-#{suffix} &> './tmp/vacols.log' &`
+
+      # Loop until setup is complete. At most 10 minutes
+      puts "Waiting for the database to be ready"
+      setup_complete = false
+      600.times do
+        if `grep -q 'Done ! The database is ready for use' ./tmp/vacols.log; echo $?` == "0\n"
+          setup_complete = true
+          break
+        end
+        sleep 1
+      end
+
+      if setup_complete
+        puts "Updating schema"
+        oracle_wait_time = 180
+        schema_complete = false
+        oracle_wait_time.times do
+          output = `docker exec --tty -i VACOLS_DB-#{suffix} bash -c \
+          "source /home/oracle/.bashrc; sqlplus /nolog @/ORCL/setup_vacols.sql"`
+          if !output.include?("SP2-0640: Not connected")
+            schema_complete = true
+            break
+          end
+          sleep 1
+        end
+
+        if schema_complete
+          puts "Schema loaded"
+        else
+          puts "Schema load failed -- you may need to increase Oracle wait time from #{oracle_wait_time} seconds"
+        end
+      else
+        puts "Failed to setup database"
+      end
+    end
+    # rubocop:enable Metrics/MethodLength
+
+    desc "Starts and sets up a dockerized local VACOLS"
+    task setup: :environment do
+      setup_facols(Rails.env)
     end
 
     desc "Seeds local VACOLS"

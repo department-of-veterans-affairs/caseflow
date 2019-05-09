@@ -2,7 +2,7 @@
 
 class VACOLS::Folder < VACOLS::Record
   # :nocov:
-  self.table_name = "folder"
+  self.table_name = "vacols.folder"
   self.primary_key = "ticknum"
 
   has_one :outcoder, foreign_key: :slogid, primary_key: :tiocuser, class_name: "Staff"

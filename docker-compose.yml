@@ -1,10 +1,32 @@
 version: '3'
 services:
-  vacols-db:
-    container_name: VACOLS_DB
+  vacols-db-test:
+    build: ./local/vacols/.
+    container_name: VACOLS_DB-test
     image: vacols_db:latest
+    tty: true
+    stdin_open: true
+    command: bash -c "/home/oracle/setup/dockerInit.sh"
+    volumes:
+      - "u01_test:/u01/app/oracle/oradata"
+      - "ORCL_test:/ORCL"
+      - "u02_test:/u02"
     ports:
       - "1521:1521"
+  
+  vacols-db-development:
+    build: ./local/vacols/.
+    container_name: VACOLS_DB-development
+    image: vacols_db:latest
+    tty: true
+    stdin_open: true
+    command: bash -c "/home/oracle/setup/dockerInit.sh"
+    volumes:
+      - "u01_development:/u01/app/oracle/oradata"
+      - "ORCL_development:/ORCL"
+      - "u02_development:/u02"
+    ports:
+      - "1522:1521"
 
   appeals-redis:
     container_name: appeals-redis
@@ -35,3 +57,9 @@ services:
 
 volumes:
   postgresdata:
+  u01_development:
+  ORCL_development:
+  u02_development:
+  u01_test:
+  ORCL_test:
+  u02_test:

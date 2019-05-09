@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VACOLS::Case < VACOLS::Record
-  self.table_name = "brieff"
+  self.table_name = "vacols.brieff"
   self.sequence_name = "vacols.bfkeyseq"
   self.primary_key = "bfkey"
 
