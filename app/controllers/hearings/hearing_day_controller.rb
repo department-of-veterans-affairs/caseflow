@@ -18,7 +18,7 @@ class Hearings::HearingDayController < HearingScheduleController
       end
       format.json do
         render json: {
-          hearings: json_hearing_days(HearingDay.array_to_hash(hearing_days)),
+          hearings: json_hearing_days(hearing_days),
           startDate: start_date,
           endDate: end_date
         }

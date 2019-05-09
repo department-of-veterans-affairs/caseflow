@@ -129,9 +129,7 @@ class HearingDay < ApplicationRecord
     end
 
     def array_to_hash(hearing_days)
-      hearing_days.map do |hearing_day|
-        HearingDay.to_hash(hearing_day)
-      end
+      hearing_days.map { |hearing_day| HearingDay.to_hash(hearing_day) }
     end
 
     def create_hearing_day(hearing_hash)
@@ -197,24 +195,23 @@ class HearingDay < ApplicationRecord
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        where("DATE(scheduled_for) between ? and ?", start_date, end_date) +
-          HearingDayRepository.load_video_days_for_range(start_date, end_date)
+        where("DATE(scheduled_for) between ? and ?", start_date, end_date)
       elsif regional_office == REQUEST_TYPES[:central]
         where("request_type = ? and DATE(scheduled_for) between ? and ?", REQUEST_TYPES[:central], start_date, end_date)
       else
-        where("regional_office = ? and DATE(scheduled_for) between ? and ?", regional_office, start_date, end_date) +
-          HearingDayRepository.load_video_days_for_regional_office(regional_office, start_date, end_date)
+        where("regional_office = ? and DATE(scheduled_for) between ? and ?", regional_office, start_date, end_date)
       end
     end
 
     def list_upcoming_hearing_days(start_date, end_date, user, regional_office = nil)
-      if user&.vso_employee?
-        upcoming_days_for_vso_user(start_date, end_date, user)
-      elsif user&.roles&.include?("Hearing Prep")
-        upcoming_days_for_judge(start_date, end_date, user)
-      else
-        load_days(start_date, end_date, regional_office)
-      end
+      hearing_days = if user&.vso_employee?
+                       upcoming_days_for_vso_user(start_date, end_date, user)
+                     elsif user&.roles&.include?("Hearing Prep")
+                       upcoming_days_for_judge(start_date, end_date, user)
+                     else
+                       load_days(start_date, end_date, regional_office)
+                     end
+      array_to_hash(hearing_days)
     end
 
     def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
@@ -227,7 +224,7 @@ class HearingDay < ApplicationRecord
       ).map do |value|
         scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
 
-        total_slots = HearingDayRepository.fetch_hearing_day_slots(regional_office)
+        total_slots = HearingDay.fetch_hearing_day_slots(regional_office)
 
         if scheduled_hearings.length >= total_slots || value[:hearing_day][:lock]
           nil
@@ -250,10 +247,8 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def find_hearing_day(request_type, hearing_key)
-      find(hearing_key)
-    rescue ActiveRecord::RecordNotFound
-      HearingDayRepository.find_hearing_day(request_type, hearing_key)
+    def fetch_hearing_day_slots(regional_office)
+      HearingDay::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
     end
 
     private

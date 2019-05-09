@@ -196,7 +196,7 @@ class HearingSchedule::AssignJudgesToHearingDays
     # raises an exception if hearing days have not already been allocated
     fail HearingDaysNotAllocated if @video_co_hearing_days.empty?
 
-    travel_board_hearing_days = HearingDayRepository.load_travel_board_days_for_range(@schedule_period.start_date,
+    travel_board_hearing_days = TravelBoardScheduleRepository.load_travel_board_days_for_range(@schedule_period.start_date,
                                                                                       @schedule_period.end_date)
     filter_travel_board_hearing_days(travel_board_hearing_days)
   end
