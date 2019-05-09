@@ -18,7 +18,7 @@ class ExternalApi::EfolderService
     generate_efolder_request(appeal.veteran_file_number.to_s, user)
   end
 
-  def self.generate_efolder_request(vbms_id, user, retry_attempts_count = 300)
+  def self.generate_efolder_request(vbms_id, user, retry_attempts_count = 10)
     headers = { "FILE-NUMBER" => vbms_id }
     response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
     response_attrs = {}
