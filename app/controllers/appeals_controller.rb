@@ -35,7 +35,7 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    render json: { document_count: EFolderService.quick_document_count_for_appeal(appeal, current_user) }
+    render json: { document_count: "Temporarily unavailable" }
   rescue Caseflow::Error::EfolderAccessForbidden => error
     render(error.serialize_response)
   rescue StandardError => error

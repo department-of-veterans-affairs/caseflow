@@ -6,7 +6,6 @@
 # The source of truth for legacy appeals is VACOLS, but legacy appeals may also be worked in Caseflow.
 # Legacy appeals have VACOLS and BGS as dependencies.
 
-# rubocop:disable Metrics/ClassLength
 class LegacyAppeal < ApplicationRecord
   include AppealConcern
   include AssociatedVacolsModel
@@ -999,4 +998,3 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 end
-# rubocop:enable Metrics/ClassLength

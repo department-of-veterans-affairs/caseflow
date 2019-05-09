@@ -11,7 +11,9 @@ RSpec.feature "Hearings tasks workflows" do
   end
 
   describe "Postponing a NoShowHearingTask" do
-    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
+    let(:veteran) { FactoryBot.create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
+    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
+    let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
     let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
@@ -41,6 +43,53 @@ RSpec.feature "Hearings tasks workflows" do
       expect(new_parent_hearing_task.children.first).to be_a(ScheduleHearingTask)
 
       expect(distribution_task.ready_for_distribution?).to eq(false)
+    end
+
+    context "with a hearing and a hearing admin member" do
+      let(:hearing_day) { FactoryBot.create(:hearing_day) }
+      let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day) }
+      let!(:association) do
+        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
+      end
+      let(:admin_full_name) { "Zagorka Hrenic" }
+      let(:hearing_admin_user) { FactoryBot.create(:user, full_name: admin_full_name, station_id: 101) }
+      let(:instructions_text) { "This is why I want a hearing disposition change!" }
+
+      before do
+        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+      end
+
+      describe "requesting a hearing disposition change" do
+        it "closes disposition task and children and creates a new change hearing dispositiont ask" do
+          step "visit the case details page and submit a request for hearing disposition change" do
+            visit("/queue/appeals/#{appeal.uuid}")
+            click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
+            fill_in "Notes", with: instructions_text
+            click_button "Submit"
+            expect(page).to have_content(
+              format(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteran_full_name)
+            )
+          end
+
+          step "log in as a hearing administrator and verify that the task is in the org queue" do
+            User.authenticate!(user: hearing_admin_user)
+            visit "/organizations/#{HearingAdmin.singleton.url}"
+            click_on veteran_link_text
+            expect(page).to have_content(ChangeHearingDispositionTask.last.label)
+          end
+
+          step "verify task instructions and submit a new disposition" do
+            schedule_row = find("dd", text: ChangeHearingDispositionTask.last.label).find(:xpath, "ancestor::tr")
+            schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+            expect(schedule_row).to have_content(instructions_text)
+            click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+            click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
+            fill_in "Notes", with: "I'm changing this to postponed."
+            click_button("Submit")
+            expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+          end
+        end
+      end
     end
   end
 

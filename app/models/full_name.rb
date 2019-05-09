@@ -21,7 +21,6 @@ class FullName
   # :form => Russell, Shane, A
   # :readable_mi_formatted => Shane A. Russell (middle inital formatted)
   # :readable_fi_last_formatted => M. Jordan
-  # rubocop:disable Metrics/AbcSize
   def formatted(format)
     case format
     when :readable_full
@@ -38,5 +37,4 @@ class FullName
       fail InvalidFormatError
     end
   end
-  # rubocop:enable Metrics/AbcSize
 end

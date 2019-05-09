@@ -51,7 +51,7 @@ describe HearingAdminActionTask do
         OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
       end
 
-      it "has no actions available" do
+      it "has no actions available to the hearing admin user" do
         expect(subject.available_actions_unwrapper(hearing_admin_user).count).to eq 0
       end
     end
