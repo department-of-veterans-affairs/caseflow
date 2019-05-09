@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 describe Contention do
-  # rubocop:disable Metrics/LineLength
   let(:utf8_text) do
-    "The claim of entitlement to compensation under 38 U.S.C. § 1151 for ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ is remanded."
+    "The claim of entitlement to compensation under 38 U.S.C. § 1151 for " \
+    "¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ is remanded."
   end
-  # rubocop:enable Metrics/LineLength
 
   subject { described_class.new(utf8_text) }
 
