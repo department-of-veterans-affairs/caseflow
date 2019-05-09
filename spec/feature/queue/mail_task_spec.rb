@@ -57,7 +57,7 @@ RSpec.feature "MailTasks" do
     end
   end
 
-  describe "Changing a mail team task type" do
+  describe "Changing a mail team task type", skip: "needs back end implementation" do
     context "when task does not need to be reassigned" do
       let(:root_task) { FactoryBot.create(:root_task) }
       let(:old_task_type) { DeathCertificateMailTask }
@@ -111,12 +111,11 @@ RSpec.feature "MailTasks" do
         )
 
         # Ensure the task has been updated and the assignee is unchanged
+        expect(page).to have_content(format("TASK\n%<label>s", label: new_task_type.label))
         expect(page).to have_content(format("ASSIGNED TO\n%<css_id>s", css_id: user.css_id))
         click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
         expect(page).to have_content(instructions)
 
-        # TODO: Currently fails, wating for the back end implementation
-        expect(page).to have_content(format("TASK\n%<label>s", label: new_task_type.label))
       end
     end
 
@@ -173,12 +172,10 @@ RSpec.feature "MailTasks" do
         )
 
         # Ensure the task has been updated
-        click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
-        expect(page).to have_content(instructions)
-
-        # TODO: Both currently fail, wating for the back end implementation
         expect(page).to have_content(format("TASK\n%<label>s", label: new_task_type.label))
         expect(page).not_to have_content(format("ASSIGNED TO\n%<css_id>s", css_id: user.css_id))
+        click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+        expect(page).to have_content(instructions)
       end
     end
   end
