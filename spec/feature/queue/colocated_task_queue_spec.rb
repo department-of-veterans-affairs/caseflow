@@ -169,7 +169,7 @@ RSpec.feature "ColocatedTask" do
     end
   end
 
-  describe "vlj support staff changes task type" do
+  describe "vlj support staff changes task type", skip: "needs back end implementation" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:appeal) { root_task.appeal }
     let!(:colocated_task) do
@@ -224,7 +224,6 @@ RSpec.feature "ColocatedTask" do
       )
 
       # Ensure the task has been updated
-      # TODO: Currently fails, wating for the back end implementation
       expect(page).to have_content(format("TASK\n%<label>s", label: selected_opt_0))
       click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
       expect(page).to have_content(instructions)

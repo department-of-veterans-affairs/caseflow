@@ -115,7 +115,6 @@ RSpec.feature "MailTasks" do
         expect(page).to have_content(format("ASSIGNED TO\n%<css_id>s", css_id: user.css_id))
         click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
         expect(page).to have_content(instructions)
-
       end
     end
 
