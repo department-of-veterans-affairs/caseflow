@@ -28,7 +28,7 @@ describe HearingTimeService do
     let!(:hearing) { create(:hearing, scheduled_time: "12:00") }
     let!(:legacy_hearing) { create(:legacy_hearing, scheduled_for: Time.now.utc.change(hour: 12, min: 0)) }
     describe "#to_s" do
-      it "builds string with time" do
+      it "converts time to HH:mm string" do
         expect(legacy_hearing.time.to_s).to eq("12:00")
         expect(hearing.time.to_s).to eq("12:00")
       end
