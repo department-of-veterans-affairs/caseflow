@@ -57,6 +57,24 @@ class HearingDay < ApplicationRecord
     (hearings + vacols_hearings).reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
   end
 
+  def hearings_for_user(current_user)
+    caseflow_and_vacols_hearings = vacols_hearings + hearings
+
+    if current_user.vso_employee?
+      caseflow_and_vacols_hearings = caseflow_and_vacols_hearings.select do |hearing|
+        hearing.assigned_to_vso?(current_user)
+      end
+    end
+
+    if current_user.roles.include?("Hearing Prep")
+      caseflow_and_vacols_hearings = caseflow_and_vacols_hearings.select do |hearing|
+        hearing.assigned_to_judge?(current_user)
+      end
+    end
+
+    caseflow_and_vacols_hearings
+  end
+
   def to_hash
     as_json.each_with_object({}) do |(k, v), result|
       result[k.to_sym] = v

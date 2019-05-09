@@ -18,7 +18,7 @@ class Hearings::HearingDayController < HearingScheduleController
       end
       format.json do
         render json: {
-          hearings: json_hearings(HearingDay.array_to_hash(hearing_days)),
+          hearings: json_hearing_days(HearingDay.array_to_hash(hearing_days)),
           startDate: start_date,
           endDate: end_date
         }
@@ -27,25 +27,11 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def show
-    hearing_day = HearingDay.find_hearing_day(nil, params[:id])
-    hearing_day_hash = HearingDay.to_hash(hearing_day)
-
-    hearings = HearingRepository.fetch_hearings_for_parent(hearing_day_id)
-
-    if hearing_day.is_a?(HearingDay)
-      hearings += hearing_day.hearings
-    end
-
-    if current_user.vso_employee?
-      hearings = hearings.select { |hearing| hearing.assigned_to_vso?(current_user) }
-    end
-
-    if current_user.roles.include?("Hearing Prep")
-      hearings = hearings.select { |hearing| hearing.assigned_to_judge?(current_user) }
-    end
+    hearing_day = HearingDay.find(params[:id])
+    hearings = hearing_day.hearings_for_user(current_user)
 
     render json: {
-      hearing_day: json_hearing(hearing_day_hash).merge(
+      hearing_day: json_hearing_day(hearing_day.to_hash).merge(
         hearings: hearings.map { |hearing| hearing.quick_to_hash(current_user.id) }
       )
     }
@@ -61,7 +47,7 @@ class Hearings::HearingDayController < HearingScheduleController
       current_user.id
     )
 
-    render json: { hearing_days: json_hearings(hearing_days_with_hearings) }
+    render json: { hearing_days: json_hearing_days(hearing_days_with_hearings) }
   end
 
   # Create a hearing schedule day
@@ -72,7 +58,7 @@ class Hearings::HearingDayController < HearingScheduleController
     return invalid_record_error(hearing) if hearing.nil?
 
     render json: {
-      hearing: json_hearing(hearing)
+      hearing: json_hearing_day(hearing)
     }, status: :created
   end
 
@@ -143,13 +129,13 @@ class Hearings::HearingDayController < HearingScheduleController
     }, status: :not_found
   end
 
-  def json_hearings(hearings)
+  def json_hearing_days(hearings)
     hearings.each_with_object([]) do |hearing, result|
-      result << json_hearing(hearing)
+      result << json_hearing_day(hearing)
     end
   end
 
-  def json_hearing(hearing)
+  def json_hearing_day(hearing)
     hearing.as_json.each_with_object({}) do |(k, v), converted|
       converted[k] = if k == "room"
                        HearingDayMapper.label_for_room(v)
