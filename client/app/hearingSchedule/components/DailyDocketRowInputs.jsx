@@ -197,7 +197,7 @@ export const TimeRadioButtons = ({ hearing, regionalOffice, update, readOnly }) 
     regionalOffice={regionalOffice}
     value={hearing.scheduledTimeString}
     readOnly={readOnly}
-    onChange={(editedTime) => update({ editedTime })} />;
+    onChange={(scheduledTimeString) => update({ scheduledTimeString })} />;
 };
 
 export const PreppedCheckbox = ({ hearing, update, readOnly }) => (
