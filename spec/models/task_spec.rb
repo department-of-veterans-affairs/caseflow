@@ -331,6 +331,41 @@ describe Task do
         end
       end
 
+      context "a new child task is added" do
+        let(:root_task) { FactoryBot.create(:root_task) }
+        let(:hearing_task) do
+          FactoryBot.create(
+            :hearing_task, parent: root_task, appeal: root_task.appeal, assigned_to: HearingsManagement.singleton
+          )
+        end
+        let(:task) do
+          FactoryBot.create(:disposition_task, parent: hearing_task, appeal: root_task.appeal, assigned_to: user)
+        end
+
+        subject do
+          TranscriptionTask.create!(
+            appeal: root_task.appeal,
+            parent: task,
+            assigned_to: TranscriptionTeam.singleton
+          )
+        end
+
+        it "cancels the child timed hold task" do
+          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(task.reload.on_hold?).to be_truthy
+          expect(task.reload.children.count).to eq 1
+
+          subject
+
+          expect(task.reload.children.count).to eq 2
+          transcription_task = task.reload.children.find { |child| child.is_a?(TranscriptionTask) }
+          expect(transcription_task).to_not be_nil
+          expect(transcription_task.active?).to be_truthy
+          expect(timed_hold_task.reload.cancelled?).to be_truthy
+          expect(task.reload.on_hold?).to be_truthy
+        end
+      end
+
       context "instructions are updated" do
         subject { task.update!(instructions: ["These are my new instructions"]) }
 
