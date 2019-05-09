@@ -20,6 +20,7 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
     return (
       <QueueFlowModal
         title={COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE}
+        button={COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_BUTTON}
       >
         <p>
           {COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL}
