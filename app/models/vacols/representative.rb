@@ -4,7 +4,7 @@ class VACOLS::Representative < VACOLS::Record
   include AddressMapper
 
   # :nocov:
-  self.table_name = "rep"
+  self.table_name = "vacols.rep"
   self.primary_key = "repkey"
 
   class RepError < StandardError; end

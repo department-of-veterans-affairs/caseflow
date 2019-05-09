@@ -42,13 +42,13 @@ production:
 
 development_vacols:
   adapter: oracle_enhanced
-  username: VACOLS_DEV
-  password: VACOLS_DEV
+  username: VACOLS
+  password: VACOLS
   <% if ! ENV['DOCKERIZED'] %>
   host: localhost
-  port: 1521
+  port: 1522
   <% end %>
-  database: <%= ENV['DEMO_DB'] || "BVAP" %>
+  database: <%= ENV['DEMO_DB'] || "BVAP.localdomain" %> 
 
 demo_vacols:
   adapter: sqlite3
@@ -100,10 +100,11 @@ test:
 # Oracle timeout configuration: https://github.com/rsim/oracle-enhanced#timeouts
 test_vacols:
   adapter: oracle_enhanced
-  username: VACOLS_TEST
-  password: VACOLS_TEST
+  username: VACOLS
+  password: VACOLS
   database: "(DESCRIPTION=
     (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=localhost)(PORT=1521)))
     (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
     (CONNECT_DATA=(SID=BVAP))
   )"
+

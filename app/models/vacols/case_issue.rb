@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class VACOLS::CaseIssue < VACOLS::Record
-  self.table_name = "issues"
-  self.sequence_name = "issseq"
+  self.table_name = "vacols.issues"
+  self.sequence_name = "vacols.issseq"
   self.primary_key = "isskey"
 
   class IssueError < StandardError; end

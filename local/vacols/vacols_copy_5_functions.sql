@@ -1,5 +1,5 @@
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ACT_CNT" (appealid CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ACT_CNT" (appealid CHAR)
   RETURN NUMBER AS
   actcnt number;
 BEGIN
@@ -11,7 +11,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ADV_CNT" (appealid CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ADV_CNT" (appealid CHAR)
   RETURN NUMBER AS
   advcnt number;
 BEGIN
@@ -23,7 +23,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."AMC_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."AMC_CNT" (folder CHAR)
   RETURN NUMBER AS
   amccnt number;
 BEGIN
@@ -35,7 +35,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."AOD_B_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."AOD_B_CNT" (folder CHAR)
   RETURN NUMBER AS aodcnt number;
 
 
@@ -51,7 +51,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."AOD_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."AOD_CNT" (folder CHAR)
   RETURN NUMBER AS
   aodcnt number;
 
@@ -74,7 +74,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."AOD_VSO_DUE" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."AOD_VSO_DUE" (folder CHAR)
   RETURN DATE AS
   duedate DATE;
 
@@ -86,7 +86,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."AOD_YN" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."AOD_YN" (folder CHAR)
    RETURN CHAR AS aodyn varchar2(1);
 
 dcnt number;
@@ -118,7 +118,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."APPEAL_CAT" (issue_code CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."APPEAL_CAT" (issue_code CHAR)
   RETURN CHAR AS
   appeal_cat varchar2(7);
 BEGIN
@@ -177,7 +177,7 @@ END appeal_cat;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ATTACH_CHECK" (folder1 CHAR, doctype CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ATTACH_CHECK" (folder1 CHAR, doctype CHAR)
   RETURN CHAR AS atyn varchar2(1);
 
 ctcnt number;
@@ -198,7 +198,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."CAVC_DISP" (folder1 CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."CAVC_DISP" (folder1 CHAR)
   RETURN CHAR AS disp varchar2(1);
 
 litcnt number;
@@ -249,13 +249,13 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."CAVC_ISSSEQ_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."CAVC_ISSSEQ_CNT" (folder CHAR)
   RETURN NUMBER AS
   cvcnt number;
 BEGIN
 
 SELECT count(*) into cvcnt from COVA where CVFOLDER = folder
-  and CVISSSEQ is not null ;
+	and CVISSSEQ is not null ;
 
 
 RETURN cvcnt;
@@ -263,7 +263,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."CAVC_LITMAT" (folder1 CHAR,
+  CREATE OR REPLACE FUNCTION "VACOLS"."CAVC_LITMAT" (folder1 CHAR,
     folder2 CHAR)
   RETURN CHAR AS lityn varchar2(1);
 
@@ -286,7 +286,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."CAVC_PREV" (docket CHAR, folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."CAVC_PREV" (docket CHAR, folder CHAR)
    RETURN NUMBER AS pcnt number;
 
 BEGIN
@@ -298,11 +298,11 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."CHARGED_BY" (folder CHAR, loc CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."CHARGED_BY" (folder CHAR, loc CHAR)
   RETURN CHAR AS chargedby varchar2(16);
 
 CURSOR DV_Cur is SELECT LOCSTOUT FROM PRIORLOC WHERE LOCKEY = folder
-  AND LOCSTTO = loc order by LOCDOUT DESC;
+  AND LOCSTTO = loc	order by LOCDOUT DESC;
 
 BEGIN
 
@@ -315,7 +315,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DAV_CNT" (logid CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DAV_CNT" (logid CHAR)
   RETURN NUMBER AS  actcnt number;
 
 BEGIN
@@ -327,7 +327,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DAYS_FREQUENCY" (in_date DATE)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DAYS_FREQUENCY" (in_date DATE)
   RETURN CHAR AS  df VARCHAR2(20);
 
 days number;
@@ -360,7 +360,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DECASS_CATEGORY" (in_prod CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DECASS_CATEGORY" (in_prod CHAR)
   RETURN CHAR AS cat varchar2(20);
 
 BEGIN
@@ -376,7 +376,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DECASS_COMPLEX" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DECASS_COMPLEX" (folder CHAR)
   RETURN NUMBER AS   compcnt number;
 
 sccnt number; totcnt number; ircnt number;  othcnt number;
@@ -409,15 +409,15 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DECASS_CREDIT" (in_prod CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DECASS_CREDIT" (in_prod CHAR)
   RETURN number AS
   credit number;
 BEGIN
 
 CASE
    When in_prod in ('BOT', 'DIM', 'DVH', 'DAF', 'DRM', 'VDR') then credit := 1.5 ;
-   when in_prod in ('REA', 'REU', 'DOR', 'RRC', 'OTD', 'OTR', 'OTB', 'OTV', 'OTI', 'COR', 'INT')  then  credit := 0;
-   ELSE credit := 1;
+   when in_prod in ('REA', 'REU', 'DOR', 'RRC', 'OTD', 'OTR', 'OTB', 'OTV', 'OTI', 'COR', 'INT')  then	credit := 0;
+   ELSE	credit := 1;
 END CASE;
 
 RETURN credit;
@@ -427,7 +427,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DECREV_EXCEP" (infolder CHAR, inissue NUMBER)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DECREV_EXCEP" (infolder CHAR, inissue NUMBER)
   RETURN CHAR AS exyn varchar2(1);
 
 excnt number;
@@ -494,7 +494,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DECREV_REVDATE" (infolder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DECREV_REVDATE" (infolder CHAR)
   RETURN DATE AS revdate DATE;
 
 BEGIN
@@ -505,7 +505,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DIARY_CHECK" (folder CHAR, actcode CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DIARY_CHECK" (folder CHAR, actcode CHAR)
   RETURN CHAR AS dind varchar2(1);
 
 dcnt number;
@@ -532,7 +532,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DIARY_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DIARY_CNT" (folder CHAR)
   RETURN number AS dcnt number;
 
 BEGIN
@@ -544,7 +544,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DIARY_CNT_HOLD" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DIARY_CNT_HOLD" (folder CHAR)
   RETURN number AS dcnt number;
 
 BEGIN
@@ -557,7 +557,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DIARY_CNT_OPEN" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DIARY_CNT_OPEN" (folder CHAR)
   RETURN number AS dcnt number;
 
 BEGIN
@@ -569,7 +569,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DIARY_DUE" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DIARY_DUE" (folder CHAR)
   RETURN DATE AS
   duedate DATE;
 
@@ -580,7 +580,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DIARY_DUE_RO" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DIARY_DUE_RO" (folder CHAR)
   RETURN char AS adesc varchar2(60);
 
 duedate DATE;
@@ -601,7 +601,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DIARY_VBA45" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DIARY_VBA45" (folder CHAR)
   RETURN CHAR AS dind varchar2(1);
 
 dcnt number;
@@ -620,7 +620,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DISPATCHER_CNT" (logid CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DISPATCHER_CNT" (logid CHAR)
   RETURN NUMBER AS  actcnt number;
 
 BEGIN
@@ -632,14 +632,14 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DOCKET_YYMM" (docket CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DOCKET_YYMM" (docket CHAR)
   RETURN CHAR AS dockyymm varchar2(7);
 
 
 
 BEGIN
 if substr(docket,1,2) < '89' and substr(docket,1,2) > '50' then
-  return '??/19' || substr(docket,1,2);
+	return '??/19' || substr(docket,1,2);
 end if;
 
 select tkdata into dockyymm from vacols.foldrnum
@@ -648,9 +648,9 @@ select tkdata into dockyymm from vacols.foldrnum
  where tkkey = 'DN' and tkdata1 <= docket);
 
 if (substr(dockyymm,4,2)) between '00' and '50' then
-  dockyymm := substr(dockyymm,1,3) || '20' || substr(dockyymm,4,2);
+	dockyymm := substr(dockyymm,1,3) || '20' || substr(dockyymm,4,2);
 else
-  dockyymm := substr(dockyymm,1,3) || '19' || substr(dockyymm,4,2);
+	dockyymm := substr(dockyymm,1,3) || '19' || substr(dockyymm,4,2);
 end if;
 
 RETURN dockyymm;
@@ -658,7 +658,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."DUP_DOCKET" (docket CHAR, appealid CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."DUP_DOCKET" (docket CHAR, appealid CHAR)
   RETURN NUMBER AS   dcnt number;
 
 BEGIN
@@ -670,7 +670,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ECA_REVOC" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ECA_REVOC" (folder CHAR)
   RETURN CHAR AS revoc varchar2(3);
 
 eccnt number;
@@ -698,7 +698,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."FORMAL_HELD" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."FORMAL_HELD" (folder CHAR)
    RETURN CHAR AS formal varchar2(1);
 
 hrcnt number;
@@ -718,7 +718,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."FORMAL_PENDING" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."FORMAL_PENDING" (folder CHAR)
    RETURN CHAR AS formal varchar2(1);
 
 hrcnt number;
@@ -738,7 +738,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."FY_RETURN" (indate DATE)
+  CREATE OR REPLACE FUNCTION "VACOLS"."FY_RETURN" (indate DATE)
   RETURN CHAR AS FY varchar2(2);
 
 cfy number;
@@ -763,7 +763,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_CASE" -- for bfhr = 1 or 2 check if Held, Cancelled or No-Show.  Held include 11/3/16 these now go to Intake
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_CASE" -- for bfhr = 1 or 2 check if Held, Cancelled or No-Show.  Held include 11/3/16 these now go to Intake
  -- 0 = Hearing case Postponed or pending (no hearing record)
  (folder CHAR)
   RETURN NUMBER AS
@@ -776,7 +776,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_CLARIFICATION" (appealid CHAR, docket CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_CLARIFICATION" (appealid CHAR, docket CHAR)
   RETURN DATE as hrdate DATE;
 
 CURSOR DN_Cur is
@@ -798,7 +798,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_DATE" (appealid CHAR, docket CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_DATE" (appealid CHAR, docket CHAR)
   RETURN DATE as hrdate DATE;
 
 CURSOR DN_Cur is
@@ -820,7 +820,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_DATE_VLJ"
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_DATE_VLJ"
   (appealid CHAR, docket CHAR, vlj CHAR)
   RETURN DATE as hrdate DATE;
 
@@ -844,7 +844,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_DISP" (appealid CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_DISP" (appealid CHAR)
   RETURN CHAR AS  hrinfo varchar2(20);
 
 CURSOR DV_Cur is select hearing_disp || ' ' || to_char(hearing_date, 'mm/dd/yy')
@@ -864,7 +864,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_HELD" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_HELD" (folder CHAR)
   RETURN NUMBER AS
   hrcnt number;
 BEGIN
@@ -876,7 +876,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_HELD2" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_HELD2" (folder CHAR)
   RETURN NUMBER AS
   hrcnt number;
 BEGIN
@@ -888,7 +888,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_HELD_INFO" (appealid CHAR, docket CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_HELD_INFO" (appealid CHAR, docket CHAR)
   RETURN CHAR AS hrinfo varchar2(30);
 
 hrtype varchar2(1);
@@ -916,7 +916,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_HELD_POSTREM" (folder CHAR, decdate date)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_HELD_POSTREM" (folder CHAR, decdate date)
   RETURN char AS held varchar2(1);
 
 hrcnt number;
@@ -937,7 +937,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_HELD_SCHED" -- Hearing held or Scheduled
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_HELD_SCHED" -- Hearing held or Scheduled
   (folder CHAR, reqdate date)
   RETURN DATE AS hrdate date;
 
@@ -953,7 +953,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_HOLD" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_HOLD" (folder CHAR)
  RETURN CHAR AS  hrinfo varchar2(4);
 
 BEGIN
@@ -969,7 +969,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_PENDING_ADV"
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_PENDING_ADV"
   (folder CHAR, inhr CHAR, inha CHAR)
   RETURN CHAR AS pending varchar2(1);
 
@@ -1004,7 +1004,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_REPNAME" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_REPNAME" (folder CHAR)
   RETURN CHAR AS hrrep varchar2(25);
 
 BEGIN
@@ -1016,7 +1016,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_SCHEDULED" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_SCHEDULED" (folder CHAR)
   RETURN CHAR AS sched varchar2(1);
 
 hrcnt number;
@@ -1036,7 +1036,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_SCHEDULED_INFO" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_SCHEDULED_INFO" (folder CHAR)
   RETURN CHAR AS hrinfo varchar2(10);
 
 hrtype varchar2(1);
@@ -1054,7 +1054,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_VENUE" (vdkey CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_VENUE" (vdkey CHAR)
   RETURN CHAR AS hrro varchar2(4);
 
 trip   number;
@@ -1097,7 +1097,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HEARING_VLJ" (appealid CHAR, docket CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HEARING_VLJ" (appealid CHAR, docket CHAR)
   RETURN CHAR AS hrinfo varchar2(50);
 
 vlj varchar2(4);
@@ -1125,7 +1125,7 @@ if team is null then team := '  '; end if;
 if    hrtype = 'C' then hrtype := 'Central Office';
 elsif hrtype = 'T' then hrtype := 'Travel Board  ';
 elsif hrtype = 'V' then hrtype := 'Video         ';
-else  hrtype := ' ';
+else	hrtype := ' ';
 end if;
 
 return team || ',' || vlj || ',' || hrtype ;
@@ -1134,7 +1134,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."HRG_SCHED" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."HRG_SCHED" (folder CHAR)
 RETURN CHAR AS tbind varchar2(1);
 
 tbcnt number;
@@ -1155,7 +1155,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."IHP_ATTACHED" (folder1 CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."IHP_ATTACHED" (folder1 CHAR)
   RETURN CHAR AS ctyn varchar2(1);
 
 ctcnt number;
@@ -1177,7 +1177,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."IME_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."IME_CNT" (folder CHAR)
   RETURN NUMBER AS
   imecnt number;
 BEGIN
@@ -1189,7 +1189,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISDIGITFN" (zip_code CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISDIGITFN" (zip_code CHAR)
   RETURN CHAR AS
   isdigitfn varchar2(5);
 BEGIN
@@ -1202,7 +1202,7 @@ END isdigitfn;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_1151_OR_DIC" (folder CHAR, incode CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_1151_OR_DIC" (folder CHAR, incode CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1224,7 +1224,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1235,7 +1235,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_ALLOWED" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_ALLOWED" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1247,7 +1247,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_ALLOWED_NM" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_ALLOWED_NM" (folder CHAR)
   RETURN NUMBER AS   isscnt number;
 
 acnt number;
@@ -1270,7 +1270,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_BVA" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_BVA" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1282,7 +1282,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_BVADEC" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_BVADEC" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1294,7 +1294,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_DENIED" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_DENIED" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1306,7 +1306,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_IR_TDIU" (folder CHAR, disp CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_IR_TDIU" (folder CHAR, disp CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1318,7 +1318,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_OPEN" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_OPEN" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1330,7 +1330,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_OPEN_CP" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_OPEN_CP" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1342,7 +1342,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_OPEN_HRG_LOSS" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_OPEN_HRG_LOSS" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1355,7 +1355,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_OPEN_OR_REM" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_OPEN_OR_REM" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1367,7 +1367,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_OPEN_SC_IR" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_OPEN_SC_IR" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1379,7 +1379,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_CNT_REMAND" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_CNT_REMAND" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1391,7 +1391,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_DISP" (folder CHAR, disp CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_DISP" (folder CHAR, disp CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1408,7 +1408,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ISSUE_PREF9" -- OGC report d_ogc_29 in datareq.pbl
+  CREATE OR REPLACE FUNCTION "VACOLS"."ISSUE_PREF9" -- OGC report d_ogc_29 in datareq.pbl
  (folder CHAR, nod DATE, FORM9 DATE)
   RETURN NUMBER AS
   isscnt number;
@@ -1426,7 +1426,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."MAILACT_PREV" (folder CHAR, actdate DATE)
+  CREATE OR REPLACE FUNCTION "VACOLS"."MAILACT_PREV" (folder CHAR, actdate DATE)
   RETURN DATE AS prevdate DATE;
 
 CURSOR DV_Cur is SELECT macompdate FROM MAILACT WHERE mafolder = folder
@@ -1443,7 +1443,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."MAILTYPE_CNT" (folder CHAR, mtype CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."MAILTYPE_CNT" (folder CHAR, mtype CHAR)
   RETURN CHAR AS  rtn CHAR;
 
 mailcnt number;
@@ -1462,7 +1462,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."MAILTYPE_OPEN" (folder CHAR, mtype CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."MAILTYPE_OPEN" (folder CHAR, mtype CHAR)
   RETURN NUMBER AS mailcnt number;
 
 
@@ -1476,7 +1476,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."MAIL_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."MAIL_CNT" (folder CHAR)
   RETURN NUMBER AS
   mailcnt number;
 BEGIN
@@ -1488,7 +1488,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."MAIL_CNT_LOC81" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."MAIL_CNT_LOC81" (folder CHAR)
   RETURN NUMBER AS
   mailcnt number;
 BEGIN
@@ -1500,7 +1500,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."MEDISSUE_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."MEDISSUE_CNT" (folder CHAR)
   RETURN NUMBER AS
   isscnt number;
 BEGIN
@@ -1510,7 +1510,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."OTHDOCS_CNT" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."OTHDOCS_CNT" (folder CHAR)
   RETURN NUMBER AS  othcnt number;
 
 BEGIN
@@ -1521,7 +1521,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."OT_DEC" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."OT_DEC" (folder CHAR)
   RETURN CHAR AS ot varchar2(1);
 
 otcnt number;
@@ -1541,7 +1541,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."OVLJ_CNT" (logid CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."OVLJ_CNT" (logid CHAR)
   RETURN NUMBER AS  actcnt number;
 
 BEGIN
@@ -1553,7 +1553,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PAPERLESS" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PAPERLESS" (folder CHAR)
   RETURN CHAR AS  paperless CHAR;
 
 pcnt number;
@@ -1572,7 +1572,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."POST_HRG_DEC" (appealid CHAR, docket CHAR, hrgdate DATE)
+  CREATE OR REPLACE FUNCTION "VACOLS"."POST_HRG_DEC" (appealid CHAR, docket CHAR, hrgdate DATE)
   RETURN DATE AS decdate DATE;
 
 CURSOR DV_Cur is SELECT bfddec FROM BRIEFF, FOLDER WHERE
@@ -1590,7 +1590,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."POS_LOOKUP" (inkey CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."POS_LOOKUP" (inkey CHAR)
   RETURN CHAR AS  retpos varchar2(10);
 
 BEGIN
@@ -1601,7 +1601,7 @@ END ;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PREV_APPEALS" -- Previous Appeals with different Docket Number
+  CREATE OR REPLACE FUNCTION "VACOLS"."PREV_APPEALS" -- Previous Appeals with different Docket Number
  (appealid char, form9 date, decdate date)
   RETURN NUMBER AS  prevcnt number;
 
@@ -1614,7 +1614,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PREV_ATTY" (appealid CHAR, docket CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PREV_ATTY" (appealid CHAR, docket CHAR)
   RETURN CHAR as attyid VARCHAR2(16);
 
 CURSOR DN_Cur is
@@ -1636,7 +1636,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PREV_BVA_DEC"
+  CREATE OR REPLACE FUNCTION "VACOLS"."PREV_BVA_DEC"
  (appealid char,  decdate Date)
   RETURN NUMBER AS  deccnt number;
 
@@ -1648,7 +1648,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PREV_REMAND" -- Previous Remand
+  CREATE OR REPLACE FUNCTION "VACOLS"."PREV_REMAND" -- Previous Remand
  (appealid char, form9 date, decdate Date)
   RETURN NUMBER AS  remcnt number;
 
@@ -1660,7 +1660,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PREV_VLJ" (appealid CHAR, docket CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PREV_VLJ" (appealid CHAR, docket CHAR)
   RETURN CHAR as memid VARCHAR2(16);
 
 CURSOR DN_Cur is
@@ -1697,7 +1697,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PREV_VLJ_RETIRED" (appealid CHAR, docket CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PREV_VLJ_RETIRED" (appealid CHAR, docket CHAR)
   RETURN CHAR as meminfo VARCHAR2(18);
 
 memid varchar2(16);
@@ -1743,7 +1743,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRE_HEARING" -- Pre-hearing entry to be excluded from the Cap Report
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRE_HEARING" -- Pre-hearing entry to be excluded from the Cap Report
  (folder CHAR)
   RETURN NUMBER AS
   hrcnt number;
@@ -1756,7 +1756,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORDEC_MEMID" (in_ac CHAR, in_vlj CHAR, in_dpdcn DATE,
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORDEC_MEMID" (in_ac CHAR, in_vlj CHAR, in_dpdcn DATE,
   in_appealid CHAR, in_tinum CHAR)
   RETURN CHAR AS memid varchar2(20);
 
@@ -1764,14 +1764,14 @@ hrdate date;
 mdate date;
 
 CURSOR Hr_Cur is SELECT BOARD_MEMBER, HEARING_DATE from  HEARSCHED, FOLDER
-  where TICKNUM = FOLDER_NR and TITRNUM = in_appealid AND tinum = in_tinum and
-      HEARING_DISP = 'H' AND HEARING_TYPE in ('C', 'T', 'V') and
-      (HEARING_DATE >= in_dpdcn or in_dpdcn is null)
-      order by HEARING_DATE DESC ;
-      
+	where TICKNUM = FOLDER_NR and TITRNUM = in_appealid AND tinum = in_tinum and
+   	  HEARING_DISP = 'H' AND HEARING_TYPE in ('C', 'T', 'V') and
+   	  (HEARING_DATE >= in_dpdcn or in_dpdcn is null)
+   	  order by HEARING_DATE DESC ;
+			
 CURSOR Brf_Cur is SELECT BFMEMID from BRIEFF where
-  BFCORLID = in_appealid and BFDDEC = in_dpdcn and BFMEMID > '000'
-   order by BFDDEC DESC;
+	BFCORLID = in_appealid and BFDDEC = in_dpdcn and BFMEMID > '000'
+	 order by BFDDEC DESC;
 
 BEGIN
 if in_ac <> '3' and in_ac <> '7' and in_vlj <> '000' then
@@ -1790,7 +1790,7 @@ end if;
 OPEN Brf_Cur;
 FETCH Brf_Cur into memid;
 CLOSE Brf_Cur;
-  
+	
 if memid is null or memid = '000' then
  memid := '';
 end if;
@@ -1800,7 +1800,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_1ST" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_1ST" (folder CHAR)
 RETURN DATE AS prdate DATE;
 
 BEGIN
@@ -1812,7 +1812,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_20" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_20" (folder CHAR)
 RETURN DATE AS pr20date DATE;
 
 BEGIN
@@ -1824,7 +1824,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_55" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_55" (folder CHAR)
   RETURN NUMBER AS
   pr55cnt number;
 BEGIN
@@ -1836,7 +1836,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_55_OR_81" (folder CHAR, locdate DATE)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_55_OR_81" (folder CHAR, locdate DATE)
   RETURN CHAR AS prevloc varchar2(16);
 
 CURSOR DV_Cur is SELECT LOCSTTO FROM PRIORLOC WHERE LOCKEY = folder
@@ -1853,11 +1853,11 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_81" (folder CHAR, locdate DATE)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_81" (folder CHAR, locdate DATE)
   RETURN CHAR AS prevloc varchar2(16);
 
 CURSOR DV_Cur is SELECT LOCSTTO FROM PRIORLOC WHERE LOCKEY = folder
-  AND locdout < locdate order by LOCDOUT DESC;
+  AND locdout < locdate	order by LOCDOUT DESC;
 
 BEGIN
 
@@ -1870,7 +1870,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_81_AFTER_VSO" (folder CHAR, vsodate DATE)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_81_AFTER_VSO" (folder CHAR, vsodate DATE)
   RETURN NUMBER AS days number;
 
 sodate date;
@@ -1892,11 +1892,11 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_81_DATE" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_81_DATE" (folder CHAR)
   RETURN DATE AS prevdate DATE;
 
 CURSOR DV_Cur is SELECT LOCDOUT FROM PRIORLOC WHERE LOCKEY = folder
-  AND locstto = '81'  order by LOCDOUT DESC;
+  AND locstto = '81'	order by LOCDOUT DESC;
 
 BEGIN
 
@@ -1909,7 +1909,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_901" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_901" (folder CHAR)
   RETURN NUMBER AS
   pr901cnt number;
 BEGIN
@@ -1921,11 +1921,11 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_CHARGE" (folder CHAR, curloc CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_CHARGE" (folder CHAR, curloc CHAR)
   RETURN CHAR AS  prevloc varchar2(16);
 
 CURSOR DV_Cur is SELECT LOCSTTO FROM PRIORLOC WHERE LOCKEY = folder
-  AND locstto <> curloc order by LOCDOUT DESC;
+  AND locstto <> curloc	order by LOCDOUT DESC;
 
 BEGIN
 
@@ -1938,7 +1938,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_CHARGE_DATE" (folder CHAR, loc CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_CHARGE_DATE" (folder CHAR, loc CHAR)
 RETURN DATE AS prdate DATE;
 
 BEGIN
@@ -1950,7 +1950,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_CNT_ADM"
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_CNT_ADM"
  (folder CHAR, locdate1 DATE, locdate2 DATE)
   RETURN NUMBER AS  prcnt number;
 
@@ -1964,7 +1964,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_CNT_AFTER"
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_CNT_AFTER"
  (folder CHAR, locdate DATE)
   RETURN NUMBER AS  prcnt number;
 
@@ -1977,7 +1977,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_INIT_ADMIN" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_INIT_ADMIN" (folder CHAR)
 RETURN NUMBER AS daycnt NUMBER;
 
 pr01date date;
@@ -2002,7 +2002,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_LAST" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_LAST" (folder CHAR)
 RETURN DATE AS prdate DATE;
 
 BEGIN
@@ -2014,7 +2014,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_PREVCHARGE" (folder CHAR, locdate DATE)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_PREVCHARGE" (folder CHAR, locdate DATE)
   RETURN CHAR AS prevloc varchar2(16);
 
 prdate date;
@@ -2039,7 +2039,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PRIORLOC_PREVCHARGE2" (folder CHAR, locdate DATE)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PRIORLOC_PREVCHARGE2" (folder CHAR, locdate DATE)
   RETURN CHAR AS prevloc varchar2(16);
 
 
@@ -2057,7 +2057,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PROGRAM_AREA" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PROGRAM_AREA" (folder CHAR)
   RETURN CHAR AS  pa VARCHAR2(2);
 
 isscnt number;
@@ -2083,7 +2083,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PTSD_IND" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PTSD_IND" (folder CHAR)
   RETURN CHAR AS  ptsd CHAR;
 
 isscnt number;
@@ -2102,7 +2102,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PTSD_PENDING" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PTSD_PENDING" (folder CHAR)
   RETURN CHAR AS  ptsd CHAR;
 
 isscnt number;
@@ -2121,7 +2121,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."PTSD_REM" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."PTSD_REM" (folder CHAR)
   RETURN CHAR AS  ptsd CHAR;
 
 isscnt number;
@@ -2140,7 +2140,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."REM_GRANT_WD" --  Remand Granted or Withdrawn
+  CREATE OR REPLACE FUNCTION "VACOLS"."REM_GRANT_WD" --  Remand Granted or Withdrawn
  (appealid char, form9 date, decdate Date)
   RETURN NUMBER AS  remcnt number;
 
@@ -2152,7 +2152,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."REP_CODE" (represent_code CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."REP_CODE" (represent_code CHAR)
   RETURN CHAR AS
   rep_code varchar2(15);
 BEGIN
@@ -2196,7 +2196,7 @@ END rep_code;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."REVIEWER_CNT" (logid CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."REVIEWER_CNT" (logid CHAR)
   RETURN NUMBER AS  revcnt number;
 
 advcnt number;
@@ -2220,7 +2220,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ROCDOC_POST_DECISION" (in_ddec DATE,
+  CREATE OR REPLACE FUNCTION "VACOLS"."ROCDOC_POST_DECISION" (in_ddec DATE,
   in_appealid CHAR, in_status CHAR, in_ac CHAR)
   RETURN CHAR AS disp varchar2(1);
 
@@ -2257,7 +2257,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."ROSTAFF_LOOKUP" (domainid CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."ROSTAFF_LOOKUP" (domainid CHAR)
   RETURN CHAR AS userid varchar2(20);
 
 BEGIN
@@ -2273,7 +2273,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."RO_REMAND" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."RO_REMAND" (folder CHAR)
   RETURN NUMBER AS
   rocnt number;
 BEGIN
@@ -2284,7 +2284,7 @@ END RO_REMAND;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."RR_CHECK" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."RR_CHECK" (folder CHAR)
   RETURN CHAR AS  rr VARCHAR2(2);
 
 precnt number;
@@ -2313,7 +2313,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."RR_CHECK_RD" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."RR_CHECK_RD" (folder CHAR)
   RETURN CHAR AS  rr VARCHAR2(2);
 
 precnt number;
@@ -2342,7 +2342,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."RR_HEARING" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."RR_HEARING" (folder CHAR)
   RETURN CHAR AS  rr VARCHAR2(1);
 
 hrcnt number;
@@ -2362,7 +2362,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."RR_LOOKUP" (inkey CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."RR_LOOKUP" (inkey CHAR)
   RETURN CHAR AS  vfdesc varchar2(100);
 
 BEGIN
@@ -2373,7 +2373,7 @@ END ;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."RR_NONHEARING" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."RR_NONHEARING" (folder CHAR)
   RETURN CHAR AS  rr VARCHAR2(1);
 
 hrcnt number;
@@ -2393,7 +2393,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."SATTYID_LNAME" (atty CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."SATTYID_LNAME" (atty CHAR)
   RETURN CHAR AS lname varchar2(60);
 
 BEGIN
@@ -2408,7 +2408,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."SATTYID_LOOKUP" (atty CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."SATTYID_LOOKUP" (atty CHAR)
   RETURN CHAR AS userid varchar2(16);
 
 BEGIN
@@ -2423,7 +2423,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."TB_SCHED" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."TB_SCHED" (folder CHAR)
 RETURN CHAR AS tbind varchar2(1);
 
 tbcnt number;
@@ -2444,7 +2444,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."TRANS_ATTACHDATE" (folder CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."TRANS_ATTACHDATE" (folder CHAR)
    RETURN DATE AS prevdate DATE;
 
 atdate date;
@@ -2463,7 +2463,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."TRANS_ATTACHED" (folder1 CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."TRANS_ATTACHED" (folder1 CHAR)
   RETURN CHAR AS ctyn varchar2(1);
 
 ctcnt number;
@@ -2485,7 +2485,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."TRANS_DATE" (appealid CHAR, docket CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."TRANS_DATE" (appealid CHAR, docket CHAR)
   RETURN DATE as ctdate DATE;
 
 CURSOR DN_Cur is
@@ -2507,7 +2507,7 @@ END;
 /
 
 
-  CREATE OR REPLACE FUNCTION "VACOLS_DEV"."VD_CNT" (in_key CHAR)
+  CREATE OR REPLACE FUNCTION "VACOLS"."VD_CNT" (in_key CHAR)
   RETURN NUMBER AS
   vdcnt number;
 BEGIN
@@ -2517,3 +2517,4 @@ select count(*) into vdcnt from HEARSCHED where vdkey = in_key
 RETURN vdcnt ;
 END;
 /
+
