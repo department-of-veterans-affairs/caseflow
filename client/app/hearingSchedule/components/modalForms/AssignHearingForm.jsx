@@ -93,7 +93,7 @@ class AssignHearingForm extends React.Component {
   render() {
     const { appeal, showErrorMessages, values } = this.props;
     const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString, errorMessages } = values;
-    const availableHearingLocations = _.sortBy(appeal.availableHearingLocations || [], 'distance');
+    const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
 
     return (
       <div>
