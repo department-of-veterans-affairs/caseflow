@@ -224,7 +224,7 @@ export const workQueueReducer = (state = initialState, action = {}) => {
       docCountForAppeal: {
         [action.payload.appealId]: {
           $set: {
-            docCount: action.payload.docCount,
+            docCountText: action.payload.docCountText,
             loading: false
           }
         }
