@@ -47,7 +47,6 @@ class Form8PdfService
   # Rubocop complains about the number of conditions here,
   # but IMO it's pretty clear and I don't want to break it up
   # just for the sake of it.
-  # rubocop:disable Metrics/CyclomaticComplexity
   def self.pdf_values_for(form8, field_locations)
     field_locations.each_with_object({}) do |(attribute, location), pdf_values|
       next pdf_values unless (value = form8.send(attribute))
@@ -109,7 +108,6 @@ class Form8PdfService
     # Remove it from the tmp_location, leaving it only in final_location
     File.delete(tmp_location)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def self.output_location_for(form8)
     File.join(Rails.root, "tmp", "pdfs", form8.pdf_filename)

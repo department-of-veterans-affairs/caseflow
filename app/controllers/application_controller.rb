@@ -110,7 +110,6 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :logo_path
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def application_urls
     urls = [{
       title: "Queue",
@@ -136,7 +135,6 @@ class ApplicationController < ApplicationBaseController
     # Only return the URL list if the user has applications to switch between
     (urls.length > 1) ? urls : nil
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
   helper_method :application_urls
 
   def dropdown_urls
@@ -180,8 +178,6 @@ class ApplicationController < ApplicationBaseController
     # :nocov:
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def case_search_home_page
     if feature_enabled?(:case_search_home_page)
       return false if current_user.admin?
@@ -194,8 +190,6 @@ class ApplicationController < ApplicationBaseController
     false
   end
   helper_method :case_search_home_page
-  # rubocop:enable Metrics/PerceivedComplexity
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def deny_vso_access
     redirect_to "/unauthorized" if current_user&.vso_employee?
