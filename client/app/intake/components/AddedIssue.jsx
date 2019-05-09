@@ -80,11 +80,7 @@ class AddedIssue extends React.PureComponent {
     };
 
     if (this.needsEligibilityCheck()) {
-      let eligibilityCheck = this.getEligibility();
-
-      if (eligibilityCheck) {
-        eligibleState = eligibilityCheck;
-      }
+      eligibleState = this.getEligibility();
     }
 
     if (issue.withdrawalPending || issue.withdrawalDate) {
