@@ -76,10 +76,13 @@ class HearingDay < ApplicationRecord
   end
 
   def to_hash
-    as_json.each_with_object({}) do |(k, v), result|
-      result[k.to_sym] = v
-    end.merge(judge_first_name: judge ? judge.full_name.split(" ").first : nil,
-              judge_last_name: judge ? judge.full_name.split(" ").last : nil)
+    serializable_hash(
+      methods: [
+        :judge_first_name,
+        :judge_last_name,
+        :readable_request_type
+      ]
+    )
   end
 
   def hearing_day_full?
@@ -92,6 +95,18 @@ class HearingDay < ApplicationRecord
     end
 
     SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
+  end
+
+  def judge_first_name
+    judge ? judge.full_name.split(" ").first : nil
+  end
+
+  def judge_last_name
+    judge ? judge.full_name.split(" ").last : nil
+  end
+
+  def readable_request_type
+    Hearing::HEARING_TYPES[request_type.to_sym]
   end
 
   private
@@ -129,7 +144,7 @@ class HearingDay < ApplicationRecord
     end
 
     def array_to_hash(hearing_days)
-      hearing_days.map { |hearing_day| HearingDay.to_hash(hearing_day) }
+      hearing_days.map { |hearing_day| hearing_day.to_hash }
     end
 
     def create_hearing_day(hearing_hash)
