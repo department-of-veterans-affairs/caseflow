@@ -673,6 +673,8 @@ RSpec.feature "Case details" do
         let!(:appeal) { FactoryBot.create(:appeal) }
         issue_description = "Head trauma 1"
         issue_description2 = "Head trauma 2"
+        benefit_text = "Benefit type: Compensation"
+        diagnostic_text = "Diagnostic code: 5008"
         let!(:request_issue) do
           FactoryBot.create(
             :request_issue,
@@ -688,10 +690,20 @@ RSpec.feature "Case details" do
           )
         end
 
-        it "should display sorted issues" do
+        it "should display sorted issues with appropriate key value pairs" do
           visit "/queue/appeals/#{appeal.uuid}"
-          text = issue_description + "\nDiagnostic code: 5008\nIssue\nBenefit type: Compensation\n" + issue_description2
-          expect(page).to have_content(text)
+          issue_key = "Issue: "
+          issue_value = issue_description
+          issue_text = issue_key + issue_value
+          expect(page).to have_content(issue_text)
+          expect(page).to have_content(benefit_text)
+          expect(page).to have_content(diagnostic_text)
+
+          issue_value = issue_description2
+          issue_text = issue_key + issue_value
+          expect(page).to have_content(issue_text)
+          expect(page).to have_content(benefit_text)
+          expect(page).to have_content(diagnostic_text)
         end
       end
     end

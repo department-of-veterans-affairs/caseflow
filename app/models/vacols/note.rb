@@ -2,7 +2,7 @@
 
 class VACOLS::Note < VACOLS::Record
   # :nocov:
-  self.table_name = "vacols.assign"
+  self.table_name = "assign"
   self.primary_key = "tasknum"
 
   class InvalidNoteCodeError < StandardError; end

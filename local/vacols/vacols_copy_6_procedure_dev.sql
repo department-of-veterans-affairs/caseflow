@@ -1,5 +1,5 @@
 
-  CREATE OR REPLACE PROCEDURE "VACOLS"."EBENEFITS" (
+  CREATE OR REPLACE PROCEDURE "VACOLS_DEV"."EBENEFITS" (
 inssn in varchar2,
 lname out varchar2,
 fname out varchar2,
@@ -23,7 +23,7 @@ end;
 /
 
 
-  CREATE OR REPLACE PROCEDURE "VACOLS"."EBENEFITS2" (
+  CREATE OR REPLACE PROCEDURE "VACOLS_DEV"."EBENEFITS2" (
 inssn in varchar2
 )
 
@@ -44,7 +44,7 @@ end;
 /
 
 
-  CREATE OR REPLACE PROCEDURE "VACOLS"."MATRIX_DEL" (fkey IN dmdftypes.ftypkey%TYPE,
+  CREATE OR REPLACE PROCEDURE "VACOLS_DEV"."MATRIX_DEL" (fkey IN dmdftypes.ftypkey%TYPE,
                                         fval IN dmdftypes.ftypval%TYPE)
 AS
 BEGIN
@@ -208,7 +208,7 @@ end matrix_del;
 /
 
 
-  CREATE OR REPLACE PROCEDURE "VACOLS"."MATRIX_INS" (fkey IN dmdftypes.ftypkey%TYPE,
+  CREATE OR REPLACE PROCEDURE "VACOLS_DEV"."MATRIX_INS" (fkey IN dmdftypes.ftypkey%TYPE,
                                         fval IN dmdftypes.ftypval%TYPE,
                                         adusr IN dmdftypes.ftyadusr%TYPE,
                                         adtim IN dmdftypes.ftyadtim%TYPE,
@@ -335,7 +335,7 @@ end matrix_ins;
 /
 
 
-  CREATE OR REPLACE PROCEDURE "VACOLS"."MATRIX_UPD" (fkey IN dmdftypes.ftypkey%TYPE,
+  CREATE OR REPLACE PROCEDURE "VACOLS_DEV"."MATRIX_UPD" (fkey IN dmdftypes.ftypkey%TYPE,
                                         fval IN dmdftypes.ftypval%TYPE,
                                         mdusr IN dmdftypes.ftymdusr%TYPE,
                                         mdtim IN dmdftypes.ftymdtim%TYPE,
@@ -588,4 +588,3 @@ BEGIN
   end if;
 end matrix_upd;
 /
-
