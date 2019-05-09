@@ -437,5 +437,5 @@
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER": "There are no schedulable veterans",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE": "Please verify that this RO has veterans to assign a hearing",
   "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER": "This RO has no available hearing days",
-  "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE": "Please contact your supervisor for further assistance. You can see the list of schedulable Veterans by clicking on their respective tabs"
+  "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE": "Please contact your supervisor for further assistance. You can  see the list of schedulable Veterans by clicking on their respective tabs"
 }
