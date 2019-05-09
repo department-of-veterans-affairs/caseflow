@@ -173,7 +173,7 @@ class VaDotGovAddressValidator
     )
   end
 
-  def get_state_code(va_dot_gov_address) # rubocop:disable Metrics/CyclomaticComplexity
+  def get_state_code(va_dot_gov_address)
     return "DC" if appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
 
     state_code = case va_dot_gov_address[:country_code]
