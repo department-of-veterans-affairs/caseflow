@@ -144,7 +144,7 @@ class HearingDay < ApplicationRecord
     end
 
     def array_to_hash(hearing_days)
-      hearing_days.map { |hearing_day| hearing_day.to_hash }
+      hearing_days.map(&:to_hash)
     end
 
     def create_hearing_day(hearing_hash)
