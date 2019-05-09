@@ -293,20 +293,7 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(u, BvaDispatch.singleton)
 
     3.times do
-      root = FactoryBot.create(:root_task)
-      FactoryBot.create_list(
-        :request_issue,
-        [3, 4, 5].sample,
-        :nonrating,
-        notes: "Pain disorder with 100\% evaluation per examination",
-        decision_review: root.appeal
-      )
-      FactoryBot.create(
-        :bva_dispatch_task,
-        assigned_to: BvaDispatch.singleton,
-        parent_id: root.id,
-        appeal: root.appeal
-      )
+      create_task_at_bva_dispatch()
     end
   end
 
@@ -867,6 +854,30 @@ class SeedDB
       }]
       QualityReviewTask.create_many_from_params(qr_task_params, qr_user).first
     end
+  end
+
+  def create_task_at_bva_dispatch()
+    root_task = FactoryBot.create(:root_task)
+    appeal = root_task.appeal
+
+    judge = FactoryBot.create(:user, station_id: 101)
+    FactoryBot.create(:staff, :judge_role, user: judge)
+    judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
+
+    atty = FactoryBot.create(:user, station_id: 101)
+    FactoryBot.create(:staff, :attorney_role, user: atty)
+    atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
+    atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
+
+    judge_team = JudgeTeam.create_for_judge(judge)
+    OrganizationsUser.add_user_to_organization(atty, judge_team)
+
+    # Happens in CaseReviewConcern.update_task_and_issue_dispositions()
+    atty_task.update!(status: Constants.TASK_STATUSES.completed)
+    judge_task.update!(status: Constants.TASK_STATUSES.completed)
+
+    bva_dispatch_org_task = BvaDispatchTask.create_from_root_task(root_task)
+
   end
 
   def create_tasks
