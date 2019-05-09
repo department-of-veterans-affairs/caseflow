@@ -143,10 +143,6 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def array_to_hash(hearing_days)
-      hearing_days.map(&:to_hash)
-    end
-
     def create_hearing_day(hearing_hash)
       hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
       create(hearing_hash).to_hash
@@ -217,14 +213,13 @@ class HearingDay < ApplicationRecord
     end
 
     def list_upcoming_hearing_days(start_date, end_date, user, regional_office = nil)
-      hearing_days = if user&.vso_employee?
-                       upcoming_days_for_vso_user(start_date, end_date, user)
-                     elsif user&.roles&.include?("Hearing Prep")
-                       upcoming_days_for_judge(start_date, end_date, user)
-                     else
-                       load_days(start_date, end_date, regional_office)
-                     end
-      array_to_hash(hearing_days)
+      if user&.vso_employee?
+        upcoming_days_for_vso_user(start_date, end_date, user)
+      elsif user&.roles&.include?("Hearing Prep")
+        upcoming_days_for_judge(start_date, end_date, user)
+      else
+        load_days(start_date, end_date, regional_office)
+      end
     end
 
     def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
