@@ -240,11 +240,11 @@ describe HearingDay do
 
   context "load Video days for a range date" do
     let!(:hearings) do
-      [FactoryBot.create(:case_hearing),
-       FactoryBot.create(:case_hearing)]
+      [FactoryBot.create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today),
+       FactoryBot.create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today + 1.day)]
     end
 
-    subject { HearingDay.load_days(Time.zone.today, Time.zone.today, "RO13") }
+    subject { HearingDay.load_days(Time.zone.today, Time.zone.today + 1.day, "RO13") }
 
     it "gets hearings for a date range" do
       expect(subject.size).to eq 2
@@ -278,11 +278,11 @@ describe HearingDay do
       FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: vacols_case)
     end
     let!(:staff) { FactoryBot.create(:staff, stafkey: "RO13", stc2: 2, stc3: 3, stc4: 4) }
-    let(:hearing) do
-      FactoryBot.create(:case_hearing, folder_nr: appeal.vacols_id)
+    let!(:hearing_day) do
+      FactoryBot.create(:hearing_day, request_type: "V", regional_office: "RO13", scheduled_for: Time.zone.today)
     end
-    let(:parent_hearing) do
-      VACOLS::CaseHearing.find(hearing.vdkey)
+    let!(:hearing) do
+      FactoryBot.create(:case_hearing, folder_nr: appeal.vacols_id, vdkey: hearing_day.id)
     end
 
     context "get parent and children structure" do
@@ -317,9 +317,6 @@ describe HearingDay do
     let!(:hearing) do
       FactoryBot.create(:case_hearing, folder_nr: appeal.vacols_id)
     end
-    let(:parent_hearing) do
-      VACOLS::CaseHearing.find(hearing.vdkey)
-    end
     let(:vacols_case2) do
       FactoryBot.create(
         :case,
@@ -333,7 +330,7 @@ describe HearingDay do
     end
     let!(:hearing2) do
       FactoryBot.create(
-        :case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: parent_hearing.hearing_pkseq
+        :case_hearing, :disposition_postponed, folder_nr: appeal2.vacols_id, vdkey: hearing.vdkey
       )
     end
 
@@ -359,7 +356,7 @@ describe HearingDay do
         )
       end
       let!(:second_hearing_today) do
-        FactoryBot.create(:case_hearing, vdkey: parent_hearing.hearing_pkseq, folder_nr: appeal_today.vacols_id)
+        FactoryBot.create(:case_hearing, vdkey: hearing.vdkey, folder_nr: appeal_today.vacols_id)
       end
       let(:appeal_tomorrow) do
         FactoryBot.create(
@@ -383,18 +380,18 @@ describe HearingDay do
       it "returns hearings are mapped to days" do
         expect(subject.size).to eq 3
         expect(subject[0][:hearings][0]["appeal_id"]).to eq ama_appeal.id
-        expect(subject[1][:hearings].size).to eq 2
-        expect(subject[1][:request_type]).to eq HearingDay::REQUEST_TYPES[:video]
-        expect(subject[1][:hearings][0]["appeal_id"]).to eq appeal.id
-        expect(subject[1][:hearings][0]["hearing_disp"]).to eq nil
-        expect(subject[1][:hearings][1]["appeal_id"]).to eq appeal_today.id
-        expect(subject[2][:hearings][0]["appeal_id"]).to eq appeal_tomorrow.id
+        expect(subject[1][:hearings][0]["appeal_id"]).to eq appeal_tomorrow.id
+        expect(subject[2][:hearings].size).to eq 2
+        expect(subject[2][:request_type]).to eq HearingDay::REQUEST_TYPES[:video]
+        expect(subject[2][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[2][:hearings][0]["hearing_disp"]).to eq nil
+        expect(subject[2][:hearings][1]["appeal_id"]).to eq appeal_today.id
       end
     end
 
     context "When there are hearing days that are filled up" do
       before do
-        allow(HearingDayRepository).to receive(:fetch_hearing_day_slots).and_return(1, 5)
+        allow(HearingDay).to receive(:fetch_hearing_day_slots).and_return(1, 5)
       end
 
       let(:appeal_today) do
