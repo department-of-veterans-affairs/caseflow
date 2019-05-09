@@ -47,8 +47,7 @@ class HearingActions extends React.Component {
 
     this.state = {
       initialState: {
-        ...props.hearing,
-        editedTime: null
+        ...props.hearing
       },
       edited: false
     };
@@ -152,6 +151,7 @@ class HearingActions extends React.Component {
           readOnly={readOnly}
           update={this.update}
           hearing={hearing}
+          initialState={this.state.initialState}
           user={user}
           index={index} />
       </div><div>

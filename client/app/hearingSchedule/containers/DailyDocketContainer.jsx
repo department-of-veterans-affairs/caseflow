@@ -3,12 +3,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-import moment from 'moment';
 import DailyDocket from '../components/DailyDocket';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
-import { getTimeWithoutTimeZone } from '../../util/DateUtil';
 import {
   onReceiveDailyDocket,
   onReceiveHearing,
@@ -100,41 +98,6 @@ export class DailyDocketContainer extends React.Component {
     });
   };
 
-  getHearingDate = (hearing) => {
-    return {
-      timezone: hearing.readableRequestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone,
-      scheduledFor: hearing.scheduledFor
-    };
-  }
-
-  getTimezoneOffsetScheduledTimeObject = (hearing) => {
-    const hearingTime = this.getScheduledTime(hearing);
-    const hearingDay = this.getHearingDate(hearing);
-
-    return getAssignHearingTime(hearingTime, hearingDay);
-  }
-
-  getScheduledTime = (hearing) => {
-    if (hearing.editedTime) {
-      return hearing.editedTime;
-    }
-
-    const timezone = this.getHearingDate(hearing).timezone;
-
-    return getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
-  };
-
-  formatEditedScheduledFor = (hearing) => {
-    if (hearing.editedTime) {
-      const scheduledTimeObj = this.getTimezoneOffsetScheduledTimeObject(hearing);
-
-      return moment(hearing.scheduledFor).set(scheduledTimeObj).
-        format();
-    }
-
-    return null;
-  };
-
   formatHearing = (hearing) => {
     const amaHearingValues = hearing.docketName === 'hearing' ? {
       evidence_window_waived: hearing.evidenceWindowWaived
@@ -145,8 +108,7 @@ export class DailyDocketContainer extends React.Component {
       transcript_requested: hearing.transcriptRequested,
       notes: hearing.notes,
       hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
-      scheduled_time: hearing.editedTime,
-      scheduled_for: this.formatEditedScheduledFor(hearing),
+      scheduled_time_string: hearing.scheduledTimeString,
       prepped: hearing.prepped,
       hold_open: hearing.holdOpen,
       ...amaHearingValues
