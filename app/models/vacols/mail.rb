@@ -3,7 +3,7 @@
 class VACOLS::Mail < VACOLS::Record
   include AddressMapper
 
-  self.table_name = "vacols.mail"
+  self.table_name = "mail"
 
   belongs_to :correspondent, foreign_key: :mlcorkey, primary_key: :stafkey
 
