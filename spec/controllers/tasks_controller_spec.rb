@@ -631,28 +631,6 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body.first["id"]).to eq admin_action.id.to_s
       end
     end
-
-    context "when updating the task type", skip: "needs back end implementation" do
-      let(:admin_action) do
-        create(
-          task_type,
-          assigned_by: assigned_by_user,
-          assigned_to: assigned_to_user,
-          action: "ihp"
-        )
-      end
-      let(:new_action) { "aoj" }
-      let(:new_instructions) { "whoops" }
-
-      it "should update successfully" do
-        patch :update, params: { task: { action: new_action, instructions: new_instructions }, id: admin_action.id }
-        expect(response.status).to eq 200
-        response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.first["id"]).to eq admin_action.id.to_s
-        expect(response_body.first["attributes"]["label"]).to eq new_action
-        expect(response_body.first["attributes"]["instructions"]).to include new_instructions
-      end
-    end
   end
 
   describe "GET appeals/:id/tasks" do
