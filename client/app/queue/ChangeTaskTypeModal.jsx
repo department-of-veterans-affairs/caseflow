@@ -71,12 +71,12 @@ class ChangeTaskTypeModal extends React.PureComponent {
       }
     };
     const msgTitle = COPY.CHANGE_TASK_TYPE_CONFIRMATION_TITLE;
-    const oldAction = taskActionData(this.props).options.find((option) =>
+    const oldTaskType = taskActionData(this.props).options.find((option) =>
       option.value === task.label || option.label === task.label
     );
-    const newAction = taskActionData(this.props).options.find((option) => option.value === action.actionLabel);
+    const newTaskType = taskActionData(this.props).options.find((option) => option.value === action.actionLabel);
     const successMsg = {
-      title: sprintf(msgTitle, oldAction.label, newAction.label),
+      title: sprintf(msgTitle, oldTaskType.label, newTaskType.label),
       detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
