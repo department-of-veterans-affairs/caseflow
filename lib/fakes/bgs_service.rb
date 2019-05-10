@@ -444,12 +444,16 @@ class Fakes::BGSService
   end
 
   def get_end_products(veteran_id)
+    DBService.release_db_connections
+
     store = self.class.end_product_store
     records = store.fetch_and_inflate(veteran_id) || store.fetch_and_inflate(:default) || {}
     records.values
   end
 
   def cancel_end_product(veteran_id, end_product_code, end_product_modifier)
+    DBService.release_db_connections
+
     end_products = get_end_products(veteran_id)
     matching_eps = end_products.select do |ep|
       ep[:claim_type_code] == end_product_code && ep[:end_product_type_code] == end_product_modifier
@@ -461,6 +465,8 @@ class Fakes::BGSService
   end
 
   def fetch_veteran_info(vbms_id)
+    DBService.release_db_connections
+
     # BGS throws a ShareError if the veteran has too high sensitivity
     fail BGS::ShareError, "Sensitive File - Access Violation !" unless can_access?(vbms_id)
 
@@ -468,6 +474,8 @@ class Fakes::BGSService
   end
 
   def fetch_person_info(participant_id)
+    DBService.release_db_connections
+
     # This is a limited set of test data, more fields are available.
     if participant_id == "5382910292"
       # This claimant is over 75 years old so they get automatic AOD
@@ -515,6 +523,8 @@ class Fakes::BGSService
 
   # TODO: add more test cases
   def fetch_poa_by_file_number(file_number)
+    DBService.release_db_connections
+
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_vso_power_of_attorney_record if file_number == 216_979_849
     record ||= default_power_of_attorney_record
@@ -523,6 +533,8 @@ class Fakes::BGSService
   end
 
   def fetch_poas_by_participant_id(participant_id)
+    DBService.release_db_connections
+
     if participant_id == VSO_PARTICIPANT_ID
       return default_vsos_by_participant_id.map { |poa| get_poa_from_bgs_poa(poa) }
     end
@@ -531,6 +543,8 @@ class Fakes::BGSService
   end
 
   def fetch_poas_by_participant_ids(participant_ids)
+    DBService.release_db_connections
+
     get_hash_of_poa_from_bgs_poas(
       participant_ids.map do |participant_id|
         vso = if participant_id == "CLAIMANT_WITH_PVA_AS_VSO"
@@ -558,6 +572,8 @@ class Fakes::BGSService
   end
 
   def fetch_limited_poas_by_claim_ids(claim_ids)
+    DBService.release_db_connections
+
     result = {}
     Array.wrap(claim_ids).each do |claim_id|
       if claim_id.include? "HAS_LIMITED_POA_WITH_ACCESS"
@@ -572,6 +588,8 @@ class Fakes::BGSService
 
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
+    DBService.release_db_connections
+
     address = (self.class.address_records || {})[participant_id]
     address ||= default_address
 
@@ -579,15 +597,21 @@ class Fakes::BGSService
   end
 
   def fetch_claimant_info_by_participant_id(_participant_id)
+    DBService.release_db_connections
+
     default_claimant_info
   end
 
   def fetch_file_number_by_ssn(ssn)
+    DBService.release_db_connections
+
     # reverse is a hack to return something different than what is passed.
     ssn_not_found ? nil : ssn.to_s.reverse
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
+    DBService.release_db_connections
+
     ratings = (self.class.rating_records || {})[participant_id]
 
     # mimic errors
@@ -617,6 +641,8 @@ class Fakes::BGSService
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)
+    DBService.release_db_connections
+
     self.class.rating_profile_records ||= {}
     self.class.rating_profile_records[participant_id] ||= {}
 
@@ -632,6 +658,8 @@ class Fakes::BGSService
   end
 
   def get_participant_id_for_user(user)
+    DBService.release_db_connections
+
     return VSO_PARTICIPANT_ID if user.css_id =~ /.*_VSO/
 
     DEFAULT_PARTICIPANT_ID
@@ -639,6 +667,8 @@ class Fakes::BGSService
 
   # rubocop:disable Metrics/MethodLength
   def find_all_relationships(*)
+    DBService.release_db_connections
+
     [
       {
         authzn_change_clmant_addrs_ind: nil,
@@ -703,6 +733,8 @@ class Fakes::BGSService
   # We're currently only using the doc_reference_id and development_item_reference_id to track
   # that the call succeeded, so I am just having the fakes return these dummy values
   def manage_claimant_letter_v2!(claim_id:, program_type_cd:, claimant_participant_id:)
+    DBService.release_db_connections
+
     self.class.manage_claimant_letter_v2_requests ||= {}
 
     self.class.manage_claimant_letter_v2_requests[claim_id] = {
@@ -714,6 +746,8 @@ class Fakes::BGSService
   end
 
   def generate_tracked_items!(claim_id)
+    DBService.release_db_connections
+
     self.class.generate_tracked_items_requests ||= {}
     self.class.generate_tracked_items_requests[claim_id] = true
 
