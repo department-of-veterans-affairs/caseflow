@@ -241,8 +241,6 @@ describe User do
   context "#selectable_organizations" do
     let(:judge) { FactoryBot.create :user }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
-    let!(:judge_team_id) { judgeteam.id }
-
 
     subject { user.selectable_organizations }
 
@@ -251,9 +249,9 @@ describe User do
 
       it "includes judge teams from the organization list" do
         is_expected.to include(
-          :id => judge_team_id,
+          :id => judgeteam.id,
           :name => "Assign",
-          :url => "queue/%<id>s/assign" % [id: judge_team_id]
+          :url => "queue/%<id>s/assign" % [id: user.id]
         )
         expect(user.organizations).to include judgeteam
       end
