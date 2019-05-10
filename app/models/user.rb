@@ -247,7 +247,7 @@ class User < ApplicationRecord
     orgs = organizations.select(&:selectable_in_queue?)
     judge_team = JudgeTeam.for_judge(self)
 
-    if !judge_team.nil?
+    if judge_team
       orgs << {
         id: judge_team.id,
         name: "Assign",
