@@ -17,28 +17,10 @@ class LegacyTask
   end
 
   def build_action_hash(action, user)
-    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
-  end
-
-  def add_admin_action_data(_user)
     {
-      redirect_after: "/queue",
-      selected: nil,
-      options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
-        {
-          label: value,
-          value: key
-        }
-      end,
-      type: ColocatedTask.name
-    }
-  end
-
-  def assign_to_attorney_data(_user)
-    {
-      selected: nil,
-      options: nil,
-      type: AttorneyLegacyTask.name
+      label: action[:label],
+      value: action[:value],
+      data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
     }
   end
 

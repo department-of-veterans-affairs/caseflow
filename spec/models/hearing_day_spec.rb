@@ -152,7 +152,7 @@ describe HearingDay do
         end
 
         it "only tries to update the room and the judge, because that's all that changed in the hearing day" do
-          expected_legacy_params = { room: "5", judge_id: judge.vacols_attorney_id.to_s }
+          expected_legacy_params = { room: "5", judge_id: judge.id }
           expect_any_instance_of(LegacyHearing).to receive(:update!).with(**expected_legacy_params)
           expected_ama_params = { room: "5", judge_id: judge.id }
           expect_any_instance_of(Hearing).to receive(:update!).with(**expected_ama_params)

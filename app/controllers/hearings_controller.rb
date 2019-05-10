@@ -89,6 +89,9 @@ class HearingsController < ApplicationController
                                      :transcript_requested,
                                      :prepped,
                                      :scheduled_for,
+                                     :judge_id,
+                                     :room,
+                                     :bva_poc,
                                      hearing_location_attributes: [
                                        :city, :state, :address,
                                        :facility_id, :facility_type,

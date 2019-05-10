@@ -23,7 +23,7 @@ module HearingMapper
         folder_nr: hearing_info[:folder_nr],
         room: hearing_info[:room],
         bva_poc: hearing_info[:bva_poc],
-        judge_id: hearing_info[:judge_id]
+        judge_id: judge_to_vacols_format(hearing_info[:judge_id])
       }.select do |k, _v|
         hearing_info.keys.map(&:to_sym).include?(k)
         # only send updates to key/values that are passed
@@ -115,6 +115,10 @@ module HearingMapper
       fail(InvalidTranscriptRequestedError) if value && vacols_code.blank?
 
       vacols_code
+    end
+
+    def judge_to_vacols_format(value)
+      value.nil? ? nil : User.find(value).vacols_attorney_id
     end
   end
 end

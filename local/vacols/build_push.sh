@@ -41,20 +41,22 @@ if [[ $# -gt 1 ]]; then
 fi
 
 build(){
+  parent_dir=$(dirname $0)
+  build_facols_dir="${parent_dir}/build_facols"
 
   echo "${bold}Building FACOLS from Base Oracle...${normal}"
 
   echo -e "\tCleaning Up Old dependencies and Bring Required Packages"
-  rm -rf build_facols && mkdir build_facols
-  cp Dockerfile setup_vacols.sql vacols_copy_* build_facols
-  cd build_facols
+  rm -rf build_facols_dir && mkdir build_facols_dir
+
+  cp $parent_dir/Dockerfile $parent_dir/setup_vacols.sql $parent_dir/vacols_copy_* build_facols_dir
 
   echo -e "\tDownloading FACOLS Dependencies..."
-  aws s3 sync --quiet --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ ./
+  aws s3 sync --quiet --region us-gov-west-1 s3://shared-s3/dsva-appeals/facols/ build_facols_dir
 
   echo -e "\tChecking if Instant Client has been downloaded"
   if [ $? -eq 0 ]; then
-    if [ ! -f linuxx64_12201_database.zip ] ; then
+    if [ ! -f $build_facols_dir/linuxx64_12201_database.zip ] ; then
       echo -e "${bold}Error: ${normal}Couldn't download the file. Exiting"
       exit 1
     fi
@@ -65,13 +67,13 @@ build(){
   echo "--------"
   echo ""
 
-  docker build --force-rm --no-cache --tag  vacols_db:latest .
+  docker build --force-rm --no-cache --tag  vacols_db:latest build_facols_dir
   docker_build_result=$?
   echo ""
   echo "--------"
   if [[ $docker_build_result -eq 0 ]]; then
     echo -e "\tCleaning Up..."
-    cd ../ && rm -rf build_facols
+    rm -rf build_facols_dir
     docker_build="SUCCESS"
     echo ""
     echo "Building Caseflow Docker App: ${bold}${docker_build}${normal}"
@@ -83,9 +85,6 @@ build(){
     echo "Please check above if there were execution errors."
     return 1
   fi
-
-
-
 }
 
 push(){
