@@ -574,7 +574,8 @@ RSpec.describe TasksController, type: :controller do
     let(:admin_action) { create(task_type, assigned_by: assigned_by_user, assigned_to: assigned_to_user) }
     let!(:authenticated_staff) { create(:staff, :colocated_role, sdomainid: authenticated_user.css_id) }
     let!(:assigned_by_staff) { create(:staff, :attorney_role, sdomainid: assigned_by_user.css_id) }
-
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:colocated_task) { FactoryBot.create(:colocated_task, parent: root_task) }
     before do
       User.stub = authenticated_user
     end
@@ -839,6 +840,7 @@ RSpec.describe TasksController, type: :controller do
         response_body = JSON.parse(response.body)
         expect(response.status).to eq(403)
         expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"].first["title"]).to eq(COPY::NO_SHOW_HEARING_TASK_RESCHEDULE_FORBIDDEN_ERROR)
       end
     end
 
@@ -849,6 +851,76 @@ RSpec.describe TasksController, type: :controller do
       it "creates the new ScheduleHearingTask as expected" do
         post(:reschedule, params: { id: task.id })
         expect(response.status).to eq(200)
+      end
+    end
+  end
+
+  describe "POST tasks/:id/request_hearing_disposition_change" do
+    let(:params) { nil }
+    let(:instructions) { "these are my detailed instructions." }
+
+    subject { post(:request_hearing_disposition_change, params: params) }
+
+    context "when the task has a HearingTask ancestor" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: root_task.appeal) }
+      let(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: root_task.appeal) }
+      let(:task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: root_task.appeal) }
+      let(:params) do
+        {
+          id: task.id,
+          tasks: [
+            {
+              type: ChangeHearingDispositionTask.name,
+              external_id: root_task.appeal.external_id,
+              parent_id: task.id,
+              instructions: instructions
+            }
+          ]
+        }
+      end
+
+      it "completes the disposition task and its children and creates a new change hearing disposition task" do
+        subject
+
+        expect(task.reload.completed?).to be_truthy
+        expect(disposition_task.reload.completed?).to be_truthy
+        expect(hearing_task.reload.active?).to be_truthy
+        expect(hearing_task.children.active.count).to eq 1
+        expect(hearing_task.children.active.first.type).to eq ChangeHearingDispositionTask.name
+
+        change_task = hearing_task.children.active.first
+        expect(change_task.active?).to be_truthy
+        expect(change_task.instructions).to match_array [instructions]
+      end
+    end
+
+    context "when the task doesn't have a HearingTask ancestor" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let!(:task) do
+        FactoryBot.create(:track_veteran_task, parent: root_task, appeal: root_task.appeal)
+      end
+      let(:params) do
+        {
+          id: task.id,
+          tasks: [
+            {
+              type: ChangeHearingDispositionTask.name,
+              external_id: root_task.appeal.external_id,
+              parent_id: task.id,
+              instructions: instructions
+            }
+          ]
+        }
+      end
+
+      it "returns an error" do
+        subject
+
+        response_body = JSON.parse(response.body)
+        expect(response.status).to eq(403)
+        expect(response_body["errors"].length).to eq(1)
+        expect(response_body["errors"].first["title"]).to eq(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
       end
     end
   end

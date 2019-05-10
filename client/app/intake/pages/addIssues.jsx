@@ -16,10 +16,12 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
-import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
-import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
+import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
+import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
 import Table from '../../components/Table';
+import EditContentionTitle from '../components/EditContentionTitle';
+
 import {
   toggleAddIssuesModal,
   toggleUntimelyExemptionModal,
@@ -89,7 +91,7 @@ export class AddIssuesPage extends React.Component {
       return <Redirect to={PAGE_PATHS.BEGIN} />;
     }
 
-    const { useAmaActivationDate, withdrawDecisionReviews } = featureToggles;
+    const { useAmaActivationDate, withdrawDecisionReviews, editContentionText } = featureToggles;
     const intakeData = intakeForms[formType];
     const requestState = intakeData.requestStatus.completeIntake || intakeData.requestStatus.requestIssuesUpdate;
     const requestErrorCode = intakeData.completeIntakeErrorCode || intakeData.requestIssuesUpdateErrorCode;
@@ -150,36 +152,41 @@ export class AddIssuesPage extends React.Component {
       return <div className="issues">
         <div>
           { requestIssues.map((issue) => {
-            return <div
-              className="issue"
-              data-key={`issue-${issue.index}`}
-              key={`issue-${issue.index}`}
-              id={`issue-${issue.referenceId}`}>
-              <AddedIssue
-                issue={issue}
-                issueIdx={issue.index}
-                requestIssues={intakeData.requestIssues}
-                legacyOptInApproved={intakeData.legacyOptInApproved}
-                legacyAppeals={intakeData.legacyAppeals}
-                formType={formType} />
-              <div className="issue-action">
-                { withdrawDecisionReviews && <Dropdown
-                  name={`issue-action-${issue.index}`}
-                  label="Actions"
-                  hideLabel
-                  options={issueActionOptions}
-                  defaultText="Select action"
-                  onChange={(option) => this.onClickIssueAction(issue.index, option)}
-                />
-                }
-                { !withdrawDecisionReviews && <Button
-                  onClick={() => this.onClickIssueAction(issue.index)}
-                  classNames={['cf-btn-link', 'remove-issue']}
-                >
-                  <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
-                </Button>
-                }
+            return <div className="issue-container" key={`issue-container-${issue.index}`}>
+              <div
+                className="issue"
+                data-key={`issue-${issue.index}`}
+                key={`issue-${issue.index}`}
+                id={`issue-${issue.referenceId}`}>
+                <AddedIssue
+                  issue={issue}
+                  issueIdx={issue.index}
+                  requestIssues={intakeData.requestIssues}
+                  legacyOptInApproved={intakeData.legacyOptInApproved}
+                  legacyAppeals={intakeData.legacyAppeals}
+                  formType={formType} />
+                <div className="issue-action">
+                  { withdrawDecisionReviews && <Dropdown
+                    name={`issue-action-${issue.index}`}
+                    label="Actions"
+                    hideLabel
+                    options={issueActionOptions}
+                    defaultText="Select action"
+                    onChange={(option) => this.onClickIssueAction(issue.index, option)}
+                  />
+                  }
+                  { !withdrawDecisionReviews && <Button
+                    onClick={() => this.onClickIssueAction(issue.index)}
+                    classNames={['cf-btn-link', 'remove-issue']}
+                  >
+                    <i className="fa fa-trash-o" aria-hidden="true"></i><br />Remove
+                  </Button>
+                  }
+                </div>
               </div>
+              {editContentionText && <EditContentionTitle
+                issue= {issue}
+                issueIdx={issue.index} />}
             </div>;
           })}
         </div>
@@ -218,6 +225,33 @@ export class AddIssuesPage extends React.Component {
     };
 
     const messageHeader = this.props.editPage ? 'Edit Issues' : 'Add / Remove Issues';
+
+    const withdrawError = () => {
+
+      const withdrawalDate = new Date(intakeData.withdrawalDate);
+
+      const currentDate = new Date();
+
+      const receiptDate = new Date(intakeData.receiptDate);
+
+      const formName = _.find(FORM_TYPES, { key: formType }).shortName;
+
+      let message;
+
+      if (validateDate(intakeData.withdrawalDate)) {
+
+        if (withdrawalDate < receiptDate) {
+          message = `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
+
+        } else if (withdrawalDate > currentDate) {
+
+          message = 'We cannot process your request. Please select a date prior to today\'s date.';
+        }
+
+        return message;
+      }
+
+    };
 
     const columns = [
       { valueName: 'field' },
@@ -304,6 +338,7 @@ export class AddIssuesPage extends React.Component {
               value={intakeData.withdrawalDate}
               onChange={this.withdrawalDateOnChange}
               placeholder={withdrawDatePlaceholder}
+              dateErrorMessage={withdrawError()}
             />
           </InlineForm>
         </div>

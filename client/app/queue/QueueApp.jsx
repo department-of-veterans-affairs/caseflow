@@ -36,6 +36,7 @@ import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
 import ChangeHearingDispositionModal from './ChangeHearingDispositionModal';
+import CreateChangeHearingDispositionTaskModal from './CreateChangeHearingDispositionTaskModal';
 import AdvancedOnDocketMotionView from './AdvancedOnDocketMotionView';
 import AssignToAttorneyModalView from './AssignToAttorneyModalView';
 import AssignToView from './AssignToView';
@@ -44,6 +45,7 @@ import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddVsoModal from './AddVsoModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
+import EndHoldModal from './components/EndHoldModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -204,6 +206,9 @@ class QueueApp extends React.PureComponent {
 
   routedChangeHearingDisposition = (props) => <ChangeHearingDispositionModal {...props.match.params} />;
 
+  routedCreateChangeHearingDispositionTask = (props) =>
+    <CreateChangeHearingDispositionTaskModal {...props.match.params} />;
+
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
 
@@ -221,6 +226,8 @@ class QueueApp extends React.PureComponent {
   routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
 
   routedPostponeHearingTaskModal = (props) => <PostponeHearingTaskModal {...props.match.params} />;
+
+  routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
@@ -328,6 +335,12 @@ class QueueApp extends React.PureComponent {
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.value}`}
             render={this.routedChangeHearingDisposition} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.value}`}
+            render={this.routedCreateChangeHearingDispositionTask} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.END_TIMED_HOLD.value}`}
+            render={this.routedEndHoldModal} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"

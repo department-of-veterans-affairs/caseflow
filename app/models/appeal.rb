@@ -5,7 +5,6 @@
 # This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
 # which went into effect Feb 19, 2019.
 
-# rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
 
@@ -139,10 +138,10 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+    active_tasks = tasks.active.not_tracking
     return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
-    on_hold_tasks = tasks.where(status: Constants.TASK_STATUSES.on_hold)
+    on_hold_tasks = tasks.on_hold.not_tracking
     return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
     return most_recently_assigned_to_label(tasks) if tasks.any?
@@ -404,8 +403,6 @@ class Appeal < DecisionReview
     end
   end
 
-  # rubocop:disable CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def fetch_pre_decision_status
     if pending_schedule_hearing_task?
       :pending_hearing_scheduling
@@ -438,11 +435,7 @@ class Appeal < DecisionReview
       :other_close
     end
   end
-  # rubocop:enable CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable CyclomaticComplexity
   def fetch_details_for_status
     case fetch_status
     when :bva_decision
@@ -474,8 +467,6 @@ class Appeal < DecisionReview
       {}
     end
   end
-  # rubocop:enable CyclomaticComplexity
-  # rubocop:enable Metrics/MethodLength
 
   def post_bva_dta_decision_status_details
     issue_list = remanded_sc_decision_issues
@@ -553,7 +544,7 @@ class Appeal < DecisionReview
   end
 
   def withdrawn?
-    # will implement when available
+    root_task&.status == Constants.TASK_STATUSES.cancelled
   end
 
   def alerts
@@ -732,4 +723,3 @@ class Appeal < DecisionReview
       end
   end
 end
-# rubocop:enable Metrics/ClassLength

@@ -66,6 +66,8 @@ Rails.application.configure do
   config.s3_enabled = !ENV['AWS_BUCKET_NAME'].nil?
   config.s3_bucket_name = "caseflow-cache"
 
+  config.vacols_db_name = "VACOLS_DEV"
+
   # Set to true to get the documents from efolder running locally on port 4000.
   config.use_efolder_locally = false
 
@@ -93,22 +95,4 @@ Rails.application.configure do
   config.efolder_key = "token"
 
   config.google_analytics_account = "UA-74789258-5"
-
-  # configure pry
-  silence_warnings do
-    begin
-      require 'pry'
-      config.console = Pry
-      unless defined? Pry::ExtendCommandBundle
-        Pry::ExtendCommandBundle = Module.new
-      end
-      require "rails/console/app"
-      require "rails/console/helpers"
-      require_relative "../../lib/helpers/console_methods"
-
-      TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods
-      TOPLEVEL_BINDING.eval('self').extend ConsoleMethods
-    rescue LoadError
-    end
-  end
 end

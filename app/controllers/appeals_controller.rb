@@ -35,11 +35,11 @@ class AppealsController < ApplicationController
   end
 
   def document_count
-    render json: { document_count: appeal.number_of_documents }
-  rescue Caseflow::Error::EfolderAccessForbidden => e
-    render(e.serialize_response)
-  rescue StandardError => e
-    handle_non_critical_error("document_count", e)
+    render json: { document_count: "" }
+  rescue Caseflow::Error::EfolderAccessForbidden => error
+    render(error.serialize_response)
+  rescue StandardError => error
+    handle_non_critical_error("document_count", error)
   end
 
   def power_of_attorney

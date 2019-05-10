@@ -33,22 +33,13 @@ class DispositionTask < GenericTask
   end
 
   def available_actions(user)
-    if HearingsManagement.singleton.user_has_access?(user)
-      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
-    else
-      []
-    end
-  end
+    hearing_admin_actions = available_hearing_admin_actions(user)
 
-  def add_schedule_hearing_task_admin_actions_data(_user)
-    {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
-      message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
-      selected: nil,
-      options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
-        { value: subclass.name, label: subclass.label }
-      end
-    }
+    if HearingsManagement.singleton.user_has_access?(user)
+      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h] | hearing_admin_actions
+    else
+      hearing_admin_actions
+    end
   end
 
   def update_from_params(params, user)
@@ -63,9 +54,13 @@ class DispositionTask < GenericTask
     end
   end
 
-  def create_change_hearing_disposition_task_and_complete
+  def create_change_hearing_disposition_task_and_complete(instructions = nil)
     multi_transaction do
-      ChangeHearingDispositionTask.create!(appeal: appeal, parent: parent)
+      ChangeHearingDispositionTask.create!(
+        appeal: appeal,
+        parent: parent,
+        instructions: instructions.present? ? [instructions] : nil
+      )
       update!(status: Constants.TASK_STATUSES.completed)
     end
   end
@@ -95,7 +90,8 @@ class DispositionTask < GenericTask
 
     no_show_hearing_task.update!(
       status: Constants.TASK_STATUSES.on_hold,
-      on_hold_duration: 25
+      on_hold_duration: 25,
+      instructions: ["Mail must be received within 14 days of the original hearing date."]
     )
   end
 
@@ -112,6 +108,10 @@ class DispositionTask < GenericTask
   end
 
   private
+
+  def update_children_status_after_closed
+    children.active.update_all(status: status)
+  end
 
   def update_hearing_and_self(params:, payload_values:)
     case payload_values[:disposition]

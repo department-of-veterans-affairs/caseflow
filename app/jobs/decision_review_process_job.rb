@@ -17,12 +17,12 @@ class DecisionReviewProcessJob < CaseflowJob
 
     begin
       return_value = decision_review.establish!
-    rescue VBMSError::Transient => err
-      decision_review.update_error!(err.inspect)
+    rescue VBMSError::Transient => error
+      decision_review.update_error!(error.inspect)
       # no need to tell Sentry about it
-    rescue StandardError => err
-      decision_review.update_error!(err.inspect)
-      Raven.capture_exception(err)
+    rescue StandardError => error
+      decision_review.update_error!(error.inspect)
+      Raven.capture_exception(error)
     end
 
     RequestStore.store[:current_user] = current_user

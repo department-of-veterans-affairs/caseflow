@@ -45,8 +45,8 @@ describe DecisionReview do
              rating_issue_reference_id: "123",
              decision_text: "decision issue 1",
              benefit_type: higher_level_review.benefit_type,
-             profile_date: profile_date,
-             promulgation_date: promulgation_date,
+             rating_profile_date: profile_date,
+             rating_promulgation_date: promulgation_date,
              decision_review: higher_level_review),
       create(:decision_issue,
              :rating,
@@ -54,8 +54,8 @@ describe DecisionReview do
              rating_issue_reference_id: "789",
              decision_text: "decision issue 2",
              benefit_type: higher_level_review.benefit_type,
-             profile_date: profile_date + 1.day,
-             promulgation_date: promulgation_date + 1.day,
+             rating_profile_date: profile_date + 1.day,
+             rating_promulgation_date: promulgation_date + 1.day,
              decision_review: higher_level_review),
       create(:decision_issue,
              :nonrating,
@@ -63,8 +63,8 @@ describe DecisionReview do
              rating_issue_reference_id: nil,
              decision_text: "decision issue 3",
              benefit_type: higher_level_review.benefit_type,
-             profile_date: profile_date + 2.days,
-             promulgation_date: promulgation_date + 2.days,
+             rating_profile_date: profile_date + 2.days,
+             rating_promulgation_date: promulgation_date + 2.days,
              decision_review: higher_level_review),
       create(:decision_issue,
              :rating,
@@ -76,6 +76,29 @@ describe DecisionReview do
              decision_review: appeal,
              caseflow_decision_date: profile_date + 3.days)
     ]
+  end
+
+  context "#removed?" do
+    subject { higher_level_review.removed? }
+
+    let!(:removed_ri) { create(:request_issue, :removed, decision_review: higher_level_review) }
+    let!(:active_ri) { create(:request_issue, decision_review: higher_level_review) }
+
+    context "when a subset of request issues are removed" do
+      it { is_expected.to eq(false) }
+    end
+
+    context "when all request issues are removed" do
+      before { higher_level_review.request_issues.each(&:remove!) }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "when there are no request issues" do
+      before { higher_level_review.request_issues.each(&:destroy!) }
+
+      it { is_expected.to eq(false) }
+    end
   end
 
   context "#contestable_issues" do
@@ -150,7 +173,7 @@ describe DecisionReview do
       let!(:future_decision_issue) do
         create(:decision_issue,
                decision_review: supplemental_claim,
-               profile_date: receipt_date + 1.day,
+               rating_profile_date: receipt_date + 1.day,
                end_product_last_action_date: receipt_date + 1.day,
                benefit_type: supplemental_claim.benefit_type,
                decision_text: "something was decided in the future",

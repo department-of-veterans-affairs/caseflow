@@ -40,6 +40,8 @@ class WorkQueue::AppealSerializer
 
   attribute(:hearings) { |object| hearings(object) }
 
+  attribute :withdrawn, &:withdrawn?
+
   attribute :assigned_to_location
 
   attribute :completed_hearing_on_previous_appeal? do
