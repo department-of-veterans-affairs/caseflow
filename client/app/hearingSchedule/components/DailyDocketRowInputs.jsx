@@ -35,7 +35,9 @@ export const DispositionDropdown = ({
           }
 
           update({ disposition: option.value });
-          saveHearing();
+
+          // give redux time to update
+          setTimeout(saveHearing, 0);
         }
       });
     }}

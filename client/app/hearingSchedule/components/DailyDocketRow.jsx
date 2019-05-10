@@ -64,13 +64,15 @@ class HearingActions extends React.Component {
   }
 
   saveHearing = () => {
-    this.props.saveHearing(this.props.hearingId);
-    setTimeout(() => {
-      this.setState({
-        initialState: { ...this.props.hearing },
-        edited: false
+    this.props.saveHearing(this.props.hearingId).
+      then((success) => {
+        if (success) {
+          this.setState({
+            initialState: { ...this.props.hearing },
+            edited: false
+          });
+        }
       });
-    }, 0);
   }
 
   isAmaHearing = () => this.props.hearing.docketName === 'hearing'

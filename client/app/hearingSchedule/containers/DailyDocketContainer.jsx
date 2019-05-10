@@ -115,16 +115,22 @@ export class DailyDocketContainer extends React.Component {
     }, _.isNil);
   };
 
-  saveHearing = (hearing) => {
-    ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
+  saveHearing = (hearingId) => {
+    const hearing = this.props.hearings[hearingId];
+
+    return ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
       hearing: this.formatHearing(hearing)
     } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
         this.props.onReceiveSavedHearing(resp);
+
+        return true;
       }, (err) => {
         this.props.handleDailyDocketServerError(err);
+
+        return false;
       });
   };
 

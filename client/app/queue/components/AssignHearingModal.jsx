@@ -133,12 +133,12 @@ class AssignHearingModal extends React.PureComponent {
   }
 
   getSuccessMsg = () => {
-    const { appeal, selectedHearingDay, selectedRegionalOffice } = this.props;
+    const { appeal, assignHearingForm } = this.props;
 
-    const hearingDateStr = formatDateStr(selectedHearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
+    const hearingDateStr = formatDateStr(assignHearingForm.hearingDay.hearingDate, 'YYYY-MM-DD', 'MM/DD/YYYY');
     const title = `You have successfully assigned ${appeal.veteranFullName} ` +
                   `to a ${this.getHearingType()} hearing on ${hearingDateStr}.`;
-    const href = `/hearings/schedule/assign?roValue=${selectedRegionalOffice}`;
+    const href = `/hearings/schedule/assign?roValue=${assignHearingForm.hearingDay.regionalOffice}`;
 
     const detail = (
       <p>
@@ -171,6 +171,7 @@ class AssignHearingModal extends React.PureComponent {
     if (openHearing) {
       return null;
     }
+    console.log(this.getInitialValues());
 
     /* eslint-disable camelcase */
     return <QueueFlowModal

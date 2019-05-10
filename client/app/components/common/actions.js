@@ -7,6 +7,13 @@ export const onReceiveRegionalOffices = (regionalOffices) => ({
   }
 });
 
+export const onRegionalOfficeChange = (regionalOffice) => ({
+  type: ACTIONS.REGIONAL_OFFICE_CHANGE,
+  payload: {
+    regionalOffice
+  }
+});
+
 export const onReceiveHearingDays = (hearingDays) => ({
   type: ACTIONS.RECEIVE_HEARING_DAYS,
   payload: {

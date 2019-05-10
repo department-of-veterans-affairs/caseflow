@@ -15,11 +15,6 @@ import HearingTime from './HearingTime';
 import { onChangeFormData } from '../../../components/common/actions';
 
 class AssignHearingForm extends React.Component {
-
-  /*
-    This duplicates a lot of the logic from AssignHearingModal.jsx
-    TODO: refactor so both of these modals use the same components
-  */
   componentWillMount() {
 
     const { initialRegionalOffice, initialHearingDate, initialScheduledTimeString } = this.props;
@@ -31,11 +26,7 @@ class AssignHearingForm extends React.Component {
       hearingDay: initialHearingDate || null
     };
 
-    this.props.onChange({
-      ...values,
-      errorMessages: this.getErrorMessages(values),
-      apiFormattedValues: this.getApiFormattedValues(values)
-    });
+    this.onChange(values);
   }
 
   getErrorMessages = (newValues) => {
@@ -65,7 +56,7 @@ class AssignHearingForm extends React.Component {
     };
 
     return {
-      scheduledTimeString: values.scheduledTimeString,
+      scheduled_time_string: values.scheduledTimeString,
       hearing_day_id: values.hearingDay ? values.hearingDay.hearingId : null,
       hearing_location: values.hearingLocation ? ApiUtil.convertToSnakeCase(values.hearingLocation) : null
     };
@@ -100,7 +91,6 @@ class AssignHearingForm extends React.Component {
         <RegionalOfficeDropdown
           value={regionalOffice}
           onChange={this.onRegionalOfficeChange}
-          validateValueOnMount
         />
         {regionalOffice && <React.Fragment>
           <AppealHearingLocationsDropdown

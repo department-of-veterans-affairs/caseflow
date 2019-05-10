@@ -71,6 +71,12 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: action.payload.regionalOffices
       }
     });
+  case ACTIONS.REGIONAL_OFFICE_CHANGE:
+    return update(state, {
+      selectedRegionalOffice: {
+        $set: action.payload.regionalOffice
+      }
+    });
   case ACTIONS.RECEIVE_HEARING_DAYS:
     return update(state, {
       hearingDays: {
