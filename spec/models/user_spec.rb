@@ -238,7 +238,7 @@ describe User do
     end
   end
 
-  context "#selectable_organizations", focus: true do
+  context "#selectable_organizations" do
     let(:judge) { FactoryBot.create :user }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
     let!(:judge_team_id) { judgeteam.id }
