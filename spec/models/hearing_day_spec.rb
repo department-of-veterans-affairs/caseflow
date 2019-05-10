@@ -29,10 +29,10 @@ describe HearingDay do
       end
 
       it "creates hearing with required attributes" do
-        expect(hearing[:request_type]).to eq HearingDay::REQUEST_TYPES[:central]
-        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
+        expect(hearing["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
+        expect(hearing["scheduled_for"].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_vacols.strftime("%Y-%m-%d")
-        expect(hearing[:room]).to eq "1"
+        expect(hearing["room"]).to eq "1"
       end
     end
 
@@ -46,10 +46,10 @@ describe HearingDay do
       end
 
       it "creates hearing with required attributes" do
-        expect(hearing[:request_type]).to eq HearingDay::REQUEST_TYPES[:central]
-        expect(hearing[:scheduled_for].strftime("%Y-%m-%d"))
+        expect(hearing["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
+        expect(hearing["scheduled_for"].strftime("%Y-%m-%d"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d")
-        expect(hearing[:room]).to eq "1"
+        expect(hearing["room"]).to eq "1"
       end
     end
 
@@ -64,11 +64,11 @@ describe HearingDay do
       end
 
       it "creates a video hearing" do
-        expect(hearing[:request_type]).to eq HearingDay::REQUEST_TYPES[:central]
-        expect(hearing[:scheduled_for].strftime("%Y-%m-%d %H:%M:%S"))
+        expect(hearing["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
+        expect(hearing["scheduled_for"].strftime("%Y-%m-%d %H:%M:%S"))
           .to eq test_hearing_date_caseflow.strftime("%Y-%m-%d %H:%M:%S")
-        expect(hearing[:regional_office]).to eq "RO89"
-        expect(hearing[:room]).to eq "5"
+        expect(hearing["regional_office"]).to eq "RO89"
+        expect(hearing["room"]).to eq "5"
       end
     end
   end
@@ -293,9 +293,9 @@ describe HearingDay do
 
       it "returns nested hash structure" do
         expect(subject.size).to eq 1
-        expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:request_type]).to eq HearingDay::REQUEST_TYPES[:video]
-        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[0]["hearings"].size).to eq 1
+        expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
+        expect(subject[0]["hearings"][0]["appeal_id"]).to eq appeal.id
       end
     end
   end
@@ -342,10 +342,10 @@ describe HearingDay do
     context "get video hearings neither postponed or cancelled" do
       it "returns nested hash structure" do
         expect(subject.size).to eq 1
-        expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:request_type]).to eq HearingDay::REQUEST_TYPES[:video]
-        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
-        expect(subject[0][:hearings][0]["hearing_disp"]).to eq nil
+        expect(subject[0]["hearings"].size).to eq 1
+        expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
+        expect(subject[0]["hearings"][0]["appeal_id"]).to eq appeal.id
+        expect(subject[0]["hearings"][0]["hearing_disp"]).to eq nil
       end
     end
 
@@ -379,36 +379,18 @@ describe HearingDay do
 
       it "returns hearings are mapped to days" do
         expect(subject.size).to eq 3
-        expect(subject[0][:hearings][0]["appeal_id"]).to eq ama_appeal.id
-        expect(subject[1][:hearings][0]["appeal_id"]).to eq appeal_tomorrow.id
-        expect(subject[2][:hearings].size).to eq 2
-        expect(subject[2][:request_type]).to eq HearingDay::REQUEST_TYPES[:video]
-        expect(subject[2][:hearings][0]["appeal_id"]).to eq appeal.id
-        expect(subject[2][:hearings][0]["hearing_disp"]).to eq nil
-        expect(subject[2][:hearings][1]["appeal_id"]).to eq appeal_today.id
+        expect(subject[0]["hearings"][0]["appeal_id"]).to eq ama_appeal.id
+        expect(subject[1]["hearings"][0]["appeal_id"]).to eq appeal_tomorrow.id
+        expect(subject[2]["hearings"].size).to eq 2
+        expect(subject[2]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
+        expect(subject[2]["hearings"][0]["appeal_id"]).to eq appeal.id
+        expect(subject[2]["hearings"][0]["hearing_disp"]).to eq nil
+        expect(subject[2]["hearings"][1]["appeal_id"]).to eq appeal_today.id
       end
     end
 
-    context "When there are hearing days that are filled up" do
-      before do
-        allow(HearingDay).to receive(:fetch_hearing_day_slots).and_return(1, 5)
-      end
-
-      let(:appeal_today) do
-        FactoryBot.create(
-          :legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)
-        )
-      end
-      let(:appeal_tomorrow) do
-        FactoryBot.create(
-          :legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)
-        )
-      end
-      let!(:hearing_tomorrow) do
-        FactoryBot.create(
-          :case_hearing, hearing_date: Time.zone.tomorrow, folder_nr: appeal_tomorrow.vacols_id
-        )
-      end
+    context "When there are hearing days that are locked" do
+      let!(:locked_hearing_day) { create(:hearing_day, lock: true) }
 
       it "only returns hearing days that are not full" do
         expect(subject.size).to eq 1
@@ -442,32 +424,10 @@ describe HearingDay do
 
       it "returns nested hash structure" do
         expect(subject.size).to eq 1
-        expect(subject[0][:hearings].size).to eq 1
-        expect(subject[0][:request_type]).to eq HearingDay::REQUEST_TYPES[:central]
-        expect(subject[0][:hearings][0]["appeal_id"]).to eq appeal.id
+        expect(subject[0]["hearings"].size).to eq 1
+        expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
+        expect(subject[0]["hearings"][0]["appeal_id"]).to eq appeal.id
       end
-    end
-  end
-
-  context ".fetch_hearing_day_slots" do
-    subject { HearingDay.fetch_hearing_day_slots(regional_office) }
-
-    context "returns slots for Winston-Salem" do
-      let(:regional_office) { "RO18" }
-
-      it { is_expected.to eq 12 }
-    end
-
-    context "returns slots for Denver" do
-      let(:regional_office) { "RO37" }
-
-      it { is_expected.to eq 10 }
-    end
-
-    context "returns slots for Los_Angeles" do
-      let(:regional_office) { "RO44" }
-
-      it { is_expected.to eq 8 }
     end
   end
 end

@@ -80,7 +80,8 @@ class HearingDay < ApplicationRecord
       methods: [
         :judge_first_name,
         :judge_last_name,
-        :readable_request_type
+        :readable_request_type,
+        :total_slots
       ]
     )
   end
@@ -135,14 +136,6 @@ class HearingDay < ApplicationRecord
   end
 
   class << self
-    def to_hash(hearing_day)
-      if hearing_day.is_a?(HearingDay)
-        hearing_day.to_hash
-      else
-        HearingDayRepository.to_hash(hearing_day)
-      end
-    end
-
     def create_hearing_day(hearing_hash)
       hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
       create(hearing_hash).to_hash
@@ -224,23 +217,18 @@ class HearingDay < ApplicationRecord
 
     def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
       total_video_and_co = load_days(start_date, end_date, regional_office)
+      vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(total_video_and_co.pluck(:id))
 
-      # fetching all the RO keys of the dockets
+      total_video_and_co.map do |hearing_day|
+        all_hearings = (hearing_day.hearings || []) + (vacols_hearings_for_days[hearing_day.id.to_s] || [])
+        scheduled_hearings = filter_non_scheduled_hearings(all_hearings || [])
 
-      hearing_days_to_array_of_days_and_hearings(
-        total_video_and_co, regional_office.nil? || regional_office == "C"
-      ).map do |value|
-        scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
-
-        total_slots = HearingDay.fetch_hearing_day_slots(regional_office)
-
-        if scheduled_hearings.length >= total_slots || value[:hearing_day][:lock]
+        if scheduled_hearings.length >= hearing_day.total_slots || hearing_day.lock
           nil
         else
-          HearingDay.to_hash(value[:hearing_day]).slice(:id, :scheduled_for, :request_type, :room).tap do |day|
-            day[:hearings] = scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
-            day[:total_slots] = total_slots
-          end
+          hearing_day.to_hash.merge({
+            "hearings" => scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
+          })
         end
       end.compact
     end
@@ -255,33 +243,7 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def fetch_hearing_day_slots(regional_office)
-      HearingDay::SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
-    end
-
     private
-
-    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, _is_video_hearing)
-      # We need to associate all of the hearing days from postgres with all of the
-      # hearings from VACOLS. For efficiency we make one call to VACOLS and then
-      # create a hash of the results using their ids.
-
-      vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(
-        total_video_and_co.map { |hearing_day| hearing_day[:id] }
-      )
-
-      # Group the hearing days with the same keys as the hearings
-      grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
-        hearing_day[:id].to_s
-      end
-
-      grouped_hearing_days.map do |key, day|
-        hearings = (vacols_hearings_for_days[key] || []) + (day[0].is_a?(HearingDay) ? day[0].hearings : [])
-
-        # There should only be one day, so we take the first value in our day array
-        { hearing_day: day[0], hearings: hearings }
-      end
-    end
 
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase
