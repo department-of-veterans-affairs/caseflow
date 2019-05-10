@@ -238,19 +238,36 @@ describe User do
     end
   end
 
-  context "#selectable_organizations" do
+  context "#selectable_organizations", focus: true do
     let(:judge) { FactoryBot.create :user }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge) }
+    let!(:judge_team_id) { judgeteam.id }
+
 
     subject { user.selectable_organizations }
 
-    before do
-      OrganizationsUser.add_user_to_organization(user, judgeteam)
+    context "when user is the team's judge" do
+      let(:user) { judge }
+
+      it "includes judge teams from the organization list" do
+        is_expected.to include(
+          :id => judge_team_id,
+          :name => "Assign",
+          :url => "queue/%<id>s/assign" % [id: judge_team_id]
+        )
+        expect(user.organizations).to include judgeteam
+      end
     end
 
-    it "excludes judge teams from the organization list" do
-      is_expected.to be_empty
-      expect(user.organizations).to include judgeteam
+    context "when user is not the team's judge" do
+      before do
+        OrganizationsUser.add_user_to_organization(user, judgeteam)
+      end
+
+      it "excludes judge teams from the organization list" do
+        is_expected.to be_empty
+        expect(user.organizations).to include judgeteam
+      end
     end
   end
 
