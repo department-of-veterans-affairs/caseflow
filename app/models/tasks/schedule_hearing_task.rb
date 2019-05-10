@@ -106,28 +106,6 @@ class ScheduleHearingTask < GenericTask
     hearing_admin_actions
   end
 
-  def add_admin_action_data(_user)
-    {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
-      message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
-      selected: nil,
-      options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
-        { value: subclass.name, label: subclass.label }
-      end
-    }
-  end
-
-  def withdraw_hearing_data(_user)
-    {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
-      modal_title: COPY::WITHDRAW_HEARING_MODAL_TITLE,
-      modal_body: COPY::WITHDRAW_HEARING_MODAL_BODY,
-      message_title: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name),
-      message_detail: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY, appeal.veteran_full_name),
-      back_to_hearing_schedule: true
-    }
-  end
-
   private
 
   def set_assignee

@@ -434,6 +434,10 @@
   "NON_COMP_ADDRESS_MESSAGE": "The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals. In order to decide that appeal, the Board will need the complete records from",
   "INTAKE_EDIT_TITLE": "Edit contention title",
 
+  "END_HOLD_MODAL_TITLE": "End hold early",
+  "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
+  "END_HOLD_SUCCESS_MESSAGE_TITLE": "Success! The hold has been ended early.",
+
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER": "There are no schedulable veterans",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE": "Please verify that this RO has veterans to assign a hearing",
   "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER": "This RO has no available hearing days",

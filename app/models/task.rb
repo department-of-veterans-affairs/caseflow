@@ -22,6 +22,7 @@ class Task < ApplicationRecord
   before_update :set_timestamps
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
+  after_update :cancel_timed_hold, unless: :task_just_placed_on_hold?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -65,11 +66,16 @@ class Task < ApplicationRecord
     active? && children.empty?
   end
 
-  # available_actions() returns an array of options from selected by the subclass
-  # from TASK_ACTIONS that looks something like:
+  # available_actions() returns an array of options selected by
+  # the subclass from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
     actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
+
+    # Add the cancel timed hold option to the set of actions here.
+    if actions.any? && on_timed_hold?
+      actions.push(build_action_hash(Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h, user))
+    end
 
     # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
     if actions.length > actions.pluck(:value).uniq.length
@@ -80,12 +86,16 @@ class Task < ApplicationRecord
   end
 
   def build_action_hash(action, user)
-    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
+    {
+      label: action[:label],
+      value: action[:value],
+      data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
+    }
   end
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
   def actions_available?(user)
-    return false if status == Constants.TASK_STATUSES.on_hold
+    return false if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
 
     actions_allowable?(user)
   end
@@ -109,6 +119,27 @@ class Task < ApplicationRecord
 
   def children_attorney_tasks
     children.where(type: AttorneyTask.name)
+  end
+
+  def on_timed_hold?
+    !active_child_timed_hold_task.nil?
+  end
+
+  def active_child_timed_hold_task
+    children.active.find_by(type: TimedHoldTask.name)
+  end
+
+  def cancel_timed_hold
+    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def calculated_placed_on_hold_at
+    active_child_timed_hold_task&.timer_start_time
+  end
+
+  def calculated_on_hold_duration
+    timed_hold_task = active_child_timed_hold_task
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def self.recently_closed
@@ -426,13 +457,6 @@ class Task < ApplicationRecord
     "#{type} completed"
   end
 
-  def timeline_details
-    {
-      title: timeline_title,
-      date: closed_at
-    }
-  end
-
   def update_if_hold_expired!
     update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
   end
@@ -480,13 +504,8 @@ class Task < ApplicationRecord
     task_just_closed? && parent
   end
 
-  def users_to_options(users)
-    users.map do |user|
-      {
-        label: user.full_name,
-        value: user.id
-      }
-    end
+  def task_just_placed_on_hold?
+    saved_change_to_attribute?(:placed_on_hold_at)
   end
 
   def update_status_if_children_tasks_are_complete
