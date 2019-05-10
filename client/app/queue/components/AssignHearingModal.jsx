@@ -171,7 +171,6 @@ class AssignHearingModal extends React.PureComponent {
     if (openHearing) {
       return null;
     }
-    console.log(this.getInitialValues());
 
     /* eslint-disable camelcase */
     return <QueueFlowModal
