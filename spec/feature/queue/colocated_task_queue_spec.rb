@@ -169,7 +169,7 @@ RSpec.feature "ColocatedTask" do
     end
   end
 
-  describe "vlj support staff changes task type", skip: "needs back end implementation" do
+  describe "vlj support staff changes task type" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:appeal) { root_task.appeal }
     let!(:colocated_task) do
@@ -179,6 +179,14 @@ RSpec.feature "ColocatedTask" do
         parent: root_task,
         assigned_to: vlj_support_staff,
         action: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last
+      )
+    end
+
+    # Fake available actions to allow change task type until the backend is implemented
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+    before do
+      allow_any_instance_of(ColocatedTask).to receive(:available_actions).and_return(
+        [Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h]
       )
     end
 
@@ -212,6 +220,13 @@ RSpec.feature "ColocatedTask" do
       # Add instructions and try again
       instructions = generate_words(5)
       fill_in("instructions", with: instructions)
+
+      # Fake response until the backend is implemented
+      # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+      allow_any_instance_of(TasksController).to receive(:update).and_return(
+        colocated_task.update(action: selected_opt_0, instructions: [instructions])
+      )
+
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # We should see a success message but remain on the case details page

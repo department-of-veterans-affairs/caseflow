@@ -57,7 +57,15 @@ RSpec.feature "MailTasks" do
     end
   end
 
-  describe "Changing a mail team task type", skip: "needs back end implementation" do
+  describe "Changing a mail team task type" do
+     # Fake available actions to allow change task type until the backend is implemented
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+    before do
+      allow_any_instance_of(MailTask).to receive(:available_actions).and_return(
+        [Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h]
+      )
+    end
+
     context "when task does not need to be reassigned" do
       let(:root_task) { FactoryBot.create(:root_task) }
       let(:old_task_type) { DeathCertificateMailTask }
@@ -99,6 +107,13 @@ RSpec.feature "MailTasks" do
         # Add instructions and try again
         instructions = generate_words(5)
         fill_in("instructions", with: instructions)
+
+        # Fake response until the backend is implemented
+        # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+        allow_any_instance_of(TasksController).to receive(:update).and_return(
+          mail_task.update(type: new_task_type, instructions: [instructions])
+        )
+
         find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
         # We should see a success message but remain on the case details page
@@ -159,6 +174,13 @@ RSpec.feature "MailTasks" do
         # Add instructions and try again
         instructions = generate_words(5)
         fill_in("instructions", with: instructions)
+
+        # Fake response until the backend is implemented
+        # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+        allow_any_instance_of(TasksController).to receive(:update).and_return(
+          mail_task.update(type: new_task_type, instructions: [instructions], assigned_to: FactoryBot.create(:user))
+        )
+
         find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
         # We should see a success message but remain on the case details page
