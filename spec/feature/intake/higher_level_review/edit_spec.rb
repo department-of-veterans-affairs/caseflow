@@ -1381,12 +1381,10 @@ feature "Higher Level Review Edit issues" do
         OrganizationsUser.add_user_to_organization(current_user, education_org)
         FeatureToggle.enable!(:decision_reviews)
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
-        FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
       end
 
       after do
         FeatureToggle.disable!(:decision_reviews)
-        FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
       end
 
       let(:withdraw_date) { 1.day.ago.to_date.mdY }
