@@ -323,6 +323,11 @@ class Veteran < ApplicationRecord
     !deceased?
   end
 
+  def unload_bgs_record
+    @bgs_record_loaded = false
+    # instance_variable_set(:@bgs_record_loaded, false)
+  end
+
   private
 
   def fetch_end_products

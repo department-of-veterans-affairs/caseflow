@@ -2,7 +2,7 @@
 
 # Travel Board master schedule is in a table called TBSCHED
 class VACOLS::TravelBoardSchedule < VACOLS::Record
-  self.table_name = "vacols.tbsched"
+  self.table_name = "tbsched"
 
   attribute :tbleg, :integer
 
@@ -27,7 +27,7 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
              :tbro,
              :tbstdate,
              :tbenddate)
-        .joins("join vacols.staff on
+        .joins("join staff on
                 staff.sattyid = tbmem1 OR
                 staff.sattyid = tbmem2 OR
                 staff.sattyid = tbmem3 OR

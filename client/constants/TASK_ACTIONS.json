@@ -18,6 +18,7 @@
     "MARK_COMPLETE": { "label": "Mark task complete", "value": "modal/mark_task_complete", "func": "complete_data" },
     "MARK_NO_SHOW_HEARING_COMPLETE": { "label": "Mark task complete: Release case for review", "value": "modal/mark_task_complete", "func": "complete_data" },
     "PLACE_HOLD": { "label": "Place hold", "value": "place_hold" },
+    "END_TIMED_HOLD": { "label": "End hold early", "value": "modal/end_hold" },
     "REASSIGN_TO_PERSON": { "label": "Re-assign to person", "value": "modal/reassign_to_person", "func": "assign_to_user_data" },
     "RESCHEDULE_HEARING": { "label": "Mark as complete: Reschedule hearing", "value": "modal/cancel_task", "func": "assign_to_hearing_schedule_team_data" },
     "RESCHEDULE_NO_SHOW_HEARING": { "label": "Mark as complete: Postpone", "value": "modal/reschedule_hearing" },

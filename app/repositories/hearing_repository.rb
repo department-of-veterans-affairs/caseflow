@@ -195,6 +195,11 @@ class HearingRepository
       date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
                                                   regional_office_key: ro,
                                                   type: vacols_record.hearing_type)
+      judge_id = if vacols_record.css_id.nil?
+                   nil
+                 else
+                   User.find_by_css_id_or_create_with_default_station_id(vacols_record.css_id).id
+                 end
       {
         vacols_record: vacols_record,
         appeal_vacols_id: vacols_record.folder_nr,
@@ -226,7 +231,9 @@ class HearingRepository
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
         hearing_day_id: vacols_record.vdkey,
-        master_record: false
+        master_record: false,
+        bva_poc: vacols_record.vdbvapoc,
+        judge_id: judge_id
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength

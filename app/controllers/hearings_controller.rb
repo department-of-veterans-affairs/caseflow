@@ -92,6 +92,9 @@ class HearingsController < ApplicationController
                                      :prepped,
                                      :scheduled_time_string,
                                      :scheduled_for,
+                                     :judge_id,
+                                     :room,
+                                     :bva_poc,
                                      hearing_location_attributes: [
                                        :city, :state, :address,
                                        :facility_id, :facility_type,

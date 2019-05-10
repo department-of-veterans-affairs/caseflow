@@ -27,12 +27,12 @@ class HearingTimeService
 
     def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
       hour, min = scheduled_time_string.split(":")
-
-      scheduled_for.to_datetime.change(
-        hour: hour.to_i,
-        min: min.to_i,
-        offset: timezone_to_offset("America/New_York")
-      )
+      time = scheduled_for.to_datetime
+      Time.use_zone("America/New_York") do
+        Time.zone.now.change(
+          year: time.year, month: time.month, day: time.day, hour: hour, min: min
+        )
+      end
     end
 
     def time_to_string(time)
@@ -72,8 +72,12 @@ class HearingTimeService
   def local_time
     return @hearing.scheduled_for if @hearing.is_a?(Hearing)
 
+    # if regional office is from HearingDay, it can only be nil if it's a
+    # central office hearing in ET
+    regional_office = @hearing.regional_office_timezone || "America/New_York"
+
     # scheduled_for returns hearing time in ET, convert back to local time
-    @hearing.scheduled_for.in_time_zone(@hearing.regional_office_timezone)
+    @hearing.scheduled_for.in_time_zone(regional_office)
   end
 
   def central_office_time
