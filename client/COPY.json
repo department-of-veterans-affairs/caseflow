@@ -131,8 +131,8 @@
   "ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION": "All AMA cases represented by %s that have been active at the Board of Veterans' Appeals in the past 2 weeks.",
 
   "JUDGE_CASE_REVIEW_TABLE_TITLE": "Review %s Cases",
-  "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign Cases",
-  "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Review Cases",
+  "JUDGE_ASSIGN_DROPDOWN_LINK_LABEL": "Assign team cases",
+  "JUDGE_REVIEW_DROPDOWN_LINK_LABEL": "Your Cases",
 
   "IS_PAPER_CASE": "This is a paper case",
 
