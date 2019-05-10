@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe HearingTimeService, focus: true do
+describe HearingTimeService do
   Time.zone = "UTC"
 
   context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
