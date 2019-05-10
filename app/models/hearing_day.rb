@@ -226,9 +226,9 @@ class HearingDay < ApplicationRecord
         if scheduled_hearings.length >= hearing_day.total_slots || hearing_day.lock
           nil
         else
-          hearing_day.to_hash.merge({
+          hearing_day.to_hash.merge(
             "hearings" => scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
-          })
+          )
         end
       end.compact
     end

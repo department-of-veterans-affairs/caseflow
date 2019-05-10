@@ -59,7 +59,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     let!(:hearing) { create(:hearing, :with_tasks) }
     let!(:postponed_hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 3)) }
 
-    scenario "User can update fields" do
+    scenario "User can update fields", focus: true do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       click_dropdown(name: "#{hearing.external_id}-disposition", index: 1)
       click_button("Confirm")

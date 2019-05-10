@@ -215,7 +215,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def filter_co_hearings(video_co_hearing_days)
     video_co_hearing_days.map do |hearing_day|
-      day = OpenStruct.new(HearingDay.to_hash(hearing_day))
+      day = OpenStruct.new(hearing_day.to_hash)
       day.scheduled_for = day.scheduled_for.to_date
 
       day if (valid_co_day?(day) || valid_ro_hearing_day?(day)) && !hearing_day_already_assigned(day)
