@@ -27,8 +27,22 @@ class TimedHoldTask < GenericTask
     update!(status: :completed) if active?
   end
 
+  # Function to set the end time for the related TaskTimer when this class is instantiated.
   def timer_ends_at
     created_at + days_on_hold.days
+  end
+
+  # Inspect the end time for related task timer.
+  def timer_end_time
+    task_timers.first&.submitted_at
+  end
+
+  def timer_start_time
+    task_timers.first&.created_at
+  end
+
+  def hide_from_queue_table_view
+    true
   end
 
   def hide_from_case_timeline
