@@ -103,7 +103,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
   };
 
   render = () => {
-    const { error, ...otherProps } = this.props;
+    const { error } = this.props;
 
     return <QueueFlowModal
       validateForm={this.validateForm}
@@ -111,7 +111,6 @@ class ChangeTaskTypeModal extends React.PureComponent {
       title={COPY.CHANGE_TASK_TYPE_SUBHEAD}
       button={COPY.CHANGE_TASK_TYPE_SUBHEAD}
       pathAfterSubmit={`/queue/appeals/${this.props.appealId}`}
-      {...otherProps}
     >
       {error && <Alert title={error.title} type="error">
         {error.detail}
