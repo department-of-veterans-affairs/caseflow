@@ -27,32 +27,23 @@ class ChangeTaskTypeModal extends React.PureComponent {
     super(props);
 
     this.state = {
-      action: {
-        actionOption: null,
-        instructions: ''
-      }
+      actionOption: null,
+      instructions: ''
     };
   }
 
-  updateActionField = (key, value) => {
-    const action = { ...this.state.action };
-
-    action[key] = value;
-    this.setState({ action });
-  }
-
-  validateForm = () => Boolean(this.state.action.actionOption) && Boolean(this.state.action.instructions);
+  validateForm = () => Boolean(this.state.actionOption) && Boolean(this.state.instructions);
 
   buildPayload = () => {
     const { appeal } = this.props;
-    const { action } = this.state;
+    const { actionOption, instructions } = this.state;
 
     return {
       data: {
         task: {
-          action: action.actionOption.value,
-          instructions: action.instructions,
-          type: taskActionData(this.props).type || action.actionOption.value,
+          action: actionOption.value,
+          instructions,
+          type: taskActionData(this.props).type || actionOption.value,
           external_id: appeal.externalId
         }
       }
@@ -61,7 +52,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
   submit = () => {
     const { task } = this.props;
-    const { action } = this.state;
+    const { actionOption } = this.state;
 
     const payload = this.buildPayload();
 
@@ -70,7 +61,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
       option.value === task.label || option.label === task.label
     );
     const successMsg = {
-      title: sprintf(msgTitle, oldTaskType.label, action.actionOption.label),
+      title: sprintf(msgTitle, oldTaskType.label, actionOption.label),
       detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
@@ -85,9 +76,9 @@ class ChangeTaskTypeModal extends React.PureComponent {
       });
   }
 
-  actionForm = (action) => {
+  actionForm = () => {
     const { highlightFormItems } = this.props;
-    const { instructions, actionOption } = action;
+    const { instructions, actionOption } = this.state;
 
     return <React.Fragment>
       <div>
@@ -97,14 +88,14 @@ class ChangeTaskTypeModal extends React.PureComponent {
             name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
             placeholder="Select an action type"
             options={taskActionData(this.props).options}
-            onChange={(option) => option && this.updateActionField('actionOption', option)}
+            onChange={(option) => option && this.setState({ actionOption: option })}
             value={actionOption && actionOption.value} />
         </div>
         <div {...marginTop(4)}>
           <TextareaField
             errorMessage={highlightFormItems && !instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
             name={COPY.CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL}
-            onChange={(value) => this.updateActionField('instructions', value)}
+            onChange={(value) => this.setState({ instructions: value })}
             value={instructions} />
         </div>
       </div>
@@ -113,7 +104,6 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
   render = () => {
     const { error, ...otherProps } = this.props;
-    const { action } = this.state;
 
     return <QueueFlowModal
       validateForm={this.validateForm}
@@ -126,7 +116,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
       {error && <Alert title={error.title} type="error">
         {error.detail}
       </Alert>}
-      { this.actionForm(action) }
+      { this.actionForm() }
     </QueueFlowModal>;
   }
 }
