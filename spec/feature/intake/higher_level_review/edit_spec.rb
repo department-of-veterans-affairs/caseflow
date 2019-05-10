@@ -1443,6 +1443,21 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_current_path("/decision_reviews/education")
         expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
       end
+    end
+
+    context "when rating is withdrawn" do
+      before do
+        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
+      end
+
+      after do
+        FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
+      end
+
+      let!(:issue) do
+        create(:request_issue, :rating, decision_review: higher_level_review, contested_issue_description: "PTSD")
+      end
 
       scenario "edit contention text" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
@@ -1453,8 +1468,7 @@ feature "Higher Level Review Edit issues" do
           click_edit_contention_issue
         end
 
-        expect(page).to have_content("Apportionment")
-        expect(page).to have_button("Submit")
+        expect(page).to have_content("PTSD")
       end
     end
 
