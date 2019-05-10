@@ -5,7 +5,7 @@ import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
 import TabWindow from '../components/TabWindow';
-import TaskTable from './components/TaskTable';
+import TaskTable, { DocketNumberColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -147,12 +147,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   <TaskTable
+    customColumns={[DocketNumberColumn(tasks, false)]}
     includeHearingBadge
     includeDetailsLink
     includeTask
     includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
-    includeDocketNumber
     includeDaysWaiting
     includeReaderLink
     includeNewDocsIcon
@@ -161,8 +161,11 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <Re
   />
 </React.Fragment>;
 
+    // includeDocketNumber
+
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
+
   <TaskTable
     includeHearingBadge
     includeDetailsLink
