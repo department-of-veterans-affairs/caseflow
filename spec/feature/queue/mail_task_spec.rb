@@ -58,7 +58,7 @@ RSpec.feature "MailTasks" do
   end
 
   describe "Changing a mail team task type" do
-     # Fake available actions to allow change task type until the backend is implemented
+    # Fake available actions to allow change task type until the backend is implemented
     # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
     before do
       allow_any_instance_of(MailTask).to receive(:available_actions).and_return(
