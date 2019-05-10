@@ -42,17 +42,6 @@ class DispositionTask < GenericTask
     end
   end
 
-  def add_schedule_hearing_task_admin_actions_data(_user)
-    {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
-      message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
-      selected: nil,
-      options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
-        { value: subclass.name, label: subclass.label }
-      end
-    }
-  end
-
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
