@@ -84,9 +84,11 @@ class MailTask < GenericTask
     mail_assign_to_organization_data
   end
 
-  def available_actions(user)
-    super(user) # .unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
-  end
+  # Waiting for backend implementation before allowing user access
+  # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+  # def available_actions(user)
+  #   super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+  # end
 end
 
 class AddressChangeMailTask < MailTask
