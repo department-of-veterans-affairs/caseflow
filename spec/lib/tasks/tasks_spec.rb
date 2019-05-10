@@ -302,5 +302,16 @@ describe "task rake tasks" do
         expect { subject }.to raise_error(InvalidTaskType).with_message(expected_output)
       end
     end
+
+    context "an id that doesn't belong to an organization is passed" do
+      let(:bad_org_id) { 123_456 }
+      let(:args) { [target_task_name, bad_org_id, to_org.id, "false"] }
+
+      it "warns about passing an id that doesn't belong to an organization" do
+        expected_output = "No organization with id #{bad_org_id}!"
+        expect(Rails.logger).to receive(:info).with("Invoked with: #{args.join(', ')}")
+        expect { subject }.to raise_error(InvalidOrganization).with_message(expected_output)
+      end
+    end
   end
 end
