@@ -2,7 +2,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
-import _ from 'lodash';
 import { sprintf } from 'sprintf-js';
 
 import TextareaField from '../components/TextareaField';
