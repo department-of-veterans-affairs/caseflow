@@ -13,8 +13,6 @@ class WorkQueue::TaskSerializer
   attribute :started_at
   attribute :created_at
   attribute :closed_at
-  attribute :placed_on_hold_at
-  attribute :on_hold_duration
   attribute :instructions
   attribute :appeal_type
   attribute :timeline_title
@@ -39,6 +37,14 @@ class WorkQueue::TaskSerializer
       type: object.assigned_to.class.name,
       id: object.assigned_to.id
     }
+  end
+
+  attribute :placed_on_hold_at do |object|
+    object.placed_on_hold_at || object.calculated_placed_on_hold_at
+  end
+
+  attribute :on_hold_duration do |object|
+    object.on_hold_duration || object.calculated_on_hold_duration
   end
 
   attribute :docket_name do |object|

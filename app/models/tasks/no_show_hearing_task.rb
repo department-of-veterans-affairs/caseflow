@@ -32,12 +32,6 @@ class NoShowHearingTask < GenericTask
     end
   end
 
-  def complete_data(_user = nil)
-    {
-      modal_body: COPY::NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY
-    }
-  end
-
   private
 
   def set_assignee

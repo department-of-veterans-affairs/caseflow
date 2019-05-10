@@ -23,22 +23,6 @@ class TranscriptionTask < GenericTask
     end
   end
 
-  def complete_transcription_data(_user)
-    {
-      modal_body: COPY::COMPLETE_TRANSCRIPTION_BODY
-    }
-  end
-
-  def assign_to_hearing_schedule_team_data(_user)
-    {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
-      modal_title: COPY::RETURN_CASE_TO_HEARINGS_MANAGEMENT_TITLE,
-      modal_body: COPY::RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY,
-      message_title: format(COPY::RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_TITLE, appeal.veteran_full_name),
-      message_detail: format(COPY::RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_BODY, appeal.veteran_full_name)
-    }
-  end
-
   def update_from_params(params, current_user)
     multi_transaction do
       verify_user_can_update!(current_user)
