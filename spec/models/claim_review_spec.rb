@@ -23,7 +23,7 @@ describe ClaimReview do
     )
   end
 
-  let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+  let(:receipt_date) { Constants::DATES["AMA_ACTIVATION"].to_date + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
