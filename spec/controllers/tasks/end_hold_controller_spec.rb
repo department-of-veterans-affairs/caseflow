@@ -34,10 +34,23 @@ RSpec.describe Tasks::EndHoldController, type: :controller do
     context "with a non-existent parent_id" do
       let(:parent_id) { parent.id + 999 }
 
-      it "returns an error" do
+      it "returns a not found error" do
         subject
 
         expect(response.status).to eq(404)
+      end
+    end
+
+    context "when the user is missing" do
+      before do
+        user.destroy!
+      end
+
+      it "returns an invalid record error" do
+        subject
+
+        expect(response.status).to eq(400)
+        expect(JSON.parse(response.body)["errors"][0]["title"]).to eq "Record is invalid"
       end
     end
   end
