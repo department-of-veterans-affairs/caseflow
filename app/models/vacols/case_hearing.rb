@@ -121,7 +121,7 @@ class VACOLS::CaseHearing < VACOLS::Record
     def select_hearings
       # VACOLS overloads the HEARSCHED table with other types of hearings
       # that work differently. Filter those out.
-      select("HEARING_VENUE(vdkey) as hearing_venue",
+      select("#{Rails.application.config.vacols_db_name}.HEARING_VENUE(vdkey) as hearing_venue",
              :hearing_disp, :hearing_pkseq, :hearing_date, :hearing_type,
              :notes1, :folder_nr, :vdkey, :aod,
              :holddays, :tranreq, :transent,
