@@ -4,7 +4,6 @@ import * as Constants from './actionTypes';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import ApiUtil from '../../util/ApiUtil';
 import { hideErrorMessage, showErrorMessage, updateFilteredIdsAndDocs } from '../commonActions';
-import _ from 'lodash';
 import { handleErrorWithSafeNavigation } from '../utils';
 
 /** Annotation Modal **/
