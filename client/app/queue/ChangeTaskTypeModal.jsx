@@ -22,20 +22,16 @@ import COPY from '../../COPY.json';
 import { taskActionData } from './utils';
 import QueueFlowModal from './components/QueueFlowModal';
 
-const actionTemplate = () => {
-  return {
-    actionLabel: null,
-    instructions: '',
-    key: _.uniqueId('action_')
-  };
-};
-
 class ChangeTaskTypeModal extends React.PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      action: actionTemplate()
+      action: {
+        actionLabel: null,
+        instructions: '',
+        key: _.uniqueId('action_')
+      }
     };
   }
 
@@ -53,10 +49,14 @@ class ChangeTaskTypeModal extends React.PureComponent {
     const { action } = this.state;
 
     return {
-      action: action.actionLabel,
-      instructions: action.instructions,
-      type: taskActionData(this.props).type || action.actionLabel,
-      external_id: appeal.externalId
+      data: {
+        task: {
+          action: action.actionLabel,
+          instructions: action.instructions,
+          type: taskActionData(this.props).type || action.actionLabel,
+          external_id: appeal.externalId
+        }
+      }
     };
   }
 
@@ -64,12 +64,8 @@ class ChangeTaskTypeModal extends React.PureComponent {
     const { task } = this.props;
     const { action } = this.state;
 
-    const payload = {
-      data: {
-        task: this.buildPayload(),
-        role: this.props.role
-      }
-    };
+    const payload = this.buildPayload();
+
     const msgTitle = COPY.CHANGE_TASK_TYPE_CONFIRMATION_TITLE;
     const oldTaskType = taskActionData(this.props).options.find((option) =>
       option.value === task.label || option.label === task.label
