@@ -42,10 +42,6 @@ class HearingTimeService
       "#{pad_time(datetime.hour)}:#{pad_time(datetime.min)}"
     end
 
-    def timezone_to_offset(timezone)
-      Time.now.in_time_zone(timezone).strftime("%z")
-    end
-
     private
 
     def pad_time(time)
@@ -72,7 +68,7 @@ class HearingTimeService
   def local_time
     return @hearing.scheduled_for if @hearing.is_a?(Hearing)
 
-    # if regional office is from HearingDay, it can only be nil if it's a
+    # since regional office is from HearingDay, it can only be nil if it's a
     # central office hearing in ET
     regional_office = @hearing.regional_office_timezone || "America/New_York"
 

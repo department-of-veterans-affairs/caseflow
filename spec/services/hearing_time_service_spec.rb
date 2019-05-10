@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-describe HearingTimeService do
+describe HearingTimeService, focus: true do
   Time.zone = "UTC"
 
   context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
     let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00") }
     let!(:legacy_hearing) do
-      # legacy scheduled_for is incorrectly offset to central_office but reflects local time
+      # vacols requires us to pass a time set in ET even though it reflects local time
+      # and is stored UTC
       create(
         :legacy_hearing,
         regional_office: "RO43",
@@ -31,8 +32,11 @@ describe HearingTimeService do
       end
 
       it "returns scheduled_for parameter in ET and removes scheduled_time_string param" do
-        offset = HearingTimeService.timezone_to_offset("America/New_York")
-        expected_params = { scheduled_for: legacy_hearing.scheduled_for.change(hour: 13, min: 30, offset: offset) }
+        expected_scheduled_for = Time.use_zone("America/New_York") do
+          time = legacy_hearing.scheduled_for.to_datetime
+          Time.zone.local(time.year, time.month, time.day, hour: 13, min: 30)
+        end
+        expected_params = { scheduled_for: expected_scheduled_for }
         expect(HearingTimeService.build_legacy_params_with_time(legacy_hearing, params)).to eq(expected_params)
         expect(params).to eq(scheduled_time_string: "13:30")
       end
