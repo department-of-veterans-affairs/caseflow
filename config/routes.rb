@@ -219,6 +219,7 @@ Rails.application.routes.draw do
       post :request_hearing_disposition_change
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
+    resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
   end
   resources :judge_assign_tasks, only: [:create]
 
