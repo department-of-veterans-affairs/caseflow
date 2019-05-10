@@ -12,12 +12,12 @@ class HearingsController < ApplicationController
 
   def update
     if hearing.is_a?(LegacyHearing)
-      params = HearingTimeService.build_legacy_params_with_time(update_params_legacy)
+      params = HearingTimeService.build_legacy_params_with_time(hearing, update_params_legacy)
       hearing.update_caseflow_and_vacols(params)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
       HearingRepository.load_vacols_data(hearing)
     else
-      params = HearingTimeService.build_params_with_time(update_params)
+      params = HearingTimeService.build_params_with_time(hearing, update_params)
       Transcription.find_or_create_by(hearing: hearing)
       hearing.update!(params)
     end
