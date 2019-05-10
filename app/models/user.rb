@@ -251,7 +251,7 @@ class User < ApplicationRecord
       orgs << {
         id: judge_team.id,
         name: "Assign",
-        url: "queue/%<id>s/assign" % [id: id]
+        url: format("queue/%s/assign", id)
       }
     end
 
