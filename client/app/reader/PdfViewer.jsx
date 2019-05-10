@@ -23,7 +23,6 @@ import { getFilteredDocuments } from './selectors';
 import * as Constants from './constants';
 import { ROTATION_INCREMENTS } from './Documents/actionTypes';
 import { CATEGORIES, ACTION_NAMES, INTERACTION_TYPES } from './analytics';
-import _ from 'lodash';
 
 const NUMBER_OF_DIRECTIONS = 4;
 
