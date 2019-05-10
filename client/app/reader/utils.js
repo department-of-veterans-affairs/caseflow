@@ -170,5 +170,6 @@ export const handleErrorWithSafeNavigation = (response) => {
 
   return error;
 };
+
 export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) => (_.isEmpty(appeal) ||
     ((appeal.vacols_id || appeal.external_id) !== vacolsIdFromUrl));
