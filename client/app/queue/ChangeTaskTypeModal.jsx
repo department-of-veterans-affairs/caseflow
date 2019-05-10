@@ -28,9 +28,8 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
     this.state = {
       action: {
-        actionLabel: null,
-        instructions: '',
-        key: _.uniqueId('action_')
+        actionOption: null,
+        instructions: ''
       }
     };
   }
@@ -42,7 +41,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
     this.setState({ action });
   }
 
-  validateForm = () => Boolean(this.state.action.actionLabel) && Boolean(this.state.action.instructions);
+  validateForm = () => Boolean(this.state.action.actionOption) && Boolean(this.state.action.instructions);
 
   buildPayload = () => {
     const { appeal } = this.props;
@@ -51,9 +50,9 @@ class ChangeTaskTypeModal extends React.PureComponent {
     return {
       data: {
         task: {
-          action: action.actionLabel,
+          action: action.actionOption.value,
           instructions: action.instructions,
-          type: taskActionData(this.props).type || action.actionLabel,
+          type: taskActionData(this.props).type || action.actionOption.value,
           external_id: appeal.externalId
         }
       }
@@ -70,9 +69,8 @@ class ChangeTaskTypeModal extends React.PureComponent {
     const oldTaskType = taskActionData(this.props).options.find((option) =>
       option.value === task.label || option.label === task.label
     );
-    const newTaskType = taskActionData(this.props).options.find((option) => option.value === action.actionLabel);
     const successMsg = {
-      title: sprintf(msgTitle, oldTaskType.label, newTaskType.label),
+      title: sprintf(msgTitle, oldTaskType.label, action.actionOption.label),
       detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
@@ -89,18 +87,18 @@ class ChangeTaskTypeModal extends React.PureComponent {
 
   actionForm = (action) => {
     const { highlightFormItems } = this.props;
-    const { instructions, actionLabel, key } = action;
+    const { instructions, actionOption } = action;
 
     return <React.Fragment>
-      <div id={key} key={key}>
+      <div>
         <div {...marginTop(4)}>
           <SearchableDropdown
-            errorMessage={highlightFormItems && !actionLabel ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+            errorMessage={highlightFormItems && !actionOption ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
             name={COPY.CHANGE_TASK_TYPE_ACTION_LABEL}
             placeholder="Select an action type"
             options={taskActionData(this.props).options}
-            onChange={(option) => option && this.updateActionField('actionLabel', option.value)}
-            value={actionLabel} />
+            onChange={(option) => option && this.updateActionField('actionOption', option)}
+            value={actionOption && actionOption.value} />
         </div>
         <div {...marginTop(4)}>
           <TextareaField
