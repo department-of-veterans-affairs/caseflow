@@ -11,6 +11,6 @@ RSpec.feature "Send feedback" do
 
     expect(page).to have_link("Send feedback")
     click_on "Send feedback"
-    expect(page).to have_link("YourIT")
+    expect(page).to have_content("YourIT")
   end
 end
