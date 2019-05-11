@@ -1443,7 +1443,7 @@ feature "Higher Level Review Edit issues" do
       end
     end
 
-    context "when rating is withdrawn" do
+    context "when a rating decision is edited" do
       before do
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
@@ -1466,7 +1466,7 @@ feature "Higher Level Review Edit issues" do
           click_edit_contention_issue
         end
 
-        expect(page).to have_content("PTSD")
+        expect(page).to have_content(issue.contested_issue_description)
       end
     end
 
