@@ -73,9 +73,12 @@ describe RequestIssue do
       vacols_sequence_id: vacols_sequence_id,
       closed_at: closed_at,
       closed_status: closed_status,
-      ineligible_reason: ineligible_reason
+      ineligible_reason: ineligible_reason,
+      edited_description: edited_description
     )
   end
+
+  let(:edited_description) { nil }
 
   let!(:nonrating_request_issue) do
     create(
@@ -638,6 +641,19 @@ describe RequestIssue do
 
     context "when contested_issue_description present" do
       let(:request_issue) { rating_request_issue }
+      it { is_expected.to eq("a rating request issue") }
+    end
+
+    context "when description is edited" do
+      let(:request_issue) { rating_request_issue }
+      let(:edited_description) { "edited description" }
+      it { is_expected.to eq(edited_description) }
+    end
+
+    context "when description returns empty string" do
+      let(:request_issue) { rating_request_issue }
+      let(:edited_description) { "" }
+
       it { is_expected.to eq("a rating request issue") }
     end
 
