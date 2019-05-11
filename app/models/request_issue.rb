@@ -233,6 +233,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def description
+    return edited_description if edited_description.present?
     return contested_issue_description if contested_issue_description
     return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
     return unidentified_issue_text if is_unidentified?
@@ -285,7 +286,8 @@ class RequestIssue < ApplicationRecord
       decision_review_title: review_title,
       title_of_active_review: title_of_active_review,
       contested_decision_issue_id: contested_decision_issue_id,
-      withdrawal_date: withdrawal_date
+      withdrawal_date: withdrawal_date,
+      contested_issue_description: contested_issue_description
     }
   end
 
