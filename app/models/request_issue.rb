@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
@@ -267,7 +266,6 @@ class RequestIssue < ApplicationRecord
     closed_at if withdrawn?
   end
 
-  # rubocop:disable Metrics/MethodLength
   def ui_hash
     {
       id: id,
@@ -292,7 +290,6 @@ class RequestIssue < ApplicationRecord
       contested_issue_description: contested_issue_description
     }
   end
-  # rubocop:enable Metrics/MethodLength
 
   def approx_decision_date_of_issue_being_contested
     return if is_unidentified
@@ -646,8 +643,6 @@ class RequestIssue < ApplicationRecord
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def check_for_eligible_previous_review!
     return unless eligible?
     return unless contested_issue
@@ -668,8 +663,6 @@ class RequestIssue < ApplicationRecord
 
     self.ineligible_due_to_id = contested_issue.source_request_issues.first&.id if ineligible_reason
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
     return unless eligible? && should_check_for_before_ama?
@@ -782,4 +775,3 @@ class RequestIssue < ApplicationRecord
     decision_review.tasks.active.any?
   end
 end
-# rubocop:enable Metrics/ClassLength

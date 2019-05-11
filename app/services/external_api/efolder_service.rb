@@ -18,7 +18,7 @@ class ExternalApi::EfolderService
     generate_efolder_request(appeal.veteran_file_number.to_s, user)
   end
 
-  def self.generate_efolder_request(vbms_id, user, retry_attempts_count = 300)
+  def self.generate_efolder_request(vbms_id, user, retry_attempts_count = 10)
     headers = { "FILE-NUMBER" => vbms_id }
     response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
     response_attrs = {}
@@ -88,7 +88,6 @@ class ExternalApi::EfolderService
     Rails.application.config.efolder_key.to_s
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.send_efolder_request(endpoint, user, headers = {}, method: :get)
     DBService.release_db_connections
 
@@ -114,5 +113,4 @@ class ExternalApi::EfolderService
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
 end
