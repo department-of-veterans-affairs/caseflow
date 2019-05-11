@@ -10,7 +10,8 @@ RSpec.feature "Send feedback" do
     visit "certifications/new/#{appeal.vacols_id}"
 
     expect(page).to have_link("Send feedback")
-    click_on "Send feedback"
-    expect(page).to have_content("YourIT")
+
+    href = find_link("Send feedback")["href"]
+    expect(href).to include("/feedback")
   end
 end
