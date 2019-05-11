@@ -128,13 +128,20 @@ class TasksController < ApplicationController
   end
 
   def request_hearing_disposition_change
-    hearing_task = task.ancestor_task_of_type(HearingTask)
+    instructions = create_params&.first&.dig(:instructions)
 
-    if hearing_task.blank?
-      fail(Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+    change_actions = [
+      Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h,
+      Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
+    ]
+
+    available_actions = task.available_actions(current_user)
+
+    if available_actions.any? { |action| change_actions.include? action }
+      task.create_change_hearing_disposition_task(instructions)
+    else
+      fail Caseflow::Error::NoEligibleHearing, task_id: task.id
     end
-
-    hearing_task.create_change_hearing_disposition_task_and_complete_children create_params&.first&.dig(:instructions)
 
     render json: {
       tasks: json_tasks(task.appeal.tasks.includes(*task_includes))[:data]

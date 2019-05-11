@@ -92,8 +92,27 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
+  def create_change_hearing_disposition_task(instructions = nil)
+    hearing_task = most_recent_inactive_hearing_task_on_appeal
+
+    if hearing_task&.hearing&.disposition.blank?
+      fail Caseflow::Error::NoEligibleHearing, task_id: task.id
+    end
+
+    # cancel my children, myself, and my hearing task ancestor
+    children.active.update_all(status: Constants.TASK_STATUSES.cancelled)
+    update!(status: Constants.TASK_STATUSES.cancelled)
+    ancestor_task_of_type(HearingTask)&.update!(status: Constants.TASK_STATUSES.cancelled)
+
+    # reopen the most recent inactive HearingTask on my appeal
+    hearing_task.update!(status: Constants.TASK_STATUSES.on_hold, closed_at: nil)
+
+    # reopen or create a ChangeHearingDispositionTask on the HearingTask
+    hearing_task.reopen_or_create_change_hearing_disposition_task(instructions)
+  end
+
   def available_actions(user)
-    hearing_admin_actions = available_hearing_admin_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
 
     if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
       return [

@@ -51,11 +51,11 @@ describe GenericTask do
     end
   end
 
-  describe ".available_hearing_admin_actions" do
+  describe ".available_hearing_user_actions" do
     let!(:task) { FactoryBot.create(:generic_task) }
     let(:user) { FactoryBot.create(:user) }
 
-    subject { task.available_hearing_admin_actions(user) }
+    subject { task.available_hearing_user_actions(user) }
 
     it "returns no actions when task doesn't have an active hearing task ancestor" do
       expect(subject).to eq []

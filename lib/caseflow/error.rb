@@ -43,6 +43,14 @@ module Caseflow::Error
     end
   end
 
+  class NoEligibleHearing < SerializableError
+    def initialize(args)
+      @task_id = args[:task_id]
+      @code = args[:code] || 500
+      @message = args[:message] || "No eligible hearing found for task with ID #{@task_id}"
+    end
+  end
+
   class NoRootTask < SerializableError
     def initialize(args)
       @task_id = args[:task_id]
