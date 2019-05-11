@@ -12,6 +12,6 @@ RSpec.feature "Send feedback" do
     expect(page).to have_link("Send feedback")
 
     href = find_link("Send feedback")["href"]
-    expect(href).to include("/feedback")
+    expect(href).to match(/\/feedback$/)
   end
 end
