@@ -10,7 +10,7 @@ class TimedHoldTask < GenericTask
   after_create :cancel_active_siblings
 
   attr_accessor :days_on_hold
-  validates :days_on_hold, presence: true, inclusion: { in: 1..100 }, on: :create
+  validates :days_on_hold, presence: true, inclusion: { in: 1..120 }, on: :create
 
   def self.create_from_parent(parent_task, days_on_hold:, assigned_by: nil, instructions: nil)
     create!(
