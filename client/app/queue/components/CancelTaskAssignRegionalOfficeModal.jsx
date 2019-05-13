@@ -10,7 +10,7 @@ import QueueFlowModal from './QueueFlowModal';
 import RegionalOfficeDropdown from '../../components/DataDropdowns/RegionalOffice';
 import TextareaField from '../../components/TextareaField';
 import { taskById } from '../selectors';
-import { highlightInvalidFormItems } from '../uiReducer/uiActions';
+import { highlightInvalidFormItems, requestPatch } from '../uiReducer/uiActions';
 
 class CancelTaskAssignRegionalOfficeModal extends React.Component {
   constructor(props) {
@@ -32,7 +32,26 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
   onNotesChanged = (notes) => this.setState({ notes });
 
   onSubmit = () => {
-    // Return a future
+    const { task } = this.props;
+    const { regionalOffice } = this.state;
+    const payload = {
+      data: {
+        task: {
+          status: 'completed',
+          business_payloads: {
+            values: {
+              regional_office_value: regionalOffice
+            }
+          }
+        }
+      }
+    };
+    const successMessage = {
+      title: COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE,
+      detail: COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_DETAIL
+    };
+
+    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMessage);
   };
 
   render = () => {
@@ -72,7 +91,8 @@ const mapStateToProps = (state, ownProps) => (
 );
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  highlightInvalidFormItems
+  highlightInvalidFormItems,
+  requestPatch
 }, dispatch);
 
 export default (withRouter(
