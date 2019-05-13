@@ -73,17 +73,6 @@ class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
     "Contested claimant issue"
   end
 end
-class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
-  after_update :fetch_closest_ro_and_ahls, if: :task_just_closed?
-
-  def self.label
-    "Verify Address"
-  end
-
-  def fetch_closest_ro_and_ahls
-    appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
-  end
-end
 class HearingAdminActionMissingFormsTask < HearingAdminActionTask
   def self.label
     "Missing forms"
