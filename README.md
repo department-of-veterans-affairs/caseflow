@@ -352,13 +352,14 @@ Rails provides a useful way to connect to the default database called `dbconsole
 ```sh
 bundle exec rails dbconsole # password is `postgres`
 ```
-#### FACOLS
-
-To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
 
 You can also use Psequel (instead of SQL Developer) with the following setup (user and password is postgres):
 
 <img width="1659" alt="Screenshot 2019-02-11 12 19 42" src="https://user-images.githubusercontent.com/46791771/57386802-1fd1ac00-7183-11e9-8333-63249df033d2.png">
+
+#### FACOLS
+
+To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
 
 ## Running tests
 
