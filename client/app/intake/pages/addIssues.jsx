@@ -16,8 +16,8 @@ import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import AddedIssue from '../components/AddedIssue';
 import ErrorAlert from '../components/ErrorAlert';
-import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES } from '../constants';
-import { formatAddedIssues, getAddIssuesFields } from '../util/issues';
+import { REQUEST_STATE, PAGE_PATHS, VBMS_BENEFIT_TYPES, FORM_TYPES } from '../constants';
+import { formatAddedIssues, getAddIssuesFields, validateDate } from '../util/issues';
 import { formatDateStr } from '../../util/DateUtil';
 import Table from '../../components/Table';
 import EditContentionTitle from '../components/EditContentionTitle';
@@ -152,6 +152,8 @@ export class AddIssuesPage extends React.Component {
       return <div className="issues">
         <div>
           { requestIssues.map((issue) => {
+            const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key && !issue.category);
+
             return <div className="issue-container" key={`issue-container-${issue.index}`}>
               <div
                 className="issue"
@@ -184,7 +186,7 @@ export class AddIssuesPage extends React.Component {
                   }
                 </div>
               </div>
-              {editContentionText && <EditContentionTitle
+              {editContentionText && editableContentionText && <EditContentionTitle
                 issue= {issue}
                 issueIdx={issue.index} />}
             </div>;
@@ -225,6 +227,33 @@ export class AddIssuesPage extends React.Component {
     };
 
     const messageHeader = this.props.editPage ? 'Edit Issues' : 'Add / Remove Issues';
+
+    const withdrawError = () => {
+
+      const withdrawalDate = new Date(intakeData.withdrawalDate);
+
+      const currentDate = new Date();
+
+      const receiptDate = new Date(intakeData.receiptDate);
+
+      const formName = _.find(FORM_TYPES, { key: formType }).shortName;
+
+      let message;
+
+      if (validateDate(intakeData.withdrawalDate)) {
+
+        if (withdrawalDate < receiptDate) {
+          message = `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
+
+        } else if (withdrawalDate > currentDate) {
+
+          message = 'We cannot process your request. Please select a date prior to today\'s date.';
+        }
+
+        return message;
+      }
+
+    };
 
     const columns = [
       { valueName: 'field' },
@@ -311,6 +340,7 @@ export class AddIssuesPage extends React.Component {
               value={intakeData.withdrawalDate}
               onChange={this.withdrawalDateOnChange}
               placeholder={withdrawDatePlaceholder}
+              dateErrorMessage={withdrawError()}
             />
           </InlineForm>
         </div>

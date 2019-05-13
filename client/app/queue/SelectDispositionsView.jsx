@@ -6,11 +6,12 @@ import _ from 'lodash';
 import { css } from 'glamor';
 
 import Button from '../components/Button';
+import AmaIssueList from '../components/AmaIssueList';
+import DecisionIssues from './components/DecisionIssues';
 import SelectIssueDispositionDropdown from './components/SelectIssueDispositionDropdown';
 import Modal from '../components/Modal';
 import TextareaField from '../components/TextareaField';
 import SearchableDropdown from '../components/SearchableDropdown';
-import ContestedIssues, { contestedIssueStyling } from './components/ContestedIssues';
 import COPY from '../../COPY.json';
 import { COLORS } from '../constants/AppConstants';
 
@@ -247,7 +248,6 @@ class SelectDispositionsView extends React.PureComponent {
 
   render = () => {
     const { appeal, highlight, ...otherProps } = this.props;
-
     const {
       highlightModal,
       decisionIssue,
@@ -256,12 +256,24 @@ class SelectDispositionsView extends React.PureComponent {
       deleteAddedDecisionIssue,
       requestIdToDelete
     } = this.state;
-
     const connectedRequestIssues = appeal.issues.filter((issue) => {
       return decisionIssue && decisionIssue.request_issue_ids.includes(issue.id);
     });
     const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
     const toDeleteHasConnectedIssue = connectedIssues.length > 0;
+
+    // In order to determine whether or not to display error styling and an error message for each issue,
+    // determine if highlight is set to true and if there is not a decision issue
+    const issueErrors = {};
+
+    appeal.issues.forEach((issue) => {
+      const hasDecisionIssue = appeal.decisionIssues.some(
+        (decisionIssueAma) => decisionIssueAma.request_issue_ids.includes(issue.id)
+      );
+
+      issueErrors[issue.id] = highlight && !hasDecisionIssue &&
+        'You must add a decision before you continue.';
+    });
 
     return <QueueFlowPage
       validateForm={this.validateForm}
@@ -272,15 +284,14 @@ class SelectDispositionsView extends React.PureComponent {
       <h1>{COPY.DECISION_ISSUE_PAGE_TITLE}</h1>
       <p>{COPY.DECISION_ISSUE_PAGE_EXPLANATION}</p>
       <hr />
-
-      <ContestedIssues
-        decisionIssues={appeal.decisionIssues}
+      <AmaIssueList
         requestIssues={appeal.issues}
-        openDecisionHandler={this.openDecisionHandler}
-        openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler}
-        numbered
-        highlight={highlight}
-      />
+        errorMessages={issueErrors}>
+        <DecisionIssues
+          decisionIssues={appeal.decisionIssues}
+          openDecisionHandler={this.openDecisionHandler}
+          openDeleteAddedDecisionIssueHandler={this.openDeleteAddedDecisionIssueHandler} />
+      </AmaIssueList>
       { deleteAddedDecisionIssue && <Modal
         buttons = {this.deleteAddedDecisionIssueModalButtons}
         closeHandler={this.handleModalClose}
@@ -294,12 +305,8 @@ class SelectDispositionsView extends React.PureComponent {
         buttons = {this.decisionModalButtons}
         closeHandler={this.handleModalClose}
         title = {`${editingExistingIssue ? 'Edit' : 'Add'} decision`}
-        customStyles={css({
-          width: '800px'
-        })}
-      >
-
-        <div {...contestedIssueStyling}>
+        customStyles={css({ width: '800px' })}>
+        <div>
           {COPY.CONTESTED_ISSUE}
           <ul>
             {

@@ -88,8 +88,6 @@ class DecisionReview < ApplicationRecord
     id.to_s
   end
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   def ui_hash
     {
       veteran: {
@@ -115,8 +113,6 @@ class DecisionReview < ApplicationRecord
       processedInCaseflow: processed_in_caseflow?
     }
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
@@ -303,6 +299,10 @@ class DecisionReview < ApplicationRecord
     return "1 issue" if request_issues.count == 1
 
     "#{request_issues.count} issues"
+  end
+
+  def removed?
+    request_issues.any? && request_issues.all?(&:removed?)
   end
 
   private

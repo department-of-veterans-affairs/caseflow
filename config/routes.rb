@@ -216,8 +216,10 @@ Rails.application.routes.draw do
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule
+      post :request_hearing_disposition_change
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
+    resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
   end
   resources :judge_assign_tasks, only: [:create]
 
@@ -252,6 +254,8 @@ Rails.application.routes.draw do
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
   get "unauthorized" => "application#unauthorized"
+
+  get "feedback" => "application#feedback"
 
   %w( 404 500 ).each do |code|
     get code, :to => "errors#show", :status_code => code

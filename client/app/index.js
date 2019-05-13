@@ -22,6 +22,7 @@ import Error500 from './errors/Error500';
 import Error404 from './errors/Error404';
 import Unauthorized from './containers/Unauthorized';
 import OutOfService from './containers/OutOfService';
+import Feedback from './containers/Feedback';
 import StatsContainer from './containers/stats/StatsContainer';
 import Login from './login';
 import TestUsers from './test/TestUsers';
@@ -49,6 +50,7 @@ const COMPONENTS = {
   Error500,
   OutOfService,
   Unauthorized,
+  Feedback,
   StatsContainer,
   Hearings,
   HearingSchedule,
