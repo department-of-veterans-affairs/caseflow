@@ -82,8 +82,6 @@ Rails.application.configure do
 
   config.google_analytics_account = "UA-74789258-5"
 
-  ENV["CASEFLOW_FEEDBACK_URL"] = "https://dsva-appeals-feedback-demo-1748368704.us-gov-west-1.elb.amazonaws.com/"
-
   ENV["SIDEKIQ_USERNAME"] ||= "caseflow"
   ENV["SIDEKIQ_PASSWORD"] ||= "caseflow"
 end

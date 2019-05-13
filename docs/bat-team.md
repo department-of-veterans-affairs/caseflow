@@ -10,7 +10,7 @@ and during that week they, along with the engineering lead, form the Bat Team. T
 * monitor Slack for Sentry alerts
 * improve the code base to reduce technical debt
 
-The name "Bat Team" refers to the ["batman" military role](https://en.wikipedia.org/wiki/Batman_(military).
+The name "Bat Team" refers to the ["batman" military role](https://en.wikipedia.org/wiki/Batman_(military)).
 It is a [growing software industry practice](https://twitter.com/mipsytipsy/status/1059392900239306755)
 and an experiment in [agile development](https://www.icidigital.com/blog/web-development/batman-can-save-agile-team).
 
@@ -48,7 +48,7 @@ in the ticket description.
 The key evaluation is whether this incident reflects an immediate production issue,
 particularly affecting data integrity, or whether it can be picked up during normal sprint planning.
 If it's an immediate production issue, you should escalate to the tech lead for the affected feature,
-and consult with them about next steps. If it's an outtage of some kind, we should convene folks in #appeals-swat.
+and consult with them about next steps. If it's an outage of some kind, we should convene folks in #appeals-swat.
 The Bat Team should do just enough investigation to determine further action.
 
 Mark the Sentry alert in Slack with the green checkmark emoji when it has been triaged, and you can ignore the alert
