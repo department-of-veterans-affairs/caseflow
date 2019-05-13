@@ -39,10 +39,10 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
+          instructions: notes,
           business_payloads: {
             values: {
-              regional_office_value: regionalOffice,
-              notes_value: notes
+              regional_office_value: regionalOffice
             }
           }
         }

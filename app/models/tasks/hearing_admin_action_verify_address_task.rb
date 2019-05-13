@@ -1,4 +1,6 @@
 class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
+  after_update :fetch_closest_ro_and_ahls, if: :task_just_completed?
+    
   def self.label
     "Verify Address"
   end
@@ -14,15 +16,15 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
   end
 
   def update_from_params(params, current_user)
+    verify_user_can_update!(current_user)
+
     payload_values = params.delete(:business_payloads)&.dig(:values)
     
-    if params[:status] == Constants.TASK_STATUSES.completed
+    case params[:status]
+    when Constants.TASK_STATUSES.completed
       fetch_closest_ro_and_ahls
-    elsif params[:status] == Constants.TASK_STATUSES.cancelled
+    when Constants.TASK_STATUSES.cancelled
       update_ro_and_ahls(payload_values["regional_office_value"])
-
-      # TODO push to end of instructions
-      update(instructions: [payload_values["notes_value"]])
     end
 
     super(params, current_user)
@@ -38,5 +40,11 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
 
   def fetch_closest_ro_and_ahls
     appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
+  end
+
+  private 
+
+  def task_just_completed?
+    saved_change_to_attribute?("status") && status == Constants.TASK_STATUSES.completed
   end
 end
