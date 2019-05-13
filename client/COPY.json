@@ -368,6 +368,7 @@
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "Review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "Quality review",
   "JUDGE_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
+  "ATTORNEY_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
 
   "IHP_TASK_LABEL": "Prepare Informal Hearing Presentation",
 

@@ -10,6 +10,7 @@ class TasksController < ApplicationController
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
+    AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
     AttorneyTask: AttorneyTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
