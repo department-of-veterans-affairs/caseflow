@@ -212,6 +212,16 @@ class TaskActionRepository
       }
     end
 
+
+    def assign_to_pulac_cerullo_data(task, _user)
+      org = PulacCurello.singleton
+      {
+        selected: org,
+        options: [{ label: org.name, value: org.id }],
+        type: task.type
+      }
+    end
+
     private
 
     def users_to_options(users)

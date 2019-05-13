@@ -133,6 +133,18 @@ class AssignToView extends React.Component {
       });
   }
 
+  determineTitle = (props, action, isPulacCurello) => {
+    if (props.assigneeAlreadySelected && action) {
+      if (isPulacCurello) {
+        return sprintf(COPY.NOTIFY_OGC_OF, action.label);
+      }
+
+      return sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label);
+    }
+
+    return COPY.ASSIGN_TASK_TITLE;
+  }
+
   render = () => {
     const {
       assigneeAlreadySelected,
@@ -142,15 +154,14 @@ class AssignToView extends React.Component {
 
     const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
     const actionData = taskActionData(this.props);
+    const isPulacCurello = action.label === 'Pulac Curello';
 
     if (!task || task.availableActions.length === 0) {
       return null;
     }
 
     return <QueueFlowModal
-      title={(this.props.assigneeAlreadySelected && action) ?
-        sprintf(COPY.ASSIGN_TASK_TO_TITLE, action.label) :
-        COPY.ASSIGN_TASK_TITLE}
+      title={this.determineTitle(this.props, action, isPulacCurello)}
       pathAfterSubmit = {(actionData && actionData.redirect_after) || '/queue'}
       submit={this.submit}
       validateForm={this.validateForm}
@@ -167,12 +178,16 @@ class AssignToView extends React.Component {
           options={taskActionData(this.props).options} />
         <br />
       </React.Fragment> }
-      <TextareaField
-        name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
-        errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
-        id="taskInstructions"
-        onChange={(value) => this.setState({ instructions: value })}
-        value={this.state.instructions} />
+      { !isPulacCurello &&
+            <TextareaField
+              name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
+              errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
+              id="taskInstructions"
+              onChange={(value) => this.setState({ instructions: value })}
+              value={this.state.instructions} />
+      }
+      {isPulacCurello && COPY.PULAC_CERULLO_MODAL_BODY }
+
     </QueueFlowModal>;
   }
 }

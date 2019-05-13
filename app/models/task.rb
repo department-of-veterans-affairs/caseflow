@@ -325,16 +325,6 @@ class Task < ApplicationRecord
     )
   end
 
-  def assign_to_pulac_cerullo_data(_user = nil)
-    org = PulacCurello.singleton
-    {
-      selected: org,
-      options: [{ label: org.name, value: org.id }],
-      type: type
-    }
-  end
-
-
   def timeline_title
     "#{type} completed"
   end
