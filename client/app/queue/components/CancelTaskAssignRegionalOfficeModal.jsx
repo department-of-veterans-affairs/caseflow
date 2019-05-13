@@ -55,7 +55,7 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
   };
 
   render = () => {
-    const { hasError } = this.props;
+    const { appealId, hasError } = this.props;
 
     return (
       <QueueFlowModal
@@ -63,6 +63,7 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
         button={COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_BUTTON}
         submit={this.onSubmit}
         validateForm={this.validateRegionalOfficePopulated}
+        pathAfterSubmit={`/queue/appeals/${appealId}`}
       >
         <p>
           {COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL}
@@ -86,6 +87,7 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
 const mapStateToProps = (state, ownProps) => (
   {
     task: taskById(state, { taskId: ownProps.taskId }),
+    appealId: ownProps.appealId,
     hasError: state.ui.highlightFormItems
   }
 );
