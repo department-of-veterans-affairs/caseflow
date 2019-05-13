@@ -1443,6 +1443,33 @@ feature "Higher Level Review Edit issues" do
       end
     end
 
+    context "when a rating decision is edited" do
+      before do
+        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
+      end
+
+      after do
+        FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
+      end
+
+      let!(:issue) do
+        create(:request_issue, :rating, decision_review: higher_level_review, contested_issue_description: "PTSD")
+      end
+
+      scenario "edit contention text" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+        expect(page).to have_content("Edit contention title")
+
+        within first(".issue-edit-text") do
+          click_edit_contention_issue
+        end
+
+        expect(page).to have_content(issue.contested_issue_description)
+      end
+    end
+
     context "when review has no active tasks" do
       scenario "no tasks are cancelled when all request issues are removed" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
