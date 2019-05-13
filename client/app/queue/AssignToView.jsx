@@ -154,7 +154,7 @@ class AssignToView extends React.Component {
 
     const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
     const actionData = taskActionData(this.props);
-    const isPulacCurello = action.label === 'Pulac Curello';
+    const isPulacCurello = action && action.label === 'Pulac Curello';
 
     if (!task || task.availableActions.length === 0) {
       return null;
@@ -164,7 +164,9 @@ class AssignToView extends React.Component {
       title={this.determineTitle(this.props, action, isPulacCurello)}
       pathAfterSubmit = {(actionData && actionData.redirect_after) || '/queue'}
       submit={this.submit}
-      validateForm={this.validateForm}
+      validateForm={isPulacCurello ? () => {
+        return true;
+      } : this.validateForm}
     >
       { !assigneeAlreadySelected && <React.Fragment>
         <SearchableDropdown
