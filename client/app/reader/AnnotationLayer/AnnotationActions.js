@@ -4,6 +4,7 @@ import * as Constants from './actionTypes';
 import { CATEGORIES, ENDPOINT_NAMES } from '../analytics';
 import ApiUtil from '../../util/ApiUtil';
 import { hideErrorMessage, showErrorMessage, updateFilteredIdsAndDocs } from '../commonActions';
+import { handleErrorWithSafeNavigation } from '../utils';
 
 /** Annotation Modal **/
 
@@ -297,8 +298,7 @@ export const requestEditAnnotation = (annotation) => (dispatch) => {
         });
       },
       (response) => {
-        const errors = response.response.type === 'application/json' ?
-          JSON.parse(response.response.text).errors[0].detail : null;
+        const errors = handleErrorWithSafeNavigation(response);
 
         dispatch(showErrorMessage('annotation', errors));
         dispatch({
@@ -344,8 +344,8 @@ export const createAnnotation = (annotation) => (dispatch) => {
         });
       },
       (response) => {
-        const errors = response.response.type === 'application/json' ?
-          JSON.parse(response.response.text).errors[0].detail : null;
+
+        const errors = handleErrorWithSafeNavigation(response);
 
         dispatch(showErrorMessage('annotation', errors));
         dispatch({

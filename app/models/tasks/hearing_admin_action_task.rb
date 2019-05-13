@@ -28,36 +28,25 @@ class HearingAdminActionTask < GenericTask
   end
 
   def available_actions(user)
+    hearing_admin_actions = available_hearing_admin_actions(user)
+
     if assigned_to == user
       [
         Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
-      ]
+      ] | hearing_admin_actions
     elsif task_is_assigned_to_users_organization?(user)
       [
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
-      ]
+      ] | hearing_admin_actions
     else
-      []
+      hearing_admin_actions
     end
   end
 
   def actions_allowable?(user)
-    HearingsManagement.singleton.user_has_access?(user) && super
-  end
-
-  def assign_to_user_data(user = nil)
-    super(user).merge(
-      redirect_after: "/organizations/#{HearingAdmin.singleton.url}",
-      message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
-    )
-  end
-
-  def complete_data(_user = nil)
-    {
-      modal_body: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
-    }
+    (HearingsManagement.singleton.user_has_access?(user) || HearingAdmin.singleton.user_has_access?(user)) && super
   end
 
   private

@@ -459,11 +459,10 @@ feature "Appeal Edit issues" do
   context "when withdraw decision reviews is enabled" do
     before do
       FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
-      FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
     end
+
     after do
       FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id])
-      FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
     end
 
     scenario "remove an issue with dropdown and show alert message" do
@@ -631,16 +630,26 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
     end
 
-    scenario "edit contention text" do
-      visit "appeals/#{appeal.uuid}/edit"
-      expect(page).to have_content("Edit contention title")
+    scenario "show alert when issue is withdrawn before receipt date" do
+      visit "appeals/#{appeal.uuid}/edit/"
 
-      within first(".issue-edit-text") do
-        click_edit_contention_issue
-      end
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+      fill_in "withdraw-date", with: 50.days.ago.to_date.mdY
 
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_button("Submit")
+      expect(page).to have_content(
+        "We cannot process your request. Please select a date after the Appeal's receipt date."
+      )
+      expect(page).to have_button("Save", disabled: true)
+    end
+
+    scenario "show alert when issue is withdrawn after current date" do
+      visit "appeals/#{appeal.uuid}/edit/"
+
+      click_withdraw_intake_issue_dropdown("PTSD denied")
+      fill_in "withdraw-date", with: 2.years.from_now.to_date.mdY
+
+      expect(page).to have_content("We cannot process your request. Please select a date prior to today's date.")
+      expect(page).to have_button("Save", disabled: true)
     end
   end
 

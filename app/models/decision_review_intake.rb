@@ -3,7 +3,6 @@
 class DecisionReviewIntake < Intake
   include RunAsyncable
 
-  # rubocop:disable Metrics/AbcSize
   def ui_hash
     super.merge(
       receipt_date: detail.receipt_date,
@@ -23,7 +22,6 @@ class DecisionReviewIntake < Intake
     cancel!(reason: "system_error")
     raise
   end
-  # rubocop:enable Metrics/AbcSize
 
   def cancel_detail!
     detail&.remove_claimants!

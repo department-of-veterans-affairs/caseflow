@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
   class AppealNotValidToReopen < StandardError
@@ -87,8 +86,6 @@ class AppealRepository
     cases.map { |case_record| build_appeal(case_record, true) }
   end
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   def self.appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
     MetricsService.record("VACOLS: appeals_by_vbms_id_with_preloaded_status_api_attrs",
                           service: :vacols,
@@ -122,8 +119,6 @@ class AppealRepository
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 
   def self.appeals_ready_for_hearing(vbms_id)
     cases = MetricsService.record("VACOLS: appeals_ready_for_hearing",
@@ -398,7 +393,6 @@ class AppealRepository
   # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
   # WARNING: some parts of this action are not automatically reversable, and must
   # be reversed by hand
-  # rubocop:disable Metrics/MethodLength
   def self.close_undecided_appeal!(appeal:, user:, closed_on:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
@@ -440,7 +434,6 @@ class AppealRepository
       close_associated_hearings(case_record)
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   # Close a remand (prematurely, such as for a withdrawal or a VAIMA opt in)
   # Remands need to be closed without overwriting the disposition data. A new
@@ -449,7 +442,6 @@ class AppealRepository
   #
   # WARNING: some parts of this action are not automatically reversable, and must
   # be reversed by hand
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def self.close_remand!(appeal:, user:, closed_on:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
@@ -525,9 +517,7 @@ class AppealRepository
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
   def self.reopen_undecided_appeal!(appeal:, user:, safeguards:, reopen_issues: true)
     case_record = appeal.case_record
     folder_record = case_record.folder
@@ -583,9 +573,7 @@ class AppealRepository
       end
     end
   end
-  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
-  # rubocop:disable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
   def self.reopen_remand!(appeal:, user:, disposition_code:)
     case_record = appeal.case_record
     folder_record = case_record.folder
@@ -621,7 +609,6 @@ class AppealRepository
       VACOLS::CaseIssue.where(isskey: follow_up_appeal_key).delete_all
     end
   end
-  # rubocop:enable Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/MethodLength
 
   def self.certify(appeal:, certification:)
     certification_date = AppealRepository.dateshift_to_utc Time.zone.now
@@ -782,4 +769,3 @@ class AppealRepository
   end
   # :nocov:
 end
-# rubocop:enable Metrics/ClassLength

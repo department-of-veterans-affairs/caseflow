@@ -245,6 +245,7 @@
 
   "HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL": "Marking this task as complete will remove this admin action from your active tasks.",
   "NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY": "Marking this case as complete will release it to a judge for review. A 90 day evidence hold may still apply to this case.",
+  "NO_SHOW_HEARING_TASK_RESCHEDULE_FORBIDDEN_ERROR": "Can only reschedule NoShowHearingTasks",
 
   "ADD_COLOCATED_TASK_SUBHEAD": "Submit admin action",
   "ADD_COLOCATED_TASK_ACTION_TYPE_LABEL": "Select the type of administrative action you'd like to assign:",
@@ -372,6 +373,7 @@
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
   "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",
   "APPEAL_WITHDRAWAL_MAIL_TASK_LABEL": "Withdrawal of appeal",
+  "ATTORNEY_TASK_LABEL": "Draft decision",
   "CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL": "CUE-related",
   "CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL": "Congressional interest",
   "CONTROLLED_CORRESPONDENCE_MAIL_TASK_LABEL": "Controlled correspondence",
@@ -393,6 +395,7 @@
 
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "DUPLICATE_PHONE_NUMBER_TITLE": "Veteran Record Alert",
+  "DUPLICATE_PHONE_NUMBER_MESSAGE": "Please contact VLJ Support to request that this veteran's information be updated to remove duplicate phone numbers currently on file to resolve this error.",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below or if the claimant's information needs updated, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
@@ -407,6 +410,11 @@
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_BODY": "This will place the case in the list of veterans to be scheduled for a hearing.",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_TITLE": "You have successfully completed this case",
   "RETURN_CASE_TO_HEARINGS_MANAGEMENT_MESSAGE_BODY": "%s case has been removed from the transcription queue and has been sent to the next hearing management branch.",
+
+  "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE": "Send for hearing disposition change",
+  "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_BODY": "Choosing this option will send this case to a Hearings Branch administrator for review. All open tasks on this case will be closed and you will no longer be able to work this case.",
+  "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS": "Successfully sent %s's case to a Hearings Branch administrator for review.",
+  "REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR": "Can only request a hearing disposition change on hearing tasks.",
 
   "COMPLETE_TRANSCRIPTION_BODY": "Mark transcription as completed and send appeal to the next team.",
 
@@ -425,6 +433,10 @@
   "INTAKE_VETERAN_NOT_FOUND": "Note: If you are certain the Veteran ID or SSN is correct, the claimant may not exist in the VBA Corporate Database. If you have access, please add claimant to the Corporate Database to continue processing this intake. If you do not have access, please",
   "NON_COMP_ADDRESS_MESSAGE": "The Veteran/appellant has filed a Notice of Disagreement at the Board of Veterans' Appeals. In order to decide that appeal, the Board will need the complete records from",
   "INTAKE_EDIT_TITLE": "Edit contention title",
+
+  "END_HOLD_MODAL_TITLE": "End hold early",
+  "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
+  "END_HOLD_SUCCESS_MESSAGE_TITLE": "Success! The hold has been ended early.",
 
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER": "There are no schedulable veterans",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE": "Please verify that this RO has veterans to assign a hearing",

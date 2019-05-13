@@ -26,6 +26,8 @@ class VBMSError < RuntimeError
   class ClaimDateInvalid < Caseflow::Error::VBMS; end
   class FilenumberDoesNotExist < Caseflow::Error::VBMS; end
   class MissingData < Caseflow::Error::VBMS; end
+  class ShareExceptionFindRatingData < Caseflow::Error::VBMS; end
+  class MissingVeteranIdentifier < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -50,6 +52,9 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3405/
     "Unable to associate rated issue, rated issue does not exist" => "RatedIssueMissing",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/321797/
+    "ShareException thrown in findRatingData" => "ShareExceptionFindRatingData",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/
     "Requested result set exceeds acceptable size." => "DocumentTooBig",
@@ -91,6 +96,9 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3696/events/315030/
     "Document not found" => "DocumentNotFound",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4908/events/331555/
+    "Missing required field: Veteran Identifier." => "MissingVeteranIdentifier",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
     "missing required data" => "MissingData"

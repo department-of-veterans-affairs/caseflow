@@ -280,7 +280,6 @@ class Veteran < ApplicationRecord
       veteran
     end
 
-    # rubocop:disable Metrics/MethodLength
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
 
@@ -310,7 +309,6 @@ class Veteran < ApplicationRecord
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
-    # rubocop:enable Metrics/MethodLength
 
     def before_create_veteran_by_file_number
       # noop - used to simulate race conditions
@@ -323,6 +321,11 @@ class Veteran < ApplicationRecord
 
   def alive?
     !deceased?
+  end
+
+  def unload_bgs_record
+    @bgs_record_loaded = false
+    # instance_variable_set(:@bgs_record_loaded, false)
   end
 
   private
