@@ -10,7 +10,7 @@ and during that week they, along with the engineering lead, form the Bat Team. T
 * monitor Slack for Sentry alerts
 * improve the code base to reduce technical debt
 
-The name "Bat Team" refers to the ["batman" military role](https://en.wikipedia.org/wiki/Batman_(military).
+The name "Bat Team" refers to the ["batman" military role](https://en.wikipedia.org/wiki/Batman_(military)).
 It is a [growing software industry practice](https://twitter.com/mipsytipsy/status/1059392900239306755)
 and an experiment in [agile development](https://www.icidigital.com/blog/web-development/batman-can-save-agile-team).
 
