@@ -32,6 +32,7 @@ describe JudgeTask do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+              Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
               Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
           )
@@ -44,6 +45,7 @@ describe JudgeTask do
             expect(subject).to eq(
               [
                 Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+                Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
                 Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h,
                 Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
                 Constants.TASK_ACTIONS.CANCEL_TASK.to_h
@@ -62,6 +64,7 @@ describe JudgeTask do
           expect(subject).to eq(
             [
               Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+              Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
               Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
               Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.to_h
             ].map { |action| subject_task.build_action_hash(action, judge) }
