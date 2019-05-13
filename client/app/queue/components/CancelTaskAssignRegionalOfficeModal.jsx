@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
 
 import COPY from '../../../COPY.json';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 import QueueFlowModal from './QueueFlowModal';
 import RegionalOfficeDropdown from '../../components/DataDropdowns/RegionalOffice';
 import TextareaField from '../../components/TextareaField';
@@ -37,7 +38,7 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
     const payload = {
       data: {
         task: {
-          status: 'completed',
+          status: TASK_STATUSES.cancelled,
           business_payloads: {
             values: {
               regional_office_value: regionalOffice
