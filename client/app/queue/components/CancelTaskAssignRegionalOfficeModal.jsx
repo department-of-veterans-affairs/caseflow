@@ -34,14 +34,15 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
 
   onSubmit = () => {
     const { task } = this.props;
-    const { regionalOffice } = this.state;
+    const { regionalOffice, notes } = this.state;
     const payload = {
       data: {
         task: {
           status: TASK_STATUSES.cancelled,
           business_payloads: {
             values: {
-              regional_office_value: regionalOffice
+              regional_office_value: regionalOffice,
+              notes_value: notes
             }
           }
         }
@@ -76,6 +77,7 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
         />
         <TextareaField
           label="Notes"
+          name="notes"
           strongLabel
           textAreaStyling={css({ height: '100px' })}
           onChange={this.onNotesChanged}
