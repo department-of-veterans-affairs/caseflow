@@ -71,7 +71,7 @@ class Search extends React.PureComponent {
       },
       veteran_has_multiple_phone_numbers: {
         title: 'The Veteran has multiple active phone numbers',
-        body: 'Please edit the Veteran\'s contact information in SHARE to have only one active phone number.'
+        body: COPY.DUPLICATE_PHONE_NUMBER_MESSAGE
       },
       veteran_not_accessible: {
         title: "You don't have permission to view this Veteran's information",

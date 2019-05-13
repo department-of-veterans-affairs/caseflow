@@ -80,7 +80,7 @@ export const Overview = ({
 
 const Details = ({
   hearing: { judgeId, room, evidenceWindowWaived, notes, bvaPoc },
-  set, readOnly
+  set, readOnly, isLegacy
 }) => (
   <React.Fragment>
     <div {...rowThirds}>
@@ -104,16 +104,18 @@ const Details = ({
         readOnly={readOnly}
         onChange={(val) => set('bvaPoc', val)}
       />
-      <div>
-        <strong>Waive 90 Day Evidence Hold</strong>
-        <Checkbox
-          label="Yes, Waive 90 Day Evidence Hold"
-          name="evidenceWindowWaived"
-          disabled={readOnly}
-          value={evidenceWindowWaived || false}
-          onChange={(val) => set('evidenceWindowWaived', val)}
-        />
-      </div>
+      {!isLegacy &&
+        <div>
+          <strong>Waive 90 Day Evidence Hold</strong>
+          <Checkbox
+            label="Yes, Waive 90 Day Evidence Hold"
+            name="evidenceWindowWaived"
+            disabled={readOnly}
+            value={evidenceWindowWaived || false}
+            onChange={(val) => set('evidenceWindowWaived', val)}
+          />
+        </div>
+      }
     </div>
     <TextareaField
       name="Notes"
@@ -305,44 +307,39 @@ const TranscriptionRequest = ({
   </div>
 );
 
-export const LegacyWarning = () => (
-  <div {...css({
-    textAlign: 'center',
-    marginTop: '4rem'
-  })}>
-    <h1>This is a Legacy Case Hearing</h1>
-    <p>To view or edit details for this hearing access VACOLS</p>
-  </div>
-);
-
-const Sections = ({ transcription, hearing, disabled, setHearing, setTranscription }) => (
+const Sections = ({ transcription, hearing, disabled, setHearing, setTranscription, isLegacy }) => (
   <React.Fragment>
     <Details
       hearing={hearing}
       set={setHearing}
-      readOnly={disabled} />
+      readOnly={disabled}
+      isLegacy={isLegacy} />
     <div className="cf-help-divider" />
 
-    <h2>Transcription Details</h2>
-    <TranscriptionDetails
-      transcription={transcription}
-      set={setTranscription}
-      readOnly={disabled} />
-    <div className="cf-help-divider" />
+    {!isLegacy &&
+      <div>
+        <h2>Transcription Details</h2>
+        <TranscriptionDetails
+          transcription={transcription}
+          set={setTranscription}
+          readOnly={disabled} />
+        <div className="cf-help-divider" />
 
-    <h2>Transcription Problem</h2>
-    <TranscriptionProblem
-      transcription={transcription}
-      set={setTranscription}
-      readOnly={disabled} />
-    <div className="cf-help-divider" />
+        <h2>Transcription Problem</h2>
+        <TranscriptionProblem
+          transcription={transcription}
+          set={setTranscription}
+          readOnly={disabled} />
+        <div className="cf-help-divider" />
 
-    <h2>Transcription Request</h2>
-    <TranscriptionRequest
-      hearing={hearing}
-      set={setHearing}
-      readOnly={disabled} />
-    <div className="cf-help-divider" />
+        <h2>Transcription Request</h2>
+        <TranscriptionRequest
+          hearing={hearing}
+          set={setHearing}
+          readOnly={disabled} />
+        <div className="cf-help-divider" />
+      </div>
+    }
   </React.Fragment>
 );
 
