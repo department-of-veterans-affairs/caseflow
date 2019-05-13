@@ -5,6 +5,48 @@ Caseflow is a suite of web-based tools to manage VA appeals. It's currently in d
 
 The Appeals Modernization team's mission is to empower employees with technology to increase timely, accurate appeals decisions and improve the Veteran experience. Most of the team's products live here, in the main Caseflow repository.
 
+# Table of Contents
+
+   * [Caseflow](#caseflow)
+      * [Caseflow products in heavy development](#caseflow-products-in-heavy-development)
+         * [Intake](#intake)
+         * [Queue](#queue)
+         * [Reader](#reader)
+         * [Hearings](#hearings)
+      * [Caseflow products in a mature state](#caseflow-products-in-a-mature-state)
+         * [Dispatch](#dispatch)
+         * [Hearing Prep](#hearing-prep)
+         * [API](#api)
+         * [Certification](#certification)
+      * [Other Caseflow Products](#other-caseflow-products)
+      * [Developer Setup](#developer-setup)
+         * [Github](#github)
+         * [Machine setup](#machine-setup)
+            * [Basic Dependencies](#basic-dependencies)
+            * [Setup <a href="https://github.com/rbenv/rbenv">rbenv</a> &amp; <a href="https://github.com/nodenv/nodenv">nodenv</a>.](#setup-rbenv--nodenv)
+            * [Install <a href="https://www.pdflabs.com/tools/pdftk-server/" rel="nofollow">PDFtk Server</a>](#install-pdftk-server)
+            * [Install Database Clients](#install-database-clients)
+            * [Install Docker](#install-docker)
+            * [Clone this repo](#clone-this-repo)
+            * [Install Ruby dependencies](#install-ruby-dependencies)
+            * [Install JavaScript dependencies](#install-javascript-dependencies)
+            * [Setup the development Postgres user](#setup-the-development-postgres-user)
+            * [Database environment setup](#database-environment-setup)
+      * [Running dev Caseflow &amp; Accessing dev DBs](#running-dev-caseflow--accessing-dev-dbs)
+         * [Running Caseflow](#running-caseflow)
+         * [Connecting to databases locally](#connecting-to-databases-locally)
+      * [Running tests](#running-tests)
+      * [Debugging FACOLS setup](#debugging-facols-setup)
+      * [Monitoring](#monitoring)
+      * [Roles](#roles)
+      * [Running Caseflow connected to external depedencies](#running-caseflow-connected-to-external-depedencies)
+      * [Dev Caseflow Usage Tweaks](#dev-caseflow-usage-tweaks)
+         * [Changing between test users](#changing-between-test-users)
+         * [Feature Toggle and Functions](#feature-toggle-and-functions)
+         * [Out of Service](#out-of-service)
+         * [Degraded Service](#degraded-service)
+      * [Documentation](#documentation)
+
 ## Caseflow products in heavy development
 
 ### Intake
@@ -271,14 +313,6 @@ The last env var silences one of the Oracle warnings on startup.
 
 (Reload the file `source ~/.bash_profile`)
 
-#### Cleanup the pre-docker dev environment _(not needed for new setups)_ ############
-
-If you were doing Caseflow development before Docker, you need to turn off the brew managed Postgres and Redis services before starting to use the Docker services:
-```
-brew services stop postgresql
-brew services stop redis
-```
-
 #### Database environment setup
 
 To rapidly set up your local development (and testing) environment, run:
@@ -393,25 +427,7 @@ the `focus` flag, you can get a short development loop.
 ## Debugging FACOLS setup
 See debugging steps as well as more information about FACOLS in our [wiki](https://github.com/department-of-veterans-affairs/caseflow/wiki/FACOLS#debugging-facols) or join the DSVA slack channel #appeals-facols-issues.
 
-#### Manually seeding your local VACOLS container
-//TODO IN PR: Does this still work?
-
-To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
-
-1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
-2) `rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
-3) `rails s` to start the server connected to local VACOLS or `rails c` to start the rails console connected to local VACOLS.
-
-#### Certification Test Scenarios
-
-| BFKEY/VACOLS_ID | Case |
-| ----- | ---------------- |
-| 2367429 | Ready to certify with all dates matching |
-| 2774535 | Ready to certify with fuzzy-matched dates |
-| 2771149 | Mismatched documents |
-| 3242524 | Already certified |
-
-Review the [FACOLS documentation](docs/FACOLS.md) for information on adding new data.
+Review the [FACOLS documentation](docs/FACOLS.md) for details.
 
 ## Monitoring
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
@@ -421,27 +437,6 @@ NEW_RELIC_LICENSE_KEY='<key as displayed on NewRelic.com>' NEW_RELIC_AGENT_ENABL
 ```
 
 You may wish to do this if you are debugging our NewRelic integration, for instance.
-
-## Running Caseflow in isolation
-//TODO IN PR does this still work?
-
-To try Caseflow without going through the hastle of connecting to VBMS and VACOLS, just tell bundler
-to skip production gems when installing.
-
-    bundle install --without production staging
-    rbenv rehash
-
-Set up and seed the DB
-
-    bundle exec rake db:setup
-
-And by default, Rails will run in the development environment, which will mock out data. For an improved development experience with faster iteration, the application by default runs in "hot mode". This will cause Javascript changes to immediately show up on the page on save, without having to reload the page. You can start the application via:
-
-    foreman start
-
-If you want to run the Rails server and frontend webpack server separately, look at the `Procfile` to figure out what commands to run.
-
-You can access the site at [http://localhost:3000/test/users](http://localhost:3000/test/users).
 
 ## Roles
 
