@@ -13,14 +13,19 @@ class TimedHoldTask < GenericTask
   validates :days_on_hold, presence: true, inclusion: { in: 1..120 }, on: :create
 
   def self.create_from_parent(parent_task, days_on_hold:, assigned_by: nil, instructions: nil)
-    create!(
-      appeal: parent_task.appeal,
-      assigned_by: assigned_by || parent_task.assigned_to,
-      assigned_to: parent_task.assigned_to,
-      parent: parent_task,
-      days_on_hold: days_on_hold&.to_i,
-      instructions: [instructions].compact.flatten
-    )
+    multi_transaction do
+      if parent_task.is_a?(Task)
+        parent_task.update!(instructions: [parent_task.instructions, instructions].flatten.compact)
+      end
+      create!(
+        appeal: parent_task.appeal,
+        assigned_by: assigned_by || parent_task.assigned_to,
+        assigned_to: parent_task.assigned_to,
+        parent: parent_task,
+        days_on_hold: days_on_hold&.to_i,
+        instructions: [instructions].compact.flatten
+      )
+    end
   end
 
   def when_timer_ends
