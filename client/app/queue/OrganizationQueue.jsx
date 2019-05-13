@@ -85,10 +85,10 @@ class OrganizationQueue extends React.PureComponent {
             {sprintf(COPY.ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, this.props.organizationName)}
           </p>
           <TaskTable
+            customColumns={[DocketNumberColumn(tasks, false)]}
             includeDetailsLink
             includeIssueCount
             includeType
-            includeDocketNumber
             tasks={this.props.trackingTasks}
           />
         </React.Fragment>
@@ -161,19 +161,17 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <Re
   />
 </React.Fragment>;
 
-    // includeDocketNumber
-
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
 
   <TaskTable
+    customColumns={[DocketNumberColumn(tasks, false)]}
     includeHearingBadge
     includeDetailsLink
     includeTask
     includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
     includeAssignedTo
-    includeDocketNumber
     includeDaysWaiting
     tasks={tasks}
   />
