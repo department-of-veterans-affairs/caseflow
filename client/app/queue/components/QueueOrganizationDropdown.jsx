@@ -23,9 +23,12 @@ export default class QueueOrganizationDropdown extends React.Component {
     };
 
     const organizationItems = organizations.map((org, index) => {
+      // If the url is a specified path, use it over the organization route
+      const orgHref = org.url.includes('/') ? org.url : `/organizations/${org.url}`;
+
       return {
         key: (index + 1).toString(),
-        href: (location === org.url) ? '#' : `/organizations/${org.url}`,
+        href: (location === org.url) ? '#' : orgHref,
         label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL, org.name)
       };
     });
