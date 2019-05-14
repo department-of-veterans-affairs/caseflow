@@ -172,6 +172,10 @@ export default class AssignHearingsTabs extends React.Component {
 
   };
 
+  getHearingLocation = (hearing) => (
+    hearing.readableRequestType === 'Central' ? 'Washington, DC' : hearing.readableLocation
+  );
+
   formatSuggestedHearingLocation = (location) => {
     if (!location) {
       return '';
@@ -239,39 +243,55 @@ export default class AssignHearingsTabs extends React.Component {
         return true;
       }
 
-      if (_.isEmpty(hearing.location) && filteredBy === 'null') {
+      const hearingLocation = this.getHearingLocation(hearing);
+
+      if (_.isEmpty(hearingLocation) && filteredBy === 'null') {
         return true;
-      } else if (_.isEmpty(hearing.location)) {
+      } else if (_.isEmpty(hearingLocation)) {
         return false;
       }
 
-      return filteredBy === hearing.location.facilityId;
+      return filteredBy === hearingLocation;
     });
 
-    return _.map(filtered, (hearing, index) => {
-      const hearingLocation = hearing.readableRequestType === 'Central' ?
-        'Washington, DC' : hearing.readableLocation;
-
-      return {
-        number: <span>{index + 1}.</span>,
-        externalId: hearing.appealExternalId,
-        caseDetails: this.appellantName(hearing),
-        type: renderAppealType({
-          caseType: hearing.appealType,
-          isAdvancedOnDocket: hearing.aod
-        }),
-        docketNumber: this.getHearingDocketTag(hearing),
-        hearingLocation,
-        time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
-      };
-    });
+    return _.map(filtered, (hearing, index) => ({
+      number: <span>{index + 1}.</span>,
+      externalId: hearing.appealExternalId,
+      caseDetails: this.appellantName(hearing),
+      type: renderAppealType({
+        caseType: hearing.appealType,
+        isAdvancedOnDocket: hearing.aod
+      }),
+      docketNumber: this.getHearingDocketTag(hearing),
+      hearingLocation: this.getHearingLocation(hearing),
+      time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
+    }));
   };
 
-  getLocationFilterValues = (data, tab) => {
-    const getLocation = (row) => tab === 'upcomingHearings' ? row.location :
-      (row.attributes.availableHearingLocations || [])[0];
+  getLocationFilterValues = (locations) => {
+    const countByValue = _.countBy(locations, 'value');
 
-    const locations = data.map((row) => {
+    return _.uniqBy(_.sortBy(locations, 'displayText'), 'value').map((row) => ({
+      ...row,
+      displayText: `${row.displayText} (${countByValue[row.value]} Veterans)`
+    }));
+  };
+
+  getFilteredLocationsForUpcomingHearings = (data) => (
+    data.map((row) => {
+      const location = this.getHearingLocation(row);
+
+      return {
+        displayText: location || '<<blank>>',
+        value: location || 'null'
+      };
+    })
+  );
+
+  getFilteredSuggestedLocationsForAvailableVeterans = (data) => {
+    const getLocation = (row) => (row.attributes.availableHearingLocations || [])[0];
+
+    return data.map((row) => {
       const location = getLocation(row);
 
       if (!location) {
@@ -288,21 +308,18 @@ export default class AssignHearingsTabs extends React.Component {
         value: facilityId || 'null'
       };
     });
-
-    const countByValue = _.countBy(locations, 'value');
-
-    return _.uniqBy(_.sortBy(locations, 'displayText'), 'value').map((row) => ({
-      ...row,
-      displayText: `${row.displayText} (${countByValue[row.value]} Veterans)`
-    }));
-  }
+  };
 
   tabWindowColumns = (data, { tab }) => {
 
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
 
     const state = this.state[tab];
-    let locationFilterValues = this.getLocationFilterValues(data, tab);
+    let locationFilterValues = this.getLocationFilterValues(
+      tab === UPCOMING_HEARINGS_TAB_NAME ?
+        this.getFilteredLocationsForUpcomingHearings(data) :
+        this.getFilteredSuggestedLocationsForAvailableVeterans(data)
+    );
 
     locationFilterValues.unshift({
       displayText: `All (${data.length})`,
