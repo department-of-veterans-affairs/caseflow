@@ -6,7 +6,9 @@ class RootTaskForAppeal
       root_task = RootTask.create!(appeal: appeal)
       create_vso_tracking_tasks(appeal, root_task)
       if FeatureToggle.enabled?(:ama_acd_tasks)
-        create_subtasks!(appeal, root_task)
+        ActiveRecord::Base.transaction do
+          create_subtasks!(appeal, root_task)
+        end
       else
         create_ihp_tasks!(appeal, root_task)
       end
@@ -27,7 +29,8 @@ class RootTaskForAppeal
       end
     end
 
-    # TODO: make this private again after RAMPs are refilled
+    # Make this private again after RAMPs are refilled
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/9406
     # private
 
     def create_vso_tracking_tasks(appeal, parent)
@@ -62,19 +65,17 @@ class RootTaskForAppeal
     end
 
     def create_subtasks!(appeal, parent)
-      ActiveRecord::Base.transaction do
-        distribution_task = create_distribution_task!(appeal, parent)
+      distribution_task = create_distribution_task!(appeal, parent)
 
-        if appeal.evidence_submission_docket?
-          create_evidence_submission_task!(appeal, distribution_task)
-        elsif appeal.hearing_docket?
-          create_hearing_schedule_task!(appeal, distribution_task)
-        else
-          vso_tasks = create_ihp_tasks!(appeal, distribution_task)
-          # If the appeal is direct docket and there are no ihp tasks,
-          # then it is initially ready for distribution.
-          distribution_task.ready_for_distribution! if vso_tasks.empty?
-        end
+      if appeal.evidence_submission_docket?
+        create_evidence_submission_task!(appeal, distribution_task)
+      elsif appeal.hearing_docket?
+        create_hearing_schedule_task!(appeal, distribution_task)
+      else
+        vso_tasks = create_ihp_tasks!(appeal, distribution_task)
+        # If the appeal is direct docket and there are no ihp tasks,
+        # then it is initially ready for distribution.
+        distribution_task.ready_for_distribution! if vso_tasks.empty?
       end
     end
   end
