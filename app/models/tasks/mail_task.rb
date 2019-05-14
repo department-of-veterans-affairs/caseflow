@@ -13,10 +13,6 @@ class MailTask < GenericTask
   # Skip unique verification for mail tasks since multiple mail tasks of each type can be created.
   def verify_org_task_unique; end
 
-  def available_actions(_user)
-    super
-  end
-
   class << self
     def blocking?
       # Some open mail tasks should block distribution of an appeal to judges.
