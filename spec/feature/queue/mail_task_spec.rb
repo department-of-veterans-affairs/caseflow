@@ -120,7 +120,7 @@ RSpec.feature "MailTasks" do
         expect(page).to have_content(
           format(
             COPY::CHANGE_TASK_TYPE_CONFIRMATION_TITLE,
-            old_task_type.label,
+            old_task_type.label.humanize,
             new_task_type.label
           )
         )
