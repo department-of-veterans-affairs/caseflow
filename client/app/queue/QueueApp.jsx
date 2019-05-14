@@ -44,6 +44,7 @@ import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddVsoModal from './AddVsoModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
+import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
 
 import CaseListView from './CaseListView';
@@ -224,6 +225,8 @@ class QueueApp extends React.PureComponent {
 
   routedPostponeHearingTaskModal = (props) => <PostponeHearingTaskModal {...props.match.params} />;
 
+  routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
+
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
 
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
@@ -335,6 +338,9 @@ class QueueApp extends React.PureComponent {
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.value}`}
             render={this.routedCreateChangeHearingDispositionTask} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.PLACE_TIMED_HOLD.value}`}
+            render={this.routedStartHoldModal} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.END_TIMED_HOLD.value}`}
             render={this.routedEndHoldModal} />
