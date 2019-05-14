@@ -3,14 +3,18 @@ import COPY from '../../../COPY.json';
 import TextareaField from '../../components/TextareaField';
 import Button from '../../components/Button';
 import { css } from 'glamor';
+import { setEditContentionText } from '../actions/addIssues';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
-export default class EditContentionTitle extends React.PureComponent {
+export class EditContentionTitle extends React.Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      showEditTitle: false
+      showEditTitle: false,
+      editedDescription: ''
     };
   }
 
@@ -20,6 +24,18 @@ export default class EditContentionTitle extends React.PureComponent {
 
 hideEditContentionTileOnClick = () => {
   this.setState({ showEditTitle: false });
+}
+
+ editContentionTextOnChange = (value) => {
+   this.setState({
+     editedDescription: value
+   });
+ }
+
+onClickSaveEdit = () => {
+  this.props.setEditContentionText(this.props.issueIdx, this.state.editedDescription);
+  this.setState({ showEditTitle: false });
+  this.setState({ editedDescription: '' });
 }
 
 render() {
@@ -36,12 +52,12 @@ render() {
   {this.state.showEditTitle && <div className="issue-text-style">
     <TextareaField
       name={title}
-      onChange={(value) => {
-        this.setState({ value });
-      }}
+      placeholder={this.props.issue.editedDescription ? this.props.issue.editedDescription : this.props.issue.text}
+      onChange= {this.editContentionTextOnChange}
+      value={this.state.editedDescription}
       strongLabel
     />
-    <p>{this.props.issue.text}</p>
+    <p>{this.props.issue.editedDescription ? this.props.issue.editedDescription : this.props.issue.text}</p>
     {this.props.issue.notes && <p {...css({
       fontStyle: 'italic' })}>Notes: {this.props.issue.notes}</p>}
     <div className="issue-text-buttons">
@@ -55,9 +71,8 @@ render() {
       <Button
         name="submit-issue"
         classNames={['cf-submit', 'issue-edit-submit-button']}
-        onClick={(value) => {
-          this.setState({ value });
-        }}
+        disabled={!this.state.editedDescription}
+        onClick={this.onClickSaveEdit}
       >
             Submit
       </Button>
@@ -68,3 +83,9 @@ render() {
 }
 }
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setEditContentionText
+}, dispatch);
+
+export default connect(null, mapDispatchToProps
+)(EditContentionTitle);
