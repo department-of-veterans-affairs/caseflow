@@ -38,8 +38,8 @@ feature "Supplemental Claim Edit issues" do
   let!(:rating_before_ama) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION"].to_date - 10.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
       issues: [
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
@@ -49,8 +49,8 @@ feature "Supplemental Claim Edit issues" do
   let!(:rating_before_ama_from_ramp) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: Constants::DATES["AMA_ACTIVATION"].to_date - 5.days,
-      profile_date: Constants::DATES["AMA_ACTIVATION"].to_date - 11.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
       issues: [
         { decision_text: "Issue before AMA Activation from RAMP",
           reference_id: "ramp_ref_id" }
