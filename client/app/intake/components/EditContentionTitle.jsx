@@ -52,12 +52,12 @@ render() {
   {this.state.showEditTitle && <div className="issue-text-style">
     <TextareaField
       name={title}
-      placeholder={this.props.issue.text}
+      placeholder={this.props.issue.editedDescription ? this.props.issue.editedDescription : this.props.issue.text}
       onChange= {this.editContentionTextOnChange}
       value={this.state.editedDescription}
       strongLabel
     />
-    <p>{this.props.issue.text}</p>
+    <p>{this.props.issue.editedDescription ? this.props.issue.editedDescription : this.props.issue.text}</p>
     {this.props.issue.notes && <p {...css({
       fontStyle: 'italic' })}>Notes: {this.props.issue.notes}</p>}
     <div className="issue-text-buttons">

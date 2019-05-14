@@ -59,3 +59,6 @@ local/vacols/build_facols/*
 
 # makefile
 Makefile
+
+# facols_build_dir
+build_facols_dir
