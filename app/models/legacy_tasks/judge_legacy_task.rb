@@ -24,9 +24,9 @@ class JudgeLegacyTask < LegacyTask
 
   def label
     if action == "review"
-      return COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
+      COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
     else
-      return COPY::JUDGE_ASSIGN_TASK_LABEL
+      COPY::JUDGE_ASSIGN_TASK_LABEL
     end
   end
 
