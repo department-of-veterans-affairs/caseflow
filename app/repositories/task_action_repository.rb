@@ -75,10 +75,12 @@ class TaskActionRepository
     end
 
     def judge_dispatch_return_to_attorney_data(task, _user = nil)
+      attorney = task.appeal.tasks.find { |task| task.is_a?(AttorneyTask) }&.assigned_to
       {
-        selected: task.root_task.children.find { |child| child.is_a?(AttorneyTask) }&.assigned_to, #TODO can this find multiple? Do I need to find the last one?
-        options: user_to_options(JudgeTeam.for_judge(task.assigned_to)&.attorneys || [])
-        type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
+        #TODO can this find multiple? Do I need to find the last one?
+        selected: attorney,
+        options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact),
+        type: AttorneyDispatchReturnTask.name
       }
     end
 

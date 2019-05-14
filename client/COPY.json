@@ -315,6 +315,7 @@
   "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending",
   "CASE_TIMELINE_JUDGE_TASK": "Decision signed by judge",
   "CASE_TIMELINE_ATTORNEY_TASK": "Decision drafted by attorney",
+  "CASE_TIMELINE_ATTORNEY_DISPATCH_RETURN_TASK": "Decision revised for dispatch by attorney",
   "CASE_TIMELINE_APPEAL_WITHDRAWN": "Appeal withdrawn",
 
   "DECISION_ISSUE_MODAL_TITLE": "Describe what the Veteran is appealing and what you decided.",

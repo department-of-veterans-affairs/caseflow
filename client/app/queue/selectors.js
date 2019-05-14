@@ -6,7 +6,6 @@ import {
 } from './utils';
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
-import COPY from '../../COPY.json';
 
 export const selectedTasksSelector = (state, userId) => {
   return _.map(
@@ -266,17 +265,12 @@ export const judgeDecisionReviewTasksSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task) => {
     if (task.appealType === 'Appeal') {
-      return (
-        [COPY.JUDGE_DECISION_REVIEW_TASK_LABEL,
-          COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL,
-          COPY.JUDGE_DISPATCH_RETURN_TASK_LABEL].includes(task.label)) &&
+      return (['review', 'Review', 'Quality Review', 'quality review', 'Revise decision (BVA Dispatch)'].includes(task.label)) &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
     // eslint-disable-next-line no-undefined
-    return [null, undefined, COPY.JUDGE_DECISION_REVIEW_TASK_LABEL,
-      COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL,
-      COPY.JUDGE_DISPATCH_RETURN_TASK_LABEL].includes(task.label);
+    return [null, undefined, 'review', 'quality review', 'Revise decision (BVA Dispatch)'].includes(task.label);
   })
 );
 

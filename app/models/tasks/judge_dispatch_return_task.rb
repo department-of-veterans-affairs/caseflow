@@ -6,8 +6,8 @@
 class JudgeDispatchReturnTask < JudgeTask
   def additional_available_actions(_user)
     [
+      Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.to_h,
       Constants.TASK_ACTIONS.JUDGE_DISPATCH_RETURN_TO_ATTORNEY.to_h,
-      Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
       Constants.TASK_ACTIONS.CANCEL_TASK.to_h
     ]
   end

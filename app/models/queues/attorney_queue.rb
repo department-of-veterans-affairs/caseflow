@@ -19,9 +19,9 @@ class AttorneyQueue
       end
     end
 
-    caseflow_tasks = Task.includes(*task_includes).incomplete_or_recently_closed
-      .where(assigned_to: user, type: [AttorneyTask.name, AttorneyRewriteTask.name, QualityReviewTask.name])
-    (colocated_tasks_for_attorney_tasks + caseflow_tasks).flatten
+    caseflow_tasks_attorney = AttorneyTask.includes(*task_includes).incomplete_or_recently_closed
+    caseflow_tasks_quality_review = QualityReviewTask.includes(*task_includes).incomplete_or_recently_closed
+    (colocated_tasks_for_attorney_tasks + caseflow_tasks_attorney + caseflow_tasks_quality_review).flatten
   end
 
   def tasks_by_appeal_id(appeal_id, appeal_type)
