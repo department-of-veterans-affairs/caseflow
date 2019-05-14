@@ -129,7 +129,7 @@ class TaskActionRepository
       }
     end
 
-    def colocated_task_add_admin_action_data(task)
+    def colocated_task_add_admin_action_data(_task, _user)
       {
         redirect_after: "/queue",
         selected: nil,
@@ -145,9 +145,9 @@ class TaskActionRepository
 
     def change_task_type_data(task, user = nil)
       if task.is_a? MailTask
-        mail_assign_to_organization_data
+        mail_assign_to_organization_data(task, user)
       else
-        colocated_task_add_admin_action_data(task)
+        colocated_task_add_admin_action_data(task, user)
       end
     end
 
