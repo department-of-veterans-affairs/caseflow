@@ -16,6 +16,7 @@ import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOL
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
+import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
@@ -522,6 +523,8 @@ export const taskActionData = (props) => {
 
   return null;
 };
+
+export const actionNameOfTask = (task) => CO_LOCATED_ADMIN_ACTIONS[task.label] || _.startCase(task.label);
 
 export const nullToFalse = (key, obj) => {
   if (obj[key] === null) {
