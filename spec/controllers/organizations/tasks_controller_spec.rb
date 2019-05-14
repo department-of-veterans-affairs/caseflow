@@ -39,6 +39,8 @@ RSpec.describe Organizations::TasksController, type: :controller do
     ]
   end
 
+  let(:business_line_org) { create(:business_line, url: "lob", name: "LoB") }
+
   before do
     allow_any_instance_of(BGSService).to receive(:get_participant_id_for_user)
       .with(user).and_return(participant_id)
@@ -94,6 +96,13 @@ RSpec.describe Organizations::TasksController, type: :controller do
 
       it "should be redirected" do
         get :index, params: { organization_url: url }
+        expect(response.status).to eq 302
+      end
+    end
+
+    context "when organization is_a BusinessLine" do
+      it "redirects to /decision_reviews/" do
+        get :index, params: { organization_url: business_line_org.url }
         expect(response.status).to eq 302
       end
     end
