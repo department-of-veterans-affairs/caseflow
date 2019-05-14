@@ -183,7 +183,7 @@ RSpec.feature "Judge assignment to attorney and judge" do
         expect(page).to have_content(COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL)
         click_on COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL
 
-        expect(page).to have_current_path("/queue/#{judge_one.user.id}/review")
+        expect(page).to have_current_path("/queue")
         expect(page).to have_content("Review 1 Cases")
       end
     end
