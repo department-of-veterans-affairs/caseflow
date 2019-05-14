@@ -8,6 +8,7 @@ class JudgeTask < Task
   def available_actions(user)
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+      appropriate_timed_hold_task_action,
       additional_available_actions(user)
     ].flatten
   end

@@ -182,10 +182,11 @@ RSpec.describe AppealsController, type: :controller do
       end
       let(:appeal) { create(:appeal, veteran_file_number: file_number) }
 
-      it "should return document count", skip: "temp disabled for doccount test" do
+      it "should return document count" do
         get :document_count, params: { appeal_id: appeal.uuid }
 
         response_body = JSON.parse(response.body)
+        pending "temp disabled for doccount test"
         expect(response_body["document_count"]).to eq 2
       end
     end

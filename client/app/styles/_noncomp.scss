@@ -7,9 +7,13 @@
   .cf-inline-form {
     line-height: 2em;
 
+    .usa-input-error-message {
+      font-weight: 500;
+    }
+
     .cf-date-error {
       input {
-        border: 3px solid $color-secondary-dark;
+        border: 1px solid $color-secondary-dark;
       }
 
     }
