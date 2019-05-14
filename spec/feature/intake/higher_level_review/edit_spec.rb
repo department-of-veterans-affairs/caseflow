@@ -1443,7 +1443,7 @@ feature "Higher Level Review Edit issues" do
       end
     end
 
-    context "when a rating decision is edited" do
+    context "when a rating decision text is edited" do
       before do
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
@@ -1466,7 +1466,14 @@ feature "Higher Level Review Edit issues" do
           click_edit_contention_issue
         end
 
-        expect(page).to have_content(issue.contested_issue_description)
+        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to have_field(type: "textarea", match: :first)
+
+        fill_in(with: "Right Knee")
+        expect(page).to have_button("Submit", disabled: false)
+        click_button("Submit")
+
+        expect(page).to have_content("Right Knee")
       end
     end
 
