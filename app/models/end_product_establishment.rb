@@ -199,7 +199,7 @@ class EndProductEstablishment < ApplicationRecord
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
   rescue StandardError => error
-    raise ::BGSSyncError.from_bgs_error(error, self)
+    raise BGSError::BGSSyncError.from_bgs_error(error, self)
   end
 
   def fetch_dispositions_from_vbms

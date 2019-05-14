@@ -203,7 +203,7 @@ describe UpdateAppellantRepresentationJob do
       let(:appeal_count) { 6 }
 
       it "returns the appropriate ratio of legacy to ama" do
-        UpdateAppellantRepresentationJob::TOTAL_NUMBER_OF_APPEALS_TO_UPDATE = 3
+        stub_const("UpdateAppellantRepresentationJob::TOTAL_NUMBER_OF_APPEALS_TO_UPDATE", 3)
         appeal_counts = UpdateAppellantRepresentationJob.new.retrieve_number_to_update
 
         expect(appeal_counts[:number_of_legacy_appeals_to_update]).to eq(1)

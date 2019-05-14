@@ -719,7 +719,7 @@ describe EndProductEstablishment do
         end
 
         it "re-raises error" do
-          expect { subject }.to raise_error(::BGSSyncError)
+          expect { subject }.to raise_error(BGSError::BGSSyncError)
         end
       end
 
@@ -745,7 +745,7 @@ describe EndProductEstablishment do
         end
 
         it "re-raises a transient ignorable error" do
-          expect { subject }.to raise_error(::TransientBGSSyncError)
+          expect { subject }.to raise_error(BGSError::TransientBGSSyncError)
         end
       end
 
@@ -761,7 +761,7 @@ describe EndProductEstablishment do
         end
 
         it "re-raises a transient ignorable error" do
-          expect { subject }.to raise_error(::TransientBGSSyncError)
+          expect { subject }.to raise_error(BGSError::TransientBGSSyncError)
         end
       end
 
