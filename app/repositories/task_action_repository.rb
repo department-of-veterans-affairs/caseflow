@@ -104,29 +104,6 @@ class TaskActionRepository
       end
     end
 
-    def colocated_task_add_admin_action_data(task)
-        {
-          redirect_after: "/queue",
-          selected: nil,
-          options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
-            {
-              label: value,
-              value: key
-            }
-          end,
-          type: ColocatedTask.name
-        }
-      end
-    end
-
-    def change_task_type_data(task, user = nil)
-      if task.is_a? MailTask
-        mail_assign_to_organization_data
-      else
-        colocated_task_add_admin_action_data(task)
-      end
-    end
-
     def schedule_hearing_task_add_admin_action_data(task, _user)
       {
         redirect_after: "/queue/appeals/#{task.appeal.external_id}",
@@ -150,6 +127,28 @@ class TaskActionRepository
         end,
         type: ColocatedTask.name
       }
+    end
+
+    def colocated_task_add_admin_action_data(task)
+      {
+        redirect_after: "/queue",
+        selected: nil,
+        options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
+          {
+            label: value,
+            value: key
+          }
+        end,
+        type: ColocatedTask.name
+      }
+    end
+
+    def change_task_type_data(task, user = nil)
+      if task.is_a? MailTask
+        mail_assign_to_organization_data
+      else
+        colocated_task_add_admin_action_data(task)
+      end
     end
 
     def complete_data(task, _user = nil)
