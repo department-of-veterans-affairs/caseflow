@@ -56,7 +56,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def ama_activation_date
-    if FeatureToggle.enabled?(:use_ama_activation_date, user: intake.user)
+    if intake && FeatureToggle.enabled?(:use_ama_activation_date, user: intake.user)
       Constants::DATES["AMA_ACTIVATION"].to_date
     else
       Constants::DATES["AMA_ACTIVATION_TEST"].to_date
