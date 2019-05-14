@@ -138,7 +138,7 @@ GEM
     bullet (6.0.0)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
-    bummr (0.3.2)
+    bummr (0.5.0)
       rainbow
       thor
     bundler-audit (0.6.1)
@@ -542,7 +542,7 @@ DEPENDENCIES
   bootsnap
   brakeman
   bullet
-  bummr (= 0.3.2)
+  bummr
   bundler-audit
   business_time (~> 0.9.3)
   byebug
