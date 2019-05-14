@@ -57,7 +57,7 @@ describe RootTask do
                  ])
         end
 
-        before { RootTask.create_root_and_sub_tasks!(appeal) }
+        before { RootTaskForAppeal.create_root_and_sub_tasks!(appeal) }
 
         it "is ready for distribution immediately" do
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("assigned")
@@ -76,7 +76,7 @@ describe RootTask do
                  ])
         end
 
-        before { RootTask.create_root_and_sub_tasks!(appeal) }
+        before { RootTaskForAppeal.create_root_and_sub_tasks!(appeal) }
 
         it "blocks distribution" do
           expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
@@ -108,7 +108,7 @@ describe RootTask do
       end
 
       it "blocks distribution" do
-        RootTask.create_root_and_sub_tasks!(appeal)
+        RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
         expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
         expect(EvidenceSubmissionWindowTask.find_by(appeal: appeal).parent.class.name).to eq("DistributionTask")
       end
@@ -128,7 +128,7 @@ describe RootTask do
       end
 
       it "blocks distribution with schedule hearing task" do
-        RootTask.create_root_and_sub_tasks!(appeal)
+        RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
         expect(DistributionTask.find_by(appeal: appeal).status).to eq("on_hold")
         expect(ScheduleHearingTask.find_by(appeal: appeal).parent.class.name).to eq("HearingTask")
         expect(ScheduleHearingTask.find_by(appeal: appeal).parent.parent.class.name).to eq("DistributionTask")
@@ -146,7 +146,7 @@ describe RootTask do
         before { allow_any_instance_of(Representative).to receive(:should_write_ihp?).with(anything).and_return(false) }
 
         it "creates no IHP tasks" do
-          RootTask.create_root_and_sub_tasks!(appeal)
+          RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
           expect(InformalHearingPresentationTask.find_by(appeal: appeal)).to be_nil
         end
       end
@@ -163,7 +163,7 @@ describe RootTask do
       end
 
       it "creates a task for each VSO" do
-        RootTask.create_root_and_sub_tasks!(appeal)
+        RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
         expect(RootTask.count).to eq(1)
 
         expect(InformalHearingPresentationTask.count).to eq(2)
@@ -177,7 +177,7 @@ describe RootTask do
           parent: appeal.root_task,
           assigned_to: vva
         )
-        RootTask.create_root_and_sub_tasks!(appeal)
+        RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
 
         expect(InformalHearingPresentationTask.count).to eq(2)
         expect(InformalHearingPresentationTask.first.assigned_to).to eq(vva)
@@ -185,14 +185,14 @@ describe RootTask do
       end
 
       it "creates RootTask assigned to Bva organization" do
-        RootTask.create_root_and_sub_tasks!(appeal)
+        RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
         expect(RootTask.last.assigned_to).to eq(Bva.singleton)
       end
     end
 
     context "when only one VSO exists in our organization table" do
       it "doesn't create a InformalHearingPresentationTask for missing organization" do
-        RootTask.create_root_and_sub_tasks!(appeal)
+        RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
 
         expect(InformalHearingPresentationTask.count).to eq(1)
         expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)

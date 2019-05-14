@@ -45,7 +45,7 @@ describe EvidenceSubmissionWindowTask do
 
   context "on complete" do
     it "creates an ihp task if the appeal has a vso" do
-      RootTask.create_root_and_sub_tasks!(appeal)
+      RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
       expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(0)
       EvidenceSubmissionWindowTask.find_by(appeal: appeal).when_timer_ends
       expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(1)
@@ -53,7 +53,7 @@ describe EvidenceSubmissionWindowTask do
     end
 
     it "marks appeal as ready for distribution if the appeal doesn't have a vso" do
-      RootTask.create_root_and_sub_tasks!(appeal_no_vso)
+      RootTaskForAppeal.create_root_and_sub_tasks!(appeal_no_vso)
       EvidenceSubmissionWindowTask.find_by(appeal: appeal_no_vso).update!(status: "completed")
       expect(DistributionTask.find_by(appeal: appeal_no_vso).status).to eq("assigned")
     end

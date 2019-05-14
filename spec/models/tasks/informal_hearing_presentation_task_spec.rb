@@ -65,7 +65,7 @@ describe InformalHearingPresentationTask do
 
     before do
       FeatureToggle.enable!(:ama_acd_tasks)
-      RootTask.create_root_and_sub_tasks!(appeal)
+      RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
     end
 
     it "should create a DistributionTask" do

@@ -8,7 +8,7 @@ class EvidenceSubmissionWindowTask < GenericTask
   include TimeableTask
 
   def when_timer_ends
-    RootTask.create_ihp_tasks!(appeal, parent)
+    RootTaskForAppeal.create_ihp_tasks!(appeal, parent)
     update!(status: :completed)
   end
 

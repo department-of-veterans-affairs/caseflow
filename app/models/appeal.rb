@@ -335,7 +335,7 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    RootTask.create_root_and_sub_tasks!(self)
+    RootTaskForAppeal.create_root_and_sub_tasks!(self)
     create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
     maybe_create_translation_task
   end

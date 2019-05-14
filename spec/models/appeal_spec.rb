@@ -66,7 +66,7 @@ describe Appeal do
 
     it "returns appeals" do
       [direct_review_appeal, evidence_submission_appeal, hearing_appeal].each do |appeal|
-        RootTask.create_root_and_sub_tasks!(appeal)
+        RootTaskForAppeal.create_root_and_sub_tasks!(appeal)
       end
 
       expect(subject).to include direct_review_appeal
