@@ -560,7 +560,7 @@ describe Appeal do
     subject { appeal.create_tasks_on_intake_success! }
 
     it "creates root and vso tasks" do
-      expect(RootTask).to receive(:create_root_and_sub_tasks!).once
+      expect(RootTaskForAppeal).to receive(:create_root_and_sub_tasks!).once
 
       subject
     end

@@ -88,7 +88,7 @@ class SeedDB
     )
 
     root_task = RootTask.create!(appeal: appeal)
-    RootTask.create_subtasks!(appeal, root_task)
+    RootTaskForAppeal.create_subtasks!(appeal, root_task)
 
     # Completing the evidence submission task will mark the appeal ready for distribution
     evidence_submission_task = EvidenceSubmissionWindowTask.find_by(appeal: appeal)
