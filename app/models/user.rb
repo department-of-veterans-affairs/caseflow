@@ -68,6 +68,11 @@ class User < ApplicationRecord
     roles && (roles.include?("Mail Intake") || roles.include?("Admin Intake"))
   end
 
+  def hearings_user?
+    can?("Build HearSched") || can?("Edit HearSched") || can?("RO ViewHearSched") ||
+      can?("VSO") || (can?("HearingPrep") && FeatureToggle.enabled?(:hearing_prep_redirect))
+  end
+
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end

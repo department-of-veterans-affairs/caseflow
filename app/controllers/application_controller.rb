@@ -122,11 +122,7 @@ class ApplicationController < ApplicationBaseController
         link: "/hearings/dockets"
       }
     end
-    if current_user.can?("Build HearSched") ||
-       current_user.can?("Edit HearSched") ||
-       current_user.can?("RO ViewHearSched") ||
-       current_user.can?("VSO") ||
-       (current_user.can?("HearingPrep") && FeatureToggle.enabled?(:hearing_prep_redirect))
+    if current_user.hearings_user?
       urls << {
         title: "Hearings",
         link: "/hearings/schedule"
