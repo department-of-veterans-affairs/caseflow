@@ -72,17 +72,16 @@ class Task < ApplicationRecord
   def available_actions_unwrapper(user)
     actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
 
-    # Add the cancel timed hold option to the set of actions here.
-    if actions.any? && on_timed_hold?
-      actions.push(build_action_hash(Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h, user))
-    end
-
     # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
     if actions.length > actions.pluck(:value).uniq.length
       fail Caseflow::Error::DuplicateTaskActionPaths, task_id: id, user_id: user.id, labels: actions.pluck(:label)
     end
 
     actions
+  end
+
+  def appropriate_timed_hold_task_action
+    on_timed_hold? ? Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h : Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
   end
 
   def build_action_hash(action, user)

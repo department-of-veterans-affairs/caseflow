@@ -29,6 +29,8 @@ class GenericTask < Task
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
   def available_actions(user)
     return [] unless user
 
@@ -36,6 +38,7 @@ class GenericTask < Task
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+        appropriate_timed_hold_task_action,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
@@ -58,6 +61,8 @@ class GenericTask < Task
 
     []
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def available_hearing_admin_actions(user)
     user_has_access = HearingAdmin.singleton.user_has_access?(user)

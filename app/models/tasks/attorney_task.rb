@@ -28,7 +28,8 @@ class AttorneyTask < Task
                             end
     [
       review_decision_label,
-      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
+      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+      appropriate_timed_hold_task_action
     ]
   end
 
