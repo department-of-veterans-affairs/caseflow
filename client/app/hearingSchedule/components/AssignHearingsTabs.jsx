@@ -33,6 +33,8 @@ const tableNumberStyling = css({
   }
 });
 
+const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
+
 const AvailableVeteransTable = ({ rows, columns }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
 
@@ -246,18 +248,23 @@ export default class AssignHearingsTabs extends React.Component {
       return filteredBy === hearing.location.facilityId;
     });
 
-    return _.map(filtered, (hearing, index) => ({
-      number: <span>{index + 1}.</span>,
-      externalId: hearing.appealExternalId,
-      caseDetails: this.appellantName(hearing),
-      type: renderAppealType({
-        caseType: hearing.appealType,
-        isAdvancedOnDocket: hearing.aod
-      }),
-      docketNumber: this.getHearingDocketTag(hearing),
-      suggestedLocation: this.formatSuggestedHearingLocation(hearing.location),
-      time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
-    }));
+    return _.map(filtered, (hearing, index) => {
+      const hearingLocation = hearing.readableRequestType === 'Central' ?
+        'Washington, DC' : hearing.readableLocation;
+
+      return {
+        number: <span>{index + 1}.</span>,
+        externalId: hearing.appealExternalId,
+        caseDetails: this.appellantName(hearing),
+        type: renderAppealType({
+          caseType: hearing.appealType,
+          isAdvancedOnDocket: hearing.aod
+        }),
+        docketNumber: this.getHearingDocketTag(hearing),
+        hearingLocation,
+        time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
+      };
+    });
   };
 
   getLocationFilterValues = (data, tab) => {
@@ -333,9 +340,9 @@ export default class AssignHearingsTabs extends React.Component {
       valueName: 'docketNumber'
     },
     {
-      header: 'Suggested Location',
+      header: tab === UPCOMING_HEARINGS_TAB_NAME ? 'Hearing Location' : 'Suggested Location',
       align: 'left',
-      valueName: 'suggestedLocation',
+      valueName: tab === UPCOMING_HEARINGS_TAB_NAME ? 'hearingLocation' : 'suggestedLocation',
       getFilterValues: locationFilterValues,
       isDropdownFilterOpen: state.dropdownIsOpen,
       label: 'Filter by location',
@@ -385,7 +392,7 @@ export default class AssignHearingsTabs extends React.Component {
             page: <UpcomingHearingsTable
               selectedHearingDay={selectedHearingDay}
               rows={this.upcomingHearingsRows(upcomingHearings)}
-              columns={this.tabWindowColumns(upcomingHearings, { tab: 'upcomingHearings' })}
+              columns={this.tabWindowColumns(upcomingHearings, { tab: UPCOMING_HEARINGS_TAB_NAME })}
             />
           },
           {
