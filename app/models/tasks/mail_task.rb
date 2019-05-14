@@ -80,10 +80,6 @@ class MailTask < GenericTask
     self.class.label
   end
 
-  def change_task_type_data(_user = nil)
-    mail_assign_to_organization_data
-  end
-
   # Waiting for backend implementation before allowing user access
   # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
   # def available_actions(user)

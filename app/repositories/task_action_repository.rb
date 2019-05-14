@@ -100,6 +100,11 @@ class TaskActionRepository
       elsif task.is_a? LegacyTask
         legacy_task_add_admin_action_data(task, user)
       else
+        colocated_task_add_admin_action_data(task)
+      end
+    end
+
+    def colocated_task_add_admin_action_data(task)
         {
           redirect_after: "/queue",
           selected: nil,
@@ -111,6 +116,14 @@ class TaskActionRepository
           end,
           type: ColocatedTask.name
         }
+      end
+    end
+
+    def change_task_type_data(task, user = nil)
+      if task.is_a? MailTask
+        mail_assign_to_organization_data
+      else
+        colocated_task_add_admin_action_data(task)
       end
     end
 
