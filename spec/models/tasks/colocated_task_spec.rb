@@ -302,6 +302,7 @@ describe ColocatedTask do
         :colocated_task,
         assigned_by: attorney,
         assigned_to: colocated_user,
+        appeal: appeal_1,
         parent: org_task
       ).becomes(ColocatedTask)
     end
