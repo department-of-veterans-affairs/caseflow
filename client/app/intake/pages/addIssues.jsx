@@ -122,7 +122,7 @@ export class AddIssuesPage extends React.Component {
       }
 
       // if any issues do not have ids, it means the issue was just added
-      if (issues.filter((issue) => !issue.id || Boolean(issue.editedDescription)).length > 0) {
+      if ((issues.filter((issue) => !issue.id || issue.editedDescription).length > 0)) {
         return true;
       }
 
