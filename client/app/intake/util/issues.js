@@ -352,7 +352,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         vacolsIssue: issue.vacolsIssue,
         eligibleForSocOptIn: issue.eligibleForSocOptIn,
         withdrawalPending: issue.withdrawalPending,
-        withdrawalDate: issue.withdrawalDate
+        withdrawalDate: issue.withdrawalDate,
+        editedDescription: issue.editedDescription
       };
     }
 
@@ -377,7 +378,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       decisionReviewTitle: issue.decisionReviewTitle,
       withdrawalPending: issue.withdrawalPending,
       withdrawalDate: issue.withdrawalDate,
-      category: issue.category
+      category: issue.category,
+      editedDescription: issue.editedDescription
     };
   });
 };
