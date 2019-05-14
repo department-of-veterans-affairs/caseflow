@@ -16,6 +16,8 @@ class BGSSyncError < RuntimeError
 
   # rubocop:disable Metrics/MethodLength
   def self.from_bgs_error(error, epe)
+    return error if error.is_a?(Caseflow::Error::VBMS)
+
     error_message = if error.try(:body)
                       # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3124/
                       error.body.encode("UTF-8", invalid: :replace, undef: :replace, replace: "")
