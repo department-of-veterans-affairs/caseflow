@@ -85,7 +85,7 @@ class VBMSError < RuntimeError
     "User is not authorized." => "UserNotAuthorized",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4999/events/332996/
-    "Logon ID \w+ Not Found" => "UnknownUser",
+    "Logon ID \\w+ Not Found" => "UnknownUser",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/294187/
     "Veteran is employed by this station." => "VeteranEmployedByStation",
