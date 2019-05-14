@@ -176,25 +176,27 @@ class VaDotGovAddressValidator
   def get_state_code(va_dot_gov_address)
     return "DC" if appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
 
-    state_code = case va_dot_gov_address[:country_code]
-                 # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
-                 when "GQ", "AQ", "RM", "FM", "CQ", "PS"
-                   "HI"
-                 # Philippine Islands
-                 when "PH", "RP", "PI"
-                   "PI"
-                 # Puerto Rico, Vieques, U.S. Virgin Islands
-                 when "VI", "VQ", "PR"
-                   "PR"
-                 when "US", "USA"
-                   va_dot_gov_address[:state_code]
-                 else
-                   fail Caseflow::Error::VaDotGovForeignVeteranError
-                 end
+    state_code = map_country_code_to_state(va_dot_gov_address)
 
-    return state_code if valid_states.include?(state_code)
+    fail Caseflow::Error::VaDotGovForeignVeteranError if state_code.nil? || !valid_states.include?(state_code)
 
-    fail Caseflow::Error::VaDotGovForeignVeteranError
+    state_code
+  end
+
+  def map_country_code_to_state(va_dot_gov_address)
+    case va_dot_gov_address[:country_code]
+    # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
+    when "GQ", "AQ", "RM", "FM", "CQ", "PS"
+      "HI"
+    # Philippine Islands
+    when "PH", "RP", "PI"
+      "PI"
+    # Puerto Rico, Vieques, U.S. Virgin Islands
+    when "VI", "VQ", "PR"
+      "PR"
+    when "US", "USA"
+      va_dot_gov_address[:state_code]
+    end
   end
 
   def handle_error(error)
@@ -202,7 +204,7 @@ class VaDotGovAddressValidator
     when Caseflow::Error::VaDotGovInvalidInputError, Caseflow::Error::VaDotGovAddressCouldNotBeFoundError,
       Caseflow::Error::VaDotGovMultipleAddressError
       admin_action = create_admin_action_for_schedule_hearing_task(
-        instructions: "The appellant's address in VBMS does not exist, is invalid, or is ambiguous.",
+        instructions: "The appellant's address in VBMS does not exist, is incomplete, or is ambiguous.",
         admin_action_type: HearingAdminActionVerifyAddressTask
       )
 
