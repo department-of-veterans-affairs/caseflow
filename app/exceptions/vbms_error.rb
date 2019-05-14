@@ -27,6 +27,8 @@ class VBMSError < RuntimeError
   class FilenumberDoesNotExist < Caseflow::Error::VBMS; end
   class MissingData < Caseflow::Error::VBMS; end
   class ShareExceptionFindRatingData < Caseflow::Error::VBMS; end
+  class MissingVeteranIdentifier < Caseflow::Error::VBMS; end
+  class Unknown < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -95,6 +97,12 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3696/events/315030/
     "Document not found" => "DocumentNotFound",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4908/events/331555/
+    "Missing required field: Veteran Identifier." => "MissingVeteranIdentifier",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3728/events/331292/
+    "The System has encountered an unknown error" => "Unknown",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
     "missing required data" => "MissingData"

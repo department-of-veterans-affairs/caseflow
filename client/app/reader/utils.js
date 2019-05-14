@@ -158,5 +158,18 @@ export const getClaimTypeDetailInfo = (claim) => {
   </div>;
 };
 
+export const handleErrorWithSafeNavigation = (response) => {
+  const isJson = _.get(response, 'response.type') === 'application/json';
+
+  if (!isJson) {
+    return null;
+  }
+  const jsonResponseText = _.get(response, 'response.text');
+  const parsedResponseText = JSON.parse(jsonResponseText);
+  const error = _.get(parsedResponseText, 'errors[0].detail', null);
+
+  return error;
+};
+
 export const shouldFetchAppeal = (appeal, vacolsIdFromUrl) => (_.isEmpty(appeal) ||
     ((appeal.vacols_id || appeal.external_id) !== vacolsIdFromUrl));
