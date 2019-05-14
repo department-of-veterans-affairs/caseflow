@@ -22,6 +22,14 @@ class JudgeLegacyTask < LegacyTask
     COPY::CASE_TIMELINE_JUDGE_TASK
   end
 
+  def label
+    if action == "review"
+      return COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
+    else
+      return COPY::JUDGE_ASSIGN_TASK_LABEL
+    end
+  end
+
   def self.from_vacols(record, appeal, user_id)
     task = super
     task.action = record.reassigned_to_judge_date.present? ? "review" : "assign"
