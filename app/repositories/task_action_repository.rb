@@ -100,7 +100,7 @@ class TaskActionRepository
       elsif task.is_a? LegacyTask
         legacy_task_add_admin_action_data(task, user)
       else
-        colocated_task_add_admin_action_data(task)
+        colocated_task_add_admin_action_data(task, user)
       end
     end
 
