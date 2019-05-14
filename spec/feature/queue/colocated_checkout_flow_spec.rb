@@ -133,7 +133,7 @@ RSpec.feature "Colocated checkout flows" do
       expect(colocated_action.instructions[1]).to eq instructions
     end
 
-    xscenario "sends task to team" do
+    scenario "sends task to team" do
       visit "/queue"
 
       appeal = translation_action.appeal
