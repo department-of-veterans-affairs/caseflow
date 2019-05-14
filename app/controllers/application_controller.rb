@@ -116,7 +116,7 @@ class ApplicationController < ApplicationBaseController
       link: "/queue"
     }]
 
-    if current_user.can?("Hearing Prep")
+    if current_user.can?("Hearing Prep") && !FeatureToggle.enabled?(:hearing_prep_redirect)
       urls << {
         title: "Hearing Prep",
         link: "/hearings/dockets"
@@ -125,7 +125,8 @@ class ApplicationController < ApplicationBaseController
     if current_user.can?("Build HearSched") ||
        current_user.can?("Edit HearSched") ||
        current_user.can?("RO ViewHearSched") ||
-       current_user.can?("VSO")
+       current_user.can?("VSO") ||
+       (current_user.can?("HearingPrep") && FeatureToggle.enabled?(:hearing_prep_redirect))
       urls << {
         title: "Hearings",
         link: "/hearings/schedule"
