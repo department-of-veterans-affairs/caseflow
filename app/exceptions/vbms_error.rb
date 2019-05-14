@@ -42,13 +42,16 @@ class VBMSError < RuntimeError
   end
 
   KNOWN_ERRORS = {
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/331930/
+    "upstream connect error or disconnect/reset before headers" => "Transient",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4403/events/293678/
     "FAILED FOR UNKNOWN REASONS" => "Transient",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/
     "additional review due to an Incident Flash" => "IncidentFlash",
 
-    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/267335/
     "Could not access remote service at" => "Transient",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3405/
