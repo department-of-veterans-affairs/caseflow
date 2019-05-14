@@ -69,8 +69,8 @@ class User < ApplicationRecord
   end
 
   def hearings_user?
-    can?("Build HearSched") || can?("Edit HearSched") || can?("RO ViewHearSched") ||
-      can?("VSO") || (can?("HearingPrep") && FeatureToggle.enabled?(:hearing_prep_redirect))
+    can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO"]) ||
+      (can?("Hearing Prep") && FeatureToggle.enabled?(:hearing_prep_redirect))
   end
 
   def administer_org_users?
@@ -156,6 +156,10 @@ class User < ApplicationRecord
     else
       username.to_s
     end
+  end
+
+  def can_any_of_these_roles?(roles)
+    roles.any? { |role| can?(role) }
   end
 
   # We should not use user.can?("System Admin"), but user.admin? instead
