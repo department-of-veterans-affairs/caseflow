@@ -428,6 +428,8 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 1.6)
+    rubocop-performance (1.1.0)
+      rubocop (>= 0.67.0)
     ruby-oci8 (2.2.7)
     ruby-plsql (0.6.0)
     ruby-progressbar (1.10.0)
@@ -582,6 +584,7 @@ DEPENDENCIES
   rspec-rails
   rspec_junit_formatter
   rubocop (~> 0.52)
+  rubocop-performance
   ruby-oci8 (~> 2.2)
   sass-rails (~> 5.0)
   scss_lint

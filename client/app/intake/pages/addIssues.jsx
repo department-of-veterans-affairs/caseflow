@@ -122,7 +122,7 @@ export class AddIssuesPage extends React.Component {
       }
 
       // if any issues do not have ids, it means the issue was just added
-      if (issues.filter((issue) => !issue.id).length > 0) {
+      if ((issues.filter((issue) => !issue.id || issue.editedDescription).length > 0)) {
         return true;
       }
 
@@ -152,7 +152,8 @@ export class AddIssuesPage extends React.Component {
       return <div className="issues">
         <div>
           { requestIssues.map((issue) => {
-            const editableContentionText = Boolean(formType !== FORM_TYPES.APPEAL.key && !issue.category);
+            const editableContentionText = Boolean(
+              formType !== FORM_TYPES.APPEAL.key && !issue.category && !issue.ineligibleReason);
 
             return <div className="issue-container" key={`issue-container-${issue.index}`}>
               <div

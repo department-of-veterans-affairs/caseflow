@@ -244,7 +244,18 @@ class User < ApplicationRecord
   end
 
   def selectable_organizations
-    organizations.select(&:selectable_in_queue?)
+    orgs = organizations.select(&:selectable_in_queue?)
+    judge_team = JudgeTeam.for_judge(self)
+
+    if judge_team
+      orgs << {
+        id: judge_team.id,
+        name: "Assign",
+        url: format("queue/%s/assign", id)
+      }
+    end
+
+    orgs
   end
 
   private
