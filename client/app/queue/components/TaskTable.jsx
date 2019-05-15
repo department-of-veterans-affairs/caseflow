@@ -38,7 +38,7 @@ import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
 
 const hasDASRecord = (task, requireDasRecord) => {
   if (task.appeal.isLegacyAppeal && requireDasRecord) {
-    return task.taskId;
+    return !!task.taskId;
   }
 
   return true;
@@ -69,7 +69,7 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
     },
     span: collapseColumn(requireDasRecord),
     getSortValue: (task) => {
-      if (!taskHasDASRecord(task, requireDasRecord)) {
+      if (!hasDASRecord(task, requireDasRecord)) {
         return null;
       }
 
