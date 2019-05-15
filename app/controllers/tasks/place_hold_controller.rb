@@ -12,7 +12,7 @@ class Tasks::PlaceHoldController < TasksController
   private
 
   def task
-    @task ||= Task.find(params[:task_id])
+    @task ||= ::Task.find(params[:task_id])
   end
 
   def create_params

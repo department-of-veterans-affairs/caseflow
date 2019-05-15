@@ -240,18 +240,12 @@ def ensure_stable
 end
 
 def safe_click(selector)
-  scroll_element_in_to_view(selector)
+  scroll_to(selector)
   page.first(selector).click
 end
 
 def click_label(label_for)
   safe_click("label[for='#{label_for}']")
-end
-
-def scroll_element_in_to_view(selector)
-  expect do
-    scroll_to_element_in_view_with_script(selector)
-  end.to become_truthy, "Could not find element #{selector}"
 end
 
 def get_computed_styles(selector, style_key)
@@ -281,25 +275,6 @@ def scroll_to_element_in_view_with_script(selector)
       return true;
     }();
   EOS
-end
-
-# We generally avoid writing our own polling code, since proper Cappybara use generally
-# doesn't require it. That said, there may be some situations (such as evaluating javascript)
-# that require a spinning test. We got the following matcher from
-# https://gist.github.com/showaltb/0456ce0002842c88c3fc06db43f3ee7b
-RSpec::Matchers.define :become_truthy do |wait: Capybara.default_max_wait_time|
-  supports_block_expectations
-
-  match do |block|
-    Timeout.timeout(wait) do
-      # rubocop:disable AssignmentInCondition
-      sleep(0.1) until value = block.call
-      # rubocop:enable AssignmentInCondition
-      value
-    end
-  rescue TimeoutError
-    false
-  end
 end
 
 # Test that a string does *not* include a provided substring

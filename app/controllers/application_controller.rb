@@ -116,16 +116,13 @@ class ApplicationController < ApplicationBaseController
       link: "/queue"
     }]
 
-    if current_user.can?("Hearing Prep")
+    if current_user.can?("Hearing Prep") && !FeatureToggle.enabled?(:hearing_prep_redirect)
       urls << {
         title: "Hearing Prep",
         link: "/hearings/dockets"
       }
     end
-    if current_user.can?("Build HearSched") ||
-       current_user.can?("Edit HearSched") ||
-       current_user.can?("RO ViewHearSched") ||
-       current_user.can?("VSO")
+    if current_user.hearings_user?
       urls << {
         title: "Hearings",
         link: "/hearings/schedule"
@@ -315,17 +312,8 @@ class ApplicationController < ApplicationBaseController
     subject.nil? ? "Caseflow" : feedback_hash[subject]
   end
 
-  def feedback_url(redirect = nil)
-    # :nocov:
-    unless ENV["CASEFLOW_FEEDBACK_URL"]
-      return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
-    end
-
-    # :nocov:
-
-    redirect_url = redirect || request.original_url
-    param_object = { redirect: redirect_url, subject: feedback_subject }
-    ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
+  def feedback_url
+    "/feedback"
   end
   helper_method :feedback_url
 

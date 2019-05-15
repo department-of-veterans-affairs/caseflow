@@ -202,8 +202,6 @@ class TaskRows extends React.PureComponent {
       taskList,
       timeline
     } = this.props;
-    const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
-    const sortedTaskList = sortTaskList(taskList);
 
     let timelineContainerText;
 
@@ -218,19 +216,19 @@ class TaskRows extends React.PureComponent {
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}>
-          {isLegacyAppealWithDecisionDate ? moment(appeal.decisionDate).format('MM/DD/YYYY') : ''}
+          { appeal.decisionDate && moment(appeal.decisionDate).format('MM/DD/YYYY') }
         </td>
         <td {...taskInfoWithIconTimelineContainer}
-          {...(isLegacyAppealWithDecisionDate ? {} : greyDotStyling)}>
-          {isLegacyAppealWithDecisionDate ? <GreenCheckmark /> : <GrayDot /> }
+          {...(!appeal.decisionDate && greyDotStyling)}>
+          {appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
             <div {...grayLineTimelineStyling}
-              {...(isLegacyAppealWithDecisionDate ? {} : css({ top: '25px !important' }))} />}</td>
+              {...(!appeal.decisionDate && css({ top: '25px !important' }))} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
           { timelineContainerText } <br />
         </td>
       </tr> }
-      { sortedTaskList.map((task, index) =>
+      { sortTaskList(taskList).map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
