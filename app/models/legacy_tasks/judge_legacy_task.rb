@@ -28,9 +28,8 @@ class JudgeLegacyTask < LegacyTask
 
   def self.from_vacols(record, appeal, user_id)
     task = super
-    task.action = record.reassigned_to_judge_date.present?
-      ? COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
-      : COPY::JUDGE_ASSIGN_TASK_LABEL
+    task.action = record.reassigned_to_judge_date.present?  ? COPY::JUDGE_DECISION_REVIEW_TASK_LABEL :
+      COPY::JUDGE_ASSIGN_TASK_LABEL
     if task.action == COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
       # If task action is 'assign' that means there was no previous task record yet
       task.previous_task = LegacyTask.new(assigned_at: record.assigned_to_attorney_date.try(:to_date))
