@@ -38,7 +38,7 @@ import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
 
 const hasDASRecord = (task, requireDasRecord) => {
   if (task.appeal.isLegacyAppeal && requireDasRecord) {
-    return !!task.taskId;
+    return Boolean(task.taskId);
   }
 
   return true;
