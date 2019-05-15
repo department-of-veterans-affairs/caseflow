@@ -28,6 +28,8 @@ class VBMSError < RuntimeError
   class MissingData < Caseflow::Error::VBMS; end
   class ShareExceptionFindRatingData < Caseflow::Error::VBMS; end
   class MissingVeteranIdentifier < Caseflow::Error::VBMS; end
+  class Unknown < Caseflow::Error::VBMS; end
+  class UnknownUser < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -41,13 +43,16 @@ class VBMSError < RuntimeError
   end
 
   KNOWN_ERRORS = {
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/331930/
+    "upstream connect error or disconnect/reset before headers" => "Transient",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4403/events/293678/
     "FAILED FOR UNKNOWN REASONS" => "Transient",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/
     "additional review due to an Incident Flash" => "IncidentFlash",
 
-    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/267335/
     "Could not access remote service at" => "Transient",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3405/
@@ -79,6 +84,9 @@ class VBMSError < RuntimeError
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/276980/
     "User is not authorized." => "UserNotAuthorized",
 
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4999/events/332996/
+    "Logon ID \\w+ Not Found" => "UnknownUser",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/294187/
     "Veteran is employed by this station." => "VeteranEmployedByStation",
 
@@ -99,6 +107,9 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4908/events/331555/
     "Missing required field: Veteran Identifier." => "MissingVeteranIdentifier",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3728/events/331292/
+    "The System has encountered an unknown error" => "Unknown",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
     "missing required data" => "MissingData"

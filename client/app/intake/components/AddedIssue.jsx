@@ -93,7 +93,7 @@ class AddedIssue extends React.PureComponent {
 
     return <div className={eligibleState.cssKlasses.join(' ')}>
       <span className="issue-num">{issueIdx + 1}.&nbsp;</span>
-      { issue.text } {eligibleState.errorMsg}
+      { issue.editedDescription ? issue.editedDescription : issue.text } {eligibleState.errorMsg}
       { issue.date && <span className="issue-date">Decision date: { issue.date }</span> }
       { issue.notes && <span className="issue-notes">Notes:&nbsp;{ issue.notes }</span> }
       { issue.untimelyExemptionNotes &&

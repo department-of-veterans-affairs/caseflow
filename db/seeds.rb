@@ -246,7 +246,7 @@ class SeedDB
   end
 
   def create_qr_user
-    qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
+    qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "Quality Reviewer")
     OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
 
     # Create QR tasks; one assigned just to the QR org and three assigned both to the org and a QR user.
