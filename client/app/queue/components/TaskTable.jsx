@@ -92,11 +92,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   taskHasDASRecord = (task) => {
-    if (task.appeal.isLegacyAppeal && this.props.requireDasRecord) {
-      return task.taskId;
-    }
-
-    return true;
+    return hasDASRecord(task, this.props.requireDasRecord);
   }
 
   collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
