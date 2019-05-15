@@ -10,7 +10,7 @@ class EvidenceSubmissionWindowTask < GenericTask
   before_validation :set_assignee
 
   def when_timer_ends
-    RootTaskForAppeal.create_ihp_tasks!(appeal, parent)
+    IhpTasksFactory.new(parent).create_ihp_tasks!
     update!(status: :completed)
   end
 

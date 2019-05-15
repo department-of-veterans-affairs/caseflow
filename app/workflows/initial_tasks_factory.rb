@@ -21,7 +21,7 @@ class InitialTasksFactory
     end
   end
 
-  def create_subtasks!    
+  def create_subtasks!
     distribution_task = DistributionTask.create!(appeal: @appeal, parent: @root_task)
 
     if @appeal.evidence_submission_docket?

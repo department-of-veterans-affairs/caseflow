@@ -34,7 +34,7 @@ class HearingTask < GenericTask
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
     else
-      RootTaskForAppeal.create_ihp_tasks!(appeal, parent)
+      IhpTasksFactory.new(parent).create_ihp_tasks!
     end
   end
 
