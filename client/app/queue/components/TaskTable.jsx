@@ -175,37 +175,6 @@ export class TaskTableUnconnected extends React.PureComponent {
     } : null;
   }
 
-  caseDocketNumberColumn = () => {
-    return this.props.includeDocketNumber ? {
-      header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      enableFilter: true,
-      tableData: this.props.tasks,
-      columnName: 'appeal.docketName',
-      customFilterLabels: DOCKET_NAME_FILTERS,
-      anyFiltersAreSet: true,
-      label: 'Filter by docket name',
-      valueName: 'docketName',
-      valueFunction: (task) => {
-        if (!this.taskHasDASRecord(task)) {
-          return null;
-        }
-
-        return <React.Fragment>
-          <DocketTypeBadge name={task.appeal.docketName} number={task.appeal.docketNumber} />
-          <span>{task.appeal.docketNumber}</span>
-        </React.Fragment>;
-      },
-      span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => {
-        if (!this.taskHasDASRecord(task)) {
-          return null;
-        }
-
-        return `${task.appeal.docketName || ''} ${task.appeal.docketNumber}`;
-      }
-    } : null;
-  }
-
   caseTypeColumn = () => {
     return this.props.includeType ? {
       header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
@@ -241,6 +210,37 @@ export class TaskTableUnconnected extends React.PureComponent {
       label: 'Filter by assignee',
       valueFunction: (task) => task.assignedTo.name,
       getSortValue: (task) => task.assignedTo.name
+    } : null;
+  }
+
+  caseDocketNumberColumn = () => {
+    return this.props.includeDocketNumber ? {
+      header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+      enableFilter: true,
+      tableData: this.props.tasks,
+      columnName: 'appeal.docketName',
+      customFilterLabels: DOCKET_NAME_FILTERS,
+      anyFiltersAreSet: true,
+      label: 'Filter by docket name',
+      valueName: 'docketName',
+      valueFunction: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return <React.Fragment>
+          <DocketTypeBadge name={task.appeal.docketName} number={task.appeal.docketNumber} />
+          <span>{task.appeal.docketNumber}</span>
+        </React.Fragment>;
+      },
+      span: this.collapseColumnIfNoDASRecord,
+      getSortValue: (task) => {
+        if (!this.taskHasDASRecord(task)) {
+          return null;
+        }
+
+        return `${task.appeal.docketName || ''} ${task.appeal.docketNumber}`;
+      }
     } : null;
   }
 
