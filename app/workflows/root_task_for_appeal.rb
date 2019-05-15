@@ -42,17 +42,14 @@ class RootTaskForAppeal
     def create_evidence_submission_task!(appeal, parent)
       EvidenceSubmissionWindowTask.create!(
         appeal: appeal,
-        parent: parent,
-        assigned_to: MailTeam.singleton
+        parent: parent
       )
     end
 
     def create_distribution_task!(appeal, parent)
       DistributionTask.create!(
         appeal: appeal,
-        parent: parent,
-        assigned_to: Bva.singleton,
-        status: "on_hold"
+        parent: parent
       )
     end
 

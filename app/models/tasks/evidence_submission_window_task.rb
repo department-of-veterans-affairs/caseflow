@@ -7,6 +7,8 @@
 class EvidenceSubmissionWindowTask < GenericTask
   include TimeableTask
 
+  before_validation :set_assignee
+
   def when_timer_ends
     RootTaskForAppeal.create_ihp_tasks!(appeal, parent)
     update!(status: :completed)
@@ -19,5 +21,11 @@ class EvidenceSubmissionWindowTask < GenericTask
     from_date ||= appeal.receipt_date
 
     from_date + 90.days
+  end
+
+  private
+
+  def set_assignee
+    self.assigned_to ||= MailTeam.singleton
   end
 end
