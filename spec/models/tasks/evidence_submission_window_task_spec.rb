@@ -61,8 +61,10 @@ describe EvidenceSubmissionWindowTask do
 
   context "timer_delay" do
     context "parent is not a DispositionTask" do
+      before { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+
       let(:task) do
-        EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: Bva.singleton)
+        appeal.tasks.last
       end
 
       it "is marked as complete and vso tasks are created in 90 days" do
