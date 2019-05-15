@@ -100,11 +100,16 @@ const clearfix = css({
 });
 
 const exportHeaders = [
-  { label: "Scheduled For", key: "scheduledFor" },
-  { label: "Type", key: "requestType" },
-  { label: "Regional Office", key: "regionalOffice" },
-  { label: "Room", key: "room" },
-  { label: "VLJ", key: "vlj" }
+  { label: 'Scheduled For',
+    key: 'scheduledFor' },
+  { label: 'Type',
+    key: 'requestType' },
+  { label: 'Regional Office',
+    key: 'regionalOffice' },
+  { label: 'Room',
+    key: 'room' },
+  { label: 'VLJ',
+    key: 'vlj' }
 ];
 
 class ListSchedule extends React.Component {

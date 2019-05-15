@@ -53,8 +53,8 @@ export default class DailyDocketEditLinks extends React.Component {
       const row = {
         date: hearing.scheduledFor,
         time: hearing.scheduledFor,
-        vlj: "",
-        hearingCoordinator: "",
+        vlj: '',
+        hearingCoordinator: '',
         regionalOffice: hearing.regionalOfficeName,
         hearingLocation: hearing.readableLocation,
         hearingType: hearing.readableRequestType,
@@ -67,7 +67,7 @@ export default class DailyDocketEditLinks extends React.Component {
       };
 
       if (this.isUserJudge()) {
-        row["aod"] = hearing.aod;
+        row.aod = hearing.aod;
       }
 
       return row;
@@ -76,23 +76,37 @@ export default class DailyDocketEditLinks extends React.Component {
 
   getExportDailyDocketHeaders() {
     const headers = [
-      { label: "Date", key: "date" },
-      { label: "Time", key: "time" },
-      { label: "VLJ", key: "vlj" },
-      { label: "Hearing Coordinator", key: "hearingCoordinator" },
-      { label: "Regional Office", key: "regionalOffice" },
-      { label: "Hearing Location", key: "hearingLocation" },
-      { label: "Hearing Type", key: "hearingType" },
-      { label: "Hearing Room", key: "hearingRoom" },
-      { label: "Docket Number", key: "docketNumber" },
-      { label: "Veteran Name", key: "veteranName" },
-      { label: "Representative Name", key: "representativeName" },
-      { label: "Disposition", key: "disposition" },
-      { label: "Notes", key: "notes" }
+      { label: 'Date',
+        key: 'date' },
+      { label: 'Time',
+        key: 'time' },
+      { label: 'VLJ',
+        key: 'vlj' },
+      { label: 'Hearing Coordinator',
+        key: 'hearingCoordinator' },
+      { label: 'Regional Office',
+        key: 'regionalOffice' },
+      { label: 'Hearing Location',
+        key: 'hearingLocation' },
+      { label: 'Hearing Type',
+        key: 'hearingType' },
+      { label: 'Hearing Room',
+        key: 'hearingRoom' },
+      { label: 'Docket Number',
+        key: 'docketNumber' },
+      { label: 'Veteran Name',
+        key: 'veteranName' },
+      { label: 'Representative Name',
+        key: 'representativeName' },
+      { label: 'Disposition',
+        key: 'disposition' },
+      { label: 'Notes',
+        key: 'notes' }
     ];
 
     if (this.isUserJudge()) {
-      headers.push({ label: "AOD", key: "aod" });
+      headers.push({ label: 'AOD',
+        key: 'aod' });
     }
 
     return headers;
