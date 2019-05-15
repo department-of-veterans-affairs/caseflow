@@ -21,13 +21,20 @@ FactoryBot.define do
     scheduled_for { hearing_day.scheduled_for }
 
     transient do
-      case_hearing { create(:case_hearing, user: user, hearing_date: scheduled_for, vdkey: hearing_day.id) }
+      case_hearing do
+        create(
+          :case_hearing,
+          user: user,
+          hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
+          vdkey: hearing_day.id
+        )
+      end
     end
 
     appeal do
       create(:legacy_appeal, closest_regional_office: regional_office, vacols_case:
         create(:case_with_form_9, case_issues:
-        [create(:case_issue), create(:case_issue)], case_hearings: [case_hearing]))
+        [create(:case_issue), create(:case_issue)], bfregoff: regional_office, case_hearings: [case_hearing]))
     end
 
     vacols_id { case_hearing.hearing_pkseq }
