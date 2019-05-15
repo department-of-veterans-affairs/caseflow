@@ -678,8 +678,8 @@ class Appeal < DecisionReview
   private
 
   def most_recently_assigned_to_label(tasks)
-    binding.pry
-    tasks.order(:updated_at).last.assigned_to_label
+    active_tasks = tasks.active.where.not(status: :on_hold)
+    active_tasks.order(:created_at).last.assigned_to_label
   end
 
   def maybe_create_translation_task
