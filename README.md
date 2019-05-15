@@ -101,7 +101,7 @@ Facilitates the transfer of cases from the Agency of Original Jurisdiction (AOJ)
 
 #### Organization ############################################################
 
-Request an invite to the [department-of-veterans-affairs](https://github.com/department-of-veterans-affairs) organization  
+Request an invite to the [department-of-veterans-affairs](https://github.com/department-of-veterans-affairs) organization
 
 #### Git 2-factor authentication ##########################################################
 
@@ -129,9 +129,9 @@ brew cask install chromedriver
 ```
 **Linux**
 
-[Install rbenv](https://github.com/rbenv/rbenv-installer#rbenv-installer`)  
-[Install nodenv](https://github.com/nodenv/nodenv-installer#nodenv-installer)  
-[Install yarn](https://yarnpkg.com/lang/en/docs/install)  
+[Install rbenv](https://github.com/rbenv/rbenv-installer#rbenv-installer`)
+[Install nodenv](https://github.com/nodenv/nodenv-installer#nodenv-installer)
+[Install yarn](https://yarnpkg.com/lang/en/docs/install)
 
 Ubuntu specific
 ```
@@ -161,24 +161,24 @@ If you don't see both, stop and debug.
 
 #### Install [PDFtk Server](https://www.pdflabs.com/tools/pdftk-server/) ########################
 
-**Mac**  
+**Mac**
 Unfortunately, the link on the website points to a version for older macOS that doesn't work on current versions. Use this link found on a Stack Overflow post instead:
 
 [PDFtk Server for modern macOS](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/pdftk_server-2.02-mac_osx-10.11-setup.pkg)
 
-**Ubuntu**  
-Available for Ubuntu in the software manager.  
+**Ubuntu**
+Available for Ubuntu in the software manager.
 
-**Fedora**  
-[Fedora Instructions](https://www.linuxglobal.com/pdftk-works-on-centos-7/)  
+**Fedora**
+[Fedora Instructions](https://www.linuxglobal.com/pdftk-works-on-centos-7/)
 
 #### Install Database Clients #######################################################
 
 _Postgres_
 **Mac & Linux**
-Install postgres client and developer libraries.  
-The postgres server is not needed. If you install it, configure it to run on a different port or you will block the docker container.    
-Add these postgres variables to your env:  
+Install postgres client and developer libraries.
+The postgres server is not needed. If you install it, configure it to run on a different port or you will block the docker container.
+Add these postgres variables to your env:
 
 ```
 export POSTGRES_HOST=localhost
@@ -186,8 +186,8 @@ export POSTGRES_USER=postgres
 export POSTGRES_PASSWORD=postgres
 ```
 
-_Oracle_  
-You'll need to install the libraries required to connect to the VACOLS Oracle database.  
+_Oracle_
+You'll need to install the libraries required to connect to the VACOLS Oracle database.
 
 **Mac**
 
@@ -214,16 +214,16 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
     ...and follow the corresponding steps in Homebrew's error message.
 
 **Linux**
-[Install oracle](https://github.com/kubo/ruby-oci8/blob/master/docs/install-instant-client.md#install-oracle-instant-client-packages)  
+[Install oracle](https://github.com/kubo/ruby-oci8/blob/master/docs/install-instant-client.md#install-oracle-instant-client-packages)
  - Last known working at Oracle Instant Client v12;
- - Follow _all the steps_ for the zip install. 
+ - Follow _all the steps_ for the zip install.
  - Requires instant-client, sdk, and sql\*plus packages.
- - Don't skip the lib softlink  
- 
-You probably have to create an Oracle account to download these.  
+ - Don't skip the lib softlink
 
-Add this to your env to squash oracle errors on startup:  
-`export NLS_LANG=AMERICAN_AMERICA.US7ASCII`  
+You probably have to create an Oracle account to download these.
+
+Add this to your env to squash oracle errors on startup:
+`export NLS_LANG=AMERICAN_AMERICA.US7ASCII`
 
 (May need to have your user own the oracle /opt directory?)
 
@@ -250,21 +250,21 @@ Back in the terminal, run:
 docker login -u dsvaappeals
 ```
 
-The password is in the DSVA 1Password account. 
+The password is in the DSVA 1Password account.
 Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
 **Linux**
 
 [Install docker-ce](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 
-Follow the directions to set docker to run without sudo.  
+Follow the directions to set docker to run without sudo.
 
 Back in the terminal, run:
 ```
 docker login -u dsvaappeals
 ```
 
-The password is in the DSVA 1Password account. 
+The password is in the DSVA 1Password account.
 Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
 #### Install chromedriver
@@ -308,9 +308,9 @@ rbenv install $(cat .ruby-version)
 rbenv rehash
 BUNDLED_WITH= #[Gemfile.lock bundled-with]
 gem install bundler -v $BUNDLED_WITH
-# If when running gem install bundler above you get a permissions error, 
+# If when running gem install bundler above you get a permissions error,
 # this means you have not propertly configured your rbenv.
-# Debug. 
+# Debug.
 # !! Do *not* proceed by running sudo gem install bundler. !!
 bundle install
 ```
@@ -364,10 +364,10 @@ foreman start
 ```
 #### Separate Front & Backend Servers ####################################################
 
-_Backend_   
+_Backend_
 `REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000`
 
-_Frontend_    
+_Frontend_
 `cd client && yarn run dev:hot`
 
 ### Seeding Data
@@ -402,6 +402,12 @@ You can also use Psequel (instead of SQL Developer) with the following setup (us
 #### FACOLS
 
 To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
+
+### Debugging Tools
+[RailsPanel](https://github.com/dejan/rails_panel) is a great Chrome extension
+that makes debugging easier. It depends on the `meta_request` gem, which is
+already included in this repo.
+
 
 ## Running tests
 
