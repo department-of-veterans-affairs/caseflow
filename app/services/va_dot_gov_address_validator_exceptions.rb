@@ -30,20 +30,15 @@ class VaDotGovAddressValidatorExceptions
       (closest_regional_office == "RO60") ? "RO10" : closest_regional_office
     end
 
-    def include_san_antonio_satellite_office(facility_ids, state_code)
+    def include_san_antonio_satellite_office(facility_ids)
       # veterans whose closest AHL is San Antonio should have Houston as the RO
       # even though Waco may be closer. This is a RO/AHL policy quirk.
       # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
-
-      facility_ids << "vha_671BY" if state_code == "TX"
-
-      facility_ids
+      facility_ids << "vha_671BY"
     end
 
-    def map_san_antonio_satellite_office_to_houston(facility_id, state_code)
-      return "vba_362" if facility_id == "vha_671BY" && state_code == "TX"
-
-      facility_id
+    def facility_is_san_antonio_satellite_office?(facility_id)
+      facility_id == "vha_671BY"
     end
   end
 end

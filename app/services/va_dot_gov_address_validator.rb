@@ -105,15 +105,11 @@ class VaDotGovAddressValidator
   def fetch_and_update_ro(va_dot_gov_address:)
     state_code = get_state_code(va_dot_gov_address)
     facility_ids = ro_facility_ids_for_state(state_code)
-    facility_ids = VaDotGovAddressValidatorExceptions.include_san_antonio_satellite_office(facility_ids, state_code)
 
     distances = VADotGovService.get_distance(ids: facility_ids, lat: va_dot_gov_address[:lat],
                                              long: va_dot_gov_address[:long])
 
     closest_facility_id = distances[0][:facility_id]
-    closest_facility_id =
-      VaDotGovAddressValidatorExceptions.map_san_antonio_satellite_office_to_houston(closest_facility_id, state_code)
-
     closest_ro = get_regional_office_from_facility_id(closest_facility_id)
 
     appeal.update(closest_regional_office: VaDotGovAddressValidatorExceptions.except_delaware(closest_ro))
@@ -127,6 +123,8 @@ class VaDotGovAddressValidator
   end
 
   def get_regional_office_from_facility_id(facility_id)
+    return "RO62" if VaDotGovAddressValidatorExceptions.facility_is_san_antonio_satellite_office?(facility_id)
+
     RegionalOffice::CITIES.find { |_key, regional_office| regional_office[:facility_locator_id] == facility_id }[0]
   end
 
@@ -136,8 +134,13 @@ class VaDotGovAddressValidator
                     else
                       [state_code]
                     end
-    RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || !filter_states.include?(ro[:state]) }
-      .pluck(:facility_locator_id)
+    ids = RegionalOffice::CITIES.values.reject do |ro|
+      ro[:facility_locator_id].nil? || !filter_states.include?(ro[:state])
+    end.pluck(:facility_locator_id)
+
+    ids = VaDotGovAddressValidatorExceptions.include_san_antonio_satellite_office(ids) if state_code == "TX"
+
+    ids
   end
 
   def valid_states
