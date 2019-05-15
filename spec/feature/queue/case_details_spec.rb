@@ -850,7 +850,7 @@ RSpec.feature "Case details" do
         expect(page).to have_content(assigned_on_text)
 
         assignee_label = COPY::TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL.upcase
-        assigned_to = task3.assigned_to.css_id
+        assigned_to = task3.assigned_to.name
         assignor_label = COPY::TASK_SNAPSHOT_TASK_ASSIGNOR_LABEL.upcase
         assigned_to_text = "#{assignee_label}\n#{assigned_to}\n#{assignor_label}"
 
