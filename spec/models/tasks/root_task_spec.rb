@@ -44,12 +44,6 @@ describe RootTask do
     end
 
     context "when a direct docket appeal is created" do
-      before do
-        FeatureToggle.enable!(:ama_acd_tasks)
-      end
-      after do
-        FeatureToggle.disable!(:ama_acd_tasks)
-      end
       context "when it has no vso representation" do
         let(:appeal) do
           create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
@@ -95,12 +89,6 @@ describe RootTask do
     end
 
     context "when an evidence submission docket appeal is created" do
-      before do
-        FeatureToggle.enable!(:ama_acd_tasks)
-      end
-      after do
-        FeatureToggle.disable!(:ama_acd_tasks)
-      end
       let(:appeal) do
         create(:appeal, docket_type: "evidence_submission", claimants: [
                  create(:claimant, participant_id: participant_id_with_no_vso)
@@ -115,12 +103,6 @@ describe RootTask do
     end
 
     context "when a hearing docket appeal is created" do
-      before do
-        FeatureToggle.enable!(:ama_acd_tasks)
-      end
-      after do
-        FeatureToggle.disable!(:ama_acd_tasks)
-      end
       let(:appeal) do
         create(:appeal, docket_type: "hearing", claimants: [
                  create(:claimant, participant_id: participant_id_with_no_vso)
