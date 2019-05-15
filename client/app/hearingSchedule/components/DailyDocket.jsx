@@ -105,7 +105,6 @@ export default class DailyDocket extends React.Component {
     const docketHearings = this.dailyDocketHearings();
     const prevHearings = this.previouslyScheduledHearings();
 
-    const hasHearings = !_.isEmpty(this.props.hearings);
     const hasDocketHearings = !_.isEmpty(docketHearings);
     const hasPrevHearings = !_.isEmpty(prevHearings);
 
@@ -144,10 +143,10 @@ export default class DailyDocket extends React.Component {
         <div className="cf-push-left">
           <DailyDocketEditLinks
             dailyDocket={dailyDocket}
+            hearings={docketHearings.concat(prevHearings)}
             user={user}
             openModal={openModal}
             onDisplayLockModal={this.props.onDisplayLockModal}
-            hasHearings={hasHearings}
             onClickRemoveHearingDay={this.props.onClickRemoveHearingDay} />
         </div>
         <div className="cf-push-right">
@@ -161,7 +160,7 @@ export default class DailyDocket extends React.Component {
 
       {hasDocketHearings &&
         <DailyDocketRows
-          hearings={this.dailyDocketHearings()}
+          hearings={docketHearings}
           readOnly={user.userRoleView || user.userRoleVso}
           saveHearing={this.props.saveHearing}
           openDispositionModal={this.openDispositionModal}
