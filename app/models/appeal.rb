@@ -137,13 +137,12 @@ class Appeal < DecisionReview
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
-
+    
     active_tasks = tasks.active.not_tracking
     return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
     on_hold_tasks = tasks.on_hold.not_tracking
     return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
-
     return most_recently_assigned_to_label(tasks) if tasks.any?
 
     status_hash[:type].to_s.titleize
@@ -679,6 +678,7 @@ class Appeal < DecisionReview
   private
 
   def most_recently_assigned_to_label(tasks)
+    binding.pry
     tasks.order(:updated_at).last.assigned_to_label
   end
 

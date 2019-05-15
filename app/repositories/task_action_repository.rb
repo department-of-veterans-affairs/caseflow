@@ -218,7 +218,7 @@ class TaskActionRepository
       {
         selected: org,
         options: [{ label: org.name, value: org.id }],
-        type: task.type
+        type: PulacCurelloTask.name
       }
     end
 

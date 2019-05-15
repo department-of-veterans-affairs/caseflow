@@ -116,6 +116,9 @@ class AppealWithdrawalMailTask < MailTask
 end
 
 class ClearAndUnmistakeableErrorMailTask < MailTask
+  def available_actions(user)
+    return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+  end
 
   def self.label
     COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL
@@ -293,6 +296,9 @@ class ReturnedUndeliverableCorrespondenceMailTask < MailTask
 end
 
 class ReconsiderationMotionMailTask < MailTask
+  def available_actions(user)
+    return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+  end
 
   def self.label
     COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL
@@ -314,6 +320,9 @@ class StatusInquiryMailTask < MailTask
 end
 
 class VacateMotionMailTask < MailTask
+  def available_actions(user)
+    return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+  end
 
   def self.label
     COPY::VACATE_MOTION_MAIL_TASK_LABEL
