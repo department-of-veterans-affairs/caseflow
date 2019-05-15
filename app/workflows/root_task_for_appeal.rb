@@ -39,13 +39,6 @@ class RootTaskForAppeal
       end
     end
 
-    def create_evidence_submission_task!(appeal, parent)
-      EvidenceSubmissionWindowTask.create!(
-        appeal: appeal,
-        parent: parent
-      )
-    end
-
     def create_distribution_task!(appeal, parent)
       DistributionTask.create!(
         appeal: appeal,
@@ -53,17 +46,13 @@ class RootTaskForAppeal
       )
     end
 
-    def create_hearing_schedule_task!(appeal, parent)
-      ScheduleHearingTask.create!(appeal: appeal, parent: parent)
-    end
-
     def create_subtasks!(appeal, parent)
       distribution_task = create_distribution_task!(appeal, parent)
 
       if appeal.evidence_submission_docket?
-        create_evidence_submission_task!(appeal, distribution_task)
+        EvidenceSubmissionWindowTask.create!(appeal: appeal, parent: parent)
       elsif appeal.hearing_docket?
-        create_hearing_schedule_task!(appeal, distribution_task)
+        ScheduleHearingTask.create!(appeal: appeal, parent: parent)
       else
         vso_tasks = create_ihp_tasks!(appeal, distribution_task)
         # If the appeal is direct docket and there are no ihp tasks,
