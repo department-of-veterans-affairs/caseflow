@@ -10,7 +10,10 @@ feature "RAMP Election Intake" do
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    FeatureToggle.enable!(:ramp_intake)
   end
+
+  after { FeatureToggle.disable!(:ramp_intake) }
 
   let!(:veteran) do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")

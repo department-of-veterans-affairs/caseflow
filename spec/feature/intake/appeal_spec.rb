@@ -115,10 +115,7 @@ feature "Appeal Intake" do
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.appeal
-    find("#form-select").send_keys :enter
+    select_form("appeal")
 
     safe_click ".cf-submit.usa-button"
 

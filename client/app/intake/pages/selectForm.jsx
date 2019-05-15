@@ -1,4 +1,5 @@
 import React from 'react';
+import RadioField from '../../components/RadioField';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Button from '../../components/Button';
 import { Redirect } from 'react-router-dom';
@@ -23,6 +24,8 @@ class SelectForm extends React.PureComponent {
       label: form.name
     }));
 
+    const enableSearchableDropdown = radioOptions.length > 3;
+
     if (this.props.intakeId) {
       return <Redirect to={PAGE_PATHS.REVIEW} />;
     }
@@ -30,13 +33,25 @@ class SelectForm extends React.PureComponent {
     return <div>
       <h1>Welcome to Caseflow Intake!</h1>
 
-      <SearchableDropdown
-        name="form-select"
-        label="Which form are you processing?"
-        placeholder="Enter or select form"
-        options={radioOptions}
-        onChange={this.setFormTypeFromDropdown}
-        value={this.props.formType} />
+      { !enableSearchableDropdown && <RadioField
+          name="form-select"
+          label="Which form are you processing?"
+          vertical
+          strongLabel
+          options={radioOptions}
+          onChange={this.props.setFormType}
+          value={this.props.formType}
+        />
+      }
+
+      { enableSearchableDropdown && <SearchableDropdown
+          name="form-select"
+          label="Which form are you processing?"
+          placeholder="Enter or select form"
+          options={radioOptions}
+          onChange={this.setFormTypeFromDropdown}
+          value={this.props.formType} />
+      }
     </div>;
   }
 }

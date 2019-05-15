@@ -3,6 +3,15 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
+
+  def select_form(form_type)
+    form_name = Constants.INTAKE_FORM_NAMES.send(form_type.to_sym)
+
+    within_fieldset("Which form are you processing?") do
+      find("label", text: form_name).click
+    end
+  end
+
   def start_higher_level_review(
     test_veteran,
     receipt_date: 1.day.ago,
