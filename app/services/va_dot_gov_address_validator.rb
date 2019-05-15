@@ -105,17 +105,18 @@ class VaDotGovAddressValidator
   def fetch_and_update_ro(va_dot_gov_address:)
     state_code = get_state_code(va_dot_gov_address)
     facility_ids = ro_facility_ids_for_state(state_code)
-    facility_ids = include_san_antonio_satellite_office(facility_ids) if state_code == "TX"
+    facility_ids = VaDotGovAddressValidatorExceptions.include_san_antonio_satellite_office(facility_ids, state_code)
 
     distances = VADotGovService.get_distance(ids: facility_ids, lat: va_dot_gov_address[:lat],
                                              long: va_dot_gov_address[:long])
 
     closest_facility_id = distances[0][:facility_id]
-    closest_facility_id = map_san_antonio_satellite_office_to_houston(closest_facility_id) if state_code == "TX"
+    closest_facility_id =
+      VaDotGovAddressValidatorExceptions.map_san_antonio_satellite_office_to_houston(closest_facility_id, state_code)
 
     closest_ro = get_regional_office_from_facility_id(closest_facility_id)
 
-    appeal.update(closest_regional_office: except_delaware(closest_ro))
+    appeal.update(closest_regional_office: VaDotGovAddressValidatorExceptions.except_delaware(closest_ro))
 
     { closest_regional_office: closest_ro, facility: distances[0] }
   end
@@ -123,20 +124,6 @@ class VaDotGovAddressValidator
   def facility_ids_for_ro(regional_office_id)
     (RegionalOffice::CITIES[regional_office_id][:alternate_locations] ||
       []) << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
-  end
-
-  def include_san_antonio_satellite_office(facility_ids)
-    # veterans whose closest AHL is San Antonio should have Houston as the RO
-    # even though Waco may be closer. This is a RO/AHL policy quirk.
-    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
-
-    facility_ids << "vha_671BY"
-  end
-
-  def map_san_antonio_satellite_office_to_houston(facility_id)
-    return "vba_362" if facility_id == "vha_671BY"
-
-    facility_id
   end
 
   def get_regional_office_from_facility_id(facility_id)
@@ -174,29 +161,13 @@ class VaDotGovAddressValidator
   end
 
   def get_state_code(va_dot_gov_address)
-    return "DC" if appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
+    return "DC" if VaDotGovAddressValidatorExceptions.veteran_requested_central_office?(appeal)
 
-    state_code = map_country_code_to_state(va_dot_gov_address)
+    state_code = VaDotGovAddressValidatorExceptions.map_country_code_to_state(va_dot_gov_address)
 
     fail Caseflow::Error::VaDotGovForeignVeteranError if state_code.nil? || !valid_states.include?(state_code)
 
     state_code
-  end
-
-  def map_country_code_to_state(va_dot_gov_address)
-    case va_dot_gov_address[:country_code]
-    # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
-    when "GQ", "AQ", "RM", "FM", "CQ", "PS"
-      "HI"
-    # Philippine Islands
-    when "PH", "RP", "PI"
-      "PI"
-    # Puerto Rico, Vieques, U.S. Virgin Islands
-    when "VI", "VQ", "PR"
-      "PR"
-    when "US", "USA"
-      va_dot_gov_address[:state_code]
-    end
   end
 
   def handle_error(error)
@@ -233,11 +204,5 @@ class VaDotGovAddressValidator
       assigned_to: HearingsManagement.singleton,
       parent: task
     )
-  end
-
-  def except_delaware(closest_regional_office)
-    # Delaware's RO is not actually an RO
-    # So we assign all appeals with appellants that live in Delaware to Philadelphia
-    (closest_regional_office == "RO60") ? "RO10" : closest_regional_office
   end
 end
