@@ -53,7 +53,7 @@ class JudgeTask < Task
     transaction do
       root_tasks.each do |root_task|
         Rails.logger.info("Creating subtasks for appeal #{root_task.appeal.id}")
-        RootTaskForAppeal.create_subtasks!(root_task.appeal, root_task)
+        InitialTasksFactory.new(root_task.appeal).create_subtasks!
         distribution_task = DistributionTask.find_by(parent: root_task)
         # Update any open IHP tasks if they exist so that they block distribution.
         ihp_task = InformalHearingPresentationTask.active.find_by(appeal: root_task.appeal)

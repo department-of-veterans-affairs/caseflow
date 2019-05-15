@@ -32,7 +32,7 @@ describe ScheduleHearingTask do
     end
 
     subject do
-      RootTaskForAppeal.create_root_and_sub_tasks! appeal
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
 
     it "is assigned to the Bva org by default" do
