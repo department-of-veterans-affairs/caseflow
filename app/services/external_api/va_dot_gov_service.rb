@@ -6,31 +6,20 @@ class ExternalApi::VADotGovService
   class << self
     # :nocov:
     def get_distance(lat:, long:, ids:)
-      page = 1
-      facility_results = []
-      remaining_ids = ids
-
-      until remaining_ids.empty?
-        results = fetch_facilities_with_ids(
-          query: { lat: lat, long: long, page: page, ids: remaining_ids.join(",") }
+      facility_results = send_multiple_facility_requests(ids) do |page, facility_ids|
+        send_facilities_distance_request(
+          lat: lat, long: long, ids: facility_ids.join(","), page: page
         )
-
-        remaining_ids -= results[:facilities].pluck(:facility_id)
-        facility_results += results[:facilities]
-
-        break if !results[:has_next]
-
-        page += 1
-        sleep 1
       end
-
-      unless remaining_ids.empty?
-        msg = "Unable to find api.va.gov facility data for: #{remaining_ids.join(', ')}."
-        fail Caseflow::Error::VaDotGovAPIError, code: 500, message: msg
-      end
-
-      track_pages(page)
       facility_results.sort_by { |res| res[:distance] }
+    end
+
+    def get_facility_data(ids:)
+      send_multiple_facility_requests(ids) do |page, facility_ids|
+        send_facility_data_request(
+          ids: facility_ids.join(","), page: page
+        )
+      end
     end
 
     # rubocop:disable Metrics/ParameterLists
@@ -144,9 +133,36 @@ class ExternalApi::VADotGovService
       }
     end
 
-    def fetch_facilities_with_ids(query:)
+    def send_multiple_facility_requests(ids)
+      page = 1
+      facility_results = []
+      remaining_ids = ids
+
+      until remaining_ids.empty?
+        results = yield(page, remaining_ids)
+
+        remaining_ids -= results[:facilities].pluck(:facility_id)
+        facility_results += results[:facilities]
+
+        break if !results[:has_next]
+
+        page += 1
+        sleep 1
+      end
+
+      unless remaining_ids.empty?
+        msg = "Unable to find api.va.gov facility data for: #{remaining_ids.join(', ')}."
+        fail Caseflow::Error::VaDotGovAPIError, code: 500, message: msg
+      end
+
+      track_pages(page)
+
+      facility_results
+    end
+
+    def send_facilities_distance_request(lat:, long:, ids:, page:)
       response = send_va_dot_gov_request(
-        query: query,
+        query: { lat: lat, long: long, page: page, ids: ids },
         endpoint: facilities_endpoint
       )
       resp_body = JSON.parse(response.body)
@@ -161,6 +177,26 @@ class ExternalApi::VADotGovService
         distance = distances.find { |dist| dist["id"] == facility["id"] }
 
         facility_json(facility, distance)
+      end
+
+      { facilities: facilities_result, has_next: has_next }
+    end
+
+    def send_facility_data_request(ids:, page:)
+      response = send_va_dot_gov_request(
+        query: { ids: ids, page: page },
+        endpoint: facilities_endpoint
+      )
+
+      resp_body = JSON.parse(response.body)
+
+      check_for_error(response_body: resp_body, code: response.code)
+
+      facilities = resp_body["data"]
+      has_next = !resp_body["links"]["next"].nil?
+
+      facilities_result = facilities.map do |facility|
+        facility_json(facility, nil)
       end
 
       { facilities: facilities_result, has_next: has_next }
