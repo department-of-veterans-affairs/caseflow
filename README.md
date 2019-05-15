@@ -374,15 +374,15 @@ _Frontend_
 
 Seeding VACOLS:
 
-`be rake local:vacols:seed`
+`bundle exec rake local:vacols:seed`
 
 Seeding Caseflow:
 
-`be rake db:seed`
+`bundle exec rake db:seed`
 
 Resetting Caseflow:
 
-`be rake db:reset`
+`bundle exec rake db:reset`
 
 ### Connecting to databases locally
 

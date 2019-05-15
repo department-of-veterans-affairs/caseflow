@@ -7,6 +7,8 @@ import {
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
+import COPY from '../../COPY.json';
+
 export const selectedTasksSelector = (state, userId) => {
   return _.map(
     state.queue.isTaskAssignedToUserSelected[userId] || {},
@@ -272,12 +274,13 @@ export const judgeDecisionReviewTasksSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task) => {
     if (task.appealType === 'Appeal') {
-      return (['Review', 'Quality review'].includes(task.label)) &&
-        (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
+      return ([COPY.JUDGE_DECISION_REVIEW_TASK_LABEL, COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL].includes(task.label))
+        && (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
     // eslint-disable-next-line no-undefined
-    return [null, undefined, 'Review', 'Quality review'].includes(task.label);
+    return [null, undefined, COPY.JUDGE_DECISION_REVIEW_TASK_LABEL,
+      COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL].includes(task.label);
   })
 );
 
@@ -285,11 +288,11 @@ export const judgeAssignTasksSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task) => {
     if (task.appealType === 'Appeal') {
-      return task.label === 'Assign' &&
+      return task.label === COPY.JUDGE_ASSIGN_TASK_LABEL &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
-    return task.label === 'Assign';
+    return task.label === COPY.JUDGE_ASSIGN_TASK_LABEL;
   })
 );
 
