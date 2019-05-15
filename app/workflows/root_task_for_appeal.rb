@@ -5,12 +5,8 @@ class RootTaskForAppeal
     def create_root_and_sub_tasks!(appeal)
       root_task = RootTask.create!(appeal: appeal)
       create_vso_tracking_tasks(appeal, root_task)
-      if FeatureToggle.enabled?(:ama_acd_tasks)
-        ActiveRecord::Base.transaction do
-          create_subtasks!(appeal, root_task)
-        end
-      else
-        create_ihp_tasks!(appeal, root_task)
+      ActiveRecord::Base.transaction do
+        create_subtasks!(appeal, root_task)
       end
     end
 
