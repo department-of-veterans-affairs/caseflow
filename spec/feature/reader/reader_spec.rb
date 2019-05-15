@@ -40,14 +40,6 @@ def scroll_to_bottom(id: nil, class_name: nil)
   EOS
 end
 
-# Returns true if an element is currently visible on the page.
-def expect_in_viewport(element)
-  expect do
-    page.evaluate_script("document.getElementById('#{element}').getBoundingClientRect().top > 0" \
-      " && document.getElementById('#{element}').getBoundingClientRect().top < window.innerHeight;")
-  end.to become_truthy(wait: 10)
-end
-
 def get_size(element)
   size = page.driver.evaluate_script <<-EOS
     function() {
@@ -360,25 +352,17 @@ RSpec.feature "Reader" do
     scenario "Rotating documents" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
-      expect do
-        transform = get_computed_styles("#rotationDiv1", "transform")
-        transform_is_expected = transform == "matrix(1, 0, 0, 1, 0, 0)"
-        puts transform unless transform_is_expected
-        transform_is_expected
-      end.to become_truthy(wait: 5)
+      expect(get_computed_styles("#rotationDiv1", "transform"))
+        .to eq "matrix(1, 0, 0, 1, 0, 0)"
 
       safe_click "#button-rotation"
 
-      expect do
-        transform = get_computed_styles("#rotationDiv1", "transform")
-        # It's annoying that the float math produces an infinitesimal-but-not-0 value.
-        # However, I think that trying to parse the string out and round it would be
-        # more trouble than it's worth. Let's just try it like this and see if the tests
-        # pass consistently. If not, we can find a more sophisticated approach.
-        transform_is_expected = transform == "matrix(6.12323e-17, 1, -1, 6.12323e-17, -5.51091e-15, -90)"
-        puts transform unless transform_is_expected
-        transform_is_expected
-      end.to become_truthy(wait: 5)
+      # It's annoying that the float math produces an infinitesimal-but-not-0 value.
+      # However, I think that trying to parse the string out and round it would be
+      # more trouble than it's worth. Let's just try it like this and see if the tests
+      # pass consistently. If not, we can find a more sophisticated approach.
+      expect(get_computed_styles("#rotationDiv1", "transform"))
+        .to eq "matrix(6.12323e-17, 1, -1, 6.12323e-17, -5.51091e-15, -90)"
     end
 
     scenario "Arrow keys to navigate through documents" do
@@ -685,12 +669,12 @@ RSpec.feature "Reader" do
 
         # Wait for PDFJS to render the pages
         expect(page).to have_css(".page")
-        comment_icon_id = "commentIcon-container-#{annotation.id}"
+        comment_icon_id = "#commentIcon-container-#{annotation.id}"
 
         # wait for comment annotations to load
         all(".commentIcon-container", wait: 3, count: 1)
 
-        expect_in_viewport(comment_icon_id)
+        expect(page).to have_css(comment_icon_id)
       end
 
       scenario "Scroll to comment" do
@@ -751,7 +735,7 @@ RSpec.feature "Reader" do
 
         expect(page).to have_content(annotation.comment)
         expect(page).to have_css(".page")
-        expect_in_viewport("commentIcon-container-#{annotation.id}")
+        expect(page).to have_css("#commentIcon-container-#{annotation.id}")
       end
 
       scenario "Scrolling pages changes page numbers" do
@@ -783,20 +767,17 @@ RSpec.feature "Reader" do
 
         scenario "Switch between pages to ensure rendering" do
           visit "/reader/appeal/#{appeal.vacols_id}/documents"
-
           click_on documents[3].type
-
           fill_in "page-progress-indicator-input", with: "23\n"
 
           expect(find("#pageContainer23")).to have_content("Rating Decision", wait: 10)
-
-          expect_in_viewport("pageContainer23")
-          expect(find_field("page-progress-indicator-input").value).to eq "23"
+          expect(page).to have_field("page-progress-indicator-input", with: "23")
 
           # Entering invalid values leaves the viewer on the same page.
           fill_in "page-progress-indicator-input", with: "abcd\n"
-          expect_in_viewport("pageContainer23")
-          expect(find_field("page-progress-indicator-input").value).to eq "23"
+
+          expect(page).to have_css("#pageContainer23")
+          expect(page).to have_field("page-progress-indicator-input", with: "23")
         end
       end
     end
@@ -1333,7 +1314,7 @@ RSpec.feature "Reader" do
       click_on "Back"
 
       expect(page).to have_content("#{num_documents} Documents")
-      expect_in_viewport("read-indicator")
+      expect(page).to have_css("#read-indicator")
       expect(scroll_position("documents-table-body")).to eq(original_scroll_position)
     end
 
@@ -1343,8 +1324,7 @@ RSpec.feature "Reader" do
       click_on "Back"
 
       expect(page).to have_content("#{num_documents} Documents")
-
-      expect_in_viewport("read-indicator")
+      expect(page).to have_css("#read-indicator")
     end
   end
 
