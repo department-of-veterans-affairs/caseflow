@@ -30,7 +30,7 @@ class HearingTimeService
       time = scheduled_for.to_datetime
       Time.use_zone("America/New_York") do
         Time.zone.now.change(
-          year: time.year, month: time.month, day: time.day, hour: hour, min: min
+          year: time.year, month: time.month, day: time.day, hour: hour.to_i, min: min.to_i
         )
       end
     end
