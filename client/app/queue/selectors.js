@@ -255,6 +255,9 @@ export const onHoldTasksByAssigneeCssIdSelector = createSelector(
 export const onHoldTasksForAttorney = createSelector(
   [incompleteTasksWithHold, incompleteWorkTasksByAssignerCssIdSelector],
   (incompleteWithHold, incompleteByAssigner) => {
+    // Include incompleteWorkTasksByAssignerCssIdSelector so that we can display on hold AttorneyLegacyTasks without
+    // actually having the AttorneyLegacyTask in the set of incompleteTasksWithHold.
+    // 
     // Favor this approach instead of filtering on task's appealType (LegacyAppeal) to be resilient to upcoming
     // migration away from DAS in favor of Caseflow tasks for all appeal types.
     const appealsAlreadyRepresented = incompleteWithHold.map((task) => task.appealId);
