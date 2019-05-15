@@ -667,7 +667,7 @@ class RequestIssue < ApplicationRecord
   def check_for_before_ama!
     return unless eligible? && should_check_for_before_ama?
 
-    if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
+    if decision_or_promulgation_date && decision_or_promulgation_date < decision_review.ama_activation_date
       self.ineligible_reason = :before_ama
     end
   end
