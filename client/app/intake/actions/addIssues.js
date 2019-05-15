@@ -57,6 +57,14 @@ export const addUnidentifiedIssue = (description, notes) => (dispatch) => {
   });
 };
 
+export const setEditContentionText = (issueIdx, editedDescription) => ({
+  type: ACTIONS.SET_EDIT_CONTENTION_TEXT,
+  payload: {
+    issueIdx,
+    editedDescription
+  }
+});
+
 export const addRatingRequestIssue = (args) => (dispatch) => {
   const currentIssue = issueByIndex(args.contestableIssues, args.contestableIssueIndex);
 
