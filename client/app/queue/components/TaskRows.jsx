@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
@@ -116,7 +117,15 @@ class TaskRows extends React.PureComponent {
   }
 
   assignedToListItem = (task) => {
-    const assignee = task.isLegacy ? this.props.appeal.locationCode : task.assignedTo.name;
+    let assignee;
+    
+    if (task.isLegacy) {
+      assignee = this.props.appeal.locationCode
+    } else if (task.assignedTo.isOrganization) {
+      assignee = task.assignedTo.name;
+    } else {
+       assignee = task.assignedTo.cssId;
+    }
 
     return assignee ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
       <dd>{assignee}</dd></div> : null;
