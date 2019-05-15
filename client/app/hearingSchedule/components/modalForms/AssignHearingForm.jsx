@@ -15,20 +15,6 @@ import HearingTime from './HearingTime';
 import { onChangeFormData } from '../../../components/common/actions';
 
 class AssignHearingForm extends React.Component {
-  componentWillMount() {
-
-    const { initialRegionalOffice, initialHearingDate, initialScheduledTimeString } = this.props;
-
-    const values = {
-      regionalOffice: initialRegionalOffice || null,
-      hearingLocation: null,
-      scheduledTimeString: initialScheduledTimeString || null,
-      hearingDay: initialHearingDate || null
-    };
-
-    this.onChange(values);
-  }
-
   getErrorMessages = (newValues) => {
     const values = {
       ...this.props.values,
@@ -83,14 +69,16 @@ class AssignHearingForm extends React.Component {
 
   render() {
     const { appeal, showErrorMessages, values } = this.props;
+    const { initialRegionalOffice, initialHearingDate } = this.props;
     const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString, errorMessages } = values;
     const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
 
     return (
       <div>
         <RegionalOfficeDropdown
-          value={regionalOffice}
+          value={regionalOffice || initialRegionalOffice}
           onChange={this.onRegionalOfficeChange}
+          validateValueOnMount
         />
         {regionalOffice && <React.Fragment>
           <AppealHearingLocationsDropdown
@@ -108,7 +96,7 @@ class AssignHearingForm extends React.Component {
             errorMessage={showErrorMessages ? errorMessages.hearingDay : ''}
             key={`hearingDate__${regionalOffice}`}
             regionalOffice={regionalOffice}
-            value={hearingDay}
+            value={hearingDay || initialHearingDate}
             onChange={(value) => this.onChange({ hearingDay: value })}
             validateValueOnMount
           />

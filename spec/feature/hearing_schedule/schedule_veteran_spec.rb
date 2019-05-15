@@ -38,7 +38,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     let!(:veteran) { create(:veteran, file_number: "123454787") }
-    let!(:hearing_location_dropdown_label) { "Suggested Hearing Location" }
+    let!(:hearing_location_dropdown_label) { "Hearing Location" }
 
     scenario "Schedule Veteran for central hearing" do
       visit "hearings/schedule/assign"
