@@ -76,10 +76,10 @@ class Hearing < ApplicationRecord
 
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
-      task.type = TrackVeteranTask.name &&
-                  task.assigned_to.is_a?(Representative) &&
-                  task.assigned_to.user_has_access?(user) &&
-                  task.active?
+      task.type == TrackVeteranTask.name &&
+        task.assigned_to.is_a?(Representative) &&
+        task.assigned_to.user_has_access?(user) &&
+        task.active?
     end
   end
 
@@ -121,6 +121,12 @@ class Hearing < ApplicationRecord
       sec: scheduled_time.sec
     )
   end
+
+  def time
+    @time ||= HearingTimeService.new(hearing: self)
+  end
+
+  delegate :central_office_time_string, :scheduled_time_string, to: :time
 
   def worksheet_issues
     request_issues.map do |request_issue|
