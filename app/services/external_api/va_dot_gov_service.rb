@@ -3,6 +3,10 @@
 require "json"
 
 class ExternalApi::VADotGovService
+  BASE_URL = ENV["VA_DOT_GOV_API_URL"] || ""
+  FACILITIES_ENDPOINT = "va_facilities/v0/facilities"
+  ADDRESS_VALIDATION_ENDPOINT = "address_validation/v1/validate"
+
   class << self
     # :nocov:
     def get_distance(lat:, long:, ids:)
@@ -38,7 +42,7 @@ class ExternalApi::VADotGovService
           "Content-Type": "application/json",
           Accept: "application/json"
         },
-        endpoint: address_validation_endpoint,
+        endpoint: ADDRESS_VALIDATION_ENDPOINT,
         method: :post
       )
 
@@ -57,18 +61,6 @@ class ExternalApi::VADotGovService
     end
 
     private
-
-    def base_url
-      ENV["VA_DOT_GOV_API_URL"] || ""
-    end
-
-    def facilities_endpoint
-      "va_facilities/v0/facilities"
-    end
-
-    def address_validation_endpoint
-      "address_validation/v1/validate"
-    end
 
     # rubocop:disable Metrics/ParameterLists
     def validate_request_body(
@@ -163,7 +155,7 @@ class ExternalApi::VADotGovService
     def send_facilities_distance_request(latlng:, ids:, page:)
       response = send_va_dot_gov_request(
         query: { lat: latlng[0], long: latlng[1], page: page, ids: ids },
-        endpoint: facilities_endpoint
+        endpoint: FACILITIES_ENDPOINT
       )
       resp_body = JSON.parse(response.body)
 
@@ -184,7 +176,7 @@ class ExternalApi::VADotGovService
     def send_facilities_data_request(ids:, page:)
       response = send_va_dot_gov_request(
         query: { ids: ids, page: page },
-        endpoint: facilities_endpoint
+        endpoint: FACILITIES_ENDPOINT
       )
 
       resp_body = JSON.parse(response.body)
@@ -202,7 +194,7 @@ class ExternalApi::VADotGovService
     end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
-      url = URI.escape(base_url + endpoint)
+      url = URI.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
       request.open_timeout = 30
