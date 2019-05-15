@@ -14,7 +14,7 @@ class JudgeLegacyTask < LegacyTask
 
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      action.eql?("review") ? review_action : Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+      action.eql?(COPY::JUDGE_DECISION_REVIEW_TASK_LABEL) ? review_action : Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
     ]
   end
 
