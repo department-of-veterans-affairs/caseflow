@@ -25,9 +25,7 @@ class RootTaskForAppeal
       end
     end
 
-    # Make this private again after RAMPs are refilled
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/9406
-    # private
+    private
 
     def create_vso_tracking_tasks(appeal, parent)
       appeal.representatives.map do |vso_organization|
