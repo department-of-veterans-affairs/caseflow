@@ -59,6 +59,7 @@ class RequestIssue < ApplicationRecord
   end
 
   class NotYetSubmitted < StandardError; end
+  class MissingContentionDisposition < StandardError; end
   class MissingDecisionDate < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} lacks a decision_date")
@@ -608,6 +609,8 @@ class RequestIssue < ApplicationRecord
   # However, if the dispositions for any of these request issues match, there is no need to create multiple decision
   # issues. They can instead be mapped to the same decision issue.
   def find_or_create_decision_issue_from_rating_issue(rating_issue)
+    fail MissingContentionDisposition unless contention_disposition
+
     preexisting_decision_issue = DecisionIssue.find_by(
       participant_id: rating_issue.participant_id,
       rating_issue_reference_id: rating_issue.reference_id,
