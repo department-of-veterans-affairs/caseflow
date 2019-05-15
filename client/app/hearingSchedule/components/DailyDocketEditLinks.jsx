@@ -1,4 +1,5 @@
 import React from 'react';
+import { CSVLink } from 'react-csv';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { css } from 'glamor';
@@ -43,8 +44,60 @@ const RemoveHearingDayLink = ({ onClickRemoveHearingDay }) => (
 
 export default class DailyDocketEditLinks extends React.Component {
 
-  render () {
-    const { dailyDocket, openModal, onDisplayLockModal, hasHearings, onClickRemoveHearingDay, user } = this.props;
+  isUserJudge = () => this.props.user.userRoleHearingPrep;
+
+  exportDailyDocket() {
+    const { hearings } = this.props;
+
+    return hearings.map((hearing) => {
+      const row = {
+        date: hearing.scheduledFor,
+        time: hearing.scheduledFor,
+        vlj: "",
+        hearingCoordinator: "",
+        regionalOffice: hearing.regionalOfficeName,
+        hearingLocation: hearing.readableLocation,
+        hearingType: hearing.readableRequestType,
+        hearingRoom: hearing.room,
+        docketNumber: hearing.docketNumber,
+        veteranName: `${hearing.veteranFirstName} ${hearing.veteranLastName}`,
+        representativeName: hearing.representativeName || hearing.representative,
+        disposition: hearing.disposition,
+        notes: hearing.notes || ''
+      };
+
+      if (this.isUserJudge()) {
+        row["aod"] = hearing.aod;
+      }
+
+      return row;
+    });
+  }
+
+  getExportDailyDocketHeaders() {
+    const headers = [
+      { label: "Date", key: "date" },
+      { label: "Time", key: "time" },
+      { label: "VLJ", key: "vlj" },
+      { label: "Hearing Coordinator", key: "hearingCoordinator" },
+      { label: "Regional Office", key: "regionalOffice" },
+      { label: "Hearing Location", key: "hearingLocation" },
+      { label: "Hearing Type", key: "hearingType" },
+      { label: "Hearing Room", key: "hearingRoom" },
+      { label: "Docket Number", key: "docketNumber" },
+      { label: "Veteran Name", key: "veteranName" },
+      { label: "Representative Name", key: "representativeName" },
+      { label: "Disposition", key: "disposition" },
+      { label: "Notes", key: "notes" }
+    ];
+
+    if (this.isUserJudge()) {
+      headers.push({ label: "AOD", key: "aod" });
+    }
+
+    return headers;
+  }
+
   render() {
     const { dailyDocket, openModal, onDisplayLockModal, hearings, onClickRemoveHearingDay, user } = this.props;
     const formattedScheduledForDate = moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY');
@@ -70,6 +123,18 @@ export default class DailyDocketEditLinks extends React.Component {
           <span {...css({ marginTop: '15px' })}>
             <br /><strong>Notes: </strong><br />{dailyDocket.notes}
           </span>}
+      </div>
+      <div>
+        <CSVLink
+          data={this.exportDailyDocket()}
+          headers={this.getExportDailyDocketHeaders()}
+          target="_blank"
+          filename={`Daily Docket ${formattedScheduledForDate}.csv`}
+        >
+          <Button classNames={['usa-button-secondary']}>
+            Download & Print Page
+          </Button>
+        </CSVLink>
       </div>
     </React.Fragment>;
   }
