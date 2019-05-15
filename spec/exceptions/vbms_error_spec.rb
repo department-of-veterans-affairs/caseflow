@@ -27,7 +27,7 @@ describe VBMSError do
 
     described_class::KNOWN_ERRORS.each do |err_str, err_class|
       context err_str do
-        let(:error) { VBMS::HTTPError.new(500, err_str) }
+        let(:error) { VBMS::HTTPError.new(500, err_str.sub("\\w+", "FOOBAR")) }
 
         it "re-casts the exception to a #{err_class}" do
           expect(subject).to be_a("VBMSError::#{err_class}".constantize)
