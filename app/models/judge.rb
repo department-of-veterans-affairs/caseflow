@@ -10,8 +10,6 @@ class Judge
     JudgeTeam.for_judge(user).try(:attorneys) || []
   end
 
-  private
-
   class << self
     def repository
       JudgeRepository

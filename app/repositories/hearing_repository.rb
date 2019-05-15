@@ -140,8 +140,6 @@ class HearingRepository
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       uniq_case_hearings.map do |vacols_record|
-        next empty_dockets(vacols_record) if master_record?(vacols_record)
-
         hearing = LegacyHearing
           .assign_or_create_from_vacols_record(vacols_record,
                                                legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
@@ -157,10 +155,6 @@ class HearingRepository
         hash[issue.appeal_id] ||= []
         hash[issue.appeal_id] << issue
       end
-    end
-
-    def master_record?(record)
-      record.master_record_type.present?
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
