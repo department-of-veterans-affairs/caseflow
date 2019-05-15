@@ -5,6 +5,7 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
 gem "aasm", "4.11.0"
+gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e94aff758739c499978041953e6d50fe58057e89"
@@ -71,7 +72,6 @@ group :production, :staging, :ssh_forwarding, :development, :test do
 end
 
 group :test, :development, :demo do
-  gem "activerecord-import"
   # Security scanners
   gem "brakeman"
   gem "bullet"
