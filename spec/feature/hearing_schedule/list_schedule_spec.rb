@@ -188,4 +188,13 @@ RSpec.feature "List Schedule" do
       expect(page).to have_content("Three, Judge")
     end
   end
+
+  context "Hearing prep deprecation" do
+    let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
+
+    scenario "Upcoming docket days redirects to hearing schedule" do
+      visit "/hearings/dockets"
+      expect(page.current_path).to eq("/hearings/schedule")
+    end
+  end
 end

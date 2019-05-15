@@ -24,7 +24,7 @@ class HearingsController < ApplicationController
   end
 
   def logo_name
-    "Hearing Prep"
+    "Hearings"
   end
 
   def logo_path

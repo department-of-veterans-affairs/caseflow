@@ -8,8 +8,7 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { populateDailyDocket, getDailyDocket,
-  setPrepped } from '../actions/Dockets';
+import { setPrepped } from '../actions/Dockets';
 import { getReaderLink, orderTheDocket } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import SmallLoader from '../../components/SmallLoader';
@@ -47,7 +46,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   componentDidMount() {
     this.date = moment(this.props.worksheet.scheduled_for).format('YYYY-MM-DD');
-    this.props.getDailyDocket(null, this.date);
+    // this.props.getDailyDocket(null, this.date);
   }
 
   onDropdownChange = (value) => {
@@ -148,8 +147,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    populateDailyDocket,
-    getDailyDocket,
     setPrepped
   }, dispatch)
 });

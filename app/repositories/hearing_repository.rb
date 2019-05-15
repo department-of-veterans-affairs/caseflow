@@ -5,21 +5,6 @@ class HearingRepository
   class HearingDayFull < StandardError; end
 
   class << self
-    # :nocov:
-    def fetch_hearings_for_judge(css_id, is_fetching_issues = false)
-      records = MetricsService.record("VACOLS: HearingRepository.fetch_hearings_for_judge: #{css_id}",
-                                      service: :vacols,
-                                      name: "fetch_hearings_for_judge") do
-        VACOLS::CaseHearing.hearings_for_judge(css_id) +
-          VACOLS::TravelBoardSchedule.hearings_for_judge_before_hearing_prep_cutoff_date(css_id)
-      end
-      hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
-
-      # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
-      load_issues(hearings) if is_fetching_issues
-      hearings
-    end
-
     def fetch_hearings_for_parent(hearing_day_id)
       # Implemented by call the array version of this method
       fetch_hearings_for_parents([hearing_day_id]).values.first || []
@@ -176,18 +161,6 @@ class HearingRepository
 
     def master_record?(record)
       record.master_record_type.present?
-    end
-
-    def empty_dockets(vacols_record)
-      values = MasterRecordHelper.values_based_on_type(vacols_record)
-      # Travel Board master records have a date range, so we create a master record for each day
-      values[:dates].inject([]) do |result, date|
-        result << Hearings::MasterRecord.new(scheduled_for: VacolsHelper.normalize_vacols_datetime(date),
-                                             request_type: values[:request_type],
-                                             master_record: true,
-                                             regional_office_key: values[:ro])
-        result
-      end
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
