@@ -8,8 +8,12 @@ class InitialTasksFactory
 
   def create_root_and_sub_tasks!
     create_vso_tracking_tasks
-    ActiveRecord::Base.transaction do
-      create_subtasks!
+    if FeatureToggle.enabled?(:ama_acd_tasks)
+      ActiveRecord::Base.transaction do
+        create_subtasks!
+      end
+    else
+      IhpTasksFactory.new(@root_task).create_ihp_tasks!
     end
   end
 

@@ -44,6 +44,12 @@ describe RootTask do
     end
 
     context "when a direct docket appeal is created" do
+      before do
+        FeatureToggle.enable!(:ama_acd_tasks)
+      end
+      after do
+        FeatureToggle.disable!(:ama_acd_tasks)
+      end
       context "when it has no vso representation" do
         let(:appeal) do
           create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
@@ -86,54 +92,15 @@ describe RootTask do
           expect(appeal.tasks.detect { |t| t.is_a?(TrackVeteranTask) }.assigned_to).to eq(pva)
         end
       end
-
-      context "when it has multiple ihp-writing vsos" do
-        let!(:vva) do
-          Vso.create(
-            name: "Vietnam Veterans Of America",
-            role: "VSO",
-            url: "vietnam-veterans-of-america",
-            participant_id: "2452415"
-          )
-        end
-
-        let(:appeal) do
-          create(:appeal, docket_type: Constants.AMA_DOCKETS.direct_review, claimants: [
-                   create(:claimant, participant_id: participant_id_with_pva),
-                   create(:claimant, participant_id: participant_id_with_aml)
-                 ])
-        end
-
-        it "creates a task for each VSO" do
-          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-          expect(RootTask.count).to eq(1)
-
-          expect(InformalHearingPresentationTask.count).to eq(2)
-          expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
-          expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
-        end
-
-        it "does not create a task for a VSO if one already exists for that appeal" do
-          InformalHearingPresentationTask.create!(
-            appeal: appeal,
-            parent: appeal.root_task,
-            assigned_to: vva
-          )
-          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-
-          expect(InformalHearingPresentationTask.count).to eq(2)
-          expect(InformalHearingPresentationTask.first.assigned_to).to eq(vva)
-          expect(InformalHearingPresentationTask.second.assigned_to).to eq(pva)
-        end
-
-        it "creates RootTask assigned to Bva organization" do
-          InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-          expect(RootTask.last.assigned_to).to eq(Bva.singleton)
-        end
-      end
     end
 
     context "when an evidence submission docket appeal is created" do
+      before do
+        FeatureToggle.enable!(:ama_acd_tasks)
+      end
+      after do
+        FeatureToggle.disable!(:ama_acd_tasks)
+      end
       let(:appeal) do
         create(:appeal, docket_type: "evidence_submission", claimants: [
                  create(:claimant, participant_id: participant_id_with_no_vso)
@@ -148,6 +115,12 @@ describe RootTask do
     end
 
     context "when a hearing docket appeal is created" do
+      before do
+        FeatureToggle.enable!(:ama_acd_tasks)
+      end
+      after do
+        FeatureToggle.disable!(:ama_acd_tasks)
+      end
       let(:appeal) do
         create(:appeal, docket_type: "hearing", claimants: [
                  create(:claimant, participant_id: participant_id_with_no_vso)
@@ -176,6 +149,53 @@ describe RootTask do
           InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
           expect(InformalHearingPresentationTask.find_by(appeal: appeal)).to be_nil
         end
+      end
+    end
+
+    context "when VSOs exist in our organization table" do
+      let!(:vva) do
+        Vso.create(
+          name: "Vietnam Veterans Of America",
+          role: "VSO",
+          url: "vietnam-veterans-of-america",
+          participant_id: "2452415"
+        )
+      end
+
+      it "creates a task for each VSO" do
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        expect(RootTask.count).to eq(1)
+
+        expect(InformalHearingPresentationTask.count).to eq(2)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
+        expect(InformalHearingPresentationTask.second.assigned_to).to eq(vva)
+      end
+
+      it "does not create a task for a VSO if one already exists for that appeal" do
+        InformalHearingPresentationTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: vva
+        )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+
+        expect(InformalHearingPresentationTask.count).to eq(2)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(vva)
+        expect(InformalHearingPresentationTask.second.assigned_to).to eq(pva)
+      end
+
+      it "creates RootTask assigned to Bva organization" do
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        expect(RootTask.last.assigned_to).to eq(Bva.singleton)
+      end
+    end
+
+    context "when only one VSO exists in our organization table" do
+      it "doesn't create a InformalHearingPresentationTask for missing organization" do
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+
+        expect(InformalHearingPresentationTask.count).to eq(1)
+        expect(InformalHearingPresentationTask.first.assigned_to).to eq(pva)
       end
     end
   end
