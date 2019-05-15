@@ -99,6 +99,14 @@ const clearfix = css({
   }
 });
 
+const exportHeaders = [
+  { label: "Scheduled For", key: "scheduledFor" },
+  { label: "Type", key: "requestType" },
+  { label: "Regional Office", key: "regionalOffice" },
+  { label: "Room", key: "room" },
+  { label: "VLJ", key: "vlj" }
+];
+
 class ListSchedule extends React.Component {
   constructor(props) {
     super(props);
@@ -246,15 +254,16 @@ class ListSchedule extends React.Component {
               onApply={this.setDateRangeKey} />
           </div>
           <div className="cf-push-right" {...downloadButtonStyling} >
-            <Button
-              classNames={['usa-button-secondary']}>
-              <CSVLink
-                data={this.getHearingScheduleRows(true)}
-                target="_blank"
-                filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}>
+            <CSVLink
+              data={this.getHearingScheduleRows(true)}
+              headers={exportHeaders}
+              target="_blank"
+              filename={`HearingSchedule ${this.props.startDate}-${this.props.endDate}.csv`}
+            >
+              <Button classNames={['usa-button-secondary']}>
                 Download current view
-              </CSVLink>
-            </Button>
+              </Button>
+            </CSVLink>
           </div>
         </div>
         <div className="section-hearings-list">
