@@ -57,10 +57,10 @@ class LegacyHearing < ApplicationRecord
 
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
-      task.type = TrackVeteranTask.name &&
-                  task.assigned_to.is_a?(Representative) &&
-                  task.assigned_to.user_has_access?(user) &&
-                  task.active?
+      task.type == TrackVeteranTask.name &&
+        task.assigned_to.is_a?(Representative) &&
+        task.assigned_to.user_has_access?(user) &&
+        task.active?
     end
   end
 
@@ -175,34 +175,6 @@ class LegacyHearing < ApplicationRecord
     Hearing::HEARING_TYPES[request_type.to_sym]
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def vacols_attributes
-    {
-      scheduled_for: scheduled_for,
-      type: type,
-      venue_key: venue_key,
-      vacols_record: vacols_record,
-      disposition: disposition,
-      aod: aod,
-      hold_open: hold_open,
-      transcript_requested: transcript_requested,
-      transcript_sent_date: transcript_sent_date,
-      notes: notes,
-      add_on: add_on,
-      representative: representative,
-      representative_name: representative_name,
-      vdkey: vdkey,
-      master_record: master_record,
-      veteran_first_name: veteran_first_name,
-      veteran_middle_initial: veteran_middle_initial,
-      veteran_last_name: veteran_last_name,
-      appellant_first_name: appellant_first_name,
-      appellant_middle_initial: appellant_middle_initial,
-      appellant_last_name: appellant_last_name,
-      appeal_vacols_id: appeal_vacols_id
-    }
-  end
-
   cache_attribute :cached_number_of_documents do
     begin
       number_of_documents
@@ -226,6 +198,7 @@ class LegacyHearing < ApplicationRecord
 
   delegate :external_id, to: :appeal, prefix: true
 
+  # rubocop:disable Metrics/MethodLength
   def to_hash(current_user_id)
     serializable_hash(
       methods: [
@@ -266,7 +239,10 @@ class LegacyHearing < ApplicationRecord
         :external_id,
         :veteran_file_number,
         :closest_regional_office,
-        :available_hearing_locations
+        :available_hearing_locations,
+        :bva_poc,
+        :room,
+        :judge_id
       ],
       except: [:military_service, :vacols_id]
     ).merge(

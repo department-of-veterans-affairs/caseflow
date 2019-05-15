@@ -22,6 +22,7 @@ class Task < ApplicationRecord
   before_update :set_timestamps
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
+  after_update :cancel_timed_hold, unless: :task_just_placed_on_hold?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -65,8 +66,8 @@ class Task < ApplicationRecord
     active? && children.empty?
   end
 
-  # available_actions() returns an array of options from selected by the subclass
-  # from TASK_ACTIONS that looks something like:
+  # available_actions() returns an array of options selected by
+  # the subclass from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
     actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
@@ -79,13 +80,21 @@ class Task < ApplicationRecord
     actions
   end
 
+  def appropriate_timed_hold_task_action
+    on_timed_hold? ? Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h : Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
+  end
+
   def build_action_hash(action, user)
-    { label: action[:label], value: action[:value], data: action[:func] ? send(action[:func], user) : nil }
+    {
+      label: action[:label],
+      value: action[:value],
+      data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
+    }
   end
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
   def actions_available?(user)
-    return false if status == Constants.TASK_STATUSES.on_hold
+    return false if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
 
     actions_allowable?(user)
   end
@@ -109,6 +118,27 @@ class Task < ApplicationRecord
 
   def children_attorney_tasks
     children.where(type: AttorneyTask.name)
+  end
+
+  def on_timed_hold?
+    !active_child_timed_hold_task.nil?
+  end
+
+  def active_child_timed_hold_task
+    children.active.find_by(type: TimedHoldTask.name)
+  end
+
+  def cancel_timed_hold
+    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
+
+  def calculated_placed_on_hold_at
+    active_child_timed_hold_task&.timer_start_time
+  end
+
+  def calculated_on_hold_duration
+    timed_hold_task = active_child_timed_hold_task
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def self.recently_closed
@@ -295,134 +325,8 @@ class Task < ApplicationRecord
     )
   end
 
-  def assign_to_organization_data(_user = nil)
-    organizations = Organization.assignable(self).map do |organization|
-      {
-        label: organization.name,
-        value: organization.id
-      }
-    end
-
-    {
-      selected: nil,
-      options: organizations,
-      type: GenericTask.name
-    }
-  end
-
-  def mail_assign_to_organization_data(_user = nil)
-    { options: MailTask.subclass_routing_options }
-  end
-
-  def cancel_task_data(_user = nil)
-    {
-      modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-      modal_body: COPY::CANCEL_TASK_MODAL_DETAIL,
-      message_title: format(COPY::CANCEL_TASK_CONFIRMATION, appeal.veteran_full_name),
-      message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, assigned_by&.full_name || "the assigner")
-    }
-  end
-
-  def assign_to_user_data(user = nil)
-    users = if assigned_to.is_a?(Organization)
-              assigned_to.users
-            elsif parent&.assigned_to.is_a?(Organization)
-              parent.assigned_to.users.reject { |u| u == assigned_to }
-            else
-              []
-            end
-
-    {
-      selected: user,
-      options: users_to_options(users),
-      type: type
-    }
-  end
-
-  def assign_to_judge_data(_user = nil)
-    {
-      selected: root_task.children.find { |task| task.is_a?(JudgeTask) }&.assigned_to,
-      options: users_to_options(Judge.list_all),
-      type: JudgeQualityReviewTask.name
-    }
-  end
-
-  def assign_to_attorney_data(_user = nil)
-    {
-      selected: nil,
-      options: nil,
-      type: AttorneyTask.name
-    }
-  end
-
-  def assign_to_privacy_team_data(_user = nil)
-    org = PrivacyTeam.singleton
-
-    {
-      selected: org,
-      options: [{ label: org.name, value: org.id }],
-      type: PrivacyActTask.name
-    }
-  end
-
-  def assign_to_translation_team_data(_user = nil)
-    org = Translation.singleton
-
-    {
-      selected: org,
-      options: [{ label: org.name, value: org.id }],
-      type: TranslationTask.name
-    }
-  end
-
-  def add_admin_action_data(_user = nil)
-    {
-      redirect_after: "/queue",
-      selected: nil,
-      options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
-        {
-          label: value,
-          value: key
-        }
-      end,
-      type: ColocatedTask.name
-    }
-  end
-
-  def complete_data(_user = nil)
-    {
-      modal_body: COPY::MARK_TASK_COMPLETE_COPY
-    }
-  end
-
-  def schedule_veteran_data(_user = nil)
-    {
-      selected: nil,
-      options: nil,
-      type: ScheduleHearingTask.name
-    }
-  end
-
-  def return_to_attorney_data(_user = nil)
-    assignee = children.select { |t| t.is_a?(AttorneyTask) }.max_by(&:created_at)&.assigned_to
-    attorneys = JudgeTeam.for_judge(assigned_to)&.attorneys || []
-    attorneys |= [assignee] if assignee.present?
-    {
-      selected: assignee,
-      options: users_to_options(attorneys),
-      type: AttorneyRewriteTask.name
-    }
-  end
-
   def timeline_title
     "#{type} completed"
-  end
-
-  def timeline_details
-    {
-      title: timeline_title,
-      date: closed_at
-    }
   end
 
   def update_if_hold_expired!
@@ -472,13 +376,8 @@ class Task < ApplicationRecord
     task_just_closed? && parent
   end
 
-  def users_to_options(users)
-    users.map do |user|
-      {
-        label: user.full_name,
-        value: user.id
-      }
-    end
+  def task_just_placed_on_hold?
+    saved_change_to_attribute?(:placed_on_hold_at)
   end
 
   def update_status_if_children_tasks_are_complete

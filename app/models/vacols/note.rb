@@ -2,7 +2,7 @@
 
 class VACOLS::Note < VACOLS::Record
   # :nocov:
-  self.table_name = "vacols.assign"
+  self.table_name = "assign"
   self.primary_key = "tasknum"
 
   class InvalidNoteCodeError < StandardError; end
@@ -44,7 +44,6 @@ class VACOLS::Note < VACOLS::Record
       "#{bfkey}D#{count + 1}"
     end
 
-    # rubocop:disable MethodLength
     def create!(note)
       validate!(note)
 
@@ -71,7 +70,6 @@ class VACOLS::Note < VACOLS::Record
       end
       primary_key
     end
-    # rubocop:enable MethodLength
 
     def find_active_by_user_and_type(note)
       VACOLS::Note.find_by(

@@ -12,7 +12,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import * as DateUtil from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 
-import DetailsSections, { Overview, LegacyWarning } from './DetailsSections';
+import DetailsSections, { Overview } from './DetailsSections';
 import { onChangeFormData } from '../../components/common/actions';
 
 const row = css({
@@ -136,7 +136,7 @@ class HearingDetails extends React.Component {
 
     const { hearingDetailsForm, transcriptionDetailsForm } = this.props;
 
-    const { disabled, success, error, isLegacy } = this.state;
+    const { disabled, success, error } = this.state;
 
     return (
       <AppSegment filledBackground>
@@ -161,15 +161,13 @@ class HearingDetails extends React.Component {
           <Overview hearing={this.props.hearing} />
           <div className="cf-help-divider" />
 
-          {!isLegacy &&
-            <DetailsSections
-              setTranscription={this.setTranscription}
-              setHearing={this.setHearing}
-              transcription={transcriptionDetailsForm || {}}
-              hearing={hearingDetailsForm || {}}
-              disabled={disabled} />}
-          {isLegacy &&
-            <LegacyWarning />}
+          <DetailsSections
+            setTranscription={this.setTranscription}
+            setHearing={this.setHearing}
+            transcription={transcriptionDetailsForm || {}}
+            hearing={hearingDetailsForm || {}}
+            isLegacy={this.state.isLegacy}
+            disabled={disabled} />
           <div>
             <a
               className="button-link"

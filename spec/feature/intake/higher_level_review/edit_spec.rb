@@ -39,8 +39,8 @@ feature "Higher Level Review Edit issues" do
   let!(:rating_before_ama) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 10.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
       issues: [
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
@@ -50,8 +50,8 @@ feature "Higher Level Review Edit issues" do
   let!(:rating_before_ama_from_ramp) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 11.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
       issues: [
         { decision_text: "Issue before AMA Activation from RAMP",
           reference_id: "ramp_ref_id" }
@@ -1440,6 +1440,45 @@ feature "Higher Level Review Edit issues" do
 
         expect(page).to have_current_path("/decision_reviews/education")
         expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
+      end
+    end
+
+    context "when a rating decision text is edited" do
+      before do
+        FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+        FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
+      end
+
+      after do
+        FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
+      end
+
+      let!(:issue) do
+        create(:request_issue, :rating, decision_review: higher_level_review, contested_issue_description: "PTSD")
+      end
+
+      scenario "edit contention text" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+        expect(page).to have_content("Edit contention title")
+
+        within first(".issue-edit-text") do
+          click_edit_contention_issue
+        end
+
+        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
+
+        fill_in(with: "Right Knee")
+        expect(page).to have_button("Submit", disabled: false)
+        click_button("Submit")
+        expect(page).to have_content("Right Knee")
+
+        within first(".issue-edit-text") do
+          click_edit_contention_issue
+        end
+
+        expect(page).to have_field(type: "textarea", match: :first, placeholder: "Right Knee")
       end
     end
 

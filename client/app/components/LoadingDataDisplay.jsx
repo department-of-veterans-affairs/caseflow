@@ -18,8 +18,7 @@ const accessDeniedMsg = <div>
 const duplicateNumberTitle = { title: COPY.DUPLICATE_PHONE_NUMBER_TITLE };
 const duplicateNumberMsg = <div>
         Duplicate phone numbers documented.<br />
-        Please contact VLJ Support to request that this veteran's information be updated to remove duplicate
-        phone numbers currently on file to resolve this error. </div>;
+  { COPY.DUPLICATE_PHONE_NUMBER_MESSAGE }</div>;
 
 const itemNotFoundTitle = { title: 'Information cannot be found' };
 const itemNotFoundMsg = <div>

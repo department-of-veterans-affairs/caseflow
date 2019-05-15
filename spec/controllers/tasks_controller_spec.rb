@@ -16,8 +16,13 @@ RSpec.describe TasksController, type: :controller do
     context "when user is an attorney" do
       let(:role) { :attorney_role }
 
-      let!(:task1) { create(:colocated_task, assigned_by: user) }
-      let!(:task2) { create(:colocated_task, assigned_by: user) }
+      let!(:vlj_support_staff) do
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        Colocated.singleton.users.first
+      end
+
+      let!(:task1) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
+      let!(:task2) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
       let!(:task3) { create(:colocated_task, assigned_by: user, status: Constants.TASK_STATUSES.completed) }
 
       let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
@@ -196,7 +201,7 @@ RSpec.describe TasksController, type: :controller do
 
             task_attributes = response_body["tasks"]["data"].find { |task| task["id"] == org_1_member_task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(5)
 
             # org count minus one since we can't assign to ourselves.
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
@@ -223,7 +228,7 @@ RSpec.describe TasksController, type: :controller do
             response_body = JSON.parse(response.body)
             task_attributes = response_body["tasks"]["data"].find { |t| t["id"] == task.id.to_s }
 
-            expect(task_attributes["attributes"]["available_actions"].length).to eq(4)
+            expect(task_attributes["attributes"]["available_actions"].length).to eq(5)
 
             assign_to_organization_action = task_attributes["attributes"]["available_actions"].find do |action|
               action["label"] == Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h[:label]
@@ -574,7 +579,8 @@ RSpec.describe TasksController, type: :controller do
     let(:admin_action) { create(task_type, assigned_by: assigned_by_user, assigned_to: assigned_to_user) }
     let!(:authenticated_staff) { create(:staff, :colocated_role, sdomainid: authenticated_user.css_id) }
     let!(:assigned_by_staff) { create(:staff, :attorney_role, sdomainid: assigned_by_user.css_id) }
-
+    let(:root_task) { FactoryBot.create(:root_task) }
+    let(:colocated_task) { FactoryBot.create(:colocated_task, parent: root_task) }
     before do
       User.stub = authenticated_user
     end

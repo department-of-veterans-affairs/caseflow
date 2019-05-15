@@ -81,3 +81,21 @@ When adding a new table you must add code to sanitize any potential PII. Unfortu
    ```
 1) Check the resulting CSV updates into git.
 1) Whitelist fields with detected PII. When sanitization is run, we examine all white-listed fields for PII, including emails, phone numbers, sentences, and vet ids. If any field matches any of these RegExs then we print it in red at the end of the dump data job. This can alert you to a possible leak. To respond, you should either, stop white-listing the field if it is actually PII, or add the field to a special white-list for fields that detect PII but don't actually contain it. This white-list is in the `ignore_pii_in_fields` method.
+
+# Manually seeding your local VACOLS container
+
+To seed the VACOLS container with data you'll need to generate the data for the CSVs first.
+
+1) `bundle install --with staging` to get the necessary gems to connect to an Oracle DB
+2) `rake local:vacols:seed` to load the data from the CSV files into your local VACOLS
+3) `rails s` to start the server connected to local VACOLS or `rails c` to start the rails console connected to local VACOLS.
+
+## Certification Test Scenarios
+
+| BFKEY/VACOLS_ID | Case |
+| ----- | ---------------- |
+| 2367429 | Ready to certify with all dates matching |
+| 2774535 | Ready to certify with fuzzy-matched dates |
+| 2771149 | Mismatched documents |
+| 3242524 | Already certified |
+

@@ -5,7 +5,6 @@
 # This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
 # which went into effect Feb 19, 2019.
 
-# rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
 
@@ -404,8 +403,6 @@ class Appeal < DecisionReview
     end
   end
 
-  # rubocop:disable CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def fetch_pre_decision_status
     if pending_schedule_hearing_task?
       :pending_hearing_scheduling
@@ -438,11 +435,7 @@ class Appeal < DecisionReview
       :other_close
     end
   end
-  # rubocop:enable CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable CyclomaticComplexity
   def fetch_details_for_status
     case fetch_status
     when :bva_decision
@@ -474,8 +467,6 @@ class Appeal < DecisionReview
       {}
     end
   end
-  # rubocop:enable CyclomaticComplexity
-  # rubocop:enable Metrics/MethodLength
 
   def post_bva_dta_decision_status_details
     issue_list = remanded_sc_decision_issues
@@ -732,4 +723,3 @@ class Appeal < DecisionReview
       end
   end
 end
-# rubocop:enable Metrics/ClassLength

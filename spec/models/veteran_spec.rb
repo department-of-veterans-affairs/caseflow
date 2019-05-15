@@ -657,6 +657,20 @@ describe Veteran do
     end
   end
 
+  describe "#unload_bgs_record" do
+    subject { veteran.unload_bgs_record }
+
+    it "uses the new address for establishing a claim" do
+      expect(veteran.bgs_record).to include(address_line1: "122 Mullberry St.")
+
+      Fakes::BGSService.veteran_records[veteran.file_number][:address_line1] = "Changed"
+
+      subject
+
+      expect(veteran.bgs_record).to include(address_line1: "Changed")
+    end
+  end
+
   describe "#stale_name?" do
     let(:first_name) { "Jane" }
     let(:last_name) { "Doe" }

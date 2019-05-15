@@ -5,6 +5,7 @@ describe ColocatedTask do
   let!(:staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
   let(:vacols_case) { create(:case) }
   let!(:appeal_1) { create(:legacy_appeal, vacols_case: vacols_case) }
+  let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal_1) }
   let!(:colocated_org) { Colocated.singleton }
   let(:colocated_members) { FactoryBot.create_list(:user, 3) }
 
@@ -19,8 +20,11 @@ describe ColocatedTask do
   context ".create_many_from_params" do
     context "all fields are present and it is a legacy appeal" do
       let!(:appeal_2) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:root_task2) { FactoryBot.create(:root_task, appeal: appeal_2) }
       let!(:appeal_3) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:root_task3) { FactoryBot.create(:root_task, appeal: appeal_3) }
       let!(:appeal_4) { create(:legacy_appeal, vacols_case: create(:case)) }
+      let!(:root_task4) { FactoryBot.create(:root_task, appeal: appeal_4) }
       let(:task_params_1) { { assigned_by: attorney, action: :aoj, appeal: appeal_1 } }
       let(:task_params_2) { { assigned_by: attorney, action: :poa_clarification, appeal: appeal_1 } }
       let(:task_params_list) { [task_params_1, task_params_2] }
@@ -298,6 +302,7 @@ describe ColocatedTask do
         :colocated_task,
         assigned_by: attorney,
         assigned_to: colocated_user,
+        appeal: appeal_1,
         parent: org_task
       ).becomes(ColocatedTask)
     end
