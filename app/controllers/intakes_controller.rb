@@ -84,7 +84,8 @@ class IntakesController < ApplicationController
       feedbackUrl: feedback_url,
       buildDate: build_date,
       featureToggles: {
-        useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
+        useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
+        rampIntake: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
       }
     }
   rescue StandardError => error

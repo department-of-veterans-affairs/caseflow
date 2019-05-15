@@ -14,16 +14,14 @@ class SelectForm extends React.PureComponent {
   }
 
   render() {
-
-    const enabledFormTypes = FORM_TYPES;
+    const rampEnabled = this.props.featureToggles.rampIntake;
+    const enabledFormTypes = rampEnabled ? FORM_TYPES : _.pickBy(FORM_TYPES, { category: 'decisionReview' });
 
     const radioOptions = _.map(enabledFormTypes, (form) => ({
       value: form.key,
       displayText: form.name,
       label: form.name
     }));
-
-    // Switch from radio buttons to searchable dropdown if there are more than 3 forms
 
     if (this.props.intakeId) {
       return <Redirect to={PAGE_PATHS.REVIEW} />;
