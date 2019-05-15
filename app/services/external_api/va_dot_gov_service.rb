@@ -160,7 +160,7 @@ class ExternalApi::VADotGovService
       facility_results
     end
 
-    def send_facilities_distance_request(latlng, ids:, page:)
+    def send_facilities_distance_request(latlng:, ids:, page:)
       response = send_va_dot_gov_request(
         query: { lat: latlng[0], long: latlng[1], page: page, ids: ids },
         endpoint: facilities_endpoint
