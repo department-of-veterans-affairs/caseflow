@@ -144,13 +144,11 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET appeals/appeal_id/document_count" do
+    let(:appeal) { create(:appeal) }
+
     before { User.authenticate!(roles: ["System Admin"]) }
 
     context "when a legacy appeal has documents" do
-      before do
-        expect_any_instance_of(DocumentFetcher).to receive(:number_of_documents) { documents.length }
-      end
-
       let(:documents) do
         [
           create(:document, type: "SSOC", received_at: 6.days.ago),
@@ -159,7 +157,7 @@ RSpec.describe AppealsController, type: :controller do
       end
       let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfkey: "654321", documents: documents)) }
 
-      it "should return document count and not call vbms", skip: "temp disabled for doccount test" do
+      it "should return document count and not call vbms" do
         get :document_count, params: { appeal_id: appeal.vacols_id }
 
         response_body = JSON.parse(response.body)
@@ -169,7 +167,7 @@ RSpec.describe AppealsController, type: :controller do
 
     context "when an ama appeal has documents" do
       before do
-        expect_any_instance_of(DocumentFetcher).to receive(:number_of_documents) { documents.length }
+        allow(EFolderService).to receive(:document_count) { documents.length }
       end
 
       let(:file_number) { Random.rand(999_999_999).to_s }
@@ -186,21 +184,16 @@ RSpec.describe AppealsController, type: :controller do
         get :document_count, params: { appeal_id: appeal.uuid }
 
         response_body = JSON.parse(response.body)
-        pending "temp disabled for doccount test"
         expect(response_body["document_count"]).to eq 2
       end
     end
 
     context "when appeal is not found" do
-      it "should return status 404", skip: "temp disabled for doccount test" do
+      it "should return status 404" do
         get :document_count, params: { appeal_id: "123456" }
         expect(response.status).to eq 404
       end
     end
-  end
-
-  describe "GET appeals/:id/document_count" do
-    let(:appeal) { FactoryBot.create(:appeal) }
 
     context "when efolder returns an access forbidden error" do
       let(:err_code) { 403 }
@@ -210,12 +203,12 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       before do
-        allow_any_instance_of(Appeal).to receive(:number_of_documents) do
+        allow(EFolderService).to receive(:document_count) do
           fail Caseflow::Error::EfolderAccessForbidden, code: err_code, message: err_msg
         end
       end
 
-      it "responds with a 4xx and error message", skip: "temp disabled for doccount test" do
+      it "responds with a 4xx and error message" do
         User.authenticate!(roles: ["System Admin"])
         get :document_count, params: { appeal_id: appeal.external_id }
         response_body = JSON.parse(response.body)
@@ -229,9 +222,9 @@ RSpec.describe AppealsController, type: :controller do
     context "when application encounters a generic error" do
       let(:err_msg) { "Some application error" }
 
-      before { allow_any_instance_of(Appeal).to receive(:number_of_documents) { fail err_msg } }
+      before { allow(EFolderService).to receive(:document_count) { fail err_msg } }
 
-      it "responds with a 500 and error message", skip: "temp disabled for doccount test" do
+      it "responds with a 500 and error message" do
         User.authenticate!(roles: ["System Admin"])
         get :document_count, params: { appeal_id: appeal.external_id }
         response_body = JSON.parse(response.body)
