@@ -8,7 +8,7 @@ class ExternalApi::VADotGovService
     def get_distance(lat:, long:, ids:)
       facility_results = send_multiple_facility_requests(ids) do |page, facility_ids|
         send_facilities_distance_request(
-          lat: lat, long: long, ids: facility_ids.join(","), page: page
+          latlng: [lat, long], ids: facility_ids.join(","), page: page
         )
       end
       facility_results.sort_by { |res| res[:distance] }
@@ -16,7 +16,7 @@ class ExternalApi::VADotGovService
 
     def get_facility_data(ids:)
       send_multiple_facility_requests(ids) do |page, facility_ids|
-        send_facility_data_request(
+        send_facilities_data_request(
           ids: facility_ids.join(","), page: page
         )
       end
@@ -111,7 +111,6 @@ class ExternalApi::VADotGovService
 
     def facility_json(facility, distance)
       attrs = facility["attributes"]
-      dist = distance["distance"] || distance[:distance] if distance
 
       {
         facility_id: facility["id"],
@@ -129,7 +128,7 @@ class ExternalApi::VADotGovService
         zip_code: attrs["address"]["physical"]["zip"],
         lat: attrs["lat"],
         long: attrs["long"],
-        distance: dist
+        distance: distance
       }
     end
 
@@ -137,14 +136,15 @@ class ExternalApi::VADotGovService
       page = 1
       facility_results = []
       remaining_ids = ids
+      has_next = true
 
-      until remaining_ids.empty?
+      until remaining_ids.empty? || !has_next
         results = yield(page, remaining_ids)
 
         remaining_ids -= results[:facilities].pluck(:facility_id)
         facility_results += results[:facilities]
 
-        break if !results[:has_next]
+        has_next = results[:has_next]
 
         page += 1
         sleep 1
@@ -160,9 +160,9 @@ class ExternalApi::VADotGovService
       facility_results
     end
 
-    def send_facilities_distance_request(lat:, long:, ids:, page:)
+    def send_facilities_distance_request(latlng, ids:, page:)
       response = send_va_dot_gov_request(
-        query: { lat: lat, long: long, page: page, ids: ids },
+        query: { lat: latlng[0], long: latlng[1], page: page, ids: ids },
         endpoint: facilities_endpoint
       )
       resp_body = JSON.parse(response.body)
@@ -171,18 +171,17 @@ class ExternalApi::VADotGovService
 
       facilities = resp_body["data"]
       distances = resp_body["meta"]["distances"]
+      distance_map = Hash[distances.pluck("id", "distance")]
       has_next = !resp_body["links"]["next"].nil?
 
       facilities_result = facilities.map do |facility|
-        distance = distances.find { |dist| dist["id"] == facility["id"] }
-
-        facility_json(facility, distance)
+        facility_json(facility, distance_map[facility["id"]])
       end
 
       { facilities: facilities_result, has_next: has_next }
     end
 
-    def send_facility_data_request(ids:, page:)
+    def send_facilities_data_request(ids:, page:)
       response = send_va_dot_gov_request(
         query: { ids: ids, page: page },
         endpoint: facilities_endpoint
