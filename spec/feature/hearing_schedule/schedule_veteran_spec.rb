@@ -126,7 +126,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
   end
 
-  context "when scheduling an AMA hearing" do
+  context "when scheduling an AMA hearing", focus: true do
     before do
       FeatureToggle.enable!(:ama_acd_tasks)
     end
@@ -216,7 +216,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_on "Bob Smith"
 
       # Reassign
-      within find("tr", text: "BVATWARNER") do
+      within find("tr", text: user.name) do
         click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h[:label])
       end
 
