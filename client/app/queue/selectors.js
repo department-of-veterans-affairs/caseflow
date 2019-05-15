@@ -285,11 +285,11 @@ export const judgeAssignTasksSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task) => {
     if (task.appealType === 'Appeal') {
-      return task.label === 'assign' &&
+      return task.label === 'Assign' &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
-    return task.label === 'assign';
+    return task.label === 'Assign';
   })
 );
 
