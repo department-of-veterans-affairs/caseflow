@@ -262,8 +262,9 @@
         }
 
         .issue-text-style {
-          background-color: $color-gray-lighter;
+          background-color: $color-gray-lightest;
           margin-bottom: 10px;
+          border: 1px solid $color-gray-lighter;
 
           p {
             padding-left: 30px;

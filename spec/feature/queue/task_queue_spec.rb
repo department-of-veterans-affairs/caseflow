@@ -686,7 +686,7 @@ RSpec.feature "Task queue" do
         available_options = click_dropdown({ text: Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h[:label] }, schedule_row)
         # the dropdown has the default options in addition to the end timed hold action
         default_options = transcription_task.available_actions(user).map { |option| option[:label] }
-        expect(available_options.count).to eq default_options.count + 1
+        expect(available_options.count).to eq default_options.count
         expect(available_options).to include(*default_options)
       end
 

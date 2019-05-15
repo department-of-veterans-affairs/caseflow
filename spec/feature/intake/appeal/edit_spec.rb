@@ -45,8 +45,8 @@ feature "Appeal Edit issues" do
   let!(:rating_before_ama) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 10.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
       issues: [
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
@@ -56,8 +56,8 @@ feature "Appeal Edit issues" do
   let!(:rating_before_ama_from_ramp) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 11.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
       issues: [
         { decision_text: "Issue before AMA Activation from RAMP",
           reference_id: "ramp_ref_id" }
@@ -459,11 +459,10 @@ feature "Appeal Edit issues" do
   context "when withdraw decision reviews is enabled" do
     before do
       FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
-      FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
     end
+
     after do
       FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id])
-      FeatureToggle.disable!(:edit_contention_text, users: [current_user.css_id])
     end
 
     scenario "remove an issue with dropdown and show alert message" do
@@ -592,7 +591,6 @@ feature "Appeal Edit issues" do
 
     scenario "show alert when issue is added, removed and withdrawn" do
       visit "appeals/#{appeal.uuid}/edit/"
-
       click_intake_add_issue
       add_intake_rating_issue("Left knee granted")
       click_edit_submit_and_confirm
@@ -629,18 +627,6 @@ feature "Appeal Edit issues" do
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
       expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
-    end
-
-    scenario "edit contention text" do
-      visit "appeals/#{appeal.uuid}/edit"
-      expect(page).to have_content("Edit contention title")
-
-      within first(".issue-edit-text") do
-        click_edit_contention_issue
-      end
-
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_button("Submit")
     end
 
     scenario "show alert when issue is withdrawn before receipt date" do

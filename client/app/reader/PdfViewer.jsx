@@ -128,7 +128,9 @@ export class PdfViewer extends React.Component {
   }
 
   updateWindowTitle = () => {
-    document.title = `${this.selectedDoc().type} | Document Viewer | Caseflow Reader`;
+    const selectedDoc = this.selectedDoc();
+
+    document.title = `${(selectedDoc && selectedDoc.type) || ''} | Document Viewer | Caseflow Reader`;
   }
 
   componentDidUpdate = () => this.updateWindowTitle();
