@@ -16,7 +16,6 @@ class Distribution < ApplicationRecord
 
   enum status: { pending: "pending", started: "started", error: "error", completed: "completed" }
 
-  before_validation :set_assignee
   before_create :mark_as_pending
 
   CASES_PER_ATTORNEY = 3
@@ -122,9 +121,5 @@ class Distribution < ApplicationRecord
 
   def distributed_cases_count
     (status == "completed") ? distributed_cases.count : 0
-  end
-
-  def set_assignee
-    self.assigned_to ||= Bva.singleton
   end
 end
