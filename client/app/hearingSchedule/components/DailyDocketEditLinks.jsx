@@ -1,6 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import { css } from 'glamor';
+import _ from 'lodash';
+
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Button from '../../components/Button';
 import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
@@ -42,9 +45,12 @@ export default class DailyDocketEditLinks extends React.Component {
 
   render () {
     const { dailyDocket, openModal, onDisplayLockModal, hasHearings, onClickRemoveHearingDay, user } = this.props;
+  render() {
+    const { dailyDocket, openModal, onDisplayLockModal, hearings, onClickRemoveHearingDay, user } = this.props;
+    const formattedScheduledForDate = moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY');
 
     return <React.Fragment>
-      <h1>Daily Docket ({moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY')})</h1><br />
+      <h1>Daily Docket ({formattedScheduledForDate})</h1><br />
       <div {...css({
         marginTop: '-35px',
         marginBottom: '25px'
@@ -57,7 +63,7 @@ export default class DailyDocketEditLinks extends React.Component {
             <LockHearingLink dailyDocket={dailyDocket} onDisplayLockModal={onDisplayLockModal} />
             &nbsp;&nbsp;
           </span>}
-        {(!hasHearings && user.userRoleBuild) &&
+        {(_.isEmpty(hearings) && user.userRoleBuild) &&
           <RemoveHearingDayLink onClickRemoveHearingDay={onClickRemoveHearingDay} />}
 
         {dailyDocket.notes &&
@@ -68,3 +74,12 @@ export default class DailyDocketEditLinks extends React.Component {
     </React.Fragment>;
   }
 }
+
+DailyDocketEditLinks.propTypes = {
+  dailyDocket: PropTypes.object.isRequired,
+  hearings: PropTypes.arrayOf(PropTypes.object).isRequired,
+  openModal: PropTypes.func.isRequired,
+  onDisplayLockModal: PropTypes.func.isRequired,
+  onClickRemoveHearingDay: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired
+};
