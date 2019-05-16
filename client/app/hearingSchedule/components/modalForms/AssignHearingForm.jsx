@@ -67,10 +67,17 @@ class AssignHearingForm extends React.Component {
     this.onChange(newValues);
   }
 
+  getErrorMessage = (valueKey) => {
+    if (this.props.showErrorMessages) {
+      return this.props.values.errorMessages[valueKey];
+    }
+
+    return '';
+  }
+
   render() {
-    const { appeal, showErrorMessages, values } = this.props;
-    const { initialRegionalOffice, initialHearingDate } = this.props;
-    const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString, errorMessages } = values;
+    const { appeal, values, initialRegionalOffice, initialHearingDate } = this.props;
+    const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString } = values;
     const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
 
     return (
@@ -82,7 +89,7 @@ class AssignHearingForm extends React.Component {
         />
         {regionalOffice && <React.Fragment>
           <AppealHearingLocationsDropdown
-            errorMessage={showErrorMessages ? errorMessages.hearingLocation : ''}
+            errorMessage={this.getErrorMessage('hearingLocation')}
             key={`hearingLocation__${regionalOffice}`}
             regionalOffice={regionalOffice}
             appealId={appeal.externalId}
@@ -93,7 +100,7 @@ class AssignHearingForm extends React.Component {
             onChange={(value) => this.onChange({ hearingLocation: value })}
           />
           <HearingDateDropdown
-            errorMessage={showErrorMessages ? errorMessages.hearingDay : ''}
+            errorMessage={this.getErrorMessage('hearingDay')}
             key={`hearingDate__${regionalOffice}`}
             regionalOffice={regionalOffice}
             value={hearingDay || initialHearingDate}
@@ -101,7 +108,7 @@ class AssignHearingForm extends React.Component {
             validateValueOnMount
           />
           <HearingTime
-            errorMessage={showErrorMessages ? errorMessages.scheduledTimeString : ''}
+            errorMessage={this.getErrorMessage('scheduledTimeString')}
             key={`hearingTime__${regionalOffice}`}
             regionalOffice={regionalOffice}
             value={scheduledTimeString}
