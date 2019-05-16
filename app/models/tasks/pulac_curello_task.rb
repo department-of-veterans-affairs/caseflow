@@ -5,6 +5,6 @@ class PulacCurelloTask < GenericTask
   def verify_org_task_unique; end
 
   def label
-    Constants.LIT_SUPPORT.PULAC_CURELLO
+    "Pulac Curello"
   end
-end 
+end
