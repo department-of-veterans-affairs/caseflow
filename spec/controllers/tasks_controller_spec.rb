@@ -16,8 +16,13 @@ RSpec.describe TasksController, type: :controller do
     context "when user is an attorney" do
       let(:role) { :attorney_role }
 
-      let!(:task1) { create(:colocated_task, assigned_by: user) }
-      let!(:task2) { create(:colocated_task, assigned_by: user) }
+      let!(:vlj_support_staff) do
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+        Colocated.singleton.users.first
+      end
+
+      let!(:task1) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
+      let!(:task2) { create(:colocated_task, assigned_by: user, assigned_to: Colocated.singleton) }
       let!(:task3) { create(:colocated_task, assigned_by: user, status: Constants.TASK_STATUSES.completed) }
 
       let!(:task11) { create(:ama_attorney_task, assigned_to: user) }
