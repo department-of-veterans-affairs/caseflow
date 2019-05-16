@@ -60,7 +60,7 @@ describe Hearing do
     end
 
     before do
-      BGSService = ExternalApi::BGSService
+      stub_const("BGSService", ExternalApi::BGSService)
       RequestStore[:current_user] = user
 
       allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)

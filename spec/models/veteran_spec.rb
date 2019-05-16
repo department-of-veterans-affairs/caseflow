@@ -456,7 +456,7 @@ describe Veteran do
     end
 
     before do
-      BGSService = ExternalApi::BGSService
+      stub_const("BGSService", ExternalApi::BGSService)
 
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
         .with(array_including(participant_ids)).and_return(poas)
