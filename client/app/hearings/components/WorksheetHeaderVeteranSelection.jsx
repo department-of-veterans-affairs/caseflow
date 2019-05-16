@@ -71,11 +71,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
       }))
   );
 
-  savePrepped = (hearingId, hearingExternalId, value) => {
-    this.props.setPrepped(hearingId, hearingExternalId, value, this.date);
-  };
-
-  preppedOnChange = (value) => this.savePrepped(this.props.worksheet.id, this.props.worksheet.external_id, value);
+  preppedOnChange = (value) => this.props.setPrepped(this.props.worksheet.external_id, value);
 
   onClickReviewClaimsFolder = () =>
     window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.CLICK_ON_REVIEW_CLAIMS_FOLDER);

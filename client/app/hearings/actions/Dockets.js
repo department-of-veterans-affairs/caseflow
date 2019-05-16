@@ -48,17 +48,11 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-export const setHearingPrepped = (payload, gaCategory = CATEGORIES.HEARINGS_DAYS_PAGE, submitToGA = true) => ({
+export const setHearingPrepped = (hearingExternalId, prepped) => ({
   type: Constants.SET_HEARING_PREPPED,
-  payload,
-  ...submitToGA && {
-    meta: {
-      analytics: {
-        category: gaCategory,
-        action: ACTIONS.DOCKET_HEARING_PREPPED,
-        label: payload.prepped ? 'checked' : 'unchecked'
-      }
-    }
+  payload: {
+    hearingExternalId,
+    prepped
   }
 });
 
@@ -145,16 +139,8 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
     });
 };
 
-export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (dispatch) => {
-  const payload = {
-    hearingId,
-    prepped,
-    date: moment(date).format('YYYY-MM-DD'),
-    setEdited: false
-  };
-
-  dispatch(setHearingPrepped(payload,
-    CATEGORIES.HEARING_WORKSHEET_PAGE));
+export const setPrepped = (hearingExternalId, prepped) => (dispatch) => {
+  dispatch(setHearingPrepped(hearingExternalId, prepped));
 
   let data = { hearing: { prepped } };
 
@@ -163,9 +149,7 @@ export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (disp
       // request was successful
     },
     () => {
-      payload.prepped = !prepped;
-
       // request failed, resetting value
-      dispatch(setHearingPrepped(payload, CATEGORIES.HEARING_WORKSHEET_PAGE, false));
+      dispatch(setHearingPrepped(hearingExternalId, !prepped));
     });
 };
