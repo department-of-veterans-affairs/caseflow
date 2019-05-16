@@ -39,6 +39,10 @@ class WorkQueue::TaskSerializer
     }
   end
 
+  attribute :assignee_name do | object |
+    object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
+  end
+
   attribute :placed_on_hold_at do |object|
     object.placed_on_hold_at || object.calculated_placed_on_hold_at
   end
