@@ -24,11 +24,13 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
 
     case params[:status]
     when Constants.TASK_STATUSES.cancelled
-      update_ro_and_ahls(payload_values["regional_office_value"])
+      update_ro_and_ahls(payload_values[:regional_office_value])
     end
 
     super(params, current_user)
   end
+
+  private
 
   def update_ro_and_ahls(new_ro)
     appeal.update(closest_regional_office: new_ro)
@@ -38,8 +40,6 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
   def fetch_closest_ro_and_ahls
     appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
   end
-
-  private
 
   def task_just_completed?
     saved_change_to_attribute?("status") && status == Constants.TASK_STATUSES.completed
