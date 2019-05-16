@@ -8,13 +8,6 @@ describe HearingRepository do
 
   context ".slot_new_hearing" do
     let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-    let(:time) do
-      {
-        "h" => "9",
-        "m" => "00",
-        "offset" => "-500"
-      }
-    end
     let(:staff_record) { create(:staff) }
     let(:hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 2)) }
 
@@ -23,7 +16,7 @@ describe HearingRepository do
     end
 
     it "slots hearing at correct time" do
-      HearingRepository.slot_new_hearing(hearing_day.id, scheduled_time: time, appeal: legacy_appeal)
+      HearingRepository.slot_new_hearing(hearing_day.id, scheduled_time_string: "09:00", appeal: legacy_appeal)
 
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
         .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
