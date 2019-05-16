@@ -164,7 +164,8 @@ export const PAGE_TITLES = {
   EVALUATE: 'Evaluate Decision'
 };
 
-export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, 'Custom'];
+export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
+export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
 
 export const COLUMN_NAMES = {
   'appeal.caseType': 'Case Type',

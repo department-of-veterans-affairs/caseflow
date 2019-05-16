@@ -50,16 +50,16 @@ class DecisionReview < ApplicationRecord
       :establishment_canceled_at
     end
 
-    def ama_activation_date
-      if FeatureToggle.enabled?(:use_ama_activation_date)
-        Constants::DATES["AMA_ACTIVATION"].to_date
-      else
-        Constants::DATES["AMA_ACTIVATION_TEST"].to_date
-      end
-    end
-
     def review_title
       to_s.underscore.titleize
+    end
+  end
+
+  def ama_activation_date
+    if intake && FeatureToggle.enabled?(:use_ama_activation_date, user: intake.user)
+      Constants::DATES["AMA_ACTIVATION"].to_date
+    else
+      Constants::DATES["AMA_ACTIVATION_TEST"].to_date
     end
   end
 
@@ -400,7 +400,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def validate_receipt_date_not_before_ama
-    errors.add(:receipt_date, "before_ama") if receipt_date < self.class.ama_activation_date
+    errors.add(:receipt_date, "before_ama") if receipt_date < ama_activation_date
   end
 
   def validate_receipt_date_not_in_future

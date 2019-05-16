@@ -153,7 +153,7 @@ class Intake < ApplicationRecord
   end
 
   def cancel_detail!
-    detail.destroy!
+    detail&.destroy!
   end
 
   def save_error!(*)

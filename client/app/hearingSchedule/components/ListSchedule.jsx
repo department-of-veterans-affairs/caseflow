@@ -238,7 +238,7 @@ class ListSchedule extends React.Component {
     return (
       <React.Fragment>
         <div {...clearfix}>
-          {this.props.userRoleHearingPrep &&
+          {this.props.userRoleHearingPrep && !this.props.hearingPrepRedirect &&
             <Alert type="info"
               styling={css({ marginBottom: '30px' })}
               title="New Hearing Schedule View"
@@ -247,7 +247,6 @@ class ListSchedule extends React.Component {
                 'Note: travel board is not supported in the updated version.'}</p><p>
                 <Link button href="/hearings/dockets"><span {...css({ color: '#fff' })}>Return to old view</span></Link>
               </p></span>} />}
-
           <div className="cf-push-left" {...inlineFormStyling} >
             <ListScheduleDateSearch
               startDateValue={this.props.startDate}

@@ -109,6 +109,17 @@ export const commonReducers = (state, action) => {
     };
   };
 
+  actionsMap[ACTIONS.SET_EDIT_CONTENTION_TEXT] = () => {
+    let listOfIssues = state.addedIssues || [];
+
+    listOfIssues[action.payload.issueIdx].editedDescription = action.payload.editedDescription;
+
+    return {
+      ...state,
+      addedIssues: listOfIssues
+    };
+  };
+
   return actionsMap;
 };
 
