@@ -75,14 +75,14 @@ class ScheduleHearingTask < GenericTask
       if params[:status] == Constants.TASK_STATUSES.completed
         task_payloads = params.delete(:business_payloads)
 
-        hearing_time = task_payloads[:values][:hearing_time]
+        scheduled_time_string = task_payloads[:values][:scheduled_time_string]
         hearing_day_id = task_payloads[:values][:hearing_day_id]
         hearing_location = task_payloads[:values][:hearing_location]
 
         hearing = HearingRepository.slot_new_hearing(hearing_day_id,
                                                      appeal: appeal,
                                                      hearing_location_attrs: hearing_location&.to_hash,
-                                                     scheduled_time: hearing_time&.stringify_keys)
+                                                     scheduled_time_string: scheduled_time_string)
         DispositionTask.create_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
