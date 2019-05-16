@@ -33,7 +33,6 @@ import {
 } from '../actions';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
-import { getAssignHearingTime } from '../components/modalForms/HearingTime';
 
 export class DailyDocketContainer extends React.Component {
   constructor(props) {
