@@ -49,7 +49,7 @@ class Task < ApplicationRecord
   end
 
   def label
-    self.class.name
+    self.class.name.titlecase
   end
 
   def self.inactive_statuses
