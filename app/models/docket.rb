@@ -69,7 +69,7 @@ class Docket
                                      appeal_type: Appeal.name,
                                      assigned_at: Time.zone.now,
                                      assigned_to: judge,
-                                     action: "assign")
+                                     action: COPY::JUDGE_ASSIGN_TASK_LABEL)
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
 
       Rails.logger.info("Closing distribution task for appeal #{appeal.id}")
