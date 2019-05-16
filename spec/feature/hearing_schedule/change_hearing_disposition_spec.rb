@@ -66,7 +66,7 @@ RSpec.feature "Change hearing disposition" do
         expect(page).to have_content("Unassigned (1)")
         expect(page).to have_content "Evidence Submission Window Task"
         click_on veteran_link_text
-        expect(page).to have_content ChangeHearingDispositionTask.name
+        expect(page).to have_content ChangeHearingDispositionTask.last.label
       end
 
       step "visit and verify that the transcription task is in the transcription team queue" do
@@ -75,7 +75,7 @@ RSpec.feature "Change hearing disposition" do
         expect(page).to have_content("Unassigned (1)")
         expect(page).to have_content "Transcription Task"
         click_on veteran_link_text
-        expect(page).to have_content ChangeHearingDispositionTask.name
+        expect(page).to have_content ChangeHearingDispositionTask.last.label
       end
 
       step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
@@ -197,7 +197,7 @@ RSpec.feature "Change hearing disposition" do
         visit "/organizations/#{HearingsManagement.singleton.url}"
         click_on "Assigned (1)"
         find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
-        no_show_active_row = find("dd", text: "NoShowHearingTask").find(:xpath, "ancestor::tr")
+        no_show_active_row = find("dd", text: NoShowHearingTask.last.label).find(:xpath, "ancestor::tr")
         expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
       end
     end
