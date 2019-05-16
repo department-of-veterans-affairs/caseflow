@@ -7,5 +7,4 @@ class PulacCurelloTask < GenericTask
   def label
     "Pulac Curello"
   end
-end
-  
+end 
