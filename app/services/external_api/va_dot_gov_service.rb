@@ -3,34 +3,27 @@
 require "json"
 
 class ExternalApi::VADotGovService
+  BASE_URL = ENV["VA_DOT_GOV_API_URL"] || ""
+  FACILITIES_ENDPOINT = "va_facilities/v0/facilities"
+  ADDRESS_VALIDATION_ENDPOINT = "address_validation/v1/validate"
+
   class << self
     # :nocov:
     def get_distance(lat:, long:, ids:)
-      page = 1
-      facility_results = []
-      remaining_ids = ids
-
-      until remaining_ids.empty?
-        results = fetch_facilities_with_ids(
-          query: { lat: lat, long: long, page: page, ids: remaining_ids.join(",") }
+      facility_results = send_multiple_facility_requests(ids) do |page, facility_ids|
+        send_facilities_distance_request(
+          latlng: [lat, long], ids: facility_ids.join(","), page: page
         )
-
-        remaining_ids -= results[:facilities].pluck(:facility_id)
-        facility_results += results[:facilities]
-
-        break if !results[:has_next]
-
-        page += 1
-        sleep 1
       end
-
-      unless remaining_ids.empty?
-        msg = "Unable to find api.va.gov facility data for: #{remaining_ids.join(', ')}."
-        fail Caseflow::Error::VaDotGovAPIError, code: 500, message: msg
-      end
-
-      track_pages(page)
       facility_results.sort_by { |res| res[:distance] }
+    end
+
+    def get_facility_data(ids:)
+      send_multiple_facility_requests(ids) do |page, facility_ids|
+        send_facilities_data_request(
+          ids: facility_ids.join(","), page: page
+        )
+      end
     end
 
     # rubocop:disable Metrics/ParameterLists
@@ -49,7 +42,7 @@ class ExternalApi::VADotGovService
           "Content-Type": "application/json",
           Accept: "application/json"
         },
-        endpoint: address_validation_endpoint,
+        endpoint: ADDRESS_VALIDATION_ENDPOINT,
         method: :post
       )
 
@@ -68,18 +61,6 @@ class ExternalApi::VADotGovService
     end
 
     private
-
-    def base_url
-      ENV["VA_DOT_GOV_API_URL"] || ""
-    end
-
-    def facilities_endpoint
-      "va_facilities/v0/facilities"
-    end
-
-    def address_validation_endpoint
-      "address_validation/v1/validate"
-    end
 
     # rubocop:disable Metrics/ParameterLists
     def validate_request_body(
@@ -122,7 +103,6 @@ class ExternalApi::VADotGovService
 
     def facility_json(facility, distance)
       attrs = facility["attributes"]
-      dist = distance["distance"] || distance[:distance] if distance
 
       {
         facility_id: facility["id"],
@@ -140,14 +120,42 @@ class ExternalApi::VADotGovService
         zip_code: attrs["address"]["physical"]["zip"],
         lat: attrs["lat"],
         long: attrs["long"],
-        distance: dist
+        distance: distance
       }
     end
 
-    def fetch_facilities_with_ids(query:)
+    def send_multiple_facility_requests(ids)
+      page = 1
+      facility_results = []
+      remaining_ids = ids
+      has_next = true
+
+      until remaining_ids.empty? || !has_next
+        results = yield(page, remaining_ids)
+
+        remaining_ids -= results[:facilities].pluck(:facility_id)
+        facility_results += results[:facilities]
+
+        has_next = results[:has_next]
+
+        page += 1
+        sleep 1
+      end
+
+      unless remaining_ids.empty?
+        msg = "Unable to find api.va.gov facility data for: #{remaining_ids.join(', ')}."
+        fail Caseflow::Error::VaDotGovAPIError, code: 500, message: msg
+      end
+
+      track_pages(page)
+
+      facility_results
+    end
+
+    def send_facilities_distance_request(latlng:, ids:, page:)
       response = send_va_dot_gov_request(
-        query: query,
-        endpoint: facilities_endpoint
+        query: { lat: latlng[0], long: latlng[1], page: page, ids: ids },
+        endpoint: FACILITIES_ENDPOINT
       )
       resp_body = JSON.parse(response.body)
 
@@ -155,19 +163,38 @@ class ExternalApi::VADotGovService
 
       facilities = resp_body["data"]
       distances = resp_body["meta"]["distances"]
+      distance_map = Hash[distances.pluck("id", "distance")]
       has_next = !resp_body["links"]["next"].nil?
 
       facilities_result = facilities.map do |facility|
-        distance = distances.find { |dist| dist["id"] == facility["id"] }
+        facility_json(facility, distance_map[facility["id"]])
+      end
 
-        facility_json(facility, distance)
+      { facilities: facilities_result, has_next: has_next }
+    end
+
+    def send_facilities_data_request(ids:, page:)
+      response = send_va_dot_gov_request(
+        query: { ids: ids, page: page },
+        endpoint: FACILITIES_ENDPOINT
+      )
+
+      resp_body = JSON.parse(response.body)
+
+      check_for_error(response_body: resp_body, code: response.code)
+
+      facilities = resp_body["data"]
+      has_next = !resp_body["links"]["next"].nil?
+
+      facilities_result = facilities.map do |facility|
+        facility_json(facility, nil)
       end
 
       { facilities: facilities_result, has_next: has_next }
     end
 
     def send_va_dot_gov_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
-      url = URI.escape(base_url + endpoint)
+      url = URI.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
       request.open_timeout = 30

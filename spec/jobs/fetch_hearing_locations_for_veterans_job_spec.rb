@@ -316,12 +316,10 @@ describe FetchHearingLocationsForVeteransJob do
             }
           end
 
-          it "only captures error" do
-            expect(Raven).to receive(:capture_exception)
-              .with(kind_of(Caseflow::Error::VaDotGovMultipleAddressError), anything)
+          it "creates Verify Address Task" do
             FetchHearingLocationsForVeteransJob.perform_now
-            expect(LegacyAppeal.first.closest_regional_office).to be_nil
-            expect(LegacyAppeal.first.available_hearing_locations.count).to eq 0
+            tsk = ScheduleHearingTask.first
+            expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
           end
         end
       end
