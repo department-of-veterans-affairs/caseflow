@@ -21,24 +21,6 @@ class HearingRepository
         .group_by { |hearing| hearing.hearing_day_id.to_s }
     end
 
-    def load_issues(hearings)
-      children_hearings = hearings.select { |h| h.master_record == false }
-      issues = VACOLS::CaseIssue.descriptions(children_hearings.map(&:appeal_vacols_id))
-
-      appeal_ids = children_hearings.map(&:appeal_id)
-      worksheet_issues_for_appeals_hash = worksheet_issues_for_appeals(appeal_ids)
-
-      hearings.map do |hearing|
-        next if hearing.master_record
-
-        issues_hash_array = issues[hearing.appeal_vacols_id] || []
-        hearing_worksheet_issues = worksheet_issues_for_appeals_hash[hearing.appeal_id] || []
-        next unless hearing_worksheet_issues.empty?
-
-        issues_hash_array.map { |i| WorksheetIssue.create_from_issue(hearing.appeal, Issue.load_from_vacols(i)) }
-      end
-    end
-
     def hearings_for_appeal(appeal_vacols_id)
       hearings_for(VACOLS::CaseHearing.for_appeal(appeal_vacols_id))
     end
@@ -52,12 +34,6 @@ class HearingRepository
     def update_vacols_hearing!(vacols_record, hearing_hash)
       hearing_hash = HearingMapper.hearing_fields_to_vacols_codes(hearing_hash)
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
-    end
-
-    def to_hash(hearing)
-      hearing.as_json.each_with_object({}) do |(k, v), result|
-        result[k.to_sym] = v
-      end
     end
 
     def create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
@@ -125,7 +101,6 @@ class HearingRepository
     def appeals_ready_for_hearing(vbms_id)
       AppealRepository.appeals_ready_for_hearing(vbms_id)
     end
-    # :nocov:
 
     def set_vacols_values(hearing, vacols_record)
       hearing.assign_from_vacols(vacols_attributes(vacols_record))

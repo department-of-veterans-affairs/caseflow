@@ -15,22 +15,22 @@ RSpec.feature "Hearing prep" do
       expect(page.title).to eq legacy_hearing.veteran_fi_last_formatted + "'s Hearing Worksheet"
     end
 
-    # context "worksheet header" do
-    #   let!(:legacy_hearing_two) { create(:legacy_hearing, user: current_user) }
-    #
-    #   scenario "Hearing worksheet switch veterans" do
-    #     visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
-    #     find(".Select-control").click
-    #     find("#react-select-2--option-0").click
-    #     expect(page).to have_current_path("/hearings/" + legacy_hearing.external_id.to_s + "/worksheet")
-    #     expect(page).to have_content(legacy_hearing.veteran_first_name)
-    #
-    #     find(".Select-control").click
-    #     find("#react-select-2--option-1").click
-    #     expect(page).to have_current_path("/hearings/" + legacy_hearing_two.external_id.to_s + "/worksheet")
-    #     expect(page).to have_content(legacy_hearing_two.veteran_first_name)
-    #   end
-    # end
+    context "worksheet header" do
+      let!(:legacy_hearing_two) { create(:legacy_hearing, user: current_user) }
+
+      scenario "Hearing worksheet switch veterans" do
+        visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
+        find(".Select-control").click
+        find("#react-select-2--option-0").click
+        expect(page).to have_current_path("/hearings/" + legacy_hearing.external_id.to_s + "/worksheet")
+        expect(page).to have_content(legacy_hearing.veteran_first_name)
+
+        find(".Select-control").click
+        find("#react-select-2--option-1").click
+        expect(page).to have_current_path("/hearings/" + legacy_hearing_two.external_id.to_s + "/worksheet")
+        expect(page).to have_content(legacy_hearing_two.veteran_first_name)
+      end
+    end
 
     scenario "Hearing worksheet default summary shows up" do
       visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"

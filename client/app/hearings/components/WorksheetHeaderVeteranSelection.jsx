@@ -4,17 +4,15 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import Checkbox from '../../components/Checkbox';
 import FoundIcon from '../../components/FoundIcon';
 import { LOGO_COLORS } from '../../constants/AppConstants';
-
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { setPrepped } from '../actions/Dockets';
-import { getReaderLink, orderTheDocket } from '../util/index';
+import { setPrepped, getHearingDayHearings } from '../actions/Dockets';
+import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import SmallLoader from '../../components/SmallLoader';
 import _ from 'lodash';
 import { CATEGORIES, ACTIONS } from '../analytics';
-import moment from 'moment';
 
 const headerSelectionStyling = css({
   display: 'block',
@@ -45,8 +43,7 @@ const buttonHeaderStyling = css({
 class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   componentDidMount() {
-    this.date = moment(this.props.worksheet.scheduled_for).format('YYYY-MM-DD');
-    // this.props.getDailyDocket(null, this.date);
+    this.props.getHearingDayHearings(this.props.worksheet.hearing_day_id);
   }
 
   onDropdownChange = (value) => {
@@ -68,7 +65,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   getDocketVeteranOptions = (docket) => (
     _.isEmpty(docket) ?
       [] :
-      docket.map((hearing) => ({
+      _.map(docket, (hearing) => ({
         label: this.getOptionLabel(hearing),
         value: hearing.external_id
       }))
@@ -85,16 +82,11 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   render() {
 
-    const { worksheet, worksheetIssues, dailyDocket } = this.props;
-    let currentDocket = dailyDocket[this.date] || {};
+    const { worksheet, worksheetIssues, hearings } = this.props;
 
-    // getting the hearing information from the daily docket for the prepped field
-    // in the header
-    const currentHearing = currentDocket[worksheet.id] || {};
+    const currentHearing = hearings ? hearings[worksheet.external_id] : {};
 
-    currentDocket = orderTheDocket(currentDocket);
-
-    const docketNotLoaded = _.isEmpty(currentDocket);
+    const docketNotLoaded = _.isEmpty(hearings);
 
     return <span className="worksheet-header" {...headerSelectionStyling}>
       <div className="cf-push-left" {...containerStyling}>
@@ -104,7 +96,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
             name="worksheet-veteran-selection"
             placeholder={docketNotLoaded ? <SmallLoader spinnerColor={LOGO_COLORS.HEARINGS.ACCENT}
               message="Loading..." /> : ''}
-            options={this.getDocketVeteranOptions(currentDocket, worksheetIssues)}
+            options={this.getDocketVeteranOptions(hearings, worksheetIssues)}
             onChange={this.onDropdownChange}
             value={worksheet.external_id}
             searchable={false}
@@ -140,21 +132,21 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  dailyDocket: state.dailyDocket,
+  hearings: state.hearings,
   worksheet: state.worksheet,
   worksheetIssues: state.worksheetIssues
 });
 
 const mapDispatchToProps = (dispatch) => ({
   ...bindActionCreators({
-    setPrepped
+    setPrepped,
+    getHearingDayHearings
   }, dispatch)
 });
 
 WorksheetHeaderVeteranSelection.propTypes = {
   worksheet: PropTypes.object.isRequired,
   worksheetIssues: PropTypes.object.isRequired,
-  dailyDocket: PropTypes.object.isRequired,
   save: PropTypes.func.isRequired
 };
 

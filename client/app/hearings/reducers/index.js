@@ -141,6 +141,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       $unset: ['saveHearingSuccess']
     });
 
+  case Constants.SET_HEARING_DAY_HEARINGS:
+    return update(state, {
+      hearings: { $set: action.payload.hearings }
+    });
+
   case Constants.SET_REPNAME:
     return newHearingWorksheetState(state, action, { representative_name: { $set: action.payload.repName } });
 

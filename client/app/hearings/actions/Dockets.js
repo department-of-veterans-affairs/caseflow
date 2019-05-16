@@ -3,6 +3,7 @@ import ApiUtil from '../../util/ApiUtil';
 import { CATEGORIES, ACTIONS, debounceMs } from '../analytics';
 import moment from 'moment';
 import { now } from '../util/DateUtil';
+import _ from 'lodash';
 
 export const populateWorksheet = (worksheet) => ({
   type: Constants.POPULATE_WORKSHEET,
@@ -107,6 +108,18 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
     saveFailed
   }
 });
+
+export const getHearingDayHearings = (hearingDayId) => (dispatch) => {
+  ApiUtil.get(`/hearings/hearing_day/${hearingDayId}`).
+    then((response) => {
+      dispatch({
+        type: Constants.SET_HEARING_DAY_HEARINGS,
+        payload: {
+          hearings: _.keyBy(JSON.parse(response.text).hearing_day.hearings, 'external_id')
+        }
+      });
+    });
+};
 
 export const saveWorksheet = (worksheet) => (dispatch) => {
   if (!worksheet.edited) {
