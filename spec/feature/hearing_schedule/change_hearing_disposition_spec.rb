@@ -69,7 +69,7 @@ RSpec.feature "Change hearing disposition" do
         expect(page).to have_content("Unassigned (1)")
         expect(page).to have_content "Evidence Submission Window Task"
         click_on veteran_link_text
-        expect(page).to have_content ChangeHearingDispositionTask.name
+        expect(page).to have_content ChangeHearingDispositionTask.last.label
       end
 
       step "visit and verify that the transcription task is in the transcription team queue" do
@@ -78,7 +78,7 @@ RSpec.feature "Change hearing disposition" do
         expect(page).to have_content("Unassigned (1)")
         expect(page).to have_content "Transcription Task"
         click_on veteran_link_text
-        expect(page).to have_content ChangeHearingDispositionTask.name
+        expect(page).to have_content ChangeHearingDispositionTask.last.label
       end
 
       step "visit and verify that the new hearing disposition is in the hearing prep daily docket" do
