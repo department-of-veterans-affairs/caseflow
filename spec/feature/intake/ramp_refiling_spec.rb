@@ -60,7 +60,7 @@ RSpec.feature "RAMP Refiling Intake" do
       visit "/intake"
 
       # Validate that you can't move forward without selecting a form
-      scroll_element_in_to_view(".cf-submit.usa-button")
+      scroll_to(".cf-submit.usa-button")
       expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
       safe_click ".Select"
@@ -102,7 +102,7 @@ RSpec.feature "RAMP Refiling Intake" do
       visit "/intake"
 
       # Validate that you can't move forward without selecting a form
-      scroll_element_in_to_view(".cf-submit.usa-button")
+      scroll_to(".cf-submit.usa-button")
       expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
       safe_click ".Select"
@@ -253,7 +253,7 @@ RSpec.feature "RAMP Refiling Intake" do
       visit "/intake/search"
 
       # Validate that you can't move forward without selecting a form
-      scroll_element_in_to_view(".cf-submit.usa-button")
+      scroll_to(".cf-submit.usa-button")
       expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
       safe_click ".Select"
@@ -523,7 +523,7 @@ RSpec.feature "RAMP Refiling Intake" do
       )
 
       visit "/intake/search"
-      scroll_element_in_to_view(".cf-submit.usa-button")
+      scroll_to(".cf-submit.usa-button")
       safe_click ".Select"
       fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
       find("#form-select").send_keys :enter

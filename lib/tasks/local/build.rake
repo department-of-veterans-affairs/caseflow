@@ -4,8 +4,7 @@ namespace :local do
   desc "build local development environment"
   task :build do
     puts "Building docker services from configuration"
-    system("cd local/vacols/ && ./build_push.sh local") || abort
-    system("cd ../../")
+    system("./local/vacols/build_push.sh local") || abort
 
     puts "Starting docker containers in the background"
     system("docker-compose up -d") || abort
