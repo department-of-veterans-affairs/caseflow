@@ -1,7 +1,6 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES, ACTIONS, debounceMs } from '../analytics';
-import moment from 'moment';
+import { CATEGORIES, debounceMs } from '../analytics';
 import { now } from '../util/DateUtil';
 import _ from 'lodash';
 

@@ -19,7 +19,6 @@ const Hearings = ({ hearings }) => {
     <BrowserRouter>
       <Switch>
         <PageRoute exact path="/hearings/:hearingId/worksheet/print"
-          breadcrumb="Daily Docket > Hearing Worksheet"
           title="Hearing Worksheet"
           component={(props) => {
 
@@ -40,14 +39,12 @@ const Hearings = ({ hearings }) => {
                 accentColor: LOGO_COLORS.HEARINGS.ACCENT,
                 overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
               }}
-              defaultUrl="/hearings/dockets"
               userDisplayName={hearings.userDisplayName}
               dropdownUrls={hearings.dropdownUrls}
               applicationUrls={hearings.applicationUrls} >
               <AppFrame wideApp>
                 <ScrollToTop />
                 <PageRoute exact path="/hearings/:hearingId/worksheet"
-                  breadcrumb="Daily Docket > Hearing Worksheet"
                   title="Hearing Worksheet"
                   component={(props) => {
 
@@ -55,7 +52,7 @@ const Hearings = ({ hearings }) => {
                       <HearingWorksheetContainer
                         veteran_law_judge={hearings.veteran_law_judge}
                         hearingId={props.match.params.hearingId} /> :
-                      <UnsupportedBrowserBanner appName="Hearing Prep" />;
+                      <UnsupportedBrowserBanner appName="Hearings" />;
                   }
                   }
                 />
@@ -63,7 +60,7 @@ const Hearings = ({ hearings }) => {
             </NavigationBar>
             <Footer
               wideApp
-              appName="Hearing Prep"
+              appName="Hearings"
               feedbackUrl={hearings.feedbackUrl}
               buildDate={hearings.buildDate} />
           </div>
