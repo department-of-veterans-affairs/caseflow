@@ -2,7 +2,7 @@
 
 class Fakes::VADotGovService < ExternalApi::VADotGovService
   def self.send_va_dot_gov_request(endpoint:, query: {}, **_args)
-    if endpoint == facilities_endpoint
+    if endpoint == VADotGovService::FACILITIES_ENDPOINT
       facilities = query[:ids].split(",").map do |id|
         data = fake_facilities_data[:data][0]
         data["id"] = id
@@ -20,7 +20,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       fake_facilities[:data] = facilities
       fake_facilities[:meta][:distances] = distances
       HTTPI::Response.new 200, {}, fake_facilities.to_json
-    elsif endpoint == address_validation_endpoint
+    elsif endpoint == VADotGovService::ADDRESS_VALIDATION_ENDPOINT
       HTTPI::Response.new 200, {}, fake_address_data.to_json
     end
   end

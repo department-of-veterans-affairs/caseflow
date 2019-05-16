@@ -5,6 +5,7 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
 gem "aasm", "4.11.0"
+gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e94aff758739c499978041953e6d50fe58057e89"
@@ -71,7 +72,6 @@ group :production, :staging, :ssh_forwarding, :development, :test do
 end
 
 group :test, :development, :demo do
-  gem "activerecord-import"
   # Security scanners
   gem "brakeman"
   gem "bullet"
@@ -96,6 +96,7 @@ group :test, :development, :demo do
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
   gem "rubocop", "~> 0.52", require: false
+  gem "rubocop-performance"
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "mb-update-capybara-click"
@@ -109,6 +110,7 @@ group :development do
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"
+  gem "meta_request"
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby
   # Include the IANA Time Zone Database on Windows, where Windows doesn't ship with a timezone database.

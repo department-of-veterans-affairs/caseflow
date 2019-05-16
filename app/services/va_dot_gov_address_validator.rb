@@ -105,17 +105,14 @@ class VaDotGovAddressValidator
   def fetch_and_update_ro(va_dot_gov_address:)
     state_code = get_state_code(va_dot_gov_address)
     facility_ids = ro_facility_ids_for_state(state_code)
-    facility_ids = include_san_antonio_satellite_office(facility_ids) if state_code == "TX"
 
     distances = VADotGovService.get_distance(ids: facility_ids, lat: va_dot_gov_address[:lat],
                                              long: va_dot_gov_address[:long])
 
     closest_facility_id = distances[0][:facility_id]
-    closest_facility_id = map_san_antonio_satellite_office_to_houston(closest_facility_id) if state_code == "TX"
-
     closest_ro = get_regional_office_from_facility_id(closest_facility_id)
 
-    appeal.update(closest_regional_office: except_delaware(closest_ro))
+    appeal.update(closest_regional_office: VaDotGovAddressValidatorExceptions.except_delaware(closest_ro))
 
     { closest_regional_office: closest_ro, facility: distances[0] }
   end
@@ -125,21 +122,9 @@ class VaDotGovAddressValidator
       []) << RegionalOffice::CITIES[regional_office_id][:facility_locator_id]
   end
 
-  def include_san_antonio_satellite_office(facility_ids)
-    # veterans whose closest AHL is San Antonio should have Houston as the RO
-    # even though Waco may be closer. This is a RO/AHL policy quirk.
-    # see https://github.com/department-of-veterans-affairs/caseflow/issues/9858
-
-    facility_ids << "vha_671BY"
-  end
-
-  def map_san_antonio_satellite_office_to_houston(facility_id)
-    return "vba_362" if facility_id == "vha_671BY"
-
-    facility_id
-  end
-
   def get_regional_office_from_facility_id(facility_id)
+    return "RO62" if VaDotGovAddressValidatorExceptions.facility_is_san_antonio_satellite_office?(facility_id)
+
     RegionalOffice::CITIES.find { |_key, regional_office| regional_office[:facility_locator_id] == facility_id }[0]
   end
 
@@ -149,8 +134,13 @@ class VaDotGovAddressValidator
                     else
                       [state_code]
                     end
-    RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? || !filter_states.include?(ro[:state]) }
-      .pluck(:facility_locator_id)
+    ids = RegionalOffice::CITIES.values.reject do |ro|
+      ro[:facility_locator_id].nil? || !filter_states.include?(ro[:state])
+    end.pluck(:facility_locator_id)
+
+    ids = VaDotGovAddressValidatorExceptions.include_san_antonio_satellite_office(ids) if state_code == "TX"
+
+    ids
   end
 
   def valid_states
@@ -174,34 +164,21 @@ class VaDotGovAddressValidator
   end
 
   def get_state_code(va_dot_gov_address)
-    return "DC" if appeal.is_a?(LegacyAppeal) && appeal.hearing_request_type == :central_office
+    return "DC" if VaDotGovAddressValidatorExceptions.veteran_requested_central_office?(appeal)
 
-    state_code = case va_dot_gov_address[:country_code]
-                 # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
-                 when "GQ", "AQ", "RM", "FM", "CQ", "PS"
-                   "HI"
-                 # Philippine Islands
-                 when "PH", "RP", "PI"
-                   "PI"
-                 # Puerto Rico, Vieques, U.S. Virgin Islands
-                 when "VI", "VQ", "PR"
-                   "PR"
-                 when "US", "USA"
-                   va_dot_gov_address[:state_code]
-                 else
-                   fail Caseflow::Error::VaDotGovForeignVeteranError
-                 end
+    state_code = VaDotGovAddressValidatorExceptions.map_country_code_to_state(va_dot_gov_address)
 
-    return state_code if valid_states.include?(state_code)
+    fail Caseflow::Error::VaDotGovForeignVeteranError if state_code.nil? || !valid_states.include?(state_code)
 
-    fail Caseflow::Error::VaDotGovForeignVeteranError
+    state_code
   end
 
   def handle_error(error)
     case error
-    when Caseflow::Error::VaDotGovInvalidInputError, Caseflow::Error::VaDotGovAddressCouldNotBeFoundError
+    when Caseflow::Error::VaDotGovInvalidInputError, Caseflow::Error::VaDotGovAddressCouldNotBeFoundError,
+      Caseflow::Error::VaDotGovMultipleAddressError
       admin_action = create_admin_action_for_schedule_hearing_task(
-        instructions: "The appellant's address in VBMS does not exist or is invalid.",
+        instructions: "The appellant's address in VBMS does not exist, is incomplete, or is ambiguous.",
         admin_action_type: HearingAdminActionVerifyAddressTask
       )
 
@@ -230,11 +207,5 @@ class VaDotGovAddressValidator
       assigned_to: HearingsManagement.singleton,
       parent: task
     )
-  end
-
-  def except_delaware(closest_regional_office)
-    # Delaware's RO is not actually an RO
-    # So we assign all appeals with appellants that live in Delaware to Philadelphia
-    (closest_regional_office == "RO60") ? "RO10" : closest_regional_office
   end
 end

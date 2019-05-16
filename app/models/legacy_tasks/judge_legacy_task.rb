@@ -12,9 +12,14 @@ class JudgeLegacyTask < LegacyTask
   def available_actions(current_user, role)
     return [] if role != "judge" || current_user != assigned_to
 
+    action_label = if action.eql?(COPY::JUDGE_DECISION_REVIEW_TASK_LABEL)
+                     review_action
+                   else
+                     Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+                   end
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      action.eql?("review") ? review_action : Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+      action_label
     ]
   end
 
@@ -24,8 +29,14 @@ class JudgeLegacyTask < LegacyTask
 
   def self.from_vacols(record, appeal, user_id)
     task = super
-    task.action = record.reassigned_to_judge_date.present? ? "review" : "assign"
-    if task.action == "review"
+
+    task.action = if record.reassigned_to_judge_date.present?
+                    COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
+                  else
+                    COPY::JUDGE_ASSIGN_TASK_LABEL
+                  end
+
+    if task.action == COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
       # If task action is 'assign' that means there was no previous task record yet
       task.previous_task = LegacyTask.new(assigned_at: record.assigned_to_attorney_date.try(:to_date))
     end

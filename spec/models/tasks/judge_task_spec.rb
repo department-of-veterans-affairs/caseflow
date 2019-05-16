@@ -227,48 +227,4 @@ describe JudgeTask do
       end
     end
   end
-
-  describe ".backfill_taskks" do
-    let!(:root_tasks) { [] }
-
-    subject { JudgeTask.backfill_tasks(root_tasks) }
-
-    context "with multiple root tasks" do
-      let!(:root_task1) { FactoryBot.create(:root_task) }
-      let!(:root_task2) { FactoryBot.create(:root_task) }
-      let!(:root_task3) { FactoryBot.create(:root_task) }
-      let!(:root_tasks) { [root_task1, root_task2, root_task3] }
-      let!(:ihp_task) do
-        InformalHearingPresentationTask.create!(
-          appeal: root_task1.appeal,
-          parent: root_task1,
-          status: "assigned",
-          assigned_to: create(:vso)
-        )
-      end
-      let!(:ihp_task2) do
-        InformalHearingPresentationTask.create!(
-          appeal: root_task2.appeal,
-          parent: root_task2,
-          status: "completed",
-          assigned_to: create(:vso)
-        )
-      end
-
-      it "creates DistributionTasks" do
-        expect(DistributionTask.all.count).to eq 0
-        subject
-        # run subject twice to see if it double creates tasks
-        subject
-        expect(DistributionTask.all.count).to eq 3
-      end
-
-      it "reassigns incomplete ihp tasks so they block distribution" do
-        subject
-
-        expect(ihp_task.reload.parent).to eq(DistributionTask.find_by(appeal: ihp_task.appeal))
-        expect(ihp_task2.reload.parent).to eq(root_task2)
-      end
-    end
-  end
 end

@@ -57,10 +57,10 @@ class LegacyHearing < ApplicationRecord
 
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
-      task.type = TrackVeteranTask.name &&
-                  task.assigned_to.is_a?(Representative) &&
-                  task.assigned_to.user_has_access?(user) &&
-                  task.active?
+      task.type == TrackVeteranTask.name &&
+        task.assigned_to.is_a?(Representative) &&
+        task.assigned_to.user_has_access?(user) &&
+        task.active?
     end
   end
 
@@ -109,6 +109,12 @@ class LegacyHearing < ApplicationRecord
 
     HearingMapper.timezone(regional_office_key)
   end
+
+  def time
+    @time ||= HearingTimeService.new(hearing: self)
+  end
+
+  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string, to: :time
 
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
