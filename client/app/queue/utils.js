@@ -524,7 +524,7 @@ export const taskActionData = (props) => {
   return null;
 };
 
-export const actionNameOfTask = (task) => CO_LOCATED_ADMIN_ACTIONS[task.label] || _.startCase(task.label);
+export const actionNameOfTask = (task) => CO_LOCATED_ADMIN_ACTIONS[task.label] || task.label;
 
 export const nullToFalse = (key, obj) => {
   if (obj[key] === null) {
