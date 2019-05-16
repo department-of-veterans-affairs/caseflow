@@ -40,7 +40,8 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 1)
       click_button("Confirm")
       expect(page).to have_content("You have successfully updated")
-      click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
+      expect(page).to_not have_content("Finding hearing locations", wait: 30)
+      click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "8:30 am").click
       find("label", text: "Transcript Requested").click

@@ -293,6 +293,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown({ index: 1 }, find(".dropdown-hearingDate"))
 
       find("label", text: "8:30 am").click
+      expect(page).to_not have_content("Finding hearing locations", wait: 30)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       click_on "Schedule"
 
