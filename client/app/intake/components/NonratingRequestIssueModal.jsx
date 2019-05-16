@@ -164,6 +164,16 @@ class NonratingRequestIssueModal extends React.Component {
     const issueNumber = (intakeData.addedIssues || []).length + 1;
     let requiredFieldsMissing = !description || !category || !decisionDate;
 
+    const validateDecisionDate = (date) => {
+     const datePattern = /^(0[1-9]|1[0-2])[/](0[1-9]|[12][0-9]|3[01])[/](19|20)\d\d$/;
+
+    if (datePattern.test(date)) {
+       return true;
+    }
+
+      return 'Please enter a valid decision date.';
+  };
+
     if (formType === 'appeal' && !benefitType) {
       requiredFieldsMissing = true;
     }
@@ -208,6 +218,7 @@ class NonratingRequestIssueModal extends React.Component {
             label="Decision date"
             strongLabel
             value={decisionDate}
+            // errorMessage={validateDecisionDate()}
             onChange={this.decisionDateOnChange} />
         </div>
 
