@@ -275,5 +275,14 @@ RSpec.feature "Hearings tasks workflows" do
         end
       end
     end
+
+    context "with a regular hearing member" do
+      it "has actions" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        expect(page).to have_content("Verify Address")
+        expect(page).not_to have_selector(".Select-control")
+      end
+    end
   end
 end
