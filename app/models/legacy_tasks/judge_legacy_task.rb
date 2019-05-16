@@ -31,10 +31,10 @@ class JudgeLegacyTask < LegacyTask
     task = super
 
     task.action = if record.reassigned_to_judge_date.present?
-                     COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
-                   else
-                     COPY::JUDGE_ASSIGN_TASK_LABEL
-                   end
+                    COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
+                  else
+                    COPY::JUDGE_ASSIGN_TASK_LABEL
+                  end
 
     if task.action == COPY::JUDGE_DECISION_REVIEW_TASK_LABEL
       # If task action is 'assign' that means there was no previous task record yet
