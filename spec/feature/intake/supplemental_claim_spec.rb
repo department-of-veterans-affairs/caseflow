@@ -137,15 +137,7 @@ feature "Supplemental Claim Intake" do
     )
 
     visit "/intake"
-    safe_click ".Select"
-    expect(page).to have_css(".cf-form-dropdown")
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
-
-    safe_click ".Select"
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.supplemental_claim
-    find("#form-select").send_keys :enter
+    select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
 
     safe_click ".cf-submit.usa-button"
 

@@ -68,14 +68,9 @@ feature "RAMP Election Intake" do
 
   scenario "Search for a veteran with an no active appeals" do
     create(:ramp_election, veteran_file_number: "77776666", notice_date: 5.days.ago)
-
     visit "/intake"
-
-    safe_click ".Select"
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
-    find("#form-select").send_keys :enter
+    select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
     safe_click ".cf-submit.usa-button"
-
     fill_in search_bar_title, with: "77776666"
     click_on "Search"
 
@@ -85,14 +80,9 @@ feature "RAMP Election Intake" do
 
   scenario "Search for a veteran with an ineligible appeal" do
     create(:ramp_election, veteran_file_number: "77778888", notice_date: 5.days.ago)
-
     visit "/intake"
-
-    safe_click ".Select"
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
-    find("#form-select").send_keys :enter
+    select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
     safe_click ".cf-submit.usa-button"
-
     fill_in search_bar_title, with: "77778888"
     click_on "Search"
 
@@ -102,10 +92,7 @@ feature "RAMP Election Intake" do
 
   scenario "Search for a veteran already in progress by current user" do
     visit "/intake"
-
-    safe_click ".Select"
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
-    find("#form-select").send_keys :enter
+    select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
     safe_click ".cf-submit.usa-button"
 
     RampElectionIntake.new(
@@ -128,10 +115,7 @@ feature "RAMP Election Intake" do
     expect(page).to have_content("Welcome to Caseflow Intake!")
 
     visit "/intake/review_request"
-
-    safe_click ".Select"
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
-    find("#form-select").send_keys :enter
+    select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
     safe_click ".cf-submit.usa-button"
 
     fill_in search_bar_title, with: "12341234"

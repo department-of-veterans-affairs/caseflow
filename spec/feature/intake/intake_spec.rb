@@ -82,12 +82,9 @@ feature "Intake" do
 
     scenario "Search for a veteran that does not exist in BGS" do
       visit "/intake"
-
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
       safe_click ".cf-submit.usa-button"
+
       expect(page).to have_css(".cf-submit[disabled]")
 
       # try to hit enter key on empty search bar
@@ -113,10 +110,7 @@ feature "Intake" do
     scenario "Search for a veteran but search throws an unhandled exception" do
       expect_any_instance_of(Intake).to receive(:start!).and_raise("random error")
       visit "/intake"
-
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-      find("#form-select").send_keys :enter
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
       safe_click ".cf-submit.usa-button"
 
       expect(page).to have_content(search_page_title)
@@ -136,12 +130,8 @@ feature "Intake" do
 
       scenario "Search for a veteran with a sensitivity error" do
         visit "/intake"
-
-        safe_click ".Select"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-        find("#form-select").send_keys :enter
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
-
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
 
@@ -159,12 +149,8 @@ feature "Intake" do
 
       scenario "Search for a veteran with multiple active phone numbers" do
         visit "/intake"
-
-        safe_click ".Select"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-        find("#form-select").send_keys :enter
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
-
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
 
@@ -177,12 +163,8 @@ feature "Intake" do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
         Fakes::BGSService.inaccessible_appeal_vbms_ids = []
         visit "/intake"
-
-        safe_click ".Select"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-        find("#form-select").send_keys :enter
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
-
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
 
@@ -207,9 +189,7 @@ feature "Intake" do
 
       scenario "Search for a veteran with a validation error" do
         visit "/intake"
-        safe_click ".Select"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
-        find("#form-select").send_keys :enter
+        select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
         safe_click ".cf-submit.usa-button"
 
         fill_in search_bar_title, with: "12341234"
@@ -233,11 +213,7 @@ feature "Intake" do
       ).start!
 
       visit "/intake"
-
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
       safe_click ".cf-submit.usa-button"
 
       fill_in search_bar_title, with: "12341234"
@@ -288,11 +264,8 @@ feature "Intake" do
 
       scenario "Cancel intake on error" do
         visit "/intake"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-        find("#form-select").send_keys :enter
-
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
-
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
 

@@ -306,11 +306,8 @@ end
 
 def check_invalid_veteran_alert_on_review_page(form_type)
   visit "/intake"
-
-  fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.send(form_type.to_sym)
-  find("#form-select").send_keys :enter
+  select_form(form_type)
   safe_click ".cf-submit.usa-button"
-
   fill_in search_bar_title, with: "25252525"
   click_on "Search"
 

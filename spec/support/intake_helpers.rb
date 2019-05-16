@@ -4,11 +4,15 @@
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
 
-  def select_form(form_type)
-    form_name = Constants.INTAKE_FORM_NAMES.send(form_type.to_sym)
-
-    within_fieldset("Which form are you processing?") do
-      find("label", text: form_name).click
+  def select_form(form_name)
+    if FeatureToggle.enabled?(:ramp_intake)
+      safe_click ".Select"
+      fill_in "Which form are you processing?", with: form_name
+      find("#form-select").send_keys :enter
+    else
+      within_fieldset("Which form are you processing?") do
+        find("label", text: form_name).click
+      end
     end
   end
 

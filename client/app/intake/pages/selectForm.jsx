@@ -34,23 +34,23 @@ class SelectForm extends React.PureComponent {
       <h1>Welcome to Caseflow Intake!</h1>
 
       { !enableSearchableDropdown && <RadioField
-          name="form-select"
-          label="Which form are you processing?"
-          vertical
-          strongLabel
-          options={radioOptions}
-          onChange={this.props.setFormType}
-          value={this.props.formType}
-        />
+        name="form-select"
+        label="Which form are you processing?"
+        vertical
+        strongLabel
+        options={radioOptions}
+        onChange={this.props.setFormType}
+        value={this.props.formType}
+      />
       }
 
       { enableSearchableDropdown && <SearchableDropdown
-          name="form-select"
-          label="Which form are you processing?"
-          placeholder="Enter or select form"
-          options={radioOptions}
-          onChange={this.setFormTypeFromDropdown}
-          value={this.props.formType} />
+        name="form-select"
+        label="Which form are you processing?"
+        placeholder="Enter or select form"
+        options={radioOptions}
+        onChange={this.setFormTypeFromDropdown}
+        value={this.props.formType} />
       }
     </div>;
   }
