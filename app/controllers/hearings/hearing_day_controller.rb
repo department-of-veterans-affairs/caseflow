@@ -6,17 +6,17 @@ class Hearings::HearingDayController < HearingScheduleController
 
   # show schedule days for date range provided
   def index
-    start_date = validate_start_date(params[:start_date])
-    end_date = validate_end_date(params[:end_date])
-    regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
-
-    hearing_days = HearingDay.list_upcoming_hearing_days(start_date, end_date, current_user, regional_office)
-
     respond_to do |format|
       format.html do
         render "hearing_schedule/index"
       end
+
       format.json do
+        start_date = validate_start_date(params[:start_date])
+        end_date = validate_end_date(params[:end_date])
+        regional_office = HearingDayMapper.validate_regional_office(params[:regional_office])
+        hearing_days = HearingDay.list_upcoming_hearing_days(start_date, end_date, current_user, regional_office)
+
         render json: {
           hearings: json_hearings(HearingDay.array_to_hash(hearing_days)),
           startDate: start_date,
