@@ -117,7 +117,7 @@ end
 
 class ClearAndUnmistakeableErrorMailTask < MailTask
   def available_actions(user)
-    return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
   end
 
   def self.label
@@ -297,7 +297,7 @@ end
 
 class ReconsiderationMotionMailTask < MailTask
   def available_actions(user)
-    return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
   end
 
   def self.label
@@ -321,7 +321,7 @@ end
 
 class VacateMotionMailTask < MailTask
   def available_actions(user)
-    return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
   end
 
   def self.label
