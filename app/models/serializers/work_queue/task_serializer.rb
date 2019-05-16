@@ -39,7 +39,7 @@ class WorkQueue::TaskSerializer
     }
   end
 
-  attribute :assignee_name do | object |
+  attribute :assignee_name do |object|
     object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
   end
 

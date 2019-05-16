@@ -45,7 +45,7 @@ class WorkQueue::LegacyTaskSerializer
     }
   end
 
-  attribute :assignee_name do | object |
+  attribute :assignee_name do |object|
     object.appeal.location_code
   end
 
