@@ -4,6 +4,8 @@ import { bindActionCreators } from 'redux';
 
 import { AssignWidgetModal } from './components/AssignWidget';
 
+import COPY from '../../COPY.json';
+
 import {
   taskById
 } from './selectors';
@@ -19,7 +21,7 @@ class AssignToAttorneyModalView extends React.PureComponent {
   ) => {
     const previousAssigneeId = tasks[0].assignedTo.id.toString();
 
-    if (['assign', 'quality review'].includes(tasks[0].label)) {
+    if ([COPY.JUDGE_ASSIGN_TASK_LABEL, COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL].includes(tasks[0].label)) {
       return this.props.initialAssignTasksToUser({
         tasks,
         assigneeId,

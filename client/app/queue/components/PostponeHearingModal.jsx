@@ -81,12 +81,14 @@ class PostponeHearingModal extends React.Component {
   }
 
   getReschedulePayload = () => {
-    const { apiFormattedValues: { hearing_time, hearing_day_id, hearing_location } } = this.props.assignHearing;
+    const {
+      apiFormattedValues: { scheduled_time_string, hearing_day_id, hearing_location }
+    } = this.props.assignHearing;
 
     return {
       action: ACTIONS.RESCHEDULE,
       new_hearing_attrs: {
-        hearing_time,
+        scheduled_time_string,
         hearing_day_id,
         hearing_location
       }

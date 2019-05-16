@@ -21,27 +21,6 @@ export const onReceiveHearingDays = (hearingDays) => ({
   }
 });
 
-export const onHearingDayChange = (hearingDay) => ({
-  type: ACTIONS.HEARING_DAY_CHANGE,
-  payload: {
-    hearingDay
-  }
-});
-
-export const onHearingTimeChange = (hearingTime) => ({
-  type: ACTIONS.HEARING_TIME_CHANGE,
-  payload: {
-    hearingTime
-  }
-});
-
-export const onHearingLocationChange = (hearingLocation) => ({
-  type: ACTIONS.HEARING_LOCATION_CHANGE,
-  payload: {
-    hearingLocation
-  }
-});
-
 export const onFetchDropdownData = (dropdownName) => ({
   type: ACTIONS.FETCH_DROPDOWN_DATA,
   payload: {
