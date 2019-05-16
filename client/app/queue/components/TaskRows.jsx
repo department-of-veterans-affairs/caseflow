@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
@@ -66,9 +65,7 @@ class TaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
 
-    this.state = {
-      taskInstructionsIsVisible: { }
-    };
+    this.state = { taskInstructionsIsVisible: { } };
   }
 
   toggleTaskInstructionsVisibility = (task) => {
@@ -141,9 +138,7 @@ class TaskRows extends React.PureComponent {
   }
 
   getActionName = (task) => {
-    const {
-      label
-    } = task;
+    const { label } = task;
 
     // First see if there is a constant to convert the label, otherwise sentence-ify it
     if (CO_LOCATED_ADMIN_ACTIONS[label]) {
