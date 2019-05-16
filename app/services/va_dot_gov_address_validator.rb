@@ -53,6 +53,16 @@ class VaDotGovAddressValidator
                                  ids: facility_ids)
   end
 
+  def assign_available_hearing_locations_for_ro(regional_office_id:)
+    facility_ids = facility_ids_for_ro(regional_office_id)
+    AvailableHearingLocations.where(appeal: appeal).destroy_all
+
+    VADotGovService.get_facility_data(ids: facility_ids)
+      .each do |alternate_hearing_location|
+        create_available_hearing_location(facility: alternate_hearing_location)
+    end
+  end
+
   def create_available_hearing_locations(va_dot_gov_address:)
     ro = fetch_and_update_ro(va_dot_gov_address: va_dot_gov_address)
     facility_ids = facility_ids_for_ro(ro[:closest_regional_office])

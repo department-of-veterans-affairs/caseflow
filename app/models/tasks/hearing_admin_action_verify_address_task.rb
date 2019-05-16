@@ -23,8 +23,6 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
     case params[:status]
-    when Constants.TASK_STATUSES.completed
-      fetch_closest_ro_and_ahls
     when Constants.TASK_STATUSES.cancelled
       update_ro_and_ahls(payload_values["regional_office_value"])
     end
@@ -34,10 +32,7 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
 
   def update_ro_and_ahls(new_ro)
     appeal.update(closest_regional_office: new_ro)
-
-    # ro = # Get RO
-
-    # appeal.va_dot_gov_address_validator.create_available_hearing_locations_from_ro(ro: ro)
+    appeal.va_dot_gov_address_validator.assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
   end
 
   def fetch_closest_ro_and_ahls
