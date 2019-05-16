@@ -47,14 +47,14 @@ export default class DailyDocketEditLinks extends React.Component {
   isUserJudge = () => this.props.user.userRoleHearingPrep;
 
   exportDailyDocket() {
-    const { hearings } = this.props;
+    const { dailyDocket, hearings } = this.props;
 
     return hearings.map((hearing) => {
       const row = {
-        date: hearing.scheduledFor,
-        time: hearing.scheduledFor,
-        vlj: '',
-        hearingCoordinator: '',
+        date: moment(hearing.scheduledFor).format('M/DD/YYYY'),
+        time: moment(hearing.scheduledFor).format('HH:mm:ss'),
+        vlj: `${dailyDocket.judgeFirstName} ${dailyDocket.judgeLastName}`,
+        hearingCoordinator: dailyDocket.bvaPoc || '',
         regionalOffice: hearing.regionalOfficeName,
         hearingLocation: hearing.readableLocation,
         hearingType: hearing.readableRequestType,
@@ -76,37 +76,65 @@ export default class DailyDocketEditLinks extends React.Component {
 
   getExportDailyDocketHeaders() {
     const headers = [
-      { label: 'Date',
-        key: 'date' },
-      { label: 'Time',
-        key: 'time' },
-      { label: 'VLJ',
-        key: 'vlj' },
-      { label: 'Hearing Coordinator',
-        key: 'hearingCoordinator' },
-      { label: 'Regional Office',
-        key: 'regionalOffice' },
-      { label: 'Hearing Location',
-        key: 'hearingLocation' },
-      { label: 'Hearing Type',
-        key: 'hearingType' },
-      { label: 'Hearing Room',
-        key: 'hearingRoom' },
-      { label: 'Docket Number',
-        key: 'docketNumber' },
-      { label: 'Veteran Name',
-        key: 'veteranName' },
-      { label: 'Representative Name',
-        key: 'representativeName' },
-      { label: 'Disposition',
-        key: 'disposition' },
-      { label: 'Notes',
-        key: 'notes' }
+      {
+        label: 'Date',
+        key: 'date'
+      },
+      {
+        label: 'Time',
+        key: 'time'
+      },
+      {
+        label: 'VLJ',
+        key: 'vlj'
+      },
+      {
+        label: 'Hearing Coordinator',
+        key: 'hearingCoordinator'
+      },
+      {
+        label: 'Regional Office',
+        key: 'regionalOffice'
+      },
+      {
+        label: 'Hearing Location',
+        key: 'hearingLocation'
+      },
+      {
+        label: 'Hearing Type',
+        key: 'hearingType'
+      },
+      {
+        label: 'Hearing Room',
+        key: 'hearingRoom'
+      },
+      {
+        label: 'Docket Number',
+        key: 'docketNumber'
+      },
+      {
+        label: 'Veteran Name',
+        key: 'veteranName'
+      },
+      {
+        label: 'Representative Name',
+        key: 'representativeName'
+      },
+      {
+        label: 'Disposition',
+        key: 'disposition'
+      },
+      {
+        label: 'Notes',
+        key: 'notes'
+      }
     ];
 
     if (this.isUserJudge()) {
-      headers.push({ label: 'AOD',
-        key: 'aod' });
+      headers.push({
+        label: 'AOD',
+        key: 'aod'
+      });
     }
 
     return headers;
@@ -114,10 +142,12 @@ export default class DailyDocketEditLinks extends React.Component {
 
   render() {
     const { dailyDocket, openModal, onDisplayLockModal, hearings, onClickRemoveHearingDay, user } = this.props;
-    const formattedScheduledForDate = moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY');
+
+    console.log(dailyDocket);
 
     return <React.Fragment>
-      <h1>Daily Docket ({formattedScheduledForDate})</h1><br />
+      <h1>Daily Docket ({moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY')})</h1>
+      <br />
       <div {...css({
         marginTop: '-35px',
         marginBottom: '25px'
@@ -143,7 +173,7 @@ export default class DailyDocketEditLinks extends React.Component {
           data={this.exportDailyDocket()}
           headers={this.getExportDailyDocketHeaders()}
           target="_blank"
-          filename={`Daily Docket ${formattedScheduledForDate}.csv`}
+          filename={`Daily Docket ${moment(dailyDocket.scheduledFor).format('M/DD/YYYY')}.csv`}
         >
           <Button classNames={['usa-button-secondary']}>
             Download & Print Page
