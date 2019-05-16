@@ -42,7 +42,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       expect(page).to have_content("You have successfully updated")
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away", wait: 30)
       fill_in "Notes", with: "This is a note about the hearing!"
-      find("label", text: "8:30").click
+      find("label", text: "8:30 am").click
       find("label", text: "Transcript Requested").click
       click_button("Save")
 
@@ -61,18 +61,18 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
-      click_dropdown(name: "#{hearing.external_id}-disposition", index: 1)
-      click_button("Confirm")
       fill_in "Notes", with: "This is a note about the hearing!"
-      find("label", text: "9:00").click
+      find("label", text: "9:00 am").click
       find("label", text: "Transcript Requested").click
       click_button("Save")
+      click_dropdown(name: "#{hearing.external_id}-disposition", text: "No Show")
+      click_button("Confirm")
 
-      expect(page).to have_content("You have successfully updated")
-      expect(page).to have_content("No Show")
-      expect(page).to have_content("This is a note about the hearing!")
+      expect(page).to have_content("You have successfully updated", wait: 30)
+      expect(page).to have_content("No Show", wait: 30)
+      expect(page).to have_content("This is a note about the hearing!", wait: 30)
       expect(find_field("Transcript Requested", visible: false)).to be_checked
-      expect(find_field("9:00", visible: false)).to be_checked
+      expect(find_field("9:00 am", visible: false)).to be_checked
     end
   end
 
