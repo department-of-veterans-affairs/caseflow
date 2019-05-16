@@ -360,7 +360,7 @@ export class TaskTableUnconnected extends React.PureComponent {
     return (
       <div>
         <BulkAssignModal
-          enableBulkAssign={this.props.organizationName === 'Hearing Admin'}
+          enableBulkAssign={this.props.organizationName === 'Hearing Management'}
           organizationUrl={ORGANIZATION_NAMES[this.props.organizationName]}
           tasks={tasks}
           assignTasks={this.props.bulkAssignTasks} />
