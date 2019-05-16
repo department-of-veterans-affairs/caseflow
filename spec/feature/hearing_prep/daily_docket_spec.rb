@@ -65,4 +65,21 @@ RSpec.feature "Hearing prep" do
       expect(find_field("#{hearing.id}-prep", visible: false)).to be_checked
     end
   end
+
+  context "Hearing prep deprecation" do
+    let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
+
+    before do
+      FeatureToggle.enable!(:hearing_prep_redirect)
+    end
+
+    after do
+      FeatureToggle.disable!(:hearing_prep_redirect)
+    end
+
+    scenario "Upcoming docket days redirects to hearing schedule" do
+      visit "/hearings/dockets/2019-05-17"
+      expect(page.current_path).to eq("/hearings/schedule")
+    end
+  end
 end
