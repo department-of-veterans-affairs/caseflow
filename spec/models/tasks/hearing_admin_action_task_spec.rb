@@ -57,7 +57,7 @@ describe HearingAdminActionTask do
     end
   end
 
-  describe "#VerifyAddressTask", focus: true do
+  describe "#VerifyAddressTask" do
     let!(:schedule_hearing_task) { create(:schedule_hearing_task, appeal: appeal) }
     let!(:verify_address_task) do
       HearingAdminActionVerifyAddressTask.create!(
