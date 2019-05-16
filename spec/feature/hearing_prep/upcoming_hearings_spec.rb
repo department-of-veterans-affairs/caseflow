@@ -83,6 +83,23 @@ RSpec.feature "Hearing Prep" do
       expect(page).not_to have_link(Time.zone.now.strftime("%-m/%d/%Y"))
     end
   end
+
+  context "Hearing prep deprecation" do
+    let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
+
+    before do
+      FeatureToggle.enable!(:hearing_prep_redirect)
+    end
+
+    after do
+      FeatureToggle.disable!(:hearing_prep_redirect)
+    end
+
+    scenario "Upcoming docket days redirects to hearing schedule" do
+      visit "/hearings/dockets"
+      expect(page.current_path).to eq("/hearings/schedule")
+    end
+  end
 end
 
 # helpers
