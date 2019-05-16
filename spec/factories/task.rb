@@ -124,6 +124,12 @@ FactoryBot.define do
           other: "Please request a waiver of AOJ consideration for new evidence"
         }
 
+        # Create a RootTask for this appeal unless one already exists because ColocatedTasks with the schedule_hearing
+        # action can create ScheduleHearingTasks which require the appeal to have a RootTask.
+        # github.com/department-of-veterans-affairs/caseflow
+        #   /blob/2bf6503e7f0888abc3222caaba499d8e7db14ae4/app/models/tasks/colocated_task.rb#L134
+        RootTask.create!(appeal: task.appeal) unless task.appeal.root_task
+
         action = task.action || Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample
         task.update!(action: action, instructions: [example_instructions[action.to_sym]]) if task.instructions.empty?
       end

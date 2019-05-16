@@ -87,7 +87,7 @@ RSpec.feature "Quality Review worflow" do
 
     click_on "Submit"
 
-    expect(page).to have_content("On hold (3)")
+    expect(page).to have_content("On hold (1)")
 
     # step "judge reviews case and assigns a task to an attorney"
     User.authenticate!(user: judge_user)
