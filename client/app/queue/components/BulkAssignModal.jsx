@@ -12,7 +12,7 @@ import Dropdown from '../../components/Dropdown';
 import { onReceiveAmaTasks } from '../QueueActions';
 
 import {
-  requestPatch
+  requestSave
 } from '../uiReducer/uiActions';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
@@ -39,21 +39,18 @@ class BulkAssignModal extends React.PureComponent {
     const assignedUser = this.state.modal.assignedUser;
     const numberOfTasks = this.state.modal.numberOfTasks;
     const payload = {
-      data: { 
-        parent_ids: taskIds,
-        assigned_to_id: assignedUser,
-        number_of_tasks: numberOfTasks 
+      data: { bulk_assign:
+        { parent_ids: taskIds,
+          assigned_to_id: assignedUser,
+          number_of_tasks: numberOfTasks
+        }
       }
     };
 
-    const successMsg = {
-      title: `Success`
-    };
-
-    return this.props.requestPatch(`/bulk_assign_tasks/`, payload, successMsg).
+    return this.props.requestSave('/tasks/bulk_assign/', payload, "").
       then((resp) => {
         const response = JSON.parse(resp.text);
-
+        this.props.assignTasks(this.state.modal);
         this.props.onReceiveAmaTasks(response.tasks.data);
       }).
       catch(() => {
@@ -87,33 +84,26 @@ class BulkAssignModal extends React.PureComponent {
     this.forceUpdate();
   }
 
-  // generateErrors = () => {
-  //   const requiredFields = ['assignedUser', 'taskType', 'numberOfTasks'];
-  //   const undefinedFields = _.keys(_.omitBy(this.state.modal, _.isString));
-  //   const errorFields = [];
+  generateErrors = () => {
+    const requiredFields = ['assignedUser', 'taskType', 'numberOfTasks'];
+    const undefinedFields = _.keys(_.omitBy(this.state.modal, _.isString));
+    const errorFields = [];
 
-  //   undefinedFields.forEach((field) => {
-  //     if (requiredFields.includes(field)) {
-  //       errorFields.push(field);
-  //     }
-  //   });
+    undefinedFields.forEach((field) => {
+      if (requiredFields.includes(field)) {
+        errorFields.push(field);
+      }
+    });
 
-  //   return errorFields;
-  // }
-
-  // bulkAssignTasks = () => {
-  //   this.setState({ showErrors: true });
-
-  //   if (this.generateErrors().length === 0) {
-  //     this.props.assignTasks(this.state.modal);
-  //     this.handleModalToggle();
-  //   }
-  // }
+    return errorFields;
+  }
 
   getFilteredTaskIds = () => {
     let filteredTasks = this.props.tasks;
+
     filteredTasks = this.filterTasks('closestRegionalOffice', this.state.modal.regionalOffice, filteredTasks);
     filteredTasks = this.filterTasks('type', this.state.modal.taskType, filteredTasks);
+
     return filteredTasks.map((task) => task.taskId);
   }
 
@@ -205,7 +195,7 @@ class BulkAssignModal extends React.PureComponent {
   generateNumberOfTaskOptions = () => {
     const actualOptions = [];
     const issueCounts = this.props.issueCountOptions || BULK_ASSIGN_ISSUE_COUNT;
-    let filteredTasksIds = this.getFilteredTaskIds();
+    const filteredTasksIds = this.getFilteredTaskIds();
 
     for (let i = 0; i < issueCounts.length; i++) {
       if (filteredTasksIds && filteredTasksIds.length < issueCounts[i]) {
@@ -271,7 +261,7 @@ class BulkAssignModal extends React.PureComponent {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  requestPatch,
+  requestSave,
   onReceiveAmaTasks
 }, dispatch);
 
