@@ -10,34 +10,11 @@ import {
   AppealHearingLocationsDropdown,
   HearingDateDropdown
 } from '../../../components/DataDropdowns';
-import HearingTime, { getAssignHearingTime } from './HearingTime';
+import HearingTime from './HearingTime';
 
 import { onChangeFormData } from '../../../components/common/actions';
 
 class AssignHearingForm extends React.Component {
-
-  /*
-    This duplicates a lot of the logic from AssignHearingModal.jsx
-    TODO: refactor so both of these modals use the same components
-  */
-  componentWillMount() {
-
-    const { initialRegionalOffice, initialHearingDate, initialHearingTime } = this.props;
-
-    const values = {
-      regionalOffice: initialRegionalOffice || null,
-      hearingLocation: null,
-      hearingTime: initialHearingTime || null,
-      hearingDay: initialHearingDate || null
-    };
-
-    this.props.onChange({
-      ...values,
-      errorMessages: this.getErrorMessages(values),
-      apiFormattedValues: this.getApiFormattedValues(values)
-    });
-  }
-
   getErrorMessages = (newValues) => {
     const values = {
       ...this.props.values,
@@ -48,13 +25,13 @@ class AssignHearingForm extends React.Component {
       hearingDay: values.hearingDay && values.hearingDay.hearingId ?
         false : 'Please select a hearing date',
       hearingLocation: values.hearingLocation ? false : 'Please select a hearing location',
-      hearingTime: values.hearingTime ? false : 'Please select a hearing time'
+      scheduledTimeString: values.scheduledTimeString ? false : 'Please select a hearing time'
     };
 
     return {
       ...errorMessages,
       hasErrorMessages: (errorMessages.hearingDay || errorMessages.hearingLocation ||
-        errorMessages.hearingTime) !== false
+        errorMessages.scheduledTimeString) !== false
     };
   }
 
@@ -65,8 +42,7 @@ class AssignHearingForm extends React.Component {
     };
 
     return {
-      hearing_time: (values.hearingDay && values.hearingDay.hearingDate) && values.hearingTime ?
-        getAssignHearingTime(values.hearingTime, values.hearingDay) : null,
+      scheduled_time_string: values.scheduledTimeString,
       hearing_day_id: values.hearingDay ? values.hearingDay.hearingId : null,
       hearing_location: values.hearingLocation ? ApiUtil.convertToSnakeCase(values.hearingLocation) : null
     };
@@ -84,28 +60,36 @@ class AssignHearingForm extends React.Component {
     const newValues = {
       regionalOffice,
       hearingLocation: null,
-      hearingTime: null,
+      scheduledTimeString: null,
       hearingDay: null
     };
 
     this.onChange(newValues);
   }
 
+  getErrorMessage = (valueKey) => {
+    if (this.props.showErrorMessages) {
+      return this.props.values.errorMessages[valueKey];
+    }
+
+    return '';
+  }
+
   render() {
-    const { appeal, showErrorMessages, values } = this.props;
-    const { regionalOffice, hearingLocation, hearingDay, hearingTime, errorMessages } = values;
-    const availableHearingLocations = _.sortBy(appeal.availableHearingLocations || [], 'distance');
+    const { appeal, values, initialRegionalOffice, initialHearingDate } = this.props;
+    const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString } = values;
+    const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
 
     return (
       <div>
         <RegionalOfficeDropdown
-          value={regionalOffice}
+          value={regionalOffice || initialRegionalOffice}
           onChange={this.onRegionalOfficeChange}
           validateValueOnMount
         />
         {regionalOffice && <React.Fragment>
           <AppealHearingLocationsDropdown
-            errorMessage={showErrorMessages ? errorMessages.hearingLocation : ''}
+            errorMessage={this.getErrorMessage('hearingLocation')}
             key={`hearingLocation__${regionalOffice}`}
             regionalOffice={regionalOffice}
             appealId={appeal.externalId}
@@ -116,19 +100,19 @@ class AssignHearingForm extends React.Component {
             onChange={(value) => this.onChange({ hearingLocation: value })}
           />
           <HearingDateDropdown
-            errorMessage={showErrorMessages ? errorMessages.hearingDay : ''}
+            errorMessage={this.getErrorMessage('hearingDay')}
             key={`hearingDate__${regionalOffice}`}
             regionalOffice={regionalOffice}
-            value={hearingDay}
+            value={hearingDay || initialHearingDate}
             onChange={(value) => this.onChange({ hearingDay: value })}
             validateValueOnMount
           />
           <HearingTime
-            errorMessage={showErrorMessages ? errorMessages.hearingTime : ''}
+            errorMessage={this.getErrorMessage('scheduledTimeString')}
             key={`hearingTime__${regionalOffice}`}
             regionalOffice={regionalOffice}
-            value={hearingTime}
-            onChange={(value) => this.onChange({ hearingTime: value })}
+            value={scheduledTimeString}
+            onChange={(value) => this.onChange({ scheduledTimeString: value })}
           />
         </React.Fragment>}
       </div>
