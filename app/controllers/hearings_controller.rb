@@ -11,6 +11,14 @@ class HearingsController < ApplicationController
   end
 
   def update
+    update_hearing
+    update_advance_on_docket_motion unless advance_on_docket_motion_params.empty?
+    update_legacy_aod unless legacy_aod_params.empty?
+
+    render json: hearing.to_hash(current_user.id)
+  end
+
+  def update_hearing
     if hearing.is_a?(LegacyHearing)
       params = HearingTimeService.build_legacy_params_with_time(hearing, update_params_legacy)
       hearing.update_caseflow_and_vacols(params)
@@ -21,8 +29,15 @@ class HearingsController < ApplicationController
       Transcription.find_or_create_by(hearing: hearing)
       hearing.update!(params)
     end
+  end
 
-    render json: hearing.to_hash(current_user.id)
+  def update_advance_on_docket_motion
+    motion = AdvanceOnDocketMotion.find_or_create_by!(person_id: advance_on_docket_motion_params[:person_id])
+    motion.update(advance_on_docket_motion_params)
+  end
+
+  def update_legacy_aod
+    hearing.appeal.update!(legacy_aod_params)
   end
 
   def logo_name
@@ -130,4 +145,12 @@ class HearingsController < ApplicationController
                                      ])
   end
   # rubocop:enable Metrics/MethodLength
+
+  def advance_on_docket_motion_params
+    params.fetch(:advance_on_docket_motion, {}).permit(:user_id, :person_id, :reason, :granted)
+  end
+
+  def legacy_aod_params
+    params.fetch(:appeal, {}).permit(:aod)
+  end
 end
