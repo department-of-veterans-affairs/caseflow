@@ -349,7 +349,7 @@ RSpec.feature "Reader" do
       expect(find(".cf-document-type")).to have_text("NOD")
     end
 
-    scenario "Rotating documents" do
+    xscenario "Rotating documents" do
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
       expect(get_computed_styles("#rotationDiv1", "transform"))
