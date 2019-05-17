@@ -60,7 +60,7 @@ class VaDotGovAddressValidator
     VADotGovService.get_facility_data(ids: facility_ids)
       .each do |alternate_hearing_location|
         create_available_hearing_location(facility: alternate_hearing_location)
-    end
+      end
   end
 
   def create_available_hearing_locations(va_dot_gov_address:)
