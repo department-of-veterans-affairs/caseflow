@@ -74,7 +74,7 @@ export default class DailyDocket extends React.Component {
   getRegionalOffice = () => {
     const { dailyDocket } = this.props;
 
-    return dailyDocket.requestType === 'Central' ? 'C' : dailyDocket.regionalOfficeKey;
+    return dailyDocket.readableRequestType === 'Central' ? 'C' : dailyDocket.regionalOfficeKey;
   };
 
   openDispositionModal = ({ hearing, disposition, onConfirm }) => {
@@ -149,7 +149,7 @@ export default class DailyDocket extends React.Component {
         <div className="cf-push-right">
           VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName} <br />
           Coordinator: {dailyDocket.bvaPoc} <br />
-          Hearing type: {dailyDocket.requestType} <br />
+          Hearing type: {dailyDocket.readableRequestType} <br />
           Regional office: {dailyDocket.regionalOffice}<br />
           Room number: {dailyDocket.room}
         </div>

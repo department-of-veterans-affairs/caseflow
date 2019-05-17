@@ -42,7 +42,7 @@ class Hearings::DocketsController < HearingsController
   def hearing_day(first_hearing)
     hearing_day = HearingDay.find(first_hearing["hearing_day_id"])
     hearing_day_object = {
-      requestType: HearingDayMapper.label_for_type(hearing_day.request_type),
+      requestType: hearing_day.readable_request_type,
       coordinator: hearing_day.bva_poc,
       room: hearing_day.room,
       notes: hearing_day.notes
