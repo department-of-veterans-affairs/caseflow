@@ -69,14 +69,8 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
-    def to_hash(hearing)
-      hearing.as_json.each_with_object({}) do |(k, v), result|
-        result[k.to_sym] = v
-      end
-    end
-
     def create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
-      VACOLS::CaseHearing.create_child_hearing!(
+      VACOLS::CaseHearing.create_hearing!(
         folder_nr: appeal.vacols_id,
         hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
         vdkey: hearing_day.id,
