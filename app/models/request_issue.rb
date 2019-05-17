@@ -546,6 +546,8 @@ class RequestIssue < ApplicationRecord
       create_decision_issues_from_rating
     end
 
+    # We expect all rating request issues on an EP to get an associated rating created when they're decided
+    # Only non-rating issues should have decision issues created from dispositions
     create_decision_issue_from_disposition if decision_issues.empty?
 
     fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
