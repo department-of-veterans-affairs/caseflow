@@ -66,8 +66,14 @@ describe AppealSeriesAlerts do
       # Save appeal so hearings can be associated to it
       before { appeal.save! }
       let(:certification_date) { 3.days.ago }
+      let(:hearing_day) do
+        create(:case_hearing,
+               hearing_type: HearingDay::REQUEST_TYPES[:video],
+               hearing_date: 1.day.from_now,
+               folder_nr: "VIDEO RO13")
+      end
       let(:hearings) do
-        [build(:case_hearing, hearing_date: 1.day.from_now)]
+        [build(:case_hearing, hearing_date: hearing_day.hearing_date, vdkey: hearing_day.id)]
       end
 
       it "includes an alert" do
