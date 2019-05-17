@@ -8,10 +8,9 @@ class TaskBulkCreator
   end
 
   def create
-    binding.pry
     @success = tasks.all?(&:valid?)
 
-    FormResponse.new(success: success, errors: errors, extra: tasks)
+    FormResponse.new(success: success, errors: [response_errors], extra: tasks)
   end
 
   private
@@ -29,10 +28,10 @@ class TaskBulkCreator
   end
 
   def tasks
-    # if parents.count != params[:number_of_tasks]
-    #   errors.add(:parent_ids, "are invalid")
-    #   return
-    # end
+    if parents.count != params[:number_of_tasks]
+      errors.add(:parent_ids, "are invalid")
+      return
+    end
     parents.map do |parent|
       Task.create(
         type: parent.type,
@@ -44,7 +43,12 @@ class TaskBulkCreator
     end
   end
 
-  def errors
-    []
+  def response_errors
+    return if success
+
+    {
+      title: "Record is invalid",
+      detail: errors.full_messages.join(", ")
+    }
   end
 end
