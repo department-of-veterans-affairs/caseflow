@@ -34,13 +34,13 @@ class TaskBulkCreator
     #   return
     # end
     parents.map do |parent|
-      # Task.create(
-      #   type: parent.type,
-      #   parent: parent,
-      #   appeal: parent.appeal,
-      #   assigned_to: assigned_to,
-      #   assigned_by: params[:assigned_by]
-      # )
+      Task.create(
+        type: parent.type,
+        parent: parent,
+        appeal: parent.appeal,
+        assigned_to: assigned_to,
+        assigned_by: params[:assigned_by]
+      )
     end
   end
 

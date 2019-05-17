@@ -49,8 +49,9 @@ class BulkAssignModal extends React.PureComponent {
 
     return this.props.requestSave('/tasks/bulk_assign/', payload, "").
       then((resp) => {
-        const response = JSON.parse(resp.text);
         this.props.assignTasks(this.state.modal);
+        this.handleModalToggle();
+        const response = JSON.parse(resp.text);
         this.props.onReceiveAmaTasks(response.tasks.data);
       }).
       catch(() => {
@@ -67,6 +68,14 @@ class BulkAssignModal extends React.PureComponent {
 
         this.setState({ users: fetchedUsers });
       });
+    }
+  }
+
+  bulkAssignTasks = () => {
+    this.setState({ showErrors: true });
+
+    if (this.generateErrors().length === 0) {
+      this.submit();
     }
   }
 
@@ -234,7 +243,7 @@ class BulkAssignModal extends React.PureComponent {
     const isBulkAssignEnabled = this.props.enableBulkAssign && this.props.organizationUrl;
     const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
       Assign Tasks</Button>;
-    const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.submit}>
+    const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.bulkAssignTasks}>
       Assign</Button>;
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
     const modal = (
