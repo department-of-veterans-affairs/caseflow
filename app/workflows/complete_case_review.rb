@@ -31,7 +31,9 @@ class CompleteCaseReview
   def create_quality_review_task
     return if case_review.appeal.is_a?(LegacyAppeal) ||
               !case_review.is_a?(JudgeCaseReview) ||
-              case_review.task.parent.is_a?(QualityReviewTask)
+              case_review.task.parent.is_a?(QualityReviewTask) ||
+              case_review.task.parent.is_a?(BvaDispatchTask)
+
 
     root_task = case_review.task.root_task
     if QualityReviewCaseSelector.select_case_for_quality_review?
