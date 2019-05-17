@@ -144,6 +144,7 @@ FactoryBot.define do
       type { DispositionTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
+      parent { create(:hearing_task) }
     end
 
     factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do

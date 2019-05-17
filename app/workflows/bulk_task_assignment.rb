@@ -19,19 +19,21 @@ class BulkTaskAssignment
   end
 
   def process
-    transaction do
+    ActiveRecord::Base.transaction do
       tasks_to_be_assigned.map do |task|
-        assign_params = {
-          assigned_to_type: "User",
-          assigned_to_id: assigned_to.id
-        }
-        GenericTask.create_child_task(task, assigned_by, assign_params)
+        Task.create!(
+          type: task_type,
+          appeal: task.appeal,
+          assigned_by: assigned_by,
+          parent: task,
+          assigned_to: assigned_to
+        )
       end
     end
   end
 
   def tasks_to_be_assigned
-    @tasks_to_be_assigned || = task_type.constantize
+    @tasks_to_be_assigned ||= task_type.constantize
       .active.where(assigned_to_id: organization_id)
       .limit(task_count).order(:created_at)
   end
@@ -41,7 +43,7 @@ class BulkTaskAssignment
   end
 
   def organization
-    @organization ||= Organization.includes(:user).find_by(id: organization_id)
+    @organization ||= Organization.includes(:users).find_by(id: organization_id)
   end
 
   private

@@ -140,7 +140,7 @@ class DispositionTask < GenericTask
   end
 
   def check_parent_type
-    if parent.type != HearingTask.name
+    if parent&.type != HearingTask.name
       fail(
         Caseflow::Error::InvalidParentTask,
         task_type: self.class.name,
