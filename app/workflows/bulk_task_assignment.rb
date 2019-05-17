@@ -7,8 +7,9 @@ class BulkTaskAssignment
   validate :task_type_is_valid
   validate :assigned_to_exists
   validate :organization_exists
-  # validate :assigned_to_part_of_organization
-  # validate :assigned_by_part_of_organization
+  validate :assigned_to_part_of_organization
+  validate :assigned_by_part_of_organization
+  validate :organization_can_bulk_assign
 
   attr_accessor :assigned_to_id, :assigned_by, :organization_id, :task_type, :task_count
 
@@ -67,14 +68,20 @@ class BulkTaskAssignment
   end
 
   def assigned_to_part_of_organization
-    return if organization && organization.users.include?(assigned_to)
+    return if organization&.users&.include?(assigned_to)
 
     errors.add(:assigned_to, "does not belong to organization with id #{organization_id}")
   end
 
   def assigned_by_part_of_organization
-    return if organization && organization.users.include?(assigned_by)
+    return if organization&.users&.include?(assigned_by)
 
     errors.add(:assigned_by, "does not belong to organization with id #{organization_id}")
+  end
+
+  def organization_can_bulk_assign
+    return if organization&.can_bulk_assign_tasks?
+
+    errors.add(:organization, "with id #{organization_id} cannot bulk assign tasks")
   end
 end
