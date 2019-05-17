@@ -57,7 +57,7 @@ export default class HearingTime extends React.Component {
     if (regionalOffice === 'C') {
       return [
         { displayText: '9:00 am',
-          value: '9:00',
+          value: '09:00',
           disabled: readOnly },
         { displayText: '1:00 pm',
           value: '13:00',
@@ -70,7 +70,7 @@ export default class HearingTime extends React.Component {
 
     return [
       { displayText: '8:30 am',
-        value: '8:30',
+        value: '08:30',
         disabled: readOnly },
       { displayText: '12:30 pm',
         value: '12:30',

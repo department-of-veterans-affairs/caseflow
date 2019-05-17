@@ -96,14 +96,8 @@ describe ScheduleHearingTask do
           business_payloads: {
             description: "Update",
             values: {
-              "regional_office_value": hearing_day.regional_office,
               "hearing_day_id": hearing_day.id,
-              "hearing_time": {
-                "h": "09",
-                "m": "00",
-                "offset": "-0500"
-              },
-              "hearing_type": "Video"
+              "scheduled_time_string": "09:00"
             }
           }
         }
