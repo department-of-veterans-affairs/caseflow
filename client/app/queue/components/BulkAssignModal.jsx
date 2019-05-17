@@ -71,14 +71,6 @@ class BulkAssignModal extends React.PureComponent {
     }
   }
 
-  bulkAssignTasks = () => {
-    this.setState({ showErrors: true });
-
-    if (this.generateErrors().length === 0) {
-      this.submit();
-    }
-  }
-
   handleModalToggle = () => {
     const modalStatus = this.state.showModal;
 
@@ -105,6 +97,14 @@ class BulkAssignModal extends React.PureComponent {
     });
 
     return errorFields;
+  }
+
+  bulkAssignTasks = () => {
+    this.setState({ showErrors: true });
+
+    if (this.generateErrors().length === 0) {
+      this.submit();
+    }
   }
 
   getFilteredTaskIds = () => {
