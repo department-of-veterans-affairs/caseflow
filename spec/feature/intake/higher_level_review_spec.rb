@@ -736,6 +736,20 @@ feature "Higher-Level Review" do
 
         expect(page).to have_content("1 issue")
       end
+
+      scenario "validate decsion date" do
+        start_higher_level_review(veteran_no_ratings)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+
+        fill_in "Issue category", with: "Apportionment"
+        find("#issue-category").send_keys :enter
+
+        fill_in "Decision date", with: "13/04/2019"
+
+        err_message = "Please enter a valid decision date"
+        expect(err_message).to_not eq nil
+      end
     end
 
     scenario "Add Issues modal uses promulgation date" do
