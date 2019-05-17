@@ -179,8 +179,7 @@ class HearingActions extends React.Component {
 }
 
 const mapStateToProps = (state, props) => ({
-  hearing: props.hearingId ? state.hearingSchedule.hearings[props.hearingId] : {},
-  userId: state.ui.userId
+  hearing: props.hearingId ? state.hearingSchedule.hearings[props.hearingId] : {}
 });
 
 const mapDispatchToProps = (dispatch, props) => bindActionCreators({
