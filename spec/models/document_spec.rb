@@ -85,13 +85,9 @@ describe Document do
 
   context ".content_url" do
     context "EFolderService is ExternalApi::EfolderService" do
-      OldEFolderService = EFolderService
-
       before do
-        EFolderService = ExternalApi::EfolderService
+        stub_const("EFolderService", ExternalApi::EfolderService)
       end
-
-      after { EFolderService = OldEFolderService }
 
       context "application is reader" do
         before do
@@ -109,7 +105,7 @@ describe Document do
 
       context "application is not reader" do
         before do
-          RequestStore.store[:application] = Faker::Cat.name
+          RequestStore.store[:application] = Faker::Creature::Cat.name
         end
 
         it "returns the URL for the document in VBMS" do
@@ -122,7 +118,7 @@ describe Document do
     context "EFolderService is Fakes::VBMSService" do
       context "application is not reader" do
         before do
-          RequestStore.store[:application] = Faker::Cat.name
+          RequestStore.store[:application] = Faker::Creature::Cat.name
         end
 
         it "returns the URL for the document in VBMS" do
