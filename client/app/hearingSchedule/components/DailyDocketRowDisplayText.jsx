@@ -2,9 +2,22 @@ import React from 'react';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 
-import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
-
 import { PreppedCheckbox } from './DailyDocketRowInputs';
+
+import moment from 'moment';
+
+const getDisplayTime = (scheduledTimeString, timezone) => {
+  const val = scheduledTimeString ? moment(scheduledTimeString, 'HH:mm').format('h:mm a') : '';
+
+  if (timezone) {
+    const tz = moment().tz(timezone).
+      format('z');
+
+    return `${val} ${tz}`;
+  }
+
+  return val;
+};
 
 export const getHearingAppellantName = (hearing) => {
   let { appellantFirstName, appellantLastName, veteranFirstName, veteranLastName } = hearing;
@@ -40,14 +53,20 @@ const AppellantInformation = ({ hearing }) => {
 };
 
 const HearingTime = ({ hearing }) => {
+  const localTime = getDisplayTime(
+    hearing.scheduledTimeString,
+    hearing.regionalOfficeTimezone || 'America/New_York'
+  );
+  const coTime = getDisplayTime(hearing.centralOfficeTimeString, 'America/New_York');
+
   if (hearing.readableRequestType === 'Central') {
-    return <div>{getTime(hearing.scheduledFor)} <br />
+    return <div>{coTime}<br />
       {hearing.regionalOfficeName}
     </div>;
   }
 
-  return <div>{getTime(hearing.scheduledFor)} /<br />
-    {getTimeInDifferentTimeZone(hearing.scheduledFor, hearing.regionalOfficeTimezone || 'America/New_York')} <br />
+  return <div>{coTime} /<br />
+    {localTime} <br />
     {hearing.regionalOfficeName}
     <p>{hearing.currentIssueCount} issues</p>
   </div>;
@@ -55,7 +74,7 @@ const HearingTime = ({ hearing }) => {
 
 export default class DisplayText extends React.Component {
   render () {
-    const { hearing, index, user, update, readOnly } = this.props;
+    const { hearing, index, user, update, readOnly, initialState } = this.props;
 
     return <React.Fragment>
       <div>{user.userRoleHearingPrep &&
@@ -63,7 +82,7 @@ export default class DisplayText extends React.Component {
       </div>
       <div><strong>{index + 1}</strong></div>
       <AppellantInformation hearing={hearing} />
-      <HearingTime hearing={hearing} />
+      <HearingTime hearing={initialState} />
     </React.Fragment>;
   }
 }
