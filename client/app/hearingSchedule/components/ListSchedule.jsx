@@ -122,7 +122,7 @@ class ListSchedule extends React.Component {
         scheduledFor: forCsv ? hearingDay.scheduledFor : <Link to={`/schedule/docket/${hearingDay.id}`}>
           {moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
         </Link>,
-        requestType: hearingDay.requestType,
+        readableRequestType: hearingDay.readableRequestType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
         vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
@@ -131,7 +131,7 @@ class ListSchedule extends React.Component {
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
 
-    const uniqueRequestTypes = populateFilterDropDowns(hearingScheduleRows, 'requestType');
+    const uniqueRequestTypes = populateFilterDropDowns(hearingScheduleRows, 'readableRequestType');
     const uniqueVljs = populateFilterDropDowns(hearingScheduleRows, 'vlj');
     const uniqueLocations = populateFilterDropDowns(hearingScheduleRows, 'regionalOffice');
 
@@ -148,7 +148,7 @@ class ListSchedule extends React.Component {
         header: 'Type',
         cellClass: 'type-column',
         align: 'left',
-        valueName: 'requestType',
+        valueName: 'readableRequestType',
         label: 'Filter by type',
         getFilterValues: uniqueRequestTypes,
         isDropdownFilterOpen: this.props.filterTypeIsOpen,
@@ -197,7 +197,7 @@ class ListSchedule extends React.Component {
   };
 
   setTypeSelectedValue = (value) => {
-    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'requestType', value));
+    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'readableRequestType', value));
     this.setState({
       filteredByList: this.state.filteredByList.concat(['Hearing Type'])
     });
@@ -298,7 +298,7 @@ class ListSchedule extends React.Component {
 ListSchedule.propTypes = {
   hearingSchedule: PropTypes.shape({
     scheduledFor: PropTypes.string,
-    requestType: PropTypes.string,
+    readableRequestType: PropTypes.string,
     regionalOffice: PropTypes.string,
     room: PropTypes.string,
     judgeId: PropTypes.string,

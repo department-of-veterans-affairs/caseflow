@@ -23,7 +23,7 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
 import { setSelectionOfTaskOfUser, bulkAssignTasks } from '../QueueActions';
-import { renderAppealType, taskHasCompletedHold } from '../utils';
+import { renderAppealType, taskHasCompletedHold, actionNameOfTask } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
@@ -98,8 +98,6 @@ export class TaskTableUnconnected extends React.PureComponent {
     } : null;
   }
 
-  actionNameOfTask = (task) => CO_LOCATED_ADMIN_ACTIONS[task.label] || task.label
-
   caseTaskColumn = () => {
     return this.props.includeTask ? {
       header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
@@ -110,8 +108,8 @@ export class TaskTableUnconnected extends React.PureComponent {
       customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
       label: 'Filter by task',
       valueName: 'label',
-      valueFunction: (task) => this.actionNameOfTask(task),
-      getSortValue: (task) => this.actionNameOfTask(task)
+      valueFunction: (task) => actionNameOfTask(task),
+      getSortValue: (task) => actionNameOfTask(task)
     } : null;
   }
 
