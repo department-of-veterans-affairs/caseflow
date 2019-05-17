@@ -83,33 +83,61 @@ export const HearingDetailsLink = ({ hearing }) => (
   </div>
 );
 
-export const AodDropdown = ({ hearing, readOnly, update }) => {
+const AOD_OPTIONS = [{ value: true,
+  label: 'Granted' },
+{ value: false,
+  label: 'Denied' },
+{ value: null,
+  label: 'None' }];
+
+export const LegacyAodDropdown = ({ hearing, readOnly, update }) => {
   return <SearchableDropdown
     label="AOD"
-    readOnly={true || readOnly}
+    readOnly={readOnly}
     name={`${hearing.externalId}-aod`}
     strongLabel
-    options={[{ value: 'granted',
-      label: 'Granted' },
-    { value: 'filed',
-      label: 'Filed' },
-    { value: 'none',
-      label: 'None' }]}
-    onChange={(aod) => update({ aod })}
+    options={AOD_OPTIONS}
+    onChange={(option) => update({ aod: (option || {}).value })}
     value={hearing.aod}
     searchable={false}
   />;
 };
 
-export const AodReasonDropdown = ({ hearing, readOnly, update }) => {
+export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion }) => {
+  return <SearchableDropdown
+    label="AOD"
+    readOnly={readOnly}
+    name={`${hearing.externalId}-aod`}
+    strongLabel
+    options={AOD_OPTIONS}
+    onChange={(option) => {
+      const granted = (option || {}).value;
+      // reset advanceOnDocketMotion if null value
+      const value = granted === null ? null : { granted };
+
+      updateAodMotion(value);
+    }}
+    value={hearing.advanceOnDocketMotion ? hearing.advanceOnDocketMotion.granted : null}
+    searchable={false}
+  />;
+};
+
+export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion }) => {
   return <SearchableDropdown
     label="AOD Reason"
-    readOnly={true || readOnly}
+    readOnly={hearing.advanceOnDocketMotion === null || readOnly}
     name={`${hearing.externalId}-aodReason`}
     strongLabel
-    options={[]}
-    onChange={(option) => update({ aodReason: (option || {}).value })}
-    value={hearing.aodReason}
+    options={[{ value: 'financial_distress',
+      label: 'Financial Distress' },
+    { value: 'age',
+      label: 'Age' },
+    { value: 'serious_illness',
+      label: 'Serious Illness' },
+    { value: 'other',
+      label: 'Other' }]}
+    onChange={(option) => updateAodMotion({ reason: (option || {}).value })}
+    value={hearing.advanceOnDocketMotion ? hearing.advanceOnDocketMotion.reason : null}
     searchable={false}
   />;
 };
