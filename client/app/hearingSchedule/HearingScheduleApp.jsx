@@ -52,7 +52,7 @@ export default class HearingScheduleApp extends React.PureComponent {
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.userPermissionProps()} />;
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
-  routeForDailyDocket = () => <DailyDocketContainer user={this.userPermissionProps()} />;
+  routeForDailyDocket = () => <DailyDocketContainer user={this.userPermissionProps()} userId={this.props.userId} />;
   routeForHearingDetails = ({ match: { params }, history }) =>
     <HearingDetailsContainer hearingId={params.hearingId} history={history} {...this.userPermissionProps()} />;
 

@@ -9,7 +9,7 @@ import { onUpdateDocketHearing } from '../actions';
 import HearingText from './DailyDocketRowDisplayText';
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
-  AodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
+  AmaAodDropdown, LegacyAodDropdown, AodReasonDropdown, HearingPrepWorkSheetLink, StaticRegionalOffice,
   NotesField, HearingLocationDropdown, StaticHearingDay, TimeRadioButtons,
   Waive90DayHoldCheckbox, HoldOpenDropdown
 } from './DailyDocketRowInputs';
@@ -56,6 +56,15 @@ class HearingActions extends React.Component {
   update = (values) => {
     this.props.update(values);
     this.setState({ edited: true });
+  }
+
+  updateAodMotion = (values) => {
+    this.update({
+      advanceOnDocketMotion: values === null ? null : {
+        ...(this.props.hearing.advanceOnDocketMotion || {}),
+        ...values
+      }
+    });
   }
 
   cancelUpdate = () => {
@@ -107,9 +116,14 @@ class HearingActions extends React.Component {
 
     return <React.Fragment>
       <HearingPrepWorkSheetLink hearing={hearing} />
-      <AodDropdown {...inputProps} />
-      {this.isAmaHearing() && <AodReasonDropdown {...inputProps} />}
-      {this.isLegacyHearing() && <HoldOpenDropdown {...inputProps} />}
+      {this.isAmaHearing() && <React.Fragment>
+        <AmaAodDropdown {...inputProps} updateAodMotion={this.updateAodMotion} />
+        <AodReasonDropdown {...inputProps} updateAodMotion={this.updateAodMotion} />
+      </React.Fragment> }
+      {this.isLegacyHearing() && <React.Fragment>
+        <LegacyAodDropdown {...inputProps} />
+        <HoldOpenDropdown {...inputProps} />
+      </React.Fragment>}
     </React.Fragment>;
   }
 

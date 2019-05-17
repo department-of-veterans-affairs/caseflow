@@ -114,11 +114,32 @@ export class DailyDocketContainer extends React.Component {
     }, _.isNil);
   };
 
+  formatAod = (hearing) => {
+    return _.omitBy({
+      reason: hearing.advanceOnDocketMotion.reason,
+      granted: hearing.advanceOnDocketMotion.granted,
+      person_id: hearing.claimantId,
+      user_id: this.props.userId
+    }, _.isNil);
+  }
+
   saveHearing = (hearingId) => {
     const hearing = this.props.hearings[hearingId];
+    const aodMotion = hearing.advanceOnDocketMotion ? {
+      advance_on_docket_motion: this.formatAod(hearing)
+    } : {};
+    const legacyAod = hearing.aod ? {
+      appeal: {
+        aod: hearing.aod
+      }
+    } : {};
+
+    console.log(aodMotion);
 
     return ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
-      hearing: this.formatHearing(hearing)
+      hearing: this.formatHearing(hearing),
+      ...aodMotion,
+      ...legacyAod
     } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
