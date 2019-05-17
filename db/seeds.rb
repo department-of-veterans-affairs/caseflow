@@ -292,8 +292,8 @@ class SeedDB
     u = User.find_by(css_id: "BVAGWHITE")
     OrganizationsUser.add_user_to_organization(u, BvaDispatch.singleton)
 
-    3.times do
-      create_task_at_bva_dispatch()
+    [42, 66, 13].each do |rand_seed|
+      create_task_at_bva_dispatch(rand_seed)
     end
   end
 
@@ -838,7 +838,6 @@ class SeedDB
     atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
     atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
 
-    # Happens in CaseReviewConcern.update_task_and_issue_dispositions()
     atty_task.update!(status: Constants.TASK_STATUSES.completed)
     judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
@@ -856,23 +855,68 @@ class SeedDB
     end
   end
 
-  def create_task_at_bva_dispatch()
-    root_task = FactoryBot.create(:root_task)
-    appeal = root_task.appeal
+  def create_task_at_bva_dispatch(seed = Faker::Number.number(3))
+    Faker::Config.random = Random.new(seed)
+    vet = FactoryBot.create(
+      :veteran,
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+     # participant_id: Faker::Number.number(9).to_s,
 
+    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+    notes = "Pain disorder with 100\% evaluation per examination"
+
+    appeal = FactoryBot.create(
+      :appeal,
+      :with_tasks,
+      number_of_claimants: 1,
+      veteran_file_number: vet.file_number,
+      docket_type: "hearing",
+      closest_regional_office: "RO17",
+      request_issues: FactoryBot.create_list(
+        :request_issue, 1, :nonrating, notes: notes
+      )
+    )
+
+    root_task = appeal.root_task
     judge = FactoryBot.create(:user, station_id: 101)
     FactoryBot.create(:staff, :judge_role, user: judge)
-    judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
+    judge_task = FactoryBot.create(
+      :ama_judge_task,
+      :on_hold,
+      assigned_to: judge,
+      appeal: appeal,
+      parent: root_task
+    )
 
     atty = FactoryBot.create(:user, station_id: 101)
     FactoryBot.create(:staff, :attorney_role, user: atty)
-    atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
-    atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
+    atty_task = FactoryBot.create(
+      :ama_attorney_task,
+      :in_progress,
+      assigned_to: atty,
+      assigned_by: judge,
+      parent: judge_task,
+      appeal: appeal
+    )
 
     judge_team = JudgeTeam.create_for_judge(judge)
     OrganizationsUser.add_user_to_organization(atty, judge_team)
 
-    # Happens in CaseReviewConcern.update_task_and_issue_dispositions()
+    appeal.request_issues.each do |request_issue|
+      FactoryBot.create(
+        :decision_issue,
+        :nonrating,
+        disposition: "allowed",
+        decision_review: appeal,
+        request_issues: [request_issue],
+        rating_promulgation_date: 2.months.ago,
+        benefit_type: request_issue.benefit_type
+      )
+    end
+
     atty_task.update!(status: Constants.TASK_STATUSES.completed)
     judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
