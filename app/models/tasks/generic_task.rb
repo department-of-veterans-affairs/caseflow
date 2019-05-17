@@ -97,7 +97,7 @@ class GenericTask < Task
     end
 
     def create_child_task(parent, current_user, params)
-      verify_user_can_create!(user, parent_task)
+      verify_user_can_create!(user, parent)
 
       Task.create!(
         type: name,

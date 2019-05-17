@@ -16,24 +16,16 @@ class BulkTaskAssignmentsController < ApplicationController
     bulk_task_assignment = BulkTaskAssignment.new(*bulk_task_assignment_params)
     return invalid_record_error(bulk_task_assignment) unless bulk_task_assignment.valid?
 
-    tasks = bulk_task_assignment.tasks_to_be_assigned
+    tasks = bulk_task_assignment.process
 
-    multi_transaction do
-      tasks.each do |task|
-        assign_params = {
-          assigned_to_type: "User",
-          assigned_to_id: bulk_task_assignment.assigned_to.id
-        }
-        GenericTask.create_child_task(task, current_user, assign_params)
-      end
-    end
-
-    true
+    render json: { tasks: json_tasks(tasks) }
   end
 
   private
 
   def bulk_task_assignment_params
-    params.require(:bulk_task_assignment).permit(:assigned_to_id, :organization_id, :task_type, :task_count)
+    params.require(:bulk_task_assignment)
+      .permit(:assigned_to_id, :organization_id, :task_type, :task_count)
+      .merge(assigned_by: current_user)
   end
 end

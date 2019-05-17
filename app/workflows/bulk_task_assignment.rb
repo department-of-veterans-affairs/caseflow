@@ -8,7 +8,7 @@ class BulkTaskAssignment
   validate :assigned_to_exists
   validate :organization_exists
 
-  attr_accessor :assigned_to_id, :organization_id, :task_type, :task_count
+  attr_accessor :assigned_to_id, :assigned_by, :organization_id, :task_type, :task_count
 
   def initialize(attributes = {})
     super
@@ -16,16 +16,30 @@ class BulkTaskAssignment
     @task_count ||= 0
   end
 
+  def process
+    transaction do
+      tasks_to_be_assigned.map do |task|
+        assign_params = {
+          assigned_to_type: "User",
+          assigned_to_id: assigned_to.id
+        }
+        GenericTask.create_child_task(task, assigned_by, assign_params)
+      end
+    end
+  end
+
   def tasks_to_be_assigned
-    task_type.constantize.active.where(assigned_to_id: organization_id).limit(task_count).order(:created_at)
+    @tasks_to_be_assigned || = task_type.constantize
+      .active.where(assigned_to_id: organization_id)
+      .limit(task_count).order(:created_at)
   end
 
   def assigned_to
-    @assigned_to ||= User.find_by(id: @assigned_to_id)
+    @assigned_to ||= User.find_by(id: assigned_to_id)
   end
 
   def organization
-    @organization ||= Organization.find_by(id: @organization_id)
+    @organization ||= Organization.find_by(id: organization_id)
   end
 
   private
