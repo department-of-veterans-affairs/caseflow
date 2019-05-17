@@ -24,7 +24,9 @@ export default class HearingScheduleApp extends React.PureComponent {
       userRoleVso,
       userRoleHearingPrep,
       userInHearingsOrganization,
-      hearingPrepRedirect
+      hearingPrepRedirect,
+      userId,
+      userCssId
     } = this.props;
 
     return {
@@ -34,7 +36,9 @@ export default class HearingScheduleApp extends React.PureComponent {
       userRoleVso,
       userRoleHearingPrep,
       userInHearingsOrganization,
-      hearingPrepRedirect
+      hearingPrepRedirect,
+      userId,
+      userCssId
     };
   };
 
@@ -52,7 +56,7 @@ export default class HearingScheduleApp extends React.PureComponent {
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.userPermissionProps()} />;
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
-  routeForDailyDocket = () => <DailyDocketContainer user={this.userPermissionProps()} userId={this.props.userId} />;
+  routeForDailyDocket = () => <DailyDocketContainer user={this.userPermissionProps()} />;
   routeForHearingDetails = ({ match: { params }, history }) =>
     <HearingDetailsContainer hearingId={params.hearingId} history={history} {...this.userPermissionProps()} />;
 

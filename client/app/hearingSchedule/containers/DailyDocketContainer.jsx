@@ -102,6 +102,10 @@ export class DailyDocketContainer extends React.Component {
       evidence_window_waived: hearing.evidenceWindowWaived
     } : {};
 
+    const legacyValues = hearing.docketName === 'legacy' ? {
+      aod: hearing.aod
+    } : {};
+
     return _.omitBy({
       disposition: hearing.disposition,
       transcript_requested: hearing.transcriptRequested,
@@ -110,6 +114,7 @@ export class DailyDocketContainer extends React.Component {
       scheduled_time_string: hearing.scheduledTimeString,
       prepped: hearing.prepped,
       hold_open: hearing.holdOpen,
+      ...legacyValues,
       ...amaHearingValues
     }, _.isNil);
   };
@@ -119,7 +124,7 @@ export class DailyDocketContainer extends React.Component {
       reason: hearing.advanceOnDocketMotion.reason,
       granted: hearing.advanceOnDocketMotion.granted,
       person_id: hearing.claimantId,
-      user_id: this.props.userId
+      user_id: this.props.user.userId
     }, _.isNil);
   }
 
@@ -128,18 +133,10 @@ export class DailyDocketContainer extends React.Component {
     const aodMotion = hearing.advanceOnDocketMotion ? {
       advance_on_docket_motion: this.formatAod(hearing)
     } : {};
-    const legacyAod = hearing.aod ? {
-      appeal: {
-        aod: hearing.aod
-      }
-    } : {};
-
-    console.log(aodMotion);
 
     return ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
       hearing: this.formatHearing(hearing),
-      ...aodMotion,
-      ...legacyAod
+      ...aodMotion
     } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));

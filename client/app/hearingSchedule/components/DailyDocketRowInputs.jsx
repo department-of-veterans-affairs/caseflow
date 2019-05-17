@@ -83,33 +83,53 @@ export const HearingDetailsLink = ({ hearing }) => (
   </div>
 );
 
-const AOD_OPTIONS = [{ value: true,
-  label: 'Granted' },
-{ value: false,
-  label: 'Denied' },
-{ value: null,
-  label: 'None' }];
-
 export const LegacyAodDropdown = ({ hearing, readOnly, update }) => {
   return <SearchableDropdown
     label="AOD"
     readOnly={readOnly}
     name={`${hearing.externalId}-aod`}
     strongLabel
-    options={AOD_OPTIONS}
+    options={[{ value: 'granted',
+      label: 'Granted' },
+    { value: 'filed',
+      label: 'Filed' },
+    { value: 'none',
+      label: 'None' }]}
     onChange={(option) => update({ aod: (option || {}).value })}
     value={hearing.aod}
     searchable={false}
   />;
 };
 
-export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion }) => {
+const isAodGrantableByThisUser = (aodMotion, userId) => {
+  // judges can create a new AOD motion if one is not set or was previously denied
+  if (!aodMotion) {
+    return true;
+  } else if (!aodMotion.granted) {
+    return true;
+  }
+
+  // if AOD was already granted, judge does not need to create a new motion
+  return aodMotion.granted && (aodMotion.userId === userId || _.isNil(aodMotion.userId));
+};
+
+export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion, userId }) => {
+  const aodMotion = hearing.advanceOnDocketMotion;
+  const aodGrantableByThisUser = isAodGrantableByThisUser(aodMotion, userId);
+
   return <SearchableDropdown
     label="AOD"
-    readOnly={readOnly}
-    name={`${hearing.externalId}-aod`}
     strongLabel
-    options={AOD_OPTIONS}
+    readOnly={readOnly || !aodGrantableByThisUser}
+    name={`${hearing.externalId}-aod`}
+    options={[{ value: true,
+      label: 'Granted' },
+    { value: false,
+      label: 'Denied' },
+    { value: null,
+      label: 'None' }]}
+    value={aodMotion ? aodMotion.granted : null}
+    searchable={false}
     onChange={(option) => {
       const granted = (option || {}).value;
       // reset advanceOnDocketMotion if null value
@@ -117,15 +137,17 @@ export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion }) => {
 
       updateAodMotion(value);
     }}
-    value={hearing.advanceOnDocketMotion ? hearing.advanceOnDocketMotion.granted : null}
-    searchable={false}
   />;
 };
 
-export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion }) => {
+export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId }) => {
+  const aodMotion = hearing.advanceOnDocketMotion;
+  const aodGrantableByThisUser = aodMotion &&
+    (aodMotion.userId === userId || _.isNil(aodMotion.userId));
+
   return <SearchableDropdown
     label="AOD Reason"
-    readOnly={hearing.advanceOnDocketMotion === null || readOnly}
+    readOnly={readOnly || !aodGrantableByThisUser}
     name={`${hearing.externalId}-aodReason`}
     strongLabel
     options={[{ value: 'financial_distress',
@@ -137,7 +159,7 @@ export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion }) => {
     { value: 'other',
       label: 'Other' }]}
     onChange={(option) => updateAodMotion({ reason: (option || {}).value })}
-    value={hearing.advanceOnDocketMotion ? hearing.advanceOnDocketMotion.reason : null}
+    value={aodMotion ? aodMotion.reason : null}
     searchable={false}
   />;
 };

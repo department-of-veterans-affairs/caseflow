@@ -111,15 +111,15 @@ class HearingActions extends React.Component {
   }
 
   judgeRightInputs = () => {
-    const { hearing } = this.props;
+    const { hearing, user } = this.props;
     const inputProps = this.getInputProps();
 
     return <React.Fragment>
       <HearingPrepWorkSheetLink hearing={hearing} />
       {this.isAmaHearing() && <React.Fragment>
-        <AmaAodDropdown {...inputProps} updateAodMotion={this.updateAodMotion} />
-        <AodReasonDropdown {...inputProps} updateAodMotion={this.updateAodMotion} />
-      </React.Fragment> }
+        <AmaAodDropdown {...inputProps} updateAodMotion={this.updateAodMotion} userId={user.userId} />
+        <AodReasonDropdown {...inputProps} updateAodMotion={this.updateAodMotion} userId={user.userId} />
+      </React.Fragment>}
       {this.isLegacyHearing() && <React.Fragment>
         <LegacyAodDropdown {...inputProps} />
         <HoldOpenDropdown {...inputProps} />
@@ -179,7 +179,8 @@ class HearingActions extends React.Component {
 }
 
 const mapStateToProps = (state, props) => ({
-  hearing: props.hearingId ? state.hearingSchedule.hearings[props.hearingId] : {}
+  hearing: props.hearingId ? state.hearingSchedule.hearings[props.hearingId] : {},
+  userId: state.ui.userId
 });
 
 const mapDispatchToProps = (dispatch, props) => bindActionCreators({

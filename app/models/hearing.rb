@@ -116,7 +116,10 @@ class Hearing < ApplicationRecord
   end
 
   def advance_on_docket_motion
-    AdvanceOnDocketMotion.find_by(person_id: claimant_id)&.slice(:person_id, :reason, :user_id, :granted)
+    # we're only really interested if the AOD was granted
+    motion = AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
+
+    motion&.slice(:person_id, :reason, :user_id, :granted)
   end
 
   def scheduled_for

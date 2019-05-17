@@ -139,8 +139,8 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     scenario "User has hearing prep fields" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
-      expect(page).to have_css(".dropdown-#{hearing.external_id}-aod")
-      expect(page).to have_css(".dropdown-#{hearing.external_id}-aodReason")
+      click_dropdown(name: "#{hearing.external_id}-aod", index: 0)
+      click_dropdown(name: "#{hearing.external_id}-aodReason", index: 0)
       expect(page).to have_css(".dropdown-#{legacy_hearing.external_id}-holdOpen")
 
       click_dropdown(name: "#{legacy_hearing.external_id}-holdOpen", index: 0)
