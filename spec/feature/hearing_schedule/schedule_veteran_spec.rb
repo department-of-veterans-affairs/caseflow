@@ -38,7 +38,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     end
 
     let!(:veteran) { create(:veteran, file_number: "123454787") }
-    let!(:hearing_location_dropdown_label) { "Suggested Hearing Location" }
+    let!(:hearing_location_dropdown_label) { "Hearing Location" }
 
     scenario "Schedule Veteran for central hearing" do
       visit "hearings/schedule/assign"
@@ -114,6 +114,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Time")
       find("label", text: "8:30 am").click
       expect(page).not_to have_content("Could not find hearing locations for this veteran", wait: 30)
+      click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       click_button("Schedule")
       click_on "Back to Schedule Veterans"
       expect(page).to have_content("Schedule Veterans")
@@ -292,7 +293,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       click_dropdown({ index: 1 }, find(".dropdown-hearingDate"))
 
       find("label", text: "8:30 am").click
-
+      expect(page).to_not have_content("Finding hearing locations", wait: 30)
+      click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
       click_on "Schedule"
 
       expect(page).to have_content("You have successfully assigned")
