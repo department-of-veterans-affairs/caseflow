@@ -128,11 +128,7 @@ feature "Higher-Level Review" do
     )
 
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-    find("#form-select").send_keys :enter
-
+    select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
     safe_click ".cf-submit.usa-button"
 
     expect(page).to have_content(search_page_title)
@@ -444,15 +440,9 @@ feature "Higher-Level Review" do
     Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
 
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-    find("#form-select").send_keys :enter
-
+    select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
     safe_click ".cf-submit.usa-button"
-
     fill_in search_bar_title, with: veteran_file_number
-
     click_on "Search"
 
     within_fieldset("What is the Benefit Type?") do
