@@ -3,7 +3,6 @@
 describe Judge do
   before do
     Timecop.freeze(Time.utc(2017, 2, 2))
-    Time.zone = "UTC"
   end
 
   context ".upcoming_dockets" do
