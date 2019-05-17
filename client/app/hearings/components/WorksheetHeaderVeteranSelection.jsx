@@ -80,9 +80,9 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
     const { worksheet, worksheetIssues, hearings } = this.props;
 
-    const currentHearing = hearings ? hearings[worksheet.external_id] : {};
-
     const docketNotLoaded = _.isEmpty(hearings);
+
+    const currentHearing = docketNotLoaded ? {} : hearings[worksheet.external_id];
 
     return <span className="worksheet-header" {...headerSelectionStyling}>
       <div className="cf-push-left" {...containerStyling}>
