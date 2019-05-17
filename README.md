@@ -214,10 +214,10 @@ You'll need to install the libraries required to connect to the VACOLS Oracle da
 **Linux**
 [Install oracle](https://github.com/kubo/ruby-oci8/blob/master/docs/install-instant-client.md#install-oracle-instant-client-packages)  
  - Last known working at Oracle Instant Client v12;
- - Follow _all the steps_ for the zip install. 
+ - Follow _all the steps_ for the zip install.
  - Requires instant-client, sdk, and sql\*plus packages.
  - Don't skip the lib softlink  
- 
+
 You probably have to create an Oracle account to download these.  
 
 Add this to your env to squash oracle errors on startup:  
@@ -248,7 +248,7 @@ Back in the terminal, run:
 docker login -u dsvaappeals
 ```
 
-The password is in the DSVA 1Password account. 
+The password is in the DSVA 1Password account.
 Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
 **Linux**
@@ -262,7 +262,7 @@ Back in the terminal, run:
 docker login -u dsvaappeals
 ```
 
-The password is in the DSVA 1Password account. 
+The password is in the DSVA 1Password account.
 Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
 
@@ -279,9 +279,9 @@ rbenv install $(cat .ruby-version)
 rbenv rehash
 BUNDLED_WITH= #[Gemfile.lock bundled-with]
 gem install bundler -v $BUNDLED_WITH
-# If when running gem install bundler above you get a permissions error, 
+# If when running gem install bundler above you get a permissions error,
 # this means you have not propertly configured your rbenv.
-# Debug. 
+# Debug.
 # !! Do *not* proceed by running sudo gem install bundler. !!
 bundle install
 ```
@@ -567,5 +567,3 @@ We have a lot of technical documentation spread over a lot of different reposito
 - [Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs) This folder also contains our [first responder manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md), which is super in understanding our production systems.
 - [Non-Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/devops/tree/master/docs). This documentation is shared with the vets.gov team, so not all of it is relevant.
 - [Project documentation](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/master/Projects)
-
-

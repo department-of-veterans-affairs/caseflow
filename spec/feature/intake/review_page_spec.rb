@@ -43,11 +43,11 @@ feature "Intake Review Page" do
     end
 
     scenario "Higher level review shows alert on Review page" do
-      check_invalid_veteran_alert_on_review_page("higher_level_review")
+      check_invalid_veteran_alert_on_review_page(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
 
     scenario "Supplemental Claim shows alert on Review page" do
-      check_invalid_veteran_alert_on_review_page("supplemental_claim")
+      check_invalid_veteran_alert_on_review_page(Constants.INTAKE_FORM_NAMES.supplemental_claim)
     end
   end
 

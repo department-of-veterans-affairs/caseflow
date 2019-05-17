@@ -8,10 +8,13 @@ RSpec.feature "RAMP Refiling Intake" do
 
   before do
     Timecop.freeze(post_ramp_start_date)
+    FeatureToggle.enable!(:ramp_intake)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
+
+  after { FeatureToggle.disable!(:ramp_intake) }
 
   let(:veteran) do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
