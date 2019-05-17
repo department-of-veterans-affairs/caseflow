@@ -79,6 +79,8 @@ class ScheduleHearingTask < GenericTask
         hearing_day_id = task_payloads[:values][:hearing_day_id]
         hearing_location = task_payloads[:values][:hearing_location]
 
+        fail "Missing scheduled_time_string" unless scheduled_time_string.present?
+
         hearing = HearingRepository.slot_new_hearing(hearing_day_id,
                                                      appeal: appeal,
                                                      hearing_location_attrs: hearing_location&.to_hash,
