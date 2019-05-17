@@ -266,16 +266,6 @@ class Task < ApplicationRecord
     end
   end
 
-  def self.verify_user_can_bulk_assign(user)
-    unless can_be_bulk_assigned_by_user?(user)
-      fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot bulk assign tasks of this type"
-    end
-  end
-
-  def self.can_be_bulk_assigned_by_user?(_user)
-    false
-  end
-
   def reassign(reassign_params, current_user)
     sibling = dup.tap do |t|
       t.assigned_by_id = self.class.child_assigned_by_id(parent, current_user)

@@ -7,6 +7,8 @@ class BulkTaskAssignment
   validate :task_type_is_valid
   validate :assigned_to_exists
   validate :organization_exists
+  # validate :assigned_to_part_of_organization
+  # validate :assigned_by_part_of_organization
 
   attr_accessor :assigned_to_id, :assigned_by, :organization_id, :task_type, :task_count
 
@@ -39,7 +41,7 @@ class BulkTaskAssignment
   end
 
   def organization
-    @organization ||= Organization.find_by(id: organization_id)
+    @organization ||= Organization.includes(:user).find_by(id: organization_id)
   end
 
   private
@@ -53,12 +55,24 @@ class BulkTaskAssignment
   def assigned_to_exists
     return if assigned_to
 
-    errors.add(:assigned_to_id, "Could not find a User with id #{assigned_to_id}")
+    errors.add(:assigned_to_id, "could not find a user with id #{assigned_to_id}")
   end
 
   def organization_exists
     return if organization
 
-    errors.add(:organization_id, "Could not find an Organization with id #{organization_id}")
+    errors.add(:organization_id, "could not find an organization with id #{organization_id}")
+  end
+
+  def assigned_to_part_of_organization
+    return if organization && organization.users.include?(assigned_to)
+
+    errors.add(:assigned_to, "does not belong to organization with id #{organization_id}")
+  end
+
+  def assigned_by_part_of_organization
+    return if organization && organization.users.include?(assigned_by)
+
+    errors.add(:assigned_by, "does not belong to organization with id #{organization_id}")
   end
 end
