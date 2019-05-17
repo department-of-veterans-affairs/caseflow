@@ -47,8 +47,7 @@ class HearingActions extends React.Component {
 
     this.state = {
       initialState: {
-        ...props.hearing,
-        editedTime: null
+        ...props.hearing
       },
       edited: false
     };
@@ -65,13 +64,15 @@ class HearingActions extends React.Component {
   }
 
   saveHearing = () => {
-    this.props.saveHearing(this.props.hearingId);
-    setTimeout(() => {
-      this.setState({
-        initialState: { ...this.props.hearing },
-        edited: false
+    this.props.saveHearing(this.props.hearingId).
+      then((success) => {
+        if (success) {
+          this.setState({
+            initialState: { ...this.props.hearing },
+            edited: false
+          });
+        }
       });
-    }, 0);
   }
 
   isAmaHearing = () => this.props.hearing.docketName === 'hearing'
@@ -152,6 +153,7 @@ class HearingActions extends React.Component {
           readOnly={readOnly}
           update={this.update}
           hearing={hearing}
+          initialState={this.state.initialState}
           user={user}
           index={index} />
       </div><div>

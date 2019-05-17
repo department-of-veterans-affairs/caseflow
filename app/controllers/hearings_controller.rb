@@ -12,12 +12,14 @@ class HearingsController < ApplicationController
 
   def update
     if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(update_params_legacy)
+      params = HearingTimeService.build_legacy_params_with_time(hearing, update_params_legacy)
+      hearing.update_caseflow_and_vacols(params)
       # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
       HearingRepository.load_vacols_data(hearing)
     else
+      params = HearingTimeService.build_params_with_time(hearing, update_params)
       Transcription.find_or_create_by(hearing: hearing)
-      hearing.update!(update_params)
+      hearing.update!(params)
     end
 
     render json: hearing.to_hash(current_user.id)
@@ -88,6 +90,7 @@ class HearingsController < ApplicationController
                                      :aod,
                                      :transcript_requested,
                                      :prepped,
+                                     :scheduled_time_string,
                                      :scheduled_for,
                                      :judge_id,
                                      :room,
@@ -108,7 +111,7 @@ class HearingsController < ApplicationController
                                      :transcript_requested,
                                      :transcript_sent_date,
                                      :prepped,
-                                     :scheduled_time,
+                                     :scheduled_time_string,
                                      :judge_id,
                                      :room,
                                      :bva_poc,

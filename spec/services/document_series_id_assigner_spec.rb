@@ -2,8 +2,8 @@
 
 require "rails_helper"
 
-describe AddSeriesIdToDocumentsService do
-  context ".perform" do
+describe DocumentSeriesIdAssigner do
+  describe "#call" do
     let(:appeal) do
       Generators::LegacyAppeal.build
     end
@@ -63,10 +63,11 @@ describe AddSeriesIdToDocumentsService do
       end
 
       it "assigns series_ids to documents without them" do
-        AddSeriesIdToDocumentsService.add_series_ids(appeal)
+        DocumentSeriesIdAssigner.new(appeal).call
 
         documents_without_series.zip(series_ids).each do |document, series_id|
           expect(document.reload.series_id).to eq(series_id)
+          expect(document.file_number).to eq(appeal.sanitized_vbms_id)
         end
 
         # VVA docs get their vbms_document_id as their series id
@@ -86,7 +87,7 @@ describe AddSeriesIdToDocumentsService do
       end
 
       it "documents with series ids are not touched" do
-        AddSeriesIdToDocumentsService.add_series_ids(appeal)
+        DocumentSeriesIdAssigner.new(appeal).call
 
         documents_with_series.zip(series_ids).each do |document, series_id|
           expect(document.reload.series_id).to eq(series_id)

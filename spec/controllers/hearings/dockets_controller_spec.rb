@@ -8,7 +8,7 @@ RSpec.describe Hearings::DocketsController, type: :controller do
   let!(:hearing_day) { create(:hearing_day, scheduled_for: Time.zone.today + 1, judge_id: user.id) }
   let!(:expected_hearing_day) do
     {
-      requestType: HearingDayMapper.label_for_type(hearing_day.request_type),
+      requestType: hearing_day.readable_request_type,
       coordinator: hearing_day.bva_poc,
       room: hearing_day.room,
       notes: hearing_day.notes
