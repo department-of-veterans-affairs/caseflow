@@ -109,7 +109,8 @@ const isAodGrantableByThisUser = (aodMotion, userId) => {
     return true;
   }
 
-  // if AOD was already granted, judge does not need to create a new motion
+  // if AOD was already granted, judge does not need to create a new motion,
+  // but can overwrite their old motion
   return aodMotion.granted && (aodMotion.userId === userId || _.isNil(aodMotion.userId));
 };
 
