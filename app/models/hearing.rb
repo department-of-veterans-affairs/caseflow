@@ -122,6 +122,12 @@ class Hearing < ApplicationRecord
     )
   end
 
+  def time
+    @time ||= HearingTimeService.new(hearing: self)
+  end
+
+  delegate :central_office_time_string, :scheduled_time_string, to: :time
+
   def worksheet_issues
     request_issues.map do |request_issue|
       HearingIssueNote.joins(:request_issue)
@@ -165,6 +171,8 @@ class Hearing < ApplicationRecord
         :regional_office_timezone,
         :readable_request_type,
         :scheduled_for,
+        :scheduled_time_string,
+        :central_office_time_string,
         :appeal_external_id,
         :veteran_file_number,
         :evidence_window_waived,
@@ -200,6 +208,8 @@ class Hearing < ApplicationRecord
         :regional_office_timezone,
         :readable_request_type,
         :scheduled_for,
+        :scheduled_time_string,
+        :central_office_time_string,
         :veteran_age,
         :veteran_gender,
         :appeal_external_id,
