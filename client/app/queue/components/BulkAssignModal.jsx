@@ -52,7 +52,6 @@ class BulkAssignModal extends React.PureComponent {
         this.props.assignTasks(this.state.modal);
         this.handleModalToggle();
         const response = JSON.parse(resp.text);
-
         this.props.onReceiveAmaTasks(response.tasks.data);
       }).
       catch(() => {

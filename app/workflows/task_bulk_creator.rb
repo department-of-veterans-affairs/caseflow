@@ -28,11 +28,11 @@ class TaskBulkCreator
   end
 
   def tasks
-    if parents.count != params[:number_of_tasks]
-      errors.add(:parent_ids, "are invalid")
-      return
-    end
-    parents.map do |parent|
+    # if parents.count != params[:number_of_tasks]
+    #   errors.add(:parent_ids, "are invalid")
+    #   return
+    # end
+    @tasks ||= parents.map do |parent|
       Task.create(
         type: parent.type,
         parent: parent,

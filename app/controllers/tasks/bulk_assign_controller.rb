@@ -5,7 +5,7 @@ class Tasks::BulkAssignController < TasksController
     result = TaskBulkCreator.new(create_params).create
 
     if result.success?
-      render json: { tasks: result.extra }
+      render json: { tasks: json_tasks(result.extra) }
     else
       render json: result.to_h, status: :bad_request
     end
