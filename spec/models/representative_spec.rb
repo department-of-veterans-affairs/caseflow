@@ -49,10 +49,6 @@ describe Representative do
         .with(participant_id).and_return(vso_participant_ids)
     end
 
-    after do
-      BGSService = Fakes::BGSService
-    end
-
     subject { vso.user_has_access?(user) }
 
     context "when the users participant_id is associated with this VSO" do

@@ -300,10 +300,6 @@ describe User do
         .with(participant_id).and_return(vso_participant_ids)
     end
 
-    after do
-      BGSService = Fakes::BGSService
-    end
-
     context "#participant_id" do
       it "returns the users participant id" do
         expect(user.participant_id).to eq(participant_id)

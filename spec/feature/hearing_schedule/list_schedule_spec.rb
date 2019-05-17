@@ -177,10 +177,6 @@ RSpec.feature "List Schedule" do
         .with(vso_participant_id).and_return(vso_participant_ids)
     end
 
-    after do
-      BGSService = Fakes::BGSService
-    end
-
     scenario "Only hearing days with VSO assigned hearings are displayed" do
       visit "hearings/schedule"
       expect(page).to have_content("One, Judge")

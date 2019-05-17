@@ -462,10 +462,6 @@ describe Veteran do
         .with(array_including(participant_ids)).and_return(poas)
     end
 
-    after do
-      BGSService = Fakes::BGSService
-    end
-
     it "returns only the case with vso assigned to it" do
       returned_appeals = veteran.accessible_appeals_for_poa([vso_participant_id, "other vso participant id"])
       expect(returned_appeals.count).to eq 1

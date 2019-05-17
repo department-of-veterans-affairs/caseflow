@@ -69,10 +69,6 @@ describe Hearing do
         .with(vso_participant_id).and_return(vso_participant_ids)
     end
 
-    after do
-      BGSService = Fakes::BGSService
-    end
-
     subject { hearing.assigned_to_vso?(user) }
 
     context "when the hearing is not assigned a vso" do
