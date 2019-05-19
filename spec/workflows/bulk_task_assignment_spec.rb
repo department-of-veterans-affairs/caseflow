@@ -16,6 +16,12 @@ describe BulkTaskAssignment do
         assigned_to: organization, 
         created_at: 2.days.ago)
     end
+    let!(:schedule_hearing3) do
+      FactoryBot.create(:no_show_hearing_task, 
+        assigned_to: organization, 
+        created_at: 1.days.ago)
+    end
+
     let(:assigned_to) { create(:user) }
     let(:assigned_by) { create(:user) }
 
@@ -25,11 +31,12 @@ describe BulkTaskAssignment do
         assigned_by: assigned_by, 
         organization_id: organization_id, 
         task_type: task_type, 
-        task_count: 2
+        task_count: task_count
       }
     end
     let(:task_type) { "NoShowHearingTask" }
     let(:organization_id) { organization.id }
+    let(:task_count) { 2 }
 
     context "when assigned to user does not belong to organization" do
       it "does not bulk assigns tasks" do
