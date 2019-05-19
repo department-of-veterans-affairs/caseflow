@@ -206,6 +206,7 @@ module IntakeHelpers
     legacy_issues: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
+    sleep 1
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
 
