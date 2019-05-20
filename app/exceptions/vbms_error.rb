@@ -30,6 +30,7 @@ class VBMSError < RuntimeError
   class MissingVeteranIdentifier < Caseflow::Error::VBMS; end
   class Unknown < Caseflow::Error::VBMS; end
   class UnknownUser < Caseflow::Error::VBMS; end
+  class BadSOAPMessage < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -110,6 +111,9 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3728/events/331292/
     "The System has encountered an unknown error" => "Unknown",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3954/events/329778/
+    "Unable to parse SOAP message" => "BadSOAPMessage",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
     "missing required data" => "MissingData"

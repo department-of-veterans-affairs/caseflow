@@ -4,27 +4,35 @@ class Hearings::DocketsController < HearingsController
   before_action :verify_access
 
   def index
-    respond_to do |format|
-      format.html { render template: "hearings/index" }
-      format.json { render json: current_user_dockets.transform_values(&:to_hash) }
+    if FeatureToggle.enabled?(:hearing_prep_redirect)
+      redirect_to "/hearings/schedule"
+    else
+      respond_to do |format|
+        format.html { render template: "hearings/index" }
+        format.json { render json: current_user_dockets.transform_values(&:to_hash) }
+      end
     end
   end
 
   def show
-    @hearing_page_title = "Daily Docket"
-    date = date_from_string(params[:docket_date])
-    return not_found unless date && judge.docket?(date)
+    if FeatureToggle.enabled?(:hearing_prep_redirect)
+      redirect_to "/hearings/schedule"
+    else
+      @hearing_page_title = "Daily Docket"
+      date = date_from_string(params[:docket_date])
+      return not_found unless date && judge.docket?(date)
 
-    daily_docket = daily_docket(date)
-    return not_found if daily_docket.empty?
+      daily_docket = daily_docket(date)
+      return not_found if daily_docket.empty?
 
-    respond_to do |format|
-      format.html { render template: "hearings/index" }
-      format.json do
-        render json: {
-          hearingDay: hearing_day(daily_docket[0]),
-          dailyDocket: daily_docket
-        }
+      respond_to do |format|
+        format.html { render template: "hearings/index" }
+        format.json do
+          render json: {
+            hearingDay: hearing_day(daily_docket[0]),
+            dailyDocket: daily_docket
+          }
+        end
       end
     end
   end
@@ -34,7 +42,7 @@ class Hearings::DocketsController < HearingsController
   def hearing_day(first_hearing)
     hearing_day = HearingDay.find(first_hearing["hearing_day_id"])
     hearing_day_object = {
-      requestType: HearingDayMapper.label_for_type(hearing_day.request_type),
+      requestType: hearing_day.readable_request_type,
       coordinator: hearing_day.bva_poc,
       room: hearing_day.room,
       notes: hearing_day.notes

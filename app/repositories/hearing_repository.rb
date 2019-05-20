@@ -69,16 +69,10 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
-    def to_hash(hearing)
-      hearing.as_json.each_with_object({}) do |(k, v), result|
-        result[k.to_sym] = v
-      end
-    end
-
-    def create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
-      VACOLS::CaseHearing.create_child_hearing!(
+    def create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
+      VACOLS::CaseHearing.create_hearing!(
         folder_nr: appeal.vacols_id,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_datetime),
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
         vdkey: hearing_day.id,
         hearing_type: hearing_day.request_type,
         room: hearing_day.room,
@@ -94,18 +88,16 @@ class HearingRepository
       hearing
     end
 
-    def slot_new_hearing(hearing_day_id, scheduled_time:, appeal:, hearing_location_attrs: nil)
+    def slot_new_hearing(hearing_day_id, scheduled_time_string:, appeal:, hearing_location_attrs: nil)
       hearing_day = HearingDay.find(hearing_day_id)
       fail HearingDayFull if hearing_day.hearing_day_full?
 
-      hearing_datetime = hearing_day.scheduled_for.to_datetime.change(
-        hour: scheduled_time["h"].to_i,
-        min: scheduled_time["m"].to_i,
-        offset: scheduled_time["offset"]
-      )
-
       hearing = if appeal.is_a?(LegacyAppeal)
-                  vacols_hearing = create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
+                  scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
+                    scheduled_for: hearing_day.scheduled_for,
+                    scheduled_time_string: scheduled_time_string
+                  )
+                  vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
                   AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
                   vacols_hearing
                 else
@@ -113,7 +105,7 @@ class HearingRepository
                     appeal: appeal,
                     hearing_day_id: hearing_day.id,
                     hearing_location_attributes: hearing_location_attrs || {},
-                    scheduled_time: hearing_datetime
+                    scheduled_time: scheduled_time_string
                   )
                 end
 
@@ -128,6 +120,7 @@ class HearingRepository
       end
 
       if vacols_record
+        LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
         set_vacols_values(hearing, vacols_record)
         true
       else
@@ -143,7 +136,7 @@ class HearingRepository
     # :nocov:
 
     def set_vacols_values(hearing, vacols_record)
-      hearing.assign_from_vacols(vacols_attributes(vacols_record))
+      hearing.assign_from_vacols(vacols_attributes(hearing, vacols_record))
       hearing
     end
 
@@ -191,17 +184,12 @@ class HearingRepository
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def vacols_attributes(vacols_record)
+    def vacols_attributes(hearing, vacols_record)
       # use venue location on the hearing if it exists
       ro = vacols_record.hearing_venue || vacols_record.bfregoff
       date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
                                                   regional_office_key: ro,
                                                   type: vacols_record.hearing_type)
-      judge_id = if vacols_record.css_id.nil?
-                   nil
-                 else
-                   User.find_by_css_id_or_create_with_default_station_id(vacols_record.css_id).id
-                 end
       {
         vacols_record: vacols_record,
         appeal_vacols_id: vacols_record.folder_nr,
@@ -235,7 +223,7 @@ class HearingRepository
         hearing_day_id: vacols_record.vdkey,
         master_record: false,
         bva_poc: vacols_record.vdbvapoc,
-        judge_id: judge_id
+        judge_id: hearing.user_id
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
