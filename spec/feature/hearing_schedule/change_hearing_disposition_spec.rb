@@ -78,13 +78,8 @@ RSpec.feature "Change hearing disposition" do
         expect(page).to have_content ChangeHearingDispositionTask.last.label
       end
 
-      step "visit and verify that the new hearing disposition is in the hearing prep daily docket" do
-        User.authenticate!(user: hearing_user)
-        visit "/hearings/dockets/" + hearing.scheduled_for.to_date.to_s
-        expect(dropdown_selected_value(find(".dropdown-#{hearing.id}-disposition"))).to eq "Held"
-      end
-
       step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
+        User.authenticate!(user: hearing_user)
         visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
         expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq "Held"
       end
