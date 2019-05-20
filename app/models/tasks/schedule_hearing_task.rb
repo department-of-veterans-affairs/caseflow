@@ -104,11 +104,12 @@ class ScheduleHearingTask < GenericTask
     update!(status: Constants.TASK_STATUSES.cancelled)
     ancestor_task_of_type(HearingTask)&.update!(status: Constants.TASK_STATUSES.cancelled)
 
-    # reopen the most recent inactive HearingTask on my appeal
-    hearing_task.update!(status: Constants.TASK_STATUSES.on_hold, closed_at: nil)
+    # cancel the old HearingTask and create a new one associated with the same hearing
+    new_hearing_task = hearing_task.cancel_and_recreate
+    HearingTaskAssociation.create!(hearing: hearing_task.hearing, hearing_task: new_hearing_task)
 
-    # reopen or create a ChangeHearingDispositionTask on the HearingTask
-    hearing_task.reopen_or_create_change_hearing_disposition_task(instructions)
+    # create a ChangeHearingDispositionTask on the new HearingTask
+    new_hearing_task.create_change_hearing_disposition_task(instructions)
   end
 
   def available_actions(user)
