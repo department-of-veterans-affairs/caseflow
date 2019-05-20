@@ -37,7 +37,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
 
 const hasDASRecord = (task, requireDasRecord) => {
-  return (task.appeal.isLegacyAppeal && requireDasRecord) ? task.taskId : true;
+  return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
 };
 
 const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;
