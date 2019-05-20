@@ -116,7 +116,7 @@ class TaskRows extends React.PureComponent {
   }
 
   assignedToListItem = (task) => {
-    const assignee = task.isLegacy ? this.props.appeal.locationCode : task.assignedTo.cssId;
+    const assignee = task.assigneeName;
 
     return assignee ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
       <dd>{assignee}</dd></div> : null;

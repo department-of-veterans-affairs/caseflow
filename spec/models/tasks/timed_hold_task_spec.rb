@@ -185,7 +185,9 @@ describe TimedHoldTask do
 
     describe ".timer_end_time" do
       it "returns the expected end time" do
-        expect(task.reload.timer_end_time).to eq task.task_timers.first.submitted_at
+        expect(task.reload.timer_end_time).to eq(
+          task.task_timers.first.submitted_at + TaskTimer.processing_retry_interval_hours.hours
+        )
       end
     end
 
