@@ -140,7 +140,7 @@ class TasksController < ApplicationController
     if available_actions.any? { |action| change_actions.include? action }
       task.create_change_hearing_disposition_task(instructions)
     else
-      fail Caseflow::Error::NoEligibleHearing, task_id: task.id
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR
     end
 
     render json: {

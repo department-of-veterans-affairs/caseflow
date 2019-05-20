@@ -211,6 +211,9 @@ RSpec.feature "Change hearing disposition" do
       let(:hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
       let!(:cancel_change_task) { change_task.update!(status: Constants.TASK_STATUSES.cancelled) }
       let!(:hearing_task_2) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+      let!(:association_2) do
+        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
+      end
       let!(:schedule_hearing_task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
       let(:instructions_text) { "This hearing is postponed, but it should be held." }
 

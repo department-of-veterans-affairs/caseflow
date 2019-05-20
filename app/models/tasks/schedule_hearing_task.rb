@@ -96,7 +96,7 @@ class ScheduleHearingTask < GenericTask
     hearing_task = most_recent_inactive_hearing_task_on_appeal
 
     if hearing_task&.hearing&.disposition.blank?
-      fail Caseflow::Error::NoEligibleHearing, task_id: task.id
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR
     end
 
     # cancel my children, myself, and my hearing task ancestor
