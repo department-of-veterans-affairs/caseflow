@@ -17,7 +17,6 @@ import {
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
-import Alert from '../../components/Alert';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
@@ -238,15 +237,6 @@ class ListSchedule extends React.Component {
     return (
       <React.Fragment>
         <div {...clearfix}>
-          {this.props.userRoleHearingPrep && !this.props.hearingPrepRedirect &&
-            <Alert type="info"
-              styling={css({ marginBottom: '30px' })}
-              title="New Hearing Schedule View"
-              message={<span><p>{'We\'re piloting an updated version of caseflow hearing. ' +
-                'Try it out and provide any feedback through our support channels. ' +
-                'Note: travel board is not supported in the updated version.'}</p><p>
-                <Link button href="/hearings/dockets"><span {...css({ color: '#fff' })}>Return to old view</span></Link>
-              </p></span>} />}
           <div className="cf-push-left" {...inlineFormStyling} >
             <ListScheduleDateSearch
               startDateValue={this.props.startDate}
