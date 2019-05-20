@@ -44,6 +44,7 @@ import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddVsoModal from './AddVsoModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
+import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
 
@@ -201,6 +202,8 @@ class QueueApp extends React.PureComponent {
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
   routedPostponeHearingModal = (props) => <PostponeHearingModal userId={this.props.userId} {...props.match.params} />;
+
+  routedChangeTaskTypeModal = (props) => <ChangeTaskTypeModal {...props.match.params} />;
 
   routedChangeHearingDisposition = (props) => <ChangeHearingDispositionModal {...props.match.params} />;
 
@@ -446,6 +449,11 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:appealId/tasks/:taskId/modal/send_colocated_task"
             title="Mark Task Complete | Caseflow"
             render={this.routedSendColocatedTaskModal} />
+          <PageRoute
+            exact
+            path="/queue/appeals/:appealId/tasks/:taskId/modal/change_task_type"
+            title="Change Task Type | Caseflow"
+            render={this.routedChangeTaskTypeModal} />
           <PageRoute
             exact
             path="/organizations/:organization"

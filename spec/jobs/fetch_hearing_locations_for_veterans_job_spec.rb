@@ -132,7 +132,7 @@ describe FetchHearingLocationsForVeteransJob do
       let(:distance_response) { HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11).to_json) }
       let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body.to_json) }
       before do
-        VADotGovService = ExternalApi::VADotGovService
+        stub_const("VADotGovService", ExternalApi::VADotGovService)
 
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
         allow(HTTPI).to receive(:post).with(instance_of(HTTPI::Request)).and_return(validate_response)

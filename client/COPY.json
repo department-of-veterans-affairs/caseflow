@@ -258,6 +258,12 @@
   "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please email your administration action team.",
   "ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL": "The task has been placed in your teams queue.",
 
+  "CHANGE_TASK_TYPE_SUBHEAD": "Change task type",
+  "CHANGE_TASK_TYPE_ACTION_LABEL": "Select another task type from the list of available options:",
+  "CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL": "Provide instructions and context for this change:",
+  "CHANGE_TASK_TYPE_CONFIRMATION_TITLE": "You have changed the task type from '%s' to '%s'",
+  "CHANGE_TASK_TYPE_CONFIRMATION_DETAIL": "These changes are now reflected in the currently active tasks section below.",
+  
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
 
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",

@@ -18,7 +18,7 @@ RSpec.describe "Hearing Day", type: :request do
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 6, 7))
-      expect(JSON.parse(response.body)["hearing"]["request_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing"]["room"]).to eq("1 (1W200A)")
     end
   end
@@ -39,7 +39,7 @@ RSpec.describe "Hearing Day", type: :request do
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 4, 14))
-      expect(JSON.parse(response.body)["hearing"]["request_type"]).to eq("Video")
+      expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Video")
       expect(JSON.parse(response.body)["hearing"]["room"]).to eq("7 (1W434)")
     end
 
@@ -49,7 +49,7 @@ RSpec.describe "Hearing Day", type: :request do
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 1, 17))
-      expect(JSON.parse(response.body)["hearing"]["request_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing"]["room"]).to eq(nil)
     end
 
@@ -59,7 +59,7 @@ RSpec.describe "Hearing Day", type: :request do
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 1, 17))
-      expect(JSON.parse(response.body)["hearing"]["request_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing"]["room"]).to eq("2 (1W200B)")
     end
 
@@ -94,7 +94,7 @@ RSpec.describe "Hearing Day", type: :request do
       expect(response).to have_http_status(:success)
       actual_date = Date.parse(JSON.parse(response.body)["hearing"]["scheduled_for"])
       expect(actual_date).to eq(Date.new(2019, 3, 14))
-      expect(JSON.parse(response.body)["hearing"]["request_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing"]["readable_request_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing"]["room"]).to eq(nil)
     end
   end
@@ -123,7 +123,7 @@ RSpec.describe "Hearing Day", type: :request do
       }
       get "/hearings/hearing_day/" + hearing_day.id.to_s, headers: headers
       expect(response).to have_http_status(:success)
-      expect(JSON.parse(response.body)["hearing_day"]["request_type"]).to eq("Central")
+      expect(JSON.parse(response.body)["hearing_day"]["readable_request_type"]).to eq("Central")
       expect(JSON.parse(response.body)["hearing_day"]["hearings"].count).to eq(1)
     end
   end
