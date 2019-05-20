@@ -7,11 +7,12 @@ class BulkTaskAssignment
   validate :task_type_is_valid
   validate :assigned_to_exists
   validate :organization_exists
+  validate :regional_office_is_valid
   validate :assigned_to_part_of_organization
   validate :assigned_by_part_of_organization
   validate :organization_can_bulk_assign
 
-  attr_accessor :assigned_to_id, :assigned_by, :organization_id, :task_type, :task_count
+  attr_accessor :assigned_to_id, :assigned_by, :organization_id, :task_type, :regional_office, :task_count
 
   def initialize(attributes = {})
     super
@@ -34,9 +35,15 @@ class BulkTaskAssignment
   end
 
   def tasks_to_be_assigned
-    @tasks_to_be_assigned ||= task_type.constantize
-      .active.where(assigned_to_id: organization_id)
-      .limit(task_count).order(:created_at)
+    @tasks_to_be_assigned ||= begin
+      tasks = task_type.constantize
+        .active.where(assigned_to_id: organization_id)
+        .limit(task_count).order(:created_at)
+      tasks = tasks.joins(
+        "INNER JOIN appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
+      ).where("appeals.closest_regional_office = ?", regional_office) if regional_office
+      tasks
+    end
   end
 
   def assigned_to
@@ -59,6 +66,14 @@ class BulkTaskAssignment
     return if assigned_to
 
     errors.add(:assigned_to_id, "could not find a user with id #{assigned_to_id}")
+  end
+
+  def regional_office_is_valid
+    return unless regional_office
+
+    RegionalOffice.find!(regional_office)
+  rescue RegionalOffice::NotFoundError
+    errors.add(:regional_office, "could not find regional office: #{regional_office}")
   end
 
   def organization_exists

@@ -31,12 +31,14 @@ describe BulkTaskAssignment do
         assigned_by: assigned_by, 
         organization_id: organization_id, 
         task_type: task_type, 
-        task_count: task_count
+        task_count: task_count, 
+        regional_office: regional_office
       }
     end
     let(:task_type) { "NoShowHearingTask" }
     let(:organization_id) { organization.id }
     let(:task_count) { 2 }
+    let(:regional_office) { nil }
 
     context "when assigned to user does not belong to organization" do
       it "does not bulk assigns tasks" do
@@ -45,6 +47,41 @@ describe BulkTaskAssignment do
         expect(bulk_assignment.valid?).to eq false
         error = ["does not belong to organization with id #{organization.id}"]
         expect(bulk_assignment.errors[:assigned_to]).to eq error
+      end
+    end
+
+    context "when regional office is not valid" do
+      let(:regional_office) { "Not Valid" }
+
+      it "does not bulk assigns tasks" do
+        organization.users << assigned_to
+        organization.users << assigned_by
+        bulk_assignment = BulkTaskAssignment.new(params)
+        expect(bulk_assignment.valid?).to eq false
+        error = ["could not find regional office: #{regional_office}"]
+        expect(bulk_assignment.errors[:regional_office]).to eq error
+      end
+    end
+
+    context "when regional office is passed" do
+      let(:regional_office) { "RO17" }
+
+      it "filters by regional office" do
+        schedule_hearing2.appeal.update(closest_regional_office: regional_office)
+        schedule_hearing3.appeal.update(closest_regional_office: "RO19")
+        organization.users << assigned_to
+        organization.users << assigned_by
+        count_before = Task.count
+        bulk_assignment = BulkTaskAssignment.new(params)
+        expect(bulk_assignment.valid?).to eq true
+        result = bulk_assignment.process
+        expect(Task.count).to eq count_before + 1
+        expect(result.count).to eq 1
+        expect(result.first.assigned_to).to eq assigned_to
+        expect(result.first.type).to eq "NoShowHearingTask"
+        expect(result.first.assigned_by).to eq assigned_by
+        expect(result.first.appeal).to eq schedule_hearing2.appeal
+        expect(result.first.parent_id).to eq schedule_hearing2.id
       end
     end
 
