@@ -1,6 +1,6 @@
 @media print {
-  body {
-    -webkit-print-color-adjust: exact;
+  .cf-app-hearings {
+    background: $color-white;
   }
 
   header,
@@ -9,15 +9,7 @@
   }
 
   .cf-app-segment:first-child {
-    margin: 0px;
-    padding: 0px;
-  }
-
-  .cf-app-segment--alt {
-    border: none !important;
-  }
-
-  @page {
     margin: 0;
+    padding: 0;
   }
 }
