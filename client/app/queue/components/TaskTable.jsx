@@ -37,17 +37,10 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
 
 const hasDASRecord = (task, requireDasRecord) => {
-  if (task.appeal.isLegacyAppeal && requireDasRecord) {
-    // return Boolean(task.taskId);
-    return task.taskId;
-  }
-
-  return true;
+  return (task.appeal.isLegacyAppeal && requireDasRecord) ? task.taskId : true;
 };
 
-const collapseColumn = (requireDasRecord) => {
-  (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;
-}
+const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;
 
 export const docketNumberColumn = (tasks, requireDasRecord) => {
   return {
@@ -212,7 +205,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDocketNumberColumn = () => {
-    return this.props.includeDocketNumber ? docketNumberColumn(this.props.tasks, this.props.requireDasRecord): null;
+    return this.props.includeDocketNumber ? docketNumberColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
 
   caseIssueCountColumn = () => {
