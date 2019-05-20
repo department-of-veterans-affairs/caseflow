@@ -212,7 +212,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDocketNumberColumn = () => {
-    return docketNumberColumn(this.props.tasks, this.props.requireDasRecord);
+    return this.props.includeDocketNumber ? docketNumberColumn(this.props.tasks, this.props.requireDasRecord): null;
   }
 
   caseIssueCountColumn = () => {
