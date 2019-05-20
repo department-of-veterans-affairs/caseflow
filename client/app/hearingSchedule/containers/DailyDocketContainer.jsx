@@ -1,9 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-import DailyDocket from '../components/DailyDocket';
+
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
@@ -325,5 +326,23 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   handleLockHearingServerError,
   onResetLockHearingAfterError
 }, dispatch);
+
+DailyDocketContainer.propTypes = {
+  user: PropTypes.object,
+  dailyDocket: PropTypes.object,
+  hearings: PropTypes.object,
+  saveSuccessful: PropTypes.object,
+  vlj: PropTypes.string,
+  coordinator: PropTypes.string,
+  hearingRoom: PropTypes.string,
+  notes: PropTypes.string,
+  hearingDayModified: PropTypes.bool,
+  displayRemoveHearingDayModal: PropTypes.bool,
+  displayLockModal: PropTypes.bool,
+  displayLockSuccessMessage: PropTypes.bool,
+  dailyDocketServerError: PropTypes.bool,
+  onErrorHearingDayLock: PropTypes.bool,
+  print: PropTypes.bool
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));

@@ -188,14 +188,21 @@ export default class DailyDocket extends React.Component {
 }
 
 DailyDocket.propTypes = {
+  user: PropTypes.object.isRequired,
   dailyDocket: PropTypes.object,
-  hearings: PropTypes.object,
-  onHearingNotesUpdate: PropTypes.func,
-  onHearingDispositionUpdate: PropTypes.func,
-  onHearingTimeUpdate: PropTypes.func,
-  onHearingRegionalOfficeUpdate: PropTypes.func,
-  onInvalidForm: PropTypes.func,
-  openModal: PropTypes.func,
-  deleteHearingDay: PropTypes.func,
-  notes: PropTypes.string
+  hearings: PropTypes.arrayOf(PropTypes.object),
+  saveHearing: PropTypes.func.isRequired,
+  saveSuccessful: PropTypes.object,
+  onInvalidForm: PropTypes.func.isRequired,
+  openModal: PropTypes.func.isRequired,
+  onClickRemoveHearingDay: PropTypes.func.isRequired,
+  displayRemoveHearingDayModal: PropTypes.func.isRequired,
+  deleteHearingDay: PropTypes.func.isRequired,
+  onDisplayLockModal: PropTypes.func.isRequired,
+  onCancelDisplayLockModal: PropTypes.func.isRequired,
+  displayLockModal: PropTypes.bool,
+  updateLockHearingDay: PropTypes.func.isRequired,
+  displayLockSuccessMessage: PropTypes.bool,
+  dailyDocketServerError: PropTypes.bool,
+  onErrorHearingDayLock: PropTypes.bool
 };
