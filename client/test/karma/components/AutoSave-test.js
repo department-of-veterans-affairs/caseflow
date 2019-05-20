@@ -5,8 +5,6 @@ import AutoSave from '../../../app/components/AutoSave';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { LOGO_COLORS } from '../../../app/constants/AppConstants';
 import sinon from 'sinon';
-// eslint-disable-next-line no-unused-vars
-import DailyDocketContainer from '../../../app/hearings/containers/DailyDocketContainer';
 
 export const saveFunction = () => ({ my: 'action' });
 
