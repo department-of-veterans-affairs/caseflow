@@ -1,0 +1,23 @@
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+  }
+
+  header,
+  .cf-app-footer {
+    display: none;
+  }
+
+  .cf-app-segment:first-child {
+    margin: 0px;
+    padding: 0px;
+  }
+
+  .cf-app-segment--alt {
+    border: none !important;
+  }
+
+  @page {
+    margin: 0;
+  }
+}
