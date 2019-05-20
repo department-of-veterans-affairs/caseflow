@@ -196,8 +196,8 @@ class HearingSchedule::AssignJudgesToHearingDays
     # raises an exception if hearing days have not already been allocated
     fail HearingDaysNotAllocated if @video_co_hearing_days.empty?
 
-    travel_board_hearing_days = HearingDayRepository.load_travel_board_days_for_range(@schedule_period.start_date,
-                                                                                      @schedule_period.end_date)
+    travel_board_hearing_days = TravelBoardScheduleRepository.load_tb_days_for_range(@schedule_period.start_date,
+                                                                                     @schedule_period.end_date)
     filter_travel_board_hearing_days(travel_board_hearing_days)
   end
 
@@ -215,7 +215,7 @@ class HearingSchedule::AssignJudgesToHearingDays
 
   def filter_co_hearings(video_co_hearing_days)
     video_co_hearing_days.map do |hearing_day|
-      day = OpenStruct.new(HearingDay.to_hash(hearing_day))
+      day = OpenStruct.new(hearing_day.to_hash)
       day.scheduled_for = day.scheduled_for.to_date
 
       day if (valid_co_day?(day) || valid_ro_hearing_day?(day)) && !hearing_day_already_assigned(day)

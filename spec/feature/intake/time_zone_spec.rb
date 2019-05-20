@@ -21,11 +21,7 @@ feature "Appeal time zone" do
   # rubocop:disable Metrics/AbcSize
   def initiate_appeal_intake
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.appeal
-    find("#form-select").send_keys :enter
-
+    select_form(Constants.INTAKE_FORM_NAMES.appeal)
     safe_click ".cf-submit.usa-button"
 
     expect(page).to have_content(search_page_title)

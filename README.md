@@ -27,6 +27,7 @@ The Appeals Modernization team's mission is to empower employees with technology
             * [Install <a href="https://www.pdflabs.com/tools/pdftk-server/" rel="nofollow">PDFtk Server</a>](#install-pdftk-server)
             * [Install Database Clients](#install-database-clients)
             * [Install Docker](#install-docker)
+            * [Install chromedriver](#install-chromedriver)
             * [Clone this repo](#clone-this-repo)
             * [Install Ruby dependencies](#install-ruby-dependencies)
             * [Install JavaScript dependencies](#install-javascript-dependencies)
@@ -34,6 +35,7 @@ The Appeals Modernization team's mission is to empower employees with technology
             * [Database environment setup](#database-environment-setup)
       * [Running dev Caseflow &amp; Accessing dev DBs](#running-dev-caseflow--accessing-dev-dbs)
          * [Running Caseflow](#running-caseflow)
+         * [Seeding Data](#seeding-data)
          * [Connecting to databases locally](#connecting-to-databases-locally)
       * [Running tests](#running-tests)
       * [Debugging FACOLS setup](#debugging-facols-setup)
@@ -265,6 +267,33 @@ docker login -u dsvaappeals
 The password is in the DSVA 1Password account.
 Note you can use your personal account as well, you'll just have to accept the license agreement for the [Oracle Database docker image](https://store.docker.com/images/oracle-database-enterprise-edition). To accept the agreement, checkout with the Oracle image on the docker store.
 
+#### Install chromedriver
+
+Allows the feature tests to run locally.
+
+**Mac**
+```
+brew cask install chromedriver
+chromedriver --version
+```
+
+**ubuntu**
+```
+sudo apt-get update
+sudo apt-get install -y unzip xvfb libxi6 libgconf-2-4
+sudo curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add
+sudo echo "deb [arch=amd64]  http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+sudo apt-get -y update
+sudo apt-get -y install google-chrome-stable
+wget https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
+unzip chromedriver_linux64.zip
+sudo mv chromedriver /usr/bin/chromedriver
+sudo chown root:root /usr/bin/chromedriver
+sudo chmod +x /usr/bin/chromedriver
+rm chromedriver_linux64.zip
+chromedriver --version
+```
+
 
 #### Clone this repo #######################################################
 Navigate to the directory you'd like to clone this repo into and run:
@@ -341,6 +370,19 @@ _Backend_
 _Frontend_
 `cd client && yarn run dev:hot`
 
+### Seeding Data
+
+Seeding VACOLS:
+
+`bundle exec rake local:vacols:seed`
+
+Seeding Caseflow:
+
+`bundle exec rake db:seed`
+
+Resetting Caseflow:
+
+`bundle exec rake db:reset`
 
 ### Connecting to databases locally
 
@@ -573,5 +615,3 @@ We have a lot of technical documentation spread over a lot of different reposito
 - [Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/appeals-deployment/tree/master/docs) This folder also contains our [first responder manual](https://github.com/department-of-veterans-affairs/appeals-deployment/blob/master/docs/first-responder-manual.md), which is super in understanding our production systems.
 - [Non-Caseflow specific devops documentation](https://github.com/department-of-veterans-affairs/devops/tree/master/docs). This documentation is shared with the vets.gov team, so not all of it is relevant.
 - [Project documentation](https://github.com/department-of-veterans-affairs/appeals-design-research/tree/master/Projects)
-
-
