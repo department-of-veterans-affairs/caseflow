@@ -3,6 +3,19 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
+
+  def select_form(form_name)
+    if FeatureToggle.enabled?(:ramp_intake)
+      safe_click ".Select"
+      fill_in "Which form are you processing?", with: form_name
+      find("#form-select").send_keys :enter
+    else
+      within_fieldset("Which form are you processing?") do
+        find("label", text: form_name).click
+      end
+    end
+  end
+
   def start_higher_level_review(
     test_veteran,
     receipt_date: 1.day.ago,
@@ -206,7 +219,6 @@ module IntakeHelpers
     legacy_issues: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
-    sleep 1
     expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
 

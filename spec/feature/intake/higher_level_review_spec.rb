@@ -748,7 +748,7 @@ feature "Higher-Level Review" do
         fill_in "Decision date", with: "13/04/2019"
 
         err_message = "Please enter a valid decision date"
-        expect(err_message).to_not eq nil
+        expect(page).to have_content(err_message)
       end
     end
 

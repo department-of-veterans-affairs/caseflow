@@ -51,7 +51,7 @@ feature "Intake Edit Confirmation" do
             visit edit_path
             click_intake_add_issue
             click_intake_no_matching_issues
-            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%D"))
+            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%m/%d/%Y"))
             click_edit_submit
             click_number_of_issues_changed_confirmation
 
@@ -64,7 +64,7 @@ feature "Intake Edit Confirmation" do
             # first add a nonrating issue so we can remove the rating issue & EP
             click_intake_add_issue
             click_intake_no_matching_issues
-            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%D"))
+            add_intake_nonrating_issue(date: (decision_review.receipt_date - 1.month).strftime("%m/%d/%Y"))
             click_remove_intake_issue(1)
             click_remove_issue_confirmation
             click_edit_submit
@@ -143,7 +143,7 @@ feature "Intake Edit Confirmation" do
         visit edit_path
         click_intake_add_issue
         click_intake_no_matching_issues
-        add_intake_nonrating_issue(date: (decision_review.receipt_date - 2.years).strftime("%D"))
+        add_intake_nonrating_issue(date: (decision_review.receipt_date - 2.years).strftime("%m/%d/%Y"))
         add_untimely_exemption_response("Yes")
         click_remove_intake_issue(1)
         click_remove_issue_confirmation
