@@ -165,6 +165,7 @@ FactoryBot.define do
     factory :ama_judge_dispatch_return_task, class: JudgeDispatchReturnTask do
       type { JudgeDispatchReturnTask.name }
       appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
     end
 
     factory :track_veteran_task, class: TrackVeteranTask do
@@ -203,7 +204,7 @@ FactoryBot.define do
       parent { create(:ama_judge_task) }
     end
 
-    factory :ama_judge_dispatch_return_to_attorney_task do
+    factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
       type { AttorneyDispatchReturnTask.name }
       appeal { create(:appeal) }
       parent { create(:ama_judge_task) }

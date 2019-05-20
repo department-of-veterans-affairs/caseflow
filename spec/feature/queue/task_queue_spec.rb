@@ -560,6 +560,108 @@ RSpec.feature "Task queue" do
       end
     end
 
+
+    context "when it was created from a BvaDispatchTask" do
+      let!(:bva_dispatch_user) { FactoryBot.create(:user) }
+      let!(:bva_dispatch_relationship) do
+        OrganizationsUser.add_user_to_organization(bva_dispatch_user, BvaDispatch.singleton)
+      end
+      let!(:attorney_user) { FactoryBot.create(:user) }
+      let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
+      let!(:attorney_judge_relationship) do
+        OrganizationsUser.add_user_to_organization(attorney_user, judge_team)
+      end
+      let!(:bva_dispatch_org_task) { BvaDispatchTask.create_from_root_task(root_task) }
+      let!(:bva_dispatch_task_params) do
+        [{
+          appeal: appeal,
+          parent_id: bva_dispatch_org_task.id,
+          assigned_to_id: bva_dispatch_user.id,
+          assigned_to_type: bva_dispatch_user.class.name,
+          assigned_by: bva_dispatch_user
+        }]
+      end
+      let!(:bva_dispatch_person_task) do
+        bva_dispatch_org_task.children.first
+      end
+
+      let!(:judge_task_params) do
+        [{
+          appeal: appeal,
+          parent_id: bva_dispatch_person_task.id,
+          assigned_to_id: judge_user.id,
+          assigned_to_type: judge_user.class.name
+        }]
+      end
+      let!(:judge_task) do
+        JudgeDispatchReturnTask.create_many_from_params(judge_task_params, bva_dispatch_user).first
+      end
+
+      before do
+        visit("/queue/appeals/#{appeal.external_id}")
+
+        # Add a user to the Colocated team so the task assignment will suceed.
+        OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
+      end
+
+      it "should display an option to Return to Dispatch" do
+        expect(bva_dispatch_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
+
+        find(".Select-control", text: "Select an action…").click
+        find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label).click
+
+        expect(page).to have_content("Add decisions")
+        click_on "Continue"
+
+        expect(page).to have_content("Evaluate Decision")
+        find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
+        text_to_click = "5 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['outstanding']}"
+        find("label", text: text_to_click).click
+        find("#issues_are_not_addressed", visible: false).sibling("label").click
+        dummy_note = generate_words 5
+        fill_in "additional-factors", with: dummy_note
+        expect(page).to have_content(dummy_note[0..5])
+        click_on "Continue"
+
+        expect(page).to have_content(COPY::JUDGE_CHECKOUT_DISPATCH_SUCCESS_MESSAGE_TITLE % appeal.veteran_full_name)
+
+        expect(judge_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(bva_dispatch_person_task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
+      end
+
+      it "should display an option to Return to Attorney" do
+        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+        expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
+        fill_in "taskInstructions", with: "Please fix this"
+
+        click_on "Submit"
+
+        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+
+        expect(judge_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(judge_task.children.first).to be_a(AttorneyDispatchReturnTask)
+        expect(judge_task.children.first.status).to eq(Constants.TASK_STATUSES.assigned)
+      end
+
+      it "should be able to be sent to VLJ support staff" do
+        # On case details page select the "Add admin action" option
+        click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.label)
+
+        # On case details page fill in the admin action
+        action = Constants::CO_LOCATED_ADMIN_ACTIONS["ihp"]
+        click_dropdown(text: action)
+        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
+
+        # Expect to see a success message, the correct number of remaining tasks and have the task in the database
+        expect(page).to have_content(format(COPY::ADD_COLOCATED_TASK_CONFIRMATION_TITLE, "an", "action", action))
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, 0))
+        expect(judge_task.children.length).to eq(1)
+        expect(judge_task.children.first).to be_a(ColocatedTask)
+      end
+    end
+
     context "when it was created through case distribution" do
       before do
         FactoryBot.create(:ama_judge_task, appeal: appeal, assigned_to: judge_user)
