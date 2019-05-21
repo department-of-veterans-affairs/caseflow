@@ -47,7 +47,7 @@ export default class StyleGuideNavigationBar extends React.PureComponent {
       <Router>
         <NavigationBar
           wideApp="full"
-          appName="Hearing Prep"
+          appName="Hearings"
           logoProps={{
             accentColor: LOGO_COLORS.HEARINGS.ACCENT,
             overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
