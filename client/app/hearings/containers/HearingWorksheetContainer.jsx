@@ -11,8 +11,7 @@ import { SERVER_ERROR_CODES } from '../constants/constants';
 import HearingWorksheet from '../HearingWorksheet';
 import querystring from 'querystring';
 import { getQueryParams } from '../../util/QueryParamsUtil';
-
-const PRINT_WINDOW_TIMEOUT_IN_MS = 150;
+import { openPrintDialogue } from '../../util/PrintUtil';
 
 export class HearingWorksheetContainer extends React.Component {
 
@@ -36,9 +35,8 @@ export class HearingWorksheetContainer extends React.Component {
 
     if (this.props.worksheet && this.props.print && !query.do_not_open_print_prompt) {
       window.onafterprint = this.afterPrint;
-      setTimeout(() => {
-        window.print();
-      }, PRINT_WINDOW_TIMEOUT_IN_MS);
+
+      openPrintDialogue();
     }
   }
 
