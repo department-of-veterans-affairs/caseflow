@@ -229,10 +229,6 @@ export class DailyDocketContainer extends React.Component {
     return 'success';
   };
 
-  showAlert = () => {
-    return this.state.showModalAlert;
-  };
-
   render() {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createHearingPromise}
@@ -244,7 +240,7 @@ export class DailyDocketContainer extends React.Component {
         title: 'Unable to load the daily docket.'
       }}
     >
-      {this.showAlert() &&
+      {this.state.showModalAlert &&
         <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
           {this.getAlertMessage()}
         </Alert>

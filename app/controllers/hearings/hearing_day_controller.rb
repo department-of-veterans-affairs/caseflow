@@ -25,7 +25,7 @@ class Hearings::HearingDayController < HearingScheduleController
       end
     end
   end
-  
+
   def index_print
     index
   end
