@@ -1,3 +1,5 @@
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
+
 export const namePartToSortBy = (fullName) => {
   const nameParts = fullName.split(' ');
 
@@ -33,3 +35,7 @@ export const fullNameParts = (fullName) => {
       middleName: '' };
   }
 };
+
+export const isPreviouslyScheduledHearing = (hearing) => (
+  hearing.disposition === TASK_STATUSES.postponed || hearing.disposition === TASK_STATUSES.cancelled
+);

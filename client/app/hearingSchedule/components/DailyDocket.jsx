@@ -9,9 +9,9 @@ import Alert from '../../components/Alert';
 import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
 import StatusMessage from '../../components/StatusMessage';
 import { getHearingAppellantName } from './DailyDocketRowDisplayText';
-
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
+import { isPreviouslyScheduledHearing } from '../utils';
 
 const alertStyling = css({
   marginBottom: '30px'
@@ -59,16 +59,12 @@ export default class DailyDocket extends React.Component {
   }
   onInvalidForm = (hearingId) => (invalid) => this.props.onInvalidForm(hearingId, invalid);
 
-  previouslyScheduled = (hearing) => {
-    return hearing.disposition === 'postponed' || hearing.disposition === 'cancelled';
-  };
-
   previouslyScheduledHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => this.previouslyScheduled(hearing));
+    return _.filter(this.props.hearings, (hearing) => isPreviouslyScheduledHearing(hearing));
   };
 
   dailyDocketHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => !this.previouslyScheduled(hearing));
+    return _.filter(this.props.hearings, (hearing) => !isPreviouslyScheduledHearing(hearing));
   };
 
   getRegionalOffice = () => {
@@ -190,13 +186,13 @@ export default class DailyDocket extends React.Component {
 DailyDocket.propTypes = {
   user: PropTypes.object.isRequired,
   dailyDocket: PropTypes.object,
-  hearings: PropTypes.arrayOf(PropTypes.object),
+  hearings: PropTypes.object,
   saveHearing: PropTypes.func.isRequired,
   saveSuccessful: PropTypes.object,
   onInvalidForm: PropTypes.func.isRequired,
   openModal: PropTypes.func.isRequired,
   onClickRemoveHearingDay: PropTypes.func.isRequired,
-  displayRemoveHearingDayModal: PropTypes.func.isRequired,
+  displayRemoveHearingDayModal: PropTypes.bool,
   deleteHearingDay: PropTypes.func.isRequired,
   onDisplayLockModal: PropTypes.func.isRequired,
   onCancelDisplayLockModal: PropTypes.func.isRequired,
