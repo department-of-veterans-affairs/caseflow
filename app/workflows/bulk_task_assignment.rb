@@ -12,7 +12,7 @@ class BulkTaskAssignment
   validate :assigned_by_part_of_organization
   validate :organization_can_bulk_assign
 
-  attr_writer :assigned_to_id, :assigned_by, :organization_id, :task_type, :regional_office, :task_count
+  attr_accessor :assigned_to_id, :assigned_by, :organization_id, :task_type, :regional_office, :task_count
 
   def initialize(attributes = {})
     super
