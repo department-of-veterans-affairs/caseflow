@@ -14,7 +14,6 @@ feature "Supplemental Claim Intake" do
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
-  let(:intake_constants) { Constants.INTAKE_STRINGS }
 
   let(:veteran_file_number) { "123412345" }
 
@@ -911,7 +910,7 @@ feature "Supplemental Claim Intake" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{intake_constants.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
+            "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
           )
 
           click_intake_finish
@@ -929,7 +928,7 @@ feature "Supplemental Claim Intake" do
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
-          expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
+          expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
         end
       end
 
@@ -965,7 +964,7 @@ feature "Supplemental Claim Intake" do
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
-          expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
+          expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
         end
       end
     end
