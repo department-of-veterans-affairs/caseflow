@@ -63,11 +63,6 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  # We only want to take this off hold, not actually complete it, like the inherited method does
-  def update_status_if_children_tasks_are_complete
-    update!(status: :assigned) if on_hold?
-  end
-
   def update_from_params(params, current_user)
     multi_transaction do
       verify_user_can_update!(current_user)

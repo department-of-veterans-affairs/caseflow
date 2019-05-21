@@ -8,7 +8,7 @@ class DistributionTask < GenericTask
   # when a child task (e.g. evidence submission)
   # is marked complete because distribution tasks are used
   # to signal that cases are ready for assignment to judges.
-  def update_status_if_children_tasks_are_complete
+  def update_status_if_children_tasks_are_complete(_child_task)
     ready_for_distribution! if children.any? && children.active.none?
   end
 

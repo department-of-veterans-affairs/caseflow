@@ -26,7 +26,7 @@ class HearingTask < GenericTask
     true
   end
 
-  def when_child_task_completed
+  def when_child_task_completed(child_task)
     super
 
     return unless appeal.tasks.active.where(type: HearingTask.name).empty?
@@ -62,11 +62,15 @@ class HearingTask < GenericTask
 
   private
 
+  def task_types_to_cascade_task_completion
+    [type, NoShowHearingTask.name, DispositionTask.name]
+  end
+
   def set_assignee
     self.assigned_to = Bva.singleton
   end
 
-  def update_status_if_children_tasks_are_complete
+  def update_status_if_children_tasks_are_complete(_child_task)
     if children.select(&:active?).empty?
       return update!(status: :cancelled) if children.select { |c| c.type == DispositionTask.name && c.cancelled? }.any?
     end
