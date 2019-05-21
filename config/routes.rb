@@ -89,6 +89,10 @@ Rails.application.routes.draw do
     resources :tag, only: [:create, :destroy]
   end
 
+  resources(:correspondence) do
+    get(:example, on: :member)
+  end
+
   namespace :reader do
     get 'appeal/veteran-id', to: "appeal#find_appeals_by_veteran_id",
       constraints: lambda{ |req| req.env["HTTP_VETERAN_ID"] =~ /[a-zA-Z0-9]{2,12}/ }

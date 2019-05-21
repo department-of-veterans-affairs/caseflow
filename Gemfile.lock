@@ -160,6 +160,10 @@ GEM
     capybara-screenshot (1.0.22)
       capybara (>= 1.0, < 4)
       launchy
+    caracal (1.4.1)
+      nokogiri (~> 1.6)
+      rubyzip (~> 1.1)
+      tilt (>= 1.4)
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
     claide (1.0.2)
@@ -548,6 +552,7 @@ DEPENDENCIES
   byebug
   capybara
   capybara-screenshot
+  caracal
   caseflow!
   connect_vbms!
   danger (~> 5.10)

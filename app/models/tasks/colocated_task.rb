@@ -60,6 +60,7 @@ class ColocatedTask < Task
     available_actions_with_conditions([
                                         Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
                                         Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+                                        Constants.TASK_ACTIONS.PREPARE_CORRESPONDENCE.to_h,
                                         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
                                       ])
   end

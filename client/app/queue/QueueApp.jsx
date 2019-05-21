@@ -47,6 +47,7 @@ import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
+import CorrespondencePickerModal from './components/CorrespondencePickerModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -232,6 +233,8 @@ class QueueApp extends React.PureComponent {
 
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
 
+  routedCorrespondencePickerModal = (props) => <CorrespondencePickerModal {...props.match.params} />;
+
   queueName = () => this.props.userRole === USER_ROLE_TYPES.attorney ? 'Your Queue' : 'Review Cases';
 
   propsForQueueLoadingScreen = () => {
@@ -347,6 +350,9 @@ class QueueApp extends React.PureComponent {
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.END_TIMED_HOLD.value}`}
             render={this.routedEndHoldModal} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.PREPARE_CORRESPONDENCE.value}`}
+            render={this.routedCorrespondencePickerModal} />
           <PageRoute
             exact
             path="/queue/appeals/:appealId"
