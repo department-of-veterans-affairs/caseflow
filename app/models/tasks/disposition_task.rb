@@ -6,6 +6,7 @@
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
+  validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
 
@@ -140,7 +141,7 @@ class DispositionTask < GenericTask
   end
 
   def check_parent_type
-    if parent&.type != HearingTask.name
+    if parent.type != HearingTask.name
       fail(
         Caseflow::Error::InvalidParentTask,
         task_type: self.class.name,

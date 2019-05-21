@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class BulkTaskAssignmentsController < TasksController
-
   def create
     bulk_task_assignment = BulkTaskAssignment.new(*bulk_task_assignment_params)
     return invalid_record_error(bulk_task_assignment) unless bulk_task_assignment.valid?
