@@ -6,7 +6,8 @@ class ExternalApi::EfolderService
   def self.document_count(file_number, user)
     headers = { "FILE-NUMBER" => file_number }
     response = send_efolder_request("/api/v2/document_counts", user, headers)
-    response[:documents]
+    response_body = JSON.parse(response.body)
+    response_body["documents"]
   end
 
   def self.fetch_documents_for(appeal, user)
