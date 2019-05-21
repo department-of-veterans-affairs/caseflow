@@ -292,7 +292,7 @@ RSpec.feature "Task queue" do
       end
     end
 
-    context "when a mail task is routed to Pulac Curello" do
+    context "when a ClearAndUnmistakeableErrorMailTask task is routed to Pulac Curello" do
       let!(:root_task) { FactoryBot.create(:root_task) }
       it "creates two child tasks, one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curello org" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -324,6 +324,84 @@ RSpec.feature "Task queue" do
         pulac_curello_task = child_task.children[0]
         pulac_curello_user_task = pulac_curello_task.children[0];
         expect(child_task.class).to eq(ClearAndUnmistakeableErrorMailTask)
+        expect(pulac_curello_task.type).to eq("PulacCurelloTask")
+        expect(pulac_curello_task.assigned_to.is_a?(Organization)).to eq(true)
+        expect(pulac_curello_task.assigned_to.class).to eq(PulacCurello)
+        expect(pulac_curello_user_task.assigned_to).to eq(pulac_user)
+      end
+    end
+
+    context "when a ReconsiderationMotionMailTask task is routed to Pulac Curello" do
+      let!(:root_task) { FactoryBot.create(:root_task) }
+      it "creates two child tasks, one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curello org" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
+
+        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find("div", class: "Select-option", text: COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL).click
+
+        fill_in("taskInstructions", with: instructions)
+        find("button", text: "Submit").click
+
+        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL)
+        expect(page).to have_content(success_msg)
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
+        click_button(text: "Submit")
+
+        
+        mail_task = root_task.reload.children[0]
+        expect(mail_task.class).to eq(ReconsiderationMotionMailTask)
+        expect(mail_task.assigned_to).to eq(MailTeam.singleton)
+        expect(mail_task.children.length).to eq(1)
+        sleep 1
+        child_task = mail_task.children[0]
+
+        pulac_curello_task = child_task.children[0]
+        pulac_curello_user_task = pulac_curello_task.children[0];
+        expect(child_task.class).to eq(ReconsiderationMotionMailTask)
+        expect(pulac_curello_task.type).to eq("PulacCurelloTask")
+        expect(pulac_curello_task.assigned_to.is_a?(Organization)).to eq(true)
+        expect(pulac_curello_task.assigned_to.class).to eq(PulacCurello)
+        expect(pulac_curello_user_task.assigned_to).to eq(pulac_user)
+      end
+    end
+
+    context "when a VacateMotionMailTask task is routed to Pulac Curello" do
+      let!(:root_task) { FactoryBot.create(:root_task) }
+      it "creates two child tasks, one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curello org" do
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
+
+        find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
+        find("div", class: "Select-option", text: COPY::VACATE_MOTION_MAIL_TASK_LABEL).click
+
+        fill_in("taskInstructions", with: instructions)
+        find("button", text: "Submit").click
+
+        success_msg = format(COPY::MAIL_TASK_CREATION_SUCCESS_MESSAGE, COPY::VACATE_MOTION_MAIL_TASK_LABEL)
+        expect(page).to have_content(success_msg)
+        expect(page.current_path).to eq("/queue/appeals/#{appeal.uuid}")
+        visit "/queue/appeals/#{appeal.uuid}"
+
+        click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
+        click_button(text: "Submit")
+
+        
+        mail_task = root_task.reload.children[0]
+        expect(mail_task.class).to eq(VacateMotionMailTask)
+        expect(mail_task.assigned_to).to eq(MailTeam.singleton)
+        expect(mail_task.children.length).to eq(1)
+        sleep 1
+        child_task = mail_task.children[0]
+
+        pulac_curello_task = child_task.children[0]
+        pulac_curello_user_task = pulac_curello_task.children[0];
+        expect(child_task.class).to eq(VacateMotionMailTask)
         expect(pulac_curello_task.type).to eq("PulacCurelloTask")
         expect(pulac_curello_task.assigned_to.is_a?(Organization)).to eq(true)
         expect(pulac_curello_task.assigned_to.class).to eq(PulacCurello)
