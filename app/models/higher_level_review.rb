@@ -69,7 +69,7 @@ class HigherLevelReview < ClaimReview
   end
 
   def events
-    @events ||= AppealEvents.new(appeal: self).all
+    @events ||= HigherLevelReviewEvents.new(appeal: self).all
   end
 
   def api_alerts_show_decision_alert?

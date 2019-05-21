@@ -178,7 +178,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def events
-    @events ||= AppealEvents.new(appeal: self).all
+    @events ||= LegacyAppealEvents.new(appeal: self).all
   end
 
   def form9_due_date
