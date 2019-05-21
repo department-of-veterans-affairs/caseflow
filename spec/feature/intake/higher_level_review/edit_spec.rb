@@ -805,7 +805,7 @@ feature "Higher Level Review Edit issues" do
 
       let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
 
-      it "does not remove & readd unedited issues" do
+      it "does not remove & read unedited issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "higher_level_reviews/#{rating_ep_claim_id}/edit",
           higher_level_review,
@@ -1479,6 +1479,26 @@ feature "Higher Level Review Edit issues" do
         end
 
         expect(page).to have_field(type: "textarea", match: :first, placeholder: "Right Knee")
+      end
+
+      scenario "edit contention text is saved" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        expect(page).to have_content("Edit contention title")
+
+        within first(".issue-edit-text") do
+          click_edit_contention_issue
+        end
+
+        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
+
+        fill_in(with: "Right Knee")
+        expect(page).to have_button("Submit", disabled: false)
+        click_button("Submit")
+        expect(page).to have_content("Right Knee")
+
+        click_button("Save")
+        expect(RequestIssue.select { |issue| issue.edited_description == "Right Knee" }).to_not be_nil
       end
     end
 

@@ -23,12 +23,14 @@ class RequestIssuesUpdate < ApplicationRecord
       process_removed_issues!
       process_legacy_issues!
       process_withdrawn_issues!
+      process_edited_issues!
       review.mark_rating_request_issues_to_reassociate!
 
       update!(
         before_request_issue_ids: before_issues.map(&:id),
         after_request_issue_ids: after_issues.map(&:id),
-        withdrawn_request_issue_ids: withdrawn_issues.map(&:id)
+        withdrawn_request_issue_ids: withdrawn_issues.map(&:id),
+        edited_request_issue_ids: edited_issues.map(&:id)
       )
       cancel_active_tasks
       submit_for_processing!
@@ -92,11 +94,15 @@ class RequestIssuesUpdate < ApplicationRecord
     @withdrawn_issues ||= withdrawn_request_issue_ids ? fetch_withdrawn_issues : calculate_withdrawn_issues
   end
 
+  def edited_issues
+    @edited_issues ||= edited_request_issue_ids ? fetch_edited_issues : calculate_edited_issues
+  end
+
   private
 
   def changes?
     review.request_issues.active_or_ineligible.count != @request_issues_data.count || !new_issues.empty? ||
-      !withdrawn_issues.empty?
+      !withdrawn_issues.empty? || !edited_issues.empty?
   end
 
   def new_issues
@@ -118,10 +124,22 @@ class RequestIssuesUpdate < ApplicationRecord
     end
   end
 
+  def calculate_edited_issues
+    edited_issue_data.map do |issue_data|
+      review.find_or_build_request_issue_from_intake_data(issue_data)
+    end
+  end
+
   def withdrawn_issue_data
     return [] unless @request_issues_data
 
     @request_issues_data.select { |ri| !ri[:withdrawal_date].nil? && ri[:request_issue_id] }
+  end
+
+  def edited_issue_data
+    return [] unless @request_issues_data
+
+    @request_issues_data.select { |ri| !ri[:edited_description].nil? && ri[:request_issue_id] }
   end
 
   def calculate_before_issues
@@ -156,6 +174,10 @@ class RequestIssuesUpdate < ApplicationRecord
     RequestIssue.where(id: withdrawn_request_issue_ids)
   end
 
+  def fetch_edited_issues
+    RequestIssue.where(id: edited_request_issue_ids)
+  end
+
   def process_legacy_issues!
     LegacyOptinManager.new(decision_review: review).process!
   end
@@ -165,6 +187,15 @@ class RequestIssuesUpdate < ApplicationRecord
 
     withdrawal_date = withdrawn_issue_data.first[:withdrawal_date]
     withdrawn_issues.each { |ri| ri.withdraw!(withdrawal_date) }
+  end
+
+  def process_edited_issues!
+    return if edited_issues.empty?
+
+    edited_issues.each do |ri|
+      edited_issue = @request_issues_data.detect { |issue| issue[:request_issue_id] == ri.id.to_s }
+      ri.edit_contention_text!(edited_issue[:edited_description])
+    end
   end
 
   def process_removed_issues!
