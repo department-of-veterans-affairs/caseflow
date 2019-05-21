@@ -223,13 +223,13 @@ export class HearingWorksheet extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  worksheet: state.worksheet,
-  worksheetAppeals: state.worksheetAppeals,
-  worksheetIssues: state.worksheetIssues,
-  saveWorksheetFailed: state.saveWorksheetFailed,
-  worksheetIsSaving: state.worksheetIsSaving,
-  worksheetTimeSaved: state.worksheetTimeSaved,
-  fetchingWorksheet: state.fetchingWorksheet
+  worksheet: state.hearings.worksheet,
+  worksheetAppeals: state.hearings.worksheetAppeals,
+  worksheetIssues: state.hearings.worksheetIssues,
+  saveWorksheetFailed: state.hearings.saveWorksheetFailed,
+  worksheetIsSaving: state.hearings.worksheetIsSaving,
+  worksheetTimeSaved: state.hearings.worksheetTimeSaved,
+  fetchingWorksheet: state.hearings.fetchingWorksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
