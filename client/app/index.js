@@ -83,7 +83,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
       './containers/stats/StatsContainer',
       './certification/Certification',
       './manageEstablishClaim/ManageEstablishClaim',
-      './hearings/index',
+      './hearingSchedule/index',
       './establishClaimAdmin/index',
       './queue/index',
       './intakeManager/index',
