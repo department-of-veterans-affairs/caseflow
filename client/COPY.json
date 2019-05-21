@@ -409,6 +409,10 @@
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
 
+  "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
+  "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
+  "VACOLS_OPTIN_ISSUE_CLOSED": "VACOLS issue has been closed",
+
   "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
   "WITHDRAW_HEARING_MODAL_BODY": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled.",
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE": "You have successfully withdrawn %s's hearing request",
