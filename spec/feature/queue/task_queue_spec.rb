@@ -488,9 +488,19 @@ RSpec.feature "Task queue" do
     let!(:judge_user) { FactoryBot.create(:user) }
     let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, sdomainid: judge_user.css_id) }
     let!(:judge_team) { JudgeTeam.create_for_judge(judge_user) }
+    let!(:appeal) do
+      FactoryBot.create(
+        :appeal,
+        number_of_claimants: 1,
+        request_issues: FactoryBot.build_list(
+          :request_issue, 1,
+          contested_issue_description: "Tinnitus"
+        )
+      )
+    end
+    let!(:decision_issue) { create(:decision_issue, decision_review: appeal, request_issues: appeal.request_issues) }
 
-    let!(:root_task) { FactoryBot.create(:root_task) }
-    let(:appeal) { root_task.appeal }
+    let(:root_task) { FactoryBot.create(:root_task) }
 
     before do
       User.authenticate!(user: judge_user)
@@ -568,9 +578,35 @@ RSpec.feature "Task queue" do
       end
       let!(:attorney_user) { FactoryBot.create(:user) }
       let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
+
       let!(:attorney_judge_relationship) do
         OrganizationsUser.add_user_to_organization(attorney_user, judge_team)
       end
+      let!(:orig_judge_task) do
+         FactoryBot.create(
+           :ama_judge_decision_review_task,
+           :on_hold,
+           assigned_to: judge_user,
+           appeal: appeal,
+           parent: root_task
+         )
+       end
+
+       let!(:orig_atty_task) do
+         FactoryBot.create(
+           :ama_attorney_task,
+           :completed,
+           assigned_to: attorney_user,
+           assigned_by: judge_user,
+           parent: orig_judge_task,
+           appeal: appeal
+         )
+       end
+
+      let!(:judge_task_done) do
+        orig_judge_task.update!(status: Constants.TASK_STATUSES.completed)
+      end
+
       let!(:bva_dispatch_org_task) { BvaDispatchTask.create_from_root_task(root_task) }
       let!(:bva_dispatch_task_params) do
         [{
@@ -581,6 +617,7 @@ RSpec.feature "Task queue" do
           assigned_by: bva_dispatch_user
         }]
       end
+
       let!(:bva_dispatch_person_task) do
         bva_dispatch_org_task.children.first
       end
@@ -598,13 +635,14 @@ RSpec.feature "Task queue" do
       end
 
       before do
+
         visit("/queue/appeals/#{appeal.external_id}")
 
         # Add a user to the Colocated team so the task assignment will suceed.
         OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), Colocated.singleton)
       end
 
-      it "should display an option to Return to Dispatch" do
+      it "should display an option of Ready for Dispatch" do
         expect(bva_dispatch_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
         find(".Select-control", text: "Select an action…").click
@@ -631,7 +669,6 @@ RSpec.feature "Task queue" do
 
       it "should display an option to Return to Attorney" do
         click_dropdown(prompt: "Select an action", text: "Return to attorney")
-        click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 

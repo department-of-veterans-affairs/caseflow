@@ -34,7 +34,6 @@ class CompleteCaseReview
               case_review.task.parent.is_a?(QualityReviewTask) ||
               case_review.task.parent.is_a?(BvaDispatchTask)
 
-
     root_task = case_review.task.root_task
     if QualityReviewCaseSelector.select_case_for_quality_review?
       QualityReviewTask.create_from_root_task(root_task)
