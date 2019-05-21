@@ -101,6 +101,18 @@ describe Task do
         end
       end
 
+      context "when task is closed" do
+        let!(:task) { FactoryBot.create(:task, :on_hold, type: Task.name, assigned_to: organization) }
+        let!(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent: task) }
+
+        before { task.update!(status: Constants.TASK_STATUSES.completed) }
+
+        it "does not change the status of the task" do
+          subject
+          expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+      end
+
       context "when task has some complete and some incomplete child tasks" do
         let!(:completed_children) { FactoryBot.create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
         let(:incomplete_children) do
