@@ -1,17 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Table from '../../components/Table';
 import { getDisplayTime } from './DailyDocketRowDisplayText';
-
-// TODO: Shared with HearingWorksheetContainer.jsx
-const PRINT_WINDOW_TIMEOUT_IN_MS = 150;
+import { isPreviouslyScheduledHearing } from '../utils';
+import { getDate } from '../../util/DateUtil';
+import { openPrintDialogue } from '../../util/PrintUtil';
 
 export class DailyDocketPrinted extends React.Component {
   componentDidMount() {
-    setTimeout(() => window.print(), PRINT_WINDOW_TIMEOUT_IN_MS);
+    window.onafterprint = () => window.close();
+
+    document.title += ` ${getDate(this.props.docket.scheduledFor)}`;
+
+    openPrintDialogue();
   }
 
   isUserJudge = () => this.props.user.userRoleHearingPrep;
@@ -55,13 +60,18 @@ export class DailyDocketPrinted extends React.Component {
 
   render() {
     const { docket, hearings } = this.props;
+    const allHearings = Object.values(hearings);
+    const currentHearings = _.filter(allHearings, _.negate(isPreviouslyScheduledHearing));
+    const previousHearings = _.filter(allHearings, isPreviouslyScheduledHearing);
 
     return (
-      <AppSegment>
-        <h1>Daily Docket ({moment(docket.scheduledFor).format('ddd M/DD/YYYY')})</h1>
-
+      <AppSegment extraClassNames={['cf-daily-docket-printed']}>
         <div className="cf-app-segment">
           <div className="cf-push-left">
+            <h2>Daily Docket ({moment(docket.scheduledFor).format('ddd M/DD/YYYY')})</h2>
+          </div>
+
+          <div className="cf-push-right">
             <strong>VLJ:</strong> {docket.judgeFirstName} {docket.judgeLastName} <br />
             <strong>Coordinator:</strong> {docket.bvaPoc} <br />
             <strong>Hearing type:</strong> {docket.readableRequestType} <br />
@@ -72,15 +82,19 @@ export class DailyDocketPrinted extends React.Component {
 
         <Table
           columns={this.getTableColumns()}
-          rowObjects={Object.values(hearings)}
+          rowObjects={currentHearings}
           slowReRendersAreOk />
 
-        <h2>Previous Hearings</h2>
+        {_.size(previousHearings) > 0 &&
+          <div>
+            <h2>Previous Hearings</h2>
 
-        <Table
-          columns={this.getTableColumns()}
-          rowObjects={[]}
-          slowReRendersAreOk />
+            <Table
+              columns={this.getTableColumns()}
+              rowObjects={previousHearings}
+              slowReRendersAreOk />
+          </div>
+        }
       </AppSegment>
     );
   }
