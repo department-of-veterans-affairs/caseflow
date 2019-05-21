@@ -113,6 +113,10 @@ class DispositionTask < GenericTask
     children.active.update_all(status: status)
   end
 
+  def cascade_closure_from_child_task?(_child_task)
+    true
+  end
+
   def update_hearing_and_self(params:, payload_values:)
     case payload_values[:disposition]
     when Constants.HEARING_DISPOSITION_TYPES.cancelled

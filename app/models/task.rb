@@ -381,8 +381,8 @@ class Task < ApplicationRecord
   end
 
   def update_status_if_children_tasks_are_complete(child_task)
-    if children.any? && children.select(&:active?).empty? && on_hold?
-      if assigned_to.is_a?(Organization) && task_types_to_cascade_task_completion.include?(child_task.type)
+    if children.any? && children.active.empty? && on_hold?
+      if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
         return update!(status: Constants.TASK_STATUSES.completed)
       end
 
@@ -390,8 +390,8 @@ class Task < ApplicationRecord
     end
   end
 
-  def task_types_to_cascade_task_completion
-    [type]
+  def cascade_closure_from_child_task?(child_task)
+    type == child_task&.type
   end
 
   def set_assigned_at

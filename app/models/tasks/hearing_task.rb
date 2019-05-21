@@ -62,8 +62,8 @@ class HearingTask < GenericTask
 
   private
 
-  def task_types_to_cascade_task_completion
-    [type, NoShowHearingTask.name, DispositionTask.name]
+  def cascade_closure_from_child_task?(_child_task)
+    true
   end
 
   def set_assignee
@@ -71,7 +71,7 @@ class HearingTask < GenericTask
   end
 
   def update_status_if_children_tasks_are_complete(_child_task)
-    if children.select(&:active?).empty?
+    if children.active.empty?
       return update!(status: :cancelled) if children.select { |c| c.type == DispositionTask.name && c.cancelled? }.any?
     end
 
