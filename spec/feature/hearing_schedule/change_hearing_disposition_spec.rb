@@ -201,7 +201,7 @@ RSpec.feature "Change hearing disposition" do
           visit "/organizations/#{HearingsManagement.singleton.url}"
           click_on "Assigned (1)"
           find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
-          no_show_active_row = find("dd", text: NoShowHearingTask.label).find(:xpath, "ancestor::tr")
+          no_show_active_row = find("dd", text: "No Show Hearing Task").find(:xpath, "ancestor::tr")
           expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
         end
       end
