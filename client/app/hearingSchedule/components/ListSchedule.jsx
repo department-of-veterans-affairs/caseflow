@@ -17,7 +17,6 @@ import {
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
-import Alert from '../../components/Alert';
 import ListScheduleDateSearch from './ListScheduleDateSearch';
 import moment from 'moment';
 
@@ -123,7 +122,7 @@ class ListSchedule extends React.Component {
         scheduledFor: forCsv ? hearingDay.scheduledFor : <Link to={`/schedule/docket/${hearingDay.id}`}>
           {moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
         </Link>,
-        requestType: hearingDay.requestType,
+        readableRequestType: hearingDay.readableRequestType,
         regionalOffice: hearingDay.regionalOffice,
         room: hearingDay.room,
         vlj: formatVljName(hearingDay.judgeLastName, hearingDay.judgeFirstName)
@@ -132,7 +131,7 @@ class ListSchedule extends React.Component {
 
   getHearingScheduleColumns = (hearingScheduleRows) => {
 
-    const uniqueRequestTypes = populateFilterDropDowns(hearingScheduleRows, 'requestType');
+    const uniqueRequestTypes = populateFilterDropDowns(hearingScheduleRows, 'readableRequestType');
     const uniqueVljs = populateFilterDropDowns(hearingScheduleRows, 'vlj');
     const uniqueLocations = populateFilterDropDowns(hearingScheduleRows, 'regionalOffice');
 
@@ -149,7 +148,7 @@ class ListSchedule extends React.Component {
         header: 'Type',
         cellClass: 'type-column',
         align: 'left',
-        valueName: 'requestType',
+        valueName: 'readableRequestType',
         label: 'Filter by type',
         getFilterValues: uniqueRequestTypes,
         isDropdownFilterOpen: this.props.filterTypeIsOpen,
@@ -198,7 +197,7 @@ class ListSchedule extends React.Component {
   };
 
   setTypeSelectedValue = (value) => {
-    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'requestType', value));
+    this.props.onReceiveHearingSchedule(filterSchedule(this.props.hearingSchedule, 'readableRequestType', value));
     this.setState({
       filteredByList: this.state.filteredByList.concat(['Hearing Type'])
     });
@@ -238,16 +237,6 @@ class ListSchedule extends React.Component {
     return (
       <React.Fragment>
         <div {...clearfix}>
-          {this.props.userRoleHearingPrep &&
-            <Alert type="info"
-              styling={css({ marginBottom: '30px' })}
-              title="New Hearing Schedule View"
-              message={<span><p>{'We\'re piloting an updated version of caseflow hearing. ' +
-                'Try it out and provide any feedback through our support channels. ' +
-                'Note: travel board is not supported in the updated version.'}</p><p>
-                <Link button href="/hearings/dockets"><span {...css({ color: '#fff' })}>Return to old view</span></Link>
-              </p></span>} />}
-
           <div className="cf-push-left" {...inlineFormStyling} >
             <ListScheduleDateSearch
               startDateValue={this.props.startDate}
@@ -309,7 +298,7 @@ class ListSchedule extends React.Component {
 ListSchedule.propTypes = {
   hearingSchedule: PropTypes.shape({
     scheduledFor: PropTypes.string,
-    requestType: PropTypes.string,
+    readableRequestType: PropTypes.string,
     regionalOffice: PropTypes.string,
     room: PropTypes.string,
     judgeId: PropTypes.string,

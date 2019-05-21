@@ -132,7 +132,7 @@ describe FetchHearingLocationsForVeteransJob do
       let(:distance_response) { HTTPI::Response.new(200, [], mock_distance_body(distance: 11.11).to_json) }
       let(:validate_response) { HTTPI::Response.new(200, [], mock_validate_body.to_json) }
       before do
-        VADotGovService = ExternalApi::VADotGovService
+        stub_const("VADotGovService", ExternalApi::VADotGovService)
 
         allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(distance_response)
         allow(HTTPI).to receive(:post).with(instance_of(HTTPI::Request)).and_return(validate_response)
@@ -316,12 +316,10 @@ describe FetchHearingLocationsForVeteransJob do
             }
           end
 
-          it "only captures error" do
-            expect(Raven).to receive(:capture_exception)
-              .with(kind_of(Caseflow::Error::VaDotGovMultipleAddressError), anything)
+          it "creates Verify Address Task" do
             FetchHearingLocationsForVeteransJob.perform_now
-            expect(LegacyAppeal.first.closest_regional_office).to be_nil
-            expect(LegacyAppeal.first.available_hearing_locations.count).to eq 0
+            tsk = ScheduleHearingTask.first
+            expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
           end
         end
       end

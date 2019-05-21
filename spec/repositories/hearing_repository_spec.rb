@@ -8,13 +8,6 @@ describe HearingRepository do
 
   context ".slot_new_hearing" do
     let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-    let(:time) do
-      {
-        "h" => "9",
-        "m" => "00",
-        "offset" => "-500"
-      }
-    end
     let(:staff_record) { create(:staff) }
     let(:hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 2)) }
 
@@ -23,7 +16,7 @@ describe HearingRepository do
     end
 
     it "slots hearing at correct time" do
-      HearingRepository.slot_new_hearing(hearing_day.id, scheduled_time: time, appeal: legacy_appeal)
+      HearingRepository.slot_new_hearing(hearing_day.id, scheduled_time_string: "09:00", appeal: legacy_appeal)
 
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
         .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
@@ -83,31 +76,12 @@ describe HearingRepository do
       )
     end
 
-    let(:record2) do
-      OpenStruct.new(
-        folder_nr: "VIDEO RO15",
-        hearing_date: Time.zone.now,
-        master_record_type: :video
-      )
-    end
-
-    let(:record3) do
-      OpenStruct.new(
-        tbro: "RO19",
-        tbstdate: Time.zone.now,
-        tbenddate: Time.zone.now,
-        master_record_type: :travel_board
-      )
-    end
-
-    let(:records) { [record1, record2, record3] }
+    let(:records) { [record1] }
 
     it "should create hearing records" do
-      expect(subject.size).to eq 3
+      expect(subject.size).to eq 1
       expect(subject.first.vacols_id).to eq case_hearing.hearing_pkseq.to_s
       expect(subject.first.master_record).to eq false
-      expect(subject.second.master_record).to eq true
-      expect(subject.third.master_record).to eq true
     end
   end
 end

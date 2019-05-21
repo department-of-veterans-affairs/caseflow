@@ -88,8 +88,8 @@ feature "Higher-Level Review" do
   let!(:before_ama_rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 10.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
       issues: [
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
@@ -127,11 +127,7 @@ feature "Higher-Level Review" do
     )
 
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-    find("#form-select").send_keys :enter
-
+    select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
     safe_click ".cf-submit.usa-button"
 
     expect(page).to have_content(search_page_title)
@@ -443,15 +439,9 @@ feature "Higher-Level Review" do
     Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
 
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-    find("#form-select").send_keys :enter
-
+    select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
     safe_click ".cf-submit.usa-button"
-
     fill_in search_bar_title, with: veteran_file_number
-
     click_on "Search"
 
     within_fieldset("What is the Benefit Type?") do
@@ -662,8 +652,8 @@ feature "Higher-Level Review" do
     let!(:before_ama_rating_from_ramp) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview.ama_activation_date - 5.days,
-        profile_date: DecisionReview.ama_activation_date - 11.days,
+        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
         issues: [
           { decision_text: "Issue before AMA Activation from RAMP",
             reference_id: "ramp_ref_id" }

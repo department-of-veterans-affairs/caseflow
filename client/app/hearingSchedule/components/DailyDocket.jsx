@@ -74,7 +74,7 @@ export default class DailyDocket extends React.Component {
   getRegionalOffice = () => {
     const { dailyDocket } = this.props;
 
-    return dailyDocket.requestType === 'Central' ? 'C' : dailyDocket.regionalOfficeKey;
+    return dailyDocket.readableRequestType === 'Central' ? 'C' : dailyDocket.regionalOfficeKey;
   };
 
   openDispositionModal = ({ hearing, disposition, onConfirm }) => {
@@ -92,16 +92,6 @@ export default class DailyDocket extends React.Component {
 
   closeDispositionModal = () => {
     this.setState({ editedDispositionModalProps: null });
-  }
-
-  saveHearing = (hearingId) => {
-    setTimeout(() => {
-      // this ensures we're updating with the latest hearing data
-      // after Redux update
-      const hearing = this.props.hearings[hearingId];
-
-      this.props.saveHearing(hearing);
-    }, 0);
   }
 
   render() {
@@ -159,7 +149,7 @@ export default class DailyDocket extends React.Component {
         <div className="cf-push-right">
           VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName} <br />
           Coordinator: {dailyDocket.bvaPoc} <br />
-          Hearing type: {dailyDocket.requestType} <br />
+          Hearing type: {dailyDocket.readableRequestType} <br />
           Regional office: {dailyDocket.regionalOffice}<br />
           Room number: {dailyDocket.room}
         </div>
@@ -169,7 +159,7 @@ export default class DailyDocket extends React.Component {
         <DailyDocketRows
           hearings={this.dailyDocketHearings()}
           readOnly={user.userRoleView || user.userRoleVso}
-          saveHearing={this.saveHearing}
+          saveHearing={this.props.saveHearing}
           openDispositionModal={this.openDispositionModal}
           regionalOffice={regionalOffice}
           user={user} />}

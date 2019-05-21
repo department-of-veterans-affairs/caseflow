@@ -68,6 +68,10 @@ class User < ApplicationRecord
     roles && (roles.include?("Mail Intake") || roles.include?("Admin Intake"))
   end
 
+  def hearings_user?
+    can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
+  end
+
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake")
   end
@@ -151,6 +155,10 @@ class User < ApplicationRecord
     else
       username.to_s
     end
+  end
+
+  def can_any_of_these_roles?(roles)
+    roles.any? { |role| can?(role) }
   end
 
   # We should not use user.can?("System Admin"), but user.admin? instead

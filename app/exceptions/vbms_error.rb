@@ -29,6 +29,8 @@ class VBMSError < RuntimeError
   class ShareExceptionFindRatingData < Caseflow::Error::VBMS; end
   class MissingVeteranIdentifier < Caseflow::Error::VBMS; end
   class Unknown < Caseflow::Error::VBMS; end
+  class UnknownUser < Caseflow::Error::VBMS; end
+  class BadSOAPMessage < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -83,6 +85,9 @@ class VBMSError < RuntimeError
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/276980/
     "User is not authorized." => "UserNotAuthorized",
 
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4999/events/332996/
+    "Logon ID \\w+ Not Found" => "UnknownUser",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/294187/
     "Veteran is employed by this station." => "VeteranEmployedByStation",
 
@@ -106,6 +111,9 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3728/events/331292/
     "The System has encountered an unknown error" => "Unknown",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3954/events/329778/
+    "Unable to parse SOAP message" => "BadSOAPMessage",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
     "missing required data" => "MissingData"

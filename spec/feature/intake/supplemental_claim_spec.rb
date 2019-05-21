@@ -92,8 +92,8 @@ feature "Supplemental Claim Intake" do
   let!(:before_ama_rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 10.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
       issues: [
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
@@ -136,16 +136,7 @@ feature "Supplemental Claim Intake" do
     )
 
     visit "/intake"
-    safe_click ".Select"
-    expect(page).to have_css(".cf-form-dropdown")
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.ramp_refiling)
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
-
-    safe_click ".Select"
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.supplemental_claim
-    find("#form-select").send_keys :enter
+    select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
 
     safe_click ".cf-submit.usa-button"
 
@@ -493,8 +484,8 @@ feature "Supplemental Claim Intake" do
     let!(:before_ama_rating_from_ramp) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview.ama_activation_date - 5.days,
-        profile_date: DecisionReview.ama_activation_date - 11.days,
+        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
         issues: [
           { decision_text: "Issue before AMA Activation from RAMP",
             reference_id: "ramp_ref_id" }

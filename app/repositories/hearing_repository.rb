@@ -5,21 +5,6 @@ class HearingRepository
   class HearingDayFull < StandardError; end
 
   class << self
-    # :nocov:
-    def fetch_hearings_for_judge(css_id, is_fetching_issues = false)
-      records = MetricsService.record("VACOLS: HearingRepository.fetch_hearings_for_judge: #{css_id}",
-                                      service: :vacols,
-                                      name: "fetch_hearings_for_judge") do
-        VACOLS::CaseHearing.hearings_for_judge(css_id) +
-          VACOLS::TravelBoardSchedule.hearings_for_judge_before_hearing_prep_cutoff_date(css_id)
-      end
-      hearings = hearings_for(MasterRecordHelper.remove_master_records_with_children(records))
-
-      # To speed up the daily docket and the hearing worksheet page loads, we pull in issues for appeals here.
-      load_issues(hearings) if is_fetching_issues
-      hearings
-    end
-
     def fetch_hearings_for_parent(hearing_day_id)
       # Implemented by call the array version of this method
       fetch_hearings_for_parents([hearing_day_id]).values.first || []
@@ -34,24 +19,6 @@ class HearingRepository
     def fetch_hearings_for_parents_assigned_to_judge(hearing_day_ids, judge)
       hearings_for(VACOLS::CaseHearing.hearings_for_hearing_days_assigned_to_judge(hearing_day_ids, judge))
         .group_by { |hearing| hearing.hearing_day_id.to_s }
-    end
-
-    def load_issues(hearings)
-      children_hearings = hearings.select { |h| h.master_record == false }
-      issues = VACOLS::CaseIssue.descriptions(children_hearings.map(&:appeal_vacols_id))
-
-      appeal_ids = children_hearings.map(&:appeal_id)
-      worksheet_issues_for_appeals_hash = worksheet_issues_for_appeals(appeal_ids)
-
-      hearings.map do |hearing|
-        next if hearing.master_record
-
-        issues_hash_array = issues[hearing.appeal_vacols_id] || []
-        hearing_worksheet_issues = worksheet_issues_for_appeals_hash[hearing.appeal_id] || []
-        next unless hearing_worksheet_issues.empty?
-
-        issues_hash_array.map { |i| WorksheetIssue.create_from_issue(hearing.appeal, Issue.load_from_vacols(i)) }
-      end
     end
 
     def hearings_for_appeal(appeal_vacols_id)
@@ -69,16 +36,10 @@ class HearingRepository
       vacols_record.update_hearing!(hearing_hash.merge(staff_id: vacols_record.slogid)) if hearing_hash.present?
     end
 
-    def to_hash(hearing)
-      hearing.as_json.each_with_object({}) do |(k, v), result|
-        result[k.to_sym] = v
-      end
-    end
-
-    def create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
-      VACOLS::CaseHearing.create_child_hearing!(
+    def create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
+      VACOLS::CaseHearing.create_hearing!(
         folder_nr: appeal.vacols_id,
-        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(hearing_datetime),
+        hearing_date: VacolsHelper.format_datetime_with_utc_timezone(scheduled_for),
         vdkey: hearing_day.id,
         hearing_type: hearing_day.request_type,
         room: hearing_day.room,
@@ -94,18 +55,16 @@ class HearingRepository
       hearing
     end
 
-    def slot_new_hearing(hearing_day_id, scheduled_time:, appeal:, hearing_location_attrs: nil)
+    def slot_new_hearing(hearing_day_id, scheduled_time_string:, appeal:, hearing_location_attrs: nil)
       hearing_day = HearingDay.find(hearing_day_id)
       fail HearingDayFull if hearing_day.hearing_day_full?
 
-      hearing_datetime = hearing_day.scheduled_for.to_datetime.change(
-        hour: scheduled_time["h"].to_i,
-        min: scheduled_time["m"].to_i,
-        offset: scheduled_time["offset"]
-      )
-
       hearing = if appeal.is_a?(LegacyAppeal)
-                  vacols_hearing = create_vacols_hearing(hearing_day, appeal, hearing_datetime, hearing_location_attrs)
+                  scheduled_for = HearingTimeService.legacy_formatted_scheduled_for(
+                    scheduled_for: hearing_day.scheduled_for,
+                    scheduled_time_string: scheduled_time_string
+                  )
+                  vacols_hearing = create_vacols_hearing(hearing_day, appeal, scheduled_for, hearing_location_attrs)
                   AppealRepository.update_location!(appeal, LegacyAppeal::LOCATION_CODES[:caseflow])
                   vacols_hearing
                 else
@@ -113,7 +72,7 @@ class HearingRepository
                     appeal: appeal,
                     hearing_day_id: hearing_day.id,
                     hearing_location_attributes: hearing_location_attrs || {},
-                    scheduled_time: hearing_datetime
+                    scheduled_time: scheduled_time_string
                   )
                 end
 
@@ -128,6 +87,7 @@ class HearingRepository
       end
 
       if vacols_record
+        LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
         set_vacols_values(hearing, vacols_record)
         true
       else
@@ -140,10 +100,9 @@ class HearingRepository
     def appeals_ready_for_hearing(vbms_id)
       AppealRepository.appeals_ready_for_hearing(vbms_id)
     end
-    # :nocov:
 
     def set_vacols_values(hearing, vacols_record)
-      hearing.assign_from_vacols(vacols_attributes(vacols_record))
+      hearing.assign_from_vacols(vacols_attributes(hearing, vacols_record))
       hearing
     end
 
@@ -155,8 +114,6 @@ class HearingRepository
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
       uniq_case_hearings.map do |vacols_record|
-        next empty_dockets(vacols_record) if master_record?(vacols_record)
-
         hearing = LegacyHearing
           .assign_or_create_from_vacols_record(vacols_record,
                                                legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
@@ -174,34 +131,13 @@ class HearingRepository
       end
     end
 
-    def master_record?(record)
-      record.master_record_type.present?
-    end
-
-    def empty_dockets(vacols_record)
-      values = MasterRecordHelper.values_based_on_type(vacols_record)
-      # Travel Board master records have a date range, so we create a master record for each day
-      values[:dates].inject([]) do |result, date|
-        result << Hearings::MasterRecord.new(scheduled_for: VacolsHelper.normalize_vacols_datetime(date),
-                                             request_type: values[:request_type],
-                                             master_record: true,
-                                             regional_office_key: values[:ro])
-        result
-      end
-    end
-
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-    def vacols_attributes(vacols_record)
+    def vacols_attributes(hearing, vacols_record)
       # use venue location on the hearing if it exists
       ro = vacols_record.hearing_venue || vacols_record.bfregoff
       date = HearingMapper.datetime_based_on_type(datetime: vacols_record.hearing_date,
                                                   regional_office_key: ro,
                                                   type: vacols_record.hearing_type)
-      judge_id = if vacols_record.css_id.nil?
-                   nil
-                 else
-                   User.find_by_css_id_or_create_with_default_station_id(vacols_record.css_id).id
-                 end
       {
         vacols_record: vacols_record,
         appeal_vacols_id: vacols_record.folder_nr,
@@ -235,7 +171,7 @@ class HearingRepository
         hearing_day_id: vacols_record.vdkey,
         master_record: false,
         bva_poc: vacols_record.vdbvapoc,
-        judge_id: judge_id
+        judge_id: hearing.user_id
       }
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength

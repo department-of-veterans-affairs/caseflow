@@ -136,7 +136,7 @@ RSpec.feature "Case details" do
           .click_link
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
-        scroll_element_in_to_view("#hearings-section")
+        scroll_to("#hearings-section")
         worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
 
@@ -160,7 +160,7 @@ RSpec.feature "Case details" do
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
-          scroll_element_in_to_view("#hearings-section")
+          scroll_to("#hearings-section")
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
           expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
@@ -363,7 +363,7 @@ RSpec.feature "Case details" do
     before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
     after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
-    scenario "reader link appears on page and sends us to reader", skip: "temp disabled for doccount test" do
+    scenario "reader link appears on page and sends us to reader" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       click_on "View #{appeal.documents.count} docs"
