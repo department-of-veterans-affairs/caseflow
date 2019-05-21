@@ -50,6 +50,13 @@ describe ExternalApi::EfolderService do
     it "returns document count" do
       expect(subject).to eq("20")
     end
+
+    it "caches result" do
+      cache_key = "Efolder-document-count-#{file_number}"
+      expect(Rails.cache.exist?(cache_key)).to eq(false)
+      subject
+      expect(Rails.cache.exist?(cache_key)).to eq(true)
+    end
   end
 
   context "#generate_efolder_request" do
