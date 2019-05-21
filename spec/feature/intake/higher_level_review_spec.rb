@@ -14,7 +14,6 @@ feature "Higher-Level Review" do
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
-  let(:intake_constants) { Constants.INTAKE_STRINGS }
 
   let(:veteran_file_number) { "123412345" }
 
@@ -128,11 +127,7 @@ feature "Higher-Level Review" do
     )
 
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-    find("#form-select").send_keys :enter
-
+    select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
     safe_click ".cf-submit.usa-button"
 
     expect(page).to have_content(search_page_title)
@@ -444,15 +439,9 @@ feature "Higher-Level Review" do
     Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
 
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-    find("#form-select").send_keys :enter
-
+    select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
     safe_click ".cf-submit.usa-button"
-
     fill_in search_bar_title, with: veteran_file_number
-
     click_on "Search"
 
     within_fieldset("What is the Benefit Type?") do
@@ -1335,7 +1324,7 @@ feature "Higher-Level Review" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{intake_constants.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
+            "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
           )
 
           # add before_ama ratings
@@ -1371,7 +1360,7 @@ feature "Higher-Level Review" do
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
-          expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
+          expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
 
           expect(LegacyIssueOptin.all.count).to eq(2)
 
@@ -1420,7 +1409,7 @@ feature "Higher-Level Review" do
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
-          expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
+          expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
         end
       end
     end

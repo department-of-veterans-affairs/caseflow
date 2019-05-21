@@ -8,10 +8,13 @@ RSpec.feature "RAMP Refiling Intake" do
 
   before do
     Timecop.freeze(post_ramp_start_date)
+    FeatureToggle.enable!(:ramp_intake)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
+
+  after { FeatureToggle.disable!(:ramp_intake) }
 
   let(:veteran) do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
@@ -63,10 +66,7 @@ RSpec.feature "RAMP Refiling Intake" do
       scroll_to(".cf-submit.usa-button")
       expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.ramp_refiling)
       safe_click ".cf-submit.usa-button"
 
       fill_in search_bar_title, with: "12341234"
@@ -105,12 +105,8 @@ RSpec.feature "RAMP Refiling Intake" do
       scroll_to(".cf-submit.usa-button")
       expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.ramp_refiling)
       safe_click ".cf-submit.usa-button"
-
       fill_in search_bar_title, with: "12341234"
       click_on "Search"
 
@@ -256,12 +252,8 @@ RSpec.feature "RAMP Refiling Intake" do
       scroll_to(".cf-submit.usa-button")
       expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.ramp_refiling)
       safe_click ".cf-submit.usa-button"
-
       fill_in search_bar_title, with: "12341234"
       click_on "Search"
 
@@ -523,11 +515,7 @@ RSpec.feature "RAMP Refiling Intake" do
       )
 
       visit "/intake/search"
-      scroll_to(".cf-submit.usa-button")
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.ramp_refiling)
       safe_click ".cf-submit.usa-button"
       fill_in search_bar_title, with: "12341234"
       click_on "Search"

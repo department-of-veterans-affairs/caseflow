@@ -115,10 +115,7 @@ feature "Appeal Intake" do
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.appeal
-    find("#form-select").send_keys :enter
+    select_form(Constants.INTAKE_FORM_NAMES.appeal)
 
     safe_click ".cf-submit.usa-button"
 
@@ -848,7 +845,7 @@ feature "Appeal Intake" do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
+          "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
         )
 
         click_intake_finish
@@ -865,7 +862,7 @@ feature "Appeal Intake" do
                  vacols_sequence_id: "1"
                )).to_not be_nil
 
-        expect(page).to have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
+        expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
       end
     end
 
@@ -901,7 +898,7 @@ feature "Appeal Intake" do
                  vacols_sequence_id: "1"
                )).to_not be_nil
 
-        expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
+        expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
       end
     end
   end
