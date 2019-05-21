@@ -76,31 +76,12 @@ describe HearingRepository do
       )
     end
 
-    let(:record2) do
-      OpenStruct.new(
-        folder_nr: "VIDEO RO15",
-        hearing_date: Time.zone.now,
-        master_record_type: :video
-      )
-    end
-
-    let(:record3) do
-      OpenStruct.new(
-        tbro: "RO19",
-        tbstdate: Time.zone.now,
-        tbenddate: Time.zone.now,
-        master_record_type: :travel_board
-      )
-    end
-
-    let(:records) { [record1, record2, record3] }
+    let(:records) { [record1] }
 
     it "should create hearing records" do
-      expect(subject.size).to eq 3
+      expect(subject.size).to eq 1
       expect(subject.first.vacols_id).to eq case_hearing.hearing_pkseq.to_s
       expect(subject.first.master_record).to eq false
-      expect(subject.second.master_record).to eq true
-      expect(subject.third.master_record).to eq true
     end
   end
 end

@@ -363,7 +363,7 @@ RSpec.feature "Case details" do
     before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
     after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
-    scenario "reader link appears on page and sends us to reader", skip: "temp disabled for doccount test" do
+    scenario "reader link appears on page and sends us to reader" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       click_on "View #{appeal.documents.count} docs"

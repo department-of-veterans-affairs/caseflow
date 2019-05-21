@@ -16,7 +16,9 @@ RSpec.feature "Hearing prep" do
     end
 
     context "worksheet header" do
-      let!(:legacy_hearing_two) { create(:legacy_hearing, user: current_user) }
+      let!(:legacy_hearing_two) { create(:legacy_hearing,
+                                         user: current_user,
+                                         hearing_day: legacy_hearing.hearing_day) }
 
       scenario "Hearing worksheet switch veterans" do
         visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
