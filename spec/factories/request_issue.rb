@@ -25,6 +25,7 @@ FactoryBot.define do
     trait :unidentified do
       is_unidentified { true }
       unidentified_issue_text { "unidentified issue description" }
+      benefit_type { "unidentified" }
     end
 
     trait :removed do
