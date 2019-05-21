@@ -1,40 +1,8 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES, ACTIONS, debounceMs } from '../analytics';
-import moment from 'moment';
+import { CATEGORIES, debounceMs } from '../analytics';
 import { now } from '../util/DateUtil';
-import { DOCKETS_TAB_INDEX_MAPPING } from '../Dockets';
 import _ from 'lodash';
-
-export const selectDocketsPageTabIndex = (tabIndex) => ({
-  type: Constants.SELECT_DOCKETS_PAGE_TAB_INDEX,
-  payload: {
-    tabIndex
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: ACTIONS.OPEN_HEARINGS_TAB,
-      label: DOCKETS_TAB_INDEX_MAPPING[tabIndex]
-    }
-  }
-});
-
-export const populateUpcomingHearings = (upcomingHearings) => ({
-  type: Constants.POPULATE_UPCOMING_HEARINGS,
-  payload: {
-    upcomingHearings
-  }
-});
-
-export const populateDailyDocket = (hearingDay, dailyDocket, date) => ({
-  type: Constants.POPULATE_DAILY_DOCKET,
-  payload: {
-    hearingDay,
-    dailyDocket,
-    date
-  }
-});
 
 export const populateWorksheet = (worksheet) => ({
   type: Constants.POPULATE_WORKSHEET,
@@ -65,40 +33,6 @@ export const getWorksheet = (id) => (dispatch) => {
     });
 };
 
-export const handleDocketServerError = (err) => ({
-  type: Constants.HANDLE_DOCKET_SERVER_ERROR,
-  payload: {
-    err
-  }
-});
-
-export const handleSaveHearingSuccess = (hearing, date) => ({
-  type: Constants.HANDLE_SAVE_HEARING_SUCCESS,
-  payload: {
-    hearing,
-    date
-  }
-});
-
-export const handleUpdateHearingSuccess = (hearing, date) => ({
-  type: Constants.HANDLE_UPDATE_HEARING_SUCCESS,
-  payload: {
-    hearing,
-    date
-  }
-});
-
-export const handleSaveHearingError = (err) => ({
-  type: Constants.HANDLE_SAVE_HEARING_ERROR,
-  payload: {
-    err
-  }
-});
-
-export const resetSaveHearingSuccess = () => ({
-  type: Constants.RESET_SAVE_HEARING_SUCCESS
-});
-
 export const onRepNameChange = (repName) => ({
   type: Constants.SET_REPNAME,
   payload: {
@@ -113,105 +47,11 @@ export const onWitnessChange = (witness) => ({
   }
 });
 
-export const setNotes = (hearingId, notes, date) => ({
-  type: Constants.SET_NOTES,
-  payload: {
-    hearingId,
-    notes,
-    date
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.DAILY_DOCKET_PAGE,
-      debounceMs
-    }
-  }
-});
-
-export const setHearingPrepped = (payload, gaCategory = CATEGORIES.HEARINGS_DAYS_PAGE, submitToGA = true) => ({
+export const setHearingPrepped = (hearingExternalId, prepped) => ({
   type: Constants.SET_HEARING_PREPPED,
-  payload,
-  ...submitToGA && {
-    meta: {
-      analytics: {
-        category: gaCategory,
-        action: ACTIONS.DOCKET_HEARING_PREPPED,
-        label: payload.prepped ? 'checked' : 'unchecked'
-      }
-    }
-  }
-});
-
-export const setDisposition = (hearingId, disposition, date) => ({
-  type: Constants.SET_DISPOSITION,
   payload: {
-    hearingId,
-    disposition,
-    date
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: ACTIONS.DISPOSITION_SELECTED,
-      label: disposition
-    }
-  }
-});
-
-export const setHoldOpen = (hearingId, holdOpen, date) => ({
-  type: Constants.SET_HOLD_OPEN,
-  payload: {
-    hearingId,
-    holdOpen,
-    date
-  }
-});
-
-export const setAod = (hearingId, aod, date) => ({
-  type: Constants.SET_AOD,
-  payload: {
-    hearingId,
-    aod,
-    date
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: ACTIONS.AOD_SELECTED,
-      label: aod
-    }
-  }
-});
-
-export const setTranscriptRequested = (hearingId, transcriptRequested, date) => ({
-  type: Constants.SET_TRANSCRIPT_REQUESTED,
-  payload: {
-    hearingId,
-    transcriptRequested,
-    date
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: ACTIONS.TRANSCRIPT_REQUESTED,
-      label: transcriptRequested ? 'checked' : 'unchecked'
-    }
-  }
-});
-
-export const setEvidenceWindowWaived = (hearingId, evidenceWindowWaived, date) => ({
-  type: Constants.SET_EVIDENCE_WINDOW_WAIVED,
-  payload: {
-    hearingId,
-    evidenceWindowWaived,
-    date
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.DAILY_DOCKET_PAGE,
-      action: ACTIONS.EVIDENCE_WINDOW_WAIVED,
-      label: evidenceWindowWaived ? 'checked' : 'unchecked'
-    }
+    hearingExternalId,
+    prepped
   }
 });
 
@@ -262,6 +102,18 @@ export const setWorksheetSaveFailedStatus = (saveFailed) => ({
   }
 });
 
+export const getHearingDayHearings = (hearingDayId) => (dispatch) => {
+  ApiUtil.get(`/hearings/hearing_day/${hearingDayId}`).
+    then((response) => {
+      dispatch({
+        type: Constants.SET_HEARING_DAY_HEARINGS,
+        payload: {
+          hearings: _.keyBy(JSON.parse(response.text).hearing_day.hearings, 'external_id')
+        }
+      });
+    });
+};
+
 export const saveWorksheet = (worksheet) => (dispatch) => {
   if (!worksheet.edited) {
     dispatch(setWorksheetTimeSaved(now()));
@@ -286,43 +138,8 @@ export const saveWorksheet = (worksheet) => (dispatch) => {
     });
 };
 
-export const setHearingViewed = (hearingId) => ({
-  type: Constants.SET_HEARING_VIEWED,
-  payload: { hearingId }
-});
-
-export const getDailyDocket = (dailyDocket, date) => (dispatch) => {
-  if (!dailyDocket || !dailyDocket[date]) {
-    ApiUtil.get(`/hearings/dockets/${date}`, { cache: true }).
-      then((response) => {
-        dispatch(populateDailyDocket(response.body.hearingDay, response.body.dailyDocket, date));
-
-        _.each(response.body.dailyDocket, (hearing) => {
-          ApiUtil.get(`/hearings/${hearing.external_id}`).then((hearingrResponse) => {
-            const resp = JSON.parse(hearingrResponse.text);
-
-            dispatch(handleUpdateHearingSuccess(resp, date));
-          }).
-            catch((error) => {
-              console.log(`Hearing endpoint failed with: ${error}`); // eslint-disable-line no-console
-            });
-        });
-      }, (err) => {
-        dispatch(handleDocketServerError(err));
-      });
-  }
-};
-
-export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (dispatch) => {
-  const payload = {
-    hearingId,
-    prepped,
-    date: moment(date).format('YYYY-MM-DD'),
-    setEdited: false
-  };
-
-  dispatch(setHearingPrepped(payload,
-    CATEGORIES.HEARING_WORKSHEET_PAGE));
+export const setPrepped = (hearingExternalId, prepped) => (dispatch) => {
+  dispatch(setHearingPrepped(hearingExternalId, prepped));
 
   let data = { hearing: { prepped } };
 
@@ -331,9 +148,7 @@ export const setPrepped = (hearingId, hearingExternalId, prepped, date) => (disp
       // request was successful
     },
     () => {
-      payload.prepped = !prepped;
-
       // request failed, resetting value
-      dispatch(setHearingPrepped(payload, CATEGORIES.HEARING_WORKSHEET_PAGE, false));
+      dispatch(setHearingPrepped(hearingExternalId, !prepped));
     });
 };

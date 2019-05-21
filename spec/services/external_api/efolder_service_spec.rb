@@ -34,6 +34,31 @@ describe ExternalApi::EfolderService do
     end
   end
 
+  context "#document_count" do
+    let(:user) { Generators::User.create }
+    let(:file_number) { "1234" }
+    let(:expected_response) { HTTPI::Response.new(200, [], { documents: "20" }.to_json) }
+
+    before do
+      allow(ExternalApi::EfolderService).to receive(:efolder_base_url).and_return(base_url)
+      allow(ExternalApi::EfolderService).to receive(:efolder_key).and_return(efolder_key)
+      allow(HTTPI).to receive(:get).with(instance_of(HTTPI::Request)).and_return(expected_response)
+    end
+
+    subject { ExternalApi::EfolderService.document_count(file_number, user) }
+
+    it "returns document count" do
+      expect(subject).to eq("20")
+    end
+
+    it "caches result" do
+      cache_key = "Efolder-document-count-#{file_number}"
+      expect(Rails.cache.exist?(cache_key)).to eq(false)
+      subject
+      expect(Rails.cache.exist?(cache_key)).to eq(true)
+    end
+  end
+
   context "#generate_efolder_request" do
     let(:user) { Generators::User.create }
     let(:appeal) { Generators::LegacyAppeal.build }
