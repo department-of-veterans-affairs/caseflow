@@ -36,7 +36,7 @@ describe Task do
         end
       end
 
-      context "when task is closed" do
+      context "when task is already closed" do
         let!(:task) { FactoryBot.create(:task, :on_hold, type: Task.name) }
         let!(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent: task) }
 
@@ -101,7 +101,7 @@ describe Task do
         end
       end
 
-      context "when task is closed" do
+      context "when task is already closed" do
         let!(:task) { FactoryBot.create(:task, :on_hold, type: Task.name, assigned_to: organization) }
         let!(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent: task) }
 
