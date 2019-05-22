@@ -68,7 +68,6 @@ describe HearingAdminActionTask do
     end
 
     it "finds closest_ro for veteran" do
-      VADotGovService = Fakes::VADotGovService
       verify_address_task.update!(status: "completed")
 
       expect(Appeal.first.closest_regional_office).to eq "RO17"

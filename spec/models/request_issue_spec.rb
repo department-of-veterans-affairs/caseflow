@@ -125,6 +125,30 @@ describe RequestIssue do
     end
   end
 
+  context "#requires_record_request_task?" do
+    context "issue is unidentified" do
+      it "does not require record request task" do
+        expect(unidentified_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is not a non-compensation line of business" do
+      let(:benefit_type) { "compensation" }
+
+      it "does not require a record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is non-compensation" do
+      let(:benefit_type) { "education" }
+
+      it "requires a record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq true
+      end
+    end
+  end
+
   context ".requires_processing" do
     before do
       rating_request_issue.submit_for_processing!(delay: 1.day)

@@ -1,22 +1,37 @@
 # frozen_string_literal: true
 
 describe HearingTask do
-  describe "#create_change_hearing_disposition_task_and_complete_children" do
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: root_task.appeal) }
-    let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: root_task.appeal) }
-    let(:instructions) { "Hello, please read these instructions." }
+  describe ".create_change_hearing_disposition_task" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let(:instructions) { "These are the instructions I've written for you." }
+    let!(:disposition_task) do
+      FactoryBot.create(
+        :disposition_task,
+        parent: hearing_task,
+        appeal: appeal,
+        status: Constants.TASK_STATUSES.in_progress
+      )
+    end
+    let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
-    subject { hearing_task.create_change_hearing_disposition_task_and_complete_children(instructions) }
+    subject { hearing_task.create_change_hearing_disposition_task(instructions) }
 
-    it "calls create_change_hearing_disposition_task_and_complete on the disposition task" do
-      allow(hearing_task)
-        .to receive_message_chain(:children, :active, :find_by)
-        .with(type: [DispositionTask.name, ChangeHearingDispositionTask.name])
-        .and_return(disposition_task)
-      expect(disposition_task).to receive(:create_change_hearing_disposition_task_and_complete).with(instructions)
+    it "completes the disposition task and its children and creates a new change hearing disposition task" do
+      expect(disposition_task.status).to_not eq Constants.TASK_STATUSES.completed
+      expect(ChangeHearingDispositionTask.count).to eq 0
 
       subject
+
+      expect(disposition_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      expect(transcription_task.reload.status).to eq Constants.TASK_STATUSES.completed
+      expect(ChangeHearingDispositionTask.count).to eq 1
+      change_hearing_disposition_task = ChangeHearingDispositionTask.last
+      expect(change_hearing_disposition_task.appeal).to eq appeal
+      expect(change_hearing_disposition_task.parent).to eq hearing_task
+      expect(change_hearing_disposition_task.active?).to be_truthy
+      expect(change_hearing_disposition_task.instructions).to match_array [instructions]
     end
   end
 
