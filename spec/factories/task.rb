@@ -244,6 +244,12 @@ FactoryBot.define do
       assigned_by { nil }
     end
 
+    factory :hearing_admin_action_verify_address_task, class: HearingAdminActionVerifyAddressTask do
+      type { HearingAdminActionVerifyAddressTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
     factory :informal_hearing_presentation_task, class: InformalHearingPresentationTask do
       type { InformalHearingPresentationTask.name }
       appeal { create(:appeal) }
