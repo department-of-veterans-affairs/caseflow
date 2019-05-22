@@ -259,15 +259,19 @@ RSpec.feature "Task queue" do
       FactoryBot.create(:user)
     end
 
+    let!(:lit_support_team) do
+      LitigationSupport.singleton
+    end
+
     before do
       OrganizationsUser.add_user_to_organization(mail_user, mail_team)
+      OrganizationsUser.add_user_to_organization(mail_user, lit_support_team)
       OrganizationsUser.add_user_to_organization(pulac_user, PulacCurello.singleton) 
       User.authenticate!(user: mail_user)
     end
 
     def validate_pulac_curello_tasks_created(task_type, label) 
       visit "/queue/appeals/#{appeal.uuid}"
-
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
       find(".Select-control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
@@ -299,11 +303,17 @@ RSpec.feature "Task queue" do
       expect(pulac_curello_task.assigned_to.is_a?(Organization)).to eq(true)
       expect(pulac_curello_task.assigned_to.class).to eq(PulacCurello)
       expect(pulac_curello_user_task.assigned_to).to eq(pulac_user)
+
+      User.unauthenticate!
+      User.authenticate!(user: pulac_user)
+      visit "/queue"
+      expect(page).to have_content("Assigned (1)")
+      expect(page).to have_content(appeal.veteran_file_number)
+
     end
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
       let!(:root_task) { FactoryBot.create(:root_task) }
-
       it "should allow us to assign a mail task to a user" do
         visit "/queue/appeals/#{appeal.uuid}"
 
@@ -333,7 +343,7 @@ RSpec.feature "Task queue" do
 
     context "when a ClearAndUnmistakeableErrorMailTask task is routed to Pulac Curello" do
       let!(:root_task) { FactoryBot.create(:root_task) }
-      it "creates two child tasks: one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curello org" do
+      it "creates two child tasks: one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curelslo org" do
        validate_pulac_curello_tasks_created("ClearAndUnmistakeableErrorMailTask", COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL)
       end
     end
