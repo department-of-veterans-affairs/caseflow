@@ -33,7 +33,7 @@ feature "Higher-Level Review" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: Time.zone.now.strftime("%D")
+        date: Time.zone.now.strftime("%m/%d/%Y")
       )
 
       step "name changes upstream" do
