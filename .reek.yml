@@ -10,6 +10,9 @@ detectors:
     exclude:
       - Appeal
       - Task
+  Attribute:
+    exclude:
+      - BulkTaskAssignment
   IrresponsibleModule:
     enabled: false
   MissingSafeMethod:

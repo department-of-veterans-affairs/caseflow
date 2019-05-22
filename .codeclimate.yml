@@ -19,8 +19,6 @@ checks:
     config:
       threshold: 25
     enabled: false
-  attribute:
-    enabled: false
   nested-control-flow:
     config:
       threshold: 4
