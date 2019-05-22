@@ -1,10 +1,10 @@
 import React from 'react';
 import ReduxBase from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/ReduxBase';
 import reducers, { initialState } from './reducers';
-import HearingScheduleApp from './HearingScheduleApp';
+import HearingsApp from './HearingsApp';
 
-const HearingSchedule = (props) => <ReduxBase store={initialState} reducer={reducers}>
-  <HearingScheduleApp {...props} />
+const Hearings = (props) => <ReduxBase store={initialState} reducer={reducers}>
+  <HearingsApp {...props} />
 </ReduxBase>;
 
-export default HearingSchedule;
+export default Hearings;

@@ -12,15 +12,15 @@ class HearingScheduleController < ApplicationController
   end
 
   def hearing_details_index
-    render "hearing_schedule/index"
+    render "hearings/index"
   end
 
   def build_schedule_index
-    render "hearing_schedule/index"
+    render "hearings/index"
   end
 
   def index
-    render "hearing_schedule/index"
+    render "hearings/index"
   end
 
   def verify_build_hearing_schedule_access
