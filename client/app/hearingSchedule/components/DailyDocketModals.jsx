@@ -42,13 +42,6 @@ export const LockModal = ({ updateLockHearingDay, onCancelDisplayLockModal, dail
 
 export class DispositionModal extends React.Component {
 
-  dispositionMap = {
-    postponed: 'Postponed',
-    no_show: 'No show',
-    held: 'Held',
-    cancelled: 'Canceled'
-  }
-
   COPY = {
     CASEFLOW: {
       body: <span>
