@@ -124,8 +124,9 @@ end
 class ClearAndUnmistakeableErrorMailTask < MailTask
   def available_actions(user)
     if LitigationSupport.singleton.user_has_access?(user) 
-      super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+      return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
     end
+    super
   end
 
   def self.label
@@ -306,8 +307,9 @@ end
 class ReconsiderationMotionMailTask < MailTask
   def available_actions(user)
     if LitigationSupport.singleton.user_has_access?(user) 
-      super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+      return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
     end
+    super
   end
 
   def self.label
@@ -332,8 +334,9 @@ end
 class VacateMotionMailTask < MailTask
   def available_actions(user)
     if LitigationSupport.singleton.user_has_access?(user) 
-      super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+      return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
     end
+    super
   end
 
   def self.label

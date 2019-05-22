@@ -343,7 +343,7 @@ RSpec.feature "Task queue" do
 
     context "when a ClearAndUnmistakeableErrorMailTask task is routed to Pulac Curello" do
       let!(:root_task) { FactoryBot.create(:root_task) }
-      it "creates two child tasks: one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curelslo org" do
+      it "creates two child tasks: one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curello org" do
        validate_pulac_curello_tasks_created("ClearAndUnmistakeableErrorMailTask", COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL)
       end
     end
