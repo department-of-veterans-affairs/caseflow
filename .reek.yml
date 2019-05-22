@@ -5,11 +5,15 @@ detectors:
     enabled: false
   TooManyMethods:
     exclude:
+      - DispositionTask
       - RootTask
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
+  Attribute:
+    exclude:
+      - BulkTaskAssignment
   IrresponsibleModule:
     enabled: false
   MissingSafeMethod:
