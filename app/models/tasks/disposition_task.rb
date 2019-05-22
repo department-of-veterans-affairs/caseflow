@@ -6,6 +6,7 @@
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
+  validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
 
@@ -100,6 +101,10 @@ class DispositionTask < GenericTask
 
   def update_children_status_after_closed
     children.active.update_all(status: status)
+  end
+
+  def cascade_closure_from_child_task?(_child_task)
+    true
   end
 
   def update_hearing_and_self(params:, payload_values:)
