@@ -727,7 +727,7 @@ feature "Higher-Level Review" do
         expect(page).to have_content("1 issue")
       end
 
-      scenario "validate decsion date" do
+      scenario "validate decision date" do
         start_higher_level_review(veteran_no_ratings)
         visit "/intake/add_issues"
         click_intake_add_issue
@@ -736,9 +736,7 @@ feature "Higher-Level Review" do
         find("#issue-category").send_keys :enter
 
         fill_in "Decision date", with: "13/04/2019"
-
-        err_message = "Please enter a valid decision date"
-        expect(page).to have_content(err_message)
+        expect(page).to have_content("Please enter a valid decision date")
       end
     end
 
