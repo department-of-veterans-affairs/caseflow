@@ -108,7 +108,7 @@ class HearingWorksheetIssues extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  worksheetIssues: state.worksheetIssues
+  worksheetIssues: state.hearings.worksheetIssues
 });
 
 export default connect(

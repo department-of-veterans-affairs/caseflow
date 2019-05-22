@@ -49,7 +49,7 @@ const getDailyDocketKey = (state, action) => _.findKey(
   (hearings) => _.some(hearings, { id: action.payload.hearingId })
 );
 
-export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
+export const hearingsReducer = function(state = mapDataToInitialState(), action = {}) {
   let dailyDocketKey;
 
   switch (action.type) {
@@ -236,4 +236,4 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   }
 };
 
-export default hearingsReducers;
+export default hearingsReducer;
