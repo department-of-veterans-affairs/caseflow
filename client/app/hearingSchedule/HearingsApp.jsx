@@ -149,13 +149,16 @@ export default class HearingsApp extends React.PureComponent {
 
 HearingsApp.propTypes = {
   userDisplayName: PropTypes.string,
+  dropdownUrls: PropTypes.array,
+  applicationUrls: PropTypes.array,
+  feedbackUrl: PropTypes.string.isRequired,
+  buildDate: PropTypes.string,
   userRoleAssign: PropTypes.bool,
   userRoleBuild: PropTypes.bool,
   userRoleView: PropTypes.bool,
   userRoleVso: PropTypes.bool,
-  feedbackUrl: PropTypes.string.isRequired,
-  buildDate: PropTypes.string,
-  dropdownUrls: PropTypes.array,
+  userRoleHearingPrep: PropTypes.bool,
+  userInHearingsOrganization: PropTypes.bool,
   userRole: PropTypes.string,
   userId: PropTypes.number,
   userCssId: PropTypes.string
