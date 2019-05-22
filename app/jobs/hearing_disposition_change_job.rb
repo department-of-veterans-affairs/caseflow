@@ -62,7 +62,7 @@ class HearingDispositionChangeJob < CaseflowJob
     when :stale
       # complete the DispositionTask and create a ChangeHearingDispositionTask to
       # remind staff to update the hearing's disposition
-      task.create_change_hearing_disposition_task_and_complete
+      task.parent.create_change_hearing_disposition_task
     end
 
     label

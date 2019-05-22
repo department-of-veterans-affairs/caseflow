@@ -845,7 +845,7 @@ feature "Appeal Intake" do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
+          "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
         )
 
         click_intake_finish
@@ -862,7 +862,7 @@ feature "Appeal Intake" do
                  vacols_sequence_id: "1"
                )).to_not be_nil
 
-        expect(page).to have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
+        expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
       end
     end
 
@@ -898,7 +898,7 @@ feature "Appeal Intake" do
                  vacols_sequence_id: "1"
                )).to_not be_nil
 
-        expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
+        expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
       end
     end
   end

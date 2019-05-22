@@ -50,10 +50,18 @@ class HearingTask < GenericTask
     AppealRepository.update_location!(appeal, location)
   end
 
-  def create_change_hearing_disposition_task_and_complete_children(instructions = nil)
-    any_disposition_task = children.active.find_by(type: [DispositionTask.name, ChangeHearingDispositionTask.name])
+  def create_change_hearing_disposition_task(instructions = nil)
+    task_names = [DispositionTask.name, ChangeHearingDispositionTask.name]
+    active_disposition_tasks = children.active.where(type: task_names).to_a
 
-    any_disposition_task&.create_change_hearing_disposition_task_and_complete(instructions)
+    multi_transaction do
+      ChangeHearingDispositionTask.create!(
+        appeal: appeal,
+        parent: self,
+        instructions: instructions.present? ? [instructions] : nil
+      )
+      active_disposition_tasks.each { |task| task.update!(status: Constants.TASK_STATUSES.completed) }
+    end
   end
 
   def disposition_task
