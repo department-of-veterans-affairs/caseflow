@@ -5,18 +5,18 @@ require "rails_helper"
 describe BulkTaskAssignment do
   describe "#process" do
     let(:organization) { HearingsManagement.singleton }
-    let!(:schedule_hearing1) do
+    let!(:no_show_hearing_task1) do
       FactoryBot.create(
         :no_show_hearing_task, 
         assigned_to: organization, 
         created_at: 5.days.ago)
     end
-    let!(:schedule_hearing2) do
+    let!(:no_show_hearing_task2) do
       FactoryBot.create(:no_show_hearing_task, 
         assigned_to: organization, 
         created_at: 2.days.ago)
     end
-    let!(:schedule_hearing3) do
+    let!(:no_show_hearing_task3) do
       FactoryBot.create(:no_show_hearing_task, 
         assigned_to: organization, 
         created_at: 1.days.ago)
@@ -67,8 +67,8 @@ describe BulkTaskAssignment do
       let(:regional_office) { "RO17" }
 
       it "filters by regional office" do
-        schedule_hearing2.appeal.update(closest_regional_office: regional_office)
-        schedule_hearing3.appeal.update(closest_regional_office: "RO19")
+        no_show_hearing_task2.appeal.update(closest_regional_office: regional_office)
+        no_show_hearing_task3.appeal.update(closest_regional_office: "RO19")
         organization.users << assigned_to
         organization.users << assigned_by
         count_before = Task.count
@@ -80,8 +80,8 @@ describe BulkTaskAssignment do
         expect(result.first.assigned_to).to eq assigned_to
         expect(result.first.type).to eq "NoShowHearingTask"
         expect(result.first.assigned_by).to eq assigned_by
-        expect(result.first.appeal).to eq schedule_hearing2.appeal
-        expect(result.first.parent_id).to eq schedule_hearing2.id
+        expect(result.first.appeal).to eq no_show_hearing_task2.appeal
+        expect(result.first.parent_id).to eq no_show_hearing_task2.id
       end
     end
 
@@ -148,8 +148,8 @@ describe BulkTaskAssignment do
         expect(result.first.assigned_to).to eq assigned_to
         expect(result.first.type).to eq "NoShowHearingTask"
         expect(result.first.assigned_by).to eq assigned_by
-        expect(result.first.appeal).to eq schedule_hearing1.appeal
-        expect(result.first.parent_id).to eq schedule_hearing1.id
+        expect(result.first.appeal).to eq no_show_hearing_task1.appeal
+        expect(result.first.parent_id).to eq no_show_hearing_task1.id
       end
     end
   end
