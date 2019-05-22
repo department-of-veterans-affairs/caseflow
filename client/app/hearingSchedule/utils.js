@@ -1,4 +1,4 @@
-import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
 
 export const namePartToSortBy = (fullName) => {
   const nameParts = fullName.split(' ');
@@ -37,5 +37,6 @@ export const fullNameParts = (fullName) => {
 };
 
 export const isPreviouslyScheduledHearing = (hearing) => (
-  hearing.disposition === TASK_STATUSES.postponed || hearing.disposition === TASK_STATUSES.cancelled
+  hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
+    hearing.disposition === HEARING_DISPOSITION_TYPES.cancelled
 );
