@@ -481,7 +481,17 @@ feature "Higher Level Review Edit issues" do
       )
       add_intake_rating_issue("ankylosis of hip")
 
-      expect(page).to have_content(Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin)
+      expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_NEW)
+
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path(
+        "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
+      )
+
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT)
     end
   end
 

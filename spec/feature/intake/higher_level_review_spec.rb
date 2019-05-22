@@ -14,7 +14,6 @@ feature "Higher-Level Review" do
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
-  let(:intake_constants) { Constants.INTAKE_STRINGS }
 
   let(:veteran_file_number) { "123412345" }
 
@@ -726,6 +725,18 @@ feature "Higher-Level Review" do
 
         expect(page).to have_content("1 issue")
       end
+
+      scenario "validate decision date" do
+        start_higher_level_review(veteran_no_ratings)
+        visit "/intake/add_issues"
+        click_intake_add_issue
+
+        fill_in "Issue category", with: "Apportionment"
+        find("#issue-category").send_keys :enter
+
+        fill_in "Decision date", with: "13/04/2019"
+        expect(page).to have_content("Please enter a valid decision date")
+      end
     end
 
     scenario "Add Issues modal uses promulgation date" do
@@ -1325,7 +1336,7 @@ feature "Higher-Level Review" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{intake_constants.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
+            "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
           )
 
           # add before_ama ratings
@@ -1361,7 +1372,7 @@ feature "Higher-Level Review" do
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
-          expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
+          expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
 
           expect(LegacyIssueOptin.all.count).to eq(2)
 
@@ -1410,7 +1421,7 @@ feature "Higher-Level Review" do
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
-          expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
+          expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
         end
       end
     end

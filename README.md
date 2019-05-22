@@ -15,7 +15,6 @@ The Appeals Modernization team's mission is to empower employees with technology
          * [Hearings](#hearings)
       * [Caseflow products in a mature state](#caseflow-products-in-a-mature-state)
          * [Dispatch](#dispatch)
-         * [Hearing Prep](#hearing-prep)
          * [API](#api)
          * [Certification](#certification)
       * [Other Caseflow Products](#other-caseflow-products)
@@ -572,9 +571,6 @@ Rails.cache.write("certification_out_of_service", true)
 
 # enable for dispatch only
 Rails.cache.write("dispatch_out_of_service", true)
-
-# enable for hearing prep only
-Rails.cache.write("hearing_prep_out_of_service", true)
 
 # enable for hearings only
 Rails.cache.write("hearings_out_of_service", true)

@@ -15,6 +15,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
+import { validateDate } from '../util/issues';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -39,7 +40,8 @@ class NonratingRequestIssueModal extends React.Component {
       selectedNonratingIssueId: '',
       ineligibleDueToId: null,
       ineligibleReason: null,
-      decisionReviewTitle: null
+      decisionReviewTitle: null,
+      dateError: false
     };
   }
 
@@ -70,7 +72,8 @@ class NonratingRequestIssueModal extends React.Component {
 
   decisionDateOnChange = (value) => {
     this.setState({
-      decisionDate: value
+      decisionDate: value,
+      dateError: !validateDate(value)
     });
   }
 
@@ -208,6 +211,7 @@ class NonratingRequestIssueModal extends React.Component {
             label="Decision date"
             strongLabel
             value={decisionDate}
+            errorMessage={this.state.dateError ? 'Please enter a valid decision date.' : null}
             onChange={this.decisionDateOnChange} />
         </div>
 
@@ -235,7 +239,7 @@ class NonratingRequestIssueModal extends React.Component {
           { classNames: ['usa-button', 'add-issue'],
             name: this.getNextButtonText(),
             onClick: this.onAddIssue,
-            disabled: requiredFieldsMissing
+            disabled: requiredFieldsMissing || this.state.dateError
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
             name: 'None of these match, see more options',

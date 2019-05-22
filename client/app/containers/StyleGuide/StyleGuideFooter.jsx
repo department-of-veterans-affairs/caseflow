@@ -44,7 +44,7 @@ export default class StyleGuideFooter extends React.PureComponent {
       <Router>
         <NavigationBar
           wideApp="full"
-          appName="Hearing Prep"
+          appName="Hearings"
           logoProps={{
             accentColor: LOGO_COLORS.HEARINGS.ACCENT,
             overlapColor: LOGO_COLORS.HEARINGS.OVERLAP
@@ -76,7 +76,7 @@ export default class StyleGuideFooter extends React.PureComponent {
 
       <Footer
         wideApp="full"
-        appName="Hearing Prep"
+        appName="Hearings"
         buildDate="10/01/2017"
         feedbackUrl="#footer" />
     </div>;
