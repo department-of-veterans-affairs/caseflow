@@ -5,6 +5,7 @@ detectors:
     enabled: false
   TooManyMethods:
     exclude:
+      - DispositionTask
       - RootTask
   InstanceVariableAssumption:
     exclude:
