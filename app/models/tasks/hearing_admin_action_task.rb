@@ -28,7 +28,7 @@ class HearingAdminActionTask < GenericTask
   end
 
   def available_actions(user)
-    hearing_admin_actions = available_hearing_admin_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
 
     if assigned_to == user
       [

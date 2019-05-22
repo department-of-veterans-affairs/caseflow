@@ -3,7 +3,10 @@
 describe RampRefiling do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
+    FeatureToggle.enable!(:ramp_intake)
   end
+
+  after { FeatureToggle.disable!(:ramp_intake) }
 
   let(:user) { Generators::User.build }
   let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }

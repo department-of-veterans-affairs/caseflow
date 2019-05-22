@@ -10,7 +10,7 @@ class TranscriptionTask < GenericTask
   end
 
   def available_actions(user)
-    hearing_admin_actions = available_hearing_admin_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
 
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       [

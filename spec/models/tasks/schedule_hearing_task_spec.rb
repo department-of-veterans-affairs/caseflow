@@ -82,7 +82,7 @@ describe ScheduleHearingTask do
     end
   end
 
-  context "#update_from_params" do
+  describe "#update_from_params" do
     context "AMA appeal" do
       let(:hearing_day) do
         create(:hearing_day,
@@ -192,7 +192,66 @@ describe ScheduleHearingTask do
     end
   end
 
-  context ".tasks_for_ro" do
+  describe "#create_change_hearing_disposition_task" do
+    let(:appeal) { FactoryBot.create(:appeal) }
+    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+    let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, disposition: past_hearing_disposition) }
+    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+    let!(:association) { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+    let!(:hearing_task_2) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+    let!(:association_2) do
+      FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
+    end
+    let!(:task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+    let(:instructions) { "These are my detailed instructions for a schedule hearing task." }
+
+    before do
+      [hearing_task, disposition_task].each { |task| task&.update!(status: Constants.TASK_STATUSES.completed) }
+    end
+
+    subject { task.create_change_hearing_disposition_task(instructions) }
+
+    it "creates new hearing and change hearing disposition tasks and cancels unwanted tasks" do
+      subject
+
+      expect(hearing_task.reload.active?).to be_falsey
+      expect(disposition_task.reload.active?).to be_falsey
+      expect(hearing_task_2.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+      new_hearing_tasks = appeal.tasks.active.where(type: HearingTask.name)
+      expect(new_hearing_tasks.count).to eq 1
+      expect(new_hearing_tasks.first.hearing).to eq hearing
+      new_change_tasks = appeal.tasks.active.where(type: ChangeHearingDispositionTask.name)
+      expect(new_change_tasks.count).to eq 1
+      expect(new_change_tasks.first.parent).to eq new_hearing_tasks.first
+    end
+
+    context "the past hearing disposition is nil" do
+      let(:past_hearing_disposition) { nil }
+
+      it "raises an error" do
+        expect { subject }
+          .to raise_error(Caseflow::Error::ActionForbiddenError)
+          .with_message(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+      end
+    end
+
+    context "there's no past inactive hearing task" do
+      let(:hearing_task) { nil }
+      let(:disposition_task) { nil }
+      let(:association) { nil }
+
+      it "raises an error" do
+        expect { subject }
+          .to raise_error(Caseflow::Error::ActionForbiddenError)
+          .with_message(COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+      end
+    end
+  end
+
+  describe "#tasks_for_ro" do
     let(:regional_office) { "RO17" }
     let(:number_of_cases) { 10 }
 

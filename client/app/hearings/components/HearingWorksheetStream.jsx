@@ -112,8 +112,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  worksheetAppeals: state.worksheetAppeals,
-  worksheetIssues: state.worksheetIssues
+  worksheetAppeals: state.hearings.worksheetAppeals,
+  worksheetIssues: state.hearings.worksheetIssues
 });
 
 export default connect(

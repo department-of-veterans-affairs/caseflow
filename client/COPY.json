@@ -407,6 +407,10 @@
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
   "INTAKE_WITHDRAWN_BANNER": "This review will be withdrawn. You can intake these issues as a different type of decision review, if that was requested.",
 
+  "VACOLS_OPTIN_ISSUE_NEW": "Adding this issue will automatically close VACOLS issue",
+  "VACOLS_OPTIN_ISSUE_CLOSED_EDIT": "This issue has automatically closed the VACOLS issue",
+  "VACOLS_OPTIN_ISSUE_CLOSED": "VACOLS issue has been closed",
+
   "WITHDRAW_HEARING_MODAL_TITLE": "Confirm withdraw hearing",
   "WITHDRAW_HEARING_MODAL_BODY": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled.",
   "WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE": "You have successfully withdrawn %s's hearing request",
@@ -420,7 +424,7 @@
   "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE": "Send for hearing disposition change",
   "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_BODY": "Choosing this option will send this case to a Hearings Branch administrator for review. All open tasks on this case will be closed and you will no longer be able to work this case.",
   "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS": "Successfully sent %s's case to a Hearings Branch administrator for review.",
-  "REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR": "Can only request a hearing disposition change on hearing tasks.",
+  "REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR": "Want to request a change in hearing disposition, but no eligible hearing task was found.",
 
   "COMPLETE_TRANSCRIPTION_BODY": "Mark transcription as completed and send appeal to the next team.",
 

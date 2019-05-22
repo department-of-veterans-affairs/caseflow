@@ -179,8 +179,7 @@ export class ListScheduleContainer extends React.Component {
             onApply={this.createHearingPromise}
             openModal={this.openModal}
             userRoleHearingPrep={this.props.userRoleHearingPrep}
-            userRoleBuild={this.props.userRoleBuild}
-            hearingPrepRedirect={this.props.hearingPrepRedirect} />
+            userRoleBuild={this.props.userRoleBuild} />
           {this.state.modalOpen &&
             <HearingDayAddModal
               closeModal={this.closeModal}
