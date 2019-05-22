@@ -7,6 +7,7 @@ import { combineReducers } from 'redux';
 import commonComponentsReducer from '../components/common/reducers';
 import caseListReducer from '../queue/CaseList/CaseListReducer';
 import { workQueueReducer } from '../queue/reducers';
+import hearingsReducer from '../hearings/reducers/index';
 import uiReducer from '../queue/uiReducer/uiReducer';
 
 export const initialState = {};
@@ -376,6 +377,7 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
   }
 };
 const combinedReducer = combineReducers({
+  hearings: hearingsReducer,
   hearingSchedule: hearingScheduleReducer,
   ui: uiReducer,
   caseList: caseListReducer,

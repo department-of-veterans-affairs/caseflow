@@ -77,11 +77,16 @@ export default class DailyDocket extends React.Component {
     return dailyDocket.readableRequestType === 'Central' ? 'C' : dailyDocket.regionalOfficeKey;
   };
 
-  openDispositionModal = ({ hearing, disposition, onConfirm }) => {
+  openDispositionModal = ({ hearing, fromDisposition, toDisposition, onConfirm, onCancel }) => {
     this.setState({
       editedDispositionModalProps: {
         hearing,
-        disposition,
+        fromDisposition,
+        toDisposition,
+        onCancel: () => {
+          onCancel();
+          this.closeDispositionModal();
+        },
         onConfirm: () => {
           onConfirm();
           this.closeDispositionModal();
@@ -115,8 +120,7 @@ export default class DailyDocket extends React.Component {
 
       {editedDispositionModalProps &&
         <DispositionModal
-          {...this.state.editedDispositionModalProps}
-          onCancel={this.closeDispositionModal} />}
+          {...this.state.editedDispositionModalProps} />}
 
       {displayRemoveHearingDayModal &&
         <RemoveHearingModal dailyDocket={dailyDocket}

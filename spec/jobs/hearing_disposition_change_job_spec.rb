@@ -128,8 +128,8 @@ describe HearingDispositionChangeJob do
 
           expect(subject).to eq(:stale)
 
-          expect(task.closed_at).to_not be_nil
-          expect(task.status).to eq Constants.TASK_STATUSES.completed
+          expect(task.reload.closed_at).to_not be_nil
+          expect(task.reload.status).to eq Constants.TASK_STATUSES.completed
           expect(ChangeHearingDispositionTask.count).to eq 1
           expect(ChangeHearingDispositionTask.first.appeal).to eq task.appeal
           expect(ChangeHearingDispositionTask.first.parent).to eq task.parent

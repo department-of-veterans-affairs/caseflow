@@ -8,7 +8,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def index
     respond_to do |format|
       format.html do
-        render "hearing_schedule/index"
+        render "hearings/index"
       end
 
       format.json do

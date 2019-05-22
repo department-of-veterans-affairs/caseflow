@@ -144,6 +144,7 @@ FactoryBot.define do
       type { DispositionTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
+      parent { create(:hearing_task) }
     end
 
     factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do
@@ -239,6 +240,12 @@ FactoryBot.define do
 
     factory :hearing_admin_action_incarcerated_veteran_task, class: HearingAdminActionIncarceratedVeteranTask do
       type { HearingAdminActionIncarceratedVeteranTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
+    factory :hearing_admin_action_verify_address_task, class: HearingAdminActionVerifyAddressTask do
+      type { HearingAdminActionVerifyAddressTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
     end
