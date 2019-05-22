@@ -426,7 +426,7 @@
   "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE": "Send for hearing disposition change",
   "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_BODY": "Choosing this option will send this case to a Hearings Branch administrator for review. All open tasks on this case will be closed and you will no longer be able to work this case.",
   "CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS": "Successfully sent %s's case to a Hearings Branch administrator for review.",
-  "REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR": "Can only request a hearing disposition change on hearing tasks.",
+  "REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR": "Want to request a change in hearing disposition, but no eligible hearing task was found.",
 
   "COMPLETE_TRANSCRIPTION_BODY": "Mark transcription as completed and send appeal to the next team.",
 
