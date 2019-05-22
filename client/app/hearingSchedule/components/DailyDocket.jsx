@@ -60,11 +60,11 @@ export default class DailyDocket extends React.Component {
   onInvalidForm = (hearingId) => (invalid) => this.props.onInvalidForm(hearingId, invalid);
 
   previouslyScheduledHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => isPreviouslyScheduledHearing(hearing));
+    return _.filter(this.props.hearings, isPreviouslyScheduledHearing);
   };
 
   dailyDocketHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => !isPreviouslyScheduledHearing(hearing));
+    return _.filter(this.props.hearings, _.negate(isPreviouslyScheduledHearing));
   };
 
   getRegionalOffice = () => {
