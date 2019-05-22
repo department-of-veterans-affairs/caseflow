@@ -4,6 +4,7 @@ import moment from 'moment';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Modal from '../../components/Modal';
 import Button from '../../components/Button';
+import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.json';
 
 export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay, dailyDocket }) => (
   <div>
@@ -93,10 +94,10 @@ export class DispositionModal extends React.Component {
             <div>
               <p>
                 Previous Disposition: <strong>
-                  {hearing.disposition ? this.dispositionMap[fromDisposition] : 'None'}
+                  {hearing.disposition ? HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[fromDisposition] : 'None'}
                 </strong>
               </p>
-              <p>New Disposition: <strong>{this.dispositionMap[toDisposition]}</strong></p>
+              <p>New Disposition: <strong>{HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[toDisposition]}</strong></p>
             </div>
             {this.COPY[hearingType].body}
           </Modal>
