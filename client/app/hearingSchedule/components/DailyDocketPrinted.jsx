@@ -69,6 +69,12 @@ export class DailyDocketPrinted extends React.Component {
         <div className="cf-app-segment">
           <div className="cf-push-left">
             <h2>Daily Docket ({moment(docket.scheduledFor).format('ddd M/DD/YYYY')})</h2>
+            {docket.notes &&
+              <div>
+                <strong>Notes:</strong><br/>
+                {docket.notes}
+              </div>
+            }
           </div>
 
           <div className="cf-push-right">
