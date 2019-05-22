@@ -3,7 +3,6 @@ import StatusMessage from '../../components/StatusMessage';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { PAGE_PATHS, INTAKE_STATES, FORM_TYPES } from '../constants';
-import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
 import { getIntakeStatus } from '../selectors';
 import _ from 'lodash';
 import Alert from '../../components/Alert';
@@ -93,7 +92,7 @@ class VacolsOptInList extends React.PureComponent {
     <Fragment>
       <ul className="cf-success-checklist cf-left-padding">
         <li>
-          <strong>{INTAKE_STRINGS.vacols_optin_issue_closed}</strong>
+          <strong>{COPY.VACOLS_OPTIN_ISSUE_CLOSED}</strong>
           {this.props.issues.map((ri, i) =>
             <p key={`vacols-issue-${i}`} className="">
               {legacyIssue(ri, this.props.legacyAppeals).description}

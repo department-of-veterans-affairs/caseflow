@@ -51,11 +51,11 @@ describe GenericTask do
     end
   end
 
-  describe ".available_hearing_admin_actions" do
+  describe ".available_hearing_user_actions" do
     let!(:task) { FactoryBot.create(:generic_task) }
     let(:user) { FactoryBot.create(:user) }
 
-    subject { task.available_hearing_admin_actions(user) }
+    subject { task.available_hearing_user_actions(user) }
 
     it "returns no actions when task doesn't have an active hearing task ancestor" do
       expect(subject).to eq []
@@ -106,6 +106,60 @@ describe GenericTask do
 
       context "hearing task has only an active child change hearing disposition task" do
         let(:disposition_task_type) { :change_hearing_disposition_task }
+
+        it "returns no actions" do
+          expect(subject).to eq []
+        end
+      end
+    end
+
+    context "task's appeal has an inactive hearing task associated with a hearing with a disposition" do
+      let!(:appeal) { FactoryBot.create(:appeal) }
+      let!(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+      let!(:hearing) do
+        FactoryBot.create(:hearing, appeal: appeal, disposition: past_hearing_disposition)
+      end
+      let!(:hearing_task) do
+        FactoryBot.create(:hearing_task, appeal: appeal, status: Constants.TASK_STATUSES.completed)
+      end
+      let!(:association) { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
+      let!(:hearing_task_2) { FactoryBot.create(:hearing_task, appeal: appeal) }
+      let!(:association_2) do
+        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
+      end
+
+      context "user is a member of hearings management and task is a ScheduleHearingTask" do
+        let!(:task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+
+        before do
+          OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
+        end
+
+        it "returns a create change previous hearing disposition task action" do
+          expect(subject).to eq [Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h]
+        end
+
+        context "past hearing disposition is nil" do
+          let!(:past_hearing_disposition) { nil }
+
+          it "returns no actions" do
+            expect(subject).to eq []
+          end
+        end
+
+        context "task is not a ScheduleHearingTask" do
+          let!(:task) { FactoryBot.create(:disposition_task, parent: hearing_task_2, appeal: appeal) }
+
+          it "returns no actions" do
+            expect(subject).to eq []
+          end
+        end
+      end
+
+      context "user is a member of hearing admin" do
+        before do
+          OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+        end
 
         it "returns no actions" do
           expect(subject).to eq []

@@ -159,7 +159,7 @@ RSpec.feature "AmaQueue" do
           )
       end
 
-      scenario "veteran is the appellant", skip: "temp disabled for doccount test" do
+      scenario "veteran is the appellant" do
         visit "/queue"
 
         click_on appeals.first.veteran.first_name

@@ -3,6 +3,19 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
+
+  def select_form(form_name)
+    if FeatureToggle.enabled?(:ramp_intake)
+      safe_click ".Select"
+      fill_in "Which form are you processing?", with: form_name
+      find("#form-select").send_keys :enter
+    else
+      within_fieldset("Which form are you processing?") do
+        find("label", text: form_name).click
+      end
+    end
+  end
+
   def start_higher_level_review(
     test_veteran,
     receipt_date: 1.day.ago,
