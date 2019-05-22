@@ -9,8 +9,11 @@ import { getDisplayTime } from './DailyDocketRowDisplayText';
 import { isPreviouslyScheduledHearing } from '../utils';
 import { getDate } from '../../util/DateUtil';
 import { openPrintDialogue } from '../../util/PrintUtil';
+import AOD_REASON_TO_LABEL_MAP from '../../../constants/AOD_REASON_TO_LABEL_MAP.json';
+import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.json';
 
 export class DailyDocketPrinted extends React.Component {
+
   componentDidMount() {
     window.onafterprint = () => window.close();
 
@@ -31,8 +34,22 @@ export class DailyDocketPrinted extends React.Component {
       }
     },
     {
-      header: 'Docket Number',
-      valueName: 'docketNumber'
+      header: '',
+      valueFunction: (hearing) => {
+        const disposition = hearing.disposition ? HEARING_DISPOSITION_TYPE_TO_LABEL_MAP[hearing.disposition] : 'None';
+
+        return (
+          <div>
+            <strong>Number:</strong> {hearing.docketNumber}<br />
+            <strong>Disposition:</strong> {disposition}<br />
+            {this.isUserJudge() &&
+              <span>
+                <strong>AOD:</strong> {hearing.aod ? AOD_REASON_TO_LABEL_MAP[hearing.aod] : 'None'}
+              </span>
+            }
+          </div>
+        );
+      }
     },
     {
       header: '',
