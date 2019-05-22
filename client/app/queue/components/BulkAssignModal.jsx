@@ -73,6 +73,16 @@ class BulkAssignModal extends React.PureComponent {
     if (this.generateErrors().length === 0) {
       this.props.assignTasks(this.state.modal);
       this.handleModalToggle();
+
+      return ApiUtil.post('/bulk_task_assignments', { data: { bulk_task_assignment: { organization_id: 1,
+        regional_office: 'RO17',
+        assigned_to_id: 17,
+        task_type: 'NoShowHearingTask',
+        task_count: 2 } } }).
+        then((resp) => {
+          console.log(resp, 'the response');
+        }).
+        catch((err) => console.log(err, 'the error over here'));
     }
   }
 
