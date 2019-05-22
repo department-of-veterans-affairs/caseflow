@@ -9,7 +9,7 @@ import { getDisplayTime } from './DailyDocketRowDisplayText';
 import { isPreviouslyScheduledHearing } from '../utils';
 import { getDate } from '../../util/DateUtil';
 import { openPrintDialogue } from '../../util/PrintUtil';
-import AOD_REASON_TO_LABEL_MAP from '../../../constants/AOD_REASON_TO_LABEL_MAP.json';
+import AOD_CODE_TO_LABEL_MAP from '../../../constants/AOD_CODE_TO_LABEL_MAP.json';
 import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.json';
 
 export class DailyDocketPrinted extends React.Component {
