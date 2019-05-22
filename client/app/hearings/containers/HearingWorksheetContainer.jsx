@@ -88,9 +88,9 @@ export class HearingWorksheetContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  worksheet: state.worksheet,
-  worksheetServerError: state.worksheetServerError,
-  fetchingWorksheet: state.fetchingWorksheet
+  worksheet: state.hearings.worksheet,
+  worksheetServerError: state.hearings.worksheetServerError,
+  fetchingWorksheet: state.hearings.fetchingWorksheet
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -105,9 +105,7 @@ export default connect(
 )(HearingWorksheetContainer);
 
 HearingWorksheetContainer.propTypes = {
-  veteran_law_judge: PropTypes.object.isRequired,
-  hearingId: PropTypes.string.isRequired,
-  worksheetServerError: PropTypes.object
+  hearingId: PropTypes.string.isRequired
 };
 
 HearingWorksheetContainer.contextTypes = {

@@ -50,7 +50,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
     window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.SELECT_VETERAN_FROM_DROPDOWN);
     if (value) {
       this.props.save();
-      this.props.history.push(`/hearings/${value.value}/worksheet`);
+      this.props.history.push(`/${value.value}/worksheet`);
     }
   }
 
@@ -128,9 +128,9 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  hearings: state.hearings,
-  worksheet: state.worksheet,
-  worksheetIssues: state.worksheetIssues
+  hearings: state.hearings.hearings,
+  worksheet: state.hearings.worksheet,
+  worksheetIssues: state.hearings.worksheetIssues
 });
 
 const mapDispatchToProps = (dispatch) => ({
