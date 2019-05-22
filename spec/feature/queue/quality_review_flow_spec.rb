@@ -29,6 +29,9 @@ RSpec.feature "Quality Review worflow" do
   let!(:judge_task) do
     FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :completed)
   end
+  let!(:attorney_task) do
+    FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: judge_task, assigned_to: attorney_user, status: :completed)
+  end
   let!(:qr_task) do
     FactoryBot.create(
       :qr_task,
@@ -101,16 +104,14 @@ RSpec.feature "Quality Review worflow" do
     expect(page).to have_content(qr_instructions)
 
     find(".Select-control", text: "Select an action", match: :first).click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h[:label]).click
+    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h[:label]).click
 
-    find(".Select-control", text: "Select a user").click
-    find("div", class: "Select-option", text: "Other").click
-
-    find(".Select-control", text: "Select a user").click
-    first("div", class: "Select-option", text: attorney_user.full_name).click
+    expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
     click_on "Submit"
 
-    expect(page).to have_content("Assigned 1 case")
+    #byebug
+    expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+    #expect(page).to have_content("Assigned 1 case")
 
     # step "attorney completes task and returns the case to the judge"
     User.authenticate!(user: attorney_user)

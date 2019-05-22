@@ -20,7 +20,7 @@ class AttorneyQueue
     end
 
     caseflow_tasks = Task.includes(*task_includes).incomplete_or_recently_closed
-      .where(assigned_to: user, type: [AttorneyTask.name, AttorneyRewriteTask.name, QualityReviewTask.name])
+      .where(assigned_to: user, type: [AttorneyTask.name, AttorneyRewriteTask.name, AttorneyQualityReviewTask.name, QualityReviewTask.name])
     (colocated_tasks_for_attorney_tasks + caseflow_tasks).flatten
   end
 
