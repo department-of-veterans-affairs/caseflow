@@ -410,7 +410,7 @@ class RequestIssue < ApplicationRecord
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
-  def edit_contention_text!(new_description)
+  def save_edit_contention_text!(new_description)
     update!(edited_description: new_description)
   end
 

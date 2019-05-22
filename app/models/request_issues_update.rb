@@ -102,7 +102,7 @@ class RequestIssuesUpdate < ApplicationRecord
 
   def changes?
     review.request_issues.active_or_ineligible.count != @request_issues_data.count || !new_issues.empty? ||
-      !withdrawn_issues.empty? || !edited_issues.empty?
+      withdrawn_issues.any? || edited_issues.any?
   end
 
   def new_issues
@@ -139,7 +139,7 @@ class RequestIssuesUpdate < ApplicationRecord
   def edited_issue_data
     return [] unless @request_issues_data
 
-    @request_issues_data.select { |ri| !ri[:edited_description].nil? && ri[:request_issue_id] }
+    @request_issues_data.select { |ri| ri[:edited_description].present? && ri[:request_issue_id] }
   end
 
   def calculate_before_issues
@@ -192,9 +192,10 @@ class RequestIssuesUpdate < ApplicationRecord
   def process_edited_issues!
     return if edited_issues.empty?
 
-    edited_issues.each do |ri|
-      edited_issue = @request_issues_data.detect { |issue| issue[:request_issue_id] == ri.id.to_s }
-      ri.edit_contention_text!(edited_issue[:edited_description])
+    edited_issue_data.each do |edited_issue|
+      RequestIssue.find(
+        edited_issue[:request_issue_id].to_s
+      ).save_edit_contention_text!(edited_issue[:edited_description])
     end
   end
 
