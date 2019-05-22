@@ -194,7 +194,8 @@ class RequestIssue < ApplicationRecord
         vacols_sequence_id: data[:vacols_sequence_id],
         contested_decision_issue_id: data[:contested_decision_issue_id],
         ineligible_reason: data[:ineligible_reason],
-        ineligible_due_to_id: data[:ineligible_due_to_id]
+        ineligible_due_to_id: data[:ineligible_due_to_id],
+        edited_description: data[:edited_description]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -407,6 +408,10 @@ class RequestIssue < ApplicationRecord
 
   def withdraw!(withdrawal_date)
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
+  end
+
+  def save_edit_contention_text!(new_description)
+    update!(edited_description: new_description)
   end
 
   def remove!
