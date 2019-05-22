@@ -45,12 +45,8 @@ export class DailyDocketPrinted extends React.Component {
             <strong>Veteran:</strong> {veteranName}<br />
             <strong>Representative:</strong> {representativeName}<br />
             <strong>Location:</strong> {hearing.readableLocation}<br />
-            <strong>Disposition:</strong> {hearing.disposition}<br />
-            {this.isUserJudge() &&
-              <span><strong>AOD:</strong> {hearing.aod}</span>
-            }
             {hearing.notes &&
-              <p><strong>Notes:</strong> {hearing.notes}</p>
+              <span><strong>Notes:</strong> {hearing.notes}</span>
             }
           </div>
         );
@@ -71,7 +67,7 @@ export class DailyDocketPrinted extends React.Component {
             <h2>Daily Docket ({moment(docket.scheduledFor).format('ddd M/DD/YYYY')})</h2>
             {docket.notes &&
               <div>
-                <strong>Notes:</strong><br/>
+                <strong>Notes:</strong><br />
                 {docket.notes}
               </div>
             }
