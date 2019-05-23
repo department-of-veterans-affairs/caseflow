@@ -53,9 +53,9 @@ class DirectReviewDocket < Docket
 
   def nonpriority_nonihp_ready_appeals
     docket_appeals
-      .merge(Appeal.ready_for_distribution)
-      .merge(Appeal.all_nonpriority)
-      .merge(Appeal.non_ihp)
+      .ready_for_distribution
+      .all_nonpriority
+      .non_ihp
       .order("receipt_date")
   end
 end
