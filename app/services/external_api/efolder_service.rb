@@ -36,9 +36,7 @@ class ExternalApi::EfolderService
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    msg = "Failed to fetch manifest after #{retry_attempts_count} seconds for #{vbms_id}, \
-      user_id: #{user.id}, response attributes: #{response_attrs}"
-    fail Caseflow::Error::DocumentRetrievalError, code: 504, message: msg
+    generate_response(response_attrs, vbms_id)
   end
 
   def self.check_for_error(response_body:, code:, vbms_id:, user_id:)
