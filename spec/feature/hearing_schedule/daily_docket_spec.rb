@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.feature "Hearing Schedule Daily Docket" do
+  let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
+
   context "Daily docket with one legacy hearing" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
     let!(:hearing_day) do
@@ -134,7 +136,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
     let!(:hearing_day) { create(:hearing_day, judge: current_user) }
 
-    context "with a legacy hearing" do
+    context "with a legacy hearing", focus: true do
       let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: current_user, hearing_day: hearing_day) }
 
       scenario "User can update hearing prep fields" do
