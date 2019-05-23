@@ -110,7 +110,6 @@ RSpec.feature "Search" do
 
               it "does not show removed decision reviews" do
                 perform_search
-
                 expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Supplemental Claim")
                 expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
                 expect(page).to_not have_css(".cf-case-list-table > tbody", text: "Original")
@@ -441,7 +440,7 @@ RSpec.feature "Search" do
       it "searching in search bar works" do
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
-
+        
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
@@ -484,6 +483,22 @@ RSpec.feature "Search" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
+    end
+  end
+
+  context "has withdrawn decision reviews" do
+    let!(:caseflow_appeal) { create(:appeal, docket_type: "direct_review") }
+    let!(:withdrawn_request_issue) { create(:request_issue, closed_status: :withdrawn, decision_review: caseflow_appeal) }
+
+    def perform_search
+      visit "/search"
+      fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
+      click_on "Search"
+    end
+   
+    it "shows withdrawn decision reviews" do
+      perform_search
+      expect(withdrawn_request_issue.closed_status).to eq("withdrawn")
     end
   end
 end
