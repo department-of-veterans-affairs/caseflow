@@ -45,7 +45,8 @@ class RequestIssue < ApplicationRecord
     dismissed_death: "dismissed_death",
     dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
-    ineligible: "ineligible"
+    ineligible: "ineligible",
+    no_decision: "no_decision"
   }
 
   before_save :set_contested_rating_issue_profile_date
@@ -402,6 +403,17 @@ class RequestIssue < ApplicationRecord
     return unless end_product_establishment&.reload&.status_canceled?
 
     close!(status: :end_product_canceled) do
+      legacy_issue_optin&.flag_for_rollback!
+    end
+  end
+
+  def close_with_no_decision!
+    return if closed?
+    return unless end_product_establishment&.status_cleared?
+    return if contention_disposition
+
+    close!(status: :no_decision) do
+      canceled!
       legacy_issue_optin&.flag_for_rollback!
     end
   end
