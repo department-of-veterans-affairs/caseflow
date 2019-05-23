@@ -266,11 +266,11 @@ RSpec.feature "Task queue" do
     before do
       OrganizationsUser.add_user_to_organization(mail_user, mail_team)
       OrganizationsUser.add_user_to_organization(mail_user, lit_support_team)
-      OrganizationsUser.add_user_to_organization(pulac_user, PulacCurello.singleton) 
+      OrganizationsUser.add_user_to_organization(pulac_user, PulacCerullo.singleton) 
       User.authenticate!(user: mail_user)
     end
 
-    def validate_pulac_curello_tasks_created(task_type, label) 
+    def validate_pulac_cerullo_tasks_created(task_type, label) 
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
@@ -296,13 +296,13 @@ RSpec.feature "Task queue" do
       sleep 1
       child_task = mail_task.children[0]
 
-      pulac_curello_task = child_task.children[0]
-      pulac_curello_user_task = pulac_curello_task.children[0];
+      pulac_cerullo_task = child_task.children[0]
+      pulac_cerullo_user_task = pulac_cerullo_task.children[0];
       expect(child_task.class).to eq(eval(task_type))
-      expect(pulac_curello_task.type).to eq("PulacCurelloTask")
-      expect(pulac_curello_task.assigned_to.is_a?(Organization)).to eq(true)
-      expect(pulac_curello_task.assigned_to.class).to eq(PulacCurello)
-      expect(pulac_curello_user_task.assigned_to).to eq(pulac_user)
+      expect(pulac_cerullo_task.type).to eq("PulacCerulloTask")
+      expect(pulac_cerullo_task.assigned_to.is_a?(Organization)).to eq(true)
+      expect(pulac_cerullo_task.assigned_to.class).to eq(PulacCerullo)
+      expect(pulac_cerullo_user_task.assigned_to).to eq(pulac_user)
 
       User.unauthenticate!
       User.authenticate!(user: pulac_user)
@@ -341,24 +341,24 @@ RSpec.feature "Task queue" do
       end
     end
 
-    context "when a ClearAndUnmistakeableErrorMailTask task is routed to Pulac Curello" do
+    context "when a ClearAndUnmistakeableErrorMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { FactoryBot.create(:root_task) }
-      it "creates two child tasks: one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curello org" do
-       validate_pulac_curello_tasks_created("ClearAndUnmistakeableErrorMailTask", COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL)
+      it "creates two child tasks: one Pulac Cerullo Task, and a child of that task assigned to the first user in the Pulac Cerullo org" do
+       validate_pulac_cerullo_tasks_created("ClearAndUnmistakeableErrorMailTask", COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL)
       end
     end
 
-    context "when a ReconsiderationMotionMailTask task is routed to Pulac Curello" do
+    context "when a ReconsiderationMotionMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { FactoryBot.create(:root_task) }
-      it "creates two child tasks: one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curello org" do
-        validate_pulac_curello_tasks_created("ReconsiderationMotionMailTask", COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL)
+      it "creates two child tasks: one Pulac Cerullo Task, and a child of that task assigned to the first user in the Pulac Cerullo org" do
+        validate_pulac_cerullo_tasks_created("ReconsiderationMotionMailTask", COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL)
       end
     end
 
-    context "when a VacateMotionMailTask task is routed to Pulac Curello" do
+    context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { FactoryBot.create(:root_task) }
-      it "creates two child tasks: one Pulac Curello Task, and a child of that task assigned to the first user in the Pulac Curello org" do
-        validate_pulac_curello_tasks_created("VacateMotionMailTask", COPY::VACATE_MOTION_MAIL_TASK_LABEL)
+      it "creates two child tasks: one Pulac Cerullo Task, and a child of that task assigned to the first user in the Pulac Cerullo org" do
+        validate_pulac_cerullo_tasks_created("VacateMotionMailTask", COPY::VACATE_MOTION_MAIL_TASK_LABEL)
       end
     end
 

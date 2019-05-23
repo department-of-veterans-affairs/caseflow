@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-class PulacCurelloTask < GenericTask
+class PulacCerulloTask < GenericTask
   # Skip unique verification
   def verify_org_task_unique; end
 
   def label
-    "Pulac Curello"
+    "Pulac Cerullo"
   end
 end
