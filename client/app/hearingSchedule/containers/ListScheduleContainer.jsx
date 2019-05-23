@@ -150,18 +150,15 @@ export class ListScheduleContainer extends React.Component {
     return 'success';
   };
 
-  showAlert = () => {
-    return this.state.showModalAlert;
-  };
-
   render() {
     return (
       <React.Fragment>
         <QueueCaseSearchBar />
-        {(this.showAlert() || this.props.successfulHearingDayDelete) &&
-        <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
-          {this.getAlertMessage()}
-        </Alert>}
+        {(this.state.showModalAlert || this.props.successfulHearingDayDelete) &&
+          <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
+            {this.getAlertMessage()}
+          </Alert>
+        }
         { this.props.invalidDates && <Alert type="error" title="Please enter valid dates." /> }
         <AppSegment filledBackground>
           <h1 className="cf-push-left">

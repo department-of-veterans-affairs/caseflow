@@ -1,3 +1,9 @@
+<% if local_assigns.has_key?(:print_stylesheet) %>
+<% content_for :head do %>
+<%= stylesheet_link_tag print_stylesheet, media: 'print' %>
+<% end %>
+<% end %>
+
 <% content_for :full_page_content do %>
 <%= react_component("Hearings", props: {
   userDisplayName: current_user.display_name,
