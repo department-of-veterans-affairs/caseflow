@@ -75,7 +75,11 @@ export class ListScheduleContainer extends React.Component {
       requestUrl = `${requestUrl}?start_date=${this.props.startDate}&end_date=${this.props.endDate}`;
     }
 
-    return ApiUtil.get(requestUrl).then((response) => {
+    const requestOptions = {
+      timeout: { response: 2 * 60 * 1000 }
+    };
+
+    return ApiUtil.get(requestUrl, requestOptions).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       this.props.onReceiveHearingSchedule(resp.hearings);
