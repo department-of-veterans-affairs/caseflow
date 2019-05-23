@@ -27,24 +27,6 @@ export const newHearingState = (state, action, spec) => {
   });
 };
 
-export const setWorksheetPrepped = (state, action, spec, setEdited = true) => {
-  if (setEdited) {
-    _.extend(spec, { edited: { $set: true } });
-  }
-
-  return update(state, {
-    dailyDocket: {
-      [action.payload.date]: {
-        $apply: (hearings) => {
-          return update(hearings, {
-            [action.payload.hearingId]: spec
-          });
-        }
-      }
-    }
-  });
-};
-
 // TODO move to issue reducer
 export const newHearingIssueState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
@@ -67,30 +49,10 @@ const getDailyDocketKey = (state, action) => _.findKey(
   (hearings) => _.some(hearings, { id: action.payload.hearingId })
 );
 
-const convertDailyDocketToHash = (dailyDocket) => _.mapValues(_.keyBy(dailyDocket, 'id'));
-
-export const hearingsReducers = function(state = mapDataToInitialState(), action = {}) {
+export const hearingsReducer = function(state = mapDataToInitialState(), action = {}) {
   let dailyDocketKey;
 
   switch (action.type) {
-  case Constants.POPULATE_UPCOMING_HEARINGS:
-    return update(state, {
-      upcomingHearings: { $set: action.payload.upcomingHearings }
-    });
-
-  case Constants.POPULATE_DAILY_DOCKET:
-    return update(state, {
-      hearingDay: { $set: action.payload.hearingDay },
-      dailyDocket: {
-        [action.payload.date]: { $set: convertDailyDocketToHash(action.payload.dailyDocket) }
-      }
-    });
-
-  case Constants.SELECT_DOCKETS_PAGE_TAB_INDEX:
-    return update(state, {
-      docketsTabIndex: { $set: action.payload.tabIndex }
-    });
-
   case Constants.FETCHING_WORKSHEET: {
     return update(state, {
       fetchingWorksheet: { $set: true }
@@ -127,12 +89,6 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       },
       fetchingWorksheet: { $set: false }
     });
-
-  case Constants.HANDLE_DOCKET_SERVER_ERROR:
-    return update(state, {
-      docketServerError: { $set: action.payload.err }
-    });
-
   case Constants.HANDLE_UPDATE_HEARING_SUCCESS:
     return update(state, {
       dailyDocket: {
@@ -167,6 +123,11 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
       $unset: ['saveHearingSuccess']
     });
 
+  case Constants.SET_HEARING_DAY_HEARINGS:
+    return update(state, {
+      hearings: { $set: action.payload.hearings }
+    });
+
   case Constants.SET_REPNAME:
     return newHearingWorksheetState(state, action, { representative_name: { $set: action.payload.repName } });
 
@@ -195,26 +156,13 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
     });
 
   case Constants.SET_HEARING_PREPPED:
-    return setWorksheetPrepped(state, action, { prepped: { $set: action.payload.prepped } },
-      action.payload.setEdited);
-
-  case Constants.SET_NOTES:
-    return newHearingState(state, action, { notes: { $set: action.payload.notes } });
-
-  case Constants.SET_DISPOSITION:
-    return newHearingState(state, action, { disposition: { $set: action.payload.disposition } });
-
-  case Constants.SET_HOLD_OPEN:
-    return newHearingState(state, action, { hold_open: { $set: action.payload.holdOpen } });
-
-  case Constants.SET_AOD:
-    return newHearingState(state, action, { aod: { $set: action.payload.aod } });
-
-  case Constants.SET_TRANSCRIPT_REQUESTED:
-    return newHearingState(state, action, { transcript_requested: { $set: action.payload.transcriptRequested } });
-
-  case Constants.SET_EVIDENCE_WINDOW_WAIVED:
-    return newHearingState(state, action, { evidence_window_waived: { $set: action.payload.evidenceWindowWaived } });
+    return update(state, {
+      hearings: {
+        [action.payload.hearingExternalId]: {
+          prepped: { $set: action.payload.prepped }
+        }
+      }
+    });
 
   case Constants.SET_ISSUE_NOTES:
     return newHearingIssueState(state, action, { notes: { $set: action.payload.notes } });
@@ -288,4 +236,4 @@ export const hearingsReducers = function(state = mapDataToInitialState(), action
   }
 };
 
-export default hearingsReducers;
+export default hearingsReducer;

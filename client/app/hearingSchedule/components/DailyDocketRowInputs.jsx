@@ -16,7 +16,7 @@ import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 const staticSpacing = css({ marginTop: '5px' });
 
 export const DispositionDropdown = ({
-  hearing, update, readOnly, cancelUpdate, openDispositionModal, saveHearing
+  hearing, update, readOnly, openDispositionModal, saveHearing
 }) => {
 
   return <div><SearchableDropdown
@@ -26,19 +26,17 @@ export const DispositionDropdown = ({
     options={DISPOSITION_OPTIONS}
     value={hearing.disposition}
     onChange={(option) => {
+      const fromDisposition = hearing.disposition;
+
+      update({ disposition: option.value });
       openDispositionModal({
         hearing,
-        disposition: option.value,
-        onConfirm: () => {
-          if (option.value === 'postponed') {
-            cancelUpdate();
-          }
-
-          update({ disposition: option.value });
-
-          // give redux time to update
-          setTimeout(saveHearing, 0);
-        }
+        fromDisposition,
+        toDisposition: option.value,
+        onCancel: () => {
+          update({ disposition: fromDisposition });
+        },
+        onConfirm: saveHearing
       });
     }}
     readOnly={readOnly || !hearing.dispositionEditable}

@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
 describe QualityReviewTask do
+  let(:root_task) { FactoryBot.create(:root_task) }
+  let(:qr_task) { QualityReviewTask.create_from_root_task(root_task) }
+
   before do
     OrganizationsUser.add_user_to_organization(FactoryBot.create(:user), BvaDispatch.singleton)
   end
 
   describe ".update!(status: Constants.TASK_STATUSES.completed)" do
-    let(:root_task) { FactoryBot.create(:root_task) }
-
     context "when QualityReviewTask is assigned to the QR organization" do
-      let!(:qr_task) { QualityReviewTask.create_from_root_task(root_task) }
-
       it "should create a task for BVA dispatch and close the current task" do
         expect(root_task.children.select { |t| t.type == BvaDispatchTask.name }.count).to eq(0)
         expect { qr_task.update!(status: Constants.TASK_STATUSES.completed) }.to_not raise_error
@@ -58,13 +57,21 @@ describe QualityReviewTask do
   end
 
   describe ".update!(status: Constants.TASK_STATUSES.cancelled)" do
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let!(:qr_task) { QualityReviewTask.create_from_root_task(root_task) }
-
     it "should create a task for BVA dispatch" do
       qr_task.update!(status: Constants.TASK_STATUSES.cancelled)
       expect(qr_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
       expect(root_task.reload.children.select { |t| t.type == BvaDispatchTask.name }.count).to eq(1)
+    end
+  end
+
+  describe "completing a child GenericTask" do
+    let!(:generic_task_child) do
+      GenericTask.create!(appeal: qr_task.appeal, parent: qr_task, assigned_to: FactoryBot.create(:user))
+    end
+    it "sets the status of the parent QualityReviewTask to assigned" do
+      expect(qr_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+      generic_task_child.update!(status: Constants.TASK_STATUSES.completed)
+      expect(qr_task.status).to eq(Constants.TASK_STATUSES.assigned)
     end
   end
 end

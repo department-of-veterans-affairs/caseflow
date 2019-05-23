@@ -8,7 +8,7 @@ class Hearings::HearingDayController < HearingScheduleController
   def index
     respond_to do |format|
       format.html do
-        render "hearing_schedule/index"
+        render "hearings/index"
       end
 
       format.json do
@@ -27,12 +27,9 @@ class Hearings::HearingDayController < HearingScheduleController
   end
 
   def show
-    hearing_day = HearingDay.find(params[:id])
-    hearings = hearing_day.hearings_for_user(current_user)
-
     render json: {
       hearing_day: json_hearing_day(hearing_day.to_hash).merge(
-        hearings: hearings.map { |hearing| hearing.quick_to_hash(current_user.id) }
+        hearings: hearing_day.hearings_for_user(current_user).map { |hearing| hearing.quick_to_hash(current_user.id) }
       )
     }
   end
