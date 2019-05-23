@@ -68,7 +68,7 @@ describe ExternalApi::EfolderService do
     let(:manifest_vva_fetched_at) { Time.zone.now.strftime(fetched_at_format) }
     let(:expected_response) { construct_response(records, sources) }
 
-    subject { ExternalApi::EfolderService.generate_efolder_request(vbms_id, user) }
+    subject { ExternalApi::EfolderService.generate_efolder_request(vbms_id, user, 3) }
 
     context "metrics" do
       let(:sources) do
@@ -341,6 +341,32 @@ describe ExternalApi::EfolderService do
         end
 
         it { is_expected.to eq expected_result }
+      end
+
+      context "when both sources come back as pending" do
+        let(:sources) do
+          [
+            {
+              source: "VVA",
+              status: "pending",
+              fetched_at: manifest_vva_fetched_at
+            },
+            {
+              source: "VBMS",
+              status: "pending",
+              fetched_at: manifest_vbms_fetched_at
+            }
+          ]
+        end
+        let(:records) { [] }
+
+        let(:expected_result) do
+          {
+            documents: [],
+            manifest_vbms_fetched_at: manifest_vbms_fetched_at,
+            manifest_vva_fetched_at: manifest_vva_fetched_at
+          }
+        end
       end
 
       context "when one source comes back as failed" do
