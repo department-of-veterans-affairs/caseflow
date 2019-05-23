@@ -132,7 +132,8 @@ export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion, userId }) =
     onChange={(option) => {
       const granted = (option || {}).value;
       // reset advanceOnDocketMotion if null value
-      const value = granted === null ? null : { granted };
+      const value = granted === null ? null : { granted,
+        userId };
 
       updateAodMotion(value);
     }}

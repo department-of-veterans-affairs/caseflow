@@ -103,7 +103,8 @@ export class DailyDocketContainer extends React.Component {
     } : {};
 
     const legacyValues = hearing.docketName === 'legacy' ? {
-      aod: hearing.aod
+      aod: hearing.aod,
+      hold_open: hearing.holdOpen
     } : {};
 
     return _.omitBy({
@@ -113,18 +114,21 @@ export class DailyDocketContainer extends React.Component {
       hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
       scheduled_time_string: hearing.scheduledTimeString,
       prepped: hearing.prepped,
-      hold_open: hearing.holdOpen,
       ...legacyValues,
       ...amaHearingValues
     }, _.isNil);
   };
 
   formatAod = (hearing) => {
+    if (hearing.advanceOnDocketMotion.userId !== this.props.user.userId) {
+      return {};
+    }
+
     return _.omitBy({
       reason: hearing.advanceOnDocketMotion.reason,
       granted: hearing.advanceOnDocketMotion.granted,
-      person_id: hearing.claimantId,
-      user_id: this.props.user.userId
+      person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId,
+      user_id: hearing.advanceOnDocketMotion.userId
     }, _.isNil);
   }
 
