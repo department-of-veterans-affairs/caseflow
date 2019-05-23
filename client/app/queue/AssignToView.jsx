@@ -133,9 +133,9 @@ class AssignToView extends React.Component {
       });
   }
 
-  determineTitle = (props, action, isPulacCurello) => {
+  determineTitle = (props, action, isPulacCerullo) => {
     if (props.assigneeAlreadySelected && action) {
-      if (isPulacCurello) {
+      if (isPulacCerullo) {
         return sprintf(COPY.NOTIFY_OGC_OF, action.label);
       }
 
@@ -154,17 +154,17 @@ class AssignToView extends React.Component {
 
     const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
     const actionData = taskActionData(this.props);
-    const isPulacCurello = action && action.label === 'Pulac Curello';
+    const isPulacCerullo = action && action.label === 'Pulac Cerullo';
 
     if (!task || task.availableActions.length === 0) {
       return null;
     }
 
     return <QueueFlowModal
-      title={this.determineTitle(this.props, action, isPulacCurello)}
+      title={this.determineTitle(this.props, action, isPulacCerullo)}
       pathAfterSubmit = {(actionData && actionData.redirect_after) || '/queue'}
       submit={this.submit}
-      validateForm={isPulacCurello ? () => {
+      validateForm={isPulacCerullo ? () => {
         return true;
       } : this.validateForm}
     >
@@ -180,7 +180,7 @@ class AssignToView extends React.Component {
           options={taskActionData(this.props).options} />
         <br />
       </React.Fragment> }
-      { !isPulacCurello &&
+      { !isPulacCerullo &&
             <TextareaField
               name={COPY.ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL}
               errorMessage={highlightFormItems && !this.state.instructions ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
@@ -188,7 +188,7 @@ class AssignToView extends React.Component {
               onChange={(value) => this.setState({ instructions: value })}
               value={this.state.instructions} />
       }
-      {isPulacCurello && COPY.PULAC_CERULLO_MODAL_BODY }
+      {isPulacCerullo && COPY.PULAC_CERULLO_MODAL_BODY }
 
     </QueueFlowModal>;
   }
