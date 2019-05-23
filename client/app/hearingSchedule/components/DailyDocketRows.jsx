@@ -62,7 +62,7 @@ export default class DailyDocketHearingRows extends React.Component {
     return <div {...rowsMargin}>
       <Header user={user} />
       <div>{hearings.map((hearing, index) => (
-        <div {...docketRowStyle} key={`docket-row-${index}`} className={user.userRoleHearingPrep ? 'judge-view' : ''}>
+        <div {...docketRowStyle} key={hearing.externalId} className={user.userRoleHearingPrep ? 'judge-view' : ''}>
           <DailyDocketRow hearingId={hearing.externalId}
             index={index}
             readOnly={readOnly}
