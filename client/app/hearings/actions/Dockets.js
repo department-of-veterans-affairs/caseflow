@@ -11,28 +11,6 @@ export const populateWorksheet = (worksheet) => ({
   }
 });
 
-export const handleWorksheetServerError = (err) => ({
-  type: Constants.HANDLE_WORKSHEET_SERVER_ERROR,
-  payload: {
-    err
-  }
-});
-
-export const fetchingWorksheet = () => ({
-  type: Constants.FETCHING_WORKSHEET
-});
-
-export const getWorksheet = (id) => (dispatch) => {
-  dispatch(fetchingWorksheet());
-
-  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
-    then((response) => {
-      dispatch(populateWorksheet(response.body));
-    }, (err) => {
-      dispatch(handleWorksheetServerError(err));
-    });
-};
-
 export const onRepNameChange = (repName) => ({
   type: Constants.SET_REPNAME,
   payload: {

@@ -53,12 +53,6 @@ export const hearingsReducer = function(state = mapDataToInitialState(), action 
   let dailyDocketKey;
 
   switch (action.type) {
-  case Constants.FETCHING_WORKSHEET: {
-    return update(state, {
-      fetchingWorksheet: { $set: true }
-    });
-  }
-
   case Constants.POPULATE_WORKSHEET: {
     const worksheetAppeals = _.keyBy(action.payload.worksheet.appeals_ready_for_hearing, 'id');
     let worksheetIssues = _(worksheetAppeals).flatMap('worksheet_issues').
@@ -74,21 +68,10 @@ export const hearingsReducer = function(state = mapDataToInitialState(), action 
     return update(state, {
       worksheetIssues: { $set: worksheetIssues },
       worksheetAppeals: { $set: worksheetAppeals },
-      worksheet: { $set: worksheet },
-      fetchingWorksheet: { $set: false }
+      worksheet: { $set: worksheet }
     });
   }
 
-  case Constants.HANDLE_WORKSHEET_SERVER_ERROR:
-    return update(state, {
-      worksheetServerError: {
-        // this else condition is needed for 500s
-        errors: { $set: action.payload.err.response.body ? action.payload.err.response.body.errors :
-          action.payload.err },
-        status: { $set: action.payload.err.response.status }
-      },
-      fetchingWorksheet: { $set: false }
-    });
   case Constants.HANDLE_UPDATE_HEARING_SUCCESS:
     return update(state, {
       dailyDocket: {

@@ -188,11 +188,7 @@ export class HearingWorksheet extends React.PureComponent {
               timeSaved={this.props.worksheetTimeSaved || now()}
               saveFailed={this.props.saveWorksheetFailed}
             />
-            <WorksheetHeaderVeteranSelection
-              openPdf={this.openPdf}
-              history={this.props.history}
-              save={this.save(worksheet, worksheetIssues)}
-            />
+            <WorksheetHeaderVeteranSelection />
           </div>
           {fetchingWorksheet ?
             <LoadingScreen spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} message="Loading worksheet..." /> :
