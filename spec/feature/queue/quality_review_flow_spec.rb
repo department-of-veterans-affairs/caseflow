@@ -109,9 +109,7 @@ RSpec.feature "Quality Review worflow" do
     expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
     click_on "Submit"
 
-    #byebug
     expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
-    #expect(page).to have_content("Assigned 1 case")
 
     # step "attorney completes task and returns the case to the judge"
     User.authenticate!(user: attorney_user)
