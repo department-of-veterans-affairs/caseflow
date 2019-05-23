@@ -81,7 +81,14 @@ class Task < ApplicationRecord
   end
 
   def appropriate_timed_hold_task_action
+    return Constants.TASK_ACTIONS.PLACE_HOLD.to_h if task_ever_on_old_style_hold?
+
     on_timed_hold? ? Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h : Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
+  end
+
+  # TODO: Do we need to use this method anywhere else?
+  def task_ever_on_old_style_hold?
+    !on_hold_duration.nil?
   end
 
   def build_action_hash(action, user)
@@ -334,10 +341,7 @@ class Task < ApplicationRecord
   end
 
   def on_hold_expired?
-    return true if on_hold? && placed_on_hold_at && on_hold_duration &&
-                   placed_on_hold_at + on_hold_duration.days < Time.zone.now
-
-    false
+    on_hold? && placed_on_hold_at && on_hold_duration && placed_on_hold_at + on_hold_duration.days < Time.zone.now
   end
 
   def serializer_class

@@ -32,7 +32,7 @@ class HearingAdminActionTask < GenericTask
 
     if assigned_to == user
       [
-        Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
+        appropriate_timed_hold_task_action,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
       ] | hearing_admin_actions
@@ -51,6 +51,8 @@ class HearingAdminActionTask < GenericTask
 
   private
 
+  # TODO: This will need to be replaced because we are using timed holds now. Probably both paths through the code
+  # will have to be supported for some time.
   def on_hold_duration_is_set
     if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
       errors.add(:on_hold_duration, "has to be specified")

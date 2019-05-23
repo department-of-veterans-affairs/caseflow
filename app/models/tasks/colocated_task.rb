@@ -49,19 +49,19 @@ class ColocatedTask < Task
   end
 
   def available_actions(user)
-    if assigned_to != user
-      if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
-        return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
-      end
-
-      return []
+    if assigned_to == user
+      return available_actions_with_conditions([
+                                                 appropriate_timed_hold_task_action,
+                                                 Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+                                                 Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+                                               ])
     end
 
-    available_actions_with_conditions([
-                                        Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
-                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
-                                        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-                                      ])
+    if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
+      return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
+    end
+
+    []
   end
 
   def available_actions_with_conditions(core_actions)
