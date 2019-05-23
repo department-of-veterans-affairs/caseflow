@@ -136,7 +136,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
     let!(:hearing_day) { create(:hearing_day, judge: current_user) }
 
-    context "with a legacy hearing", focus: true do
+    context "with a legacy hearing" do
       let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: current_user, hearing_day: hearing_day) }
 
       scenario "User can update hearing prep fields" do
