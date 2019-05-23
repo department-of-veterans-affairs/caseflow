@@ -35,7 +35,7 @@ class HearingWorksheetContainer extends React.Component {
             title: 'Unable to load the hearing worksheet.'
           }}>
 
-          <HearingWorksheet {...this.props} />;
+          <HearingWorksheet {...this.props} />
         </LoadingDataDisplay>
       </React.Fragment>
     );

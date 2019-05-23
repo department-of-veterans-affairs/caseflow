@@ -1,6 +1,5 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES, debounceMs } from '../analytics';
 import { now } from '../util/DateUtil';
 import _ from 'lodash';
 
@@ -37,12 +36,6 @@ export const onMilitaryServiceChange = (militaryService) => ({
   type: Constants.SET_MILITARY_SERVICE,
   payload: {
     militaryService
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
   }
 });
 
@@ -50,12 +43,6 @@ export const onSummaryChange = (summary) => ({
   type: Constants.SET_SUMMARY,
   payload: {
     summary
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
   }
 });
 
