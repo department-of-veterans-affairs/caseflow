@@ -19,7 +19,7 @@ class TimedHoldTask < GenericTask
       end
       create!(
         appeal: parent_task.appeal,
-        assigned_by: assigned_by || parent_task.assigned_to,
+        assigned_by: assigned_by,
         assigned_to: parent_task.assigned_to,
         parent: parent_task,
         days_on_hold: days_on_hold&.to_i,
