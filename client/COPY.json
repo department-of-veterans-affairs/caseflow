@@ -333,6 +333,7 @@
   "CASE_TIMELINE_ATTORNEY_TASK": "Decision drafted by attorney",
   "CASE_TIMELINE_ATTORNEY_DISPATCH_RETURN_TASK": "Decision revised for dispatch by attorney",
   "CASE_TIMELINE_APPEAL_WITHDRAWN": "Appeal withdrawn",
+  "CASE_TIMELINE_ATTORNEY_REWRITE_TASK": "Decision revised by attorney",
   "CASE_TIMELINE_ATTORNEY_QUALITY_REVIEW_TASK": "Attorney quality reviewed",
 
   "DECISION_ISSUE_MODAL_TITLE": "Describe what the Veteran is appealing and what you decided.",
@@ -388,6 +389,7 @@
   "JUDGE_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
 
   "ATTORNEY_TASK_LABEL": "Draft decision",
+  "ATTORNEY_REWRITE_TASK_LABEL": "Revise decision draft",
   "ATTORNEY_QUALITY_REVIEW_TASK_LABEL": "Quality review",
   "ATTORNEY_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
 

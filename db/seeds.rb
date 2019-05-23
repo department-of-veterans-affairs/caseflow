@@ -69,7 +69,7 @@ class SeedDB
     create_aod_user_and_tasks
     create_privacy_user
     create_lit_support_user
-    create_pulac_curello_user
+    create_pulac_cerullo_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -303,9 +303,9 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(u, LitigationSupport.singleton)
   end
 
-  def create_pulac_curello_user
+  def create_pulac_cerullo_user
     u = User.create!(station_id: 101, css_id: "BVAKSOSNA", full_name: "KATHLEEN SOSNA")
-    OrganizationsUser.add_user_to_organization(u, PulacCurello.singleton)
+    OrganizationsUser.add_user_to_organization(u, PulacCerullo.singleton)
   end
 
   def create_mail_team_user

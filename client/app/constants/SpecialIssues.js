@@ -196,7 +196,7 @@ const SPECIAL_ISSUES = [
     display: 'Private Attorney or Agent',
     queueDisplay: 'Has a private attorney or agent',
     specialIssue: 'privateAttorneyOrAgent',
-    stationOfJurisdiction: null,
+    stationOfJurisdiction: 'regional',
     snakeCase: 'private_attorney_or_agent',
     unhandled: null,
     queueSection: 'about',
