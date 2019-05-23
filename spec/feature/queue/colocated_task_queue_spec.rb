@@ -101,29 +101,26 @@ RSpec.feature "ColocatedTask" do
       visit("/queue/appeals/#{appeal.uuid}")
 
       # Attempt to put the task on hold.
-      find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.PLACE_HOLD.to_h[:label]).click
+      click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h[:label])
 
       # Redirected to place task on hold page.
-      expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, veteran_name, appeal.veteran.file_number)
-      )
+      expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
       # Attempt to place the task on hold without including notes.
       find(".Select-control", text: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL).click
       find("div", class: "Select-option", text: "15 days").click
-      find("button", text: COPY::COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY).click
+      click_on(COPY::MODAL_SUBMIT_BUTTON)
 
       # Instructions field is required
       expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
 
       # Add instructions and try again
       fill_in("instructions", with: "some text")
-      find("button", text: COPY::COLOCATED_ACTION_PLACE_HOLD_BUTTON_COPY).click
+      click_on(COPY::MODAL_SUBMIT_BUTTON)
 
       # We should see a success message and be redirected to our queue page.
       expect(page).to have_content(format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, "15"))
-      expect(page).to have_current_path("/queue")
+      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
     end
   end
 
