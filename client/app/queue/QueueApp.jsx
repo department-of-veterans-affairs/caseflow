@@ -32,6 +32,7 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
+import CancelTaskAssignRegionalOfficeModal from './components/CancelTaskAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
@@ -193,11 +194,16 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
+  routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
+
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
 
   routedCancelTaskModal = (props) => <CancelTaskModal {...props.match.params} />;
+
+  routedCancelTaskAndAssignRegionalOfficeModal = (props) =>
+    <CancelTaskAssignRegionalOfficeModal {...props.match.params} />;
 
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
@@ -336,6 +342,9 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.QR_RETURN_TO_JUDGE.value}`}
             render={this.routedAssignToUser} />
           <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.value}`}
+            render={this.routedAssignToUser} />
+          <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.value}`}
             render={this.routedAssignToUser} />
           <Route
@@ -430,9 +439,18 @@ class QueueApp extends React.PureComponent {
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`}
+            title="Assign to Pulac Curello | Caseflow"
+            render={this.routedAssignToPulacCerullo} />
+          <PageRoute
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}
+            title="Cancel Task and Assign Regional Office | Caseflow"
+            render={this.routedCancelTaskAndAssignRegionalOfficeModal} />
+          <PageRoute
+            exact
             path={'/queue/appeals/:appealId/tasks/:taskId/' +
               `(${TASK_ACTIONS.WITHDRAW_HEARING.value}|${TASK_ACTIONS.CANCEL_TASK.value})`}
-            title="Cancel task | Caseflow"
+            title="Cancel Task | Caseflow"
             render={this.routedCancelTaskModal} />
           <PageRoute
             exact

@@ -28,7 +28,7 @@ class HearingAdminActionTask < GenericTask
   end
 
   def available_actions(user)
-    hearing_admin_actions = available_hearing_admin_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
 
     if assigned_to == user
       [
@@ -71,17 +71,6 @@ end
 class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
   def self.label
     "Contested claimant issue"
-  end
-end
-class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
-  after_update :fetch_closest_ro_and_ahls, if: :task_just_closed?
-
-  def self.label
-    "Verify Address"
-  end
-
-  def fetch_closest_ro_and_ahls
-    appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
   end
 end
 class HearingAdminActionMissingFormsTask < HearingAdminActionTask

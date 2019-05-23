@@ -371,21 +371,22 @@ describe HearingDay do
       let!(:ama_hearing_day) do
         FactoryBot.create(:hearing_day,
                           request_type: HearingDay::REQUEST_TYPES[:video],
-                          scheduled_for: Time.zone.now,
+                          scheduled_for: Time.zone.yesterday,
                           regional_office: staff.stafkey)
       end
       let!(:ama_appeal) { FactoryBot.create(:appeal) }
       let!(:ama_hearing) { FactoryBot.create(:hearing, :with_tasks, hearing_day: ama_hearing_day, appeal: ama_appeal) }
 
       it "returns hearings are mapped to days" do
+        subject.sort_by! { |hearing_day| hearing_day["scheduled_for"]}
         expect(subject.size).to eq 3
         expect(subject[0]["hearings"][0]["appeal_id"]).to eq ama_appeal.id
-        expect(subject[1]["hearings"][0]["appeal_id"]).to eq appeal_tomorrow.id
-        expect(subject[2]["hearings"].size).to eq 2
-        expect(subject[2]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
-        expect(subject[2]["hearings"][0]["appeal_id"]).to eq appeal.id
-        expect(subject[2]["hearings"][0]["hearing_disp"]).to eq nil
-        expect(subject[2]["hearings"][1]["appeal_id"]).to eq appeal_today.id
+        expect(subject[1]["hearings"].size).to eq 2
+        expect(subject[1]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:V]
+        expect(subject[1]["hearings"][0]["appeal_id"]).to eq appeal.id
+        expect(subject[1]["hearings"][0]["hearing_disp"]).to eq nil
+        expect(subject[1]["hearings"][1]["appeal_id"]).to eq appeal_today.id
+        expect(subject[2]["hearings"][0]["appeal_id"]).to eq appeal_tomorrow.id
       end
     end
 

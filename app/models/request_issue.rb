@@ -194,7 +194,8 @@ class RequestIssue < ApplicationRecord
         vacols_sequence_id: data[:vacols_sequence_id],
         contested_decision_issue_id: data[:contested_decision_issue_id],
         ineligible_reason: data[:ineligible_reason],
-        ineligible_due_to_id: data[:ineligible_due_to_id]
+        ineligible_due_to_id: data[:ineligible_due_to_id],
+        edited_description: data[:edited_description]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -409,6 +410,10 @@ class RequestIssue < ApplicationRecord
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
+  def save_edit_contention_text!(new_description)
+    update!(edited_description: new_description)
+  end
+
   def remove!
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
@@ -432,7 +437,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def requires_record_request_task?
-    !benefit_type_requires_payee_code?
+    !is_unidentified && !benefit_type_requires_payee_code?
   end
 
   def decision_or_promulgation_date
