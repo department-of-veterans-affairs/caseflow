@@ -37,6 +37,11 @@
         "value": "modal/assign_to_team",
         "func": "assign_to_organization_data"
     },
+    "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
+        "label": "Cancel hearing request",
+        "value": "modal/cancel_task",
+        "func": "cancel_foreign_veterans_case_data"
+    },
     "CANCEL_TASK": {
         "label": "Cancel task",
         "value": "modal/cancel_task",

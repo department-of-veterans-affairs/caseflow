@@ -33,6 +33,18 @@ class TaskActionRepository
       }
     end
 
+
+    def cancel_foreign_veterans_case_data(task, _user = nil)
+      {
+        modal_title: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE,
+        modal_body: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL,
+        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
+        message_detail: format(
+          COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL,
+          task.assigned_by&.full_name || "the assigner"
+        )
+      }
+    end
     def assign_to_user_data(task, user = nil)
       users = if task.assigned_to.is_a?(Organization)
                 task.assigned_to.users
