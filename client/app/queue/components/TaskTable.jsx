@@ -317,8 +317,8 @@ export class TaskTableUnconnected extends React.PureComponent {
       columnName: 'closestRegionalOffice',
       anyFiltersAreSet: true,
       label: 'Filter by regional office',
-      valueFunction: (task) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
-      getSortValue: (task) => task.closestRegionalOffice
+      valueFunction: (task) => task.closestRegionalOffice ? task.closestRegionalOffice.location_hash.city : 'Unknown',
+      getSortValue: (task) => task.closestRegionalOffice.location_hash.city
     } : null;
   }
 
@@ -366,6 +366,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         <BulkAssignModal
           enableBulkAssign={this.props.organizationName === 'Hearing Management'}
           organizationUrl={ORGANIZATION_NAMES[this.props.organizationName]}
+          organizationId={this.props.organizationId}
           tasks={tasks}
           assignTasks={this.props.bulkAssignTasks} />
         <QueueTable
@@ -386,7 +387,8 @@ const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole,
-  tasksAssignedByBulk: state.queue.tasksAssignedByBulk
+  tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
+  organizationId: state.ui.activeOrganization.id
 });
 
 const mapDispatchToProps = (dispatch) => (

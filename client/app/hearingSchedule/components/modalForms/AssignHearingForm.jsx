@@ -93,7 +93,7 @@ class AssignHearingForm extends React.Component {
             key={`hearingLocation__${regionalOffice}`}
             regionalOffice={regionalOffice}
             appealId={appeal.externalId}
-            dynamic={regionalOffice !== appeal.closestRegionalOffice ||
+            dynamic={regionalOffice !== appeal.closestRegionalOffice.location_hash.city ||
               _.isEmpty(appeal.availableHearingLocations)}
             staticHearingLocations={availableHearingLocations}
             value={hearingLocation}

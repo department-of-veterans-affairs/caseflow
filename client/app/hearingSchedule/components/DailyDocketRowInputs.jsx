@@ -152,7 +152,7 @@ export const NotesField = ({ hearing, update, readOnly }) => {
 };
 
 export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, update }) => {
-  const roIsDifferent = regionalOffice !== hearing.closestRegionalOffice;
+  const roIsDifferent = regionalOffice !== hearing.closestRegionalOffice.location_hash.city;
   let staticHearingLocations = _.isEmpty(hearing.availableHearingLocations) ?
     [hearing.location] : _.values(hearing.availableHearingLocations);
 

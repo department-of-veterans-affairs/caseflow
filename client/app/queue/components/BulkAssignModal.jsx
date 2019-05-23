@@ -74,13 +74,25 @@ class BulkAssignModal extends React.PureComponent {
       this.props.assignTasks(this.state.modal);
       this.handleModalToggle();
 
-      return ApiUtil.post('/bulk_task_assignments', { data: { bulk_task_assignment: { organization_id: 1,
-        regional_office: 'RO17',
-        assigned_to_id: 17,
-        task_type: 'NoShowHearingTask',
-        task_count: 2 } } }).
+      const { taskType: task_type, numberOfTasks: task_count } = this.state.modal;
+
+      const { organizationId: organization_id } = this.props;
+      const regionalOffice = _.uniq(this.props.tasks.filter((task) => task.closestRegionalOffice.location_hash.city === this.state.modal.regionalOffice))[0];
+      const regionalOfficeKey = regionalOffice.closestRegionalOffice.key;
+
+      const data = { bulk_task_assignment: {
+        organization_id,
+        regional_office: regionalOfficeKey,
+        assigned_to_id: this.state.modal.assignedUser,
+        task_type,
+        task_count }
+      };
+
+      return ApiUtil.post('/bulk_task_assignments', { data }
+      ).
         then((resp) => {
-          console.log(resp, 'the response');
+          // what needs to be done with the response, update redux?
+          console.log(resp.body);
         }).
         catch((err) => console.log(err, 'the error over here'));
     }
@@ -129,7 +141,7 @@ class BulkAssignModal extends React.PureComponent {
   generateUserOptions = () => {
     const users = this.state.users.map((user) => {
       return {
-        value: user.attributes.css_id,
+        value: user.id,
         displayText: `${user.attributes.css_id} ${user.attributes.full_name}`
       };
     });
@@ -143,7 +155,7 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   generateRegionalOfficeOptions = () => {
-    const options = _.uniq(this.props.tasks.map((task) => task.closestRegionalOffice));
+    const options = _.uniq(this.props.tasks.map((task) => task.closestRegionalOffice && task.closestRegionalOffice.location_hash.city));
 
     return this.getDisplayTextOption(options);
   }
@@ -152,11 +164,12 @@ class BulkAssignModal extends React.PureComponent {
     let filteredTasks = this.props.tasks;
 
     if (this.state.modal.regionalOffice) {
-      filteredTasks = _.filter(filteredTasks, { closestRegionalOffice: this.state.modal.regionalOffice });
+      filteredTasks = filteredTasks.filter((task) => {
+        return task.closestRegionalOffice && task.closestRegionalOffice.location_hash.city === this.state.modal.regionalOffice;
+      });
     }
 
-    const uniqueTasks = _.uniq(filteredTasks.map((task) => task.type));
-    const taskOptions = uniqueTasks.map((task) => {
+    const taskOptions = _.uniq(filteredTasks.map((task) => task.type)).map((task) => {
       return {
         value: task,
         displayText: task.replace(/([a-z])([A-Z])/g, '$1 $2')
@@ -177,7 +190,9 @@ class BulkAssignModal extends React.PureComponent {
     let filteredTasks = this.props.tasks;
 
     // filter by regional office
-    filteredTasks = this.filterTasks('closestRegionalOffice', this.state.modal.regionalOffice, filteredTasks);
+    filteredTasks = filteredTasks.filter((task) => {
+      return task.closestRegionalOffice && (task.closestRegionalOffice.location_hash.city === this.state.modal.regionalOffice);
+    });
 
     // filter by task type
     filteredTasks = this.filterTasks('type', this.state.modal.taskType, filteredTasks);
@@ -250,7 +265,8 @@ BulkAssignModal.propTypes = {
   tasks: PropTypes.array.isRequired,
   organizationUrl: PropTypes.string,
   assignTasks: PropTypes.func.isRequired,
-  issueCountOptions: PropTypes.array
+  issueCountOptions: PropTypes.array,
+  organizationId: PropTypes.number
 };
 
 export default BulkAssignModal;

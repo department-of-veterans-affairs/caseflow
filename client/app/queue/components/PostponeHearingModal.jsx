@@ -207,7 +207,7 @@ class PostponeHearingModal extends React.Component {
 
         {afterDispositionUpdateAction === ACTIONS.RESCHEDULE &&
         <AssignHearingForm
-          initialRegionalOffice={appeal.closestRegionalOffice}
+          initialRegionalOffice={appeal.closestRegionalOffice.location_hash.city}
           showErrorMessages={showErrorMessages}
           appeal={appeal}
         />
