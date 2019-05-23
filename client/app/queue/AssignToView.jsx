@@ -189,7 +189,6 @@ class AssignToView extends React.Component {
               value={this.state.instructions} />
       }
       {isPulacCerullo && COPY.PULAC_CERULLO_MODAL_BODY }
-
     </QueueFlowModal>;
   }
 }

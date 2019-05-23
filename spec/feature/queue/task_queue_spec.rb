@@ -4,6 +4,7 @@ require "rails_helper"
 
 RSpec.feature "Task queue" do
   context "attorney user with assigned tasks" do
+
     let(:attorney_user) { FactoryBot.create(:user) }
 
     let!(:attorney_task) do

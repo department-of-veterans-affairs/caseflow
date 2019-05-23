@@ -11,6 +11,7 @@ class TasksController < ApplicationController
     ColocatedTask: ColocatedTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyTask: AttorneyTask,
+    AttorneyQualityReviewTask: AttorneyQualityReviewTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
     JudgeAssignTask: JudgeAssignTask,

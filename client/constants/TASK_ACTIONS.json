@@ -15,6 +15,7 @@
     "CREATE_CHANGE_HEARING_DISPOSITION_TASK": { "label": "Send for hearing disposition change", "value": "modal/create_change_hearing_disposition_task" },
     "CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK": { "label": "Change previous hearing disposition", "value": "modal/create_change_hearing_disposition_task" },
     "CREATE_MAIL_TASK": { "label": "Create mail task", "value": "modal/create_mail_task", "func": "mail_assign_to_organization_data" },
+    "JUDGE_QR_RETURN_TO_ATTORNEY": { "label": "Return to attorney", "value": "modal/judge_qr_return_to_attorney", "func": "judge_qr_return_to_attorney_data" },
     "JUDGE_LEGACY_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/special_issues"  },
     "JUDGE_AMA_CHECKOUT": { "label": "Ready for Dispatch", "value": "dispatch_decision/dispositions"  },
     "JUDGE_RETURN_TO_ATTORNEY": { "label": "Return to attorney", "value": "modal/return_to_attorney", "func": "return_to_attorney_data" },
