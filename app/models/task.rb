@@ -44,6 +44,10 @@ class Task < ApplicationRecord
                                  )
                                }
 
+  scope :belongs_to_appeal, -> { where(appeal_type: "Appeal") }
+  scope :belongs_to_legacy_appeal, -> { where(appeal_type: "LegacyAppeal") }
+  scope :cancelled_root_task, -> { where(type: "RootTask", status: Constants.TASK_STATUSES.cancelled) }
+
   def available_actions(_user)
     []
   end
