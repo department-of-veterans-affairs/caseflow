@@ -39,8 +39,8 @@ feature "Higher Level Review Edit issues" do
   let!(:rating_before_ama) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 10.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
       issues: [
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
@@ -50,8 +50,8 @@ feature "Higher Level Review Edit issues" do
   let!(:rating_before_ama_from_ramp) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 11.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
       issues: [
         { decision_text: "Issue before AMA Activation from RAMP",
           reference_id: "ramp_ref_id" }
@@ -481,7 +481,17 @@ feature "Higher Level Review Edit issues" do
       )
       add_intake_rating_issue("ankylosis of hip")
 
-      expect(page).to have_content(Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin)
+      expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_NEW)
+
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path(
+        "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
+      )
+
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT)
     end
   end
 
@@ -805,7 +815,7 @@ feature "Higher Level Review Edit issues" do
 
       let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
 
-      it "does not remove & readd unedited issues" do
+      it "does not remove & re-add unedited issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "higher_level_reviews/#{rating_ep_claim_id}/edit",
           higher_level_review,
@@ -1443,7 +1453,7 @@ feature "Higher Level Review Edit issues" do
       end
     end
 
-    context "when a rating decision is edited" do
+    context "when a rating decision text is edited" do
       before do
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
@@ -1466,7 +1476,39 @@ feature "Higher Level Review Edit issues" do
           click_edit_contention_issue
         end
 
-        expect(page).to have_content(issue.contested_issue_description)
+        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
+
+        fill_in(with: "Right Knee")
+        expect(page).to have_button("Submit", disabled: false)
+        click_button("Submit")
+        expect(page).to have_content("Right Knee")
+
+        within first(".issue-edit-text") do
+          click_edit_contention_issue
+        end
+
+        expect(page).to have_field(type: "textarea", match: :first, placeholder: "Right Knee")
+      end
+
+      scenario "edit contention text is saved" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        expect(page).to have_content("Edit contention title")
+
+        within first(".issue-edit-text") do
+          click_edit_contention_issue
+        end
+
+        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
+
+        fill_in(with: "Right Knee")
+        expect(page).to have_button("Submit", disabled: false)
+        click_button("Submit")
+        expect(page).to have_content("Right Knee")
+
+        click_button("Save")
+        expect(RequestIssue.where(edited_description: "Right Knee")).to_not be_nil
       end
     end
 

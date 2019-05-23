@@ -74,6 +74,15 @@ class TaskActionRepository
       }
     end
 
+    def judge_qr_return_to_attorney_data(task, _user = nil)
+      attorney = task.appeal.assigned_attorney
+      {
+        selected: attorney,
+        options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact),
+        type: AttorneyQualityReviewTask.name
+      }
+    end
+
     def assign_to_privacy_team_data(_task, _user = nil)
       org = PrivacyTeam.singleton
 
@@ -97,20 +106,8 @@ class TaskActionRepository
     def add_admin_action_data(task, user = nil)
       if task.is_a? ScheduleHearingTask
         schedule_hearing_task_add_admin_action_data(task, user)
-      elsif task.is_a? LegacyTask
-        legacy_task_add_admin_action_data(task, user)
       else
-        {
-          redirect_after: "/queue",
-          selected: nil,
-          options: Constants::CO_LOCATED_ADMIN_ACTIONS.map do |key, value|
-            {
-              label: value,
-              value: key
-            }
-          end,
-          type: ColocatedTask.name
-        }
+        legacy_and_colocated_task_add_admin_action_data(task, user)
       end
     end
 
@@ -125,7 +122,7 @@ class TaskActionRepository
       }
     end
 
-    def legacy_task_add_admin_action_data(_task, _user)
+    def legacy_and_colocated_task_add_admin_action_data(_task, _user)
       {
         redirect_after: "/queue",
         selected: nil,
@@ -137,6 +134,14 @@ class TaskActionRepository
         end,
         type: ColocatedTask.name
       }
+    end
+
+    def change_task_type_data(task, user = nil)
+      if task.is_a? MailTask
+        mail_assign_to_organization_data(task, user)
+      else
+        legacy_and_colocated_task_add_admin_action_data(task, user)
+      end
     end
 
     def complete_data(task, _user = nil)
@@ -209,6 +214,15 @@ class TaskActionRepository
         options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
           { value: subclass.name, label: subclass.label }
         end
+      }
+    end
+
+    def assign_to_pulac_cerullo_data(_task, _user)
+      org = PulacCurello.singleton
+      {
+        selected: org,
+        options: [{ label: org.name, value: org.id }],
+        type: PulacCurelloTask.name
       }
     end
 

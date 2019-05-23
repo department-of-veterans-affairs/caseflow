@@ -10,7 +10,7 @@ class AttorneyQueue
   # using assigned by user. We set status to being on_hold and placed_on_hold_at to assigned_at timestamp
   def tasks
     colocated_tasks_grouped = ColocatedTask.includes(*task_includes)
-      .active.where(assigned_by: user, assigned_to_type: User.name, appeal_type: LegacyAppeal.name)
+      .active.where(assigned_by: user, assigned_to: Colocated.singleton, appeal_type: LegacyAppeal.name)
       .order(:created_at).group_by(&:appeal_id)
     colocated_tasks_for_attorney_tasks = colocated_tasks_grouped.each_with_object([]) do |(_k, value), result|
       result << value.first.tap do |record|
@@ -19,8 +19,10 @@ class AttorneyQueue
       end
     end
 
-    caseflow_tasks = Task.includes(*task_includes).incomplete_or_recently_closed
-      .where(assigned_to: user, type: [AttorneyTask.name, AttorneyRewriteTask.name, QualityReviewTask.name])
+    caseflow_tasks = Task.includes(*task_includes).incomplete_or_recently_closed .where(
+      assigned_to: user,
+      type: [AttorneyTask.name, AttorneyRewriteTask.name, AttorneyQualityReviewTask.name, QualityReviewTask.name]
+    )
     (colocated_tasks_for_attorney_tasks + caseflow_tasks).flatten
   end
 

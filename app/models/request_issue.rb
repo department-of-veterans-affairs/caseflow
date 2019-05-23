@@ -59,6 +59,7 @@ class RequestIssue < ApplicationRecord
   end
 
   class NotYetSubmitted < StandardError; end
+  class MissingContentionDisposition < StandardError; end
   class MissingDecisionDate < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} lacks a decision_date")
@@ -193,7 +194,8 @@ class RequestIssue < ApplicationRecord
         vacols_sequence_id: data[:vacols_sequence_id],
         contested_decision_issue_id: data[:contested_decision_issue_id],
         ineligible_reason: data[:ineligible_reason],
-        ineligible_due_to_id: data[:ineligible_due_to_id]
+        ineligible_due_to_id: data[:ineligible_due_to_id],
+        edited_description: data[:edited_description]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -408,6 +410,10 @@ class RequestIssue < ApplicationRecord
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
+  def save_edit_contention_text!(new_description)
+    update!(edited_description: new_description)
+  end
+
   def remove!
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
@@ -431,7 +437,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def requires_record_request_task?
-    !benefit_type_requires_payee_code?
+    !is_unidentified && !benefit_type_requires_payee_code?
   end
 
   def decision_or_promulgation_date
@@ -546,6 +552,8 @@ class RequestIssue < ApplicationRecord
       create_decision_issues_from_rating
     end
 
+    # We expect all rating request issues on an EP to get an associated rating created when they're decided
+    # Only non-rating issues should have decision issues created from dispositions
     create_decision_issue_from_disposition if decision_issues.empty?
 
     fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
@@ -608,6 +616,8 @@ class RequestIssue < ApplicationRecord
   # However, if the dispositions for any of these request issues match, there is no need to create multiple decision
   # issues. They can instead be mapped to the same decision issue.
   def find_or_create_decision_issue_from_rating_issue(rating_issue)
+    fail MissingContentionDisposition unless contention_disposition
+
     preexisting_decision_issue = DecisionIssue.find_by(
       participant_id: rating_issue.participant_id,
       rating_issue_reference_id: rating_issue.reference_id,
@@ -667,7 +677,7 @@ class RequestIssue < ApplicationRecord
   def check_for_before_ama!
     return unless eligible? && should_check_for_before_ama?
 
-    if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
+    if decision_or_promulgation_date && decision_or_promulgation_date < decision_review.ama_activation_date
       self.ineligible_reason = :before_ama
     end
   end

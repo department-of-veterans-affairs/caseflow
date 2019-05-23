@@ -43,7 +43,7 @@ RSpec.feature "Judge assignment to attorney and judge" do
       expect(case_rows.length).to eq(2)
 
       step "checks a case and assigns them to another judge" do
-        scroll_element_in_to_view(".usa-table-borderless")
+        scroll_to(".usa-table-borderless")
         check judge_task_one.id.to_s, allow_label_click: true
 
         safe_click ".Select"
@@ -76,7 +76,7 @@ RSpec.feature "Judge assignment to attorney and judge" do
       expect(case_rows.length).to eq(2)
 
       step "checks both cases and assigns them to an attorney" do
-        scroll_element_in_to_view(".usa-table-borderless")
+        scroll_to(".usa-table-borderless")
         check judge_task_one.id.to_s, allow_label_click: true
         check judge_task_two.id.to_s, allow_label_click: true
 
@@ -96,7 +96,7 @@ RSpec.feature "Judge assignment to attorney and judge" do
       end
 
       step "checks one case and assigns it to another attorney" do
-        scroll_element_in_to_view(".usa-table-borderless")
+        scroll_to(".usa-table-borderless")
         check attorney_one.tasks.first.id.to_s, allow_label_click: true
 
         safe_click ".Select"
@@ -183,7 +183,7 @@ RSpec.feature "Judge assignment to attorney and judge" do
         expect(page).to have_content(COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL)
         click_on COPY::JUDGE_REVIEW_DROPDOWN_LINK_LABEL
 
-        expect(page).to have_current_path("/queue/#{judge_one.user.id}/review")
+        expect(page).to have_current_path("/queue")
         expect(page).to have_content("Review 1 Cases")
       end
     end

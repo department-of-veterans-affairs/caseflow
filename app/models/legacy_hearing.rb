@@ -57,10 +57,10 @@ class LegacyHearing < ApplicationRecord
 
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
-      task.type = TrackVeteranTask.name &&
-                  task.assigned_to.is_a?(Representative) &&
-                  task.assigned_to.user_has_access?(user) &&
-                  task.active?
+      task.type == TrackVeteranTask.name &&
+        task.assigned_to.is_a?(Representative) &&
+        task.assigned_to.user_has_access?(user) &&
+        task.active?
     end
   end
 
@@ -109,6 +109,12 @@ class LegacyHearing < ApplicationRecord
 
     HearingMapper.timezone(regional_office_key)
   end
+
+  def time
+    @time ||= HearingTimeService.new(hearing: self)
+  end
+
+  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string, to: :time
 
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
@@ -204,6 +210,8 @@ class LegacyHearing < ApplicationRecord
       methods: [
         :disposition_editable,
         :scheduled_for,
+        :scheduled_time_string,
+        :central_office_time_string,
         :readable_request_type,
         :disposition,
         :aod,
@@ -318,22 +326,19 @@ class LegacyHearing < ApplicationRecord
     end
 
     def assign_or_create_from_vacols_record(vacols_record, legacy_hearing: nil)
-      transaction do
-        hearing = legacy_hearing ||
-                  find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
+      hearing = legacy_hearing || find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
 
-        # update hearing if user is nil, it's likely when the record doesn't exist and is being created
-        # or if vacols record css is different from
-        # who it's assigned to in the db.
-        if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
-          hearing.update(
-            appeal: LegacyAppeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-            user: User.find_by(css_id: vacols_record.css_id)
-          )
-        end
-
-        hearing
+      # update hearing if user is nil, it's likely when the record doesn't exist and is being created
+      # or if vacols record css is different from
+      # who it's assigned to in the db.
+      if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
+        hearing.update(
+          appeal: LegacyAppeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
+          user: User.find_by(css_id: vacols_record.css_id)
+        )
       end
+
+      hearing
     end
   end
 end

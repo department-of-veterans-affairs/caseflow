@@ -125,6 +125,30 @@ describe RequestIssue do
     end
   end
 
+  context "#requires_record_request_task?" do
+    context "issue is unidentified" do
+      it "does not require record request task" do
+        expect(unidentified_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is not a non-compensation line of business" do
+      let(:benefit_type) { "compensation" }
+
+      it "does not require a record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is non-compensation" do
+      let(:benefit_type) { "education" }
+
+      it "requires a record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq true
+      end
+    end
+  end
+
   context ".requires_processing" do
     before do
       rating_request_issue.submit_for_processing!(delay: 1.day)
@@ -883,8 +907,8 @@ describe RequestIssue do
       )
       Generators::Rating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview.ama_activation_date - 5.days,
-        profile_date: DecisionReview.ama_activation_date - 10.days,
+        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
         issues: [
           { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
           { decision_text: "Issue before AMA Activation from RAMP",
@@ -1100,10 +1124,10 @@ describe RequestIssue do
     end
 
     context "Issues with decision dates before AMA" do
-      let(:profile_date) { DecisionReview.ama_activation_date - 5.days }
+      let(:profile_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days }
 
       it "flags nonrating issues before AMA" do
-        nonrating_request_issue.decision_date = DecisionReview.ama_activation_date - 5.days
+        nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days
         nonrating_request_issue.validate_eligibility!
 
         expect(nonrating_request_issue.ineligible_reason).to eq("before_ama")
@@ -1125,7 +1149,7 @@ describe RequestIssue do
         end
 
         it "does not apply before AMA checks" do
-          nonrating_request_issue.decision_date = DecisionReview.ama_activation_date - 5.days
+          nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days
           nonrating_request_issue.validate_eligibility!
 
           expect(nonrating_request_issue.ineligible_reason).to_not eq("before_ama")

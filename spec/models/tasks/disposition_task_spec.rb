@@ -165,7 +165,7 @@ describe DispositionTask do
             new_hearing_attrs: {
               hearing_day_id: HearingDay.first.id,
               hearing_location: { facility_id: "vba_370", distance: 10 },
-              hearing_time: { h: "12", m: "30", offset: "-05:00" }
+              scheduled_time_string: "12:30"
             }
           }
         end
@@ -219,39 +219,6 @@ describe DispositionTask do
       it "should throw an error" do
         expect { subject }.to raise_error(Caseflow::Error::InvalidParentTask)
       end
-    end
-  end
-
-  describe ".create_change_hearing_disposition_task_and_complete" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let(:instructions) { "These are the instructions I've written for you." }
-    let!(:disposition_task) do
-      FactoryBot.create(
-        :disposition_task,
-        parent: hearing_task,
-        appeal: appeal,
-        status: Constants.TASK_STATUSES.in_progress
-      )
-    end
-    let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
-
-    subject { disposition_task.create_change_hearing_disposition_task_and_complete(instructions) }
-
-    it "completes the disposition task and its children and creates a new change hearing disposition task" do
-      expect(disposition_task.status).to_not eq Constants.TASK_STATUSES.completed
-      expect(ChangeHearingDispositionTask.count).to eq 0
-
-      subject
-
-      expect(disposition_task.reload.status).to eq Constants.TASK_STATUSES.completed
-      expect(transcription_task.reload.status).to eq Constants.TASK_STATUSES.completed
-      expect(ChangeHearingDispositionTask.count).to eq 1
-      change_hearing_disposition_task = ChangeHearingDispositionTask.first
-      expect(change_hearing_disposition_task.appeal).to eq appeal
-      expect(change_hearing_disposition_task.parent).to eq hearing_task
-      expect(change_hearing_disposition_task.instructions).to match_array [instructions]
     end
   end
 

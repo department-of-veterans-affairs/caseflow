@@ -79,6 +79,12 @@ class MailTask < GenericTask
   def label
     self.class.label
   end
+
+  # Waiting for backend implementation before allowing user access
+  # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+  # def available_actions(user)
+  #   super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+  # end
 end
 
 class AddressChangeMailTask < MailTask
@@ -116,6 +122,14 @@ class AppealWithdrawalMailTask < MailTask
 end
 
 class ClearAndUnmistakeableErrorMailTask < MailTask
+  def available_actions(user)
+    if LitigationSupport.singleton.user_has_access?(user)
+      return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    end
+
+    super
+  end
+
   def self.label
     COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL
   end
@@ -292,6 +306,14 @@ class ReturnedUndeliverableCorrespondenceMailTask < MailTask
 end
 
 class ReconsiderationMotionMailTask < MailTask
+  def available_actions(user)
+    if LitigationSupport.singleton.user_has_access?(user)
+      return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    end
+
+    super
+  end
+
   def self.label
     COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL
   end
@@ -312,6 +334,14 @@ class StatusInquiryMailTask < MailTask
 end
 
 class VacateMotionMailTask < MailTask
+  def available_actions(user)
+    if LitigationSupport.singleton.user_has_access?(user)
+      return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    end
+
+    super
+  end
+
   def self.label
     COPY::VACATE_MOTION_MAIL_TASK_LABEL
   end

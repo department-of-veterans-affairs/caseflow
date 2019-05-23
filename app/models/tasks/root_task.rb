@@ -13,10 +13,14 @@ class RootTask < GenericTask
     self.assigned_to = Bva.singleton
   end
 
-  def when_child_task_completed; end
+  def when_child_task_completed(_child_task); end
 
   def update_children_status_after_closed
     children.active.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def hide_from_case_timeline
+    true
   end
 
   def hide_from_task_snapshot

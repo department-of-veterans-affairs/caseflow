@@ -6,6 +6,7 @@
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
+  validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
 
@@ -33,7 +34,7 @@ class DispositionTask < GenericTask
   end
 
   def available_actions(user)
-    hearing_admin_actions = available_hearing_admin_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
 
     if HearingsManagement.singleton.user_has_access?(user)
       [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h] | hearing_admin_actions
@@ -51,17 +52,6 @@ class DispositionTask < GenericTask
       [self]
     else
       super(params, user)
-    end
-  end
-
-  def create_change_hearing_disposition_task_and_complete(instructions = nil)
-    multi_transaction do
-      ChangeHearingDispositionTask.create!(
-        appeal: appeal,
-        parent: parent,
-        instructions: instructions.present? ? [instructions] : nil
-      )
-      update!(status: Constants.TASK_STATUSES.completed)
     end
   end
 
@@ -113,6 +103,10 @@ class DispositionTask < GenericTask
     children.active.update_all(status: status)
   end
 
+  def cascade_closure_from_child_task?(_child_task)
+    true
+  end
+
   def update_hearing_and_self(params:, payload_values:)
     case payload_values[:disposition]
     when Constants.HEARING_DISPOSITION_TYPES.cancelled
@@ -149,13 +143,13 @@ class DispositionTask < GenericTask
     end
   end
 
-  def reschedule(hearing_day_id:, hearing_time:, hearing_location: nil)
+  def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil)
     new_hearing_task = hearing_task.cancel_and_recreate
 
     new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
                                                      appeal: appeal,
                                                      hearing_location_attrs: hearing_location&.to_hash,
-                                                     scheduled_time: hearing_time.stringify_keys)
+                                                     scheduled_time_string: scheduled_time_string)
     self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
   end
 
@@ -192,7 +186,8 @@ class DispositionTask < GenericTask
     when "reschedule"
       new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
       reschedule(
-        hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
+        hearing_day_id: new_hearing_attrs[:hearing_day_id],
+        scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
         hearing_location: new_hearing_attrs[:hearing_location]
       )
     when "schedule_later"

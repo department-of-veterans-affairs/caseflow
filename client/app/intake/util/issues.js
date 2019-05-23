@@ -219,7 +219,8 @@ const formatRatingRequestIssues = (state) => {
         contested_decision_issue_id: issue.decisionIssueId,
         ineligible_reason: issue.ineligibleReason,
         ineligible_due_to_id: issue.ineligibleDueToId,
-        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null
+        withdrawal_date: issue.withdrawalPending ? formatDateStringForApi(state.withdrawalDate) : null,
+        edited_description: issue.editedDescription
       };
     });
 };
@@ -352,7 +353,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
         vacolsIssue: issue.vacolsIssue,
         eligibleForSocOptIn: issue.eligibleForSocOptIn,
         withdrawalPending: issue.withdrawalPending,
-        withdrawalDate: issue.withdrawalDate
+        withdrawalDate: issue.withdrawalDate,
+        editedDescription: issue.editedDescription
       };
     }
 
@@ -377,7 +379,8 @@ export const formatAddedIssues = (intakeData, useAmaActivationDate = false) => {
       decisionReviewTitle: issue.decisionReviewTitle,
       withdrawalPending: issue.withdrawalPending,
       withdrawalDate: issue.withdrawalDate,
-      category: issue.category
+      category: issue.category,
+      editedDescription: issue.editedDescription
     };
   });
 };

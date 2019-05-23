@@ -70,6 +70,9 @@ class ColocatedTask < Task
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
+    # Waiting for backend implementation before allowing user access
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+    # core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
       return ama_translation_actions(core_actions)
@@ -113,12 +116,11 @@ class ColocatedTask < Task
   end
 
   def update_location_in_vacols
-    all_colocated_tasks_for_legacy_appeal_complete = saved_change_to_status? &&
-                                                     !active? &&
-                                                     appeal_type == LegacyAppeal.name &&
-                                                     all_tasks_closed_for_appeal?
-
-    if all_colocated_tasks_for_legacy_appeal_complete
+    if saved_change_to_status? &&
+       !active? &&
+       all_tasks_closed_for_appeal? &&
+       appeal.is_a?(LegacyAppeal) &&
+       appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end

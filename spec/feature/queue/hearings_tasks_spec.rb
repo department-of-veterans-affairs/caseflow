@@ -207,4 +207,82 @@ RSpec.feature "Hearings tasks workflows" do
       end
     end
   end
+
+  describe "Cancelling a VerifyAddressTask" do
+    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
+    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
+    let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
+    let!(:verify_address_task) do
+      FactoryBot.create(:hearing_admin_action_verify_address_task, parent: parent_hearing_task, appeal: appeal)
+    end
+    let(:instructions_text) { "This is why I want to cancel the task!" }
+    
+    context "with a hearing admin member" do
+      let(:admin_full_name) { "Zagorka Hrenic" }
+      let(:hearing_admin_user) { FactoryBot.create(:user, full_name: admin_full_name, station_id: 101) }
+
+      before do
+        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+
+        User.authenticate!(user: hearing_admin_user)
+
+        visit("/queue/appeals/#{appeal.uuid}")
+      end
+
+      it "has 'Cancel task and assign Regional Office' option" do
+        expect(page).to have_content("Verify Address")
+
+        click_dropdown(text: Constants.TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.label)
+      end
+
+      context "in cancel task modal" do
+        before do
+          click_dropdown(text: Constants.TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.label)
+        end
+
+        it "has Regional Office dropdown and notes field" do
+          expect(page).to have_field("regionalOffice")
+          expect(page).to have_field("notes")
+        end
+
+        it "Regional Office and notes are editable" do
+          click_dropdown(text: "Atlanta, GA")
+          fill_in("Notes", with: instructions_text)
+        end
+
+        it "can't submit form without specifying a Regional Office" do
+          click_button("Confirm")
+
+          expect(page).to have_content COPY::REGIONAL_OFFICE_REQUIRED_MESSAGE
+        end
+
+        it "can submit form with Regional Office and no notes" do
+          click_dropdown(text: "Atlanta, GA")
+
+          click_button("Confirm")
+
+          expect(page).to have_content COPY::CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
+        end
+
+        it "can submit form with Regional Office and notes" do
+          click_dropdown(text: "Atlanta, GA")
+          fill_in("Notes", with: instructions_text)
+
+          click_button("Confirm")
+
+          expect(page).to have_content COPY::CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
+        end
+      end
+    end
+
+    context "with a regular hearing member" do
+      it "has actions" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        expect(page).to have_content("Verify Address")
+        expect(page).not_to have_selector(".Select-control")
+      end
+    end
+  end
 end

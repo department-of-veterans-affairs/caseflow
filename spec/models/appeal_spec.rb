@@ -566,7 +566,11 @@ describe Appeal do
     end
 
     context "request issue has non-comp business line" do
-      let!(:appeal) { create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)]) }
+      let!(:appeal) { create(:appeal, request_issues: [
+        create(:request_issue, benefit_type: :fiduciary),
+        create(:request_issue, benefit_type: :compensation),
+        create(:request_issue, :unidentified)
+        ]) }
 
       it "creates root task and veteran record request task" do
         expect(VeteranRecordRequest).to receive(:create!).once
@@ -977,7 +981,7 @@ describe Appeal do
   context "#status_hash" do
     let(:judge) { create(:user) }
     let!(:hearings_user) { create(:hearings_coordinator) }
-    let!(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let!(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
     let(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let(:root_task_status) { "in_progress" }
     let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
@@ -1276,7 +1280,7 @@ describe Appeal do
   end
 
   context "#events" do
-    let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
     let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let!(:decision_date) { receipt_date + 130.days }
     let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
@@ -1416,7 +1420,7 @@ describe Appeal do
   end
 
   context "#issues_hash" do
-    let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
 
     let(:request_issue1) do
       create(:request_issue,

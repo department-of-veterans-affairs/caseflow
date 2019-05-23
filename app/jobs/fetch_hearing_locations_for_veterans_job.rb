@@ -18,7 +18,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
           LEFT OUTER JOIN tasks admin_actions
           ON t.id = admin_actions.parent_id
           AND admin_actions.type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-          AND admin_actions.status NOT IN ('cancelled', 'completed')
           WHERE t.appeal_type = ?
           AND admin_actions.id IS NULL AND t.type = 'ScheduleHearingTask'
           AND t.status NOT IN ('cancelled', 'completed')
@@ -46,7 +45,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
       rescue StandardError => error
         Raven.capture_exception(error, extra: { appeal_external_id: appeal.external_id })
         record_geomatched_appeal(appeal.external_id, "error")
-        break # break until Facilities API is working
       end
     end
   end

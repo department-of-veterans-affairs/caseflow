@@ -110,8 +110,6 @@ RSpec.feature "List Schedule" do
 
       scenario "Correct hearing days are displayed" do
         visit "hearings/schedule"
-
-        expect(page).to have_content("Try it out and provide any feedback through our support channels.")
         expect(page).to have_content(Hearing::HEARING_TYPES[HearingDay.first.request_type.to_sym])
       end
     end
@@ -168,7 +166,7 @@ RSpec.feature "List Schedule" do
     end
 
     before do
-      BGSService = ExternalApi::BGSService
+      stub_const("BGSService", ExternalApi::BGSService)
       RequestStore[:current_user] = current_user
 
       allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
@@ -177,15 +175,20 @@ RSpec.feature "List Schedule" do
         .with(vso_participant_id).and_return(vso_participant_ids)
     end
 
-    after do
-      BGSService = Fakes::BGSService
-    end
-
     scenario "Only hearing days with VSO assigned hearings are displayed" do
       visit "hearings/schedule"
       expect(page).to have_content("One, Judge")
       expect(page).to_not have_content("Two, Judge")
       expect(page).to have_content("Three, Judge")
+    end
+  end
+
+  context "Hearing prep deprecation" do
+    let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
+
+    scenario "Upcoming docket days redirects to hearing schedule" do
+      visit "/hearings/dockets"
+      expect(page.current_path).to eq("/hearings/schedule")
     end
   end
 end

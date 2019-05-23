@@ -3,7 +3,6 @@ import _ from 'lodash';
 import { css } from 'glamor';
 import moment from 'moment';
 
-import { getTimeWithoutTimeZone } from '../../util/DateUtil';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import Checkbox from '../../components/Checkbox';
@@ -17,7 +16,7 @@ import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
 const staticSpacing = css({ marginTop: '5px' });
 
 export const DispositionDropdown = ({
-  hearing, update, readOnly, cancelUpdate, openDispositionModal, saveHearing
+  hearing, update, readOnly, openDispositionModal, saveHearing
 }) => {
 
   return <div><SearchableDropdown
@@ -27,17 +26,17 @@ export const DispositionDropdown = ({
     options={DISPOSITION_OPTIONS}
     value={hearing.disposition}
     onChange={(option) => {
+      const fromDisposition = hearing.disposition;
+
+      update({ disposition: option.value });
       openDispositionModal({
         hearing,
-        disposition: option.value,
-        onConfirm: () => {
-          if (option.value === 'postponed') {
-            cancelUpdate();
-          }
-
-          update({ disposition: option.value });
-          saveHearing();
-        }
+        fromDisposition,
+        toDisposition: option.value,
+        onCancel: () => {
+          update({ disposition: fromDisposition });
+        },
+        onConfirm: saveHearing
       });
     }}
     readOnly={readOnly || !hearing.dispositionEditable}
@@ -194,15 +193,11 @@ export const StaticHearingDay = ({ hearing }) => (
 );
 
 export const TimeRadioButtons = ({ hearing, regionalOffice, update, readOnly }) => {
-  const timezone = hearing.readableRequestType === 'Central' ? 'America/New_York' : hearing.regionalOfficeTimezone;
-
-  const value = hearing.editedTime ? hearing.editedTime : getTimeWithoutTimeZone(hearing.scheduledFor, timezone);
-
   return <HearingTime
     regionalOffice={regionalOffice}
-    value={value}
+    value={hearing.scheduledTimeString}
     readOnly={readOnly}
-    onChange={(editedTime) => update({ editedTime })} />;
+    onChange={(scheduledTimeString) => update({ scheduledTimeString })} />;
 };
 
 export const PreppedCheckbox = ({ hearing, update, readOnly }) => (

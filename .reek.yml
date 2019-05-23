@@ -5,11 +5,15 @@ detectors:
     enabled: false
   TooManyMethods:
     exclude:
+      - DispositionTask
       - RootTask
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
+  Attribute:
+    exclude:
+      - BulkTaskAssignment
   IrresponsibleModule:
     enabled: false
   MissingSafeMethod:
@@ -21,6 +25,7 @@ detectors:
   UtilityFunction:
     public_methods_only: true
     exclude:
+      - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings

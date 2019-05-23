@@ -29,10 +29,7 @@ RSpec.describe Tasks::PlaceHoldController, type: :controller do
         expect(timed_hold_task).to be_a(TimedHoldTask)
         expect(timed_hold_task.instructions).to eq([instructions])
         expect(timed_hold_task.assigned_by).to eq(user)
-
-        task_timer = timed_hold_task.task_timers.first
-        expect(task_timer).to be_a(TaskTimer)
-        expect(task_timer.submitted_at.to_date).to eq((Time.zone.now + days_on_hold.days).to_date)
+        expect(timed_hold_task.timer_end_time.to_date).to eq((Time.zone.now + days_on_hold.days).to_date)
       end
     end
 

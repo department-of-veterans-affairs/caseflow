@@ -244,13 +244,28 @@ describe User do
 
     subject { user.selectable_organizations }
 
-    before do
-      OrganizationsUser.add_user_to_organization(user, judgeteam)
+    context "when user is the team's judge" do
+      let(:user) { judge }
+
+      it "includes judge teams from the organization list" do
+        is_expected.to include(
+          :id => judgeteam.id,
+          :name => "Assign",
+          :url => "queue/%<id>s/assign" % [id: user.id]
+        )
+        expect(user.organizations).to include judgeteam
+      end
     end
 
-    it "excludes judge teams from the organization list" do
-      is_expected.to be_empty
-      expect(user.organizations).to include judgeteam
+    context "when user is not the team's judge" do
+      before do
+        OrganizationsUser.add_user_to_organization(user, judgeteam)
+      end
+
+      it "excludes judge teams from the organization list" do
+        is_expected.to be_empty
+        expect(user.organizations).to include judgeteam
+      end
     end
   end
 
@@ -276,17 +291,13 @@ describe User do
     end
 
     before do
-      BGSService = ExternalApi::BGSService
+      stub_const("BGSService", ExternalApi::BGSService)
       RequestStore[:current_user] = user
 
       allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
         .with(css_id: user.css_id, station_id: user.station_id).and_return(participant_id)
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
         .with(participant_id).and_return(vso_participant_ids)
-    end
-
-    after do
-      BGSService = Fakes::BGSService
     end
 
     context "#participant_id" do

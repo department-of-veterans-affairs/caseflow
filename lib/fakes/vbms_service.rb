@@ -77,9 +77,9 @@ class Fakes::VBMSService
     IO.binread(path)
   end
 
-  def self.quick_document_count_for_appeal(appeal, user)
-    response = fetch_documents_for(appeal, user)
-    response[:documents]&.size
+  def self.document_count(veteran_file_number, _user = nil)
+    docs = (document_records || {})[veteran_file_number] || @documents || []
+    docs.length
   end
 
   def self.fetch_documents_for(appeal, _user = nil)

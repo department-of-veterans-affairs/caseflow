@@ -15,7 +15,7 @@ export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay,
       </Button>}
       cancelButton={<Button linkStyling onClick={onCancelRemoveHearingDay}>Go back</Button>} >
       {'Once the hearing day is removed, users will no longer be able to ' +
-        `schedule Veterans for this ${dailyDocket.requestType} hearing day on ` +
+        `schedule Veterans for this ${dailyDocket.readableRequestType} hearing day on ` +
         `${moment(dailyDocket.scheduledFor).format('ddd M/DD/YYYY')}.`}
     </Modal>
   </div>
@@ -85,7 +85,7 @@ export class DispositionModal extends React.Component {
   }
 
   render () {
-    const { hearing, disposition, onCancel } = this.props;
+    const { hearing, fromDisposition, toDisposition, onCancel } = this.props;
     const hearingType = hearing.docketName === 'legacy' &&
       !hearing.dispositionEditable ? 'VACOLS' : 'CASEFLOW';
 
@@ -100,10 +100,10 @@ export class DispositionModal extends React.Component {
             <div>
               <p>
                 Previous Disposition: <strong>
-                  {hearing.disposition ? this.dispositionMap[hearing.disposition] : 'None'}
+                  {hearing.disposition ? this.dispositionMap[fromDisposition] : 'None'}
                 </strong>
               </p>
-              <p>New Disposition: <strong>{this.dispositionMap[disposition]}</strong></p>
+              <p>New Disposition: <strong>{this.dispositionMap[toDisposition]}</strong></p>
             </div>
             {this.COPY[hearingType].body}
           </Modal>

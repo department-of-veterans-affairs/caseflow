@@ -2,9 +2,17 @@
 
 FactoryBot.define do
   factory :hearing do
+    transient do
+      regional_office { nil }
+    end
     appeal { create(:appeal, :hearing_docket) }
     uuid { SecureRandom.uuid }
-    hearing_day { create(:hearing_day) }
+    hearing_day do
+      create(:hearing_day,
+             regional_office: regional_office,
+             scheduled_for: Time.zone.now,
+             request_type: regional_office.nil? ? "C" : "V")
+    end
     scheduled_time { "8:30AM" }
 
     trait :with_tasks do

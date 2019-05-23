@@ -69,6 +69,7 @@ class SeedDB
     create_aod_user_and_tasks
     create_privacy_user
     create_lit_support_user
+    create_pulac_curello_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -122,18 +123,37 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
 
-    create_no_show_hearings_task
+    create_no_show_hearings_tasks
     create_change_hearing_disposition_task
   end
 
-  def create_no_show_hearings_task
-    appeal = FactoryBot.create(:appeal, :hearing_docket)
-    root_task = FactoryBot.create(:root_task, appeal: appeal)
-    distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
-    parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
-    FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
-    disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
-    FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+  def create_no_show_hearings_tasks
+    5.times do 
+      appeal = FactoryBot.create(
+        :appeal, 
+        :hearing_docket, 
+        closest_regional_office: ["RO17", "RO19", "RO31"].sample
+      )
+      root_task = FactoryBot.create(:root_task, appeal: appeal)
+      distribution_task = FactoryBot.create(
+        :distribution_task, 
+        appeal: appeal, 
+        parent: root_task
+      )
+      parent_hearing_task = FactoryBot.create(
+        :hearing_task, 
+        parent: distribution_task, 
+        appeal: appeal
+      )
+      FactoryBot.create(
+        :schedule_hearing_task, 
+        :completed, 
+        parent: parent_hearing_task, 
+        appeal: appeal
+      )
+      disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
+      FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+    end
   end
 
   def create_change_hearing_disposition_task
@@ -246,7 +266,7 @@ class SeedDB
   end
 
   def create_qr_user
-    qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "QR User")
+    qr_user = User.create!(station_id: 101, css_id: "QR_USER", full_name: "Quality Reviewer")
     OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton)
 
     # Create QR tasks; one assigned just to the QR org and three assigned both to the org and a QR user.
@@ -281,6 +301,11 @@ class SeedDB
   def create_lit_support_user
     u = User.create!(station_id: 101, css_id: "LIT_SUPPORT_USER", full_name: "Litigation Support team member")
     OrganizationsUser.add_user_to_organization(u, LitigationSupport.singleton)
+  end
+
+  def create_pulac_curello_user
+    u = User.create!(station_id: 101, css_id: "BVAKSOSNA", full_name: "KATHLEEN SOSNA")
+    OrganizationsUser.add_user_to_organization(u, PulacCurello.singleton)
   end
 
   def create_mail_team_user
