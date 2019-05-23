@@ -6,6 +6,8 @@
 
 class BvaDispatchTask < GenericTask
   def available_actions(user)
+    return [] unless user
+
     super.unshift(Constants.TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.to_h)
   end
 
