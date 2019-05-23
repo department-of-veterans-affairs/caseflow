@@ -79,7 +79,7 @@ describe HearingAdminActionTask do
         available_actions = verify_address_task.available_actions(hearings_management_user)
 
         expect(available_actions.length).to eq 1
-        expect(available_actions).to include(Constants.TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.to_h)
+        expect(available_actions).to include(Constants.TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.to_h)
       end
     end
 

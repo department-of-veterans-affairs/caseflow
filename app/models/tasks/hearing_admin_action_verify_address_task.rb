@@ -11,7 +11,7 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
     user_has_access = HearingAdmin.singleton.user_has_access?(user)
 
     if user_has_access
-      [Constants.TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.to_h]
+      [Constants.TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.to_h]
     else
       []
     end

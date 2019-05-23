@@ -233,12 +233,12 @@ RSpec.feature "Hearings tasks workflows" do
       it "has 'Cancel task and assign Regional Office' option" do
         expect(page).to have_content("Verify Address")
 
-        click_dropdown(text: Constants.TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.label)
+        click_dropdown(text: Constants.TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.label)
       end
 
       context "in cancel task modal" do
         before do
-          click_dropdown(text: Constants.TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.label)
+          click_dropdown(text: Constants.TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.label)
         end
 
         it "has Regional Office dropdown and notes field" do
@@ -262,7 +262,7 @@ RSpec.feature "Hearings tasks workflows" do
 
           click_button("Confirm")
 
-          expect(page).to have_content COPY::CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
+          expect(page).to have_content COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
         end
 
         it "can submit form with Regional Office and notes" do
@@ -271,7 +271,7 @@ RSpec.feature "Hearings tasks workflows" do
 
           click_button("Confirm")
 
-          expect(page).to have_content COPY::CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
+          expect(page).to have_content COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
         end
       end
     end

@@ -443,7 +443,7 @@ class QueueApp extends React.PureComponent {
             title="Assign to Pulac-Cerullo | Caseflow"
             render={this.routedAssignToPulacCerullo} />
           <PageRoute
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}
             title="Cancel Task and Assign Regional Office | Caseflow"
             render={this.routedCancelTaskAndAssignRegionalOfficeModal} />
           <PageRoute
