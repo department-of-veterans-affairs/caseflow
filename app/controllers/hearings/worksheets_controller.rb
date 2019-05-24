@@ -15,7 +15,10 @@ class Hearings::WorksheetsController < HearingsController
     HearingView.find_or_create_by(hearing: hearing, user_id: current_user.id).touch
 
     respond_to do |format|
-      format.html { render template: "hearings/index" }
+      format.html do
+        render template: "hearings/index", locals: { print_stylesheet: "print/hearings_worksheet" }
+      end
+
       format.json do
         render json: hearing_worksheet
       end

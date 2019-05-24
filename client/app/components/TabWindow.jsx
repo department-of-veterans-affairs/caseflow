@@ -94,7 +94,7 @@ export default class TabWindow extends React.Component {
 TabWindow.propTypes = {
   onChange: PropTypes.func,
   tabs: PropTypes.arrayOf(PropTypes.shape({
-    disable: PropTypes.boolean,
+    disable: PropTypes.bool,
     icon: PropTypes.obj,
     indicator: PropTypes.obj,
     label: PropTypes.node.isRequired,
