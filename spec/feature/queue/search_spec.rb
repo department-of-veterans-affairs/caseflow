@@ -440,7 +440,7 @@ RSpec.feature "Search" do
       it "searching in search bar works" do
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
-        
+
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
@@ -487,18 +487,66 @@ RSpec.feature "Search" do
   end
 
   context "has withdrawn decision reviews" do
-    let!(:caseflow_appeal) { create(:appeal, docket_type: "direct_review") }
-    let!(:withdrawn_request_issue) { create(:request_issue, closed_status: :withdrawn, decision_review: caseflow_appeal) }
+    include IntakeHelpers
+
+    before do
+      FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
+    end
+
+    after do
+      FeatureToggle.disable!(:withdraw_decision_review, users: [current_user.css_id])
+    end
+    let(:receipt_date) { Time.zone.today - 20.days }
+
+    let!(:caseflow_appeal) do
+      create(:appeal,
+             docket_type: "direct_review",
+             veteran_is_not_claimant: false,
+             receipt_date: receipt_date)
+    end
 
     def perform_search
       visit "/search"
       fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
       click_on "Search"
     end
-   
-    it "shows withdrawn decision reviews" do
+
+    let(:withdraw_date) { 1.day.ago.to_date.mdY }
+
+    scenario "withdraw entire review and show withdrwan on search page" do
+      visit "appeals/#{caseflow_appeal.uuid}/edit/"
+
+      # Add issue that is not a VBMS issue
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        benefit_type: "Education",
+        category: "Accrued",
+        description: "Description for Accrued",
+        date: 1.day.ago.to_date.mdY
+      )
+
+      click_edit_submit_and_confirm
+
+      sleep 1
+
+      # reload to verify that the new issues populate the form
+      visit "appeals/#{caseflow_appeal.uuid}/edit/"
+      click_withdraw_intake_issue_dropdown("Accrued")
+      fill_in "withdraw-date", with: withdraw_date
+
+      expect(page).to have_content("This review will be withdrawn.")
+      expect(page).to have_button("Withdraw", disabled: false)
+
+      click_edit_submit
+
+      expect(page).to have_current_path("/queue/appeals/#{caseflow_appeal.uuid}")
+
+      expect(page).to have_content("You have successfully withdrawn a review.")
+
+      # load search page
       perform_search
-      expect(withdrawn_request_issue.closed_status).to eq("withdrawn")
+      expect(caseflow_appeal.reload.request_issues.withdrawn)
+      expect(page).to have_content("Withdrawn")
     end
   end
 end
