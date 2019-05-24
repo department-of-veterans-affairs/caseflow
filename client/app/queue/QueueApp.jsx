@@ -32,7 +32,7 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
-import CancelTaskAssignRegionalOfficeModal from './components/CancelTaskAssignRegionalOfficeModal';
+import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
@@ -67,6 +67,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
 import COPY from '../../COPY.json';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
@@ -202,8 +203,8 @@ class QueueApp extends React.PureComponent {
 
   routedCancelTaskModal = (props) => <CancelTaskModal {...props.match.params} />;
 
-  routedCancelTaskAndAssignRegionalOfficeModal = (props) =>
-    <CancelTaskAssignRegionalOfficeModal {...props.match.params} />;
+  routedUpdateTaskAndAssignRegionalOfficeModal = (updateStatusTo) => (props) =>
+    <UpdateTaskStatusAssignRegionalOfficeModal updateStatusTo={updateStatusTo} {...props.match.params} />;
 
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
@@ -443,9 +444,14 @@ class QueueApp extends React.PureComponent {
             title="Assign to Pulac-Cerullo | Caseflow"
             render={this.routedAssignToPulacCerullo} />
           <PageRoute
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${
+              TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}
             title="Cancel Task and Assign Regional Office | Caseflow"
-            render={this.routedCancelTaskAndAssignRegionalOfficeModal} />
+            render={this.routedUpdateTaskAndAssignRegionalOfficeModal(TASK_STATUSES.cancelled)} />
+          <PageRoute
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.value}`}
+            title="Send to Schedule Veteran List | Caseflow"
+            render={this.routedUpdateTaskAndAssignRegionalOfficeModal(TASK_STATUSES.completed)} />
           <PageRoute
             exact
             path={'/queue/appeals/:appealId/tasks/:taskId/' +

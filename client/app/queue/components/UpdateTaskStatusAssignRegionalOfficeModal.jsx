@@ -1,16 +1,17 @@
 import _ from 'lodash';
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { css } from 'glamor';
 
 import COPY from '../../../COPY.json';
-import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 import QueueFlowModal from './QueueFlowModal';
 import RegionalOfficeDropdown from '../../components/DataDropdowns/RegionalOffice';
 import TextareaField from '../../components/TextareaField';
 import { taskById } from '../selectors';
+import { taskActionData } from '../utils';
 import { highlightInvalidFormItems, requestPatch } from '../uiReducer/uiActions';
 
 class CancelTaskAssignRegionalOfficeModal extends React.Component {
@@ -33,12 +34,12 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
   onNotesChanged = (notes) => this.setState({ notes });
 
   onSubmit = () => {
-    const { task } = this.props;
+    const { updateStatusTo, task, actionConfiguration } = this.props;
     const { regionalOffice, notes } = this.state;
     const payload = {
       data: {
         task: {
-          status: TASK_STATUSES.cancelled,
+          status: updateStatusTo,
           instructions: notes,
           business_payloads: {
             values: {
@@ -49,27 +50,25 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
       }
     };
     const successMessage = {
-      title: COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE,
-      detail: COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_DETAIL
+      title: actionConfiguration.message_title || 'Success',
+      detail: actionConfiguration.message_detail || ''
     };
 
     return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMessage);
   };
 
   render = () => {
-    const { appealId, hasError } = this.props;
+    const { actionConfiguration, appealId, hasError } = this.props;
 
     return (
       <QueueFlowModal
-        title={COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE}
-        button={COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_BUTTON}
+        title={actionConfiguration.modal_title || ''}
+        button={COPY.MODAL_CONFIRM_BUTTON}
         submit={this.onSubmit}
         validateForm={this.validateRegionalOfficePopulated}
         pathAfterSubmit={`/queue/appeals/${appealId}`}
       >
-        <p>
-          {COPY.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL}
-        </p>
+        {actionConfiguration.modal_body && <p>{actionConfiguration.modal_body}</p>}
         <RegionalOfficeDropdown
           errorMessage={hasError ? COPY.REGIONAL_OFFICE_REQUIRED_MESSAGE : null}
           value={this.state.regionalOffice}
@@ -87,18 +86,30 @@ class CancelTaskAssignRegionalOfficeModal extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => (
-  {
-    task: taskById(state, { taskId: ownProps.taskId }),
+const mapStateToProps = (state, ownProps) => {
+  const task = taskById(state, { taskId: ownProps.taskId });
+
+  return {
+    task,
+    actionConfiguration: taskActionData({ task,
+      ...ownProps }),
     appealId: ownProps.appealId,
     hasError: state.ui.highlightFormItems
-  }
-);
+  };
+};
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   highlightInvalidFormItems,
   requestPatch
 }, dispatch);
+
+CancelTaskAssignRegionalOfficeModal.propTypes = {
+  updateStatusTo: PropTypes.string.isRequired,
+  task: PropTypes.object.isRequired,
+  actionConfiguration: PropTypes.object.isRequired,
+  appealId: PropTypes.string.isRequired,
+  hasError: PropTypes.bool.isRequired
+};
 
 export default (withRouter(
   connect(mapStateToProps, mapDispatchToProps)(
