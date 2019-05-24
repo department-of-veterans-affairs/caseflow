@@ -14,7 +14,7 @@ import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import HearingDetailsContainer from './containers/DetailsContainer';
-import HearingWorksheetContainer from '../hearings/containers/HearingWorksheetContainer';
+import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
 import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 
@@ -26,7 +26,9 @@ export default class HearingsApp extends React.PureComponent {
       userRoleView,
       userRoleVso,
       userRoleHearingPrep,
-      userInHearingsOrganization
+      userInHearingsOrganization,
+      userId,
+      userCssId
     } = this.props;
 
     return {
@@ -35,7 +37,9 @@ export default class HearingsApp extends React.PureComponent {
       userRoleView,
       userRoleVso,
       userRoleHearingPrep,
-      userInHearingsOrganization
+      userInHearingsOrganization,
+      userId,
+      userCssId
     };
   };
 
@@ -53,7 +57,7 @@ export default class HearingsApp extends React.PureComponent {
 
   routeForListScheduleContainer = () => <ListScheduleContainer {...this.userPermissionProps()} />;
   routeForAssignHearingsContainer = () => <AssignHearingsContainer {...this.propsForAssignHearingsContainer()} />
-  routeForDailyDocket = () => <DailyDocketContainer user={this.userPermissionProps()} />;
+  routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
   routeForHearingDetails = ({ match: { params }, history }) =>
     <HearingDetailsContainer hearingId={params.hearingId} history={history} {...this.userPermissionProps()} />;
   routeForHearingWorksheet = (print) => ({ match: { params } }) =>
@@ -67,6 +71,12 @@ export default class HearingsApp extends React.PureComponent {
         path="/:hearingId/worksheet/print"
         title="Hearing Worksheet"
         render={this.routeForHearingWorksheet(true)}
+      />
+      <PageRoute
+        exact
+        path="/schedule/docket/:hearingDayId/print"
+        title="Daily Docket"
+        render={this.routeForDailyDocket(true)}
       />
       <NavigationBar
         wideApp
@@ -104,7 +114,7 @@ export default class HearingsApp extends React.PureComponent {
               exact
               path="/schedule/docket/:hearingDayId"
               title="Daily Docket"
-              render={this.routeForDailyDocket}
+              render={this.routeForDailyDocket(false)}
             />
             <PageRoute
               exact

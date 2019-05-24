@@ -6,7 +6,7 @@ import { PreppedCheckbox } from './DailyDocketRowInputs';
 
 import moment from 'moment';
 
-const getDisplayTime = (scheduledTimeString, timezone) => {
+export const getDisplayTime = (scheduledTimeString, timezone) => {
   const val = scheduledTimeString ? moment(scheduledTimeString, 'HH:mm').format('h:mm a') : '';
 
   if (timezone) {

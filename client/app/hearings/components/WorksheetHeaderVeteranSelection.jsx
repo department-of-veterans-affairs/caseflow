@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Checkbox from '../../components/Checkbox';
 import FoundIcon from '../../components/FoundIcon';
@@ -12,7 +12,6 @@ import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import SmallLoader from '../../components/SmallLoader';
 import _ from 'lodash';
-import { CATEGORIES, ACTIONS } from '../analytics';
 
 const headerSelectionStyling = css({
   display: 'block',
@@ -47,12 +46,11 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   }
 
   onDropdownChange = (value) => {
-    window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.SELECT_VETERAN_FROM_DROPDOWN);
     if (value) {
-      this.props.save();
       this.props.history.push(`/${value.value}/worksheet`);
+      location.reload();
     }
-  }
+  };
 
   getOptionLabel = (hearing) => (
     <div>
@@ -72,9 +70,6 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
   );
 
   preppedOnChange = (value) => this.props.setPrepped(this.props.worksheet.external_id, value);
-
-  onClickReviewClaimsFolder = () =>
-    window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.CLICK_ON_REVIEW_CLAIMS_FOLDER);
 
   render() {
 
@@ -117,7 +112,6 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
          View case details</Link>
         <Link
           name="review-claims-folder"
-          onClick={this.onClickReviewClaimsFolder}
           href={`${getReaderLink(worksheet.appeal_external_id)}?category=case_summary`}
           button="primary"
           target="_blank">
@@ -140,13 +134,7 @@ const mapDispatchToProps = (dispatch) => ({
   }, dispatch)
 });
 
-WorksheetHeaderVeteranSelection.propTypes = {
-  worksheet: PropTypes.object.isRequired,
-  worksheetIssues: PropTypes.object.isRequired,
-  save: PropTypes.func.isRequired
-};
-
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(WorksheetHeaderVeteranSelection);
+)(WorksheetHeaderVeteranSelection));
