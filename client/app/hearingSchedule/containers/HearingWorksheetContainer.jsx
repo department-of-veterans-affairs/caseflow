@@ -7,8 +7,16 @@ import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
 import HearingWorksheet from '../../hearings/HearingWorksheet';
+import { openPrintDialogue } from '../../util/PrintUtil';
 
 class HearingWorksheetContainer extends React.Component {
+
+  componentDidMount() {
+    if (this.props.print) {
+      window.onafterprint = () => window.close();
+      openPrintDialogue();
+    }
+  }
 
   loadHearingWorksheet = () => {
     let requestUrl = `/hearings/${this.props.hearingId}/worksheet.json`;
@@ -23,11 +31,6 @@ class HearingWorksheetContainer extends React.Component {
   ]);
 
   render() {
-
-    if (this.props.print) {
-      window.onafterprint = () => window.close();
-    }
-
     return (
       <React.Fragment>
         <LoadingDataDisplay
