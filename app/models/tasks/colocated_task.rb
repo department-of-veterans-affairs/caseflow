@@ -116,12 +116,11 @@ class ColocatedTask < Task
   end
 
   def update_location_in_vacols
-    all_colocated_tasks_for_legacy_appeal_complete = saved_change_to_status? &&
-                                                     !active? &&
-                                                     appeal_type == LegacyAppeal.name &&
-                                                     all_tasks_closed_for_appeal?
-
-    if all_colocated_tasks_for_legacy_appeal_complete
+    if saved_change_to_status? &&
+       !active? &&
+       all_tasks_closed_for_appeal? &&
+       appeal.is_a?(LegacyAppeal) &&
+       appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end

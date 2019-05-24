@@ -9,9 +9,9 @@ import Alert from '../../components/Alert';
 import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
 import StatusMessage from '../../components/StatusMessage';
 import { getHearingAppellantName } from './DailyDocketRowDisplayText';
-
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
+import { isPreviouslyScheduledHearing } from '../utils';
 
 const alertStyling = css({
   marginBottom: '30px'
@@ -59,16 +59,12 @@ export default class DailyDocket extends React.Component {
   }
   onInvalidForm = (hearingId) => (invalid) => this.props.onInvalidForm(hearingId, invalid);
 
-  previouslyScheduled = (hearing) => {
-    return hearing.disposition === 'postponed' || hearing.disposition === 'cancelled';
-  };
-
   previouslyScheduledHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => this.previouslyScheduled(hearing));
+    return _.filter(this.props.hearings, isPreviouslyScheduledHearing);
   };
 
   dailyDocketHearings = () => {
-    return _.filter(this.props.hearings, (hearing) => !this.previouslyScheduled(hearing));
+    return _.filter(this.props.hearings, _.negate(isPreviouslyScheduledHearing));
   };
 
   getRegionalOffice = () => {
@@ -77,11 +73,16 @@ export default class DailyDocket extends React.Component {
     return dailyDocket.readableRequestType === 'Central' ? 'C' : dailyDocket.regionalOfficeKey;
   };
 
-  openDispositionModal = ({ hearing, disposition, onConfirm }) => {
+  openDispositionModal = ({ hearing, fromDisposition, toDisposition, onConfirm, onCancel }) => {
     this.setState({
       editedDispositionModalProps: {
         hearing,
-        disposition,
+        fromDisposition,
+        toDisposition,
+        onCancel: () => {
+          onCancel();
+          this.closeDispositionModal();
+        },
         onConfirm: () => {
           onConfirm();
           this.closeDispositionModal();
@@ -100,7 +101,6 @@ export default class DailyDocket extends React.Component {
     const docketHearings = this.dailyDocketHearings();
     const prevHearings = this.previouslyScheduledHearings();
 
-    const hasHearings = !_.isEmpty(this.props.hearings);
     const hasDocketHearings = !_.isEmpty(docketHearings);
     const hasPrevHearings = !_.isEmpty(prevHearings);
 
@@ -115,8 +115,7 @@ export default class DailyDocket extends React.Component {
 
       {editedDispositionModalProps &&
         <DispositionModal
-          {...this.state.editedDispositionModalProps}
-          onCancel={this.closeDispositionModal} />}
+          {...this.state.editedDispositionModalProps} />}
 
       {displayRemoveHearingDayModal &&
         <RemoveHearingModal dailyDocket={dailyDocket}
@@ -140,10 +139,10 @@ export default class DailyDocket extends React.Component {
         <div className="cf-push-left">
           <DailyDocketEditLinks
             dailyDocket={dailyDocket}
+            hearings={docketHearings.concat(prevHearings)}
             user={user}
             openModal={openModal}
             onDisplayLockModal={this.props.onDisplayLockModal}
-            hasHearings={hasHearings}
             onClickRemoveHearingDay={this.props.onClickRemoveHearingDay} />
         </div>
         <div className="cf-push-right">
@@ -157,7 +156,7 @@ export default class DailyDocket extends React.Component {
 
       {hasDocketHearings &&
         <DailyDocketRows
-          hearings={this.dailyDocketHearings()}
+          hearings={docketHearings}
           readOnly={user.userRoleView || user.userRoleVso}
           saveHearing={this.props.saveHearing}
           openDispositionModal={this.openDispositionModal}
@@ -185,14 +184,21 @@ export default class DailyDocket extends React.Component {
 }
 
 DailyDocket.propTypes = {
+  user: PropTypes.object.isRequired,
   dailyDocket: PropTypes.object,
   hearings: PropTypes.object,
-  onHearingNotesUpdate: PropTypes.func,
-  onHearingDispositionUpdate: PropTypes.func,
-  onHearingTimeUpdate: PropTypes.func,
-  onHearingRegionalOfficeUpdate: PropTypes.func,
-  onInvalidForm: PropTypes.func,
-  openModal: PropTypes.func,
-  deleteHearingDay: PropTypes.func,
-  notes: PropTypes.string
+  saveHearing: PropTypes.func.isRequired,
+  saveSuccessful: PropTypes.object,
+  onInvalidForm: PropTypes.func.isRequired,
+  openModal: PropTypes.func.isRequired,
+  onClickRemoveHearingDay: PropTypes.func.isRequired,
+  displayRemoveHearingDayModal: PropTypes.bool,
+  deleteHearingDay: PropTypes.func.isRequired,
+  onDisplayLockModal: PropTypes.func.isRequired,
+  onCancelDisplayLockModal: PropTypes.func.isRequired,
+  displayLockModal: PropTypes.bool,
+  updateLockHearingDay: PropTypes.func.isRequired,
+  displayLockSuccessMessage: PropTypes.bool,
+  dailyDocketServerError: PropTypes.bool,
+  onErrorHearingDayLock: PropTypes.bool
 };
