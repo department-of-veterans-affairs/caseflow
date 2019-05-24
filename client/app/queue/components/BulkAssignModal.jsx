@@ -6,6 +6,8 @@ import ApiUtil from '../../util/ApiUtil';
 
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
+import QueueFlowModal from './QueueFlowModal';
+
 import Dropdown from '../../components/Dropdown';
 import { locationCity } from '../utils';
 
@@ -91,15 +93,7 @@ class BulkAssignModal extends React.PureComponent {
         task_count }
       };
 
-      return ApiUtil.post('/bulk_task_assignments', { data }
-      ).
-        then(() => {
-          // make a call to to get the queue from the source of truth
-          window.location.reload();
-        }).
-        catch(() => {
-          // handle the error from the frontend
-        });
+      return ApiUtil.post('/bulk_task_assignments', { data });
     }
   }
 
@@ -241,21 +235,20 @@ class BulkAssignModal extends React.PureComponent {
     const isBulkAssignEnabled = this.props.enableBulkAssign && this.props.organizationUrl;
     const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
       Assign Tasks</Button>;
-    const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.bulkAssignTasks}>
-      Assign</Button>;
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
     const modal = (
-      <Modal
+      <QueueFlowModal
+        button="Assign"
+        submit={this.bulkAssignTasks}
         title="Assign Tasks"
         closeHandler={this.handleModalToggle}
-        confirmButton={confirmButton}
         cancelButton={cancelButton} >
         {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
         {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
         {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}
         {this.generateDropdown('Select number of tasks to assign', 'numberOfTasks',
           this.generateNumberOfTaskOptions(), true)}
-      </Modal>
+      </QueueFlowModal>
     );
 
     return (
