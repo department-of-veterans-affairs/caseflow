@@ -6,11 +6,7 @@ import Button from '../../components/Button';
 import TabWindow from '../../components/TabWindow';
 import { onAddIssue } from '../actions/Issue';
 import { filterIssuesOnAppeal, currentIssues, priorIssues } from '../util/IssuesUtil';
-import { CATEGORIES, ACTIONS } from '../analytics';
-
 import HearingWorksheetIssues from './HearingWorksheetIssues';
-
-const PAST_ISSUES_TAB_INDEX = 1;
 
 class HearingWorksheetStream extends Component {
 
@@ -81,12 +77,6 @@ class HearingWorksheetStream extends Component {
 
   getPriorIssuesCount = () => _.size(priorIssues(this.props.worksheetIssues));
 
-  issuesTabSelected = (tabIndex) => {
-    if (tabIndex === PAST_ISSUES_TAB_INDEX) {
-      window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.OPEN_PAST_ISSUES_TAB);
-    }
-  }
-
   render() {
     const tabs = [{
       label: `Current Issues (${this.getCurrentIssuesCount()})`,
@@ -101,7 +91,6 @@ class HearingWorksheetStream extends Component {
       <TabWindow
         name="issues-tabwindow"
         tabs={tabs}
-        onChange={this.issuesTabSelected}
       />
     </div>;
   }
