@@ -14,7 +14,7 @@ import ListScheduleContainer from './containers/ListScheduleContainer';
 import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import HearingDetailsContainer from './containers/DetailsContainer';
-import HearingWorksheetContainer from '../hearings/containers/HearingWorksheetContainer';
+import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
 import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 
@@ -26,7 +26,9 @@ export default class HearingsApp extends React.PureComponent {
       userRoleView,
       userRoleVso,
       userRoleHearingPrep,
-      userInHearingsOrganization
+      userInHearingsOrganization,
+      userId,
+      userCssId
     } = this.props;
 
     return {
@@ -35,7 +37,9 @@ export default class HearingsApp extends React.PureComponent {
       userRoleView,
       userRoleVso,
       userRoleHearingPrep,
-      userInHearingsOrganization
+      userInHearingsOrganization,
+      userId,
+      userCssId
     };
   };
 
