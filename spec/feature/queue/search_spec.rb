@@ -525,6 +525,14 @@ RSpec.feature "Search" do
         date: 1.day.ago.to_date.mdY
       )
 
+      click_intake_add_issue
+      add_intake_nonrating_issue(
+        benefit_type: "Insurance",
+        category: "",
+        description: "Description for other insurance",
+        date: 1.day.ago.to_date.mdY
+      )
+
       click_edit_submit_and_confirm
 
       sleep 1
@@ -534,13 +542,15 @@ RSpec.feature "Search" do
       click_withdraw_intake_issue_dropdown("Accrued")
       fill_in "withdraw-date", with: withdraw_date
 
+      click_withdraw_intake_issue_dropdown("Waiver of premiums")
+      fill_in "withdraw-date", with: withdraw_date
+
       expect(page).to have_content("This review will be withdrawn.")
       expect(page).to have_button("Withdraw", disabled: false)
 
       click_edit_submit
 
       expect(page).to have_current_path("/queue/appeals/#{caseflow_appeal.uuid}")
-
       expect(page).to have_content("You have successfully withdrawn a review.")
 
       # load search page
