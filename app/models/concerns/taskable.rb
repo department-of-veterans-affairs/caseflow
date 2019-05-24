@@ -18,4 +18,8 @@ module Taskable
   def assigned_judge
     tasks.includes(:assigned_to).detect { |t| t.is_a?(JudgeTask) }.try(:assigned_to)
   end
+
+  def all_tasks_on_hold?
+    tasks.select(&:on_hold?).size == tasks.size
+  end
 end

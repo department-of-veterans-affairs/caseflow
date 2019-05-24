@@ -4,11 +4,13 @@ class AppealReporter
 
   def stuck
     stuck = []
+    # AMA appeal must have 1 or more tasks
     open_appeals.find_in_batches do |appeals|
-      stuck << appeals
+      stuck << appeals.select(&:all_tasks_on_hold?)
     end
+    # legacy appeal may legitimally have zero tasks
     open_legacy_appeals.find_in_batches do |appeals|
-      stuck << appeals
+      stuck << appeals.select { |appeal| appeal.tasks.count > 0 && all_tasks_on_hold? }
     end
     stuck.flatten
   end
