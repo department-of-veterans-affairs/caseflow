@@ -81,7 +81,7 @@ class BulkAssignModal extends React.PureComponent {
       const regionalOffice = _.uniq(this.props.tasks.filter((task) => {
         return locationCity(task) === this.state.modal.regionalOffice;
       }))[0];
-      const regionalOfficeKey = regionalOffice.closestRegionalOffice.key;
+      const regionalOfficeKey = _.get(regionalOffice, 'closestRegionalOffice.key');
 
       const data = { bulk_task_assignment: {
         organization_id,
