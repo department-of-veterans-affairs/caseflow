@@ -3,7 +3,7 @@
 class OrganizationsController < ApplicationController
   before_action :verify_organization_access
   before_action :verify_role_access
-  before_action :verify_business_line
+  before_action :verify_business_line, only: [:show]
   before_action :set_application
   skip_before_action :deny_vso_access
 
