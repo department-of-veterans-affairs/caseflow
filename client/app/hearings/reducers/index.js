@@ -6,7 +6,7 @@
 * that would live at client/app/actions/**.js.
 */
 import update from 'immutability-helper';
-import * as Constants from '../constants/constants';
+import * as Constants from '../constants';
 import _ from 'lodash';
 
 // TODO move to issue reducer

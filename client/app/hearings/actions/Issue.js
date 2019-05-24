@@ -1,4 +1,4 @@
-import * as Constants from '../constants/constants';
+import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import _ from 'lodash';
 
