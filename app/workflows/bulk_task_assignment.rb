@@ -86,6 +86,7 @@ class BulkTaskAssignment
 
   def assigned_to_part_of_organization
     return if organization&.users&.include?(assigned_to)
+
     errors.add(:assigned_to, "does not belong to organization with id #{organization_id}")
   end
 

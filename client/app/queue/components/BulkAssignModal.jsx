@@ -90,11 +90,11 @@ class BulkAssignModal extends React.PureComponent {
 
       return ApiUtil.post('/bulk_task_assignments', { data }
       ).
-        then((resp) => {
-          // what needs to be done with the response, update redux?
-          console.log(resp.body);
+        then(() => {
+          // make a call to to get the queue from the source of truth
+          window.location.reload();
         }).
-        catch((err) => console.log(err, 'the error over here'));
+        catch((err) => console.log(err, 'the error making a bulk task assignment'));
     }
   }
 
