@@ -4,7 +4,7 @@ import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import ISSUE_DISPOSITIONS_BY_ID from '../../../constants/ISSUE_DISPOSITIONS_BY_ID.json';
 import { LinkSymbol } from '../../components/RenderFunctions';
-import HearingWorksheetAmaIssues from '../../hearings/components/HearingWorksheetAmaIssues';
+import HearingWorksheetAmaIssues from '../../hearings/components/hearingWorksheet/HearingWorksheetAmaIssues';
 
 const TEXT_INDENTATION = '10px';
 
