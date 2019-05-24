@@ -18,7 +18,7 @@ import {
   updateRoCoUploadFormErrors,
   updateJudgeUploadFormErrors,
   unsetUploadErrors
-} from '../actions';
+} from '../actions/actions';
 import BuildScheduleUpload from '../components/BuildScheduleUpload';
 
 export class BuildScheduleUploadContainer extends React.Component {

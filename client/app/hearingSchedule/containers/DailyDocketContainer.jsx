@@ -31,7 +31,7 @@ import {
   handleLockHearingServerError,
   onResetLockHearingAfterError,
   onInvalidForm
-} from '../actions';
+} from '../actions/actions';
 import DailyDocket from '../components/DailyDocket';
 import DailyDocketPrinted from '../components/DailyDocketPrinted';
 import HearingDayEditModal from '../components/HearingDayEditModal';

@@ -24,7 +24,7 @@ import {
   setNotes,
   onAssignHearingRoom,
   onReceiveHearingSchedule
-} from '../actions';
+} from '../actions/actions';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import Checkbox from '../../components/Checkbox';
 import Alert from '../../components/Alert';

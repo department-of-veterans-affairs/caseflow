@@ -3,7 +3,7 @@ import moment from 'moment';
 import { css } from 'glamor';
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
-import { TIME_OPTIONS } from '../../../hearings/constants/constants';
+import { TIME_OPTIONS } from '../../constants';
 import _ from 'lodash';
 
 export const getAssignHearingTime = (time, day) => {

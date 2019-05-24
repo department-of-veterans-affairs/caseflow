@@ -13,7 +13,7 @@ import {
   toggleTypeFilterVisibility, toggleLocationFilterVisibility,
   toggleVljFilterVisibility, onReceiveHearingSchedule,
   onViewStartDateChange, onViewEndDateChange
-} from '../actions';
+} from '../actions/actions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';

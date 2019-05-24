@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Textarea from 'react-textarea-autosize';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
-import { onEditWorksheetNotes } from '../actions/Issue';
+import { onEditWorksheetNotes } from '../../hearingSchedule/actions/Issue';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import Table from '../../components/Table';
 

@@ -28,9 +28,9 @@ import {
   setWorksheetTimeSaved,
   setWorksheetSaveFailedStatus,
   saveWorksheet
-} from './actions/Dockets';
+} from '../hearingSchedule/actions/Dockets';
 
-import { saveIssues } from './actions/Issue';
+import { saveIssues } from '../hearingSchedule/actions/Issue';
 
 const toolbar = {
   options: ['inline', 'fontSize', 'list', 'colorPicker'],

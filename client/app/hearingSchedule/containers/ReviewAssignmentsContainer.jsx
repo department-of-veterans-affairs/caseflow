@@ -13,7 +13,7 @@ import {
   onSchedulePeriodError,
   removeSchedulePeriodError,
   setVacolsUpload
-} from '../actions';
+} from '../actions/actions';
 
 export class ReviewAssignmentsContainer extends React.Component {
 

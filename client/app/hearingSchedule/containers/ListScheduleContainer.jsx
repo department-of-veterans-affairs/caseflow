@@ -18,7 +18,7 @@ import {
   setNotes,
   onResetDeleteSuccessful,
   onAssignHearingRoom
-} from '../actions';
+} from '../actions/actions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';

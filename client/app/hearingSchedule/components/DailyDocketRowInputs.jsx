@@ -11,7 +11,7 @@ import { AppealHearingLocationsDropdown } from '../../components/DataDropdowns';
 import HearingTime from './modalForms/HearingTime';
 import { pencilSymbol } from '../../components/RenderFunctions';
 
-import { DISPOSITION_OPTIONS } from '../../hearings/constants/constants';
+import { DISPOSITION_OPTIONS } from '../constants';
 
 const staticSpacing = css({ marginTop: '5px' });
 

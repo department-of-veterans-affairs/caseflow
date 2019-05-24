@@ -12,7 +12,7 @@ import {
   onReceiveUpcomingHearingDays,
   onSelectedHearingDayChange,
   onReceiveAppealsReadyForHearing
-} from '../actions';
+} from '../actions/actions';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { COLORS, LOGO_COLORS } from '../../constants/AppConstants';

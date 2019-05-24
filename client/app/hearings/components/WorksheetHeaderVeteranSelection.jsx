@@ -7,7 +7,7 @@ import { LOGO_COLORS } from '../../constants/AppConstants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { setPrepped, getHearingDayHearings } from '../actions/Dockets';
+import { setPrepped, getHearingDayHearings } from '../../hearingSchedule/actions/Dockets';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import SmallLoader from '../../components/SmallLoader';
 import _ from 'lodash';
