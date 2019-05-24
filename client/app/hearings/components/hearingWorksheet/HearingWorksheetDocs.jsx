@@ -94,5 +94,4 @@ class HearingWorksheetDocs extends Component {
   }
 }
 
-// TODO map state to corresponding stream
 export default connect()(HearingWorksheetDocs);

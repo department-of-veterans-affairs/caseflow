@@ -18,8 +18,6 @@ import CFRichTextEditor from '../../../components/CFRichTextEditor';
 import DOMPurify from 'dompurify';
 import Button from '../../../components/Button';
 import ContentSection from '../../../components/ContentSection';
-
-// TODO Move all stream related to streams container
 import HearingWorksheetDocs from './HearingWorksheetDocs';
 
 import {
