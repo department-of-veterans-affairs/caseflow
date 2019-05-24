@@ -1,6 +1,6 @@
 import * as Constants from '../constants/constants';
 import ApiUtil from '../../util/ApiUtil';
-import { now } from '../util/DateUtil';
+import { now } from '../../hearingSchedule/utils';
 import _ from 'lodash';
 
 export const populateWorksheet = (worksheet) => ({

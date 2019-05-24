@@ -10,7 +10,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
 import ContestedIssues from '../queue/components/ContestedIssues';
-import { now } from './util/DateUtil';
+import { now } from '../hearingSchedule/utils';
 import { navigateToPrintPage } from '../util/PrintUtil';
 import WorksheetFooter from './components/WorksheetFooter';
 import LoadingScreen from '../components/LoadingScreen';

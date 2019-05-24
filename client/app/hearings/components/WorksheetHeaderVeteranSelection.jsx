@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import { setPrepped, getHearingDayHearings } from '../actions/Dockets';
-import { getReaderLink } from '../util/index';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import SmallLoader from '../../components/SmallLoader';
 import _ from 'lodash';
@@ -79,6 +78,8 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
     const currentHearing = docketNotLoaded ? {} : hearings[worksheet.external_id];
 
+    const readerLink = `/reader/appeal/${worksheet.appeal_external_id}/documents?category=case_summary`;
+
     return <span className="worksheet-header" {...headerSelectionStyling}>
       <div className="cf-push-left" {...containerStyling}>
         <div {...selectVeteranStyling}>
@@ -112,7 +113,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
          View case details</Link>
         <Link
           name="review-claims-folder"
-          href={`${getReaderLink(worksheet.appeal_external_id)}?category=case_summary`}
+          href={readerLink}
           button="primary"
           target="_blank">
         Review claims folder</Link>

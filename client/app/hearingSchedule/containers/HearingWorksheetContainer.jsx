@@ -25,15 +25,11 @@ class HearingWorksheetContainer extends React.Component {
     });
   };
 
-  createHearingPromise = () => Promise.all([
-    this.loadHearingWorksheet()
-  ]);
-
   render() {
     return (
       <React.Fragment>
         <LoadingDataDisplay
-          createLoadPromise={this.createHearingPromise}
+          createLoadPromise={this.loadHearingWorksheet}
           loadingComponentProps={{
             spinnerColor: LOGO_COLORS.HEARINGS.ACCENT,
             message: 'Loading the hearing worksheet...'
@@ -55,12 +51,8 @@ HearingWorksheetContainer.propTypes = {
   print: PropTypes.bool
 };
 
-const mapStateToProps = (state) => ({
-  worksheet: state.hearings.worksheet
-});
-
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   populateWorksheet
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps)(HearingWorksheetContainer);
+export default connect(null, mapDispatchToProps)(HearingWorksheetContainer);
