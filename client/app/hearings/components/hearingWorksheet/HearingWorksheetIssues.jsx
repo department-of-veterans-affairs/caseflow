@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import Table from '../../components/Table';
+import Table from '../../../components/Table';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';

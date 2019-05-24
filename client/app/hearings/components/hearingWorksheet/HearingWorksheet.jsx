@@ -2,25 +2,25 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
-import HearingWorksheetStream from './components/HearingWorksheetStream';
-import WorksheetHeader from './components/WorksheetHeader';
+import HearingWorksheetStream from './HearingWorksheetStream';
+import WorksheetHeader from './WorksheetHeader';
 import classNames from 'classnames';
-import AutoSave from '../components/AutoSave';
-import { LOGO_COLORS } from '../constants/AppConstants';
+import AutoSave from '../../../components/AutoSave';
+import { LOGO_COLORS } from '../../../constants/AppConstants';
 import _ from 'lodash';
-import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
-import ContestedIssues from '../queue/components/ContestedIssues';
-import { now } from '../hearingSchedule/utils';
-import { navigateToPrintPage } from '../util/PrintUtil';
-import WorksheetFooter from './components/WorksheetFooter';
-import LoadingScreen from '../components/LoadingScreen';
-import CFRichTextEditor from '../components/CFRichTextEditor';
+import WorksheetHeaderVeteranSelection from './WorksheetHeaderVeteranSelection';
+import ContestedIssues from '../../../queue/components/ContestedIssues';
+import { now } from '../../utils';
+import { navigateToPrintPage } from '../../../util/PrintUtil';
+import WorksheetFooter from './WorksheetFooter';
+import LoadingScreen from '../../../components/LoadingScreen';
+import CFRichTextEditor from '../../../components/CFRichTextEditor';
 import DOMPurify from 'dompurify';
-import Button from '../components/Button';
-import ContentSection from '../components/ContentSection';
+import Button from '../../../components/Button';
+import ContentSection from '../../../components/ContentSection';
 
 // TODO Move all stream related to streams container
-import HearingWorksheetDocs from './components/HearingWorksheetDocs';
+import HearingWorksheetDocs from './HearingWorksheetDocs';
 
 import {
   onSummaryChange,
@@ -28,9 +28,9 @@ import {
   setWorksheetTimeSaved,
   setWorksheetSaveFailedStatus,
   saveWorksheet
-} from '../hearingSchedule/actions/Dockets';
+} from '../../actions/Dockets';
 
-import { saveIssues } from '../hearingSchedule/actions/Issue';
+import { saveIssues } from '../../actions/Issue';
 
 const toolbar = {
   options: ['inline', 'fontSize', 'list', 'colorPicker'],

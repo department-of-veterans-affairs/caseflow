@@ -2,8 +2,8 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
-import BuildScheduleUpload from '../../../../app/hearingSchedule/components/BuildScheduleUpload';
-import { SPREADSHEET_TYPES } from '../../../../app/hearingSchedule/constants';
+import BuildScheduleUpload from '../../../../app/hearings/components/BuildScheduleUpload';
+import { SPREADSHEET_TYPES } from '../../../../app/hearings/constants';
 
 describe('BuildScheduleUpload', () => {
   it('does not show the date selector when file type is null', () => {

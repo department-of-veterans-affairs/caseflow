@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Textarea from 'react-textarea-autosize';
-import { onDescriptionChange, onIssueNotesChange, onIssueDispositionChange } from '../../hearingSchedule/actions/Issue';
+import { onDescriptionChange, onIssueNotesChange, onIssueDispositionChange } from '../../actions/Issue';
 
 class HearingWorksheetIssueFields extends PureComponent {
 

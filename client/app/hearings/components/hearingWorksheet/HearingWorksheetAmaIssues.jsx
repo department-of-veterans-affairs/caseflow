@@ -4,9 +4,9 @@ import { bindActionCreators } from 'redux';
 import Textarea from 'react-textarea-autosize';
 import { css } from 'glamor';
 import { connect } from 'react-redux';
-import { onEditWorksheetNotes } from '../../hearingSchedule/actions/Issue';
+import { onEditWorksheetNotes } from '../../actions/Issue';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
-import Table from '../../components/Table';
+import Table from '../../../components/Table';
 
 const tableRowStyling = css({
   '& > tr': {

@@ -1,15 +1,15 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import Checkbox from '../../components/Checkbox';
-import FoundIcon from '../../components/FoundIcon';
-import { LOGO_COLORS } from '../../constants/AppConstants';
+import Checkbox from '../../../components/Checkbox';
+import FoundIcon from '../../../components/FoundIcon';
+import { LOGO_COLORS } from '../../../constants/AppConstants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { setPrepped, getHearingDayHearings } from '../../hearingSchedule/actions/Dockets';
-import SearchableDropdown from '../../components/SearchableDropdown';
-import SmallLoader from '../../components/SmallLoader';
+import { setPrepped, getHearingDayHearings } from '../../actions/Dockets';
+import SearchableDropdown from '../../../components/SearchableDropdown';
+import SmallLoader from '../../../components/SmallLoader';
 import _ from 'lodash';
 
 const headerSelectionStyling = css({

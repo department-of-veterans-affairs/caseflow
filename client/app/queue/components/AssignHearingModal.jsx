@@ -21,9 +21,9 @@ import {
 import { onReceiveAmaTasks, onReceiveAppealDetails } from '../QueueActions';
 import { prepareAppealForStore } from '../utils';
 import _ from 'lodash';
-import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearingSchedule/constants';
+import { CENTRAL_OFFICE_HEARING, VIDEO_HEARING } from '../../hearings/constants';
 import QueueFlowModal from './QueueFlowModal';
-import AssignHearingForm from '../../hearingSchedule/components/modalForms/AssignHearingForm';
+import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
 
 class AssignHearingModal extends React.PureComponent {
   constructor(props) {

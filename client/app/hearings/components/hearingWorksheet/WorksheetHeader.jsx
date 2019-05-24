@@ -4,14 +4,14 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
-import { ClipboardIcon } from '../../components/RenderFunctions';
+import { ClipboardIcon } from '../../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../hearingSchedule/actions/Dockets';
+import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/Dockets';
 import { css } from 'glamor';
 import _ from 'lodash';
-import { DISPOSITION_OPTIONS } from '../../hearingSchedule/constants';
-import Tooltip from '../../components/Tooltip';
-import DocketTypeBadge from '../../components/DocketTypeBadge';
+import { DISPOSITION_OPTIONS } from '../../constants';
+import Tooltip from '../../../components/Tooltip';
+import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {

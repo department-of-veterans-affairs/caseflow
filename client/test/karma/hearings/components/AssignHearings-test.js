@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
-import AssignHearings from '../../../../app/hearingSchedule/components/AssignHearings';
+import AssignHearings from '../../../../app/hearings/components/AssignHearings';
 
 describe.skip('AssignHearings', () => {
   it('renders table with upload history', () => {

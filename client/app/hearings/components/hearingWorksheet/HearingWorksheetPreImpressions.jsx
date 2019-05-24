@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Checkbox from '../../components/Checkbox';
+import Checkbox from '../../../components/Checkbox';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import {
   onToggleReopen, onToggleAllow, onToggleDeny,
   onToggleRemand, onToggleDismiss, onToggleOMO
-} from '../../hearingSchedule/actions/Issue';
+} from '../../actions/Issue';
 
 class HearingWorksheetPreImpressions extends PureComponent {
 

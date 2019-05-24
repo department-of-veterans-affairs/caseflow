@@ -2,7 +2,7 @@ import React from 'react';
 import { expect } from 'chai';
 import { mount } from 'enzyme';
 import { MemoryRouter } from 'react-router-dom';
-import BuildSchedule from '../../../../app/hearingSchedule/components/BuildSchedule';
+import BuildSchedule from '../../../../app/hearings/components/BuildSchedule';
 
 describe('BuildSchedule', () => {
   it('renders table with upload history', () => {

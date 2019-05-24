@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import Button from '../../components/Button';
-import TabWindow from '../../components/TabWindow';
-import { onAddIssue } from '../../hearingSchedule/actions/Issue';
+import Button from '../../../components/Button';
+import TabWindow from '../../../components/TabWindow';
+import { onAddIssue } from '../../actions/Issue';
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
