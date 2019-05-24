@@ -1,3 +1,6 @@
+@import 'uswds/src/stylesheets/lib/addons/_font-stacks.scss';
+@import 'uswds/src/stylesheets/core/_variables.scss';
+
 @media print {
   body {-webkit-print-color-adjust: exact;}
   h3 {
@@ -296,9 +299,9 @@
       }
     }
   }
-}
 
-@page {
-  size: 8.5in 11in;
-  margin: 0;
+  @page {
+    size: 8.5in 11in;
+    margin: 0;
+  }
 }
