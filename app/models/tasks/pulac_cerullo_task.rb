@@ -5,6 +5,6 @@ class PulacCerulloTask < GenericTask
   def verify_org_task_unique; end
 
   def label
-    "Pulac Cerullo"
+    "Pulac-Cerullo"
   end
 end

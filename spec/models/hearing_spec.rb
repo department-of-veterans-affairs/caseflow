@@ -42,6 +42,25 @@ describe Hearing do
     end
   end
 
+  context "#advance_on_docket_motion" do
+    let!(:hearing) { create(:hearing, :with_tasks) }
+
+    before do
+      [false, false, true, false, false].each do |granted|
+        AdvanceOnDocketMotion.create(
+          user_id: create(:user).id,
+          person_id: hearing.claimant_id,
+          granted: granted,
+          reason: "age"
+        )
+      end
+    end
+
+    it "returns granted motion" do
+      expect(hearing.advance_on_docket_motion["granted"]).to eq(true)
+    end
+  end
+
   context "assigned_to_vso?" do
     let!(:hearing) { create(:hearing, :with_tasks) }
     let!(:user) { create(:user, :vso_role) }

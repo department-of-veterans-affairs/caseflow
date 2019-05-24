@@ -440,7 +440,7 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`}
-            title="Assign to Pulac Cerullo | Caseflow"
+            title="Assign to Pulac-Cerullo | Caseflow"
             render={this.routedAssignToPulacCerullo} />
           <PageRoute
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}
