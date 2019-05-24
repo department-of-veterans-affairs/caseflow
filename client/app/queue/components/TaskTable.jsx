@@ -23,7 +23,7 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
 import { setSelectionOfTaskOfUser, bulkAssignTasks } from '../QueueActions';
-import { renderAppealType, taskHasCompletedHold, actionNameOfTask } from '../utils';
+import { renderAppealType, taskHasCompletedHold, actionNameOfTask, locationCity } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
@@ -317,8 +317,10 @@ export class TaskTableUnconnected extends React.PureComponent {
       columnName: 'closestRegionalOffice',
       anyFiltersAreSet: true,
       label: 'Filter by regional office',
-      valueFunction: (task) => task.closestRegionalOffice ? task.closestRegionalOffice.location_hash.city : 'Unknown',
-      getSortValue: (task) => task.closestRegionalOffice.location_hash.city
+      valueFunction: (task) => {
+        return locationCity(task);
+      },
+      getSortValue: (task) => locationCity(task)
     } : null;
   }
 

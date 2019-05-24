@@ -541,3 +541,7 @@ export const sortTaskList = (taskList) => {
     new Date(prev.closedAt || prev.createdAt).getTime();
   });
 };
+
+export const locationCity = (task) => {
+  return _.get(task, 'closestRegionalOffice.location_hash.city', 'Unknown');
+};

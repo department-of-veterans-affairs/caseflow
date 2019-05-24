@@ -7,6 +7,7 @@ import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/Dropdown';
+import { locationCity } from '../utils';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -78,7 +79,7 @@ class BulkAssignModal extends React.PureComponent {
 
       const { organizationId: organization_id } = this.props;
       const regionalOffice = _.uniq(this.props.tasks.filter((task) => {
-        return this.locationCity(task) === this.state.modal.regionalOffice;
+        return locationCity(task) === this.state.modal.regionalOffice;
       }))[0];
       const regionalOfficeKey = regionalOffice.closestRegionalOffice.key;
 
@@ -157,12 +158,10 @@ class BulkAssignModal extends React.PureComponent {
 
     return users;
   }
-  locationCity = (task) => {
-    return _.get(task, 'closestRegionalOffice.location_hash.city');
-  }
+
   generateRegionalOfficeOptions = () => {
     const options = _.uniq(this.props.tasks.map((task) => {
-      return this.locationCity(task);
+      return locationCity(task);
     }));
 
     return this.getDisplayTextOption(options);
@@ -173,7 +172,7 @@ class BulkAssignModal extends React.PureComponent {
 
     if (this.state.modal.regionalOffice) {
       filteredTasks = filteredTasks.filter((task) => {
-        return this.locationCity(task);
+        return locationCity(task);
       });
     }
 
@@ -199,7 +198,7 @@ class BulkAssignModal extends React.PureComponent {
 
     // filter by regional office
     filteredTasks = filteredTasks.filter((task) => {
-      return this.locationCity(task) === this.state.modal.regionalOffice;
+      return locationCity(task) === this.state.modal.regionalOffice;
     });
 
     // filter by task type

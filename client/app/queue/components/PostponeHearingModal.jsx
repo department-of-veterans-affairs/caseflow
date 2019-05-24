@@ -13,7 +13,7 @@ import {
   requestPatch, showErrorMessage
 } from '../uiReducer/uiActions';
 import QueueFlowModal from './QueueFlowModal';
-import { taskActionData, prepareAppealForStore } from '../utils';
+import { taskActionData, prepareAppealForStore, locationCity } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
 import RadioField from '../../components/RadioField';
@@ -207,7 +207,7 @@ class PostponeHearingModal extends React.Component {
 
         {afterDispositionUpdateAction === ACTIONS.RESCHEDULE &&
         <AssignHearingForm
-          initialRegionalOffice={appeal.closestRegionalOffice.location_hash.city}
+          initialRegionalOffice={locationCity(appeal)}
           showErrorMessages={showErrorMessages}
           appeal={appeal}
         />
