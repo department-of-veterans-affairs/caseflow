@@ -77,7 +77,9 @@ class BulkAssignModal extends React.PureComponent {
       const { taskType: task_type, numberOfTasks: task_count } = this.state.modal;
 
       const { organizationId: organization_id } = this.props;
-      const regionalOffice = _.uniq(this.props.tasks.filter((task) => task.closestRegionalOffice.location_hash.city === this.state.modal.regionalOffice))[0];
+      const regionalOffice = _.uniq(this.props.tasks.filter((task) => {
+        return this.locationCity(task) === this.state.modal.regionalOffice;
+      }))[0];
       const regionalOfficeKey = regionalOffice.closestRegionalOffice.key;
 
       const data = { bulk_task_assignment: {
@@ -94,7 +96,9 @@ class BulkAssignModal extends React.PureComponent {
           // make a call to to get the queue from the source of truth
           window.location.reload();
         }).
-        catch((err) => console.log(err, 'the error making a bulk task assignment'));
+        catch(() => {
+          // handle the error from the frontend
+        });
     }
   }
 
@@ -153,9 +157,13 @@ class BulkAssignModal extends React.PureComponent {
 
     return users;
   }
-
+  locationCity = (task) => {
+    return _.get(task, 'closestRegionalOffice.location_hash.city');
+  }
   generateRegionalOfficeOptions = () => {
-    const options = _.uniq(this.props.tasks.map((task) => task.closestRegionalOffice && task.closestRegionalOffice.location_hash.city));
+    const options = _.uniq(this.props.tasks.map((task) => {
+      return this.locationCity(task);
+    }));
 
     return this.getDisplayTextOption(options);
   }
@@ -165,7 +173,7 @@ class BulkAssignModal extends React.PureComponent {
 
     if (this.state.modal.regionalOffice) {
       filteredTasks = filteredTasks.filter((task) => {
-        return task.closestRegionalOffice && task.closestRegionalOffice.location_hash.city === this.state.modal.regionalOffice;
+        return this.locationCity(task);
       });
     }
 
@@ -191,7 +199,7 @@ class BulkAssignModal extends React.PureComponent {
 
     // filter by regional office
     filteredTasks = filteredTasks.filter((task) => {
-      return task.closestRegionalOffice && (task.closestRegionalOffice.location_hash.city === this.state.modal.regionalOffice);
+      return this.locationCity(task) === this.state.modal.regionalOffice;
     });
 
     // filter by task type
