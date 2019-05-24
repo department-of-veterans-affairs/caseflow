@@ -74,13 +74,7 @@ class Task < ApplicationRecord
   end
 
   def appropriate_timed_hold_task_action
-    return Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h if !on_timed_hold? && currently_on_old_style_hold?
-
     on_timed_hold? ? Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h : Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
-  end
-
-  def currently_on_old_style_hold?
-    on_hold? && placed_on_hold_at && on_hold_duration && (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
   end
 
   def build_action_hash(action, user)
