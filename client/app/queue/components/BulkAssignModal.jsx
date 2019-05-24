@@ -75,7 +75,7 @@ class BulkAssignModal extends React.PureComponent {
       this.props.assignTasks(this.state.modal);
       this.handleModalToggle();
 
-      const { taskType: task_type, numberOfTasks: task_count } = this.state.modal;
+      const { taskType: task_type, numberOfTasks: task_count, assignedUser: assigned_to_id } = this.state.modal;
 
       const { organizationId: organization_id } = this.props;
       const regionalOffice = _.uniq(this.props.tasks.filter((task) => {
@@ -86,7 +86,7 @@ class BulkAssignModal extends React.PureComponent {
       const data = { bulk_task_assignment: {
         organization_id,
         regional_office: regionalOfficeKey,
-        assigned_to_id: this.state.modal.assignedUser,
+        assigned_to_id,
         task_type,
         task_count }
       };
