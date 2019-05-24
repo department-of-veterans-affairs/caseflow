@@ -8,7 +8,12 @@ class BvaDispatchTask < GenericTask
   def available_actions(user)
     return [] unless user
 
-    super.unshift(Constants.TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.to_h)
+    actions = super(user)
+    if assigned_to == user || parent.task_is_assigned_to_organization_user_administers?(user)
+      actions.unshift(Constants.TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.to_h)
+    end
+
+    actions
   end
 
   class << self
