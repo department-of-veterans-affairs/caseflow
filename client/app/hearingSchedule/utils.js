@@ -1,3 +1,5 @@
+import HEARING_DISPOSITION_TYPES from '../../constants/HEARING_DISPOSITION_TYPES.json';
+
 export const namePartToSortBy = (fullName) => {
   const nameParts = fullName.split(' ');
 
@@ -33,3 +35,8 @@ export const fullNameParts = (fullName) => {
       middleName: '' };
   }
 };
+
+export const isPreviouslyScheduledHearing = (hearing) => (
+  hearing.disposition === HEARING_DISPOSITION_TYPES.postponed ||
+    hearing.disposition === HEARING_DISPOSITION_TYPES.cancelled
+);
