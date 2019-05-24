@@ -10,6 +10,7 @@ import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteranSelection';
 import ContestedIssues from '../queue/components/ContestedIssues';
 import { now } from './util/DateUtil';
+import { navigateToPrintPage } from '../util/PrintUtil';
 import WorksheetFooter from './components/WorksheetFooter';
 import LoadingScreen from '../components/LoadingScreen';
 import CFRichTextEditor from '../components/CFRichTextEditor';
@@ -105,9 +106,7 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   openPdf = (worksheet, worksheetIssues) => () => {
-    Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(() => {
-      window.open(`${window.location.pathname}/print`, '_blank', 'noopener noreferrer');
-    });
+    Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(navigateToPrintPage);
   };
 
   onSummaryChange = (value) => this.props.onSummaryChange(value);
