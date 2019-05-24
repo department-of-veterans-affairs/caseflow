@@ -26,7 +26,9 @@ export default class HearingsApp extends React.PureComponent {
       userRoleView,
       userRoleVso,
       userRoleHearingPrep,
-      userInHearingsOrganization
+      userInHearingsOrganization,
+      userId,
+      userCssId
     } = this.props;
 
     return {
@@ -35,7 +37,9 @@ export default class HearingsApp extends React.PureComponent {
       userRoleView,
       userRoleVso,
       userRoleHearingPrep,
-      userInHearingsOrganization
+      userInHearingsOrganization,
+      userId,
+      userCssId
     };
   };
 

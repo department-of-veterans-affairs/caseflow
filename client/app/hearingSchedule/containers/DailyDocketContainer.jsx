@@ -105,6 +105,11 @@ export class DailyDocketContainer extends React.Component {
       evidence_window_waived: hearing.evidenceWindowWaived
     } : {};
 
+    const legacyValues = hearing.docketName === 'legacy' ? {
+      aod: hearing.aod,
+      hold_open: hearing.holdOpen
+    } : {};
+
     return _.omitBy({
       disposition: hearing.disposition,
       transcript_requested: hearing.transcriptRequested,
@@ -112,16 +117,33 @@ export class DailyDocketContainer extends React.Component {
       hearing_location_attributes: hearing.location ? ApiUtil.convertToSnakeCase(hearing.location) : null,
       scheduled_time_string: hearing.scheduledTimeString,
       prepped: hearing.prepped,
-      hold_open: hearing.holdOpen,
+      ...legacyValues,
       ...amaHearingValues
     }, _.isNil);
   };
 
+  formatAod = (hearing) => {
+    if (hearing.advanceOnDocketMotion.userId !== this.props.user.userId) {
+      return {};
+    }
+
+    return _.omitBy({
+      reason: hearing.advanceOnDocketMotion.reason,
+      granted: hearing.advanceOnDocketMotion.granted,
+      person_id: hearing.claimantId || hearing.advanceOnDocketMotion.personId,
+      user_id: hearing.advanceOnDocketMotion.userId
+    }, _.isNil);
+  }
+
   saveHearing = (hearingId) => {
     const hearing = this.props.hearings[hearingId];
+    const aodMotion = hearing.advanceOnDocketMotion ? {
+      advance_on_docket_motion: this.formatAod(hearing)
+    } : {};
 
     return ApiUtil.patch(`/hearings/${hearing.externalId}`, { data: {
-      hearing: this.formatHearing(hearing)
+      hearing: this.formatHearing(hearing),
+      ...aodMotion
     } }).
       then((response) => {
         const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
