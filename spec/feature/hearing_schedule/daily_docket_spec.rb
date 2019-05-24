@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.feature "Hearing Schedule Daily Docket" do
+  let!(:actcode) { create(:actcode, actckey: "B", actcdtc: "30", actadusr: "SBARTELL", acspare1: "59") }
+
   context "Daily docket with one legacy hearing" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Build HearSched"]) }
     let!(:hearing_day) do
@@ -133,39 +135,138 @@ RSpec.feature "Hearing Schedule Daily Docket" do
   context "Daily docket for Judge user" do
     let!(:current_user) { User.authenticate!(css_id: "BVATWARNER", roles: ["Hearing Prep"]) }
     let!(:hearing_day) { create(:hearing_day, judge: current_user) }
-    let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
-    let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: current_user, hearing_day: hearing_day) }
 
-    scenario "User has hearing prep fields" do
-      visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+    context "with a legacy hearing" do
+      let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: current_user, hearing_day: hearing_day) }
 
-      expect(page).to have_css(".dropdown-#{hearing.external_id}-aod")
-      expect(page).to have_css(".dropdown-#{hearing.external_id}-aodReason")
-      expect(page).to have_css(".dropdown-#{legacy_hearing.external_id}-holdOpen")
+      scenario "User can update hearing prep fields" do
+        visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
 
-      click_dropdown(name: "#{legacy_hearing.external_id}-holdOpen", index: 0)
-      find(".checkbox-wrapper-checkbox-prepped-#{legacy_hearing.external_id}").click
-      find("label", text: "Transcript Requested", match: :first).click
-      find("textarea", id: "#{legacy_hearing.external_id}-notes", match: :first)
-        .fill_in(with: "This is a note about the hearing!")
-      click_button("Save")
+        click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 0)
+        click_button("Confirm")
+        expect(page).to have_content("You have successfully updated")
 
-      expect(page).to have_content("You have successfully updated")
+        click_dropdown(name: "#{legacy_hearing.external_id}-aod", text: "Granted")
+        click_dropdown(name: "#{legacy_hearing.external_id}-holdOpen", index: 0)
+        find("label", text: "Transcript Requested", match: :first).click
+        find("textarea", id: "#{legacy_hearing.external_id}-notes", match: :first)
+          .fill_in(with: "This is a note about the hearing!")
+        click_button("Save", match: :first)
 
-      find("label", text: "Yes, Waive 90 Day Hold", match: :first).click
-      click_button("Save")
-
-      expect(page).to have_content("You have successfully updated")
+        expect(page).to have_content("You have successfully updated")
+      end
     end
 
-    context "and hearings are not assigned to judge" do
+    context "with a legacy and AMA hearing" do
       let!(:hearing_day) { create(:hearing_day, judge: create(:user)) }
       let!(:legacy_hearing) { create(:legacy_hearing, :with_tasks, user: create(:user), hearing_day: hearing_day) }
+      let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
 
       scenario "no hearings are shown" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
 
         expect(page).to have_content("No Veterans are scheduled for this hearing day.")
+      end
+    end
+
+    context "with an AMA hearing" do
+      let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
+
+      scenario "User can update hearing prep fields" do
+        visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+
+        click_dropdown(name: "#{hearing.external_id}-disposition", index: 0)
+        click_button("Confirm")
+        expect(page).to have_content("You have successfully updated")
+
+        find("label", text: "Transcript Requested", match: :first).click
+        find("textarea", id: "#{hearing.external_id}-notes", match: :first)
+          .fill_in(with: "This is a note about the hearing!")
+
+        find("label", text: "Yes, Waive 90 Day Hold", match: :first).click
+        click_button("Save")
+
+        expect(page).to have_content("You have successfully updated")
+      end
+
+      context "with an existing denied AOD motion made by another judge" do
+        let!(:aod_motion) do
+          AdvanceOnDocketMotion.create!(
+            user_id: create(:user).id,
+            person_id: hearing.claimant_id,
+            granted: false,
+            reason: "age"
+          )
+        end
+        scenario "judge can create a new AOD motion" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          click_dropdown(name: "#{hearing.external_id}-aod", text: "Granted")
+          click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Age")
+          click_button("Save")
+
+          expect(page).to have_content("You have successfully updated")
+          expect(AdvanceOnDocketMotion.count).to eq(2)
+          judge_motions = AdvanceOnDocketMotion.where(user_id: current_user.id)
+          expect(judge_motions.count).to eq(1)
+          expect(judge_motions.first.granted).to eq(true)
+          expect(judge_motions.first.reason).to eq("age")
+        end
+      end
+
+      context "with an existing granted AOD motion made by another judge" do
+        let!(:aod_motion) do
+          AdvanceOnDocketMotion.create!(
+            user_id: create(:user).id,
+            person_id: hearing.claimant_id,
+            granted: true,
+            reason: "age"
+          )
+        end
+
+        scenario "judge cannot create a new AOD motion" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          expect(page).to have_selector(".dropdown-#{hearing.external_id}-aod .is-disabled")
+          expect(page).to have_selector(".dropdown-#{hearing.external_id}-aodReason .is-disabled")
+        end
+      end
+
+      context "with an existing AOD motion made by same judge" do
+        let!(:aod_motion) do
+          AdvanceOnDocketMotion.create!(
+            user_id: current_user.id,
+            person_id: hearing.claimant_id,
+            granted: true,
+            reason: "age"
+          )
+        end
+
+        scenario "judge can overwrite AOD motion" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          click_dropdown(name: "#{hearing.external_id}-aod", text: "Denied")
+          click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
+          click_button("Save")
+
+          expect(page).to have_content("You have successfully updated")
+          expect(AdvanceOnDocketMotion.count).to eq(1)
+          judge_motion = AdvanceOnDocketMotion.first
+          expect(judge_motion.granted).to eq(false)
+          expect(judge_motion.reason).to eq("financial_distress")
+        end
+      end
+
+      context "with no existing AOD motion" do
+        scenario "judge can create a new AOD motion" do
+          visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
+          click_dropdown(name: "#{hearing.external_id}-aod", text: "Granted")
+          click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
+          click_button("Save")
+
+          expect(page).to have_content("You have successfully updated")
+          expect(AdvanceOnDocketMotion.count).to eq(1)
+          judge_motion = AdvanceOnDocketMotion.first
+          expect(judge_motion.granted).to eq(true)
+          expect(judge_motion.reason).to eq("financial_distress")
+        end
       end
     end
   end
