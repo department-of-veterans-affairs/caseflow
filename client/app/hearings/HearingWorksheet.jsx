@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import WorksheetHeader from './components/WorksheetHeader';
 import classNames from 'classnames';
@@ -11,7 +12,6 @@ import WorksheetHeaderVeteranSelection from './components/WorksheetHeaderVeteran
 import ContestedIssues from '../queue/components/ContestedIssues';
 import { now } from './util/DateUtil';
 import { navigateToPrintPage } from '../util/PrintUtil';
-import { CATEGORIES, ACTIONS } from './analytics';
 import WorksheetFooter from './components/WorksheetFooter';
 import LoadingScreen from '../components/LoadingScreen';
 import CFRichTextEditor from '../components/CFRichTextEditor';
@@ -107,7 +107,6 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   openPdf = (worksheet, worksheetIssues) => () => {
-    window.analyticsEvent(CATEGORIES.HEARING_WORKSHEET_PAGE, ACTIONS.CLICK_ON_SAVE_TO_PDF);
     Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(navigateToPrintPage);
   };
 
@@ -187,11 +186,7 @@ export class HearingWorksheet extends React.PureComponent {
               timeSaved={this.props.worksheetTimeSaved || now()}
               saveFailed={this.props.saveWorksheetFailed}
             />
-            <WorksheetHeaderVeteranSelection
-              openPdf={this.openPdf}
-              history={this.props.history}
-              save={this.save(worksheet, worksheetIssues)}
-            />
+            <WorksheetHeaderVeteranSelection />
           </div>
           {fetchingWorksheet ?
             <LoadingScreen spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} message="Loading worksheet..." /> :
@@ -220,6 +215,10 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
   }
 }
+
+HearingWorksheet.propTypes = {
+  print: PropTypes.bool
+};
 
 const mapStateToProps = (state) => ({
   worksheet: state.hearings.worksheet,
