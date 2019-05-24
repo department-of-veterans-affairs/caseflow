@@ -10,7 +10,7 @@ class AppealReporter
     end
     # legacy appeal may legitimally have zero tasks
     open_legacy_appeals.find_in_batches do |appeals|
-      stuck << appeals.select { |appeal| appeal.tasks.count > 0 && all_tasks_on_hold? }
+      stuck << appeals.select { |appeal| appeal.tasks.count > 0 && appeal.all_tasks_on_hold? }
     end
     stuck.flatten
   end
