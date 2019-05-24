@@ -9,12 +9,6 @@ import update from 'immutability-helper';
 import * as Constants from '../constants/constants';
 import _ from 'lodash';
 
-export const mapDataToInitialState = function(state = {}) {
-  return update(state, {
-    worksheetServerError: { $set: {} }
-  });
-};
-
 // TODO move to issue reducer
 export const newHearingIssueState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
@@ -32,7 +26,7 @@ export const newHearingWorksheetState = (state, action, spec) => {
   return update(state, { worksheet: spec });
 };
 
-export const hearingsReducer = function(state = mapDataToInitialState(), action = {}) {
+export const hearingsReducer = function(state = {}, action = {}) {
   switch (action.type) {
   case Constants.POPULATE_WORKSHEET: {
     const worksheetAppeals = _.keyBy(action.payload.worksheet.appeals_ready_for_hearing, 'id');

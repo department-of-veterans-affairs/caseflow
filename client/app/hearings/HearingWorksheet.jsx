@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import PropTypes from 'prop-types';
 import HearingWorksheetStream from './components/HearingWorksheetStream';
 import WorksheetHeader from './components/WorksheetHeader';
 import classNames from 'classnames';
@@ -214,6 +215,10 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
   }
 }
+
+HearingWorksheet.propTypes = {
+  print: PropTypes.bool
+};
 
 const mapStateToProps = (state) => ({
   worksheet: state.hearings.worksheet,
