@@ -13,7 +13,6 @@ class HearingWorksheetContainer extends React.Component {
 
   componentDidMount() {
     if (this.props.print) {
-      window.onafterprint = () => window.close();
       openPrintDialogue();
     }
   }
