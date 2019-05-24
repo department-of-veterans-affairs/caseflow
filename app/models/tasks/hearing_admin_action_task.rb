@@ -53,6 +53,8 @@ class HearingAdminActionTask < GenericTask
 
   # TODO: This will need to be replaced because we are using timed holds now. Probably both paths through the code
   # will have to be supported for some time.
+  # 
+  # Where do we do this? Is this coming in from the front-end?
   def on_hold_duration_is_set
     if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
       errors.add(:on_hold_duration, "has to be specified")
