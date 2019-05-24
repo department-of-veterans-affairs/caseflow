@@ -11,25 +11,25 @@ class HearingWorksheetStream extends Component {
 
   filterIssuesOnAppeal = (issues, appealId) =>
     _(issues).
-    omitBy('_destroy').
-    pickBy({ appeal_id: appealId }).
-    value();
+      omitBy('_destroy').
+      pickBy({ appeal_id: appealId }).
+      value();
 
   currentIssues = (issues) => {
     return _.omitBy(issues, (issue) => {
       /* eslint-disable no-underscore-dangle */
-        return issue._destroy || (issue.disposition && !issue.disposition.includes('Remand') && issue.from_vacols);
+      return issue._destroy || (issue.disposition && !issue.disposition.includes('Remand') && issue.from_vacols);
       /* eslint-enable no-underscore-dangle */
     });
-};
+  };
 
   priorIssues = (issues) => (
     _.pickBy(issues, (issue) => (
-        /* eslint-disable no-underscore-dangle */
-        !issue._destroy && issue.disposition && !issue.disposition.includes('Remand') && issue.from_vacols
-        /* eslint-enable no-underscore-dangle */
+      /* eslint-disable no-underscore-dangle */
+      !issue._destroy && issue.disposition && !issue.disposition.includes('Remand') && issue.from_vacols
+      /* eslint-enable no-underscore-dangle */
     ))
-);
+  );
 
   onAddIssue = (appealId) => () => this.props.onAddIssue(appealId, this.getVacolsSequenceId());
 

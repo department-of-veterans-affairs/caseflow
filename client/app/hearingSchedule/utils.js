@@ -8,6 +8,6 @@ export const isPreviouslyScheduledHearing = (hearing) => (
 
 export const now = () => {
   return moment().tz(moment.tz.guess()).
-  format('h:mm a');
+    format('h:mm a');
 };
 
