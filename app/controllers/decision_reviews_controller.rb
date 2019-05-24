@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DecisionReviewsController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application
+  before_action :verify_access, :react_routed, :set_application
 
   def index
     if business_line
@@ -98,10 +98,6 @@ class DecisionReviewsController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
-  end
-
-  def verify_feature_enabled
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:decision_reviews)
   end
 
   def allowed_params
