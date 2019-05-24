@@ -718,10 +718,10 @@ RSpec.feature "Task queue" do
       it "should display an option of Ready for Dispatch" do
         expect(bva_dispatch_person_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
 
-        find(".Select-control", text: "Select an action…").click
+        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label).click
 
-        expect(page).to have_content("Add decisions")
+        expect(page).to have_content(COPY::DECISION_ISSUE_PAGE_TITLE)
         click_on "Continue"
 
         expect(page).to have_content("Evaluate Decision")
@@ -741,13 +741,16 @@ RSpec.feature "Task queue" do
       end
 
       it "should display an option to Return to Attorney" do
-        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                       text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.label)
         expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
         fill_in "taskInstructions", with: "Please fix this"
 
-        click_on "Submit"
+        click_on COPY::MODAL_SUBMIT_BUTTON
 
-        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+
+
+        expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
 
         expect(judge_task.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(judge_task.children.first).to be_a(AttorneyDispatchReturnTask)

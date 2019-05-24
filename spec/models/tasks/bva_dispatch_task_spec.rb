@@ -5,33 +5,6 @@ describe BvaDispatchTask do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end
 
-  describe ".available_actions" do
-    let(:root_task) { FactoryBot.create(:root_task) }
-    let(:bva_dispatch_task) { BvaDispatchTask.create_from_root_task(root_task) }
-    let(:bva_dispatch_user) { FactoryBot.create(:user) }
-    before do
-      OrganizationsUser.add_user_to_organization(bva_dispatch_user, BvaDispatch.singleton)
-    end
-
-    subject { bva_dispatch_task.available_actions(bva_dispatch_user) }
-
-    context "when bva dispatch task is assigned to dispatcher" do
-      let(:expected_actions) do
-        [
-          Constants.TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.to_h,
-          Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
-          Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-        ]
-      end
-
-      it "should return the right set of actions" do
-        expect(subject).to eq(expected_actions)
-      end
-    end
-  end
-
   describe ".create_from_root_task" do
     context "when no root_task passed as argument" do
       it "throws an error" do
