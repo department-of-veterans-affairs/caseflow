@@ -75,7 +75,11 @@ export class ListScheduleContainer extends React.Component {
       requestUrl = `${requestUrl}?start_date=${this.props.startDate}&end_date=${this.props.endDate}`;
     }
 
-    return ApiUtil.get(requestUrl).then((response) => {
+    const requestOptions = {
+      timeout: { response: 2 * 60 * 1000 }
+    };
+
+    return ApiUtil.get(requestUrl, requestOptions).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       this.props.onReceiveHearingSchedule(resp.hearings);
@@ -146,18 +150,15 @@ export class ListScheduleContainer extends React.Component {
     return 'success';
   };
 
-  showAlert = () => {
-    return this.state.showModalAlert;
-  };
-
   render() {
     return (
       <React.Fragment>
         <QueueCaseSearchBar />
-        {(this.showAlert() || this.props.successfulHearingDayDelete) &&
-        <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
-          {this.getAlertMessage()}
-        </Alert>}
+        {(this.state.showModalAlert || this.props.successfulHearingDayDelete) &&
+          <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
+            {this.getAlertMessage()}
+          </Alert>
+        }
         { this.props.invalidDates && <Alert type="error" title="Please enter valid dates." /> }
         <AppSegment filledBackground>
           <h1 className="cf-push-left">
