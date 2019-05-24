@@ -130,6 +130,7 @@ Rails.application.routes.draw do
   get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/:hearing_id/details', to: "hearing_schedule#hearing_details_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day#index_print"
   get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"

@@ -1,9 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
-import DailyDocket from '../components/DailyDocket';
+
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
@@ -31,6 +32,8 @@ import {
   onResetLockHearingAfterError,
   onInvalidForm
 } from '../actions';
+import DailyDocket from '../components/DailyDocket';
+import DailyDocketPrinted from '../components/DailyDocketPrinted';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
 
@@ -248,10 +251,6 @@ export class DailyDocketContainer extends React.Component {
     return 'success';
   };
 
-  showAlert = () => {
-    return this.state.showModalAlert;
-  };
-
   render() {
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={this.createHearingPromise}
@@ -261,45 +260,45 @@ export class DailyDocketContainer extends React.Component {
       }}
       failStatusMessageProps={{
         title: 'Unable to load the daily docket.'
-      }}>
-      {this.showAlert() && <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
-        {this.getAlertMessage()}
-      </Alert>}
-      <DailyDocket
-        dailyDocket={this.props.dailyDocket}
-        hearings={this.props.hearings}
-        onHearingNotesUpdate={this.props.onHearingNotesUpdate}
-        onHearingDispositionUpdate={this.props.onHearingDispositionUpdate}
-        onHearingTimeUpdate={this.props.onHearingTimeUpdate}
-        onTranscriptRequestedUpdate={this.props.onTranscriptRequestedUpdate}
-        onHearingLocationUpdate={this.props.onHearingLocationUpdate}
-        saveHearing={this.saveHearing}
-        saveSuccessful={this.props.saveSuccessful}
-        onResetSaveSuccessful={this.props.onResetSaveSuccessful}
-        onCancelHearingUpdate={this.props.onCancelHearingUpdate}
-        openModal={this.openModal}
-        onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
-        displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
-        onCancelRemoveHearingDay={this.props.onCancelRemoveHearingDay}
-        deleteHearingDay={this.deleteHearingDay}
-        onDisplayLockModal={this.props.onDisplayLockModal}
-        onCancelDisplayLockModal={this.props.onCancelDisplayLockModal}
-        displayLockModal={this.props.displayLockModal}
-        updateLockHearingDay={this.updateLockHearingDay}
-        displayLockSuccessMessage={this.props.displayLockSuccessMessage}
-        onResetLockSuccessMessage={this.props.onResetLockSuccessMessage}
-        user={this.props.user}
-        dailyDocketServerError={this.props.dailyDocketServerError}
-        onResetDailyDocketAfterError={this.props.onResetDailyDocketAfterError}
-        notes={this.props.notes}
-        onErrorHearingDayLock={this.props.onErrorHearingDayLock}
-        onResetLockHearingAfterError={this.props.onResetLockHearingAfterError}
-        onInvalidForm={this.props.onInvalidForm}
-      />
+      }}
+    >
+      {this.state.showModalAlert &&
+        <Alert type={this.getAlertType()} title={this.getAlertTitle()} scrollOnAlert={false}>
+          {this.getAlertMessage()}
+        </Alert>
+      }
+
+      {this.props.print &&
+        <DailyDocketPrinted
+          user={this.props.user}
+          docket={this.props.dailyDocket}
+          hearings={this.props.hearings} />
+      }
+
+      {!this.props.print &&
+        <DailyDocket
+          user={this.props.user}
+          dailyDocket={this.props.dailyDocket}
+          hearings={this.props.hearings}
+          saveHearing={this.saveHearing}
+          saveSuccessful={this.props.saveSuccessful}
+          onInvalidForm={this.props.onInvalidForm}
+          openModal={this.openModal}
+          onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
+          displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
+          deleteHearingDay={this.deleteHearingDay}
+          onDisplayLockModal={this.props.onDisplayLockModal}
+          onCancelDisplayLockModal={this.props.onCancelDisplayLockModal}
+          displayLockModal={this.props.displayLockModal}
+          updateLockHearingDay={this.updateLockHearingDay}
+          displayLockSuccessMessage={this.props.displayLockSuccessMessage}
+          onErrorHearingDayLock={this.props.onErrorHearingDayLock} />
+      }
+
       {this.state.modalOpen &&
-      <HearingDayEditModal
-        closeModal={this.closeModal}
-        cancelModal={this.cancelModal} />
+        <HearingDayEditModal
+          closeModal={this.closeModal}
+          cancelModal={this.cancelModal} />
       }
     </LoadingDataDisplay>;
 
@@ -347,5 +346,23 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   handleLockHearingServerError,
   onResetLockHearingAfterError
 }, dispatch);
+
+DailyDocketContainer.propTypes = {
+  user: PropTypes.object,
+  dailyDocket: PropTypes.object,
+  hearings: PropTypes.object,
+  saveSuccessful: PropTypes.object,
+  vlj: PropTypes.string,
+  coordinator: PropTypes.string,
+  hearingRoom: PropTypes.string,
+  notes: PropTypes.string,
+  hearingDayModified: PropTypes.bool,
+  displayRemoveHearingDayModal: PropTypes.bool,
+  displayLockModal: PropTypes.bool,
+  displayLockSuccessMessage: PropTypes.bool,
+  dailyDocketServerError: PropTypes.bool,
+  onErrorHearingDayLock: PropTypes.bool,
+  print: PropTypes.bool
+};
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(DailyDocketContainer));
