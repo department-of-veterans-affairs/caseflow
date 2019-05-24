@@ -23,6 +23,11 @@ class HearingWorksheetContainer extends React.Component {
   ]);
 
   render() {
+
+    if (this.props.print) {
+      window.onafterprint = () => window.close();
+    }
+
     return (
       <React.Fragment>
         <LoadingDataDisplay
