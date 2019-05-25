@@ -42,18 +42,34 @@ class AttorneyTask < Task
       return []
     end
 
+    if TaskCondition.ama_appeal(self, user) && TaskCondition.on_timed_hold(self, user)
+      return [
+        Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h
+      ]
+    end
+
     if TaskCondition.ama_appeal(self, user)
       return [
         Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-        appropriate_timed_hold_task_action
+        Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
+      ]
+    end
+
+    if TaskCondition.on_timed_hold(self, user)
+      return [
+        Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h
       ]
     end
 
     [
       Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      appropriate_timed_hold_task_action
+      Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
     ]
   end
 
