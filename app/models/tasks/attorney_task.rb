@@ -16,61 +16,51 @@ class AttorneyTask < Task
 
   ACTION_SETS = [
     {
-      conditions: [],
+      conditions: [:parent_is_a_judge_task, :parent_assigned_to_me],
+      actions: [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
+    },
+    {
+      conditions: [:not_assigned_to_me],
       actions: []
     },
     {
-      conditions: [],
-      actions: []
-    },
-    {
-      conditions: [],
-      actions: []
-    },
-    {
-      conditions: [],
-      actions: []
-    }
-  ].freeze
-
-  def available_actions(user)
-    if TaskCondition.parent_is_a_judge_task(self, user) && TaskCondition.parent_assigned_to_me(self, user)
-      return [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
-    end
-
-    if TaskCondition.not_assigned_to_me(self, user)
-      return []
-    end
-
-    if TaskCondition.ama_appeal(self, user) && TaskCondition.on_timed_hold(self, user)
-      return [
+      conditions: [:ama_appeal, :on_timed_hold],
+      actions: [
         Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h
       ]
-    end
-
-    if TaskCondition.ama_appeal(self, user)
-      return [
+    },
+    {
+      conditions: [:ama_appeal],
+      actions: [
         Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       ]
-    end
-
-    if TaskCondition.on_timed_hold(self, user)
-      return [
+    },
+    {
+      conditions: [:on_timed_hold],
+      actions: [
         Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h
       ]
-    end
+    },
+    {
+      conditions: [],
+      actions: [
+        Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
+      ]
+    }
+  ].freeze
 
-    [
-      Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
-      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
-    ]
+  def available_actions(user)
+    ACTION_SETS.each do |set|
+      break set[:actions] if set[:conditions].map { |condition| TaskCondition.send(condition, self, user) }.all?(true)
+    end
   end
 
   def timeline_title
