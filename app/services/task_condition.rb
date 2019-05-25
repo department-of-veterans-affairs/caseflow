@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-# TODO: Transform these into where statements so we can run them proactively.
+# Transform these into where statements so we can run them proactively.
+# - Task.where(type: task.type).where(appeal_type: Appeal.name).include?(task)
+# - How do we handle proactive calculation when it depends on current user?
 module TaskCondition
   def actions_for_active_set(sets, task, user)
     sets.each { |set| break set[:actions] if TaskCondition.condition_checker(set[:conditions], task, user) }
@@ -13,13 +15,21 @@ module TaskCondition
   # private
 
   def self.ama_appeal(task, _user)
-    # Task.where(type: task.type).where(appeal_type: Appeal.name).include?(task)
     task.appeal&.is_a?(Appeal)
   end
 
   def self.assigned_to_me(task, user)
-    # TODO: How do we handle proactive calculation when it depends on current user?
     task.assigned_to &.== user
+  end
+
+  def self.assigned_to_organization_user_belongs_to(task, user)
+    task.assigned_to.is_a?(Organization) && task.assigned_to.user_has_access?(user)
+  end
+
+  def self.assigned_to_user_within_organization(task, user)
+    task.parent&.assigned_to.is_a?(Organization) &&
+      task.assigned_to.is_a?(User) &&
+      task.parent.assigned_to.user_has_access?(user)
   end
 
   def self.judge_task(task, _user)
@@ -28,10 +38,6 @@ module TaskCondition
 
   def self.legacy_appeal(task, _user)
     task.appeal&.is_a?(LegacyAppeal)
-  end
-
-  def self.not_assigned_to_me(task, user)
-    task.assigned_to &.!= user
   end
 
   def self.on_timed_hold(task, _user)

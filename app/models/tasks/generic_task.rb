@@ -9,6 +9,47 @@
 class GenericTask < Task
   before_create :verify_org_task_unique
 
+  ACTION_SETS = [
+    {
+      conditions: [:assigned_to_me, :on_timed_hold],
+      actions: [
+        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    },
+    {
+      conditions: [:assigned_to_me],
+      actions: [
+        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    },
+    {
+      conditions: [:assigned_to_user_within_organization],
+      actions: [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
+    },
+
+    {
+      conditions: [:assigned_to_organization_user_belongs_to],
+      actions: [
+        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    },
+    {
+      conditions: [],
+      actions: []
+    }
+  ].freeze
+
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
   def verify_org_task_unique
@@ -29,40 +70,9 @@ class GenericTask < Task
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   def available_actions(user)
-    return [] unless user
-
-    if assigned_to == user
-      return [
-        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
-        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-        appropriate_timed_hold_task_action,
-        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-      ]
-    end
-
-    if task_is_assigned_to_user_within_organization?(user)
-      return [
-        Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
-      ]
-    end
-
-    if task_is_assigned_to_users_organization?(user)
-      return [
-        Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
-        Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
-        Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
-        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-      ]
-    end
-
-    []
+    TaskCondition.actions_for_active_set(ACTION_SETS, self, user)
   end
-  # rubocop:enable Metrics/AbcSize
-  # rubocop:enable Metrics/MethodLength
 
   def available_hearing_user_actions(user)
     available_hearing_admin_actions(user) | available_hearing_mgmt_actions(user)
@@ -107,7 +117,7 @@ class GenericTask < Task
   end
 
   def task_is_assigned_to_users_organization?(user)
-    assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
+    TaskCondition.assigned_to_organization_user_belongs_to(self, user)
   end
 
   class << self

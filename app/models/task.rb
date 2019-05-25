@@ -229,9 +229,7 @@ class Task < ApplicationRecord
   end
 
   def task_is_assigned_to_user_within_organization?(user)
-    parent&.assigned_to.is_a?(Organization) &&
-      assigned_to.is_a?(User) &&
-      parent.assigned_to.user_has_access?(user)
+    TaskCondition.assigned_to_user_within_organization(self, user)
   end
 
   def can_be_updated_by_user?(user)

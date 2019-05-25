@@ -20,11 +20,7 @@ class AttorneyTask < Task
       actions: [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
     },
     {
-      conditions: [:not_assigned_to_me],
-      actions: []
-    },
-    {
-      conditions: [:ama_appeal, :on_timed_hold],
+      conditions: [:assigned_to_me, :ama_appeal, :on_timed_hold],
       actions: [
         Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -32,7 +28,7 @@ class AttorneyTask < Task
       ]
     },
     {
-      conditions: [:ama_appeal],
+      conditions: [:assigned_to_me, :ama_appeal],
       actions: [
         Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -40,7 +36,7 @@ class AttorneyTask < Task
       ]
     },
     {
-      conditions: [:on_timed_hold],
+      conditions: [:assigned_to_me, :on_timed_hold],
       actions: [
         Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
@@ -48,12 +44,16 @@ class AttorneyTask < Task
       ]
     },
     {
-      conditions: [],
+      conditions: [:assigned_to_me],
       actions: [
         Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
         Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
       ]
+    },
+    {
+      conditions: [],
+      actions: []
     }
   ].freeze
 
