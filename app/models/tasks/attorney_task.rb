@@ -14,8 +14,27 @@ class AttorneyTask < Task
   validate :assigned_to_role_is_valid
   validate :child_attorney_tasks_are_completed, on: :create
 
+  ACTION_SETS = [
+    {
+      conditions: [],
+      actions: []
+    },
+    {
+      conditions: [],
+      actions: []
+    },
+    {
+      conditions: [],
+      actions: []
+    },
+    {
+      conditions: [],
+      actions: []
+    }
+  ]
+
   def available_actions(user)
-    if parent.is_a?(JudgeTask) && parent.assigned_to == user
+    if TaskCondition::parent_is_a_judge_task(self, user) && TaskCondition::parent_assigned_to_me(self, user)
       return [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
     end
 
