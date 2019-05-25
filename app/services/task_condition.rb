@@ -2,6 +2,16 @@
 
 # TODO: Transform these into where statements so we can run them proactively.
 module TaskCondition
+  def actions_for_active_set(sets, task, user)
+    sets.each { |set| break set[:actions] if TaskCondition.condition_checker(set[:conditions], task, user) }
+  end
+
+  def condition_checker(conditions, task, user)
+    conditions.map { |condition| TaskCondition.send(condition, task, user) }.all?(true)
+  end
+
+  # private
+
   def self.ama_appeal(task, _user)
     # Task.where(type: task.type).where(appeal_type: Appeal.name).include?(task)
     task.appeal&.is_a?(Appeal)

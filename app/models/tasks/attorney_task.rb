@@ -58,9 +58,7 @@ class AttorneyTask < Task
   ].freeze
 
   def available_actions(user)
-    ACTION_SETS.each do |set|
-      break set[:actions] if set[:conditions].map { |condition| TaskCondition.send(condition, self, user) }.all?(true)
-    end
+    TaskCondition.actions_for_active_set(ACTION_SETS, self, user)
   end
 
   def timeline_title
