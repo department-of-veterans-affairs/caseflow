@@ -31,22 +31,27 @@ class AttorneyTask < Task
       conditions: [],
       actions: []
     }
-  ]
+  ].freeze
 
   def available_actions(user)
-    if TaskCondition::parent_is_a_judge_task(self, user) && TaskCondition::parent_assigned_to_me(self, user)
+    if TaskCondition.parent_is_a_judge_task(self, user) && TaskCondition.parent_assigned_to_me(self, user)
       return [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
     end
 
-    return [] if assigned_to != user
+    if TaskCondition.not_assigned_to_me(self, user)
+      return []
+    end
 
-    review_decision_label = if ama?
-                              Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
-                            else
-                              Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
-                            end
+    if TaskCondition.ama_appeal(self, user)
+      return [
+        Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h,
+        Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        appropriate_timed_hold_task_action
+      ]
+    end
+
     [
-      review_decision_label,
+      Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
       appropriate_timed_hold_task_action
     ]
