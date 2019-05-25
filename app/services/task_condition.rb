@@ -4,11 +4,11 @@
 # - Task.where(type: task.type).where(appeal_type: Appeal.name).include?(task)
 # - How do we handle proactive calculation when it depends on current user?
 module TaskCondition
-  def actions_for_active_set(sets, task, user)
+  def self.actions_for_active_set(sets, task, user)
     sets.each { |set| break set[:actions] if TaskCondition.condition_checker(set[:conditions], task, user) }
   end
 
-  def condition_checker(conditions, task, user)
+  def self.condition_checker(conditions, task, user)
     conditions.map { |condition| TaskCondition.send(condition, task, user) }.all?(true)
   end
 
