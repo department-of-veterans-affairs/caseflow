@@ -29,12 +29,12 @@ class TaskAction
 
   def build_data_attribute(func)
     data = func ? TaskActionRepository.send(func, @task, @user) : nil
+    @data = data
 
     if data&.delete(:returns_complete_hash)
       @label = data[:label]
       @value = data[:value]
+      @data = data[:data]
     end
-
-    @data = data
   end
 end
