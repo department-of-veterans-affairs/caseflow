@@ -34,7 +34,6 @@ class GenericTask < Task
       conditions: [:assigned_to_user_within_organization],
       actions: [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
     },
-
     {
       conditions: [:assigned_to_organization_user_belongs_to],
       actions: [

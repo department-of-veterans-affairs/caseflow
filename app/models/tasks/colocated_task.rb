@@ -75,7 +75,7 @@ class ColocatedTask < Task
     # core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
-      return ama_translation_actions(core_actions)
+      return core_actions | [Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h]
     end
 
     core_actions
@@ -86,11 +86,6 @@ class ColocatedTask < Task
   end
 
   private
-
-  def ama_translation_actions(core_actions)
-    core_actions.push(Constants.TASK_ACTIONS.SEND_TO_TRANSLATION.to_h)
-    core_actions
-  end
 
   def legacy_translation_or_hearing_actions(actions)
     return legacy_schedule_hearing_actions(actions) if action == "schedule_hearing"
