@@ -86,12 +86,18 @@ class Task < ApplicationRecord
   end
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
+  # Could be replaced by adding the following rule to the top of a given task class' ACTION_SETS:
+  # {
+  #    conditions: [:on_hold],
+  #    actions: []
+  # }
   def actions_available?(user)
     return false if status == Constants.TASK_STATUSES.on_hold && !on_timed_hold?
 
     actions_allowable?(user)
   end
 
+  # Is this function worth it?
   def actions_allowable?(user)
     return false if !active?
 
