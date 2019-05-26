@@ -10,17 +10,27 @@ class TaskAction
     @label = config[:label]
     @value = config[:value]
 
-    @func = config[:func]
+    build_data_attribute(config[:func])
   end
 
   def to_h
-    data = @func ? TaskActionRepository.send(@func, @task, @user) : nil
-    return data if data&.delete(:returns_complete_hash)
-
     {
       label: @label,
       value: @value,
-      data: data
+      data: @data
     }
+  end
+
+  private
+
+  def build_data_attribute(func)
+    data = func ? TaskActionRepository.send(func, @task, @user) : nil
+
+    if data&.delete(:returns_complete_hash)
+      @label = data[:label]
+      @value = data[:value]
+    end
+
+    @data = data
   end
 end
