@@ -78,11 +78,7 @@ class Task < ApplicationRecord
   end
 
   def build_action_hash(action, user)
-    {
-      label: action[:label],
-      value: action[:value],
-      data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
-    }
+    TaskAction.new(action, self, user).to_h
   end
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
@@ -245,6 +241,7 @@ class Task < ApplicationRecord
   end
 
   def self.verify_user_can_create!(user, parent)
+    # TODO: Can this be moved into the TaskActionFactory file as well?
     can_create = parent&.available_actions(user)&.map do |action|
       parent.build_action_hash(action, user)
     end&.any? do |action|

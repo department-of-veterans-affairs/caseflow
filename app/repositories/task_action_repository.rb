@@ -226,6 +226,20 @@ class TaskActionRepository
       }
     end
 
+    def toggle_timed_hold(task, user)
+      action = Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
+      action = Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h if task.on_timed_hold?
+
+      TaskAction.new(action, task, user).to_h.merge(returns_complete_hash: true)
+    end
+
+    def review_decision_draft(task, user)
+      action = Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
+      action = Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h if task.ama?
+
+      TaskAction.new(action, task, user).to_h.merge(returns_complete_hash: true)
+    end
+
     private
 
     def users_to_options(users)
