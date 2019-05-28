@@ -84,43 +84,173 @@ RSpec.feature "ColocatedTask" do
   describe "vlj support staff places the task on hold" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:appeal) { root_task.appeal }
-    let!(:colocated_task) do
-      FactoryBot.create(
-        :ama_colocated_task,
-        appeal: appeal,
-        parent: root_task,
-        assigned_to: vlj_support_staff
-      )
-    end
-
     let(:veteran_name) { appeal.veteran.name.formatted(:readable_full) }
 
-    it "should return attorney task to active state" do
-      # Visit case details page for VLJ support staff.
-      User.authenticate!(user: vlj_support_staff)
-      visit("/queue/appeals/#{appeal.uuid}")
+    context "when ColocatedTask is in progress" do
+      let(:hold_duration_days) { 15 }
+      let!(:colocated_task) do
+        FactoryBot.create(
+          :ama_colocated_task,
+          appeal: appeal,
+          parent: root_task,
+          assigned_to: Colocated.singleton
+        )
+      end
+      let(:individual_task) { colocated_task.children.first }
 
-      # Attempt to put the task on hold.
-      click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h[:label])
+      it "is successfully placed on hold" do
+        # Visit case details page for VLJ support staff.
+        User.authenticate!(user: vlj_support_staff)
+        visit("/queue/appeals/#{appeal.uuid}")
 
-      # Redirected to place task on hold page.
-      expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
+        # Attempt to put the task on hold.
+        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
-      # Attempt to place the task on hold without including notes.
-      find(".Select-control", text: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL).click
-      find("div", class: "Select-option", text: "15 days").click
-      click_on(COPY::MODAL_SUBMIT_BUTTON)
+        # Modal appears.
+        expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
-      # Instructions field is required
-      expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
+        # Attempt to place the task on hold without including notes.
+        find(".Select-control", text: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL).click
+        find("div", class: "Select-option", text: "#{hold_duration_days} days").click
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
 
-      # Add instructions and try again
-      fill_in("instructions", with: "some text")
-      click_on(COPY::MODAL_SUBMIT_BUTTON)
+        # Instructions field is required
+        expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
 
-      # We should see a success message and be redirected to our queue page.
-      expect(page).to have_content(format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, "15"))
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+        # Add instructions and try again
+        fill_in("instructions", with: "some text")
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
+
+        # We should see a success message and remain on the case details page.
+        expect(page).to have_content(
+          format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, hold_duration_days)
+        )
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+        # Values in database are correct.
+        expect(individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(individual_task.calculated_on_hold_duration).to eq(hold_duration_days)
+      end
+    end
+
+    context "when ColocatedTask on old-style hold is updated with a later hold expiration date" do
+      let(:old_hold_started) { 3.days.ago }
+      let(:old_hold_duration_days) { 15 }
+      let(:new_hold_duration_days) { 60 }
+
+      let(:colocated_org_task) do
+        FactoryBot.create(
+          :ama_colocated_task,
+          appeal: appeal,
+          parent: root_task,
+          assigned_to: Colocated.singleton
+        )
+      end
+      let(:colocated_individual_task) { colocated_org_task.children.first }
+
+      before do
+        colocated_individual_task.update!(
+          status: Constants.TASK_STATUSES.on_hold,
+          on_hold_duration: old_hold_duration_days
+        )
+
+        # Update the placed_on_hold_at value in a different statement to avoid it being overwritten by set_timestamps.
+        colocated_individual_task.update!(placed_on_hold_at: old_hold_started)
+      end
+
+      it "wipes out the old hold and updates the task with new hold information" do
+        User.authenticate!(user: vlj_support_staff)
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        # Confirm old hold information is set.
+        expect(colocated_individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(colocated_individual_task.calculated_placed_on_hold_at).to eq(old_hold_started)
+        expect(colocated_individual_task.calculated_on_hold_duration).to eq(old_hold_duration_days)
+
+        # Place task on hold again.
+        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
+        expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
+        click_dropdown(
+          prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL,
+          text: "#{new_hold_duration_days} days"
+        )
+        fill_in("instructions", with: "some text")
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
+
+        expect(page).to have_content(
+          format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, new_hold_duration_days)
+        )
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+        # Values in database are correct.
+        colocated_individual_task.reload
+        expect(colocated_individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(colocated_individual_task.calculated_placed_on_hold_at).to_not eq(old_hold_started)
+        expect(colocated_individual_task.calculated_on_hold_duration).to eq(new_hold_duration_days)
+
+        # Task snapshot updated with new hold information
+        expect(page).to have_content("0 of #{new_hold_duration_days}")
+      end
+    end
+
+    context "when ColocatedTask on old-style hold is updated with an earlier hold expiration date" do
+      let(:old_hold_started) { 3.days.ago }
+      let(:old_hold_duration_days) { 90 }
+      let(:new_hold_duration_days) { 45 }
+
+      let(:colocated_org_task) do
+        FactoryBot.create(
+          :ama_colocated_task,
+          appeal: appeal,
+          parent: root_task,
+          assigned_to: Colocated.singleton
+        )
+      end
+      let(:colocated_individual_task) { colocated_org_task.children.first }
+
+      before do
+        colocated_individual_task.update!(
+          status: Constants.TASK_STATUSES.on_hold,
+          on_hold_duration: old_hold_duration_days
+        )
+
+        # Update the placed_on_hold_at value in a different statement to avoid it being overwritten by set_timestamps.
+        colocated_individual_task.update!(placed_on_hold_at: old_hold_started)
+      end
+
+      it "wipes out the old hold and updates the task with new hold information" do
+        User.authenticate!(user: vlj_support_staff)
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        # Confirm old hold information is set.
+        expect(colocated_individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(colocated_individual_task.calculated_placed_on_hold_at).to eq(old_hold_started)
+        expect(colocated_individual_task.calculated_on_hold_duration).to eq(old_hold_duration_days)
+
+        # Place task on hold again.
+        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
+        expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
+        click_dropdown(
+          prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL,
+          text: "#{new_hold_duration_days} days"
+        )
+        fill_in("instructions", with: "some text")
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
+
+        expect(page).to have_content(
+          format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, new_hold_duration_days)
+        )
+        expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
+
+        # Values in database are correct.
+        colocated_individual_task.reload
+        expect(colocated_individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
+        expect(colocated_individual_task.calculated_placed_on_hold_at).to_not eq(old_hold_started)
+        expect(colocated_individual_task.calculated_on_hold_duration).to eq(new_hold_duration_days)
+
+        # Task snapshot updated with new hold information
+        expect(page).to have_content("0 of #{new_hold_duration_days}")
+      end
     end
   end
 

@@ -126,12 +126,12 @@ class Task < ApplicationRecord
   end
 
   def calculated_placed_on_hold_at
-    active_child_timed_hold_task&.timer_start_time
+    active_child_timed_hold_task&.timer_start_time || placed_on_hold_at
   end
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i || on_hold_duration
   end
 
   def self.recently_closed
