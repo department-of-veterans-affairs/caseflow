@@ -475,5 +475,7 @@
   "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE": "Please contact your supervisor for further assistance. You can see the list of schedulable Veterans by clicking on their respective tabs",
 
   "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_TITLE": "Send to Schedule Veterans List",
-  "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_DETAIL": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled. You must assign this case a Regional Office to proceed."
+  "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_DETAIL": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled. You must assign this case a Regional Office to proceed.",
+  "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE": "Updated Task Successfully",
+  "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL": "Successfully sent %s's case to the list of Veterans to be scheduled."
 }

@@ -58,8 +58,11 @@ class TaskActionRepository
       {
         modal_title: COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_TITLE,
         modal_body: COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_DETAIL,
-        message_title: 'Success Title',
-        message_detail: 'Success Detail'
+        message_title: COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE,
+        message_detail: format(
+          COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL,
+          task.appeal.veteran_full_name
+        )
       }
     end
 
