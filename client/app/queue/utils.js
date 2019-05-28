@@ -542,6 +542,6 @@ export const sortTaskList = (taskList) => {
   });
 };
 
-export const regionalOfficeCity = (task) => {
-  return _.get(task, 'closestRegionalOffice.location_hash.city', 'Unknown');
+export const regionalOfficeCity = (taskOrAppeal) => {
+  return _.get(taskOrAppeal, 'closestRegionalOffice.location_hash.city', 'Unknown');
 };
