@@ -66,7 +66,7 @@ describe Appeal do
 
     it "returns appeals" do
       [direct_review_appeal, evidence_submission_appeal, hearing_appeal].each do |appeal|
-        RootTask.create_root_and_sub_tasks!(appeal)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
 
       expect(subject).to include direct_review_appeal
@@ -560,7 +560,7 @@ describe Appeal do
     subject { appeal.create_tasks_on_intake_success! }
 
     it "creates root and vso tasks" do
-      expect(RootTask).to receive(:create_root_and_sub_tasks!).once
+      expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).once
 
       subject
     end

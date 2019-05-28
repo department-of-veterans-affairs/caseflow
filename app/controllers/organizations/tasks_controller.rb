@@ -3,7 +3,6 @@
 class Organizations::TasksController < OrganizationsController
   before_action :verify_organization_access, only: [:index]
   before_action :verify_role_access, only: [:index]
-  before_action :verify_business_line, only: [:index]
 
   def index
     tasks = GenericQueue.new(user: organization).tasks
@@ -33,9 +32,5 @@ class Organizations::TasksController < OrganizationsController
 
   def serializer
     organization.is_a?(::Representative) ? WorkQueue::OrganizationTaskSerializer : WorkQueue::TaskSerializer
-  end
-
-  def verify_business_line
-    redirect_to "/decision_reviews/#{organization.url}" if organization.is_a?(::BusinessLine)
   end
 end
