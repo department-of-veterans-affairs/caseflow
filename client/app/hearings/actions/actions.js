@@ -14,10 +14,10 @@ export const onReceiveSchedulePeriod = (schedulePeriod) => ({
   }
 });
 
-export const onReceiveDailyDocket = (dailyDocket, hearings) => ({
+export const onReceiveDailyDocket = (hearingDay, hearings) => ({
   type: ACTIONS.RECEIVE_DAILY_DOCKET,
   payload: {
-    dailyDocket,
+    hearingDay,
     hearings
   }
 });

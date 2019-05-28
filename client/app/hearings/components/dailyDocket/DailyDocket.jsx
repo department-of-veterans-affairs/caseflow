@@ -5,13 +5,13 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Alert from '../../components/Alert';
+import Alert from '../../../components/Alert';
 import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
-import StatusMessage from '../../components/StatusMessage';
+import StatusMessage from '../../../components/StatusMessage';
 import { getHearingAppellantName } from './DailyDocketRowDisplayText';
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
-import { isPreviouslyScheduledHearing } from '../utils';
+import { isPreviouslyScheduledHearing } from '../../utils';
 
 const alertStyling = css({
   marginBottom: '30px'

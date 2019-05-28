@@ -221,7 +221,7 @@ HearingDayEditModal.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  dailyDocket: state.hearingSchedule.dailyDocket,
+  dailyDocket: state.dailyDocket.hearingDay,
   hearingRoom: state.hearingSchedule.hearingRoom || {},
   vlj: state.hearingSchedule.vlj || {},
   coordinator: state.hearingSchedule.coordinator || {},

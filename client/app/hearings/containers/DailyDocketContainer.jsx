@@ -32,8 +32,8 @@ import {
   onResetLockHearingAfterError,
   onInvalidForm
 } from '../actions/actions';
-import DailyDocket from '../components/DailyDocket';
-import DailyDocketPrinted from '../components/DailyDocketPrinted';
+import DailyDocket from '../components/dailyDocket/DailyDocket';
+import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
 import HearingDayEditModal from '../components/HearingDayEditModal';
 import Alert from '../../components/Alert';
 
@@ -92,9 +92,9 @@ export class DailyDocketContainer extends React.Component {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       const hearings = _.keyBy(resp.hearingDay.hearings, 'externalId');
-      const dailyDocket = _.omit(resp.hearingDay, ['hearings']);
+      const hearingDay = _.omit(resp.hearingDay, ['hearings']);
 
-      this.props.onReceiveDailyDocket(dailyDocket, hearings);
+      this.props.onReceiveDailyDocket(hearingDay, hearings);
 
       this.loadHearingDetails(resp.hearingDay.hearings);
     });
@@ -159,7 +159,7 @@ export class DailyDocketContainer extends React.Component {
   };
 
   updateLockHearingDay = (lock) => () => {
-    ApiUtil.patch(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data: { lock } }).
+    ApiUtil.patch(`/hearings/hearing_day/${this.props.hearingDay.id}`, { data: { lock } }).
       then(() => {
         this.props.onUpdateLock(lock);
       }, (err) => {
@@ -192,7 +192,7 @@ export class DailyDocketContainer extends React.Component {
     if (this.props.hearingDayModified) {
       this.setState({ showModalAlert: true });
 
-      let data = { id: this.props.dailyDocket.id };
+      let data = { id: this.props.hearingDay.id };
 
       if (this.props.hearingRoom) {
         data.room = this.props.hearingRoom.value;
@@ -210,11 +210,11 @@ export class DailyDocketContainer extends React.Component {
         data.notes = this.props.notes;
       }
 
-      ApiUtil.put(`/hearings/hearing_day/${this.props.dailyDocket.id}`, { data }).
+      ApiUtil.put(`/hearings/hearing_day/${this.props.hearingDay.id}`, { data }).
         then((response) => {
           const editedHearingDay = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-          editedHearingDay.requestType = this.props.dailyDocket.requestType;
+          editedHearingDay.requestType = this.props.hearingDay.requestType;
 
           this.props.onReceiveDailyDocket(editedHearingDay, this.props.hearings);
         }, () => {
@@ -271,14 +271,14 @@ export class DailyDocketContainer extends React.Component {
       {this.props.print &&
         <DailyDocketPrinted
           user={this.props.user}
-          docket={this.props.dailyDocket}
+          docket={this.props.hearingDay}
           hearings={this.props.hearings} />
       }
 
       {!this.props.print &&
         <DailyDocket
           user={this.props.user}
-          dailyDocket={this.props.dailyDocket}
+          dailyDocket={this.props.hearingDay}
           hearings={this.props.hearings}
           saveHearing={this.saveHearing}
           saveSuccessful={this.props.saveSuccessful}
@@ -307,19 +307,19 @@ export class DailyDocketContainer extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  dailyDocket: state.hearingSchedule.dailyDocket,
-  hearings: state.hearingSchedule.hearings,
+  hearingDay: state.dailyDocket.hearingDay,
+  hearings: state.dailyDocket.hearings,
   saveSuccessful: state.hearingSchedule.saveSuccessful,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   hearingRoom: state.hearingSchedule.hearingRoom,
   notes: state.hearingSchedule.notes,
   hearingDayModified: state.hearingSchedule.hearingDayModified,
-  displayRemoveHearingDayModal: state.hearingSchedule.displayRemoveHearingDayModal,
-  displayLockModal: state.hearingSchedule.displayLockModal,
-  displayLockSuccessMessage: state.hearingSchedule.displayLockSuccessMessage,
-  dailyDocketServerError: state.hearingSchedule.dailyDocketServerError,
-  onErrorHearingDayLock: state.hearingSchedule.onErrorHearingDayLock
+  displayRemoveHearingDayModal: state.dailyDocket.displayRemoveHearingDayModal,
+  displayLockModal: state.dailyDocket.displayLockModal,
+  displayLockSuccessMessage: state.dailyDocket.displayLockSuccessMessage,
+  dailyDocketServerError: state.dailyDocket.dailyDocketServerError,
+  onErrorHearingDayLock: state.dailyDocket.onErrorHearingDayLock
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -349,7 +349,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 DailyDocketContainer.propTypes = {
   user: PropTypes.object,
-  dailyDocket: PropTypes.object,
+  hearingDay: PropTypes.object,
   hearings: PropTypes.object,
   saveSuccessful: PropTypes.object,
   vlj: PropTypes.string,

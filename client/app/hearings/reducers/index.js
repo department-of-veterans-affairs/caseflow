@@ -5,11 +5,13 @@ import caseListReducer from '../../queue/CaseList/CaseListReducer';
 import { workQueueReducer } from '../../queue/reducers';
 import hearingWorksheetReducer from './hearingWorksheetReducer';
 import hearingScheduleReducer from './hearingScheduleReducer';
+import dailyDocketReducer from './dailyDocketReducer';
 import uiReducer from '../../queue/uiReducer/uiReducer';
 
 const combinedReducer = combineReducers({
   hearingWorksheet: hearingWorksheetReducer,
   hearingSchedule: hearingScheduleReducer,
+  dailyDocket: dailyDocketReducer,
   ui: uiReducer,
   caseList: caseListReducer,
   queue: workQueueReducer,

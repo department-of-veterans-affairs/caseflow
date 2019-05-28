@@ -3,9 +3,9 @@ import { css } from 'glamor';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import Button from '../../components/Button';
+import Button from '../../../components/Button';
 
-import { onUpdateDocketHearing } from '../actions/actions';
+import { onUpdateDocketHearing } from '../../actions/actions';
 import HearingText from './DailyDocketRowDisplayText';
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
@@ -179,7 +179,7 @@ class HearingActions extends React.Component {
 }
 
 const mapStateToProps = (state, props) => ({
-  hearing: props.hearingId ? state.hearingSchedule.hearings[props.hearingId] : {}
+  hearing: props.hearingId ? state.dailyDocket.hearings[props.hearingId] : {}
 });
 
 const mapDispatchToProps = (dispatch, props) => bindActionCreators({
