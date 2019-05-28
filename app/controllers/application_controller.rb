@@ -206,6 +206,7 @@ class ApplicationController < ApplicationBaseController
       Raven.user_context(
         email: current_user.email,
         css_id: current_user.css_id,
+        station_id: current_user.station_id,
         regional_office: current_user.regional_office
       )
     end

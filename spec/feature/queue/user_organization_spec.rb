@@ -128,4 +128,17 @@ RSpec.feature "User organization" do
       end
     end
   end
+
+  context "When organization is a BusinessLine" do
+    let!(:organization) { create(:business_line, url: "lob", name: "LOB") }
+
+    before { OrganizationsUser.add_user_to_organization(user, organization) }
+
+    scenario "Redirects to /decision_reviews equivalent" do
+      visit organization.path
+
+      expect(current_path).to eq "/decision_reviews/lob"
+      expect(page).to have_content("Reviews needing action")
+    end
+  end
 end

@@ -1,7 +1,6 @@
-import * as Constants from '../constants/constants';
+import * as Constants from '../constants';
 import ApiUtil from '../../util/ApiUtil';
-import { CATEGORIES, debounceMs } from '../analytics';
-import { now } from '../util/DateUtil';
+import { now } from '../utils';
 import _ from 'lodash';
 
 export const populateWorksheet = (worksheet) => ({
@@ -10,28 +9,6 @@ export const populateWorksheet = (worksheet) => ({
     worksheet
   }
 });
-
-export const handleWorksheetServerError = (err) => ({
-  type: Constants.HANDLE_WORKSHEET_SERVER_ERROR,
-  payload: {
-    err
-  }
-});
-
-export const fetchingWorksheet = () => ({
-  type: Constants.FETCHING_WORKSHEET
-});
-
-export const getWorksheet = (id) => (dispatch) => {
-  dispatch(fetchingWorksheet());
-
-  ApiUtil.get(`/hearings/${id}/worksheet.json`, { cache: true }).
-    then((response) => {
-      dispatch(populateWorksheet(response.body));
-    }, (err) => {
-      dispatch(handleWorksheetServerError(err));
-    });
-};
 
 export const onRepNameChange = (repName) => ({
   type: Constants.SET_REPNAME,
@@ -59,12 +36,6 @@ export const onMilitaryServiceChange = (militaryService) => ({
   type: Constants.SET_MILITARY_SERVICE,
   payload: {
     militaryService
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
   }
 });
 
@@ -72,12 +43,6 @@ export const onSummaryChange = (summary) => ({
   type: Constants.SET_SUMMARY,
   payload: {
     summary
-  },
-  meta: {
-    analytics: {
-      category: CATEGORIES.HEARING_WORKSHEET_PAGE,
-      debounceMs
-    }
   }
 });
 
