@@ -5,7 +5,7 @@ class VaDotGovAddressValidator
 
   STATUSES = {
     matched_available_hearing_locations: :matched_available_hearing_locations,
-    phillipines_exception: :defaulted_to_phillipines_RO58,
+    philippines_exception: :defaulted_to_philippines_RO58,
     created_admin_action: :created_admin_action
   }.freeze
 
@@ -185,8 +185,8 @@ class VaDotGovAddressValidator
   end
 
   def handle_error(error)
-    if VaDotGovAddressValidatorExceptions.check_for_phillipines_and_maybe_update(appeal, address)
-      return { status: STATUSES[:phillipines_exception] }
+    if VaDotGovAddressValidatorExceptions.check_for_philippines_and_maybe_update(appeal, address)
+      return { status: STATUSES[:philippines_exception] }
     end
 
     case error

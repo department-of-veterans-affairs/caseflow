@@ -41,8 +41,8 @@ class VaDotGovAddressValidatorExceptions
       facility_id == "vha_671BY"
     end
 
-    def check_for_phillipines_and_maybe_update(appeal, address)
-      if "Phillipines".casecmp(address[:country]) == 0
+    def check_for_philippines_and_maybe_update(appeal, address)
+      if "Philippines".casecmp(address[:country]) == 0
         appeal.update(closest_regional_office: "RO58")
         facility = VADotGovService.get_facility_data(ids: ["vba_358"])
         appeal.va_dot_gov_address_validator.create_available_hearing_location(facility: facility)
