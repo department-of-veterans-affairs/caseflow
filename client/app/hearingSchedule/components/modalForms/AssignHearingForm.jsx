@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import ApiUtil from '../../../util/ApiUtil';
-import { locationCity } from '../../../queue/utils';
+import { regionalOfficeCity } from '../../../queue/utils';
 
 import {
   RegionalOfficeDropdown,
@@ -94,7 +94,7 @@ class AssignHearingForm extends React.Component {
             key={`hearingLocation__${regionalOffice}`}
             regionalOffice={regionalOffice}
             appealId={appeal.externalId}
-            dynamic={regionalOffice !== locationCity(appeal) ||
+            dynamic={regionalOffice !== regionalOfficeCity(appeal) ||
               _.isEmpty(appeal.availableHearingLocations)}
             staticHearingLocations={availableHearingLocations}
             value={hearingLocation}
