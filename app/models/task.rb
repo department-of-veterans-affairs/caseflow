@@ -242,8 +242,10 @@ class Task < ApplicationRecord
 
   def self.verify_user_can_create!(user, parent)
     can_create = parent&.available_actions(user)&.map do |action|
-      TaskAction.new(action, parent, user).can_create_task_type?(name)
-    end&.any?
+      parent.build_action_hash(action, user)
+    end&.any? do |action|
+      action.dig(:data, :type) == name || action.dig(:data, :options)&.any? { |option| option.dig(:value) == name }
+    end
 
     if !parent&.actions_allowable?(user) || !can_create
       user_description = user ? "User #{user.id}" : "nil User"
