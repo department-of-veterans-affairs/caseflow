@@ -40,7 +40,7 @@ class HearingDayEditModal extends React.Component {
     };
   }
 
-  componentWillMount = () => {
+  componentDidMount = () => {
     // find labels in options before passing values to modal
     this.initialState();
     if (this.props.dailyDocket.roomInfo) {
@@ -56,23 +56,6 @@ class HearingDayEditModal extends React.Component {
       this.initialState();
     }
   }
-
-  formatRoomOptions = () => {
-    const roomOptions = [
-      { label: '',
-        value: '' }
-    ];
-    const rooms = Object.keys(HEARING_ROOMS_LIST);
-
-    for (const roomKey of rooms) {
-      const room = HEARING_ROOMS_LIST[roomKey];
-
-      roomOptions.push({ label: room.label,
-        value: roomKey });
-    }
-
-    return roomOptions;
-  };
 
   modalConfirmButton = () => {
     return <Button
