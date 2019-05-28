@@ -21,10 +21,6 @@ class TaskAction
     }
   end
 
-  def can_create_task_type?(task_type)
-    @data.dig(:type) == task_type || @data.dig(:options)&.any? { |option| option.dig(:value) == task_type }
-  end
-
   private
 
   def build_data_attribute(func)
