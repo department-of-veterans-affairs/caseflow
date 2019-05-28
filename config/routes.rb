@@ -211,6 +211,8 @@ Rails.application.routes.draw do
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
 
+  resources :task_actions, only: [:index]
+
   get '/search', to: 'queue#index'
 
   resources :legacy_tasks, only: [:create, :update]
