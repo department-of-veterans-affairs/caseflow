@@ -322,6 +322,23 @@ describe FetchHearingLocationsForVeteransJob do
             expect(HearingAdminActionVerifyAddressTask.where(parent_id: tsk.id).count).to eq 1
           end
         end
+
+        context "and veteran's address is in the Philippines" do
+          before do
+            allow(VADotGovService).to receive(:get_facility_data)
+              .and_return([{ distance: nil, facility_id: "vba_358" }])
+            Fakes::BGSService.veteran_records = {
+              "123456789" => veteran_record(file_number: "123456789S",
+                                            state: nil, zip_code: nil, country: "PHILIPPINES")
+            }
+          end
+
+          it "associates appeals RO to RO58 and sets available_hearing_location" do
+            FetchHearingLocationsForVeteransJob.perform_now
+            expect(legacy_appeal.available_hearing_locations.count).to eq(1)
+            expect(LegacyAppeal.first.closest_regional_office).to eq("RO58")
+          end
+        end
       end
 
       context "when veterans' states or country vary" do
