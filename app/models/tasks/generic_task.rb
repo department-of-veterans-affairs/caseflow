@@ -78,8 +78,8 @@ class GenericTask < Task
     hearing_task.create_change_hearing_disposition_task(instructions)
   end
 
-  def most_recent_inactive_hearing_task_on_appeal
-    appeal.tasks.inactive.order(closed_at: :desc).where(type: HearingTask.name).last
+  def most_recent_closed_hearing_task_on_appeal
+    appeal.tasks.closed.order(closed_at: :desc).where(type: HearingTask.name).last
   end
 
   private
@@ -99,7 +99,7 @@ class GenericTask < Task
     return [] unless type == ScheduleHearingTask.name
     return [] unless HearingsManagement.singleton.user_has_access?(user)
 
-    return [] if most_recent_inactive_hearing_task_on_appeal&.hearing&.disposition.blank?
+    return [] if most_recent_closed_hearing_task_on_appeal&.hearing&.disposition.blank?
 
     [
       Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h

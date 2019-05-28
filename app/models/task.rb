@@ -36,7 +36,7 @@ class Task < ApplicationRecord
 
   scope :open, -> { where(status: open_statuses) }
 
-  scope :inactive, -> { where(status: inactive_statuses) }
+  scope :closed, -> { where(status: closed_statuses) }
 
   scope :not_tracking, -> { where.not(type: TrackVeteranTask.name) }
 
@@ -54,7 +54,7 @@ class Task < ApplicationRecord
     self.class.name.titlecase
   end
 
-  def self.inactive_statuses
+  def self.closed_statuses
     [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled]
   end
 
@@ -69,7 +69,7 @@ class Task < ApplicationRecord
   # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
   # properties of the task will not change.
   def active?
-    !self.class.inactive_statuses.include?(status)
+    !self.class.closed_statuses.include?(status)
   end
 
   def active_with_no_children?
@@ -145,7 +145,7 @@ class Task < ApplicationRecord
   end
 
   def self.recently_closed
-    inactive.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+    closed.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
   def self.incomplete_or_recently_closed
