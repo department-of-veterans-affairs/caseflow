@@ -498,7 +498,7 @@ RSpec.feature "Search" do
       click_on "Search"
     end
 
-    scenario "withdraw entire review and show withdrwan on search page" do
+    scenario "withdraw entire review and show withdrawn on search page" do
       caseflow_appeal.root_task.update(status: Constants.TASK_STATUSES.cancelled)
       perform_search
       expect(page).to have_content("Withdrawn")
