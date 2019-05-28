@@ -222,12 +222,12 @@ HearingDayEditModal.propTypes = {
 
 const mapStateToProps = (state) => ({
   dailyDocket: state.dailyDocket.hearingDay,
-  hearingRoom: state.hearingSchedule.hearingRoom || {},
-  vlj: state.hearingSchedule.vlj || {},
-  coordinator: state.hearingSchedule.coordinator || {},
+  hearingRoom: state.dailyDocket.hearingRoom || {},
+  vlj: state.dailyDocket.vlj || {},
+  coordinator: state.dailyDocket.coordinator || {},
   activeJudges: state.components.dropdowns.judges.options,
   activeCoordinators: state.components.dropdowns.hearingCoordinators.options,
-  notes: state.hearingSchedule.notes
+  notes: state.dailyDocket.notes
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

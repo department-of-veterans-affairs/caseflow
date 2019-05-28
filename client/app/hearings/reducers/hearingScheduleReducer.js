@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import { ACTIONS } from '../constants';
 import { update } from '../../util/ReducerUtil';
 
@@ -44,19 +43,6 @@ export const hearingScheduleReducer = (state = {}, action = {}) => {
     return update(state, {
       appealsReadyForHearing: {
         $set: action.payload.appeals
-      }
-    });
-  case ACTIONS.INVALID_FORM:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          invalid: {
-            $set: {
-              ...(state.hearings[action.payload.hearingId].invalid || {}),
-              ...action.payload.invalid
-            }
-          }
-        }
       }
     });
   case ACTIONS.SELECTED_HEARING_DAY_CHANGE:
@@ -222,40 +208,10 @@ export const hearingScheduleReducer = (state = {}, action = {}) => {
         $set: action.payload.requestType
       }
     });
-  case ACTIONS.SELECT_VLJ:
-    return update(state, {
-      vlj: {
-        $set: action.payload.vlj
-      }
-    });
-  case ACTIONS.SELECT_COORDINATOR:
-    return update(state, {
-      coordinator: {
-        $set: action.payload.coordinator
-      }
-    });
-  case ACTIONS.SELECT_HEARING_ROOM:
-    return update(state, {
-      hearingRoom: {
-        $set: action.payload.hearingRoom
-      }
-    });
-  case ACTIONS.SET_NOTES:
-    return update(state, {
-      notes: {
-        $set: action.payload.notes
-      }
-    });
   case ACTIONS.ASSIGN_HEARING_ROOM:
     return update(state, {
       roomRequired: {
         $set: action.payload.roomRequired
-      }
-    });
-  case ACTIONS.HEARING_DAY_MODIFIED:
-    return update(state, {
-      hearingDayModified: {
-        $set: action.payload.hearingDayModified
       }
     });
   case ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE:

@@ -57,7 +57,6 @@ export default class DailyDocket extends React.Component {
       editedDispositionModalProps: null
     };
   }
-  onInvalidForm = (hearingId) => (invalid) => this.props.onInvalidForm(hearingId, invalid);
 
   previouslyScheduledHearings = () => {
     return _.filter(this.props.hearings, isPreviouslyScheduledHearing);
@@ -189,7 +188,6 @@ DailyDocket.propTypes = {
   hearings: PropTypes.object,
   saveHearing: PropTypes.func.isRequired,
   saveSuccessful: PropTypes.object,
-  onInvalidForm: PropTypes.func.isRequired,
   openModal: PropTypes.func.isRequired,
   onClickRemoveHearingDay: PropTypes.func.isRequired,
   displayRemoveHearingDayModal: PropTypes.bool,

@@ -29,8 +29,7 @@ import {
   handleDailyDocketServerError,
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
-  onResetLockHearingAfterError,
-  onInvalidForm
+  onResetLockHearingAfterError
 } from '../actions/actions';
 import DailyDocket from '../components/dailyDocket/DailyDocket';
 import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
@@ -168,9 +167,9 @@ export class DailyDocketContainer extends React.Component {
   };
 
   deleteHearingDay = () => {
-    ApiUtil.delete(`/hearings/hearing_day/${this.props.dailyDocket.id}`).
+    ApiUtil.delete(`/hearings/hearing_day/${this.props.hearingDay.id}`).
       then(() => {
-        this.props.onSuccessfulHearingDayDelete(this.props.dailyDocket.scheduledFor);
+        this.props.onSuccessfulHearingDayDelete(this.props.hearingDay.scheduledFor);
         this.props.history.push('/schedule');
       }, (err) => {
         this.props.handleDailyDocketServerError(err);
@@ -282,7 +281,6 @@ export class DailyDocketContainer extends React.Component {
           hearings={this.props.hearings}
           saveHearing={this.saveHearing}
           saveSuccessful={this.props.saveSuccessful}
-          onInvalidForm={this.props.onInvalidForm}
           openModal={this.openModal}
           onClickRemoveHearingDay={this.props.onClickRemoveHearingDay}
           displayRemoveHearingDayModal={this.props.displayRemoveHearingDayModal}
@@ -310,11 +308,11 @@ const mapStateToProps = (state) => ({
   hearingDay: state.dailyDocket.hearingDay,
   hearings: state.dailyDocket.hearings,
   saveSuccessful: state.dailyDocket.saveSuccessful,
-  vlj: state.hearingSchedule.vlj,
-  coordinator: state.hearingSchedule.coordinator,
-  hearingRoom: state.hearingSchedule.hearingRoom,
-  notes: state.hearingSchedule.notes,
-  hearingDayModified: state.hearingSchedule.hearingDayModified,
+  vlj: state.dailyDocket.vlj,
+  coordinator: state.dailyDocket.coordinator,
+  hearingRoom: state.dailyDocket.hearingRoom,
+  notes: state.dailyDocket.notes,
+  hearingDayModified: state.dailyDocket.hearingDayModified,
   displayRemoveHearingDayModal: state.dailyDocket.displayRemoveHearingDayModal,
   displayLockModal: state.dailyDocket.displayLockModal,
   displayLockSuccessMessage: state.dailyDocket.displayLockSuccessMessage,
@@ -328,7 +326,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveSavedHearing,
   onResetSaveSuccessful,
   onCancelHearingUpdate,
-  onInvalidForm,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,

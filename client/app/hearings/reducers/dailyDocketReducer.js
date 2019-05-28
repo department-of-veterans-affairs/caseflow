@@ -96,6 +96,36 @@ export const dailyDocketReducer = function(state = {}, action = {}) {
         }
       }
     });
+  case ACTIONS.HEARING_DAY_MODIFIED:
+    return update(state, {
+      hearingDayModified: {
+        $set: action.payload.hearingDayModified
+      }
+    });
+  case ACTIONS.SELECT_VLJ:
+    return update(state, {
+      vlj: {
+        $set: action.payload.vlj
+      }
+    });
+  case ACTIONS.SELECT_COORDINATOR:
+    return update(state, {
+      coordinator: {
+        $set: action.payload.coordinator
+      }
+    });
+  case ACTIONS.SELECT_HEARING_ROOM:
+    return update(state, {
+      hearingRoom: {
+        $set: action.payload.hearingRoom
+      }
+    });
+  case ACTIONS.SET_NOTES:
+    return update(state, {
+      notes: {
+        $set: action.payload.notes
+      }
+    });
   default:
     return state;
   }
