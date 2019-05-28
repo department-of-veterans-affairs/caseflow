@@ -19,7 +19,10 @@ RSpec.feature "Change hearing disposition" do
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
   let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-  let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day) }
+  let(:hearing_disposition) { nil }
+  let(:hearing) do
+    FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day, disposition: hearing_disposition)
+  end
   let!(:association) { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
   let!(:change_task) { FactoryBot.create(:change_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
   let(:instructions_text) { "This is why I'm changing this hearing's disposition." }
@@ -78,13 +81,8 @@ RSpec.feature "Change hearing disposition" do
         expect(page).to have_content ChangeHearingDispositionTask.last.label
       end
 
-      step "visit and verify that the new hearing disposition is in the hearing prep daily docket" do
-        User.authenticate!(user: hearing_user)
-        visit "/hearings/dockets/" + hearing.scheduled_for.to_date.to_s
-        expect(dropdown_selected_value(find(".dropdown-#{hearing.id}-disposition"))).to eq "Held"
-      end
-
       step "visit and verify that the new hearing disposition is in the hearing schedule daily docket" do
+        User.authenticate!(user: hearing_user)
         visit "/hearings/schedule/docket/" + hearing.hearing_day.id.to_s
         expect(dropdown_selected_value(find(".dropdown-#{hearing.uuid}-disposition"))).to eq "Held"
       end
@@ -137,73 +135,133 @@ RSpec.feature "Change hearing disposition" do
       OrganizationsUser.add_user_to_organization(hearing_mgmt_user, HearingsManagement.singleton)
     end
 
-    scenario "change hearing disposition to postponed" do
-      step "visit the hearing admin organization queue and click on the veteran's name" do
-        visit "/organizations/#{HearingAdmin.singleton.url}"
-        expect(page).to have_content("Unassigned (1)")
-        click_on veteran_link_text
+    context "changing hearing disposition" do
+      scenario "change hearing disposition to postponed" do
+        step "visit the hearing admin organization queue and click on the veteran's name" do
+          visit "/organizations/#{HearingAdmin.singleton.url}"
+          expect(page).to have_content("Unassigned (1)")
+          click_on veteran_link_text
+        end
+
+        step "change the hearing disposition to postponed" do
+          click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+          click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
+          fill_in "Notes", with: instructions_text
+          click_button("Submit")
+          expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+        end
+
+        step "return to the hearing admin organization queue and verify that the task is no longer there" do
+          click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
+          expect(page).to have_content("Unassigned (0)")
+        end
+
+        step "visit hearings schedule and verify that the schedule hearing task is there" do
+          User.authenticate!(user: hearing_mgmt_user)
+          visit "hearings/schedule/assign"
+          expect(page).to have_content("Regional Office")
+          click_dropdown(text: "Denver")
+          click_button("AMA Veterans Waiting")
+          click_on veteran_hearing_link_text
+          expect(page).to have_content(ScheduleHearingTask.last.label)
+        end
+
+        step "verify that instructions and actions are available on the schedule hearing task" do
+          schedule_row = find("dd", text: ScheduleHearingTask.last.label).find(:xpath, "ancestor::tr")
+          schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          expect(schedule_row).to have_content(instructions_text)
+          expect(schedule_row).to have_css(
+            ".Select-control .Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
+          )
+        end
       end
 
-      step "change the hearing disposition to postponed" do
-        click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
-        fill_in "Notes", with: instructions_text
-        click_button("Submit")
-        expect(page).to have_content("Successfully changed hearing disposition to Postponed")
-      end
+      scenario "change hearing disposition to no_show" do
+        step "visit the hearings management organization queue and click on the veteran's name" do
+          visit "/organizations/#{HearingAdmin.singleton.url}"
+          expect(page).to have_content("Unassigned (1)")
+          click_on veteran_link_text
+        end
 
-      step "return to the hearing admin organization queue and verify that the task is no longer there" do
-        click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
-        expect(page).to have_content("Unassigned (0)")
-      end
+        step "change the hearing disposition to no show" do
+          click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+          click_dropdown({ prompt: "Select", text: "No Show" }, find(".cf-modal-body"))
+          fill_in "Notes", with: instructions_text
+          click_button("Submit")
+          expect(page).to have_content("Successfully changed hearing disposition to No Show")
+        end
 
-      step "visit hearings schedule and verify that the schedule hearing task is there" do
-        User.authenticate!(user: hearing_mgmt_user)
-        visit "hearings/schedule/assign"
-        expect(page).to have_content("Regional Office")
-        click_dropdown(text: "Denver")
-        click_button("AMA Veterans Waiting")
-        click_on veteran_hearing_link_text
-        expect(page).to have_content(ScheduleHearingTask.last.label)
-      end
+        step "return to the hearing admin organization queue and verify that the task is no longer unassigned" do
+          click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
+          expect(page).to have_content("Unassigned (0)")
+        end
 
-      step "verify that instructions and actions are available on the schedule hearing task" do
-        schedule_row = find("dd", text: ScheduleHearingTask.last.label).find(:xpath, "ancestor::tr")
-        schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
-        expect(schedule_row).to have_content(instructions_text)
-        expect(schedule_row).to have_css(
-          ".Select-control .Select-placeholder", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
-        )
+        step "verify that there's a NoShowHearingTask with a hold in the HearingsManagement org assigned queue" do
+          User.authenticate!(user: hearing_mgmt_user)
+          visit "/organizations/#{HearingsManagement.singleton.url}"
+          click_on "Assigned (1)"
+          find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
+          no_show_active_row = find("dd", text: "No Show Hearing Task").find(:xpath, "ancestor::tr")
+          expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
+        end
       end
     end
 
-    scenario "change hearing disposition to no_show" do
-      step "visit the hearings management organization queue and click on the veteran's name" do
-        visit "/organizations/#{HearingAdmin.singleton.url}"
-        expect(page).to have_content("Unassigned (1)")
-        click_on veteran_link_text
+    context "a hearing has mistakenly been marked postponed" do
+      let(:hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
+      let!(:cancel_change_task) { change_task.update!(status: Constants.TASK_STATUSES.cancelled) }
+      let!(:hearing_task_2) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+      let!(:association_2) do
+        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task_2)
       end
+      let!(:schedule_hearing_task) { FactoryBot.create(:schedule_hearing_task, parent: hearing_task_2, appeal: appeal) }
+      let(:instructions_text) { "This hearing is postponed, but it should be held." }
 
-      step "change the hearing disposition to no show" do
-        click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
-        click_dropdown({ prompt: "Select", text: "No Show" }, find(".cf-modal-body"))
-        fill_in "Notes", with: instructions_text
-        click_button("Submit")
-        expect(page).to have_content("Successfully changed hearing disposition to No Show")
-      end
-
-      step "return to the hearing admin organization queue and verify that the task is no longer unassigned" do
-        click_queue_switcher COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_TEAM_CASES_LABEL % HearingAdmin.singleton.name
-        expect(page).to have_content("Unassigned (0)")
-      end
-
-      step "verify that there's a NoShowHearingTask with a hold in the HearingsManagement org assigned queue" do
+      before do
         User.authenticate!(user: hearing_mgmt_user)
-        visit "/organizations/#{HearingsManagement.singleton.url}"
-        click_on "Assigned (1)"
-        find("td", text: "No Show Hearing Task").find(:xpath, "ancestor::tr").click_on veteran_link_text
-        no_show_active_row = find("dd", text: NoShowHearingTask.last.label).find(:xpath, "ancestor::tr")
-        expect(no_show_active_row).to have_content("DAYS ON HOLD 0 of 25", normalize_ws: true)
+      end
+
+      scenario "correct the hearing disposition to held" do
+        step "visit hearings schedule and verify that the schedule hearing task is there" do
+          visit "hearings/schedule/assign"
+          expect(page).to have_content("Regional Office")
+          click_dropdown(text: "Denver")
+          click_button("AMA Veterans Waiting")
+          click_on veteran_hearing_link_text
+          expect(page).to have_content(ScheduleHearingTask.last.label)
+        end
+
+        step "choose the change previous hearing disposition action and fill out the form" do
+          schedule_hearing_row = find("dd", text: ScheduleHearingTask.last.label).find(:xpath, "ancestor::tr")
+          click_dropdown(
+            { text: Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.label },
+            schedule_hearing_row
+          )
+          expect(page).to have_content(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE)
+          fill_in "Notes", with: instructions_text
+          click_button "Submit"
+          expect(page).to have_content(
+            format(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteran_full_name)
+          )
+        end
+
+        step "log in as a hearing administrator and verify that the task is in the org queue" do
+          User.authenticate!(user: hearing_admin_user)
+          visit "/organizations/#{HearingAdmin.singleton.url}"
+          click_on veteran_link_text
+          expect(page).to have_content(ChangeHearingDispositionTask.last.label)
+        end
+
+        step "verify task instructions and submit a new disposition" do
+          schedule_row = find("dd", text: ChangeHearingDispositionTask.last.label).find(:xpath, "ancestor::tr")
+          schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          expect(schedule_row).to have_content(instructions_text)
+          click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+          click_dropdown({ prompt: "Select", text: "Held" }, find(".cf-modal-body"))
+          fill_in "Notes", with: "I'm changing this to held."
+          click_button("Submit")
+          expect(page).to have_content("Successfully changed hearing disposition to Held")
+        end
       end
     end
   end
@@ -298,6 +356,7 @@ RSpec.feature "Change hearing disposition" do
         visit("/queue/appeals/#{appeal.uuid}")
         expect(page).to have_content(DispositionTask.last.label)
         click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
+        expect(page).to have_content(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE)
         fill_in "Notes", with: instructions_text
         click_button "Submit"
         expect(page).to have_content(

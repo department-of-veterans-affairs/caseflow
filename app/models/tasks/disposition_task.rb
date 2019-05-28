@@ -6,6 +6,7 @@
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
+  validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
 
@@ -33,7 +34,7 @@ class DispositionTask < GenericTask
   end
 
   def available_actions(user)
-    hearing_admin_actions = available_hearing_admin_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
 
     if HearingsManagement.singleton.user_has_access?(user)
       [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h] | hearing_admin_actions
@@ -51,17 +52,6 @@ class DispositionTask < GenericTask
       [self]
     else
       super(params, user)
-    end
-  end
-
-  def create_change_hearing_disposition_task_and_complete(instructions = nil)
-    multi_transaction do
-      ChangeHearingDispositionTask.create!(
-        appeal: appeal,
-        parent: parent,
-        instructions: instructions.present? ? [instructions] : nil
-      )
-      update!(status: Constants.TASK_STATUSES.completed)
     end
   end
 

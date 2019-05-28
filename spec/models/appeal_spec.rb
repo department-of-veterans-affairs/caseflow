@@ -566,7 +566,11 @@ describe Appeal do
     end
 
     context "request issue has non-comp business line" do
-      let!(:appeal) { create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)]) }
+      let!(:appeal) { create(:appeal, request_issues: [
+        create(:request_issue, benefit_type: :fiduciary),
+        create(:request_issue, benefit_type: :compensation),
+        create(:request_issue, :unidentified)
+        ]) }
 
       it "creates root task and veteran record request task" do
         expect(VeteranRecordRequest).to receive(:create!).once
