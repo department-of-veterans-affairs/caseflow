@@ -416,7 +416,7 @@ describe DispositionTask do
           no_show_hearing_task = NoShowHearingTask.first
           expect(no_show_hearing_task).to_not be_nil
           expect(no_show_hearing_task.placed_on_hold_at).to_not be_nil
-          expect(no_show_hearing_task.on_hold_expired?).to be_falsey
+          expect(no_show_hearing_task.old_style_hold_expired?).to be_falsey
           expect(no_show_hearing_task.reload.on_hold?).to be_truthy
           expect(no_show_hearing_task.calculated_on_hold_duration).to eq 25
           instructions_text = "Mail must be received within 14 days of the original hearing date."

@@ -323,10 +323,10 @@ class Task < ApplicationRecord
   end
 
   def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
+    update!(status: Constants.TASK_STATUSES.in_progress) if old_style_hold_expired?
   end
 
-  def on_hold_expired?
+  def old_style_hold_expired?
     !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
       (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
   end
