@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
 describe Docket do
-  before do
-    FeatureToggle.enable!(:ama_auto_case_distribution)
-  end
-  after do
-    FeatureToggle.disable!(:ama_auto_case_distribution)
-  end
-
   context "docket" do
     # nonpriority
     let!(:appeal) { create(:appeal, :with_tasks, docket_type: "direct_review") }

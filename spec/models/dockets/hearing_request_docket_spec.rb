@@ -1,13 +1,6 @@
 # frozen_string_literal: true
 
 describe HearingRequestDocket do
-  before do
-    FeatureToggle.enable!(:ama_auto_case_distribution)
-  end
-  after do
-    FeatureToggle.disable!(:ama_auto_case_distribution)
-  end
-
   describe "#age_of_n_oldest_priority_appeals" do
     let(:judge_user) { create(:user, last_login_at: Time.zone.now) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
