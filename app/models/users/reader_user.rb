@@ -24,9 +24,10 @@ class ReaderUser < ApplicationRecord
       end
     end
 
+    # Search through users who have been active for the past month
     def all_without_records(limit = 10)
       User.joins("LEFT JOIN reader_users ON users.id=reader_users.user_id")
-        .where("'Reader' = ANY(roles)")
+        .where("last_login_at >= ?", 1.month.ago)
         .where(reader_users: { user_id: nil })
         .limit(limit)
     end
