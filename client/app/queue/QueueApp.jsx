@@ -194,6 +194,8 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
+  routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
+
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
@@ -337,7 +339,16 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.QR_RETURN_TO_JUDGE.value}`}
+            render={this.routedAssignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.value}`}
+            render={this.routedAssignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.value}`}
+            render={this.routedAssignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_DISPATCH_RETURN_TO_ATTORNEY.value}`}
             render={this.routedAssignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.value}`}
@@ -428,6 +439,10 @@ class QueueApp extends React.PureComponent {
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`}
+            title="Assign to Pulac-Cerullo | Caseflow"
+            render={this.routedAssignToPulacCerullo} />
+          <PageRoute
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}
             title="Cancel Task and Assign Regional Office | Caseflow"
             render={this.routedCancelTaskAndAssignRegionalOfficeModal} />

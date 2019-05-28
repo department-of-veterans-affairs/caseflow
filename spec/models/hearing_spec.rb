@@ -29,6 +29,7 @@ describe Hearing do
 
     context "when the hearing has a cancelled disposition task" do
       before do
+        hearing.hearing_task_association.hearing_task.update!(parent: create(:root_task))
         hearing.disposition_task.update!(status: Constants.TASK_STATUSES.cancelled)
       end
 
@@ -39,6 +40,25 @@ describe Hearing do
       let!(:transcription_task) { create(:transcription_task, parent: hearing.disposition_task) }
 
       it { is_expected.to eq(false) }
+    end
+  end
+
+  context "#advance_on_docket_motion" do
+    let!(:hearing) { create(:hearing, :with_tasks) }
+
+    before do
+      [false, false, true, false, false].each do |granted|
+        AdvanceOnDocketMotion.create(
+          user_id: create(:user).id,
+          person_id: hearing.claimant_id,
+          granted: granted,
+          reason: "age"
+        )
+      end
+    end
+
+    it "returns granted motion" do
+      expect(hearing.advance_on_docket_motion["granted"]).to eq(true)
     end
   end
 

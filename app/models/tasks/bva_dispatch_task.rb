@@ -5,6 +5,17 @@
 # This indicates that an appeal is decided and the appellant is about to be notified of the decision.
 
 class BvaDispatchTask < GenericTask
+  def available_actions(user)
+    return [] unless user
+
+    actions = super(user)
+    if assigned_to == user || parent.task_is_assigned_to_organization_user_administers?(user)
+      actions.unshift(Constants.TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.to_h)
+    end
+
+    actions
+  end
+
   class << self
     def create_from_root_task(root_task)
       create!(assigned_to: BvaDispatch.singleton, parent_id: root_task.id, appeal: root_task.appeal)
