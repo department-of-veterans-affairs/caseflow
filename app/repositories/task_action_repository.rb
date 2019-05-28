@@ -66,6 +66,23 @@ class TaskActionRepository
       }
     end
 
+    def dispatch_return_to_judge_data(task, _user = nil)
+      {
+        selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
+        options: users_to_options(Judge.list_all),
+        type: JudgeDispatchReturnTask.name
+      }
+    end
+
+    def judge_dispatch_return_to_attorney_data(task, _user = nil)
+      attorney = task.appeal.assigned_attorney
+      {
+        selected: attorney,
+        options: users_to_options([JudgeTeam.for_judge(task.assigned_to)&.attorneys, attorney].flatten.compact),
+        type: AttorneyDispatchReturnTask.name
+      }
+    end
+
     def assign_to_attorney_data(task, _user = nil)
       {
         selected: nil,
