@@ -331,6 +331,7 @@
   "CASE_TIMELINE_NOD_PENDING": "Notice of disagreement pending",
   "CASE_TIMELINE_JUDGE_TASK": "Decision signed by judge",
   "CASE_TIMELINE_ATTORNEY_TASK": "Decision drafted by attorney",
+  "CASE_TIMELINE_ATTORNEY_DISPATCH_RETURN_TASK": "Decision revised for dispatch by attorney",
   "CASE_TIMELINE_APPEAL_WITHDRAWN": "Appeal withdrawn",
   "CASE_TIMELINE_ATTORNEY_REWRITE_TASK": "Decision revised by attorney",
   "CASE_TIMELINE_ATTORNEY_QUALITY_REVIEW_TASK": "Attorney quality reviewed",
@@ -385,15 +386,18 @@
   "JUDGE_ASSIGN_TASK_LABEL": "Assign",
   "JUDGE_DECISION_REVIEW_TASK_LABEL": "Review",
   "JUDGE_QUALITY_REVIEW_TASK_LABEL": "Quality review",
+  "JUDGE_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
+
+  "ATTORNEY_TASK_LABEL": "Draft decision",
+  "ATTORNEY_REWRITE_TASK_LABEL": "Revise decision draft",
   "ATTORNEY_QUALITY_REVIEW_TASK_LABEL": "Quality review",
+  "ATTORNEY_DISPATCH_RETURN_TASK_LABEL": "Revise decision (BVA Dispatch)",
 
   "IHP_TASK_LABEL": "Prepare Informal Hearing Presentation",
 
   "ADDRESS_CHANGE_MAIL_TASK_LABEL": "Change of address",
   "AOD_MOTION_MAIL_TASK_LABEL": "Motion to Advance on Docket",
   "APPEAL_WITHDRAWAL_MAIL_TASK_LABEL": "Withdrawal of appeal",
-  "ATTORNEY_TASK_LABEL": "Draft decision",
-  "ATTORNEY_REWRITE_TASK_LABEL": "Revise decision draft",
   "CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL": "CUE-related",
   "CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL": "Congressional interest",
   "CONTROLLED_CORRESPONDENCE_MAIL_TASK_LABEL": "Controlled correspondence",
