@@ -5,6 +5,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import LEGACY_APPEAL_TYPES_BY_ID from '../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
+import { sortHearings } from '../utils';
 import COPY from '../../../COPY.json';
 import Table from '../../components/Table';
 import TabWindow from '../../components/TabWindow';
@@ -392,7 +393,7 @@ export default class AssignHearingsTabs extends React.Component {
     const hearingsForSelected = _.get(selectedHearingDay, 'hearings', []);
     const availableSlots = _.get(selectedHearingDay, 'totalSlots', 0) - Object.keys(hearingsForSelected).length;
 
-    const upcomingHearings = _.orderBy(Object.values(hearingsForSelected), (hearing) => hearing.scheduledFor, 'asc');
+    const upcomingHearings = sortHearings(hearingsForSelected);
     const amaAppeals = _.filter(appealsReadyForHearing, (appeal) => this.isAmaAppeal(appeal));
     const legacyAppeals = _.filter(appealsReadyForHearing, (appeal) => !this.isAmaAppeal(appeal));
 
