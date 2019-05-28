@@ -58,10 +58,6 @@ const UpcomingHearingDaysNav = ({
 
 export default class AssignHearings extends React.Component {
 
-  onSelectedHearingDayChangeFactory = (hearingDay) => () => {
-    this.props.onSelectedHearingDayChange(hearingDay);
-  };
-
   room = () => {
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
 
@@ -76,7 +72,8 @@ export default class AssignHearings extends React.Component {
   render() {
     const {
       upcomingHearingDays, selectedHearingDay,
-      appealsReadyForHearing, selectedRegionalOffice
+      appealsReadyForHearing, selectedRegionalOffice,
+      onSelectedHearingDayChange
     } = this.props;
     const room = this.room();
 
@@ -85,7 +82,7 @@ export default class AssignHearings extends React.Component {
         {<UpcomingHearingDaysNav
           upcomingHearingDays={upcomingHearingDays}
           selectedHearingDay={selectedHearingDay}
-          onSelectedHearingDayChangeFactory={this.onSelectedHearingDayChangeFactory} />
+          onSelectedHearingDayChangeFactory={onSelectedHearingDayChange} />
         }
         {appealsReadyForHearing &&
           <AssignHearingsTabs
