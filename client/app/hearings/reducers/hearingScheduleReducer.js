@@ -1,17 +1,8 @@
 /* eslint-disable max-lines */
-import { timeFunction } from '../../util/PerfDebug';
 import { ACTIONS } from '../constants';
 import { update } from '../../util/ReducerUtil';
-import { combineReducers } from 'redux';
 
-import commonComponentsReducer from '../../components/common/reducers';
-import caseListReducer from '../../queue/CaseList/CaseListReducer';
-import { workQueueReducer } from '../../queue/reducers';
-import hearingsReducer from './index';
-import uiReducer from '../../queue/uiReducer/uiReducer';
-
-export const initialState = {};
-const hearingScheduleReducer = (state = initialState, action = {}) => {
+export const hearingScheduleReducer = (state = {}, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_HEARING_SCHEDULE:
     return update(state, {
@@ -376,16 +367,5 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return state;
   }
 };
-const combinedReducer = combineReducers({
-  hearings: hearingsReducer,
-  hearingSchedule: hearingScheduleReducer,
-  ui: uiReducer,
-  caseList: caseListReducer,
-  queue: workQueueReducer,
-  components: commonComponentsReducer
-});
 
-export default timeFunction(
-  combinedReducer,
-  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
-);
+export default hearingScheduleReducer;
