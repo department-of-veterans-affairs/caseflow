@@ -5,6 +5,7 @@ class VaDotGovAddressValidator
 
   STATUSES = {
     matched_available_hearing_locations: :matched_available_hearing_locations,
+    phillipines_exception: :defaulted_to_phillipines_RO58,
     created_admin_action: :created_admin_action
   }.freeze
 
@@ -82,6 +83,22 @@ class VaDotGovAddressValidator
     { status: STATUSES[:matched_available_hearing_locations], available_hearing_locations: available_hearing_locations }
   end
 
+  def create_available_hearing_location(facility:)
+    AvailableHearingLocations.create(
+      veteran_file_number: appeal.veteran_file_number || "",
+      appeal: appeal,
+      distance: facility[:distance],
+      facility_id: facility[:facility_id],
+      name: facility[:name],
+      address: facility[:address],
+      city: facility[:city],
+      state: facility[:state],
+      zip_code: facility[:zip_code],
+      classification: facility[:classification],
+      facility_type: facility[:facility_type]
+    )
+  end
+
   private
 
   def address
@@ -157,22 +174,6 @@ class VaDotGovAddressValidator
     @valid_states ||= RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:state)
   end
 
-  def create_available_hearing_location(facility:)
-    AvailableHearingLocations.create(
-      veteran_file_number: appeal.veteran_file_number || "",
-      appeal: appeal,
-      distance: facility[:distance],
-      facility_id: facility[:facility_id],
-      name: facility[:name],
-      address: facility[:address],
-      city: facility[:city],
-      state: facility[:state],
-      zip_code: facility[:zip_code],
-      classification: facility[:classification],
-      facility_type: facility[:facility_type]
-    )
-  end
-
   def get_state_code(va_dot_gov_address)
     return "DC" if VaDotGovAddressValidatorExceptions.veteran_requested_central_office?(appeal)
 
@@ -184,6 +185,10 @@ class VaDotGovAddressValidator
   end
 
   def handle_error(error)
+    if VaDotGovAddressValidatorExceptions.check_for_phillipines_and_maybe_update(appeal, address)
+      return { status: STATUSES[:phillipines_exception] }
+    end
+
     case error
     when Caseflow::Error::VaDotGovInvalidInputError, Caseflow::Error::VaDotGovAddressCouldNotBeFoundError,
       Caseflow::Error::VaDotGovMultipleAddressError
