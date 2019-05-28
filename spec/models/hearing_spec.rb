@@ -29,6 +29,7 @@ describe Hearing do
 
     context "when the hearing has a cancelled disposition task" do
       before do
+        hearing.hearing_task_association.hearing_task.update!(parent: create(:root_task))
         hearing.disposition_task.update!(status: Constants.TASK_STATUSES.cancelled)
       end
 
