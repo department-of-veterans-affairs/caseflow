@@ -34,17 +34,6 @@ export const hearingScheduleReducer = (state = {}, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
-  case ACTIONS.UPDATE_DOCKET_HEARING:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          $set: {
-            ...state.hearings[action.payload.hearingId],
-            ...action.payload.values
-          }
-        }
-      }
-    });
   case ACTIONS.RECEIVE_UPCOMING_HEARING_DAYS:
     return update(state, {
       upcomingHearingDays: {

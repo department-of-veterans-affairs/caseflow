@@ -309,7 +309,7 @@ export class DailyDocketContainer extends React.Component {
 const mapStateToProps = (state) => ({
   hearingDay: state.dailyDocket.hearingDay,
   hearings: state.dailyDocket.hearings,
-  saveSuccessful: state.hearingSchedule.saveSuccessful,
+  saveSuccessful: state.dailyDocket.saveSuccessful,
   vlj: state.hearingSchedule.vlj,
   coordinator: state.hearingSchedule.coordinator,
   hearingRoom: state.hearingSchedule.hearingRoom,
