@@ -27,7 +27,7 @@ RSpec.feature "Hearings tasks workflows" do
 
     it "closes current branch of task tree and starts a new one" do
       expect(distribution_task.children.count).to eq(1)
-      expect(distribution_task.children.active.count).to eq(1)
+      expect(distribution_task.children.open.count).to eq(1)
 
       visit("/queue/appeals/#{appeal.uuid}")
       click_dropdown(text: Constants.TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.label)
@@ -36,9 +36,9 @@ RSpec.feature "Hearings tasks workflows" do
       expect(page).to have_content("Success")
 
       expect(distribution_task.children.count).to eq(2)
-      expect(distribution_task.children.active.count).to eq(1)
+      expect(distribution_task.children.open.count).to eq(1)
 
-      new_parent_hearing_task = distribution_task.children.active.first
+      new_parent_hearing_task = distribution_task.children.open.first
       expect(new_parent_hearing_task).to be_a(HearingTask)
       expect(new_parent_hearing_task.children.first).to be_a(ScheduleHearingTask)
 

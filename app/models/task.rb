@@ -63,7 +63,7 @@ class Task < ApplicationRecord
   end
 
   def self.open_statuses
-    active_statuses.concat(Constants.TASK_STATUSES.on_hold)
+    active_statuses.concat([Constants.TASK_STATUSES.on_hold])
   end
 
   # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
@@ -149,7 +149,7 @@ class Task < ApplicationRecord
   end
 
   def self.incomplete_or_recently_closed
-    active.or(recently_closed)
+    open.or(recently_closed)
   end
 
   def self.create_many_from_params(params_array, current_user)
