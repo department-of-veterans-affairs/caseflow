@@ -151,7 +151,6 @@ describe Distribution do
     context "when ama cases are in the mix" do
       before do
         FeatureToggle.enable!(:ama_auto_case_distribution)
-        FeatureToggle.enable!(:ama_acd_tasks)
 
         allow_any_instance_of(DirectReviewDocket)
           .to receive(:nonpriority_receipts_per_year)
@@ -172,7 +171,6 @@ describe Distribution do
 
       after do
         FeatureToggle.disable!(:ama_auto_case_distribution)
-        FeatureToggle.disable!(:ama_acd_tasks)
       end
 
       let!(:due_direct_review_cases) do

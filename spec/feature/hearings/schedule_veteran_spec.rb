@@ -128,14 +128,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
   end
 
   context "when scheduling an AMA hearing" do
-    before do
-      FeatureToggle.enable!(:ama_acd_tasks)
-    end
-
-    after do
-      FeatureToggle.disable!(:ama_acd_tasks)
-    end
-
     let!(:hearing_day) do
       create(
         :hearing_day,

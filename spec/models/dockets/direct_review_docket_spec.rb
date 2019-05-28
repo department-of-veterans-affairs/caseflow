@@ -1,14 +1,6 @@
 # frozen_string_literal: true
 
 describe DirectReviewDocket do
-  before do
-    FeatureToggle.enable!(:ama_acd_tasks)
-  end
-
-  after do
-    FeatureToggle.disable!(:ama_acd_tasks)
-  end
-
   context "#due_count" do
     subject { DirectReviewDocket.new.due_count }
 
