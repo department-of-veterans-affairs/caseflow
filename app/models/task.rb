@@ -32,7 +32,9 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
-  scope :active, -> { where.not(status: inactive_statuses) }
+  scope :active, -> { where(status: active_statuses) }
+
+  scope :open, -> { where(status: open_statuses) }
 
   scope :inactive, -> { where(status: inactive_statuses) }
 
@@ -54,6 +56,14 @@ class Task < ApplicationRecord
 
   def self.inactive_statuses
     [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled]
+  end
+
+  def self.active_statuses
+    [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+  end
+
+  def self.open_statuses
+    active_statuses.concat(Constants.TASK_STATUSES.on_hold)
   end
 
   # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
