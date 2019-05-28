@@ -73,10 +73,6 @@ class Task < ApplicationRecord
     actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
   end
 
-  def appropriate_timed_hold_task_action
-    on_timed_hold? ? Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h : Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
-  end
-
   def build_action_hash(action, user)
     TaskAction.new(action, self, user).to_h
   end
