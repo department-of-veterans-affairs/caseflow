@@ -57,4 +57,6 @@ The Bat Team should do just enough investigation to determine further action.
 
 Sign up for Pager Duty. You will be on Pager Duty from 6AM-5PM EST during your 5 days on the Bat Team.
 
-The [Sentry](https://sentry.ds.va.gov) and [Looker](https://caseflow-looker.va.gov) diagnostic tools the team uses are hosted behind the VA's firewall. You may need to set up a SOCKS proxy server to access these tools. Although this document was written specifically for the Intake team, it contains useful information, particularly for setting up your SOCKS proxy server: https://github.com/department-of-veterans-affairs/appeals-design-research/blob/master/Project%20Folders/Caseflow%20Projects/Intake/onboarding/oncall.md
+The [Sentry](https://sentry.ds.va.gov) and [Looker](https://caseflow-looker.va.gov) diagnostic tools the team uses are hosted behind the VA's firewall. You may need to set up a SOCKS proxy server to access these tools. A quick setup guide may be found here: https://github.com/department-of-veterans-affairs/caseflow/blob/batteam-docs/docs/foxyproxy1.png
+
+Although this document was written specifically for the Intake team, it contains useful information: https://github.com/department-of-veterans-affairs/appeals-design-research/blob/master/Project%20Folders/Caseflow%20Projects/Intake/onboarding/oncall.md

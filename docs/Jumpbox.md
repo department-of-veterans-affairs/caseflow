@@ -66,8 +66,8 @@ Some handy aliases for those who will be connecting frequently:
 
 6. Configure 2 SOCK5 proxy rules on FoxyProxy. The order of the rules matters.
 
-![](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/foxyproxy1.png)
+![](./foxyproxy1.png)
 
-![](https://github.com/department-of-veterans-affairs/caseflow/blob/master/docs/foxyproxy2.png)
+![](./foxyproxy2.png)
 
 7. As long as you are connected to SSH, you should now be able to navigate to Sentry links on the VA network and sign in.
