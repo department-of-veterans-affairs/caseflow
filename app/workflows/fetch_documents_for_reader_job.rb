@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 class FetchDocumentsForReaderJob
   def initialize(user:, appeals:)
-  	@user = user
-  	@appeals = appeals
-  	@appeals_successful ||= 0
+    @user = user
+    @appeals = appeals
+    @appeals_successful ||= 0
   end
 
   def process
-  	setup_debug_context
+    setup_debug_context
     appeals.each { |appeal| fetch_for_appeal(appeal) }
   rescue StandardError => error
     log_error
@@ -19,7 +21,7 @@ class FetchDocumentsForReaderJob
   attr_reader :user, :appeals
 
   def fetch_for_appeal(appeal)
-  	Raven.extra_context(appeal_id: appeal.id)
+    Raven.extra_context(appeal_id: appeal.id)
     appeal.document_fetcher.find_or_create_documents!
     @appeals_successful += 1
   rescue Caseflow::Error::EfolderError => e

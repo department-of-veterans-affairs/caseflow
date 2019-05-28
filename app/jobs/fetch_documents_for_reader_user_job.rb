@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# This job will retrieve cases from VACOLS via the AppealRepository
+# This job will retrieve cases from VACOLS and cases from Caseflow tasks
 # and all documents for these cases in VBMS and store them
 class FetchDocumentsForReaderUserJob < ApplicationJob
   queue_as :low_priority

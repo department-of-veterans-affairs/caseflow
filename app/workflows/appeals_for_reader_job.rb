@@ -2,14 +2,14 @@
 
 class AppealsForReaderJob
   def initialize(user)
-  	@user = user
+    @user = user
   end
 
   def process
-    # Not all legacy tasks are stored in Caseflow so search through Vacols first 
-	appeals = user.current_case_assignments
+    # Not all legacy tasks are stored in Caseflow so search through Vacols first
+    appeals = user.current_case_assignments
 
-	# We'd like to grab all appeals that are either assigned, in-progress or on-hold
+    # We'd like to grab all appeals that are either assigned, in-progress or on-hold
     appeals += Task.active.where(assigned_to: user).map(&:appeal).uniq
 
     # Attorney legacy tasks are not yet stored in Caseflow tasks. However, we can grab
