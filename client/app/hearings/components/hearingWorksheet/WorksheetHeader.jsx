@@ -129,7 +129,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
-            <h5>HEARING DISPOSITION</h5>
+            <h4>HEARING DISPOSITION</h4>
             <div className={classNames('cf-hearings-headers', dispositionClassNames)}>
               {getDisposition(worksheet.disposition)}
             </div>

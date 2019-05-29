@@ -1,7 +1,6 @@
 import { ACTIONS } from '../constants';
 import ApiUtil from '../../util/ApiUtil';
 import { now } from '../utils';
-import _ from 'lodash';
 
 export const populateWorksheet = (worksheet) => ({
   type: ACTIONS.POPULATE_WORKSHEET,
@@ -222,28 +221,23 @@ export const toggleIssueDeleteModal = (issueId, isShowingModal) => ({
   }
 });
 
-export const saveIssues = (worksheetIssues) => (dispatch) => {
-  _.forEach(worksheetIssues, (issue) => {
-    if (issue.edited) {
+export const saveIssue = (issue) => (dispatch) => {
+  let url = `/hearings/appeals/${issue.appeal_id}`;
+  let data = { appeal: { worksheet_issues_attributes: [issue] } };
 
-      let url = `/hearings/appeals/${issue.appeal_id}`;
-      let data = { appeal: { worksheet_issues_attributes: [issue] } };
+  if (issue.docket_name === 'hearing') {
+    url = `/hearings/worksheets/${issue.hearing.external_id}`;
+    data = { worksheet: { hearing_issue_notes_attributes: [issue] } };
+  }
 
-      if (issue.docket_name === 'hearing') {
-        url = `/hearings/worksheets/${issue.hearing.external_id}`;
-        data = { worksheet: { hearing_issue_notes_attributes: [issue] } };
-      }
-
-      ApiUtil.patch(url, { data }).
-        then(() => {
-          dispatch({ type: ACTIONS.SET_ISSUE_EDITED_FLAG_TO_FALSE,
-            payload: { issueId: issue.id }
-          });
-        },
-        () => {
-          dispatch({ type: ACTIONS.SET_WORKSHEET_SAVE_FAILED_STATUS,
-            payload: { saveFailed: true } });
-        });
-    }
-  });
+  ApiUtil.patch(url, { data }).
+    then(() => {
+      dispatch({ type: ACTIONS.SET_ISSUE_EDITED_FLAG_TO_FALSE,
+        payload: { issueId: issue.id }
+      });
+    },
+    () => {
+      dispatch({ type: ACTIONS.SET_WORKSHEET_SAVE_FAILED_STATUS,
+        payload: { saveFailed: true } });
+    });
 };
