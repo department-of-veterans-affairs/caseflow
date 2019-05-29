@@ -6,7 +6,7 @@ import { css } from 'glamor';
 
 import BulkAssignModal from './components/BulkAssignModal';
 import TabWindow from '../components/TabWindow';
-import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn } from './components/TaskTable';
+import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -157,9 +157,9 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
     customColumns={[
       docketNumberColumn(tasks, false),
       hearingBadgeColumn(tasks),
-      detailsColumn(tasks, false, userRole)
+      detailsColumn(tasks, false, userRole),
+      taskColumn(tasks)
     ]}
-    includeTask
     includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
     includeDaysWaiting
@@ -173,8 +173,12 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, user
   <p className="cf-margin-top-0">{description}</p>
 
   <TaskTable
-    customColumns={[docketNumberColumn(tasks, false), hearingBadgeColumn(tasks), detailsColumn(tasks, false, userRole)]}
-    includeTask
+    customColumns={[
+      docketNumberColumn(tasks, false),
+      hearingBadgeColumn(tasks),
+      detailsColumn(tasks, false, userRole),
+      taskColumn(tasks)
+    ]}
     includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
     includeAssignedTo
