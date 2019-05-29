@@ -22,13 +22,11 @@ class HearingAdminActionForeignVeteranCaseTask < HearingAdminActionTask
   def update_from_params(params, current_user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    if parent.is_a?(ScheduleHearingTask)
-      params["instructions"] = flattened_instructions(params)
+    super(params.except(:instructions), current_user) # verifies access
 
-      parent.update!(instructions: params.delete("instructions"))
-    end
+    params[:instructions] = flattened_instructions(params)
 
-    super(params, current_user)
+    parent.update!(instructions: params[:instructions])
 
     case params[:status]
     when Constants.TASK_STATUSES.completed

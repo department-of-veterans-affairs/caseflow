@@ -20,7 +20,7 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
   def update_from_params(params, current_user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    super(params, current_user)
+    super(params, current_user) # verifies access
 
     case params[:status]
     when Constants.TASK_STATUSES.cancelled
