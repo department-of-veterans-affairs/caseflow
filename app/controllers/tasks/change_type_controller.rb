@@ -23,9 +23,15 @@ class Tasks::ChangeTypeController < TasksController
 
   def mail_sibling
     new_class = MailTask.subclasses.find { |mt| mt.name == update_params[:action] }
+
+    new_assignee = task.assigned_to
+    if new_class.method_defined? :default_assignee
+      new_assignee = new_class.default_assignee
+    end
+
     new_class.create!(
       appeal: task.appeal,
-      assigned_to: task.assigned_to,
+      assigned_to: new_assignee,
       assigned_by: task.assigned_by,
       instructions: [task.instructions, update_params[:instructions]].flatten,
       status: task.status,

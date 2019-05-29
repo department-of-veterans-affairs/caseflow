@@ -77,6 +77,29 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
             expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
           end
         end
+
+        context "that does need reassigning" do
+          let(:task_class_name) { DeathCertificateMailTask }
+          let(:old_task_type) { nil }
+          let(:new_task_type) { AodMotionMailTask }
+
+          it "should update successfully" do
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"]
+            expect(response_body.first["id"]).not_to eq task.id.to_s
+            expect(response_body.first["attributes"]["label"]).to eq new_task_type.label
+            expect(response_body.first["attributes"]["instructions"]).to include old_instructions
+            expect(response_body.first["attributes"]["instructions"]).to include new_instructions
+            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq AodTeam.singleton.id
+            expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
+            expect(response_body.first["attributes"]["appeal_id"]).to eq task.appeal_id
+            expect(Task.find(response_body.first["id"]).parent_id).to eq task.parent_id
+
+            expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+          end
+        end
       end
     end
 
