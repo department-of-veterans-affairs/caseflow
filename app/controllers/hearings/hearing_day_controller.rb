@@ -2,7 +2,7 @@
 
 class Hearings::HearingDayController < HearingScheduleController
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
-  skip_before_action :deny_vso_access, only: [:index, :show]
+  skip_before_action :deny_vso_access, only: [:index, :show, :index_print]
 
   # show schedule days for date range provided
   def index
