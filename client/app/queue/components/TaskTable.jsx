@@ -86,7 +86,8 @@ export const daysWaitingColumn = (tasks, requireDasRecord) => ({
         diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
     </React.Fragment>;
   },
-  getSortValue: (task) => moment().startOf('day').diff(moment(task.assignedOn), 'days')
+  getSortValue: (task) => moment().startOf('day').
+    diff(moment(task.assignedOn), 'days')
 });
 
 export class TaskTableUnconnected extends React.PureComponent {
