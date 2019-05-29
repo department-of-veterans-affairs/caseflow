@@ -14,7 +14,6 @@ import { bindActionCreators } from 'redux';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
-import BulkAssignModal from './BulkAssignModal';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
@@ -22,7 +21,7 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
-import { setSelectionOfTaskOfUser, bulkAssignTasks } from '../QueueActions';
+import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType, taskHasCompletedHold, actionNameOfTask } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
@@ -34,7 +33,6 @@ import {
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
-import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
 
 const hasDASRecord = (task, requireDasRecord) => {
   return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
@@ -358,28 +356,15 @@ export class TaskTableUnconnected extends React.PureComponent {
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
-  render = () => {
-    const { tasks } = this.props;
-
-    return (
-      <div>
-        <BulkAssignModal
-          enableBulkAssign={this.props.organizationName === 'Hearing Admin'}
-          organizationUrl={ORGANIZATION_NAMES[this.props.organizationName]}
-          tasks={tasks}
-          assignTasks={this.props.bulkAssignTasks} />
-        <QueueTable
-          columns={this.getQueueColumns}
-          rowObjects={tasks}
-          getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
-          defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-          alternateColumnNames={COLUMN_NAMES}
-          enablePagination
-          rowClassNames={(task) =>
-            this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
-      </div>
-    );
-  }
+  render = () => <QueueTable
+    columns={this.getQueueColumns}
+    rowObjects={this.props.tasks}
+    getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
+    defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
+    alternateColumnNames={COLUMN_NAMES}
+    enablePagination
+    rowClassNames={(task) =>
+      this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
 }
 
 const mapStateToProps = (state) => ({
@@ -390,10 +375,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    setSelectionOfTaskOfUser,
-    bulkAssignTasks
-  }, dispatch)
+  bindActionCreators({ setSelectionOfTaskOfUser }, dispatch)
 );
 
 export default (connect(mapStateToProps, mapDispatchToProps)(TaskTableUnconnected));
