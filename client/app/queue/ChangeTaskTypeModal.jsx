@@ -62,7 +62,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
       detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+    return this.props.requestPatch(`/tasks/${task.taskId}/change_type`, payload, successMsg).
       then((response) => {
         const amaTasks = JSON.parse(response.text).tasks.data;
 
