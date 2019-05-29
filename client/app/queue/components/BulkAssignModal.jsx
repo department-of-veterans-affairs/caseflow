@@ -36,7 +36,10 @@ class BulkAssignModal extends React.PureComponent {
   componentDidMount() {
     ApiUtil.get('/organizations/hearing-admin/users.json').then((resp) => {
       this.setState({ users: resp.body.organization_users.data });
-    });
+    }).
+      catch(() => {
+        // handle the error from the frontend
+      });
   }
 
   handleModalToggle = () => {

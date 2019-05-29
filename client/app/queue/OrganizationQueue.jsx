@@ -154,7 +154,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
 const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole, organizationId }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
-  { organizationName === 'Hearing Management' && <BulkAssignModal tasks={tasks} organizationId={organizationId}/> }
+  { organizationName === 'Hearing Management' && <BulkAssignModal tasks={tasks} organizationId={organizationId} /> }
   <TaskTable
     customColumns={[
       docketNumberColumn(tasks, false),
