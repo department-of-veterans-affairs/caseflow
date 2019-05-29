@@ -123,9 +123,9 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  hearings: state.hearings.hearings,
-  worksheet: state.hearings.worksheet,
-  worksheetIssues: state.hearings.worksheetIssues
+  hearings: state.hearingWorksheet.hearings,
+  worksheet: state.hearingWorksheet.worksheet,
+  worksheetIssues: state.hearingWorksheet.worksheetIssues
 });
 
 const mapDispatchToProps = (dispatch) => ({
