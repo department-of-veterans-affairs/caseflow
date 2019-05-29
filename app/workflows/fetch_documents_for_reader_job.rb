@@ -34,6 +34,7 @@ class FetchDocumentsForReaderJob
     Raven.user_context(
       email: user.email,
       css_id: user.css_id,
+      station_id: user.station_id,
       regional_office: user.regional_office
     )
   end
