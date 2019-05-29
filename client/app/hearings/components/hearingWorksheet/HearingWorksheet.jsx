@@ -25,10 +25,9 @@ import {
   toggleWorksheetSaving,
   setWorksheetTimeSaved,
   setWorksheetSaveFailedStatus,
-  saveWorksheet
-} from '../../actions/Dockets';
-
-import { saveIssues } from '../../actions/Issue';
+  saveWorksheet,
+  saveIssues
+} from '../../actions/hearingWorksheetActions';
 
 const toolbar = {
   options: ['inline', 'fontSize', 'list', 'colorPicker'],

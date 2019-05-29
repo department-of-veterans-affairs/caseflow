@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
 import { ClipboardIcon } from '../../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/Dockets';
+import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/hearingWorksheetActions';
 import { css } from 'glamor';
 import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../../constants';
