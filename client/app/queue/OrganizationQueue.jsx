@@ -6,7 +6,8 @@ import { css } from 'glamor';
 
 import BulkAssignModal from './components/BulkAssignModal';
 import TabWindow from '../components/TabWindow';
-import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn } from './components/TaskTable';
+import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
+  taskColumn, regionalOfficeColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -150,6 +151,10 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
+const isHearingsOrganization = (orgName) => {
+  return (orgName === 'Hearing Management' || orgName === 'Hearing Admin');
+};
+
 const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   { organizationName === 'Hearing Admin' && <BulkAssignModal tasks={tasks} /> }
@@ -158,9 +163,9 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
       docketNumberColumn(tasks, false),
       hearingBadgeColumn(tasks),
       detailsColumn(tasks, false, userRole),
-      taskColumn(tasks)
+      taskColumn(tasks),
+      isHearingsOrganization(organizationName) ? regionalOfficeColumn(tasks) : null
     ]}
-    includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
     includeDaysWaiting
     includeReaderLink
@@ -177,9 +182,9 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, user
       docketNumberColumn(tasks, false),
       hearingBadgeColumn(tasks),
       detailsColumn(tasks, false, userRole),
-      taskColumn(tasks)
+      taskColumn(tasks),
+      isHearingsOrganization(organizationName) ? regionalOfficeColumn(tasks) : null
     ]}
-    includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
     includeAssignedTo
     includeDaysWaiting
