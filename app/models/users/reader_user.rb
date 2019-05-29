@@ -3,10 +3,10 @@
 class ReaderUser < ApplicationRecord
   belongs_to :user
 
-  DEFAULT_USERS_LIMIT = 10
+  DEFAULT_USERS_LIMIT = 5
 
   class << self
-    def all_by_documents_fetched_at(limit = 10)
+    def all_by_documents_fetched_at
       # At this point, let's also make sure that we've created Reader user records
       create_records
       delete_records
