@@ -78,6 +78,23 @@ export const hearingBadgeColumn = () => {
   };
 };
 
+export const detailsColumn = (tasks, requireDasRecord, userRole) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
+    valueFunction: (task) => <CaseDetailsLink
+      task={task}
+      appeal={task.appeal}
+      userRole={userRole}
+      disabled={!hasDASRecord(task, requireDasRecord)} />,
+    getSortValue: (task) => {
+      const vetName = task.appeal.veteranFullName.split(' ');
+      // only take last, first names. ignore middle names/initials
+
+      return `${_.last(vetName)} ${vetName[0]}`;
+    }
+  };
+};
+
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -117,20 +134,9 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDetailsColumn = () => {
-    return this.props.includeDetailsLink ? {
-      header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
-      valueFunction: (task) => <CaseDetailsLink
-        task={task}
-        appeal={task.appeal}
-        userRole={this.props.userRole}
-        disabled={!this.taskHasDASRecord(task)} />,
-      getSortValue: (task) => {
-        const vetName = task.appeal.veteranFullName.split(' ');
-        // only take last, first names. ignore middle names/initials
-
-        return `${_.last(vetName)} ${vetName[0]}`;
-      }
-    } : null;
+    return this.props.includeDetailsLink ?
+      detailsColumn(this.props.tasks, this.props.requireDasRecord, this.props.userRole) :
+      null;
   }
 
   caseTaskColumn = () => {

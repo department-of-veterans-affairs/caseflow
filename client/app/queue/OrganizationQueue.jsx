@@ -6,7 +6,7 @@ import { css } from 'glamor';
 
 import BulkAssignModal from './components/BulkAssignModal';
 import TabWindow from '../components/TabWindow';
-import TaskTable, { docketNumberColumn, hearingBadgeColumn } from './components/TaskTable';
+import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -59,6 +59,7 @@ class OrganizationQueue extends React.PureComponent {
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
           tasks={this.props.assignedTasks}
+          userRole={this.props.userRole}
         />
       },
       {
@@ -69,6 +70,7 @@ class OrganizationQueue extends React.PureComponent {
             sprintf(COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
               this.props.organizationName)}
           tasks={this.props.completedTasks}
+          userRole={this.props.userRole}
         />
       }
     ];
@@ -86,8 +88,10 @@ class OrganizationQueue extends React.PureComponent {
             {sprintf(COPY.ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, this.props.organizationName)}
           </p>
           <TaskTable
-            customColumns={[docketNumberColumn(this.props.trackingTasks, false)]}
-            includeDetailsLink
+            customColumns={[
+              docketNumberColumn(this.props.trackingTasks, false),
+              detailsColumn(this.props.trackingTasks, false, this.props.userRole)
+            ]}
             includeIssueCount
             includeType
             tasks={this.props.trackingTasks}
@@ -126,6 +130,7 @@ const mapStateToProps = (state) => {
 
   return {
     success,
+    userRole: state.ui.userRole,
     organizationName: state.ui.activeOrganization.name,
     organizationIsVso: state.ui.activeOrganization.isVso,
     organizations: state.ui.organizations,
@@ -145,12 +150,15 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
-const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <React.Fragment>
+const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   { organizationName === 'Hearing Admin' && <BulkAssignModal tasks={tasks} /> }
   <TaskTable
-    customColumns={[docketNumberColumn(tasks, false), hearingBadgeColumn(tasks)]}
-    includeDetailsLink
+    customColumns={[
+      docketNumberColumn(tasks, false),
+      hearingBadgeColumn(tasks),
+      detailsColumn(tasks, false, userRole)
+    ]}
     includeTask
     includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
@@ -161,12 +169,11 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <Re
   />
 </React.Fragment>;
 
-const TaskTableWithUserColumnTab = ({ description, tasks, organizationName }) => <React.Fragment>
+const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
 
   <TaskTable
-    customColumns={[docketNumberColumn(tasks, false), hearingBadgeColumn(tasks)]}
-    includeDetailsLink
+    customColumns={[docketNumberColumn(tasks, false), hearingBadgeColumn(tasks), detailsColumn(tasks, false, userRole)]}
     includeTask
     includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
