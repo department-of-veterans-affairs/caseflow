@@ -73,6 +73,22 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
   };
 };
 
+export const daysWaitingColumn = (tasks, requireDasRecord) => ({
+  header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
+  span: collapseColumn(requireDasRecord),
+  tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
+  align: 'center',
+  valueFunction: (task) => {
+    return <React.Fragment>
+      <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>{moment().startOf('day').
+        diff(moment(task.assignedOn), 'days')}</span>
+      { taskHasCompletedHold(task) ? <ContinuousProgressBar level={moment().startOf('day').
+        diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
+    </React.Fragment>;
+  },
+  getSortValue: (task) => moment().startOf('day').diff(moment(task.assignedOn), 'days')
+});
+
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -241,22 +257,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDaysWaitingColumn = () => {
-    return this.props.includeDaysWaiting ? {
-      header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
-      span: this.collapseColumnIfNoDASRecord,
-      tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
-      align: 'center',
-      valueFunction: (task) => {
-        return <React.Fragment>
-          <span className={taskHasCompletedHold(task) ? 'cf-red-text' : ''}>{moment().startOf('day').
-            diff(moment(task.assignedOn), 'days')}</span>
-          { taskHasCompletedHold(task) ? <ContinuousProgressBar level={moment().startOf('day').
-            diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
-        </React.Fragment>;
-      },
-      getSortValue: (task) => moment().startOf('day').
-        diff(moment(task.assignedOn), 'days')
-    } : null;
+    return this.props.includeDaysWaiting ? daysWaitingColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
 
   caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
