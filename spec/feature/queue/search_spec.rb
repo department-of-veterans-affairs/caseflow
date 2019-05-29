@@ -110,7 +110,6 @@ RSpec.feature "Search" do
 
               it "does not show removed decision reviews" do
                 perform_search
-
                 expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Supplemental Claim")
                 expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
                 expect(page).to_not have_css(".cf-case-list-table > tbody", text: "Original")
@@ -484,6 +483,25 @@ RSpec.feature "Search" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
+    end
+  end
+
+  context "has withdrawn decision reviews" do
+    let!(:caseflow_appeal) do
+      create(:appeal,
+             :with_tasks)
+    end
+
+    def perform_search
+      visit "/search"
+      fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
+      click_on "Search"
+    end
+
+    scenario "withdraw entire review and show withdrawn on search page" do
+      caseflow_appeal.root_task.update(status: Constants.TASK_STATUSES.cancelled)
+      perform_search
+      expect(page).to have_content("Withdrawn")
     end
   end
 end
