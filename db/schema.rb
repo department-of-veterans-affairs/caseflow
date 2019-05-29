@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20190529143622) do
 
   create_table "appeals", force: :cascade, comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement)." do |t|
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
+    t.date "docket_range_date"
     t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
     t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow by the user."
     t.datetime "establishment_attempted_at", comment: "Timestamp for when the appeal's establishment was last attempted."
@@ -89,7 +90,6 @@ ActiveRecord::Schema.define(version: 20190529143622) do
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
-    t.date "in_docket_range"
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
     t.date "receipt_date", comment: "Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues."
     t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
