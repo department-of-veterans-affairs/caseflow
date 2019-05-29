@@ -71,6 +71,13 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
   };
 };
 
+export const hearingBadgeColumn = () => {
+  return {
+    header: '',
+    valueFunction: (task) => <HearingBadge task={task} />
+  };
+};
+
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -91,10 +98,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
 
   caseHearingColumn = () => {
-    return this.props.includeHearingBadge ? {
-      header: '',
-      valueFunction: (task) => <HearingBadge task={task} />
-    } : null;
+    return this.props.includeHearingBadge ? hearingBadgeColumn() : null;
   }
 
   caseSelectColumn = () => {
