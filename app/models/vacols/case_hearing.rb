@@ -115,6 +115,7 @@ class VACOLS::CaseHearing < VACOLS::Record
         .joins("left outer join folder on folder.ticknum = brieff.bfkey")
         .joins("left outer join corres on corres.stafkey = bfcorkey")
         .where(hearing_type: HEARING_TYPES)
+        .group(:hearing_pkseq)
     end
   end
 
