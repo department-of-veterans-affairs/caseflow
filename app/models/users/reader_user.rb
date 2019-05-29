@@ -16,7 +16,7 @@ class ReaderUser < ApplicationRecord
         .where("documents_fetched_at <= ? " \
                "OR documents_fetched_at IS NULL", 24.hours.ago)
         .order("documents_fetched_at IS NULL DESC, documents_fetched_at ASC")
-        .limit(limit)
+        .limit(DEFAULT_USERS_LIMIT)
     end
 
     def create_records
