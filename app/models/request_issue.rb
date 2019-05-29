@@ -163,6 +163,14 @@ class RequestIssue < ApplicationRecord
       active.or(decided).order(id: :asc)
     end
 
+    def active_or_decided_or_withdrawn
+      active.or(decided).or(withdrawn).order(id: :asc)
+    end
+
+    def active_or_withdrawn
+      active.or(withdrawn)
+    end
+
     def unidentified
       where(
         contested_rating_issue_reference_id: nil,
