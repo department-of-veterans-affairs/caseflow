@@ -59,7 +59,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  worksheet: state.worksheet
+  worksheet: state.hearingWorksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
