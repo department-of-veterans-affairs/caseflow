@@ -73,11 +73,19 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
   };
 };
 
+<<<<<<< HEAD
 export const hearingBadgeColumn = () => {
   return {
     header: '',
     valueFunction: (task) => <HearingBadge task={task} />
   };
+=======
+export const hearingBadgeColumn = (tasks) => {
+  return {
+    header: '',
+    valueFunction: (task) => <HearingBadge task={task} />
+  }
+>>>>>>> Refactor TaskTable includeHearingBadge class method into pure method that can be used to inject a hearing badge into task tables.
 };
 
 export class TaskTableUnconnected extends React.PureComponent {
@@ -100,7 +108,11 @@ export class TaskTableUnconnected extends React.PureComponent {
   collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
 
   caseHearingColumn = () => {
+<<<<<<< HEAD
     return this.props.includeHearingBadge ? hearingBadgeColumn() : null;
+=======
+    return this.props.includeHearingBadge ? hearingBadgeColumn(this.props.tasks): null;
+>>>>>>> Refactor TaskTable includeHearingBadge class method into pure method that can be used to inject a hearing badge into task tables.
   }
 
   caseSelectColumn = () => {
