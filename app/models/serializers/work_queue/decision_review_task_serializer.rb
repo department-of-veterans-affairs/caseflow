@@ -7,10 +7,14 @@ class WorkQueue::DecisionReviewTaskSerializer
     object.appeal
   end
 
+  def self.claimant_with_name(object)
+    decision_review(object).claimants.find { |claimant| claimant.name.present? }
+  end
+
   def self.claimant_name(object)
     if decision_review(object).veteran_is_not_claimant
       # TODO: support multiple?
-      decision_review(object).claimants.first.try(:name)
+      claimant_with_name(object).try(:name) || "claimant"
     else
       decision_review(object).veteran_full_name
     end
@@ -19,7 +23,7 @@ class WorkQueue::DecisionReviewTaskSerializer
   def self.claimant_relationship(object)
     return "self" unless decision_review(object).veteran_is_not_claimant
 
-    decision_review(object).claimants.first.try(:relationship)
+    claimant_with_name(object).try(:relationship) || "claimant"
   end
 
   attribute :claimant do |object|
