@@ -107,8 +107,8 @@ export const taskColumn = (tasks) => {
     valueName: 'label',
     valueFunction: (task) => actionNameOfTask(task),
     getSortValue: (task) => actionNameOfTask(task)
-  }
-}
+  };
+};
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
