@@ -129,7 +129,7 @@ const mapStateToProps = (state) => {
 
   return {
     success,
-    userRole: state.ui.userRole
+    userRole: state.ui.userRole,
     organizationName: state.ui.activeOrganization.name,
     organizationIsVso: state.ui.activeOrganization.isVso,
     organizations: state.ui.organizations,
@@ -137,7 +137,7 @@ const mapStateToProps = (state) => {
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
     completedTasks: getCompletedOrganizationalTasks(state),
-    trackingTasks: trackingTasksForOrganization(state),
+    trackingTasks: trackingTasksForOrganization(state)
   };
 };
 

@@ -94,8 +94,8 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
 
       return `${_.last(vetName)} ${vetName[0]}`;
     }
-  }
-}
+  };
+};
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -136,7 +136,9 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDetailsColumn = () => {
-    return this.props.includeDetailsLink ? detailsColumn(this.props.tasks, this.props.requireDasRecord, this.props.userRole) : null;
+    return this.props.includeDetailsLink ?
+      detailsColumn(this.props.tasks, this.props.requireDasRecord, this.props.userRole) :
+      null;
   }
 
   caseTaskColumn = () => {
