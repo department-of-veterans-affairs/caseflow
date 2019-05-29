@@ -21,11 +21,28 @@ class Tasks::ChangeTypeController < TasksController
     end
   end
 
+  def mail_sibling
+    new_class = MailTask.subclasses.find { |mt| mt.name == update_params[:action] }
+    new_class.create!(
+      appeal: task.appeal,
+      assigned_to: task.assigned_to,
+      assigned_by: task.assigned_by,
+      instructions: [task.instructions, update_params[:instructions]].flatten,
+      status: task.status,
+      parent: task.parent
+      # on_hold_duration: task.on_hold_duration, ??
+      # placed_on_hold_at: task.placed_on_hold_at, ??
+      # started_at: task.started_at, ??
+    )
+  end
+
   def update_task_type
     sibling = nil
 
     if task.is_a? ColocatedTask
       sibling = colocated_sibling
+    elsif task.is_a? MailTask
+      sibling = mail_sibling
     else
       fail Caseflow::Error::ActionForbiddenError, message: "Can only change task type of colocated or mail tasks"
     end
