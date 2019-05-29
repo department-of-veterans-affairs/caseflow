@@ -339,13 +339,8 @@ export default class AssignHearingsTabs extends React.Component {
       valueFunction: (appeal) => <Link
         name={appeal.externalId}
         href={(() => {
-          const qry = `?regionalOffice=${selectedRegionalOffice}`;
-
-          if (!_.isNil(selectedHearingDay)) {
-            const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
-
-            qry.concat(`&hearingDate=${date}`);
-          }
+          const date = moment(selectedHearingDay.scheduledFor).format('YYYY-MM-DD');
+          const qry = `?hearingDate=${date}&regionalOffice=${selectedRegionalOffice}`;
 
           return `/queue/appeals/${appeal.externalId}/${qry}`;
         })()}>
