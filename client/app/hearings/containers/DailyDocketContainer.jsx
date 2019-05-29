@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
+import { sortHearings } from '../utils';
 import ApiUtil from '../../util/ApiUtil';
 import {
   onReceiveDailyDocket,
@@ -306,7 +307,7 @@ export class DailyDocketContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   hearingDay: state.dailyDocket.hearingDay,
-  hearings: state.dailyDocket.hearings,
+  hearings: sortHearings(state.dailyDocket.hearings),
   saveSuccessful: state.dailyDocket.saveSuccessful,
   vlj: state.dailyDocket.vlj,
   coordinator: state.dailyDocket.coordinator,
