@@ -22,7 +22,7 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
-import { renderAppealType, taskHasCompletedHold, actionNameOfTask } from '../utils';
+import { renderAppealType, taskHasCompletedHold, actionNameOfTask, regionalOfficeCity } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,

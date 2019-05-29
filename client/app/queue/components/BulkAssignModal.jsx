@@ -188,9 +188,11 @@ class BulkAssignModal extends React.PureComponent {
     let filteredTasks = this.props.tasks;
 
     // filter by regional office
-    filteredTasks = filteredTasks.filter((task) => {
-      return regionalOfficeCity(task) === this.state.modal.regionalOffice;
-    });
+    if (this.state.modal.regionalOffice) {
+      filteredTasks = filteredTasks.filter((task) => {
+        return regionalOfficeCity(task) === this.state.modal.regionalOffice;
+      });
+    }
 
     // filter by task type
     filteredTasks = this.filterTasks('type', this.state.modal.taskType, filteredTasks);
@@ -201,13 +203,7 @@ class BulkAssignModal extends React.PureComponent {
           value: filteredTasks.length,
           displayText: `${filteredTasks.length} (all available tasks)`
         });
-
         break;
-      } else {
-        actualOptions.push({
-          value: issueCounts[1],
-          displayText: issueCounts[1]
-        });
       }
     }
 
@@ -234,9 +230,9 @@ class BulkAssignModal extends React.PureComponent {
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
     const modal = (
       <QueueFlowModal
-        button="Assign"
+        button="Assign Tasks"
         submit={this.bulkAssignTasks}
-        title="Assign Tasks"
+        title="Bulk Assign Tasks"
         closeHandler={this.handleModalToggle}
         cancelButton={cancelButton} >
         {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
@@ -259,7 +255,6 @@ class BulkAssignModal extends React.PureComponent {
 BulkAssignModal.propTypes = {
   tasks: PropTypes.array.isRequired,
   organizationUrl: PropTypes.string,
-  assignTasks: PropTypes.func.isRequired,
   issueCountOptions: PropTypes.array,
   organizationId: PropTypes.number
 };
@@ -269,5 +264,5 @@ const mapDispatchToProps = (dispatch) => (
 );
 
 export default (connect(() => {
-  return null;
+  return {};
 }, mapDispatchToProps)(BulkAssignModal));

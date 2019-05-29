@@ -48,6 +48,7 @@ class OrganizationQueue extends React.PureComponent {
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
           tasks={this.props.unassignedTasks}
+          organizationId={this.props.organizationId}
         />
       },
       {
@@ -134,6 +135,7 @@ const mapStateToProps = (state) => {
     organizationName: state.ui.activeOrganization.name,
     organizationIsVso: state.ui.activeOrganization.isVso,
     organizations: state.ui.organizations,
+    organizationId: state.ui.activeOrganization.id,
     tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
@@ -150,9 +152,9 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
-const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
+const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole, organizationId }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
-  { organizationName === 'Hearing Admin' && <BulkAssignModal tasks={tasks} /> }
+  { organizationName === 'Hearing Management' && <BulkAssignModal tasks={tasks} organizationId={organizationId}/> }
   <TaskTable
     customColumns={[
       docketNumberColumn(tasks, false),
