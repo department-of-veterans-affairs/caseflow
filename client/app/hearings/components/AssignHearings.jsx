@@ -30,7 +30,7 @@ const roSelectionStyling = css({ marginTop: '10px' });
 
 const UpcomingHearingDaysNav = ({
   upcomingHearingDays, selectedHearingDay,
-  onSelectedHearingDayChangeFactory
+  onSelectedHearingDayChange
 }) => (
   <div className="usa-width-one-fourth" {...roSelectionStyling}>
     <h3>Hearings to Schedule</h3>
@@ -45,7 +45,7 @@ const UpcomingHearingDaysNav = ({
           return <li key={hearingDay.id} >
             <Button
               styling={dateSelected ? buttonColorSelected : {}}
-              onClick={onSelectedHearingDayChangeFactory(hearingDay)}
+              onClick={onSelectedHearingDayChange}
               linkStyling>
               {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
               ${hearingDay.room}`}
