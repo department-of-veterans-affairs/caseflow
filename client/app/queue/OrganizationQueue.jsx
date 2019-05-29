@@ -4,8 +4,9 @@ import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
+import BulkAssignModal from './components/BulkAssignModal';
 import TabWindow from '../components/TabWindow';
-import TaskTable, { docketNumberColumn } from './components/TaskTable';
+import TaskTable, { docketNumberColumn, hearingBadgeColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -146,9 +147,9 @@ export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
 const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
+  { organizationName === 'Hearing Admin' && <BulkAssignModal tasks={tasks} /> }
   <TaskTable
-    customColumns={[docketNumberColumn(tasks, false)]}
-    includeHearingBadge
+    customColumns={[docketNumberColumn(tasks, false), hearingBadgeColumn(tasks)]}
     includeDetailsLink
     includeTask
     includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
@@ -156,7 +157,6 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName }) => <Re
     includeDaysWaiting
     includeReaderLink
     includeNewDocsIcon
-    organizationName={organizationName}
     tasks={tasks}
   />
 </React.Fragment>;
@@ -165,8 +165,7 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName }) =>
   <p className="cf-margin-top-0">{description}</p>
 
   <TaskTable
-    customColumns={[docketNumberColumn(tasks, false)]}
-    includeHearingBadge
+    customColumns={[docketNumberColumn(tasks, false), hearingBadgeColumn(tasks)]}
     includeDetailsLink
     includeTask
     includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}

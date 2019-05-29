@@ -219,13 +219,13 @@ HearingWorksheet.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  worksheet: state.hearings.worksheet,
-  worksheetAppeals: state.hearings.worksheetAppeals,
-  worksheetIssues: state.hearings.worksheetIssues,
-  saveWorksheetFailed: state.hearings.saveWorksheetFailed,
-  worksheetIsSaving: state.hearings.worksheetIsSaving,
-  worksheetTimeSaved: state.hearings.worksheetTimeSaved,
-  fetchingWorksheet: state.hearings.fetchingWorksheet
+  worksheet: state.hearingWorksheet.worksheet,
+  worksheetAppeals: state.hearingWorksheet.worksheetAppeals,
+  worksheetIssues: state.hearingWorksheet.worksheetIssues,
+  saveWorksheetFailed: state.hearingWorksheet.saveWorksheetFailed,
+  worksheetIsSaving: state.hearingWorksheet.worksheetIsSaving,
+  worksheetTimeSaved: state.hearingWorksheet.worksheetTimeSaved,
+  fetchingWorksheet: state.hearingWorksheet.fetchingWorksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

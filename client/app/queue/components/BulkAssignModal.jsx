@@ -1,4 +1,6 @@
-import * as React from 'react';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 
@@ -7,6 +9,8 @@ import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import Modal from '../../components/Modal';
 import Dropdown from '../../components/Dropdown';
+
+import { bulkAssignTasks } from '../QueueActions';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -28,15 +32,9 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   componentDidMount() {
-    let fetchedUsers;
-
-    if (this.props.organizationUrl) {
-      ApiUtil.get(`/organizations/${this.props.organizationUrl}/users.json`).then((resp) => {
-        fetchedUsers = resp.body.organization_users.data;
-
-        this.setState({ users: fetchedUsers });
-      });
-    }
+    ApiUtil.get('/organizations/hearing-admin/users.json').then((resp) => {
+      this.setState({ users: resp.body.organization_users.data });
+    });
   }
 
   handleModalToggle = () => {
@@ -71,7 +69,7 @@ class BulkAssignModal extends React.PureComponent {
     this.setState({ showErrors: true });
 
     if (this.generateErrors().length === 0) {
-      this.props.assignTasks(this.state.modal);
+      this.props.bulkAssignTasks(this.state.modal);
       this.handleModalToggle();
     }
   }
@@ -206,9 +204,8 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   render() {
-    const isBulkAssignEnabled = this.props.enableBulkAssign && this.props.organizationUrl;
-    // const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
-    //   Assign Tasks</Button>;
+    const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
+      Assign Tasks</Button>;
     const confirmButton = <Button classNames={['usa-button-secondary']} onClick={this.bulkAssignTasks}>
       Assign</Button>;
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
@@ -228,20 +225,23 @@ class BulkAssignModal extends React.PureComponent {
 
     return (
       <div>
-        {isBulkAssignEnabled && this.state.showModal && modal}
+        { this.state.showModal && modal }
         {/* hide the button until the backend work is complete: */}
-        {/* {isBulkAssignEnabled && bulkAssignButton} */}
+        { false && bulkAssignButton }
       </div>
     );
   }
 }
 
 BulkAssignModal.propTypes = {
-  enableBulkAssign: PropTypes.bool,
   tasks: PropTypes.array.isRequired,
-  organizationUrl: PropTypes.string,
-  assignTasks: PropTypes.func.isRequired,
   issueCountOptions: PropTypes.array
 };
 
-export default BulkAssignModal;
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({ bulkAssignTasks }, dispatch)
+);
+
+export default (connect(() => {
+  return null;
+}, mapDispatchToProps)(BulkAssignModal));

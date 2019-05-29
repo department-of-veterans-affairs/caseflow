@@ -2,9 +2,9 @@ import React from 'react';
 import moment from 'moment';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Modal from '../../components/Modal';
-import Button from '../../components/Button';
-import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.json';
+import Modal from '../../../components/Modal';
+import Button from '../../../components/Button';
+import HEARING_DISPOSITION_TYPE_TO_LABEL_MAP from '../../../../constants/HEARING_DISPOSITION_TYPE_TO_LABEL_MAP.json';
 
 export const RemoveHearingModal = ({ onCancelRemoveHearingDay, deleteHearingDay, dailyDocket }) => (
   <div>
