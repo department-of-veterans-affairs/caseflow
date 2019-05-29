@@ -24,8 +24,8 @@ class FetchDocumentsForReaderJob
     Raven.extra_context(appeal_id: appeal.id)
     appeal.document_fetcher.find_or_create_documents!
     @appeals_successful += 1
-  rescue Caseflow::Error::EfolderError => e
-    Rails.logger.error "Encountered #{e.class.name} when fetching documents for appeal #{appeal.id}"
+  rescue Caseflow::Error::EfolderError => error
+    Rails.logger.error "Encountered #{error.class.name} when fetching documents for appeal #{appeal.id}"
   end
 
   def setup_debug_context
