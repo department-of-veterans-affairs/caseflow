@@ -339,10 +339,16 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />
           <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.QR_RETURN_TO_JUDGE.value}`}
+            render={this.routedAssignToUser} />
+          <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.value}`}
             render={this.routedAssignToUser} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.value}`}
+            render={this.routedAssignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_DISPATCH_RETURN_TO_ATTORNEY.value}`}
             render={this.routedAssignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.value}`}
@@ -434,7 +440,7 @@ class QueueApp extends React.PureComponent {
           <PageRoute
             exact
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`}
-            title="Assign to Pulac Cerullo | Caseflow"
+            title="Assign to Pulac-Cerullo | Caseflow"
             render={this.routedAssignToPulacCerullo} />
           <PageRoute
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}

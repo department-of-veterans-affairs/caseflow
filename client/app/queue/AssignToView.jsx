@@ -154,7 +154,7 @@ class AssignToView extends React.Component {
 
     const action = this.props.task && this.props.task.availableActions.length > 0 ? selectedAction(this.props) : null;
     const actionData = taskActionData(this.props);
-    const isPulacCerullo = action && action.label === 'Pulac Cerullo';
+    const isPulacCerullo = action && action.label === 'Pulac-Cerullo';
 
     if (!task || task.availableActions.length === 0) {
       return null;
