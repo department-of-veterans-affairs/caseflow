@@ -24,8 +24,7 @@ describe DocketRangeJob do
 
     it "adds docket_range_date to last 15 appeals" do
       DocketRangeJob.perform_now
-      expected_month = today + 1.month
-      expected_date = expected_month.change(day: expected_month.end_of_month.day)
+      expected_date = (today + 1.month).end_of_month
       appeals = Appeal.where(docket_range_date: expected_date)
       expect(appeals.count).to eq(15)
     end
