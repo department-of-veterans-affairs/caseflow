@@ -17,14 +17,16 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
 import { bindActionCreators } from 'redux';
 import {
-  onSelectedHearingDayChange,
-  selectRequestType,
   selectVlj,
   selectHearingCoordinator,
-  setNotes,
+  setNotes
+} from '../actions/dailyDocketActions';
+import {
+  onSelectedHearingDayChange,
+  selectRequestType,
   onAssignHearingRoom,
   onReceiveHearingSchedule
-} from '../actions/actions';
+} from '../actions/hearingScheduleActions';
 import { onRegionalOfficeChange } from '../../components/common/actions';
 import Checkbox from '../../components/Checkbox';
 import Alert from '../../components/Alert';
