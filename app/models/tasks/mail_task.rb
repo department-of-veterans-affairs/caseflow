@@ -81,7 +81,10 @@ class MailTask < GenericTask
   end
 
   def available_actions(user)
-    super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+    core_available_actions = super(user)
+    return core_available_actions if core_available_actions.empty?
+
+    core_available_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
   end
 end
 
