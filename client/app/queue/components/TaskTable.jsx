@@ -170,6 +170,26 @@ export const assignedToColumn = (tasks) => {
   };
 };
 
+export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
+    span: collapseColumn(requireDasRecord),
+    valueFunction: (task) => {
+      if (!hasDASRecord(task, requireDasRecord)) {
+        return null;
+      }
+
+      return <ReaderLink appealId={task.externalAppealId}
+        analyticsSource={CATEGORIES.QUEUE_TABLE}
+        redirectUrl={window.location.pathname}
+        appeal={task.appeal}
+        newDocsIcon={includeNewDocsIcon}
+        task={task}
+        docCountBelowLink />;
+    }
+  };
+};
+
 export const daysWaitingColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
@@ -331,23 +351,9 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseReaderLinkColumn = () => {
-    return !this.props.userIsVsoEmployee && this.props.includeReaderLink ? {
-      header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
-      span: this.collapseColumnIfNoDASRecord,
-      valueFunction: (task) => {
-        if (!this.taskHasDASRecord(task)) {
-          return null;
-        }
-
-        return <ReaderLink appealId={task.externalAppealId}
-          analyticsSource={CATEGORIES.QUEUE_TABLE}
-          redirectUrl={window.location.pathname}
-          appeal={task.appeal}
-          newDocsIcon={this.props.includeNewDocsIcon}
-          task={task}
-          docCountBelowLink />;
-      }
-    } : null;
+    return !this.props.userIsVsoEmployee && this.props.includeReaderLink ?
+      readerLinkColumn(this.props.requireDasRecord, this.props.includeNewDocsIcon) :
+      null;
   }
 
   caseRegionalOfficeColumn = () => {
