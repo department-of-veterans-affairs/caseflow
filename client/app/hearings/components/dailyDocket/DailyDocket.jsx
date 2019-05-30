@@ -5,13 +5,13 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import Alert from '../../components/Alert';
+import Alert from '../../../components/Alert';
 import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
-import StatusMessage from '../../components/StatusMessage';
+import StatusMessage from '../../../components/StatusMessage';
 import { getHearingAppellantName } from './DailyDocketRowDisplayText';
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
-import { isPreviouslyScheduledHearing } from '../utils';
+import { isPreviouslyScheduledHearing } from '../../utils';
 
 const alertStyling = css({
   marginBottom: '30px'
@@ -57,7 +57,6 @@ export default class DailyDocket extends React.Component {
       editedDispositionModalProps: null
     };
   }
-  onInvalidForm = (hearingId) => (invalid) => this.props.onInvalidForm(hearingId, invalid);
 
   previouslyScheduledHearings = () => {
     return _.filter(this.props.hearings, isPreviouslyScheduledHearing);
@@ -189,7 +188,6 @@ DailyDocket.propTypes = {
   hearings: PropTypes.object,
   saveHearing: PropTypes.func.isRequired,
   saveSuccessful: PropTypes.object,
-  onInvalidForm: PropTypes.func.isRequired,
   openModal: PropTypes.func.isRequired,
   onClickRemoveHearingDay: PropTypes.func.isRequired,
   displayRemoveHearingDayModal: PropTypes.bool,

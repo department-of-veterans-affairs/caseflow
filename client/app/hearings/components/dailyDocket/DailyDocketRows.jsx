@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'glamor';
-import { sortHearings } from '../utils';
+import { sortHearings } from '../../utils';
 import DailyDocketRow from './DailyDocketRow';
 
 const docketRowStyle = css({
