@@ -89,11 +89,6 @@ class HearingAdminActionFoiaPrivacyRequestTask < HearingAdminActionTask
     "FOIA/Privacy request"
   end
 end
-class HearingAdminActionForeignVeteranCaseTask < HearingAdminActionTask
-  def self.label
-    "Foreign Veteran case"
-  end
-end
 class HearingAdminActionOtherTask < HearingAdminActionTask
   def self.label
     "Other"
