@@ -8,8 +8,7 @@ class DocketRangeJob < ApplicationJob
   def perform
     for_month = Time.zone.now + 1.month
     days_in_month = Time.days_in_month(for_month.month, for_month.year)
-    end_of_month = Time.utc(for_month.year, for_month.month, for_month.end_of_month.day)
-    appeals_to_mark(days_in_month).update(docket_range_date: end_of_month)
+    appeals_to_mark(days_in_month).update(docket_range_date: for_month.end_of_month)
   end
 
   def appeals_to_mark(days_in_month)
