@@ -206,7 +206,7 @@ class Appeal < DecisionReview
     docket_type == Constants.AMA_DOCKETS.direct_review
   end
 
-  def open?
+  def active?
     tasks.open.where(type: RootTask.name).any?
   end
 
@@ -376,11 +376,11 @@ class Appeal < DecisionReview
     # For the appeal status api, and Appeal is considered open
     # as long as there are active remand claim or effectuation
     # tracked in VBMS.
-    open? || active_effectuation_ep? || active_remanded_claims?
+    active? || active_effectuation_ep? || active_remanded_claims?
   end
 
   def active_effectuation_ep?
-    decision_document&.end_product_establishments&.any? { |ep| ep.status_open?(sync: false) }
+    decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
   end
 
   def location
@@ -396,7 +396,7 @@ class Appeal < DecisionReview
   end
 
   def fetch_status
-    if open?
+    if active?
       fetch_pre_decision_status
     else
       fetch_post_decision_status
