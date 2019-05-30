@@ -151,7 +151,8 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
-// TODO: DRY code up re whether to display regional office column.
+// The 2 TaskTables in the rest of this file render 1 of 2 configs depending on whether the organization is hearing team.
+// The only difference is displaying a regional office column.
 const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   { organizationName === 'Hearing Admin' && <BulkAssignModal tasks={tasks} /> }
