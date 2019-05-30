@@ -212,41 +212,6 @@ describe RequestIssue do
     end
   end
 
-  context "close_with_no_decision!" do
-    subject { rating_request_issue.close_with_no_decision! }
-
-    context "end product is cleared" do
-      let(:end_product_establishment) { create(:end_product_establishment, :cleared)}
-
-      it "closes the request issue and cancels decision issue sync" do
-        subject
-
-        expect(rating_request_issue.closed_status).to eq("no_decision")
-        expect(rating_request_issue.closed_at).to eq(Time.zone.now)
-        expect(rating_request_issue.decision_sync_canceled_at).to eq(Time.zone.now)
-      end
-
-      context "request issue is already closed" do
-        let(:closed_status) { "removed" }
-        let(:closed_at) { 2.days.ago }
-
-        it { is_expected.to be_falsey }
-      end
-
-      context "the request issue contention has a disposition" do
-        before { allow_any_instance_of(RequestIssue).to receive(:contention_disposition).and_return(true) }
-
-        it { is_expected.to be_falsey }
-      end
-    end
-
-    context "end product is not cleared" do
-      let(:end_product_establishment) { create(:end_product_establishment, :active) }
-
-      it { is_expected.to be_falsey }
-    end
-  end
-
   context "remove!" do
     let(:decision_issue) { create(:decision_issue) }
     let!(:request_issue1) { create(:request_issue, decision_issues: [decision_issue]) }

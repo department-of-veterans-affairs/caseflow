@@ -407,17 +407,6 @@ class RequestIssue < ApplicationRecord
     end
   end
 
-  def close_with_no_decision!
-    return if closed?
-    return unless end_product_establishment&.status_cleared?
-    return if contention_disposition
-
-    close!(status: :no_decision) do
-      canceled!
-      legacy_issue_optin&.flag_for_rollback!
-    end
-  end
-
   def withdraw!(withdrawal_date)
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
@@ -502,6 +491,12 @@ class RequestIssue < ApplicationRecord
     return unless limited_poa
 
     limited_poa[:limited_poa_access] == "Y"
+  end
+
+  def contention_disposition
+    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
+      disposition.contention_id.to_i == contention_reference_id
+    end
   end
 
   private
@@ -604,12 +599,6 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     end_product_establishment.associated_rating&.promulgation_date
-  end
-
-  def contention_disposition
-    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
-      disposition.contention_id.to_i == contention_reference_id
-    end
   end
 
   def create_decision_issues_from_rating
