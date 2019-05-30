@@ -1,17 +1,7 @@
-/* eslint-disable max-lines */
-import { timeFunction } from '../../util/PerfDebug';
 import { ACTIONS } from '../constants';
 import { update } from '../../util/ReducerUtil';
-import { combineReducers } from 'redux';
 
-import commonComponentsReducer from '../../components/common/reducers';
-import caseListReducer from '../../queue/CaseList/CaseListReducer';
-import { workQueueReducer } from '../../queue/reducers';
-import hearingsReducer from './index';
-import uiReducer from '../../queue/uiReducer/uiReducer';
-
-export const initialState = {};
-const hearingScheduleReducer = (state = initialState, action = {}) => {
+export const hearingScheduleReducer = (state = {}, action = {}) => {
   switch (action.type) {
   case ACTIONS.RECEIVE_HEARING_SCHEDULE:
     return update(state, {
@@ -43,43 +33,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.schedulePeriod
       }
     });
-  case ACTIONS.RECEIVE_DAILY_DOCKET:
-    return update(state, {
-      dailyDocket: { $set: action.payload.dailyDocket },
-      hearings: { $set: action.payload.hearings }
-    });
-  case ACTIONS.RECEIVE_HEARING:
-    return update(state, {
-      hearings: {
-        [action.payload.hearing.externalId]: {
-          $set: action.payload.hearing
-        }
-      }
-    });
-  case ACTIONS.RECEIVE_SAVED_HEARING:
-    return update(state, {
-      hearings: {
-        [action.payload.hearing.externalId]: {
-          $set: action.payload.hearing
-        }
-      },
-      saveSuccessful: { $set: action.payload.hearing }
-    });
-  case ACTIONS.RESET_SAVE_SUCCESSFUL:
-    return update(state, {
-      $unset: ['saveSuccessful', 'displayLockSuccessMessage']
-    });
-  case ACTIONS.UPDATE_DOCKET_HEARING:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          $set: {
-            ...state.hearings[action.payload.hearingId],
-            ...action.payload.values
-          }
-        }
-      }
-    });
   case ACTIONS.RECEIVE_UPCOMING_HEARING_DAYS:
     return update(state, {
       upcomingHearingDays: {
@@ -90,19 +43,6 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
     return update(state, {
       appealsReadyForHearing: {
         $set: action.payload.appeals
-      }
-    });
-  case ACTIONS.INVALID_FORM:
-    return update(state, {
-      hearings: {
-        [action.payload.hearingId]: {
-          invalid: {
-            $set: {
-              ...(state.hearings[action.payload.hearingId].invalid || {}),
-              ...action.payload.invalid
-            }
-          }
-        }
       }
     });
   case ACTIONS.SELECTED_HEARING_DAY_CHANGE:
@@ -268,51 +208,11 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.requestType
       }
     });
-  case ACTIONS.SELECT_VLJ:
-    return update(state, {
-      vlj: {
-        $set: action.payload.vlj
-      }
-    });
-  case ACTIONS.SELECT_COORDINATOR:
-    return update(state, {
-      coordinator: {
-        $set: action.payload.coordinator
-      }
-    });
-  case ACTIONS.SELECT_HEARING_ROOM:
-    return update(state, {
-      hearingRoom: {
-        $set: action.payload.hearingRoom
-      }
-    });
-  case ACTIONS.SET_NOTES:
-    return update(state, {
-      notes: {
-        $set: action.payload.notes
-      }
-    });
   case ACTIONS.ASSIGN_HEARING_ROOM:
     return update(state, {
       roomRequired: {
         $set: action.payload.roomRequired
       }
-    });
-  case ACTIONS.HEARING_DAY_MODIFIED:
-    return update(state, {
-      hearingDayModified: {
-        $set: action.payload.hearingDayModified
-      }
-    });
-  case ACTIONS.ON_CLICK_REMOVE_HEARING_DAY:
-    return update(state, {
-      displayRemoveHearingDayModal: {
-        $set: true
-      }
-    });
-  case ACTIONS.CANCEL_REMOVE_HEARING_DAY:
-    return update(state, {
-      $unset: ['displayRemoveHearingDayModal']
     });
   case ACTIONS.SUCCESSFUL_HEARING_DAY_DELETE:
     return update(state, {
@@ -320,72 +220,13 @@ const hearingScheduleReducer = (state = initialState, action = {}) => {
         $set: action.payload.date
       }
     });
-  case ACTIONS.HANDLE_DAILY_DOCKET_SERVER_ERROR:
-    return update(state, {
-      dailyDocketServerError: { $set: true },
-      displayRemoveHearingDayModal: { $set: false }
-    });
-
-  case ACTIONS.RESET_DAILY_DOCKET_AFTER_SERVER_ERROR:
-    return update(state, {
-      $unset: ['dailyDocketServerError']
-    });
-
-  case ACTIONS.HANDLE_LOCK_HEARING_SERVER_ERROR:
-    return update(state, {
-      onErrorHearingDayLock: { $set: true },
-      displayLockModal: { $set: false }
-    });
-
-  case ACTIONS.RESET_LOCK_HEARING_SERVER_ERROR:
-    return update(state, {
-      $unset: ['onErrorHearingDayLock']
-    });
-
   case ACTIONS.RESET_DELETE_SUCCESSFUL:
     return update(state, {
       $unset: ['successfulHearingDayDelete']
-    });
-  case ACTIONS.DISPLAY_LOCK_MODAL:
-    return update(state, {
-      displayLockModal: {
-        $set: true
-      }
-    });
-  case ACTIONS.CANCEL_DISPLAY_LOCK_MODAL:
-    return update(state, {
-      $unset: ['displayLockModal']
-    });
-  case ACTIONS.UPDATE_LOCK:
-    return update(state, {
-      dailyDocket: {
-        lock: {
-          $set: action.payload.lock
-        }
-      },
-      displayLockSuccessMessage: {
-        $set: true
-      },
-      $unset: ['displayLockModal']
-    });
-  case ACTIONS.RESET_LOCK_SUCCESS_MESSAGE:
-    return update(state, {
-      $unset: ['displayLockSuccessMessage']
     });
   default:
     return state;
   }
 };
-const combinedReducer = combineReducers({
-  hearings: hearingsReducer,
-  hearingSchedule: hearingScheduleReducer,
-  ui: uiReducer,
-  caseList: caseListReducer,
-  queue: workQueueReducer,
-  components: commonComponentsReducer
-});
 
-export default timeFunction(
-  combinedReducer,
-  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
-);
+export default hearingScheduleReducer;

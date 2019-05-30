@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import DocketTypeBadge from '../../components/DocketTypeBadge';
+import DocketTypeBadge from '../../../components/DocketTypeBadge';
 
 import { PreppedCheckbox } from './DailyDocketRowInputs';
 
