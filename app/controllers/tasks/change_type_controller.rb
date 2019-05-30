@@ -3,7 +3,7 @@
 class Tasks::ChangeTypeController < TasksController
   def update
     tasks = update_task_type
-    tasks.each { |t| return invalid_record_error(t) unless t.valid? }
+    tasks.each { |task_to_check| return invalid_record_error(task_to_check) unless task_to_check.valid? }
 
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 
@@ -13,11 +13,11 @@ class Tasks::ChangeTypeController < TasksController
   private
 
   def colocated_sibling
-    task.dup.tap do |t|
-      t.action = update_params[:action]
-      t.instructions = [task.instructions, update_params[:instructions]].flatten
+    task.dup.tap do |dupe|
+      dupe.action = update_params[:action]
+      dupe.instructions = [task.instructions, update_params[:instructions]].flatten
       # Will this ever need to be reassigned?
-      t.save!
+      dupe.save!
     end
   end
 
@@ -55,7 +55,7 @@ class Tasks::ChangeTypeController < TasksController
 
     task.update!(status: Constants.TASK_STATUSES.cancelled)
 
-    task.children.active.each { |t| t.update!(parent_id: sibling.id) }
+    task.children.active.each { |child| child.update!(parent_id: sibling.id) }
 
     [sibling, task, sibling.children].flatten
   end
