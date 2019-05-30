@@ -10,7 +10,7 @@ class AmaAppealDispatch
   def call
     throw_error_if_no_tasks_or_if_task_is_completed
 
-    create_decision_document!(params)
+    create_decision_document_and_submit_for_processing!(params)
     complete_dispatch_task!
     complete_dispatch_root_task!
     close_request_issues_as_decided!
@@ -50,20 +50,8 @@ class AmaAppealDispatch
     end
   end
 
-  def create_decision_document!(params)
-    DecisionDocument.create!(params).tap do |decision_document|
-      delay = if decision_document.decision_date.future?
-                decision_document.decision_date + DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours
-              else
-                0
-              end
-
-      decision_document.submit_for_processing!(delay: delay)
-
-      unless decision_document.processed? || decision_document.decision_date.future?
-        ProcessDecisionDocumentJob.perform_later(decision_document.id)
-      end
-    end
+  def create_decision_document_and_submit_for_processing!(params)
+    DecisionDocument.create!(params).tap(&:submit_for_processing!)
   end
 
   def complete_dispatch_task!

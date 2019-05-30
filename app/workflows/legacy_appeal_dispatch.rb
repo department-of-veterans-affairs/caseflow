@@ -7,7 +7,7 @@ class LegacyAppealDispatch
   end
 
   def call
-    create_decision_document!(params)
+    create_decision_document_and_submit_for_processing!(params)
   rescue ActiveRecord::RecordInvalid => error
     if error.message.match?(/^Validation failed:/)
       raise(Caseflow::Error::OutcodeValidationFailure, message: error.message)
@@ -20,19 +20,7 @@ class LegacyAppealDispatch
 
   attr_reader :appeal, :params
 
-  def create_decision_document!(params)
-    DecisionDocument.create!(params).tap do |decision_document|
-      delay = if decision_document.decision_date.future?
-                decision_document.decision_date + DecisionDocument::PROCESS_DELAY_VBMS_OFFSET_HOURS.hours
-              else
-                0
-              end
-
-      decision_document.submit_for_processing!(delay: delay)
-
-      unless decision_document.processed? || decision_document.decision_date.future?
-        ProcessDecisionDocumentJob.perform_later(decision_document.id)
-      end
-    end
+  def create_decision_document_and_submit_for_processing!(params)
+    DecisionDocument.create!(params).tap(&:submit_for_processing!)
   end
 end
