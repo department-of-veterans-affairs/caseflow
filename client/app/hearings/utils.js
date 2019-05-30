@@ -12,6 +12,4 @@ export const now = () => {
     format('h:mm a');
 };
 
-export const sortHearings = (hearings) => (
-  _.orderBy(Object.values(hearings || {}), (hearing) => hearing.scheduledFor, 'asc')
-);
+export const sortHearings = (hearings) => _.orderBy(Object.values(hearings), (hearing) => hearing.scheduledFor, 'asc');
