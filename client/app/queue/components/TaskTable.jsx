@@ -120,8 +120,17 @@ export const regionalOfficeColumn = (tasks) => {
     label: 'Filter by regional office',
     valueFunction: (task) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
     getSortValue: (task) => task.closestRegionalOffice
-  }
-}
+  };
+};
+
+export const issueCountColumn = (requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
+    valueFunction: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null,
+    span: collapseColumn(requireDasRecord),
+    getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null
+  };
+};
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -234,12 +243,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseIssueCountColumn = () => {
-    return this.props.includeIssueCount ? {
-      header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
-      valueFunction: (task) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null,
-      span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => this.taskHasDASRecord(task) ? task.appeal.issueCount : null
-    } : null;
+    return this.props.includeIssueCount ? issueCountColumn(this.props.requireDasRecord) : null;
   }
 
   caseDueDateColumn = () => {

@@ -6,7 +6,8 @@ import { css } from 'glamor';
 
 import BulkAssignModal from './components/BulkAssignModal';
 import TabWindow from '../components/TabWindow';
-import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn } from './components/TaskTable';
+import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
+  taskColumn, regionalOfficeColumn, issueCountColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -90,9 +91,9 @@ class OrganizationQueue extends React.PureComponent {
           <TaskTable
             customColumns={[
               docketNumberColumn(this.props.trackingTasks, false),
-              detailsColumn(this.props.trackingTasks, false, this.props.userRole)
+              detailsColumn(this.props.trackingTasks, false, this.props.userRole),
+              issueCountColumn(false)
             ]}
-            includeIssueCount
             includeType
             tasks={this.props.trackingTasks}
           />
@@ -159,7 +160,8 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
       hearingBadgeColumn(tasks),
       detailsColumn(tasks, false, userRole),
       taskColumn(tasks),
-      (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ? regionalOfficeColumn(tasks) : null
+      (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ?
+        regionalOfficeColumn(tasks) : null
     ]}
     includeType
     includeDaysWaiting
@@ -168,9 +170,6 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
     tasks={tasks}
   />
 </React.Fragment>;
-
-
-    // includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
 
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
@@ -181,7 +180,8 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, user
       hearingBadgeColumn(tasks),
       detailsColumn(tasks, false, userRole),
       taskColumn(tasks),
-      (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ? regionalOfficeColumn(tasks) : null
+      (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ?
+        regionalOfficeColumn(tasks) : null
     ]}
     includeType
     includeAssignedTo
@@ -189,5 +189,3 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, user
     tasks={tasks}
   />
 </React.Fragment>;
-
-    // includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
