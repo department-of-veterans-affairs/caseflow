@@ -25,8 +25,8 @@ class Tasks::ChangeTypeController < TasksController
     new_class = MailTask.subclasses.find { |mt| mt.name == update_params[:action] }
 
     new_assignee = task.assigned_to
-    if new_class.method_defined? :default_assignee
-      new_assignee = new_class.default_assignee
+    if new_class.respond_to? :default_assignee
+      new_assignee = new_class.default_assignee(task.parent, update_params)
     end
 
     new_class.create!(
