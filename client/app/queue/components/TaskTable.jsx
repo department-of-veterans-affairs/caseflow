@@ -226,7 +226,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseTypeColumn = () => {
-    return this.props.includeType ? typeColumn(this.props.tasks) : null;
+    return this.props.includeType ? typeColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
 
   caseAssignedToColumn = () => {
