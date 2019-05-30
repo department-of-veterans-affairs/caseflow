@@ -176,7 +176,8 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
 
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => {
   let columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-    detailsColumn(tasks, false, userRole), taskColumn(tasks), typeColumn(tasks, false), assignedToColumn(tasks), daysWaitingColumn(false)];
+    detailsColumn(tasks, false, userRole), taskColumn(tasks),
+    typeColumn(tasks, false), assignedToColumn(tasks), daysWaitingColumn(false)];
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
     columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
