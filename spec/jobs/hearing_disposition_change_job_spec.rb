@@ -56,7 +56,7 @@ describe HearingDispositionChangeJob do
 
       it "only returns the DispositionTasks" do
         # Confirm that the ChangeHearingDispositionTasks are in the database.
-        expect(ChangeHearingDispositionTask.open.count).to(
+        expect(ChangeHearingDispositionTask.active.count).to(
           eq(change_disposition_tasks.length)
         )
 

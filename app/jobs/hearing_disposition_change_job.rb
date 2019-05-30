@@ -34,7 +34,7 @@ class HearingDispositionChangeJob < CaseflowJob
   end
 
   def hearing_disposition_tasks
-    Task.open.where(type: DispositionTask.name)
+    Task.active.where(type: DispositionTask.name)
   end
 
   def task_count_for
