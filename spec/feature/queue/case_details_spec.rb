@@ -587,17 +587,16 @@ RSpec.feature "Case details" do
       end
 
       scenario "displays task bold in queue" do
-        ensure_stable do
         visit "/queue"
         vet_name = assigned_task.appeal.veteran_full_name
-        expect(page).to have_content(vet_name)
-        expect(find("#veteran-name-for-task-#{assigned_task.id}").style('font-weight')['font-weight']).to eq('700')
+        
+        fontweight_new  = page.find("#veteran-name-for-task-#{assigned_task.id}").style('font-weight')['font-weight']
         click_on vet_name
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         click_on "Caseflow"
         expect(page).to have_content(COPY::COLOCATED_QUEUE_PAGE_NEW_TASKS_DESCRIPTION)
-        expect(find("#veteran-name-for-task-#{assigned_task.id}").reload.style('font-weight')['font-weight']).to eq('400')
-       end
+        fontweight_visited = page.find("#veteran-name-for-task-#{assigned_task.id}").style('font-weight')['font-weight']
+        expect(fontweight_visited < fontweight_new)
       end
     end
   end
