@@ -182,14 +182,6 @@ RSpec.feature "ColocatedTask" do
       )
     end
 
-    # Fake available actions to allow change task type until the backend is implemented
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
-    before do
-      allow_any_instance_of(ColocatedTask).to receive(:available_actions).and_return(
-        [Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h]
-      )
-    end
-
     it "should update the task type" do
       # Visit case details page for VLJ support staff.
       User.authenticate!(user: vlj_support_staff)
@@ -220,13 +212,6 @@ RSpec.feature "ColocatedTask" do
       # Add instructions and try again
       instructions = generate_words(5)
       fill_in("instructions", with: instructions)
-
-      # Fake response until the backend is implemented
-      # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
-      allow_any_instance_of(TasksController).to receive(:update).and_return(
-        colocated_task.update(action: selected_opt_0, instructions: [instructions])
-      )
-
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # We should see a success message but remain on the case details page
@@ -240,7 +225,10 @@ RSpec.feature "ColocatedTask" do
 
       # Ensure the task has been updated
       expect(page).to have_content(format("TASK\n%<label>s", label: selected_opt_0))
-      click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+      # Cancelled task is showing up in timeline. is this intended? should the instructions be
+      #     showing up as well?
+      # click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+      find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
       expect(page).to have_content(instructions)
     end
   end
