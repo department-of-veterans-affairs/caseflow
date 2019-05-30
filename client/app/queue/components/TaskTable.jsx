@@ -110,6 +110,19 @@ export const taskColumn = (tasks) => {
   };
 };
 
+export const regionalOfficeColumn = (tasks) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'closestRegionalOffice',
+    anyFiltersAreSet: true,
+    label: 'Filter by regional office',
+    valueFunction: (task) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
+    getSortValue: (task) => task.closestRegionalOffice
+  }
+}
+
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -322,16 +335,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseRegionalOfficeColumn = () => {
-    return this.props.includeRegionalOffice ? {
-      header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
-      enableFilter: true,
-      tableData: this.props.tasks,
-      columnName: 'closestRegionalOffice',
-      anyFiltersAreSet: true,
-      label: 'Filter by regional office',
-      valueFunction: (task) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
-      getSortValue: (task) => task.closestRegionalOffice
-    } : null;
+    return this.props.includeRegionalOffice ? regionalOfficeColumn(this.props.tasks) : null;
   }
 
   getQueueColumns = () =>

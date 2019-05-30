@@ -6,7 +6,7 @@ import { css } from 'glamor';
 
 import BulkAssignModal from './components/BulkAssignModal';
 import TabWindow from '../components/TabWindow';
-import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn } from './components/TaskTable';
+import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn, regionalOfficeColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -158,9 +158,9 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
       docketNumberColumn(tasks, false),
       hearingBadgeColumn(tasks),
       detailsColumn(tasks, false, userRole),
-      taskColumn(tasks)
+      taskColumn(tasks),
+      (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ? regionalOfficeColumn(tasks) : null
     ]}
-    includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
     includeDaysWaiting
     includeReaderLink
@@ -168,6 +168,9 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
     tasks={tasks}
   />
 </React.Fragment>;
+
+
+    // includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
 
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
@@ -177,12 +180,14 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, user
       docketNumberColumn(tasks, false),
       hearingBadgeColumn(tasks),
       detailsColumn(tasks, false, userRole),
-      taskColumn(tasks)
+      taskColumn(tasks),
+      (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ? regionalOfficeColumn(tasks) : null
     ]}
-    includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
     includeType
     includeAssignedTo
     includeDaysWaiting
     tasks={tasks}
   />
 </React.Fragment>;
+
+    // includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
