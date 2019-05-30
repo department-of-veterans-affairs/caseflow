@@ -91,10 +91,10 @@ class OrganizationQueue extends React.PureComponent {
           </p>
           <TaskTable
             customColumns={[
-              docketNumberColumn(this.props.trackingTasks, false),
               detailsColumn(this.props.trackingTasks, false, this.props.userRole),
               issueCountColumn(false),
-              typeColumn(this.props.trackingTasks, false)
+              typeColumn(this.props.trackingTasks, false),
+              docketNumberColumn(this.props.trackingTasks, false)
             ]}
             tasks={this.props.trackingTasks}
           />
@@ -153,15 +153,16 @@ const mapDispatchToProps = (dispatch) => ({
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
 const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => {
-  let columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-    detailsColumn(tasks, false, userRole), taskColumn(tasks),
-    typeColumn(tasks, false), daysWaitingColumn(false),
+  let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+    userRole), taskColumn(tasks), typeColumn(tasks, false),
+    docketNumberColumn(tasks, false), daysWaitingColumn(false),
     readerLinkColumn(false, true)];
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
-    columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-      detailsColumn(tasks, false, userRole), taskColumn(tasks),
-      regionalOfficeColumn(tasks), typeColumn(tasks, false), daysWaitingColumn(false), readerLinkColumn(false, true)];
+    columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+      userRole), taskColumn(tasks), regionalOfficeColumn(tasks),
+      typeColumn(tasks, false), docketNumberColumn(tasks, false),
+      daysWaitingColumn(false), readerLinkColumn(false, true)];
   }
 
   return (<React.Fragment>
@@ -175,14 +176,16 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
 };
 
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => {
-  let columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-    detailsColumn(tasks, false, userRole), taskColumn(tasks),
-    typeColumn(tasks, false), assignedToColumn(tasks), daysWaitingColumn(false)];
+  let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+    userRole), taskColumn(tasks), typeColumn(tasks, false),
+    assignedToColumn(tasks), docketNumberColumn(tasks, false),
+    daysWaitingColumn(false)];
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
-    columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-      detailsColumn(tasks, false, userRole), taskColumn(tasks),
-      regionalOfficeColumn(tasks), typeColumn(tasks, false), assignedToColumn(tasks), daysWaitingColumn(false)];
+    columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+      userRole), taskColumn(tasks), regionalOfficeColumn(tasks),
+      typeColumn(tasks, false), assignedToColumn(tasks),
+      docketNumberColumn(tasks, false), daysWaitingColumn(false)];
   }
 
   return (<React.Fragment>
