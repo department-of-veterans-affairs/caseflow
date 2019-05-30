@@ -32,6 +32,18 @@ for the next team.
 
 ## Protocols
 
+### Slack
+
+Join the #appeals-batteam channel. Support and product folks will be in there and will bring issues to our attention.
+
+If you want to acknowledge a slack message but don't have time to look at it immediately, use the :bat:
+emoji response.
+
+If you are actively looking into a slack message, add the :eyes: emoji response.
+
+When a slack message has been adequately addressed (question answered, or GitHub issue created, etc),
+add the :white_check_mark: emoji.
+
 ### Sentry and Slack
 
 Each Bat Team member should take responsibility for one or more Slack channels and monitor for Sentry alerts. These
