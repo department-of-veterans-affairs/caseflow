@@ -154,7 +154,9 @@ export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
 const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => {
   let columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-    detailsColumn(tasks, false, userRole), taskColumn(tasks), typeColumn(tasks, false), daysWaitingColumn(false), readerLinkColumn(false, true)];
+    detailsColumn(tasks, false, userRole), taskColumn(tasks),
+    typeColumn(tasks, false), daysWaitingColumn(false),
+    readerLinkColumn(false, true)];
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
     columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
