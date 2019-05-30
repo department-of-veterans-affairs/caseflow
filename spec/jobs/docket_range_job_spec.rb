@@ -4,7 +4,7 @@ require "rails_helper"
 require "faker"
 
 describe DocketRangeJob do
-  describe "#perform", focus: true do
+  describe "#perform" do
     let(:today) { Time.zone.now }
     let(:docket_coord) { DocketCoordinator.new }
     before do
