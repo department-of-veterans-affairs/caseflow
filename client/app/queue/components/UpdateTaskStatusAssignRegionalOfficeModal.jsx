@@ -14,7 +14,7 @@ import { taskById } from '../selectors';
 import { taskActionData } from '../utils';
 import { highlightInvalidFormItems, requestPatch } from '../uiReducer/uiActions';
 
-class CancelTaskAssignRegionalOfficeModal extends React.Component {
+class UpdateTaskStatusAssignRegionalOfficeModal extends React.Component {
   constructor(props) {
     super(props);
 
@@ -103,7 +103,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   requestPatch
 }, dispatch);
 
-CancelTaskAssignRegionalOfficeModal.propTypes = {
+UpdateTaskStatusAssignRegionalOfficeModal.propTypes = {
   updateStatusTo: PropTypes.string.isRequired,
   task: PropTypes.object.isRequired,
   actionConfiguration: PropTypes.object.isRequired,
@@ -113,6 +113,6 @@ CancelTaskAssignRegionalOfficeModal.propTypes = {
 
 export default (withRouter(
   connect(mapStateToProps, mapDispatchToProps)(
-    CancelTaskAssignRegionalOfficeModal
+    UpdateTaskStatusAssignRegionalOfficeModal
   )
 ));
