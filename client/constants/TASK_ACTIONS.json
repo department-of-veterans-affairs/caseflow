@@ -37,14 +37,20 @@
         "value": "modal/assign_to_team",
         "func": "assign_to_organization_data"
     },
+    "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
+        "label": "Cancel hearing request",
+        "value": "modal/cancel_task",
+        "func": "cancel_foreign_veterans_case_data"
+    },
     "CANCEL_TASK": {
         "label": "Cancel task",
         "value": "modal/cancel_task",
         "func": "cancel_task_data"
     },
-    "CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE": {
+    "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE": {
         "label": "Cancel task and assign Regional Office",
-        "value": "modal/cancel_task_and_assign_regional_office"
+        "value": "modal/cancel_task_and_assign_regional_office",
+        "func": "cancel_address_verify_task_and_assign_regional_office_data"
     },
     "CHANGE_TASK_TYPE": {
         "label": "Change task type",
@@ -159,6 +165,11 @@
         "label": "Schedule Veteran",
         "value": "modal/schedule_veteran",
         "func": "schedule_veteran_data"
+    },
+    "SEND_TO_SCHEDULE_VETERAN_LIST": {
+        "label": "Send to Schedule Veterans list",
+        "value": "modal/send_to_schedule_veterans_list",
+        "func": "send_to_schedule_veterans_list"
     },
     "SEND_TO_TEAM": {
         "label": "Send to team",
