@@ -101,10 +101,6 @@
         "value": "modal/mark_task_complete",
         "func": "complete_data"
     },
-    "PLACE_HOLD": {
-        "label": "Place hold",
-        "value": "place_hold"
-    },
     "PLACE_TIMED_HOLD": {
         "label": "Put task on hold",
         "value": "modal/place_timed_hold"

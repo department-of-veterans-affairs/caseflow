@@ -1,5 +1,5 @@
 import update from 'immutability-helper';
-import * as Constants from '../constants';
+import { ACTIONS } from '../constants';
 import _ from 'lodash';
 
 export const newHearingIssueState = (state, action, spec) => {
@@ -20,7 +20,7 @@ export const newHearingWorksheetState = (state, action, spec) => {
 
 export const hearingWorksheetReducer = function(state = {}, action = {}) {
   switch (action.type) {
-  case Constants.POPULATE_WORKSHEET: {
+  case ACTIONS.POPULATE_WORKSHEET: {
     const worksheetAppeals = _.keyBy(action.payload.worksheet.appeals_ready_for_hearing, 'id');
     let worksheetIssues = _(worksheetAppeals).flatMap('worksheet_issues').
       keyBy('id').
@@ -39,25 +39,25 @@ export const hearingWorksheetReducer = function(state = {}, action = {}) {
     });
   }
 
-  case Constants.SET_HEARING_DAY_HEARINGS:
+  case ACTIONS.SET_HEARING_DAY_HEARINGS:
     return update(state, {
       hearings: { $set: action.payload.hearings }
     });
 
-  case Constants.SET_REPNAME:
+  case ACTIONS.SET_REPNAME:
     return newHearingWorksheetState(state, action, { representative_name: { $set: action.payload.repName } });
 
-  case Constants.SET_WITNESS:
+  case ACTIONS.SET_WITNESS:
     return newHearingWorksheetState(state, action, { witness: { $set: action.payload.witness } });
 
-  case Constants.SET_SUMMARY:
+  case ACTIONS.SET_SUMMARY:
     return newHearingWorksheetState(state, action, { summary: { $set: action.payload.summary } });
 
-  case Constants.SET_MILITARY_SERVICE:
+  case ACTIONS.SET_MILITARY_SERVICE:
     return newHearingWorksheetState(state, action, {
       military_service: { $set: action.payload.militaryService }
     });
-  case Constants.SET_HEARING_PREPPED:
+  case ACTIONS.SET_HEARING_PREPPED:
     return update(state, {
       hearings: {
         [action.payload.hearingExternalId]: {
@@ -66,70 +66,70 @@ export const hearingWorksheetReducer = function(state = {}, action = {}) {
       }
     });
 
-  case Constants.SET_ISSUE_NOTES:
+  case ACTIONS.SET_ISSUE_NOTES:
     return newHearingIssueState(state, action, { notes: { $set: action.payload.notes } });
 
-  case Constants.SET_WORKSHEET_ISSUE_NOTES:
+  case ACTIONS.SET_WORKSHEET_ISSUE_NOTES:
     return newHearingIssueState(state, action, { worksheet_notes: { $set: action.payload.notes } });
 
-  case Constants.SET_ISSUE_DISPOSITION:
+  case ACTIONS.SET_ISSUE_DISPOSITION:
     return newHearingIssueState(state, action, { disposition: { $set: action.payload.disposition } });
 
-  case Constants.SET_DESCRIPTION:
+  case ACTIONS.SET_DESCRIPTION:
     return newHearingIssueState(state, action, { description: { $set: action.payload.description } });
 
-  case Constants.SET_REOPEN:
+  case ACTIONS.SET_REOPEN:
     return newHearingIssueState(state, action, { reopen: { $set: action.payload.reopen } });
 
-  case Constants.SET_ALLOW:
+  case ACTIONS.SET_ALLOW:
     return newHearingIssueState(state, action, { allow: { $set: action.payload.allow } });
 
-  case Constants.SET_DENY:
+  case ACTIONS.SET_DENY:
     return newHearingIssueState(state, action, { deny: { $set: action.payload.deny } });
 
-  case Constants.SET_REMAND:
+  case ACTIONS.SET_REMAND:
     return newHearingIssueState(state, action, { remand: { $set: action.payload.remand } });
 
-  case Constants.SET_DISMISS:
+  case ACTIONS.SET_DISMISS:
     return newHearingIssueState(state, action, { dismiss: { $set: action.payload.dismiss } });
 
-  case Constants.SET_OMO:
+  case ACTIONS.SET_OMO:
     return newHearingIssueState(state, action, { omo: { $set: action.payload.omo } });
 
-  case Constants.TOGGLE_ISSUE_DELETE_MODAL:
+  case ACTIONS.TOGGLE_ISSUE_DELETE_MODAL:
     return newHearingIssueState(state, action, { isShowingModal: { $set: action.payload.isShowingModal } });
 
-  case Constants.ADD_ISSUE:
+  case ACTIONS.ADD_ISSUE:
     return update(state, {
       worksheetIssues: { [action.payload.issue.id]: {
         $set: action.payload.issue
       } }
     });
 
-  case Constants.DELETE_ISSUE:
+  case ACTIONS.DELETE_ISSUE:
     return newHearingIssueState(state, action, { _destroy: { $set: true } });
 
-  case Constants.TOGGLE_WORKSHEET_SAVING:
+  case ACTIONS.TOGGLE_WORKSHEET_SAVING:
     return update(state, { worksheetIsSaving: { $set: action.payload.saving }
     });
 
-  case Constants.SET_WORKSHEET_TIME_SAVED:
+  case ACTIONS.SET_WORKSHEET_TIME_SAVED:
     return update(state, { worksheetTimeSaved: { $set: action.payload.timeSaved }
     });
 
-  case Constants.SET_WORKSHEET_SAVE_FAILED_STATUS:
+  case ACTIONS.SET_WORKSHEET_SAVE_FAILED_STATUS:
     return update(state, {
       saveWorksheetFailed: { $set: action.payload.saveFailed }
     });
 
-  case Constants.SET_ISSUE_EDITED_FLAG_TO_FALSE:
+  case ACTIONS.SET_ISSUE_EDITED_FLAG_TO_FALSE:
     return update(state, {
       worksheetIssues: {
         [action.payload.issueId]: { edited: { $set: false } }
       }
     });
 
-  case Constants.SET_WORKSHEET_EDITED_FLAG_TO_FALSE:
+  case ACTIONS.SET_WORKSHEET_EDITED_FLAG_TO_FALSE:
     return update(state, {
       worksheet: { edited: { $set: false } }
     });
