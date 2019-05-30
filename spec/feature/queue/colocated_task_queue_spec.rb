@@ -226,9 +226,9 @@ RSpec.feature "ColocatedTask" do
       # Ensure the task has been updated
       expect(page).to have_content(format("TASK\n%<label>s", label: selected_opt_0))
       # Cancelled task is showing up in timeline. is this intended? should the instructions be
-      #     showing up as well?
+      #   showing up as well?
       # click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
-      find_all("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).first.click
+      find_all("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
       expect(page).to have_content(instructions)
     end
   end
