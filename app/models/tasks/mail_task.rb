@@ -83,6 +83,20 @@ class MailTask < GenericTask
   def available_actions(user)
     super(user).present? ? super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h) : []
   end
+
+  def change_type(params)
+    new_class = MailTask.subclasses.find { |mt| mt.name == params[:action] }
+
+    default_assignee = new_class.default_assignee(parent, params)
+
+    new_class.create!(
+      slice(:appeal, :assigned_by, :status, :parent, :on_hold_duration, :placed_on_hold_at)
+      .merge(
+        assigned_to: default_assignee.user_has_access?(current_user) ? assigned_to : default_assignee,
+        instructions: [instructions, params[:instructions]].flatten
+      )
+    )
+  end
 end
 
 class AddressChangeMailTask < MailTask

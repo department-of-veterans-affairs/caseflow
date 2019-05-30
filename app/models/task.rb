@@ -160,6 +160,10 @@ class Task < ApplicationRecord
     params
   end
 
+  def change_type(_params)
+    fail Caseflow::Error::ActionForbiddenError, message: "Cannot change type of this task"
+  end
+
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
 

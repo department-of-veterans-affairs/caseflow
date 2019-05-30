@@ -83,6 +83,14 @@ class ColocatedTask < Task
     active?
   end
 
+  def change_type(params)
+    dup.tap do |dupe|
+      dupe.action = params[:action]
+      dupe.instructions = [instructions, params[:instructions]].flatten
+      dupe.save!
+    end
+  end
+
   private
 
   def ama_translation_actions(core_actions)
