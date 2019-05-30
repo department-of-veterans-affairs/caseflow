@@ -8,10 +8,12 @@ class DocketRangeJob < ApplicationJob
   def perform
     for_month = Time.zone.now + 1.month
     days_in_month = Time.days_in_month(for_month.month, for_month.year)
+    appeals_to_mark(days_in_month).update(docket_range_date: Time.utc(for_month.year, for_month.month, 1))
+  end
+
+  def appeals_to_mark(days_in_month)
     dc = DocketCoordinator.new
     target = dc.target_number_of_ama_hearings(days_in_month.days)
-    appeals_to_mark = dc.dockets[:hearing].appeals(priority: false).where(docket_range_date: false).limit(target)
-
-    appeals_to_mark.update(docket_range_date: Time.utc(for_month.year, for_month.month, 1))
+    dc.dockets[:hearing].appeals(priority: false).where(docket_range_date: nil).limit(target)
   end
 end
