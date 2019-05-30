@@ -376,11 +376,11 @@ class Appeal < DecisionReview
     # For the appeal status api, and Appeal is considered open
     # as long as there are active remand claim or effectuation
     # tracked in VBMS.
-    active? || active_effectuation_ep? || active_remanded_claims?
+    open? || active_effectuation_ep? || active_remanded_claims?
   end
 
   def active_effectuation_ep?
-    decision_document&.end_product_establishments&.any? { |ep| ep.status_active?(sync: false) }
+    decision_document&.end_product_establishments&.any? { |ep| ep.status_open?(sync: false) }
   end
 
   def location
@@ -396,7 +396,7 @@ class Appeal < DecisionReview
   end
 
   def fetch_status
-    if active?
+    if open?
       fetch_pre_decision_status
     else
       fetch_post_decision_status
