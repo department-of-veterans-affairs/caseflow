@@ -327,8 +327,7 @@ class Task < ApplicationRecord
   end
 
   def old_style_hold_expired?
-    !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
-      (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
+    !on_timed_hold? && on_hold? && (placed_on_hold_at &.+ on_hold_duration&.days &.< Time.zone.now)
   end
 
   def serializer_class
