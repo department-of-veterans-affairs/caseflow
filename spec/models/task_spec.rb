@@ -388,14 +388,14 @@ describe Task do
       context "instructions are updated" do
         subject { task.update!(instructions: ["These are my new instructions"]) }
 
-        it "cancels the child timed hold task" do
+        it "doesn not cancel the child timed hold task" do
           expect(timed_hold_task.reload.active?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
 
           subject
 
-          expect(timed_hold_task.reload.cancelled?).to be_truthy
-          expect(task.reload.on_hold?).to be_falsey
+          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(task.reload.on_hold?).to be_truthy
         end
       end
     end

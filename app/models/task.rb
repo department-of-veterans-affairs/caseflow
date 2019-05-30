@@ -229,7 +229,7 @@ class Task < ApplicationRecord
 
   def when_child_task_created(child_task)
     cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
-    update!(status: :on_hold)
+    update!(status: :on_hold) if !on_hold?
   end
 
   def task_is_assigned_to_user_within_organization?(user)
@@ -365,7 +365,9 @@ class Task < ApplicationRecord
     parent&.when_child_task_created(self)
   end
 
-  def update_children_status_after_closed; end
+  def update_children_status_after_closed
+    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
 
   def task_just_closed?
     saved_change_to_attribute?("status") && !active?
