@@ -713,7 +713,7 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     add_duplicate_issue_error(
-      RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
+      RequestIssue.open.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
     )
   end
 
@@ -721,7 +721,7 @@ class RequestIssue < ApplicationRecord
     return unless contested_decision_issue_id
 
     add_duplicate_issue_error(
-      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
+      RequestIssue.open.find_by(contested_decision_issue_id: contested_decision_issue_id)
     )
   end
 
@@ -782,6 +782,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    decision_review.tasks.active.any?
+    decision_review.tasks.open.any?
   end
 end

@@ -12,9 +12,9 @@ class GenericTask < Task
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
   def verify_org_task_unique
-    return if !active?
+    return if !open?
 
-    if appeal.tasks.active.where(
+    if appeal.tasks.open.where(
       type: type,
       assigned_to: assigned_to,
       parent: parent
@@ -92,7 +92,7 @@ class GenericTask < Task
     return [] unless HearingAdmin.singleton.user_has_access?(user)
 
     hearing_task = ancestor_task_of_type(HearingTask)
-    return [] unless hearing_task&.active? && hearing_task&.disposition_task&.present?
+    return [] unless hearing_task&.open? && hearing_task&.disposition_task&.present?
 
     [
       Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h

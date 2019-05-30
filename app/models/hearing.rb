@@ -79,7 +79,7 @@ class Hearing < ApplicationRecord
       task.type == TrackVeteranTask.name &&
         task.assigned_to.is_a?(Representative) &&
         task.assigned_to.user_has_access?(user) &&
-        task.active?
+        task.open?
     end
   end
 

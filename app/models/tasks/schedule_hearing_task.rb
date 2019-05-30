@@ -95,7 +95,7 @@ class ScheduleHearingTask < GenericTask
     end
 
     # cancel my children, myself, and my hearing task ancestor
-    children.active.update_all(status: Constants.TASK_STATUSES.cancelled)
+    children.open.update_all(status: Constants.TASK_STATUSES.cancelled)
     update!(status: Constants.TASK_STATUSES.cancelled)
     ancestor_task_of_type(HearingTask)&.update!(status: Constants.TASK_STATUSES.cancelled)
 

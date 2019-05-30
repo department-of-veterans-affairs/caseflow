@@ -138,7 +138,7 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_tasks = tasks.active.not_tracking
+    active_tasks = tasks.open.not_tracking
     return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
     on_hold_tasks = tasks.on_hold.not_tracking
@@ -206,8 +206,8 @@ class Appeal < DecisionReview
     docket_type == Constants.AMA_DOCKETS.direct_review
   end
 
-  def active?
-    tasks.active.where(type: RootTask.name).any?
+  def open?
+    tasks.open.where(type: RootTask.name).any?
   end
 
   def ready_for_distribution_at
@@ -523,7 +523,7 @@ class Appeal < DecisionReview
   end
 
   def pending_schedule_hearing_task?
-    tasks.active.where(type: ScheduleHearingTask.name).any?
+    tasks.open.where(type: ScheduleHearingTask.name).any?
   end
 
   def hearing_pending?
@@ -531,12 +531,12 @@ class Appeal < DecisionReview
   end
 
   def evidence_submission_hold_pending?
-    tasks.active.where(type: EvidenceSubmissionWindowTask.name).any?
+    tasks.open.where(type: EvidenceSubmissionWindowTask.name).any?
   end
 
   def at_vso?
     # This task is always open, this can be used once that task is completed
-    # tasks.active.where(type: InformalHearingPresentationTask.name).any?
+    # tasks.open.where(type: InformalHearingPresentationTask.name).any?
   end
 
   def distributed_to_a_judge?
