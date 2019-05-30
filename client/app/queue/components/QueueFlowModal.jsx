@@ -25,7 +25,16 @@ class QueueFlowModal extends React.PureComponent {
 
   cancelHandler = () => this.props.history.goBack();
 
-  closeHandler = () => this.props.history.replace(this.props.pathAfterSubmit);
+  closeHandler = () => {
+    if (this.props.reloadPageAfterSubmit) {
+      // give the user a chance to read the success message
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } else {
+      this.props.history.replace(this.props.pathAfterSubmit)
+    }
+  };
 
   setLoading = (loading) => this.setState({ loading });
 
@@ -95,7 +104,8 @@ QueueFlowModal.propTypes = {
   button: PropTypes.string,
   pathAfterSubmit: PropTypes.string,
   submit: PropTypes.func,
-  validateForm: PropTypes.func
+  validateForm: PropTypes.func,
+  reloadPageAfterSubmit: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {

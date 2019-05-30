@@ -542,6 +542,7 @@ export const sortTaskList = (taskList) => {
   });
 };
 
-export const regionalOfficeCity = (objWithLocation) => {
-  return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city', 'Unknown');
+export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
+  return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
+    defaultToUnknown ? 'Unknown' : defaultToUnknown);
 };

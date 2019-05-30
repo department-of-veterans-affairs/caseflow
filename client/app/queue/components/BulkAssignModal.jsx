@@ -233,6 +233,8 @@ class BulkAssignModal extends React.PureComponent {
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
     const modal = (
       <QueueFlowModal
+        reloadPageAfterSubmit
+        pathAfterSubmit="/organizations/hearing-management/"
         button="Assign Tasks"
         submit={this.bulkAssignTasks}
         title="Bulk Assign Tasks"
