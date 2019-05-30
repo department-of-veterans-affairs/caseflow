@@ -6,7 +6,7 @@ RSpec.feature "Quality Review worflow" do
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Javitz") }
   let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
 
-  scenario "return case to judge" do
+  context "return case to judge" do
     let(:valid_document_id) { "12345-12345678" }
 
     let(:veteran_first_name) { "Marissa" }
@@ -254,6 +254,7 @@ RSpec.feature "Quality Review worflow" do
 
       step "confirm that the task is on hold but timed hold is cancelled" do
         qr_person_task = qr_org_task.children.first
+        expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, judge_user.full_name))
         expect(qr_person_task.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(qr_person_task.on_timed_hold?).to eq(false)
       end
