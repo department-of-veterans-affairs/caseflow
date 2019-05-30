@@ -32,7 +32,7 @@ class QueueFlowModal extends React.PureComponent {
         window.location.reload();
       }, 2000);
     } else {
-      this.props.history.replace(this.props.pathAfterSubmit)
+      this.props.history.replace(this.props.pathAfterSubmit);
     }
   };
 
