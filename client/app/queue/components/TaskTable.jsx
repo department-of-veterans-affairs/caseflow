@@ -330,7 +330,7 @@ export class TaskTableUnconnected extends React.PureComponent {
       anyFiltersAreSet: true,
       label: 'Filter by regional office',
       valueFunction: (task) => {
-        return regionalOfficeCity(task);
+        return regionalOfficeCity(task, true);
       },
       getSortValue: (task) => regionalOfficeCity(task)
     } : null;
