@@ -127,9 +127,8 @@ RSpec.feature "ColocatedTask" do
         )
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
-        # Values in database are correct.
-        expect(individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
-        expect(individual_task.calculated_on_hold_duration).to eq(hold_duration_days)
+        # Task snapshot updated with new hold information
+        expect(page).to have_content("0 of #{hold_duration_days}")
       end
     end
 
@@ -181,12 +180,6 @@ RSpec.feature "ColocatedTask" do
           format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, new_hold_duration_days)
         )
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
-
-        # Values in database are correct.
-        colocated_individual_task.reload
-        expect(colocated_individual_task.status).to eq(Constants.TASK_STATUSES.on_hold)
-        expect(colocated_individual_task.calculated_placed_on_hold_at).to_not eq(old_hold_started)
-        expect(colocated_individual_task.calculated_on_hold_duration).to eq(new_hold_duration_days)
 
         # Task snapshot updated with new hold information
         expect(page).to have_content("0 of #{new_hold_duration_days}")
