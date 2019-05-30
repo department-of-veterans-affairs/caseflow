@@ -27,14 +27,11 @@ class Tasks::ChangeTypeController < TasksController
     default_assignee = new_class.default_assignee(task.parent, update_params)
 
     new_class.create!(
-      appeal: task.appeal,
-      assigned_to: default_assignee.user_has_access?(current_user) ? task.assigned_to : default_assignee,
-      assigned_by: task.assigned_by,
-      instructions: [task.instructions, update_params[:instructions]].flatten,
-      status: task.status,
-      parent: task.parent,
-      on_hold_duration: task.on_hold_duration,
-      placed_on_hold_at: task.placed_on_hold_at
+      task.slice(:appeal, :assigned_by, :status, :parent, :on_hold_duration, :placed_on_hold_at)
+      .merge(
+        assigned_to: default_assignee.user_has_access?(current_user) ? task.assigned_to : default_assignee,
+        instructions: [task.instructions, update_params[:instructions]].flatten
+      )
     )
   end
 
