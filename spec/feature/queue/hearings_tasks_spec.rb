@@ -91,27 +91,22 @@ RSpec.feature "Hearings tasks workflows" do
         end
       end
 
-      describe "Bulk Assign NoShowHearingTasks" do 
-        let(:veteran) { FactoryBot.create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
+      describe "Bulk assign hearing tasks" do
         def fill_in_and_submit_bulk_assign_modal
-          options = find_all('option', wait: 20)
+          options = find_all('option')
           assign_to = options[2]
           assign_to.click
           task_type = options[8]
-          task_type.click(wait: 20)
+          task_type.click
           number_of_tasks = options[10];
           number_of_tasks.click
           submit = all('button', text: "Assign Tasks")[0]
           submit.click
         end
+
         it "is able to bulk assign tasks for the hearing management org" do
-          3.times do 
-            appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
-            root_task = FactoryBot.create(:root_task, appeal: appeal) 
-            distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
-            parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
-            disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
-            FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+          3.times do
+            FactoryBot.create(:no_show_hearing_task)
           end
           success_msg = 'You have assigned 4 No Show Hearing Task task(s) to your individual queue'
           visit("organizations/hearing-management/")

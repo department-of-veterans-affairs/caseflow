@@ -20,7 +20,7 @@ import { selectHearingCoordinator,
   selectHearingRoom,
   setNotes,
   onHearingDayModified
-} from '../actions/actions';
+} from '../actions/dailyDocketActions';
 import HEARING_ROOMS_LIST from '../../../constants/HEARING_ROOMS_LIST.json';
 import _ from 'lodash';
 
