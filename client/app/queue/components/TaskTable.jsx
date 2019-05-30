@@ -95,6 +95,21 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   };
 };
 
+export const taskColumn = (tasks) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'label',
+    anyFiltersAreSet: true,
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    label: 'Filter by task',
+    valueName: 'label',
+    valueFunction: (task) => actionNameOfTask(task),
+    getSortValue: (task) => actionNameOfTask(task)
+  };
+};
+
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -140,18 +155,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseTaskColumn = () => {
-    return this.props.includeTask ? {
-      header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-      enableFilter: true,
-      tableData: this.props.tasks,
-      columnName: 'label',
-      anyFiltersAreSet: true,
-      customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
-      label: 'Filter by task',
-      valueName: 'label',
-      valueFunction: (task) => actionNameOfTask(task),
-      getSortValue: (task) => actionNameOfTask(task)
-    } : null;
+    return this.props.includeTask ? taskColumn(this.props.tasks) : null;
   }
 
   caseDocumentIdColumn = () => {
