@@ -157,6 +157,19 @@ export const typeColumn = (tasks, requireDasRecord) => {
   };
 };
 
+export const assignedToColumn = (tasks) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'assignedTo.name',
+    anyFiltersAreSet: true,
+    label: 'Filter by assignee',
+    valueFunction: (task) => task.assignedTo.name,
+    getSortValue: (task) => task.assignedTo.name
+  }
+}
+
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -230,16 +243,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseAssignedToColumn = () => {
-    return this.props.includeAssignedTo ? {
-      header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
-      enableFilter: true,
-      tableData: this.props.tasks,
-      columnName: 'assignedTo.name',
-      anyFiltersAreSet: true,
-      label: 'Filter by assignee',
-      valueFunction: (task) => task.assignedTo.name,
-      getSortValue: (task) => task.assignedTo.name
-    } : null;
+    return this.props.includeAssignedTo ? assignedToColumn(this.props.tasks) : null;
   }
 
   caseDocketNumberColumn = () => {

@@ -7,7 +7,8 @@ import { css } from 'glamor';
 import BulkAssignModal from './components/BulkAssignModal';
 import TabWindow from '../components/TabWindow';
 import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
-  taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn } from './components/TaskTable';
+  taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
+  assignedToColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -180,14 +181,14 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, user
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
     columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-      detailsColumn(tasks, false, userRole), taskColumn(tasks), regionalOfficeColumn(tasks), typeColumn(tasks, false)];
+      detailsColumn(tasks, false, userRole), taskColumn(tasks), regionalOfficeColumn(tasks), typeColumn(tasks, false,
+      assignedToColumn(tasks))];
   }
 
   return (<React.Fragment>
     <p className="cf-margin-top-0">{description}</p>
     <TaskTable
       customColumns={columns}
-      includeAssignedTo
       includeDaysWaiting
       tasks={tasks}
     />
