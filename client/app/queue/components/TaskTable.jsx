@@ -167,8 +167,8 @@ export const assignedToColumn = (tasks) => {
     label: 'Filter by assignee',
     valueFunction: (task) => task.assignedTo.name,
     getSortValue: (task) => task.assignedTo.name
-  }
-}
+  };
+};
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId

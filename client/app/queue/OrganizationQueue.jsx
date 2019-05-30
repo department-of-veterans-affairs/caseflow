@@ -181,8 +181,8 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, user
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
     columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-      detailsColumn(tasks, false, userRole), taskColumn(tasks), regionalOfficeColumn(tasks), typeColumn(tasks, false,
-      assignedToColumn(tasks))];
+      detailsColumn(tasks, false, userRole), taskColumn(tasks),
+      regionalOfficeColumn(tasks), typeColumn(tasks, false, assignedToColumn(tasks))];
   }
 
   return (<React.Fragment>
