@@ -216,14 +216,14 @@ describe ScheduleHearingTask do
     it "creates new hearing and change hearing disposition tasks and cancels unwanted tasks" do
       subject
 
-      expect(hearing_task.reload.active?).to be_falsey
-      expect(disposition_task.reload.active?).to be_falsey
+      expect(hearing_task.reload.open?).to be_falsey
+      expect(disposition_task.reload.open?).to be_falsey
       expect(hearing_task_2.reload.status).to eq Constants.TASK_STATUSES.cancelled
       expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
-      new_hearing_tasks = appeal.tasks.active.where(type: HearingTask.name)
+      new_hearing_tasks = appeal.tasks.open.where(type: HearingTask.name)
       expect(new_hearing_tasks.count).to eq 1
       expect(new_hearing_tasks.first.hearing).to eq hearing
-      new_change_tasks = appeal.tasks.active.where(type: ChangeHearingDispositionTask.name)
+      new_change_tasks = appeal.tasks.open.where(type: ChangeHearingDispositionTask.name)
       expect(new_change_tasks.count).to eq 1
       expect(new_change_tasks.first.parent).to eq new_hearing_tasks.first
     end

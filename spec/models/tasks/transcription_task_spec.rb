@@ -35,9 +35,9 @@ describe TranscriptionTask do
         new_hearing_task = root_task.children.where.not(status: Constants.TASK_STATUSES.cancelled).first
         new_schedule_hearing_task = new_hearing_task.children.first
 
-        expect(new_hearing_task.active?).to eq(true)
+        expect(new_hearing_task.open?).to eq(true)
         expect(new_hearing_task.type).to eq(HearingTask.name)
-        expect(new_schedule_hearing_task.active?).to eq(true)
+        expect(new_schedule_hearing_task.open?).to eq(true)
         expect(new_schedule_hearing_task.type).to eq(ScheduleHearingTask.name)
       end
     end
