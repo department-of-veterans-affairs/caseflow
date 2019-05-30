@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 
 import Button from '../../../components/Button';
 
-import { onUpdateDocketHearing } from '../../actions/actions';
+import { onUpdateDocketHearing } from '../../actions/dailyDocketActions';
 import HearingText from './DailyDocketRowDisplayText';
 import {
   DispositionDropdown, TranscriptRequestedCheckbox, HearingDetailsLink,
