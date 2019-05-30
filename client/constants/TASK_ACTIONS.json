@@ -73,11 +73,6 @@
         "value": "modal/create_mail_task",
         "func": "mail_assign_to_organization_data"
     },
-    "JUDGE_QR_RETURN_TO_ATTORNEY": {
-        "label": "Return to attorney",
-        "value": "modal/judge_qr_return_to_attorney",
-        "func": "judge_qr_return_to_attorney_data"
-    },
     "JUDGE_LEGACY_CHECKOUT": {
         "label": "Ready for Dispatch",
         "value": "dispatch_decision/special_issues"
@@ -106,10 +101,6 @@
         "value": "modal/mark_task_complete",
         "func": "complete_data"
     },
-    "PLACE_HOLD": {
-        "label": "Place hold",
-        "value": "place_hold"
-    },
     "PLACE_TIMED_HOLD": {
         "label": "Put task on hold",
         "value": "modal/place_timed_hold"
@@ -132,10 +123,25 @@
         "label": "Mark as complete: Postpone",
         "value": "modal/reschedule_hearing"
     },
-    "RETURN_TO_JUDGE": {
+    "QR_RETURN_TO_JUDGE": {
         "label": "Return to judge",
         "value": "modal/assign_to_judge",
         "func": "assign_to_judge_data"
+    },
+    "JUDGE_QR_RETURN_TO_ATTORNEY": {
+        "label": "Return to attorney",
+        "value": "modal/judge_qr_return_to_attorney",
+        "func": "judge_qr_return_to_attorney_data"
+    },
+    "DISPATCH_RETURN_TO_JUDGE": {
+      "label": "Return to judge",
+      "value": "modal/dispatch_assign_to_judge",
+      "func": "dispatch_return_to_judge_data"
+    },
+    "JUDGE_DISPATCH_RETURN_TO_ATTORNEY": {
+      "label": "Return to attorney",
+      "value": "modal/judge_dispatch_return_to_attorney",
+      "func": "judge_dispatch_return_to_attorney_data"
     },
     "REVIEW_LEGACY_DECISION": {
         "label": "Decision ready for review",
