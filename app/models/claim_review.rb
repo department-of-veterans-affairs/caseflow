@@ -195,7 +195,7 @@ class ClaimReview < DecisionReview
   end
 
   def issues_hash
-    issue_list = active_status? ? request_issues.open.all : fetch_all_decision_issues
+    issue_list = active_status? ? request_issues.active.all : fetch_all_decision_issues
 
     return [] if issue_list.empty?
 
@@ -203,7 +203,7 @@ class ClaimReview < DecisionReview
   end
 
   def contention_records(epe)
-    epe.request_issues.open
+    epe.request_issues.active
   end
 
   def all_contention_records(epe)

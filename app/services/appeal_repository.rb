@@ -113,7 +113,7 @@ class AppealRepository
         appeal.issues = (issues[appeal.vacols_id] || []).map { |issue| Issue.load_from_vacols(issue.attributes) }
         appeal.hearings = hearings[appeal.vacols_id] || []
         appeal.cavc_decisions = cavc_decisions[appeal.vacols_id] || []
-        appeal.remand_return_date = (aod_and_rem_return[appeal.vacols_id].rem_return || false) unless appeal.open?
+        appeal.remand_return_date = (aod_and_rem_return[appeal.vacols_id].rem_return || false) unless appeal.active?
         appeal.save
         appeal
       end
@@ -368,7 +368,7 @@ class AppealRepository
 
   # Determine VACOLS location desired after dispatching a decision
   def self.location_after_dispatch(appeal:)
-    return unless appeal.open?
+    return unless appeal.active?
 
     return "54" if appeal.vamc?
     return "53" if appeal.national_cemetery_administration?
