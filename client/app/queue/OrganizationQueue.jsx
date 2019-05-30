@@ -151,41 +151,68 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
+// TODO: DRY code up re whether to display regional office column.
 const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
   { organizationName === 'Hearing Admin' && <BulkAssignModal tasks={tasks} /> }
-  <TaskTable
-    customColumns={[
-      docketNumberColumn(tasks, false),
-      hearingBadgeColumn(tasks),
-      detailsColumn(tasks, false, userRole),
-      taskColumn(tasks),
-      (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ?
-        regionalOfficeColumn(tasks) : null
-    ]}
-    includeType
-    includeDaysWaiting
-    includeReaderLink
-    includeNewDocsIcon
-    tasks={tasks}
-  />
+  { (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ?
+    <TaskTable
+      customColumns={[
+        docketNumberColumn(tasks, false),
+        hearingBadgeColumn(tasks),
+        detailsColumn(tasks, false, userRole),
+        taskColumn(tasks),
+        regionalOfficeColumn(tasks)
+      ]}
+      includeType
+      includeDaysWaiting
+      includeReaderLink
+      includeNewDocsIcon
+      tasks={tasks}
+    /> :
+    <TaskTable
+      customColumns={[
+        docketNumberColumn(tasks, false),
+        hearingBadgeColumn(tasks),
+        detailsColumn(tasks, false, userRole),
+        taskColumn(tasks)
+      ]}
+      includeType
+      includeDaysWaiting
+      includeReaderLink
+      includeNewDocsIcon
+      tasks={tasks}
+    />
+  }
 </React.Fragment>;
 
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
   <p className="cf-margin-top-0">{description}</p>
-
-  <TaskTable
-    customColumns={[
-      docketNumberColumn(tasks, false),
-      hearingBadgeColumn(tasks),
-      detailsColumn(tasks, false, userRole),
-      taskColumn(tasks),
-      (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ?
-        regionalOfficeColumn(tasks) : null
-    ]}
-    includeType
-    includeAssignedTo
-    includeDaysWaiting
-    tasks={tasks}
-  />
+  { (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') ?
+    <TaskTable
+      customColumns={[
+        docketNumberColumn(tasks, false),
+        hearingBadgeColumn(tasks),
+        detailsColumn(tasks, false, userRole),
+        taskColumn(tasks),
+        regionalOfficeColumn(tasks)
+      ]}
+      includeType
+      includeAssignedTo
+      includeDaysWaiting
+      tasks={tasks}
+    /> :
+    <TaskTable
+      customColumns={[
+        docketNumberColumn(tasks, false),
+        hearingBadgeColumn(tasks),
+        detailsColumn(tasks, false, userRole),
+        taskColumn(tasks)
+      ]}
+      includeType
+      includeAssignedTo
+      includeDaysWaiting
+      tasks={tasks}
+    />
+  }
 </React.Fragment>;
