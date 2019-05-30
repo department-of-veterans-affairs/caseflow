@@ -100,7 +100,7 @@ class Hearing < ApplicationRecord
   end
 
   def disposition_task_in_progress
-    disposition_task ? disposition_task.active_with_no_children? : false
+    disposition_task ? disposition_task.open_with_no_children? : false
   end
 
   def disposition_editable
