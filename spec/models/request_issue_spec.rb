@@ -155,6 +155,18 @@ describe RequestIssue do
   end
 
   context "#requires_record_request_task?" do
+    context "issue is ineligible" do
+      let(:benefit_type) { "education" }
+
+      before do
+        allow(nonrating_request_issue).to receive(:eligible?).and_return(false)
+      end
+
+      it "does not require record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq false
+      end
+    end
+
     context "issue is unidentified" do
       it "does not require record request task" do
         expect(unidentified_issue.requires_record_request_task?).to eq false

@@ -439,7 +439,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def requires_record_request_task?
-    !is_unidentified && !benefit_type_requires_payee_code?
+    eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
 
   def decision_or_promulgation_date
