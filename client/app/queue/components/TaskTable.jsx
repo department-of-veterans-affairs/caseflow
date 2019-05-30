@@ -132,6 +132,31 @@ export const issueCountColumn = (requireDasRecord) => {
   };
 };
 
+export const typeColumn = (tasks, requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'appeal.caseType',
+    anyFiltersAreSet: true,
+    label: 'Filter by type',
+    valueName: 'caseType',
+    valueFunction: (task) => hasDASRecord(task, requireDasRecord) ?
+      renderAppealType(task.appeal) :
+      <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
+    span: (task) => hasDASRecord(task, requireDasRecord) ? 1 : 5,
+    getSortValue: (task) => {
+      // We append a * before the docket number if it's a priority case since * comes before
+      // numbers in sort order, this forces these cases to the top of the sort.
+      if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
+        return `*${task.appeal.docketNumber}`;
+      }
+
+      return task.appeal.docketNumber;
+    }
+  };
+};
+
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -201,28 +226,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseTypeColumn = () => {
-    return this.props.includeType ? {
-      header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
-      enableFilter: true,
-      tableData: this.props.tasks,
-      columnName: 'appeal.caseType',
-      anyFiltersAreSet: true,
-      label: 'Filter by type',
-      valueName: 'caseType',
-      valueFunction: (task) => this.taskHasDASRecord(task) ?
-        renderAppealType(task.appeal) :
-        <span {...redText}>{COPY.ATTORNEY_QUEUE_TABLE_TASK_NEEDS_ASSIGNMENT_ERROR_MESSAGE}</span>,
-      span: (task) => this.taskHasDASRecord(task) ? 1 : 5,
-      getSortValue: (task) => {
-        // We append a * before the docket number if it's a priority case since * comes before
-        // numbers in sort order, this forces these cases to the top of the sort.
-        if (task.appeal.isAdvancedOnDocket || task.appeal.caseType === LEGACY_APPEAL_TYPES.CAVC_REMAND) {
-          return `*${task.appeal.docketNumber}`;
-        }
-
-        return task.appeal.docketNumber;
-      }
-    } : null;
+    return this.props.includeType ? typeColumn(this.props.tasks) : null;
   }
 
   caseAssignedToColumn = () => {
