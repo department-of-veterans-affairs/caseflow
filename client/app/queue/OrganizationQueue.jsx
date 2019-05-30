@@ -8,7 +8,7 @@ import BulkAssignModal from './components/BulkAssignModal';
 import TabWindow from '../components/TabWindow';
 import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
   taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
-  assignedToColumn } from './components/TaskTable';
+  assignedToColumn, daysWaitingColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -154,12 +154,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
 const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => {
   let columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-    detailsColumn(tasks, false, userRole), taskColumn(tasks), typeColumn(tasks, false)];
+    detailsColumn(tasks, false, userRole), taskColumn(tasks), typeColumn(tasks, false), daysWaitingColumn(false)];
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
     columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
       detailsColumn(tasks, false, userRole), taskColumn(tasks),
-      regionalOfficeColumn(tasks), typeColumn(tasks, false)];
+      regionalOfficeColumn(tasks), typeColumn(tasks, false), daysWaitingColumn(false)];
   }
 
   return (<React.Fragment>
@@ -167,7 +167,6 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
     { organizationName === 'Hearing Admin' && <BulkAssignModal tasks={tasks} /> }
     <TaskTable
       customColumns={columns}
-      includeDaysWaiting
       includeReaderLink
       includeNewDocsIcon
       tasks={tasks}
@@ -177,19 +176,18 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
 
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => {
   let columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
-    detailsColumn(tasks, false, userRole), taskColumn(tasks), typeColumn(tasks, false)];
+    detailsColumn(tasks, false, userRole), taskColumn(tasks), typeColumn(tasks, false), assignedToColumn(tasks), daysWaitingColumn(false)];
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
     columns = [docketNumberColumn(tasks, false), hearingBadgeColumn(tasks),
       detailsColumn(tasks, false, userRole), taskColumn(tasks),
-      regionalOfficeColumn(tasks), typeColumn(tasks, false, assignedToColumn(tasks))];
+      regionalOfficeColumn(tasks), typeColumn(tasks, false), assignedToColumn(tasks), daysWaitingColumn(false)];
   }
 
   return (<React.Fragment>
     <p className="cf-margin-top-0">{description}</p>
     <TaskTable
       customColumns={columns}
-      includeDaysWaiting
       tasks={tasks}
     />
     }
