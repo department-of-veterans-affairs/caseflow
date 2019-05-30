@@ -25,18 +25,16 @@ class Tasks::ChangeTypeController < TasksController
     new_class = MailTask.subclasses.find { |mt| mt.name == update_params[:action] }
 
     default_assignee = new_class.default_assignee(task.parent, update_params)
-    new_assignee = default_assignee.user_has_access?(current_user) ? task.assigned_to : default_assignee
 
     new_class.create!(
       appeal: task.appeal,
-      assigned_to: new_assignee,
+      assigned_to: default_assignee.user_has_access?(current_user) ? task.assigned_to : default_assignee,
       assigned_by: task.assigned_by,
       instructions: [task.instructions, update_params[:instructions]].flatten,
       status: task.status,
-      parent: task.parent
-      # on_hold_duration: task.on_hold_duration, ??
-      # placed_on_hold_at: task.placed_on_hold_at, ??
-      # started_at: task.started_at, ??
+      parent: task.parent,
+      on_hold_duration: task.on_hold_duration,
+      placed_on_hold_at: task.placed_on_hold_at
     )
   end
 
