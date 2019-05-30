@@ -149,7 +149,7 @@ describe RequestIssue do
       end
     end
 
-    it "defalts to 'unknown'" do
+    it "defaults to 'unknown'" do
       expect(rating_request_issue.guess_benefit_type).to eq "unknown"
     end
   end
