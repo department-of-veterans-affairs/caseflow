@@ -7,48 +7,7 @@ RSpec.feature "Hearings tasks workflows" do
 
   before do
     OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
-    OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
     User.authenticate!(user: user)
-  end
-
-  describe "Bulk Assign NoShowHearingTasks" do 
-    
-    let(:veteran) { FactoryBot.create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
-    def fill_in_and_submit_bulk_assign_modal
-      sleep 1
-      options = all('option')
-      assign_to = options[2]
-      assign_to.click
-      task_type = options[8]
-      sleep 1
-      task_type.click
-      number_of_tasks = options[10];
-      number_of_tasks.click
-      submit = all('button', text: "Assign Tasks")[0]
-      submit.click
-      sleep 1
-    end
-
-    def switch_to_hearing_management_org 
-      find('a', text: 'Switch views').click
-      sleep 1
-      find('a', text: 'Hearing Management team cases').click
-    end
-    it "is able to bulk assign tasks for the hearing management org" do
-      3.times do 
-        appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
-        root_task = FactoryBot.create(:root_task, appeal: appeal) 
-        distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
-        parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
-        disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
-        FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
-      end
-      visit("organizations/hearing-management/")
-      click_button(text: "Assign Tasks")
-      fill_in_and_submit_bulk_assign_modal
-      switch_to_hearing_management_org
-      expect(page).to have_content("Assigned (3)")
-    end
   end
 
   describe "Postponing a NoShowHearingTask" do
@@ -129,6 +88,39 @@ RSpec.feature "Hearings tasks workflows" do
             click_button("Submit")
             expect(page).to have_content("Successfully changed hearing disposition to Postponed")
           end
+        end
+      end
+
+      describe "Bulk Assign NoShowHearingTasks" do 
+        let(:veteran) { FactoryBot.create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
+        def fill_in_and_submit_bulk_assign_modal
+          sleep 1
+          options = all('option')
+          assign_to = options[2]
+          assign_to.click
+          task_type = options[8]
+          sleep 1
+          task_type.click
+          number_of_tasks = options[10];
+          number_of_tasks.click
+          submit = all('button', text: "Assign Tasks")[0]
+          submit.click
+          sleep 1
+        end
+        it "is able to bulk assign tasks for the hearing management org" do
+          3.times do 
+            appeal = FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number)
+            root_task = FactoryBot.create(:root_task, appeal: appeal) 
+            distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
+            parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
+            disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
+            FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+          end
+          success_msg = 'You have assigned 4 No Show Hearing Task task(s) to your individual queue'
+          visit("organizations/hearing-management/")
+          click_button(text: "Assign Tasks")
+          fill_in_and_submit_bulk_assign_modal
+          expect(page).to have_content(success_msg)
         end
       end
     end
