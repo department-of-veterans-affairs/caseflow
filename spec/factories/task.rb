@@ -69,10 +69,10 @@ FactoryBot.define do
       parent { FactoryBot.create(:generic_task) }
     end
 
-    factory :colocated_task do
+    factory :colocated_task, class: ColocatedTask do
       type { ColocatedTask.name }
 
-      factory :ama_colocated_task do
+      factory :ama_colocated_task, class: ColocatedTask do
         appeal { create(:appeal) }
       end
 
@@ -199,7 +199,7 @@ FactoryBot.define do
       parent { create(:disposition_task, appeal: appeal) }
     end
 
-    factory :ama_attorney_task do
+    factory :ama_attorney_task, class: AttorneyTask do
       type { AttorneyTask.name }
       appeal { create(:appeal) }
       parent { create(:ama_judge_task) }
@@ -218,7 +218,7 @@ FactoryBot.define do
       assigned_to { TranscriptionTeam.singleton }
     end
 
-    factory :ama_vso_task do
+    factory :ama_vso_task, class: GenericTask do
       type { GenericTask.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
@@ -232,13 +232,13 @@ FactoryBot.define do
       assigned_to { QualityReview.singleton }
     end
 
-    factory :quality_review_task do
+    factory :quality_review_task, class: QualityReviewTask do
       type { QualityReviewTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
     end
 
-    factory :bva_dispatch_task do
+    factory :bva_dispatch_task, class: BvaDispatchTask do
       type { BvaDispatchTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
