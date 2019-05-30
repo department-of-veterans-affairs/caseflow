@@ -155,14 +155,14 @@ export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => {
   let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
     userRole), taskColumn(tasks), typeColumn(tasks, false),
-    docketNumberColumn(tasks, false), daysWaitingColumn(false),
-    readerLinkColumn(false, true)];
+  docketNumberColumn(tasks, false), daysWaitingColumn(false),
+  readerLinkColumn(false, true)];
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
     columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
       userRole), taskColumn(tasks), regionalOfficeColumn(tasks),
-      typeColumn(tasks, false), docketNumberColumn(tasks, false),
-      daysWaitingColumn(false), readerLinkColumn(false, true)];
+    typeColumn(tasks, false), docketNumberColumn(tasks, false),
+    daysWaitingColumn(false), readerLinkColumn(false, true)];
   }
 
   return (<React.Fragment>
@@ -178,14 +178,14 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
 const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => {
   let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
     userRole), taskColumn(tasks), typeColumn(tasks, false),
-    assignedToColumn(tasks), docketNumberColumn(tasks, false),
-    daysWaitingColumn(false)];
+  assignedToColumn(tasks), docketNumberColumn(tasks, false),
+  daysWaitingColumn(false)];
 
   if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
     columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
       userRole), taskColumn(tasks), regionalOfficeColumn(tasks),
-      typeColumn(tasks, false), assignedToColumn(tasks),
-      docketNumberColumn(tasks, false), daysWaitingColumn(false)];
+    typeColumn(tasks, false), assignedToColumn(tasks),
+    docketNumberColumn(tasks, false), daysWaitingColumn(false)];
   }
 
   return (<React.Fragment>
