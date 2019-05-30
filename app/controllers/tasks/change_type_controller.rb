@@ -24,10 +24,8 @@ class Tasks::ChangeTypeController < TasksController
   def mail_sibling
     new_class = MailTask.subclasses.find { |mt| mt.name == update_params[:action] }
 
-    new_assignee = task.assigned_to
-    if new_class.respond_to? :default_assignee
-      new_assignee = new_class.default_assignee(task.parent, update_params)
-    end
+    default_assignee = new_class.default_assignee(task.parent, update_params)
+    new_assignee = default_assignee.user_has_access?(current_user) ? task.assigned_to : default_assignee
 
     new_class.create!(
       appeal: task.appeal,
