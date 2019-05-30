@@ -86,7 +86,7 @@ RSpec.feature "Colocated checkout flows" do
       vet_name = appeal.veteran_full_name
 
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
-      click_dropdown(index: 0)
+      click_dropdown(text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label])
 
       expect(page).to have_content(COPY::MARK_TASK_COMPLETE_BUTTON)
       click_on COPY::MARK_TASK_COMPLETE_BUTTON
