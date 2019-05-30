@@ -20,7 +20,7 @@ describe ReaderUser do
     context ".all_without_records" do
       it "should return only users without associated reader users" do
         users = ReaderUser.all_without_records
-        expect(users).to eq(active_users)
+        expect(users).to eq(active_users[0..4])
       end
     end
 
