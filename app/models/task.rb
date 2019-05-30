@@ -70,14 +70,7 @@ class Task < ApplicationRecord
   # the subclass from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
-
-    # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
-    if actions.length > actions.pluck(:value).uniq.length
-      fail Caseflow::Error::DuplicateTaskActionPaths, task_id: id, user_id: user.id, labels: actions.pluck(:label)
-    end
-
-    actions
+    actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
   end
 
   def appropriate_timed_hold_task_action
@@ -133,12 +126,12 @@ class Task < ApplicationRecord
   end
 
   def calculated_placed_on_hold_at
-    active_child_timed_hold_task&.timer_start_time
+    active_child_timed_hold_task&.timer_start_time || placed_on_hold_at
   end
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i || on_hold_duration
   end
 
   def self.recently_closed
@@ -330,14 +323,12 @@ class Task < ApplicationRecord
   end
 
   def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
+    update!(status: Constants.TASK_STATUSES.in_progress) if old_style_hold_expired?
   end
 
-  def on_hold_expired?
-    return true if on_hold? && placed_on_hold_at && on_hold_duration &&
-                   placed_on_hold_at + on_hold_duration.days < Time.zone.now
-
-    false
+  def old_style_hold_expired?
+    !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
+      (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
   end
 
   def serializer_class

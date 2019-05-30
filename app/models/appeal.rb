@@ -335,7 +335,7 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    RootTask.create_root_and_sub_tasks!(self)
+    InitialTasksFactory.new(self).create_root_and_sub_tasks!
     create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
     maybe_create_translation_task
   end
@@ -674,6 +674,11 @@ class Appeal < DecisionReview
     return ["cavc"] if request_issues.any? { |ri| ri.benefit_type == "fiduciary" }
 
     %w[supplemental_claim cavc]
+  end
+
+  def assign_ro_and_update_ahls(new_ro)
+    update!(closest_regional_office: new_ro)
+    va_dot_gov_address_validator.assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
   end
 
   private

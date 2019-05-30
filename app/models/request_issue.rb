@@ -332,7 +332,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def guess_benefit_type
+    return contested_decision_issue.benefit_type if contested_decision_issue
     return "unidentified" if is_unidentified
+    return "ineligible" unless eligible?
 
     "unknown"
   end
@@ -438,7 +440,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def requires_record_request_task?
-    !is_unidentified && !benefit_type_requires_payee_code?
+    eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
 
   def decision_or_promulgation_date
