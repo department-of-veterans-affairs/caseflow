@@ -14,7 +14,6 @@ import { bindActionCreators } from 'redux';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
-import BulkAssignModal from './BulkAssignModal';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
@@ -22,7 +21,7 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
-import { setSelectionOfTaskOfUser, bulkAssignTasks } from '../QueueActions';
+import { setSelectionOfTaskOfUser } from '../QueueActions';
 import { renderAppealType, taskHasCompletedHold, actionNameOfTask } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
@@ -34,7 +33,6 @@ import {
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
-import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
 
 const hasDASRecord = (task, requireDasRecord) => {
   return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
@@ -73,6 +71,45 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
   };
 };
 
+export const hearingBadgeColumn = () => {
+  return {
+    header: '',
+    valueFunction: (task) => <HearingBadge task={task} />
+  };
+};
+
+export const detailsColumn = (tasks, requireDasRecord, userRole) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
+    valueFunction: (task) => <CaseDetailsLink
+      task={task}
+      appeal={task.appeal}
+      userRole={userRole}
+      disabled={!hasDASRecord(task, requireDasRecord)} />,
+    getSortValue: (task) => {
+      const vetName = task.appeal.veteranFullName.split(' ');
+      // only take last, first names. ignore middle names/initials
+
+      return `${_.last(vetName)} ${vetName[0]}`;
+    }
+  };
+};
+
+export const taskColumn = (tasks) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'label',
+    anyFiltersAreSet: true,
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    label: 'Filter by task',
+    valueName: 'label',
+    valueFunction: (task) => actionNameOfTask(task),
+    getSortValue: (task) => actionNameOfTask(task)
+  };
+};
+
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
 
@@ -93,10 +130,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
 
   caseHearingColumn = () => {
-    return this.props.includeHearingBadge ? {
-      header: '',
-      valueFunction: (task) => <HearingBadge task={task} />
-    } : null;
+    return this.props.includeHearingBadge ? hearingBadgeColumn() : null;
   }
 
   caseSelectColumn = () => {
@@ -115,35 +149,13 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDetailsColumn = () => {
-    return this.props.includeDetailsLink ? {
-      header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
-      valueFunction: (task) => <CaseDetailsLink
-        task={task}
-        appeal={task.appeal}
-        userRole={this.props.userRole}
-        disabled={!this.taskHasDASRecord(task)} />,
-      getSortValue: (task) => {
-        const vetName = task.appeal.veteranFullName.split(' ');
-        // only take last, first names. ignore middle names/initials
-
-        return `${_.last(vetName)} ${vetName[0]}`;
-      }
-    } : null;
+    return this.props.includeDetailsLink ?
+      detailsColumn(this.props.tasks, this.props.requireDasRecord, this.props.userRole) :
+      null;
   }
 
   caseTaskColumn = () => {
-    return this.props.includeTask ? {
-      header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-      enableFilter: true,
-      tableData: this.props.tasks,
-      columnName: 'label',
-      anyFiltersAreSet: true,
-      customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
-      label: 'Filter by task',
-      valueName: 'label',
-      valueFunction: (task) => actionNameOfTask(task),
-      getSortValue: (task) => actionNameOfTask(task)
-    } : null;
+    return this.props.includeTask ? taskColumn(this.props.tasks) : null;
   }
 
   caseDocumentIdColumn = () => {
@@ -358,28 +370,15 @@ export class TaskTableUnconnected extends React.PureComponent {
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
-  render = () => {
-    const { tasks } = this.props;
-
-    return (
-      <div>
-        <BulkAssignModal
-          enableBulkAssign={this.props.organizationName === 'Hearing Admin'}
-          organizationUrl={ORGANIZATION_NAMES[this.props.organizationName]}
-          tasks={tasks}
-          assignTasks={this.props.bulkAssignTasks} />
-        <QueueTable
-          columns={this.getQueueColumns}
-          rowObjects={tasks}
-          getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
-          defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-          alternateColumnNames={COLUMN_NAMES}
-          enablePagination
-          rowClassNames={(task) =>
-            this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
-      </div>
-    );
-  }
+  render = () => <QueueTable
+    columns={this.getQueueColumns}
+    rowObjects={this.props.tasks}
+    getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
+    defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
+    alternateColumnNames={COLUMN_NAMES}
+    enablePagination
+    rowClassNames={(task) =>
+      this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
 }
 
 const mapStateToProps = (state) => ({
@@ -390,10 +389,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    setSelectionOfTaskOfUser,
-    bulkAssignTasks
-  }, dispatch)
+  bindActionCreators({ setSelectionOfTaskOfUser }, dispatch)
 );
 
 export default (connect(mapStateToProps, mapDispatchToProps)(TaskTableUnconnected));
