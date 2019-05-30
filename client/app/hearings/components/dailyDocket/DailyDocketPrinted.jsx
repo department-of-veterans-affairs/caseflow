@@ -6,7 +6,7 @@ import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Table from '../../../components/Table';
 import { getDisplayTime } from './DailyDocketRowDisplayText';
-import { isPreviouslyScheduledHearing } from '../../utils';
+import { isPreviouslyScheduledHearing, sortHearings } from '../../utils';
 import { getDate } from '../../../util/DateUtil';
 import { openPrintDialogue } from '../../../util/PrintUtil';
 import AOD_CODE_TO_LABEL_MAP from '../../../../constants/AOD_CODE_TO_LABEL_MAP.json';
@@ -73,7 +73,7 @@ export class DailyDocketPrinted extends React.Component {
 
   render() {
     const { docket, hearings } = this.props;
-    const allHearings = Object.values(hearings);
+    const allHearings = sortHearings(hearings);
     const currentHearings = _.filter(allHearings, _.negate(isPreviouslyScheduledHearing));
     const previousHearings = _.filter(allHearings, isPreviouslyScheduledHearing);
 

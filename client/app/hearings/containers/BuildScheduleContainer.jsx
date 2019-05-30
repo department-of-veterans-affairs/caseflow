@@ -2,7 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { onReceivePastUploads, unsetSuccessMessage, onConfirmAssignmentsUpload } from '../actions/actions';
+import {
+  onReceivePastUploads,
+  unsetSuccessMessage,
+  onConfirmAssignmentsUpload
+} from '../actions/hearingScheduleActions';
 import ApiUtil from '../../util/ApiUtil';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../../constants/AppConstants';
