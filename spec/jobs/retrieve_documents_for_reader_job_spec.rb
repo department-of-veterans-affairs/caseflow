@@ -5,48 +5,47 @@ require "faker"
 
 describe RetrieveDocumentsForReaderJob do
   context ".perform" do
-    context "A user exists with reader privileges" do
-      let!(:user_with_reader_role) do
-        Generators::User.create(roles: ["Reader"])
+    context "a user exists who have been recently active" do
+      let!(:active_user) do
+        create(:user, last_login_at: 3.days.ago )
       end
 
-      let!(:user_without_reader_role) do
-        Generators::User.create(roles: ["Something else"])
+      let!(:inactive_user) do
+        create(:user, last_login_at: 3.months.ago )
       end
 
-      context "without a reader_user" do
-        it "should create a reader_user and run FindDocumentsForReaderUserJob for this user" do
+      context "without a reader user" do
+        it "should create a reader user and run FindDocumentsForReaderUserJob for this user" do
           expect(FetchDocumentsForReaderUserJob).to receive(:perform_later).once do |reader_user|
-            expect(reader_user.user.id).to eq(user_with_reader_role.id)
+            expect(reader_user.user.id).to eq(active_user.id)
           end
           RetrieveDocumentsForReaderJob.perform_now
         end
       end
 
-      context "with existing reader_user" do
+      context "with existing active reader user" do
         before do
-          Generators::ReaderUser.create(user_id: user_with_reader_role.id)
+          Generators::ReaderUser.create(user_id: active_user.id)
         end
 
-        it "should FindDocumentsForReaderUserJob for this user" do
+        it "should run FindDocumentsForReaderUserJob for this user" do
           expect(FetchDocumentsForReaderUserJob).to receive(:perform_later).once do |reader_user|
-            expect(reader_user.user.id).to eq(user_with_reader_role.id)
+            expect(reader_user.user.id).to eq(active_user.id)
           end
           RetrieveDocumentsForReaderJob.perform_now
         end
       end
 
-      context "with a limit parameter of 5 passed in" do
+      context "with existing inactive reader user" do
         before do
-          # create 10 users
-          10.times do
-            u = Generators::User.create(roles: ["Reader"])
-            Generators::ReaderUser.create(user_id: u.id)
-          end
+          Generators::ReaderUser.create(user_id: inactive_user.id)
         end
-        it "should only run FetchDocumentsForReaderUserJob 5 times" do
-          expect(FetchDocumentsForReaderUserJob).to receive(:perform_later).with(anything).exactly(5).times
-          RetrieveDocumentsForReaderJob.perform_now("limit" => 5)
+
+        it "should only run FindDocumentsForReaderUserJob for the active user" do
+          expect(FetchDocumentsForReaderUserJob).to receive(:perform_later).once do |reader_user|
+            expect(reader_user.user.id).to eq(active_user.id)
+          end
+          RetrieveDocumentsForReaderJob.perform_now
         end
       end
     end
