@@ -33,6 +33,39 @@ class TaskActionRepository
       }
     end
 
+    def cancel_address_verify_task_and_assign_regional_office_data(_task, _user = nil)
+      {
+        modal_title: COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE,
+        modal_body: COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL,
+        message_title: COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE,
+        message_detail: COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_DETAIL
+      }
+    end
+
+    def cancel_foreign_veterans_case_data(task, _user = nil)
+      {
+        modal_title: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE,
+        modal_body: COPY::CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL,
+        message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
+        message_detail: format(
+          COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL,
+          task.assigned_by&.full_name || "the assigner"
+        )
+      }
+    end
+
+    def send_to_schedule_veterans_list(task, _user = nil)
+      {
+        modal_title: COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_TITLE,
+        modal_body: COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_DETAIL,
+        message_title: COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE,
+        message_detail: format(
+          COPY::SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL,
+          task.appeal.veteran_full_name
+        )
+      }
+    end
+
     def assign_to_user_data(task, user = nil)
       users = if task.assigned_to.is_a?(Organization)
                 task.assigned_to.users
