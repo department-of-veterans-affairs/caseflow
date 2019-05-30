@@ -715,7 +715,7 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     add_duplicate_issue_error(
-      RequestIssue.open.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
+      RequestIssue.active.find_by(contested_rating_issue_reference_id: contested_rating_issue_reference_id)
     )
   end
 
@@ -723,7 +723,7 @@ class RequestIssue < ApplicationRecord
     return unless contested_decision_issue_id
 
     add_duplicate_issue_error(
-      RequestIssue.open.find_by(contested_decision_issue_id: contested_decision_issue_id)
+      RequestIssue.active.find_by(contested_decision_issue_id: contested_decision_issue_id)
     )
   end
 
