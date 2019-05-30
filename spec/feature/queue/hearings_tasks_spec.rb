@@ -94,18 +94,15 @@ RSpec.feature "Hearings tasks workflows" do
       describe "Bulk Assign NoShowHearingTasks" do 
         let(:veteran) { FactoryBot.create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
         def fill_in_and_submit_bulk_assign_modal
-          sleep 1
-          options = all('option')
+          options = find_all('option', wait: 20)
           assign_to = options[2]
           assign_to.click
           task_type = options[8]
-          sleep 1
-          task_type.click
+          task_type.click(wait: 20)
           number_of_tasks = options[10];
           number_of_tasks.click
           submit = all('button', text: "Assign Tasks")[0]
           submit.click
-          sleep 1
         end
         it "is able to bulk assign tasks for the hearing management org" do
           3.times do 
