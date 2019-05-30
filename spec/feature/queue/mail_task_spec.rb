@@ -58,14 +58,6 @@ RSpec.feature "MailTasks" do
   end
 
   describe "Changing a mail team task type" do
-    # Fake available actions to allow change task type until the backend is implemented
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
-    before do
-      allow_any_instance_of(MailTask).to receive(:available_actions).and_return(
-        [Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h]
-      )
-    end
-
     context "when task does not need to be reassigned" do
       let(:root_task) { FactoryBot.create(:root_task) }
       let(:old_task_type) { DeathCertificateMailTask }
@@ -77,6 +69,10 @@ RSpec.feature "MailTasks" do
           parent_id: root_task.id,
           assigned_to: user
         )
+      end
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
       end
 
       it "should update the task type" do
@@ -107,13 +103,6 @@ RSpec.feature "MailTasks" do
         # Add instructions and try again
         instructions = generate_words(5)
         fill_in("instructions", with: instructions)
-
-        # Fake response until the backend is implemented
-        # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
-        allow_any_instance_of(TasksController).to receive(:update).and_return(
-          mail_task.update(type: new_task_type, instructions: [instructions])
-        )
-
         find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
         # We should see a success message but remain on the case details page
@@ -174,13 +163,6 @@ RSpec.feature "MailTasks" do
         # Add instructions and try again
         instructions = generate_words(5)
         fill_in("instructions", with: instructions)
-
-        # Fake response until the backend is implemented
-        # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
-        allow_any_instance_of(TasksController).to receive(:update).and_return(
-          mail_task.update(type: new_task_type, instructions: [instructions], assigned_to: FactoryBot.create(:user))
-        )
-
         find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
         # We should see a success message but remain on the case details page
@@ -194,8 +176,11 @@ RSpec.feature "MailTasks" do
 
         # Ensure the task has been updated
         expect(page).to have_content(format("TASK\n%<label>s", label: new_task_type.label))
-        expect(page).not_to have_content(format("ASSIGNED TO\n%<css_id>s", css_id: user.css_id))
-        click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+        expect(page).to have_content(format("ASSIGNED TO\n%<name>s", name: AodTeam.singleton.name))
+        # Cancelled task is showing up in timeline. is this intended? should the instructions be
+        #   showing up as well?
+        # click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
+        find_all("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
         expect(page).to have_content(instructions)
       end
     end
