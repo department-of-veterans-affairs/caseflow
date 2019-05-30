@@ -5,6 +5,7 @@ detectors:
     enabled: false
   TooManyMethods:
     exclude:
+      - DispositionTask
       - RootTask
   InstanceVariableAssumption:
     exclude:
@@ -24,6 +25,7 @@ detectors:
   UtilityFunction:
     public_methods_only: true
     exclude:
+      - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
       - Helpers::AppealHearingHelper#available_hearing_locations
       - Helpers::AppealHearingHelper#hearings

@@ -2,52 +2,71 @@
 
 describe Task do
   describe ".when_child_task_completed" do
+    let(:task) { FactoryBot.create(:task, :on_hold, type: Task.name) }
+    let(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent: task) }
+
+    subject { task.when_child_task_completed(child) }
+
     context "when on_hold task is assigned to a person" do
-      let(:task) { FactoryBot.create(:task, :on_hold, type: "Task") }
       context "when task has no child tasks" do
+        let(:child) { nil }
         it "should not change the task's status" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to eq(status_before)
         end
       end
 
       context "when task has 1 incomplete child task" do
-        before { FactoryBot.create(:task, :in_progress, type: "Task", parent_id: task.id) }
+        let(:child) { FactoryBot.create(:task, :in_progress, type: Task.name, parent_id: task.id) }
         it "should not change the task's status" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to eq(status_before)
         end
       end
 
       context "when task has 1 complete child task" do
-        before { FactoryBot.create(:task, :completed, type: "Task", parent_id: task.id) }
+        let(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent_id: task.id) }
         it "should change task's status to assigned" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to_not eq(status_before)
           expect(task.status).to eq("assigned")
         end
       end
 
-      context "when task has some complete and some incomplete child tasks" do
-        before do
-          FactoryBot.create_list(:task, 3, :completed, type: "Task", parent_id: task.id)
-          FactoryBot.create_list(:task, 2, :in_progress, type: "Task", parent_id: task.id)
+      context "when task is already closed" do
+        let!(:task) { FactoryBot.create(:task, :on_hold, type: Task.name) }
+        let!(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent: task) }
+
+        before { task.update!(status: Constants.TASK_STATUSES.completed) }
+
+        it "does not change the status of the task" do
+          subject
+          expect(task.status).to eq(Constants.TASK_STATUSES.completed)
         end
+      end
+
+      context "when task has some complete and some incomplete child tasks" do
+        let!(:completed_children) { FactoryBot.create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:incomplete_children) do
+          FactoryBot.create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
+        end
+        let(:child) { incomplete_children.last }
         it "should not change the task's status" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to eq(status_before)
         end
       end
 
       context "when task has only complete child tasks" do
-        before { FactoryBot.create_list(:task, 4, :completed, type: "Task", parent_id: task.id) }
+        let(:completed_children) { FactoryBot.create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:child) { completed_children.last }
         it "should change task's status to assigned" do
           status_before = task.status
-          task.when_child_task_completed
+          subject
           expect(task.status).to_not eq(status_before)
           expect(task.status).to eq("assigned")
         end
@@ -56,46 +75,70 @@ describe Task do
 
     context "when on_hold task is assigned to an organization" do
       let(:organization) { Organization.create!(name: "Other organization", url: "other") }
-      let(:task) { FactoryBot.create(:task, :on_hold, type: "Task", assigned_to: organization) }
+      let(:task) { FactoryBot.create(:task, :on_hold, type: Task.name, assigned_to: organization) }
+
       context "when task has no child tasks" do
+        let(:child) { nil }
         it "should not update any attribute of the task" do
           expect_any_instance_of(Task).to_not receive(:update!)
-          task.when_child_task_completed
+          subject
         end
       end
 
       context "when task has 1 incomplete child task" do
-        before { FactoryBot.create(:task, :in_progress, type: "Task", parent_id: task.id) }
+        let(:child) { FactoryBot.create(:task, :in_progress, type: Task.name, parent_id: task.id) }
         it "should not update any attribute of the task" do
           expect_any_instance_of(Task).to_not receive(:update!)
-          task.when_child_task_completed
+          subject
         end
       end
 
       context "when task has 1 complete child task" do
-        before { FactoryBot.create(:task, :completed, type: "Task", parent_id: task.id) }
+        let(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent_id: task.id) }
         it "should update the task" do
           expect_any_instance_of(Task).to receive(:update!)
-          task.when_child_task_completed
+          subject
+        end
+      end
+
+      context "when task is already closed" do
+        let!(:task) { FactoryBot.create(:task, :on_hold, type: Task.name, assigned_to: organization) }
+        let!(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent: task) }
+
+        before { task.update!(status: Constants.TASK_STATUSES.completed) }
+
+        it "does not change the status of the task" do
+          subject
+          expect(task.status).to eq(Constants.TASK_STATUSES.completed)
         end
       end
 
       context "when task has some complete and some incomplete child tasks" do
-        before do
-          FactoryBot.create_list(:task, 3, :completed, type: "Task", parent_id: task.id)
-          FactoryBot.create_list(:task, 2, :in_progress, type: "Task", parent_id: task.id)
+        let!(:completed_children) { FactoryBot.create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:incomplete_children) do
+          FactoryBot.create_list(:task, 2, :in_progress, type: Task.name, parent_id: task.id)
         end
+        let(:child) { incomplete_children.last }
         it "should not update any attribute of the task" do
           expect_any_instance_of(Task).to_not receive(:update!)
-          task.when_child_task_completed
+          subject
         end
       end
 
       context "when task has only complete child tasks" do
-        before { FactoryBot.create_list(:task, 4, :completed, type: "Task", parent_id: task.id) }
+        let(:completed_children) { FactoryBot.create_list(:task, 3, :completed, type: Task.name, parent_id: task.id) }
+        let(:child) { completed_children.last }
         it "should update the task" do
           expect_any_instance_of(Task).to receive(:update!)
-          task.when_child_task_completed
+          subject
+        end
+      end
+
+      context "when child task has a different type than parent" do
+        let!(:child) { FactoryBot.create(:generic_task, :completed, parent_id: task.id) }
+        it "sets the status of the parent to assigned" do
+          subject
+          expect(task.reload.status).to eq(Constants.TASK_STATUSES.assigned)
         end
       end
     end
@@ -120,7 +163,7 @@ describe Task do
   end
 
   describe "#prepared_by_display_name" do
-    let(:task) { create(:task, type: "Task") }
+    let(:task) { create(:task, type: Task.name) }
 
     context "when there is no attorney_case_review" do
       it "should return nil" do
@@ -129,7 +172,7 @@ describe Task do
     end
 
     context "when there is an attorney_case_review" do
-      let!(:child) { create(:task, type: "Task", appeal: task.appeal, parent_id: task.id) }
+      let!(:child) { create(:task, type: Task.name, appeal: task.appeal, parent_id: task.id) }
       let!(:attorney_case_reviews) do
         create(:attorney_case_review, task_id: child.id, attorney: create(:user, full_name: "Bob Smith"))
       end
@@ -162,7 +205,7 @@ describe Task do
   end
 
   describe "#latest_attorney_case_review" do
-    let(:task) { create(:task, type: "Task") }
+    let(:task) { create(:task, type: Task.name) }
 
     context "when there is no sub task" do
       it "should return nil" do
@@ -171,7 +214,7 @@ describe Task do
     end
 
     context "when there is a sub task" do
-      let!(:child) { create(:task, type: "Task", appeal: task.appeal, parent_id: task.id) }
+      let!(:child) { create(:task, type: Task.name, appeal: task.appeal, parent_id: task.id) }
       let!(:attorney_case_reviews) do
         [
           create(:attorney_case_review, task_id: child.id, created_at: 1.day.ago),
@@ -266,30 +309,6 @@ describe Task do
   describe ".available_actions_unwrapper" do
     let(:user) { FactoryBot.create(:user) }
     let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
-
-    context "when task/user combination result in multiple available actions with same path" do
-      let(:path) { "modal/path_to_modal" }
-      let(:labels) { ["First option", "Second option"] }
-
-      before do
-        allow(task).to receive(:actions_available?).and_return(true)
-
-        dummy_actions = [
-          { label: labels[0], value: path },
-          { label: labels[1], value: path }
-        ]
-        allow(task).to receive(:available_actions).and_return(dummy_actions)
-      end
-
-      it "should throw an error" do
-        expect { task.available_actions_unwrapper(user) }.to(raise_error) do |e|
-          expect(e).to be_a(Caseflow::Error::DuplicateTaskActionPaths)
-          expect(e.task_id).to eq(task.id)
-          expect(e.user_id).to eq(user.id)
-          expect(e.labels).to match_array(labels)
-        end
-      end
-    end
 
     context "without a timed hold task" do
       it "doesn't include end timed hold in the returned actions" do
@@ -478,8 +497,8 @@ describe Task do
     let!(:judge) { FactoryBot.create(:user) }
     let!(:attorney) { FactoryBot.create(:user) }
     let!(:appeal) { FactoryBot.create(:appeal) }
-    let!(:task) { FactoryBot.create(:task, type: "Task", appeal: appeal) }
-    let(:params) { { assigned_to: judge, appeal: task.appeal, parent_id: task.id, type: "Task" } }
+    let!(:task) { FactoryBot.create(:task, type: Task.name, appeal: appeal) }
+    let(:params) { { assigned_to: judge, appeal: task.appeal, parent_id: task.id, type: Task.name } }
 
     before do
       FactoryBot.create(:staff, :judge_role, sdomainid: judge.css_id)
@@ -533,7 +552,7 @@ describe Task do
     end
 
     context "the params are incomplete" do
-      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: "Task" } }
+      let(:params) { { assigned_to: judge, appeal: nil, parent_id: task.id, type: Task.name } }
 
       it "raises an error" do
         expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /Appeal can't be blank/)
@@ -680,6 +699,35 @@ describe Task do
 
       task.destroy!
       expect(TaskTimer.where(task_id: task_id).count).to eq(0)
+    end
+  end
+
+  describe ".old_style_hold_expired?" do
+    subject { task.old_style_hold_expired? }
+
+    context "when a task is on an active old-style hold" do
+      let(:task) { FactoryBot.create(:task, :on_hold) }
+
+      it "recognizes that the old style hold has not expired" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when a task has completed an old-style hold" do
+      let(:task) { FactoryBot.create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
+
+      it "recognizes that the old style hold has expired" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when a task has a completed old-style hold as well as a new timed hold" do
+      let(:task) { FactoryBot.create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
+      before { TimedHoldTask.create_from_parent(task, days_on_hold: 16) }
+
+      it "does not recognize that the task has completed the old-style hold" do
+        expect(subject).to eq(false)
+      end
     end
   end
 end

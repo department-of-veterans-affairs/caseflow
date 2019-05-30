@@ -70,14 +70,7 @@ class Task < ApplicationRecord
   # the subclass from TASK_ACTIONS that looks something like:
   # [ { "label": "Assign to person", "value": "modal/assign_to_person", "func": "assignable_users" }, ... ]
   def available_actions_unwrapper(user)
-    actions = actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
-
-    # Make sure each task action has a unique URL so we can determine which action we are selecting on the frontend.
-    if actions.length > actions.pluck(:value).uniq.length
-      fail Caseflow::Error::DuplicateTaskActionPaths, task_id: id, user_id: user.id, labels: actions.pluck(:label)
-    end
-
-    actions
+    actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
   end
 
   def appropriate_timed_hold_task_action
@@ -133,12 +126,12 @@ class Task < ApplicationRecord
   end
 
   def calculated_placed_on_hold_at
-    active_child_timed_hold_task&.timer_start_time
+    active_child_timed_hold_task&.timer_start_time || placed_on_hold_at
   end
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i || on_hold_duration
   end
 
   def self.recently_closed
@@ -231,8 +224,8 @@ class Task < ApplicationRecord
     ["", ""]
   end
 
-  def when_child_task_completed
-    update_status_if_children_tasks_are_complete
+  def when_child_task_completed(child_task)
+    update_status_if_children_tasks_are_complete(child_task)
   end
 
   def task_is_assigned_to_user_within_organization?(user)
@@ -330,14 +323,12 @@ class Task < ApplicationRecord
   end
 
   def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
+    update!(status: Constants.TASK_STATUSES.in_progress) if old_style_hold_expired?
   end
 
-  def on_hold_expired?
-    return true if on_hold? && placed_on_hold_at && on_hold_duration &&
-                   placed_on_hold_at + on_hold_duration.days < Time.zone.now
-
-    false
+  def old_style_hold_expired?
+    !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
+      (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
   end
 
   def serializer_class
@@ -363,7 +354,7 @@ class Task < ApplicationRecord
   end
 
   def update_parent_status
-    parent.when_child_task_completed
+    parent.when_child_task_completed(self)
   end
 
   def update_children_status_after_closed; end
@@ -380,11 +371,18 @@ class Task < ApplicationRecord
     saved_change_to_attribute?(:placed_on_hold_at)
   end
 
-  def update_status_if_children_tasks_are_complete
-    if children.any? && children.select(&:active?).empty?
-      return update!(status: Constants.TASK_STATUSES.completed) if assigned_to.is_a?(Organization)
-      return update!(status: :assigned) if on_hold?
+  def update_status_if_children_tasks_are_complete(child_task)
+    if children.any? && children.active.empty? && on_hold?
+      if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
+        return update!(status: Constants.TASK_STATUSES.completed)
+      end
+
+      update!(status: Constants.TASK_STATUSES.assigned)
     end
+  end
+
+  def cascade_closure_from_child_task?(child_task)
+    type == child_task&.type
   end
 
   def set_assigned_at

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190509155449) do
+ActiveRecord::Schema.define(version: 20190529143622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20190509155449) do
 
   create_table "appeals", force: :cascade, comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement)." do |t|
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
+    t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
     t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
     t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow by the user."
     t.datetime "establishment_attempted_at", comment: "Timestamp for when the appeal's establishment was last attempted."
@@ -843,6 +844,7 @@ ActiveRecord::Schema.define(version: 20190509155449) do
     t.datetime "attempted_at", comment: "Timestamp for when the request issue update processing was last attempted."
     t.integer "before_request_issue_ids", null: false, comment: "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).", array: true
     t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+    t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
     t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
     t.datetime "processed_at", comment: "Timestamp for when the request issue update successfully completed processing."

@@ -373,35 +373,50 @@ describe ColocatedTask do
     end
 
     context "for legacy appeals, the new assigned to location is set correctly" do
-      let(:legacy_org_translation_task) do
+      let(:org_colocated_task) do
         FactoryBot.create(
           :colocated_task,
           assigned_by: attorney,
           assigned_to: org,
-          action: :translation
+          action: action
         )
       end
-      let(:legacy_colocated_task) { legacy_org_translation_task.children.first }
-      let(:translation_location_code) { LegacyAppeal::LOCATION_CODES[:translation] }
+      let(:legacy_colocated_task) { org_colocated_task.children.first }
 
-      it "for translation and schedule hearing tasks, it assigns back to those locations" do
-        legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
-        expect(legacy_org_translation_task.appeal.location_code).to eq translation_location_code
+      before do
+        org_colocated_task.appeal.case_record.update!(bfcurloc: location_code)
       end
 
-      let(:legacy_org_task) do
-        FactoryBot.create(
-          :colocated_task,
-          assigned_by: attorney,
-          assigned_to: org,
-          action: :aoj
-        )
-      end
-      let(:legacy_colocated_task_2) { legacy_org_task.children.first }
+      context "when the location code is CASEFLOW" do
+        let(:location_code) { LegacyAppeal::LOCATION_CODES[:caseflow] }
 
-      it "for all other org tasks, it assigns back to the assigner" do
-        legacy_colocated_task_2.update!(status: Constants.TASK_STATUSES.cancelled)
-        expect(legacy_org_task.appeal.location_code).to eq attorney.vacols_uniq_id
+        context "for translation task" do
+          let(:action) { :translation }
+
+          it "assigns back to translation VACOLS location" do
+            legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
+            expect(org_colocated_task.reload.appeal.location_code).to eq(LegacyAppeal::LOCATION_CODES[:translation])
+          end
+        end
+
+        context "for AOJ ColocatedTask" do
+          let(:action) { :aoj }
+
+          it "assigns back to the assigner" do
+            legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
+            expect(org_colocated_task.reload.appeal.location_code).to eq(attorney.vacols_uniq_id)
+          end
+        end
+      end
+
+      context "when the location code is not CASEFLOW" do
+        let(:action) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
+        let(:location_code) { "FAKELOC" }
+
+        it "does not change the case's location_code" do
+          legacy_colocated_task.update!(status: Constants.TASK_STATUSES.cancelled)
+          expect(org_colocated_task.reload.appeal.location_code).to eq(location_code)
+        end
       end
     end
   end

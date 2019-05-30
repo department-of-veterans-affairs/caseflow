@@ -14,7 +14,6 @@ import { bindActionCreators } from 'redux';
 
 import QueueTable from '../QueueTable';
 import Checkbox from '../../components/Checkbox';
-import BulkAssignModal from './BulkAssignModal';
 import DocketTypeBadge from '../../components/DocketTypeBadge';
 import HearingBadge from './HearingBadge';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
@@ -22,8 +21,8 @@ import ReaderLink from '../ReaderLink';
 import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
-import { setSelectionOfTaskOfUser, bulkAssignTasks } from '../QueueActions';
-import { renderAppealType, taskHasCompletedHold, actionNameOfTask } from '../utils';
+import { setSelectionOfTaskOfUser } from '../QueueActions';
+import { renderAppealType, taskHasCompletedHold, actionNameOfTask, regionalOfficeCity } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
@@ -34,7 +33,82 @@ import {
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
-import ORGANIZATION_NAMES from '../../../constants/ORGANIZATION_NAMES.json';
+
+const hasDASRecord = (task, requireDasRecord) => {
+  return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
+};
+
+const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requireDasRecord) ? 1 : 0;
+
+export const docketNumberColumn = (tasks, requireDasRecord) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'appeal.docketName',
+    customFilterLabels: DOCKET_NAME_FILTERS,
+    anyFiltersAreSet: true,
+    label: 'Filter by docket name',
+    valueName: 'docketName',
+    valueFunction: (task) => {
+      if (!hasDASRecord(task, requireDasRecord)) {
+        return null;
+      }
+
+      return <React.Fragment>
+        <DocketTypeBadge name={task.appeal.docketName} number={task.appeal.docketNumber} />
+        <span>{task.appeal.docketNumber}</span>
+      </React.Fragment>;
+    },
+    span: collapseColumn(requireDasRecord),
+    getSortValue: (task) => {
+      if (!hasDASRecord(task, requireDasRecord)) {
+        return null;
+      }
+
+      return `${task.appeal.docketName || ''} ${task.appeal.docketNumber}`;
+    }
+  };
+};
+
+export const hearingBadgeColumn = () => {
+  return {
+    header: '',
+    valueFunction: (task) => <HearingBadge task={task} />
+  };
+};
+
+export const detailsColumn = (tasks, requireDasRecord, userRole) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
+    valueFunction: (task) => <CaseDetailsLink
+      task={task}
+      appeal={task.appeal}
+      userRole={userRole}
+      disabled={!hasDASRecord(task, requireDasRecord)} />,
+    getSortValue: (task) => {
+      const vetName = task.appeal.veteranFullName.split(' ');
+      // only take last, first names. ignore middle names/initials
+
+      return `${_.last(vetName)} ${vetName[0]}`;
+    }
+  };
+};
+
+export const taskColumn = (tasks) => {
+  return {
+    header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'label',
+    anyFiltersAreSet: true,
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    label: 'Filter by task',
+    valueName: 'label',
+    valueFunction: (task) => actionNameOfTask(task),
+    getSortValue: (task) => actionNameOfTask(task)
+  };
+};
 
 export class TaskTableUnconnected extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.uniqueId
@@ -50,20 +124,13 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   taskHasDASRecord = (task) => {
-    if (task.appeal.isLegacyAppeal && this.props.requireDasRecord) {
-      return task.taskId;
-    }
-
-    return true;
+    return hasDASRecord(task, this.props.requireDasRecord);
   }
 
   collapseColumnIfNoDASRecord = (task) => this.taskHasDASRecord(task) ? 1 : 0
 
   caseHearingColumn = () => {
-    return this.props.includeHearingBadge ? {
-      header: '',
-      valueFunction: (task) => <HearingBadge task={task} />
-    } : null;
+    return this.props.includeHearingBadge ? hearingBadgeColumn() : null;
   }
 
   caseSelectColumn = () => {
@@ -82,35 +149,13 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDetailsColumn = () => {
-    return this.props.includeDetailsLink ? {
-      header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
-      valueFunction: (task) => <CaseDetailsLink
-        task={task}
-        appeal={task.appeal}
-        userRole={this.props.userRole}
-        disabled={!this.taskHasDASRecord(task)} />,
-      getSortValue: (task) => {
-        const vetName = task.appeal.veteranFullName.split(' ');
-        // only take last, first names. ignore middle names/initials
-
-        return `${_.last(vetName)} ${vetName[0]}`;
-      }
-    } : null;
+    return this.props.includeDetailsLink ?
+      detailsColumn(this.props.tasks, this.props.requireDasRecord, this.props.userRole) :
+      null;
   }
 
   caseTaskColumn = () => {
-    return this.props.includeTask ? {
-      header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-      enableFilter: true,
-      tableData: this.props.tasks,
-      columnName: 'label',
-      anyFiltersAreSet: true,
-      customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
-      label: 'Filter by task',
-      valueName: 'label',
-      valueFunction: (task) => actionNameOfTask(task),
-      getSortValue: (task) => actionNameOfTask(task)
-    } : null;
+    return this.props.includeTask ? taskColumn(this.props.tasks) : null;
   }
 
   caseDocumentIdColumn = () => {
@@ -172,34 +217,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   }
 
   caseDocketNumberColumn = () => {
-    return this.props.includeDocketNumber ? {
-      header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
-      enableFilter: true,
-      tableData: this.props.tasks,
-      columnName: 'appeal.docketName',
-      customFilterLabels: DOCKET_NAME_FILTERS,
-      anyFiltersAreSet: true,
-      label: 'Filter by docket name',
-      valueName: 'docketName',
-      valueFunction: (task) => {
-        if (!this.taskHasDASRecord(task)) {
-          return null;
-        }
-
-        return <React.Fragment>
-          <DocketTypeBadge name={task.appeal.docketName} number={task.appeal.docketNumber} />
-          <span>{task.appeal.docketNumber}</span>
-        </React.Fragment>;
-      },
-      span: this.collapseColumnIfNoDASRecord,
-      getSortValue: (task) => {
-        if (!this.taskHasDASRecord(task)) {
-          return null;
-        }
-
-        return `${task.appeal.docketName || ''} ${task.appeal.docketNumber}`;
-      }
-    } : null;
+    return this.props.includeDocketNumber ? docketNumberColumn(this.props.tasks, this.props.requireDasRecord) : null;
   }
 
   caseIssueCountColumn = () => {
@@ -311,8 +329,10 @@ export class TaskTableUnconnected extends React.PureComponent {
       columnName: 'closestRegionalOffice',
       anyFiltersAreSet: true,
       label: 'Filter by regional office',
-      valueFunction: (task) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
-      getSortValue: (task) => task.closestRegionalOffice
+      valueFunction: (task) => {
+        return regionalOfficeCity(task);
+      },
+      getSortValue: (task) => regionalOfficeCity(task)
     } : null;
   }
 
@@ -352,42 +372,27 @@ export class TaskTableUnconnected extends React.PureComponent {
     return _.findIndex(this.getQueueColumns(), (column) => column.getSortValue);
   }
 
-  render = () => {
-    const { tasks } = this.props;
-
-    return (
-      <div>
-        <BulkAssignModal
-          enableBulkAssign={this.props.organizationName === 'Hearing Admin'}
-          organizationUrl={ORGANIZATION_NAMES[this.props.organizationName]}
-          tasks={tasks}
-          assignTasks={this.props.bulkAssignTasks} />
-        <QueueTable
-          columns={this.getQueueColumns}
-          rowObjects={tasks}
-          getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
-          defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-          alternateColumnNames={COLUMN_NAMES}
-          enablePagination
-          rowClassNames={(task) =>
-            this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />
-      </div>
-    );
-  }
+  render = () => <QueueTable
+    columns={this.getQueueColumns}
+    rowObjects={this.props.tasks}
+    getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
+    defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
+    alternateColumnNames={COLUMN_NAMES}
+    enablePagination
+    rowClassNames={(task) =>
+      this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;
 }
 
 const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole,
-  tasksAssignedByBulk: state.queue.tasksAssignedByBulk
+  tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
+  organizationId: state.ui.activeOrganization.id
 });
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    setSelectionOfTaskOfUser,
-    bulkAssignTasks
-  }, dispatch)
+  bindActionCreators({ setSelectionOfTaskOfUser }, dispatch)
 );
 
 export default (connect(mapStateToProps, mapDispatchToProps)(TaskTableUnconnected));

@@ -222,39 +222,6 @@ describe DispositionTask do
     end
   end
 
-  describe ".create_change_hearing_disposition_task_and_complete" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let(:instructions) { "These are the instructions I've written for you." }
-    let!(:disposition_task) do
-      FactoryBot.create(
-        :disposition_task,
-        parent: hearing_task,
-        appeal: appeal,
-        status: Constants.TASK_STATUSES.in_progress
-      )
-    end
-    let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
-
-    subject { disposition_task.create_change_hearing_disposition_task_and_complete(instructions) }
-
-    it "completes the disposition task and its children and creates a new change hearing disposition task" do
-      expect(disposition_task.status).to_not eq Constants.TASK_STATUSES.completed
-      expect(ChangeHearingDispositionTask.count).to eq 0
-
-      subject
-
-      expect(disposition_task.reload.status).to eq Constants.TASK_STATUSES.completed
-      expect(transcription_task.reload.status).to eq Constants.TASK_STATUSES.completed
-      expect(ChangeHearingDispositionTask.count).to eq 1
-      change_hearing_disposition_task = ChangeHearingDispositionTask.first
-      expect(change_hearing_disposition_task.appeal).to eq appeal
-      expect(change_hearing_disposition_task.parent).to eq hearing_task
-      expect(change_hearing_disposition_task.instructions).to match_array [instructions]
-    end
-  end
-
   context "disposition updates" do
     let(:disposition) { nil }
     let(:appeal) { FactoryBot.create(:appeal) }
@@ -449,9 +416,9 @@ describe DispositionTask do
           no_show_hearing_task = NoShowHearingTask.first
           expect(no_show_hearing_task).to_not be_nil
           expect(no_show_hearing_task.placed_on_hold_at).to_not be_nil
-          expect(no_show_hearing_task.on_hold_expired?).to be_falsey
+          expect(no_show_hearing_task.old_style_hold_expired?).to be_falsey
           expect(no_show_hearing_task.reload.on_hold?).to be_truthy
-          expect(no_show_hearing_task.on_hold_duration).to eq 25
+          expect(no_show_hearing_task.calculated_on_hold_duration).to eq 25
           instructions_text = "Mail must be received within 14 days of the original hearing date."
           expect(no_show_hearing_task.instructions).to eq [instructions_text]
         end

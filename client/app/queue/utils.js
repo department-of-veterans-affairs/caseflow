@@ -70,6 +70,7 @@ export const prepareTasksForStore = (tasks) =>
       closestRegionalOffice: task.attributes.closest_regional_office,
       createdAt: task.attributes.created_at,
       closedAt: task.attributes.closed_at,
+      assigneeName: task.attributes.assignee_name,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         name: task.attributes.assigned_to.name,
@@ -539,4 +540,8 @@ export const sortTaskList = (taskList) => {
     return new Date(next.closedAt || next.createdAt).getTime() -
     new Date(prev.closedAt || prev.createdAt).getTime();
   });
+};
+
+export const regionalOfficeCity = (objWithLocation) => {
+  return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city', 'Unknown');
 };

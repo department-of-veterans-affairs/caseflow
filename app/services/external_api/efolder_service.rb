@@ -3,15 +3,13 @@
 require "json"
 
 class ExternalApi::EfolderService
-  def self.quick_document_count_for_appeal(appeal, user)
-    response = generate_efolder_request(appeal.veteran_file_number.to_s, user, 1)
-    response[:documents]&.size
-    # We expect to fail fast. generate_efolder_request() raises an error if we have not gotten a positive response from
-    # Efolder after we are done retrying. Since we only retry once, it is more likely that we will raise that error.
-    # Since this function is only used to get the text that the front-end will display, we catch that error to avoid
-    # returning a 504 response to the front-end and showing the error text.
-  rescue Caseflow::Error::DocumentRetrievalError
-    "Try again later..."
+  def self.document_count(file_number, user)
+    Rails.cache.fetch("Efolder-document-count-#{file_number}", expires_in: 1.hour) do
+      headers = { "FILE-NUMBER" => file_number }
+      response = send_efolder_request("/api/v2/document_counts", user, headers)
+      response_body = JSON.parse(response.body)
+      response_body["documents"]
+    end
   end
 
   def self.fetch_documents_for(appeal, user)
@@ -38,9 +36,7 @@ class ExternalApi::EfolderService
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    msg = "Failed to fetch manifest after #{retry_attempts_count} seconds for #{vbms_id}, \
-      user_id: #{user.id}, response attributes: #{response_attrs}"
-    fail Caseflow::Error::DocumentRetrievalError, code: 504, message: msg
+    generate_response(response_attrs, vbms_id)
   end
 
   def self.check_for_error(response_body:, code:, vbms_id:, user_id:)

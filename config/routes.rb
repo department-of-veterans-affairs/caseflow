@@ -119,7 +119,6 @@ Rails.application.routes.draw do
   get '/regional_offices/:regional_office/open_hearing_dates', to: "regional_offices#open_hearing_dates"
 
   namespace :hearings do
-    resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :id
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
@@ -127,9 +126,11 @@ Rails.application.routes.draw do
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
+  get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/:hearing_id/details', to: "hearing_schedule#hearing_details_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day#index_print"
   get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"

@@ -28,11 +28,11 @@ class HearingAdminActionTask < GenericTask
   end
 
   def available_actions(user)
-    hearing_admin_actions = available_hearing_admin_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
 
     if assigned_to == user
       [
-        Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
+        appropriate_timed_hold_task_action,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
       ] | hearing_admin_actions
@@ -52,9 +52,15 @@ class HearingAdminActionTask < GenericTask
   private
 
   def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
+    if saved_change_to_status? && on_hold? && !on_hold_duration && !on_timed_hold? && assigned_to.is_a?(User)
       errors.add(:on_hold_duration, "has to be specified")
     end
+  end
+
+  # HearingAdminActionTasks on old-style holds can be placed on new timed holds which will not reset the
+  # placed_on_hold_at value.
+  def task_just_placed_on_hold?
+    super || (on_timed_hold? && children.active.where.not(type: TimedHoldTask.name).empty?)
   end
 end
 
@@ -71,17 +77,6 @@ end
 class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
   def self.label
     "Contested claimant issue"
-  end
-end
-class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
-  after_update :fetch_closest_ro_and_ahls, if: :task_just_closed?
-
-  def self.label
-    "Verify Address"
-  end
-
-  def fetch_closest_ro_and_ahls
-    appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
   end
 end
 class HearingAdminActionMissingFormsTask < HearingAdminActionTask

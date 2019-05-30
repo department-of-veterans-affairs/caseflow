@@ -122,8 +122,8 @@ describe TimedHoldTask do
     context "when there is no assigner argument" do
       let(:args) { initial_args.reject { |key, _| key == :assigned_by } }
 
-      it "sets assigned_by to parent assigned_to" do
-        expect(subject.assigned_by).to eq(parent.assigned_to)
+      it "sets assigned_by to nil" do
+        expect(subject.assigned_by).to eq(nil)
       end
     end
 
@@ -145,9 +145,20 @@ describe TimedHoldTask do
     context "when the task is active" do
       let(:status) { Constants.TASK_STATUSES.in_progress }
 
-      it "changes task status to completed" do
-        subject
-        expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+      context "when the TimedHoldTask does not have a parent task" do
+        it "changes task status to completed" do
+          subject
+          expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      context "when the TimedHoldTask has a parent task assigned to an organization" do
+        let(:parent_task) { FactoryBot.create(:generic_task, status: Constants.TASK_STATUSES.on_hold) }
+        let(:task) { FactoryBot.create(:timed_hold_task, status: status, parent: parent_task) }
+        it "sets the parent task status to assigned" do
+          subject
+          expect(parent_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        end
       end
     end
 

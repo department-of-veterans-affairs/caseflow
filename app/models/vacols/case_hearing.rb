@@ -54,13 +54,6 @@ class VACOLS::CaseHearing < VACOLS::Record
   after_update :create_or_update_diaries
 
   class << self
-    def hearings_for_judge(css_id)
-      id = connection.quote(css_id.upcase)
-
-      select_hearings.where("staff.sdomainid = #{id}")
-        .where("hearing_date > ?", 1.year.ago.beginning_of_day)
-    end
-
     def hearings_for_hearing_days(hearing_day_ids)
       select_hearings.where(vdkey: hearing_day_ids).where("hearing_date > ?", Date.new(2019, 1, 1))
     end

@@ -69,8 +69,7 @@ class User < ApplicationRecord
   end
 
   def hearings_user?
-    can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO"]) ||
-      (can?("Hearing Prep") && FeatureToggle.enabled?(:hearing_prep_redirect))
+    can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
   end
 
   def administer_org_users?

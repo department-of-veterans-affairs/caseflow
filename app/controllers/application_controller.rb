@@ -115,13 +115,6 @@ class ApplicationController < ApplicationBaseController
       title: "Queue",
       link: "/queue"
     }]
-
-    if current_user.can?("Hearing Prep") && !FeatureToggle.enabled?(:hearing_prep_redirect)
-      urls << {
-        title: "Hearing Prep",
-        link: "/hearings/dockets"
-      }
-    end
     if current_user.hearings_user?
       urls << {
         title: "Hearings",
@@ -213,6 +206,7 @@ class ApplicationController < ApplicationBaseController
       Raven.user_context(
         email: current_user.email,
         css_id: current_user.css_id,
+        station_id: current_user.station_id,
         regional_office: current_user.regional_office
       )
     end
@@ -303,8 +297,7 @@ class ApplicationController < ApplicationBaseController
       "dispatch" => "Caseflow Dispatch",
       "certifications" => "Caseflow Certification",
       "reader" => "Caseflow Reader",
-      "schedule" => "Caseflow Hearings",
-      "hearings" => "Caseflow Hearing Prep",
+      "hearings" => "Caseflow Hearings",
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"
     }

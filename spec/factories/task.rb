@@ -163,6 +163,12 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :ama_judge_dispatch_return_task, class: JudgeDispatchReturnTask do
+      type { JudgeDispatchReturnTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
+    end
+
     factory :track_veteran_task, class: TrackVeteranTask do
       type { TrackVeteranTask.name }
       appeal { create(:appeal) }
@@ -195,6 +201,12 @@ FactoryBot.define do
 
     factory :ama_attorney_task do
       type { AttorneyTask.name }
+      appeal { create(:appeal) }
+      parent { create(:ama_judge_task) }
+    end
+
+    factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
+      type { AttorneyDispatchReturnTask.name }
       appeal { create(:appeal) }
       parent { create(:ama_judge_task) }
     end
@@ -240,6 +252,12 @@ FactoryBot.define do
 
     factory :hearing_admin_action_incarcerated_veteran_task, class: HearingAdminActionIncarceratedVeteranTask do
       type { HearingAdminActionIncarceratedVeteranTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
+    factory :hearing_admin_action_verify_address_task, class: HearingAdminActionVerifyAddressTask do
+      type { HearingAdminActionVerifyAddressTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
     end
