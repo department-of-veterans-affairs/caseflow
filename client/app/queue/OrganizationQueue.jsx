@@ -106,10 +106,10 @@ class OrganizationQueue extends React.PureComponent {
       {tasksAssignedByBulk.assignedUser &&
         <Alert
           message="Please go to your individual queue to see your self assigned tasks"
-          title={`You have assigned
+          title={`You have bulk assigned
             ${tasksAssignedByBulk.numberOfTasks}
             ${tasksAssignedByBulk.taskType.replace(/([a-z])([A-Z])/g, '$1 $2')}
-            task(s) to your individual queue`}
+            task(s)`}
           type="success"
           styling={alertStyling} />
       }
