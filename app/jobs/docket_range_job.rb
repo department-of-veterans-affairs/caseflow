@@ -7,7 +7,7 @@ class DocketRangeJob < ApplicationJob
 
   def perform
     DocketCoordinator.new
-      .upcoming_appeals_in_range(number_of_days_in_next_month_from_now.days)
+      .upcoming_appeals_in_range(number_of_days_in_next_month_from_now)
       .update(docket_range_date: one_month_from_now.end_of_month)
   end
 
@@ -18,6 +18,6 @@ class DocketRangeJob < ApplicationJob
   end
 
   def number_of_days_in_next_month_from_now
-    Time.days_in_month(one_month_from_now.month, one_month_from_now.year)
+    Time.days_in_month(one_month_from_now.month, one_month_from_now.year).days
   end
 end
