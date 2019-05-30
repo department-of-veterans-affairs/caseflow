@@ -1,7 +1,7 @@
 import React from 'react';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import PropTypes from 'prop-types';
-import { populateWorksheet } from '../actions/Dockets';
+import { populateWorksheet } from '../actions/hearingWorksheetActions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';

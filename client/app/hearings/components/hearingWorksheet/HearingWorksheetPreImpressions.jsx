@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import {
   onToggleReopen, onToggleAllow, onToggleDeny,
   onToggleRemand, onToggleDismiss, onToggleOMO
-} from '../../actions/Issue';
+} from '../../actions/hearingWorksheetActions';
 
 class HearingWorksheetPreImpressions extends PureComponent {
 
