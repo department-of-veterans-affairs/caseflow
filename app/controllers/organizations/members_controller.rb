@@ -4,9 +4,13 @@ class Organizations::MembersController < OrganizationsController
   def index
     redirect_to "/unauthorized" unless organization.users.include?(current_user)
 
-    render json: {
-      members: organization.users
-    }
+    respond_to do |format|
+      format.json do
+        render json: {
+          members: json_users(organization.users)
+        }
+      end
+    end
   end
 
   private
