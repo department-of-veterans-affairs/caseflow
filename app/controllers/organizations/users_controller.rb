@@ -46,7 +46,7 @@ class Organizations::UsersController < OrganizationsController
   end
 
   def verify_organization_access
-    return if current_user.administer_org_users? || organization.users.include?(current_user)
+    return if current_user.administer_org_users?
 
     redirect_to "/unauthorized" unless current_user.administered_teams.include?(organization)
   end
