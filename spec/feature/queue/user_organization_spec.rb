@@ -13,6 +13,12 @@ RSpec.feature "User organization" do
   context "When user is in the organization but not an admin" do
     before { OrganizationsUser.add_user_to_organization(user, organization) }
 
+    scenario "Adds and removes users from the organization" do
+      visit organization.user_admin_path
+
+      expect(page).to have_content(COPY::UNAUTHORIZED_PAGE_ACCESS_MESSAGE)
+    end
+
     scenario "Organization task list view shows queue switcher dropdown" do
       visit organization.path
       expect(page).to have_content(COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL)
