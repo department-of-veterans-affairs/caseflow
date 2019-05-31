@@ -22,7 +22,7 @@ import CaseDetailsLink from '../CaseDetailsLink';
 import ContinuousProgressBar from '../../components/ContinuousProgressBar';
 
 import { setSelectionOfTaskOfUser } from '../QueueActions';
-import { renderAppealType, taskHasCompletedHold, actionNameOfTask } from '../utils';
+import { renderAppealType, taskHasCompletedHold, actionNameOfTask, regionalOfficeCity } from '../utils';
 import { DateString } from '../../util/DateUtil';
 import {
   CATEGORIES,
@@ -118,8 +118,10 @@ export const regionalOfficeColumn = (tasks) => {
     columnName: 'closestRegionalOffice',
     anyFiltersAreSet: true,
     label: 'Filter by regional office',
-    valueFunction: (task) => task.closestRegionalOffice ? task.closestRegionalOffice : 'Unknown',
-    getSortValue: (task) => task.closestRegionalOffice
+    valueFunction: (task) => {
+      return regionalOfficeCity(task, true);
+    },
+    getSortValue: (task) => regionalOfficeCity(task)
   };
 };
 
@@ -411,7 +413,8 @@ const mapStateToProps = (state) => ({
   isTaskAssignedToUserSelected: state.queue.isTaskAssignedToUserSelected,
   userIsVsoEmployee: state.ui.userIsVsoEmployee,
   userRole: state.ui.userRole,
-  tasksAssignedByBulk: state.queue.tasksAssignedByBulk
+  tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
+  organizationId: state.ui.activeOrganization.id
 });
 
 const mapDispatchToProps = (dispatch) => (

@@ -68,7 +68,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :closest_regional_office do |object|
-    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office).city
+    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office)
   end
 
   attribute :external_appeal_id do |object|
