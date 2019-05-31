@@ -11,6 +11,7 @@ import { AppealHearingLocationsDropdown } from '../../../components/DataDropdown
 import HearingTime from '../modalForms/HearingTime';
 import { pencilSymbol } from '../../../components/RenderFunctions';
 
+import { regionalOfficeCity } from '../../../queue/utils';
 import { DISPOSITION_OPTIONS } from '../../constants';
 
 const staticSpacing = css({ marginTop: '5px' });
@@ -202,7 +203,7 @@ export const NotesField = ({ hearing, update, readOnly }) => {
 };
 
 export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, update }) => {
-  const roIsDifferent = regionalOffice !== hearing.closestRegionalOffice;
+  const roIsDifferent = regionalOffice !== regionalOfficeCity(hearing);
   let staticHearingLocations = _.isEmpty(hearing.availableHearingLocations) ?
     [hearing.location] : _.values(hearing.availableHearingLocations);
 
