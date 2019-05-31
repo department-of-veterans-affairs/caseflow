@@ -72,7 +72,7 @@ class Task < ApplicationRecord
     self.class.open_statuses.include?(status)
   end
 
-  def active_with_no_children?
+  def open_with_no_children?
     open? && children.empty?
   end
 
