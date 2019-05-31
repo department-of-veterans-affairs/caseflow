@@ -144,7 +144,7 @@ class ColocatedTask < Task
   end
 
   def all_tasks_closed_for_appeal?
-    appeal.tasks.active.where(type: ColocatedTask.name).none?
+    appeal.tasks.open.where(type: ColocatedTask.name).none?
   end
 
   def on_hold_duration_is_set
@@ -155,6 +155,6 @@ class ColocatedTask < Task
 
   # ColocatedTasks on old-style holds can be placed on new timed holds which will not reset the placed_on_hold_at value.
   def task_just_placed_on_hold?
-    super || (on_timed_hold? && children.active.where.not(type: TimedHoldTask.name).empty?)
+    super || (on_timed_hold? && children.open.where.not(type: TimedHoldTask.name).empty?)
   end
 end

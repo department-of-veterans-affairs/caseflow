@@ -207,7 +207,7 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.active.where(type: RootTask.name).any?
+    tasks.open.where(type: RootTask.name).any?
   end
 
   def ready_for_distribution_at
@@ -523,7 +523,7 @@ class Appeal < DecisionReview
   end
 
   def pending_schedule_hearing_task?
-    tasks.active.where(type: ScheduleHearingTask.name).any?
+    tasks.open.where(type: ScheduleHearingTask.name).any?
   end
 
   def hearing_pending?
@@ -531,12 +531,12 @@ class Appeal < DecisionReview
   end
 
   def evidence_submission_hold_pending?
-    tasks.active.where(type: EvidenceSubmissionWindowTask.name).any?
+    tasks.open.where(type: EvidenceSubmissionWindowTask.name).any?
   end
 
   def at_vso?
     # This task is always open, this can be used once that task is completed
-    # tasks.active.where(type: InformalHearingPresentationTask.name).any?
+    # tasks.open.where(type: InformalHearingPresentationTask.name).any?
   end
 
   def distributed_to_a_judge?

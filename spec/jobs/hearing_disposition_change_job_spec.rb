@@ -56,7 +56,7 @@ describe HearingDispositionChangeJob do
 
       it "only returns the DispositionTasks" do
         # Confirm that the ChangeHearingDispositionTasks are in the database.
-        expect(ChangeHearingDispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold).count).to(
+        expect(ChangeHearingDispositionTask.open.where.not(status: Constants.TASK_STATUSES.on_hold).count).to(
           eq(change_disposition_tasks.length)
         )
 
