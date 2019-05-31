@@ -60,7 +60,7 @@ vacols:
 	docker exec --tty -i VACOLS_DB bash
 
 facols:
-	sqlplus "VACOLS/VACOLS@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
+	sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
 
 build: clean
 	bundle exec rake local:destroy local:build
