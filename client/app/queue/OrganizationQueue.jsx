@@ -6,7 +6,9 @@ import { css } from 'glamor';
 
 import BulkAssignModal from './components/BulkAssignModal';
 import TabWindow from '../components/TabWindow';
-import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn, taskColumn } from './components/TaskTable';
+import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
+  taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
+  assignedToColumn, daysWaitingColumn, readerLinkColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
@@ -90,11 +92,11 @@ class OrganizationQueue extends React.PureComponent {
           </p>
           <TaskTable
             customColumns={[
-              docketNumberColumn(this.props.trackingTasks, false),
-              detailsColumn(this.props.trackingTasks, false, this.props.userRole)
+              detailsColumn(this.props.trackingTasks, false, this.props.userRole),
+              issueCountColumn(false),
+              typeColumn(this.props.trackingTasks, false),
+              docketNumberColumn(this.props.trackingTasks, false)
             ]}
-            includeIssueCount
-            includeType
             tasks={this.props.trackingTasks}
           />
         </React.Fragment>
@@ -152,39 +154,48 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
-const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole, organizationId }) => <React.Fragment>
-  <p className="cf-margin-top-0">{description}</p>
-  { organizationName === 'Hearing Management' && <BulkAssignModal tasks={tasks} organizationId={organizationId} /> }
-  <TaskTable
-    customColumns={[
-      docketNumberColumn(tasks, false),
-      hearingBadgeColumn(tasks),
-      detailsColumn(tasks, false, userRole),
-      taskColumn(tasks)
-    ]}
-    includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
-    includeType
-    includeDaysWaiting
-    includeReaderLink
-    includeNewDocsIcon
-    tasks={tasks}
-  />
-</React.Fragment>;
+const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole, organizationId }) => {
+  let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+    userRole), taskColumn(tasks), typeColumn(tasks, false),
+  docketNumberColumn(tasks, false), daysWaitingColumn(false),
+  readerLinkColumn(false, true)];
 
-const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => <React.Fragment>
-  <p className="cf-margin-top-0">{description}</p>
+  if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
+    columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+      userRole), taskColumn(tasks), regionalOfficeColumn(tasks),
+    typeColumn(tasks, false), docketNumberColumn(tasks, false),
+    daysWaitingColumn(false), readerLinkColumn(false, true)];
+  }
 
-  <TaskTable
-    customColumns={[
-      docketNumberColumn(tasks, false),
-      hearingBadgeColumn(tasks),
-      detailsColumn(tasks, false, userRole),
-      taskColumn(tasks)
-    ]}
-    includeRegionalOffice={organizationName === 'Hearing Management' || organizationName === 'Hearing Admin'}
-    includeType
-    includeAssignedTo
-    includeDaysWaiting
-    tasks={tasks}
-  />
-</React.Fragment>;
+  return (<React.Fragment>
+    <p className="cf-margin-top-0">{description}</p>
+    { organizationName === 'Hearing Management' && <BulkAssignModal tasks={tasks} organizationId={organizationId} /> }
+    <TaskTable
+      customColumns={columns}
+      tasks={tasks}
+    />
+  </React.Fragment>);
+};
+
+const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => {
+  let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+    userRole), taskColumn(tasks), typeColumn(tasks, false),
+  assignedToColumn(tasks), docketNumberColumn(tasks, false),
+  daysWaitingColumn(false)];
+
+  if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
+    columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+      userRole), taskColumn(tasks), regionalOfficeColumn(tasks),
+    typeColumn(tasks, false), assignedToColumn(tasks),
+    docketNumberColumn(tasks, false), daysWaitingColumn(false)];
+  }
+
+  return (<React.Fragment>
+    <p className="cf-margin-top-0">{description}</p>
+    <TaskTable
+      customColumns={columns}
+      tasks={tasks}
+    />
+    }
+  </React.Fragment>);
+};
