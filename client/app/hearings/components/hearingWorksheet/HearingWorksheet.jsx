@@ -11,7 +11,7 @@ import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './WorksheetHeaderVeteranSelection';
 import ContestedIssues from '../../../queue/components/ContestedIssues';
 import { now } from '../../utils';
-import { navigateToPrintPage } from '../../../util/PrintUtil';
+import { navigateToPrintPage, openPrintDialogue } from '../../../util/PrintUtil';
 import WorksheetFooter from './WorksheetFooter';
 import CFRichTextEditor from '../../../components/CFRichTextEditor';
 import DOMPurify from 'dompurify';
@@ -83,6 +83,9 @@ class WorksheetFormEntry extends React.PureComponent {
 export class HearingWorksheet extends React.PureComponent {
   componentDidMount() {
     document.title = this.getWorksheetTitle();
+    if (this.props.print) {
+      openPrintDialogue();
+    }
   }
 
   getWorksheetTitle = () => {
