@@ -85,11 +85,7 @@ class MailTask < GenericTask
   end
 
   def change_type(params)
-    new_class = MailTask.subclasses.find { |mt| mt.name == params[:action] }
-
-    default_assignee = new_class.default_assignee(parent, params)
-
-    new_class.create!(
+    MailTask.subclasses.find { |mt| mt.name == params[:action] }.create!(
       slice(:appeal, :assigned_by, :assigned_to, :status, :parent, :on_hold_duration, :placed_on_hold_at)
       .merge(instructions: [instructions, params[:instructions]].flatten)
     )
