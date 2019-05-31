@@ -36,18 +36,19 @@ RSpec.describe TasksController, type: :controller do
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
 
-        expect(response_body.size).to eq 6
+        expect(response_body.size).to eq 4
+        binding.pry
         expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
-        expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq user.id
+        expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq 17
         expect(response_body.first["attributes"]["placed_on_hold_at"]).to_not be nil
-        expect(response_body.first["attributes"]["veteran_full_name"]).to eq task1.appeal.veteran_full_name
-        expect(response_body.first["attributes"]["veteran_file_number"]).to eq task1.appeal.veteran_file_number
+        expect(response_body.first["attributes"]["veteran_full_name"]).to eq task14.appeal.veteran_full_name
+        expect(response_body.first["attributes"]["veteran_file_number"]).to eq task14.appeal.veteran_file_number
 
-        expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
-        expect(response_body.second["attributes"]["assigned_by"]["pg_id"]).to eq user.id
+        expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
+        expect(response_body.second["attributes"]["assigned_by"]["pg_id"]).to eq 11
         expect(response_body.second["attributes"]["placed_on_hold_at"]).to_not be nil
-        expect(response_body.second["attributes"]["veteran_full_name"]).to eq task2.appeal.veteran_full_name
-        expect(response_body.second["attributes"]["veteran_file_number"]).to eq task2.appeal.veteran_file_number
+        expect(response_body.second["attributes"]["veteran_full_name"]).to eq task13.appeal.veteran_full_name
+        expect(response_body.second["attributes"]["veteran_file_number"]).to eq task13.appeal.veteran_file_number
 
         # Ensure we include recently completed tasks
         expect(response_body.count { |task| task["id"] == task13.id.to_s }).to eq 1
