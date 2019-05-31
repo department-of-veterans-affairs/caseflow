@@ -4,9 +4,9 @@ bold=$(tput bold)
 normal=$(tput sgr0)
 
 USAGE=$(cat <<-END
-./build_push.sh [local|remote]
+./build_push.sh [local|remote|rake]
 
-   This is a handy script which allows you to build FACOLS locally for your development.
+   This is a handy script which allows you to build, push or download FACOLS locally for your use.
    ${bold}You must first mfa using the issue_mfa.sh since it will download dependencies.${normal}
    Example Usage (build but not push): ./build_push.sh local
    Example Usage (build and push): ./build_push.sh remote
@@ -101,6 +101,15 @@ push(){
 
 }
 
+download(){
+  # get circleci latest image from this same repo
+  facols_image=$(cat ../../.circleci/config.yml| grep facols | awk '{print $3}')
+  eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
+  docker pull $facols_image
+  docker tag $facols_image vacols_db:latest
+}
+
+
 if [[ "$1" == "local" ]]; then
   build
 
@@ -109,4 +118,7 @@ elif [[ "$1" == "remote" ]]; then
   if [[ $? -eq 0 ]]; then
     push
   fi
+
+elif [[ "$1" == "rake" ]]; then
+  download
 fi
