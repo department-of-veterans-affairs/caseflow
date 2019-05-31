@@ -6,23 +6,13 @@ require "mail_task"
 RSpec.describe Tasks::ChangeTypeController, type: :controller do
   describe "POST tasks/change_type/:id" do
     let(:user) { create(:user) }
-
-    let(:parent) { create(:root_task) }
-    let(:parent_id) { parent.id }
+    let(:assigner) { create(:user) }
+    let(:root_task) { create(:root_task) }
     let(:old_instructions) { "Some instructions" }
     let(:new_instructions) { "New instructions" }
     let(:params) { { task: { action: new_task_type, instructions: new_instructions }, id: task.id } }
 
-    let(:task) do
-      task_class_name.create!(
-        appeal: parent.appeal,
-        parent_id: parent.id,
-        assigned_by: create(:user),
-        assigned_to: user,
-        action: old_task_type,
-        instructions: [old_instructions]
-      )
-    end
+    let(:task) { parent_task.children.first }
 
     subject { patch(:update, params: params) }
 
@@ -37,6 +27,17 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
         let(:old_task_type) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.first }
         let(:new_task_type) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last }
 
+        let(:parent_task) do
+          task_class_name.create!(
+            appeal: root_task.appeal,
+            parent_id: root_task.id,
+            assigned_by: assigner,
+            assigned_to: Colocated.singleton,
+            action: old_task_type,
+            instructions: [old_instructions]
+          )
+        end
+
         it "should update successfully" do
           subject
 
@@ -44,68 +45,95 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
           response_body = JSON.parse(response.body)["tasks"]["data"]
           expect(response_body.first["id"]).not_to eq task.id.to_s
           expect(response_body.first["attributes"]["label"]).to eq new_task_type
+          expect(response_body.first["attributes"]["status"]).to eq task.status
           expect(response_body.first["attributes"]["instructions"]).to include old_instructions
           expect(response_body.first["attributes"]["instructions"]).to include new_instructions
           expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq task.assigned_to_id
           expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
           expect(response_body.first["attributes"]["appeal_id"]).to eq task.appeal_id
-          expect(Task.find(response_body.first["id"]).parent_id).to eq task.parent_id
+
+          new_parent_id = Task.find(response_body.first["id"]).parent_id
+          new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
+          expect(new_parent["id"]).not_to eq parent_task.id.to_s
+          expect(new_parent["attributes"]["label"]).to eq new_task_type
+          expect(new_parent["attributes"]["status"]).to eq parent_task.status
+          expect(new_parent["attributes"]["instructions"]).to include old_instructions
+          expect(new_parent["attributes"]["instructions"]).to include new_instructions
+          expect(new_parent["attributes"]["assigned_to"]["id"]).to eq parent_task.assigned_to_id
+          expect(new_parent["attributes"]["assigned_by"]["pg_id"]).to eq parent_task.assigned_by_id
+          expect(new_parent["attributes"]["appeal_id"]).to eq parent_task.appeal_id
 
           expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(parent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
         end
       end
 
       context "for a mail task" do
-        context "that doesn't need reassigning" do
-          let(:task_class_name) { DeathCertificateMailTask }
-          let(:old_task_type) { nil }
-          let(:new_task_type) { AddressChangeMailTask }
+        let(:old_task_type) { DeathCertificateMailTask }
+        let(:new_task_type) { AddressChangeMailTask }
 
-          it "should update successfully" do
-            subject
-
-            expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.first["id"]).not_to eq task.id.to_s
-            expect(response_body.first["attributes"]["label"]).to eq new_task_type.label
-            expect(response_body.first["attributes"]["instructions"]).to include old_instructions
-            expect(response_body.first["attributes"]["instructions"]).to include new_instructions
-            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq task.assigned_to_id
-            expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
-            expect(response_body.first["attributes"]["appeal_id"]).to eq task.appeal_id
-            expect(Task.find(response_body.first["id"]).parent_id).to eq task.parent_id
-
-            expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
-          end
+        let(:grandparent_task) do
+          old_task_type.create!(
+            appeal: root_task.appeal,
+            parent_id: root_task.id,
+            assigned_by: assigner,
+            assigned_to: MailTeam.singleton
+          )
         end
 
-        context "that does need reassigning" do
-          let(:task_class_name) { DeathCertificateMailTask }
-          let(:old_task_type) { nil }
-          let(:new_task_type) { AodMotionMailTask }
+        let!(:parent_task) do
+          old_task_type.create!(
+            appeal: grandparent_task.appeal,
+            parent_id: grandparent_task.id,
+            assigned_by: assigner,
+            assigned_to: Colocated.singleton,
+            instructions: [old_instructions]
+          )
+        end
 
-          it "should update successfully" do
-            subject
+        it "should update successfully" do
+          subject
 
-            expect(response.status).to eq 200
-            response_body = JSON.parse(response.body)["tasks"]["data"]
-            expect(response_body.last["id"]).not_to eq task.id.to_s
-            expect(response_body.last["attributes"]["label"]).to eq new_task_type.label
-            expect(response_body.last["attributes"]["instructions"]).to include old_instructions
-            expect(response_body.last["attributes"]["instructions"]).to include new_instructions
-            expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq AodTeam.singleton.id
-            expect(response_body.last["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
-            expect(response_body.last["attributes"]["appeal_id"]).to eq task.appeal_id
-            expect(Task.find(response_body.last["id"]).parent_id).to eq task.parent_id
+          expect(response.status).to eq 200
+          response_body = JSON.parse(response.body)["tasks"]["data"]
+          expect(response_body.first["id"]).not_to eq task.id.to_s
+          expect(response_body.first["attributes"]["label"]).to eq new_task_type.label
+          expect(response_body.first["attributes"]["status"]).to eq task.status
+          expect(response_body.first["attributes"]["instructions"]).to include old_instructions
+          expect(response_body.first["attributes"]["instructions"]).to include new_instructions
+          expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq task.assigned_to_id
+          expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
+          expect(Task.find(response_body.first["id"]).parent_id).not_to eq task.parent_id
 
-            expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
-          end
+          new_parent_id = Task.find(response_body.first["id"]).parent_id
+          new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
+          expect(new_parent["id"]).not_to eq parent_task.id.to_s
+          expect(new_parent["attributes"]["label"]).to eq new_task_type.label
+          expect(new_parent["attributes"]["status"]).to eq parent_task.status
+          expect(new_parent["attributes"]["instructions"]).to include old_instructions
+          expect(new_parent["attributes"]["instructions"]).to include new_instructions
+          expect(new_parent["attributes"]["assigned_to"]["id"]).to eq parent_task.assigned_to_id
+          expect(new_parent["attributes"]["assigned_by"]["pg_id"]).to eq parent_task.assigned_by_id
+          expect(new_parent["attributes"]["appeal_id"]).to eq parent_task.appeal_id
+
+          new_grandparent_id = Task.find(new_parent["id"]).parent_id
+          new_grandparent = response_body.find { |t| t["id"] == new_grandparent_id.to_s }
+          expect(new_grandparent["id"]).not_to eq grandparent_task.id.to_s
+          expect(new_grandparent["attributes"]["status"]).to eq parent_task.status
+          expect(new_grandparent["attributes"]["label"]).to eq new_task_type.label
+          expect(new_grandparent["attributes"]["assigned_to"]["id"]).to eq grandparent_task.assigned_to_id
+          expect(new_grandparent["attributes"]["assigned_by"]["pg_id"]).to eq grandparent_task.assigned_by_id
+          expect(new_grandparent["attributes"]["appeal_id"]).to eq grandparent_task.appeal_id
+
+          expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(parent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(grandparent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
         end
       end
     end
 
     context "for a non supported task type" do
-      let(:params) { { task: { action: "other", instructions: new_instructions }, id: parent.id } }
+      let(:params) { { task: { action: "other", instructions: new_instructions }, id: root_task.id } }
 
       it "returns an error" do
         subject
