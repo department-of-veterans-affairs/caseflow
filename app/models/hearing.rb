@@ -70,10 +70,6 @@ class Hearing < ApplicationRecord
     HEARING_TYPES[request_type.to_sym]
   end
 
-  def master_record
-    false
-  end
-
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
       task.type == TrackVeteranTask.name &&

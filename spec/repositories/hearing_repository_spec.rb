@@ -68,7 +68,6 @@ describe HearingRepository do
     let(:record1) do
       OpenStruct.new(
         hearing_type: HearingDay::REQUEST_TYPES[:travel],
-        master_record_type: nil,
         bfregoff: "RO36",
         hearing_pkseq: case_hearing.hearing_pkseq,
         folder_nr: "5678",
@@ -81,7 +80,6 @@ describe HearingRepository do
     it "should create hearing records" do
       expect(subject.size).to eq 1
       expect(subject.first.vacols_id).to eq case_hearing.hearing_pkseq.to_s
-      expect(subject.first.master_record).to eq false
     end
   end
 end

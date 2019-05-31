@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::SchedulePeriodsController < HearingScheduleController
+class Hearings::SchedulePeriodsController < HearingsApplicationController
   before_action :verify_build_hearing_schedule_access
 
   def index

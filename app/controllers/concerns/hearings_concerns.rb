@@ -8,7 +8,6 @@ module HearingsConcerns
       before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
       before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
       before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
-      before_action :check_hearing_prep_out_of_service
     end
 
     def verify_access

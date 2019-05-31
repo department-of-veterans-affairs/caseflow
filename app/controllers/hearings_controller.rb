@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class HearingsController < ApplicationController
+class HearingsController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
 
   def show
@@ -35,14 +35,6 @@ class HearingsController < ApplicationController
     motion.update(advance_on_docket_motion_params)
   end
 
-  def logo_name
-    "Hearings"
-  end
-
-  def logo_path
-    hearings_dockets_path
-  end
-
   def find_closest_hearing_locations
     begin
       HearingDayMapper.validate_regional_office(params["regional_office"])
@@ -75,10 +67,6 @@ class HearingsController < ApplicationController
 
   def hearing_external_id
     params[:id]
-  end
-
-  def set_application
-    RequestStore.store[:application] = "hearings"
   end
 
   def update_params_legacy
