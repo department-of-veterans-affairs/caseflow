@@ -91,7 +91,7 @@ describe MailTask do
     subject { MailTask.case_active?(root_task) }
 
     context "when the appeal is active" do
-      before { allow_any_instance_of(Appeal).to receive(:active?).and_return(true) }
+      before { allow_any_instance_of(Appeal).to receive(:open?).and_return(true) }
 
       it "should return true" do
         expect(subject).to eq(true)
@@ -99,7 +99,7 @@ describe MailTask do
     end
 
     context "when the appeal is not active" do
-      before { allow_any_instance_of(Appeal).to receive(:active?).and_return(false) }
+      before { allow_any_instance_of(Appeal).to receive(:open?).and_return(false) }
 
       it "should return false" do
         expect(subject).to eq(false)

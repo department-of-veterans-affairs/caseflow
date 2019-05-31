@@ -70,9 +70,9 @@ describe NoShowHearingTask do
       it "does not commit any changes to the database" do
         expect { no_show_hearing_task.reschedule_hearing }.to raise_error(StandardError)
 
-        expect(hearing_task.reload.active?).to eq(true)
-        expect(disposition_task.reload.active?).to eq(true)
-        expect(no_show_hearing_task.reload.active?).to eq(true)
+        expect(hearing_task.reload.open?).to eq(true)
+        expect(disposition_task.reload.open?).to eq(true)
+        expect(no_show_hearing_task.reload.open?).to eq(true)
 
         expect(distribution_task.children.count).to eq(1)
 

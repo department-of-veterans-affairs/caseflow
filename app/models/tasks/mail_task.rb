@@ -68,7 +68,7 @@ class MailTask < GenericTask
     end
 
     def case_active?(parent)
-      parent.appeal.active?
+      parent.appeal.open?
     end
 
     def most_recent_active_task_assignee(parent)
