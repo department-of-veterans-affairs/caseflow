@@ -586,8 +586,8 @@ RSpec.feature "Case details" do
         )
       end
 
-      # Test fails because the font weights have the same value once vet_name is clicked.
-      xscenario "displays task bold in queue" do
+      scenario "displays task bold in queue",
+               skip: "https://circleci.com/gh/department-of-veterans-affairs/caseflow/65218, bat team investigated" do
         visit "/queue"
         vet_name = assigned_task.appeal.veteran_full_name
         fontweight_new = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
