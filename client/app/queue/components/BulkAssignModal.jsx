@@ -272,7 +272,9 @@ BulkAssignModal.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ bulkAssignTasks, onReceiveQueue, setActiveOrganization }, dispatch)
+  bindActionCreators({ bulkAssignTasks,
+    onReceiveQueue,
+    setActiveOrganization }, dispatch)
 );
 
 export default (connect(() => {

@@ -25,7 +25,8 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
 
     const loadingDataDisplay = <LoadingDataDisplay
       createLoadPromise={() => {
-        return createOrgQueueLoadPromise(this.props, this.props.urlToLoad)}
+        return createOrgQueueLoadPromise(this.props, this.props.urlToLoad);
+      }
       }
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
