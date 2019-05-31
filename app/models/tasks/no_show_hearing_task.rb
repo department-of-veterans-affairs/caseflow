@@ -5,6 +5,16 @@
 class NoShowHearingTask < GenericTask
   before_validation :set_assignee
 
+  def self.create_with_hold(parent_task)
+    create!(parent: parent_task, appeal: parent_task.appeal).tap do |no_show_hearing_task|
+      TimedHoldTask.create_from_parent(
+        no_show_hearing_task,
+        days_on_hold: 25,
+        instructions: ["Mail must be received within 14 days of the original hearing date."]
+      )
+    end
+  end
+
   def available_actions(user)
     hearing_admin_actions = available_hearing_user_actions(user)
 
