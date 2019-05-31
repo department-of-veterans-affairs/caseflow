@@ -331,7 +331,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def guess_benefit_type
+    return contested_decision_issue.benefit_type if contested_decision_issue
     return "unidentified" if is_unidentified
+    return "ineligible" unless eligible?
 
     "unknown"
   end
