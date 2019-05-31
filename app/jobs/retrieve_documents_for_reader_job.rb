@@ -6,11 +6,8 @@ class RetrieveDocumentsForReaderJob < ApplicationJob
   queue_as :low_priority
   application_attr :reader
 
-  DEFAULT_USERS_LIMIT = 3
-  def perform(args = {})
-    # specified limit of users we fetch for
-    limit = args["limit"] || DEFAULT_USERS_LIMIT
-    find_all_reader_users_by_documents_fetched_at(limit).each do |user|
+  def perform
+    find_all_reader_users_by_documents_fetched_at.each do |user|
       start_fetch_job(user)
     end
   end
@@ -19,7 +16,7 @@ class RetrieveDocumentsForReaderJob < ApplicationJob
     FetchDocumentsForReaderUserJob.perform_later(user)
   end
 
-  def find_all_reader_users_by_documents_fetched_at(limit = 10)
-    ReaderUser.all_by_documents_fetched_at(limit)
+  def find_all_reader_users_by_documents_fetched_at
+    ReaderUser.all_by_documents_fetched_at
   end
 end
