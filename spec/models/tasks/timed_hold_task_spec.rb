@@ -122,8 +122,8 @@ describe TimedHoldTask do
     context "when there is no assigner argument" do
       let(:args) { initial_args.reject { |key, _| key == :assigned_by } }
 
-      it "sets assigned_by to parent assigned_to" do
-        expect(subject.assigned_by).to eq(parent.assigned_to)
+      it "sets assigned_by to nil" do
+        expect(subject.assigned_by).to eq(nil)
       end
     end
 

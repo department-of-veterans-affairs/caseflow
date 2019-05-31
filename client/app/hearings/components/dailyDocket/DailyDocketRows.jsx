@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'glamor';
-
+import { sortHearings } from '../../utils';
 import DailyDocketRow from './DailyDocketRow';
 
 const docketRowStyle = css({
@@ -59,9 +59,11 @@ export default class DailyDocketHearingRows extends React.Component {
     const { hearings, readOnly, regionalOffice,
       openDispositionModal, user, saveHearing } = this.props;
 
+    const sortedHearings = sortHearings(hearings);
+
     return <div {...rowsMargin}>
       <Header user={user} />
-      <div>{hearings.map((hearing, index) => (
+      <div>{sortedHearings.map((hearing, index) => (
         <div {...docketRowStyle} key={hearing.externalId} className={user.userRoleHearingPrep ? 'judge-view' : ''}>
           <DailyDocketRow hearingId={hearing.externalId}
             index={index}

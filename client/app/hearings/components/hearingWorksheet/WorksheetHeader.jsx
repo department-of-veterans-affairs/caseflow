@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
 import { ClipboardIcon } from '../../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
-import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/Dockets';
+import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/hearingWorksheetActions';
 import { css } from 'glamor';
 import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../../constants';
@@ -129,7 +129,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
-            <h5>HEARING DISPOSITION</h5>
+            <h4>HEARING DISPOSITION</h4>
             <div className={classNames('cf-hearings-headers', dispositionClassNames)}>
               {getDisposition(worksheet.disposition)}
             </div>
@@ -239,7 +239,7 @@ class WorksheetHeader extends React.PureComponent {
   }
 }
 const mapStateToProps = (state) => ({
-  worksheet: state.hearings.worksheet
+  worksheet: state.hearingWorksheet.worksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

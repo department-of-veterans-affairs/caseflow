@@ -7,10 +7,11 @@ import { LOGO_COLORS } from '../../../constants/AppConstants';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { setPrepped, getHearingDayHearings } from '../../actions/Dockets';
+import { setPrepped, getHearingDayHearings } from '../../actions/hearingWorksheetActions';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import SmallLoader from '../../../components/SmallLoader';
 import _ from 'lodash';
+import ApiUtil from '../../../util/ApiUtil';
 
 const headerSelectionStyling = css({
   display: 'block',
@@ -41,7 +42,10 @@ const buttonHeaderStyling = css({
 class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   componentDidMount() {
-    this.props.getHearingDayHearings(this.props.worksheet.hearing_day_id);
+    ApiUtil.get(`/hearings/hearing_day/${this.props.worksheet.hearing_day_id}`).
+      then((response) => {
+        this.props.getHearingDayHearings(_.keyBy(JSON.parse(response.text).hearing_day.hearings, 'external_id'));
+      });
   }
 
   onDropdownChange = (value) => {
@@ -123,9 +127,9 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  hearings: state.hearings.hearings,
-  worksheet: state.hearings.worksheet,
-  worksheetIssues: state.hearings.worksheetIssues
+  hearings: state.hearingWorksheet.hearings,
+  worksheet: state.hearingWorksheet.worksheet,
+  worksheetIssues: state.hearingWorksheet.worksheetIssues
 });
 
 const mapDispatchToProps = (dispatch) => ({

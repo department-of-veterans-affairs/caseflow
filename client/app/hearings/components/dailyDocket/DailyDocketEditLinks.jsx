@@ -5,9 +5,9 @@ import { css } from 'glamor';
 import _ from 'lodash';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import Button from '../../components/Button';
-import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../components/RenderFunctions';
-import { navigateToPrintPage } from '../../util/PrintUtil';
+import Button from '../../../components/Button';
+import { crossSymbolHtml, pencilSymbol, lockIcon } from '../../../components/RenderFunctions';
+import { navigateToPrintPage } from '../../../util/PrintUtil';
 
 const EditHearingDayLink = ({ openModal }) => (
   <Button {...css({ marginLeft: '30px' })} linkStyling onClick={openModal} >

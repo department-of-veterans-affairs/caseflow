@@ -82,6 +82,10 @@ class GenericTask < Task
     appeal.tasks.inactive.order(closed_at: :desc).where(type: HearingTask.name).last
   end
 
+  def task_is_assigned_to_organization_user_administers?(user)
+    task_is_assigned_to_users_organization?(user) && user.administered_teams.include?(assigned_to)
+  end
+
   private
 
   def available_hearing_admin_actions(user)

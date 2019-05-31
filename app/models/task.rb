@@ -118,12 +118,12 @@ class Task < ApplicationRecord
   end
 
   def calculated_placed_on_hold_at
-    active_child_timed_hold_task&.timer_start_time
+    active_child_timed_hold_task&.timer_start_time || placed_on_hold_at
   end
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
+    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i || on_hold_duration
   end
 
   def self.recently_closed
@@ -315,14 +315,12 @@ class Task < ApplicationRecord
   end
 
   def update_if_hold_expired!
-    update!(status: Constants.TASK_STATUSES.in_progress) if on_hold_expired?
+    update!(status: Constants.TASK_STATUSES.in_progress) if old_style_hold_expired?
   end
 
-  def on_hold_expired?
-    return true if on_hold? && placed_on_hold_at && on_hold_duration &&
-                   placed_on_hold_at + on_hold_duration.days < Time.zone.now
-
-    false
+  def old_style_hold_expired?
+    !on_timed_hold? && on_hold? && placed_on_hold_at && on_hold_duration &&
+      (placed_on_hold_at + on_hold_duration.days < Time.zone.now)
   end
 
   def serializer_class

@@ -701,4 +701,33 @@ describe Task do
       expect(TaskTimer.where(task_id: task_id).count).to eq(0)
     end
   end
+
+  describe ".old_style_hold_expired?" do
+    subject { task.old_style_hold_expired? }
+
+    context "when a task is on an active old-style hold" do
+      let(:task) { FactoryBot.create(:task, :on_hold) }
+
+      it "recognizes that the old style hold has not expired" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when a task has completed an old-style hold" do
+      let(:task) { FactoryBot.create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
+
+      it "recognizes that the old style hold has expired" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when a task has a completed old-style hold as well as a new timed hold" do
+      let(:task) { FactoryBot.create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
+      before { TimedHoldTask.create_from_parent(task, days_on_hold: 16) }
+
+      it "does not recognize that the task has completed the old-style hold" do
+        expect(subject).to eq(false)
+      end
+    end
+  end
 end

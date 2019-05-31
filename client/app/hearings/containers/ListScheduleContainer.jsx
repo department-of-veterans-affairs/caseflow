@@ -13,12 +13,14 @@ import {
   onResetInvalidDates,
   onSelectedHearingDayChange,
   selectRequestType,
-  selectVlj,
-  selectHearingCoordinator,
-  setNotes,
   onResetDeleteSuccessful,
   onAssignHearingRoom
-} from '../actions/actions';
+} from '../actions/hearingScheduleActions';
+import {
+  selectVlj,
+  selectHearingCoordinator,
+  setNotes
+} from '../actions/dailyDocketActions';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';

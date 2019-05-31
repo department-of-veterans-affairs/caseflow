@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 import Button from '../../../components/Button';
 import TabWindow from '../../../components/TabWindow';
-import { onAddIssue } from '../../actions/Issue';
+import { onAddIssue } from '../../actions/hearingWorksheetActions';
 import HearingWorksheetIssues from './HearingWorksheetIssues';
 
 class HearingWorksheetStream extends Component {
@@ -122,8 +122,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 }, dispatch);
 
 const mapStateToProps = (state) => ({
-  worksheetAppeals: state.hearings.worksheetAppeals,
-  worksheetIssues: state.hearings.worksheetIssues
+  worksheetAppeals: state.hearingWorksheet.worksheetAppeals,
+  worksheetIssues: state.hearingWorksheet.worksheetIssues
 });
 
 export default connect(
