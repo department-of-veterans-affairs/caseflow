@@ -160,6 +160,20 @@ class Task < ApplicationRecord
     params
   end
 
+  def update_task_type(params)
+    sibling = change_type(params)
+    update!(status: Constants.TASK_STATUSES.cancelled)
+    children.active.each { |child| child.update!(parent_id: sibling.id) }
+
+    parents = []
+
+    if parent.slice(:class, :action, :type).eql? slice(:class, :action, :type)
+      parents << parent.update_task_type(params)
+    end
+
+    [sibling, self, sibling.children, parents].flatten
+  end
+
   def change_type(_params)
     fail Caseflow::Error::ActionForbiddenError, message: "Cannot change type of this task"
   end
