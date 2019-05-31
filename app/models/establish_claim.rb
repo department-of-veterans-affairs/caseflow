@@ -164,7 +164,7 @@ class EstablishClaim < Dispatch::Task
 
     begin
       appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
-    rescue VBMS::ClientError, VBMSError => error
+    rescue VBMS::ClientError, VBMSError, Caseflow::Error::VBMS => error
       Rails.logger.info "Failed EstablishClaim (id = #{id}), Error: #{error}"
       return :failed
     end
