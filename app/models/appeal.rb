@@ -144,7 +144,9 @@ class Appeal < DecisionReview
     on_hold_tasks = tasks.on_hold.not_tracking
     return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
-    return most_recently_assigned_to_label(tasks) if tasks.any?
+    # this condition is no longer needed since we only want active or on hold tasks
+    # return most_recently_assigned_to_label(tasks) if tasks.any?
+
     status_hash[:type].to_s.titleize
   end
 
