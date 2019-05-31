@@ -63,7 +63,7 @@ class Task < ApplicationRecord
   end
 
   def self.open_statuses
-    active_statuses([Constants.TASK_STATUSES.on_hold])
+    active_statuses.concat([Constants.TASK_STATUSES.on_hold])
   end
 
   # When a status is "open" we expect properties of the task to change. When a task is not "open" we expect that
