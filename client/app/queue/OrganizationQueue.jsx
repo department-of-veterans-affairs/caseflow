@@ -50,6 +50,7 @@ class OrganizationQueue extends React.PureComponent {
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
           tasks={this.props.unassignedTasks}
+          organizationId={this.props.organizationId}
         />
       },
       {
@@ -107,10 +108,10 @@ class OrganizationQueue extends React.PureComponent {
       {tasksAssignedByBulk.assignedUser &&
         <Alert
           message="Please go to your individual queue to see your self assigned tasks"
-          title={`You have assigned
+          title={`You have bulk assigned
             ${tasksAssignedByBulk.numberOfTasks}
             ${tasksAssignedByBulk.taskType.replace(/([a-z])([A-Z])/g, '$1 $2')}
-            task(s) to your individual queue`}
+            task(s)`}
           type="success"
           styling={alertStyling} />
       }
@@ -136,6 +137,7 @@ const mapStateToProps = (state) => {
     organizationName: state.ui.activeOrganization.name,
     organizationIsVso: state.ui.activeOrganization.isVso,
     organizations: state.ui.organizations,
+    organizationId: state.ui.activeOrganization.id,
     tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
@@ -152,7 +154,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
-const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => {
+const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole, organizationId }) => {
   let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
     userRole), taskColumn(tasks), typeColumn(tasks, false),
   docketNumberColumn(tasks, false), daysWaitingColumn(false),
@@ -167,7 +169,7 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
 
   return (<React.Fragment>
     <p className="cf-margin-top-0">{description}</p>
-    { organizationName === 'Hearing Admin' && <BulkAssignModal tasks={tasks} /> }
+    { organizationName === 'Hearing Management' && <BulkAssignModal tasks={tasks} organizationId={organizationId} /> }
     <TaskTable
       customColumns={columns}
       tasks={tasks}
