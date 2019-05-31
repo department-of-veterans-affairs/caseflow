@@ -4,8 +4,7 @@ import { bindActionCreators } from 'redux';
 
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import ApiUtil from '../util/ApiUtil';
-import { extractAppealsAndAmaTasks } from './utils';
+import { createOrgQueueLoadPromise } from './utils';
 
 import {
   onReceiveQueue
@@ -16,21 +15,6 @@ import {
 } from './uiReducer/uiActions';
 
 class OrganizationQueueLoadingScreen extends React.PureComponent {
-  // TODO: Short-circuit this request if we already have the tasks for this organization's queue.
-  createLoadPromise = () => ApiUtil.get(this.props.urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then(
-    (response) => {
-      const {
-        tasks: { data: tasks },
-        id,
-        organization_name: organizationName,
-        is_vso: isVso
-      } = JSON.parse(response.text);
-
-      this.props.setActiveOrganization(id, organizationName, isVso);
-      this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
-    }
-  );
-
   reload = () => window.location.reload();
 
   render = () => {
@@ -40,7 +24,9 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay
-      createLoadPromise={this.createLoadPromise}
+      createLoadPromise={() => {
+        return createOrgQueueLoadPromise(this.props, this.props.urlToLoad)}
+      }
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
         message: 'Loading cases...'
