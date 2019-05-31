@@ -32,6 +32,23 @@ for the next team.
 
 ## Protocols
 
+### Pull Requests
+
+Drop links to PRs in the #appeals-batteam channel with the :git-pull-request: emoji. We review each others'
+PRs, which typically fix tests or Sentry-alert-related bugs.
+
+### Flakey tests
+
+A signficant blocker for sprint teams is flakey tests. Right now we track them on a single
+[GitHub issue](https://github.com/department-of-veterans-affairs/caseflow/issues/10516).
+
+We spend time-boxed effort to fix the tests, and if we can't do it in the 1 or 2 hours we allot ourselves,
+we skip the tests with a reason that refers to the CircleCI URL with the flake and a note about Bat Team efforts.
+
+If you skip the test, consider adding the reason why to the
+[Engineering Huddle agenda](https://github.com/department-of-veterans-affairs/caseflow/issues/10569)
+if you think it merits wider conversation.
+
 ### Slack
 
 Join the #appeals-batteam channel. Support and product folks will be in there and will bring issues to our attention.
@@ -44,6 +61,9 @@ If you are actively looking into a slack message, add the :eyes: emoji response.
 When a slack message has been adequately addressed (question answered, or GitHub issue created, etc),
 add the :white_check_mark: emoji.
 
+Prioritize pairing during investigations. This gives everyone a chance to learn about parts of Caseflow that
+they might not know as well.
+
 ### Sentry and Slack
 
 Each Bat Team member should take responsibility for one or more Slack channels and monitor for Sentry alerts. These
@@ -51,6 +71,9 @@ come from the production Caseflow system.
 
 When a new Sentry alert appears in Slack, it should be investigated asap. If you cannot investigate it immediately,
 emoji tag it with the :bat: emoji.
+
+Prioritize pairing during investigations. This gives everyone a chance to learn about parts of Caseflow that
+they might not know as well.
 
 If a Github ticket already exists for the underlying issue, the Sentry alert should be ignored for a month.
 
