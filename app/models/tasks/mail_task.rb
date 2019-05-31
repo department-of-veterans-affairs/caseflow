@@ -90,11 +90,8 @@ class MailTask < GenericTask
     default_assignee = new_class.default_assignee(parent, params)
 
     new_class.create!(
-      slice(:appeal, :assigned_by, :status, :parent, :on_hold_duration, :placed_on_hold_at)
-      .merge(
-        assigned_to: default_assignee.user_has_access?(current_user) ? assigned_to : default_assignee,
-        instructions: [instructions, params[:instructions]].flatten
-      )
+      slice(:appeal, :assigned_by, :assigned_to, :status, :parent, :on_hold_duration, :placed_on_hold_at)
+      .merge(instructions: [instructions, params[:instructions]].flatten)
     )
   end
 end
