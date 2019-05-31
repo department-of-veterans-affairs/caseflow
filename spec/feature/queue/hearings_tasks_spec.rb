@@ -108,11 +108,15 @@ RSpec.feature "Hearings tasks workflows" do
           3.times do
             FactoryBot.create(:no_show_hearing_task)
           end
-          success_msg = 'You have assigned 4 No Show Hearing Task task(s) to your individual queue'
+          success_msg = 'You have bulk assigned 4 No Show Hearing Task task(s)'
           visit("organizations/hearing-management/")
           click_button(text: "Assign Tasks")
           fill_in_and_submit_bulk_assign_modal
           expect(page).to have_content(success_msg)
+          # wait for the ajax call to reload the org queue to complete
+          using_wait_time 10 do 
+            expect(page).to have_content("Assigned (4)")
+          end
         end
       end
     end

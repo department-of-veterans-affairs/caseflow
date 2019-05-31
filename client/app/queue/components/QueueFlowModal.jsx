@@ -25,16 +25,7 @@ class QueueFlowModal extends React.PureComponent {
 
   cancelHandler = () => this.props.history.goBack();
 
-  closeHandler = () => {
-    if (this.props.reloadPageAfterSubmit) {
-      // give the user a chance to read the success message
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    } else {
-      this.props.history.replace(this.props.pathAfterSubmit);
-    }
-  };
+  closeHandler = () => this.props.history.replace(this.props.pathAfterSubmit);
 
   setLoading = (loading) => this.setState({ loading });
 

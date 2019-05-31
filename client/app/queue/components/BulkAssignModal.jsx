@@ -10,9 +10,12 @@ import Button from '../../components/Button';
 import QueueFlowModal from './QueueFlowModal';
 
 import Dropdown from '../../components/Dropdown';
-import { regionalOfficeCity } from '../utils';
+import { regionalOfficeCity, createOrgQueueLoadPromise } from '../utils';
 
-import { bulkAssignTasks } from '../QueueActions';
+import { bulkAssignTasks, onReceiveQueue } from '../QueueActions';
+import {
+  setActiveOrganization
+} from '../uiReducer/uiActions';
 
 const BULK_ASSIGN_ISSUE_COUNT = [5, 10, 20, 30, 40, 50];
 
@@ -93,7 +96,12 @@ class BulkAssignModal extends React.PureComponent {
         task_count }
       };
 
-      return ApiUtil.post('/bulk_task_assignments', { data });
+      return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
+        createOrgQueueLoadPromise(this.props, '/organizations/hearing-management/tasks');
+      }).
+        catch(() => {
+          // handle the error
+        });
     }
   }
 
@@ -233,7 +241,6 @@ class BulkAssignModal extends React.PureComponent {
     const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
     const modal = (
       <QueueFlowModal
-        reloadPageAfterSubmit
         pathAfterSubmit="/organizations/hearing-management/"
         button="Assign Tasks"
         submit={this.bulkAssignTasks}
@@ -265,7 +272,9 @@ BulkAssignModal.propTypes = {
 };
 
 const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({ bulkAssignTasks }, dispatch)
+  bindActionCreators({ bulkAssignTasks,
+    onReceiveQueue,
+    setActiveOrganization }, dispatch)
 );
 
 export default (connect(() => {
