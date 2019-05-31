@@ -7,15 +7,8 @@ import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
 import HearingWorksheet from '../components/hearingWorksheet/HearingWorksheet';
-import { openPrintDialogue } from '../../util/PrintUtil';
 
 class HearingWorksheetContainer extends React.Component {
-
-  componentDidMount() {
-    if (this.props.print) {
-      openPrintDialogue();
-    }
-  }
 
   loadHearingWorksheet = () => {
     let requestUrl = `/hearings/${this.props.hearingId}/worksheet.json`;
