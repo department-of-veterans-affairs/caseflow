@@ -45,7 +45,8 @@ class RequestIssue < ApplicationRecord
     dismissed_death: "dismissed_death",
     dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
-    ineligible: "ineligible"
+    ineligible: "ineligible",
+    no_decision: "no_decision"
   }
 
   before_save :set_contested_rating_issue_profile_date
@@ -494,6 +495,12 @@ class RequestIssue < ApplicationRecord
     limited_poa[:limited_poa_access] == "Y"
   end
 
+  def contention_disposition
+    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
+      disposition.contention_id.to_i == contention_reference_id
+    end
+  end
+
   private
 
   def limited_poa
@@ -594,12 +601,6 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     end_product_establishment.associated_rating&.promulgation_date
-  end
-
-  def contention_disposition
-    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
-      disposition.contention_id.to_i == contention_reference_id
-    end
   end
 
   def create_decision_issues_from_rating
