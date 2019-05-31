@@ -113,10 +113,7 @@ RSpec.feature "Hearings tasks workflows" do
           click_button(text: "Assign Tasks")
           fill_in_and_submit_bulk_assign_modal
           expect(page).to have_content(success_msg)
-          # wait for the ajax call to reload the org queue to complete
-          using_wait_time 10 do 
-            expect(page).to have_content("Assigned (4)")
-          end
+          expect(page).to have_content("Assigned (4)")
         end
       end
     end
