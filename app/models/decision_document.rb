@@ -34,12 +34,16 @@ class DecisionDocument < ApplicationRecord
     output_location
   end
 
-  def submit_for_processing!(delay: 0)
+  def submit_for_processing!(delay: processing_delay)
     update_decision_issue_decision_dates! if appeal.is_a?(Appeal)
     return no_processing_required! unless upload_enabled?
 
     cache_file!
     super
+
+    if not_processed_or_decision_date_not_in_the_future?
+      ProcessDecisionDocumentJob.perform_later(id)
+    end
   end
 
   def process!
@@ -132,5 +136,17 @@ class DecisionDocument < ApplicationRecord
     fail NoFileError unless @file
 
     S3Service.store_file(s3_location, Base64.decode64(@file))
+  end
+
+  def processing_delay
+    return decision_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours if decision_date.future?
+
+    0
+  end
+
+  def not_processed_or_decision_date_not_in_the_future?
+    return true unless processed? || decision_date.future?
+
+    false
   end
 end
