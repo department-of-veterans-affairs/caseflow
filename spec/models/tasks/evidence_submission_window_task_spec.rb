@@ -3,14 +3,6 @@
 describe EvidenceSubmissionWindowTask do
   let(:participant_id_with_pva) { "000000" }
   let(:participant_id_with_no_vso) { "11111" }
-
-  before do
-    FeatureToggle.enable!(:ama_acd_tasks)
-  end
-  after do
-    FeatureToggle.disable!(:ama_acd_tasks)
-  end
-
   let!(:receipt_date) { 2.days.ago }
   let!(:appeal) do
     create(:appeal, docket_type: "evidence_submission", receipt_date: receipt_date, claimants: [

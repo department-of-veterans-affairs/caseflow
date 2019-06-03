@@ -229,6 +229,29 @@ RSpec.feature "Judge assignment to attorney and judge" do
     before { FeatureToggle.enable!(:automatic_case_distribution) }
     after { FeatureToggle.disable!(:automatic_case_distribution) }
 
+    before do
+      allow_any_instance_of(DirectReviewDocket)
+        .to receive(:nonpriority_receipts_per_year)
+        .and_return(100)
+
+      allow(Appeal)
+        .to receive(:nonpriority_decisions_per_year)
+        .and_return(1000)
+
+      allow_any_instance_of(HearingRequestDocket)
+        .to receive(:age_of_n_oldest_priority_appeals)
+        .and_return([])
+
+      allow_any_instance_of(HearingRequestDocket)
+        .to receive(:distribute_appeals)
+        .and_return([])
+
+      allow_any_instance_of(LegacyDocket).to receive(:weight).and_return(101.4)
+      allow_any_instance_of(DirectReviewDocket).to receive(:weight).and_return(10)
+      allow_any_instance_of(EvidenceSubmissionDocket).to receive(:weight).and_return(95)
+      allow_any_instance_of(HearingRequestDocket).to receive(:weight).and_return(7)
+    end
+
     it "displays an error if the distribution request is invalid" do
       create(:ama_judge_task, :in_progress, assigned_at: 40.days.ago, assigned_to: judge_one.user, appeal: appeal_one)
 

@@ -23,14 +23,6 @@ describe ScheduleHearingTask do
   context "create a new ScheduleHearingTask" do
     let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
 
-    before do
-      FeatureToggle.enable!(:ama_acd_tasks)
-    end
-
-    after do
-      FeatureToggle.disable!(:ama_acd_tasks)
-    end
-
     subject do
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
