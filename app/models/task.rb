@@ -163,23 +163,32 @@ class Task < ApplicationRecord
   def update_task_type(params)
     parents = []
 
-    if parent.slice(:class, :action, :type).eql? slice(:class, :action, :type)
+    if parent_is_of_task_type?
       parents = parent.update_task_type(params)
     end
 
     new_parent = parents.first
-    sibling = new_parent&.children && new_parent.children.last
+    new_task_of_type = auto_created_child_of(new_parent)
 
-    if sibling.nil? || eql?(sibling)
-      sibling = change_type(params, new_parent)
+    if new_task_of_type
+      new_task_of_type.update!(assigned_to: assigned_to, status: status)
     else
-      sibling.update!(assigned_to: assigned_to, status: status)
+      new_task_of_type = change_type(params, new_parent)
     end
 
     update!(status: Constants.TASK_STATUSES.cancelled)
-    children.active.each { |child| child.update!(parent_id: sibling.id) }
+    children.active.each { |child| child.update!(parent_id: new_task_of_type.id) }
 
-    [sibling, self, sibling.children, parents].flatten
+    [new_task_of_type, self, new_task_of_type.children, parents].flatten
+  end
+
+  def auto_created_child_of(new_parent)
+    child_of_parent = new_parent&.children && new_parent.children.last
+    !eql?(child_of_parent) && child_of_parent
+  end
+
+  def parent_is_of_task_type?
+    parent.slice(:class, :action, :type).eql? slice(:class, :action, :type)
   end
 
   def change_type(_params, _new_parent)

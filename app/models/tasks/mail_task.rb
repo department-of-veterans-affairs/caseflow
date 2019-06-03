@@ -85,7 +85,7 @@ class MailTask < GenericTask
   end
 
   def change_type(params, new_parent)
-    MailTask.subclasses.find { |mt| mt.name == params[:action] }.create!(
+    Object.const_get(params[:action]).create!(
       slice(:appeal, :assigned_by, :assigned_to, :status, :on_hold_duration, :placed_on_hold_at)
       .merge(instructions: [instructions, params[:instructions]].flatten, parent: new_parent || parent)
     )
