@@ -169,30 +169,27 @@ class HearingDay < ApplicationRecord
     end
 
     def upcoming_days_for_vso_user(start_date, end_date, user)
-      hearing_days_with_ama_hearings = HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
-        .where("DATE(scheduled_for) between ? and ?", start_date, end_date).select do |hearing_day|
-        hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
+      days_in_range = hearing_days_in_range(start_date, end_date)
+
+      ama_days = days_in_range.select { |day| day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) } }
+
+      remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(:scheduled_for).limit(1000)
+
+      vacols_hearings_for_remaining_days = HearingRepository.fetch_hearings_for_parents(remaining_days.map(&:id))
+
+      loaded_hearings = LegacyHearing
+        .includes(appeal: [tasks: :assigned_to])
+        .where(id: vacols_hearings_for_remaining_days.values.flatten.pluck(:id))
+
+      vacols_days = remaining_days.select do |day|
+        vacols_hearing = vacols_hearings_for_remaining_days[day.id.to_s]
+
+        vacols_hearing&.any? do |hearing|
+          loaded_hearings.detect { |legacy_hearing| legacy_hearing.id == hearing.id }&.assigned_to_vso?(user)
+        end
       end
 
-      remaining_hearing_days = HearingDay.where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-        .where.not(id: hearing_days_with_ama_hearings.pluck(:id)).order(:scheduled_for).limit(1000)
-
-      vacols_hearings_for_remaining_hearing_days = HearingRepository.fetch_hearings_for_parents(
-        remaining_hearing_days.pluck(:id)
-      )
-
-      caseflow_hearing_ids = vacols_hearings_for_remaining_hearing_days.values.flatten.pluck(:id)
-
-      loaded_caseflow_hearings = LegacyHearing.includes(appeal: [tasks: :assigned_to]).where(id: caseflow_hearing_ids)
-
-      hearing_days_with_vacols_hearings = remaining_hearing_days.select do |hearing_day|
-        !vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil? &&
-          vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].any? do |hearing|
-            loaded_caseflow_hearings.detect { |legacy_hearing| legacy_hearing.id == hearing.id }.assigned_to_vso?(user)
-          end
-      end
-
-      hearing_days_with_ama_hearings + hearing_days_with_vacols_hearings
+      ama_days + vacols_days
     end
 
     def load_days(start_date, end_date, regional_office = nil)
@@ -244,6 +241,11 @@ class HearingDay < ApplicationRecord
     end
 
     private
+
+    def hearing_days_in_range(start_date, end_date)
+      HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
+        .where("DATE(scheduled_for) between ? and ?", start_date, end_date)
+    end
 
     def current_user_css_id
       RequestStore.store[:current_user].css_id.upcase

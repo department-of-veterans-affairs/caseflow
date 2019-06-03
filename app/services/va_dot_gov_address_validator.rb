@@ -211,12 +211,11 @@ class VaDotGovAddressValidator
   end
 
   def create_admin_action_for_schedule_hearing_task(instructions:, admin_action_type:)
-    task = ScheduleHearingTask.active.find_by(appeal: appeal)
+    task = ScheduleHearingTask.open.find_by(appeal: appeal)
 
     return if task.nil?
 
-    # Create only if another admin task is not in an active status.
-    admin_action_type.active.find_or_create_by(
+    admin_action_type.find_or_create_by(
       appeal: appeal,
       instructions: [instructions],
       assigned_to: HearingsManagement.singleton,
