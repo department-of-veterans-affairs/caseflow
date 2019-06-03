@@ -3,19 +3,19 @@
 describe BatchUsersForReaderQuery do
   describe "#process" do
     let!(:active_user1) do
-      create(:user, last_login_at: 3.days.ago, efolder_documents_fetched_at: 25.hours.ago )
+      create(:user, last_login_at: 3.days.ago, efolder_documents_fetched_at: 25.hours.ago)
     end
     let!(:active_user2) do
-      create(:user, last_login_at: 3.days.ago, efolder_documents_fetched_at: 26.hours.ago )
+      create(:user, last_login_at: 3.days.ago, efolder_documents_fetched_at: 26.hours.ago)
     end
     let!(:active_user3) do
-      create(:user, last_login_at: 3.days.ago, efolder_documents_fetched_at: 5.hours.ago )
+      create(:user, last_login_at: 3.days.ago, efolder_documents_fetched_at: 5.hours.ago)
     end
     let!(:active_user4) do
       create(:user, last_login_at: 3.days.ago)
     end
     let!(:inactive_user) do
-      create(:user, last_login_at: 3.months.ago )
+      create(:user, last_login_at: 3.months.ago)
     end
 
     subject { BatchUsersForReaderQuery.process }

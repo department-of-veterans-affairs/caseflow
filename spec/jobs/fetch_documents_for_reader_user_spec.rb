@@ -14,7 +14,7 @@ describe FetchDocumentsForReaderUserJob do
         vacols_case: create(:case, documents: [document], staff: create(:staff, sdomainid: user.css_id))
       )
     end
-    
+
     let(:doc_struct) do
       {
         documents: [document]
