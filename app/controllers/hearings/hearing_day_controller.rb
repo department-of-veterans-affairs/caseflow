@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Hearings::HearingDayController < HearingsApplicationController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_view_hearing_schedule_access
+  before_action :verify_access_to_hearings, only: [:update]
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
   skip_before_action :deny_vso_access, only: [:index, :show, :index_print]
 
