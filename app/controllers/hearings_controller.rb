@@ -1,30 +1,42 @@
 # frozen_string_literal: true
 
 class HearingsController < ApplicationController
-  before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
-  before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
-  before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
-  before_action :check_hearing_prep_out_of_service
+  include HearingsConcerns::VerifyAccess
 
   def show
     render json: hearing.to_hash(current_user.id)
   end
 
   def update
-    if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(update_params_legacy)
-      # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
-      HearingRepository.load_vacols_data(hearing)
-    else
-      Transcription.find_or_create_by(hearing: hearing)
-      hearing.update!(update_params)
-    end
+    update_hearing
+    update_advance_on_docket_motion unless advance_on_docket_motion_params.empty?
 
     render json: hearing.to_hash(current_user.id)
   end
 
+  def update_hearing
+    if hearing.is_a?(LegacyHearing)
+      params = HearingTimeService.build_legacy_params_with_time(hearing, update_params_legacy)
+      hearing.update_caseflow_and_vacols(params)
+      # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
+      HearingRepository.load_vacols_data(hearing)
+    else
+      params = HearingTimeService.build_params_with_time(hearing, update_params)
+      Transcription.find_or_create_by(hearing: hearing)
+      hearing.update!(params)
+    end
+  end
+
+  def update_advance_on_docket_motion
+    motion = AdvanceOnDocketMotion.find_or_create_by!(
+      person_id: advance_on_docket_motion_params[:person_id],
+      user_id: advance_on_docket_motion_params[:user_id]
+    )
+    motion.update(advance_on_docket_motion_params)
+  end
+
   def logo_name
-    "Hearing Prep"
+    "Hearings"
   end
 
   def logo_path
@@ -43,28 +55,12 @@ class HearingsController < ApplicationController
       locations = appeal.va_dot_gov_address_validator.get_distance_to_facilities(facility_ids: facility_ids)
 
       render json: { hearing_locations: locations }
-    rescue Caseflow::Error::VaDotGovAPIError => e
-      render json: { message: e.message["messages"][0]["key"] }, status: :bad_request
+    rescue Caseflow::Error::VaDotGovAPIError => error
+      messages = error.message.dig("messages") || []
+      render json: { message: messages[0]&.dig("key") || error.message }, status: :bad_request
+    rescue StandardError => error
+      render json: { message: error.message }, status: :internal_server_error
     end
-  end
-
-  def docket_range
-    HearingDayMapper.validate_regional_office(params["regional_office"])
-
-    appeals = DocketCoordinator.new.dockets[:hearing]
-      .appeals_in_docket_range_for_regional_office(params["regional_office"])
-      .map do |appeal|
-        {
-          id: appeal.id,
-          external_id: appeal.uuid,
-          receipt_date: appeal.receipt_date,
-          docket_number: appeal.docket_number,
-          target_decision_date: appeal.target_decision_date,
-          aod: appeal.advanced_on_docket
-        }
-      end
-
-    render json: appeals.as_json
   end
 
   private
@@ -81,18 +77,6 @@ class HearingsController < ApplicationController
     params[:id]
   end
 
-  def verify_access
-    verify_authorized_roles("Hearing Prep")
-  end
-
-  def verify_access_to_reader_or_hearings
-    verify_authorized_roles("Reader", "Hearing Prep", "Edit HearSched", "Build HearSched")
-  end
-
-  def verify_access_to_hearing_prep_or_schedule
-    verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched")
-  end
-
   def set_application
     RequestStore.store[:application] = "hearings"
   end
@@ -104,7 +88,11 @@ class HearingsController < ApplicationController
                                      :aod,
                                      :transcript_requested,
                                      :prepped,
+                                     :scheduled_time_string,
                                      :scheduled_for,
+                                     :judge_id,
+                                     :room,
+                                     :bva_poc,
                                      hearing_location_attributes: [
                                        :city, :state, :address,
                                        :facility_id, :facility_type,
@@ -121,7 +109,7 @@ class HearingsController < ApplicationController
                                      :transcript_requested,
                                      :transcript_sent_date,
                                      :prepped,
-                                     :scheduled_time,
+                                     :scheduled_time_string,
                                      :judge_id,
                                      :room,
                                      :bva_poc,
@@ -140,4 +128,8 @@ class HearingsController < ApplicationController
                                      ])
   end
   # rubocop:enable Metrics/MethodLength
+
+  def advance_on_docket_motion_params
+    params.fetch(:advance_on_docket_motion, {}).permit(:user_id, :person_id, :reason, :granted)
+  end
 end

@@ -59,11 +59,9 @@ class DocketCoordinator
     (decisions_in_days * docket_proportions[:hearing]).round
   end
 
-  def target_number_of_ama_hearings_this_month
-    today = Time.zone.now
-
-    days_in_month = Time.days_in_month(today.month, today.year)
-    target_number_of_ama_hearings(days_in_month.days)
+  def upcoming_appeals_in_range(time_period)
+    target = target_number_of_ama_hearings(time_period)
+    dockets[:hearing].appeals(priority: false).where(docket_range_date: nil).limit(target)
   end
 
   def priority_count

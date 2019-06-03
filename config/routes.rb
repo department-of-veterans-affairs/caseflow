@@ -42,6 +42,7 @@ Rails.application.routes.draw do
         post 'appeals/:appeal_id/upload_document', to: 'upload_vbms_document#create'
         get 'judges', to: 'judges#index'
         get 'user', to: 'users#index'
+        get 'veterans', to: 'veterans#details'
       end
     end
   end
@@ -118,7 +119,6 @@ Rails.application.routes.draw do
   get '/regional_offices/:regional_office/open_hearing_dates', to: "regional_offices#open_hearing_dates"
 
   namespace :hearings do
-    resources :dockets, only: [:index, :show], param: :docket_date
     resources :worksheets, only: [:update, :show], param: :id
     resources :appeals, only: [:update], param: :appeal_id
     resources :hearing_day, only: [:index, :show, :destroy, :update]
@@ -126,9 +126,11 @@ Rails.application.routes.draw do
     resources :schedule_periods, only: [:show, :update, :download], param: :schedule_period_id
     resources :hearing_day, only: [:update, :show], param: :hearing_key
   end
+  get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
   get 'hearings/:hearing_id/details', to: "hearing_schedule#hearing_details_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
+  get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day#index_print"
   get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"
@@ -140,7 +142,6 @@ Rails.application.routes.draw do
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
   get 'hearings/queue/appeals/:vacols_id', to: 'queue#index'
   get 'hearings/find_closest_hearing_locations', to: 'hearings#find_closest_hearing_locations'
-  get 'hearings/docket_range/:regional_office', to: 'hearings#docket_range'
 
   resources :hearings, only: [:update, :show]
 
@@ -207,6 +208,7 @@ Rails.application.routes.draw do
   resources :team_management, only: [:index, :update]
   get '/team_management(*rest)', to: 'team_management#index'
   post '/team_management/judge_team/:user_id', to: 'team_management#create_judge_team'
+  post '/team_management/private_bar', to: 'team_management#create_private_bar'
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
 
@@ -216,15 +218,22 @@ Rails.application.routes.draw do
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule
+      post :request_hearing_disposition_change
     end
+    resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
+    resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
   end
+
   resources :judge_assign_tasks, only: [:create]
+
+  resources :bulk_task_assignments, only: [:create]
 
   resources :distributions, only: [:new, :show]
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
-    resources :users, only: [:index, :create, :destroy], controller: 'organizations/users'
+    resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
+    resources :members, only: [:index], controller: 'organizations/members'
   end
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
@@ -251,6 +260,8 @@ Rails.application.routes.draw do
   mount PdfjsViewer::Rails::Engine => "/pdfjs", as: 'pdfjs'
 
   get "unauthorized" => "application#unauthorized"
+
+  get "feedback" => "application#feedback"
 
   %w( 404 500 ).each do |code|
     get code, :to => "errors#show", :status_code => code
