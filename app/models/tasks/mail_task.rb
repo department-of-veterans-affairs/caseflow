@@ -84,10 +84,10 @@ class MailTask < GenericTask
     super(user).present? ? super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h) : []
   end
 
-  def change_type(params)
+  def change_type(params, new_parent)
     MailTask.subclasses.find { |mt| mt.name == params[:action] }.create!(
-      slice(:appeal, :assigned_by, :assigned_to, :status, :parent, :on_hold_duration, :placed_on_hold_at)
-      .merge(instructions: [instructions, params[:instructions]].flatten)
+      slice(:appeal, :assigned_by, :assigned_to, :status, :on_hold_duration, :placed_on_hold_at)
+      .merge(instructions: [instructions, params[:instructions]].flatten, parent: new_parent || parent)
     )
   end
 end

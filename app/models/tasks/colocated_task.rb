@@ -83,10 +83,11 @@ class ColocatedTask < Task
     active?
   end
 
-  def change_type(params)
+  def change_type(params, new_parent)
     dup.tap do |dupe|
       dupe.action = params[:action]
       dupe.instructions = [instructions, params[:instructions]].flatten
+      dupe.parent = new_parent if new_parent
       dupe.save!
     end
   end
