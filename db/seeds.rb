@@ -91,7 +91,6 @@ class SeedDB
       decision_review: appeal
     )
 
-    FeatureToggle.enable!(:ama_acd_tasks)
     InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
 
     # Completing the evidence submission task will mark the appeal ready for distribution
@@ -537,7 +536,6 @@ class SeedDB
 
     vet.save
 
-    FeatureToggle.enable!(:ama_acd_tasks)
     FactoryBot.create(
       :appeal,
       :with_tasks,
@@ -1094,8 +1092,6 @@ class SeedDB
   def create_ama_hearing_appeals
     description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
-
-    FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
       :appeal,
