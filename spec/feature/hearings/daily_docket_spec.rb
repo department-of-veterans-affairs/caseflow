@@ -232,9 +232,10 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
       context "with an existing AOD motion made by same judge" do
         let!(:aod_motion) do
+          person = Person.find_by(participant_id: hearing.appellant.participant_id)
           AdvanceOnDocketMotion.create!(
             user_id: current_user.id,
-            person_id: hearing.claimant_id,
+            person_id: person.id,
             granted: true,
             reason: "age"
           )
@@ -251,6 +252,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
           judge_motion = AdvanceOnDocketMotion.first
           expect(judge_motion.granted).to eq(false)
           expect(judge_motion.reason).to eq("financial_distress")
+          expect(hearing.appeal.advanced_on_docket).to eq(true)
         end
       end
 
