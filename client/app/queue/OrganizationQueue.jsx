@@ -190,12 +190,11 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, user
     docketNumberColumn(tasks, false), daysWaitingColumn(false)];
   }
 
-  return (<React.Fragment>
+  return <React.Fragment>
     <p className="cf-margin-top-0">{description}</p>
     <TaskTable
       customColumns={columns}
       tasks={tasks}
     />
-    }
-  </React.Fragment>);
+  </React.Fragment>;
 };
