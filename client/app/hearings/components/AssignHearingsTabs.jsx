@@ -37,7 +37,7 @@ const tableNumberStyling = css({
 
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 
-const AvailableVeteransTable = ({ rows, columns, style }) => {
+const AvailableVeteransTable = ({ rows, columns, style = {} }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
 
   if (_.isEmpty(rows)) {
@@ -395,43 +395,21 @@ export default class AssignHearingsTabs extends React.Component {
   }
 
   amaDocketCutoffLineStyle = (appeals) => {
-    const { appealsInDocketRange } = this.props;
-
-    if (_.isEmpty(appealsInDocketRange)) {
-      return css({});
-    }
-
     const filtered = this.filterAppeals(appeals, 'amaAppeals');
+    const endOfNextMonth = moment().add('months', 1).
+      endOf('month');
+    const appealsInDocketRange = _.filter(filtered, (appeal) => (
+      moment(appeal.attributes.docketRangeDate).isBefore(endOfNextMonth)
+    ));
 
     const filteredAppealsInDocketRange = _.intersection(
       filtered.map((appeal) => appeal.attributes.externalAppealId),
-      appealsInDocketRange.map((appeal) => appeal.external_id)
+      appealsInDocketRange.map((appeal) => appeal.attributes.externalAppealId)
     );
 
     const indexOfLine = getIndexOfDocketLine(filtered, filteredAppealsInDocketRange);
 
-    return docketCutoffLineStyle(indexOfLine);
-  }
-
-  legacyDocketCutoffLineStyle = (appeals) => {
-    const docketEndDate = moment().endOf('month');
-
-    const filtered = this.filterAppeals(appeals, 'legacyAppeals');
-
-    const filteredAppealsInDocketRange = _.filter(filtered, (appeal) => (
-      moment(appeal.attributes.docketDate).isBefore(docketEndDate) && !(
-        appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
-        appeal.attributes.aod
-      )
-    ));
-
-    const indexOfLine = getIndexOfDocketLine(filtered, filteredAppealsInDocketRange);
-
-    return docketCutoffLineStyle(
-      indexOfLine,
-      `Hearings docket date: ${moment().endOf('month').
-        format('MM/DD/YYYY')}`
-    );
+    return docketCutoffLineStyle(indexOfLine, endOfNextMonth.format('MMMM YYYY'));
   }
 
   render() {
@@ -463,7 +441,6 @@ export default class AssignHearingsTabs extends React.Component {
           {
             label: 'Legacy Veterans Waiting',
             page: <AvailableVeteransTable
-              style={this.legacyDocketCutoffLineStyle(legacyAppeals)}
               rows={this.availableVeteransRows(legacyAppeals, { tab: 'legacyAppeals' })}
               columns={this.tabWindowColumns(legacyAppeals, { tab: 'legacyAppeals' })}
             />
