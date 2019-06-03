@@ -95,7 +95,8 @@ QueueFlowModal.propTypes = {
   button: PropTypes.string,
   pathAfterSubmit: PropTypes.string,
   submit: PropTypes.func,
-  validateForm: PropTypes.func
+  validateForm: PropTypes.func,
+  reloadPageAfterSubmit: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {
