@@ -52,7 +52,7 @@ class WorkQueue::LegacyTaskSerializer
     object.appeal.type
   end
 
-  attribute :docket_date do |object|
+  attribute :docket_range_date do |object|
     object.appeal.docket_date
   end
 

@@ -59,8 +59,12 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:docket_number)
   end
 
-  attribute :docket_date do |object|
-    object.appeal.try(:docket_date)
+  attribute :docket_range_date do |object|
+    if object.appeal.is_a?(LegacyAppeal)
+      object.appeal.try(:docket_date)
+    else
+      object.appeal.try(:docket_range_date)
+    end
   end
 
   attribute :veteran_full_name do |object|
