@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190520201631) do
+ActiveRecord::Schema.define(version: 20190529143622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(version: 20190520201631) do
 
   create_table "appeals", force: :cascade, comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement)." do |t|
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
+    t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
     t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
     t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow by the user."
     t.datetime "establishment_attempted_at", comment: "Timestamp for when the appeal's establishment was last attempted."

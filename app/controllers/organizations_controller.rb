@@ -3,6 +3,7 @@
 class OrganizationsController < ApplicationController
   before_action :verify_organization_access
   before_action :verify_role_access
+  before_action :verify_business_line, only: [:show]
   before_action :set_application
   skip_before_action :deny_vso_access
 
@@ -14,6 +15,10 @@ class OrganizationsController < ApplicationController
 
   def verify_organization_access
     redirect_to "/unauthorized" unless organization&.user_has_access?(current_user)
+  end
+
+  def verify_business_line
+    redirect_to "/decision_reviews/#{organization.url}" if organization.is_a?(::BusinessLine)
   end
 
   def verify_role_access

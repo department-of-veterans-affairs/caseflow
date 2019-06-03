@@ -310,30 +310,6 @@ describe Task do
     let(:user) { FactoryBot.create(:user) }
     let(:task) { FactoryBot.create(:generic_task, assigned_to: user) }
 
-    context "when task/user combination result in multiple available actions with same path" do
-      let(:path) { "modal/path_to_modal" }
-      let(:labels) { ["First option", "Second option"] }
-
-      before do
-        allow(task).to receive(:actions_available?).and_return(true)
-
-        dummy_actions = [
-          { label: labels[0], value: path },
-          { label: labels[1], value: path }
-        ]
-        allow(task).to receive(:available_actions).and_return(dummy_actions)
-      end
-
-      it "should throw an error" do
-        expect { task.available_actions_unwrapper(user) }.to(raise_error) do |e|
-          expect(e).to be_a(Caseflow::Error::DuplicateTaskActionPaths)
-          expect(e.task_id).to eq(task.id)
-          expect(e.user_id).to eq(user.id)
-          expect(e.labels).to match_array(labels)
-        end
-      end
-    end
-
     context "without a timed hold task" do
       it "doesn't include end timed hold in the returned actions" do
         actions = task.available_actions_unwrapper(user)
@@ -366,7 +342,7 @@ describe Task do
         subject { task.update!(status: Constants.TASK_STATUSES.completed) }
 
         it "cancels the child timed hold task" do
-          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(timed_hold_task.reload.open?).to be_truthy
 
           subject
 
@@ -394,7 +370,7 @@ describe Task do
         end
 
         it "cancels the child timed hold task" do
-          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(timed_hold_task.reload.open?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
           expect(task.reload.children.count).to eq 1
 
@@ -403,7 +379,7 @@ describe Task do
           expect(task.reload.children.count).to eq 2
           transcription_task = task.reload.children.find { |child| child.is_a?(TranscriptionTask) }
           expect(transcription_task).to_not be_nil
-          expect(transcription_task.active?).to be_truthy
+          expect(transcription_task.open?).to be_truthy
           expect(timed_hold_task.reload.cancelled?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
         end
@@ -413,7 +389,7 @@ describe Task do
         subject { task.update!(instructions: ["These are my new instructions"]) }
 
         it "cancels the child timed hold task" do
-          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(timed_hold_task.reload.open?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
 
           subject
@@ -436,10 +412,10 @@ describe Task do
     end
   end
 
-  describe ".active?" do
+  describe ".open?" do
     let(:status) { nil }
     let(:task) { FactoryBot.create(:generic_task, status: status) }
-    subject { task.active? }
+    subject { task.open? }
 
     context "when status is assigned" do
       let(:status) { Constants.TASK_STATUSES.assigned }
@@ -723,6 +699,35 @@ describe Task do
 
       task.destroy!
       expect(TaskTimer.where(task_id: task_id).count).to eq(0)
+    end
+  end
+
+  describe ".old_style_hold_expired?" do
+    subject { task.old_style_hold_expired? }
+
+    context "when a task is on an active old-style hold" do
+      let(:task) { FactoryBot.create(:task, :on_hold) }
+
+      it "recognizes that the old style hold has not expired" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when a task has completed an old-style hold" do
+      let(:task) { FactoryBot.create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
+
+      it "recognizes that the old style hold has expired" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when a task has a completed old-style hold as well as a new timed hold" do
+      let(:task) { FactoryBot.create(:task, :on_hold, placed_on_hold_at: 200.days.ago) }
+      before { TimedHoldTask.create_from_parent(task, days_on_hold: 16) }
+
+      it "does not recognize that the task has completed the old-style hold" do
+        expect(subject).to eq(false)
+      end
     end
   end
 end

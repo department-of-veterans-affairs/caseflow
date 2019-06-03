@@ -59,6 +59,11 @@ class DocketCoordinator
     (decisions_in_days * docket_proportions[:hearing]).round
   end
 
+  def upcoming_appeals_in_range(time_period)
+    target = target_number_of_ama_hearings(time_period)
+    dockets[:hearing].appeals(priority: false).where(docket_range_date: nil).limit(target)
+  end
+
   def priority_count
     @priority_count ||= dockets
       .values

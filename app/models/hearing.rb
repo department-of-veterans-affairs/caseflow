@@ -36,7 +36,7 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :available_hearing_locations, :closest_regional_office, to: :appeal
+  delegate :available_hearing_locations, :closest_regional_office, :advanced_on_docket, to: :appeal
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
@@ -79,7 +79,7 @@ class Hearing < ApplicationRecord
       task.type == TrackVeteranTask.name &&
         task.assigned_to.is_a?(Representative) &&
         task.assigned_to.user_has_access?(user) &&
-        task.active?
+        task.open?
     end
   end
 
@@ -100,7 +100,7 @@ class Hearing < ApplicationRecord
   end
 
   def disposition_task_in_progress
-    disposition_task ? disposition_task.active_with_no_children? : false
+    disposition_task ? disposition_task.open_with_no_children? : false
   end
 
   def disposition_editable
@@ -109,6 +109,17 @@ class Hearing < ApplicationRecord
 
   def representative
     appeal.representative_name
+  end
+
+  def claimant_id
+    appeal.appellant.id
+  end
+
+  def advance_on_docket_motion
+    # we're only really interested if the AOD was granted
+    motion = AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
+
+    motion&.slice(:person_id, :reason, :user_id, :granted)
   end
 
   def scheduled_for
@@ -186,7 +197,9 @@ class Hearing < ApplicationRecord
         :worksheet_issues,
         :closest_regional_office,
         :available_hearing_locations,
-        :disposition_editable
+        :disposition_editable,
+        :advance_on_docket_motion,
+        :claimant_id
       ],
       except: [:military_service]
     )
@@ -227,7 +240,9 @@ class Hearing < ApplicationRecord
         :worksheet_issues,
         :closest_regional_office,
         :available_hearing_locations,
-        :disposition_editable
+        :disposition_editable,
+        :advance_on_docket_motion,
+        :claimant_id
       ]
     )
   end

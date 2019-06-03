@@ -43,13 +43,9 @@ class WorkQueue::TaskSerializer
     object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
   end
 
-  attribute :placed_on_hold_at do |object|
-    object.placed_on_hold_at || object.calculated_placed_on_hold_at
-  end
+  attribute :placed_on_hold_at, &:calculated_placed_on_hold_at
 
-  attribute :on_hold_duration do |object|
-    object.on_hold_duration || object.calculated_on_hold_duration
-  end
+  attribute :on_hold_duration, &:calculated_on_hold_duration
 
   attribute :docket_name do |object|
     object.appeal.try(:docket_name)
@@ -72,7 +68,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :closest_regional_office do |object|
-    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office).city
+    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office)
   end
 
   attribute :external_appeal_id do |object|

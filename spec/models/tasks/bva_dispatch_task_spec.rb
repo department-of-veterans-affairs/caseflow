@@ -74,9 +74,9 @@ describe BvaDispatchTask do
 
       context "when :decision_document_upload feature is enabled" do
         it "should complete the BvaDispatchTask assigned to the User and the task assigned to the BvaDispatch org" do
-          expect do
-            BvaDispatchTask.outcode(root_task.appeal.reload, params, user)
-          end.to have_enqueued_job(ProcessDecisionDocumentJob).exactly(:once)
+          allow(ProcessDecisionDocumentJob).to receive(:perform_later)
+
+          BvaDispatchTask.outcode(root_task.appeal.reload, params, user)
 
           tasks = BvaDispatchTask.where(appeal: root_task.appeal, assigned_to: user)
           expect(tasks.length).to eq(1)
@@ -88,6 +88,9 @@ describe BvaDispatchTask do
           expect(request_issue.closed_status).to eq("decided")
 
           decision_document = DecisionDocument.find_by(appeal_id: root_task.appeal.id)
+
+          expect(ProcessDecisionDocumentJob).to have_received(:perform_later)
+            .with(decision_document.id).exactly(:once)
           expect(decision_document).to_not eq nil
           expect(decision_document.document_type).to eq "BVA Decision"
           expect(decision_document.source).to eq "BVA"
@@ -103,14 +106,17 @@ describe BvaDispatchTask do
         end
 
         it "should not complete the BvaDispatchTask and the task assigned to the BvaDispatch org" do
-          expect do
-            BvaDispatchTask.outcode(legacy_appeal, params_legacy, user)
-          end.to have_enqueued_job(ProcessDecisionDocumentJob).exactly(:once)
+          allow(ProcessDecisionDocumentJob).to receive(:perform_later)
+
+          BvaDispatchTask.outcode(legacy_appeal, params_legacy, user)
 
           tasks = BvaDispatchTask.where(appeal: legacy_appeal, assigned_to: user)
           expect(tasks.length).to eq(0)
 
           decision_document = DecisionDocument.find_by(appeal_id: legacy_appeal.id)
+
+          expect(ProcessDecisionDocumentJob).to have_received(:perform_later)
+            .with(decision_document.id).exactly(:once)
           expect(decision_document).to_not eq nil
           expect(decision_document.document_type).to eq "BVA Decision"
           expect(decision_document.source).to eq "BVA"
