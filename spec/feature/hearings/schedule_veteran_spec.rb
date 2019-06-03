@@ -252,13 +252,13 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         # Your queue
         visit "/queue"
         click_on "Bob Smith"
-        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_HOLD.to_h[:label])
+        click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
         # On hold
         click_dropdown(text: "15 days")
         fill_in "Notes:", with: "Waiting for response"
 
-        click_on "Place case on hold"
+        click_on(COPY::MODAL_SUBMIT_BUTTON)
 
         expect(page).to have_content("case has been placed on hold")
       end

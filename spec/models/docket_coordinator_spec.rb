@@ -108,6 +108,20 @@ describe DocketCoordinator do
       expect(docket_coordinator.target_number_of_ama_hearings(2.years)).to eq(400)
     end
 
+    context "with appeals that have already been marked in range" do
+      let(:appeals_count) { docket_coordinator.dockets[:hearing].appeals.count }
+      let(:number_of_appeals_in_range) { 2 }
+      before do
+        docket_coordinator.dockets[:hearing].appeals.limit(number_of_appeals_in_range)
+          .update(docket_range_date: Time.utc(2019, 1, 1))
+      end
+
+      it "returns appeals that have not been marked in range" do
+        expect(docket_coordinator.upcoming_appeals_in_range(2.years).pluck(:id).count)
+          .to eq(other_docket_count - number_of_appeals_in_range)
+      end
+    end
+
     context "when the direct review proportion would exceed 80%" do
       let(:due_direct_review_count) { 170 }
 

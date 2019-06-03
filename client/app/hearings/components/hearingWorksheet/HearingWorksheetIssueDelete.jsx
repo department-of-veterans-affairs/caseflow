@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
-import { toggleIssueDeleteModal, onDeleteIssue } from '../../actions/Issue';
+import { toggleIssueDeleteModal, onDeleteIssue } from '../../actions/hearingWorksheetActions';
 import Modal from '../../../components/Modal';
 import { trashCan } from '../../../components/RenderFunctions';
 
@@ -59,7 +59,7 @@ class HearingWorksheetIssueDelete extends PureComponent {
 }
 
 const mapStateToProps = (state) => ({
-  worksheet: state.worksheet
+  worksheet: state.hearingWorksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
