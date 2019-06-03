@@ -785,6 +785,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    decision_review.tasks.active.any?
+    decision_review.tasks.open.any?
   end
 end
