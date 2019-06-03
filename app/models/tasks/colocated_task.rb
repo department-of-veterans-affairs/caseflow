@@ -87,7 +87,7 @@ class ColocatedTask < Task
     dup.tap do |dupe|
       dupe.action = params[:action]
       dupe.instructions = [instructions, params[:instructions]].flatten
-      dupe.parent = new_parent || parent
+      dupe.parent = new_parent.nil? ? parent : new_parent
       dupe.save!
     end
   end
