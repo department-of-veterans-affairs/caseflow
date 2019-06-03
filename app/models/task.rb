@@ -168,7 +168,7 @@ class Task < ApplicationRecord
     end
 
     new_parent = parents.first
-    new_task_of_type = auto_created_child_of(new_parent)
+    new_task_of_type = auto_created_child_of_task(new_parent)
 
     if new_task_of_type
       new_task_of_type.update!(assigned_to: assigned_to, status: status)
@@ -182,8 +182,8 @@ class Task < ApplicationRecord
     [new_task_of_type, self, new_task_of_type.children, parents].flatten
   end
 
-  def auto_created_child_of(new_parent)
-    child_of_parent = new_parent&.children && new_parent.children.last
+  def auto_created_child_of_task(task_to_check)
+    child_of_parent = task_to_check&.children && task_to_check.children.last
     !eql?(child_of_parent) && child_of_parent
   end
 
