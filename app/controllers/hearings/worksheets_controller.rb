@@ -6,7 +6,6 @@ class Hearings::WorksheetsController < HearingsController
   before_action :verify_access_to_reader_or_hearings, except: [:update]
   before_action :verify_edit_worksheet_access, only: [:update]
 
-
   rescue_from ActiveRecord::RecordNotFound do |e|
     Rails.logger.debug "Worksheets Controller failed: #{e.message}"
     render json: { "errors": ["message": e.message, code: 1000] }, status: :not_found

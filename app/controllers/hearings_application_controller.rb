@@ -5,7 +5,7 @@ class HearingsApplicationController < ApplicationController
 
   before_action :react_routed, :check_hearings_out_of_service
   before_action :verify_build_hearing_schedule_access, only: [:build_schedule_index]
-  before_action :verify_hearings_or_reader_access, only: [:hearing_details_index]
+  before_action :verify_access_to_reader_or_hearings, only: [:hearing_details_index]
   before_action :verify_view_hearing_schedule_access, only: [:index]
 
   def set_application
