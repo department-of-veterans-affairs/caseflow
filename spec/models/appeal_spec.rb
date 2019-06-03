@@ -56,12 +56,6 @@ describe Appeal do
     let!(:hearing_appeal) { create(:appeal, docket_type: "hearing") }
     let!(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
 
-    before do
-      FeatureToggle.enable!(:ama_acd_tasks)
-    end
-    after do
-      FeatureToggle.disable!(:ama_acd_tasks)
-    end
     subject { Appeal.ready_for_distribution }
 
     it "returns appeals" do
