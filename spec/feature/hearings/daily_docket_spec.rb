@@ -171,6 +171,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     context "with an AMA hearing" do
       let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
+      let!(:person) { Person.find_by(participant_id: hearing.appeal.appellant.participant_id) }
 
       scenario "User can update hearing prep fields" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
@@ -193,7 +194,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
         let!(:aod_motion) do
           AdvanceOnDocketMotion.create!(
             user_id: create(:user).id,
-            person_id: hearing.claimant_id,
+            person_id: person.id,
             granted: false,
             reason: "age"
           )
@@ -217,7 +218,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
         let!(:aod_motion) do
           AdvanceOnDocketMotion.create!(
             user_id: create(:user).id,
-            person_id: hearing.claimant_id,
+            person_id: person.id,
             granted: true,
             reason: "age"
           )
@@ -232,7 +233,6 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
       context "with an existing AOD motion made by same judge" do
         let!(:aod_motion) do
-          person = Person.find_by(participant_id: hearing.appellant.participant_id)
           AdvanceOnDocketMotion.create!(
             user_id: current_user.id,
             person_id: person.id,
@@ -252,7 +252,6 @@ RSpec.feature "Hearing Schedule Daily Docket" do
           judge_motion = AdvanceOnDocketMotion.first
           expect(judge_motion.granted).to eq(false)
           expect(judge_motion.reason).to eq("financial_distress")
-          expect(hearing.appeal.advanced_on_docket).to eq(true)
         end
       end
 
