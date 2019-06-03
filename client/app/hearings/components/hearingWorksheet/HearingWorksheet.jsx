@@ -11,9 +11,8 @@ import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './WorksheetHeaderVeteranSelection';
 import ContestedIssues from '../../../queue/components/ContestedIssues';
 import { now } from '../../utils';
-import { navigateToPrintPage } from '../../../util/PrintUtil';
+import { navigateToPrintPage, openPrintDialogue } from '../../../util/PrintUtil';
 import WorksheetFooter from './WorksheetFooter';
-import LoadingScreen from '../../../components/LoadingScreen';
 import CFRichTextEditor from '../../../components/CFRichTextEditor';
 import DOMPurify from 'dompurify';
 import Button from '../../../components/Button';
@@ -25,10 +24,9 @@ import {
   toggleWorksheetSaving,
   setWorksheetTimeSaved,
   setWorksheetSaveFailedStatus,
-  saveWorksheet
-} from '../../actions/Dockets';
-
-import { saveIssues } from '../../actions/Issue';
+  saveWorksheet,
+  saveIssue
+} from '../../actions/hearingWorksheetActions';
 
 const toolbar = {
   options: ['inline', 'fontSize', 'list', 'colorPicker'],
@@ -85,23 +83,24 @@ class WorksheetFormEntry extends React.PureComponent {
 export class HearingWorksheet extends React.PureComponent {
   componentDidMount() {
     document.title = this.getWorksheetTitle();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.worksheet !== this.props.worksheet) {
-      document.title = this.getWorksheetTitle();
+    if (this.props.print) {
+      openPrintDialogue();
     }
   }
 
   getWorksheetTitle = () => {
     const { worksheet } = this.props;
 
-    return `${worksheet.veteran_first_name[0]}. ${worksheet.veteran_last_name}'s ${document.title}`;
+    return `${worksheet.veteran_first_name[0]}. ${worksheet.veteran_last_name}'s Hearing Worksheet`;
   };
 
   save = (worksheet, worksheetIssues) => () => {
     this.props.saveWorksheet(worksheet);
-    this.props.saveIssues(worksheetIssues);
+    _.forEach(worksheetIssues, (issue) => {
+      if (issue.edited) {
+        this.props.saveIssue(issue);
+      }
+    });
   };
 
   openPdf = (worksheet, worksheetIssues) => () => {
@@ -131,7 +130,7 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   render() {
-    let { worksheet, worksheetIssues, fetchingWorksheet } = this.props;
+    let { worksheet, worksheetIssues } = this.props;
 
     const worksheetHeader = <WorksheetHeader
       print={this.props.print}
@@ -186,12 +185,10 @@ export class HearingWorksheet extends React.PureComponent {
             />
             <WorksheetHeaderVeteranSelection />
           </div>
-          {fetchingWorksheet ?
-            <LoadingScreen spinnerColor={LOGO_COLORS.HEARINGS.ACCENT} message="Loading worksheet..." /> :
-            <div className={wrapperClassNames}>
-              {firstWorksheetPage}
-              {secondWorksheetPage}
-            </div>}
+          <div className={wrapperClassNames}>
+            {firstWorksheetPage}
+            {secondWorksheetPage}
+          </div>
         </div>
       }
       {this.props.print &&
@@ -224,8 +221,7 @@ const mapStateToProps = (state) => ({
   worksheetIssues: state.hearingWorksheet.worksheetIssues,
   saveWorksheetFailed: state.hearingWorksheet.saveWorksheetFailed,
   worksheetIsSaving: state.hearingWorksheet.worksheetIsSaving,
-  worksheetTimeSaved: state.hearingWorksheet.worksheetTimeSaved,
-  fetchingWorksheet: state.hearingWorksheet.fetchingWorksheet
+  worksheetTimeSaved: state.hearingWorksheet.worksheetTimeSaved
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
@@ -234,7 +230,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setWorksheetTimeSaved,
   saveWorksheet,
   setWorksheetSaveFailedStatus,
-  saveIssues
+  saveIssue
 }, dispatch);
 
 export default connect(

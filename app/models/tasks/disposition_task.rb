@@ -76,13 +76,7 @@ class DispositionTask < GenericTask
       fail HearingDispositionNotNoShow
     end
 
-    no_show_hearing_task = NoShowHearingTask.create!(parent: self, appeal: appeal)
-
-    no_show_hearing_task.update!(
-      status: Constants.TASK_STATUSES.on_hold,
-      on_hold_duration: 25,
-      instructions: ["Mail must be received within 14 days of the original hearing date."]
-    )
+    NoShowHearingTask.create_with_hold(self)
   end
 
   def hold!
@@ -100,7 +94,7 @@ class DispositionTask < GenericTask
   private
 
   def update_children_status_after_closed
-    children.active.update_all(status: status)
+    children.open.update_all(status: status)
   end
 
   def cascade_closure_from_child_task?(_child_task)

@@ -13,7 +13,6 @@ import {
   onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
-  onCancelHearingUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,
@@ -30,7 +29,7 @@ import {
   onResetDailyDocketAfterError,
   handleLockHearingServerError,
   onResetLockHearingAfterError
-} from '../actions/actions';
+} from '../actions/dailyDocketActions';
 import DailyDocket from '../components/dailyDocket/DailyDocket';
 import DailyDocketPrinted from '../components/dailyDocket/DailyDocketPrinted';
 import HearingDayEditModal from '../components/HearingDayEditModal';
@@ -325,7 +324,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveHearing,
   onReceiveSavedHearing,
   onResetSaveSuccessful,
-  onCancelHearingUpdate,
   selectHearingRoom,
   selectVlj,
   selectHearingCoordinator,

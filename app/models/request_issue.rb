@@ -45,7 +45,8 @@ class RequestIssue < ApplicationRecord
     dismissed_death: "dismissed_death",
     dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
-    ineligible: "ineligible"
+    ineligible: "ineligible",
+    no_decision: "no_decision"
   }
 
   before_save :set_contested_rating_issue_profile_date
@@ -331,7 +332,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def guess_benefit_type
+    return contested_decision_issue.benefit_type if contested_decision_issue
     return "unidentified" if is_unidentified
+    return "ineligible" unless eligible?
 
     "unknown"
   end
@@ -437,7 +440,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def requires_record_request_task?
-    !is_unidentified && !benefit_type_requires_payee_code?
+    eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
 
   def decision_or_promulgation_date
@@ -490,6 +493,12 @@ class RequestIssue < ApplicationRecord
     return unless limited_poa
 
     limited_poa[:limited_poa_access] == "Y"
+  end
+
+  def contention_disposition
+    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
+      disposition.contention_id.to_i == contention_reference_id
+    end
   end
 
   private
@@ -592,12 +601,6 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     end_product_establishment.associated_rating&.promulgation_date
-  end
-
-  def contention_disposition
-    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
-      disposition.contention_id.to_i == contention_reference_id
-    end
   end
 
   def create_decision_issues_from_rating
@@ -782,6 +785,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    decision_review.tasks.active.any?
+    decision_review.tasks.open.any?
   end
 end

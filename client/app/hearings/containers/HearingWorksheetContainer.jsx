@@ -1,21 +1,14 @@
 import React from 'react';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import PropTypes from 'prop-types';
-import { populateWorksheet } from '../actions/Dockets';
+import { populateWorksheet } from '../actions/hearingWorksheetActions';
 import { bindActionCreators } from 'redux';
 import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
 import HearingWorksheet from '../components/hearingWorksheet/HearingWorksheet';
-import { openPrintDialogue } from '../../util/PrintUtil';
 
 class HearingWorksheetContainer extends React.Component {
-
-  componentDidMount() {
-    if (this.props.print) {
-      openPrintDialogue();
-    }
-  }
 
   loadHearingWorksheet = () => {
     let requestUrl = `/hearings/${this.props.hearingId}/worksheet.json`;

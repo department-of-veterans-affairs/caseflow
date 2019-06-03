@@ -58,7 +58,7 @@ class Appeal < DecisionReview
       .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
               DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
       .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
-              MailTask.blocking_subclasses, Task.inactive_statuses, 0)
+              MailTask.blocking_subclasses, Task.closed_statuses, 0)
   }
 
   scope :non_ihp, lambda {
@@ -72,7 +72,7 @@ class Appeal < DecisionReview
     joins(:tasks)
       .group("appeals.id")
       .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
-              RootTask.name, Task.inactive_statuses, 1)
+              RootTask.name, Task.closed_statuses, 1)
   }
 
   scope :ordered_by_distribution_ready_date, lambda {
@@ -144,6 +144,7 @@ class Appeal < DecisionReview
     on_hold_tasks = tasks.on_hold.not_tracking
     return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
+    # this condition is no longer needed since we only want active or on hold tasks
     return most_recently_assigned_to_label(tasks) if tasks.any?
 
     status_hash[:type].to_s.titleize
@@ -207,7 +208,7 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.active.where(type: RootTask.name).any?
+    tasks.open.where(type: RootTask.name).any?
   end
 
   def ready_for_distribution_at
@@ -523,7 +524,7 @@ class Appeal < DecisionReview
   end
 
   def pending_schedule_hearing_task?
-    tasks.active.where(type: ScheduleHearingTask.name).any?
+    tasks.open.where(type: ScheduleHearingTask.name).any?
   end
 
   def hearing_pending?
@@ -531,12 +532,12 @@ class Appeal < DecisionReview
   end
 
   def evidence_submission_hold_pending?
-    tasks.active.where(type: EvidenceSubmissionWindowTask.name).any?
+    tasks.open.where(type: EvidenceSubmissionWindowTask.name).any?
   end
 
   def at_vso?
     # This task is always open, this can be used once that task is completed
-    # tasks.active.where(type: InformalHearingPresentationTask.name).any?
+    # tasks.open.where(type: InformalHearingPresentationTask.name).any?
   end
 
   def distributed_to_a_judge?
@@ -676,10 +677,15 @@ class Appeal < DecisionReview
     %w[supplemental_claim cavc]
   end
 
+  def assign_ro_and_update_ahls(new_ro)
+    update!(closest_regional_office: new_ro)
+    va_dot_gov_address_validator.assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)
-    tasks.order(:updated_at).last.assigned_to_label
+    tasks.order(:created_at).last&.assigned_to_label
   end
 
   def maybe_create_translation_task
