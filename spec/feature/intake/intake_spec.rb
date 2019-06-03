@@ -3,12 +3,10 @@
 require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "Intake" do
+feature "Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ama_start_date)
 
     Fakes::BGSService.inaccessible_appeal_vbms_ids = []
@@ -84,12 +82,9 @@ RSpec.feature "Intake" do
 
     scenario "Search for a veteran that does not exist in BGS" do
       visit "/intake"
-
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
       safe_click ".cf-submit.usa-button"
+
       expect(page).to have_css(".cf-submit[disabled]")
 
       # try to hit enter key on empty search bar
@@ -115,10 +110,7 @@ RSpec.feature "Intake" do
     scenario "Search for a veteran but search throws an unhandled exception" do
       expect_any_instance_of(Intake).to receive(:start!).and_raise("random error")
       visit "/intake"
-
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
-      find("#form-select").send_keys :enter
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
       safe_click ".cf-submit.usa-button"
 
       expect(page).to have_content(search_page_title)
@@ -138,12 +130,8 @@ RSpec.feature "Intake" do
 
       scenario "Search for a veteran with a sensitivity error" do
         visit "/intake"
-
-        safe_click ".Select"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-        find("#form-select").send_keys :enter
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
-
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
 
@@ -161,21 +149,34 @@ RSpec.feature "Intake" do
 
       scenario "Search for a veteran with multiple active phone numbers" do
         visit "/intake"
-
-        safe_click ".Select"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-        find("#form-select").send_keys :enter
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
-
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
 
         expect(page).to have_current_path("/intake/search")
         expect(page).to have_content("The Veteran has multiple active phone numbers")
+
+        cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, "12341234")
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+        fill_in search_bar_title, with: "12341234"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/review_request")
+        expect(Rails.cache.exist?(cache_key)).to eq(true)
       end
     end
 
-    context "Veteran has invalid information" do
+    context "RAMP Veteran has invalid information" do
+      before { FeatureToggle.enable!(:ramp_intake) }
+      after { FeatureToggle.disable!(:ramp_intake) }
+
       let(:veteran) do
         Generators::Veteran.build(
           file_number: "12341234",
@@ -188,10 +189,7 @@ RSpec.feature "Intake" do
 
       scenario "Search for a veteran with a validation error" do
         visit "/intake"
-
-        safe_click ".Select"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-        find("#form-select").send_keys :enter
+        select_form(Constants.INTAKE_FORM_NAMES.ramp_election)
         safe_click ".cf-submit.usa-button"
 
         fill_in search_bar_title, with: "12341234"
@@ -207,19 +205,15 @@ RSpec.feature "Intake" do
     end
 
     scenario "Search for a veteran whose form is already being processed" do
-      create(:ramp_election, veteran_file_number: "12341234", notice_date: 6.months.ago)
+      create(:higher_level_review, veteran_file_number: "12341234")
 
-      RampElectionIntake.new(
+      HigherLevelReviewIntake.new(
         veteran_file_number: "12341234",
         user: Generators::User.build(full_name: "David Schwimmer")
       ).start!
 
       visit "/intake"
-
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_election
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
       safe_click ".cf-submit.usa-button"
 
       fill_in search_bar_title, with: "12341234"
@@ -230,9 +224,9 @@ RSpec.feature "Intake" do
     end
 
     scenario "Cancel an intake" do
-      create(:ramp_election, veteran_file_number: "12341234", notice_date: 6.months.ago)
+      create(:higher_level_review, veteran_file_number: "12341234")
 
-      intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
+      intake = HigherLevelReviewIntake.new(veteran_file_number: "12341234", user: current_user)
       intake.start!
 
       visit "/intake"
@@ -270,11 +264,8 @@ RSpec.feature "Intake" do
 
       scenario "Cancel intake on error" do
         visit "/intake"
-        fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.higher_level_review
-        find("#form-select").send_keys :enter
-
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
-
         fill_in search_bar_title, with: "12341234"
         click_on "Search"
 

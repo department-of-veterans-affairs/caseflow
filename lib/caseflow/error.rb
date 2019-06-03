@@ -28,7 +28,11 @@ module Caseflow::Error
   class VaDotGovRequestError < VaDotGovAPIError; end
   class VaDotGovServerError < VaDotGovAPIError; end
   class VaDotGovLimitError < VaDotGovAPIError; end
-  class VaDotGovValidatorError < VaDotGovAPIError; end
+  class VaDotGovAddressCouldNotBeFoundError < VaDotGovAPIError; end
+  class VaDotGovInvalidInputError < VaDotGovAPIError; end
+  class VaDotGovMultipleAddressError < VaDotGovAPIError; end
+  class VaDotGovNullAddressError < StandardError; end
+  class VaDotGovForeignVeteranError < StandardError; end
 
   class FetchHearingLocationsJobError < SerializableError; end
 
@@ -52,19 +56,6 @@ module Caseflow::Error
       @task_type = args[:task_type]
       @code = args[:code] || 500
       @message = args[:message] || "Invalid parent type for task #{@task_type}"
-    end
-  end
-
-  class DuplicateTaskActionPaths < SerializableError
-    attr_accessor :task_id, :user_id, :labels
-
-    def initialize(args)
-      @task_id = args[:task_id]
-      @user_id = args[:user_id]
-      @labels = args[:labels]
-      @code = args[:code] || 500
-      @message = args[:message] || "Task #{@task_id} for user #{user_id} has more than one available action"\
-                                   " with same path. Labels: #{labels.join(', ')}"
     end
   end
 
@@ -139,14 +130,6 @@ module Caseflow::Error
     end
   end
 
-  class TooManyChildTasks < SerializableError
-    def initialize(args)
-      @task_id = args[:task_id]
-      @code = args[:code] || 500
-      @message = args[:message] || "JudgeTask #{@task_id} has too many children"
-    end
-  end
-
   class ChildTaskAssignedToSameUser < SerializableError
     def initialize
       @code = 500
@@ -183,7 +166,6 @@ module Caseflow::Error
       @error_code = error_code
     end
 
-    # rubocop:disable Metrics/CyclomaticComplexity
     def self.from_vbms_error(error)
       case error.body
       when /PIF is already in use/
@@ -203,7 +185,6 @@ module Caseflow::Error
         error
       end
     end
-    # rubocop:enable Metrics/CyclomaticComplexity
   end
 
   class MissingTimerMethod < StandardError; end

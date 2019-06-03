@@ -11,6 +11,7 @@ import { issueCountSelector } from '../../intake/selectors';
 import { requestIssuesUpdate } from '../actions/edit';
 import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../intake/constants';
 import SaveAlertConfirmModal from './SaveAlertConfirmModal';
+import { validateDate } from '../../intake/util/issues';
 
 class SaveButtonUnconnected extends React.Component {
   constructor(props) {
@@ -94,7 +95,9 @@ class SaveButtonUnconnected extends React.Component {
       requestStatus,
       removeDecisionReviews,
       veteranValid,
-      processedInCaseflow
+      processedInCaseflow,
+      withdrawalDate,
+      receiptDate
     } = this.props;
 
     let disableDueToIssueCount = false;
@@ -107,7 +110,21 @@ class SaveButtonUnconnected extends React.Component {
       addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
     );
 
-    const saveDisabled = _.isEqual(addedIssues, originalIssues) || disableDueToIssueCount || invalidVeteran;
+    const withdrawDateError = new Date(withdrawalDate) < new Date(receiptDate) || new Date(withdrawalDate) > new Date();
+
+    const withdrawDateValid = _.every(
+      addedIssues, (issue) => !issue.withdrawalPending
+    ) || (validateDate(withdrawalDate) && !withdrawDateError);
+
+    const saveDisabled = _.isEqual(
+      addedIssues, originalIssues
+    ) || disableDueToIssueCount || invalidVeteran || !withdrawDateValid;
+
+    const withdrawReview = !_.isEmpty(addedIssues) && _.every(
+      addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
+    );
+
+    const saveButtonText = withdrawReview ? 'Withdraw' : 'Save';
 
     const removeVbmsCopy = 'This will remove the review and cancel all the End Products associated with it.';
 
@@ -158,8 +175,9 @@ class SaveButtonUnconnected extends React.Component {
         loading={requestStatus.requestIssuesUpdate === REQUEST_STATE.IN_PROGRESS ||
           requestStatus.requestIssuesUpdate === REQUEST_STATE.SUCCEEDED}
         disabled={saveDisabled}
+        redStyling={withdrawReview}
       >
-        Save
+        { saveButtonText }
       </Button>
     </span>;
   }
@@ -176,6 +194,8 @@ const SaveButton = connect(
     removeDecisionReviews: state.featureToggles.removeDecisionReviews,
     veteranValid: state.veteranValid,
     processedInCaseflow: state.processedInCaseflow,
+    withdrawalDate: state.withdrawalDate,
+    receiptDate: state.receiptDate,
     state
   }),
   (dispatch) => bindActionCreators({

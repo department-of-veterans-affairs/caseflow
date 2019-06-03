@@ -4,32 +4,33 @@ require "rails_helper"
 
 RSpec.feature "TranscriptionTeam" do
   let(:transcription_team_member) { FactoryBot.create(:user) }
+  let(:veteran) { FactoryBot.create(:veteran, first_name: "Maisie", last_name: "Varesko", file_number: 201_905_061) }
+  let(:appeal) { FactoryBot.create(:appeal, veteran_file_number: veteran.file_number) }
+  let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
+  let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+  let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
+  let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+  let!(:transcription_task) { FactoryBot.create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
   before do
     OrganizationsUser.add_user_to_organization(transcription_team_member, TranscriptionTeam.singleton)
     User.authenticate!(user: transcription_team_member)
   end
 
-  describe "transcription team members should be able to complete transcription tasks" do
-    let(:appeal) { FactoryBot.create(:appeal) }
-    let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
-    let!(:transcription_task) { FactoryBot.create(:transcription_task, parent: disposition_task, appeal: appeal) }
-
+  describe "transcription team member completes a transcription task" do
     scenario "completes the task" do
       visit("/organizations/transcription")
-      click_on "Bob Smith"
+      click_on veteran_link_text
       click_dropdown(text: Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h[:label])
       click_on "Mark complete"
 
-      expect(page).to have_content("Bob Smith's case has been marked complete")
+      expect(page).to have_content("#{appeal.veteran_full_name}'s case has been marked complete")
       expect(transcription_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
     end
 
     scenario "cancels the task and sends appeal to hearings management" do
       visit("/organizations/transcription")
-      click_on "Bob Smith"
+      click_on veteran_link_text
       click_dropdown(text: Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h[:label])
       click_on "Submit"
 
@@ -41,7 +42,55 @@ RSpec.feature "TranscriptionTeam" do
       expect(root_task.children.where(type: HearingTask.name).count).to eq(2)
       open_hearing_task = root_task.children.find_by(type: HearingTask.name, status: Constants.TASK_STATUSES.on_hold)
       expect(open_hearing_task.children.first.type).to eq(ScheduleHearingTask.name)
-      expect(open_hearing_task.children.first.assigned_to).to eq(HearingsManagement.singleton)
+      expect(open_hearing_task.children.first.assigned_to).to eq(Bva.singleton)
+    end
+
+    context "with a hearing and a hearing admin member" do
+      let(:hearing_day) { FactoryBot.create(:hearing_day) }
+      let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day) }
+      let!(:association) do
+        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task)
+      end
+      let(:admin_full_name) { "Steinlaug Huppert" }
+      let(:hearing_admin_user) { FactoryBot.create(:user, full_name: admin_full_name, station_id: 101) }
+      let(:instructions_text) { "This is why I want a hearing disposition change!" }
+
+      before do
+        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+      end
+
+      scenario "transcription team member requests a hearing disposition change" do
+        step "visit the transcription team organization queue and submit a request for hearing disposition change" do
+          visit("/organizations/transcription")
+          click_on veteran_link_text
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
+          click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
+          fill_in "Notes", with: instructions_text
+          click_button "Submit"
+          expect(page).to have_content(
+            format(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteran_full_name)
+          )
+          expect(page).to_not have_content veteran_link_text
+        end
+
+        step "log in as a hearing administrator and verify that the task is in the org queue" do
+          User.authenticate!(user: hearing_admin_user)
+          visit "/organizations/#{HearingAdmin.singleton.url}"
+          click_on veteran_link_text
+          expect(page).to have_content(ChangeHearingDispositionTask.last.label)
+        end
+
+        step "verify task instructions and submit a new disposition" do
+          schedule_row = find("dd", text: ChangeHearingDispositionTask.last.label).find(:xpath, "ancestor::tr")
+          schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+          expect(schedule_row).to have_content(instructions_text)
+          click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+          click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
+          fill_in "Notes", with: "I'm changing this to postponed."
+          click_button("Submit")
+          expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+        end
+      end
     end
   end
 end

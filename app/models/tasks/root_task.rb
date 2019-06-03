@@ -5,6 +5,7 @@
 # This task is closed when an appeal has been completely resolved.
 
 class RootTask < GenericTask
+  before_create :verify_root_task_unique
   # Set assignee to the Bva organization automatically so we don't have to set it when we create RootTasks.
   after_initialize :set_assignee, if: -> { assigned_to_id.nil? }
 
@@ -12,10 +13,14 @@ class RootTask < GenericTask
     self.assigned_to = Bva.singleton
   end
 
-  def when_child_task_completed; end
+  def when_child_task_completed(_child_task); end
 
-  def update_children_status
+  def update_children_status_after_closed
     children.active.where(type: TrackVeteranTask.name).update_all(status: Constants.TASK_STATUSES.completed)
+  end
+
+  def hide_from_case_timeline
+    true
   end
 
   def hide_from_task_snapshot
@@ -26,13 +31,6 @@ class RootTask < GenericTask
     return [Constants.TASK_ACTIONS.CREATE_MAIL_TASK.to_h] if MailTeam.singleton.user_has_access?(user) && ama?
 
     []
-  end
-
-  def can_create_schedule_hearings_task?(user)
-    HearingsManagement.singleton.user_has_access?(user) &&
-      active? &&
-      legacy? &&
-      children.active.where(type: ScheduleHearingTask.name).empty?
   end
 
   def actions_available?(_user)
@@ -47,81 +45,19 @@ class RootTask < GenericTask
     COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL
   end
 
-  class << self
-    def create_root_and_sub_tasks!(appeal)
-      root_task = create!(appeal: appeal)
-      create_vso_tracking_tasks(appeal, root_task)
-      if FeatureToggle.enabled?(:ama_acd_tasks)
-        create_subtasks!(appeal, root_task)
-      else
-        create_ihp_tasks!(appeal, root_task)
-      end
-    end
-
-    def create_ihp_tasks!(appeal, parent)
-      appeal.vsos.select { |org| org.should_write_ihp?(appeal) }.map do |vso_organization|
-        # For some RAMP appeals, this method may run twice.
-        existing_task = InformalHearingPresentationTask.find_by(
-          appeal: appeal,
-          assigned_to: vso_organization
-        )
-        existing_task || InformalHearingPresentationTask.create!(
-          appeal: appeal,
-          parent: parent,
-          assigned_to: vso_organization
-        )
-      end
-    end
-
-    # TODO: make this private again after RAMPs are refilled
-    # private
-
-    def create_vso_tracking_tasks(appeal, parent)
-      appeal.vsos.map do |vso_organization|
-        TrackVeteranTask.create!(
-          appeal: appeal,
-          parent: parent,
-          assigned_to: vso_organization
-        )
-      end
-    end
-
-    def create_evidence_submission_task!(appeal, parent)
-      EvidenceSubmissionWindowTask.create!(
-        appeal: appeal,
-        parent: parent,
-        assigned_to: MailTeam.singleton
+  # Use the existence of a root task, active or inactive, to prevent duplicates
+  # since there should only ever be one root task for a single appeal.
+  def verify_root_task_unique
+    if appeal.tasks.where(
+      type: type
+    ).any?
+      fail(
+        Caseflow::Error::DuplicateOrgTask,
+        appeal_id: appeal.id,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name,
+        parent_id: parent&.id
       )
-    end
-
-    def create_distribution_task!(appeal, parent)
-      DistributionTask.create!(
-        appeal: appeal,
-        parent: parent,
-        assigned_to: Bva.singleton,
-        status: "on_hold"
-      )
-    end
-
-    def create_hearing_schedule_task!(appeal, parent)
-      ScheduleHearingTask.create!(appeal: appeal, parent: parent)
-    end
-
-    def create_subtasks!(appeal, parent)
-      transaction do
-        distribution_task = create_distribution_task!(appeal, parent)
-
-        if appeal.evidence_submission_docket?
-          create_evidence_submission_task!(appeal, distribution_task)
-        elsif appeal.hearing_docket?
-          create_hearing_schedule_task!(appeal, distribution_task)
-        else
-          vso_tasks = create_ihp_tasks!(appeal, distribution_task)
-          # If the appeal is direct docket and there are no ihp tasks,
-          # then it is initially ready for distribution.
-          distribution_task.ready_for_distribution! if vso_tasks.empty?
-        end
-      end
     end
   end
 end

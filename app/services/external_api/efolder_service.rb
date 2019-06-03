@@ -3,18 +3,25 @@
 require "json"
 
 class ExternalApi::EfolderService
-  TRIES = 300
+  def self.document_count(file_number, user)
+    Rails.cache.fetch("Efolder-document-count-#{file_number}", expires_in: 1.hour) do
+      headers = { "FILE-NUMBER" => file_number }
+      response = send_efolder_request("/api/v2/document_counts", user, headers)
+      response_body = JSON.parse(response.body)
+      response_body["documents"]
+    end
+  end
 
   def self.fetch_documents_for(appeal, user)
     generate_efolder_request(appeal.veteran_file_number.to_s, user)
   end
 
-  def self.generate_efolder_request(vbms_id, user)
+  def self.generate_efolder_request(vbms_id, user, retry_attempts_count = 10)
     headers = { "FILE-NUMBER" => vbms_id }
     response = send_efolder_request("/api/v2/manifests", user, headers, method: :post)
     response_attrs = {}
 
-    TRIES.times do
+    retry_attempts_count.times do
       response_body = JSON.parse(response.body)
 
       check_for_error(response_body: response_body, code: response.code, vbms_id: vbms_id, user_id: user.id)
@@ -29,9 +36,7 @@ class ExternalApi::EfolderService
       response = send_efolder_request("/api/v2/manifests/#{manifest_id}", user, headers)
     end
 
-    msg = "Failed to fetch manifest after #{TRIES} seconds for #{vbms_id}, \
-      user_id: #{user.id}, response attributes: #{response_attrs}"
-    fail Caseflow::Error::DocumentRetrievalError, code: 504, message: msg
+    generate_response(response_attrs, vbms_id)
   end
 
   def self.check_for_error(response_body:, code:, vbms_id:, user_id:)
@@ -79,7 +84,6 @@ class ExternalApi::EfolderService
     Rails.application.config.efolder_key.to_s
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.send_efolder_request(endpoint, user, headers = {}, method: :get)
     DBService.release_db_connections
 
@@ -105,5 +109,4 @@ class ExternalApi::EfolderService
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
 end

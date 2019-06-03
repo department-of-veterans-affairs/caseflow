@@ -63,11 +63,6 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
-  # We only want to take this off hold, not actually complete it, like the inherited method does
-  def update_status_if_children_tasks_are_complete
-    update!(status: :assigned) if on_hold?
-  end
-
   def update_from_params(params, current_user)
     multi_transaction do
       verify_user_can_update!(current_user)
@@ -75,14 +70,14 @@ class ScheduleHearingTask < GenericTask
       if params[:status] == Constants.TASK_STATUSES.completed
         task_payloads = params.delete(:business_payloads)
 
-        hearing_time = task_payloads[:values][:hearing_time]
+        scheduled_time_string = task_payloads[:values][:scheduled_time_string]
         hearing_day_id = task_payloads[:values][:hearing_day_id]
         hearing_location = task_payloads[:values][:hearing_location]
 
         hearing = HearingRepository.slot_new_hearing(hearing_day_id,
                                                      appeal: appeal,
                                                      hearing_location_attrs: hearing_location&.to_hash,
-                                                     scheduled_time: hearing_time&.stringify_keys)
+                                                     scheduled_time_string: scheduled_time_string)
         DispositionTask.create_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
@@ -92,49 +87,50 @@ class ScheduleHearingTask < GenericTask
     end
   end
 
+  def create_change_hearing_disposition_task(instructions = nil)
+    hearing_task = most_recent_inactive_hearing_task_on_appeal
+
+    if hearing_task&.hearing&.disposition.blank?
+      fail Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR
+    end
+
+    # cancel my children, myself, and my hearing task ancestor
+    children.active.update_all(status: Constants.TASK_STATUSES.cancelled)
+    update!(status: Constants.TASK_STATUSES.cancelled)
+    ancestor_task_of_type(HearingTask)&.update!(status: Constants.TASK_STATUSES.cancelled)
+
+    # cancel the old HearingTask and create a new one associated with the same hearing
+    new_hearing_task = hearing_task.cancel_and_recreate
+    HearingTaskAssociation.create!(hearing: hearing_task.hearing, hearing_task: new_hearing_task)
+
+    # create a ChangeHearingDispositionTask on the new HearingTask
+    new_hearing_task.create_change_hearing_disposition_task(instructions)
+  end
+
   def available_actions(user)
-    if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
+
+    if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
       return [
         Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h,
         Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+        appropriate_timed_hold_task_action,
         Constants.TASK_ACTIONS.WITHDRAW_HEARING.to_h
-      ]
+      ] | hearing_admin_actions
     end
 
-    []
-  end
-
-  def add_admin_action_data(_user)
-    {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
-      message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
-      selected: nil,
-      options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
-        { value: subclass.name, label: subclass.label }
-      end
-    }
-  end
-
-  def withdraw_hearing_data(_user)
-    {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
-      modal_title: COPY::WITHDRAW_HEARING_MODAL_TITLE,
-      modal_body: COPY::WITHDRAW_HEARING_MODAL_BODY,
-      message_title: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_TITLE, appeal.veteran_full_name),
-      message_detail: format(COPY::WITHDRAW_HEARING_SUCCESS_MESSAGE_BODY, appeal.veteran_full_name),
-      back_to_hearing_schedule: true
-    }
+    hearing_admin_actions
   end
 
   private
 
   def set_assignee
-    self.assigned_to = assigned_to.nil? ? HearingsManagement.singleton : assigned_to
+    self.assigned_to ||= Bva.singleton
   end
 
   def withdraw_hearing
     if appeal.is_a?(LegacyAppeal)
-      location = if appeal.vsos.empty?
+      location = if appeal.representatives.empty?
                    LegacyAppeal::LOCATION_CODES[:case_storage]
                  else
                    LegacyAppeal::LOCATION_CODES[:service_organization]

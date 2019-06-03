@@ -15,9 +15,7 @@ class HearingDispositionChangeJob < CaseflowJob
     # Set user to system_user to avoid sensitivity errors
     RequestStore.store[:current_user] = User.system_user
 
-    tasks = DispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold)
-
-    tasks.each do |task|
+    hearing_disposition_tasks.each do |task|
       # Skip task unless there is a hearing associated with the task and it was held more than a day ago.
       next unless task&.hearing&.scheduled_for &.< 24.hours.ago
 
@@ -30,9 +28,13 @@ class HearingDispositionChangeJob < CaseflowJob
       error_count += 1
     end
 
-    log_info(start_time, @task_count_for, error_count, hearing_ids)
+    log_info(start_time, task_count_for, error_count, hearing_ids)
   rescue StandardError => error
-    log_info(start_time, @task_count_for, error_count, hearing_ids, error)
+    log_info(start_time, task_count_for, error_count, hearing_ids, error)
+  end
+
+  def hearing_disposition_tasks
+    Task.active.where(type: DispositionTask.name).where.not(status: Constants.TASK_STATUSES.on_hold)
   end
 
   def task_count_for
@@ -45,41 +47,42 @@ class HearingDispositionChangeJob < CaseflowJob
     task_count_for[label.to_sym] += 1
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def update_task_by_hearing_disposition(task)
-    hearing = task.hearing
-    label = hearing.disposition
+    label = disposition_label(task.hearing)
 
-    # rubocop:disable Lint/EmptyWhen
-    case hearing.disposition
+    case label
     when Constants.HEARING_DISPOSITION_TYPES.held
       task.hold!
     when Constants.HEARING_DISPOSITION_TYPES.cancelled
       task.cancel!
     when Constants.HEARING_DISPOSITION_TYPES.postponed
-      # Postponed hearings should be acted on immediately and the related tasks should be closed. Do not take any
-      # action here.
+      task.postpone!
     when Constants.HEARING_DISPOSITION_TYPES.no_show
       task.no_show!
-    when nil
-      # We allow judges and hearings staff 2 days to make changes to the hearing's disposition. If it has been more
-      # than 2 days since the hearing was held and there is no disposition then remind the hearings staff.
-      label = if hearing.scheduled_for < 48.hours.ago
-                # Logic will be added as part of #9833.
-                :stale
-              else
-                :between_one_and_two_days_old
-              end
-    else
-      # Expect to never reach this block since all dispositions should be accounted for above. If we run into this
-      # case we ignore it and will investigate and potentially incorporate that fix here. Until then we're fine.
-      label = :unknown_disposition
+    when :stale
+      # complete the DispositionTask and create a ChangeHearingDispositionTask to
+      # remind staff to update the hearing's disposition
+      task.parent.create_change_hearing_disposition_task
     end
-    # rubocop:enable Lint/EmptyWhen
 
     label
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
+
+  def disposition_label(hearing)
+    if Constants.HEARING_DISPOSITION_TYPES.to_h.value?(hearing.disposition)
+      hearing.disposition
+    elsif hearing.disposition.nil?
+      if hearing.scheduled_for < 48.hours.ago
+        # stale if there's no disposition after 2 days
+        :stale
+      else
+        :between_one_and_two_days_old
+      end
+    else
+      # we should never reach this, but will investigate if we do
+      :unknown_disposition
+    end
+  end
 
   def log_info(start_time, task_count_for, error_count, hearing_ids, err = nil)
     duration = time_ago_in_words(start_time)

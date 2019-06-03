@@ -83,30 +83,6 @@ const commonComponentsReducer = (state = initialState, action = {}) => {
         $set: action.payload.hearingDays
       }
     });
-  case ACTIONS.HEARING_DAY_CHANGE:
-    return update(state, {
-      selectedHearingDay: {
-        $set: action.payload.hearingDay
-      }
-    });
-  case ACTIONS.HEARING_TIME_CHANGE:
-    return update(state, {
-      selectedHearingTime: {
-        $set: action.payload.hearingTime
-      }
-    });
-  case ACTIONS.HEARING_OPTIONAL_TIME_CHANGE:
-    return update(state, {
-      selectedOptionalTime: {
-        $set: action.payload.optionalTime
-      }
-    });
-  case ACTIONS.HEARING_LOCATION_CHANGE:
-    return update(state, {
-      selectedHearingLocation: {
-        $set: action.payload.hearingLocation
-      }
-    });
   case ACTIONS.FETCH_DROPDOWN_DATA:
   case ACTIONS.RECEIVE_DROPDOWN_DATA:
   case ACTIONS.DROPDOWN_ERROR:

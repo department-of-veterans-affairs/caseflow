@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 describe Organizations::UsersController, type: :controller do
-  let(:non_admin_user) do
-    User.authenticate!(roles: ["VSO"])
-  end
-
-  let(:admin_user) do
-    User.authenticate!(roles: ["Admin Intake"])
-  end
-
   describe "GET /organizations/:business_line/users" do
     subject { get :index, params: { organization_url: non_comp_org.url }, format: :json }
+
+    let(:non_admin_user) do
+      User.authenticate!(roles: ["VSO"])
+    end
+
+    let(:admin_user) do
+      User.authenticate!(roles: ["Admin Intake"])
+    end
 
     let(:non_comp_org) { create(:business_line, name: "National Cemetery Administration", url: "nca") }
 
@@ -41,6 +41,192 @@ describe Organizations::UsersController, type: :controller do
 
         expect(response.status).to eq 200
         expect(response.body).to match(user.username)
+      end
+
+      it "includes admin field for users in organization" do
+        subject
+
+        resp = JSON.parse(response.body)
+        org_user = resp["organization_users"]["data"].first
+        expect(org_user["attributes"]["css_id"]).to eq(user.css_id)
+        expect(org_user["attributes"]["admin"]).to eq(false)
+      end
+    end
+  end
+
+  describe "PATCH /organizations/:org_url/users/:user_id" do
+    subject { patch(:update, params: params, as: :json) }
+
+    let(:org) { FactoryBot.create(:organization) }
+    let(:user) { FactoryBot.create(:user) }
+    let(:admin) do
+      FactoryBot.create(:user).tap do |u|
+        OrganizationsUser.make_user_admin(u, org)
+      end
+    end
+
+    before do
+      User.authenticate!(user: admin)
+    end
+
+    context "when the admin field is not included as a request parameter" do
+      let(:params) { { organization_url: org.url, id: user.id } }
+
+      before { OrganizationsUser.add_user_to_organization(user, org) }
+
+      it "returns the user but does not alter the user in any way" do
+        subject
+
+        resp = JSON.parse(response.body)
+        modified_user = resp["users"]["data"].first
+        expect(modified_user["attributes"]["css_id"]).to eq(user.css_id)
+        expect(modified_user["attributes"]["admin"]).to eq(false)
+
+        expect(org.admins.count).to eq(1)
+        expect(org.non_admins.count).to eq(1)
+      end
+    end
+
+    context "when admin field is included as a request parameter" do
+      let(:params) { { organization_url: org.url, id: user.id, admin: admin_flag } }
+
+      context "when the admin flag is true" do
+        let(:admin_flag) { true }
+
+        context "when the target user is not a member of the organization" do
+          it "adds the user to the organization and makes them an admin" do
+            expect(org.admins.count).to eq(1)
+            expect(org.non_admins.count).to eq(0)
+
+            subject
+
+            resp = JSON.parse(response.body)
+            modified_user = resp["users"]["data"].first
+            expect(modified_user["attributes"]["css_id"]).to eq(user.css_id)
+            expect(modified_user["attributes"]["admin"]).to eq(true)
+
+            expect(org.admins.count).to eq(2)
+            expect(org.non_admins.count).to eq(0)
+          end
+        end
+
+        context "when the target user is a non-admin in the organization" do
+          before { OrganizationsUser.add_user_to_organization(user, org) }
+
+          it "makes the target user an admin of the team" do
+            expect(org.admins.count).to eq(1)
+            expect(org.non_admins.count).to eq(1)
+
+            subject
+
+            resp = JSON.parse(response.body)
+            modified_user = resp["users"]["data"].first
+            expect(modified_user["attributes"]["css_id"]).to eq(user.css_id)
+            expect(modified_user["attributes"]["admin"]).to eq(true)
+
+            expect(org.admins.count).to eq(2)
+            expect(org.non_admins.count).to eq(0)
+          end
+        end
+
+        context "when the target user is already an admin in the organization" do
+          before { OrganizationsUser.make_user_admin(user, org) }
+
+          it "does not change the target user admin rights" do
+            expect(org.admins.count).to eq(2)
+            expect(org.non_admins.count).to eq(0)
+
+            subject
+
+            resp = JSON.parse(response.body)
+            modified_user = resp["users"]["data"].first
+            expect(modified_user["attributes"]["css_id"]).to eq(user.css_id)
+            expect(modified_user["attributes"]["admin"]).to eq(true)
+
+            expect(org.admins.count).to eq(2)
+            expect(org.non_admins.count).to eq(0)
+          end
+        end
+      end
+
+      context "when the admin flag is false" do
+        let(:admin_flag) { false }
+
+        context "when the target user is not a member of the organization" do
+          it "does not change the admin rights of the user or their membership in the organization" do
+            expect(org.admins.count).to eq(1)
+            expect(org.non_admins.count).to eq(0)
+
+            subject
+
+            resp = JSON.parse(response.body)
+            modified_user = resp["users"]["data"].first
+            expect(modified_user["attributes"]["css_id"]).to eq(user.css_id)
+            expect(modified_user["attributes"]["admin"]).to eq(false)
+
+            expect(org.admins.count).to eq(1)
+            expect(org.non_admins.count).to eq(0)
+          end
+        end
+
+        context "when the target user is a non-admin in the organization" do
+          before { OrganizationsUser.add_user_to_organization(user, org) }
+
+          it "does not change the target user admin rights" do
+            expect(org.admins.count).to eq(1)
+            expect(org.non_admins.count).to eq(1)
+
+            subject
+
+            resp = JSON.parse(response.body)
+            modified_user = resp["users"]["data"].first
+            expect(modified_user["attributes"]["css_id"]).to eq(user.css_id)
+            expect(modified_user["attributes"]["admin"]).to eq(false)
+
+            expect(org.admins.count).to eq(1)
+            expect(org.non_admins.count).to eq(1)
+          end
+        end
+
+        context "when the target user is already an admin in the organization" do
+          before { OrganizationsUser.make_user_admin(user, org) }
+
+          it "removes admin rights from the target user" do
+            expect(org.admins.count).to eq(2)
+            expect(org.non_admins.count).to eq(0)
+
+            subject
+
+            resp = JSON.parse(response.body)
+            modified_user = resp["users"]["data"].first
+            expect(modified_user["attributes"]["css_id"]).to eq(user.css_id)
+            expect(modified_user["attributes"]["admin"]).to eq(false)
+
+            expect(org.admins.count).to eq(1)
+            expect(org.non_admins.count).to eq(1)
+          end
+        end
+      end
+
+      context "when the admin flag is something other than true or false" do
+        let(:admin_flag) { "neither true nor false" }
+
+        before { OrganizationsUser.make_user_admin(user, org) }
+
+        it "removes admin rights from the target user" do
+          expect(org.admins.count).to eq(2)
+          expect(org.non_admins.count).to eq(0)
+
+          subject
+
+          resp = JSON.parse(response.body)
+          modified_user = resp["users"]["data"].first
+          expect(modified_user["attributes"]["css_id"]).to eq(user.css_id)
+          expect(modified_user["attributes"]["admin"]).to eq(false)
+
+          expect(org.admins.count).to eq(1)
+          expect(org.non_admins.count).to eq(1)
+        end
       end
     end
   end

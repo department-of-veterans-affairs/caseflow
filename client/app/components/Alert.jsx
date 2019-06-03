@@ -58,6 +58,9 @@ Alert.propTypes = {
   message: PropTypes.node,
   title: PropTypes.string,
   type: PropTypes.oneOf(['success', 'error', 'warning', 'info']).isRequired,
-  styling: PropTypes.string,
+  styling: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.object
+  ]),
   scrollOnAlert: PropTypes.bool
 };

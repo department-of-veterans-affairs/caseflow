@@ -50,13 +50,7 @@ class Test::UsersController < ApplicationController
       }
     },
     {
-      name: "Hearing Prep",
-      links: {
-        upcoming_days: "/hearings/dockets"
-      }
-    },
-    {
-      name: "Hearing Schedule",
+      name: "Hearings",
       links: {
         current_schedule: "/hearings/schedule"
       }

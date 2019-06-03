@@ -36,7 +36,7 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :available_hearing_locations, :closest_regional_office, to: :appeal
+  delegate :available_hearing_locations, :closest_regional_office, :advanced_on_docket, to: :appeal
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
@@ -76,11 +76,17 @@ class Hearing < ApplicationRecord
 
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
-      task.type = TrackVeteranTask.name &&
-                  task.assigned_to.is_a?(Vso) &&
-                  task.assigned_to.user_has_access?(user) &&
-                  task.active?
+      task.type == TrackVeteranTask.name &&
+        task.assigned_to.is_a?(Representative) &&
+        task.assigned_to.user_has_access?(user) &&
+        task.active?
     end
+  end
+
+  def assigned_to_judge?(user)
+    return hearing_day&.judge == user if judge.nil?
+
+    judge == user
   end
 
   def hearing_task?
@@ -105,6 +111,17 @@ class Hearing < ApplicationRecord
     appeal.representative_name
   end
 
+  def claimant_id
+    appeal.appellant.id
+  end
+
+  def advance_on_docket_motion
+    # we're only really interested if the AOD was granted
+    motion = AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
+
+    motion&.slice(:person_id, :reason, :user_id, :granted)
+  end
+
   def scheduled_for
     DateTime.new.in_time_zone(regional_office_timezone).change(
       year: hearing_day.scheduled_for.year,
@@ -115,6 +132,12 @@ class Hearing < ApplicationRecord
       sec: scheduled_time.sec
     )
   end
+
+  def time
+    @time ||= HearingTimeService.new(hearing: self)
+  end
+
+  delegate :central_office_time_string, :scheduled_time_string, to: :time
 
   def worksheet_issues
     request_issues.map do |request_issue|
@@ -148,7 +171,6 @@ class Hearing < ApplicationRecord
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def quick_to_hash(_current_user_id)
     serializable_hash(
       methods: [
@@ -160,6 +182,8 @@ class Hearing < ApplicationRecord
         :regional_office_timezone,
         :readable_request_type,
         :scheduled_for,
+        :scheduled_time_string,
+        :central_office_time_string,
         :appeal_external_id,
         :veteran_file_number,
         :evidence_window_waived,
@@ -173,14 +197,14 @@ class Hearing < ApplicationRecord
         :worksheet_issues,
         :closest_regional_office,
         :available_hearing_locations,
-        :disposition_editable
+        :disposition_editable,
+        :advance_on_docket_motion,
+        :claimant_id
       ],
       except: [:military_service]
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
-  # rubocop:disable Metrics/MethodLength
   def to_hash(_current_user_id)
     serializable_hash(
       methods: [
@@ -197,6 +221,8 @@ class Hearing < ApplicationRecord
         :regional_office_timezone,
         :readable_request_type,
         :scheduled_for,
+        :scheduled_time_string,
+        :central_office_time_string,
         :veteran_age,
         :veteran_gender,
         :appeal_external_id,
@@ -214,11 +240,12 @@ class Hearing < ApplicationRecord
         :worksheet_issues,
         :closest_regional_office,
         :available_hearing_locations,
-        :disposition_editable
+        :disposition_editable,
+        :advance_on_docket_motion,
+        :claimant_id
       ]
     )
   end
-  # rubocop:enable Metrics/MethodLength
 
   def to_hash_for_worksheet(current_user_id)
     serializable_hash(

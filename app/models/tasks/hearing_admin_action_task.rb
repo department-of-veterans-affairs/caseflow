@@ -13,7 +13,7 @@ class HearingAdminActionTask < GenericTask
     if params[:assigned_to_type] && params[:assigned_to_id]
       super(parent, params)
     else
-      HearingAdmin.singleton
+      HearingsManagement.singleton
     end
   end
 
@@ -28,40 +28,39 @@ class HearingAdminActionTask < GenericTask
   end
 
   def available_actions(user)
+    hearing_admin_actions = available_hearing_user_actions(user)
+
     if assigned_to == user
       [
-        Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
+        appropriate_timed_hold_task_action,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
-      ]
+      ] | hearing_admin_actions
     elsif task_is_assigned_to_users_organization?(user)
       [
         Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h
-      ]
+      ] | hearing_admin_actions
     else
-      []
+      hearing_admin_actions
     end
   end
 
-  def assign_to_user_data(user = nil)
-    super(user).merge(
-      redirect_after: "/organizations/#{HearingAdmin.singleton.url}",
-      message_detail: COPY::HEARING_ASSIGN_TASK_SUCCESS_MESSAGE_DETAIL
-    )
-  end
-
-  def complete_data(_user = nil)
-    {
-      modal_body: COPY::HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL
-    }
+  def actions_allowable?(user)
+    (HearingsManagement.singleton.user_has_access?(user) || HearingAdmin.singleton.user_has_access?(user)) && super
   end
 
   private
 
   def on_hold_duration_is_set
-    if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
+    if saved_change_to_status? && on_hold? && !on_hold_duration && !on_timed_hold? && assigned_to.is_a?(User)
       errors.add(:on_hold_duration, "has to be specified")
     end
+  end
+
+  # HearingAdminActionTasks on old-style holds can be placed on new timed holds which will not reset the
+  # placed_on_hold_at value.
+  def task_just_placed_on_hold?
+    super || (on_timed_hold? && children.active.where.not(type: TimedHoldTask.name).empty?)
   end
 end
 
@@ -80,17 +79,6 @@ class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
     "Contested claimant issue"
   end
 end
-class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
-  after_update :fetch_closest_ro_and_ahls, if: :task_just_closed?
-
-  def self.label
-    "Verify Address"
-  end
-
-  def fetch_closest_ro_and_ahls
-    appeal.va_dot_gov_address_validator.update_closest_ro_and_ahls
-  end
-end
 class HearingAdminActionMissingFormsTask < HearingAdminActionTask
   def self.label
     "Missing forms"
@@ -99,11 +87,6 @@ end
 class HearingAdminActionFoiaPrivacyRequestTask < HearingAdminActionTask
   def self.label
     "FOIA/Privacy request"
-  end
-end
-class HearingAdminActionForeignVeteranCaseTask < HearingAdminActionTask
-  def self.label
-    "Foreign Veteran case"
   end
 end
 class HearingAdminActionOtherTask < HearingAdminActionTask

@@ -58,6 +58,7 @@ describe User do
         "id" => css_id.upcase,
         "station_id" => "310",
         "css_id" => css_id.upcase,
+        "pg_user_id" => user.id,
         "email" => nil,
         "roles" => [],
         "selected_regional_office" => nil,
@@ -243,13 +244,28 @@ describe User do
 
     subject { user.selectable_organizations }
 
-    before do
-      OrganizationsUser.add_user_to_organization(user, judgeteam)
+    context "when user is the team's judge" do
+      let(:user) { judge }
+
+      it "includes judge teams from the organization list" do
+        is_expected.to include(
+          :id => judgeteam.id,
+          :name => "Assign",
+          :url => "queue/%<id>s/assign" % [id: user.id]
+        )
+        expect(user.organizations).to include judgeteam
+      end
     end
 
-    it "excludes judge teams from the organization list" do
-      is_expected.to be_empty
-      expect(user.organizations).to include judgeteam
+    context "when user is not the team's judge" do
+      before do
+        OrganizationsUser.add_user_to_organization(user, judgeteam)
+      end
+
+      it "excludes judge teams from the organization list" do
+        is_expected.to be_empty
+        expect(user.organizations).to include judgeteam
+      end
     end
   end
 
@@ -275,17 +291,13 @@ describe User do
     end
 
     before do
-      BGSService = ExternalApi::BGSService
+      stub_const("BGSService", ExternalApi::BGSService)
       RequestStore[:current_user] = user
 
       allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
         .with(css_id: user.css_id, station_id: user.station_id).and_return(participant_id)
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
         .with(participant_id).and_return(vso_participant_ids)
-    end
-
-    after do
-      BGSService = Fakes::BGSService
     end
 
     context "#participant_id" do
@@ -443,6 +455,7 @@ describe User do
       end
 
       it do
+        expect(User).to receive(:find_by_css_id)
         is_expected.to be_an_instance_of(User)
         expect(subject.roles).to eq(["Do the thing"])
         expect(subject.regional_office).to eq("283")
@@ -453,6 +466,13 @@ describe User do
 
       it "persists user to DB" do
         expect(User.find(subject.id)).to be_truthy
+      end
+
+      it "searches by user id when it is in session" do
+        user = create(:user)
+        expect(User).to_not receive(:find_by_css_id)
+        session["user"]["pg_user_id"] = user.id
+        expect(subject).to eq user
       end
     end
 
@@ -557,6 +577,25 @@ describe User do
       end
       it "should return a list of all teams user is an admin for" do
         expect(user.administered_teams).to include(*admin_orgs)
+      end
+    end
+  end
+
+  describe ".organization_queue_user?" do
+    let(:user) { FactoryBot.create(:user) }
+
+    subject { user.organization_queue_user? }
+
+    context "when the current user is not a member of any organizations" do
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when the user is a member of some organizations" do
+      before { OrganizationsUser.add_user_to_organization(user, FactoryBot.create(:organization)) }
+      it "returns true" do
+        expect(subject).to eq(true)
       end
     end
   end

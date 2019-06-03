@@ -1,8 +1,6 @@
 import { css } from 'glamor';
 import React from 'react';
 import moment from 'moment';
-import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
@@ -118,15 +116,13 @@ class TaskRows extends React.PureComponent {
   }
 
   assignedToListItem = (task) => {
-    const assignee = task.isLegacy ? this.props.appeal.locationCode : task.assignedTo.cssId;
+    const assignee = task.assigneeName;
 
     return assignee ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNEE_LABEL}</dt>
       <dd>{assignee}</dd></div> : null;
   }
 
-  getAbbrevName = ({ firstName, lastName }) => {
-    return `${firstName.substring(0, 1)}. ${lastName}`;
-  }
+  getAbbrevName = ({ firstName, lastName }) => `${firstName.substring(0, 1)}. ${lastName}`;
 
   assignedByListItem = (task) => {
     const assignor = task.assignedBy.firstName ? this.getAbbrevName(task.assignedBy) : null;
@@ -206,27 +202,33 @@ class TaskRows extends React.PureComponent {
       taskList,
       timeline
     } = this.props;
-    const isLegacyAppealWithDecisionDate = appeal.decisionDate && appeal.isLegacyAppeal;
-    const sortedTaskList = sortTaskList(taskList);
+
+    let timelineContainerText;
+
+    if (appeal.withdrawn) {
+      timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
+    } else if (appeal.decisionDate) {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
+    } else {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
+    }
 
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}>
-          {isLegacyAppealWithDecisionDate ? moment(appeal.decisionDate).format('MM/DD/YYYY') : ''}
+          { appeal.decisionDate && moment(appeal.decisionDate).format('MM/DD/YYYY') }
         </td>
         <td {...taskInfoWithIconTimelineContainer}
-          {...(isLegacyAppealWithDecisionDate ? {} : greyDotStyling)}>
-          {isLegacyAppealWithDecisionDate ? <GreenCheckmark /> : <GrayDot /> }
+          {...(!appeal.decisionDate && greyDotStyling)}>
+          {appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
             <div {...grayLineTimelineStyling}
-              {...(isLegacyAppealWithDecisionDate ? {} : css({ top: '25px !important' }))} />}</td>
+              {...(!appeal.decisionDate && css({ top: '25px !important' }))} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
-          { appeal.decisionDate ?
-            COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING
-          } <br />
+          { timelineContainerText } <br />
         </td>
       </tr> }
-      { sortedTaskList.map((task, index) =>
+      { sortTaskList(taskList).map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>
@@ -281,10 +283,4 @@ class TaskRows extends React.PureComponent {
   }
 }
 
-const mapStateToProps = () => {
-
-  return {
-  };
-};
-
-export default (withRouter(connect(mapStateToProps, null)(TaskRows)));
+export default TaskRows;

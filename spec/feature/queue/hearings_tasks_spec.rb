@@ -6,12 +6,14 @@ RSpec.feature "Hearings tasks workflows" do
   let(:user) { FactoryBot.create(:user) }
 
   before do
-    OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
+    OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
     User.authenticate!(user: user)
   end
 
   describe "Postponing a NoShowHearingTask" do
-    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
+    let(:veteran) { FactoryBot.create(:veteran, first_name: "Semka", last_name: "Venturini", file_number: 800_888_002) }
+    let(:appeal) { FactoryBot.create(:appeal, :hearing_docket, veteran_file_number: veteran.file_number) }
+    let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let(:distribution_task) { FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task) }
     let(:parent_hearing_task) { FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal) }
@@ -41,6 +43,79 @@ RSpec.feature "Hearings tasks workflows" do
       expect(new_parent_hearing_task.children.first).to be_a(ScheduleHearingTask)
 
       expect(distribution_task.ready_for_distribution?).to eq(false)
+    end
+
+    context "with a hearing and a hearing admin member" do
+      let(:hearing_day) { FactoryBot.create(:hearing_day) }
+      let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day) }
+      let!(:association) do
+        FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
+      end
+      let(:admin_full_name) { "Zagorka Hrenic" }
+      let(:hearing_admin_user) { FactoryBot.create(:user, full_name: admin_full_name, station_id: 101) }
+      let(:instructions_text) { "This is why I want a hearing disposition change!" }
+
+      before do
+        OrganizationsUser.add_user_to_organization(hearing_admin_user, HearingAdmin.singleton)
+      end
+
+      describe "requesting a hearing disposition change" do
+        it "closes disposition task and children and creates a new change hearing dispositiont ask" do
+          step "visit the case details page and submit a request for hearing disposition change" do
+            visit("/queue/appeals/#{appeal.uuid}")
+            click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
+            fill_in "Notes", with: instructions_text
+            click_button "Submit"
+            expect(page).to have_content(
+              format(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_SUCCESS, appeal.veteran_full_name)
+            )
+          end
+
+          step "log in as a hearing administrator and verify that the task is in the org queue" do
+            User.authenticate!(user: hearing_admin_user)
+            visit "/organizations/#{HearingAdmin.singleton.url}"
+            click_on veteran_link_text
+            expect(page).to have_content(ChangeHearingDispositionTask.last.label)
+          end
+
+          step "verify task instructions and submit a new disposition" do
+            schedule_row = find("dd", text: ChangeHearingDispositionTask.last.label).find(:xpath, "ancestor::tr")
+            schedule_row.find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+            expect(schedule_row).to have_content(instructions_text)
+            click_dropdown(prompt: "Select an action", text: "Change hearing disposition")
+            click_dropdown({ prompt: "Select", text: "Postponed" }, find(".cf-modal-body"))
+            fill_in "Notes", with: "I'm changing this to postponed."
+            click_button("Submit")
+            expect(page).to have_content("Successfully changed hearing disposition to Postponed")
+          end
+        end
+      end
+
+      describe "Bulk assign hearing tasks" do
+        def fill_in_and_submit_bulk_assign_modal
+          options = find_all('option')
+          assign_to = options[2]
+          assign_to.click
+          task_type = options[8]
+          task_type.click
+          number_of_tasks = options[10];
+          number_of_tasks.click
+          submit = all('button', text: "Assign Tasks")[0]
+          submit.click
+        end
+
+        it "is able to bulk assign tasks for the hearing management org" do
+          3.times do
+            FactoryBot.create(:no_show_hearing_task)
+          end
+          success_msg = 'You have bulk assigned 4 No Show Hearing Task task(s)'
+          visit("organizations/hearing-management/")
+          click_button(text: "Assign Tasks")
+          fill_in_and_submit_bulk_assign_modal
+          expect(page).to have_content(success_msg)
+          expect(page).to have_content("Assigned (4)")
+        end
+      end
     end
   end
 
@@ -74,7 +149,7 @@ RSpec.feature "Hearings tasks workflows" do
       context "when the appellant is represented by a VSO" do
         before do
           FactoryBot.create(:vso)
-          allow_any_instance_of(LegacyAppeal).to receive(:vsos) { Vso.all }
+          allow_any_instance_of(LegacyAppeal).to receive(:representatives) { Representative.all }
         end
 
         it "marks all Caseflow tasks complete and sets the VACOLS location correctly" do
@@ -113,11 +188,11 @@ RSpec.feature "Hearings tasks workflows" do
       context "when the appellant is represented by a VSO" do
         before do
           FactoryBot.create(:vso)
-          allow_any_instance_of(Appeal).to receive(:vsos) { Vso.all }
+          allow_any_instance_of(Appeal).to receive(:representatives) { Representative.all }
         end
 
         context "when the VSO is not supposed to write an IHP for this appeal" do
-          before { allow_any_instance_of(Vso).to receive(:should_write_ihp?) { false } }
+          before { allow_any_instance_of(Representative).to receive(:should_write_ihp?) { false } }
 
           it "marks the case ready for distribution" do
             mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
@@ -131,7 +206,7 @@ RSpec.feature "Hearings tasks workflows" do
         end
 
         context "when the VSO is supposed to write an IHP for this appeal" do
-          before { allow_any_instance_of(Vso).to receive(:should_write_ihp?) { true } }
+          before { allow_any_instance_of(Representative).to receive(:should_write_ihp?) { true } }
 
           it "creates an IHP task as a child of the HearingTask" do
             mark_complete_and_verify_status(appeal, page, no_show_hearing_task)

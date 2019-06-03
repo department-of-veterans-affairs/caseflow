@@ -114,14 +114,16 @@ class Veteran < ApplicationRecord
     # If the file number is nil, that's another way of saying the veteran wasn't found.
     result && result[:file_number] && result
   rescue BGS::ShareError => error
-    # Now that we are always checking find_flashes for access control before we fetch the
-    # veteran, we should never see this error. Reporting it to sentry if it happens
-    Raven.capture_exception(error)
     @access_error = error.message
 
-    # Set the veteran as inaccessible if a sensitivity error is thrown
-    raise error unless error.message.match?(/Sensitive File/)
+    # Now that we are always checking find_flashes for access control before we fetch the
+    # veteran, we should never see this error. Reporting it to sentry if it happens
+    unless error.message.match?(/Sensitive File/)
+      Raven.capture_exception(error)
+      raise error
+    end
 
+    # Set the veteran as inaccessible if a sensitivity error is thrown
     @accessible = false
   end
 
@@ -138,7 +140,13 @@ class Veteran < ApplicationRecord
   # When two Veteran records get merged for data clean up, it can lead to multiple active phone numbers
   # This causes an error fetching the BGS record and needs to be fixed in SHARE
   def multiple_phone_numbers?
-    !!access_error&.include?("NonUniqueResultException")
+    if !!access_error&.include?("NonUniqueResultException")
+      bgs.bust_can_access_cache(RequestStore[:current_user], file_number)
+
+      true
+    else
+      false
+    end
   end
 
   def relationships
@@ -272,7 +280,6 @@ class Veteran < ApplicationRecord
       veteran
     end
 
-    # rubocop:disable Metrics/MethodLength
     def create_by_file_number(file_number)
       veteran = Veteran.new(file_number: file_number)
 
@@ -302,7 +309,6 @@ class Veteran < ApplicationRecord
     rescue ActiveRecord::RecordNotUnique
       find_by(file_number: file_number)
     end
-    # rubocop:enable Metrics/MethodLength
 
     def before_create_veteran_by_file_number
       # noop - used to simulate race conditions
@@ -315,6 +321,11 @@ class Veteran < ApplicationRecord
 
   def alive?
     !deceased?
+  end
+
+  def unload_bgs_record
+    @bgs_record_loaded = false
+    # instance_variable_set(:@bgs_record_loaded, false)
   end
 
   private

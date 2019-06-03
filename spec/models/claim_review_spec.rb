@@ -23,7 +23,7 @@ describe ClaimReview do
     )
   end
 
-  let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+  let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
   let(:informal_conference) { nil }
   let(:same_office) { nil }
   let(:benefit_type) { "compensation" }
@@ -57,7 +57,7 @@ describe ClaimReview do
       :request_issue,
       decision_review: claim_review,
       nonrating_issue_description: "Issue text",
-      issue_category: "surgery",
+      nonrating_issue_category: "surgery",
       decision_date: 4.days.ago.to_date,
       benefit_type: benefit_type,
       ineligible_reason: ineligible_reason
@@ -69,7 +69,7 @@ describe ClaimReview do
       :request_issue,
       decision_review: claim_review,
       nonrating_issue_description: "some other issue",
-      issue_category: "something",
+      nonrating_issue_category: "something",
       decision_date: 3.days.ago.to_date,
       benefit_type: benefit_type
     )
@@ -132,9 +132,23 @@ describe ClaimReview do
       )
     end
 
+    let!(:claim_review_canceled) do
+      create(
+        :higher_level_review,
+        receipt_date: receipt_date,
+        establishment_canceled_at: 2.days.ago
+      )
+    end
+
     context ".unexpired" do
       it "matches reviews still inside the processing window" do
         expect(HigherLevelReview.unexpired).to eq([claim_review_requiring_processing])
+      end
+    end
+
+    context ".canceled" do
+      it "only returns canceled jobs" do
+        expect(HigherLevelReview.canceled).to eq([claim_review_canceled])
       end
     end
 
@@ -149,6 +163,7 @@ describe ClaimReview do
     context ".attemptable" do
       it "matches reviews that could be attempted" do
         expect(HigherLevelReview.attemptable).not_to include(claim_review_recently_attempted)
+        expect(HigherLevelReview.attemptable).not_to include(claim_review_canceled)
       end
     end
 
@@ -815,9 +830,14 @@ describe ClaimReview do
     end
   end
 
-  describe "#find_all_by_file_number" do
+  describe "#find_all_visible_by_file_number" do
+    let!(:removed_hlr) { create(:higher_level_review, veteran_file_number: veteran_file_number) }
+    let!(:removed_sc) { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
+    let!(:removed_hlr_issue) { create(:request_issue, :removed, decision_review: removed_hlr) }
+    let!(:removed_sc_issue) { create(:request_issue, :removed, decision_review: removed_sc) }
+
     it "finds higher level reviews and supplemental claims" do
-      expect(ClaimReview.find_all_by_file_number(veteran_file_number).length).to eq(2)
+      expect(ClaimReview.find_all_visible_by_file_number(veteran_file_number).length).to eq(2)
     end
   end
 

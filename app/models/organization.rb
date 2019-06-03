@@ -7,10 +7,17 @@ class Organization < ApplicationRecord
   has_many :users, through: :organizations_users
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
 
+  validates :name, presence: true
+  validates :url, presence: true, uniqueness: true
+
   before_save :clean_url
 
   def admins
     organizations_users.includes(:user).select(&:admin?).map(&:user)
+  end
+
+  def can_bulk_assign_tasks?
+    false
   end
 
   def non_admins

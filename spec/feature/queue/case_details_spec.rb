@@ -136,7 +136,7 @@ RSpec.feature "Case details" do
           .click_link
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
-        scroll_element_in_to_view("#hearings-section")
+        scroll_to("#hearings-section")
         worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
         expect(worksheet_link.text).to eq(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
 
@@ -151,7 +151,7 @@ RSpec.feature "Case details" do
 
         before do
           OrganizationsUser.add_user_to_organization(vso_user, vso)
-          allow_any_instance_of(Vso).to receive(:user_has_access?).and_return(true)
+          allow_any_instance_of(Representative).to receive(:user_has_access?).and_return(true)
           User.authenticate!(user: vso_user)
         end
 
@@ -160,7 +160,7 @@ RSpec.feature "Case details" do
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
-          scroll_element_in_to_view("#hearings-section")
+          scroll_to("#hearings-section")
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
           expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
@@ -310,6 +310,43 @@ RSpec.feature "Case details" do
         # Expect to find content we know to be on the page so that we wait for the page to load.
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).not_to have_content("Select an action")
+      end
+    end
+
+    context "veteran records have been merged and Veteran has multiple active phone numbers in SHARE" do
+      let!(:appeal) do
+        FactoryBot.create(
+          :legacy_appeal,
+          :with_veteran,
+          vacols_case: FactoryBot.create(
+            :case,
+            :assigned,
+            user: attorney_user,
+            correspondent: FactoryBot.create(:correspondent, sgender: "F")
+          )
+        )
+      end
+
+      before do
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+        Fakes::BGSService.inaccessible_appeal_vbms_ids << appeal.veteran_file_number
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)
+          .and_raise(BGS::ShareError, message: "NonUniqueResultException")
+      end
+
+      scenario "access the appeal's case details", skip: "flake" do
+        visit "/queue/appeals/#{appeal.external_id}"
+
+        expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
+
+        cache_key = Fakes::BGSService.new.can_access_cache_key(current_user, appeal.veteran_file_number)
+        expect(Rails.cache.exist?(cache_key)).to eq(false)
+
+        allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
+        Fakes::BGSService.inaccessible_appeal_vbms_ids = []
+        visit "/queue/appeals/#{appeal.external_id}"
+
+        expect(Rails.cache.exist?(cache_key)).to eq(true)
       end
     end
   end
@@ -549,7 +586,8 @@ RSpec.feature "Case details" do
         )
       end
 
-      scenario "displays task bold in queue" do
+      scenario "displays task bold in queue",
+               skip: "https://circleci.com/gh/department-of-veterans-affairs/caseflow/65218, bat team investigated" do
         visit "/queue"
         vet_name = assigned_task.appeal.veteran_full_name
         fontweight_new = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
@@ -636,6 +674,8 @@ RSpec.feature "Case details" do
         let!(:appeal) { FactoryBot.create(:appeal) }
         issue_description = "Head trauma 1"
         issue_description2 = "Head trauma 2"
+        benefit_text = "Benefit type: Compensation"
+        diagnostic_text = "Diagnostic code: 5008"
         let!(:request_issue) do
           FactoryBot.create(
             :request_issue,
@@ -651,10 +691,20 @@ RSpec.feature "Case details" do
           )
         end
 
-        it "should display sorted issues" do
+        it "should display sorted issues with appropriate key value pairs" do
           visit "/queue/appeals/#{appeal.uuid}"
-          text = issue_description + "\nDiagnostic code: 5008\nIssue\nBenefit type: Compensation\n" + issue_description2
-          expect(page).to have_content(text)
+          issue_key = "Issue: "
+          issue_value = issue_description
+          issue_text = issue_key + issue_value
+          expect(page).to have_content(issue_text)
+          expect(page).to have_content(benefit_text)
+          expect(page).to have_content(diagnostic_text)
+
+          issue_value = issue_description2
+          issue_text = issue_key + issue_value
+          expect(page).to have_content(issue_text)
+          expect(page).to have_content(benefit_text)
+          expect(page).to have_content(diagnostic_text)
         end
       end
     end
@@ -876,6 +926,48 @@ RSpec.feature "Case details" do
 
         # Expect to only find the "NOD received" row and the "dispatch pending" rows.
         expect(page).to have_css("table#case-timeline-table tbody tr", count: 2)
+      end
+    end
+
+    context "when an AMA appeal has been dispatched from the Board" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+      before do
+        judge = FactoryBot.create(:user, station_id: 101)
+        FactoryBot.create(:staff, :judge_role, user: judge)
+        judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
+
+        atty = FactoryBot.create(:user, station_id: 101)
+        FactoryBot.create(:staff, :attorney_role, user: atty)
+        atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
+        atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
+
+        atty_task.update!(status: Constants.TASK_STATUSES.completed)
+        judge_task.update!(status: Constants.TASK_STATUSES.completed)
+
+        bva_dispatcher = FactoryBot.create(:user)
+        OrganizationsUser.add_user_to_organization(bva_dispatcher, BvaDispatch.singleton)
+        BvaDispatchTask.create_from_root_task(root_task)
+
+        params = {
+          appeal_id: appeal.external_id,
+          citation_number: "12312312",
+          decision_date: Date.new(1989, 11, 9).to_s,
+          file: "longfilenamehere",
+          redacted_document_location: "C://Windows/User/BVASWIFTT/Documents/NewDecision.docx"
+        }
+        BvaDispatchTask.outcode(appeal, params, bva_dispatcher)
+      end
+
+      it "displays the correct elements in case timeline" do
+        visit("/queue/appeals/#{appeal.uuid}")
+
+        expect(page).to_not have_content(root_task.timeline_title)
+        expect(page).to_not have_content(COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING)
+        expect(page).to_not have_css(".gray-dot")
+
+        expect(page).to have_content(COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA)
       end
     end
   end

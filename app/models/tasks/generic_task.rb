@@ -38,6 +38,7 @@ class GenericTask < Task
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
+        appropriate_timed_hold_task_action,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
@@ -60,10 +61,54 @@ class GenericTask < Task
 
     []
   end
-  # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+
+  def available_hearing_user_actions(user)
+    available_hearing_admin_actions(user) | available_hearing_mgmt_actions(user)
+  end
+
+  def create_change_hearing_disposition_task(instructions = nil)
+    hearing_task = ancestor_task_of_type(HearingTask)
+
+    if hearing_task.blank?
+      fail(Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR)
+    end
+
+    hearing_task.create_change_hearing_disposition_task(instructions)
+  end
+
+  def most_recent_inactive_hearing_task_on_appeal
+    appeal.tasks.inactive.order(closed_at: :desc).where(type: HearingTask.name).last
+  end
+
+  def task_is_assigned_to_organization_user_administers?(user)
+    task_is_assigned_to_users_organization?(user) && user.administered_teams.include?(assigned_to)
+  end
 
   private
+
+  def available_hearing_admin_actions(user)
+    return [] unless HearingAdmin.singleton.user_has_access?(user)
+
+    hearing_task = ancestor_task_of_type(HearingTask)
+    return [] unless hearing_task&.active? && hearing_task&.disposition_task&.present?
+
+    [
+      Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
+    ]
+  end
+
+  def available_hearing_mgmt_actions(user)
+    return [] unless type == ScheduleHearingTask.name
+    return [] unless HearingsManagement.singleton.user_has_access?(user)
+
+    return [] if most_recent_inactive_hearing_task_on_appeal&.hearing&.disposition.blank?
+
+    [
+      Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h
+    ]
+  end
 
   def task_is_assigned_to_users_organization?(user)
     assigned_to.is_a?(Organization) && assigned_to.user_has_access?(user)
@@ -84,18 +129,14 @@ class GenericTask < Task
     end
 
     def create_child_task(parent, current_user, params)
-      transaction do
-        parent.update!(status: Constants.TASK_STATUSES.on_hold)
-
-        Task.create!(
-          type: name,
-          appeal: parent.appeal,
-          assigned_by_id: child_assigned_by_id(parent, current_user),
-          parent_id: parent.id,
-          assigned_to: child_task_assignee(parent, params),
-          instructions: params[:instructions]
-        )
-      end
+      Task.create!(
+        type: name,
+        appeal: parent.appeal,
+        assigned_by_id: child_assigned_by_id(parent, current_user),
+        parent_id: parent.id,
+        assigned_to: child_task_assignee(parent, params),
+        instructions: params[:instructions]
+      )
     end
   end
 end

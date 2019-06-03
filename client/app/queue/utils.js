@@ -3,6 +3,7 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
+import ApiUtil from '../util/ApiUtil';
 import {
   redText,
   ISSUE_DISPOSITIONS,
@@ -16,6 +17,7 @@ import UNDECIDED_VACOLS_DISPOSITIONS_BY_ID from '../../constants/UNDECIDED_VACOL
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
+import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
@@ -69,6 +71,7 @@ export const prepareTasksForStore = (tasks) =>
       closestRegionalOffice: task.attributes.closest_regional_office,
       createdAt: task.attributes.created_at,
       closedAt: task.attributes.closed_at,
+      assigneeName: task.attributes.assignee_name,
       assignedTo: {
         cssId: task.attributes.assigned_to.css_id,
         name: task.attributes.assigned_to.name,
@@ -254,6 +257,7 @@ export const prepareAppealForStore =
         id: appeal.id,
         externalId: appeal.attributes.external_id,
         docketName: appeal.attributes.docket_name,
+        withdrawn: appeal.attributes.withdrawn,
         isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
@@ -522,6 +526,8 @@ export const taskActionData = (props) => {
   return null;
 };
 
+export const actionNameOfTask = (task) => CO_LOCATED_ADMIN_ACTIONS[task.label] || task.label;
+
 export const nullToFalse = (key, obj) => {
   if (obj[key] === null) {
     obj[key] = false;
@@ -535,4 +541,29 @@ export const sortTaskList = (taskList) => {
     return new Date(next.closedAt || next.createdAt).getTime() -
     new Date(prev.closedAt || prev.createdAt).getTime();
   });
+};
+
+export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
+  return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
+    defaultToUnknown ? 'Unknown' : defaultToUnknown);
+};
+
+export const createOrgQueueLoadPromise = (props, url) => {
+  return ApiUtil.get(url, { timeout: { response: 5 * 60 * 1000 } }).
+    then(
+      (response) => {
+        const {
+          tasks: { data: tasks },
+          id,
+          organization_name: organizationName,
+          is_vso: isVso
+        } = JSON.parse(response.text);
+
+        props.setActiveOrganization(id, organizationName, isVso);
+        props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
+      }
+    ).
+    catch(() => {
+      // handle frontend error
+    });
 };

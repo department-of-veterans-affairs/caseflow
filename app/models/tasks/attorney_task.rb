@@ -28,7 +28,8 @@ class AttorneyTask < Task
                             end
     [
       review_decision_label,
-      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h
+      Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+      appropriate_timed_hold_task_action
     ]
   end
 
@@ -39,6 +40,10 @@ class AttorneyTask < Task
   def update_parent_status
     parent.begin_decision_review_phase if parent&.is_a?(JudgeAssignTask)
     super
+  end
+
+  def label
+    COPY::ATTORNEY_TASK_LABEL
   end
 
   private

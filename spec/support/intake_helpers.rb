@@ -3,6 +3,19 @@
 # rubocop:disable Metrics/ModuleLength
 module IntakeHelpers
   # rubocop: disable Metrics/ParameterLists
+
+  def select_form(form_name)
+    if FeatureToggle.enabled?(:ramp_intake)
+      safe_click ".Select"
+      fill_in "Which form are you processing?", with: form_name
+      find("#form-select").send_keys :enter
+    else
+      within_fieldset("Which form are you processing?") do
+        find("label", text: form_name).click
+      end
+    end
+  end
+
   def start_higher_level_review(
     test_veteran,
     receipt_date: 1.day.ago,
@@ -111,17 +124,25 @@ module IntakeHelpers
   end
   # rubocop: enable Metrics/ParameterLists
 
-  def start_claim_review(claim_review_type, veteran: create(:veteran), veteran_is_not_claimant: false)
+  def start_claim_review(
+    claim_review_type,
+    veteran: create(:veteran),
+    veteran_is_not_claimant: false,
+    benefit_type: "compensation"
+  )
     if claim_review_type == :supplemental_claim
-      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant)
+      start_supplemental_claim(veteran, veteran_is_not_claimant: veteran_is_not_claimant, benefit_type: benefit_type)
     else
-      start_higher_level_review(veteran, veteran_is_not_claimant: veteran_is_not_claimant, informal_conference: true)
+      start_higher_level_review(
+        veteran,
+        veteran_is_not_claimant: veteran_is_not_claimant,
+        informal_conference: true,
+        benefit_type: benefit_type
+      )
     end
   end
 
   def setup_intake_flags
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(Time.zone.today)
 
     # skip the sync call since all edit requests require resyncing
@@ -259,6 +280,10 @@ module IntakeHelpers
     safe_click ".remove-issue"
   end
 
+  def click_edit_contention_issue
+    safe_click ".edit-contention-issue"
+  end
+
   def click_number_of_issues_changed_confirmation
     safe_click "#Number-of-issues-has-changed-button-id-1"
   end
@@ -268,17 +293,17 @@ module IntakeHelpers
   end
 
   def find_intake_issue_by_number(number)
-    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
+    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
       if node.find(".issue-num").text.match?(/^#{number}\./)
-        return node
+        return node.find(".issue")
       end
     end
   end
 
   def find_intake_issue_by_text(text)
-    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue"]').each do |node|
+    find_all(:xpath, './/div[@class="issues"]/*/div[@class="issue-container"]').each do |node|
       if node.text.match?(/#{text}/)
-        return node
+        return node.find(".issue")
       end
     end
   end
@@ -367,13 +392,15 @@ module IntakeHelpers
     setup_inactive_ineligible_legacy_appeal(veteran_file_number)
   end
 
-  def setup_request_issue_with_nonrating_decision_issue(decision_review, issue_category: "Active Duty Adjustments")
+  def setup_request_issue_with_nonrating_decision_issue(
+    decision_review, nonrating_issue_category: "Active Duty Adjustments"
+  )
     create(:request_issue,
            :with_nonrating_decision_issue,
            nonrating_issue_description: "Test nonrating decision issue",
            decision_review: decision_review,
            decision_date: decision_review.receipt_date - 1.day,
-           issue_category: issue_category,
+           nonrating_issue_category: nonrating_issue_category,
            veteran_participant_id: veteran.participant_id)
   end
 

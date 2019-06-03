@@ -110,25 +110,14 @@ class ApplicationController < ApplicationBaseController
   end
   helper_method :logo_path
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def application_urls
     urls = [{
       title: "Queue",
       link: "/queue"
     }]
-
-    if current_user.can?("Hearing Prep")
+    if current_user.hearings_user?
       urls << {
-        title: "Hearing Prep",
-        link: "/hearings/dockets"
-      }
-    end
-    if current_user.can?("Build HearSched") ||
-       current_user.can?("Edit HearSched") ||
-       current_user.can?("RO ViewHearSched") ||
-       current_user.can?("VSO")
-      urls << {
-        title: "Hearing Schedule",
+        title: "Hearings",
         link: "/hearings/schedule"
       }
     end
@@ -136,7 +125,6 @@ class ApplicationController < ApplicationBaseController
     # Only return the URL list if the user has applications to switch between
     (urls.length > 1) ? urls : nil
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
   helper_method :application_urls
 
   def dropdown_urls
@@ -180,8 +168,6 @@ class ApplicationController < ApplicationBaseController
     # :nocov:
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def case_search_home_page
     if feature_enabled?(:case_search_home_page)
       return false if current_user.admin?
@@ -194,28 +180,10 @@ class ApplicationController < ApplicationBaseController
     false
   end
   helper_method :case_search_home_page
-  # rubocop:enable Metrics/PerceivedComplexity
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def deny_vso_access
     redirect_to "/unauthorized" if current_user&.vso_employee?
   end
-
-  # :nocov:
-  def can_assign_task?
-    if current_user.attorney_in_vacols?
-      # This feature toggle control access of attorneys to create admin actions for co-located users
-      feature_enabled?(:attorney_assignment_to_colocated) ||
-        current_user.organizations.pluck(:name).include?(QualityReview.singleton.name)
-    else
-      true
-    end
-  end
-
-  def verify_task_assignment_access
-    redirect_to("/unauthorized") unless can_assign_task?
-  end
-  # :nocov:
 
   def invalid_record_error(record)
     render json: {
@@ -238,13 +206,15 @@ class ApplicationController < ApplicationBaseController
       Raven.user_context(
         email: current_user.email,
         css_id: current_user.css_id,
+        station_id: current_user.station_id,
         regional_office: current_user.regional_office
       )
     end
   end
 
   def set_timezone
-    Time.zone = current_user.timezone if current_user
+    Time.zone = session[:timezone] || current_user&.timezone
+    session[:timezone] ||= current_user&.timezone
   end
 
   # This is used in development mode to:
@@ -327,8 +297,7 @@ class ApplicationController < ApplicationBaseController
       "dispatch" => "Caseflow Dispatch",
       "certifications" => "Caseflow Certification",
       "reader" => "Caseflow Reader",
-      "schedule" => "Caseflow Hearing Schedule",
-      "hearings" => "Caseflow Hearing Prep",
+      "hearings" => "Caseflow Hearings",
       "intake" => "Caseflow Intake",
       "queue" => "Caseflow Queue"
     }
@@ -336,17 +305,8 @@ class ApplicationController < ApplicationBaseController
     subject.nil? ? "Caseflow" : feedback_hash[subject]
   end
 
-  def feedback_url(redirect = nil)
-    # :nocov:
-    unless ENV["CASEFLOW_FEEDBACK_URL"]
-      return "https://vaww.vaco.portal.va.gov/sites/BVA/olkm/DigitalService/Lists/Feedback/NewForm.aspx"
-    end
-
-    # :nocov:
-
-    redirect_url = redirect || request.original_url
-    param_object = { redirect: redirect_url, subject: feedback_subject }
-    ENV["CASEFLOW_FEEDBACK_URL"] + "?" + param_object.to_param
+  def feedback_url
+    "/feedback"
   end
   helper_method :feedback_url
 

@@ -13,6 +13,7 @@ feature "Intake Review Page" do
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
   end
+  let(:benefit_type) { "compensation" }
 
   describe "Validating receipt date not before ama" do
     before { FeatureToggle.enable!(:use_ama_activation_date) }
@@ -42,11 +43,11 @@ feature "Intake Review Page" do
     end
 
     scenario "Higher level review shows alert on Review page" do
-      check_invalid_veteran_alert_on_review_page("higher_level_review")
+      check_invalid_veteran_alert_on_review_page(Constants.INTAKE_FORM_NAMES.higher_level_review)
     end
 
     scenario "Supplemental Claim shows alert on Review page" do
-      check_invalid_veteran_alert_on_review_page("supplemental_claim")
+      check_invalid_veteran_alert_on_review_page(Constants.INTAKE_FORM_NAMES.supplemental_claim)
     end
   end
 
@@ -121,11 +122,43 @@ feature "Intake Review Page" do
       context "when the claimant is missing an address" do
         before { allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil) }
 
-        [:higher_level_review, :supplemental_claim, :appeal].each do |claim_review_type|
+        describe "given an appeal" do
+          it "does not require the claimant to have an address" do
+            review = start_appeal(veteran, veteran_is_not_claimant: veteran_is_not_claimant).first
+
+            check_claimant_address_error(review, benefit_type)
+          end
+        end
+
+        [:higher_level_review, :supplemental_claim].each do |claim_review_type|
           describe "given a #{claim_review_type}" do
             it "requires that the claimant have an address" do
-              start_claim_review(claim_review_type, veteran: veteran, veteran_is_not_claimant: veteran_is_not_claimant)
-              check_claimant_address_error
+              review = start_claim_review(
+                claim_review_type,
+                veteran: veteran,
+                veteran_is_not_claimant: veteran_is_not_claimant
+              ).first
+
+              check_claimant_address_error(review, benefit_type)
+            end
+          end
+        end
+
+        context "for a noncompensation benefit_type" do
+          let(:benefit_type) { "education" }
+
+          [:higher_level_review, :supplemental_claim].each do |claim_review_type|
+            describe "given a #{claim_review_type}" do
+              it "does not require that the claimant have an address" do
+                review = start_claim_review(
+                  claim_review_type,
+                  veteran: veteran,
+                  veteran_is_not_claimant: veteran_is_not_claimant,
+                  benefit_type: benefit_type
+                ).first
+
+                check_claimant_address_error(review, benefit_type)
+              end
             end
           end
         end
@@ -143,7 +176,6 @@ feature "Intake Review Page" do
       end
 
       context "when there are no relationships" do
-        let(:benefit_type) { "compensation" }
         before do
           allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return([])
         end
@@ -249,12 +281,14 @@ def check_pension_and_compensation_payee_code
   expect(page).to have_current_path("/intake/add_issues")
 end
 
-def check_claimant_address_error
+def check_claimant_address_error(review, benefit_type)
   visit "/intake"
   expect(page).to have_current_path("/intake/review_request")
 
-  within_fieldset("What is the Benefit Type?") do
-    find("label", text: "Compensation", match: :prefer_exact).click
+  if review.is_a?(ClaimReview)
+    within_fieldset("What is the Benefit Type?") do
+      find("label", text: benefit_type.capitalize, match: :prefer_exact).click
+    end
   end
 
   fill_in "What is the Receipt Date of this form?", with: Time.zone.today.mdY
@@ -262,16 +296,18 @@ def check_claimant_address_error
 
   click_intake_continue
 
-  expect(page).to have_content("Please update the claimant's address")
+  if review.processed_in_caseflow?
+    expect(page).to_not have_content("Please update the claimant's address")
+    expect(page).to have_current_path("/intake/add_issues")
+  else
+    expect(page).to have_content("Please update the claimant's address")
+  end
 end
 
 def check_invalid_veteran_alert_on_review_page(form_type)
   visit "/intake"
-
-  fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.send(form_type.to_sym)
-  find("#form-select").send_keys :enter
+  select_form(form_type)
   safe_click ".cf-submit.usa-button"
-
   fill_in search_bar_title, with: "25252525"
   click_on "Search"
 

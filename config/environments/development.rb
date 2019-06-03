@@ -4,6 +4,7 @@ Rails.application.configure do
     Bullet.bullet_logger = true
     Bullet.console       = true
     Bullet.rails_logger  = true
+    Bullet.unused_eager_loading_enable = false
   end
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -65,6 +66,8 @@ Rails.application.configure do
   config.s3_enabled = !ENV['AWS_BUCKET_NAME'].nil?
   config.s3_bucket_name = "caseflow-cache"
 
+  config.vacols_db_name = "VACOLS_DEV"
+
   # Set to true to get the documents from efolder running locally on port 4000.
   config.use_efolder_locally = false
 
@@ -80,7 +83,6 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
   #
-  ENV["CASEFLOW_FEEDBACK_URL"] = "https://dsva-appeals-feedback-demo-1748368704.us-gov-west-1.elb.amazonaws.com/"
 
   ENV["METRICS_USERNAME"] ||= "caseflow"
   ENV["METRICS_PASSWORD"] ||= "caseflow"
@@ -92,22 +94,4 @@ Rails.application.configure do
   config.efolder_key = "token"
 
   config.google_analytics_account = "UA-74789258-5"
-
-  # configure pry
-  silence_warnings do
-    begin
-      require 'pry'
-      config.console = Pry
-      unless defined? Pry::ExtendCommandBundle
-        Pry::ExtendCommandBundle = Module.new
-      end
-      require "rails/console/app"
-      require "rails/console/helpers"
-      require_relative "../../lib/helpers/console_methods"
-
-      TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods
-      TOPLEVEL_BINDING.eval('self').extend ConsoleMethods
-    rescue LoadError
-    end
-  end
 end

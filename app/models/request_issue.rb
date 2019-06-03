@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ClassLength
 class RequestIssue < ApplicationRecord
   include Asyncable
   include HasBusinessLine
+  include DecisionSyncable
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 14
@@ -12,8 +12,8 @@ class RequestIssue < ApplicationRecord
   DEFAULT_REQUIRES_PROCESSING_RETRY_WINDOW_HOURS = 12
 
   belongs_to :decision_review, polymorphic: true
-  belongs_to :end_product_establishment
-  has_many :request_decision_issues
+  belongs_to :end_product_establishment, dependent: :destroy
+  has_many :request_decision_issues, dependent: :destroy
   has_many :decision_issues, through: :request_decision_issues
   has_many :remand_reasons, through: :decision_issues
   has_many :duplicate_but_ineligible, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
@@ -45,7 +45,8 @@ class RequestIssue < ApplicationRecord
     dismissed_death: "dismissed_death",
     dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
-    ineligible: "ineligible"
+    ineligible: "ineligible",
+    no_decision: "no_decision"
   }
 
   before_save :set_contested_rating_issue_profile_date
@@ -59,6 +60,7 @@ class RequestIssue < ApplicationRecord
   end
 
   class NotYetSubmitted < StandardError; end
+  class MissingContentionDisposition < StandardError; end
   class MissingDecisionDate < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} lacks a decision_date")
@@ -115,26 +117,6 @@ class RequestIssue < ApplicationRecord
   }.freeze
 
   class << self
-    def last_submitted_at_column
-      :decision_sync_last_submitted_at
-    end
-
-    def submitted_at_column
-      :decision_sync_submitted_at
-    end
-
-    def attempted_at_column
-      :decision_sync_attempted_at
-    end
-
-    def processed_at_column
-      :decision_sync_processed_at
-    end
-
-    def error_column
-      :decision_sync_error
-    end
-
     def rating
       where.not(
         contested_rating_issue_reference_id: nil
@@ -145,7 +127,7 @@ class RequestIssue < ApplicationRecord
       where(
         contested_rating_issue_reference_id: nil,
         is_unidentified: [nil, false]
-      ).where.not(issue_category: nil)
+      ).where.not(nonrating_issue_category: nil)
     end
 
     def eligible
@@ -160,6 +142,14 @@ class RequestIssue < ApplicationRecord
 
     def active_or_ineligible
       active.or(ineligible)
+    end
+
+    def withdrawn
+      eligible.where(closed_status: :withdrawn)
+    end
+
+    def active_or_ineligible_or_withdrawn
+      active_or_ineligible.or(withdrawn)
     end
 
     def active_or_decided
@@ -191,10 +181,10 @@ class RequestIssue < ApplicationRecord
         contested_rating_issue_reference_id: data[:rating_issue_reference_id],
         contested_rating_issue_diagnostic_code: data[:rating_issue_diagnostic_code],
         contested_issue_description: contested_issue_present ? data[:decision_text] : nil,
-        nonrating_issue_description: data[:issue_category] ? data[:decision_text] : nil,
+        nonrating_issue_description: data[:nonrating_issue_category] ? data[:decision_text] : nil,
         unidentified_issue_text: data[:is_unidentified] ? data[:decision_text] : nil,
         decision_date: data[:decision_date],
-        issue_category: data[:issue_category],
+        nonrating_issue_category: data[:nonrating_issue_category],
         benefit_type: data[:benefit_type],
         notes: data[:notes],
         is_unidentified: data[:is_unidentified],
@@ -205,7 +195,8 @@ class RequestIssue < ApplicationRecord
         vacols_sequence_id: data[:vacols_sequence_id],
         contested_decision_issue_id: data[:contested_decision_issue_id],
         ineligible_reason: data[:ineligible_reason],
-        ineligible_due_to_id: data[:ineligible_due_to_id]
+        ineligible_due_to_id: data[:ineligible_due_to_id],
+        edited_description: data[:edited_description]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -245,8 +236,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def description
+    return edited_description if edited_description.present?
     return contested_issue_description if contested_issue_description
-    return "#{issue_category} - #{nonrating_issue_description}" if nonrating?
+    return "#{nonrating_issue_category} - #{nonrating_issue_description}" if nonrating?
     return unidentified_issue_text if is_unidentified?
   end
 
@@ -273,6 +265,10 @@ class RequestIssue < ApplicationRecord
     return specials unless specials.empty?
   end
 
+  def withdrawal_date
+    closed_at if withdrawn?
+  end
+
   def ui_hash
     {
       id: id,
@@ -281,7 +277,7 @@ class RequestIssue < ApplicationRecord
       description: description,
       contention_text: contention_text,
       approx_decision_date: approx_decision_date_of_issue_being_contested,
-      category: issue_category,
+      category: nonrating_issue_category,
       notes: notes,
       is_unidentified: is_unidentified,
       ramp_claim_id: ramp_claim_id,
@@ -292,7 +288,9 @@ class RequestIssue < ApplicationRecord
       ineligible_due_to_id: ineligible_due_to_id,
       decision_review_title: review_title,
       title_of_active_review: title_of_active_review,
-      contested_decision_issue_id: contested_decision_issue_id
+      contested_decision_issue_id: contested_decision_issue_id,
+      withdrawal_date: withdrawal_date,
+      contested_issue_description: contested_issue_description
     }
   end
 
@@ -334,7 +332,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def guess_benefit_type
+    return contested_decision_issue.benefit_type if contested_decision_issue
     return "unidentified" if is_unidentified
+    return "ineligible" unless eligible?
 
     "unknown"
   end
@@ -382,35 +382,43 @@ class RequestIssue < ApplicationRecord
     eligible? && vacols_id && vacols_sequence_id
   end
 
-  def close!(status)
+  def close!(status:, closed_at_value: Time.zone.now)
     return unless closed_at.nil?
 
     transaction do
-      update!(closed_at: Time.zone.now, closed_status: status)
+      update!(closed_at: closed_at_value, closed_status: status)
       yield if block_given?
     end
   end
 
   def close_if_ineligible!
-    close!(:ineligible) if ineligible_reason?
+    close!(status: :ineligible) if ineligible_reason?
   end
 
   def close_decided_issue!
     return unless decision_issues.any?
 
-    close!(:decided)
+    close!(status: :decided)
   end
 
   def close_after_end_product_canceled!
     return unless end_product_establishment&.reload&.status_canceled?
 
-    close!(:end_product_canceled) do
+    close!(status: :end_product_canceled) do
       legacy_issue_optin&.flag_for_rollback!
     end
   end
 
+  def withdraw!(withdrawal_date)
+    close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
+  end
+
+  def save_edit_contention_text!(new_description)
+    update!(edited_description: new_description)
+  end
+
   def remove!
-    close!(:removed) do
+    close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
 
       # If the decision issue is not associated with any other request issue, also delete
@@ -432,7 +440,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def requires_record_request_task?
-    !benefit_type_requires_payee_code?
+    eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
 
   def decision_or_promulgation_date
@@ -485,6 +493,12 @@ class RequestIssue < ApplicationRecord
     return unless limited_poa
 
     limited_poa[:limited_poa_access] == "Y"
+  end
+
+  def contention_disposition
+    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
+      disposition.contention_id.to_i == contention_reference_id
+    end
   end
 
   private
@@ -547,6 +561,8 @@ class RequestIssue < ApplicationRecord
       create_decision_issues_from_rating
     end
 
+    # We expect all rating request issues on an EP to get an associated rating created when they're decided
+    # Only non-rating issues should have decision issues created from dispositions
     create_decision_issue_from_disposition if decision_issues.empty?
 
     fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
@@ -566,8 +582,8 @@ class RequestIssue < ApplicationRecord
         participant_id: decision_review.veteran.participant_id,
         disposition: contention_disposition.disposition,
         description: "#{contention_disposition.disposition}: #{description}",
-        profile_date: end_product_establishment_associated_rating_profile_date,
-        promulgation_date: end_product_establishment_associated_rating_promulgation_date,
+        rating_profile_date: end_product_establishment_associated_rating_profile_date,
+        rating_promulgation_date: end_product_establishment_associated_rating_promulgation_date,
         decision_review: decision_review,
         benefit_type: benefit_type,
         end_product_last_action_date: end_product_establishment.result.last_action_date
@@ -587,12 +603,6 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.associated_rating&.promulgation_date
   end
 
-  def contention_disposition
-    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
-      disposition.contention_id.to_i == contention_reference_id
-    end
-  end
-
   def create_decision_issues_from_rating
     matching_rating_issues.each do |rating_issue|
       transaction { decision_issues << find_or_create_decision_issue_from_rating_issue(rating_issue) }
@@ -609,6 +619,8 @@ class RequestIssue < ApplicationRecord
   # However, if the dispositions for any of these request issues match, there is no need to create multiple decision
   # issues. They can instead be mapped to the same decision issue.
   def find_or_create_decision_issue_from_rating_issue(rating_issue)
+    fail MissingContentionDisposition unless contention_disposition
+
     preexisting_decision_issue = DecisionIssue.find_by(
       participant_id: rating_issue.participant_id,
       rating_issue_reference_id: rating_issue.reference_id,
@@ -621,9 +633,9 @@ class RequestIssue < ApplicationRecord
       rating_issue_reference_id: rating_issue.reference_id,
       disposition: contention_disposition.disposition,
       participant_id: rating_issue.participant_id,
-      promulgation_date: rating_issue.promulgation_date,
+      rating_promulgation_date: rating_issue.promulgation_date,
       decision_text: rating_issue.decision_text,
-      profile_date: rating_issue.profile_date,
+      rating_profile_date: rating_issue.profile_date,
       decision_review: decision_review,
       benefit_type: rating_issue.benefit_type,
       end_product_last_action_date: end_product_establishment.result.last_action_date
@@ -644,8 +656,6 @@ class RequestIssue < ApplicationRecord
     rating_with_issue[:issues].find { |issue| issue[:reference_id] == contested_rating_issue_reference_id }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def check_for_eligible_previous_review!
     return unless eligible?
     return unless contested_issue
@@ -666,13 +676,11 @@ class RequestIssue < ApplicationRecord
 
     self.ineligible_due_to_id = contested_issue.source_request_issues.first&.id if ineligible_reason
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
   def check_for_before_ama!
     return unless eligible? && should_check_for_before_ama?
 
-    if decision_or_promulgation_date && decision_or_promulgation_date < DecisionReview.ama_activation_date
+    if decision_or_promulgation_date && decision_or_promulgation_date < decision_review.ama_activation_date
       self.ineligible_reason = :before_ama
     end
   end
@@ -780,4 +788,3 @@ class RequestIssue < ApplicationRecord
     decision_review.tasks.active.any?
   end
 end
-# rubocop:enable Metrics/ClassLength

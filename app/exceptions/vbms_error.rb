@@ -12,6 +12,7 @@ class VBMSError < RuntimeError
   class Transient < Caseflow::Error::VBMS; end
   class RatedIssueMissing < Caseflow::Error::VBMS; end
   class DocumentTooBig < Caseflow::Error::VBMS; end
+  class DocumentNotFound < Caseflow::Error::VBMS; end
   class Security < Caseflow::Error::VBMS; end
   class DownForMaintenance < Caseflow::Error::VBMS; end
   class BadPostalCode < Caseflow::Error::VBMS; end
@@ -23,6 +24,13 @@ class VBMSError < RuntimeError
   class BadClaim < Caseflow::Error::VBMS; end
   class CannotDeleteContention < Caseflow::Error::VBMS; end
   class ClaimDateInvalid < Caseflow::Error::VBMS; end
+  class FilenumberDoesNotExist < Caseflow::Error::VBMS; end
+  class MissingData < Caseflow::Error::VBMS; end
+  class ShareExceptionFindRatingData < Caseflow::Error::VBMS; end
+  class MissingVeteranIdentifier < Caseflow::Error::VBMS; end
+  class Unknown < Caseflow::Error::VBMS; end
+  class UnknownUser < Caseflow::Error::VBMS; end
+  class BadSOAPMessage < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -36,17 +44,23 @@ class VBMSError < RuntimeError
   end
 
   KNOWN_ERRORS = {
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/331930/
+    "upstream connect error or disconnect/reset before headers" => "Transient",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4403/events/293678/
     "FAILED FOR UNKNOWN REASONS" => "Transient",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3288/
     "additional review due to an Incident Flash" => "IncidentFlash",
 
-    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4035/267335/
     "Could not access remote service at" => "Transient",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3405/
     "Unable to associate rated issue, rated issue does not exist" => "RatedIssueMissing",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/321797/
+    "ShareException thrown in findRatingData" => "ShareExceptionFindRatingData",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/
     "Requested result set exceeds acceptable size." => "DocumentTooBig",
@@ -71,6 +85,9 @@ class VBMSError < RuntimeError
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/276980/
     "User is not authorized." => "UserNotAuthorized",
 
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4999/events/332996/
+    "Logon ID \\w+ Not Found" => "UnknownUser",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/294187/
     "Veteran is employed by this station." => "VeteranEmployedByStation",
 
@@ -81,7 +98,25 @@ class VBMSError < RuntimeError
     "The contention is connected to an issue in ratings and cannot be deleted." => "CannotDeleteContention",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/292533/
-    "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid"
+    "The ClaimDateDt value must be a valid date for a claim." => "ClaimDateInvalid",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/308951/
+    "File Number does not exist within the system." => "FilenumberDoesNotExist",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3696/events/315030/
+    "Document not found" => "DocumentNotFound",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4908/events/331555/
+    "Missing required field: Veteran Identifier." => "MissingVeteranIdentifier",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3728/events/331292/
+    "The System has encountered an unknown error" => "Unknown",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3954/events/329778/
+    "Unable to parse SOAP message" => "BadSOAPMessage",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
+    "missing required data" => "MissingData"
   }.freeze
 
   class << self

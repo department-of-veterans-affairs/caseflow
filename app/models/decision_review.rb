@@ -8,14 +8,12 @@ class DecisionReview < ApplicationRecord
 
   attr_reader :saving_review
 
-  has_many :request_issues, as: :decision_review
-  has_many :claimants, as: :decision_review
+  has_many :request_issues, as: :decision_review, dependent: :destroy
+  has_many :claimants, as: :decision_review, dependent: :destroy
   has_many :request_decision_issues, through: :request_issues
-  has_many :decision_issues, as: :decision_review
-  has_many :tasks, as: :appeal
+  has_many :decision_issues, as: :decision_review, dependent: :destroy
+  has_many :tasks, as: :appeal, dependent: :destroy
   has_one :intake, as: :detail
-
-  before_destroy :remove_issues!
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
     ratings_with_issues.map(&:serialize)
@@ -48,16 +46,20 @@ class DecisionReview < ApplicationRecord
       :establishment_last_submitted_at
     end
 
-    def ama_activation_date
-      if FeatureToggle.enabled?(:use_ama_activation_date)
-        Constants::DATES["AMA_ACTIVATION"].to_date
-      else
-        Constants::DATES["AMA_ACTIVATION_TEST"].to_date
-      end
+    def canceled_at_column
+      :establishment_canceled_at
     end
 
     def review_title
       to_s.underscore.titleize
+    end
+  end
+
+  def ama_activation_date
+    if intake && FeatureToggle.enabled?(:use_ama_activation_date, user: intake.user)
+      Constants::DATES["AMA_ACTIVATION"].to_date
+    else
+      Constants::DATES["AMA_ACTIVATION_TEST"].to_date
     end
   end
 
@@ -86,8 +88,6 @@ class DecisionReview < ApplicationRecord
     id.to_s
   end
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
   def ui_hash
     {
       veteran: {
@@ -113,8 +113,6 @@ class DecisionReview < ApplicationRecord
       processedInCaseflow: processed_in_caseflow?
     }
   end
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 
   def timely_issue?(decision_date)
     return true unless receipt_date && decision_date
@@ -155,10 +153,6 @@ class DecisionReview < ApplicationRecord
 
   def veteran
     @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number)
-  end
-
-  def remove_issues!
-    request_issues.destroy_all unless request_issues.empty?
   end
 
   def mark_rating_request_issues_to_reassociate!
@@ -226,7 +220,7 @@ class DecisionReview < ApplicationRecord
       rsc.create_remand_issues!
       rsc.create_decision_review_task_if_required!
 
-      delay = rsc.receipt_date.future? ? rsc.receipt_date : 0
+      delay = rsc.receipt_date.future? ? (rsc.receipt_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
 
       unless rsc.processed? || rsc.receipt_date.future?
@@ -307,6 +301,10 @@ class DecisionReview < ApplicationRecord
     "#{request_issues.count} issues"
   end
 
+  def removed?
+    request_issues.any? && request_issues.all?(&:removed?)
+  end
+
   private
 
   def veteran_invalid_fields
@@ -317,7 +315,9 @@ class DecisionReview < ApplicationRecord
   end
 
   def request_issues_ui_hash
-    request_issues.includes(:decision_review, :contested_decision_issue).active_or_ineligible.map(&:ui_hash)
+    request_issues.includes(
+      :decision_review, :contested_decision_issue
+    ).active_or_ineligible_or_withdrawn.map(&:ui_hash)
   end
 
   def can_contest_rating_issues?
@@ -381,8 +381,8 @@ class DecisionReview < ApplicationRecord
     veteran.ratings.reject { |rating| rating.issues.empty? }
 
     # return empty list when there are no ratings
-  rescue Rating::BackfilledRatingError, Rating::LockedRatingError => e
-    Raven.capture_exception(e)
+  rescue Rating::BackfilledRatingError, Rating::LockedRatingError => error
+    Raven.capture_exception(error)
     []
   end
 
@@ -400,7 +400,7 @@ class DecisionReview < ApplicationRecord
   end
 
   def validate_receipt_date_not_before_ama
-    errors.add(:receipt_date, "before_ama") if receipt_date < self.class.ama_activation_date
+    errors.add(:receipt_date, "before_ama") if receipt_date < ama_activation_date
   end
 
   def validate_receipt_date_not_in_future

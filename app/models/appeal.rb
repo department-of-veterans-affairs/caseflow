@@ -5,7 +5,6 @@
 # This is the type of appeal created by the Veterans Appeals Improvement and Modernization Act (AMA),
 # which went into effect Feb 19, 2019.
 
-# rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
   include Taskable
 
@@ -139,10 +138,10 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_tasks = tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
+    active_tasks = tasks.active.not_tracking
     return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
-    on_hold_tasks = tasks.where(status: Constants.TASK_STATUSES.on_hold)
+    on_hold_tasks = tasks.on_hold.not_tracking
     return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
     return most_recently_assigned_to_label(tasks) if tasks.any?
@@ -159,8 +158,11 @@ class Appeal < DecisionReview
   end
 
   def latest_attorney_case_review
-    @latest_attorney_case_review ||=
-      AttorneyCaseReview.where(task_id: tasks.pluck(:id)).order(:created_at).last
+    return @latest_attorney_case_review if defined?(@latest_attorney_case_review)
+
+    @latest_attorney_case_review = AttorneyCaseReview
+      .where(task_id: tasks.pluck(:id))
+      .order(:created_at).last
   end
 
   def reviewing_judge_name
@@ -323,9 +325,9 @@ class Appeal < DecisionReview
     claimants.map(&:power_of_attorney)
   end
 
-  def vsos
+  def representatives
     vso_participant_ids = power_of_attorneys.map(&:participant_id) - [nil]
-    Vso.where(participant_id: vso_participant_ids)
+    Representative.where(participant_id: vso_participant_ids)
   end
 
   def external_id
@@ -333,7 +335,7 @@ class Appeal < DecisionReview
   end
 
   def create_tasks_on_intake_success!
-    RootTask.create_root_and_sub_tasks!(self)
+    InitialTasksFactory.new(self).create_root_and_sub_tasks!
     create_business_line_tasks if request_issues.any?(&:requires_record_request_task?)
     maybe_create_translation_task
   end
@@ -401,8 +403,6 @@ class Appeal < DecisionReview
     end
   end
 
-  # rubocop:disable CyclomaticComplexity
-  # rubocop:disable Metrics/PerceivedComplexity
   def fetch_pre_decision_status
     if pending_schedule_hearing_task?
       :pending_hearing_scheduling
@@ -435,11 +435,7 @@ class Appeal < DecisionReview
       :other_close
     end
   end
-  # rubocop:enable CyclomaticComplexity
-  # rubocop:enable Metrics/PerceivedComplexity
 
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable CyclomaticComplexity
   def fetch_details_for_status
     case fetch_status
     when :bva_decision
@@ -471,8 +467,6 @@ class Appeal < DecisionReview
       {}
     end
   end
-  # rubocop:enable CyclomaticComplexity
-  # rubocop:enable Metrics/MethodLength
 
   def post_bva_dta_decision_status_details
     issue_list = remanded_sc_decision_issues
@@ -533,7 +527,7 @@ class Appeal < DecisionReview
   end
 
   def hearing_pending?
-    tasks.active.where(type: DispositionTask.name).any?
+    scheduled_hearing.present?
   end
 
   def evidence_submission_hold_pending?
@@ -550,7 +544,7 @@ class Appeal < DecisionReview
   end
 
   def withdrawn?
-    # will implement when available
+    root_task&.status == Constants.TASK_STATUSES.cancelled
   end
 
   def alerts
@@ -682,6 +676,11 @@ class Appeal < DecisionReview
     %w[supplemental_claim cavc]
   end
 
+  def assign_ro_and_update_ahls(new_ro)
+    update!(closest_regional_office: new_ro)
+    va_dot_gov_address_validator.assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)
@@ -729,4 +728,3 @@ class Appeal < DecisionReview
       end
   end
 end
-# rubocop:enable Metrics/ClassLength

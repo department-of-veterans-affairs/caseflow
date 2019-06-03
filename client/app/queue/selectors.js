@@ -7,6 +7,8 @@ import {
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 
+import COPY from '../../COPY.json';
+
 export const selectedTasksSelector = (state, userId) => {
   return _.map(
     state.queue.isTaskAssignedToUserSelected[userId] || {},
@@ -255,9 +257,16 @@ export const onHoldTasksByAssigneeCssIdSelector = createSelector(
 export const onHoldTasksForAttorney = createSelector(
   [incompleteTasksWithHold, incompleteWorkTasksByAssignerCssIdSelector],
   (incompleteWithHold, incompleteByAssigner) => {
-    const onHoldTasksWithDuplicates = incompleteWithHold.concat(incompleteByAssigner);
+    // Include incompleteWorkTasksByAssignerCssIdSelector so that we can display on hold AttorneyLegacyTasks without
+    // actually having the AttorneyLegacyTask in the set of incompleteTasksWithHold.
+    // 
+    // Favor this approach instead of filtering on task's appealType (LegacyAppeal) to be resilient to upcoming
+    // migration away from DAS in favor of Caseflow tasks for all appeal types.
+    const appealsAlreadyRepresented = incompleteWithHold.map((task) => task.appealId);
+    const uniqueOnHoldTasksByAssigner = _.filter(
+      incompleteByAssigner, (task) => !appealsAlreadyRepresented.includes(task.appealId));
 
-    return _.filter(onHoldTasksWithDuplicates, (task) => task.assignedTo.type === 'User');
+    return incompleteWithHold.concat(uniqueOnHoldTasksByAssigner);
   }
 );
 
@@ -265,12 +274,16 @@ export const judgeDecisionReviewTasksSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task) => {
     if (task.appealType === 'Appeal') {
-      return (['review', 'quality review'].includes(task.label)) &&
+      return ([COPY.JUDGE_DECISION_REVIEW_TASK_LABEL,
+        COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL,
+        COPY.JUDGE_DISPATCH_RETURN_TASK_LABEL].includes(task.label)) &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
     // eslint-disable-next-line no-undefined
-    return [null, undefined, 'review', 'quality review'].includes(task.label);
+    return [null, undefined, COPY.JUDGE_DECISION_REVIEW_TASK_LABEL,
+      COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL,
+      COPY.JUDGE_DISPATCH_RETURN_TASK_LABEL].includes(task.label);
   })
 );
 
@@ -278,11 +291,11 @@ export const judgeAssignTasksSelector = createSelector(
   [workTasksByAssigneeCssIdSelector],
   (tasks) => _.filter(tasks, (task) => {
     if (task.appealType === 'Appeal') {
-      return task.label === 'assign' &&
+      return task.label === COPY.JUDGE_ASSIGN_TASK_LABEL &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned);
     }
 
-    return task.label === 'assign';
+    return task.label === COPY.JUDGE_ASSIGN_TASK_LABEL;
   })
 );
 

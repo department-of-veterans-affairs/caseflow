@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190402195624) do
+ActiveRecord::Schema.define(version: 20190529143622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,9 +81,11 @@ ActiveRecord::Schema.define(version: 20190402195624) do
 
   create_table "appeals", force: :cascade, comment: "Decision reviews intaken for AMA appeals to the board (also known as a notice of disagreement)." do |t|
     t.string "closest_regional_office", comment: "The code for the regional office closest to the Veteran on the appeal."
+    t.date "docket_range_date", comment: "Date that appeal was added to hearing docket range."
     t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
     t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow by the user."
     t.datetime "establishment_attempted_at", comment: "Timestamp for when the appeal's establishment was last attempted."
+    t.datetime "establishment_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "establishment_error", comment: "The error message if attempting to establish the appeal resulted in an error. This gets cleared once the establishment is successful."
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
@@ -137,7 +139,9 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.string "contention_reference_id", comment: "The ID of the contention created in VBMS. Indicates successful creation of the contention. If the EP has been rated, this contention could have been connected to a rating issue. That connection is used to map the rating issue back to the decision issue."
     t.bigint "decision_document_id", comment: "The ID of the decision document which triggered this effectuation."
     t.datetime "decision_sync_attempted_at", comment: "When the EP is cleared, an asyncronous job attempts to map the resulting rating issue back to the decision issue. Timestamp representing the time the job was last attempted."
+    t.datetime "decision_sync_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "decision_sync_error", comment: "Async job processing last error message. See description for decision_sync_attempted_at for the decision sync job description."
+    t.datetime "decision_sync_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp. See description for decision_sync_attempted_at for the decision sync job description."
     t.datetime "decision_sync_submitted_at", comment: "Async job processing start timestamp. See description for decision_sync_attempted_at for the decision sync job description."
     t.bigint "end_product_establishment_id", comment: "The ID of the end product establishment created for this board grant effectuation."
@@ -235,6 +239,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.bigint "appeal_id", null: false
     t.string "appeal_type"
     t.datetime "attempted_at"
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.string "citation_number", null: false
     t.datetime "created_at", null: false
     t.date "decision_date", null: false
@@ -262,9 +267,9 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.string "disposition", comment: "The disposition for a decision issue. Dispositions made in Caseflow and dispositions made in VBMS can have different values."
     t.date "end_product_last_action_date", comment: "After an end product gets synced with a status of CLR (cleared), the end product's last_action_date is saved on any decision issues that are created as a result. This is used as a proxy for decision date for non-rating issues that are processed in VBMS because they don't have a rating profile date, and the exact decision date is not available."
     t.string "participant_id", null: false, comment: "The Veteran's participant id."
-    t.datetime "profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
-    t.datetime "promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
     t.string "rating_issue_reference_id", comment: "Identifies the specific issue on the rating that resulted from the decision issue (a rating can have multiple issues). This is unique per rating issue."
+    t.datetime "rating_profile_date", comment: "The profile date of the rating that a decision issue resulted in (if applicable). The profile_date is used as an identifier for the rating, and is the date that most closely maps to what the Veteran writes down as the decision date."
+    t.datetime "rating_promulgation_date", comment: "The promulgation date of the rating that a decision issue resulted in (if applicable). It is used for calculating whether a decision issue is within the timeliness window to be appealed or get a higher level review."
     t.index ["rating_issue_reference_id", "disposition", "participant_id"], name: "decision_issues_uniq_by_disposition_and_ref_id", unique: true
   end
 
@@ -557,6 +562,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
   create_table "higher_level_reviews", force: :cascade, comment: "Intake data for Higher Level Reviews." do |t|
     t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
     t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
+    t.datetime "establishment_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
@@ -680,10 +686,11 @@ ActiveRecord::Schema.define(version: 20190402195624) do
 
   create_table "organizations", force: :cascade do |t|
     t.string "name"
-    t.string "participant_id"
-    t.string "role"
-    t.string "type"
-    t.string "url"
+    t.string "participant_id", comment: "Organizations BGS partipant id"
+    t.string "role", comment: "Role users in organization must have, if present"
+    t.string "type", comment: "Single table inheritance"
+    t.string "url", comment: "Unique portion of the organization queue url"
+    t.index ["url"], name: "index_organizations_on_url", unique: true
   end
 
   create_table "organizations_users", force: :cascade do |t|
@@ -773,10 +780,8 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.datetime "created_at", null: false
     t.integer "decision_issue_id"
     t.boolean "post_aoj"
-    t.bigint "request_issue_id"
     t.datetime "updated_at", null: false
     t.index ["decision_issue_id"], name: "index_remand_reasons_on_decision_issue_id"
-    t.index ["request_issue_id"], name: "index_remand_reasons_on_request_issue_id"
   end
 
   create_table "request_decision_issues", force: :cascade, comment: "Join table for the has and belongs to many to many relationship between request issues and decision issues." do |t|
@@ -804,15 +809,17 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
     t.string "decision_review_type", comment: "Class name of the decision review that this request issue belongs to"
     t.datetime "decision_sync_attempted_at", comment: "Async job processing last attempted timestamp"
+    t.datetime "decision_sync_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "decision_sync_error", comment: "Async job processing last error message"
     t.datetime "decision_sync_last_submitted_at", comment: "Async job processing most recent start timestamp"
     t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp"
     t.datetime "decision_sync_submitted_at", comment: "Async job processing start timestamp"
+    t.string "edited_description", comment: "The edited description for the contested issue, optionally entered by the user."
     t.integer "end_product_establishment_id", comment: "The ID of the End Product Establishment created for this request issue."
     t.bigint "ineligible_due_to_id", comment: "If a request issue is ineligible due to another request issue, for example that issue is already being actively reviewed, then the ID of the other request issue is stored here."
     t.string "ineligible_reason", comment: "The reason for a Request Issue being ineligible. If a Request Issue has an ineligible_reason, it is still captured, but it will not get a contention in VBMS or a decision."
     t.boolean "is_unidentified", comment: "Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
-    t.string "issue_category", comment: "The category selected for nonrating request issues. These vary by business line (also known as benefit type)."
+    t.string "nonrating_issue_category", comment: "The category selected for nonrating request issues. These vary by business line."
     t.string "nonrating_issue_description", comment: "The user entered description if the issue is a nonrating issue"
     t.text "notes", comment: "Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
     t.string "ramp_claim_id", comment: "If a rating issue was created as a result of an issue intaken for a RAMP Review, it will be connected to the former RAMP issue by its End Product's claim ID."
@@ -836,6 +843,8 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.integer "after_request_issue_ids", null: false, comment: "An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).", array: true
     t.datetime "attempted_at", comment: "Timestamp for when the request issue update processing was last attempted."
     t.integer "before_request_issue_ids", null: false, comment: "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).", array: true
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+    t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
     t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
     t.datetime "processed_at", comment: "Timestamp for when the request issue update successfully completed processing."
@@ -843,6 +852,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.string "review_type", null: false, comment: "The type of the decision review edited."
     t.datetime "submitted_at", comment: "Timestamp when the request issues update was originally submitted."
     t.bigint "user_id", null: false, comment: "The ID of the user who edited the decision review."
+    t.integer "withdrawn_request_issue_ids", comment: "An array of the request issue IDs that were withdrawn during this request issues update.", array: true
     t.index ["review_type", "review_id"], name: "index_request_issues_updates_on_review_type_and_review_id"
     t.index ["user_id"], name: "index_request_issues_updates_on_user_id"
   end
@@ -895,6 +905,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
     t.bigint "decision_review_remanded_id", comment: "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here."
     t.string "decision_review_remanded_type", comment: "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review."
     t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
+    t.datetime "establishment_canceled_at", comment: "Timestamp when job was abandoned"
     t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
@@ -918,6 +929,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
 
   create_table "task_timers", force: :cascade, comment: "Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask." do |t|
     t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run."
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false, comment: "Automatic timestamp for record creation."
     t.string "error", comment: "Async any error message from most recent failed attempt to run."
     t.datetime "last_submitted_at", comment: "Async timestamp for most recent job start."
@@ -998,6 +1010,7 @@ ActiveRecord::Schema.define(version: 20190402195624) do
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.datetime "attempted_at"
+    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
     t.string "document_type", null: false
     t.string "error"

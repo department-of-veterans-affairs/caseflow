@@ -11,14 +11,14 @@ class Docket
     fail "'ready for distribution' value cannot be false" if ready == false
 
     scope = docket_appeals
-    scope = scope.merge(Appeal.ready_for_distribution) if ready == true
+    scope = scope.ready_for_distribution if ready == true
 
     if priority == true
-      scope = scope.merge(Appeal.all_priority)
-      return scope.merge(Appeal.ordered_by_distribution_ready_date)
+      scope = scope.all_priority
+      return scope.ordered_by_distribution_ready_date
     end
 
-    scope = scope.merge(Appeal.all_nonpriority) if priority == false
+    scope = scope.all_nonpriority if priority == false
     scope.order("receipt_date")
   end
 
@@ -69,7 +69,7 @@ class Docket
                                      appeal_type: Appeal.name,
                                      assigned_at: Time.zone.now,
                                      assigned_to: judge,
-                                     action: "assign")
+                                     action: COPY::JUDGE_ASSIGN_TASK_LABEL)
       Rails.logger.info("Assigned judge task with task id #{task.id} to #{task.assigned_to.css_id}")
 
       Rails.logger.info("Closing distribution task for appeal #{appeal.id}")

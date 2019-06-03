@@ -6,7 +6,6 @@ feature "Appeal Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
     # Test that this works when only enabled on the current user
 
     Timecop.freeze(post_ramp_start_date)
@@ -77,8 +76,8 @@ feature "Appeal Intake" do
   let!(:before_ama_rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 11.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
       issues: [
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
@@ -116,10 +115,7 @@ feature "Appeal Intake" do
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(nil)
 
     visit "/intake"
-    safe_click ".Select"
-
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.appeal
-    find("#form-select").send_keys :enter
+    select_form(Constants.INTAKE_FORM_NAMES.appeal)
 
     safe_click ".cf-submit.usa-button"
 
@@ -217,7 +213,7 @@ feature "Appeal Intake" do
     expect(nonrating_request_issue).to have_attributes(
       contested_rating_issue_reference_id: nil,
       contested_rating_issue_profile_date: nil,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       benefit_type: "compensation"
     )
@@ -395,8 +391,8 @@ feature "Appeal Intake" do
 
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 10.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
       issues: [
         { decision_text: "Issue before AMA Activation from RAMP",
           reference_id: "ramp_ref_id" }
@@ -557,7 +553,7 @@ feature "Appeal Intake" do
     expect(success_checklist).to_not have_content("Non-RAMP issue before AMA Activation")
     expect(success_checklist).to_not have_content("A nonrating issue before AMA")
 
-    ineligible_checklist = find("ul.cf-ineligible-checklist")
+    ineligible_checklist = find("ul.cf-issue-checklist")
     expect(ineligible_checklist).to have_content("Non-RAMP Issue before AMA Activation is ineligible")
     expect(ineligible_checklist).to have_content("A nonrating issue before AMA is ineligible")
 
@@ -582,7 +578,7 @@ feature "Appeal Intake" do
 
     active_duty_adjustments_request_issue = RequestIssue.find_by!(
       decision_review: appeal,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       decision_date: nonrating_date
     )
@@ -592,7 +588,7 @@ feature "Appeal Intake" do
     another_active_duty_adjustments_request_issue = RequestIssue.find_by!(
       decision_review_type: "Appeal",
       decision_review_id: appeal.id,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Another Description for Active Duty Adjustments"
     )
 
@@ -690,7 +686,7 @@ feature "Appeal Intake" do
       expect(
         RequestIssue.find_by(contested_issue_description: "appeal decision issue").ineligible_reason
       ).to eq("appeal_to_appeal")
-      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      ineligible_checklist = find("ul.cf-issue-checklist")
       expect(ineligible_checklist).to have_content(
         "appeal decision issue #{Constants.INELIGIBLE_REQUEST_ISSUES.appeal_to_appeal}"
       )
@@ -723,7 +719,6 @@ feature "Appeal Intake" do
     safe_click ".close-modal"
     expect(page).to_not have_css("#modal_id-title")
     safe_click "#cancel-intake"
-
     safe_click ".confirm-cancel"
     expect(page).to have_content("Make sure you’ve selected an option below.")
     within_fieldset("Please select the reason you are canceling this intake.") do
@@ -850,12 +845,12 @@ feature "Appeal Intake" do
         add_intake_rating_issue("ankylosis of hip")
 
         expect(page).to have_content(
-          "#{Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
+          "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
         )
 
         click_intake_finish
 
-        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        ineligible_checklist = find("ul.cf-issue-checklist")
         expect(ineligible_checklist).to have_content(
           "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_appeal_not_eligible}"
         )
@@ -867,7 +862,7 @@ feature "Appeal Intake" do
                  vacols_sequence_id: "1"
                )).to_not be_nil
 
-        expect(page).to have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
+        expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
       end
     end
 
@@ -891,7 +886,7 @@ feature "Appeal Intake" do
 
         click_intake_finish
 
-        ineligible_checklist = find("ul.cf-ineligible-checklist")
+        ineligible_checklist = find("ul.cf-issue-checklist")
         expect(ineligible_checklist).to have_content(
           "Left knee granted #{Constants.INELIGIBLE_REQUEST_ISSUES.legacy_issue_not_withdrawn}"
         )
@@ -903,7 +898,7 @@ feature "Appeal Intake" do
                  vacols_sequence_id: "1"
                )).to_not be_nil
 
-        expect(page).to_not have_content(Constants.INTAKE_STRINGS.vacols_optin_issue_closed)
+        expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
       end
     end
   end

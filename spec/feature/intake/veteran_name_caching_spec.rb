@@ -6,18 +6,12 @@ feature "Higher-Level Review" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ramp_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
     allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
     allow(bgs).to receive(:fetch_veteran_info).and_call_original
-  end
-
-  after do
-    FeatureToggle.disable!(:intake)
   end
 
   let(:veteran) { create(:veteran) }
@@ -39,7 +33,7 @@ feature "Higher-Level Review" do
       add_intake_nonrating_issue(
         category: "Active Duty Adjustments",
         description: "Description for Active Duty Adjustments",
-        date: Time.zone.now.strftime("%D")
+        date: Time.zone.now.strftime("%m/%d/%Y")
       )
 
       step "name changes upstream" do

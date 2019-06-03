@@ -9,10 +9,9 @@ class TeamManagementController < ApplicationController
       format.json do
         render json: {
           judge_teams: JudgeTeam.all.order(:id).map { |jt| serialize_org(jt) },
+          private_bars: PrivateBar.all.order(:id).map { |private_bar| serialize_org(private_bar) },
           vsos: Vso.all.order(:id).map { |vso| serialize_org(vso) },
-          other_orgs: Organization.all.order(:id).reject { |o| o.is_a?(JudgeTeam) || o.is_a?(Vso) }.map do |o|
-            serialize_org(o)
-          end
+          other_orgs: other_orgs.map { |org| serialize_org(org) }
         }
       end
     end
@@ -36,6 +35,14 @@ class TeamManagementController < ApplicationController
     Rails.logger.info("Creating JudgeTeam for user: #{user.inspect}")
 
     org = JudgeTeam.create_for_judge(user)
+
+    render json: { org: serialize_org(org) }, status: :ok
+  end
+
+  def create_private_bar
+    org = PrivateBar.create!(update_params)
+
+    Rails.logger.info("Creating PrivateBar with parameters: #{update_params.inspect}")
 
     render json: { org: serialize_org(org) }, status: :ok
   end
@@ -64,6 +71,10 @@ class TeamManagementController < ApplicationController
 
   def update_params
     params.require(:organization).permit(:name, :participant_id, :url)
+  end
+
+  def other_orgs
+    Organization.all.order(:id).reject { |org| org.is_a?(JudgeTeam) || org.is_a?(Representative) }
   end
 
   def serialize_org(org)

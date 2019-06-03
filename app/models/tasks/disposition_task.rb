@@ -1,21 +1,23 @@
 # frozen_string_literal: true
 
 ##
-# Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask is completed.
-# When the associated hearing's disposition is set, the appropriate tasks are set as children
+# Task assigned to the BvaOrganization after a hearing is scheduled, created after the ScheduleHearingTask
+# is completed. When the associated hearing's disposition is set, the appropriate tasks are set as children
 #   (e.g., TranscriptionTask, EvidenceWindowTask, etc.).
 # The task is marked complete when these children tasks are completed.
 class DispositionTask < GenericTask
+  validates :parent, presence: true
   before_create :check_parent_type
   delegate :hearing, to: :hearing_task, allow_nil: true
 
   class HearingDispositionNotCanceled < StandardError; end
+  class HearingDispositionNotPostponed < StandardError; end
   class HearingDispositionNotNoShow < StandardError; end
   class HearingDispositionNotHeld < StandardError; end
 
   class << self
     def create_disposition_task!(appeal, parent, hearing)
-      disposition_task = DispositionTask.create!(
+      disposition_task = create!(
         appeal: appeal,
         parent: parent,
         assigned_to: Bva.singleton
@@ -32,44 +34,25 @@ class DispositionTask < GenericTask
   end
 
   def available_actions(user)
-    if JudgeTeam.for_judge(user) || HearingsManagement.singleton.user_has_access?(user)
-      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h]
-    else
-      []
-    end
-  end
+    hearing_admin_actions = available_hearing_user_actions(user)
 
-  def add_schedule_hearing_task_admin_actions_data(_user)
-    {
-      redirect_after: "/queue/appeals/#{appeal.external_id}",
-      message_detail: COPY::ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL,
-      selected: nil,
-      options: HearingAdminActionTask.subclasses.sort_by(&:label).map do |subclass|
-        { value: subclass.name, label: subclass.label }
-      end
-    }
+    if HearingsManagement.singleton.user_has_access?(user)
+      [Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h] | hearing_admin_actions
+    else
+      hearing_admin_actions
+    end
   end
 
   def update_from_params(params, user)
     payload_values = params.delete(:business_payloads)&.dig(:values)
 
-    if params[:status] == Constants.TASK_STATUSES.cancelled
-      case payload_values[:disposition]
-      when "cancelled"
-        mark_hearing_cancelled
-      when "held"
-        mark_hearing_held
-      when "no_show"
-        mark_hearing_no_show
-      when "postponed"
-        mark_hearing_postponed(
-          instructions: params["instructions"],
-          after_disposition_update: payload_values[:after_disposition_update]
-        )
-      end
-    end
+    if params[:status] == Constants.TASK_STATUSES.cancelled && payload_values[:disposition].present?
+      update_hearing_and_self(params: params, payload_values: payload_values)
 
-    super(params, user)
+      [self]
+    else
+      super(params, user)
+    end
   end
 
   def cancel!
@@ -80,21 +63,20 @@ class DispositionTask < GenericTask
     update!(status: Constants.TASK_STATUSES.cancelled)
   end
 
+  def postpone!
+    if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.postponed
+      fail HearingDispositionNotPostponed
+    end
+
+    schedule_later
+  end
+
   def no_show!
     if hearing&.disposition != Constants.HEARING_DISPOSITION_TYPES.no_show
       fail HearingDispositionNotNoShow
     end
 
-    no_show_hearing_task = NoShowHearingTask.create!(
-      parent: self,
-      appeal: appeal,
-      assigned_to: HearingAdmin.singleton
-    )
-
-    no_show_hearing_task.update!(
-      status: Constants.TASK_STATUSES.on_hold,
-      on_hold_duration: 25.days
-    )
+    NoShowHearingTask.create_with_hold(self)
   end
 
   def hold!
@@ -103,13 +85,47 @@ class DispositionTask < GenericTask
     end
 
     if appeal.is_a?(LegacyAppeal)
-      complete_task
+      update!(status: Constants.TASK_STATUSES.completed)
     else
       create_transcription_and_maybe_evidence_submission_window_tasks
     end
   end
 
   private
+
+  def update_children_status_after_closed
+    children.active.update_all(status: status)
+  end
+
+  def cascade_closure_from_child_task?(_child_task)
+    true
+  end
+
+  def update_hearing_and_self(params:, payload_values:)
+    case payload_values[:disposition]
+    when Constants.HEARING_DISPOSITION_TYPES.cancelled
+      mark_hearing_cancelled
+    when Constants.HEARING_DISPOSITION_TYPES.held
+      mark_hearing_held
+    when Constants.HEARING_DISPOSITION_TYPES.no_show
+      mark_hearing_no_show
+    when Constants.HEARING_DISPOSITION_TYPES.postponed
+      mark_hearing_postponed(
+        instructions: params["instructions"],
+        after_disposition_update: payload_values[:after_disposition_update]
+      )
+    end
+
+    update!(instructions: flattened_instructions(params)) if params[:instructions].present?
+  end
+
+  def update_hearing_disposition(disposition:)
+    if hearing.is_a?(LegacyHearing)
+      hearing.update_caseflow_and_vacols(disposition: disposition)
+    else
+      hearing.update(disposition: disposition)
+    end
+  end
 
   def check_parent_type
     if parent.type != HearingTask.name
@@ -121,30 +137,40 @@ class DispositionTask < GenericTask
     end
   end
 
-  def reschedule(hearing_day_id:, hearing_time:, hearing_location: nil)
+  def reschedule(hearing_day_id:, scheduled_time_string:, hearing_location: nil)
     new_hearing_task = hearing_task.cancel_and_recreate
 
     new_hearing = HearingRepository.slot_new_hearing(hearing_day_id,
                                                      appeal: appeal,
                                                      hearing_location_attrs: hearing_location&.to_hash,
-                                                     scheduled_time: hearing_time.stringify_keys)
+                                                     scheduled_time_string: scheduled_time_string)
     self.class.create_disposition_task!(appeal, new_hearing_task, new_hearing)
   end
 
-  def mark_hearing_cancelled() end
+  def mark_hearing_cancelled
+    multi_transaction do
+      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
+      cancel!
+    end
+  end
 
-  def mark_hearing_held() end
+  def mark_hearing_held
+    multi_transaction do
+      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.held)
+      hold!
+    end
+  end
 
-  def mark_hearing_no_show() end
+  def mark_hearing_no_show
+    multi_transaction do
+      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.no_show)
+      no_show!
+    end
+  end
 
   def mark_hearing_postponed(instructions: nil, after_disposition_update: nil)
     multi_transaction do
-      if hearing.is_a?(LegacyHearing)
-        hearing.update_caseflow_and_vacols(disposition: "postponed")
-      else
-        hearing.update(disposition: "postponed")
-      end
-
+      update_hearing_disposition(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
       reschedule_or_schedule_later(instructions: instructions, after_disposition_update: after_disposition_update)
     end
   end
@@ -154,7 +180,8 @@ class DispositionTask < GenericTask
     when "reschedule"
       new_hearing_attrs = after_disposition_update[:new_hearing_attrs]
       reschedule(
-        hearing_day_id: new_hearing_attrs[:hearing_day_id], hearing_time: new_hearing_attrs[:hearing_time],
+        hearing_day_id: new_hearing_attrs[:hearing_day_id],
+        scheduled_time_string: new_hearing_attrs[:scheduled_time_string],
         hearing_location: new_hearing_attrs[:hearing_location]
       )
     when "schedule_later"
@@ -171,7 +198,6 @@ class DispositionTask < GenericTask
 
     schedule_task = ScheduleHearingTask.create!(
       appeal: appeal,
-      assigned_to: HearingsManagement.singleton,
       instructions: instructions.present? ? [instructions] : nil,
       parent: new_hearing_task
     )
@@ -183,10 +209,6 @@ class DispositionTask < GenericTask
         parent: schedule_task
       )
     end
-  end
-
-  def complete_task
-    update!(status: Constants.TASK_STATUSES.completed)
   end
 
   def create_transcription_and_maybe_evidence_submission_window_tasks

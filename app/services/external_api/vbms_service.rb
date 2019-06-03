@@ -40,9 +40,7 @@ class ExternalApi::VBMSService
 
     begin
       documents = send_and_log_request(veteran_file_number, request)
-    rescue VBMS::HTTPError => e
-      raise unless e.body.include?("File Number does not exist within the system.")
-
+    rescue VBMSError::FilenumberDoesNotExist
       alternative_file_number = ExternalApi::BGSService.new.fetch_veteran_info(veteran_file_number)[:claim_number]
 
       raise if alternative_file_number == veteran_file_number
@@ -157,6 +155,18 @@ class ExternalApi::VBMSService
     send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))
   end
 
+  def self.update_contention!(contention)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::UpdateContention.new(
+      contention: contention,
+      v5: FeatureToggle.enabled?(:claims_service_v5),
+      send_userid: FeatureToggle.enabled?(:vbms_include_user)
+    )
+
+    send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))
+  end
+
   def self.associate_rating_request_issues!(claim_id:, rating_issue_contention_map:)
     # rating_issue_contention_map format: { issue_id: contention_id, issue_id2: contention_id2 }
     @vbms_client ||= init_vbms_client
@@ -175,6 +185,14 @@ class ExternalApi::VBMSService
     request = VBMS::Requests::GetDispositions.new(claim_id: claim_id)
 
     send_and_log_request(claim_id, request)
+  end
+
+  def self.list_document_types
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::ListTypeCategory.new
+
+    send_and_log_request(nil, request)
   end
 
   def self.vbms_client_with_user(user)
@@ -204,9 +222,9 @@ class ExternalApi::VBMSService
                           name: name) do
       (override_vbms_client || @vbms_client).send_request(request)
     end
-  rescue VBMS::ClientError => e
-    Rails.logger.error "#{e.message}\n#{e.backtrace.join("\n")}"
+  rescue VBMS::ClientError => error
+    Rails.logger.error "#{error.message}\n#{error.backtrace.join("\n")}"
 
-    raise VBMSError.from_vbms_http_error(e)
+    raise VBMSError.from_vbms_http_error(error)
   end
 end

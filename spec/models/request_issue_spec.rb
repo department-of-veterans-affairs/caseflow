@@ -73,9 +73,12 @@ describe RequestIssue do
       vacols_sequence_id: vacols_sequence_id,
       closed_at: closed_at,
       closed_status: closed_status,
-      ineligible_reason: ineligible_reason
+      ineligible_reason: ineligible_reason,
+      edited_description: edited_description
     )
   end
+
+  let(:edited_description) { nil }
 
   let!(:nonrating_request_issue) do
     create(
@@ -83,7 +86,7 @@ describe RequestIssue do
       decision_review: review,
       nonrating_issue_description: "a nonrating request issue description",
       contested_issue_description: nonrating_contested_issue_description,
-      issue_category: "a category",
+      nonrating_issue_category: "a category",
       decision_date: 1.day.ago,
       decision_sync_processed_at: decision_sync_processed_at,
       end_product_establishment: end_product_establishment,
@@ -118,6 +121,71 @@ describe RequestIssue do
           closed_at: Time.zone.now,
           closed_status: "ineligible"
         )
+      end
+    end
+  end
+
+  context "#guess_benefit_type" do
+    context "issue is unidentified" do
+      it "returns 'unidentified'" do
+        expect(unidentified_issue.guess_benefit_type).to eq "unidentified"
+      end
+    end
+
+    context "issue is ineligible" do
+      let(:ineligible_reason) { :duplicate_of_rating_issue_in_active_review }
+
+      it "returns 'ineligible'" do
+        expect(rating_request_issue.guess_benefit_type).to eq "ineligible"
+      end
+    end
+
+    context "issue has a contested_decision_issue" do
+      let(:decision_issue) { create(:decision_issue, benefit_type: "education") }
+      let(:request_issue) { create(:request_issue, contested_decision_issue: decision_issue) }
+
+      it "returns the parent decision issue's benefit_type" do
+        expect(request_issue.guess_benefit_type).to eq "education"
+      end
+    end
+
+    it "defaults to 'unknown'" do
+      expect(rating_request_issue.guess_benefit_type).to eq "unknown"
+    end
+  end
+
+  context "#requires_record_request_task?" do
+    context "issue is ineligible" do
+      let(:benefit_type) { "education" }
+
+      before do
+        allow(nonrating_request_issue).to receive(:eligible?).and_return(false)
+      end
+
+      it "does not require record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is unidentified" do
+      it "does not require record request task" do
+        expect(unidentified_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is not a non-compensation line of business" do
+      let(:benefit_type) { "compensation" }
+
+      it "does not require a record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is non-compensation" do
+      let(:benefit_type) { "education" }
+
+      it "requires a record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq true
       end
     end
   end
@@ -544,7 +612,7 @@ describe RequestIssue do
       {
         rating_issue_reference_id: rating_issue_reference_id,
         decision_text: "decision text",
-        issue_category: issue_category,
+        nonrating_issue_category: nonrating_issue_category,
         is_unidentified: is_unidentified,
         decision_date: Time.zone.today,
         notes: "notes",
@@ -561,7 +629,7 @@ describe RequestIssue do
 
     let(:rating_issue_reference_id) { nil }
     let(:contested_decision_issue_id) { nil }
-    let(:issue_category) { nil }
+    let(:nonrating_issue_category) { nil }
     let(:is_unidentified) { nil }
 
     it do
@@ -606,12 +674,12 @@ describe RequestIssue do
       end
     end
 
-    context "when issue_category is set" do
-      let(:issue_category) { "other" }
+    context "when nonrating_issue_category is set" do
+      let(:nonrating_issue_category) { "other" }
 
       it do
         is_expected.to have_attributes(
-          issue_category: "other",
+          nonrating_issue_category: "other",
           contested_issue_description: nil,
           nonrating_issue_description: "decision text",
           unidentified_issue_text: nil
@@ -638,6 +706,19 @@ describe RequestIssue do
 
     context "when contested_issue_description present" do
       let(:request_issue) { rating_request_issue }
+      it { is_expected.to eq("a rating request issue") }
+    end
+
+    context "when description is edited" do
+      let(:request_issue) { rating_request_issue }
+      let(:edited_description) { "edited description" }
+      it { is_expected.to eq(edited_description) }
+    end
+
+    context "when description returns empty string" do
+      let(:request_issue) { rating_request_issue }
+      let(:edited_description) { "" }
+
       it { is_expected.to eq("a rating request issue") }
     end
 
@@ -867,8 +948,8 @@ describe RequestIssue do
       )
       Generators::Rating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview.ama_activation_date - 5.days,
-        profile_date: DecisionReview.ama_activation_date - 10.days,
+        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
         issues: [
           { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" },
           { decision_text: "Issue before AMA Activation from RAMP",
@@ -1084,10 +1165,10 @@ describe RequestIssue do
     end
 
     context "Issues with decision dates before AMA" do
-      let(:profile_date) { DecisionReview.ama_activation_date - 5.days }
+      let(:profile_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days }
 
       it "flags nonrating issues before AMA" do
-        nonrating_request_issue.decision_date = DecisionReview.ama_activation_date - 5.days
+        nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days
         nonrating_request_issue.validate_eligibility!
 
         expect(nonrating_request_issue.ineligible_reason).to eq("before_ama")
@@ -1109,7 +1190,7 @@ describe RequestIssue do
         end
 
         it "does not apply before AMA checks" do
-          nonrating_request_issue.decision_date = DecisionReview.ama_activation_date - 5.days
+          nonrating_request_issue.decision_date = Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days
           nonrating_request_issue.validate_eligibility!
 
           expect(nonrating_request_issue.ineligible_reason).to_not eq("before_ama")
@@ -1184,6 +1265,39 @@ describe RequestIssue do
     end
   end
 
+  context "#withdraw!" do
+    let(:withdraw_date) { 2.days.ago.to_date }
+    subject { rating_request_issue.withdraw!(withdraw_date) }
+
+    context "if the request issue is already closed" do
+      let(:closed_at) { 1.day.ago }
+      let(:closed_status) { "removed" }
+
+      it "does not reclose the issue" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(closed_at)
+        expect(rating_request_issue.closed_status).to eq(closed_status)
+      end
+    end
+
+    context "when there is a legacy issue optin" do
+      let(:vacols_id) { vacols_issue.id }
+      let(:vacols_sequence_id) { vacols_issue.isskey }
+      let(:vacols_issue) { create(:case_issue, :disposition_remanded, isskey: 1) }
+      let(:vacols_case) do
+        create(:case, case_issues: [vacols_issue])
+      end
+      let!(:legacy_issue_optin) { create(:legacy_issue_optin, request_issue: rating_request_issue) }
+
+      it "withdraws issue and does not flag the legacy issue optin for rollback" do
+        subject
+        expect(rating_request_issue.closed_at).to eq(withdraw_date.to_datetime.utc)
+        expect(rating_request_issue.closed_status).to eq("withdrawn")
+        expect(legacy_issue_optin.reload.rollback_created_at).to be_nil
+      end
+    end
+  end
+
   context "#sync_decision_issues!" do
     let(:request_issue) { rating_request_issue.tap(&:submit_for_processing!) }
     subject { request_issue.sync_decision_issues! }
@@ -1251,9 +1365,9 @@ describe RequestIssue do
                 rating_issue_reference_id: contested_rating_issue_reference_id,
                 disposition: "allowed",
                 participant_id: veteran.participant_id,
-                promulgation_date: ratings.promulgation_date,
+                rating_promulgation_date: ratings.promulgation_date,
                 decision_text: "Left knee granted",
-                profile_date: ratings.profile_date,
+                rating_profile_date: ratings.profile_date,
                 decision_review_type: "HigherLevelReview",
                 decision_review_id: review.id,
                 benefit_type: "compensation",
@@ -1313,8 +1427,8 @@ describe RequestIssue do
                 disposition: "allowed",
                 description: "allowed: #{request_issue.description}",
                 decision_review_type: "HigherLevelReview",
-                profile_date: ratings.profile_date,
-                promulgation_date: ratings.promulgation_date,
+                rating_profile_date: ratings.profile_date,
+                rating_promulgation_date: ratings.promulgation_date,
                 decision_review_id: review.id,
                 benefit_type: "compensation",
                 end_product_last_action_date: end_product_establishment.result.last_action_date.to_date

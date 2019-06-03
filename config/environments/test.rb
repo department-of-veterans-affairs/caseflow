@@ -1,9 +1,11 @@
 require "fileutils"
 Rails.application.configure do
   config.after_initialize do
-    Bullet.enable        = true
+    Bullet.enable        = false
     Bullet.bullet_logger = true
     Bullet.rails_logger  = true
+    Bullet.raise = true
+    Bullet.unused_eager_loading_enable = false
   end
   # Settings specified here will take precedence over those in config/application.rb.
 
@@ -49,6 +51,8 @@ Rails.application.configure do
 
   # Setup S3
   config.s3_enabled = false
+
+  config.vacols_db_name = "VACOLS_TEST"
 
   if ENV['TEST_SUBCATEGORY']
     assets_cache_path = Rails.root.join("tmp/cache/assets/#{ENV['TEST_SUBCATEGORY']}")

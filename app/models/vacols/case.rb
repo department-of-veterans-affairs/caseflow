@@ -1,12 +1,11 @@
 # frozen_string_literal: true
 
 class VACOLS::Case < VACOLS::Record
-  self.table_name = "vacols.brieff"
+  self.table_name = "brieff"
   self.sequence_name = "vacols.bfkeyseq"
   self.primary_key = "bfkey"
 
   has_one    :folder,          foreign_key: :ticknum
-  has_many   :representatives, foreign_key: :repkey
   belongs_to :correspondent,   foreign_key: :bfcorkey, primary_key: :stafkey
   has_many   :case_issues,     foreign_key: :isskey
   has_many   :notes,           foreign_key: :tsktknm
@@ -281,7 +280,13 @@ class VACOLS::Case < VACOLS::Record
     self.class.batch_update_vacols_location(location, [bfkey])
   end
 
-  # rubocop:disable Metrics/MethodLength
+  def vacols_representatives
+    result = VACOLS::Representative.where(repkey: bfkey)
+    return result if result.present?
+
+    VACOLS::Representative.where(repcorkey: bfcorkey)
+  end
+
   def self.batch_update_vacols_location(location, vacols_ids)
     unless location
       Rails.logger.error "THERE IS A BUG IN YOUR CODE! It attempted to assign a case to a falsey location. " \
@@ -332,7 +337,6 @@ class VACOLS::Case < VACOLS::Record
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def previous_active_location
     conn = self.class.connection

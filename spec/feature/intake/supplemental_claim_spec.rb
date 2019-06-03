@@ -6,8 +6,6 @@ feature "Supplemental Claim Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
@@ -16,7 +14,6 @@ feature "Supplemental Claim Intake" do
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
-  let(:intake_constants) { Constants.INTAKE_STRINGS }
 
   let(:veteran_file_number) { "123412345" }
 
@@ -95,8 +92,8 @@ feature "Supplemental Claim Intake" do
   let!(:before_ama_rating) do
     Generators::Rating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: DecisionReview.ama_activation_date - 5.days,
-      profile_date: DecisionReview.ama_activation_date - 10.days,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 10.days,
       issues: [
         { reference_id: "before_ama_ref_id", decision_text: "Non-RAMP Issue before AMA Activation" }
       ]
@@ -139,16 +136,7 @@ feature "Supplemental Claim Intake" do
     )
 
     visit "/intake"
-    safe_click ".Select"
-    expect(page).to have_css(".cf-form-dropdown")
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.ramp_refiling)
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.supplemental_claim)
-    expect(page).to have_content(Constants.INTAKE_FORM_NAMES.appeal)
-
-    safe_click ".Select"
-    fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.supplemental_claim
-    find("#form-select").send_keys :enter
+    select_form(Constants.INTAKE_FORM_NAMES.supplemental_claim)
 
     safe_click ".cf-submit.usa-button"
 
@@ -354,7 +342,7 @@ feature "Supplemental Claim Intake" do
     expect(supplemental_claim.request_issues.last).to have_attributes(
       contested_rating_issue_reference_id: nil,
       contested_rating_issue_profile_date: nil,
-      issue_category: "Active Duty Adjustments",
+      nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
       decision_date: profile_date.to_date
     )
@@ -496,8 +484,8 @@ feature "Supplemental Claim Intake" do
     let!(:before_ama_rating_from_ramp) do
       Generators::Rating.build(
         participant_id: veteran.participant_id,
-        promulgation_date: DecisionReview.ama_activation_date - 5.days,
-        profile_date: DecisionReview.ama_activation_date - 11.days,
+        promulgation_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 5.days,
+        profile_date: Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 11.days,
         issues: [
           { decision_text: "Issue before AMA Activation from RAMP",
             reference_id: "ramp_ref_id" }
@@ -645,7 +633,7 @@ feature "Supplemental Claim Intake" do
       expect(success_checklist).to have_content("Non-RAMP Issue before AMA Activation")
       expect(success_checklist).to have_content("A nonrating issue before AMA")
 
-      ineligible_checklist = find("ul.cf-ineligible-checklist")
+      ineligible_checklist = find("ul.cf-issue-checklist")
       expect(ineligible_checklist).to_not have_content("Non-RAMP Issue before AMA Activation is ineligible")
       expect(ineligible_checklist).to_not have_content("A nonrating issue before AMA is ineligible")
 
@@ -686,7 +674,7 @@ feature "Supplemental Claim Intake" do
 
       expect(RequestIssue.find_by(
                decision_review: supplemental_claim,
-               issue_category: "Active Duty Adjustments",
+               nonrating_issue_category: "Active Duty Adjustments",
                nonrating_issue_description: "Description for Active Duty Adjustments",
                decision_date: profile_date.to_date,
                end_product_establishment_id: non_rating_end_product_establishment.id
@@ -819,7 +807,7 @@ feature "Supplemental Claim Intake" do
           # request issue should have matching benefit type
           expect(RequestIssue.find_by(
                    decision_review: sc,
-                   issue_category: "Accrued",
+                   nonrating_issue_category: "Accrued",
                    benefit_type: sc.benefit_type
                  )).to_not be_nil
         end
@@ -922,12 +910,12 @@ feature "Supplemental Claim Intake" do
           add_intake_rating_issue("ankylosis of hip")
 
           expect(page).to have_content(
-            "#{intake_constants.adding_this_issue_vacols_optin}:\nService connection, ankylosis of hip"
+            "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
           )
 
           click_intake_finish
 
-          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          ineligible_checklist = find("ul.cf-issue-checklist")
           expect(ineligible_checklist).to have_content(
             "Left knee granted #{ineligible_constants.legacy_appeal_not_eligible}"
           )
@@ -940,7 +928,7 @@ feature "Supplemental Claim Intake" do
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
-          expect(page).to have_content(intake_constants.vacols_optin_issue_closed)
+          expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
         end
       end
 
@@ -964,7 +952,7 @@ feature "Supplemental Claim Intake" do
 
           click_intake_finish
 
-          ineligible_checklist = find("ul.cf-ineligible-checklist")
+          ineligible_checklist = find("ul.cf-issue-checklist")
           expect(ineligible_checklist).to have_content(
             "Left knee granted #{ineligible_constants.legacy_issue_not_withdrawn}"
           )
@@ -976,7 +964,7 @@ feature "Supplemental Claim Intake" do
                    vacols_sequence_id: "1"
                  )).to_not be_nil
 
-          expect(page).to_not have_content(intake_constants.vacols_optin_issue_closed)
+          expect(page).to_not have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED)
         end
       end
     end

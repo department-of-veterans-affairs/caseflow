@@ -1,3 +1,5 @@
+require: rubocop-performance
+
 AllCops:
   Exclude:
     - 'db/migrate/*'
@@ -33,8 +35,17 @@ Metrics/LineLength:
 Metrics/BlockLength:
   Enabled: false
 
+Naming/RescuedExceptionsVariableName:
+  Description: 'Use consistent rescued exceptions variables naming.'
+  Enabled: true
+  PreferredName: error
+
 Rails:
   Enabled: true
+
+# temporarily disabled due to a bug in Rubocop 0.67.2
+Rails/ActiveRecordOverride:
+  Enabled: false
 
 Rails/Output:
   Exclude:
@@ -80,9 +91,6 @@ Metrics/AbcSize:
   Max: 30
 
 Style/DoubleNegation:
-  Enabled: false
-
-Performance/RedundantBlockCall:
   Enabled: false
 
 Style/NegatedIf:

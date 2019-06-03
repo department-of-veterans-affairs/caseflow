@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 
 import INELIGIBLE_REQUEST_ISSUES from '../../../constants/INELIGIBLE_REQUEST_ISSUES.json';
-import INTAKE_STRINGS from '../../../constants/INTAKE_STRINGS.json';
+import COPY from '../../../COPY.json';
 
 import { legacyIssue } from '../util/issues';
 
@@ -87,13 +87,13 @@ class AddedIssue extends React.PureComponent {
       }
     }
 
-    if (issue.withdrawalPending) {
+    if (issue.withdrawalPending || issue.withdrawalDate) {
       eligibleState.cssKlasses.push('withdrawn-issue');
     }
 
     return <div className={eligibleState.cssKlasses.join(' ')}>
       <span className="issue-num">{issueIdx + 1}.&nbsp;</span>
-      { issue.text } {eligibleState.errorMsg}
+      { issue.editedDescription ? issue.editedDescription : issue.text } {eligibleState.errorMsg}
       { issue.date && <span className="issue-date">Decision date: { issue.date }</span> }
       { issue.notes && <span className="issue-notes">Notes:&nbsp;{ issue.notes }</span> }
       { issue.untimelyExemptionNotes &&
@@ -101,11 +101,15 @@ class AddedIssue extends React.PureComponent {
       }
       { issue.vacolsId && !eligibleState.errorMsg &&
         <div className="issue-vacols">
-          <span className="msg">{ INTAKE_STRINGS.adding_this_issue_vacols_optin }:</span>
+          <span className="msg">
+            { issue.referenceId ? COPY.VACOLS_OPTIN_ISSUE_CLOSED_EDIT : COPY.VACOLS_OPTIN_ISSUE_NEW }:
+          </span>
           <span className="desc">{ legacyIssue(issue, this.props.legacyAppeals).description }</span>
         </div>
       }
       { issue.withdrawalPending && <p>Withdraw pending</p> }
+      { issue.withdrawalDate && <p>Withdrawn on {issue.withdrawalDate}</p> }
+
     </div>;
   }
 

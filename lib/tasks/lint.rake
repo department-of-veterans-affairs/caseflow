@@ -9,10 +9,6 @@ task :lint do
   puts "running scss-lint..."
   scss_result = ShellCommand.run("scss-lint --color")
 
-  opts = ENV["CI"] ? "--parallel" : "--auto-correct"
-  puts "running rubocop..."
-  rubocop_result = ShellCommand.run("rubocop #{opts} --color")
-
   puts "running fasterer..."
   fasterer_result = ShellCommand.run("bundle exec fasterer")
 
@@ -20,8 +16,12 @@ task :lint do
   eslint_cmd = ENV["CI"] ? "lint" : "lint:fix"
   eslint_result = ShellCommand.run("cd ./client && yarn run #{eslint_cmd}")
 
+  puts "\nrunning prettier..."
+  prettier_cmd = ENV["CI"] ? "pretty:check" : "pretty:format"
+  prettier_result = ShellCommand.run("cd ./client && yarn run #{prettier_cmd}")
+
   puts "\n"
-  if scss_result && rubocop_result && eslint_result && fasterer_result
+  if scss_result && eslint_result && fasterer_result && prettier_result
     puts Rainbow("Passed. Everything looks stylish! " \
       "But there may have been auto-corrections that you now need to check in.").green
   else

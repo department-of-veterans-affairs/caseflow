@@ -70,7 +70,7 @@ RSpec.describe HearingsController, type: :controller do
 
   describe "#find_closest_hearing_locations" do
     before do
-      VADotGovService = Fakes::VADotGovService
+      stub_const("VADotGovService", Fakes::VADotGovService)
     end
 
     context "for AMA appeals" do
@@ -98,6 +98,25 @@ RSpec.describe HearingsController, type: :controller do
       end
     end
 
+    context "when returns unknown error" do
+      let(:appeal) { create(:appeal) }
+
+      before do
+        error = JSON::ParserError.new
+
+        allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
+      end
+
+      it "returns an error response" do
+        get :find_closest_hearing_locations,
+            as: :json,
+            params: { appeal_id: appeal.external_id, regional_office: "RO13" }
+
+        expect(response.status).to eq 500
+        expect(JSON.parse(response.body)["message"]).to eq "JSON::ParserError"
+      end
+    end
+
     context "when an address cannot be found" do
       let(:appeal) { create(:appeal) }
 
@@ -115,7 +134,7 @@ RSpec.describe HearingsController, type: :controller do
         allow(VADotGovService).to receive(:send_va_dot_gov_request).and_raise(error)
       end
 
-      it "returns an error" do
+      it "returns an error response" do
         get :find_closest_hearing_locations,
             as: :json,
             params: { appeal_id: appeal.external_id, regional_office: "RO13" }

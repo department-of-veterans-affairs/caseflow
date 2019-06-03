@@ -31,19 +31,28 @@ class MailTask < GenericTask
     def create_from_params(params, user)
       verify_user_can_create!(user, Task.find(params[:parent_id]))
 
-      root_task = RootTask.find(params[:parent_id])
+      parent_task = Task.find(params[:parent_id])
 
-      # Do not create the parent mail task if we fail to create any of the children tasks.
       transaction do
-        # Create a task assigned to the mail organization with a child task so we can track how that child was created.
-        mail_task = create!(
-          appeal: root_task.appeal,
-          parent_id: root_task.id,
-          assigned_to: MailTeam.singleton
-        )
+        if parent_task.is_a?(RootTask)
+          # Create a task assigned to the mail team with a child task so we can track how that child was created.
+          parent_task = create!(
+            appeal: parent_task.appeal,
+            parent_id: parent_task.id,
+            assigned_to: MailTeam.singleton
+          )
+        end
 
         params = modify_params(params)
-        create_child_task(mail_task, user, params)
+        create_child_task(parent_task, user, params)
+      end
+    end
+
+    def child_task_assignee(parent, params)
+      if [:assigned_to_type, :assigned_to_id].all? { |key| params.key?(key) }
+        super
+      else
+        default_assignee(parent, params)
       end
     end
 
@@ -70,6 +79,12 @@ class MailTask < GenericTask
   def label
     self.class.label
   end
+
+  # Waiting for backend implementation before allowing user access
+  # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+  # def available_actions(user)
+  #   super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+  # end
 end
 
 class AddressChangeMailTask < MailTask
@@ -77,7 +92,7 @@ class AddressChangeMailTask < MailTask
     COPY::ADDRESS_CHANGE_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(parent, _params)
+  def self.default_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
     return HearingAdmin.singleton if pending_hearing_task?(parent)
@@ -91,7 +106,7 @@ class AodMotionMailTask < MailTask
     COPY::AOD_MOTION_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     AodTeam.singleton
   end
 end
@@ -101,17 +116,25 @@ class AppealWithdrawalMailTask < MailTask
     COPY::APPEAL_WITHDRAWAL_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     Colocated.singleton
   end
 end
 
 class ClearAndUnmistakeableErrorMailTask < MailTask
+  def available_actions(user)
+    if LitigationSupport.singleton.user_has_access?(user)
+      return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    end
+
+    super
+  end
+
   def self.label
     COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     LitigationSupport.singleton
   end
 end
@@ -125,7 +148,7 @@ class CongressionalInterestMailTask < MailTask
     COPY::CONGRESSIONAL_INTEREST_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     LitigationSupport.singleton
   end
 end
@@ -135,7 +158,7 @@ class ControlledCorrespondenceMailTask < MailTask
     COPY::CONTROLLED_CORRESPONDENCE_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     LitigationSupport.singleton
   end
 end
@@ -145,7 +168,7 @@ class DeathCertificateMailTask < MailTask
     COPY::DEATH_CERTIFICATE_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     Colocated.singleton
   end
 end
@@ -155,7 +178,7 @@ class EvidenceOrArgumentMailTask < MailTask
     COPY::EVIDENCE_OR_ARGUMENT_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(parent, _params)
+  def self.default_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
     return HearingAdmin.singleton if pending_hearing_task?(parent)
@@ -173,7 +196,7 @@ class ExtensionRequestMailTask < MailTask
     COPY::EXTENSION_REQUEST_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(parent, _params)
+  def self.default_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
     Colocated.singleton
@@ -189,7 +212,7 @@ class FoiaRequestMailTask < MailTask
     COPY::FOIA_REQUEST_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     PrivacyTeam.singleton
   end
 end
@@ -203,7 +226,7 @@ class HearingRelatedMailTask < MailTask
     COPY::HEARING_RELATED_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(parent, _params)
+  def self.default_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
     return HearingAdmin.singleton if pending_hearing_task?(parent)
@@ -217,7 +240,7 @@ class OtherMotionMailTask < MailTask
     COPY::OTHER_MOTION_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     LitigationSupport.singleton
   end
 end
@@ -231,7 +254,7 @@ class PowerOfAttorneyRelatedMailTask < MailTask
     COPY::POWER_OF_ATTORNEY_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(parent, _params)
+  def self.default_assignee(parent, _params)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
     return HearingAdmin.singleton if pending_hearing_task?(parent)
@@ -249,7 +272,7 @@ class PrivacyActRequestMailTask < MailTask
     COPY::PRIVACY_ACT_REQUEST_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     PrivacyTeam.singleton
   end
 end
@@ -263,7 +286,7 @@ class PrivacyComplaintMailTask < MailTask
     COPY::PRIVACY_COMPLAINT_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     PrivacyTeam.singleton
   end
 end
@@ -273,7 +296,7 @@ class ReturnedUndeliverableCorrespondenceMailTask < MailTask
     COPY::RETURNED_CORRESPONDENCE_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(parent, _params)
+  def self.default_assignee(parent, _params)
     return BvaDispatch.singleton if !case_active?(parent)
     return HearingAdmin.singleton if pending_hearing_task?(parent)
     return most_recent_active_task_assignee(parent) if most_recent_active_task_assignee(parent)
@@ -283,11 +306,19 @@ class ReturnedUndeliverableCorrespondenceMailTask < MailTask
 end
 
 class ReconsiderationMotionMailTask < MailTask
+  def available_actions(user)
+    if LitigationSupport.singleton.user_has_access?(user)
+      return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    end
+
+    super
+  end
+
   def self.label
     COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     LitigationSupport.singleton
   end
 end
@@ -297,17 +328,25 @@ class StatusInquiryMailTask < MailTask
     COPY::STATUS_INQUIRY_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     LitigationSupport.singleton
   end
 end
 
 class VacateMotionMailTask < MailTask
+  def available_actions(user)
+    if LitigationSupport.singleton.user_has_access?(user)
+      return super.push(Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h)
+    end
+
+    super
+  end
+
   def self.label
     COPY::VACATE_MOTION_MAIL_TASK_LABEL
   end
 
-  def self.child_task_assignee(_parent, _params)
+  def self.default_assignee(_parent, _params)
     LitigationSupport.singleton
   end
 end

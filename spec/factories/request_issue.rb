@@ -7,7 +7,7 @@ FactoryBot.define do
     contested_rating_issue_diagnostic_code { "5008" }
 
     factory :request_issue_with_epe do
-      end_product_establishment { create(:end_product_establishment) }
+      end_product_establishment { create(:end_product_establishment, source: decision_review) }
     end
 
     trait :rating do
@@ -17,7 +17,7 @@ FactoryBot.define do
     end
 
     trait :nonrating do
-      issue_category { "Apportionment" }
+      nonrating_issue_category { "Apportionment" }
       decision_date { 2.months.ago }
       nonrating_issue_description { "nonrating issue description" }
     end
@@ -25,6 +25,7 @@ FactoryBot.define do
     trait :unidentified do
       is_unidentified { true }
       unidentified_issue_text { "unidentified issue description" }
+      benefit_type { "unidentified" }
     end
 
     trait :removed do
@@ -53,7 +54,7 @@ FactoryBot.define do
           :decision_issue,
           decision_review: request_issue.decision_review,
           participant_id: evaluator.veteran_participant_id,
-          profile_date: request_issue.contested_rating_issue_profile_date.to_date,
+          rating_profile_date: request_issue.contested_rating_issue_profile_date.to_date,
           end_product_last_action_date: request_issue.contested_rating_issue_profile_date.to_date,
           benefit_type: request_issue.decision_review.benefit_type,
           decision_text: "a rating decision issue"

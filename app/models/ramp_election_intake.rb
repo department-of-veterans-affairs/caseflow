@@ -92,9 +92,9 @@ class RampElectionIntake < Intake
     if ramp_election.create_or_connect_end_product! == :connected
       update!(error_code: "connected_preexisting_ep")
     end
-  rescue StandardError => e
+  rescue StandardError => error
     abort_completion!
-    raise e
+    raise error
   end
 
   def create_ramp_closed_appeals!
@@ -141,7 +141,9 @@ class RampElectionIntake < Intake
   end
 
   def new_intake_ramp_election
-    @new_intake_ramp_election ||= matching_ramp_election_with_notice_date || veteran_ramp_elections.build
+    @new_intake_ramp_election ||= RampElection.new(
+      veteran_file_number: veteran_file_number
+    )
   end
 
   def existing_ramp_election
@@ -160,13 +162,5 @@ class RampElectionIntake < Intake
       detail.destroy!
       update!(detail: existing_ramp_election)
     end
-  end
-
-  def matching_ramp_election_with_notice_date
-    veteran_ramp_elections.where(established_at: nil).where.not(notice_date: nil).first
-  end
-
-  def veteran_ramp_elections
-    RampElection.where(veteran_file_number: veteran_file_number)
   end
 end

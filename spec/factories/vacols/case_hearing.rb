@@ -37,21 +37,19 @@ FactoryBot.define do
     after(:build) do |hearing, evaluator|
       # Build Caseflow hearing day and associate with legacy hearing.
       if hearing.vdkey.nil?
-        master_record = if hearing.hearing_type == HearingDay::REQUEST_TYPES[:central]
-                          create(:hearing_day,
-                                 scheduled_for: hearing.hearing_date,
-                                 request_type: hearing.hearing_type)
-                        else
-                          create(:case_hearing,
-                                 hearing_type: HearingDay::REQUEST_TYPES[:central],
-                                 hearing_date: hearing.hearing_date,
-                                 folder_nr: "VIDEO RO13")
-                        end
-        hearing.vdkey = master_record.id
+        regional_office = hearing.hearing_type == HearingDay::REQUEST_TYPES[:video] ? "RO13" : nil
+        hearing_day = create(:hearing_day,
+                             scheduled_for: hearing.hearing_date,
+                             request_type: hearing.hearing_type,
+                             regional_office: regional_office)
+
+        hearing.vdkey = hearing_day.id
       end
 
       if evaluator.user
-        hearing.board_member = create(:staff, :attorney_judge_role, user: evaluator.user).sattyid
+        existing_staff_record = VACOLS::Staff.where(sdomainid: evaluator.user.css_id, svlj: %w[A J], sactive: "A").first
+        staff_record = existing_staff_record || create(:staff, :attorney_judge_role, user: evaluator.user)
+        hearing.board_member = staff_record.sattyid
       end
     end
   end

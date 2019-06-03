@@ -3,6 +3,7 @@
 require "capybara/rspec"
 require "capybara-screenshot/rspec"
 require "selenium-webdriver"
+require "webdrivers"
 
 Sniffybara::Driver.configuration_file = File.expand_path("VA-axe-configuration.json", __dir__)
 
@@ -31,6 +32,9 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
     browser: :chrome,
     options: chrome_options
   }
+  Sniffybara::Driver.register_specialization(
+    :chrome, Capybara::Selenium::Driver::ChromeDriver
+  )
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
@@ -54,6 +58,9 @@ Capybara.register_driver(:sniffybara_headless) do |app|
     options: chrome_options
   }
 
+  Sniffybara::Driver.register_specialization(
+    :chrome, Capybara::Selenium::Driver::ChromeDriver
+  )
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
@@ -71,5 +78,3 @@ Capybara.default_max_wait_time = 5
 # Capybara uses puma by default, but for some reason, some of our tests don't
 # pass with puma. See: https://github.com/teamcapybara/capybara/issues/2170
 Capybara.server = :webrick
-
-Chromedriver.set_version "2.45"

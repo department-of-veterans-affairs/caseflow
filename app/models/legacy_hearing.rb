@@ -57,11 +57,17 @@ class LegacyHearing < ApplicationRecord
 
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
-      task.type = TrackVeteranTask.name &&
-                  task.assigned_to.is_a?(Vso) &&
-                  task.assigned_to.user_has_access?(user) &&
-                  task.active?
+      task.type == TrackVeteranTask.name &&
+        task.assigned_to.is_a?(Representative) &&
+        task.assigned_to.user_has_access?(user) &&
+        task.active?
     end
+  end
+
+  def assigned_to_judge?(user)
+    return hearing_day&.judge == user if judge.nil?
+
+    judge == user
   end
 
   def venue
@@ -103,6 +109,12 @@ class LegacyHearing < ApplicationRecord
 
     HearingMapper.timezone(regional_office_key)
   end
+
+  def time
+    @time ||= HearingTimeService.new(hearing: self)
+  end
+
+  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string, to: :time
 
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
@@ -169,34 +181,6 @@ class LegacyHearing < ApplicationRecord
     Hearing::HEARING_TYPES[request_type.to_sym]
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def vacols_attributes
-    {
-      scheduled_for: scheduled_for,
-      type: type,
-      venue_key: venue_key,
-      vacols_record: vacols_record,
-      disposition: disposition,
-      aod: aod,
-      hold_open: hold_open,
-      transcript_requested: transcript_requested,
-      transcript_sent_date: transcript_sent_date,
-      notes: notes,
-      add_on: add_on,
-      representative: representative,
-      representative_name: representative_name,
-      vdkey: vdkey,
-      master_record: master_record,
-      veteran_first_name: veteran_first_name,
-      veteran_middle_initial: veteran_middle_initial,
-      veteran_last_name: veteran_last_name,
-      appellant_first_name: appellant_first_name,
-      appellant_middle_initial: appellant_middle_initial,
-      appellant_last_name: appellant_last_name,
-      appeal_vacols_id: appeal_vacols_id
-    }
-  end
-
   cache_attribute :cached_number_of_documents do
     begin
       number_of_documents
@@ -220,11 +204,14 @@ class LegacyHearing < ApplicationRecord
 
   delegate :external_id, to: :appeal, prefix: true
 
+  # rubocop:disable Metrics/MethodLength
   def to_hash(current_user_id)
     serializable_hash(
       methods: [
         :disposition_editable,
         :scheduled_for,
+        :scheduled_time_string,
+        :central_office_time_string,
         :readable_request_type,
         :disposition,
         :aod,
@@ -260,7 +247,10 @@ class LegacyHearing < ApplicationRecord
         :external_id,
         :veteran_file_number,
         :closest_regional_office,
-        :available_hearing_locations
+        :available_hearing_locations,
+        :bva_poc,
+        :room,
+        :judge_id
       ],
       except: [:military_service, :vacols_id]
     ).merge(
@@ -336,22 +326,19 @@ class LegacyHearing < ApplicationRecord
     end
 
     def assign_or_create_from_vacols_record(vacols_record, legacy_hearing: nil)
-      transaction do
-        hearing = legacy_hearing ||
-                  find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
+      hearing = legacy_hearing || find_or_initialize_by(vacols_id: vacols_record.hearing_pkseq)
 
-        # update hearing if user is nil, it's likely when the record doesn't exist and is being created
-        # or if vacols record css is different from
-        # who it's assigned to in the db.
-        if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
-          hearing.update(
-            appeal: LegacyAppeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
-            user: User.find_by(css_id: vacols_record.css_id)
-          )
-        end
-
-        hearing
+      # update hearing if user is nil, it's likely when the record doesn't exist and is being created
+      # or if vacols record css is different from
+      # who it's assigned to in the db.
+      if user_nil_or_assigned_to_another_judge?(hearing.user, vacols_record.css_id)
+        hearing.update(
+          appeal: LegacyAppeal.find_or_create_by(vacols_id: vacols_record.folder_nr),
+          user: User.find_by(css_id: vacols_record.css_id)
+        )
       end
+
+      hearing
     end
   end
 end

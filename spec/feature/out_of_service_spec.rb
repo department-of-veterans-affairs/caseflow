@@ -91,49 +91,23 @@ RSpec.feature "Out of Service" do
     end
   end
 
-  context "Hearing Prep" do
-    let!(:vacols_case) do
-      create(:case, case_hearings: [create(:case_hearing, user: current_user)])
-    end
-
+  context "Hearings" do
     after do
-      Rails.cache.write("hearing_prep_out_of_service", false)
-    end
-
-    let!(:current_user) do
-      User.authenticate!(roles: ["Hearing Prep"])
-    end
-
-    scenario "When out of service is disabled, it shows Hearings page" do
-      visit "/hearings/dockets"
-      expect(page).to have_content("Your Hearing Days")
-      expect(page).to_not have_content("Technical Difficulties")
-    end
-
-    scenario "When out of service is enabled, it shows Out of service page" do
-      Rails.cache.write("hearing_prep_out_of_service", true)
-      visit "/hearings/dockets"
-      expect(page).to have_content("Technical Difficulties")
-    end
-  end
-
-  context "Hearing Schedule" do
-    after do
-      Rails.cache.write("hearing_schedule_out_of_service", false)
+      Rails.cache.write("hearings_out_of_service", false)
     end
 
     let!(:current_user) do
       User.authenticate!(roles: ["Build HearSched"])
     end
 
-    scenario "When out of service is disabled, it shows hearing schedule page" do
+    scenario "When out of service is disabled, it shows hearings page" do
       visit "/hearings/schedule/build"
       expect(page).to have_content("Build Schedule")
       expect(page).to_not have_content("Technical Difficulties")
     end
 
     scenario "When out of service is enabled, it shows out of service page" do
-      Rails.cache.write("hearing_schedule_out_of_service", true)
+      Rails.cache.write("hearings_out_of_service", true)
       visit "/hearings/schedule/build"
       expect(page).to have_content("Technical Difficulties")
       expect(page).to_not have_content("Build Schedule")

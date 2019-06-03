@@ -26,7 +26,7 @@ class HearingTask < GenericTask
     true
   end
 
-  def when_child_task_completed
+  def when_child_task_completed(child_task)
     super
 
     return unless appeal.tasks.active.where(type: HearingTask.name).empty?
@@ -34,14 +34,14 @@ class HearingTask < GenericTask
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
     else
-      RootTask.create_ihp_tasks!(appeal, parent)
+      IhpTasksFactory.new(parent).create_ihp_tasks!
     end
   end
 
   def update_legacy_appeal_location
     location = if hearing&.held?
                  LegacyAppeal::LOCATION_CODES[:transcription]
-               elsif appeal.vsos.empty?
+               elsif appeal.representatives.empty?
                  LegacyAppeal::LOCATION_CODES[:case_storage]
                else
                  LegacyAppeal::LOCATION_CODES[:service_organization]
@@ -50,14 +50,36 @@ class HearingTask < GenericTask
     AppealRepository.update_location!(appeal, location)
   end
 
+  def create_change_hearing_disposition_task(instructions = nil)
+    task_names = [DispositionTask.name, ChangeHearingDispositionTask.name]
+    active_disposition_tasks = children.active.where(type: task_names).to_a
+
+    multi_transaction do
+      ChangeHearingDispositionTask.create!(
+        appeal: appeal,
+        parent: self,
+        instructions: instructions.present? ? [instructions] : nil
+      )
+      active_disposition_tasks.each { |task| task.update!(status: Constants.TASK_STATUSES.completed) }
+    end
+  end
+
+  def disposition_task
+    children.active.detect { |child| child.type == DispositionTask.name }
+  end
+
   private
+
+  def cascade_closure_from_child_task?(_child_task)
+    true
+  end
 
   def set_assignee
     self.assigned_to = Bva.singleton
   end
 
-  def update_status_if_children_tasks_are_complete
-    if children.select(&:active?).empty?
+  def update_status_if_children_tasks_are_complete(_child_task)
+    if children.active.empty?
       return update!(status: :cancelled) if children.select { |c| c.type == DispositionTask.name && c.cancelled? }.any?
     end
 

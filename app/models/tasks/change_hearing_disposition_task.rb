@@ -8,10 +8,14 @@ class ChangeHearingDispositionTask < DispositionTask
 
   def available_actions(_user)
     [
-      Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
+      appropriate_timed_hold_task_action,
       Constants.TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.to_h,
       Constants.TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.to_h
     ]
+  end
+
+  def actions_allowable?(user)
+    HearingAdmin.singleton.user_has_access?(user) && super
   end
 
   private

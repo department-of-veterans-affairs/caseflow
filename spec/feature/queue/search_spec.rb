@@ -75,7 +75,7 @@ RSpec.feature "Search" do
           let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
           let!(:eligible_request_issue) { create(:request_issue, decision_review: higher_level_review) }
 
-          before do
+          def perform_search
             visit "/search"
             fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
             click_on "Search"
@@ -83,17 +83,36 @@ RSpec.feature "Search" do
 
           context "has a higher level review" do
             it "shows the HLR / SCs table" do
+              perform_search
               expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
             end
 
             it "shows a higher level review" do
+              perform_search
               expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
             end
 
             context "and has no end products" do
               it "shows no end products" do
+                perform_search
                 expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
                 expect(page).to have_css(".cf-other-reviews-table > tbody", text: COPY::OTHER_REVIEWS_TABLE_NO_EPS_NOTE)
+              end
+            end
+
+            context "has removed decision reviews" do
+              before do
+                higher_level_review.request_issues.each(&:remove!)
+              end
+
+              let!(:caseflow_appeal) { create(:appeal, veteran: higher_level_review.veteran) }
+              let!(:removed_request_issue) { create(:request_issue, :removed, decision_review: caseflow_appeal) }
+
+              it "does not show removed decision reviews" do
+                perform_search
+                expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Supplemental Claim")
+                expect(page).to_not have_css(".cf-other-reviews-table > tbody", text: "Higher Level Review")
+                expect(page).to_not have_css(".cf-case-list-table > tbody", text: "Original")
               end
             end
 
@@ -133,6 +152,7 @@ RSpec.feature "Search" do
 
               context "when the EPs have not been established" do
                 it "shows that the EP is establishing if it has not been established" do
+                  perform_search
                   expect(page).to have_css(
                     ".cf-other-reviews-table > tbody",
                     text: COPY::OTHER_REVIEWS_TABLE_ESTABLISHING
@@ -151,6 +171,7 @@ RSpec.feature "Search" do
                 end
 
                 it "shows that the EP has an establishment error" do
+                  perform_search
                   expect(page).to have_css(
                     ".cf-other-reviews-table > tbody",
                     text: COPY::OTHER_REVIEWS_TABLE_ESTABLISHMENT_FAILED
@@ -160,20 +181,18 @@ RSpec.feature "Search" do
 
               context "the EP has been established" do
                 before do
-                  end_product_establishment_1.commit!
-                  end_product_establishment_2.commit!
-                  end_product_establishment_3.commit!
-                  end_product_establishment_4.commit!
-                  higher_level_review.establish!
+                  higher_level_review.reload.establish!
                 end
 
                 it "shows the end product status" do
+                  perform_search
                   expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Canceled")
                   expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Cleared")
                   expect(page).to have_css(".cf-other-reviews-table > tbody", text: "Ready to work")
                 end
 
                 it "if the end products have synced_status codes we don't recognize, show the status code" do
+                  perform_search
                   expect(page).to have_css(".cf-other-reviews-table > tbody", text: "LOL")
                 end
               end
@@ -182,10 +201,12 @@ RSpec.feature "Search" do
 
           context "has a supplemental claim" do
             it "shows the HLR / SCs table" do
+              perform_search
               expect(page).to have_content(COPY::OTHER_REVIEWS_TABLE_TITLE)
             end
 
             it "shows a supplemental claim and that it's 'tracked in caseflow'" do
+              perform_search
               expect(page).to have_css(
                 ".cf-other-reviews-table > tbody",
                 text: COPY::OTHER_REVIEWS_TABLE_SUPPLEMENTAL_CLAIM_NOTE
@@ -462,6 +483,25 @@ RSpec.feature "Search" do
         click_on appeal.docket_number
         expect(page.current_path).to eq("/queue/appeals/#{appeal.vacols_id}")
       end
+    end
+  end
+
+  context "has withdrawn decision reviews" do
+    let!(:caseflow_appeal) do
+      create(:appeal,
+             :with_tasks)
+    end
+
+    def perform_search
+      visit "/search"
+      fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
+      click_on "Search"
+    end
+
+    scenario "withdraw entire review and show withdrawn on search page" do
+      caseflow_appeal.root_task.update(status: Constants.TASK_STATUSES.cancelled)
+      perform_search
+      expect(page).to have_content("Withdrawn")
     end
   end
 end

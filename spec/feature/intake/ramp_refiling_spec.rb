@@ -7,13 +7,14 @@ RSpec.feature "RAMP Refiling Intake" do
   include IntakeHelpers
 
   before do
-    FeatureToggle.enable!(:intake)
-
     Timecop.freeze(post_ramp_start_date)
+    FeatureToggle.enable!(:ramp_intake)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
+
+  after { FeatureToggle.disable!(:ramp_intake) }
 
   let(:veteran) do
     Generators::Veteran.build(file_number: "12341234", first_name: "Ed", last_name: "Merica")
@@ -62,13 +63,10 @@ RSpec.feature "RAMP Refiling Intake" do
       visit "/intake"
 
       # Validate that you can't move forward without selecting a form
-      scroll_element_in_to_view(".cf-submit.usa-button")
+      scroll_to(".cf-submit.usa-button")
       expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.ramp_refiling)
       safe_click ".cf-submit.usa-button"
 
       fill_in search_bar_title, with: "12341234"
@@ -104,15 +102,11 @@ RSpec.feature "RAMP Refiling Intake" do
       visit "/intake"
 
       # Validate that you can't move forward without selecting a form
-      scroll_element_in_to_view(".cf-submit.usa-button")
+      scroll_to(".cf-submit.usa-button")
       expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.ramp_refiling)
       safe_click ".cf-submit.usa-button"
-
       fill_in search_bar_title, with: "12341234"
       click_on "Search"
 
@@ -164,6 +158,7 @@ RSpec.feature "RAMP Refiling Intake" do
       click_intake_continue
 
       expect(page).to have_content("Ineligible for Higher-Level Review")
+      expect(page).to have_content(COPY::INELIGIBLE_HIGHER_LEVEL_REVIEW_ALERT)
       expect(page).to have_button("Continue to next step", disabled: true)
       click_on "Begin next intake"
 
@@ -254,15 +249,11 @@ RSpec.feature "RAMP Refiling Intake" do
       visit "/intake/search"
 
       # Validate that you can't move forward without selecting a form
-      scroll_element_in_to_view(".cf-submit.usa-button")
+      scroll_to(".cf-submit.usa-button")
       expect(find(".cf-submit.usa-button")["disabled"]).to eq("true")
 
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.ramp_refiling)
       safe_click ".cf-submit.usa-button"
-
       fill_in search_bar_title, with: "12341234"
       click_on "Search"
 
@@ -322,6 +313,8 @@ RSpec.feature "RAMP Refiling Intake" do
       safe_click "#finish-intake"
 
       expect(page).to have_content("Appeal record saved in Caseflow")
+      expect(page).to have_content(COPY::APPEAL_RECORD_SAVED_MESSAGE)
+
       expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
       expect(ramp_refiling.issues.count).to eq(2)
       expect(ramp_refiling.issues.first.description).to eq("Left knee rating increase")
@@ -391,6 +384,8 @@ RSpec.feature "RAMP Refiling Intake" do
       Fakes::VBMSService.resume_request!
 
       expect(page).to have_content("Intake completed")
+
+      expect(page).to have_content(COPY::RAMP_COMPLETED_ALERT)
 
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
       expect(ramp_refiling.has_ineligible_issue).to eq(true)
@@ -483,6 +478,8 @@ RSpec.feature "RAMP Refiling Intake" do
 
       expect(page).to have_content("Ineligible RAMP request")
 
+      expect(page).to have_content(COPY::INELIGIBLE_RAMP_ALERT)
+
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
       expect(ramp_refiling.has_ineligible_issue).to eq(true)
       expect(ramp_refiling.issues.count).to eq(0)
@@ -518,11 +515,7 @@ RSpec.feature "RAMP Refiling Intake" do
       )
 
       visit "/intake/search"
-      scroll_element_in_to_view(".cf-submit.usa-button")
-      safe_click ".Select"
-      fill_in "Which form are you processing?", with: Constants.INTAKE_FORM_NAMES.ramp_refiling
-      find("#form-select").send_keys :enter
-
+      select_form(Constants.INTAKE_FORM_NAMES.ramp_refiling)
       safe_click ".cf-submit.usa-button"
       fill_in search_bar_title, with: "12341234"
       click_on "Search"

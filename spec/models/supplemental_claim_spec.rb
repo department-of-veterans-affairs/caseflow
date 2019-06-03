@@ -100,7 +100,7 @@ describe SupplementalClaim do
         end
 
         context "when it is before AMA begin date" do
-          let(:receipt_date) { DecisionReview.ama_activation_date - 1 }
+          let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date - 1 }
 
           it "adds an error to receipt_date" do
             is_expected.to be false
@@ -178,7 +178,7 @@ describe SupplementalClaim do
         decision_review: supplemental_claim,
         contested_decision_issue_id: decision_issue_needing_remand.id,
         contested_rating_issue_reference_id: decision_issue_needing_remand.rating_issue_reference_id,
-        contested_rating_issue_profile_date: decision_issue_needing_remand.profile_date,
+        contested_rating_issue_profile_date: decision_issue_needing_remand.rating_profile_date,
         contested_issue_description: decision_issue_needing_remand.description,
         benefit_type: benefit_type
       )
@@ -187,7 +187,7 @@ describe SupplementalClaim do
                decision_review: supplemental_claim,
                contested_decision_issue_id: already_contested_remanded_di.id,
                contested_rating_issue_reference_id: already_contested_remanded_di.rating_issue_reference_id,
-               contested_rating_issue_profile_date: already_contested_remanded_di.profile_date,
+               contested_rating_issue_profile_date: already_contested_remanded_di.rating_profile_date,
                contested_issue_description: already_contested_remanded_di.description,
                benefit_type: benefit_type
              )).to be_nil

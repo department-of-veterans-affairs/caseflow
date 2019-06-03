@@ -8,24 +8,32 @@ import Alert from '../../components/Alert';
 import IneligibleIssuesList from '../components/IneligibleIssuesList';
 import SmallLoader from '../../components/SmallLoader';
 import { LOGO_COLORS } from '../../constants/AppConstants';
+import COPY from '../../../COPY.json';
 
-const leadMessageList = ({ veteran, formName, requestIssues }) => {
+const leadMessageList = ({ veteran, formName, requestIssues, addedIssues }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
-  const editMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been processed.`];
+  const editMessage = () => {
+    if (requestIssues.length === 0) {
+      return 'removed';
+    } else if (_.every(addedIssues, (ri) => ri.withdrawalPending)) {
+      return 'withdrawn';
+    }
 
-  const removalMessage = [`${veteran.name}'s (ID #${veteran.fileNumber}) ${formName} has been removed.`];
+    return 'processed';
+  };
 
-  const leadMessageArr = requestIssues.length === 0 ? removalMessage : editMessage;
+  const leadMessageArr = [
+    `${veteran.name}'s (ID #${veteran.fileNumber}) Request for ${formName} has been ${editMessage()}.`
+  ];
 
   if (eligibleRequestIssues.length !== 0) {
     if (unidentifiedIssues.length > 0) {
       leadMessageArr.push(
         <Alert type="warning">
           <h2>Unidentified issue</h2>
-          <p>There is still an unidentified issue that needs to be resolved before sending the notice
-          letter. To edit, go to VBMS claim details and click the “Edit in Caseflow” button.</p>
+          <p>{COPY.INDENTIFIED_ALERT}</p>
           {unidentifiedIssues.map((ri, i) => <p className="cf-red-text" key={`unidentified-alert-${i}`}>
             Unidentified issue: no issue matched for requested "{ri.description}"
           </p>)}
@@ -115,6 +123,7 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
       formType,
       issuesBefore,
       issuesAfter,
+      addedIssues,
       informalConference,
       redirectTo
     } = this.props;
@@ -132,16 +141,28 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
 
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
+    const withdrawnRequestIssues = addedIssues.filter((ri) => ri.withdrawalPending);
+    const hasWithdrawnIssues = !_.isEmpty(withdrawnRequestIssues);
+    const pageTitle = () => {
+      if (issuesAfter.length === 0) {
+        return 'Review Removed';
+      } else if (hasWithdrawnIssues) {
+        return 'Review Withdrawn';
+      }
+
+      return 'Claim Issues Saved';
+    };
 
     return <div>
       <StatusMessage
-        title= {issuesAfter.length === 0 ? 'Review Removed' : 'Claim Issues Saved'}
+        title= {pageTitle()}
         type="success"
         leadMessageList={
           leadMessageList({
             veteran,
             formName: selectedForm.name,
-            requestIssues: issuesAfter
+            requestIssues: issuesAfter,
+            addedIssues
           })
         }
         checklist={
@@ -155,6 +176,17 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
         wrapInAppSegment={false}
       />
       { ineligibleRequestIssues.length > 0 && <IneligibleIssuesList issues={ineligibleRequestIssues} /> }
+      { hasWithdrawnIssues && <Fragment>
+        <ul className="cf-issue-checklist cf-left-padding">
+          <li>
+            <strong>Withdrawn</strong>
+            {withdrawnRequestIssues.map((ri, i) =>
+              <p key={`withdrawn-issue-${i}`}>
+                {ri.contentionText}
+              </p>)}
+          </li>
+        </ul>
+      </Fragment> }
     </div>
     ;
   }
@@ -166,6 +198,7 @@ export default connect(
     veteran: state.veteran,
     issuesBefore: state.issuesBefore,
     issuesAfter: state.issuesAfter,
+    addedIssues: state.addedIssues,
     informalConference: state.informalConference,
     redirectTo: state.redirectTo
   })

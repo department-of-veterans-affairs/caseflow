@@ -49,19 +49,19 @@ class ColocatedTask < Task
   end
 
   def available_actions(user)
-    if assigned_to != user
-      if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
-        return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
-      end
-
-      return []
+    if assigned_to == user
+      return available_actions_with_conditions([
+                                                 appropriate_timed_hold_task_action,
+                                                 Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+                                                 Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+                                               ])
     end
 
-    available_actions_with_conditions([
-                                        Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
-                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
-                                        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-                                      ])
+    if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
+      return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
+    end
+
+    []
   end
 
   def available_actions_with_conditions(core_actions)
@@ -70,6 +70,9 @@ class ColocatedTask < Task
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
+    # Waiting for backend implementation before allowing user access
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
+    # core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
       return ama_translation_actions(core_actions)
@@ -113,22 +116,28 @@ class ColocatedTask < Task
   end
 
   def update_location_in_vacols
-    all_colocated_tasks_for_legacy_appeal_complete = saved_change_to_status? &&
-                                                     !active? &&
-                                                     appeal_type == LegacyAppeal.name &&
-                                                     all_tasks_closed_for_appeal?
-
-    if all_colocated_tasks_for_legacy_appeal_complete
+    if saved_change_to_status? &&
+       !active? &&
+       all_tasks_closed_for_appeal? &&
+       appeal.is_a?(LegacyAppeal) &&
+       appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
 
   def location_based_on_action
     case action.to_sym
-    when :translation, :schedule_hearing
-      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled && action == "schedule_hearing"
+    when :schedule_hearing
+      # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
+      # actually held.
+      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled
 
-      return LegacyAppeal::LOCATION_CODES[action.to_sym]
+      # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
+      ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
+
+      LegacyAppeal::LOCATION_CODES[:caseflow]
+    when :translation
+      LegacyAppeal::LOCATION_CODES[action.to_sym]
     else
       assigned_by.vacols_uniq_id
     end
@@ -142,5 +151,10 @@ class ColocatedTask < Task
     if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
       errors.add(:on_hold_duration, "has to be specified")
     end
+  end
+
+  # ColocatedTasks on old-style holds can be placed on new timed holds which will not reset the placed_on_hold_at value.
+  def task_just_placed_on_hold?
+    super || (on_timed_hold? && children.active.where.not(type: TimedHoldTask.name).empty?)
   end
 end

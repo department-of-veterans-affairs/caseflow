@@ -66,7 +66,7 @@ describe Appeal do
 
     it "returns appeals" do
       [direct_review_appeal, evidence_submission_appeal, hearing_appeal].each do |appeal|
-        RootTask.create_root_and_sub_tasks!(appeal)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
 
       expect(subject).to include direct_review_appeal
@@ -249,7 +249,7 @@ describe Appeal do
     let!(:past_decision_issue) do
       create(:decision_issue,
              decision_review: another_review,
-             profile_date: receipt_date - 1.day,
+             rating_profile_date: receipt_date - 1.day,
              benefit_type: another_review.benefit_type,
              decision_text: "something decided in the past",
              description: "past issue",
@@ -260,8 +260,8 @@ describe Appeal do
     let!(:future_decision_issue) do
       create(:decision_issue,
              decision_review: another_review,
-             profile_date: receipt_date + 1.day,
-             promulgation_date: receipt_date + 1.day,
+             rating_profile_date: receipt_date + 1.day,
+             rating_promulgation_date: receipt_date + 1.day,
              benefit_type: another_review.benefit_type,
              decision_text: "something was decided in the future",
              description: "future issue",
@@ -523,10 +523,10 @@ describe Appeal do
       end
     end
 
-    context "#vsos" do
-      it "returns all vsos this appeal has that exist in our DB" do
-        expect(appeal.vsos.count).to eq(1)
-        expect(appeal.vsos.first.name).to eq("Paralyzed Veterans Of America")
+    context "#representatives" do
+      it "returns all representatives this appeal has that exist in our DB" do
+        expect(appeal.representatives.count).to eq(1)
+        expect(appeal.representatives.first.name).to eq("Paralyzed Veterans Of America")
       end
 
       context "when there is no VSO" do
@@ -540,10 +540,15 @@ describe Appeal do
         let(:appeal) do
           create(:appeal, claimants: [create(:claimant, participant_id: participant_id_with_nil)])
         end
-        let!(:vsos) { Vso.create(name: "Test VSO") }
+        let!(:vso) do
+          Vso.create(
+            name: "Test VSO",
+            url: "test-vso"
+          )
+        end
 
         it "does not return VSOs with nil participant_id" do
-          expect(appeal.vsos).to eq([])
+          expect(appeal.representatives).to eq([])
         end
       end
     end
@@ -555,13 +560,17 @@ describe Appeal do
     subject { appeal.create_tasks_on_intake_success! }
 
     it "creates root and vso tasks" do
-      expect(RootTask).to receive(:create_root_and_sub_tasks!).once
+      expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).once
 
       subject
     end
 
     context "request issue has non-comp business line" do
-      let!(:appeal) { create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)]) }
+      let!(:appeal) { create(:appeal, request_issues: [
+        create(:request_issue, benefit_type: :fiduciary),
+        create(:request_issue, benefit_type: :compensation),
+        create(:request_issue, :unidentified)
+        ]) }
 
       it "creates root task and veteran record request task" do
         expect(VeteranRecordRequest).to receive(:create!).once
@@ -690,6 +699,19 @@ describe Appeal do
       end
 
       it "returns Case storage" do
+        expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
+      end
+    end
+
+    context "if there are TrackVeteranTasks" do
+      let!(:appeal) { create(:appeal) }
+      let!(:root_task) { create(:root_task, appeal: appeal, status: :in_progress) }
+
+      before do
+        create(:track_veteran_task, appeal: appeal, status: :in_progress)
+      end
+
+      it "does not include TrackVeteranTasks in its determinations" do
         expect(appeal.assigned_to_location).to eq(COPY::CASE_LIST_TABLE_CASE_STORAGE_LABEL)
       end
     end
@@ -959,7 +981,7 @@ describe Appeal do
   context "#status_hash" do
     let(:judge) { create(:user) }
     let!(:hearings_user) { create(:hearings_coordinator) }
-    let!(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let!(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
     let(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let(:root_task_status) { "in_progress" }
     let!(:appeal_root_task) { create(:root_task, appeal: appeal, status: root_task_status) }
@@ -1016,7 +1038,6 @@ describe Appeal do
           :schedule_hearing_task,
           parent: hearing_task,
           appeal: appeal,
-          assigned_to: HearingsManagement.singleton,
           status: Constants.TASK_STATUSES.completed
         )
       end
@@ -1259,7 +1280,7 @@ describe Appeal do
   end
 
   context "#events" do
-    let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
     let!(:appeal) { create(:appeal, receipt_date: receipt_date) }
     let!(:decision_date) { receipt_date + 130.days }
     let!(:decision_document) { create(:decision_document, appeal: appeal, decision_date: decision_date) }
@@ -1399,7 +1420,7 @@ describe Appeal do
   end
 
   context "#issues_hash" do
-    let(:receipt_date) { DecisionReview.ama_activation_date + 1 }
+    let(:receipt_date) { Constants::DATES["AMA_ACTIVATION_TEST"].to_date + 1 }
 
     let(:request_issue1) do
       create(:request_issue,
@@ -1631,7 +1652,6 @@ describe Appeal do
           :schedule_hearing_task,
           parent: hearing_task,
           appeal: appeal,
-          assigned_to: HearingsManagement.singleton,
           status: Constants.TASK_STATUSES.completed
         )
       end
@@ -1649,6 +1669,19 @@ describe Appeal do
         expect(subject[0][:type]).to eq("scheduled_hearing")
         expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
         expect(subject[0][:details][:type]).to eq("video")
+      end
+    end
+  end
+
+  describe ".withdrawn?" do
+    context "when root task is cancelled" do
+      let(:appeal) { FactoryBot.create(:appeal) }
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+      it "is withdrawn" do
+        expect(appeal.withdrawn?).to eq(false)
+        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+        expect(appeal.withdrawn?).to eq(true)
       end
     end
   end

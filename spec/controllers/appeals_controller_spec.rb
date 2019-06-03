@@ -144,13 +144,11 @@ RSpec.describe AppealsController, type: :controller do
   end
 
   describe "GET appeals/appeal_id/document_count" do
+    let(:appeal) { create(:appeal) }
+
     before { User.authenticate!(roles: ["System Admin"]) }
 
     context "when a legacy appeal has documents" do
-      before do
-        expect_any_instance_of(DocumentFetcher).to receive(:number_of_documents) { documents.length }
-      end
-
       let(:documents) do
         [
           create(:document, type: "SSOC", received_at: 6.days.ago),
@@ -169,7 +167,7 @@ RSpec.describe AppealsController, type: :controller do
 
     context "when an ama appeal has documents" do
       before do
-        expect_any_instance_of(DocumentFetcher).to receive(:number_of_documents) { documents.length }
+        allow(EFolderService).to receive(:document_count) { documents.length }
       end
 
       let(:file_number) { Random.rand(999_999_999).to_s }
@@ -196,10 +194,6 @@ RSpec.describe AppealsController, type: :controller do
         expect(response.status).to eq 404
       end
     end
-  end
-
-  describe "GET appeals/:id/document_count" do
-    let(:appeal) { FactoryBot.create(:appeal) }
 
     context "when efolder returns an access forbidden error" do
       let(:err_code) { 403 }
@@ -209,7 +203,7 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       before do
-        allow_any_instance_of(Appeal).to receive(:number_of_documents) do
+        allow(EFolderService).to receive(:document_count) do
           fail Caseflow::Error::EfolderAccessForbidden, code: err_code, message: err_msg
         end
       end
@@ -228,7 +222,7 @@ RSpec.describe AppealsController, type: :controller do
     context "when application encounters a generic error" do
       let(:err_msg) { "Some application error" }
 
-      before { allow_any_instance_of(Appeal).to receive(:number_of_documents) { fail err_msg } }
+      before { allow(EFolderService).to receive(:document_count) { fail err_msg } }
 
       it "responds with a 500 and error message" do
         User.authenticate!(roles: ["System Admin"])

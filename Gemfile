@@ -5,16 +5,15 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
 gem "aasm", "4.11.0"
-# Use sqlite3 as the database for Active Record
-gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
+gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
-gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "54955cfc95e528394bf1975285edc6bc23cfaf7d"
+gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e94aff758739c499978041953e6d50fe58057e89"
 # Bootsnap speeds up app boot (and started to be a default gem in 5.2).
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "dddc821c2335c7de234a5454e4b4874e3f658420"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "603c7385bd5f021286a3f4f58fb2d99c772a4ca1"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
@@ -24,9 +23,9 @@ gem "jquery-rails"
 gem "loofah", ">= 2.2.3"
 gem "moment_timezone-rails"
 gem "newrelic_rpm"
-# nokogiri versions before 1.8.3 are affected by CVE-2018-8048. Explicitly define nokogiri version here to avoid that.
-# https://github.com/sparklemotion/nokogiri/pull/1746
-gem "nokogiri", "1.8.5"
+# nokogiri versions before 1.10.3 are affected by CVE-2019-11068. Explicitly define nokogiri version here to avoid that.
+# https://github.com/sparklemotion/nokogiri/issues/1892
+gem "nokogiri", "1.10.3"
 gem "paper_trail", "8.1.2"
 # Used to speed up reporting
 gem "parallel"
@@ -58,7 +57,6 @@ gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
-gem "sqlite3", platforms: [:ruby, :mswin, :mingw, :mswin, :x64_mingw]
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
@@ -74,7 +72,6 @@ group :production, :staging, :ssh_forwarding, :development, :test do
 end
 
 group :test, :development, :demo do
-  gem "activerecord-import"
   # Security scanners
   gem "brakeman"
   gem "bullet"
@@ -84,7 +81,6 @@ group :test, :development, :demo do
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "chromedriver-helper"
   gem "danger", "~> 5.10"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 4.8"
@@ -100,18 +96,21 @@ group :test, :development, :demo do
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
   gem "rubocop", "~> 0.52", require: false
+  gem "rubocop-performance"
   gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git", branch: "mb-update-capybara-click"
   gem "timecop"
+  gem "webdrivers"
 end
 
 group :development do
-  gem "bummr", "= 0.3.2", require: false
+  gem "bummr", require: false
   gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"
+  gem "meta_request"
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   # gem 'spring', platforms: :ruby
   # Include the IANA Time Zone Database on Windows, where Windows doesn't ship with a timezone database.

@@ -13,8 +13,6 @@ class WorkQueue::TaskSerializer
   attribute :started_at
   attribute :created_at
   attribute :closed_at
-  attribute :placed_on_hold_at
-  attribute :on_hold_duration
   attribute :instructions
   attribute :appeal_type
   attribute :timeline_title
@@ -41,6 +39,14 @@ class WorkQueue::TaskSerializer
     }
   end
 
+  attribute :assignee_name do |object|
+    object.assigned_to.is_a?(Organization) ? object.assigned_to.name : object.assigned_to.css_id
+  end
+
+  attribute :placed_on_hold_at, &:calculated_placed_on_hold_at
+
+  attribute :on_hold_duration, &:calculated_on_hold_duration
+
   attribute :docket_name do |object|
     object.appeal.try(:docket_name)
   end
@@ -66,7 +72,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :closest_regional_office do |object|
-    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office).city
+    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office)
   end
 
   attribute :external_appeal_id do |object|
@@ -96,13 +102,13 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :document_id do |object|
-    object.latest_attorney_case_review ? object.latest_attorney_case_review.document_id : nil
+    object.latest_attorney_case_review&.document_id
   end
 
   attribute :decision_prepared_by do |object|
     {
-      first_name: object.prepared_by_display_name ? object.prepared_by_display_name.first : nil,
-      last_name: object.prepared_by_display_name ? object.prepared_by_display_name.last : nil
+      first_name: object.prepared_by_display_name&.first,
+      last_name: object.prepared_by_display_name&.last
     }
   end
 

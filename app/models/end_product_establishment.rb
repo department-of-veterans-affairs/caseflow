@@ -196,10 +196,10 @@ class EndProductEstablishment < ApplicationRecord
       sync_source!
       close_request_issues_if_canceled!
     end
-  rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => e
-    raise e
-  rescue StandardError => e
-    raise ::BGSSyncError.from_bgs_error(e, self)
+  rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
+    raise error
+  rescue StandardError => error
+    raise ::BGSSyncError.from_bgs_error(error, self)
   end
 
   def fetch_dispositions_from_vbms
@@ -399,6 +399,8 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def establish_claim_in_vbms(end_product)
+    veteran.unload_bgs_record
+
     VBMSService.establish_claim!(
       claim_hash: end_product.to_vbms_hash,
       veteran_hash: veteran.to_vbms_hash,

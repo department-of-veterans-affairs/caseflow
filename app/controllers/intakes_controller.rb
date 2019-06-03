@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class IntakesController < ApplicationController
-  before_action :verify_access, :react_routed, :verify_feature_enabled, :set_application, :check_intake_out_of_service
+  before_action :verify_access, :react_routed, :set_application, :check_intake_out_of_service
 
   def index
     no_cache
@@ -84,14 +84,15 @@ class IntakesController < ApplicationController
       feedbackUrl: feedback_url,
       buildDate: build_date,
       featureToggles: {
-        useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user)
+        useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),
+        rampIntake: FeatureToggle.enabled?(:ramp_intake, user: current_user)
       }
     }
-  rescue StandardError => e
-    Raven.capture_exception(e)
+  rescue StandardError => error
+    Raven.capture_exception(error)
     # cancel intake so user doesn't get stuck
     intake_in_progress&.cancel!(reason: "system_error")
-    flash[:error] = e.message + ". Intake has been cancelled, please retry."
+    flash[:error] = error.message + ". Intake has been cancelled, please retry."
     raise
   end
 
@@ -101,10 +102,6 @@ class IntakesController < ApplicationController
 
   def verify_access
     verify_authorized_roles("Mail Intake", "Admin Intake")
-  end
-
-  def verify_feature_enabled
-    redirect_to "/unauthorized" unless FeatureToggle.enabled?(:intake)
   end
 
   def check_intake_out_of_service

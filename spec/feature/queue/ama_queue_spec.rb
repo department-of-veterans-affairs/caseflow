@@ -302,6 +302,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content("Task assigned to #{other_organization.name}")
         expect(Task.last.instructions.first).to eq(instructions)
       end
+
       context "A TranslationTask is assigned to the organization" do
         let(:veteran_first_name) { "Milivoj" }
         let(:veteran_last_name) { "Veilleux" }
@@ -351,11 +352,13 @@ RSpec.feature "AmaQueue" do
       let(:vso_participant_id) { "2452383" }
       let(:participant_ids) { [participant_id, participant_id_without_vso] }
       let(:url) { "vietnam-veterans" }
+      let(:name) { "Vietnam Veterans" }
 
       let!(:vso) do
         Vso.create(
           participant_id: vso_participant_id,
-          url: url
+          url: url,
+          name: name
         )
       end
 
@@ -580,6 +583,7 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content valid_document_id
       end
     end
+
     it "checkout details (documentID, judge, attorney notes) are preserved in attorney checkout" do
       step "judge reviews case and assigns a task to an attorney" do
         visit "/queue"

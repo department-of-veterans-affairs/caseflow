@@ -152,10 +152,14 @@ describe AppealIntake do
           allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil)
         end
 
-        it "adds claimant address required error" do
-          expect(subject).to be_falsey
-          expect(detail.errors[:claimant]).to include("claimant_address_required")
-          expect(detail.claimants).to be_empty
+        it "does not require the address" do
+          expect(subject).to be_truthy
+          expect(intake.detail.claimants.count).to eq 1
+          expect(intake.detail.claimants.first).to have_attributes(
+            participant_id: "1234",
+            payee_code: nil,
+            decision_review: intake.detail
+          )
         end
       end
 
@@ -187,7 +191,7 @@ describe AppealIntake do
           decision_text: "decision text"
         },
         { decision_text: "nonrating request issue decision text",
-          issue_category: "test issue category",
+          nonrating_issue_category: "test issue category",
           benefit_type: "compensation",
           decision_date: "2018-12-25" }
       ]
@@ -214,7 +218,7 @@ describe AppealIntake do
         contested_issue_description: "decision text"
       )
       expect(intake.detail.request_issues.second).to have_attributes(
-        issue_category: "test issue category",
+        nonrating_issue_category: "test issue category",
         decision_date: Date.new(2018, 12, 25),
         nonrating_issue_description: "nonrating request issue decision text"
       )

@@ -456,14 +456,10 @@ describe Veteran do
     end
 
     before do
-      BGSService = ExternalApi::BGSService
+      stub_const("BGSService", ExternalApi::BGSService)
 
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_ids)
         .with(array_including(participant_ids)).and_return(poas)
-    end
-
-    after do
-      BGSService = Fakes::BGSService
     end
 
     it "returns only the case with vso assigned to it" do
@@ -654,6 +650,20 @@ describe Veteran do
           expect(veteran.reload.last_name).to eq "Smith"
         end
       end
+    end
+  end
+
+  describe "#unload_bgs_record" do
+    subject { veteran.unload_bgs_record }
+
+    it "uses the new address for establishing a claim" do
+      expect(veteran.bgs_record).to include(address_line1: "122 Mullberry St.")
+
+      Fakes::BGSService.veteran_records[veteran.file_number][:address_line1] = "Changed"
+
+      subject
+
+      expect(veteran.bgs_record).to include(address_line1: "Changed")
     end
   end
 

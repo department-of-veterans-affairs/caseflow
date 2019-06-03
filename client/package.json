@@ -12,6 +12,9 @@
     "test:legacy:watch": "yarn run test:legacy --watch",
     "lint": "eslint . --ext .jsx --ext .js --max-warnings 0 --cache",
     "lint:fix": "yarn run lint --fix",
+    "pretty": "yarn run prettier constants/TASK_ACTIONS.json",
+    "pretty:check": "yarn run pretty --check",
+    "pretty:format": "yarn run pretty --write",
     "build": "webpack --config webpack.config.js",
     "build:test": "NODE_ENV=test yarn run build",
     "build:demo": "NODE_ENV=development yarn run build",
@@ -25,7 +28,7 @@
     "client/node_modules"
   ],
   "dependencies": {
-    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#f8928f5",
+    "@department-of-veterans-affairs/caseflow-frontend-toolkit": "https://github.com/department-of-veterans-affairs/caseflow-frontend-toolkit#d386d03",
     "@fortawesome/fontawesome-free": "^5.3.1",
     "babel-core": "^6.18.2",
     "babel-loader": "^7.1.2",
@@ -117,6 +120,7 @@
     "karma-webpack": "^2.0.3",
     "mocha": "^5.2.0",
     "mocha-junit-reporter": "^1.17.0",
+    "prettier": "1.17.1",
     "sinon": "^2.1.0",
     "webpack-dev-server": "^2.4.2"
   }

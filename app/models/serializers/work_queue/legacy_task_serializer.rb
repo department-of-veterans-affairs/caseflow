@@ -44,6 +44,10 @@ class WorkQueue::LegacyTaskSerializer
     }
   end
 
+  attribute :assignee_name do |object|
+    object.appeal.location_code
+  end
+
   attribute :case_type do |object|
     object.appeal.type
   end

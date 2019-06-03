@@ -24,7 +24,7 @@ class AppealIntake < DecisionReviewIntake
       update_person!
       detail.save(context: :intake_review)
     end
-  rescue ActiveRecord::RecordInvalid => _err
+  rescue ActiveRecord::RecordInvalid
     set_review_errors
   end
 
