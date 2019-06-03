@@ -1,5 +1,6 @@
 import { css } from 'glamor';
 import _ from 'lodash';
+import moment from 'moment';
 
 import LEGACY_APPEAL_TYPES_BY_ID from '../../../constants/LEGACY_APPEAL_TYPES_BY_ID.json';
 
@@ -50,14 +51,18 @@ export const docketCutoffLineStyle = (_index, scheduledForText) => {
   return css(_.merge(style, isEmptyStyle));
 };
 
-export const getIndexOfDocketLine = (allAppeals, appealsInDocketRange) => {
-  const numberOfAppealsInDocketRange = appealsInDocketRange.length;
-  const numberOfAodAndCavcAppeals = _.filter(allAppeals, (appeal) => (
-    appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
-    appeal.attributes.aod
-  )).length;
+const getAppealsInDocketRange = (appeals, endOfRange) => _.filter(appeals, (appeal) => (
+  moment(appeal.attributes.docketRangeDate).isBefore(endOfRange) ||
+  appeal.attributes.caseType === LEGACY_APPEAL_TYPES_BY_ID.cavc_remand ||
+  appeal.attributes.aod
+));
 
-  const appealsThisDocket = numberOfAppealsInDocketRange + numberOfAodAndCavcAppeals;
+export const getIndexOfDocketLine = (appeals, endOfRange) => {
+  if (_.isEmpty(appeals)) {
+    return -1;
+  }
 
-  return appealsThisDocket - 1;
+  const numberOfAppealsInDocketRange = getAppealsInDocketRange(appeals, endOfRange).length;
+
+  return numberOfAppealsInDocketRange - 1;
 };

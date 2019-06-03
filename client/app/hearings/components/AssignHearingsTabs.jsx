@@ -398,16 +398,8 @@ export default class AssignHearingsTabs extends React.Component {
     const filtered = this.filterAppeals(appeals, 'amaAppeals');
     const endOfNextMonth = moment().add('months', 1).
       endOf('month');
-    const appealsInDocketRange = _.filter(filtered, (appeal) => (
-      moment(appeal.attributes.docketRangeDate).isBefore(endOfNextMonth)
-    ));
 
-    const filteredAppealsInDocketRange = _.intersection(
-      filtered.map((appeal) => appeal.attributes.externalAppealId),
-      appealsInDocketRange.map((appeal) => appeal.attributes.externalAppealId)
-    );
-
-    const indexOfLine = getIndexOfDocketLine(filtered, filteredAppealsInDocketRange);
+    const indexOfLine = getIndexOfDocketLine(filtered, endOfNextMonth);
 
     return docketCutoffLineStyle(indexOfLine, endOfNextMonth.format('MMMM YYYY'));
   }
