@@ -234,7 +234,7 @@ RSpec.feature "Judge assignment to attorney and judge" do
         .to receive(:nonpriority_receipts_per_year)
         .and_return(100)
 
-      allow(Appeal)
+      allow(Docket)
         .to receive(:nonpriority_decisions_per_year)
         .and_return(1000)
 
