@@ -93,14 +93,14 @@ RSpec.feature "Hearings tasks workflows" do
 
       describe "Bulk assign hearing tasks" do
         def fill_in_and_submit_bulk_assign_modal
-          options = find_all('option')
+          options = find_all("option")
           assign_to = options[2]
           assign_to.click
           task_type = options[8]
           task_type.click
-          number_of_tasks = options[10];
+          number_of_tasks = options[10]
           number_of_tasks.click
-          submit = all('button', text: "Assign Tasks")[0]
+          submit = all("button", text: "Assign Tasks")[0]
           submit.click
         end
 
@@ -108,8 +108,8 @@ RSpec.feature "Hearings tasks workflows" do
           3.times do
             FactoryBot.create(:no_show_hearing_task)
           end
-          success_msg = 'You have bulk assigned 4 No Show Hearing Task task(s)'
-          visit("organizations/hearing-management/")
+          success_msg = "You have bulk assigned 4 No Show Hearing Task task(s)"
+          visit("/organizations/hearing-management")
           click_button(text: "Assign Tasks")
           fill_in_and_submit_bulk_assign_modal
           expect(page).to have_content(success_msg)
