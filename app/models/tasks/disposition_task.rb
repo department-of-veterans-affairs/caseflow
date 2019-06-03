@@ -94,7 +94,7 @@ class DispositionTask < GenericTask
   private
 
   def update_children_status_after_closed
-    children.active.update_all(status: status)
+    children.open.update_all(status: status)
   end
 
   def cascade_closure_from_child_task?(_child_task)
