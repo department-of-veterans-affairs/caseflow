@@ -42,7 +42,8 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
           subject
 
           expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)["tasks"]["data"]
+          response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
+          expect(response_body.length).to eq 4
           expect(response_body.first["id"]).not_to eq task.id.to_s
           expect(response_body.first["attributes"]["label"]).to eq new_task_type
           expect(response_body.first["attributes"]["status"]).to eq task.status
@@ -95,7 +96,8 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
           subject
 
           expect(response.status).to eq 200
-          response_body = JSON.parse(response.body)["tasks"]["data"]
+          response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
+          expect(response_body.length).to eq 6
           expect(response_body.first["id"]).not_to eq task.id.to_s
           expect(response_body.first["attributes"]["label"]).to eq new_task_type.label
           expect(response_body.first["attributes"]["status"]).to eq task.status
@@ -133,7 +135,7 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
     end
 
     context "for a non supported task type" do
-      let(:params) { { task: { action: "other", instructions: new_instructions }, id: root_task.id } }
+      let(:params) { { task: { action: "other", instructions: new_instructions }, id: create(:ama_judge_task, parent: root_task).id } }
 
       it "returns an error" do
         subject
