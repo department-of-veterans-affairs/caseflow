@@ -89,7 +89,8 @@ class MailTask < GenericTask
       slice(:appeal, :assigned_by, :assigned_to, :status, :on_hold_duration, :placed_on_hold_at)
       .merge(
         instructions: [instructions, params[:instructions]].flatten,
-        parent: new_parent.nil? ? parent : new_parent)
+        parent: new_parent.nil? ? parent : new_parent
+      )
     )
   end
 end
