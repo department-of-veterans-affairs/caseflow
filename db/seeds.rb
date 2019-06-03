@@ -536,7 +536,6 @@ class SeedDB
 
     vet.save
 
-    FeatureToggle.enable!(:ama_acd_tasks)
     FactoryBot.create(
       :appeal,
       :with_tasks,
