@@ -7,7 +7,7 @@ class RetrieveDocumentsForReaderJob < ApplicationJob
   application_attr :reader
 
   def perform
-    users = FindUsersInBatchesForReaderJob.process
+    users = BatchUsersForReaderQuery.process
     users.each { |user| start_fetch_job(user) }
   end
 
