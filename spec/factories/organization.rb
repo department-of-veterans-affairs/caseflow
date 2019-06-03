@@ -13,6 +13,10 @@ FactoryBot.define do
       type { FieldVso.name }
     end
 
+    factory :private_bar, class: PrivateBar do
+      type { PrivateBar.name }
+    end
+
     factory :bva do
       type { "Bva" }
     end

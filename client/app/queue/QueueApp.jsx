@@ -44,6 +44,7 @@ import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddVsoModal from './AddVsoModal';
+import AddPrivateBarModal from './AddPrivateBarModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 import StartHoldModal from './components/StartHoldModal';
@@ -232,6 +233,8 @@ class QueueApp extends React.PureComponent {
   routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
 
   routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
+
+  routedAddPrivateBarModal = (props) => <AddPrivateBarModal {...props.match.params} />;
 
   routedPostponeHearingTaskModal = (props) => <PostponeHearingTaskModal {...props.match.params} />;
 
@@ -494,6 +497,9 @@ class QueueApp extends React.PureComponent {
           <Route
             path="/team_management/add_vso"
             render={this.routedAddVsoModal} />
+          <Route
+            path="/team_management/add_private_bar"
+            render={this.routedAddPrivateBarModal} />
           <PageRoute
             path="/team_management"
             title="Team Management | Caseflow"
