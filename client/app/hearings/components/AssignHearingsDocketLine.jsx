@@ -59,7 +59,5 @@ export const getIndexOfDocketLine = (allAppeals, appealsInDocketRange) => {
 
   const appealsThisDocket = numberOfAppealsInDocketRange + numberOfAodAndCavcAppeals;
 
-  console.log(allAppeals, appealsInDocketRange);
-
   return appealsThisDocket - 1;
 };
