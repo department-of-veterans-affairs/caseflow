@@ -5,7 +5,9 @@ module HasBusinessLine
 
   def business_line
     business_line_name = Constants::BENEFIT_TYPES[benefit_type]
-    @business_line ||= BusinessLine.find_or_create_by(url: benefit_type, name: business_line_name)
+    @business_line ||= BusinessLine.find_or_create_by(name: business_line_name) do |org|
+      org.url = benefit_type
+    end
   end
 
   def processed_in_vbms?
