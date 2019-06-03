@@ -66,8 +66,6 @@ class AssignHearingsContainer extends React.PureComponent {
       label,
       value
     });
-
-    this.getAppealsInDocketRange(value);
   }
 
   loadUpcomingHearingDays = (roValue) => {
@@ -85,19 +83,19 @@ class AssignHearingsContainer extends React.PureComponent {
     });
   };
 
-  getAppealsInDocketRange = (roValue) => {
+  loadAppealsReadyForHearing = (roValue) => {
     if (!roValue) {
       return;
     }
 
-    const requestUrl = `/hearings/docket_range/${roValue}`;
+    const requestUrl = `/cases_to_schedule/${roValue}`;
 
     return ApiUtil.get(requestUrl).then((response) => {
-      const appealsInDocketRange = JSON.parse(response.text);
+      const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
-      this.props.onReceiveAppealsInDocketRange(appealsInDocketRange);
+      this.props.onReceiveAppealsReadyForHearing(resp.data);
     });
-  }
+  };
 
   getNoUpcomingError = () => {
     if (this.props.selectedRegionalOffice) {
@@ -114,7 +112,8 @@ class AssignHearingsContainer extends React.PureComponent {
     const roValue = selectedRegionalOffice ? selectedRegionalOffice.value : null;
 
     return Promise.all([
-      this.loadUpcomingHearingDays(roValue)
+      this.loadUpcomingHearingDays(roValue),
+      this.loadAppealsReadyForHearing(roValue)
     ]);
   }
 
@@ -152,7 +151,6 @@ class AssignHearingsContainer extends React.PureComponent {
             onSelectedHearingDayChange={this.props.onSelectedHearingDayChange}
             selectedHearingDay={this.props.selectedHearingDay}
             appealsReadyForHearing={this.props.appealsReadyForHearing}
-            appealsInDocketRange={this.props.appealsInDocketRange}
             userId={this.props.userId}
             onReceiveTasks={this.props.onReceiveTasks} />
         </LoadingDataDisplay>}
@@ -170,8 +168,7 @@ const mapStateToProps = (state) => ({
   selectedRegionalOffice: state.components.selectedRegionalOffice,
   upcomingHearingDays: state.hearingSchedule.upcomingHearingDays,
   selectedHearingDay: state.hearingSchedule.selectedHearingDay,
-  appealsReadyForHearing: state.hearingSchedule.appealsReadyForHearing,
-  appealsInDocketRange: state.hearingSchedule.appealsInDocketRange
+  appealsReadyForHearing: state.hearingSchedule.appealsReadyForHearing
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
