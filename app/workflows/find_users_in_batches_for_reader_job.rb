@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class FindUsersInBatchesForReaderJob
   DEFAULT_USERS_LIMIT = 5
 
@@ -5,7 +7,7 @@ class FindUsersInBatchesForReaderJob
     User.where("(efolder_documents_fetched_at <= ? " \
                "OR efolder_documents_fetched_at IS NULL) " \
                "AND last_login_at >= ?", 24.hours.ago, 1.week.ago)
-        .order("efolder_documents_fetched_at IS NULL DESC, efolder_documents_fetched_at ASC")
-        .limit(DEFAULT_USERS_LIMIT)
+      .order("efolder_documents_fetched_at IS NULL DESC, efolder_documents_fetched_at ASC")
+      .limit(DEFAULT_USERS_LIMIT)
   end
 end
