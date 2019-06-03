@@ -29,7 +29,7 @@ class HearingTask < GenericTask
   def when_child_task_completed(child_task)
     super
 
-    return unless appeal.tasks.active.where(type: HearingTask.name).empty?
+    return unless appeal.tasks.open.where(type: HearingTask.name).empty?
 
     if appeal.is_a?(LegacyAppeal)
       update_legacy_appeal_location
@@ -52,7 +52,7 @@ class HearingTask < GenericTask
 
   def create_change_hearing_disposition_task(instructions = nil)
     task_names = [DispositionTask.name, ChangeHearingDispositionTask.name]
-    active_disposition_tasks = children.active.where(type: task_names).to_a
+    active_disposition_tasks = children.open.where(type: task_names).to_a
 
     multi_transaction do
       ChangeHearingDispositionTask.create!(
@@ -65,7 +65,7 @@ class HearingTask < GenericTask
   end
 
   def disposition_task
-    children.active.detect { |child| child.type == DispositionTask.name }
+    children.open.detect { |child| child.type == DispositionTask.name }
   end
 
   private
@@ -79,7 +79,7 @@ class HearingTask < GenericTask
   end
 
   def update_status_if_children_tasks_are_complete(_child_task)
-    if children.active.empty?
+    if children.open.empty?
       return update!(status: :cancelled) if children.select { |c| c.type == DispositionTask.name && c.cancelled? }.any?
     end
 
