@@ -561,7 +561,7 @@ describe Task do
   end
 
   describe ".create_and_auto_assign_child_task" do
-    subject { Task.create!(assigned_to: org, appeal: FactoryBot.create(:appeal), type: Task.name) }
+    subject { create(:task, assigned_to: org, appeal: create(:appeal)) }
 
     context "when the task is assigned to an organization that automatically assigns tasks to its members" do
       class AutoAssignOrg < Organization
@@ -572,8 +572,8 @@ describe Task do
         end
       end
 
-      let(:user) { FactoryBot.create(:user) }
-      let(:org) { AutoAssignOrg.create(assignee: user) }
+      let(:user) { create(:user) }
+      let(:org) { AutoAssignOrg.create!(url: 'autoassign', name: 'AutoAssign', assignee: user) }
 
       it "should create a child task when a task assigned to the organization is created" do
         expect(subject.children.length).to eq(1)

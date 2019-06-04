@@ -1,17 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 
 import ApiUtil from '../../util/ApiUtil';
-
-import Button from '../../components/Button';
 import QueueFlowModal from './QueueFlowModal';
-
 import Dropdown from '../../components/Dropdown';
-import { regionalOfficeCity, createOrgQueueLoadPromise } from '../utils';
-
+import { regionalOfficeCity } from '../utils';
+import { getUnassignedOrganizationalTasks } from '../selectors';
 import { bulkAssignTasks, onReceiveQueue } from '../QueueActions';
 import {
   setActiveOrganization
@@ -24,7 +21,6 @@ class BulkAssignModal extends React.PureComponent {
     super(props);
 
     this.state = {
-      showModal: false,
       showErrors: false,
       users: [],
       modal: {
@@ -37,18 +33,12 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   componentDidMount() {
-    ApiUtil.get('/organizations/hearing-management/members.json').then((resp) => {
+    ApiUtil.get(`/organizations/${this.organizationUrl()}/members.json`).then((resp) => {
       this.setState({ users: resp.body.members.data });
     }).
       catch(() => {
         // handle the error from the frontend
       });
-  }
-
-  handleModalToggle = () => {
-    const modalStatus = this.state.showModal;
-
-    this.setState({ showModal: !modalStatus });
   }
 
   onFieldChange = (value, field) => {
@@ -78,18 +68,15 @@ class BulkAssignModal extends React.PureComponent {
 
     if (this.generateErrors().length === 0) {
       this.props.bulkAssignTasks(this.state.modal);
-      this.handleModalToggle();
 
       const { taskType: task_type, numberOfTasks: task_count, assignedUser: assigned_to_id } = this.state.modal;
-
-      const { organizationId: organization_id } = this.props;
       const regionalOffice = _.uniq(this.props.tasks.filter((task) => {
         return regionalOfficeCity(task) === this.state.modal.regionalOffice;
       }))[0];
       const regionalOfficeKey = _.get(regionalOffice, 'closestRegionalOffice.key');
 
       const data = { bulk_task_assignment: {
-        organization_id,
+        organization_url: this.organizationUrl(),
         regional_office: regionalOfficeKey,
         assigned_to_id,
         task_type,
@@ -97,7 +84,8 @@ class BulkAssignModal extends React.PureComponent {
       };
 
       return ApiUtil.post('/bulk_task_assignments', { data }).then(() => {
-        createOrgQueueLoadPromise(this.props, '/organizations/hearing-management/tasks');
+        this.props.history.push(`/organizations/${this.organizationUrl()}`);
+        window.location.reload();
       }).
         catch(() => {
           // handle the error
@@ -195,7 +183,7 @@ class BulkAssignModal extends React.PureComponent {
 
   generateNumberOfTaskOptions = () => {
     const actualOptions = [];
-    const issueCounts = this.props.issueCountOptions || BULK_ASSIGN_ISSUE_COUNT;
+    const issueCounts = BULK_ASSIGN_ISSUE_COUNT;
     let filteredTasks = this.props.tasks;
 
     // filter by regional office
@@ -221,55 +209,32 @@ class BulkAssignModal extends React.PureComponent {
     return actualOptions;
   }
 
-  generateDropdown = (label, fieldName, options, isRequired) => {
-    return (
-      <Dropdown
-        name={label}
-        options={options}
-        value={this.state.modal[fieldName]}
-        defaultText="Select"
-        onChange={(value) => this.onFieldChange(value, fieldName)}
-        errorMessage={this.displayErrorMessage(fieldName)}
-        required={isRequired}
-      />
-    );
-  }
+  generateDropdown = (label, fieldName, options, isRequired) => <Dropdown
+    name={label}
+    options={options}
+    value={this.state.modal[fieldName]}
+    defaultText="Select"
+    onChange={(value) => this.onFieldChange(value, fieldName)}
+    errorMessage={this.displayErrorMessage(fieldName)}
+    required={isRequired}
+  />;
 
-  render() {
-    const bulkAssignButton = <Button classNames={['bulk-assign-button']} onClick={this.handleModalToggle}>
-      Assign Tasks</Button>;
-    const cancelButton = <Button linkStyling onClick={this.handleModalToggle}>Cancel</Button>;
-    const modal = (
-      <QueueFlowModal
-        pathAfterSubmit="/organizations/hearing-management/"
-        button="Assign Tasks"
-        submit={this.bulkAssignTasks}
-        title="Bulk Assign Tasks"
-        closeHandler={this.handleModalToggle}
-        cancelButton={cancelButton} >
-        {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
-        {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
-        {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}
-        {this.generateDropdown('Select number of tasks to assign', 'numberOfTasks',
-          this.generateNumberOfTaskOptions(), true)}
-      </QueueFlowModal>
-    );
+  organizationUrl = () => this.props.location.pathname.split('/')[2];
 
-    return (
-      <div>
-        { this.state.showModal && modal }
-        { bulkAssignButton }
-      </div>
-    );
-  }
+  render = () => <QueueFlowModal
+    pathAfterSubmit={`/organizations/${this.organizationUrl()}`}
+    button="Assign Tasks"
+    submit={this.bulkAssignTasks}
+    title="Bulk Assign Tasks">
+    {this.generateDropdown('Assign to', 'assignedUser', this.generateUserOptions(), true)}
+    {this.generateDropdown('Regional office', 'regionalOffice', this.generateRegionalOfficeOptions(), false)}
+    {this.generateDropdown('Select task type', 'taskType', this.generateTaskTypeOptions(), true)}
+    {this.generateDropdown('Select number of tasks to assign', 'numberOfTasks',
+      this.generateNumberOfTaskOptions(), true)}
+  </QueueFlowModal>;
 }
 
-BulkAssignModal.propTypes = {
-  tasks: PropTypes.array.isRequired,
-  organizationUrl: PropTypes.string,
-  issueCountOptions: PropTypes.array,
-  organizationId: PropTypes.number
-};
+const mapStateToProps = (state) => ({ tasks: getUnassignedOrganizationalTasks(state) });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({ bulkAssignTasks,
@@ -277,6 +242,4 @@ const mapDispatchToProps = (dispatch) => (
     setActiveOrganization }, dispatch)
 );
 
-export default (connect(() => {
-  return {};
-}, mapDispatchToProps)(BulkAssignModal));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(BulkAssignModal));
