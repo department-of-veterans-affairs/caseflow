@@ -112,7 +112,9 @@ class Hearing < ApplicationRecord
   end
 
   def claimant_id
-    appeal.appellant.id
+    return nil if appeal.appellant.nil?
+
+    Person.find_by(participant_id: appeal.appellant.participant_id).id
   end
 
   def advance_on_docket_motion
