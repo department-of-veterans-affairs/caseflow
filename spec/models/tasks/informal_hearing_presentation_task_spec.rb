@@ -64,7 +64,6 @@ describe InformalHearingPresentationTask do
     end
 
     before do
-      FeatureToggle.enable!(:ama_acd_tasks)
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
 
