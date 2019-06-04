@@ -43,6 +43,7 @@ class WorkQueue::LegacyAppealSerializer
   attribute :type
   attribute :aod
   attribute :docket_number
+  attribute :docket_range_date, &:docket_date
   attribute :status
   attribute :decision_date
   attribute :form9_date
