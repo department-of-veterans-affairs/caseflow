@@ -63,34 +63,3 @@ class HearingAdminActionTask < GenericTask
     super || (on_timed_hold? && children.open.where.not(type: TimedHoldTask.name).empty?)
   end
 end
-
-class HearingAdminActionVerifyPoaTask < HearingAdminActionTask
-  def self.label
-    "Verify power of attorney"
-  end
-end
-class HearingAdminActionIncarceratedVeteranTask < HearingAdminActionTask
-  def self.label
-    "Veteran is incarcerated"
-  end
-end
-class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
-  def self.label
-    "Contested claimant issue"
-  end
-end
-class HearingAdminActionMissingFormsTask < HearingAdminActionTask
-  def self.label
-    "Missing forms"
-  end
-end
-class HearingAdminActionFoiaPrivacyRequestTask < HearingAdminActionTask
-  def self.label
-    "FOIA/Privacy request"
-  end
-end
-class HearingAdminActionOtherTask < HearingAdminActionTask
-  def self.label
-    "Other"
-  end
-end
