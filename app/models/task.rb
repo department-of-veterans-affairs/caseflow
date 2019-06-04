@@ -171,37 +171,38 @@ class Task < ApplicationRecord
   end
 
   def update_task_type(params)
-    parents = []
+    new_branch_task = first_ancestor_of_type.change_type(params)
 
-    if parent_is_of_task_type?
-      parents = parent.update_task_type(params)
+    if assigned_to.is_a?(User) && parent.assigned_to_same_org?(last_descendant_of_type.parent)
+      new_branch_task.last_descendant_of_type.update!(assigned_to: assigned_to, status: status)
     end
 
-    new_parent = parents.first
-    new_task_of_type = auto_created_child_of_task(new_parent)
+    # Will this task ever have children?
+    children.active.each { |child| child.update!(parent_id: last_descendant_of_type.id) }
+    # Will any ancestors have other children?
+    first_ancestor_of_type.descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
 
-    if new_task_of_type
-      new_task_of_type.update!(assigned_to: assigned_to, status: status)
-    else
-      new_task_of_type = change_type(params, new_parent)
-    end
-
-    update!(status: Constants.TASK_STATUSES.cancelled)
-    children.active.each { |child| child.update!(parent_id: new_task_of_type.id) }
-
-    [new_task_of_type, self, new_task_of_type.children, parents].flatten
+    [first_ancestor_of_type.descendants, new_branch_task.first_ancestor_of_type.descendants].flatten
   end
 
-  def auto_created_child_of_task(task_to_check)
-    child_of_parent = task_to_check&.children && task_to_check.children.last
-    !eql?(child_of_parent) && child_of_parent
+  def assigned_to_same_org?(task_to_check)
+    assigned_to.is_a?(Organization) && assigned_to == task_to_check.assigned_to
   end
 
-  def parent_is_of_task_type?
-    parent.slice(:class, :action, :type).eql? slice(:class, :action, :type)
+  def first_ancestor_of_type
+    (parent && same_task_type?(parent)) ? parent.first_ancestor_of_type : self
   end
 
-  def change_type(_params, _new_parent)
+  def last_descendant_of_type
+    child_of_task_type = children.open.detect { |child| same_task_type?(child) }
+    child_of_task_type&.last_descendant_of_type || self
+  end
+
+  def same_task_type?(task_to_check)
+    task_to_check.slice(:class, :action, :type).eql? slice(:class, :action, :type)
+  end
+
+  def change_type(_params)
     fail Caseflow::Error::ActionForbiddenError, message: "Cannot change type of this task"
   end
 
