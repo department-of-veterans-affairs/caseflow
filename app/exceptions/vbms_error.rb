@@ -31,6 +31,7 @@ class VBMSError < RuntimeError
   class Unknown < Caseflow::Error::VBMS; end
   class UnknownUser < Caseflow::Error::VBMS; end
   class BadSOAPMessage < Caseflow::Error::VBMS; end
+  class FileNumberNotFoundForClaimId < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -44,6 +45,9 @@ class VBMSError < RuntimeError
   end
 
   KNOWN_ERRORS = {
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4999/events/360484/
+    "Error retrieving fileNumber by provided claimId" => "FileNumberNotFoundForClaimId",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/331930/
     "upstream connect error or disconnect/reset before headers" => "Transient",
 
