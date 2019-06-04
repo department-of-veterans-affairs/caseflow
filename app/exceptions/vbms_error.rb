@@ -103,6 +103,9 @@ class VBMSError < RuntimeError
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/308951/
     "File Number does not exist within the system." => "FilenumberDoesNotExist",
 
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/5254/events/360180/
+    "FILENUMBER does not exist within the system." => "FilenumberDoesNotExist",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3696/events/315030/
     "Document not found" => "DocumentNotFound",
 
