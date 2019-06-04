@@ -63,132 +63,136 @@ RSpec.feature "Quality Review worflow" do
 
   scenario "return case to judge" do
     expect(QualityReviewTask.count).to eq 1
-    # step "QR user visits the quality review organization page and assigns the task to themself"
-    visit quality_review_organization.path
-    click_on veteran_full_name
 
-    find(".Select-control", text: "Select an action").click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
+    step "QR user visits the quality review organization page and assigns the task to themself" do
+      visit quality_review_organization.path
+      click_on veteran_full_name
 
-    fill_in "taskInstructions", with: "Review the quality"
-    click_on "Submit"
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h[:label]).click
 
-    expect(page).to have_content("Task assigned to #{qr_user_name}")
+      fill_in "taskInstructions", with: "Review the quality"
+      click_on "Submit"
 
-    expect(QualityReviewTask.count).to eq 2
+      expect(page).to have_content("Task assigned to #{qr_user_name}")
 
-    # step "QR user returns the case to a judge"
-    click_on "Caseflow"
-
-    click_on veteran_full_name
-
-    find(".Select-control", text: "Select an action").click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.to_h[:label]).click
-
-    expect(dropdown_selected_value(find(".cf-modal-body"))).to eq judge_user.full_name
-    fill_in "taskInstructions", with: qr_instructions
-
-    click_on "Submit"
-
-    expect(page).to have_content("On hold (1)")
-
-    # step "judge reviews case and assigns a task to an attorney"
-    User.authenticate!(user: judge_user)
-
-    visit "/queue"
-
-    click_on veteran_full_name
-
-    find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
-
-    expect(page).to have_content(qr_instructions)
-
-    find(".Select-control", text: "Select an action", match: :first).click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h[:label]).click
-
-    expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
-    click_on "Submit"
-
-    expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
-
-    # step "attorney completes task and returns the case to the judge"
-    User.authenticate!(user: attorney_user)
-
-    visit "/queue"
-
-    click_on veteran_full_name
-
-    find(".Select-control", text: "Select an action").click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
-
-    expect(page).not_to have_content("Select special issues (optional)")
-
-    expect(page).to have_content("Add decisions")
-    all("button", text: "+ Add decision", count: 1)[0].click
-    expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
-
-    fill_in "Text Box", with: "test"
-    find(".Select-control", text: "Select disposition").click
-    find("div", class: "Select-option", text: "Allowed").click
-
-    click_on "Save"
-
-    click_on "Continue"
-
-    expect(page).to have_content("Submit Draft Decision for Review")
-
-    fill_in "Document ID:", with: valid_document_id
-    # the judge should be pre selected
-    expect(page).to have_content(judge_user.full_name)
-    fill_in "notes", with: "all done"
-
-    click_on "Continue"
-
-    expect(page).to have_content(
-      "Thank you for drafting #{veteran_full_name}'s decision. It's been sent to #{judge_user.full_name} for review."
-    )
-
-    # step "judge completes task"
-    User.authenticate!(user: judge_user)
-
-    visit "/queue"
-
-    click_on veteran_full_name
-
-    find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
-    expect(page).to have_content(qr_instructions)
-
-    find(".Select-control", text: "Select an action", match: :first).click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
-
-    expect(page).to have_content("Mark as complete")
-
-    click_on "Mark complete"
-
-    expect(page).to have_content("#{veteran_full_name}'s case has been marked complete")
-
-    # step "QR reviews case"
-    User.authenticate!(user: qr_user)
-
-    visit "/queue"
-
-    click_on veteran_full_name
-
-    expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
-    find(".Select-control", text: "Select an action").click
-    find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
-
-    expect(page).to have_content("Mark as complete")
-
-    click_on "Mark complete"
-
-    expect(page).to have_content("#{veteran_full_name}'s case has been marked complete")
-    # ensure no duplicate org tasks
-    page.go_back
-    case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
-    quality_review_tasks_on_timeline = case_timeline_rows.select do |html_node|
-      html_node.has_content?("QualityReviewTask")
+      expect(QualityReviewTask.count).to eq 2
     end
-    expect(quality_review_tasks_on_timeline.length).to eq(1)
+
+    step "QR user returns the case to a judge" do
+      click_on "Caseflow"
+
+      click_on veteran_full_name
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.QR_RETURN_TO_JUDGE.to_h[:label]).click
+
+      expect(dropdown_selected_value(find(".cf-modal-body"))).to eq judge_user.full_name
+      fill_in "taskInstructions", with: qr_instructions
+
+      click_on "Submit"
+
+      expect(page).to have_content("On hold (1)")
+    end
+
+    step "judge reviews case and assigns a task to an attorney" do
+      User.authenticate!(user: judge_user)
+
+      visit "/queue"
+
+      click_on veteran_full_name
+
+      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
+
+      expect(page).to have_content(qr_instructions)
+
+      find(".Select-control", text: "Select an action", match: :first).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h[:label]).click
+
+      expect(dropdown_selected_value(find(".cf-modal-body"))).to eq
+      click_on "Submit"
+
+      expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+    end
+
+    step "attorney completes task and returns the case to the judge" do
+      User.authenticate!(user: attorney_user)
+
+      visit "/queue"
+
+      click_on veteran_full_name
+
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h[:label]).click
+
+      expect(page).not_to have_content("Select special issues (optional)")
+
+      expect(page).to have_content("Add decisions")
+      all("button", text: "+ Add decision", count: 1)[0].click
+      expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+      fill_in "Text Box", with: "test"
+      find(".Select-control", text: "Select disposition").click
+      find("div", class: "Select-option", text: "Allowed").click
+
+      click_on "Save"
+
+      click_on "Continue"
+
+      expect(page).to have_content("Submit Draft Decision for Review")
+
+      fill_in "Document ID:", with: valid_document_id
+      # the judge should be pre selected
+      expect(page).to have_content(judge_user.full_name)
+      fill_in "notes", with: "all done"
+
+      click_on "Continue"
+
+      expect(page).to have_content(
+        "Thank you for drafting #{veteran_full_name}'s decision. It's been sent to #{judge_user.full_name} for review."
+      )
+    end
+
+    step "judge completes task" do
+      User.authenticate!(user: judge_user)
+
+      visit "/queue"
+
+      click_on veteran_full_name
+
+      find("button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL, match: :first).click
+      expect(page).to have_content(qr_instructions)
+
+      find(".Select-control", text: "Select an action", match: :first).click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
+
+      expect(page).to have_content("Mark as complete")
+
+      click_on "Mark complete"
+
+      expect(page).to have_content("#{veteran_full_name}'s case has been marked complete")
+    end
+
+    step "QR reviews case" do
+      User.authenticate!(user: qr_user)
+
+      visit "/queue"
+
+      click_on veteran_full_name
+
+      expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.MARK_COMPLETE.to_h[:label]).click
+
+      expect(page).to have_content("Mark as complete")
+
+      click_on "Mark complete"
+
+      expect(page).to have_content("#{veteran_full_name}'s case has been marked complete")
+      # ensure no duplicate org tasks
+      page.go_back
+
+      assert_text("QualityReviewTask", count: 1)
+    end
   end
 end
