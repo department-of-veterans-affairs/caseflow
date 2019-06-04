@@ -24,8 +24,10 @@ describe RetrieveDocumentsForReaderJob do
 
       context "if there are active and inactive users" do
         it "should only run the job for the active user with expired or nil efolder_documents_fetched_at" do
-          expect(FetchDocumentsForReaderUserJob).to receive(:perform_later).exactly(3).times
+          users = []
+          allow(FetchDocumentsForReaderUserJob).to receive(:perform_later) { |user| users << user }
           RetrieveDocumentsForReaderJob.perform_now
+          expect(users).to match_array([active_user1, active_user2, active_user4])
         end
       end
     end
