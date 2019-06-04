@@ -61,6 +61,7 @@ describe User do
         "pg_user_id" => user.id,
         "email" => nil,
         "roles" => [],
+        "efolder_documents_fetched_at" => nil,
         "selected_regional_office" => nil,
         :display_name => css_id.upcase,
         "name" => "Tom Brady"
