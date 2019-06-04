@@ -178,7 +178,7 @@ class AssignWidget extends React.PureComponent {
               casePlural: pluralize('case', selectedTasks.length) })}
           loading={savePending}
           loadingText={COPY.ASSIGN_WIDGET_LOADING} /> }
-        {this.props.userId && this.props.showRequestCasesButton && featureToggles.automatic_case_distribution &&
+        {this.props.userId && this.props.showRequestCasesButton &&
           <div {...css({ marginLeft: 'auto' })}>
             <Button
               name="Request more cases"
