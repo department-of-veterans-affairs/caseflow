@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
@@ -33,9 +34,46 @@ const alertStyling = css({
   marginBottom: '1.5em'
 });
 
+// TODO: Is this worth it just because it is a handy alias?
+const includeTrackingTasksTab = (organizationIsVso) => organizationIsVso;
+
+const allowBulkAssign = (organizationName) => (organizationName === 'Hearing Management');
+
+const showRegionalOfficeInQueue = (organizationName) => 
+  (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin');
+
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
+  }
+
+  queueConfig = () => {
+    return {
+      table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),
+      active_tab: 0, // TODO: This needs to respond to whether we have the tracking tasks tab or not.
+      tabs: [
+        // Tracking tasks tab.
+        // Unassigned tasks tab.
+        {
+          name: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+          description: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, this.props.organizationName),
+          // Compact to account for the maybe absent regional office column
+          columns: _.compact([
+            "hearingBadgeColumn",
+            "detailsColumn",
+            "taskColumn",
+            showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
+            "typeColumn",
+            "docketNumberColumn",
+            "daysWaitingColumn",
+            "readerLinkColumn"
+          ]),
+          allow_bulk_assign: allowBulkAssign(this.props.organizationName)
+        },
+        // Assigned tasks tab.
+        // Completed tasks tab.
+      ]
+    };
   }
 
   render = () => {
