@@ -84,12 +84,6 @@ class DistributionsController < ApplicationController
         "title": "Forbidden",
         "detail": "You don't have permission to access this distribution."
       }
-    when :feature_not_enabled
-      {
-        "error": error,
-        "title": "Automatic case distribution not enabled",
-        "detail": "The automatic case distribution feature has not yet been enabled for you."
-      }
     else
       {
         "error": error,

@@ -116,8 +116,7 @@ class AssignWidget extends React.PureComponent {
       attorneys,
       selectedTasks,
       savePending,
-      distributionLoading,
-      featureToggles
+      distributionLoading
     } = this.props;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
       value: attorney.id.toString() });
