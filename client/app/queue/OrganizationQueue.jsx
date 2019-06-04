@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
-import BulkAssignModal from './components/BulkAssignModal';
+import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
 import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
   taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
@@ -50,7 +50,6 @@ class OrganizationQueue extends React.PureComponent {
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName)}
           tasks={this.props.unassignedTasks}
-          organizationId={this.props.organizationId}
         />
       },
       {
@@ -137,7 +136,6 @@ const mapStateToProps = (state) => {
     organizationName: state.ui.activeOrganization.name,
     organizationIsVso: state.ui.activeOrganization.isVso,
     organizations: state.ui.organizations,
-    organizationId: state.ui.activeOrganization.id,
     tasksAssignedByBulk: state.queue.tasksAssignedByBulk,
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
@@ -154,7 +152,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
 
-const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole, organizationId }) => {
+const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => {
   let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
     userRole), taskColumn(tasks), typeColumn(tasks, false),
   docketNumberColumn(tasks, false), daysWaitingColumn(false),
@@ -169,7 +167,7 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
 
   return (<React.Fragment>
     <p className="cf-margin-top-0">{description}</p>
-    { organizationName === 'Hearing Management' && <BulkAssignModal tasks={tasks} organizationId={organizationId} /> }
+    { organizationName === 'Hearing Management' && <BulkAssignButton /> }
     <TaskTable
       customColumns={columns}
       tasks={tasks}
