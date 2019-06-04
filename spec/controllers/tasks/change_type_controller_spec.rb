@@ -78,8 +78,7 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
             appeal: root_task.appeal,
             parent_id: root_task.id,
             assigned_by: assigner,
-            assigned_to: MailTeam.singleton,
-            instructions: [old_instructions]
+            assigned_to: MailTeam.singleton
           )
         end
 
@@ -136,7 +135,12 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
     end
 
     context "for a non supported task type" do
-      let(:params) { { task: { action: "other", instructions: new_instructions }, id: create(:ama_judge_task, parent: root_task).id } }
+      let(:params) do
+        {
+          task: { action: "other", instructions: new_instructions },
+          id: create(:ama_judge_task, parent: root_task).id
+        }
+      end
 
       it "returns an error" do
         subject
