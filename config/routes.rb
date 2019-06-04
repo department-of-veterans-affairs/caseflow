@@ -235,6 +235,7 @@ Rails.application.routes.draw do
     resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
     resources :members, only: [:index], controller: 'organizations/members'
   end
+  get '/organizations/:url/modal(*rest)', to: 'organizations#show'
 
   post '/case_reviews/:task_id/complete', to: 'case_reviews#complete'
   patch '/case_reviews/:id', to: 'case_reviews#update'
