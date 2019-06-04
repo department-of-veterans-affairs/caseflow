@@ -2,7 +2,7 @@
 
 class Tasks::ChangeTypeController < TasksController
   def update
-    tasks = Task.find(params[:id]).update_task_type(update_params)
+    tasks = task.update_task_type(update_params)
     tasks.each { |task_to_check| return invalid_record_error(task_to_check) unless task_to_check.valid? }
 
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
@@ -12,7 +12,13 @@ class Tasks::ChangeTypeController < TasksController
 
   private
 
+  def task
+    @task ||= Task.find(params[:id])
+  end
+
   def update_params
-    params.require(:task).permit(:action, :instructions)
+    change_type_params = params.require(:task).permit(:action, :instructions)
+    change_type_params[:instructions] = [change_type_params[:instructions], task.instructions].flatten
+    change_type_params
   end
 end

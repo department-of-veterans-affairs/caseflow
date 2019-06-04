@@ -86,7 +86,7 @@ class ColocatedTask < Task
   def change_type(params)
     dup.tap do |dupe|
       dupe.action = params[:action]
-      dupe.instructions = [instructions, params[:instructions]].flatten
+      dupe.instructions = params[:instructions]
       dupe.assigned_to = Colocated.singleton
       dupe.save!
     end

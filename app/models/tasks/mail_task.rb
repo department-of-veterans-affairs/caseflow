@@ -90,17 +90,15 @@ class MailTask < GenericTask
       appeal: appeal,
       parent: parent,
       assigned_by: assigned_by,
-      assigned_to: MailTeam.singleton,
-      instructions: [instructions, params[:instructions]].flatten
+      assigned_to: MailTeam.singleton
     )
 
     task_type.create!(
-      slice(:appeal, :assigned_by)
-      .merge(
-        instructions: [instructions, params[:instructions]].flatten,
-        parent: parent_task,
-        assigned_to: self.class.default_assignee(parent_task, params)
-      )
+      appeal: appeal,
+      parent: parent_task,
+      assigned_by: assigned_by,
+      assigned_to: self.class.default_assignee(parent_task, params),
+      instructions: params[:instructions]
     )
   end
 end
