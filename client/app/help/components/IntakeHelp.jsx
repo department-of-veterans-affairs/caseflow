@@ -14,9 +14,9 @@ class IntakeHelp extends React.Component {
         <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide</a> and the
         <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">
       Quick Reference Guide</a>. These items are provided to assist you as you access and use Intake. If you require
-      further assistance after reviewing these items, please contact the Caseflow Product Support Team by phone
-      (1-844-876-5548) or email <a href="mailto:caseflow@va.gov">(caseflow@va.gov)</a>.
-      We look forward to assisting you.
+      further assistance after reviewing these items, please contact
+        <a href="https://yourit.va.gov/va" target="_blank" rel="noopener noreferrer">
+        YourIT for support</a>. We look forward to assisting you.
       </p>
 
       <h1 id="training-videos">Training Videos</h1>
@@ -117,9 +117,8 @@ class IntakeHelp extends React.Component {
 
       <h2 id="encounter-problems">7. What should I do if I encounter problems?</h2>
       <p>
-      If you encounter any problems while using Intake, contact the Caseflow Product Support Team
-      by calling 1-844-876-5548 or send an email to <a href="mailto: caseflow@va.gov">caseflow@va.gov</a>.
-      They can be reached from 8:00AM to 8:00PM EST, Monday through Friday.
+      If you encounter any problems while using Intake, please contact
+        <a href="https://yourit.va.gov/va" target="_blank" rel="noopener noreferrer">YourIT for support</a>.
       </p>
 
       <h2 id="suggestions">8. How can I share my suggestions for improving Intake?</h2>
@@ -138,8 +137,9 @@ class IntakeHelp extends React.Component {
       If you require further assistance after reviewing the <a href="#faq">FAQs</a>,
         <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">Quick Reference
       Guide</a>, or <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide
-        </a>, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email
-        <a href="mailto: caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
+        </a>, please contact
+        <a href="https://yourit.va.gov/va" target="_blank" rel="noopener noreferrer">
+        YourIT for support</a>. We look forward to assisting you.
       </p>
 
     </div>;
