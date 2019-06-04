@@ -38,12 +38,6 @@ class OrganizationQueue extends React.PureComponent {
     this.props.clearCaseSelectSearch();
   }
 
-  queueConfig = () => ({
-    table_title: 'some tigle',
-    active_tab: 0,
-    tabs: [{}]
-  });
-
   render = () => {
     const { success, tasksAssignedByBulk } = this.props;
     const tabs = [
