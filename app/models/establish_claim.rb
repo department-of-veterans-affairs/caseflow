@@ -110,6 +110,7 @@ class EstablishClaim < Dispatch::Task
   end
 
   def prepare_with_decision!
+    Rails.logger.info "Starting EstablishClaim (id = #{id})"
     try_prepare_with_decision!.tap do |result|
       Rails.logger.info "Prepared EstablishClaim (id = #{id}), Result: #{result}"
     end
