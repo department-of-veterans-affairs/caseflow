@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "mail_task"
-
 class GenericQueue
   include ActiveModel::Model
 
