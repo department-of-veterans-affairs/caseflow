@@ -762,7 +762,7 @@ class LegacyAppeal < ApplicationRecord
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
       (RequestStore.store[:application] = "queue" ||
-       RequestStore.store[:application] = "hearing_schedule" ||
+       RequestStore.store[:application] = "hearings" ||
        RequestStore.store[:application] = "idt")
   end
 

@@ -42,10 +42,6 @@ class VACOLS::TravelBoardSchedule < VACOLS::Record
     end
   end
 
-  def master_record_type
-    :travel_board
-  end
-
   def vdkey
     nil
   end
