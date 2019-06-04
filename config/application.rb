@@ -1,6 +1,8 @@
-require_relative 'boot'
+# frozen_string_literal: true
 
-require 'rails/all'
+require_relative "boot"
+
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -27,12 +29,14 @@ module CaseflowCertification
     # config.i18n.default_locale = :de
 
     # setup the deploy env environment variable
-    ENV['DEPLOY_ENV'] ||= Rails.env
+    ENV["DEPLOY_ENV"] ||= Rails.env
 
-    config.eager_load_paths << Rails.root.join('lib')
-    config.eager_load_paths += Dir[Rails.root.join('app', 'models', '{**}')]
+    config.autoload_paths += %W[#{Rails.root}/app/models/tasks]
 
-    config.exceptions_app = self.routes
+    config.eager_load_paths << Rails.root.join("lib")
+    config.eager_load_paths += Dir[Rails.root.join("app", "models", "{**}")]
+
+    config.exceptions_app = routes
 
     config.cache_store = :redis_store, Rails.application.secrets.redis_url_cache, { expires_in: 24.hours }
     config.sso_service_disabled = ENV["SSO_SERVICE_DISABLED"]
@@ -57,7 +61,7 @@ module CaseflowCertification
     config.sqs_endpoint = nil
 
     # sqs details
-    config.active_job.queue_name_prefix = "caseflow_" + ENV['DEPLOY_ENV']
+    config.active_job.queue_name_prefix = "caseflow_" + ENV["DEPLOY_ENV"]
 
     # it's a safe assumption we're running on us-gov-west-1
     ENV["AWS_REGION"] ||= "us-gov-west-1"
@@ -67,7 +71,7 @@ module CaseflowCertification
       # configure pry
       silence_warnings do
         begin
-          require 'pry'
+          require "pry"
           config.console = Pry
           unless defined? Pry::ExtendCommandBundle
             Pry::ExtendCommandBundle = Module.new
@@ -76,8 +80,8 @@ module CaseflowCertification
           require "rails/console/helpers"
           require_relative "../lib/helpers/console_methods"
 
-          TOPLEVEL_BINDING.eval('self').extend ::Rails::ConsoleMethods
-          TOPLEVEL_BINDING.eval('self').extend ConsoleMethods
+          TOPLEVEL_BINDING.eval("self").extend ::Rails::ConsoleMethods
+          TOPLEVEL_BINDING.eval("self").extend ConsoleMethods
         rescue LoadError
         end
       end
