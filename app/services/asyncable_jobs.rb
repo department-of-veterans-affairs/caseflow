@@ -31,7 +31,8 @@ class AsyncableJobs
     jobs = expired_jobs.flatten.sort_by(&:sort_by_last_submitted_at)
 
     return paginated_jobs(jobs) if page_size > 0
-    return jobs
+
+    jobs
   end
 
   def paginated_jobs(jobs)
