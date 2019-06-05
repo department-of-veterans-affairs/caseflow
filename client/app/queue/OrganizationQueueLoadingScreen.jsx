@@ -2,9 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import ApiUtil from '../util/ApiUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import { createOrgQueueLoadPromise } from './utils';
+import { extractAppealsAndAmaTasks } from './utils';
 
 import {
   onReceiveQueue
@@ -17,6 +18,26 @@ import {
 class OrganizationQueueLoadingScreen extends React.PureComponent {
   reload = () => window.location.reload();
 
+  createOrgQueueLoadPromise = () => ApiUtil.get(this.props.urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).
+    then(
+      (response) => {
+        const {
+          tasks: { data: tasks },
+          id,
+          organization_name: organizationName,
+          is_vso: isVso,
+          queue_config: queueConfig
+        } = JSON.parse(response.text);
+
+        this.props.setActiveOrganization(id, organizationName, isVso);
+        this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
+        this.props.setQueueConfig(queueConfig);
+      }
+    ).
+    catch(() => {
+      // handle frontend error
+    });
+
   render = () => {
     const failStatusMessageChildren = <div>
       It looks like Caseflow was unable to load your cases.<br />
@@ -24,7 +45,7 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay
-      createLoadPromise={() => createOrgQueueLoadPromise(this.props, this.props.urlToLoad)}
+      createLoadPromise={() => this.createOrgQueueLoadPromise()}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
         message: 'Loading cases...'
