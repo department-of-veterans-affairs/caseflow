@@ -18,7 +18,9 @@ Only actively maintained APIs are documented here. See the Git log history of th
 All API requests require a valid API key token, which is passed in the `Authorization` HTTP header. See the `curl`
 examples below for the proper syntax.
 
-To create a key in the Caseflow Rails console, try:
+If you need an API key, you can request one [[ TODO ]].
+
+If you are a Caseflow administrator, you can create a key in the Caseflow Rails console:
 
 ```bash
 irb> api_key = ApiKey.create!(consumer_name: "Some Application")
