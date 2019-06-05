@@ -3,7 +3,7 @@ import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
 import Button from '../../components/Button';
 import BENEFIT_TYPES from '../../../constants/BENEFIT_TYPES.json';
-import HearingWorksheetAmaIssues from '../../hearings/components/HearingWorksheetAmaIssues';
+import HearingWorksheetAmaIssues from '../../hearings/components/hearingWorksheet/HearingWorksheetAmaIssues';
 import DecisionIssues from './DecisionIssues';
 
 const TEXT_INDENTATION = '10px';

@@ -96,10 +96,10 @@ describe TrackVeteranTask do
         let!(:tracking_task) { FactoryBot.create(:track_veteran_task, appeal: appeal, assigned_to: vso) }
 
         it "cancels old TrackVeteranTask, does not create any new tasks" do
-          active_task_count_before = TrackVeteranTask.active.count
+          active_task_count_before = TrackVeteranTask.open.count
 
           expect(subject).to eq([0, 1])
-          expect(TrackVeteranTask.active.count).to eq(active_task_count_before - 1)
+          expect(TrackVeteranTask.open.count).to eq(active_task_count_before - 1)
         end
       end
     end

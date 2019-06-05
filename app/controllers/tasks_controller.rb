@@ -10,17 +10,21 @@ class TasksController < ApplicationController
     ChangeHearingDispositionTask: ChangeHearingDispositionTask,
     ColocatedTask: ColocatedTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
+    AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
     AttorneyTask: AttorneyTask,
+    AttorneyQualityReviewTask: AttorneyQualityReviewTask,
     GenericTask: GenericTask,
     QualityReviewTask: QualityReviewTask,
     JudgeAssignTask: JudgeAssignTask,
     JudgeQualityReviewTask: JudgeQualityReviewTask,
+    JudgeDispatchReturnTask: JudgeDispatchReturnTask,
     ScheduleHearingTask: ScheduleHearingTask,
     TranslationTask: TranslationTask,
     HearingAdminActionTask: HearingAdminActionTask,
     MailTask: MailTask,
     InformalHearingPresentationTask: InformalHearingPresentationTask,
-    PrivacyActTask: PrivacyActTask
+    PrivacyActTask: PrivacyActTask,
+    PulacCerulloTask: PulacCerulloTask
   }.freeze
 
   def set_application

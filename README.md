@@ -400,7 +400,28 @@ You can also use Psequel (instead of SQL Developer) with the following setup (us
 
 #### FACOLS
 
-To connect to FACOLS, we recommend using [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
+To connect to FACOLS, we recommend using SQL Plus Instant Client or [SQL Developer](https://www.oracle.com/database/technologies/appdev/sql-developer.html). Connection details can be found in the docker-compose.yml file.
+
+To install SQL Plus Instant Client on a Mac, run the following Homebrew install commands:
+
+```sh
+brew tap InstantClientTap/instantclient
+brew install instantclient-sqlplus
+```
+
+Homebrew will error and give you instructions to complete a successful installation.
+
+Once SQL Plus is installed, you can connect to FACOLS with this command:
+
+```sh
+sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
+```
+
+Alternately, you can run SQL commands on FACOLS via the rails console using this syntax:
+
+```ruby
+VACOLS::Case.connection.exec_query("SELECT hearing_pkseq from HEARSCHED").to_hash
+```
 
 ### Debugging Tools
 [RailsPanel](https://github.com/dejan/rails_panel) is a great Chrome extension

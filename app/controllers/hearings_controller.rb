@@ -1,16 +1,23 @@
 # frozen_string_literal: true
 
-class HearingsController < ApplicationController
-  before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
+class HearingsController < HearingsApplicationController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_access_to_hearings, except: [:show_print, :show]
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
-  before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
-  before_action :check_hearing_prep_out_of_service
 
   def show
     render json: hearing.to_hash(current_user.id)
   end
 
   def update
+    update_hearing
+    update_advance_on_docket_motion unless advance_on_docket_motion_params.empty?
+
+    render json: hearing.to_hash(current_user.id)
+  end
+
+  def update_hearing
     if hearing.is_a?(LegacyHearing)
       params = HearingTimeService.build_legacy_params_with_time(hearing, update_params_legacy)
       hearing.update_caseflow_and_vacols(params)
@@ -21,16 +28,14 @@ class HearingsController < ApplicationController
       Transcription.find_or_create_by(hearing: hearing)
       hearing.update!(params)
     end
-
-    render json: hearing.to_hash(current_user.id)
   end
 
-  def logo_name
-    "Hearings"
-  end
-
-  def logo_path
-    hearings_dockets_path
+  def update_advance_on_docket_motion
+    motion = AdvanceOnDocketMotion.find_or_create_by!(
+      person_id: advance_on_docket_motion_params[:person_id],
+      user_id: advance_on_docket_motion_params[:user_id]
+    )
+    motion.update(advance_on_docket_motion_params)
   end
 
   def find_closest_hearing_locations
@@ -65,22 +70,6 @@ class HearingsController < ApplicationController
 
   def hearing_external_id
     params[:id]
-  end
-
-  def verify_access
-    verify_authorized_roles("Hearing Prep")
-  end
-
-  def verify_access_to_reader_or_hearings
-    verify_authorized_roles("Reader", "Hearing Prep", "Edit HearSched", "Build HearSched")
-  end
-
-  def verify_access_to_hearing_prep_or_schedule
-    verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched")
-  end
-
-  def set_application
-    RequestStore.store[:application] = "hearings"
   end
 
   def update_params_legacy
@@ -130,4 +119,8 @@ class HearingsController < ApplicationController
                                      ])
   end
   # rubocop:enable Metrics/MethodLength
+
+  def advance_on_docket_motion_params
+    params.fetch(:advance_on_docket_motion, {}).permit(:user_id, :person_id, :reason, :granted)
+  end
 end

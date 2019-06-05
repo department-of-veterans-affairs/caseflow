@@ -81,6 +81,7 @@ class WorkQueue::AppealSerializer
   attribute :aod, &:advanced_on_docket
   attribute :docket_name
   attribute :docket_number
+  attribute :docket_range_date
   attribute :decision_date
   attribute :nod_date, &:receipt_date
 

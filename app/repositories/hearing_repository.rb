@@ -107,13 +107,16 @@ class HearingRepository
     end
 
     def hearings_for(case_hearings)
-      uniq_case_hearings = case_hearings.uniq
-      vacols_ids = uniq_case_hearings.map { |record| record[:hearing_pkseq] }.compact
+      vacols_ids = case_hearings.map { |record| record[:hearing_pkseq] }.compact
+
+      if vacols_ids.uniq.length != vacols_ids.length
+        Raven.capture_message("hearings_for has been sent non-unique vacols ids #{vacols_ids}")
+      end
 
       fetched_hearings = LegacyHearing.where(vacols_id: vacols_ids).includes(:appeal, :user, :hearing_views)
       fetched_hearings_hash = fetched_hearings.index_by { |hearing| hearing.vacols_id.to_i }
 
-      uniq_case_hearings.map do |vacols_record|
+      case_hearings.map do |vacols_record|
         hearing = LegacyHearing
           .assign_or_create_from_vacols_record(vacols_record,
                                                legacy_hearing: fetched_hearings_hash[vacols_record.hearing_pkseq])
@@ -169,7 +172,6 @@ class HearingRepository
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
         hearing_day_id: vacols_record.vdkey,
-        master_record: false,
         bva_poc: vacols_record.vdbvapoc,
         judge_id: hearing.user_id
       }

@@ -1,14 +1,18 @@
 # frozen_string_literal: true
 
-class Hearings::HearingDayController < HearingScheduleController
+class Hearings::HearingDayController < HearingsApplicationController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_view_hearing_schedule_access
+  before_action :verify_access_to_hearings, only: [:update]
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
-  skip_before_action :deny_vso_access, only: [:index, :show]
+  skip_before_action :deny_vso_access, only: [:index, :show, :index_print]
 
   # show schedule days for date range provided
   def index
     respond_to do |format|
       format.html do
-        render "hearings/index"
+        render "hearings/index", locals: { print_stylesheet: "print/hearings_schedule" }
       end
 
       format.json do
@@ -24,6 +28,10 @@ class Hearings::HearingDayController < HearingScheduleController
         }
       end
     end
+  end
+
+  def index_print
+    index
   end
 
   def show

@@ -3,8 +3,6 @@
 describe DocketCoordinator do
   before do
     FeatureToggle.enable!(:test_facols)
-    FeatureToggle.enable!(:ama_auto_case_distribution)
-    FeatureToggle.enable!(:ama_acd_tasks)
     Timecop.freeze(Time.utc(2020, 4, 1, 12, 0, 0))
 
     4.times do
@@ -18,15 +16,13 @@ describe DocketCoordinator do
       .to receive(:nonpriority_receipts_per_year)
       .and_return(nonpriority_receipts_per_year)
 
-    allow(Appeal)
+    allow(Docket)
       .to receive(:nonpriority_decisions_per_year)
       .and_return(nonpriority_decisions_per_year)
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:ama_auto_case_distribution)
-    FeatureToggle.disable!(:ama_acd_tasks)
   end
 
   let(:nonpriority_receipts_per_year) { 100 }
@@ -110,6 +106,20 @@ describe DocketCoordinator do
       expect(docket_coordinator.pacesetting_direct_review_proportion).to eq(0.1)
       expect(docket_coordinator.interpolated_minimum_direct_review_proportion).to eq(0.067)
       expect(docket_coordinator.target_number_of_ama_hearings(2.years)).to eq(400)
+    end
+
+    context "with appeals that have already been marked in range" do
+      let(:appeals_count) { docket_coordinator.dockets[:hearing].appeals.count }
+      let(:number_of_appeals_in_range) { 2 }
+      before do
+        docket_coordinator.dockets[:hearing].appeals.limit(number_of_appeals_in_range)
+          .update(docket_range_date: Time.utc(2019, 1, 1))
+      end
+
+      it "returns appeals that have not been marked in range" do
+        expect(docket_coordinator.upcoming_appeals_in_range(2.years).pluck(:id).count)
+          .to eq(other_docket_count - number_of_appeals_in_range)
+      end
     end
 
     context "when the direct review proportion would exceed 80%" do

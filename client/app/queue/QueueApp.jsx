@@ -32,7 +32,7 @@ import EvaluateDecisionView from './EvaluateDecisionView';
 import AddColocatedTaskView from './AddColocatedTaskView';
 import ColocatedPlaceHoldView from './ColocatedPlaceHoldView';
 import CompleteTaskModal from './components/CompleteTaskModal';
-import CancelTaskAssignRegionalOfficeModal from './components/CancelTaskAssignRegionalOfficeModal';
+import UpdateTaskStatusAssignRegionalOfficeModal from './components/UpdateTaskStatusAssignRegionalOfficeModal';
 import CancelTaskModal from './components/CancelTaskModal';
 import AssignHearingModal from './components/AssignHearingModal';
 import PostponeHearingModal from './components/PostponeHearingModal';
@@ -44,10 +44,12 @@ import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddVsoModal from './AddVsoModal';
+import AddPrivateBarModal from './AddPrivateBarModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
+import BulkAssignModal from './components/BulkAssignModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -67,6 +69,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
 import COPY from '../../COPY.json';
 import TASK_ACTIONS from '../../constants/TASK_ACTIONS.json';
+import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import { FlashAlerts } from '../nonComp/components/Alerts';
@@ -194,14 +197,16 @@ class QueueApp extends React.PureComponent {
 
   routedAssignToUser = (props) => <AssignToView {...props.match.params} />;
 
+  routedAssignToPulacCerullo = (props) => <AssignToView isTeamAssign assigneeAlreadySelected {...props.match.params} />;
+
   routedReassignToUser = (props) => <AssignToView isReassignAction {...props.match.params} />;
 
   routedCompleteTaskModal = (props) => <CompleteTaskModal modalType="mark_task_complete" {...props.match.params} />;
 
   routedCancelTaskModal = (props) => <CancelTaskModal {...props.match.params} />;
 
-  routedCancelTaskAndAssignRegionalOfficeModal = (props) =>
-    <CancelTaskAssignRegionalOfficeModal {...props.match.params} />;
+  routedUpdateTaskAndAssignRegionalOfficeModal = (updateStatusTo) => (props) =>
+    <UpdateTaskStatusAssignRegionalOfficeModal updateStatusTo={updateStatusTo} {...props.match.params} />;
 
   routedAssignHearingModal = (props) => <AssignHearingModal userId={this.props.userId} {...props.match.params} />;
 
@@ -217,6 +222,8 @@ class QueueApp extends React.PureComponent {
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
 
+  routedBulkAssignTaskModal = (props) => <BulkAssignModal {...props} />;
+
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
     <OrganizationQueue {...this.props} />
@@ -229,6 +236,8 @@ class QueueApp extends React.PureComponent {
   routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
 
   routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
+
+  routedAddPrivateBarModal = (props) => <AddPrivateBarModal {...props.match.params} />;
 
   routedPostponeHearingTaskModal = (props) => <PostponeHearingTaskModal {...props.match.params} />;
 
@@ -337,7 +346,16 @@ class QueueApp extends React.PureComponent {
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />
           <Route
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.RETURN_TO_JUDGE.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.QR_RETURN_TO_JUDGE.value}`}
+            render={this.routedAssignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.value}`}
+            render={this.routedAssignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.DISPATCH_RETURN_TO_JUDGE.value}`}
+            render={this.routedAssignToUser} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.JUDGE_DISPATCH_RETURN_TO_ATTORNEY.value}`}
             render={this.routedAssignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.value}`}
@@ -428,9 +446,18 @@ class QueueApp extends React.PureComponent {
             render={this.routedCompleteTaskModal} />
           <PageRoute
             exact
-            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value}`}
+            title="Assign to Pulac-Cerullo | Caseflow"
+            render={this.routedAssignToPulacCerullo} />
+          <PageRoute
+            path={`/queue/appeals/:appealId/tasks/:taskId/${
+              TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.value}`}
             title="Cancel Task and Assign Regional Office | Caseflow"
-            render={this.routedCancelTaskAndAssignRegionalOfficeModal} />
+            render={this.routedUpdateTaskAndAssignRegionalOfficeModal(TASK_STATUSES.cancelled)} />
+          <PageRoute
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.value}`}
+            title="Send to Schedule Veteran List | Caseflow"
+            render={this.routedUpdateTaskAndAssignRegionalOfficeModal(TASK_STATUSES.completed)} />
           <PageRoute
             exact
             path={'/queue/appeals/:appealId/tasks/:taskId/' +
@@ -457,9 +484,12 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:appealId/tasks/:taskId/modal/change_task_type"
             title="Change Task Type | Caseflow"
             render={this.routedChangeTaskTypeModal} />
+          <Route
+            path="/organizations/:organization/modal/bulk_assign_tasks"
+            render={this.routedBulkAssignTaskModal} />
           <PageRoute
             exact
-            path="/organizations/:organization"
+            path={['/organizations/:organization', '/organizations/:organization/modal/:modalType']}
             title="Organization Queue | Caseflow"
             render={this.routedOrganization} />
           <PageRoute
@@ -473,6 +503,9 @@ class QueueApp extends React.PureComponent {
           <Route
             path="/team_management/add_vso"
             render={this.routedAddVsoModal} />
+          <Route
+            path="/team_management/add_private_bar"
+            render={this.routedAddPrivateBarModal} />
           <PageRoute
             path="/team_management"
             title="Team Management | Caseflow"
