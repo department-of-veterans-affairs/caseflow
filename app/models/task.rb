@@ -172,15 +172,16 @@ class Task < ApplicationRecord
 
   def update_task_type(params)
     new_branch_task = first_ancestor_of_type.change_type(params)
+    new_child_task = new_branch_task.last_descendant_of_type
+    new_child_task.update!(status: status)
 
-    if assigned_to.is_a?(User) && parent.assigned_to_same_org?(last_descendant_of_type.parent)
-      new_branch_task.last_descendant_of_type.update!(assigned_to: assigned_to, status: status)
+    if assigned_to.is_a?(User) && new_child_task.assigned_to.is_a?(User) &&
+       parent.assigned_to_same_org?(new_child_task.parent)
+      new_child_task.update!(assigned_to: assigned_to)
     end
 
-    # Will this task ever have children?
     children.active.each { |child| child.update!(parent_id: last_descendant_of_type.id) }
-    # Will any ancestors have other children?
-    first_ancestor_of_type.descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+    first_ancestor_of_type.cancel_descendants
 
     [first_ancestor_of_type.descendants, new_branch_task.first_ancestor_of_type.descendants].flatten
   end
@@ -200,6 +201,10 @@ class Task < ApplicationRecord
 
   def same_task_type?(task_to_check)
     task_to_check.slice(:class, :action, :type).eql? slice(:class, :action, :type)
+  end
+
+  def cancel_descendants
+    descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
   end
 
   def change_type(_params)
