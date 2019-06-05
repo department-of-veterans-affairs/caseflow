@@ -146,6 +146,8 @@ class EndProductEstablishment < ApplicationRecord
     cached ? cached_result : fetched_result
   end
 
+  alias end_product result
+
   delegate :contentions, to: :cached_result
 
   def limited_poa_on_established_claim
