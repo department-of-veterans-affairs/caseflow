@@ -21,8 +21,7 @@ class SaveButtonUnconnected extends React.Component {
       originalIssueNumber: this.props.state.addedIssues.length,
       showModals: {
         issueChangeModal: false,
-        unidentifiedIssueModal: false,
-        reviewRemovedModal: false
+        unidentifiedIssueModal: false
       }
     };
   }
@@ -31,16 +30,11 @@ class SaveButtonUnconnected extends React.Component {
     // do validation and show modals
     let showModals = {
       issueChangeModal: false,
-      unidentifiedIssueModal: false,
-      reviewRemovedModal: false
+      unidentifiedIssueModal: false
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      if (this.props.state.addedIssues.length === 0 && this.props.removeDecisionReviews) {
-        showModals.reviewRemovedModal = true;
-      } else {
-        showModals.issueChangeModal = true;
-      }
+      showModals.issueChangeModal = true;
     }
 
     if (this.props.state.addedIssues.filter((i) => i.isUnidentified).length > 0) {
@@ -93,7 +87,6 @@ class SaveButtonUnconnected extends React.Component {
       originalIssues,
       requestStatus,
       veteranValid,
-      processedInCaseflow,
       withdrawalDate,
       receiptDate
     } = this.props;
@@ -120,10 +113,6 @@ class SaveButtonUnconnected extends React.Component {
 
     const saveButtonText = withdrawReview ? 'Withdraw' : 'Save';
 
-    const removeVbmsCopy = 'This will remove the review and cancel all the End Products associated with it.';
-
-    const removeCaseflowCopy = 'This review and all tasks associated with it will be removed.';
-
     const originalIssueNumberCopy = `The review originally had ${this.state.originalIssueNumber}
        ${pluralize('issue', this.state.originalIssueNumber)} but now has ${this.props.state.addedIssues.length}.`;
 
@@ -136,17 +125,6 @@ class SaveButtonUnconnected extends React.Component {
           {originalIssueNumberCopy}
         </p>
         <p>Please check that this is the correct number.</p>
-      </SaveAlertConfirmModal>}
-
-      {this.state.showModals.reviewRemovedModal && <SaveAlertConfirmModal
-        title="Remove review?"
-        buttonText= "Yes, remove"
-        onClose={() => this.closeModal('reviewRemovedModal')}
-        onConfirm={() => this.confirmModal('reviewRemovedModal')}>
-        <p>
-          {originalIssueNumberCopy}
-        </p>
-        <p>{processedInCaseflow ? removeCaseflowCopy : removeVbmsCopy}</p>
       </SaveAlertConfirmModal>}
 
       { this.state.showModals.unidentifiedIssueModal && <SaveAlertConfirmModal

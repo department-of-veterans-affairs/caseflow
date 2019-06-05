@@ -711,8 +711,6 @@ feature "Appeal Edit issues" do
           end
 
           click_edit_submit
-          expect(page).to have_content("Remove review?")
-          expect(page).to have_content("This review and all tasks associated with it will be removed.")
           click_intake_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")

@@ -456,14 +456,6 @@ feature "Supplemental Claim Edit issues" do
       expect(page).to_not have_content("Left knee granted")
       expect(page).to have_button("Save", disabled: true)
     end
-    
-    it "Allow save if no issues are selected" do
-      visit "supplemental_claims/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
-      
-      expect(page).to have_button("Save", disabled: false)
-    end
 
     scenario "shows error message if an update is in progress" do
       RequestIssuesUpdate.create!(

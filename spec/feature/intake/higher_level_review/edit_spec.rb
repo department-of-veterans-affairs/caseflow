@@ -1321,7 +1321,7 @@ feature "Higher Level Review Edit issues" do
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
       end
 
-      fscenario "remove all vbms decisions reviews" do
+      scenario "remove all vbms decisions reviews" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
         higher_level_review.request_issues.length.times do
@@ -1360,8 +1360,6 @@ feature "Higher Level Review Edit issues" do
         end
 
         click_edit_submit
-        expect(page).to have_content("Remove review?")
-        expect(page).to have_content("This review and all tasks associated with it will be removed.")
         click_intake_confirm
         sleep 1
 
