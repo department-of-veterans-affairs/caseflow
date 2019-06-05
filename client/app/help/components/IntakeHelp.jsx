@@ -15,7 +15,7 @@ class IntakeHelp extends React.Component {
         <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">
       Quick Reference Guide</a>. These items are provided to assist you as you access and use Intake. If you require
       further assistance after reviewing these items, please contact
-        <a href="https://yourit.va.gov/va" target="_blank" rel="noopener noreferrer">
+        <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">
         YourIT for support</a>. We look forward to assisting you.
       </p>
 
@@ -83,8 +83,10 @@ class IntakeHelp extends React.Component {
       <p><strong>To gain access to Intake, your Caseflow Administrator must submit a request including:</strong></p>
 
       <h3>User Access List Submission</h3>
-      <p>Email <a href="mailto: martina.jones@va.gov">Martina Jones</a> requesting access to Caseflow and provide a
-      list of users with credential information (Name, Email, Station, and User ID).</p>
+      <p>
+      Please contact <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a> requesting
+       access to Caseflow and provide a list of users with credential information (Name, Email, Station, and User ID).
+      </p>
 
       <h3>Users may require Documents Submission (If requested)</h3>
       <p>
@@ -118,7 +120,7 @@ class IntakeHelp extends React.Component {
       <h2 id="encounter-problems">7. What should I do if I encounter problems?</h2>
       <p>
       If you encounter any problems while using Intake, please contact
-        <a href="https://yourit.va.gov/va" target="_blank" rel="noopener noreferrer">YourIT for support</a>.
+        <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT for support</a>.
       </p>
 
       <h2 id="suggestions">8. How can I share my suggestions for improving Intake?</h2>
@@ -138,7 +140,7 @@ class IntakeHelp extends React.Component {
         <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">Quick Reference
       Guide</a>, or <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide
         </a>, please contact
-        <a href="https://yourit.va.gov/va" target="_blank" rel="noopener noreferrer">
+        <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">
         YourIT for support</a>. We look forward to assisting you.
       </p>
 
