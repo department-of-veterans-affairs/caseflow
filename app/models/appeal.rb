@@ -199,9 +199,6 @@ class Appeal < DecisionReview
     veteran_if_exists&.available_hearing_locations
   end
 
-  delegate :city,
-           :state, to: :appellant, prefix: true
-
   def regional_office
     nil
   end
