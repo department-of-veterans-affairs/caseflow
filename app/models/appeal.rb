@@ -29,60 +29,11 @@ class Appeal < DecisionReview
     validates_associated :claimants
   end
 
-  scope :join_aod_motions, lambda {
-    joins(claimants: :person)
-      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
-  }
-
-  scope :all_priority, lambda {
-    join_aod_motions
-      .where("advance_on_docket_motions.created_at > appeals.established_at")
-      .where("advance_on_docket_motions.granted = ?", true)
-      .or(join_aod_motions
-        .where("people.date_of_birth <= ?", 75.years.ago))
-      .group("appeals.id")
-  }
-
-  # rubocop:disable Metrics/LineLength
-  scope :all_nonpriority, lambda {
-    join_aod_motions
-      .where("people.date_of_birth > ?", 75.years.ago)
-      .group("appeals.id")
-      .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
-  }
-  # rubocop:enable Metrics/LineLength
-
-  scope :ready_for_distribution, lambda {
-    joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
-              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
-      .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
-              MailTask.blocking_subclasses, Task.closed_statuses, 0)
-  }
-
-  scope :non_ihp, lambda {
-    joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? then 1 end) = ?",
-              InformalHearingPresentationTask.name, 0)
-  }
-
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
       .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
               RootTask.name, Task.closed_statuses, 1)
-  }
-
-  scope :ordered_by_distribution_ready_date, lambda {
-    joins(:tasks)
-      .group("appeals.id")
-      .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
-  }
-
-  scope :priority_ordered_by_distribution_ready_date, lambda {
-    from(all_priority).ordered_by_distribution_ready_date
   }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
@@ -107,14 +58,6 @@ class Appeal < DecisionReview
     else
       LegacyAppeal.find_or_create_by_vacols_id(id)
     end
-  end
-
-  def self.nonpriority_decisions_per_year
-    appeal_ids = all_nonpriority
-      .joins(:decision_documents)
-      .where("decision_date > ?", 1.year.ago)
-      .select("appeals.id")
-    where(id: appeal_ids).count
   end
 
   def ui_hash
