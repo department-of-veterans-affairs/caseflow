@@ -745,11 +745,6 @@ class LegacyAppeal < ApplicationRecord
     location_code
   end
 
-  def assign_ro_and_update_ahls(new_ro)
-    update!(regional_office_key: new_ro)
-    va_dot_gov_address_validator.assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
-  end
-
   private
 
   def active_tasks
