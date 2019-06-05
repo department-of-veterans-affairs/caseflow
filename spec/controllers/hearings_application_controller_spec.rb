@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe HearingScheduleController, type: :controller do
+RSpec.describe HearingsApplicationController, type: :controller do
   context "when user is not authenticated" do
     it "redirects" do
       get :index
