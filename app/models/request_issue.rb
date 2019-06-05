@@ -525,6 +525,10 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  def contention
+    end_product_establishment.end_product.contentions.find { |c| c.id.to_s == contention_reference_id.to_s }
+  end
+
   private
 
   def limited_poa
