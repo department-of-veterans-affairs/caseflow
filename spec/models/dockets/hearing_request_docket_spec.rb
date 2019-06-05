@@ -205,6 +205,28 @@ describe HearingRequestDocket do
     end
   end
 
+  describe "#count" do
+    context "priority and readiness for distribution not specified" do
+      it "returns all hearing docket appeals" do
+        matching_all_conditions_except_priority_and_ready_for_distribution
+        non_priority_with_no_held_hearings
+        create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+
+        expect(HearingRequestDocket.new.count).to eq 3
+      end
+    end
+
+    context "priority: true and ready: true" do
+      it "only returns hearing docket appeals that are priority and ready for distribution" do
+        matching_all_conditions_except_priority_and_ready_for_distribution
+        non_priority_with_no_held_hearings
+        create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+
+        expect(HearingRequestDocket.new.count(priority: true, ready: true)).to eq 1
+      end
+    end
+  end
+
   private
 
   def create_appeals_that_should_not_be_returned_by_query
