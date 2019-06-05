@@ -56,12 +56,6 @@ class HearingAdminActionTask < GenericTask
       errors.add(:on_hold_duration, "has to be specified")
     end
   end
-
-  # HearingAdminActionTasks on old-style holds can be placed on new timed holds which will not reset the
-  # placed_on_hold_at value.
-  def task_just_placed_on_hold?
-    super || (on_timed_hold? && children.open.where.not(type: TimedHoldTask.name).empty?)
-  end
 end
 
 require_dependency "hearing_admin_action_contested_claimant_task"
