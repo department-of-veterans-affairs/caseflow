@@ -620,11 +620,6 @@ class Appeal < DecisionReview
     %w[supplemental_claim cavc]
   end
 
-  def assign_ro_and_update_ahls(new_ro)
-    update!(closest_regional_office: new_ro)
-    va_dot_gov_address_validator.assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
-  end
-
   private
 
   def most_recently_assigned_to_label(tasks)
