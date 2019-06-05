@@ -573,7 +573,7 @@ describe Task do
       end
 
       let(:user) { create(:user) }
-      let(:org) { AutoAssignOrg.create!(url: 'autoassign', name: 'AutoAssign', assignee: user) }
+      let(:org) { AutoAssignOrg.create!(url: "autoassign", name: "AutoAssign", assignee: user) }
 
       it "should create a child task when a task assigned to the organization is created" do
         expect(subject.children.length).to eq(1)
@@ -695,7 +695,7 @@ describe Task do
 
     it "returns and destroys related timers" do
       expect(TaskTimer.where(task_id: task_id).count).to eq(task_timer_count)
-      expect(task.task_timers).to eq(task_timers)
+      expect(task.task_timers.to_a).to match_array(task_timers)
 
       task.destroy!
       expect(TaskTimer.where(task_id: task_id).count).to eq(0)
