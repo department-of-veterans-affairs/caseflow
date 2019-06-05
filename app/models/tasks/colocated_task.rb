@@ -84,12 +84,14 @@ class ColocatedTask < Task
   end
 
   def change_type(params)
-    dup.tap do |dupe|
-      dupe.action = params[:action]
-      dupe.instructions = params[:instructions]
-      dupe.assigned_to = Colocated.singleton
-      dupe.save!
-    end
+    self.class.create!(
+      appeal: appeal,
+      parent: parent,
+      assigned_by: assigned_by,
+      action: params[:action],
+      instructions: params[:instructions],
+      assigned_to: Colocated.singleton
+    )
   end
 
   private

@@ -3,8 +3,6 @@
 class Tasks::ChangeTypeController < TasksController
   def update
     tasks = task.update_task_type(update_params)
-    tasks.each { |task_to_check| return invalid_record_error(task_to_check) unless task_to_check.valid? }
-
     tasks_to_return = (queue_class.new(user: current_user).tasks + tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }

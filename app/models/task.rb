@@ -171,19 +171,21 @@ class Task < ApplicationRecord
   end
 
   def update_task_type(params)
-    new_branch_task = first_ancestor_of_type.change_type(params)
-    new_child_task = new_branch_task.last_descendant_of_type
-    new_child_task.update!(status: status)
+    ActiveRecord::Base.transaction do
+      new_branch_task = first_ancestor_of_type.change_type(params)
+      new_child_task = new_branch_task.last_descendant_of_type
+      new_child_task.update!(status: status)
 
-    if assigned_to.is_a?(User) && new_child_task.assigned_to.is_a?(User) &&
-       parent.assigned_to_same_org?(new_child_task.parent)
-      new_child_task.update!(assigned_to: assigned_to)
+      if assigned_to.is_a?(User) && new_child_task.assigned_to.is_a?(User) &&
+         parent.assigned_to_same_org?(new_child_task.parent)
+        new_child_task.update!(assigned_to: assigned_to)
+      end
+
+      children.active.each { |child| child.update!(parent_id: last_descendant_of_type.id) }
+      first_ancestor_of_type.cancel_descendants
+
+      [first_ancestor_of_type.descendants, new_branch_task.first_ancestor_of_type.descendants].flatten
     end
-
-    children.active.each { |child| child.update!(parent_id: last_descendant_of_type.id) }
-    first_ancestor_of_type.cancel_descendants
-
-    [first_ancestor_of_type.descendants, new_branch_task.first_ancestor_of_type.descendants].flatten
   end
 
   def assigned_to_same_org?(task_to_check)
