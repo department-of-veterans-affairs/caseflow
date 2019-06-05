@@ -47,6 +47,37 @@ class OrganizationQueue extends React.PureComponent {
     this.props.clearCaseSelectSearch();
   }
 
+  columnsFromConfig = (columnDefs) => {
+    //
+  }
+
+  tabsFromConfig = (config) => {
+    return config.tabs.map((tabConfig) => {
+      return <React.Fragment>
+        <p className="cf-margin-top-0">{description}</p>
+        { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
+        <TaskTable
+          customColumns={this.columnsFromConfig(tabConfig.columns)}
+          tasks={tabConfig.tasks}
+        />
+      </React.Fragment>;
+    });
+  }
+
+  componentsFromConfig = (config) => {
+    const tabs = this.tabsFromConfig(config);
+
+    return <div>
+      <h1 {...fullWidth}>{config.table_title}</h1>
+      <QueueOrganizationDropdown organizations={this.props.organizations} />
+      <TabWindow
+        name="tasks-organization-queue"
+        tabs={tabs}
+        defaultPage={config.active_tab}
+      />
+    </div>;
+  }
+
   queueConfig = () => {
     return {
       table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),
@@ -68,7 +99,8 @@ class OrganizationQueue extends React.PureComponent {
             "daysWaitingColumn",
             "readerLinkColumn"
           ]),
-          allow_bulk_assign: allowBulkAssign(this.props.organizationName)
+          allow_bulk_assign: allowBulkAssign(this.props.organizationName),
+          tasks: this.props.unassignedTasks
         },
         // Assigned tasks tab.
         // Completed tasks tab.
@@ -139,6 +171,8 @@ class OrganizationQueue extends React.PureComponent {
         </React.Fragment>
       });
     }
+
+    // const body = this.componentsFromConfig(this.queueConfig());
 
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
