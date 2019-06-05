@@ -1024,14 +1024,6 @@ feature "Higher Level Review Edit issues" do
       expect(page).to have_button("Save", disabled: true)
     end
 
-    it "Does not allow save if no issues are selected" do
-      visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
-      click_remove_intake_issue("1")
-      click_remove_issue_confirmation
-
-      expect(page).to have_button("Save", disabled: true)
-    end
-
     scenario "shows error message if an update is in progress" do
       RequestIssuesUpdate.create!(
         review: higher_level_review,
@@ -1261,16 +1253,11 @@ feature "Higher Level Review Edit issues" do
 
   context "when remove decision reviews is enabled" do
     before do
-      FeatureToggle.enable!(:remove_decision_reviews, users: [current_user.css_id])
       OrganizationsUser.add_user_to_organization(current_user, non_comp_org)
 
       # skip the sync call since all edit requests require resyncing
       # currently, we're not mocking out vbms and bgs
       allow_any_instance_of(EndProductEstablishment).to receive(:sync!).and_return(nil)
-    end
-
-    after do
-      FeatureToggle.disable!(:remove_decision_reviews, users: [current_user.css_id])
     end
 
     let(:today) { Time.zone.now }
@@ -1334,7 +1321,7 @@ feature "Higher Level Review Edit issues" do
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
       end
 
-      scenario "remove all vbms decisions reviews" do
+      fscenario "remove all vbms decisions reviews" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         # remove all request issues
         higher_level_review.request_issues.length.times do
@@ -1343,8 +1330,6 @@ feature "Higher Level Review Edit issues" do
         end
 
         click_edit_submit
-        expect(page).to have_content("Remove review?")
-        expect(page).to have_content("This will remove the review and cancel all the End Products associated with it")
         click_intake_confirm
         expect(page).to have_content("Review Removed")
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
