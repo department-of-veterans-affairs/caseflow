@@ -1457,6 +1457,7 @@ feature "Higher Level Review Edit issues" do
       before do
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
+        allow(Fakes::VBMSService).to receive(:update_contention!).and_call_original
       end
 
       after do
@@ -1508,6 +1509,9 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Right Knee")
 
         click_button("Save")
+        expect(page).to have_current_path(
+          "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
+        )
         expect(RequestIssue.where(edited_description: "Right Knee")).to_not be_nil
       end
     end

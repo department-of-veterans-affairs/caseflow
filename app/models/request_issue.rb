@@ -429,7 +429,7 @@ class RequestIssue < ApplicationRecord
     return unless contention
 
     contention_to_update = contention
-    contention_to_update.text = edited_description
+    contention_to_update.text = Contention.new(edited_description).text
     VBMSService.update_contention!(contention_to_update)
     update!(contention_updated_at: Time.zone.now)
   end

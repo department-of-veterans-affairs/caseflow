@@ -303,6 +303,10 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def contention_for_object(for_object)
+    contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
+  end
+
   private
 
   def status_type
@@ -479,10 +483,6 @@ class EndProductEstablishment < ApplicationRecord
       contentions: contentions,
       user: user
     )
-  end
-
-  def contention_for_object(for_object)
-    contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
   end
 
   # These are values that need to be determined based on the source right before the end
