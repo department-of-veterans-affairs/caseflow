@@ -105,7 +105,7 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
           expect(response_body.first["attributes"]["instructions"]).to include new_instructions
           expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq task.assigned_to_id
           expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
-          expect(Task.find(response_body.first["id"]).parent_id).not_to eq task.parent_id
+          expect(response_body.first["attributes"]["appeal_id"]).to eq task.appeal_id
 
           new_parent_id = Task.find(response_body.first["id"]).parent_id
           new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
