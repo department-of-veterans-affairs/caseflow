@@ -394,7 +394,7 @@ describe Task do
 
           subject
 
-          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(timed_hold_task.reload.open?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
         end
       end
@@ -420,7 +420,7 @@ describe Task do
     context "when status is assigned" do
       let(:status) { Constants.TASK_STATUSES.assigned }
 
-      it "is active" do
+      it "is open" do
         expect(subject).to eq(true)
       end
     end
@@ -428,7 +428,7 @@ describe Task do
     context "when status is in_progress" do
       let(:status) { Constants.TASK_STATUSES.in_progress }
 
-      it "is active" do
+      it "is open" do
         expect(subject).to eq(true)
       end
     end
@@ -436,7 +436,7 @@ describe Task do
     context "when status is on_hold" do
       let(:status) { Constants.TASK_STATUSES.on_hold }
 
-      it "is active" do
+      it "is open" do
         expect(subject).to eq(true)
       end
     end
@@ -444,7 +444,7 @@ describe Task do
     context "when status is completed" do
       let(:status) { Constants.TASK_STATUSES.completed }
 
-      it "is not active" do
+      it "is not open" do
         expect(subject).to eq(false)
       end
     end
@@ -452,7 +452,7 @@ describe Task do
     context "when status is cancelled" do
       let(:status) { Constants.TASK_STATUSES.cancelled }
 
-      it "is not active" do
+      it "is not open" do
         expect(subject).to eq(false)
       end
     end
@@ -573,7 +573,7 @@ describe Task do
       end
 
       let(:user) { create(:user) }
-      let(:org) { AutoAssignOrg.create!(url: 'autoassign', name: 'AutoAssign', assignee: user) }
+      let(:org) { AutoAssignOrg.create!(url: "autoassign", name: "AutoAssign", assignee: user) }
 
       it "should create a child task when a task assigned to the organization is created" do
         expect(subject.children.length).to eq(1)
