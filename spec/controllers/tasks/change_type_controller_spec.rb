@@ -131,6 +131,42 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
           expect(parent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
           expect(grandparent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
         end
+
+        context "that needs reassigning" do
+          let(:new_task_type) { CongressionalInterestMailTask }
+
+          before do
+            OrganizationsUser.add_user_to_organization(create(:user), LitigationSupport.singleton)
+          end
+
+          it "should reassign the task when changing the type" do
+            subject
+
+            expect(response.status).to eq 200
+            response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
+            expect(response_body.length).to eq 5
+            expect(response_body.first["id"]).not_to eq task.id.to_s
+            expect(response_body.first["attributes"]["label"]).to eq new_task_type.label
+            expect(response_body.first["attributes"]["status"]).to eq task.status
+            expect(response_body.first["attributes"]["instructions"]).to include old_instructions
+            expect(response_body.first["attributes"]["instructions"]).to include new_instructions
+            expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq LitigationSupport.singleton.id
+            expect(response_body.first["attributes"]["assigned_to"]["type"]).to eq LitigationSupport.singleton.type
+            expect(response_body.first["attributes"]["assigned_by"]["pg_id"]).to eq task.assigned_by_id
+
+            new_parent_id = Task.find(response_body.first["id"]).parent_id
+            new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
+            expect(new_parent["id"]).not_to eq grandparent_task.id.to_s
+            expect(new_parent["attributes"]["label"]).to eq new_task_type.label
+            expect(new_parent["attributes"]["assigned_to"]["id"]).to eq grandparent_task.assigned_to_id
+            expect(new_parent["attributes"]["assigned_by"]["pg_id"]).to eq grandparent_task.assigned_by_id
+            expect(new_parent["attributes"]["appeal_id"]).to eq grandparent_task.appeal_id
+
+            expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+            expect(parent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+            expect(grandparent_task.reload.status).to eq Constants.TASK_STATUSES.cancelled
+          end
+        end
       end
     end
 
