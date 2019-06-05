@@ -388,14 +388,14 @@ describe Task do
       context "instructions are updated" do
         subject { task.update!(instructions: ["These are my new instructions"]) }
 
-        it "cancels the child timed hold task" do
+        it "doesn not cancel the child timed hold task" do
           expect(timed_hold_task.reload.open?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
 
           subject
 
-          expect(timed_hold_task.reload.cancelled?).to be_truthy
-          expect(task.reload.on_hold?).to be_falsey
+          expect(timed_hold_task.reload.open?).to be_truthy
+          expect(task.reload.on_hold?).to be_truthy
         end
       end
     end
@@ -420,7 +420,7 @@ describe Task do
     context "when status is assigned" do
       let(:status) { Constants.TASK_STATUSES.assigned }
 
-      it "is active" do
+      it "is open" do
         expect(subject).to eq(true)
       end
     end
@@ -428,7 +428,7 @@ describe Task do
     context "when status is in_progress" do
       let(:status) { Constants.TASK_STATUSES.in_progress }
 
-      it "is active" do
+      it "is open" do
         expect(subject).to eq(true)
       end
     end
@@ -436,7 +436,7 @@ describe Task do
     context "when status is on_hold" do
       let(:status) { Constants.TASK_STATUSES.on_hold }
 
-      it "is active" do
+      it "is open" do
         expect(subject).to eq(true)
       end
     end
@@ -444,7 +444,7 @@ describe Task do
     context "when status is completed" do
       let(:status) { Constants.TASK_STATUSES.completed }
 
-      it "is not active" do
+      it "is not open" do
         expect(subject).to eq(false)
       end
     end
@@ -452,7 +452,7 @@ describe Task do
     context "when status is cancelled" do
       let(:status) { Constants.TASK_STATUSES.cancelled }
 
-      it "is not active" do
+      it "is not open" do
         expect(subject).to eq(false)
       end
     end
