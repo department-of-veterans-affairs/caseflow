@@ -128,7 +128,7 @@ module Asyncable
 
     update!(
       self.class.last_submitted_at_column => when_to_start,
-      self.class.submitted_at_column => when_to_start,
+      self.class.submitted_at_column => Time.zone.now,
       self.class.processed_at_column => nil
     )
   end
@@ -183,7 +183,7 @@ module Asyncable
   end
 
   def submitted_and_ready?
-    !!self[self.class.submitted_at_column] && self[self.class.submitted_at_column] <= Time.zone.now
+    submitted? && self[self.class.last_submitted_at_column] <= Time.zone.now
   end
 
   def submitted_not_processed?
