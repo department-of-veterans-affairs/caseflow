@@ -226,9 +226,6 @@ RSpec.feature "Judge assignment to attorney and judge" do
   end
 
   describe "requesting cases (automatic case distribution)" do
-    before { FeatureToggle.enable!(:automatic_case_distribution) }
-    after { FeatureToggle.disable!(:automatic_case_distribution) }
-
     before do
       allow_any_instance_of(DirectReviewDocket)
         .to receive(:nonpriority_receipts_per_year)
