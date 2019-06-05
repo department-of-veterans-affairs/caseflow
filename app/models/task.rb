@@ -31,9 +31,11 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
-  scope :active, -> { where.not(status: inactive_statuses) }
+  scope :active, -> { where(status: active_statuses) }
 
-  scope :inactive, -> { where(status: inactive_statuses) }
+  scope :open, -> { where(status: open_statuses) }
+
+  scope :closed, -> { where(status: closed_statuses) }
 
   scope :not_tracking, -> { where.not(type: TrackVeteranTask.name) }
 
@@ -51,18 +53,26 @@ class Task < ApplicationRecord
     self.class.name.titlecase
   end
 
-  def self.inactive_statuses
+  def self.closed_statuses
     [Constants.TASK_STATUSES.completed, Constants.TASK_STATUSES.cancelled]
+  end
+
+  def self.active_statuses
+    [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+  end
+
+  def self.open_statuses
+    active_statuses.concat([Constants.TASK_STATUSES.on_hold])
   end
 
   # When a status is "active" we expect properties of the task to change. When a task is not "active" we expect that
   # properties of the task will not change.
-  def active?
-    !self.class.inactive_statuses.include?(status)
+  def open?
+    !self.class.closed_statuses.include?(status)
   end
 
-  def active_with_no_children?
-    active? && children.empty?
+  def open_with_no_children?
+    open? && children.empty?
   end
 
   # available_actions() returns an array of options selected by
@@ -92,7 +102,7 @@ class Task < ApplicationRecord
   end
 
   def actions_allowable?(user)
-    return false if !active?
+    return false if !open?
 
     # Users who are assigned a subtask of an organization don't have actions on the organizational task.
     return false if assigned_to.is_a?(Organization) && children.any? { |child| child.assigned_to == user }
@@ -117,7 +127,7 @@ class Task < ApplicationRecord
   end
 
   def active_child_timed_hold_task
-    children.active.find_by(type: TimedHoldTask.name)
+    children.open.find_by(type: TimedHoldTask.name)
   end
 
   def cancel_timed_hold
@@ -134,11 +144,11 @@ class Task < ApplicationRecord
   end
 
   def self.recently_closed
-    inactive.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+    closed.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
   end
 
   def self.incomplete_or_recently_closed
-    active.or(recently_closed)
+    open.or(recently_closed)
   end
 
   def self.create_many_from_params(params_array, current_user)
@@ -273,7 +283,7 @@ class Task < ApplicationRecord
 
     update!(status: Constants.TASK_STATUSES.cancelled)
 
-    children.active.each { |t| t.update!(parent_id: sibling.id) }
+    children.open.each { |t| t.update!(parent_id: sibling.id) }
 
     [sibling, self, sibling.children].flatten
   end
@@ -316,7 +326,7 @@ class Task < ApplicationRecord
   def cancel_task_and_child_subtasks
     # Cancel all descendants at the same time to avoid after_update hooks marking some tasks as completed.
     descendant_ids = descendants.pluck(:id)
-    Task.active.where(id: descendant_ids).update_all(
+    Task.open.where(id: descendant_ids).update_all(
       status: Constants.TASK_STATUSES.cancelled,
       closed_at: Time.zone.now
     )
@@ -370,7 +380,7 @@ class Task < ApplicationRecord
   end
 
   def task_just_closed?
-    saved_change_to_attribute?("status") && !active?
+    saved_change_to_attribute?("status") && !open?
   end
 
   def task_just_closed_and_has_parent?
@@ -378,7 +388,7 @@ class Task < ApplicationRecord
   end
 
   def update_status_if_children_tasks_are_complete(child_task)
-    if children.any? && children.active.empty? && on_hold?
+    if children.any? && children.open.empty? && on_hold?
       if assigned_to.is_a?(Organization) && cascade_closure_from_child_task?(child_task)
         return update!(status: Constants.TASK_STATUSES.completed)
       end

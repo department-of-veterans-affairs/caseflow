@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 
-import BulkAssignModal from './components/BulkAssignModal';
+import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
 import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
   taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
@@ -107,10 +107,10 @@ class OrganizationQueue extends React.PureComponent {
       {tasksAssignedByBulk.assignedUser &&
         <Alert
           message="Please go to your individual queue to see your self assigned tasks"
-          title={`You have assigned
+          title={`You have bulk assigned
             ${tasksAssignedByBulk.numberOfTasks}
             ${tasksAssignedByBulk.taskType.replace(/([a-z])([A-Z])/g, '$1 $2')}
-            task(s) to your individual queue`}
+            task(s)`}
           type="success"
           styling={alertStyling} />
       }
@@ -167,7 +167,7 @@ const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole
 
   return (<React.Fragment>
     <p className="cf-margin-top-0">{description}</p>
-    { organizationName === 'Hearing Admin' && <BulkAssignModal tasks={tasks} /> }
+    { organizationName === 'Hearing Management' && <BulkAssignButton /> }
     <TaskTable
       customColumns={columns}
       tasks={tasks}
@@ -188,12 +188,11 @@ const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, user
     docketNumberColumn(tasks, false), daysWaitingColumn(false)];
   }
 
-  return (<React.Fragment>
+  return <React.Fragment>
     <p className="cf-margin-top-0">{description}</p>
     <TaskTable
       customColumns={columns}
       tasks={tasks}
     />
-    }
-  </React.Fragment>);
+  </React.Fragment>;
 };

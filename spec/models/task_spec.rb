@@ -342,7 +342,7 @@ describe Task do
         subject { task.update!(status: Constants.TASK_STATUSES.completed) }
 
         it "cancels the child timed hold task" do
-          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(timed_hold_task.reload.open?).to be_truthy
 
           subject
 
@@ -370,7 +370,7 @@ describe Task do
         end
 
         it "cancels the child timed hold task" do
-          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(timed_hold_task.reload.open?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
           expect(task.reload.children.count).to eq 1
 
@@ -379,7 +379,7 @@ describe Task do
           expect(task.reload.children.count).to eq 2
           transcription_task = task.reload.children.find { |child| child.is_a?(TranscriptionTask) }
           expect(transcription_task).to_not be_nil
-          expect(transcription_task.active?).to be_truthy
+          expect(transcription_task.open?).to be_truthy
           expect(timed_hold_task.reload.cancelled?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
         end
@@ -389,7 +389,7 @@ describe Task do
         subject { task.update!(instructions: ["These are my new instructions"]) }
 
         it "doesn not cancel the child timed hold task" do
-          expect(timed_hold_task.reload.active?).to be_truthy
+          expect(timed_hold_task.reload.open?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
 
           subject
@@ -412,10 +412,10 @@ describe Task do
     end
   end
 
-  describe ".active?" do
+  describe ".open?" do
     let(:status) { nil }
     let(:task) { FactoryBot.create(:generic_task, status: status) }
-    subject { task.active? }
+    subject { task.open? }
 
     context "when status is assigned" do
       let(:status) { Constants.TASK_STATUSES.assigned }
@@ -561,7 +561,7 @@ describe Task do
   end
 
   describe ".create_and_auto_assign_child_task" do
-    subject { Task.create!(assigned_to: org, appeal: FactoryBot.create(:appeal), type: Task.name) }
+    subject { create(:task, assigned_to: org, appeal: create(:appeal)) }
 
     context "when the task is assigned to an organization that automatically assigns tasks to its members" do
       class AutoAssignOrg < Organization
@@ -572,8 +572,8 @@ describe Task do
         end
       end
 
-      let(:user) { FactoryBot.create(:user) }
-      let(:org) { AutoAssignOrg.create(assignee: user) }
+      let(:user) { create(:user) }
+      let(:org) { AutoAssignOrg.create!(url: 'autoassign', name: 'AutoAssign', assignee: user) }
 
       it "should create a child task when a task assigned to the organization is created" do
         expect(subject.children.length).to eq(1)

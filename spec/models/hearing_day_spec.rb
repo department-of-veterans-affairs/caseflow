@@ -145,7 +145,7 @@ describe HearingDay do
 
           updated_vacols_child_hearing = vacols_child_hearing.reload
           expect(updated_vacols_child_hearing[:room]).to eql "5"
-          expect(updated_vacols_child_hearing.judge_id).to eql judge.vacols_attorney_id
+          expect(updated_vacols_child_hearing[:board_member]).to eql judge.vacols_attorney_id
           updated_caseflow_child_hearing = caseflow_child_hearing.reload
           expect(updated_caseflow_child_hearing.room).to eql "5"
           expect(updated_caseflow_child_hearing.judge).to eql judge
@@ -429,6 +429,55 @@ describe HearingDay do
         expect(subject[0]["readable_request_type"]).to eq Hearing::HEARING_TYPES[:C]
         expect(subject[0]["hearings"][0]["appeal_id"]).to eq appeal.id
       end
+    end
+  end
+
+  describe ".upcoming_days_for_vso_user" do
+    let!(:hearing_day_one) { create(:hearing_day, judge: create(:user, full_name: "Leocadia Jarecki")) }
+    let!(:hearing_day_two) { create(:hearing_day, judge: create(:user, full_name: "Ayame Jouda")) }
+    let!(:hearing_day_three) { create(:hearing_day, judge: create(:user, full_name: "Clovis Jolla")) }
+    let!(:hearing_day_four) { create(:hearing_day, judge: create(:user, full_name: "Geraldine Juniel")) }
+    let!(:hearing_one) { create(:hearing, :with_tasks, hearing_day: hearing_day_one) }
+    let!(:case_hearing_two) { create(:case_hearing, vdkey: hearing_day_two.id) }
+    let!(:hearing_two) { create(:legacy_hearing, hearing_day: hearing_day_two, case_hearing: case_hearing_two) }
+    let!(:case_hearing_four) { create(:case_hearing, vdkey: hearing_day_four.id) }
+    let!(:hearing_three) { create(:hearing, :with_tasks, hearing_day: hearing_day_three) }
+    let!(:hearing_four) { create(:legacy_hearing, hearing_day: hearing_day_four, case_hearing: case_hearing_four) }
+    let!(:vso_participant_id) { "789" }
+    let!(:vso) { create(:vso, participant_id: vso_participant_id) }
+    let!(:current_user) { User.authenticate!(css_id: "VSO_USER", roles: ["VSO"]) }
+    let!(:track_veteran_task_one) { create(:track_veteran_task, appeal: hearing_one.appeal, assigned_to: vso) }
+    let!(:track_veteran_task_two) { create(:track_veteran_task, appeal: hearing_two.appeal, assigned_to: vso) }
+    let!(:track_veteran_task_four) { create(:track_veteran_task, appeal: hearing_four.appeal, assigned_to: vso) }
+    let(:start_date) { Time.zone.now + 1.day - 1.month }
+    let(:end_date) { Time.zone.now - 1.day + 1.year }
+    let!(:vso_participant_ids) do
+      [
+        {
+          legacy_poa_cd: "070",
+          nm: "VIETNAM VETERANS OF AMERICA",
+          org_type_nm: "POA National Organization",
+          ptcpnt_id: vso_participant_id
+        }
+      ]
+    end
+
+    subject { HearingDay.upcoming_days_for_vso_user(start_date, end_date, current_user) }
+
+    before do
+      stub_const("BGSService", ExternalApi::BGSService)
+      RequestStore[:current_user] = current_user
+
+      allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
+        .with(css_id: current_user.css_id, station_id: current_user.station_id).and_return(vso_participant_id)
+      allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
+        .with(vso_participant_id).and_return(vso_participant_ids)
+    end
+
+    it "only returns hearing days with VSO assigned hearings" do
+      expect(subject.count).to eq 3
+      expect(HearingDay.count).to eq 4
+      expect(subject.pluck(:id)).to match_array [hearing_day_one.id, hearing_day_two.id, hearing_day_four.id]
     end
   end
 end

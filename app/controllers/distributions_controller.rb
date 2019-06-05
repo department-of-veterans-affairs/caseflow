@@ -6,8 +6,6 @@ class DistributionsController < ApplicationController
   end
 
   def new
-    return render_403_error(:feature_not_enabled) unless feature_enabled?
-
     distribution = Distribution.create!(judge: current_user)
     enqueue_distribution_job(distribution)
     render_single(distribution)
@@ -86,12 +84,6 @@ class DistributionsController < ApplicationController
         "title": "Forbidden",
         "detail": "You don't have permission to access this distribution."
       }
-    when :feature_not_enabled
-      {
-        "error": error,
-        "title": "Automatic case distribution not enabled",
-        "detail": "The automatic case distribution feature has not yet been enabled for you."
-      }
     else
       {
         "error": error,
@@ -99,10 +91,6 @@ class DistributionsController < ApplicationController
         "detail": "Distribution request is invalid."
       }
     end
-  end
-
-  def feature_enabled?
-    FeatureToggle.enabled?(:automatic_case_distribution, user: current_user)
   end
 
   def pending_distribution

@@ -82,7 +82,7 @@ class ColocatedTask < Task
   end
 
   def actions_available?(_user)
-    active?
+    open?
   end
 
   private
@@ -117,7 +117,7 @@ class ColocatedTask < Task
 
   def update_location_in_vacols
     if saved_change_to_status? &&
-       !active? &&
+       !open? &&
        all_tasks_closed_for_appeal? &&
        appeal.is_a?(LegacyAppeal) &&
        appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
@@ -144,7 +144,7 @@ class ColocatedTask < Task
   end
 
   def all_tasks_closed_for_appeal?
-    appeal.tasks.active.where(type: ColocatedTask.name).none?
+    appeal.tasks.open.where(type: ColocatedTask.name).none?
   end
 
   def on_hold_duration_is_set

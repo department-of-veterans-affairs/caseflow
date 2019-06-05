@@ -194,6 +194,13 @@ class Fakes::VBMSService
     true
   end
 
+  def self.update_contention!(contention)
+    Rails.logger.info("Submitting updated contention request to VBMS...")
+    Rails.logger.info("Contention: #{contention.inspect}")
+
+    contention
+  end
+
   # Used in test to clean fake VBMS state.
   def self.clean!
     self.document_records = nil

@@ -27,7 +27,7 @@ RSpec.feature "Hearings tasks workflows" do
 
     it "closes current branch of task tree and starts a new one" do
       expect(distribution_task.children.count).to eq(1)
-      expect(distribution_task.children.active.count).to eq(1)
+      expect(distribution_task.children.open.count).to eq(1)
 
       visit("/queue/appeals/#{appeal.uuid}")
       click_dropdown(text: Constants.TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.label)
@@ -36,9 +36,9 @@ RSpec.feature "Hearings tasks workflows" do
       expect(page).to have_content("Success")
 
       expect(distribution_task.children.count).to eq(2)
-      expect(distribution_task.children.active.count).to eq(1)
+      expect(distribution_task.children.open.count).to eq(1)
 
-      new_parent_hearing_task = distribution_task.children.active.first
+      new_parent_hearing_task = distribution_task.children.open.first
       expect(new_parent_hearing_task).to be_a(HearingTask)
       expect(new_parent_hearing_task.children.first).to be_a(ScheduleHearingTask)
 
@@ -90,6 +90,32 @@ RSpec.feature "Hearings tasks workflows" do
           end
         end
       end
+
+      describe "Bulk assign hearing tasks" do
+        def fill_in_and_submit_bulk_assign_modal
+          options = find_all("option")
+          assign_to = options[2]
+          assign_to.click
+          task_type = options[8]
+          task_type.click
+          number_of_tasks = options[10]
+          number_of_tasks.click
+          submit = all("button", text: "Assign Tasks")[0]
+          submit.click
+        end
+
+        it "is able to bulk assign tasks for the hearing management org" do
+          3.times do
+            FactoryBot.create(:no_show_hearing_task)
+          end
+          success_msg = "You have bulk assigned 4 No Show Hearing Task task(s)"
+          visit("/organizations/hearing-management")
+          click_button(text: "Assign Tasks")
+          fill_in_and_submit_bulk_assign_modal
+          expect(page).to have_content(success_msg)
+          expect(page).to have_content("Assigned (4)")
+        end
+      end
     end
   end
 
@@ -132,7 +158,7 @@ RSpec.feature "Hearings tasks workflows" do
           mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
           expect(Task.count).to eq(caseflow_task_count_before)
-          expect(Task.active.where.not(type: RootTask.name).count).to eq(0)
+          expect(Task.open.where.not(type: RootTask.name).count).to eq(0)
 
           # Re-find the appeal so we re-fetch information from VACOLS.
           refreshed_appeal = LegacyAppeal.find(appeal.id)
@@ -147,7 +173,7 @@ RSpec.feature "Hearings tasks workflows" do
           mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
           expect(Task.count).to eq(caseflow_task_count_before)
-          expect(Task.active.where.not(type: RootTask.name).count).to eq(0)
+          expect(Task.open.where.not(type: RootTask.name).count).to eq(0)
 
           # Re-find the appeal so we re-fetch information from VACOLS.
           refreshed_appeal = LegacyAppeal.find(appeal.id)
@@ -172,7 +198,7 @@ RSpec.feature "Hearings tasks workflows" do
             mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
             # DispositionTask has been closed and no IHP tasks have been created for this appeal.
-            expect(parent_hearing_task.reload.children.active.count).to eq(0)
+            expect(parent_hearing_task.reload.children.open.count).to eq(0)
             expect(InformalHearingPresentationTask.count).to eq(0)
 
             expect(distribution_task.reload.ready_for_distribution?).to eq(true)
@@ -186,8 +212,8 @@ RSpec.feature "Hearings tasks workflows" do
             mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
             # DispositionTask has been closed but IHP task has been created for this appeal.
-            expect(parent_hearing_task.parent.reload.children.active.count).to eq(1)
-            expect(parent_hearing_task.parent.children.active.first).to be_a(InformalHearingPresentationTask)
+            expect(parent_hearing_task.parent.reload.children.open.count).to eq(1)
+            expect(parent_hearing_task.parent.children.open.first).to be_a(InformalHearingPresentationTask)
 
             expect(distribution_task.reload.ready_for_distribution?).to eq(false)
           end
@@ -199,7 +225,7 @@ RSpec.feature "Hearings tasks workflows" do
           mark_complete_and_verify_status(appeal, page, no_show_hearing_task)
 
           # DispositionTask has been closed and no IHP tasks have been created for this appeal.
-          expect(parent_hearing_task.reload.children.active.count).to eq(0)
+          expect(parent_hearing_task.reload.children.open.count).to eq(0)
           expect(InformalHearingPresentationTask.count).to eq(0)
 
           expect(distribution_task.reload.ready_for_distribution?).to eq(true)
