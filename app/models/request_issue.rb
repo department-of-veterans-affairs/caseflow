@@ -414,7 +414,24 @@ class RequestIssue < ApplicationRecord
   end
 
   def save_edit_contention_text!(new_description)
-    update!(edited_description: new_description)
+    update!(edited_description: new_description, contention_updated_at: nil)
+  end
+
+  def contention
+    return unless contention_reference_id
+
+    end_product_establishment.contention_for_object(self)
+  end
+
+  def update_contention_text_in_vbms!
+    return unless edited_description
+    return unless contention_updated_at.nil?
+    return unless contention
+
+    contention_to_update = contention
+    contention_to_update.text = edited_description
+    VBMSService.update_contention!(contention_to_update)
+    update!(contention_updated_at: Time.zone.now)
   end
 
   def remove!
