@@ -109,7 +109,7 @@ RSpec.feature "Quality Review worflow" do
       find(".Select-control", text: "Select an action", match: :first).click
       find("div", class: "Select-option", text: Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h[:label]).click
 
-      expect(dropdown_selected_value(find(".cf-modal-body"))).to eq
+      expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
       click_on "Submit"
 
       expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
@@ -192,7 +192,7 @@ RSpec.feature "Quality Review worflow" do
       # ensure no duplicate org tasks
       page.go_back
 
-      assert_text("QualityReviewTask", count: 1)
+      page.find("table#case-timeline-table").assert_text("QualityReviewTask", count: 1)
     end
   end
 end
