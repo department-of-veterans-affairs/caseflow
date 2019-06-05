@@ -58,33 +58,11 @@ class HearingAdminActionTask < GenericTask
   end
 end
 
-class HearingAdminActionVerifyPoaTask < HearingAdminActionTask
-  def self.label
-    "Verify power of attorney"
-  end
-end
-class HearingAdminActionIncarceratedVeteranTask < HearingAdminActionTask
-  def self.label
-    "Veteran is incarcerated"
-  end
-end
-class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
-  def self.label
-    "Contested claimant issue"
-  end
-end
-class HearingAdminActionMissingFormsTask < HearingAdminActionTask
-  def self.label
-    "Missing forms"
-  end
-end
-class HearingAdminActionFoiaPrivacyRequestTask < HearingAdminActionTask
-  def self.label
-    "FOIA/Privacy request"
-  end
-end
-class HearingAdminActionOtherTask < HearingAdminActionTask
-  def self.label
-    "Other"
-  end
-end
+require_dependency "hearing_admin_action_contested_claimant_task"
+require_dependency "hearing_admin_action_foia_privacy_request_task"
+require_dependency "hearing_admin_action_foreign_veteran_case_task"
+require_dependency "hearing_admin_action_incarcerated_veteran_task"
+require_dependency "hearing_admin_action_missing_forms_task"
+require_dependency "hearing_admin_action_other_task"
+require_dependency "hearing_admin_action_verify_address_task"
+require_dependency "hearing_admin_action_verify_poa_task"

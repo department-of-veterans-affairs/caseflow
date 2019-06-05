@@ -528,19 +528,19 @@ RSpec.describe TasksController, type: :controller do
         [
           {
             "instructions": incarcerated_instructions,
-            "type": "HearingAdminActionIncarceratedVeteranTask",
+            "type": HearingAdminActionIncarceratedVeteranTask.name,
             "external_id": appeal.external_id,
             "parent_id": schedule_hearing_task.id.to_s
           },
           {
             "instructions": contested_instructions_1,
-            "type": "HearingAdminActionContestedClaimantTask",
+            "type": HearingAdminActionContestedClaimantTask.name,
             "external_id": appeal.external_id,
             "parent_id": schedule_hearing_task.id.to_s
           },
           {
             "instructions": contested_instructions_2,
-            "type": "HearingAdminActionContestedClaimantTask",
+            "type": HearingAdminActionContestedClaimantTask.name,
             "external_id": appeal.external_id,
             "parent_id": schedule_hearing_task.id.to_s
           }

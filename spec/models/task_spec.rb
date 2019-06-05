@@ -695,7 +695,7 @@ describe Task do
 
     it "returns and destroys related timers" do
       expect(TaskTimer.where(task_id: task_id).count).to eq(task_timer_count)
-      expect(task.task_timers).to eq(task_timers)
+      expect(task.task_timers.to_a).to eq(task_timers)
 
       task.destroy!
       expect(TaskTimer.where(task_id: task_id).count).to eq(0)
