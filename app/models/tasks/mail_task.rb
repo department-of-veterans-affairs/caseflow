@@ -52,7 +52,7 @@ class MailTask < GenericTask
       if [:assigned_to_type, :assigned_to_id].all? { |key| params.key?(key) }
         super
       else
-        default_assignee(parent, params)
+        default_assignee(parent)
       end
     end
 

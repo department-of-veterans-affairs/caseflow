@@ -9,7 +9,7 @@ class PrivacyActRequestMailTask < MailTask
     COPY::PRIVACY_ACT_REQUEST_MAIL_TASK_LABEL
   end
 
-  def self.default_assignee(_parent, _params)
+  def self.default_assignee(_parent)
     PrivacyTeam.singleton
   end
 end
