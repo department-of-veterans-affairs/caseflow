@@ -174,7 +174,6 @@ class Task < ApplicationRecord
     multi_transaction do
       new_branch_task = first_ancestor_of_type.create_twin_of_type(params)
       new_child_task = new_branch_task.last_descendant_of_type
-      new_child_task.update!(status: status)
 
       if assigned_to.is_a?(User) && new_child_task.assigned_to.is_a?(User) &&
          parent.assigned_to_same_org?(new_child_task.parent)
