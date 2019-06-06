@@ -220,6 +220,7 @@ class Appeal < DecisionReview
            :last_name,
            :middle_name,
            :name_suffix,
+           :address_line_1,
            :city,
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
