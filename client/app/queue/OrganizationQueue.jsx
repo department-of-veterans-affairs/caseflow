@@ -39,7 +39,7 @@ const includeTrackingTasksTab = (organizationIsVso) => organizationIsVso;
 
 const allowBulkAssign = (organizationName) => (organizationName === 'Hearing Management');
 
-const showRegionalOfficeInQueue = (organizationName) => 
+const showRegionalOfficeInQueue = (organizationName) =>
   (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin');
 
 class OrganizationQueue extends React.PureComponent {
@@ -48,12 +48,13 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   columnsFromConfig = (columnDefs) => {
-    //
+
   }
 
   tabsFromConfig = (config) => {
     return config.tabs.map((tabConfig) => {
-      return <React.Fragment>
+      return
+      <React.Fragment>
         <p className="cf-margin-top-0">{description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
         <TaskTable
@@ -81,6 +82,7 @@ class OrganizationQueue extends React.PureComponent {
   queueConfig = () => {
     return {
       table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),
+
       active_tab: 0, // TODO: This needs to respond to whether we have the tracking tasks tab or not.
       tabs: [
         // Tracking tasks tab.
