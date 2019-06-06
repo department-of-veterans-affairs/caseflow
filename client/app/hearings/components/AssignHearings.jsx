@@ -94,7 +94,7 @@ export default class AssignHearings extends React.Component {
       <React.Fragment>
         {<UpcomingHearingDaysNav
           upcomingHearingDays={upcomingHearingDays}
-          selectedHearingDay={selectedHearingDay || {}}
+          selectedHearingDay={selectedHearingDay}
           onSelectedHearingDayChange={onSelectedHearingDayChange} />
         }
         {appealsReadyForHearing &&
