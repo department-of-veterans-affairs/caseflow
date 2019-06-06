@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import ApiUtil from '../../../util/ApiUtil';
-import { regionalOfficeCity } from '../../../queue/utils';
 
 import {
   RegionalOfficeDropdown,
@@ -80,6 +79,7 @@ class AssignHearingForm extends React.Component {
     const { appeal, values, initialRegionalOffice, initialHearingDate } = this.props;
     const { regionalOffice, hearingLocation, hearingDay, scheduledTimeString } = values;
     const availableHearingLocations = _.orderBy(appeal.availableHearingLocations || [], ['distance'], ['asc']);
+    const dynamic = regionalOffice !== appeal.closestRegionalOffice || _.isEmpty(appeal.availableHearingLocations);
 
     return (
       <div>
@@ -94,8 +94,7 @@ class AssignHearingForm extends React.Component {
             key={`hearingLocation__${regionalOffice}`}
             regionalOffice={regionalOffice}
             appealId={appeal.externalId}
-            dynamic={regionalOffice !== regionalOfficeCity(appeal) ||
-              _.isEmpty(appeal.availableHearingLocations)}
+            dynamic={dynamic}
             staticHearingLocations={availableHearingLocations}
             value={hearingLocation}
             onChange={(value) => this.onChange({ hearingLocation: value })}
