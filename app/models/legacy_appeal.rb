@@ -69,6 +69,21 @@ class LegacyAppeal < ApplicationRecord
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
                 :created_at, :document_id, :assigned_by, :updated_at, :attorney_id
 
+  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at,
+           to: :document_fetcher
+
+  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex,
+           to: :veteran,
+           prefix: true,
+           allow_nil: true
+
+  # NOTE: we cannot currently match end products to a specific appeal.
+  delegate :end_products,
+           to: :veteran
+
+  delegate :vacols_representatives,
+           to: :case_record
+
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
   end
@@ -150,9 +165,6 @@ class LegacyAppeal < ApplicationRecord
     @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
   end
 
-  delegate :documents, :number_of_documents,
-           :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
-
   def number_of_documents_after_certification
     return 0 unless certification_date
 
@@ -218,20 +230,6 @@ class LegacyAppeal < ApplicationRecord
   def veteran_ssn
     vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
   end
-
-  delegate :address_line_1,
-           :address_line_2,
-           :address_line_3,
-           :city,
-           :state,
-           :zip,
-           :country,
-           :age,
-           :sex,
-           to: :veteran, prefix: true, allow_nil: true
-
-  # NOTE: we cannot currently match end products to a specific appeal.
-  delegate :end_products, to: :veteran
 
   def congressional_interest_addresses
     case_record.mail.map(&:congressional_address)
@@ -332,8 +330,6 @@ class LegacyAppeal < ApplicationRecord
       end
     end
   end
-
-  delegate :vacols_representatives, to: :case_record
 
   def representatives
     Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
