@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "rails_helper"
-require "mail_task"
 
 RSpec.feature "MailTasks" do
   let(:user) { FactoryBot.create(:user) }

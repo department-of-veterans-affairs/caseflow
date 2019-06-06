@@ -70,10 +70,6 @@ class Hearing < ApplicationRecord
     HEARING_TYPES[request_type.to_sym]
   end
 
-  def master_record
-    false
-  end
-
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
       task.type == TrackVeteranTask.name &&
@@ -112,7 +108,9 @@ class Hearing < ApplicationRecord
   end
 
   def claimant_id
-    appeal.appellant.id
+    return nil if appeal.appellant.nil?
+
+    Person.find_by(participant_id: appeal.appellant.participant_id).id
   end
 
   def advance_on_docket_motion

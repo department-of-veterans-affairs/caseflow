@@ -17,12 +17,11 @@ class Task < ApplicationRecord
 
   before_create :set_assigned_at
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
-  after_create :put_parent_on_hold
+  after_create :tell_parent_task_child_task_created
 
   before_update :set_timestamps
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
-  after_update :cancel_timed_hold, unless: :task_just_placed_on_hold?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -282,6 +281,11 @@ class Task < ApplicationRecord
     update_status_if_children_tasks_are_complete(child_task)
   end
 
+  def when_child_task_created(child_task)
+    cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
+    update!(status: :on_hold) if !on_hold?
+  end
+
   def task_is_assigned_to_user_within_organization?(user)
     parent&.assigned_to.is_a?(Organization) &&
       assigned_to.is_a?(User) &&
@@ -411,7 +415,13 @@ class Task < ApplicationRecord
     parent.when_child_task_completed(self)
   end
 
-  def update_children_status_after_closed; end
+  def tell_parent_task_child_task_created
+    parent&.when_child_task_created(self)
+  end
+
+  def update_children_status_after_closed
+    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
 
   def task_just_closed?
     saved_change_to_attribute?("status") && !open?
@@ -419,10 +429,6 @@ class Task < ApplicationRecord
 
   def task_just_closed_and_has_parent?
     task_just_closed? && parent
-  end
-
-  def task_just_placed_on_hold?
-    saved_change_to_attribute?(:placed_on_hold_at)
   end
 
   def update_status_if_children_tasks_are_complete(child_task)
@@ -441,10 +447,6 @@ class Task < ApplicationRecord
 
   def set_assigned_at
     self.assigned_at = created_at unless assigned_at
-  end
-
-  def put_parent_on_hold
-    parent&.update(status: :on_hold)
   end
 
   def set_timestamps

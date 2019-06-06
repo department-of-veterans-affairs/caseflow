@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Hearings::AppealsController < HearingsController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_edit_worksheet_access
+
   def update
     appeal.update!(appeal_params)
     render json: { appeal: appeal.attributes_for_hearing }

@@ -3,7 +3,6 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
-import ApiUtil from '../util/ApiUtil';
 import {
   redText,
   ISSUE_DISPOSITIONS,
@@ -546,24 +545,4 @@ export const sortTaskList = (taskList) => {
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
   return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
     defaultToUnknown ? 'Unknown' : defaultToUnknown);
-};
-
-export const createOrgQueueLoadPromise = (props, url) => {
-  return ApiUtil.get(url, { timeout: { response: 5 * 60 * 1000 } }).
-    then(
-      (response) => {
-        const {
-          tasks: { data: tasks },
-          id,
-          organization_name: organizationName,
-          is_vso: isVso
-        } = JSON.parse(response.text);
-
-        props.setActiveOrganization(id, organizationName, isVso);
-        props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
-      }
-    ).
-    catch(() => {
-      // handle frontend error
-    });
 };

@@ -49,6 +49,7 @@ import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
+import BulkAssignModal from './components/BulkAssignModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -220,6 +221,8 @@ class QueueApp extends React.PureComponent {
 
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
+
+  routedBulkAssignTaskModal = (props) => <BulkAssignModal {...props} />;
 
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
@@ -481,9 +484,12 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:appealId/tasks/:taskId/modal/change_task_type"
             title="Change Task Type | Caseflow"
             render={this.routedChangeTaskTypeModal} />
+          <Route
+            path="/organizations/:organization/modal/bulk_assign_tasks"
+            render={this.routedBulkAssignTaskModal} />
           <PageRoute
             exact
-            path="/organizations/:organization"
+            path={['/organizations/:organization', '/organizations/:organization/modal/:modalType']}
             title="Organization Queue | Caseflow"
             render={this.routedOrganization} />
           <PageRoute

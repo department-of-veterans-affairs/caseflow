@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190531152758) do
+ActiveRecord::Schema.define(version: 20190603150958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -947,7 +947,7 @@ ActiveRecord::Schema.define(version: 20190531152758) do
     t.string "appeal_type", null: false
     t.datetime "assigned_at"
     t.integer "assigned_by_id"
-    t.integer "assigned_to_id"
+    t.integer "assigned_to_id", null: false
     t.string "assigned_to_type", null: false
     t.datetime "closed_at"
     t.datetime "created_at", null: false
@@ -998,6 +998,7 @@ ActiveRecord::Schema.define(version: 20190531152758) do
   create_table "users", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.string "css_id", null: false
+    t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"
     t.string "email"
     t.string "full_name"
     t.datetime "last_login_at"

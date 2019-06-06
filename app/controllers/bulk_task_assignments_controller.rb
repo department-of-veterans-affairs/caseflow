@@ -14,7 +14,7 @@ class BulkTaskAssignmentsController < TasksController
 
   def bulk_task_assignment_params
     params.require(:bulk_task_assignment)
-      .permit(:assigned_to_id, :organization_id, :task_type, :regional_office, :task_count)
+      .permit(:assigned_to_id, :organization_url, :task_type, :regional_office, :task_count)
       .merge(assigned_by: current_user)
   end
 end
