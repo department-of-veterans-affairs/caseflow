@@ -60,14 +60,26 @@ RSpec.feature "MailTasks" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:old_task_type) { DeathCertificateMailTask }
     let(:new_task_type) { AddressChangeMailTask }
+    let(:old_instructions) { generate_words(5) }
 
-    let!(:mail_task) do
+    let(:grandparent_task) do
       old_task_type.create!(
         appeal: root_task.appeal,
         parent_id: root_task.id,
-        assigned_to: user
+        assigned_to: MailTeam.singleton
       )
     end
+
+    let(:parent_task) do
+      old_task_type.create!(
+        appeal: grandparent_task.appeal,
+        parent_id: grandparent_task.id,
+        assigned_to: Colocated.singleton,
+        instructions: [old_instructions]
+      )
+    end
+
+    let(:task) { parent_task.children.first }
 
     before do
       OrganizationsUser.add_user_to_organization(user, Colocated.singleton)
@@ -75,8 +87,7 @@ RSpec.feature "MailTasks" do
 
     it "should update the task type" do
       # Visit case details page
-      visit "/queue"
-      click_on "#{root_task.appeal.veteran_full_name} (#{root_task.appeal.veteran_file_number})"
+      visit "/queue/appeals/#{task.appeal.uuid}"
 
       # Navigate to the change task type modal
       find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
@@ -99,8 +110,8 @@ RSpec.feature "MailTasks" do
       expect(page).to have_content(COPY::FORM_ERROR_FIELD_REQUIRED)
 
       # Add instructions and try again
-      instructions = generate_words(5)
-      fill_in("instructions", with: instructions)
+      new_instructions = generate_words(5)
+      fill_in("instructions", with: new_instructions)
       find("button", text: COPY::CHANGE_TASK_TYPE_SUBHEAD).click
 
       # We should see a success message but remain on the case details page
@@ -115,8 +126,9 @@ RSpec.feature "MailTasks" do
       # Ensure the task has been updated and the assignee is unchanged
       expect(page).to have_content(format("TASK\n%<label>s", label: new_task_type.label))
       expect(page).to have_content(format("ASSIGNED TO\n%<css_id>s", css_id: user.css_id))
-      click_on COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL
-      expect(page).to have_content(instructions)
+      page.find("#currently-active-tasks button", text: COPY::TASK_SNAPSHOT_VIEW_TASK_INSTRUCTIONS_LABEL).click
+      expect(page).to have_content(old_instructions)
+      expect(page).to have_content(new_instructions)
     end
   end
 end
