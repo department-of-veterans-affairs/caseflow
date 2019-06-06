@@ -13,7 +13,7 @@ class ClearAndUnmistakeableErrorMailTask < MailTask
     COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL
   end
 
-  def self.default_assignee(_parent, _params)
+  def self.default_assignee(_parent)
     LitigationSupport.singleton
   end
 end

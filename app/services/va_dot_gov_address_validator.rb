@@ -29,6 +29,11 @@ class VaDotGovAddressValidator
     end
   end
 
+  def assign_ro_and_update_ahls(new_ro)
+    appeal.update!(closest_regional_office: new_ro)
+    assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
+  end
+
   def validate
     if address.nil?
       fail Caseflow::Error::VaDotGovNullAddressError

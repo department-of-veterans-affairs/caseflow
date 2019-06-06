@@ -9,7 +9,7 @@ class ExtensionRequestMailTask < MailTask
     COPY::EXTENSION_REQUEST_MAIL_TASK_LABEL
   end
 
-  def self.default_assignee(parent, _params)
+  def self.default_assignee(parent)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
     Colocated.singleton
