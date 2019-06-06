@@ -83,7 +83,7 @@ class ColocatedTask < Task
     open?
   end
 
-  def change_type(params)
+  def create_twin_of_type(params)
     self.class.create!(
       appeal: appeal,
       parent: parent,

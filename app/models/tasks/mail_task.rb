@@ -84,7 +84,7 @@ class MailTask < GenericTask
     super(user).present? ? super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h) : []
   end
 
-  def change_type(params)
+  def create_twin_of_type(params)
     task_type = Object.const_get(params[:action])
     parent_task = task_type.create!(
       appeal: appeal,

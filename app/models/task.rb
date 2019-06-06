@@ -172,7 +172,7 @@ class Task < ApplicationRecord
 
   def update_task_type(params)
     multi_transaction do
-      new_branch_task = first_ancestor_of_type.change_type(params)
+      new_branch_task = first_ancestor_of_type.create_twin_of_type(params)
       new_child_task = new_branch_task.last_descendant_of_type
       new_child_task.update!(status: status)
 
@@ -209,7 +209,7 @@ class Task < ApplicationRecord
     descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
   end
 
-  def change_type(_params)
+  def create_twin_of_type(_params)
     fail Caseflow::Error::ActionForbiddenError, message: "Cannot change type of this task"
   end
 
