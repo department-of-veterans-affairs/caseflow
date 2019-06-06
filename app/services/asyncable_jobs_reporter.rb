@@ -7,6 +7,10 @@ class AsyncableJobsReporter
     self.jobs = jobs
   end
 
+  def as_csv
+
+  end
+
   # summarize all jobs by class and error and age
   def summary
     @summary ||= build_summary
