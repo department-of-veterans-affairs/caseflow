@@ -121,7 +121,8 @@ module Asyncable
     # One minute offset to prevent "this date is in the future" errors with external services
     when_to_start = delay.try(:to_datetime) ? delay.to_datetime + 1.minute : Time.zone.now + delay
 
-    # Add the `processing_retry_interval_hours` to the delay time, since it should not be considered
+    # Subtract the `processing_retry_interval_hours` from the delay time,
+    # to offset its presence in the `previously_attmpted_ready_for_retry` logic.
     if delay != 0
       when_to_start -= self.class.processing_retry_interval_hours.hours
     end
