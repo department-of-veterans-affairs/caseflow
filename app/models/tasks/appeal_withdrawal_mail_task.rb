@@ -6,6 +6,6 @@ class AppealWithdrawalMailTask < MailTask
   end
 
   def self.default_assignee(_parent, _params)
-    Colocated.singleton
+    BvaIntake.singleton
   end
 end

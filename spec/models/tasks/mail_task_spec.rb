@@ -205,8 +205,8 @@ describe MailTask do
     context "for an AppealWithdrawalMailTask" do
       let(:task_class) { AppealWithdrawalMailTask }
 
-      it "should always route to the VLJ support staff" do
-        expect(subject).to eq(Colocated.singleton)
+      it "should always route to BVA Intake" do
+        expect(subject).to eq(BvaIntake.singleton)
       end
     end
 
