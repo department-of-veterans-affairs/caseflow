@@ -100,9 +100,9 @@ class LegacyOptInModal extends React.Component {
 
   // do no allow the same legacy issue to be selected more than once
   findOptinIssue = (legacyIssue, addedIssues) => {
-    return (addedIssues || []).find((e) => {
-      return e.vacolsId === legacyIssue.vacols_id &&
-        e.vacolsSequenceId === legacyIssue.vacols_sequence_id.toString();
+    return (addedIssues || []).find((element) => {
+      return element.vacolsId === legacyIssue.vacols_id &&
+        element.vacolsSequenceId === legacyIssue.vacols_sequence_id.toString();
     });
   }
 
@@ -118,7 +118,7 @@ class LegacyOptInModal extends React.Component {
         return {
           displayText: issue.description,
           value: `${issue.vacols_id}-${issue.vacols_sequence_id}`,
-          disabled: !!this.findOptinIssue(issue, intakeData.addedIssues)
+          disabled: Boolean(this.findOptinIssue(issue, intakeData.addedIssues))
         };
       });
 
