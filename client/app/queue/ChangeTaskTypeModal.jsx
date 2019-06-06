@@ -34,16 +34,13 @@ class ChangeTaskTypeModal extends React.PureComponent {
   validateForm = () => Boolean(this.state.actionOption) && Boolean(this.state.instructions);
 
   buildPayload = () => {
-    const { appeal } = this.props;
     const { actionOption, instructions } = this.state;
 
     return {
       data: {
         task: {
           action: actionOption.value,
-          instructions,
-          type: taskActionData(this.props).type || actionOption.value,
-          external_id: appeal.externalId
+          instructions
         }
       }
     };
