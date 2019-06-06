@@ -53,7 +53,7 @@ class RequestIssuesUpdate < ApplicationRecord
   def establish!
     attempted!
 
-    # re-assign user temporarily to whomever edited the Claim.
+    # re-assign user to whomever edited the Claim.
     # this works around issue when original user is no longer authorized for VBMS.
     review.end_product_establishments.each { |epe| epe.user = user }
 
