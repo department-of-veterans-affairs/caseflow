@@ -188,11 +188,11 @@ class Task < ApplicationRecord
   end
 
   def assigned_to_same_org?(task_to_check)
-    assigned_to.is_a?(Organization) && assigned_to == task_to_check.assigned_to
+    assigned_to.is_a?(Organization) && assigned_to.eql?(task_to_check.assigned_to)
   end
 
   def first_ancestor_of_type
-    (parent && same_task_type?(parent)) ? parent.first_ancestor_of_type : self
+    same_task_type?(parent) ? parent.first_ancestor_of_type : self
   end
 
   def last_descendant_of_type
@@ -201,7 +201,7 @@ class Task < ApplicationRecord
   end
 
   def same_task_type?(task_to_check)
-    task_to_check.slice(:class, :action, :type).eql? slice(:class, :action, :type)
+    slice(:action, :type).eql?(task_to_check&.slice(:action, :type))
   end
 
   def cancel_descendants
