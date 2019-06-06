@@ -2,9 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature HearingAdminActionVerifyAddressTask do
-  let!(:veteran) { create(:veteran) }
-  let!(:appeal) { create(:appeal, :hearing_docket, veteran: veteran) }
+RSpec.shared_examples "Address Verify Task for Appeal" do
   let!(:user) { create(:hearings_coordinator) }
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
@@ -55,8 +53,8 @@ RSpec.feature HearingAdminActionVerifyAddressTask do
       verify_address_task.update!(status: Constants.TASK_STATUSES.completed)
 
       expect(verify_address_task.status).to eq Constants.TASK_STATUSES.completed
-      expect(Appeal.first.closest_regional_office).to eq "RO17"
-      expect(Appeal.first.available_hearing_locations.count).to eq 2
+      expect(appeal.class.first.closest_regional_office).to eq "RO17"
+      expect(appeal.class.first.available_hearing_locations.map { |ahl| ahl.facility_id }.uniq.count).to eq 2
     end
 
     it "throws an access error trying to update from params with random user" do
@@ -83,8 +81,8 @@ RSpec.feature HearingAdminActionVerifyAddressTask do
       verify_address_task.update_from_params(payload, user)
 
       expect(verify_address_task.status).to eq Constants.TASK_STATUSES.cancelled
-      expect(Appeal.first.closest_regional_office).to eq "RO50"
-      expect(Appeal.first.available_hearing_locations.count).to eq 1
+      expect(appeal.class.first.closest_regional_office).to eq "RO50"
+      expect(appeal.class.first.available_hearing_locations.count).to eq 1
     end
   end
 
@@ -97,7 +95,7 @@ RSpec.feature HearingAdminActionVerifyAddressTask do
 
         User.authenticate!(user: user)
 
-        visit("/queue/appeals/#{appeal.uuid}")
+        visit("/queue/appeals/#{appeal_id}")
       end
 
       it "has 'Cancel task and assign Regional Office' option" do
@@ -152,11 +150,28 @@ RSpec.feature HearingAdminActionVerifyAddressTask do
       end
 
       it "has no actions" do
-        visit("/queue/appeals/#{appeal.uuid}")
+        visit("/queue/appeals/#{appeal_id}")
 
         expect(page).to have_content("Verify Address")
         expect(page).not_to have_selector(".Select-control")
       end
     end
+  end
+end
+
+RSpec.feature HearingAdminActionVerifyAddressTask do
+  describe "Address Verify Workflow with Legacy Appeal" do
+    let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+    let!(:appeal_id) { appeal.vacols_id }
+
+    include_examples "Address Verify Task for Appeal"
+  end
+
+  describe "Address Verify Workflow with AMA Appeal" do
+    let!(:veteran) { create(:veteran) }
+    let!(:appeal) { create(:appeal, :hearing_docket, veteran: veteran) }
+    let!(:appeal_id) { appeal.uuid }
+
+    include_examples "Address Verify Task for Appeal"
   end
 end

@@ -947,7 +947,7 @@ ActiveRecord::Schema.define(version: 20190603150958) do
     t.string "appeal_type", null: false
     t.datetime "assigned_at"
     t.integer "assigned_by_id"
-    t.integer "assigned_to_id"
+    t.integer "assigned_to_id", null: false
     t.string "assigned_to_type", null: false
     t.datetime "closed_at"
     t.datetime "created_at", null: false

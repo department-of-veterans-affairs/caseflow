@@ -118,22 +118,6 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
   end
 
-  def scheduled_for
-    hearing_date
-  end
-
-  def request_type
-    hearing_type
-  end
-
-  def judge_id
-    board_member
-  end
-
-  def master_record_type
-    :video if folder_nr&.include?("VIDEO")
-  end
-
   def update_hearing!(hearing_info)
     attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
