@@ -19,6 +19,14 @@ class Fakes::BGSService
   cattr_accessor :generate_tracked_items_requests
   attr_accessor :client
 
+  DEFAULT_ADDRESS_LINE_1 = "9999 MISSION ST"
+  DEFAULT_ADDRESS_LINE_2 = "UBER"
+  DEFAULT_ADDRESS_LINE_3 = "APT 2"
+  DEFAULT_CITY = "SAN FRANCISCO"
+  DEFAULT_COUNTRY = "USA"
+  DEFAULT_STATE = "CA"
+  DEFAULT_ZIP = "94103"
+
   def self.create_veteran_records
     return if @veteran_records_created
 
@@ -780,18 +788,18 @@ class Fakes::BGSService
   # rubocop:disable Metrics/MethodLength
   def default_address
     {
-      addrs_one_txt: "9999 MISSION ST",
-      addrs_three_txt: "APT 2",
-      addrs_two_txt: "UBER",
-      city_nm: "SAN FRANCISCO",
-      cntry_nm: "USA",
+      addrs_one_txt: DEFAULT_ADDRESS_LINE_1,
+      addrs_three_txt: DEFAULT_ADDRESS_LINE_3,
+      addrs_two_txt: DEFAULT_ADDRESS_LINE_2,
+      city_nm: DEFAULT_CITY,
+      cntry_nm: DEFAULT_COUNTRY,
       efctv_dt: 15.days.ago.to_formatted_s(:short_date),
       jrn_dt: 15.days.ago.to_formatted_s(:short_date),
       jrn_lctn_id: "283",
       jrn_obj_id: "SHARE  - PCAN",
       jrn_status_type_cd: "U",
       jrn_user_id: "CASEFLOW1",
-      postal_cd: "CA",
+      postal_cd: DEFAULT_STATE,
       ptcpnt_addrs_id: "15069061",
       ptcpnt_addrs_type_nm: "Mailing",
       ptcpnt_id: "600085544",
@@ -801,7 +809,7 @@ class Fakes::BGSService
       trsury_addrs_three_txt: "APT 2",
       trsury_addrs_two_txt: "9999 MISSION ST",
       trsury_seq_nbr: "5",
-      zip_prefix_nbr: "94103"
+      zip_prefix_nbr: DEFAULT_ZIP
     }
   end
   # rubocop:enable Metrics/MethodLength
