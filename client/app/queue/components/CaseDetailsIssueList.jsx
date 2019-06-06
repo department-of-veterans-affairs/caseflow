@@ -27,11 +27,11 @@ const headingStyling = css({
 export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal) {
     return <AmaIssueList
-        requestIssues={props.issues}
-        decisionIssues={props.decisionIssues}>
-        <DecisionIssues
-          decisionIssues={props.decisionIssues} />
-      </AmaIssueList>;
+      requestIssues={props.issues}
+      decisionIssues={props.decisionIssues}>
+      <DecisionIssues
+        decisionIssues={props.decisionIssues} />
+    </AmaIssueList>;
   }
 
   return <React.Fragment>
