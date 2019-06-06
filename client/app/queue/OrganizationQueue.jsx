@@ -34,7 +34,7 @@ const alertStyling = css({
   marginBottom: '1.5em'
 });
 
-// TODO: Is this worth it just because it is a handy alias?
+// TODO: Is this worth it just because it is a handy alias? Yes
 const includeTrackingTasksTab = (organizationIsVso) => organizationIsVso;
 
 const allowBulkAssign = (organizationName) => (organizationName === 'Hearing Management');
@@ -42,35 +42,110 @@ const allowBulkAssign = (organizationName) => (organizationName === 'Hearing Man
 const showRegionalOfficeInQueue = (organizationName) =>
   (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin');
 
+
+
+
+
+
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   }
 
-  columnsFromConfig = (columnDefs) => {
+  columnsFromConfig = (columnStrings, organizationName) => {
+    // UNASSIGNED
 
+    // const requestedColumns = config.column;
+
+    let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+      userRole), taskColumn(tasks), typeColumn(tasks, false),
+    docketNumberColumn(tasks, false), daysWaitingColumn(false),
+    readerLinkColumn(false, true)];
+
+    if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
+      columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+        userRole), taskColumn(tasks), regionalOfficeColumn(tasks),
+      typeColumn(tasks, false), docketNumberColumn(tasks, false),
+      daysWaitingColumn(false), readerLinkColumn(false, true)];
+    }
+
+    return columns;
   }
 
   tabsFromConfig = (config) => {
     return config.tabs.map((tabConfig) => {
-      return
-      <React.Fragment>
-        <p className="cf-margin-top-0">{description}</p>
-        { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
-        <TaskTable
-          customColumns={this.columnsFromConfig(tabConfig.columns)}
-          tasks={tabConfig.tasks}
+      return {
+        label: sprintf(
+          COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
+        page: <UnassignedTaskTableTab
+          organizationName={this.props.organizationName}
+          description={
+            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.unassignedTasks}
         />
-      </React.Fragment>;
+      };
+      // <React.Fragment>
+      //   <p className="cf-margin-top-0">{description}</p>
+      //   { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
+      //   <TaskTable
+      //     customColumns={this.columnsFromConfig(tabConfig.columns, config.organizationName)}
+      //     tasks={tabConfig.tasks}
+      //   />
+      // </React.Fragment>;
     });
+
+
+    // const tabs = [
+    //   {
+    //     label: sprintf(
+    //       COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
+    //     page: <UnassignedTaskTableTab
+    //       organizationName={this.props.organizationName}
+    //       description={
+    //         sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+    //           this.props.organizationName)}
+    //       tasks={this.props.unassignedTasks}
+    //     />
+    //   },
+
+
+      // {
+      //   label: sprintf(
+      //     COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
+      //   page: <TaskTableWithUserColumnTab
+      //     organizationName={this.props.organizationName}
+      //     description={
+      //       sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
+      //         this.props.organizationName)}
+      //     tasks={this.props.assignedTasks}
+      //     userRole={this.props.userRole}
+      //   />
+      // },
+      // {
+      //   label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
+      //   page: <TaskTableWithUserColumnTab
+      //     organizationName={this.props.organizationName}
+      //     description={
+      //       sprintf(COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
+      //         this.props.organizationName)}
+      //     tasks={this.props.completedTasks}
+      //     userRole={this.props.userRole}
+      //   />
+      // }
+    // ];
+
+    // return tabs;
   }
 
+// THE BIG KAHUNA
   componentsFromConfig = (config) => {
     const tabs = this.tabsFromConfig(config);
 
     return <div>
       <h1 {...fullWidth}>{config.table_title}</h1>
-      <QueueOrganizationDropdown organizations={this.props.organizations} />
+      <QueueOrganizationDropdown organizations={config.organizations} />
+
       <TabWindow
         name="tasks-organization-queue"
         tabs={tabs}
@@ -79,36 +154,98 @@ class OrganizationQueue extends React.PureComponent {
     </div>;
   }
 
+  // <TabWindow
+  //   name="tasks-organization-queue"
+  //   tabs={tabs}
+  //   defaultPage={config.active_tab}
+  // />
+
+  // <QueueOrganizationDropdown organizations={this.props.organizations} />
+  // <TabWindow
+  //   name="tasks-organization-queue"
+  //   tabs={tabs}
+  //   defaultPage={config.active_tab}
+  // />
+
   queueConfig = () => {
     return {
       table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),
+      organizations: this.props.organizations,
 
       active_tab: 0, // TODO: This needs to respond to whether we have the tracking tasks tab or not.
+      organizationName: this.props.organizationName,
       tabs: [
-        // Tracking tasks tab.
-        // Unassigned tasks tab.
         {
-          name: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
-          description: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, this.props.organizationName),
-          // Compact to account for the maybe absent regional office column
-          columns: _.compact([
-            "hearingBadgeColumn",
-            "detailsColumn",
-            "taskColumn",
-            showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
-            "typeColumn",
-            "docketNumberColumn",
-            "daysWaitingColumn",
-            "readerLinkColumn"
-          ]),
-          allow_bulk_assign: allowBulkAssign(this.props.organizationName),
-          tasks: this.props.unassignedTasks
-        },
-        // Assigned tasks tab.
-        // Completed tasks tab.
+          // label: sprintf(
+          //   COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
+          // page: <UnassignedTaskTableTab
+          //   organizationName={this.props.organizationName}
+          //   description={
+          //     sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+          //       this.props.organizationName)}
+          //   tasks={this.props.unassignedTasks}
+          // />
+        }
       ]
+
+
+
+
+
+
+      // [
+        // tracking tasks tab
+        // {
+        //   name: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+        //   description: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, this.props.organizationName),
+        //   // Compact to account for the maybe absent regional office column
+        //   label: sprintf(
+        //     COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
+        //   columns: _.compact([
+        //     "hearingBadgeColumn",
+        //     "detailsColumn",
+        //     "taskColumn",
+        //     showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
+        //     "typeColumn",
+        //     "docketNumberColumn",
+        //     "daysWaitingColumn",
+        //     "readerLinkColumn"
+        //   ]),
+        //   allow_bulk_assign: allowBulkAssign(this.props.organizationName),
+        //   tasks: this.props.unassignedTasks,
+        // }
+
+        // unassigned tasks tab
+
+        //
+      // ]
+
     };
   }
+
+  tabs: [
+    // Tracking tasks tab.
+    // Unassigned tasks tab.
+    // {
+    //   name: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+    //   description: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, this.props.organizationName),
+    //   // Compact to account for the maybe absent regional office column
+    //   columns: _.compact([
+    //     "hearingBadgeColumn",
+    //     "detailsColumn",
+    //     "taskColumn",
+    //     showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
+    //     "typeColumn",
+    //     "docketNumberColumn",
+    //     "daysWaitingColumn",
+    //     "readerLinkColumn"
+    //   ]),
+    //   allow_bulk_assign: allowBulkAssign(this.props.organizationName),
+    //   tasks: this.props.unassignedTasks
+    // },
+    // Assigned tasks tab.
+    // Completed tasks tab.
+  ]
 
   render = () => {
     const { success, tasksAssignedByBulk } = this.props;
@@ -174,7 +311,7 @@ class OrganizationQueue extends React.PureComponent {
       });
     }
 
-    // const body = this.componentsFromConfig(this.queueConfig());
+    const body = this.componentsFromConfig(this.queueConfig());
 
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
@@ -188,18 +325,20 @@ class OrganizationQueue extends React.PureComponent {
           type="success"
           styling={alertStyling} />
       }
-      <div>
-        <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-        <QueueOrganizationDropdown organizations={this.props.organizations} />
-        <TabWindow
-          name="tasks-organization-queue"
-          tabs={tabs}
-          defaultPage={focusedTab}
-        />
-      </div>
+      {body}
     </AppSegment>;
   };
 }
+
+// <div>
+//   <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
+//   <QueueOrganizationDropdown organizations={this.props.organizations} />
+//   <TabWindow
+//     name="tasks-organization-queue"
+//     tabs={tabs}
+//     defaultPage={focusedTab}
+//   />
+// </div>
 
 const mapStateToProps = (state) => {
   const { success } = state.ui.messages;
