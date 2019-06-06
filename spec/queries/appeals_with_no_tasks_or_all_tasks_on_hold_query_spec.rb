@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe StuckAppealsQuery do
+describe AppealsWithNoTasksOrAllTasksOnHoldQuery do
   let!(:appeal_with_zero_tasks) { create(:appeal) }
   let!(:appeal_with_tasks) { create(:appeal, :with_tasks) }
   let!(:legacy_appeal_with_zero_tasks) { create(:legacy_appeal, vacols_case: create(:case)) }
