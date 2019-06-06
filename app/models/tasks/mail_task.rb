@@ -97,7 +97,7 @@ class MailTask < GenericTask
       appeal: appeal,
       parent: parent_task,
       assigned_by: assigned_by,
-      assigned_to: task_type.default_assignee(parent_task, params),
+      assigned_to: task_type.default_assignee(parent_task),
       instructions: params[:instructions]
     )
   end
