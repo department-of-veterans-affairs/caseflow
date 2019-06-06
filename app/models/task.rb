@@ -171,7 +171,7 @@ class Task < ApplicationRecord
   end
 
   def update_task_type(params)
-    ActiveRecord::Base.transaction do
+    multi_transaction do
       new_branch_task = first_ancestor_of_type.change_type(params)
       new_child_task = new_branch_task.last_descendant_of_type
       new_child_task.update!(status: status)
