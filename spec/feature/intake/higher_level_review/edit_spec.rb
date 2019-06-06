@@ -1509,9 +1509,6 @@ feature "Higher Level Review Edit issues" do
         expect(page).to have_content("Right Knee")
 
         click_button("Save")
-        expect(page).to have_current_path(
-          "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
-        )
         expect(RequestIssue.where(edited_description: "Right Knee")).to_not be_nil
       end
     end

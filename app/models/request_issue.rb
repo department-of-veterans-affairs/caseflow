@@ -413,7 +413,7 @@ class RequestIssue < ApplicationRecord
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
-  def save_edit_contention_text!(new_description)
+  def save_edited_contention_text!(new_description)
     update!(edited_description: new_description, contention_updated_at: nil)
   end
 
@@ -424,9 +424,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def update_contention_text_in_vbms!
-    return unless edited_description
-    return unless contention_updated_at.nil?
-    return unless contention
+    return unless contention_can_be_updated
 
     contention_to_update = contention
     contention_to_update.text = Contention.new(edited_description).text
@@ -519,6 +517,10 @@ class RequestIssue < ApplicationRecord
   end
 
   private
+
+  def contention_can_be_updated
+    edited_description && contention_updated_at.nil? && contention
+  end
 
   def limited_poa
     previous_request_issue&.end_product_establishment&.limited_poa_on_established_claim
