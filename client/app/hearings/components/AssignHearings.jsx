@@ -82,7 +82,7 @@ export default class AssignHearings extends React.Component {
         {<UpcomingHearingDaysNav
           upcomingHearingDays={upcomingHearingDays}
           selectedHearingDay={selectedHearingDay}
-          onSelectedHearingDayChangeFactory={onSelectedHearingDayChange} />
+          onSelectedHearingDayChange={onSelectedHearingDayChange} />
         }
         {appealsReadyForHearing &&
           <AssignHearingsTabs
