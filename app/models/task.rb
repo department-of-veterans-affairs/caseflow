@@ -180,7 +180,9 @@ class Task < ApplicationRecord
         new_child_task.update!(assigned_to: assigned_to)
       end
 
-      children.active.each { |child| child.update!(parent_id: last_descendant_of_type.id) }
+      # Move children from the old childmost task to the new childmost task
+      children.open.each { |child| child.update!(parent_id: last_descendant_of_type.id) }
+      # Cancel all tasks under the old task type branch
       first_ancestor_of_type.cancel_descendants
 
       [first_ancestor_of_type.descendants, new_branch_task.first_ancestor_of_type.descendants].flatten
