@@ -37,7 +37,7 @@ class QueueConfig
       name: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
       description: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, organization.name),
       columns: columns_with_minimal_detail,
-      tasks: "trackingTasks",
+      task_group: "trackingTasks",
       allow_bulk_assign: false
     }
   end
@@ -48,7 +48,7 @@ class QueueConfig
       name: COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name),
       columns: columns_with_reader_link,
-      tasks: "unassignedTasks",
+      task_group: "unassignedTasks",
       allow_bulk_assign: organization.can_bulk_assign_tasks?
 
       # TODO: Include tasks to display in this tab in this hash.
@@ -61,7 +61,7 @@ class QueueConfig
       name: COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name),
       columns: columns_with_assignee,
-      tasks: "assignedTasks",
+      task_group: "assignedTasks",
       allow_bulk_assign: false
     }
   end
@@ -71,7 +71,7 @@ class QueueConfig
       name: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
       description: format(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION, organization.name),
       columns: columns_with_assignee,
-      tasks: "completedTasks",
+      task_group: "completedTasks",
       allow_bulk_assign: false
     }
   end
