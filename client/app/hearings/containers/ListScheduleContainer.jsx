@@ -28,7 +28,7 @@ import Alert from '../../components/Alert';
 import COPY from '../../../COPY.json';
 import {
   formatDateStr,
-  getDurationFromSeconds
+  getMinutesToMilliseconds
 } from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
@@ -81,7 +81,7 @@ export class ListScheduleContainer extends React.Component {
     }
 
     const requestOptions = {
-      timeout: { response: getDurationFromSeconds(2) }
+      timeout: { response: getMinutesToMilliseconds(2) }
     };
 
     return ApiUtil.get(requestUrl, requestOptions).then((response) => {

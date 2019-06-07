@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import { getDurationFromSeconds } from '../util/DateUtil';
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 import { associateTasksWithAppeals } from './utils';
 
 import {
@@ -58,7 +58,7 @@ class QueueLoadingScreen extends React.PureComponent {
     }
 
     const requestOptions = {
-      timeout: { response: getDurationFromSeconds(5) }
+      timeout: { response: getMinutesToMilliseconds(5) }
     };
 
     return ApiUtil.get(urlToLoad, requestOptions).then((response) => {

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import ApiUtil from '../util/ApiUtil';
-import { getDurationFromSeconds } from '../util/DateUtil';
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { extractAppealsAndAmaTasks } from './utils';
@@ -25,7 +25,7 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
     //    https://github.com/department-of-veterans-affairs/caseflow/issues/10997
     //
     const requestOptions = {
-      timeout: { response: getDurationFromSeconds(30) }
+      timeout: { response: getMinutesToMilliseconds(30) }
     };
 
     return ApiUtil.get(this.props.urlToLoad, requestOptions).

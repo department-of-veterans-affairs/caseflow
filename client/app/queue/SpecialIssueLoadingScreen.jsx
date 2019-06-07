@@ -5,14 +5,14 @@ import { bindActionCreators } from 'redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
-import { getDurationFromSeconds } from '../util/DateUtil';
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 
 import { setSpecialIssues } from './QueueActions';
 
 class SpecialIssueLoadingScreen extends React.PureComponent {
   createLoadPromise = () => {
     const requestOptions = {
-      timeout: { response: getDurationFromSeconds(5) }
+      timeout: { response: getMinutesToMilliseconds(5) }
     };
 
     return ApiUtil.get(

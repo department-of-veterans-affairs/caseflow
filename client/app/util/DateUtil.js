@@ -153,6 +153,6 @@ export const getDate = (date) => {
   return moment(date).format('YYYY-MM-DD');
 };
 
-export const getDurationFromSeconds = (seconds) => {
-  return seconds * 60 * 1000;
+export const getMinutesToMilliseconds = (minutes) => {
+  return minutes * 60 * 1000;
 };
