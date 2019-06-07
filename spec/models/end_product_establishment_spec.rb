@@ -130,11 +130,11 @@ describe EndProductEstablishment do
       end
     end
 
-    context "when eps with a valid modifier already exist" do
+    context "when eps with a valid modifier already exists" do
       let!(:past_created_ep) do
         Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
-          bgs_attrs: { end_product_type_code: "030", status_type_code: "CAN" }
+          bgs_attrs: { end_product_type_code: "030", status_type_code: "PEND" }
         )
       end
 
