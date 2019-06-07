@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import ApiUtil from '../util/ApiUtil';
+import { getDurationFromSeconds } from '../util/DateUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { extractAppealsAndAmaTasks } from './utils';
@@ -18,25 +19,35 @@ import {
 class OrganizationQueueLoadingScreen extends React.PureComponent {
   reload = () => window.location.reload();
 
-  createOrgQueueLoadPromise = () => ApiUtil.get(this.props.urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).
-    then(
-      (response) => {
-        const {
-          tasks: { data: tasks },
-          id,
-          organization_name: organizationName,
-          is_vso: isVso,
-          queue_config: queueConfig
-        } = JSON.parse(response.text);
+  createOrgQueueLoadPromise = () => {
+    // Setting timeout duration very high as a workaround for:
+    //
+    //    https://github.com/department-of-veterans-affairs/caseflow/issues/10997
+    //
+    const requestOptions = {
+      timeout: { response: getDurationFromSeconds(30) }
+    };
 
-        this.props.setActiveOrganization(id, organizationName, isVso);
-        this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
-        this.props.setQueueConfig(queueConfig);
-      }
-    ).
-    catch(() => {
-      // handle frontend error
-    });
+    return ApiUtil.get(this.props.urlToLoad, requestOptions).
+      then(
+        (response) => {
+          const {
+            tasks: { data: tasks },
+            id,
+            organization_name: organizationName,
+            is_vso: isVso,
+            queue_config: queueConfig
+          } = JSON.parse(response.text);
+
+          this.props.setActiveOrganization(id, organizationName, isVso);
+          this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
+          this.props.setQueueConfig(queueConfig);
+        }
+      ).
+      catch(() => {
+        // handle frontend error
+      });
+  }
 
   render = () => {
     const failStatusMessageChildren = <div>
