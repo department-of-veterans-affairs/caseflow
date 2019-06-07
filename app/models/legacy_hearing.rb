@@ -10,7 +10,7 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
-  vacols_attr_accessor :representative_name, :representative, :hearing_day_id
+  vacols_attr_accessor :representative_name, :hearing_day_id
   vacols_attr_accessor :docket_number, :appeal_type, :room, :bva_poc, :judge_id
 
   belongs_to :appeal, class_name: "LegacyAppeal"
@@ -41,6 +41,10 @@ class LegacyHearing < ApplicationRecord
 
   delegate :appellant_address, :appellant_address_line_1, :appellant_address_line_2,
            :appellant_city, :appellant_country, :appellant_state, :appellant_zip,
+           to: :appeal,
+           allow_nil: true
+
+  delegate :representative,
            to: :appeal,
            allow_nil: true
 

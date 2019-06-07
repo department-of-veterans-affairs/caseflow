@@ -334,6 +334,11 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
+  #  LegacyHearing delegates representative here, which is equivalent to representative_name
+  def representative
+    representative_name
+  end
+
   def representatives
     Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
   end
