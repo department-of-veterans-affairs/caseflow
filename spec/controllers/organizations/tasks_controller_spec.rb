@@ -46,6 +46,7 @@ RSpec.describe Organizations::TasksController, type: :controller do
       .with(participant_id).and_return(vso_participant_ids.map { |poa| get_poa_from_bgs_poa(poa) })
   end
 
+  # TODO: Add test to confirm the shape of the has is correct. And includes queue_config.
   describe "GET organization/:organization_id/tasks" do
     let!(:tasks) do
       appeal = create_legacy_appeal_with_hearings

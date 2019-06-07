@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 # TODO: Move all string literals in this file to COPY.json or some more sensible shared place.
-#
-# TODO: Do we have the bulk assign button in there?
 class QueueConfig
   include ActiveModel::Model
 
