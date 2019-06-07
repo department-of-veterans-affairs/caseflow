@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 # TODO: Move all string literals in this file to COPY.json or some more sensible shared place.
+#
+# TODO: Do we have the bulk assign button in there?
 class QueueConfig
   include ActiveModel::Model
 
@@ -34,7 +36,12 @@ class QueueConfig
       label: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
       name: "tracking",
       description: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, organization.name),
-      columns: columns_with_minimal_detail,
+      columns: %w[
+        detailsColumn
+        issueCountColumn
+        typeColumn
+        docketNumberColumn
+      ],
       task_group: "trackingTasks",
       allow_bulk_assign: false
     }
@@ -46,7 +53,18 @@ class QueueConfig
       label: COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
       name: "unassigned",
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name),
-      columns: columns_with_reader_link,
+      # TODO: We're sharing string betwene the front- and back-end. Let's put these in a shared file somewhere.
+      columns: [
+        "hearingBadgeColumn",
+        "detailsColumn",
+        "taskColumn",
+        organization.show_regional_office_in_queue? ? "regionalOfficeColumn" : nil,
+        "typeColumn",
+        "docketNumberColumn",
+        "daysWaitingColumn",
+        "readerLinkColumn"
+        # Compact to account for the maybe absent regional office column
+      ].compact,
       task_group: "unassignedTasks",
       allow_bulk_assign: organization.can_bulk_assign_tasks?
     }
@@ -58,7 +76,16 @@ class QueueConfig
       label: COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE,
       name: "assigned",
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name),
-      columns: columns_with_assignee,
+      columns: [
+        "hearingBadgeColumn",
+        "detailsColumn",
+        "taskColumn",
+        organization.show_regional_office_in_queue? ? "regionalOfficeColumn" : nil,
+        "typeColumn",
+        "assignedToColumn",
+        "docketNumberColumn",
+        "daysWaitingColumn"
+      ].compact,
       task_group: "assignedTasks",
       allow_bulk_assign: false
     }
@@ -69,46 +96,18 @@ class QueueConfig
       label: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
       name: "completed",
       description: format(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION, organization.name),
-      columns: columns_with_assignee,
+      columns: [
+        "hearingBadgeColumn",
+        "detailsColumn",
+        "taskColumn",
+        organization.show_regional_office_in_queue? ? "regionalOfficeColumn" : nil,
+        "typeColumn",
+        "assignedToColumn",
+        "docketNumberColumn",
+        "daysWaitingColumn"
+      ].compact,
       task_group: "completedTasks",
       allow_bulk_assign: false
     }
-  end
-
-  def columns_with_minimal_detail
-    %w[
-      detailsColumn
-      issueCountColumn
-      typeColumn
-      docketNumberColumn
-    ]
-  end
-
-  def columns_with_reader_link
-    # TODO: We're sharing string betwene the front- and back-end. Let's put these in a shared file somewhere.
-    [
-      "hearingBadgeColumn",
-      "detailsColumn",
-      "taskColumn",
-      organization.show_regional_office_in_queue? ? "regionalOfficeColumn" : nil,
-      "typeColumn",
-      "docketNumberColumn",
-      "daysWaitingColumn",
-      "readerLinkColumn"
-      # Compact to account for the maybe absent regional office column
-    ].compact
-  end
-
-  def columns_with_assignee
-    [
-      "hearingBadgeColumn",
-      "detailsColumn",
-      "taskColumn",
-      organization.show_regional_office_in_queue? ? "regionalOfficeColumn" : nil,
-      "typeColumn",
-      "assignedToColumn",
-      "docketNumberColumn",
-      "daysWaitingColumn"
-    ].compact
   end
 end
