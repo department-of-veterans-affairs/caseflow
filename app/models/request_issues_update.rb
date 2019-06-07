@@ -34,10 +34,18 @@ class RequestIssuesUpdate < ApplicationRecord
       )
       cancel_active_tasks
       submit_for_processing!
-      DecisionReviewProcessJob.perform_now(self)
+      process_job
     end
 
     true
+  end
+
+  def process_job
+    if run_async?
+      DecisionReviewProcessJob.perform_later(self)
+    else
+      DecisionReviewProcessJob.perform_now(self)
+    end
   end
 
   # establish! is called async via DecisionReviewProcessJob.
@@ -46,10 +54,10 @@ class RequestIssuesUpdate < ApplicationRecord
     attempted!
 
     review.establish!
-    edited_issues.each(&:update_contention_text_in_vbms!)
+    edited_issues.each{ |issue| RequestIssueContention.new(issue).update_text! }
     potential_end_products_to_remove = []
     removed_or_withdrawn_issues.select(&:end_product_establishment).each do |request_issue|
-      request_issue.end_product_establishment.remove_contention!(request_issue)
+      RequestIssueContention.new(request_issue).remove!
       potential_end_products_to_remove << request_issue.end_product_establishment
     end
 

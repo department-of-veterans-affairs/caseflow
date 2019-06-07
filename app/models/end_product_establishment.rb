@@ -112,15 +112,6 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def remove_contention!(request_issue)
-    contention = contention_for_object(request_issue)
-
-    fail ContentionNotFound, request_issue.contention_reference_id unless contention
-
-    VBMSService.remove_contention!(contention)
-    request_issue.update!(contention_removed_at: Time.zone.now)
-  end
-
   # Committing an end product establishment is a way to signify that any other actions performed
   # as part of a larger atomic operation containing the end product establishment are also complete.
   # Those actions could be creating contentions or other end product establishments.

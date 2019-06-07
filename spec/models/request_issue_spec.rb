@@ -126,38 +126,6 @@ describe RequestIssue do
     end
   end
 
-  context "#update_contention_text_in_vbms!" do
-    subject { rating_request_issue.update_contention_text_in_vbms! }
-
-    before { allow(Fakes::VBMSService).to receive(:update_contention!).and_call_original }
-
-    let(:contention_updated_at) { nil }
-    let(:edited_description) { "new request issue description" }
-    let!(:end_product_establishment) { create(:end_product_establishment) }
-    let!(:contention) do
-      Generators::Contention.build(
-        id: contention_reference_id,
-        claim_id: end_product_establishment.reference_id,
-        text: "Left knee"
-      )
-    end
-
-    it "updates the contention in VBMS" do
-      expect(subject).to be true
-      expect(rating_request_issue.contention_updated_at).to eq(Time.zone.now)
-
-      updated_contention = contention
-      updated_contention.text = edited_description
-      expect(Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
-    end
-
-    context "when the contention has already been updated in VBMS" do
-      let(:contention_updated_at) { 1.day.ago }
-
-      it { is_expected.to be_falsey }
-    end
-  end
-
   context "#guess_benefit_type" do
     context "issue is unidentified" do
       it "returns 'unidentified'" do
