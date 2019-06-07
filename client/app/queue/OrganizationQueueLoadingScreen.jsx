@@ -20,12 +20,8 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
   reload = () => window.location.reload();
 
   createOrgQueueLoadPromise = () => {
-    // Setting timeout duration very high as a workaround for:
-    //
-    //    https://github.com/department-of-veterans-affairs/caseflow/issues/10997
-    //
     const requestOptions = {
-      timeout: { response: getMinutesToMilliseconds(30) }
+      timeout: { response: getMinutesToMilliseconds(5) }
     };
 
     return ApiUtil.get(this.props.urlToLoad, requestOptions).
