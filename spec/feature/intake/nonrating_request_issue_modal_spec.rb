@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-feature "Nonrating Request Issue Modal" do
+feature "Nonrating Request Issue Modal", ui_test: true do
   include IntakeHelpers
 
   before do

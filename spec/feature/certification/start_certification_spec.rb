@@ -1,8 +1,9 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 require "rails_helper"
 
-RSpec.feature "Start Certification" do
+RSpec.feature "Start Certification", ui_test: true do
   before do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end

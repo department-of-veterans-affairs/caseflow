@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-feature "NonComp Reviews Queue" do
+feature "NonComp Reviews Queue", ui_test: true do
   before do
     FeatureToggle.enable!(:decision_reviews)
   end

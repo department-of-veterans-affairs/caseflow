@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Send feedback" do
+RSpec.feature "Send feedback", ui_test: true do
   let!(:current_user) { User.authenticate! }
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 

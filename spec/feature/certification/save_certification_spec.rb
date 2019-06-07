@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Save Certification" do
+RSpec.feature "Save Certification", ui_test: true do
   before do
     Form8.pdf_service = FakePdfService
     Timecop.freeze(Time.utc(2017, 2, 2, 20, 59, 0))

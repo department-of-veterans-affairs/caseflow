@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Judge checkout flow" do
+RSpec.feature "Judge checkout flow", ui_test: true do
   let(:attorney_user) { FactoryBot.create(:default_user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 

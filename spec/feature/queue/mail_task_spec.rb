@@ -3,7 +3,7 @@
 require "rails_helper"
 require "mail_task"
 
-RSpec.feature "MailTasks" do
+RSpec.feature "MailTasks", ui_test: true do
   let(:user) { FactoryBot.create(:user) }
 
   before do

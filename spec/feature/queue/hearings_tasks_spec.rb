@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Hearings tasks workflows" do
+RSpec.feature "Hearings tasks workflows", ui_test: true do
   let(:user) { FactoryBot.create(:user) }
 
   before do

@@ -3,7 +3,7 @@
 require "rails_helper"
 require "support/intake_helpers"
 
-RSpec.feature "RAMP Refiling Intake" do
+RSpec.feature "RAMP Refiling Intake", ui_test: true do
   include IntakeHelpers
 
   before do

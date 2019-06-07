@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Hearing prep" do
+RSpec.feature "Hearing prep", ui_test: true do
   context "Hearing worksheet" do
     let!(:current_user) { User.authenticate!(roles: ["Hearing Prep"]) }
     let!(:legacy_hearing) { create(:legacy_hearing, user: current_user) }

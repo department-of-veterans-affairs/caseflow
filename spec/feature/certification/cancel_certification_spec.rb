@@ -1,8 +1,9 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 require "rails_helper"
 
-RSpec.feature "Cancel certification" do
+RSpec.feature "Cancel certification", ui_test: true do
   let!(:current_user) { User.authenticate! }
 
   let(:appeal) do

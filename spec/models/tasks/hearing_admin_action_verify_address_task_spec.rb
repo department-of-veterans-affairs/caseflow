@@ -88,7 +88,7 @@ RSpec.feature HearingAdminActionVerifyAddressTask do
     end
   end
 
-  describe "UI tests" do
+  describe "UI tests", ui_test: true do
     let(:instructions_text) { "This is why I want to cancel the task!" }
     
     context "with a hearing admin member" do

@@ -3,7 +3,7 @@
 require "rails_helper"
 require "support/intake_helpers"
 
-feature "NonComp Dispositions Task Page" do
+feature "NonComp Dispositions Task Page", ui_test: true do
   include IntakeHelpers
 
   before do

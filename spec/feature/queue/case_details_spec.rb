@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Case details" do
+RSpec.feature "Case details", ui_test: true do
   before do
     Timecop.freeze(Time.utc(2020, 1, 1, 19, 0, 0))
   end

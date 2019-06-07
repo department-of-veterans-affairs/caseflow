@@ -74,7 +74,7 @@ RSpec.feature HearingAdminActionForeignVeteranCaseTask do
     end
   end
 
-  context "UI tests" do
+  context "UI tests", ui_test: true do
     before do
       OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
 

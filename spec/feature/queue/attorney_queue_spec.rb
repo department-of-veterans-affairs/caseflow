@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Attorney queue" do
+RSpec.feature "Attorney queue", ui_test: true do
   let(:judge) { FactoryBot.create(:user) }
   let!(:vacols_judge) { FactoryBot.create(:staff, :judge_role, user: judge) }
 

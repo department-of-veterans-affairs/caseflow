@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Intake Manager Page" do
+RSpec.feature "Intake Manager Page", ui_test: true do
   before do
     Timecop.freeze(post_ramp_start_date)
   end

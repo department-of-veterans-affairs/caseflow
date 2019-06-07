@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "User organization" do
+RSpec.feature "User organization", ui_test: true do
   let(:role) { "org_role" }
   let!(:user) { User.authenticate!(user: create(:user, roles: [role])) }
   let!(:organization) { create(:organization, name: "Test organization", url: "test", role: role) }

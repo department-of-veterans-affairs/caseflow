@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Establish Claim - ARC Dispatch" do
+RSpec.feature "Establish Claim - ARC Dispatch", ui_test: true do
   before do
     Timecop.freeze(pre_ramp_start_date)
 

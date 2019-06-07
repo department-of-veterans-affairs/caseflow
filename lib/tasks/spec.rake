@@ -3,11 +3,13 @@
 require "rspec/core/rake_task"
 
 namespace :spec do
+  DEFAULT_RSPEC_OPTS = "--tty --color"
+
   feature_spec_folders = Dir.entries("./spec/feature").select do |file|
     ![".", ".."].include?(file) && File.directory?(File.join("./spec/feature", file))
   end
 
-  spec_names = feature_spec_folders + %w[other unit]
+  spec_names = [*feature_spec_folders, 'unit', 'other'].flat_map { |n| [n, "#{n}_no_ui"] }
 
   # Tasks for setting up the environment and running the tests without
   # immediately printing output to the screen. This prevents output from overrunning
@@ -53,24 +55,42 @@ namespace :spec do
 
   # Customized rspec rake tasks. These are used by the specs defined above,
   # so the proper environment variables can be set.
-  desc "Run all unit specs"
-  RSpec::Core::RakeTask.new(:unit) do |t|
-    t.pattern = "spec/**/*_spec.rb"
-    t.exclude_pattern = "spec/feature/**/*"
-    t.rspec_opts = "--tty --color"
+
+  make_rake_task = proc do |name:, desc:, pattern:, exclude_pattern:|
+    [
+      { name_suffix: nil, extra_rspec_opts: nil },
+      { name_suffix: '_no_ui', extra_rspec_opts: "--tag ~ui_test" }
+    ].each do |name_suffix:, extra_rspec_opts:|
+      desc "#{desc}#{extra_rspec_opts ? " (#{extra_rspec_opts})" : ''}"
+      RSpec::Core::RakeTask.new("#{name}#{name_suffix}".to_sym) do |t|
+        t.pattern = pattern if pattern
+        t.exclude_pattern = exclude_pattern if exclude_pattern
+        t.rspec_opts = "#{DEFAULT_RSPEC_OPTS} #{extra_rspec_opts}"
+      end
+    end
   end
 
-  desc "Run all uncategorized feature specs"
-  RSpec::Core::RakeTask.new(:other) do |t|
-    t.pattern = "spec/feature/*_spec.rb"
-    t.rspec_opts = "--tty --color"
-  end
+  [
+    {
+      name: "unit",
+      desc: "Run all unit specs",
+      pattern: "spec/**/*_spec.rb",
+      exclude_pattern: "spec/feature/**/*"
+    },
+    {
+      name: "other",
+      desc: "Run all uncategorized feature specs",
+      pattern: "spec/feature/*_spec.rb",
+      exclude_pattern: nil
+    }
+  ].each &make_rake_task
 
   feature_spec_folders.each do |folder|
-    desc "Run all #{feature_spec_folders} feature specs"
-    RSpec::Core::RakeTask.new(folder.to_s.to_sym) do |t|
-      t.pattern = "spec/feature/#{folder}/**/*_spec.rb"
-      t.rspec_opts = "--tty --color"
-    end
+    make_rake_task[
+      name: folder.to_s,
+      desc: "Run all #{feature_spec_folders} feature specs",
+      pattern: "spec/feature/#{folder}/**/*_spec.rb",
+      exclude_pattern: nil
+    ]
   end
 end

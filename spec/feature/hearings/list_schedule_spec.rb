@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "List Schedule" do
+RSpec.feature "List Schedule", ui_test: true do
   context "Correct buttons are displayed based on permissions" do
     let!(:hearing) { create(:hearing) }
 

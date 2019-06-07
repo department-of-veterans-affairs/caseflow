@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Dropdown" do
+RSpec.feature "Dropdown", ui_test: true do
   let!(:current_user) { User.authenticate! }
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 

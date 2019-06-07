@@ -1,9 +1,10 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 require "rails_helper"
 require "support/intake_helpers"
 
-feature "Intake" do
+feature "Intake", ui_test: true do
   include IntakeHelpers
 
   before do

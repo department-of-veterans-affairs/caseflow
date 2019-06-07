@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Postpone hearing" do
+RSpec.feature "Postpone hearing", ui_test: true do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "SwitchApps" do
+RSpec.feature "SwitchApps", ui_test: true do
   context "A user with just Queue access" do
     let!(:user) do
       User.authenticate!(user: create(:user, roles: ["Reader"]))

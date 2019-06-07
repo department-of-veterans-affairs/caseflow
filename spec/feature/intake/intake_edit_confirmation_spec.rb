@@ -3,7 +3,7 @@
 require "support/intake_helpers"
 require "byebug"
 
-feature "Intake Edit Confirmation" do
+feature "Intake Edit Confirmation", ui_test: true do
   include IntakeHelpers
 
   before { setup_intake_flags }

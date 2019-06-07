@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Team management page" do
+RSpec.feature "Team management page", ui_test: true do
   let(:user) { FactoryBot.create(:user) }
 
   before do

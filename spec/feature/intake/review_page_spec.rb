@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-feature "Intake Review Page" do
+feature "Intake Review Page", ui_test: true do
   include IntakeHelpers
 
   before do

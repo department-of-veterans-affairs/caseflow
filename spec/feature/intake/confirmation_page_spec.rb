@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-feature "Intake Confirmation Page" do
+feature "Intake Confirmation Page", ui_test: true do
   include IntakeHelpers
 
   before { setup_intake_flags }

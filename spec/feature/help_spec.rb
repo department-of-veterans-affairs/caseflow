@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Help" do
+RSpec.feature "Help", ui_test: true do
   let!(:current_user) { User.authenticate! }
   scenario "user goes to the help page" do
     User.authenticate!

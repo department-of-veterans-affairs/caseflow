@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Login" do
+RSpec.feature "Login", ui_test: true do
   let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
   before do

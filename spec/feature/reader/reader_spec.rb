@@ -81,7 +81,7 @@ def add_comment(text)
   click_on "Save"
 end
 
-RSpec.feature "Reader" do
+RSpec.feature "Reader", ui_test: true do
   before do
     Fakes::Initializer.load!
 

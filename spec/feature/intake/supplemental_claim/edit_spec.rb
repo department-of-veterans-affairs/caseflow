@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-feature "Supplemental Claim Edit issues" do
+feature "Supplemental Claim Edit issues", ui_test: true do
   include IntakeHelpers
 
   before do

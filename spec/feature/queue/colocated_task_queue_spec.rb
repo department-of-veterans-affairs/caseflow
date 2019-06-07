@@ -1,8 +1,9 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 require "rails_helper"
 
-RSpec.feature "ColocatedTask" do
+RSpec.feature "ColocatedTask", ui_test: true do
   let(:vlj_support_staff) { FactoryBot.create(:user) }
 
   before { OrganizationsUser.add_user_to_organization(vlj_support_staff, Colocated.singleton) }

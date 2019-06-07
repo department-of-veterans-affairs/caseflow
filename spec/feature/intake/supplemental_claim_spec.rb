@@ -1,8 +1,9 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 require "support/intake_helpers"
 
-feature "Supplemental Claim Intake" do
+feature "Supplemental Claim Intake", ui_test: true do
   include IntakeHelpers
 
   before do

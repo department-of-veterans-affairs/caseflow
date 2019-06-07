@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-feature "Intake Add Issues Page" do
+feature "Intake Add Issues Page", ui_test: true do
   include IntakeHelpers
 
   before do

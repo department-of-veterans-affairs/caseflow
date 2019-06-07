@@ -1,8 +1,9 @@
+# coding: utf-8
 # frozen_string_literal: true
 
 require "support/intake_helpers"
 
-feature "Appeal Intake" do
+feature "Appeal Intake", ui_test: true do
   include IntakeHelpers
 
   before do

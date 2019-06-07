@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Test Users for Demo" do
+RSpec.feature "Test Users for Demo", ui_test: true do
   before do
     # Switch user only works in demo
     ENV["DEPLOY_ENV"] = "development"

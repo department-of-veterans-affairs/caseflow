@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Remove a Hearing Day" do
+RSpec.feature "Remove a Hearing Day", ui_test: true do
   let!(:current_user) do
     user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
     OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)

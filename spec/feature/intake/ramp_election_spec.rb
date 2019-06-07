@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-feature "RAMP Election Intake" do
+feature "RAMP Election Intake", ui_test: true do
   include IntakeHelpers
 
   before do

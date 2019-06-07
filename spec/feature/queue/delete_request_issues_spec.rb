@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-feature "correcting issues" do
+feature "correcting issues", ui_test: true do
   before { FeatureToggle.enable!(:ama_decision_issues) }
   after { FeatureToggle.disable!(:ama_decision_issues) }
 

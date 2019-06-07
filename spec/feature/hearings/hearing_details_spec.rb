@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Hearing Schedule Daily Docket" do
+RSpec.feature "Hearing Schedule Daily Docket", ui_test: true do
   let(:user) { create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"]) }
 
   before do

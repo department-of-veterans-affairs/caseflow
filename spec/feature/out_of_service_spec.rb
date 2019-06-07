@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Out of Service" do
+RSpec.feature "Out of Service", ui_test: true do
   context "Across all apps" do
     before do
       User.authenticate!(css_id: "BVAAABSHIRE", roles: ["Admin Intake"])

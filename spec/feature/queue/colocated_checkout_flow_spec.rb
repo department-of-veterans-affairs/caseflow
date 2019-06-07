@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Colocated checkout flows" do
+RSpec.feature "Colocated checkout flows", ui_test: true do
   let(:attorney_user) { FactoryBot.create(:default_user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
   let(:colocated_user) { FactoryBot.create(:user) }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature "Build Hearing Schedule" do
+RSpec.feature "Build Hearing Schedule", ui_test: true do
   context "Build RO Hearing Schedule" do
     let!(:current_user) do
       User.authenticate!(roles: ["Build HearSched"])

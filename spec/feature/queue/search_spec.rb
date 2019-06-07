@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Search" do
+RSpec.feature "Search", ui_test: true do
   let(:attorney_user) { FactoryBot.create(:user) }
   let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 

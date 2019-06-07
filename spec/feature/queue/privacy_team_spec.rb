@@ -1,6 +1,7 @@
+# coding: utf-8
 # frozen_string_literal: true
 
-RSpec.feature "Privacy team tasks and queue" do
+RSpec.feature "Privacy team tasks and queue", ui_test: true do
   describe "Assigning ColocatedTask to Privacy team" do
     let(:attorney) { FactoryBot.create(:user) }
 

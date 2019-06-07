@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "AmaQueue" do
+RSpec.feature "AmaQueue", ui_test: true do
   def valid_document_id
     "12345-12345678"
   end

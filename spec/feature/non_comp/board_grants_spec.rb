@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-feature "NonComp Board Grant Task Page" do
+feature "NonComp Board Grant Task Page", ui_test: true do
   before do
     FeatureToggle.enable!(:decision_reviews)
     Timecop.freeze(post_ama_start_date)

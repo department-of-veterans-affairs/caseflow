@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Quality Review worflow" do
+RSpec.feature "Quality Review worflow", ui_test: true do
   let(:valid_document_id) { "12345-12345678" }
 
   let(:veteran_first_name) { "Marissa" }

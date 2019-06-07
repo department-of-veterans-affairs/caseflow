@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Style Guide" do
+RSpec.feature "Style Guide", ui_test: true do
   # :nocov:
   # The default Capybara driver would timeout on CircleCI pretty heavily.
   # The headless driver gets us the same result, but much faster

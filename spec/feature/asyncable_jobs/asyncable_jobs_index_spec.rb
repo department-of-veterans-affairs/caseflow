@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-feature "Asyncable Jobs index" do
+feature "Asyncable Jobs index", ui_test: true do
   before do
     Timecop.freeze(Time.zone.now)
   end

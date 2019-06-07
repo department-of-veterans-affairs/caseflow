@@ -2,7 +2,7 @@
 
 require "support/intake_helpers"
 
-feature "Higher Level Review Edit issues" do
+feature "Higher Level Review Edit issues", ui_test: true do
   include IntakeHelpers
 
   before do
