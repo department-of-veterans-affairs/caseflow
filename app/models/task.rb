@@ -169,6 +169,50 @@ class Task < ApplicationRecord
     params
   end
 
+  def update_task_type(params)
+    multi_transaction do
+      new_branch_task = first_ancestor_of_type.create_twin_of_type(params)
+      new_child_task = new_branch_task.last_descendant_of_type
+
+      if assigned_to.is_a?(User) && new_child_task.assigned_to.is_a?(User) &&
+         parent.assigned_to_same_org?(new_child_task.parent)
+        new_child_task.update!(assigned_to: assigned_to)
+      end
+
+      # Move children from the old childmost task to the new childmost task
+      children.open.each { |child| child.update!(parent_id: last_descendant_of_type.id) }
+      # Cancel all tasks under the old task type branch
+      first_ancestor_of_type.cancel_descendants
+
+      [first_ancestor_of_type.descendants, new_branch_task.first_ancestor_of_type.descendants].flatten
+    end
+  end
+
+  def assigned_to_same_org?(task_to_check)
+    assigned_to.is_a?(Organization) && assigned_to.eql?(task_to_check.assigned_to)
+  end
+
+  def first_ancestor_of_type
+    same_task_type?(parent) ? parent.first_ancestor_of_type : self
+  end
+
+  def last_descendant_of_type
+    child_of_task_type = children.open.detect { |child| same_task_type?(child) }
+    child_of_task_type&.last_descendant_of_type || self
+  end
+
+  def same_task_type?(task_to_check)
+    slice(:action, :type).eql?(task_to_check&.slice(:action, :type))
+  end
+
+  def cancel_descendants
+    descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+  end
+
+  def create_twin_of_type(_params)
+    fail Caseflow::Error::ActionForbiddenError, message: "Cannot change type of this task"
+  end
+
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
 
