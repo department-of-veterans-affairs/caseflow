@@ -72,19 +72,46 @@ class OrganizationQueue extends React.PureComponent {
     return columns;
   }
 
+  tabFactory = (config) => {
+    let tab;
+
+    switch (config.TabType) {
+      case COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE:
+        tab = {
+          label: sprintf(
+            COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, config.tasks.length),
+          page: <UnassignedTaskTableTab
+            organizationName={config.organizationName}
+            description={
+              sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+                config.organizationName)}
+            tasks={config.tasks}
+          />
+        }
+        break;
+      default:
+        continue;
+
+    return tab;
+  }
+
   tabsFromConfig = (config) => {
     return config.tabs.map((tabConfig) => {
-      return {
-        label: sprintf(
-          COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
-        page: <UnassignedTaskTableTab
-          organizationName={this.props.organizationName}
-          description={
-            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
-              this.props.organizationName)}
-          tasks={this.props.unassignedTasks}
-        />
-      };
+      return tabFactory(tabConfig)
+
+      // return {
+      //   label: sprintf(
+      //     COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
+      //   page: <UnassignedTaskTableTab
+      //     organizationName={this.props.organizationName}
+      //     description={
+      //       sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+      //         this.props.organizationName)}
+      //     tasks={this.props.unassignedTasks}
+      //   />
+      // };
+
+
       // <React.Fragment>
       //   <p className="cf-margin-top-0">{description}</p>
       //   { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
@@ -176,6 +203,9 @@ class OrganizationQueue extends React.PureComponent {
       organizationName: this.props.organizationName,
       tabs: [
         {
+          tabType:COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+          tasks: this.props.unassignedTasks,
+          organizationName: this.props.organizationName
           // label: sprintf(
           //   COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
           // page: <UnassignedTaskTableTab
