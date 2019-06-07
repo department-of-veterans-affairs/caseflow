@@ -274,7 +274,7 @@
   "CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL": "Provide instructions and context for this change:",
   "CHANGE_TASK_TYPE_CONFIRMATION_TITLE": "You have changed the task type from '%s' to '%s'",
   "CHANGE_TASK_TYPE_CONFIRMATION_DETAIL": "These changes are now reflected in the currently active tasks section below.",
-  
+
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
 
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",
@@ -471,6 +471,8 @@
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
   "END_HOLD_SUCCESS_MESSAGE_TITLE": "Success! The hold has been ended early.",
 
+  "ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_HEADER": "No upcoming hearing days",
+  "ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_MESSAGE": "There are no upcoming hearing days for this regional office. Please add a hearing day.",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER": "There are no schedulable veterans",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE": "Please verify that this RO has veterans to assign a hearing",
   "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER": "This RO has no available hearing days",
