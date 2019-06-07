@@ -11,9 +11,7 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative, :hearing_day_id
-  vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
-  vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
-  vacols_attr_accessor :appellant_zip, :appellant_country, :room, :bva_poc, :judge_id
+  vacols_attr_accessor :docket_number, :appeal_type, :room, :bva_poc, :judge_id
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
@@ -40,6 +38,11 @@ class LegacyHearing < ApplicationRecord
   delegate :external_id,
            to: :appeal,
            prefix: true
+
+  delegate :appellant_address, :appellant_address_line_1, :appellant_address_line_2,
+           :appellant_city, :appellant_country, :appellant_state, :appellant_zip,
+           to: :appeal,
+           allow_nil: true
 
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
@@ -231,7 +234,9 @@ class LegacyHearing < ApplicationRecord
         :docket_name,
         :appeal_type,
         :appellant_address_line_1,
+        :appellant_address_line_2,
         :appellant_city,
+        :appellant_country,
         :appellant_state,
         :appellant_zip,
         :location,
