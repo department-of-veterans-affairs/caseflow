@@ -216,7 +216,7 @@ VACOLS/Caseflow.
 
 There are several endpoints available in the IDT API.
 
-### `GET /idt/api/v1/token`
+#### `GET /idt/api/v1/token`
 
 Returns a one-time key and token for subsequent requests.
 
@@ -233,7 +233,7 @@ On success returns a `200` HTTP code and a body like:
 }
 ```
 
-### `GET /idt/auth?one_time_key=:your-one-time-key`
+#### `GET /idt/auth?one_time_key=:your-one-time-key`
 
 Activates an IDT session based on a one-time key. The default IDT session is 7 days.
 
@@ -257,18 +257,63 @@ On error returns a `400` code with an error message like:
 {"message":"Invalid key."}
 ```
 
-### `GET /idt/api/v1/appeals`
+#### `GET /idt/api/v1/appeals`
 
-### `GET /idt/api/v1/appeals/:appeal_id`
+#### `GET /idt/api/v1/appeals/:appeal_id`
 
-### `POST /idt/api/v1/appeals/:appeal_id/outcode`
+#### `POST /idt/api/v1/appeals/:appeal_id/outcode`
 
-### `POST /idt/api/v1/appeals/:appeal_id/upload_document`
+#### `POST /idt/api/v1/appeals/:appeal_id/upload_document`
 
-### `GET /idt/api/v1/judges`
+#### `GET /idt/api/v1/judges`
 
-### `GET /idt/api/v1/user`
+#### `GET /idt/api/v1/user`
 
-### `GET /idt/api/v1/veterans`
+#### `GET /idt/api/v1/veterans`
 
 ## VETText / Hearings (experimental)
+
+The Hearings API returns all the hearings scheduled for a given day.
+
+```bash
+% curl -H 'Authorization: Token your-sekrit-key' \
+       https://appeals.cf.ds.va.gov/api/v2/hearings/2019-06-07
+```
+
+On success returns `200` HTTP code and a body like:
+
+```json
+{
+   "hearings" : [
+      {
+         "address" : "15 New Sudbury Street JFK Federal Building",
+         "appeal" : "182fd411-c770-44c8-8491-0de36ac6f92c",
+         "facility_id" : "vba_301",
+         "first_name" : "John",
+         "last_name" : "Veteran",
+         "regional_office" : "Boston",
+         "room" : "123",
+         "scheduled_for" : "2019-06-07 14:00:00",
+         "ssn" : "666456999",
+         "state" : "MA",
+         "timezone" : "America/New_York",
+         "zip_code" : "02203"
+      },
+      {
+         "address" : "123 Main St.",
+         "appeal" : "d69d7c3f-fd68-45aa-9bb9-556622fd557b",
+         "facility_id" : "vba_999",
+         "first_name" : "Jane",
+         "last_name" : "Veteran",
+         "regional_office" : "Providence",
+         "room" : "456",
+         "scheduled_for" : "2019-06-07 12:00:00",
+         "ssn" : "666456000",
+         "state" : "RI",
+         "timezone" : "America/New_York",
+         "zip_code" : "12345"
+      }
+   ]
+}
+```
+
