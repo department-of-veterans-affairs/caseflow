@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# TODO: Move all string literals in this file to COPY.json or some more sensible shared place.
 class QueueConfig
   include ActiveModel::Model
 
@@ -8,16 +9,12 @@ class QueueConfig
   def to_h
     {
       table_title: format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, organization.name),
-      active_tab: active_tab,
+      active_tab: unassigned_tasks_tab[:name],
       tabs: tabs
     }
   end
 
   private
-
-  def active_tab
-    include_tracking_tasks_tab? ? 1 : 0
-  end
 
   def tabs
     [
@@ -34,7 +31,8 @@ class QueueConfig
 
   def tracking_tasks_tab
     {
-      name: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
+      label: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
+      name: "tracking",
       description: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, organization.name),
       columns: columns_with_minimal_detail,
       task_group: "trackingTasks",
@@ -45,20 +43,20 @@ class QueueConfig
   def unassigned_tasks_tab
     {
       # TODO: insert the task count into the name on the front-end. Eventually do that on the back-end.
-      name: COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+      label: COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+      name: "unassigned",
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name),
       columns: columns_with_reader_link,
       task_group: "unassignedTasks",
       allow_bulk_assign: organization.can_bulk_assign_tasks?
-
-      # TODO: Include tasks to display in this tab in this hash.
     }
   end
 
   def assigned_tasks_tab
     {
       # TODO: insert the task count into the name on the front-end. Eventually do that on the back-end.
-      name: COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE,
+      label: COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE,
+      name: "assigned",
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name),
       columns: columns_with_assignee,
       task_group: "assignedTasks",
@@ -68,7 +66,8 @@ class QueueConfig
 
   def completed_tasks_tab
     {
-      name: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
+      label: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
+      name: "completed",
       description: format(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION, organization.name),
       columns: columns_with_assignee,
       task_group: "completedTasks",
