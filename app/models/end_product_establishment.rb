@@ -451,7 +451,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def taken_modifiers
-    @taken_modifiers ||= veteran.end_products.select(&:cleared?).map(&:modifier)
+    @taken_modifiers ||= veteran.end_products.select(&:canceled?).map(&:modifier)
   end
 
   def find_open_modifier
