@@ -29,6 +29,18 @@ class LegacyHearing < ApplicationRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
+  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string,
+           to: :time
+
+  delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
+           :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
+           to: :appeal,
+           allow_nil: true
+
+  delegate :external_id,
+           to: :appeal,
+           prefix: true
+
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
 
@@ -113,8 +125,6 @@ class LegacyHearing < ApplicationRecord
     @time ||= HearingTimeService.new(hearing: self)
   end
 
-  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string, to: :time
-
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
       "Board of Veterans' Appeals in Washington, DC"
@@ -187,21 +197,6 @@ class LegacyHearing < ApplicationRecord
       nil
     end
   end
-
-  delegate \
-    :veteran_age, \
-    :veteran_gender, \
-    :vbms_id, \
-    :number_of_documents, \
-    :number_of_documents_after_certification, \
-    :veteran,  \
-    :veteran_file_number, \
-    :docket_name,
-    :closest_regional_office,
-    :available_hearing_locations,
-    to: :appeal, allow_nil: true
-
-  delegate :external_id, to: :appeal, prefix: true
 
   # rubocop:disable Metrics/MethodLength
   def to_hash(current_user_id)
