@@ -1457,7 +1457,6 @@ feature "Higher Level Review Edit issues" do
       before do
         FeatureToggle.enable!(:withdraw_decision_review, users: [current_user.css_id])
         FeatureToggle.enable!(:edit_contention_text, users: [current_user.css_id])
-        allow(Fakes::VBMSService).to receive(:update_contention!).and_call_original
       end
 
       after do

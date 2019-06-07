@@ -21,7 +21,6 @@ describe RequestIssue do
   let(:closed_status) { nil }
   let(:ineligible_reason) { nil }
   let(:edited_description) { nil }
-  let(:contention_updated_at) { nil }
 
   let(:review) do
     create(
@@ -75,9 +74,7 @@ describe RequestIssue do
       vacols_sequence_id: vacols_sequence_id,
       closed_at: closed_at,
       closed_status: closed_status,
-      ineligible_reason: ineligible_reason,
-      edited_description: edited_description,
-      contention_updated_at: contention_updated_at
+      ineligible_reason: ineligible_reason
     )
   end
 
