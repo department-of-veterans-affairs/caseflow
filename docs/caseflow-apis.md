@@ -61,6 +61,8 @@ or if the API key was missing or not found, a HTTP code `401` and body like:
 
 The Appeals Status feature of va.gov allows Veterans to see details about their cases.
 
+[Additional documentation is available](https://github.com/department-of-veterans-affairs/caseflow/wiki/Appeal-Status-API).
+
 You may `GET /api/v2/appeals` with the Veteran Social Security Number (SSN) in the `ssn` HTTP header
 and a `source` string of your choosing.
 
