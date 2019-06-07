@@ -6,10 +6,21 @@ class QueueConfig
 
   attr_accessor :organization
 
+  def initialize(args)
+    super
+
+    if !organization&.is_a?(Organization)
+      fail(
+        Caseflow::Error::MissingRequiredProperty,
+        message: "organization property must be an instance of Organization"
+      )
+    end
+  end
+
   def to_h
     {
       table_title: format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, organization.name),
-      active_tab: unassigned_tasks_tab[:name],
+      active_tab: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
       tabs: tabs
     }
   end
@@ -32,59 +43,59 @@ class QueueConfig
   def tracking_tasks_tab
     {
       label: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
-      name: "tracking",
+      name: Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME,
       description: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, organization.name),
-      columns: %w[
-        detailsColumn
-        issueCountColumn
-        typeColumn
-        docketNumberColumn
+      columns: [
+        Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+        Constants.QUEUE_CONFIG.ISSUE_COUNT_COLUMN,
+        Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+        Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
       ],
-      task_group: "trackingTasks",
+      task_group: Constants.QUEUE_CONFIG.TRACKING_TASKS_GROUP,
       allow_bulk_assign: false
     }
   end
 
   def unassigned_tasks_tab
     {
-      # TODO: insert the task count into the name on the front-end. Eventually do that on the back-end.
+      # Insert the task count into the name on the front-end. Eventually do that on the back-end.
       label: COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
-      name: "unassigned",
+      name: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name),
-      # TODO: We're sharing string betwene the front- and back-end. Let's put these in a shared file somewhere.
+      # Compact to account for the maybe absent regional office column
       columns: [
-        "hearingBadgeColumn",
-        "detailsColumn",
-        "taskColumn",
-        organization.show_regional_office_in_queue? ? "regionalOfficeColumn" : nil,
-        "typeColumn",
-        "docketNumberColumn",
-        "daysWaitingColumn",
-        "readerLinkColumn"
-        # Compact to account for the maybe absent regional office column
+        Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
+        Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN,
+        organization.show_regional_office_in_queue? ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
+        Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+        Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
+        Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
+        Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
       ].compact,
-      task_group: "unassignedTasks",
+      task_group: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_GROUP,
       allow_bulk_assign: organization.can_bulk_assign_tasks?
     }
   end
 
   def assigned_tasks_tab
     {
-      # TODO: insert the task count into the name on the front-end. Eventually do that on the back-end.
+      # Insert the task count into the name on the front-end. Eventually do that on the back-end.
       label: COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE,
-      name: "assigned",
+      name: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name),
+      # Compact to account for the maybe absent regional office column
       columns: [
-        "hearingBadgeColumn",
-        "detailsColumn",
-        "taskColumn",
-        organization.show_regional_office_in_queue? ? "regionalOfficeColumn" : nil,
-        "typeColumn",
-        "assignedToColumn",
-        "docketNumberColumn",
-        "daysWaitingColumn"
+        Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
+        Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN,
+        organization.show_regional_office_in_queue? ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
+        Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
+        Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
+        Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
-      task_group: "assignedTasks",
+      task_group: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_GROUP,
       allow_bulk_assign: false
     }
   end
@@ -92,19 +103,20 @@ class QueueConfig
   def completed_tasks_tab
     {
       label: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
-      name: "completed",
+      name: Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME,
       description: format(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION, organization.name),
+      # Compact to account for the maybe absent regional office column
       columns: [
-        "hearingBadgeColumn",
-        "detailsColumn",
-        "taskColumn",
-        organization.show_regional_office_in_queue? ? "regionalOfficeColumn" : nil,
-        "typeColumn",
-        "assignedToColumn",
-        "docketNumberColumn",
-        "daysWaitingColumn"
+        Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
+        Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN,
+        organization.show_regional_office_in_queue? ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
+        Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
+        Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
+        Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
-      task_group: "completedTasks",
+      task_group: Constants.QUEUE_CONFIG.COMPLETED_TASKS_GROUP,
       allow_bulk_assign: false
     }
   end
