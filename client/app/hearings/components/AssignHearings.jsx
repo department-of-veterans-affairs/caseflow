@@ -7,6 +7,8 @@ import { css } from 'glamor';
 import moment from 'moment';
 import { COLORS } from '../../constants/AppConstants';
 import AssignHearingsTabs from './AssignHearingsTabs';
+import StatusMessage from '../../components/StatusMessage';
+import COPY from '../../../COPY.json';
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -45,7 +47,7 @@ const UpcomingHearingDaysNav = ({
           return <li key={hearingDay.id} >
             <Button
               styling={dateSelected ? buttonColorSelected : {}}
-              onClick={onSelectedHearingDayChange}
+              onClick={() => onSelectedHearingDayChange(hearingDay)}
               linkStyling>
               {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
               ${hearingDay.room}`}
@@ -76,6 +78,17 @@ export default class AssignHearings extends React.Component {
       onSelectedHearingDayChange
     } = this.props;
     const room = this.room();
+
+    if (_.isEmpty(upcomingHearingDays)) {
+      return <div {...css({ marginTop: 50 })}>
+        <StatusMessage
+          title= {COPY.ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_HEADER}
+          type="alert"
+          messageText={COPY.ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_MESSAGE}
+          wrapInAppSegment={false}
+        />
+      </div>;
+    }
 
     return (
       <React.Fragment>
