@@ -42,6 +42,8 @@ class WorkQueue::AppealSerializer
 
   attribute :withdrawn, &:withdrawn?
 
+  attribute :removed, &:removed?
+
   attribute :assigned_to_location
 
   attribute :completed_hearing_on_previous_appeal? do
