@@ -874,6 +874,7 @@ RSpec.feature "Case details" do
       end
 
       it "is displayed in the TaskSnapshot" do
+
         visit "/queue/appeals/#{legacy_appeal.vacols_id}"
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
@@ -939,7 +940,6 @@ RSpec.feature "Case details" do
     context "when an AMA appeal has been dispatched from the Board" do
       let(:appeal) { FactoryBot.create(:appeal) }
       let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let!(:removed_request_issue) { create(:request_issue, decision_review: appeal) }
 
       before do
         judge = FactoryBot.create(:user, station_id: 101)
@@ -1029,6 +1029,7 @@ RSpec.feature "Case details" do
           it "displays a loading failed message on the case details page" do
             visit(queue_home_path)
             click_on("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
+            
             expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
             expect(page).to have_current_path(case_details_page_path)
           end
