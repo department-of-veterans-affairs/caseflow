@@ -12,6 +12,7 @@ import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
+import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -28,6 +29,24 @@ const grayLineTimelineStyling = css(grayLineStyling, { left: '9%',
   top: '39px' });
 
 const greyDotAndlineStyling = css({ top: '25px' });
+
+const xWithSquare = css({
+  color: 'red',
+  'border-style': 'solid',
+  padding: '1px 1px 1px 1px'
+});
+
+const cancelIconStyling = css({
+  'padding-left': '8px !important'
+});
+
+const cancelIcon = () => {
+  return <i className={`fa fa-times ${xWithSquare}`}></i>;
+};
+
+const closedAtIcon = (task, timeline) => {
+  return (task.closedAt && timeline ? <GreenCheckmark /> : <GrayDot />);
+};
 
 const taskContainerStyling = css({
   border: 'none',
@@ -60,6 +79,16 @@ const taskInfoWithIconTimelineContainer =
     paddingLeft: '0px' });
 const greyDotStyling = css({ paddingLeft: '6px' });
 const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
+const isCancelled = (task) => {
+  return task.status === TASK_STATUSES.cancelled;
+};
+const tdClassNames = (timeline, task) => {
+  const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
+  const cancelledClass = isCancelled(task) ? cancelIconStyling : null;
+  const closedAtClass = task.closedAt ? null : greyDotTimelineStyling;
+
+  return [containerClass, cancelledClass, closedAtClass].filter((val) => val).join(' ');
+};
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
@@ -228,6 +257,7 @@ class TaskRows extends React.PureComponent {
           { timelineContainerText } <br />
         </td>
       </tr> }
+
       { sortTaskList(taskList).map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
@@ -237,9 +267,8 @@ class TaskRows extends React.PureComponent {
               { !task.closedAt && this.daysWaitingListItem(task) }
             </CaseDetailsDescriptionList>
           </td>
-          <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
-            task.closedAt ? '' : greyDotTimelineStyling].join(' ')}>
-            { task.closedAt && timeline ? <GreenCheckmark /> : <GrayDot /> }
+          <td {...taskInfoWithIconContainer} className={tdClassNames(timeline, task)}>
+            { isCancelled(task) ? cancelIcon() : closedAtIcon(task, timeline) }
             { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
               <div {...grayLineStyling} className={[timeline ? grayLineTimelineStyling : '',
                 task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
