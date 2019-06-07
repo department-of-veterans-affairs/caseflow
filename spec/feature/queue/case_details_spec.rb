@@ -391,7 +391,6 @@ RSpec.feature "Case details" do
     scenario "case details page shows appropriate text" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-
       # Call have_content() so we wait for the case details page to load
       expect(page).to have_content(appeal.veteran_full_name)
       expect(page).to have_content("DISPOSITION\n1 - Allowed")
@@ -876,7 +875,6 @@ RSpec.feature "Case details" do
 
       it "is displayed in the TaskSnapshot" do
         visit "/queue/appeals/#{legacy_appeal.vacols_id}"
-
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
       end
@@ -887,7 +885,8 @@ RSpec.feature "Case details" do
     let(:attorney_user) { FactoryBot.create(:user) }
     let(:judge_user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
-    let(:appeal) { root_task.appeal }
+    let!(:appeal) { root_task.appeal }
+    let!(:request_issue) { create(:request_issue, decision_review: appeal) }
     let!(:atty_task) do
       FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_by: judge_user,
                                             assigned_to: attorney_user)
@@ -896,7 +895,6 @@ RSpec.feature "Case details" do
       FactoryBot.create(:ama_judge_task, appeal: appeal, parent: atty_task, assigned_by: judge_user,
                                          assigned_to: judge_user)
     end
-
     context "Attorney has been assigned" do
       it "is displayed in the Universal Case Title" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -904,6 +902,16 @@ RSpec.feature "Case details" do
         expect(page).to have_content(judge_user.full_name)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL)
         expect(page).to have_content(attorney_user.full_name)
+      end
+    end
+
+    context "Attorney has removed appeal" do
+      before { request_issue.remove! }
+      it "should not show attorney name" do
+        expect(appeal.reload.removed?).to eq(true)
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to_not have_content(judge_user.full_name)
+        expect(page).to_not have_content(attorney_user.full_name)
       end
     end
   end
@@ -923,7 +931,6 @@ RSpec.feature "Case details" do
 
       it "should not show the tracking task in case timeline" do
         visit("/queue/appeals/#{tracking_task.appeal.uuid}")
-
         # Expect to only find the "NOD received" row and the "dispatch pending" rows.
         expect(page).to have_css("table#case-timeline-table tbody tr", count: 2)
       end
@@ -932,6 +939,7 @@ RSpec.feature "Case details" do
     context "when an AMA appeal has been dispatched from the Board" do
       let(:appeal) { FactoryBot.create(:appeal) }
       let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let!(:removed_request_issue) { create(:request_issue, decision_review: appeal) }
 
       before do
         judge = FactoryBot.create(:user, station_id: 101)
