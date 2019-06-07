@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# TODO: Move all string literals in this file to COPY.json or some more sensible shared place.
 class QueueConfig
   include ActiveModel::Model
 
