@@ -8,11 +8,11 @@ class RequestIssueContention
   delegate :end_product_establishment, :contention_reference_id, :contention_removed_at, :contention_updated_at,
            :edited_description, to: :request_issue
 
-   def vbms_contention
-     return unless contention_reference_id
+  def vbms_contention
+    return unless contention_reference_id
 
-     end_product_establishment.contention_for_object(request_issue)
-   end
+    end_product_establishment.contention_for_object(request_issue)
+  end
 
   def update_text!
     return unless contention_text_update_pending

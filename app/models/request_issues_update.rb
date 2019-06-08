@@ -54,7 +54,7 @@ class RequestIssuesUpdate < ApplicationRecord
     attempted!
 
     review.establish!
-    edited_issues.each{ |issue| RequestIssueContention.new(issue).update_text! }
+    edited_issues.each { |issue| RequestIssueContention.new(issue).update_text! }
     potential_end_products_to_remove = []
     removed_or_withdrawn_issues.select(&:end_product_establishment).each do |request_issue|
       RequestIssueContention.new(request_issue).remove!
