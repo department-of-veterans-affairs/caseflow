@@ -54,32 +54,35 @@ class OrganizationQueue extends React.PureComponent {
     return {
       table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),
       organizations: this.props.organizations,
-      active_tab: this.props.organizationIsVso ? 1 : 0, // TODO: This needs to respond to whether we have the tracking tasks tab or not. then it should be 1 -- this is if if () {
-      organizationName: this.props.organizationName,
+      active_tab: this.props.organizationIsVso ? 1 : 0, // tracking tasks tab?
+      // organizationName: this.props.organizationName,
       tabs: [
         {
-          tabTitle: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+          tasks: this.props.unassignedTasks,
+          tabTitle: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, // pick
+          tabType: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,  // one
           label: sprintf(
               COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
-          tasks: this.props.unassignedTasks,
-          organizationName: this.props.organizationName,
-          userRole: this.props.userRole,
-          showRegionalOffice: showRegionalOfficeInQueue(this.props.organizationName),
-          allow_bulk_assign: allowBulkAssign(this.props.organizationName),
-          tabType: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
           description:
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName),
+          organizationName: this.props.organizationName,
+          userRole: this.props.userRole,
+
+          allow_bulk_assign: allowBulkAssign(this.props.organizationName),
+
           columns: _.compact([
               "hearingBadgeColumn",
               "detailsColumn",
               "taskColumn",
               showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
               "typeColumn",
-              "docketNumberColumn"
-              // "daysWaitingColumn",
-              // "readerLinkColumn"
-            ])
+              "docketNumberColumn",
+              "daysWaitingColumn",
+              "readerLinkColumn"
+            ]),
+
+        // showRegionalOffice: showRegionalOfficeInQueue(this.props.organizationName),
 
         },
 
@@ -121,6 +124,7 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   // accepts column string, calls proper column objection creation function, returns it.
+  // ONLY WORKS FOR UNASSIGNED TAB RIGHT NOW
   createColumnObject = (column) => {
     console.log("-------------");
     console.dir(this.props.unassignedTasks);
@@ -131,8 +135,9 @@ class OrganizationQueue extends React.PureComponent {
       taskColumn: taskColumn(this.props.unassignedTasks),
       regionalOfficeColumn: regionalOfficeColumn(this.props.unassignedTasks),
       typeColumn: typeColumn(this.props.unassignedTasks, false),
-      docketNumberColumn: docketNumberColumn(this.props.unassignedTasks, false)
-
+      docketNumberColumn: docketNumberColumn(this.props.unassignedTasks, false),
+      daysWaitingColumn: daysWaitingColumn(false),
+      readerLinkColumn: readerLinkColumn(false, true)
     };
 
     return functionForColumn[column];
