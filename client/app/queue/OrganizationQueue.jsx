@@ -91,51 +91,18 @@ class OrganizationQueue extends React.PureComponent {
 
 
 
-
-
-      // [
-        // tracking tasks tab
-        // {
-        //   name: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
-        //   description: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, this.props.organizationName),
-        //   // Compact to account for the maybe absent regional office column
-        //   label: sprintf(
-        //     COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
-        //   columns: _.compact([
-        //     "hearingBadgeColumn",
-        //     "detailsColumn",
-        //     "taskColumn",
-        //     showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
-        //     "typeColumn",
-        //     "docketNumberColumn",
-        //     "daysWaitingColumn",
-        //     "readerLinkColumn"
-        //   ]),
-        //   allow_bulk_assign: allowBulkAssign(this.props.organizationName),
-        //   tasks: this.props.unassignedTasks,
-        // }
-
-        // unassigned tasks tab
-
-        //
-      // ]
-
     };
   }
 
   // accepts column string, calls proper column objection creation function, returns it.
-  // ONLY WORKS FOR UNASSIGNED TAB RIGHT NOW
-  createColumnObject = (column) => {
-    console.log("-------------");
-    console.dir(this.props.unassignedTasks);
-    console.log(column);
+  createColumnObject = (column, config) => {
     const functionForColumn = {
-      hearingBadgeColumn: hearingBadgeColumn(this.props.unassignedTasks),
-      detailsColumn: detailsColumn(this.props.unassignedTasks, false, this.props.userRole),
-      taskColumn: taskColumn(this.props.unassignedTasks),
-      regionalOfficeColumn: regionalOfficeColumn(this.props.unassignedTasks),
-      typeColumn: typeColumn(this.props.unassignedTasks, false),
-      docketNumberColumn: docketNumberColumn(this.props.unassignedTasks, false),
+      hearingBadgeColumn: hearingBadgeColumn(config.tasks),
+      detailsColumn: detailsColumn(config.tasks, false, config.userRole),
+      taskColumn: taskColumn(config.tasks),
+      regionalOfficeColumn: regionalOfficeColumn(config.tasks),
+      typeColumn: typeColumn(config.tasks, false),
+      docketNumberColumn: docketNumberColumn(config.tasks, false),
       daysWaitingColumn: daysWaitingColumn(false),
       readerLinkColumn: readerLinkColumn(false, true)
     };
@@ -143,27 +110,10 @@ class OrganizationQueue extends React.PureComponent {
     return functionForColumn[column];
   }
 
-  //
-  // columns = [
-  //   hearingBadgeColumn(tasks),
-  //   detailsColumn(tasks, false,
-  //   userRole),
-  //   taskColumn(tasks),
-  //   regionalOfficeColumn(tasks),
-  //   typeColumn(tasks, false),
-  //   docketNumberColumn(tasks, false),
-  //   daysWaitingColumn(false),
-  //   readerLinkColumn(false, true)];
-
-  // call all those pure column functions you made and
-  // return them in an array that can be passed
-  columnsFromConfig = (columnConfig) => {
-    const customColumns = columnConfig.map((column) => {
-      return this.createColumnObject(column);
-    })
-
-    console.log(customColumns);
-    return customColumns
+  columnsFromConfig = (tabConfig) => {
+    return tabConfig.columns.map((column) => {
+      return this.createColumnObject(column, tabConfig);
+    });
   }
 
 
@@ -194,11 +144,11 @@ class OrganizationQueue extends React.PureComponent {
   taskTableTabFactory = (tabConfig) => {
     // let tab;
 
-    let { columns, tasks, label, description } = tabConfig;
+    let { tasks, label, description } = tabConfig;
 
     // feeds an array of strings identifying which columnFunctions to call.
     // returns an array of column objects
-    const cols = this.columnsFromConfig(columns);
+    const cols = this.columnsFromConfig(tabConfig);
 
     return {
       label: label,
@@ -241,66 +191,17 @@ class OrganizationQueue extends React.PureComponent {
 
 // THE BIG KAHUNA
   makeQueueComponents = (config) => {
-
-    // should return an array of React.Fragments that
-    // contain TaskTableWithUserColumnTab
-    const tabs = this.tabsFromConfig(config);
-
     return <div>
       <h1 {...fullWidth}>{config.table_title}</h1>
       <QueueOrganizationDropdown organizations={config.organizations} />
 
       <TabWindow
         name="tasks-organization-queue"
-        tabs={tabs}
+        tabs={this.tabsFromConfig(config)}
         defaultPage={config.active_tab}
       />
     </div>;
   }
-
-  // <div>
-  //   <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
-  //   <QueueOrganizationDropdown organizations={this.props.organizations} />
-  //   <TabWindow
-  //     name="tasks-organization-queue"
-  //     tabs={tabs}
-  //     defaultPage={focusedTab}
-  //   />
-  // </div>
-
-
-  // <QueueOrganizationDropdown organizations={this.props.organizations} />
-  // <TabWindow
-  //   name="tasks-organization-queue"
-  //   tabs={tabs}
-  //   defaultPage={config.active_tab}
-  // />
-
-
-  //
-  // tabs: [
-  //   // Tracking tasks tab.
-  //   // Unassigned tasks tab.
-  //   // {
-  //   //   name: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
-  //   //   description: sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, this.props.organizationName),
-  //   //   // Compact to account for the maybe absent regional office column
-  //   //   columns: _.compact([
-  //   //     "hearingBadgeColumn",
-  //   //     "detailsColumn",
-  //   //     "taskColumn",
-  //   //     showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
-  //   //     "typeColumn",
-  //   //     "docketNumberColumn",
-  //   //     "daysWaitingColumn",
-  //   //     "readerLinkColumn"
-  //   //   ]),
-  //   //   allow_bulk_assign: allowBulkAssign(this.props.organizationName),
-  //   //   tasks: this.props.unassignedTasks
-  //   // },
-  //   // Assigned tasks tab.
-  //   // Completed tasks tab.
-  // ]
 
   render = () => {
     const { success, tasksAssignedByBulk } = this.props;
