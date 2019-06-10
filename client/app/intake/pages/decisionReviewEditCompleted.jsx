@@ -142,6 +142,8 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const ineligibleRequestIssues = issuesAfter.filter((ri) => ri.ineligibleReason);
     const withdrawnRequestIssues = addedIssues.filter((ri) => ri.withdrawalPending);
+    const editedRequestIssues = addedIssues.filter((ri) => ri.editedDescription);
+    const hasEditedRequestIssues = !_.isEmpty(editedRequestIssues);
     const hasWithdrawnIssues = !_.isEmpty(withdrawnRequestIssues);
     const pageTitle = () => {
       if (issuesAfter.length === 0) {
@@ -181,6 +183,17 @@ class DecisionReviewEditCompletedPage extends React.PureComponent {
           <li>
             <strong>Withdrawn</strong>
             {withdrawnRequestIssues.map((ri, i) =>
+              <p key={`withdrawn-issue-${i}`}>
+                {ri.contentionText}
+              </p>)}
+          </li>
+        </ul>
+      </Fragment> }
+      { hasEditedRequestIssues && <Fragment>
+        <ul className="cf-issue-checklist cf-left-padding">
+          <li>
+            <strong>Edited</strong>
+            {editedRequestIssues.map((ri, i) =>
               <p key={`withdrawn-issue-${i}`}>
                 {ri.contentionText}
               </p>)}
