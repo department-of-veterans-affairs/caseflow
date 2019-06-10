@@ -67,6 +67,9 @@ class OrganizationQueue extends React.PureComponent {
           showRegionalOffice: showRegionalOfficeInQueue(this.props.organizationName),
           allow_bulk_assign: allowBulkAssign(this.props.organizationName),
           tabType: COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+          description:
+            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+              this.props.organizationName),
           columns: _.compact([
               "hearingBadgeColumn",
               "detailsColumn",
@@ -183,19 +186,19 @@ class OrganizationQueue extends React.PureComponent {
   //   </React.Fragment>);
   // };
 
-  taskTableTabFactory = (tabConfig, config) => {
+  taskTableTabFactory = (tabConfig) => {
     // let tab;
 
-    let { columns, tasks } = tabConfig;
+    let { columns, tasks, label, description } = tabConfig;
 
     // feeds an array of strings identifying which columnFunctions to call.
     // returns an array of column objects
     const cols = this.columnsFromConfig(columns);
 
     return {
-      label: 'lolol',
+      label: label,
       page: <React.Fragment>
-        <p className="cf-margin-top-0">{config.description}</p>
+        <p className="cf-margin-top-0">{description}</p>
         <TaskTable
           customColumns={cols}
           tasks={tasks}
