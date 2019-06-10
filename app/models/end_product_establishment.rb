@@ -283,12 +283,6 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def on_decision_issue_sync_processed(processing_request_issue)
-    if decision_issues_sync_complete?(processing_request_issue)
-      source.on_decision_issues_sync_processed
-    end
-  end
-
   def status
     if committed?
       {

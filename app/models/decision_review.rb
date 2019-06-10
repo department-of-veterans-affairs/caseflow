@@ -176,10 +176,6 @@ class DecisionReview < ApplicationRecord
     LegacyOptinManager.new(decision_review: self).process!
   end
 
-  def on_decision_issues_sync_processed
-    # no-op, can be overwritten
-  end
-
   def establish!
     # no-op
   end

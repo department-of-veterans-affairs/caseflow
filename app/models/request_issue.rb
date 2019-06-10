@@ -353,7 +353,7 @@ class RequestIssue < ApplicationRecord
     transaction do
       return unless create_decision_issues
 
-      end_product_establishment.on_decision_issue_sync_processed(self)
+      decision_review.create_remand_supplemental_claims!
       clear_error!
       close_decided_issue!
       processed!

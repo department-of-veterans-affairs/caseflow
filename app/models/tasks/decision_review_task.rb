@@ -27,7 +27,7 @@ class DecisionReviewTask < GenericTask
       update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
     end
 
-    appeal.on_decision_issues_sync_processed if appeal.is_a?(HigherLevelReview)
+    appeal.create_remand_supplemental_claims! if appeal.is_a?(HigherLevelReview)
 
     true
   end

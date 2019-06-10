@@ -21,10 +21,6 @@ class HigherLevelReview < ClaimReview
     )
   end
 
-  def on_decision_issues_sync_processed
-    create_remand_supplemental_claims!
-  end
-
   # needed for appeal status api
 
   def review_status_id
