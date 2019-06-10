@@ -20,7 +20,6 @@ class IntakeHelp extends React.Component {
       </p>
 
       <h1 id="training-videos">Training Videos</h1>
-      https://www.youtube.com/watch?v=kSQLLBVPgy0&feature=youtu.be
       <p>
         <a href="https://www.youtube.com/watch?v=kSQLLBVPgy0&feature=youtu.be" target="_blank" rel="noopener noreferrer">
       Training video for business lines other than compensation and pension
