@@ -9,13 +9,13 @@ describe WorkQueue::LegacyAppealSerializer do
   describe "#as_json" do
     it "renders the appellant address from BGS" do
       serialized_appellant_address = {
-        address_line_1: Fakes::BGSService::DEFAULT_ADDRESS_LINE_1,
-        address_line_2: Fakes::BGSService::DEFAULT_ADDRESS_LINE_2,
-        address_line_3: Fakes::BGSService::DEFAULT_ADDRESS_LINE_3,
-        city: Fakes::BGSService::DEFAULT_CITY,
-        country: Fakes::BGSService::DEFAULT_COUNTRY,
-        state: Fakes::BGSService::DEFAULT_STATE,
-        zip: Fakes::BGSService::DEFAULT_ZIP
+        address_line_1: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1,
+        address_line_2: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_2,
+        address_line_3: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_3,
+        city: FakeConstants.BGS_SERVICE.DEFAULT_CITY,
+        country: FakeConstants.BGS_SERVICE.DEFAULT_COUNTRY,
+        state: FakeConstants.BGS_SERVICE.DEFAULT_STATE,
+        zip: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
       }
 
       expect(subject.serializable_hash[:data][:attributes][:appellant_address]).to eq serialized_appellant_address
