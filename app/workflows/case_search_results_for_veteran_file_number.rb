@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForVeteranFileNumber
-  include ActiveModel::Model
+  include ActiveModel::Validations
   include ValidateVsoEmployeeCanAccessFileNumber
 
   validate :file_number_presence

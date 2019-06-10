@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForCaseflowVeteranId
-  include ActiveModel::Model
+  include ActiveModel::Validations
   include ValidateVsoEmployeeCanAccessFileNumber
 
   validate :valid_caseflow_veteran_id
