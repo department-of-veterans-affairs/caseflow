@@ -834,8 +834,8 @@ class LegacyAppeal < ApplicationRecord
     end
 
     def fetch_appeals_by_file_number(*file_numbers)
-      if file_numbers.length < 1
-        raise ArgumentError, "Expected at least one file number to fetch by"
+      if file_numbers.empty?
+        fail ArgumentError, "Expected at least one file number to fetch by"
       end
 
       repository.appeals_by_vbms_id(
