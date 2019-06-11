@@ -38,7 +38,6 @@ const allowBulkAssign = (organizationName) => (organizationName === 'Hearing Man
 const showRegionalOfficeInQueue = (organizationName) =>
   (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin');
 
-
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
@@ -54,45 +53,43 @@ class OrganizationQueue extends React.PureComponent {
         {
           tasks: this.props.unassignedTasks,
           label: sprintf(
-              COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
+            COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
           description:
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName),
           organizationName: this.props.organizationName,
           userRole: this.props.userRole,
-
           allow_bulk_assign: allowBulkAssign(this.props.organizationName),
-
           columns: _.compact([
-              "hearingBadgeColumn",
-              "detailsColumn",
-              "taskColumn",
-              showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
-              "typeColumn",
-              "docketNumberColumn",
-              "daysWaitingColumn",
-              "readerLinkColumn"
-            ]),
+            'hearingBadgeColumn',
+            'detailsColumn',
+            'taskColumn',
+            showRegionalOfficeInQueue(this.props.organizationName) ? 'regionalOfficeColumn' : null,
+            'typeColumn',
+            'docketNumberColumn',
+            'daysWaitingColumn',
+            'readerLinkColumn'
+          ])
         },
         // Assigned Tasks tab
         {
           tasks: this.props.assignedTasks,
           label: sprintf(
-              COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
+            COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
           description:
             sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
               this.props.organizationName),
           organizationName: this.props.organizationName,
           userRole: this.props.userRole,
           columns: _.compact([
-              "hearingBadgeColumn",
-              "detailsColumn",
-              "taskColumn",
-              showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
-              "typeColumn",
-              "assignedToColumn",
-              "docketNumberColumn",
-              "daysWaitingColumn"
+            'hearingBadgeColumn',
+            'detailsColumn',
+            'taskColumn',
+            showRegionalOfficeInQueue(this.props.organizationName) ? 'regionalOfficeColumn' : null,
+            'typeColumn',
+            'assignedToColumn',
+            'docketNumberColumn',
+            'daysWaitingColumn'
           ])
         },
         // Completed Tasks tab
@@ -104,14 +101,14 @@ class OrganizationQueue extends React.PureComponent {
           organizationName: this.props.organizationName,
           userRole: this.props.userRole,
           columns: _.compact([
-              "hearingBadgeColumn",
-              "detailsColumn",
-              "taskColumn",
-              showRegionalOfficeInQueue(this.props.organizationName) ? "regionalOfficeColumn" : null,
-              "typeColumn",
-              "assignedToColumn",
-              "docketNumberColumn",
-              "daysWaitingColumn"
+            'hearingBadgeColumn',
+            'detailsColumn',
+            'taskColumn',
+            showRegionalOfficeInQueue(this.props.organizationName) ? 'regionalOfficeColumn' : null,
+            'typeColumn',
+            'assignedToColumn',
+            'docketNumberColumn',
+            'daysWaitingColumn'
           ])
         }
       ]
@@ -131,7 +128,7 @@ class OrganizationQueue extends React.PureComponent {
           'docketNumberColumn'
         ]
       });
-    };
+    }
 
     return config;
   }
@@ -143,7 +140,7 @@ class OrganizationQueue extends React.PureComponent {
       taskColumn: taskColumn(config.tasks),
       regionalOfficeColumn: regionalOfficeColumn(config.tasks),
       typeColumn: typeColumn(config.tasks, false),
-      "assignedToColumn": assignedToColumn(config.tasks),
+      assignedToColumn: assignedToColumn(config.tasks),
       docketNumberColumn: docketNumberColumn(config.tasks, false),
       daysWaitingColumn: daysWaitingColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
@@ -152,7 +149,6 @@ class OrganizationQueue extends React.PureComponent {
 
     return functionForColumn[column];
   }
-
 
   columnsFromConfig = (tabConfig) => {
     return tabConfig.columns.map((column) => {
@@ -166,20 +162,21 @@ class OrganizationQueue extends React.PureComponent {
     const cols = this.columnsFromConfig(tabConfig);
 
     return {
-      label: label,
+      label,
       page: <React.Fragment>
         <p className="cf-margin-top-0">{description}</p>
+        { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
         <TaskTable
           customColumns={cols}
           tasks={tasks}
         />
-        </React.Fragment>
-    }
+      </React.Fragment>
+    };
   }
 
   tabsFromConfig = (config) => {
     return config.tabs.map((tabConfig) => {
-      return this.taskTableTabFactory(tabConfig, config)
+      return this.taskTableTabFactory(tabConfig, config);
     });
   }
 
