@@ -1,59 +1,39 @@
 # frozen_string_literal: true
 
-class CaseSearchResultsForVeteranFileNumber
-  include ActiveModel::Validations
-  include ValidateVsoEmployeeCanAccessFileNumber
+class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
 
-  validate :file_number_presence
+  validate :file_number_or_ssn_presence
   validate :veteran_exists, if: :current_user_is_vso_employee?
 
-  def initialize(file_number:, user:)
-    @file_number = file_number
-    @user = user
+  def initialize(file_number_or_ssn:, user:)
+    super(user: user)
+    @file_number_or_ssn = file_number_or_ssn
   end
 
-  def call
-    @success = valid?
+  protected
 
-    search_results if success
+  def appeals
+    VeteranFinderQuery.new(user: user).find_appeals_for_veterans(veterans: veterans)
+  end
 
-    FormResponse.new(
-      success: success,
-      errors: errors.messages[:workflow],
-      extra: error_status_or_search_results
-    )
+  def claim_reviews
+    veteran_file_numbers = veterans.map { |vet| vet.file_number }
+
+    ClaimReview.find_all_visible_by_file_number(*veteran_file_numbers).map(&:search_table_ui_hash)
   end
 
   private
 
-  attr_reader :file_number, :success, :user, :status, :workflow
+  attr_reader :file_number_or_ssn
 
-  def search_results
-    @search_results ||= { search_results: { appeals: appeals, claim_reviews: claim_reviews } }
-  end
+  def file_number_or_ssn_presence
+    return if file_number_or_ssn
 
-  def appeals
-    ::AppealsForFileNumbers.new(file_numbers: [file_number], user: user, veteran: veteran).call
-  end
-
-  def claim_reviews
-    ClaimReview.find_all_visible_by_file_number(file_number).map(&:search_table_ui_hash)
-  end
-
-  def error_status_or_search_results
-    return { status: status } unless success
-
-    search_results
-  end
-
-  def file_number_presence
-    return if file_number
-
-    errors.add(:workflow, missing_veteran_file_number_error)
+    errors.add(:workflow, missing_veteran_file_number_or_ssn_error)
     @status = :bad_request
   end
 
-  def missing_veteran_file_number_error
+  def missing_veteran_file_number_or_ssn_error
     {
       "title": "Veteran file number missing",
       "detail": "HTTP_VETERAN_ID request header must include Veteran file number"
@@ -61,7 +41,7 @@ class CaseSearchResultsForVeteranFileNumber
   end
 
   def veteran_exists
-    return if veteran
+    return unless veterans.empty?
 
     errors.add(:workflow, not_found_error)
     @status = :not_found
@@ -74,8 +54,8 @@ class CaseSearchResultsForVeteranFileNumber
     }
   end
 
-  def veteran
-    @veteran ||= Veteran.find_by(file_number: file_number)
+  def veterans
+    @veterans ||= VeteranFinderQuery.find_by_ssn_or_file_number(file_number_or_ssn: file_number_or_ssn)
   end
 
   def current_user_is_vso_employee?
