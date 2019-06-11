@@ -8,7 +8,9 @@ class Organizations::TasksController < OrganizationsController
     tasks = GenericQueue.new(user: organization).tasks
 
     # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
-    tasks = tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod } if organization.id == "20"
+    if organization.url == "hearings-management"
+      tasks = tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
+    end
 
     render json: {
       organization_name: organization.name,

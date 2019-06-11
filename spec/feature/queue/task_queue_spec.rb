@@ -288,7 +288,6 @@ RSpec.feature "Task queue" do
       click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
       click_button(text: "Submit")
 
-
       mail_task = root_task.reload.children[0]
       expect(mail_task.class).to eq(eval(task_type))
       expect(mail_task.assigned_to).to eq(MailTeam.singleton)
