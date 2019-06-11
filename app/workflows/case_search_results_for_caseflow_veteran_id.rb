@@ -32,7 +32,7 @@ class CaseSearchResultsForCaseflowVeteranId
   end
 
   def appeals
-    ::AppealsForFileNumber.new(file_number: file_number, user: user, veteran: veteran).call
+    ::AppealsForFileNumbers.new(file_numbers: [file_number], user: user, veteran: veteran).call
   end
 
   def claim_reviews

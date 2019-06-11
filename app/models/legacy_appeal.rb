@@ -833,8 +833,14 @@ class LegacyAppeal < ApplicationRecord
       BGSService.new
     end
 
-    def fetch_appeals_by_file_number(file_number)
-      repository.appeals_by_vbms_id(convert_file_number_to_vacols(file_number))
+    def fetch_appeals_by_file_number(*file_numbers)
+      if file_numbers.length < 1
+        raise ArgumentError, "Expected at least one file number to fetch by"
+      end
+
+      repository.appeals_by_vbms_id(
+        file_numbers.map { |num| convert_file_number_to_vacols(num) }
+      )
     rescue Caseflow::Error::InvalidFileNumber
       raise ActiveRecord::RecordNotFound
     end
