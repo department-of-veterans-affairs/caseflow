@@ -98,6 +98,7 @@ RSpec.feature "Change hearing disposition" do
   scenario "change hearing disposition to cancelled" do
     step "visit the hearing admin organization queue and click on the veteran's name" do
       visit "/organizations/#{HearingAdmin.singleton.url}"
+
       expect(page).to have_content("Unassigned (1)")
       click_on veteran_link_text
     end

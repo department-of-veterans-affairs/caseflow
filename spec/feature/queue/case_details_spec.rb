@@ -1029,7 +1029,7 @@ RSpec.feature "Case details" do
           it "displays a loading failed message on the case details page" do
             visit(queue_home_path)
             click_on("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
-            
+
             expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)
             expect(page).to have_current_path(case_details_page_path)
           end

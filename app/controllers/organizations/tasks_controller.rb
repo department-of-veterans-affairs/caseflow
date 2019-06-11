@@ -6,7 +6,9 @@ class Organizations::TasksController < OrganizationsController
 
   def index
     tasks = GenericQueue.new(user: organization).tasks
-    tasks = tasks.select{|t| t.appeal.is_a?(LegacyAppeal) && t.appeal.aod} if organization.is_a?(HearingsManagement)
+
+    # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
+    tasks = tasks.select{|t| t.appeal.is_a?(LegacyAppeal) ? t.appeal.aod : true} if organization.id == "20"
 
     render json: {
       organization_name: organization.name,
