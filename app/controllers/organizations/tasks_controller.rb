@@ -27,7 +27,7 @@ class Organizations::TasksController < OrganizationsController
 
     AmaAndLegacyTaskSerializer.new(
       tasks: tasks, params: params, ama_serializer: serializer
-    ).call
+    )
   end
 
   def serializer
