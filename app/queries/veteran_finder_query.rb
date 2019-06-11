@@ -31,13 +31,11 @@ class VeteranFinderQuery
       #   3. Combination of both.
       veteran_file_number_or_ssn = Veteran.find_by(file_number: file_number_or_ssn)
       veteran_bgs_lookup = if file_number_or_ssn.length == 9
-        Veteran.find_by_file_number_or_ssn(file_number_or_ssn)
-      else
-        nil
-      end
+                             Veteran.find_by_file_number_or_ssn(file_number_or_ssn)
+                           end
 
       [veteran_file_number_or_ssn, veteran_bgs_lookup].uniq(&:id).select { |vet| !vet.nil? }
-    end 
+    end
 
     def find_appeals_with_file_numbers(file_numbers:)
       MetricsService.record("VACOLS: Get appeal information for file_numbers #{file_numbers}",
