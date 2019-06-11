@@ -6,6 +6,7 @@ class HearingDispositionChangeJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
   queue_as :low_priority
+  application_attr :hearing_schedule
 
   def perform
     start_time = Time.zone.now
