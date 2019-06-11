@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
-
   validate :valid_caseflow_veteran_id
 
   def initialize(caseflow_veteran_id:, user:)

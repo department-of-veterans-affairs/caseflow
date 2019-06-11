@@ -16,7 +16,6 @@ class VeteranFinderQuery
     veteran_file_number_is_ssn = Veteran.find_by(file_number: file_number_or_ssn)
     veteran_bgs_lookup = Veteran.find_by_file_number_or_ssn(file_number_or_ssn)
 
-    # TODO Check participant_id?
     [veteran_file_number_is_ssn, veteran_bgs_lookup].select { |vet| !vet.nil? }
   end
 
@@ -25,7 +24,7 @@ class VeteranFinderQuery
       find_appeals_for_vso_user(veterans: veterans)
     else
       self.class.find_appeals_with_file_numbers(
-        file_numbers: veterans.map { |vet| vet.file_number }
+        file_numbers: veterans.map(&:file_number)
       )
     end
   end
@@ -36,11 +35,7 @@ class VeteranFinderQuery
     )
   end
 
-  private
-
-  attr_accessor :user
-
-  def self.find_appeals_with_file_numbers(file_numbers:)
+  private_class_method def self.find_appeals_with_file_numbers(file_numbers:)
     MetricsService.record("VACOLS: Get appeal information for file_numbers #{file_numbers}",
                           service: :queue,
                           name: "VeteranFinderQuery.find_appeals_with_file_numbers") do
@@ -54,6 +49,10 @@ class VeteranFinderQuery
       appeals
     end
   end
+
+  private
+
+  attr_accessor :user
 
   def find_appeals_for_vso_user(veterans:)
     MetricsService.record("VACOLS: Get vso appeals information for veterans",

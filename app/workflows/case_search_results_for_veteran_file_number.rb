@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
-
   validate :file_number_or_ssn_presence
   validate :veteran_exists, if: :current_user_is_vso_employee?
 
@@ -17,7 +16,7 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   end
 
   def claim_reviews
-    veteran_file_numbers = veterans.map { |vet| vet.file_number }
+    veteran_file_numbers = veterans.map(&:file_number)
 
     ClaimReview.find_all_visible_by_file_number(*veteran_file_numbers).map(&:search_table_ui_hash)
   end

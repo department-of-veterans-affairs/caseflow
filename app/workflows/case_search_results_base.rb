@@ -4,7 +4,7 @@ class CaseSearchResultsBase
   include ActiveModel::Validations
   include ValidateVsoEmployeeCanAccessFileNumber
 
-  def initialize(user: user)
+  def initialize(user:)
     @user = user
   end
 
@@ -26,9 +26,6 @@ class CaseSearchResultsBase
 
   def json_appeals(appeals)
     ama_appeals, legacy_appeals = appeals.partition { |appeal| appeal.is_a?(Appeal) }
-
-    puts user
-    puts legacy_appeals
 
     ama_hash = WorkQueue::AppealSerializer.new(
       ama_appeals, is_collection: true, params: { user: user }
@@ -55,7 +52,7 @@ class CaseSearchResultsBase
     @search_results ||= {
       search_results: {
         appeals: json_appeals(appeals),
-        claim_reviews: claim_reviews 
+        claim_reviews: claim_reviews
       }
     }
   end
