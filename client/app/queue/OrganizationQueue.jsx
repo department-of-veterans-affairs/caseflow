@@ -31,15 +31,12 @@ const alertStyling = css({
   marginBottom: '1.5em'
 });
 
-// TODO: Is this worth it just because it is a handy alias? Yes
 const includeTrackingTasksTab = (organizationIsVso) => organizationIsVso;
 
 const allowBulkAssign = (organizationName) => (organizationName === 'Hearing Management');
 
 const showRegionalOfficeInQueue = (organizationName) =>
   (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin');
-
-
 
 
 class OrganizationQueue extends React.PureComponent {
@@ -51,9 +48,9 @@ class OrganizationQueue extends React.PureComponent {
     const config = {
       table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),
       organizations: this.props.organizations,
-      active_tab: includeTrackingTasksTab(this.props.organizationIsVso) ? 1 : 0, // tracking tasks tab?
-      // organizationName: this.props.organizationName,
+      active_tab: includeTrackingTasksTab(this.props.organizationIsVso) ? 1 : 0,
       tabs: [
+        // Unassigned Tasks Tab
         {
           tasks: this.props.unassignedTasks,
           label: sprintf(
@@ -77,7 +74,7 @@ class OrganizationQueue extends React.PureComponent {
               "readerLinkColumn"
             ]),
         },
-
+        // Assigned Tasks tab
         {
           tasks: this.props.assignedTasks,
           label: sprintf(
@@ -98,6 +95,7 @@ class OrganizationQueue extends React.PureComponent {
               "daysWaitingColumn"
           ])
         },
+        // Completed Tasks tab
         {
           tasks: this.props.completedTasks,
           label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
@@ -119,6 +117,7 @@ class OrganizationQueue extends React.PureComponent {
       ]
     };
 
+    // Tracking Task tab - when organization is a VSO
     if (includeTrackingTasksTab(this.props.organizationIsVso)) {
       config.tabs.unshift({
         tasks: this.props.trackingTasks,
@@ -137,25 +136,6 @@ class OrganizationQueue extends React.PureComponent {
     return config;
   }
 
-      // {
-      //   label: COPY.ALL_CASES_QUEUE_TABLE_TAB_TITLE,
-      //   page: <React.Fragment>
-      //     <p className="cf-margin-top-0">
-      //       {sprintf(COPY.ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, this.props.organizationName)}
-      //     </p>
-      //     <TaskTable
-      //       customColumns={[
-      //         detailsColumn(this.props.trackingTasks, false, this.props.userRole),
-      //         issueCountColumn(false),
-      //         typeColumn(this.props.trackingTasks, false),
-      //         docketNumberColumn(this.props.trackingTasks, false)
-      //       ]}
-      //       tasks={this.props.trackingTasks}
-      //     />
-      //   </React.Fragment>
-      // }
-      
-  // accepts column string, calls proper column objection creation function, returns it.
   createColumnObject = (column, config) => {
     const functionForColumn = {
       hearingBadgeColumn: hearingBadgeColumn(config.tasks),
@@ -181,12 +161,8 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   taskTableTabFactory = (tabConfig) => {
-    // let tab;
+    const { tasks, label, description } = tabConfig;
 
-    let { tasks, label, description } = tabConfig;
-
-    // feeds an array of strings identifying which columnFunctions to call.
-    // returns an array of column objects
     const cols = this.columnsFromConfig(tabConfig);
 
     return {
@@ -207,7 +183,6 @@ class OrganizationQueue extends React.PureComponent {
     });
   }
 
-// THE BIG KAHUNA
   makeQueueComponents = (config) => {
     return <div>
       <h1 {...fullWidth}>{config.table_title}</h1>
@@ -223,32 +198,6 @@ class OrganizationQueue extends React.PureComponent {
 
   render = () => {
     const { success, tasksAssignedByBulk } = this.props;
-
-    // Focus on the first tab in the list of tabs unless we have an "all cases" view, in which case the first tab will
-    // be the "all cases" tab. In that case focus on the second tab which will be the first tab with workable tasks.
-    // let focusedTab = 0;
-
-    // if (this.props.organizationIsVso) {
-    //   focusedTab = 1;
-    //   tabs.unshift({
-    //     label: COPY.ALL_CASES_QUEUE_TABLE_TAB_TITLE,
-    //     page: <React.Fragment>
-    //       <p className="cf-margin-top-0">
-    //         {sprintf(COPY.ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, this.props.organizationName)}
-    //       </p>
-    //       <TaskTable
-    //         customColumns={[
-    //           detailsColumn(this.props.trackingTasks, false, this.props.userRole),
-    //           issueCountColumn(false),
-    //           typeColumn(this.props.trackingTasks, false),
-    //           docketNumberColumn(this.props.trackingTasks, false)
-    //         ]}
-    //         tasks={this.props.trackingTasks}
-    //       />
-    //     </React.Fragment>
-    //   });
-    // }
-
     const body = this.makeQueueComponents(this.queueConfig());
 
     return <AppSegment filledBackground styling={containerStyles}>
