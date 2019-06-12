@@ -20,7 +20,7 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
 
   private
 
-  attr_reader :caseflow_veteran_id, :file_number
+  attr_reader :caseflow_veteran_id, :file_number_or_ssn
 
   def valid_caseflow_veteran_id
     return if file_number_or_ssn
@@ -37,7 +37,7 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
   end
 
   def file_number_or_ssn
-    @file_number ||= veteran&.file_number
+    @file_number_or_ssn ||= veteran&.file_number
   end
 
   def veteran

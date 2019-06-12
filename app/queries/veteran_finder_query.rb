@@ -6,6 +6,8 @@ class VeteranFinderQuery
   end
 
   def find_appeals_for_veterans(veterans:)
+    return [] if veterans.empty?
+
     if user.vso_employee?
       find_appeals_for_vso_user(veterans: veterans)
     else
@@ -60,8 +62,6 @@ class VeteranFinderQuery
   attr_accessor :user
 
   def find_appeals_for_vso_user(veterans:)
-    return [] if veterans.empty?
-
     MetricsService.record("VACOLS: Get vso appeals information for veterans",
                           service: :queue,
                           name: "VeteranFinderQuery.find_appeals_for_vso_user") do
