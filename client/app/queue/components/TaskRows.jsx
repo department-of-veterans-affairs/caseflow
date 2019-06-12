@@ -300,6 +300,7 @@ class TaskRows extends React.PureComponent {
         return this.decisionDateTemplate(templateConfig);
 
       }) }
+      {/* everything below here will not be in chronological order unless it's added to the task list on line 287*/}
       { timeline && appeal.isLegacyAppeal && <tr>
         <td {...taskTimeTimelineContainerStyling}>
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
