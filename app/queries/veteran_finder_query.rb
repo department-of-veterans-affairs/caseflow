@@ -25,7 +25,7 @@ class VeteranFinderQuery
 
   class << self
     def find_by_ssn_or_file_number(file_number_or_ssn:)
-      veteran = Veteran.find_by_file_number_or_ssn(file_number: file_number_or_ssn)
+      veteran = Veteran.find_by_file_number_or_ssn(file_number_or_ssn)
 
       # TODO will this return multiple veterans in the future?
       [veteran].select { |vet| !vet.nil? }.uniq(&:id)
