@@ -6,7 +6,7 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
 
   def initialize(file_number_or_ssn:, user:)
     super(user: user)
-    @file_number_or_ssn = file_number_or_ssn
+    @file_number_or_ssn = file_number_or_ssn.to_s
   end
 
   protected

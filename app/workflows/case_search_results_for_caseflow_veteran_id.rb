@@ -15,7 +15,7 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
   end
 
   def claim_reviews
-    ClaimReview.find_all_visible_by_file_number(file_number).map(&:search_table_ui_hash)
+    ClaimReview.find_all_visible_by_file_number(file_number_or_ssn).map(&:search_table_ui_hash)
   end
 
   private
@@ -32,7 +32,7 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
   def not_found_error
     {
       "title": "Veteran not found",
-      "detail": "Could not find a Veteran matching the Caseflow Veteran id #{file_number}"
+      "detail": "Could not find a Veteran matching the Caseflow Veteran id #{file_number_or_ssn}"
     }
   end
 
