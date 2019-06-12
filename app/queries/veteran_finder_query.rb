@@ -34,7 +34,7 @@ class VeteranFinderQuery
                              Veteran.find_by_file_number_or_ssn(file_number_or_ssn)
                            end
 
-      [veteran_file_number_or_ssn, veteran_bgs_lookup].uniq(&:id).select { |vet| !vet.nil? }
+      [veteran_file_number_or_ssn, veteran_bgs_lookup].select { |vet| !vet.nil? }.uniq(&:id)
     end
 
     def find_appeals_with_file_numbers(file_numbers:)
