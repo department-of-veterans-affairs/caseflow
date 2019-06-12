@@ -388,14 +388,14 @@ describe Task do
       context "instructions are updated" do
         subject { task.update!(instructions: ["These are my new instructions"]) }
 
-        it "cancels the child timed hold task" do
+        it "doesn not cancel the child timed hold task" do
           expect(timed_hold_task.reload.open?).to be_truthy
           expect(task.reload.on_hold?).to be_truthy
 
           subject
 
-          expect(timed_hold_task.reload.cancelled?).to be_truthy
-          expect(task.reload.on_hold?).to be_falsey
+          expect(timed_hold_task.reload.open?).to be_truthy
+          expect(task.reload.on_hold?).to be_truthy
         end
       end
     end
@@ -420,7 +420,7 @@ describe Task do
     context "when status is assigned" do
       let(:status) { Constants.TASK_STATUSES.assigned }
 
-      it "is active" do
+      it "is open" do
         expect(subject).to eq(true)
       end
     end
@@ -428,7 +428,7 @@ describe Task do
     context "when status is in_progress" do
       let(:status) { Constants.TASK_STATUSES.in_progress }
 
-      it "is active" do
+      it "is open" do
         expect(subject).to eq(true)
       end
     end
@@ -436,7 +436,7 @@ describe Task do
     context "when status is on_hold" do
       let(:status) { Constants.TASK_STATUSES.on_hold }
 
-      it "is active" do
+      it "is open" do
         expect(subject).to eq(true)
       end
     end
@@ -444,7 +444,7 @@ describe Task do
     context "when status is completed" do
       let(:status) { Constants.TASK_STATUSES.completed }
 
-      it "is not active" do
+      it "is not open" do
         expect(subject).to eq(false)
       end
     end
@@ -452,7 +452,7 @@ describe Task do
     context "when status is cancelled" do
       let(:status) { Constants.TASK_STATUSES.cancelled }
 
-      it "is not active" do
+      it "is not open" do
         expect(subject).to eq(false)
       end
     end
@@ -573,7 +573,7 @@ describe Task do
       end
 
       let(:user) { create(:user) }
-      let(:org) { AutoAssignOrg.create!(url: 'autoassign', name: 'AutoAssign', assignee: user) }
+      let(:org) { AutoAssignOrg.create!(url: "autoassign", name: "AutoAssign", assignee: user) }
 
       it "should create a child task when a task assigned to the organization is created" do
         expect(subject.children.length).to eq(1)
@@ -695,7 +695,7 @@ describe Task do
 
     it "returns and destroys related timers" do
       expect(TaskTimer.where(task_id: task_id).count).to eq(task_timer_count)
-      expect(task.task_timers).to eq(task_timers)
+      expect(task.task_timers.to_a).to match_array(task_timers)
 
       task.destroy!
       expect(TaskTimer.where(task_id: task_id).count).to eq(0)
@@ -727,6 +727,108 @@ describe Task do
 
       it "does not recognize that the task has completed the old-style hold" do
         expect(subject).to eq(false)
+      end
+    end
+  end
+
+  describe ".assigned_to_same_org?" do
+    subject { task.assigned_to_same_org?(other_task) }
+
+    before { OrganizationsUser.add_user_to_organization(create(:user), Colocated.singleton) }
+
+    context "when other task is assigned to a user" do
+      let(:task) { create(:task, assigned_to: Colocated.singleton) }
+      let(:other_task) { create(:task, assigned_to: create(:user)) }
+
+      it "should be false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when other task is assigned to another org" do
+      let(:task) { create(:task, assigned_to: Colocated.singleton) }
+      let(:other_task) { create(:task, assigned_to: MailTeam.singleton) }
+
+      it "should be false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when other task is assigned to same org" do
+      let(:task) { create(:task, assigned_to: Colocated.singleton) }
+      let(:other_task) { create(:task, assigned_to: Colocated.singleton) }
+
+      it "should be true" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe ".first_ancestor_of_type" do
+    let(:user) { create(:user) }
+
+    subject { task.first_ancestor_of_type }
+
+    context "when the task has no parents of the same type" do
+      let(:task) { create(:colocated_task, parent: create(:root_task), assigned_to: user) }
+
+      it "should should return itself" do
+        expect(subject.id).to eq(task.id)
+      end
+    end
+
+    context "when the task has a grandparent of the same type, but a different parent" do
+      let(:grandparent_task) { create(:colocated_task, action: "ihp", assigned_to: user) }
+      let(:parent_task) { create(:ama_judge_task, parent: grandparent_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, action: "ihp", parent: parent_task, assigned_to: user) }
+
+      it "should should return itself" do
+        expect(subject.id).to eq(task.id)
+      end
+    end
+
+    context "when the task has both a parent and grandparent of the same type" do
+      let(:grandparent_task) { create(:colocated_task, action: "ihp", assigned_to: user) }
+      let(:parent_task) { create(:colocated_task, action: "ihp", parent: grandparent_task, assigned_to: user) }
+      let(:task) { create(:colocated_task, action: "ihp", parent: parent_task, assigned_to: user) }
+
+      it "should should return the grandparent" do
+        expect(subject.id).to eq(grandparent_task.id)
+      end
+    end
+  end
+
+  describe ".last_descendant_of_type" do
+    let(:user) { create(:user) }
+
+    subject { task.last_descendant_of_type }
+
+    context "when the task has no children of the same type" do
+      let(:task) { create(:colocated_task) }
+      let(:child_task) { create(:ama_judge_task, parent: task) }
+
+      it "should should return itself" do
+        expect(subject.id).to eq(task.id)
+      end
+    end
+
+    context "when the task has a grandchild of the same type, but a different child" do
+      let(:task) { create(:colocated_task, action: "ihp", assigned_to: user) }
+      let(:child_task) { create(:ama_judge_task, type: JudgeAssignTask.name, parent: task) }
+      let(:grandchild_task) { create(:colocated_task, action: "ihp", parent: child_task, assigned_to: user) }
+
+      it "should should return itself" do
+        expect(subject.id).to eq(task.id)
+      end
+    end
+
+    context "when the task has both a parent and grandparent of the same type" do
+      let(:task) { create(:colocated_task, action: "ihp", assigned_to: user) }
+      let(:child_task) { create(:colocated_task, action: "ihp", parent: task, assigned_to: user) }
+      let!(:grandchild_task) { create(:colocated_task, action: "ihp", parent: child_task, assigned_to: user) }
+
+      it "should should return the grandchild" do
+        expect(subject.id).to eq(grandchild_task.id)
       end
     end
   end

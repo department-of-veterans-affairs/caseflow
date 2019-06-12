@@ -152,3 +152,7 @@ export const getTimeInDifferentTimeZone = (date, timeZone) => {
 export const getDate = (date) => {
   return moment(date).format('YYYY-MM-DD');
 };
+
+export const getMinutesToMilliseconds = (minutes) => {
+  return minutes * 60 * 1000;
+};
