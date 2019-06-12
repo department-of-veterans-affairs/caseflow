@@ -239,11 +239,10 @@ class TaskRows extends React.PureComponent {
   decisionDateTemplate = (templateConfig) => {
     const { taskList, timeline, appeal } = templateConfig;
     let timelineContainerText;
-    const decisionDate = '12/12/2018';
 
     if (appeal.withdrawn) {
       timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
-    } else if (decisionDate) {
+    } else if (appeal.decisionDate) {
       timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
     } else {
       timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
@@ -251,14 +250,14 @@ class TaskRows extends React.PureComponent {
     if (timeline) {
       return <tr>
         <td {...taskTimeTimelineContainerStyling}>
-          { decisionDate && moment(decisionDate).format('MM/DD/YYYY') }
+          { appeal.decisionDate && moment(appeal.decisionDate).format('MM/DD/YYYY') }
         </td>
         <td {...taskInfoWithIconTimelineContainer}
-          {...(!decisionDate && greyDotStyling)}>
-          {decisionDate ? <GreenCheckmark /> : <GrayDot /> }
+          {...(!appeal.decisionDate && greyDotStyling)}>
+          {appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
           <div {...grayLineTimelineStyling}
-            {...(!decisionDate && css({ top: '25px !important' }))} />}
+            {...(!appeal.decisionDate && css({ top: '25px !important' }))} />}
         </td>
         <td {...taskInformationTimelineContainerStyling}>
           { timelineContainerText } <br />
@@ -276,9 +275,8 @@ class TaskRows extends React.PureComponent {
 
     const taskListToSort = taskList;
     const mappedDecisionDateObj = this.mapDecisionDateToSortableObject(appeal);
-    const decDate = '12/12/2018';
 
-    if (decDate) {
+    if (appeal.decisionDate) {
       taskListToSort.push(mappedDecisionDateObj);
     } else {
       taskListToSort.unshift(mappedDecisionDateObj);
@@ -302,7 +300,6 @@ class TaskRows extends React.PureComponent {
         return this.decisionDateTemplate(templateConfig);
 
       }) }
-      {/* everything below here will not be in chronological order unless it's added to the task list on line 289*/}
       { timeline && appeal.isLegacyAppeal && <tr>
         <td {...taskTimeTimelineContainerStyling}>
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
