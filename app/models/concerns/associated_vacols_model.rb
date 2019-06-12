@@ -13,13 +13,24 @@ module AssociatedVacolsModel
     # all instance variables for the appeal. Further requests will pull the values from memory and not
     # do subsequent VACOLS DB lookups
     def vacols_attr_accessor(*fields)
+      vacols_attr_getter(*fields)
+      vacols_attr_setter(*fields)
+    end
+
+    def vacols_attr_getter(*fields)
       fields.each do |field|
-        vacols_fields[field] = true
+        vacols_getters[field] = true
 
         define_method field do
           check_and_load_vacols_data! unless field_set?(field)
           instance_variable_get("@#{field}".to_sym)
         end
+      end
+    end
+
+    def vacols_attr_setter(*fields)
+      fields.each do |field|
+        vacols_setters[field] = true
 
         define_method "#{field}=" do |value|
           @vacols_load_status = :disabled
@@ -29,12 +40,24 @@ module AssociatedVacolsModel
       end
     end
 
-    def vacols_fields
-      @vacols_fields ||= {}
+    def vacols_setters
+      @vacols_setters ||= {}
+    end
+
+    def vacols_getters
+      @vacols_getters ||= {}
     end
 
     def vacols_field?(field)
-      vacols_fields[field]
+      vacols_setter?(field) && vacols_getter?(field)
+    end
+
+    def vacols_setter?(field)
+      vacols_setters[field].present?
+    end
+
+    def vacols_getter?(field)
+      vacols_getters[field].present?
     end
   end
 

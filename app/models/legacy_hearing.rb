@@ -5,6 +5,10 @@ class LegacyHearing < ApplicationRecord
   include AssociatedVacolsModel
   include AppealConcern
 
+  # When these instance variable getters are called, first check if we've
+  # fetched the values from VACOLS. If not, first fetch all values and save them
+  # This allows us to easily call `hearing.veteran_first_name` and dynamically
+  # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
@@ -12,6 +16,11 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :hearing_day_id
   vacols_attr_accessor :docket_number, :appeal_type, :room, :bva_poc, :judge_id
+
+  # these values have been delegated to BGS, but we may want to set them in VACOLS
+  vacols_attr_setter :representative
+  vacols_attr_setter :appellant_address_line_1, :appellant_address_line_2
+  vacols_attr_setter :appellant_city, :appellant_state, :appellant_country, :appellant_zip
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
