@@ -528,19 +528,19 @@ RSpec.describe TasksController, type: :controller do
         [
           {
             "instructions": incarcerated_instructions,
-            "type": "HearingAdminActionIncarceratedVeteranTask",
+            "type": HearingAdminActionIncarceratedVeteranTask.name,
             "external_id": appeal.external_id,
             "parent_id": schedule_hearing_task.id.to_s
           },
           {
             "instructions": contested_instructions_1,
-            "type": "HearingAdminActionContestedClaimantTask",
+            "type": HearingAdminActionContestedClaimantTask.name,
             "external_id": appeal.external_id,
             "parent_id": schedule_hearing_task.id.to_s
           },
           {
             "instructions": contested_instructions_2,
-            "type": "HearingAdminActionContestedClaimantTask",
+            "type": HearingAdminActionContestedClaimantTask.name,
             "external_id": appeal.external_id,
             "parent_id": schedule_hearing_task.id.to_s
           }
@@ -827,7 +827,7 @@ RSpec.describe TasksController, type: :controller do
         data = JSON.parse(response.body)["data"]
 
         expect(data.size).to be(1)
-        expect(data.first["attributes"]["closest_regional_office"]).to eq(
+        expect(data.first["attributes"]["closest_regional_office"]["location_hash"]["city"]).to eq(
           RegionalOffice.find!(closest_regional_office).city
         )
         expect(data.first["attributes"]["available_hearing_locations"].first["address"]).to eq(

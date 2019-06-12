@@ -11,7 +11,6 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
   vacols_attr_accessor :representative_name, :representative, :hearing_day_id
-  vacols_attr_accessor :master_record
   vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
   vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
   vacols_attr_accessor :appellant_zip, :appellant_country, :room, :bva_poc, :judge_id
@@ -44,7 +43,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def disposition_task_in_progress
-    disposition_task ? disposition_task.active_with_no_children? : false
+    disposition_task ? disposition_task.open_with_no_children? : false
   end
 
   def disposition_editable
@@ -60,7 +59,7 @@ class LegacyHearing < ApplicationRecord
       task.type == TrackVeteranTask.name &&
         task.assigned_to.is_a?(Representative) &&
         task.assigned_to.user_has_access?(user) &&
-        task.active?
+        task.open?
     end
   end
 
@@ -219,7 +218,6 @@ class LegacyHearing < ApplicationRecord
         :hold_open,
         :notes,
         :add_on,
-        :master_record,
         :representative,
         :representative_name,
         :regional_office_key,

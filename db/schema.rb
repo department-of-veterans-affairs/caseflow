@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190529143622) do
+ActiveRecord::Schema.define(version: 20190603150958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,7 @@ ActiveRecord::Schema.define(version: 20190529143622) do
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
+    t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
     t.date "receipt_date", comment: "Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues."
     t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which can be used to navigate to appeals/appeal_uuid. This allows a single ID to determine an appeal whether it is a legacy appeal or an AMA appeal."
@@ -946,7 +947,7 @@ ActiveRecord::Schema.define(version: 20190529143622) do
     t.string "appeal_type", null: false
     t.datetime "assigned_at"
     t.integer "assigned_by_id"
-    t.integer "assigned_to_id"
+    t.integer "assigned_to_id", null: false
     t.string "assigned_to_type", null: false
     t.datetime "closed_at"
     t.datetime "created_at", null: false
@@ -997,6 +998,7 @@ ActiveRecord::Schema.define(version: 20190529143622) do
   create_table "users", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.string "css_id", null: false
+    t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"
     t.string "email"
     t.string "full_name"
     t.datetime "last_login_at"

@@ -938,7 +938,7 @@ RSpec.feature "Task queue" do
       end
 
       step "verify that the associated TimedHoldTask has been canceled" do
-        expect(timed_hold_task.reload.active?).to be_falsey
+        expect(timed_hold_task.reload.open?).to be_falsey
       end
     end
   end

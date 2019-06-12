@@ -59,6 +59,14 @@ class WorkQueue::TaskSerializer
     object.appeal.try(:docket_number)
   end
 
+  attribute :docket_range_date do |object|
+    if object.appeal.is_a?(LegacyAppeal)
+      object.appeal.try(:docket_date)
+    else
+      object.appeal.try(:docket_range_date)
+    end
+  end
+
   attribute :veteran_full_name do |object|
     object.appeal.veteran_full_name
   end
@@ -68,7 +76,7 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :closest_regional_office do |object|
-    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office).city
+    object.appeal.closest_regional_office && RegionalOffice.find!(object.appeal.closest_regional_office)
   end
 
   attribute :external_appeal_id do |object|

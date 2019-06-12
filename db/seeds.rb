@@ -18,9 +18,6 @@ DEVELOPMENT_JUDGE_TEAMS = {
 
 require "database_cleaner"
 
-# Explicitly include mail_task so we can create instances of MailTask's subclasses that are in the same file.
-require "mail_task"
-
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
@@ -59,6 +56,8 @@ class SeedDB
     User.create(css_id: "BVAGGREY", station_id: 101, full_name: "BVA Dispatch user without cases")
     dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "BVA Dispatch admin without cases")
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
+    bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
+    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -130,27 +129,27 @@ class SeedDB
   end
 
   def create_no_show_hearings_tasks
-    5.times do 
+    5.times do
       appeal = FactoryBot.create(
-        :appeal, 
-        :hearing_docket, 
-        closest_regional_office: ["RO17", "RO19", "RO31"].sample
+        :appeal,
+        :hearing_docket,
+        closest_regional_office: %w[RO17 RO19 RO31].sample
       )
       root_task = FactoryBot.create(:root_task, appeal: appeal)
       distribution_task = FactoryBot.create(
-        :distribution_task, 
-        appeal: appeal, 
+        :distribution_task,
+        appeal: appeal,
         parent: root_task
       )
       parent_hearing_task = FactoryBot.create(
-        :hearing_task, 
-        parent: distribution_task, 
+        :hearing_task,
+        parent: distribution_task,
         appeal: appeal
       )
       FactoryBot.create(
-        :schedule_hearing_task, 
-        :completed, 
-        parent: parent_hearing_task, 
+        :schedule_hearing_task,
+        :completed,
+        parent: parent_hearing_task,
         appeal: appeal
       )
       disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
@@ -536,18 +535,13 @@ class SeedDB
 
     vet.save
 
-    appeal = FactoryBot.create(
+    FactoryBot.create(
       :appeal,
       :with_tasks,
       number_of_claimants: 1,
       closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
       docket_type: "hearing"
-    )
-
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     )
   end
 
@@ -890,9 +884,7 @@ class SeedDB
       first_name: Faker::Name.first_name,
       last_name: Faker::Name.last_name
     )
-     # participant_id: Faker::Number.number(9).to_s,
 
-    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
 
     appeal = FactoryBot.create(
@@ -947,8 +939,7 @@ class SeedDB
     atty_task.update!(status: Constants.TASK_STATUSES.completed)
     judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
-    bva_dispatch_org_task = BvaDispatchTask.create_from_root_task(root_task)
-
+    BvaDispatchTask.create_from_root_task(root_task)
   end
 
   def create_tasks
@@ -1100,9 +1091,6 @@ class SeedDB
   def create_ama_hearing_appeals
     description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
-
-    FeatureToggle.enable!(:ama_acd_tasks)
-    FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
       :appeal,

@@ -8,10 +8,23 @@ class IntakeHelp extends React.Component {
 
       <h1 id="#top">Welcome to the Intake Help page!</h1>
 
-      <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq">Frequently Asked Questions (FAQs)</a> for Intake, as well as links to the <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide</a> and the <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">Quick Reference Guide</a>. These items are provided to assist you as you access and use Intake. If you require further assistance after reviewing these items, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email <a href="mailto:caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
+      <p>
+      Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq">Frequently Asked Questions
+      (FAQs)</a> for Intake, as well as links to the
+        <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide</a> and the
+        <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">
+      Quick Reference Guide</a>. These items are provided to assist you as you access and use Intake. If you require
+      further assistance after reviewing these items, please contact
+        <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">
+        YourIT for support</a>. We look forward to assisting you.
       </p>
 
       <h1 id="training-videos">Training Videos</h1>
+      <p>
+        <a href="https://www.youtube.com/watch?v=kSQLLBVPgy0&feature=youtu.be" target="_blank" rel="noopener noreferrer">
+      Training video for business lines other than compensation and pension
+        </a>
+      </p>
       <div className="cf-help-divider"></div>
 
       <div className="cf-lead-paragraph">Coming Soon!</div>
@@ -35,49 +48,74 @@ class IntakeHelp extends React.Component {
       <div className="cf-help-divider"></div>
 
       <h2 id="what-is-caseflow-intake">1. What is Caseflow Intake?</h2>
-      <p>Caseflow Intake (Intake) is a web-based application designed to support the Rapid Appeals
-    Modernization Program (RAMP). It will help process legacy appeals for Veterans who have
-    chosen to opt-in for the new Supplemental Claim (SC) or Higher-Level Review (HLR) options.
-    Intake will serve as the single intake system for this process. It will allow for identifying the
-    selected option (SC or HLR) and details for a given Veteran's issues (pulled from VBMS),
-    creating an End Product (EP), sending notifications to the Appellant, routing the EP to the
-    appropriate destination, and closing the VACOLS record automatically for eligible opt-ins.
-    Intake will guide Claims Assistants (CAs) through the process of notifying Veterans, updating
-    necessary systems, and creating End Products (EPs). Intake was built by the Digital Service at
-    VA (DSVA) and will create process improvements for many areas of the VA. Learn more: <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide</a>
+      <p>
+      Caseflow Intake (Intake) is a web-based application designed to support the Appeals Modernization Act (AMA).
+      Used to process AMA appeals for Veterans who have chosen the new Supplemental Claim (SC) or Higher-Level Review
+      (HLR) options as well as those who have chosen to appeal directly to the Board through a Notice of Disagreement
+      (NOD). Intake serves as the single data input system for this process, providing a source of truth for AMA
+      statutory metrics. For VBMS users, Intake creates an End Product (EP), route the EP to the appropriate
+      destination, and close the VACOLS record automatically for eligible legacy opt-ins. Intake also guides Claims
+      Assistants (CAs) through the process of notifying Veterans, updating necessary systems, and creating EPs.
+      </p>
+
+      <p>
+      For non-VBMS users, Intake also provides a lightweight task list and facility to mark dispositions,
+      closing the loop on appeals issues and assuring an end-to-end collection of AMA metrics. Across the board,
+      Intake performs numerous issue-level validations, matching, and error checking, to capture the best possible
+      data and reduce processing overhead.
+
+      </p>
+
+      <p>
+       Learn more: <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">
+       Training Guide</a>
       </p>
 
       <h2 id="how-was-intake-developed">2. How was Intake developed?</h2>
-      <p>The DSVA team worked closely with stakeholders across the VA to develop and test Intake.
-    Using feedback from VA employees and human-centered design principles, DSVA has tweaked
-    and improved the tool steadily. They will continue to improve the tool based on feedback and as
-    they have more opportunities to make things simpler.
+      <p>
+      The DSVA team worked closely with stakeholders across the VA to develop and test Intake.
+      Using feedback from VA employees and human-centered design principles, DSVA has tweaked
+      and improved the tool steadily. They will continue to improve the tool based on feedback and as
+      they have more opportunities to make things simpler.
       </p>
 
       <h2 id="how-to-access-intake">3. How do I access Intake?</h2>
-      <p>To gain access to Intake, you must submit a request to your Information Security Officer (ISO)
-    and/or Information Resources Management (IRM) team to adjust your Common Security
-    Employee Manager (CSEM) permissions. To initiate the request, draft an email requesting your
-    current permissions be updated as follows:
+      <p>
+      Each business line has identified a <strong>Caseflow Administrator</strong>, who acts as the point of contact
+      for Caseflow issues for their line of business.
       </p>
 
-      <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Intake Access" src="/assets/help/intake-access.jpg" />
+      <p><strong>To gain access to Intake, your Caseflow Administrator must submit a request including:</strong></p>
+
+      <h3>User Access List Submission</h3>
+      <p>
+      Please contact <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a> requesting
+       access to Caseflow and provide a list of users with credential information (Name, Email, Station, and User ID).
       </p>
 
-      <p>Once the email is drafted, attach a copy of your latest “VA Privacy and Information Security
-    Awareness and Rules of Behavior” training certificate and forward the email to your supervisor
-    for approval. If approved, your supervisor should forward the request to your station’s IRM team
-    and/or ISO for entry into CSEM. You will receive an email notice once access is granted.
+      <h3>Users may require Documents Submission (If requested)</h3>
+      <p>
+      Users not currently in CSEM may require documentation which includes TMS Certificates, access forms, and/or
+      Credentialing Information. Have your group’s POC alert the users.
+      </p>
+
+      <p className="cf-red-text">
+      The Caseflow support team does not have access to view CSEM access requests and therefore cannot provide the
+      status of a user’s access. Users will be directed to contact their Caseflow Administrator for more information.
       </p>
 
       <h2 id="launch-intake">4. How do I launch Intake?</h2>
-      <p>To launch Intake, open your web browser and paste the following URL into the address bar: <a href="https://appeals.cf.ds.va.gov/intake" >https://appeals.cf.ds.va.gov/intake</a>. Hit the Enter button and sign in using your VA credentials. You will be taken to the Intake Welcome page.
+      <h3>For Compensation and Pension Lines of Business</h3>
+      <p>To launch Intake, open your web browser and paste the following URL into the address bar:
+        <a href="https://appeals.cf.ds.va.gov/intake" >https://appeals.cf.ds.va.gov/intake</a>. Hit the Enter button
+      and sign in using your VA credentials. You will be taken to the Intake Welcome page.
       </p>
 
+      <h3>For Non-Compensation / Non-Pension Lines of Business</h3>
+      <p>The URL for your Line of Business will be provided to you.</p>
+
       <h2 id="web-browser">5. Which web browser can I use with Intake?</h2>
-      <p>Intake is compatible with most modern web browsers, such as Chrome,
-    Firefox, Safari, and Internet Explorer 9 (or later).
+      <p>The latest version of Google Chrome and Internet Explorer are recommended for Caseflow Intake.
       </p>
 
       <h2 id="telecommuting">6. Does Intake work while I am telecommuting?</h2>
@@ -85,22 +123,30 @@ class IntakeHelp extends React.Component {
       </p>
 
       <h2 id="encounter-problems">7. What should I do if I encounter problems?</h2>
-      <p>If you encounter any problems while using Intake, contact the Caseflow Product Support Team
-    by calling 1-844-876-5548 or send an email to <a href="mailto: caseflow@va.gov">caseflow@va.gov</a>. They can be reached from 8:00AM to 8:00PM EST, Monday through Friday.
-      </p>
-
-      <p className="cf-help-image-wrapper">
-        <img className="cf-help-image" alt="Send Intake Feedback" src="/assets/help/intake-feedback.jpg" />
+      <p>
+      If you encounter any problems while using Intake, please contact
+        <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT for support</a>.
       </p>
 
       <h2 id="suggestions">8. How can I share my suggestions for improving Intake?</h2>
-      <p>You can use the "Send feedback" link located in the dropdown menu next to your username or
-    the “Send feedback” link located at the bottom right-hand corner of the screen to share your
-    ideas for improving Intake or to report an issue.
+      <p>
+      You can use the "Send feedback" link located in the dropdown menu next to your username or
+      the “Send feedback” link located at the bottom right-hand corner of the screen to share your
+      ideas for improving Intake or to report an issue.
+      </p>
+
+      <p className="cf-help-image-wrapper">
+        <img className="cf-help-image" alt="Send Intake Feedback" src="/assets/intake-feedback.jpg" />
       </p>
 
       <h2 id="still-need-help">9. What if I still need help?</h2>
-      <p>If you require further assistance after reviewing the <a href="#faq">FAQs</a>, <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">Quick Reference Guide</a>, or <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide</a>, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email <a href="mailto: caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
+      <p>
+      If you require further assistance after reviewing the <a href="#faq">FAQs</a>,
+        <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Quick_Reference_Guide.pdf">Quick Reference
+      Guide</a>, or <a target="_blank" rel="noopener noreferrer" href="/assets/Intake_Training_Guide.pdf">Training Guide
+        </a>, please contact
+        <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">
+        YourIT for support</a>. We look forward to assisting you.
       </p>
 
     </div>;
