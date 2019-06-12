@@ -23,13 +23,7 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "when request header contains Veteran file number with associated appeals and claim reviews" do
-        let(:veteran_for_appeal) { create(:veteran, file_number: veteran_id) }
-
-        before do
-          allow(Veteran).to receive(:find_by)
-            .with(file_number: veteran_id)
-            .and_return(veteran_for_appeal)
-        end
+        let!(:veteran_for_appeal) { create(:veteran, file_number: veteran_id) }
 
         it "returns valid response with one appeal" do
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
@@ -44,13 +38,7 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "when request header contains existing Veteran ID with no associated appeals" do
-        let(:veteran_without_associated_appeals) { create(:veteran) }
-
-        before do
-          allow(Veteran).to receive(:find_by)
-            .with(file_number: veteran_without_associated_appeals.file_number)
-            .and_return(veteran_without_associated_appeals)
-        end
+        let!(:veteran_without_associated_appeals) { create(:veteran) }
 
         it "returns valid response with empty appeals array" do
           request.headers["HTTP_VETERAN_ID"] = veteran_without_associated_appeals.file_number
@@ -105,7 +93,7 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "and has access to the file" do
-        let(:veteran) { create(:veteran) }
+        let!(:veteran) { create(:veteran) }
         let(:appeal) do
           create(:appeal, 
                  veteran_file_number: veteran.file_number,
@@ -115,10 +103,6 @@ RSpec.describe AppealsController, type: :controller do
 
         before do
           User.authenticate!(user: vso_user)
-
-          allow(Veteran).to receive(:find_by)
-            .with(file_number: appeal.veteran_file_number)
-            .and_return(veteran)
         end
 
         it "responds with appeals and claim reviews" do
