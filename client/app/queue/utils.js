@@ -257,6 +257,7 @@ export const prepareAppealForStore =
         externalId: appeal.attributes.external_id,
         docketName: appeal.attributes.docket_name,
         withdrawn: appeal.attributes.withdrawn,
+        removed: appeal.attributes.removed,
         isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,

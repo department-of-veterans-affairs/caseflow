@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import ApiUtil from '../util/ApiUtil';
-
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 import { loadAppealDocCount, setAppealDocCount, errorFetchingDocumentCount } from './QueueActions';
 
 import { css } from 'glamor';
@@ -31,7 +31,7 @@ class AppealDocumentCount extends React.PureComponent {
 
     const requestOptions = {
       withCredentials: true,
-      timeout: { response: 5 * 60 * 1000 }
+      timeout: { response: getMinutesToMilliseconds(5) }
     };
 
     this.props.loadAppealDocCount(this.props.externalId);
