@@ -223,12 +223,14 @@ class TaskRows extends React.PureComponent {
           {appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
             <div {...grayLineTimelineStyling}
-              {...(!appeal.decisionDate && css({ top: '25px !important' }))} />}</td>
+              {...(!appeal.decisionDate && css({ top: '25px !important' }))} />}
+        </td>
         <td {...taskInformationTimelineContainerStyling}>
           { timelineContainerText } <br />
         </td>
       </tr> }
-      { sortTaskList(taskList).map((task, index) =>
+
+      { sortTaskList(taskList, appeal).map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
             <CaseDetailsDescriptionList>

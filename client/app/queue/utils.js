@@ -536,7 +536,10 @@ export const nullToFalse = (key, obj) => {
   return obj;
 };
 
-export const sortTaskList = (taskList) => {
+export const sortTaskList = (taskList, appeal) => {
+  console.log(taskList[0], 'the first task');
+  console.log(appeal.decisionDate, 'the appeal decision date');
+
   return taskList.sort((prev, next) => {
     return new Date(next.closedAt || next.createdAt).getTime() -
     new Date(prev.closedAt || prev.createdAt).getTime();
