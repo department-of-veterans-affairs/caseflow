@@ -33,7 +33,7 @@ class VeteranFinderQuery
       #   3. Combination of both.
       veteran_file_number_or_ssn = Veteran.find_by(file_number: file_number_or_ssn)
       veteran_bgs_lookup = if file_number_or_ssn.length == 9
-                             Veteran.find_by_file_number_or_ssn(file_number_or_ssn)
+                             Veteran.find_by_ssn(file_number_or_ssn)
                            end
 
       [veteran_file_number_or_ssn, veteran_bgs_lookup].select { |vet| !vet.nil? }.uniq(&:id)
