@@ -22,6 +22,8 @@ class VBMSError < RuntimeError
   class UserNotAuthorized < Caseflow::Error::VBMS; end
   class VeteranEmployedByStation < Caseflow::Error::VBMS; end
   class BadClaim < Caseflow::Error::VBMS; end
+  class ClaimantAddressMissing < Caseflow::Error::VBMS; end
+  class MultiplePoas < Caseflow::Error::VBMS; end
   class CannotDeleteContention < Caseflow::Error::VBMS; end
   class ClaimDateInvalid < Caseflow::Error::VBMS; end
   class FilenumberDoesNotExist < Caseflow::Error::VBMS; end
@@ -96,7 +98,10 @@ class VBMSError < RuntimeError
     "Veteran is employed by this station." => "VeteranEmployedByStation",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/278342/
-    "Unable to establish claim: " => "BadClaim",
+    "insertBenefitClaim: City is null" => "ClaimantAddressMissing",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/5068/events/364152/
+    "ORACLE ERROR when attempting to store PTCPNT_RLNSHP between the vet and the POA" => "MultiplePoas",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4164/events/279584/
     "The contention is connected to an issue in ratings and cannot be deleted." => "CannotDeleteContention",
