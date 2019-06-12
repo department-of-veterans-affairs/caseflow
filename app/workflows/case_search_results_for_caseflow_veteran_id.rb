@@ -20,10 +20,10 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
 
   private
 
-  attr_reader :caseflow_veteran_id
+  attr_reader :caseflow_veteran_id, :file_number
 
   def valid_caseflow_veteran_id
-    return if file_number
+    return if file_number_or_ssn
 
     errors.add(:workflow, not_found_error)
     @status = :not_found
@@ -36,7 +36,7 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
     }
   end
 
-  def file_number
+  def file_number_or_ssn
     @file_number ||= veteran&.file_number
   end
 
