@@ -23,6 +23,14 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "when request header contains Veteran file number with associated appeals and claim reviews" do
+        let(:veteran_for_appeal) { create(:veteran, file_number: veteran_id) }
+
+        before do
+          allow(Veteran).to receive(:find_by)
+            .with(file_number: veteran_id)
+            .and_return(veteran_for_appeal)
+        end
+
         it "returns valid response with one appeal" do
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
           request.headers["HTTP_VETERAN_ID"] = veteran_id
@@ -36,8 +44,15 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "when request header contains existing Veteran ID with no associated appeals" do
+        let(:veteran_without_associated_appeals) { create(:veteran) }
+
+        before do
+          allow(Veteran).to receive(:find_by)
+            .with(file_number: veteran_without_associated_appeals.file_number)
+            .and_return(veteran_without_associated_appeals)
+        end
+
         it "returns valid response with empty appeals array" do
-          veteran_without_associated_appeals = create(:veteran)
           request.headers["HTTP_VETERAN_ID"] = veteran_without_associated_appeals.file_number
           get :index, params: options
           response_body = JSON.parse(response.body)
@@ -90,13 +105,25 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "and has access to the file" do
-        it "responds with appeals and claim reviews" do
-          appeal = create(:appeal, claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
-          create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
-          vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
-          User.authenticate!(user: vso_user)
-          request.headers["HTTP_VETERAN_ID"] = appeal.veteran_file_number
+        let(:veteran) { create(:veteran) }
+        let(:appeal) do
+          create(:appeal, 
+                 veteran_file_number: veteran.file_number,
+                 claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
+        end
+        let(:vso_user) { create(:user, :vso_role, css_id: "BVA_VSO") }
 
+        before do
+          User.authenticate!(user: vso_user)
+
+          allow(Veteran).to receive(:find_by)
+            .with(file_number: appeal.veteran_file_number)
+            .and_return(veteran)
+        end
+
+        it "responds with appeals and claim reviews" do
+          create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)          
+          request.headers["HTTP_VETERAN_ID"] = appeal.veteran_file_number
           get :index, params: options
           response_body = JSON.parse(response.body)
 
