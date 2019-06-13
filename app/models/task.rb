@@ -31,6 +31,10 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
+  # This suppresses a warning about the :open scope overwriting the Kernel#open method
+  # https://ruby-doc.org/core-2.6.3/Kernel.html#method-i-open
+  class << self; undef_method :open; end
+
   scope :active, -> { where(status: active_statuses) }
 
   scope :open, -> { where(status: open_statuses) }
