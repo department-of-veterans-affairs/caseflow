@@ -47,7 +47,7 @@ class OrganizationQueue extends React.PureComponent {
     const config = {
       table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),
       organizations: this.props.organizations,
-      active_tab: includeTrackingTasksTab(this.props.organizationIsVso) ? 1 : 0,
+      active_tab_index: includeTrackingTasksTab(this.props.organizationIsVso) ? 1 : 0,
       tabs: [
         // Unassigned Tasks Tab
         {
@@ -188,7 +188,7 @@ class OrganizationQueue extends React.PureComponent {
       <TabWindow
         name="tasks-organization-queue"
         tabs={this.tabsFromConfig(config)}
-        defaultPage={config.active_tab}
+        defaultPage={config.active_tab_index}
       />
     </div>;
   }
