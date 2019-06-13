@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { sprintf } from 'sprintf-js';
@@ -12,13 +11,16 @@ import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
   assignedToColumn, daysWaitingColumn, readerLinkColumn } from './components/TaskTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+
 import {
   getUnassignedOrganizationalTasks,
   getAssignedOrganizationalTasks,
   getCompletedOrganizationalTasks,
   trackingTasksForOrganization
 } from './selectors';
+
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
+
 import { fullWidth } from './constants';
 import COPY from '../../COPY.json';
 import Alert from '../components/Alert';
@@ -31,171 +33,74 @@ const alertStyling = css({
   marginBottom: '1.5em'
 });
 
-const includeTrackingTasksTab = (organizationIsVso) => organizationIsVso;
-
-const allowBulkAssign = (organizationName) => (organizationName === 'Hearing Management');
-
-const showRegionalOfficeInQueue = (organizationName) =>
-  (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin');
-
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
     this.props.clearCaseSelectSearch();
   }
 
-  queueConfig = () => {
-    const config = {
-      table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),
-      organizations: this.props.organizations,
-      active_tab_index: includeTrackingTasksTab(this.props.organizationIsVso) ? 1 : 0,
-      tabs: [
-        // Unassigned Tasks Tab
-        {
-          tasks: this.props.unassignedTasks,
-          label: sprintf(
-            COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
-          description:
-            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
-              this.props.organizationName),
-          organizationName: this.props.organizationName,
-          userRole: this.props.userRole,
-          allow_bulk_assign: allowBulkAssign(this.props.organizationName),
-          columns: _.compact([
-            'hearingBadgeColumn',
-            'detailsColumn',
-            'taskColumn',
-            showRegionalOfficeInQueue(this.props.organizationName) ? 'regionalOfficeColumn' : null,
-            'typeColumn',
-            'docketNumberColumn',
-            'daysWaitingColumn',
-            'readerLinkColumn'
-          ])
-        },
-        // Assigned Tasks tab
-        {
-          tasks: this.props.assignedTasks,
-          label: sprintf(
-            COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
-          description:
-            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
-              this.props.organizationName),
-          organizationName: this.props.organizationName,
-          userRole: this.props.userRole,
-          columns: _.compact([
-            'hearingBadgeColumn',
-            'detailsColumn',
-            'taskColumn',
-            showRegionalOfficeInQueue(this.props.organizationName) ? 'regionalOfficeColumn' : null,
-            'typeColumn',
-            'assignedToColumn',
-            'docketNumberColumn',
-            'daysWaitingColumn'
-          ])
-        },
-        // Completed Tasks tab
-        {
-          tasks: this.props.completedTasks,
-          label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
-          description: sprintf(COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
-            this.props.organizationName),
-          organizationName: this.props.organizationName,
-          userRole: this.props.userRole,
-          columns: _.compact([
-            'hearingBadgeColumn',
-            'detailsColumn',
-            'taskColumn',
-            showRegionalOfficeInQueue(this.props.organizationName) ? 'regionalOfficeColumn' : null,
-            'typeColumn',
-            'assignedToColumn',
-            'docketNumberColumn',
-            'daysWaitingColumn'
-          ])
-        }
-      ]
-    };
-
-    // Tracking Task tab - when organization is a VSO
-    if (includeTrackingTasksTab(this.props.organizationIsVso)) {
-      config.tabs.unshift({
-        tasks: this.props.trackingTasks,
-        label: COPY.ALL_CASES_QUEUE_TABLE_TAB_TITLE,
-        description: sprintf(COPY.ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, this.props.organizationName),
-        userRole: this.props.userRole,
-        columns: [
-          'detailsColumn',
-          'issueCountColumn',
-          'typeColumn',
-          'docketNumberColumn'
-        ]
-      });
-    }
-
-    return config;
-  }
-
-  createColumnObject = (column, config) => {
-    const functionForColumn = {
-      hearingBadgeColumn: hearingBadgeColumn(config.tasks),
-      detailsColumn: detailsColumn(config.tasks, false, config.userRole),
-      taskColumn: taskColumn(config.tasks),
-      regionalOfficeColumn: regionalOfficeColumn(config.tasks),
-      typeColumn: typeColumn(config.tasks, false),
-      assignedToColumn: assignedToColumn(config.tasks),
-      docketNumberColumn: docketNumberColumn(config.tasks, false),
-      daysWaitingColumn: daysWaitingColumn(false),
-      readerLinkColumn: readerLinkColumn(false, true),
-      issueCountColumn: issueCountColumn(false)
-    };
-
-    return functionForColumn[column];
-  }
-
-  columnsFromConfig = (tabConfig) => {
-    return tabConfig.columns.map((column) => {
-      return this.createColumnObject(column, tabConfig);
-    });
-  }
-
-  taskTableTabFactory = (tabConfig) => {
-    const { tasks, label, description } = tabConfig;
-
-    const cols = this.columnsFromConfig(tabConfig);
-
-    return {
-      label,
-      page: <React.Fragment>
-        <p className="cf-margin-top-0">{description}</p>
-        { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
-        <TaskTable
-          customColumns={cols}
-          tasks={tasks}
-        />
-      </React.Fragment>
-    };
-  }
-
-  tabsFromConfig = (config) => {
-    return config.tabs.map((tabConfig) => {
-      return this.taskTableTabFactory(tabConfig, config);
-    });
-  }
-
-  makeQueueComponents = (config) => {
-    return <div>
-      <h1 {...fullWidth}>{config.table_title}</h1>
-      <QueueOrganizationDropdown organizations={config.organizations} />
-
-      <TabWindow
-        name="tasks-organization-queue"
-        tabs={this.tabsFromConfig(config)}
-        defaultPage={config.active_tab_index}
-      />
-    </div>;
-  }
-
   render = () => {
     const { success, tasksAssignedByBulk } = this.props;
-    const body = this.makeQueueComponents(this.queueConfig());
+    const tabs = [
+      {
+        label: sprintf(
+          COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, this.props.unassignedTasks.length),
+        page: <UnassignedTaskTableTab
+          organizationName={this.props.organizationName}
+          description={
+            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.unassignedTasks}
+        />
+      },
+      {
+        label: sprintf(
+          COPY.QUEUE_PAGE_ASSIGNED_TAB_TITLE, this.props.assignedTasks.length),
+        page: <TaskTableWithUserColumnTab
+          organizationName={this.props.organizationName}
+          description={
+            sprintf(COPY.ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.assignedTasks}
+          userRole={this.props.userRole}
+        />
+      },
+      {
+        label: COPY.QUEUE_PAGE_COMPLETE_TAB_TITLE,
+        page: <TaskTableWithUserColumnTab
+          organizationName={this.props.organizationName}
+          description={
+            sprintf(COPY.QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION,
+              this.props.organizationName)}
+          tasks={this.props.completedTasks}
+          userRole={this.props.userRole}
+        />
+      }
+    ];
+
+    // Focus on the first tab in the list of tabs unless we have an "all cases" view, in which case the first tab will
+    // be the "all cases" tab. In that case focus on the second tab which will be the first tab with workable tasks.
+    let focusedTab = 0;
+
+    if (this.props.organizationIsVso) {
+      focusedTab = 1;
+      tabs.unshift({
+        label: COPY.ALL_CASES_QUEUE_TABLE_TAB_TITLE,
+        page: <React.Fragment>
+          <p className="cf-margin-top-0">
+            {sprintf(COPY.ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, this.props.organizationName)}
+          </p>
+          <TaskTable
+            customColumns={[
+              detailsColumn(this.props.trackingTasks, false, this.props.userRole),
+              issueCountColumn(false),
+              typeColumn(this.props.trackingTasks, false),
+              docketNumberColumn(this.props.trackingTasks, false)
+            ]}
+            tasks={this.props.trackingTasks}
+          />
+        </React.Fragment>
+      });
+    }
 
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
@@ -209,7 +114,15 @@ class OrganizationQueue extends React.PureComponent {
           type="success"
           styling={alertStyling} />
       }
-      {body}
+      <div>
+        <h1 {...fullWidth}>{sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName)}</h1>
+        <QueueOrganizationDropdown organizations={this.props.organizations} />
+        <TabWindow
+          name="tasks-organization-queue"
+          tabs={tabs}
+          defaultPage={focusedTab}
+        />
+      </div>
     </AppSegment>;
   };
 }
@@ -238,3 +151,48 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(OrganizationQueue);
+
+const UnassignedTaskTableTab = ({ description, tasks, organizationName, userRole }) => {
+  let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+    userRole), taskColumn(tasks), typeColumn(tasks, false),
+  docketNumberColumn(tasks, false), daysWaitingColumn(false),
+  readerLinkColumn(false, true)];
+
+  if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
+    columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+      userRole), taskColumn(tasks), regionalOfficeColumn(tasks),
+    typeColumn(tasks, false), docketNumberColumn(tasks, false),
+    daysWaitingColumn(false), readerLinkColumn(false, true)];
+  }
+
+  return (<React.Fragment>
+    <p className="cf-margin-top-0">{description}</p>
+    { organizationName === 'Hearing Management' && <BulkAssignButton /> }
+    <TaskTable
+      customColumns={columns}
+      tasks={tasks}
+    />
+  </React.Fragment>);
+};
+
+const TaskTableWithUserColumnTab = ({ description, tasks, organizationName, userRole }) => {
+  let columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+    userRole), taskColumn(tasks), typeColumn(tasks, false),
+  assignedToColumn(tasks), docketNumberColumn(tasks, false),
+  daysWaitingColumn(false)];
+
+  if (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin') {
+    columns = [hearingBadgeColumn(tasks), detailsColumn(tasks, false,
+      userRole), taskColumn(tasks), regionalOfficeColumn(tasks),
+    typeColumn(tasks, false), assignedToColumn(tasks),
+    docketNumberColumn(tasks, false), daysWaitingColumn(false)];
+  }
+
+  return <React.Fragment>
+    <p className="cf-margin-top-0">{description}</p>
+    <TaskTable
+      customColumns={columns}
+      tasks={tasks}
+    />
+  </React.Fragment>;
+};
