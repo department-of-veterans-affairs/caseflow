@@ -87,7 +87,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
   end
 end
 
-RSpec.feature HearingAdminActionVerifyAddressTask do
+describe HearingAdminActionVerifyAddressTask do
   describe "Address Verify Workflow with Legacy Appeal" do
     let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
     let!(:appeal_id) { appeal.vacols_id }

@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature HearingAdminActionForeignVeteranCaseTask do
+describe HearingAdminActionForeignVeteranCaseTask do
   let!(:veteran) { create(:veteran) }
   let!(:appeal) { create(:appeal, veteran: veteran) }
   let(:root_task) { create(:root_task, appeal: appeal) }
