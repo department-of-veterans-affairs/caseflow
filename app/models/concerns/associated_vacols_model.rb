@@ -21,10 +21,7 @@ module AssociatedVacolsModel
       fields.each do |field|
         vacols_getters[field] = true
 
-        define_method field do
-          check_and_load_vacols_data! unless field_set?(field)
-          instance_variable_get("@#{field}".to_sym)
-        end
+        define_vacols_getter(field)
       end
     end
 
@@ -32,11 +29,22 @@ module AssociatedVacolsModel
       fields.each do |field|
         vacols_setters[field] = true
 
-        define_method "#{field}=" do |value|
-          @vacols_load_status = :disabled
-          mark_field_as_set(field)
-          instance_variable_set("@#{field}".to_sym, value)
-        end
+        define_vacols_setter(field)
+      end
+    end
+
+    def define_vacols_getter(field)
+      define_method field do
+        check_and_load_vacols_data! unless field_set?(field)
+        instance_variable_get("@#{field}".to_sym)
+      end
+    end
+
+    def define_vacols_setter(field)
+      define_method "#{field}=" do |value|
+        @vacols_load_status = :disabled
+        mark_field_as_set(field)
+        instance_variable_set("@#{field}".to_sym, value)
       end
     end
 
