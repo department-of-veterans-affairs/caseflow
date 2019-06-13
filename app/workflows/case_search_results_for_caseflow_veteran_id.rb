@@ -11,7 +11,7 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
   protected
 
   def appeals
-    VeteranFinderQuery.new(user: user).find_appeals_for_veterans(veterans: [veteran])
+    AppealFinder.new(user: user).find_appeals_for_veterans([veteran])
   end
 
   def claim_reviews

@@ -12,7 +12,7 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   protected
 
   def appeals
-    VeteranFinderQuery.new(user: user).find_appeals_for_veterans(veterans: veterans)
+    AppealFinder.new(user: user).find_appeals_for_veterans(veterans)
   end
 
   def claim_reviews
@@ -54,7 +54,7 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   end
 
   def veterans
-    @veterans ||= VeteranFinderQuery.find_by_ssn_or_file_number(file_number_or_ssn: file_number_or_ssn)
+    @veterans ||= VeteranFinder.find_all(file_number_or_ssn)
   end
 
   def current_user_is_vso_employee?
