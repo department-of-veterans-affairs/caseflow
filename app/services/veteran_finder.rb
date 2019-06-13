@@ -27,7 +27,9 @@ class VeteranFinder
         # another record where the file number is the veteran's SSN.
         veteran_file_number_match = Veteran.find_by(file_number: file_number)
 
-        veteran_ssn_match = Veteran.find_by(file_number: veteran_by_file_number.ssn) if veteran_by_file_number
+        veteran_ssn_match = if veteran_file_number_match
+                              Veteran.find_by(file_number: veteran_file_number_match.ssn)
+                            end
       end
 
       [veteran_file_number_match, veteran_ssn_match].compact.uniq
