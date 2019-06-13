@@ -9,22 +9,28 @@ class VeteranFinder
     private
 
     def find_by_file_number_or_ssn(file_number_or_ssn)
-      # Multiple possibilities:
-      #
-      #   1. The input is an SSN or File Number that maps directly to the `file_number`
-      #      field for a vet.
-      #   2. The input is an SSN that requires a BGS lookup for the file number OR
-      #      the input is not an SSN, and there might be a Veteran with the SSN as a
-      #      file number.
-      #   3. Combination of both.
-      veteran_file_number_or_ssn = Veteran.find_by(file_number: file_number_or_ssn)
-      veteran_bgs_lookup = if file_number_or_ssn.length == 9
-                             Veteran.find_by_ssn(file_number_or_ssn)
-                           elsif veteran_file_number_or_ssn
-                             Veteran.find_by(file_number: veteran_file_number_or_ssn.ssn)
-                           end
+      if file_number_or_ssn.length == 9
+        # The input is an SSN.
+        ssn = file_number_or_ssn
 
-      [veteran_file_number_or_ssn, veteran_bgs_lookup].compact.uniq
+        # There could be a veteran record where the file number is the SSN. There
+        # could also be a BGS record with the veteran's SSN that maps back to a
+        # different file number.
+        veteran_file_number_match = Veteran.find_by(file_number: ssn)
+
+        veteran_ssn_match = Veteran.find_by_ssn(ssn)
+      else
+        # The input is not an SSN. The value should be a claim number.
+        file_number = file_number_or_ssn
+
+        # If a veteran exists for the given claim number, there might be
+        # another record where the file number is the veteran's SSN.
+        veteran_file_number_match = Veteran.find_by(file_number: file_number)
+
+        veteran_ssn_match = Veteran.find_by(file_number: veteran_by_file_number.ssn) if veteran_by_file_number
+      end
+
+      [veteran_file_number_match, veteran_ssn_match].compact.uniq
     end
   end
 end
