@@ -114,11 +114,20 @@ RSpec.describe AppealsController, type: :controller do
     end
 
     context "when the current user is a VSO employee" do
+      let(:vso_user) { create(:user, :vso_role, css_id: "BVA_VSO") }
+
+      before do
+        User.authenticate!(user: vso_user)
+      end
+
+      after do
+        BGSService.new.bust_can_access_cache(vso_user, appeal.veteran_file_number)
+      end
+
       context "and does not have access to the file" do
         it "responds with an error" do
           request.headers["HTTP_VETERAN_ID"] = veteran_id
           Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
-          User.authenticate!(roles: ["VSO"])
 
           get :index, params: options
           response_body = JSON.parse(response.body)
@@ -131,7 +140,7 @@ RSpec.describe AppealsController, type: :controller do
         it "responds with an error" do
           request.headers["HTTP_VETERAN_ID"] = "123"
           Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number, "123"]
-          User.authenticate!(roles: ["VSO"])
+
           expect_any_instance_of(Fakes::BGSService).to_not receive(:fetch_poas_by_participant_id)
 
           get :index, params: options
@@ -148,14 +157,10 @@ RSpec.describe AppealsController, type: :controller do
                  veteran_file_number: veteran.file_number,
                  claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
         end
-        let(:vso_user) { create(:user, :vso_role, css_id: "BVA_VSO") }
-
-        before do
-          User.authenticate!(user: vso_user)
-        end
 
         it "responds with appeals and claim reviews" do
-          create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)          
+          create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
+
           request.headers["HTTP_VETERAN_ID"] = appeal.veteran_file_number
           get :index, params: options
           response_body = JSON.parse(response.body)
@@ -169,8 +174,7 @@ RSpec.describe AppealsController, type: :controller do
         it "returns 404 error" do
           appeal = create(:appeal, claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
-          vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
-          User.authenticate!(user: vso_user)
+          
           request.headers["HTTP_VETERAN_ID"] = "123"
 
           expect_any_instance_of(Fakes::BGSService).to_not receive(:fetch_poas_by_participant_id)
@@ -187,9 +191,7 @@ RSpec.describe AppealsController, type: :controller do
         it "returns valid response with empty appeals array" do
           appeal = create(:appeal, claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
-          vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
           veteran_without_associated_appeals = create(:veteran)
-          User.authenticate!(user: vso_user)
           request.headers["HTTP_VETERAN_ID"] = veteran_without_associated_appeals.file_number
 
           get :index, params: options
@@ -360,7 +362,15 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "when current user is a VSO employee" do
-        before { User.authenticate!(roles: ["VSO"]) }
+        let(:vso_user) { create(:user, :vso_role) }
+
+        before do
+          User.authenticate!(user: vso_user, roles: ["VSO"])
+        end
+
+        after do
+          BGSService.new.bust_can_access_cache(vso_user, veteran_id)
+        end
 
         context "when requesting json response" do
           let(:request_format) { :json }
