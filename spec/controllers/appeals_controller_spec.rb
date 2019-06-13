@@ -52,14 +52,18 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "when request header contains existing Veteran ID that maps to multiple veterans" do
-        let!(:veteran_file_number_match) { create(:veteran, file_number: ssn) }
-        let!(:veteran_ssn_match) { create(:veteran) }
+        let!(:veteran_file_number_match) { create(:veteran, file_number: ssn, ssn: ssn) }
+        let!(:veteran_bgs_match) { create(:veteran, file_number: "12345678", ssn: ssn) }
         let!(:appeal) { create(:appeal, veteran_file_number: ssn) }
 
         before do
           allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn)
+            .with(anything)
+            .and_return(nil)
+
+          allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn)
             .with(ssn.to_s)
-            .and_return(veteran_ssn_match.file_number)
+            .and_return(veteran_bgs_match.file_number)
         end
 
         it "returns appeals for veteran with appeals" do
@@ -71,6 +75,28 @@ RSpec.describe AppealsController, type: :controller do
           expect(response_body["appeals"].size).to eq 1
           expect(response_body["appeals"][0]["attributes"]["veteran_file_number"]).to eq ssn.to_s
           expect(response_body["claim_reviews"].size).to eq 0
+        end
+
+        it "returns claims for all veteran records with claims" do
+          create(:supplemental_claim, veteran_file_number: veteran_file_number_match.file_number)
+          create(:supplemental_claim, veteran_file_number: veteran_bgs_match.file_number)
+
+          request.headers["HTTP_VETERAN_ID"] = ssn
+          get :index, params: options
+          response_body = JSON.parse(response.body)
+
+          expect(response.status).to eq 200
+          expect(response_body["claim_reviews"].size).to eq 2
+        end
+
+        it "returns ssn match appeals if given file number" do
+          request.headers["HTTP_VETERAN_ID"] = veteran_bgs_match.file_number
+          get :index, params: options
+          response_body = JSON.parse(response.body)
+
+          expect(response.status).to eq 200
+          expect(response_body["appeals"].size).to eq 1
+          expect(response_body["appeals"][0]["attributes"]["veteran_file_number"]).to eq ssn.to_s
         end
       end
 
