@@ -51,6 +51,29 @@ RSpec.describe AppealsController, type: :controller do
         end
       end
 
+      context "when request header contains existing Veteran ID that maps to multiple veterans" do
+        let!(:veteran_file_number_match) { create(:veteran, file_number: ssn) }
+        let!(:veteran_ssn_match) { create(:veteran) }
+        let!(:appeal) { create(:appeal, veteran_file_number: ssn) }
+
+        before do
+          allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn)
+            .with(ssn.to_s)
+            .and_return(veteran_ssn_match.file_number)
+        end
+
+        it "returns appeals for veteran with appeals" do
+          request.headers["HTTP_VETERAN_ID"] = ssn
+          get :index, params: options
+          response_body = JSON.parse(response.body)
+
+          expect(response.status).to eq 200
+          expect(response_body["appeals"].size).to eq 1
+          expect(response_body["appeals"][0]["attributes"]["veteran_file_number"]).to eq ssn.to_s
+          expect(response_body["claim_reviews"].size).to eq 0
+        end
+      end
+
       context "with invalid Veteran file number" do
         it "returns valid response with empty appeals array" do
           request.headers["HTTP_VETERAN_ID"] = "invalid_file_number"
