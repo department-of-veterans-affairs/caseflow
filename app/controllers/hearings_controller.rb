@@ -6,6 +6,10 @@ class HearingsController < HearingsApplicationController
   before_action :verify_access_to_hearings, except: [:show_print, :show]
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
 
+  def set_application
+    RequestStore.store[:application] = "hearings"
+  end
+
   def show
     render json: hearing.to_hash(current_user.id)
   end
