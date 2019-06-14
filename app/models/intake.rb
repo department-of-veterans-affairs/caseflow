@@ -295,6 +295,9 @@ class Intake < ApplicationRecord
 
   def check_reserved_file_number?
     return false if file_number_reserved
+
+    self.veteran_file_number = veteran_file_number.strip
+    veteran_file_number =~ /^[0-9]{8,9}$/
   end
 
   # Optionally implement this methods in subclass
