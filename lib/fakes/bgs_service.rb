@@ -416,7 +416,7 @@ class Fakes::BGSService
           power_of_attorney:
             {
               legacy_poa_cd: "3QQ",
-              nm: "Clarence Darrow",
+              nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
               org_type_nm: "POA Attorney",
               ptcpnt_id: "ERROR-ID"
             },
@@ -738,7 +738,7 @@ class Fakes::BGSService
       power_of_attorney:
         {
           legacy_poa_cd: "3QQ",
-          nm: "Clarence Darrow",
+          nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
           org_type_nm: "POA Attorney",
           ptcpnt_id: "600153863"
         },
