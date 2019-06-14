@@ -54,10 +54,6 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number, :docket_date, :citation_number
 
-  # these values have been delegated to BGS, but we may want to set them in VACOLS
-  vacols_attr_setter :appellant_address_line_1, :appellant_address_line_2
-  vacols_attr_setter :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-
   # If the case is Post-Remand, this is the date the decision was made to
   # remand the original appeal
   vacols_attr_accessor :prior_decision_date

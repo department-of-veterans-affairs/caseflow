@@ -59,11 +59,6 @@ describe HearingRepository do
       expect(subject.notes).to eq notes
       expect(subject.representative_name).to eq representative_name
     end
-
-    it "sets values in VACOLS" do
-      expect_any_instance_of(LegacyHearing).to receive(:representative=).with("Jewish War Veterans")
-      subject
-    end
   end
 
   context ".hearings_for" do

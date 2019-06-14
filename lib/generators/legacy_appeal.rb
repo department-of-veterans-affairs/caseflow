@@ -177,7 +177,7 @@ class Generators::LegacyAppeal
       setup_vbms_documents(attrs)
       set_vacols_issues(appeal: appeal, vacols_record: vacols_record, attrs: attrs)
 
-      non_vacols_attrs = attrs.reject { |attr| LegacyAppeal.vacols_setter?(attr) }
+      non_vacols_attrs = attrs.reject { |attr| LegacyAppeal.vacols_field?(attr) }
       appeal.attributes = non_vacols_attrs
 
       add_inaccessible_appeal(appeal) if inaccessible

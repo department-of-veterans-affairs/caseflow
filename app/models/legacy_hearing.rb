@@ -17,11 +17,6 @@ class LegacyHearing < ApplicationRecord
   vacols_attr_accessor :representative_name, :hearing_day_id
   vacols_attr_accessor :docket_number, :appeal_type, :room, :bva_poc, :judge_id
 
-  # these values have been delegated to BGS, but we may want to set them in VACOLS
-  vacols_attr_setter :representative
-  vacols_attr_setter :appellant_address_line_1, :appellant_address_line_2
-  vacols_attr_setter :appellant_city, :appellant_state, :appellant_country, :appellant_zip
-
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
   has_many :hearing_views, as: :hearing
