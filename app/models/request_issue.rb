@@ -348,6 +348,7 @@ class RequestIssue < ApplicationRecord
 
     fail NotYetSubmitted unless submitted_and_ready?
 
+    clear_error!
     attempted!
 
     transaction do
@@ -425,6 +426,7 @@ class RequestIssue < ApplicationRecord
       decision_issues.each(&:soft_delete_on_removed_request_issue)
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
+      canceled!
     end
   end
 
@@ -556,7 +558,7 @@ class RequestIssue < ApplicationRecord
 
   def create_decision_issues
     if rating?
-      return false unless end_product_establishment.associated_rating
+       fail ErrorCreatingDecisionIssue unless end_product_establishment.associated_rating
 
       create_decision_issues_from_rating
     end
