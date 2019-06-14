@@ -17,7 +17,6 @@ class VeteranFinder
         # could also be a BGS record with the veteran's SSN that maps back to a
         # different file number.
         veteran_file_number_match = Veteran.find_by(file_number: ssn)
-
         veteran_ssn_match = Veteran.find_by_ssn(ssn)
       else
         # The input is not an SSN. The value should be a claim number.
@@ -26,13 +25,13 @@ class VeteranFinder
         # If a veteran exists for the given claim number, there might be
         # another record where the file number is the veteran's SSN.
         veteran_file_number_match = Veteran.find_by(file_number: file_number)
-
         veteran_ssn_match = if veteran_file_number_match
                               Veteran.find_by(file_number: veteran_file_number_match.ssn)
                             end
-      end
 
-      [veteran_file_number_match, veteran_ssn_match].compact.uniq
+      participant_ids = [veteran_file_number_match, veteran_ssn_match].compact.uniq.map(&:participant_id)
+
+      Veteran.where(participant_id: participant_ids)
     end
   end
 end
