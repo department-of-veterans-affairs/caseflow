@@ -97,7 +97,6 @@ feature "Intake" do
       fill_in search_bar_title, with: "5678"
       click_on "Search"
 
-      binding.pry
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Veteran ID not found")
 
@@ -313,7 +312,6 @@ feature "Intake" do
         select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
         safe_click ".cf-submit.usa-button"
 
-        binding.pry
         fill_in search_bar_title, with: "123456789"
         click_on "Search"
 
