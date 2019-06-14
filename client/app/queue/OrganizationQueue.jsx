@@ -33,10 +33,10 @@ const alertStyling = css({
 
 const includeTrackingTasksTab = (organizationIsVso) => organizationIsVso;
 
-const allowBulkAssign = (organizationName) => (organizationName === 'Hearing Management');
+const allowBulkAssign = (organizationName) => (organizationName === 'Hearings Management');
 
 const showRegionalOfficeInQueue = (organizationName) =>
-  (organizationName === 'Hearing Management' || organizationName === 'Hearing Admin');
+  (organizationName === 'Hearings Management' || organizationName === 'Hearing Admin');
 
 class OrganizationQueue extends React.PureComponent {
   componentDidMount = () => {
