@@ -7,6 +7,8 @@ FactoryBot.define do
     name_suffix { "II" }
 
     transient do
+      ssn { "987654321" }
+
       bgs_veteran_record do
         {
           first_name: "Bob",
@@ -14,7 +16,7 @@ FactoryBot.define do
           date_of_birth: "01/10/1935",
           date_of_death: nil,
           name_suffix: "II",
-          ssn: ssn { "987654321" },
+          ssn: ssn,
           sex: "M",
           address_line1: "1234 Main Street",
           country: "USA",
