@@ -28,6 +28,7 @@ class VeteranFinder
         veteran_ssn_match = if veteran_file_number_match
                               Veteran.find_by(file_number: veteran_file_number_match.ssn)
                             end
+      end
 
       participant_ids = [veteran_file_number_match, veteran_ssn_match].compact.uniq.map(&:participant_id)
 
