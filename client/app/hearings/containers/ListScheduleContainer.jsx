@@ -26,7 +26,10 @@ import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import Alert from '../../components/Alert';
 import COPY from '../../../COPY.json';
-import { formatDateStr } from '../../util/DateUtil';
+import {
+  formatDateStr,
+  getMinutesToMilliseconds
+} from '../../util/DateUtil';
 import ApiUtil from '../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import QueueCaseSearchBar from '../../queue/SearchBar';
@@ -78,7 +81,7 @@ export class ListScheduleContainer extends React.Component {
     }
 
     const requestOptions = {
-      timeout: { response: 2 * 60 * 1000 }
+      timeout: { response: getMinutesToMilliseconds(2) }
     };
 
     return ApiUtil.get(requestUrl, requestOptions).then((response) => {
