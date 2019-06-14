@@ -288,13 +288,13 @@ class Intake < ApplicationRecord
     veteran_file_number =~ /^[0-9]{8,9}$/
   end
 
-  def file_number_reserved
+  def file_number_reserved?
     FeatureToggle.enabled?(:intake_reserved_file_number,
                            user: RequestStore[:current_user]) && veteran_file_number == "123456789"
   end
 
   def check_reserved_file_number?
-    return false if file_number_reserved
+    return false if file_number_reserved?
 
     self.veteran_file_number = veteran_file_number.strip
     veteran_file_number =~ /^[0-9]{8,9}$/
