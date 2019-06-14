@@ -119,6 +119,7 @@ class EndProductEstablishment < ApplicationRecord
 
     VBMSService.remove_contention!(contention)
     request_issue.update!(contention_removed_at: Time.zone.now)
+    request_issue.canceled!
   end
 
   # Committing an end product establishment is a way to signify that any other actions performed

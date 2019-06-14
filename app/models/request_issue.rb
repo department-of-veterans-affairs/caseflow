@@ -59,6 +59,13 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  class NoAssociatedRating < StandardError
+    def initialize(request_issue_id)
+      super("Rating request Issue #{request_issue_id} cannot create decision issue " \
+        "due to not having an associated rating")
+    end
+  end
+
   class NotYetSubmitted < StandardError; end
   class MissingContentionDisposition < StandardError; end
   class MissingDecisionDate < StandardError
@@ -558,7 +565,7 @@ class RequestIssue < ApplicationRecord
 
   def create_decision_issues
     if rating?
-       fail ErrorCreatingDecisionIssue unless end_product_establishment.associated_rating
+      fail NoAssociatedRating unless end_product_establishment.associated_rating
 
       create_decision_issues_from_rating
     end
