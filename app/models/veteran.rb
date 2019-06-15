@@ -149,10 +149,6 @@ class Veteran < ApplicationRecord
     end
   end
 
-  def incident_flash?
-    bgs_record[:block_cadd_ind] == "S"
-  end
-
   def relationships
     @relationships ||= fetch_relationships
   end

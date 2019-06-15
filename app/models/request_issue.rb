@@ -433,7 +433,7 @@ class RequestIssue < ApplicationRecord
       decision_issues.each(&:soft_delete_on_removed_request_issue)
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
-      canceled!
+      canceled! if submitted_not_processed?
     end
   end
 
