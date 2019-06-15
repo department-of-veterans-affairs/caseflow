@@ -357,11 +357,23 @@ Your development setup of caseflow runs Redis, Postgres and OracleDB (VACOLS) in
 
 ### Running Caseflow ###################################################
 
-#### All in one ########################################################################
+To run caseflow:
 ```
 foreman start
 ```
+**Note:**  If you had just run `bundle exec rake local:build` to set up your local environment, docker-compose has already been called, and the docker containers you need are running in the background. If these containers are stopped or killed—restarting your computer, running `docker-compose down`, etc.—you must start them back up.
+
+For example, after restarting your computer, you must instead run:
+```
+docker-compose up -d
+foreman start
+```
+
 #### Separate Front & Backend Servers ####################################################
+
+`foreman start` starts both the back-end server and the front-end server.
+
+They can, alternatively, be started separately:
 
 _Backend_
 `REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000`
