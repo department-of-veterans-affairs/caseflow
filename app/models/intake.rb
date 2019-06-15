@@ -23,7 +23,8 @@ class Intake < ApplicationRecord
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_valid: "veteran_not_valid",
     duplicate_intake_in_progress: "duplicate_intake_in_progress",
-    reserved_veteran_file_number: "reserved_veteran_file_number"
+    reserved_veteran_file_number: "reserved_veteran_file_number",
+    incident_flash: "incident_flash"
   }.freeze
 
   FORM_TYPES = {
@@ -196,6 +197,9 @@ class Intake < ApplicationRecord
 
     elsif !veteran.accessible?
       set_veteran_accessible_error
+
+    elsif veteran.incident_flash?
+      self.error_code = :incident_flash
 
     elsif duplicate_intake_in_progress
       self.error_code = :duplicate_intake_in_progress
