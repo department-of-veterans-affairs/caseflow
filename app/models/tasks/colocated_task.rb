@@ -13,6 +13,7 @@ class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :on_hold_duration_is_set, on: :update
+  validate :task_is_unique, on: :create
 
   after_update :update_location_in_vacols
 
@@ -159,6 +160,26 @@ class ColocatedTask < Task
   def on_hold_duration_is_set
     if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
       errors.add(:on_hold_duration, "has to be specified")
+    end
+  end
+
+  def task_is_unique
+    ColocatedTask.where(
+      appeal_id: appeal_id,
+      assigned_to_id: assigned_to_id,
+      assigned_to_type: assigned_to_type,
+      action: action,
+      parent_id: parent_id,
+      instructions: instructions
+    ).find_each do |duplicate_task|
+      if duplicate_task.open?
+        errors[:base] << format(
+          COPY::ADD_HEARING_ADMIN_TASK_ERROR_DUPLICATE,
+          Constants::CO_LOCATED_ADMIN_ACTIONS[action]&.upcase,
+          instructions.join(", ")
+        )
+        break
+      end
     end
   end
 end
