@@ -565,7 +565,7 @@ class RequestIssue < ApplicationRecord
 
   def create_decision_issues
     if rating?
-      fail NoAssociatedRating unless end_product_establishment.associated_rating
+      fail NoAssociatedRating, id unless end_product_establishment.associated_rating
 
       create_decision_issues_from_rating
     end
