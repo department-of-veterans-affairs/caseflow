@@ -76,6 +76,14 @@ RSpec.describe Organizations::TasksController, type: :controller do
         expect(response_body.size).to eq 2
         expect(response_body[0]["attributes"]["available_hearing_locations"]).to be_empty
       end
+
+      it "has a response body with the correct shape" do
+        get(:index, params: { organization_url: url })
+        expect(response.status).to eq(200)
+        response_body = JSON.parse(response.body)
+
+        expect(response_body.keys).to match_array(%w[organization_name tasks id is_vso queue_config])
+      end
     end
 
     context "when user doesn't have proper role" do
