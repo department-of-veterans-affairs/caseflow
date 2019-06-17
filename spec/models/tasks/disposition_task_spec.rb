@@ -36,8 +36,6 @@ describe DispositionTask do
 
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
-        expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
-        expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
       end
     end
 
@@ -281,6 +279,8 @@ describe DispositionTask do
             expect(disposition_task.reload.cancelled?).to be_truthy
             expect(hearing_task.reload.cancelled?).to be_truthy
             expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq 0
+            expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
+            expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
           end
 
           context "the appeal has a VSO" do
