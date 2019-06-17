@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190617152134) do
+ActiveRecord::Schema.define(version: 20190617164845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -760,13 +760,6 @@ ActiveRecord::Schema.define(version: 20190617152134) do
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
-  create_table "reader_users", id: :serial, force: :cascade do |t|
-    t.datetime "documents_fetched_at"
-    t.integer "user_id", null: false
-    t.index ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at"
-    t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
-  end
-
   create_table "record_synced_by_jobs", force: :cascade do |t|
     t.string "error"
     t.datetime "processed_at"
@@ -1086,7 +1079,6 @@ ActiveRecord::Schema.define(version: 20190617152134) do
   add_foreign_key "organizations_users", "users"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
-  add_foreign_key "reader_users", "users"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "user_quotas", "users"
