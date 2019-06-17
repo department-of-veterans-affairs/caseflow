@@ -16,11 +16,13 @@ class QueueConfig
     end
   end
 
-  def to_h
+  def to_hash_for_user(user)
+    serialized_tabs = tabs.each { |tab| tab[:tasks] = serialized_tasks_for_user(tab[:tasks], user) }
+
     {
       table_title: format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, organization.name),
       active_tab: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
-      tabs: tabs
+      tabs: serialized_tabs
     }
   end
 
@@ -35,8 +37,22 @@ class QueueConfig
     ].compact
   end
 
+  def serialized_tasks_for_user(tasks, user)
+    primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+
+    organization.ama_task_serializer.new(
+      primed_tasks,
+      is_collection: true,
+      params: { user: user }
+    ).serializable_hash[:data]
+  end
+
   def include_tracking_tasks_tab?
     organization.is_a?(Representative)
+  end
+
+  def tracking_tasks
+    TrackVeteranTask.active.where(assigned_to: organization)
   end
 
   def tracking_tasks_tab
@@ -51,14 +67,19 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
       ],
       task_group: Constants.QUEUE_CONFIG.TRACKING_TASKS_GROUP,
+      tasks: tracking_tasks,
       allow_bulk_assign: false
     }
   end
 
+  def unassigned_tasks
+    Task.active.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
+  end
+
+  # rubocop:disable Metrics/AbcSize
   def unassigned_tasks_tab
     {
-      # Insert the task count into the name on the front-end. Eventually do that on the back-end.
-      label: COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+      label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, tasks.count),
       name: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name),
       # Compact to account for the maybe absent regional office column
@@ -73,14 +94,20 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_GROUP,
+      tasks: unassigned_tasks,
       allow_bulk_assign: organization.can_bulk_assign_tasks?
     }
   end
+  # rubocop:enable Metrics/AbcSize
 
+  def assigned_tasks
+    Task.on_hold.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
+  end
+
+  # rubocop:disable Metrics/AbcSize
   def assigned_tasks_tab
     {
-      # Insert the task count into the name on the front-end. Eventually do that on the back-end.
-      label: COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE,
+      label: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_tasks.count),
       name: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name),
       # Compact to account for the maybe absent regional office column
@@ -95,8 +122,14 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_GROUP,
+      tasks: assigned_tasks,
       allow_bulk_assign: false
     }
+  end
+  # rubocop:enable Metrics/AbcSize
+
+  def recently_completed_tasks
+    Task.recently_closed.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
   end
 
   def completed_tasks_tab
@@ -116,6 +149,7 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.COMPLETED_TASKS_GROUP,
+      tasks: recently_completed_tasks,
       allow_bulk_assign: false
     }
   end

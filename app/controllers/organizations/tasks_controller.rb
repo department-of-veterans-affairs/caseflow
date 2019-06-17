@@ -5,10 +5,8 @@ class Organizations::TasksController < OrganizationsController
   before_action :verify_role_access, only: [:index]
 
   def index
-    queue = GenericQueue.new(user: organization)
-    tasks = queue.tasks
-
     # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
+    tasks = GenericQueue.new(user: organization).tasks
     if organization.url == "hearings-management"
       tasks = tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
     end
@@ -18,11 +16,15 @@ class Organizations::TasksController < OrganizationsController
       tasks: json_tasks(tasks),
       id: organization.id,
       is_vso: organization.is_a?(::Representative),
-      queue_config: queue.config
+      queue_config: config
     }
   end
 
   private
+
+  def config
+    QueueConfig.new(organization: organization).to_hash_for_user(current_user)
+  end
 
   def organization_url
     params[:organization_url]
@@ -33,11 +35,7 @@ class Organizations::TasksController < OrganizationsController
     params = { user: current_user }
 
     AmaAndLegacyTaskSerializer.new(
-      tasks: tasks, params: params, ama_serializer: serializer
+      tasks: tasks, params: params, ama_serializer: organization.ama_task_serializer
     ).call
-  end
-
-  def serializer
-    organization.is_a?(::Representative) ? WorkQueue::OrganizationTaskSerializer : WorkQueue::TaskSerializer
   end
 end

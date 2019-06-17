@@ -31,10 +31,11 @@ describe QueueConfig do
     end
   end
 
-  describe ".to_h" do
+  describe ".to_hash_for_user" do
     let(:organization) { FactoryBot.create(:organization) }
+    let(:user) { FactoryBot.create(:user) }
 
-    subject { QueueConfig.new(organization: organization).to_h }
+    subject { QueueConfig.new(organization: organization).to_hash_for_user(user) }
 
     describe "shape of the returned hash" do
       it "returns the correct top level keys in the response" do
@@ -55,7 +56,7 @@ describe QueueConfig do
     end
 
     describe "tabs" do
-      subject { QueueConfig.new(organization: organization).to_h[:tabs] }
+      subject { QueueConfig.new(organization: organization).to_hash_for_user(user)[:tabs] }
 
       context "with a non-VSO organization" do
         it "does not include a tab for tracking tasks" do
@@ -65,7 +66,9 @@ describe QueueConfig do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array([:label, :name, :description, :columns, :task_group, :allow_bulk_assign])
+            expect(tab.keys).to match_array(
+              [:label, :name, :description, :columns, :task_group, :allow_bulk_assign, :tasks]
+            )
           end
         end
 
@@ -96,7 +99,9 @@ describe QueueConfig do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array([:label, :name, :description, :columns, :task_group, :allow_bulk_assign])
+            expect(tab.keys).to match_array(
+              [:label, :name, :description, :columns, :task_group, :allow_bulk_assign, :tasks]
+            )
           end
         end
       end
