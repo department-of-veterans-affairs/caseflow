@@ -20,6 +20,10 @@ class Organization < ApplicationRecord
     false
   end
 
+  def show_regional_office_in_queue?
+    false
+  end
+
   def non_admins
     organizations_users.includes(:user).non_admin.map(&:user)
   end
