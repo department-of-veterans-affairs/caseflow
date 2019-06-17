@@ -60,6 +60,12 @@ class DispositionTask < GenericTask
       fail HearingDispositionNotCanceled
     end
 
+    EvidenceSubmissionWindowTask.create!(
+      appeal: appeal,
+      parent: hearing_task.parent,
+      assigned_to: MailTeam.singleton
+    )
+
     update!(status: Constants.TASK_STATUSES.cancelled)
   end
 

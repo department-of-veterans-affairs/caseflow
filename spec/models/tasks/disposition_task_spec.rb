@@ -36,6 +36,8 @@ describe DispositionTask do
 
         expect(Hearing.count).to eq 1
         expect(hearing.disposition).to eq Constants.HEARING_DISPOSITION_TYPES.cancelled
+        expect(EvidenceSubmissionWindowTask.first.appeal).to eq disposition_task.appeal
+        expect(EvidenceSubmissionWindowTask.first.parent).to eq disposition_task.hearing_task.parent
       end
     end
 
