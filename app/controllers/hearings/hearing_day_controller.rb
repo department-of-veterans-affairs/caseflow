@@ -121,7 +121,7 @@ class Hearings::HearingDayController < HearingsApplicationController
 
   def invalid_record_error(hearing)
     render json: {
-      "errors": ["title": "Record is invalid", "detail": hearing.errors.full_messages.join(" ,")]
+      "errors": ["title": COPY::INVALID_RECORD_ERROR_TITLE, "detail": hearing.errors.full_messages.join(" ,")]
     }, status: :bad_request
   end
 
