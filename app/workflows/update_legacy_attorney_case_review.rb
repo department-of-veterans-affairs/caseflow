@@ -152,7 +152,7 @@ class UpdateLegacyAttorneyCaseReview
     return if success
 
     {
-      title: "Record is invalid",
+      title: COPY::INVALID_RECORD_ERROR_TITLE,
       detail: errors.to_hash[:document_id][0]
     }
   end
