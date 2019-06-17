@@ -8,7 +8,7 @@ class ChangeHearingDispositionTask < DispositionTask
 
   def available_actions(_user)
     [
-      appropriate_timed_hold_task_action,
+      Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
       Constants.TASK_ACTIONS.CHANGE_HEARING_DISPOSITION.to_h,
       Constants.TASK_ACTIONS.ASSIGN_TO_HEARING_ADMIN_MEMBER.to_h
     ]
