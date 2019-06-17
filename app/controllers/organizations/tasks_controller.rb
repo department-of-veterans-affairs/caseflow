@@ -6,6 +6,7 @@ class Organizations::TasksController < OrganizationsController
 
   def index
     queue = GenericQueue.new(user: organization)
+    tasks = queue.tasks
 
     # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
     if organization.url == "hearings-management"
@@ -14,7 +15,7 @@ class Organizations::TasksController < OrganizationsController
 
     render json: {
       organization_name: organization.name,
-      tasks: json_tasks(queue.tasks),
+      tasks: json_tasks(tasks),
       id: organization.id,
       is_vso: organization.is_a?(::Representative),
       queue_config: queue.config
