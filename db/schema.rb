@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190603150958) do
+ActiveRecord::Schema.define(version: 20190617152134) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -659,7 +659,7 @@ ActiveRecord::Schema.define(version: 20190603150958) do
     t.string "vacols_id", null: false
     t.string "witness"
     t.index ["user_id"], name: "index_legacy_hearings_on_user_id"
-    t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id"
+    t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id", unique: true
   end
 
   create_table "legacy_issue_optins", force: :cascade, comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review." do |t|
