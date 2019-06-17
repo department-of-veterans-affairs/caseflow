@@ -50,6 +50,16 @@ const veteranNotFoundInstructions = <div>
   </p>
 </div>;
 
+const incidentFlashTeamEmail = React.createElement(
+  'a', { href: 'mailto:IncidentTeam.VBASLC@va.gov ? Subject=Temporarily%20unlock%20incident%20flash' },
+  'incident team'
+);
+
+const incidentFlashError = React.createElement(
+  'span', { id: 'incidentFlashError' }, COPY.INCIDENT_FLASH_ERROR_START, incidentFlashTeamEmail,
+  COPY.INCIDENT_FLASH_ERROR_END
+);
+
 class Search extends React.PureComponent {
   handleSearchSubmit = () => (
     this.props.doFileNumberSearch(this.props.formType, this.props.fileNumberSearchInput)
@@ -85,6 +95,10 @@ class Search extends React.PureComponent {
       veteran_not_valid: {
         title: 'The Veteran\'s profile has missing or invalid information required to create an EP.',
         body: invalidVeteranInstructions(searchErrorData)
+      },
+      incident_flash: {
+        title: 'The Veteran has an incident flash',
+        body: incidentFlashError
       },
       did_not_receive_ramp_election: {
         title: 'A RAMP Opt-in Notice Letter was not sent to this Veteran.',
