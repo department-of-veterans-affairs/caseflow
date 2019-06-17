@@ -22,16 +22,7 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :appellant_full_name, &:appellant_name
 
-  attribute :appellant_address do |object|
-    {
-      address_line_1: object.appellant_address_line_1,
-      address_line_2: object.appellant_address_line_2,
-      city: object.appellant_city,
-      state: object.appellant_state,
-      zip: object.appellant_zip,
-      country: object.appellant_country
-    }
-  end
+  attribute :appellant_address, &:appellant_address
 
   attribute :appellant_relationship
   attribute :assigned_to_location
@@ -43,6 +34,7 @@ class WorkQueue::LegacyAppealSerializer
   attribute :type
   attribute :aod
   attribute :docket_number
+  attribute :docket_range_date, &:docket_date
   attribute :status
   attribute :decision_date
   attribute :form9_date

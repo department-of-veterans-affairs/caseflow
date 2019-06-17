@@ -34,7 +34,6 @@ RSpec.feature "Postpone hearing" do
   let!(:appeal) do
     create(
       :appeal,
-      :with_tasks,
       docket_type: "hearing",
       closest_regional_office: "RO39",
       veteran: create(:veteran)

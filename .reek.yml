@@ -1,25 +1,37 @@
 ### Generic smell configuration
+### Please keep these alphabetical
 detectors:
   # You can disable smells completely
+  Attribute:
+    exclude:
+      - BulkTaskAssignment
+      - QueueConfig
   DuplicateMethodCall:
     enabled: false
-  TooManyMethods:
+  FeatureEnvy:
     exclude:
-      - DispositionTask
-      - RootTask
+      - FetchDocumentsForReaderJob#fetch_for_appeal
+      - AsyncableJobsReporter
   InstanceVariableAssumption:
     exclude:
       - Appeal
       - Task
-  Attribute:
-    exclude:
-      - BulkTaskAssignment
   IrresponsibleModule:
     enabled: false
   MissingSafeMethod:
     enabled: false
+  NestedIterators:
+    exclude:
+      - AsyncableJobsReporter
   NilCheck:
     enabled: false
+  RepeatedConditional:
+    exclude:
+      - QueueConfig
+  TooManyMethods:
+    exclude:
+      - DispositionTask
+      - RootTask
   TooManyStatements:
     enabled: false
   UtilityFunction:
@@ -38,6 +50,9 @@ detectors:
 directories:
   "app/controllers":
     InstanceVariableAssumption:
+      enabled: false
+  "app/jobs":
+    UtilityFunction:
       enabled: false
 
 ### Excluding directories

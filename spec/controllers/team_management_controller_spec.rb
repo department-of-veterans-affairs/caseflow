@@ -24,6 +24,7 @@ describe TeamManagementController, type: :controller do
       context "when there are organizations in the database" do
         let!(:vsos) { FactoryBot.create_list(:vso, 5) }
         let!(:judge_team_count) { 3.times { JudgeTeam.create_for_judge(FactoryBot.create(:user)) } }
+        let!(:private_bars) { FactoryBot.create_list(:private_bar, 4) }
         let!(:other_orgs) { FactoryBot.create_list(:organization, 7) }
 
         # Increase the count of other orgs to account for the Bva organization the current user is a member of.
@@ -37,6 +38,7 @@ describe TeamManagementController, type: :controller do
           response_body = JSON.parse(response.body)
           expect(response_body["vsos"].length).to eq(vsos.count)
           expect(response_body["judge_teams"].length).to eq(judge_team_count)
+          expect(response_body["private_bars"].length).to eq(private_bars.count)
           expect(response_body["other_orgs"].length).to eq(other_org_count)
         end
       end
@@ -146,6 +148,27 @@ describe TeamManagementController, type: :controller do
       org = FieldVso.find(response_body["org"]["id"])
       expect(org.name).to eq(org_name)
       expect(org.vso_config).to_not be_nil
+    end
+  end
+
+  describe "POST /team_management/private_bar" do
+    let(:org_name) { "New Private Bar org" }
+    let(:url) { "private-bar-esq" }
+    let(:participant_id) { "882771" }
+    let(:params) { { organization: { name: org_name, url: url, participant_id: participant_id } } }
+
+    it "properly returns newly created organization" do
+      post(:create_private_bar, params: params, format: :json)
+
+      expect(response.status).to eq(200)
+
+      response_body = JSON.parse(response.body)
+      expect(response_body["org"]["name"]).to eq(org_name)
+      expect(response_body["org"]["url"]).to eq(url)
+      expect(response_body["org"]["participant_id"]).to eq(participant_id)
+
+      org = PrivateBar.find(response_body["org"]["id"])
+      expect(org.name).to eq(org_name)
     end
   end
 end

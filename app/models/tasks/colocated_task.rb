@@ -70,9 +70,7 @@ class ColocatedTask < Task
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
-    # Waiting for backend implementation before allowing user access
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
-    # core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+    core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
       return ama_translation_actions(core_actions)
@@ -82,7 +80,18 @@ class ColocatedTask < Task
   end
 
   def actions_available?(_user)
-    active?
+    open?
+  end
+
+  def create_twin_of_type(params)
+    self.class.create!(
+      appeal: appeal,
+      parent: parent,
+      assigned_by: assigned_by,
+      action: params[:action],
+      instructions: params[:instructions],
+      assigned_to: Colocated.singleton
+    )
   end
 
   private
@@ -117,7 +126,7 @@ class ColocatedTask < Task
 
   def update_location_in_vacols
     if saved_change_to_status? &&
-       !active? &&
+       !open? &&
        all_tasks_closed_for_appeal? &&
        appeal.is_a?(LegacyAppeal) &&
        appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
@@ -144,17 +153,12 @@ class ColocatedTask < Task
   end
 
   def all_tasks_closed_for_appeal?
-    appeal.tasks.active.where(type: ColocatedTask.name).none?
+    appeal.tasks.open.where(type: ColocatedTask.name).none?
   end
 
   def on_hold_duration_is_set
     if saved_change_to_status? && on_hold? && !on_hold_duration && assigned_to.is_a?(User)
       errors.add(:on_hold_duration, "has to be specified")
     end
-  end
-
-  # ColocatedTasks on old-style holds can be placed on new timed holds which will not reset the placed_on_hold_at value.
-  def task_just_placed_on_hold?
-    super || (on_timed_hold? && children.active.where.not(type: TimedHoldTask.name).empty?)
   end
 end

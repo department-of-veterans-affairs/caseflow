@@ -451,7 +451,7 @@ describe GenericTask do
         expect { subject }.to_not raise_error
         expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
-        new_task = task.parent.children.active.first
+        new_task = task.parent.children.open.first
         expect(new_task.children.length).to eq(incomplete_children_cnt)
 
         task.reload

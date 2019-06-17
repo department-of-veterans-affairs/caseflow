@@ -266,11 +266,11 @@ RSpec.feature "Task queue" do
     before do
       OrganizationsUser.add_user_to_organization(mail_user, mail_team)
       OrganizationsUser.add_user_to_organization(mail_user, lit_support_team)
-      OrganizationsUser.add_user_to_organization(pulac_user, PulacCerullo.singleton) 
+      OrganizationsUser.add_user_to_organization(pulac_user, PulacCerullo.singleton)
       User.authenticate!(user: mail_user)
     end
 
-    def validate_pulac_cerullo_tasks_created(task_type, label) 
+    def validate_pulac_cerullo_tasks_created(task_type, label)
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
@@ -288,7 +288,6 @@ RSpec.feature "Task queue" do
       click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
       click_button(text: "Submit")
 
-      
       mail_task = root_task.reload.children[0]
       expect(mail_task.class).to eq(eval(task_type))
       expect(mail_task.assigned_to).to eq(MailTeam.singleton)
@@ -938,7 +937,7 @@ RSpec.feature "Task queue" do
       end
 
       step "verify that the associated TimedHoldTask has been canceled" do
-        expect(timed_hold_task.reload.active?).to be_falsey
+        expect(timed_hold_task.reload.open?).to be_falsey
       end
     end
   end

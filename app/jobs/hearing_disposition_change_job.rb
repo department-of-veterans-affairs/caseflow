@@ -6,6 +6,7 @@ class HearingDispositionChangeJob < CaseflowJob
   # For time_ago_in_words()
   include ActionView::Helpers::DateHelper
   queue_as :low_priority
+  application_attr :hearing_schedule
 
   def perform
     start_time = Time.zone.now
@@ -34,7 +35,7 @@ class HearingDispositionChangeJob < CaseflowJob
   end
 
   def hearing_disposition_tasks
-    Task.active.where(type: DispositionTask.name).where.not(status: Constants.TASK_STATUSES.on_hold)
+    Task.active.where(type: DispositionTask.name)
   end
 
   def task_count_for

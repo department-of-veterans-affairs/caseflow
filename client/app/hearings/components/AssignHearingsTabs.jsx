@@ -14,6 +14,7 @@ import { renderAppealType } from '../../queue/utils';
 import { getTime, getTimeInDifferentTimeZone } from '../../util/DateUtil';
 import StatusMessage from '../../components/StatusMessage';
 import { getFacilityType } from '../../components/DataDropdowns/AppealHearingLocations';
+import { getIndexOfDocketLine, docketCutoffLineStyle } from './AssignHearingsDocketLine';
 
 const filterDropdownFix = css({
   '& svg.table-icon + div': {
@@ -36,7 +37,7 @@ const tableNumberStyling = css({
 
 const UPCOMING_HEARINGS_TAB_NAME = 'upcomingHearings';
 
-const AvailableVeteransTable = ({ rows, columns }) => {
+const AvailableVeteransTable = ({ rows, columns, style = {} }) => {
   let removeTimeColumn = _.slice(columns, 0, -1);
 
   if (_.isEmpty(rows)) {
@@ -50,13 +51,14 @@ const AvailableVeteransTable = ({ rows, columns }) => {
     </div>;
   }
 
-  return <Table
-    columns={removeTimeColumn}
-    rowObjects={rows}
-    summary="scheduled-hearings-table"
-    slowReRendersAreOk
-    bodyStyling={tableNumberStyling}
-  />;
+  return <span {...style}>
+    <Table
+      columns={removeTimeColumn}
+      rowObjects={rows}
+      summary="scheduled-hearings-table"
+      slowReRendersAreOk
+      bodyStyling={tableNumberStyling} />
+  </span>;
 };
 
 const UpcomingHearingsTable = ({ rows, columns, selectedHearingDay }) => {
@@ -190,9 +192,10 @@ export default class AssignHearingsTabs extends React.Component {
     </span>;
   }
 
-  availableVeteransRows = (appeals, { tab }) => {
+  filterAppeals = (appeals, tab) => {
     const filteredBy = this.state[tab].filteredBy;
-    const filtered = _.filter(appeals, (appeal) => {
+
+    return _.filter(appeals, (appeal) => {
 
       if (filteredBy === null) {
         return true;
@@ -206,6 +209,10 @@ export default class AssignHearingsTabs extends React.Component {
 
       return filteredBy === appeal.attributes.availableHearingLocations[0].facilityId;
     });
+  }
+
+  availableVeteransRows = (appeals, { tab }) => {
+    const filtered = this.filterAppeals(appeals, tab);
 
     /*
       Sorting by docket number within each category of appeal:
@@ -387,6 +394,16 @@ export default class AssignHearingsTabs extends React.Component {
     }];
   }
 
+  amaDocketCutoffLineStyle = (appeals) => {
+    const filtered = this.filterAppeals(appeals, 'amaAppeals');
+    const endOfNextMonth = moment().add('months', 1).
+      endOf('month');
+
+    const indexOfLine = getIndexOfDocketLine(filtered, endOfNextMonth);
+
+    return docketCutoffLineStyle(indexOfLine, endOfNextMonth.format('MMMM YYYY'));
+  }
+
   render() {
     const { selectedHearingDay, appealsReadyForHearing, room } = this.props;
 
@@ -423,6 +440,7 @@ export default class AssignHearingsTabs extends React.Component {
           {
             label: 'AMA Veterans Waiting',
             page: <AvailableVeteransTable
+              style={this.amaDocketCutoffLineStyle(amaAppeals)}
               rows={this.availableVeteransRows(amaAppeals, { tab: 'amaAppeals' })}
               columns={this.tabWindowColumns(amaAppeals, { tab: 'amaAppeals' })}
             />

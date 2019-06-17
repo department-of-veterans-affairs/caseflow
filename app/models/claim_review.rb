@@ -33,9 +33,9 @@ class ClaimReview < DecisionReview
       claim_review
     end
 
-    def find_all_visible_by_file_number(file_number)
-      HigherLevelReview.where(veteran_file_number: file_number).reject(&:removed?) +
-        SupplementalClaim.where(veteran_file_number: file_number).reject(&:removed?)
+    def find_all_visible_by_file_number(*file_numbers)
+      HigherLevelReview.where(veteran_file_number: file_numbers).reject(&:removed?) +
+        SupplementalClaim.where(veteran_file_number: file_numbers).reject(&:removed?)
     end
   end
 
