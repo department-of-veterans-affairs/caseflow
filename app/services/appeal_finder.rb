@@ -31,10 +31,12 @@ class AppealFinder
                             service: :queue,
                             name: "VeteranFinderQuery.find_appeals_with_file_numbers") do
         appeals = Appeal.where(veteran_file_number: file_numbers).reject(&:removed?).to_a
+        # rubocop:disable Lint/HandleExceptions
         begin
           appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(*file_numbers))
         rescue ActiveRecord::RecordNotFound
         end
+        # rubocop:enable Lint/HandleExceptions
         appeals
       end
     end
