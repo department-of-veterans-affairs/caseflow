@@ -25,9 +25,7 @@ class VeteranFinder
         # If a veteran exists for the given claim number, there might be
         # another record where the file number is the veteran's SSN.
         veteran_file_number_match = Veteran.find_by(file_number: file_number)
-        veteran_ssn_match = if veteran_file_number_match
-                              Veteran.find_by(file_number: veteran_file_number_match.ssn)
-                            end
+        veteran_ssn_match = Veteran.find_by(file_number: veteran_file_number_match.ssn) if veteran_file_number_match
       end
 
       participant_ids = [veteran_file_number_match, veteran_ssn_match].compact.uniq.map(&:participant_id)
