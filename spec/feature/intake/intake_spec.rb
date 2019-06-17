@@ -96,7 +96,6 @@ feature "Intake" do
 
       fill_in search_bar_title, with: "5678"
       click_on "Search"
-
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Veteran ID not found")
 

@@ -189,17 +189,19 @@ class Intake < ApplicationRecord
   end
 
   def validate_start
-    if validate_file_number
-      if !veteran.accessible?
-        set_veteran_accessible_error
-      elsif veteran.incident_flash?
-        self.error_code = :incident_flash
-      elsif duplicate_intake_in_progress
-        self.error_code = :duplicate_intake_in_progress
-        @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
-      else
-        validate_detail_on_start
-      end
+    return false unless validate_file_number
+
+    if !veteran
+      self.error_code = :veteran_not_found
+    elsif !veteran.accessible?
+      set_veteran_accessible_error
+    elsif veteran.incident_flash?
+      self.error_code = :incident_flash
+    elsif duplicate_intake_in_progress
+      self.error_code = :duplicate_intake_in_progress
+      @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
+    else
+      validate_detail_on_start
     end
 
     !error_code
@@ -259,13 +261,11 @@ class Intake < ApplicationRecord
   def validate_file_number
     if !file_number_valid?
       self.error_code = :invalid_file_number
-    elsif !veteran
-      self.error_code = :veteran_not_found
-    elsif !check_reserved_file_number?
+    elsif file_number_reserved?
       self.error_code = :reserved_veteran_file_number
-    else
-      true
     end
+
+    !error_code
   end
 
   def validate_receipt_date_not_before_ama
@@ -300,13 +300,6 @@ class Intake < ApplicationRecord
   def file_number_reserved?
     FeatureToggle.enabled?(:intake_reserved_file_number,
                            user: RequestStore[:current_user]) && veteran_file_number == "123456789"
-  end
-
-  def check_reserved_file_number?
-    return false if file_number_reserved?
-
-    self.veteran_file_number = veteran_file_number.strip
-    veteran_file_number =~ /^[0-9]{8,9}$/
   end
 
   # Optionally implement this methods in subclass
