@@ -16,7 +16,6 @@ services:
   vacols-db-development:
     container_name: VACOLS_DB-development
     image: vacols_db:latest
-    command: bash -c "/home/oracle/setup/dockerInitWithSchema.sh"
     ports:
       - "1521:1521"
     depends_on:
