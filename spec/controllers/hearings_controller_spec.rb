@@ -70,7 +70,7 @@ RSpec.describe HearingsController, type: :controller do
 
   describe "#find_closest_hearing_locations" do
     before do
-      VADotGovService = Fakes::VADotGovService
+      stub_const("VADotGovService", Fakes::VADotGovService)
     end
 
     context "for AMA appeals" do

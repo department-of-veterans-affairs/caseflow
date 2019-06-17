@@ -39,8 +39,6 @@ RSpec.describe Organizations::TasksController, type: :controller do
     ]
   end
 
-  let(:business_line_org) { create(:business_line, url: "lob", name: "LoB") }
-
   before do
     allow_any_instance_of(BGSService).to receive(:get_participant_id_for_user)
       .with(user).and_return(participant_id)
@@ -78,6 +76,14 @@ RSpec.describe Organizations::TasksController, type: :controller do
         expect(response_body.size).to eq 2
         expect(response_body[0]["attributes"]["available_hearing_locations"]).to be_empty
       end
+
+      it "has a response body with the correct shape" do
+        get(:index, params: { organization_url: url })
+        expect(response.status).to eq(200)
+        response_body = JSON.parse(response.body)
+
+        expect(response_body.keys).to match_array(%w[organization_name tasks id is_vso queue_config])
+      end
     end
 
     context "when user doesn't have proper role" do
@@ -96,13 +102,6 @@ RSpec.describe Organizations::TasksController, type: :controller do
 
       it "should be redirected" do
         get :index, params: { organization_url: url }
-        expect(response.status).to eq 302
-      end
-    end
-
-    context "when organization is_a BusinessLine" do
-      it "redirects to /decision_reviews/" do
-        get :index, params: { organization_url: business_line_org.url }
         expect(response.status).to eq 302
       end
     end

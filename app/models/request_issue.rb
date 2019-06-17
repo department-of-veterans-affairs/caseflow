@@ -45,7 +45,8 @@ class RequestIssue < ApplicationRecord
     dismissed_death: "dismissed_death",
     dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
-    ineligible: "ineligible"
+    ineligible: "ineligible",
+    no_decision: "no_decision"
   }
 
   before_save :set_contested_rating_issue_profile_date
@@ -59,6 +60,7 @@ class RequestIssue < ApplicationRecord
   end
 
   class NotYetSubmitted < StandardError; end
+  class MissingContentionDisposition < StandardError; end
   class MissingDecisionDate < StandardError
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} lacks a decision_date")
@@ -193,7 +195,8 @@ class RequestIssue < ApplicationRecord
         vacols_sequence_id: data[:vacols_sequence_id],
         contested_decision_issue_id: data[:contested_decision_issue_id],
         ineligible_reason: data[:ineligible_reason],
-        ineligible_due_to_id: data[:ineligible_due_to_id]
+        ineligible_due_to_id: data[:ineligible_due_to_id],
+        edited_description: data[:edited_description]
       }
     end
     # rubocop:enable Metrics/MethodLength
@@ -329,7 +332,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def guess_benefit_type
+    return contested_decision_issue.benefit_type if contested_decision_issue
     return "unidentified" if is_unidentified
+    return "ineligible" unless eligible?
 
     "unknown"
   end
@@ -408,6 +413,10 @@ class RequestIssue < ApplicationRecord
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
+  def save_edit_contention_text!(new_description)
+    update!(edited_description: new_description)
+  end
+
   def remove!
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
@@ -431,7 +440,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def requires_record_request_task?
-    !benefit_type_requires_payee_code?
+    eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
 
   def decision_or_promulgation_date
@@ -484,6 +493,12 @@ class RequestIssue < ApplicationRecord
     return unless limited_poa
 
     limited_poa[:limited_poa_access] == "Y"
+  end
+
+  def contention_disposition
+    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
+      disposition.contention_id.to_i == contention_reference_id
+    end
   end
 
   private
@@ -546,6 +561,8 @@ class RequestIssue < ApplicationRecord
       create_decision_issues_from_rating
     end
 
+    # We expect all rating request issues on an EP to get an associated rating created when they're decided
+    # Only non-rating issues should have decision issues created from dispositions
     create_decision_issue_from_disposition if decision_issues.empty?
 
     fail ErrorCreatingDecisionIssue, id if decision_issues.empty?
@@ -586,12 +603,6 @@ class RequestIssue < ApplicationRecord
     end_product_establishment.associated_rating&.promulgation_date
   end
 
-  def contention_disposition
-    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
-      disposition.contention_id.to_i == contention_reference_id
-    end
-  end
-
   def create_decision_issues_from_rating
     matching_rating_issues.each do |rating_issue|
       transaction { decision_issues << find_or_create_decision_issue_from_rating_issue(rating_issue) }
@@ -608,6 +619,8 @@ class RequestIssue < ApplicationRecord
   # However, if the dispositions for any of these request issues match, there is no need to create multiple decision
   # issues. They can instead be mapped to the same decision issue.
   def find_or_create_decision_issue_from_rating_issue(rating_issue)
+    fail MissingContentionDisposition unless contention_disposition
+
     preexisting_decision_issue = DecisionIssue.find_by(
       participant_id: rating_issue.participant_id,
       rating_issue_reference_id: rating_issue.reference_id,
@@ -772,6 +785,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    decision_review.tasks.active.any?
+    decision_review.tasks.open.any?
   end
 end

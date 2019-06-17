@@ -19,13 +19,13 @@ class RegionalOfficesController < ApplicationController
     render json: {
       hearing_days: hearing_days.map do |day|
         {
-          hearing_id: day[:id],
+          hearing_id: day["id"],
           regional_office: ro,
           timezone: RegionalOffice::CITIES[ro][:timezone],
-          scheduled_for: day[:scheduled_for],
-          request_type: day[:request_type],
-          room: day[:room],
-          total_slots: day[:total_slots]
+          scheduled_for: day["scheduled_for"],
+          request_type: day["request_type"],
+          room: day["room"],
+          total_slots: day["total_slots"]
         }
       end
     }

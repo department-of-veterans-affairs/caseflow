@@ -158,7 +158,6 @@ RSpec.feature "Case details" do
         scenario "worksheet and details links are not visible" do
           visit vso.path
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-
           expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
           scroll_to("#hearings-section")
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
@@ -363,7 +362,7 @@ RSpec.feature "Case details" do
     before { attorney_user.update!(roles: attorney_user.roles + ["Reader"]) }
     after { attorney_user.update!(roles: attorney_user.roles - ["Reader"]) }
 
-    scenario "reader link appears on page and sends us to reader", skip: "temp disabled for doccount test" do
+    scenario "reader link appears on page and sends us to reader" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
       click_on "View #{appeal.documents.count} docs"
@@ -391,7 +390,6 @@ RSpec.feature "Case details" do
     scenario "case details page shows appropriate text" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-
       # Call have_content() so we wait for the case details page to load
       expect(page).to have_content(appeal.veteran_full_name)
       expect(page).to have_content("DISPOSITION\n1 - Allowed")
@@ -586,7 +584,8 @@ RSpec.feature "Case details" do
         )
       end
 
-      scenario "displays task bold in queue" do
+      scenario "displays task bold in queue",
+               skip: "https://circleci.com/gh/department-of-veterans-affairs/caseflow/65218, bat team investigated" do
         visit "/queue"
         vet_name = assigned_task.appeal.veteran_full_name
         fontweight_new = get_computed_styles("#veteran-name-for-task-#{assigned_task.id}", "font-weight")
@@ -874,8 +873,8 @@ RSpec.feature "Case details" do
       end
 
       it "is displayed in the TaskSnapshot" do
-        visit "/queue/appeals/#{legacy_appeal.vacols_id}"
 
+        visit "/queue/appeals/#{legacy_appeal.vacols_id}"
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
       end
@@ -886,7 +885,8 @@ RSpec.feature "Case details" do
     let(:attorney_user) { FactoryBot.create(:user) }
     let(:judge_user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
-    let(:appeal) { root_task.appeal }
+    let!(:appeal) { root_task.appeal }
+    let!(:request_issue) { create(:request_issue, decision_review: appeal) }
     let!(:atty_task) do
       FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_by: judge_user,
                                             assigned_to: attorney_user)
@@ -895,7 +895,6 @@ RSpec.feature "Case details" do
       FactoryBot.create(:ama_judge_task, appeal: appeal, parent: atty_task, assigned_by: judge_user,
                                          assigned_to: judge_user)
     end
-
     context "Attorney has been assigned" do
       it "is displayed in the Universal Case Title" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -903,6 +902,16 @@ RSpec.feature "Case details" do
         expect(page).to have_content(judge_user.full_name)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL)
         expect(page).to have_content(attorney_user.full_name)
+      end
+    end
+
+    context "Attorney has removed appeal" do
+      before { request_issue.remove! }
+      it "should not show attorney name" do
+        expect(appeal.reload.removed?).to eq(true)
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to_not have_content(judge_user.full_name)
+        expect(page).to_not have_content(attorney_user.full_name)
       end
     end
   end
@@ -922,7 +931,6 @@ RSpec.feature "Case details" do
 
       it "should not show the tracking task in case timeline" do
         visit("/queue/appeals/#{tracking_task.appeal.uuid}")
-
         # Expect to only find the "NOD received" row and the "dispatch pending" rows.
         expect(page).to have_css("table#case-timeline-table tbody tr", count: 2)
       end

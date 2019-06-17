@@ -629,9 +629,8 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("You have successfully added 1 issue, removed 1 issue, and withdrawn 1 issue.")
     end
 
-    scenario "show alert when issue is withdrawn before receipt date" do
+    scenario "show alert when withdrawal date is not valid" do
       visit "appeals/#{appeal.uuid}/edit/"
-
       click_withdraw_intake_issue_dropdown("PTSD denied")
       fill_in "withdraw-date", with: 50.days.ago.to_date.mdY
 
@@ -639,16 +638,20 @@ feature "Appeal Edit issues" do
         "We cannot process your request. Please select a date after the Appeal's receipt date."
       )
       expect(page).to have_button("Save", disabled: true)
-    end
 
-    scenario "show alert when issue is withdrawn after current date" do
-      visit "appeals/#{appeal.uuid}/edit/"
-
-      click_withdraw_intake_issue_dropdown("PTSD denied")
       fill_in "withdraw-date", with: 2.years.from_now.to_date.mdY
 
       expect(page).to have_content("We cannot process your request. Please select a date prior to today's date.")
       expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: "14/20/2019"
+
+      expect(page).to have_content("We cannot process your request. Please enter a valid date.")
+      expect(page).to have_button("Save", disabled: true)
+
+      fill_in "withdraw-date", with: withdraw_date
+      expect(page).to_not have_content("We cannot process your request.")
+      expect(page).to have_button("Save", disabled: false)
     end
   end
 

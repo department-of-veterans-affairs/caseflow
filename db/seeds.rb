@@ -18,9 +18,6 @@ DEVELOPMENT_JUDGE_TEAMS = {
 
 require "database_cleaner"
 
-# Explicitly include mail_task so we can create instances of MailTask's subclasses that are in the same file.
-require "mail_task"
-
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
@@ -56,6 +53,11 @@ class SeedDB
     User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Judge has case to assign no team")
     User.create(css_id: "BVATWARNER", station_id: 101, full_name: "Build Hearing Schedule")
     User.create(css_id: "BVAGWHITE", station_id: 101, full_name: "BVA Dispatch user with cases")
+    User.create(css_id: "BVAGGREY", station_id: 101, full_name: "BVA Dispatch user without cases")
+    dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "BVA Dispatch admin without cases")
+    OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
+    bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
+    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -69,6 +71,7 @@ class SeedDB
     create_aod_user_and_tasks
     create_privacy_user
     create_lit_support_user
+    create_pulac_cerullo_user
     create_mail_team_user
     create_bva_dispatch_user_with_tasks
     create_case_search_only_user
@@ -87,8 +90,7 @@ class SeedDB
       decision_review: appeal
     )
 
-    root_task = RootTask.create!(appeal: appeal)
-    RootTask.create_subtasks!(appeal, root_task)
+    InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
 
     # Completing the evidence submission task will mark the appeal ready for distribution
     evidence_submission_task = EvidenceSubmissionWindowTask.find_by(appeal: appeal)
@@ -122,18 +124,37 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
 
-    create_no_show_hearings_task
+    create_no_show_hearings_tasks
     create_change_hearing_disposition_task
   end
 
-  def create_no_show_hearings_task
-    appeal = FactoryBot.create(:appeal, :hearing_docket)
-    root_task = FactoryBot.create(:root_task, appeal: appeal)
-    distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
-    parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
-    FactoryBot.create(:schedule_hearing_task, :completed, parent: parent_hearing_task, appeal: appeal)
-    disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
-    FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+  def create_no_show_hearings_tasks
+    5.times do
+      appeal = FactoryBot.create(
+        :appeal,
+        :hearing_docket,
+        closest_regional_office: %w[RO17 RO19 RO31].sample
+      )
+      root_task = FactoryBot.create(:root_task, appeal: appeal)
+      distribution_task = FactoryBot.create(
+        :distribution_task,
+        appeal: appeal,
+        parent: root_task
+      )
+      parent_hearing_task = FactoryBot.create(
+        :hearing_task,
+        parent: distribution_task,
+        appeal: appeal
+      )
+      FactoryBot.create(
+        :schedule_hearing_task,
+        :completed,
+        parent: parent_hearing_task,
+        appeal: appeal
+      )
+      disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
+      FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+    end
   end
 
   def create_change_hearing_disposition_task
@@ -283,6 +304,11 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(u, LitigationSupport.singleton)
   end
 
+  def create_pulac_cerullo_user
+    u = User.create!(station_id: 101, css_id: "BVAKSOSNA", full_name: "KATHLEEN SOSNA")
+    OrganizationsUser.add_user_to_organization(u, PulacCerullo.singleton)
+  end
+
   def create_mail_team_user
     u = User.create!(station_id: 101, css_id: "JOLLY_POSTMAN", full_name: "Mail team member")
     OrganizationsUser.add_user_to_organization(u, MailTeam.singleton)
@@ -292,27 +318,8 @@ class SeedDB
     u = User.find_by(css_id: "BVAGWHITE")
     OrganizationsUser.add_user_to_organization(u, BvaDispatch.singleton)
 
-    3.times do
-      root = FactoryBot.create(:root_task)
-      FactoryBot.create_list(
-        :request_issue,
-        [3, 4, 5].sample,
-        :nonrating,
-        notes: "Pain disorder with 100\% evaluation per examination",
-        decision_review: root.appeal
-      )
-      parent = FactoryBot.create(
-        :bva_dispatch_task,
-        assigned_to: BvaDispatch.singleton,
-        parent_id: root.id,
-        appeal: root.appeal
-      )
-      FactoryBot.create(
-        :bva_dispatch_task,
-        assigned_to: u,
-        parent_id: parent.id,
-        appeal: parent.appeal
-      )
+    [42, 66, 13].each do |rand_seed|
+      create_task_at_bva_dispatch(rand_seed)
     end
   end
 
@@ -528,18 +535,13 @@ class SeedDB
 
     vet.save
 
-    appeal = FactoryBot.create(
+    FactoryBot.create(
       :appeal,
       :with_tasks,
       number_of_claimants: 1,
       closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
       docket_type: "hearing"
-    )
-
-    ScheduleHearingTask.create!(
-      appeal: appeal,
-      parent: HearingTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     )
   end
 
@@ -857,7 +859,6 @@ class SeedDB
     atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
     atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
 
-    # Happens in CaseReviewConcern.update_task_and_issue_dispositions()
     atty_task.update!(status: Constants.TASK_STATUSES.completed)
     judge_task.update!(status: Constants.TASK_STATUSES.completed)
 
@@ -873,6 +874,72 @@ class SeedDB
       }]
       QualityReviewTask.create_many_from_params(qr_task_params, qr_user).first
     end
+  end
+
+  def create_task_at_bva_dispatch(seed = Faker::Number.number(3))
+    Faker::Config.random = Random.new(seed)
+    vet = FactoryBot.create(
+      :veteran,
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+
+    notes = "Pain disorder with 100\% evaluation per examination"
+
+    appeal = FactoryBot.create(
+      :appeal,
+      :with_tasks,
+      number_of_claimants: 1,
+      veteran_file_number: vet.file_number,
+      docket_type: "hearing",
+      closest_regional_office: "RO17",
+      request_issues: FactoryBot.create_list(
+        :request_issue, 1, :nonrating, notes: notes
+      )
+    )
+
+    root_task = appeal.root_task
+    judge = FactoryBot.create(:user, station_id: 101)
+    FactoryBot.create(:staff, :judge_role, user: judge)
+    judge_task = FactoryBot.create(
+      :ama_judge_task,
+      :on_hold,
+      assigned_to: judge,
+      appeal: appeal,
+      parent: root_task
+    )
+
+    atty = FactoryBot.create(:user, station_id: 101)
+    FactoryBot.create(:staff, :attorney_role, user: atty)
+    atty_task = FactoryBot.create(
+      :ama_attorney_task,
+      :in_progress,
+      assigned_to: atty,
+      assigned_by: judge,
+      parent: judge_task,
+      appeal: appeal
+    )
+
+    judge_team = JudgeTeam.create_for_judge(judge)
+    OrganizationsUser.add_user_to_organization(atty, judge_team)
+
+    appeal.request_issues.each do |request_issue|
+      FactoryBot.create(
+        :decision_issue,
+        :nonrating,
+        disposition: "allowed",
+        decision_review: appeal,
+        request_issues: [request_issue],
+        rating_promulgation_date: 2.months.ago,
+        benefit_type: request_issue.benefit_type
+      )
+    end
+
+    atty_task.update!(status: Constants.TASK_STATUSES.completed)
+    judge_task.update!(status: Constants.TASK_STATUSES.completed)
+
+    BvaDispatchTask.create_from_root_task(root_task)
   end
 
   def create_tasks
@@ -1024,9 +1091,6 @@ class SeedDB
   def create_ama_hearing_appeals
     description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
     notes = "Pain disorder with 100\% evaluation per examination"
-
-    FeatureToggle.enable!(:ama_acd_tasks)
-    FeatureToggle.enable!(:ama_auto_case_distribution)
 
     @ama_appeals << FactoryBot.create(
       :appeal,

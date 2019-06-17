@@ -8,13 +8,6 @@ describe HearingRepository do
 
   context ".slot_new_hearing" do
     let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-    let(:time) do
-      {
-        "h" => "9",
-        "m" => "00",
-        "offset" => "-500"
-      }
-    end
     let(:staff_record) { create(:staff) }
     let(:hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 2)) }
 
@@ -23,7 +16,7 @@ describe HearingRepository do
     end
 
     it "slots hearing at correct time" do
-      HearingRepository.slot_new_hearing(hearing_day.id, scheduled_time: time, appeal: legacy_appeal)
+      HearingRepository.slot_new_hearing(hearing_day.id, scheduled_time_string: "09:00", appeal: legacy_appeal)
 
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
         .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
@@ -31,11 +24,11 @@ describe HearingRepository do
   end
 
   context ".set_vacols_values" do
-    subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
     let(:hearing) { create(:legacy_hearing) }
     let(:hearing_day) { HearingDay.first }
-
+    let(:notes) { "test notes" }
+    let(:representative_name) { "test representative name" }
     let(:hearing_hash) do
       OpenStruct.new(
         hearing_date: date,
@@ -45,13 +38,15 @@ describe HearingRepository do
         aod: "Y",
         tranreq: nil,
         holddays: 90,
-        notes1: "test notes",
-        repname: "test rep name",
+        notes1: notes,
+        repname: representative_name,
         bfso: "E",
         bfregoff: "RO36",
         vdkey: hearing_day.id
       )
     end
+
+    subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
 
     it "assigns values properly" do
       expect(subject.request_type).to eq(HearingDay::REQUEST_TYPES[:video])
@@ -61,9 +56,8 @@ describe HearingRepository do
       expect(subject.aod).to eq :filed
       expect(subject.transcript_requested).to eq nil
       expect(subject.hold_open).to eq 90
-      expect(subject.notes).to eq "test notes"
-      expect(subject.representative_name).to eq "test rep name"
-      expect(subject.representative).to eq "Jewish War Veterans"
+      expect(subject.notes).to eq notes
+      expect(subject.representative_name).to eq representative_name
     end
   end
 
@@ -75,7 +69,6 @@ describe HearingRepository do
     let(:record1) do
       OpenStruct.new(
         hearing_type: HearingDay::REQUEST_TYPES[:travel],
-        master_record_type: nil,
         bfregoff: "RO36",
         hearing_pkseq: case_hearing.hearing_pkseq,
         folder_nr: "5678",
@@ -83,31 +76,11 @@ describe HearingRepository do
       )
     end
 
-    let(:record2) do
-      OpenStruct.new(
-        folder_nr: "VIDEO RO15",
-        hearing_date: Time.zone.now,
-        master_record_type: :video
-      )
-    end
-
-    let(:record3) do
-      OpenStruct.new(
-        tbro: "RO19",
-        tbstdate: Time.zone.now,
-        tbenddate: Time.zone.now,
-        master_record_type: :travel_board
-      )
-    end
-
-    let(:records) { [record1, record2, record3] }
+    let(:records) { [record1] }
 
     it "should create hearing records" do
-      expect(subject.size).to eq 3
+      expect(subject.size).to eq 1
       expect(subject.first.vacols_id).to eq case_hearing.hearing_pkseq.to_s
-      expect(subject.first.master_record).to eq false
-      expect(subject.second.master_record).to eq true
-      expect(subject.third.master_record).to eq true
     end
   end
 end

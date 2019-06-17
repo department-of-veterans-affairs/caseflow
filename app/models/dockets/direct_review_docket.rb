@@ -48,14 +48,14 @@ class DirectReviewDocket < Docket
   private
 
   def all_nonpriority
-    Appeal.all_nonpriority.where(docket_type: docket_type)
+    docket_appeals.nonpriority
   end
 
   def nonpriority_nonihp_ready_appeals
     docket_appeals
-      .merge(Appeal.ready_for_distribution)
-      .merge(Appeal.all_nonpriority)
-      .merge(Appeal.non_ihp)
+      .ready_for_distribution
+      .nonpriority
+      .non_ihp
       .order("receipt_date")
   end
 end

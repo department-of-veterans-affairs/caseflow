@@ -61,6 +61,7 @@ describe User do
         "pg_user_id" => user.id,
         "email" => nil,
         "roles" => [],
+        "efolder_documents_fetched_at" => nil,
         "selected_regional_office" => nil,
         :display_name => css_id.upcase,
         "name" => "Tom Brady"
@@ -291,17 +292,13 @@ describe User do
     end
 
     before do
-      BGSService = ExternalApi::BGSService
+      stub_const("BGSService", ExternalApi::BGSService)
       RequestStore[:current_user] = user
 
       allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
         .with(css_id: user.css_id, station_id: user.station_id).and_return(participant_id)
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
         .with(participant_id).and_return(vso_participant_ids)
-    end
-
-    after do
-      BGSService = Fakes::BGSService
     end
 
     context "#participant_id" do

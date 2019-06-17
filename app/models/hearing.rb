@@ -26,6 +26,7 @@ class Hearing < ApplicationRecord
   delegate :veteran_last_name, to: :appeal
   delegate :appellant_first_name, to: :appeal
   delegate :appellant_last_name, to: :appeal
+  delegate :appellant_address_line_1, to: :appeal
   delegate :appellant_city, to: :appeal
   delegate :appellant_state, to: :appeal
   delegate :appellant_zip, to: :appeal
@@ -36,7 +37,7 @@ class Hearing < ApplicationRecord
   delegate :docket_name, to: :appeal
   delegate :request_issues, to: :appeal
   delegate :decision_issues, to: :appeal
-  delegate :available_hearing_locations, :closest_regional_office, to: :appeal
+  delegate :available_hearing_locations, :closest_regional_office, :advanced_on_docket, to: :appeal
   delegate :external_id, to: :appeal, prefix: true
   delegate :regional_office, to: :hearing_day, prefix: true
   delegate :hearing_day_full?, to: :hearing_day
@@ -70,16 +71,12 @@ class Hearing < ApplicationRecord
     HEARING_TYPES[request_type.to_sym]
   end
 
-  def master_record
-    false
-  end
-
   def assigned_to_vso?(user)
     appeal.tasks.any? do |task|
       task.type == TrackVeteranTask.name &&
         task.assigned_to.is_a?(Representative) &&
         task.assigned_to.user_has_access?(user) &&
-        task.active?
+        task.open?
     end
   end
 
@@ -100,7 +97,7 @@ class Hearing < ApplicationRecord
   end
 
   def disposition_task_in_progress
-    disposition_task ? disposition_task.active_with_no_children? : false
+    disposition_task ? disposition_task.open_with_no_children? : false
   end
 
   def disposition_editable
@@ -109,6 +106,19 @@ class Hearing < ApplicationRecord
 
   def representative
     appeal.representative_name
+  end
+
+  def claimant_id
+    return nil if appeal.appellant.nil?
+
+    Person.find_by(participant_id: appeal.appellant.participant_id).id
+  end
+
+  def advance_on_docket_motion
+    # we're only really interested if the AOD was granted
+    motion = AdvanceOnDocketMotion.where(person_id: claimant_id).order("granted DESC NULLS LAST").first
+
+    motion&.slice(:person_id, :reason, :user_id, :granted)
   end
 
   def scheduled_for
@@ -171,6 +181,8 @@ class Hearing < ApplicationRecord
         :regional_office_timezone,
         :readable_request_type,
         :scheduled_for,
+        :scheduled_time_string,
+        :central_office_time_string,
         :appeal_external_id,
         :veteran_file_number,
         :evidence_window_waived,
@@ -184,7 +196,9 @@ class Hearing < ApplicationRecord
         :worksheet_issues,
         :closest_regional_office,
         :available_hearing_locations,
-        :disposition_editable
+        :disposition_editable,
+        :advance_on_docket_motion,
+        :claimant_id
       ],
       except: [:military_service]
     )
@@ -198,6 +212,7 @@ class Hearing < ApplicationRecord
         :veteran_last_name,
         :appellant_first_name,
         :appellant_last_name,
+        :appellant_address_line_1,
         :appellant_city,
         :appellant_state,
         :appellant_zip,
@@ -206,6 +221,8 @@ class Hearing < ApplicationRecord
         :regional_office_timezone,
         :readable_request_type,
         :scheduled_for,
+        :scheduled_time_string,
+        :central_office_time_string,
         :veteran_age,
         :veteran_gender,
         :appeal_external_id,
@@ -223,7 +240,9 @@ class Hearing < ApplicationRecord
         :worksheet_issues,
         :closest_regional_office,
         :available_hearing_locations,
-        :disposition_editable
+        :disposition_editable,
+        :advance_on_docket_motion,
+        :claimant_id
       ]
     )
   end

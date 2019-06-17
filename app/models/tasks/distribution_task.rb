@@ -4,13 +4,7 @@
 # Task that signals that an appeal is ready for distribution to a judge, including for auto case distribution.
 
 class DistributionTask < GenericTask
-  # Prevent this task from being marked complete
-  # when a child task (e.g. evidence submission)
-  # is marked complete because distribution tasks are used
-  # to signal that cases are ready for assignment to judges.
-  def update_status_if_children_tasks_are_complete
-    ready_for_distribution! if children.any? && children.active.none?
-  end
+  before_validation :set_assignee
 
   def ready_for_distribution!
     update!(status: :assigned, assigned_at: Time.zone.now)
@@ -22,5 +16,11 @@ class DistributionTask < GenericTask
 
   def ready_for_distribution_at
     assigned_at
+  end
+
+  private
+
+  def set_assignee
+    self.assigned_to ||= MailTeam.singleton
   end
 end

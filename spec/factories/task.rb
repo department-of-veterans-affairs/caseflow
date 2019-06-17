@@ -144,6 +144,7 @@ FactoryBot.define do
       type { DispositionTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
+      parent { create(:hearing_task) }
     end
 
     factory :change_hearing_disposition_task, class: ChangeHearingDispositionTask do
@@ -160,6 +161,12 @@ FactoryBot.define do
     factory :ama_judge_quality_review_task, class: JudgeQualityReviewTask do
       type { JudgeQualityReviewTask.name }
       appeal { create(:appeal) }
+    end
+
+    factory :ama_judge_dispatch_return_task, class: JudgeDispatchReturnTask do
+      type { JudgeDispatchReturnTask.name }
+      appeal { create(:appeal) }
+      parent { create(:root_task, appeal: appeal) }
     end
 
     factory :track_veteran_task, class: TrackVeteranTask do
@@ -194,6 +201,12 @@ FactoryBot.define do
 
     factory :ama_attorney_task do
       type { AttorneyTask.name }
+      appeal { create(:appeal) }
+      parent { create(:ama_judge_task) }
+    end
+
+    factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
+      type { AttorneyDispatchReturnTask.name }
       appeal { create(:appeal) }
       parent { create(:ama_judge_task) }
     end
@@ -239,6 +252,12 @@ FactoryBot.define do
 
     factory :hearing_admin_action_incarcerated_veteran_task, class: HearingAdminActionIncarceratedVeteranTask do
       type { HearingAdminActionIncarceratedVeteranTask.name }
+      appeal { create(:appeal) }
+      assigned_by { nil }
+    end
+
+    factory :hearing_admin_action_verify_address_task, class: HearingAdminActionVerifyAddressTask do
+      type { HearingAdminActionVerifyAddressTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
     end

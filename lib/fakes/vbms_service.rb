@@ -77,9 +77,9 @@ class Fakes::VBMSService
     IO.binread(path)
   end
 
-  def self.quick_document_count_for_appeal(appeal, user)
-    response = fetch_documents_for(appeal, user)
-    response[:documents]&.size
+  def self.document_count(veteran_file_number, _user = nil)
+    docs = (document_records || {})[veteran_file_number] || @documents || []
+    docs.length
   end
 
   def self.fetch_documents_for(appeal, _user = nil)
@@ -192,6 +192,13 @@ class Fakes::VBMSService
     Rails.logger.info("Contention: #{contention.inspect}")
 
     true
+  end
+
+  def self.update_contention!(contention)
+    Rails.logger.info("Submitting updated contention request to VBMS...")
+    Rails.logger.info("Contention: #{contention.inspect}")
+
+    contention
   end
 
   # Used in test to clean fake VBMS state.

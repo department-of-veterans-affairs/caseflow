@@ -125,6 +125,71 @@ describe RequestIssue do
     end
   end
 
+  context "#guess_benefit_type" do
+    context "issue is unidentified" do
+      it "returns 'unidentified'" do
+        expect(unidentified_issue.guess_benefit_type).to eq "unidentified"
+      end
+    end
+
+    context "issue is ineligible" do
+      let(:ineligible_reason) { :duplicate_of_rating_issue_in_active_review }
+
+      it "returns 'ineligible'" do
+        expect(rating_request_issue.guess_benefit_type).to eq "ineligible"
+      end
+    end
+
+    context "issue has a contested_decision_issue" do
+      let(:decision_issue) { create(:decision_issue, benefit_type: "education") }
+      let(:request_issue) { create(:request_issue, contested_decision_issue: decision_issue) }
+
+      it "returns the parent decision issue's benefit_type" do
+        expect(request_issue.guess_benefit_type).to eq "education"
+      end
+    end
+
+    it "defaults to 'unknown'" do
+      expect(rating_request_issue.guess_benefit_type).to eq "unknown"
+    end
+  end
+
+  context "#requires_record_request_task?" do
+    context "issue is ineligible" do
+      let(:benefit_type) { "education" }
+
+      before do
+        allow(nonrating_request_issue).to receive(:eligible?).and_return(false)
+      end
+
+      it "does not require record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is unidentified" do
+      it "does not require record request task" do
+        expect(unidentified_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is not a non-compensation line of business" do
+      let(:benefit_type) { "compensation" }
+
+      it "does not require a record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq false
+      end
+    end
+
+    context "issue is non-compensation" do
+      let(:benefit_type) { "education" }
+
+      it "requires a record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq true
+      end
+    end
+  end
+
   context ".requires_processing" do
     before do
       rating_request_issue.submit_for_processing!(delay: 1.day)

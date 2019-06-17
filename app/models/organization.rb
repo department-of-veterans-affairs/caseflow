@@ -16,6 +16,14 @@ class Organization < ApplicationRecord
     organizations_users.includes(:user).select(&:admin?).map(&:user)
   end
 
+  def can_bulk_assign_tasks?
+    false
+  end
+
+  def show_regional_office_in_queue?
+    false
+  end
+
   def non_admins
     organizations_users.includes(:user).non_admin.map(&:user)
   end

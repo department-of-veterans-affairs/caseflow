@@ -86,7 +86,7 @@ RSpec.feature "Colocated checkout flows" do
       vet_name = appeal.veteran_full_name
 
       click_on "#{vet_name.split(' ').first} #{vet_name.split(' ').last} (#{appeal.sanitized_vbms_id})"
-      click_dropdown(index: 0)
+      click_dropdown(text: Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h[:label])
 
       expect(page).to have_content(COPY::MARK_TASK_COMPLETE_BUTTON)
       click_on COPY::MARK_TASK_COMPLETE_BUTTON
@@ -109,11 +109,9 @@ RSpec.feature "Colocated checkout flows" do
 
       expect(page).to have_content("Actions")
 
-      click_dropdown(text: Constants.TASK_ACTIONS.PLACE_HOLD.to_h[:label])
+      click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h[:label])
 
-      expect(page).to have_content(
-        format(COPY::COLOCATED_ACTION_PLACE_HOLD_HEAD, vet_name, appeal.sanitized_vbms_id)
-      )
+      expect(page).to have_content(Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
 
       click_dropdown(index: 6)
       expect(page).to have_content(COPY::COLOCATED_ACTION_PLACE_CUSTOM_HOLD_COPY)
@@ -123,12 +121,12 @@ RSpec.feature "Colocated checkout flows" do
 
       instructions = generate_words 5
       fill_in "instructions", with: instructions
-      click_on "Place case on hold"
+      click_on(COPY::MODAL_SUBMIT_BUTTON)
 
       expect(page).to have_content(
         format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, vet_name, hold_duration)
       )
-      expect(colocated_action.reload.on_hold_duration).to eq hold_duration
+      expect(colocated_action.reload.calculated_on_hold_duration).to eq hold_duration
       expect(colocated_action.status).to eq "on_hold"
       expect(colocated_action.instructions[1]).to eq instructions
     end

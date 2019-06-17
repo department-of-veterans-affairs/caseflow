@@ -17,9 +17,9 @@ import { taskActionData, prepareAppealForStore } from '../utils';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
 
 import RadioField from '../../components/RadioField';
-import AssignHearingForm from '../../hearingSchedule/components/modalForms/AssignHearingForm';
+import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
 import ScheduleHearingLaterWithAdminActionForm from
-  '../../hearingSchedule/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
+  '../../hearings/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
 import ApiUtil from '../../util/ApiUtil';
 
 const ACTIONS = {
@@ -81,12 +81,14 @@ class PostponeHearingModal extends React.Component {
   }
 
   getReschedulePayload = () => {
-    const { apiFormattedValues: { hearing_time, hearing_day_id, hearing_location } } = this.props.assignHearing;
+    const {
+      apiFormattedValues: { scheduled_time_string, hearing_day_id, hearing_location }
+    } = this.props.assignHearing;
 
     return {
       action: ACTIONS.RESCHEDULE,
       new_hearing_attrs: {
-        hearing_time,
+        scheduled_time_string,
         hearing_day_id,
         hearing_location
       }

@@ -3,14 +3,6 @@
 describe EvidenceSubmissionWindowTask do
   let(:participant_id_with_pva) { "000000" }
   let(:participant_id_with_no_vso) { "11111" }
-
-  before do
-    FeatureToggle.enable!(:ama_acd_tasks)
-  end
-  after do
-    FeatureToggle.disable!(:ama_acd_tasks)
-  end
-
   let!(:receipt_date) { 2.days.ago }
   let!(:appeal) do
     create(:appeal, docket_type: "evidence_submission", receipt_date: receipt_date, claimants: [
@@ -45,7 +37,7 @@ describe EvidenceSubmissionWindowTask do
 
   context "on complete" do
     it "creates an ihp task if the appeal has a vso" do
-      RootTask.create_root_and_sub_tasks!(appeal)
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(0)
       EvidenceSubmissionWindowTask.find_by(appeal: appeal).when_timer_ends
       expect(InformalHearingPresentationTask.where(appeal: appeal).length).to eq(1)
@@ -53,7 +45,7 @@ describe EvidenceSubmissionWindowTask do
     end
 
     it "marks appeal as ready for distribution if the appeal doesn't have a vso" do
-      RootTask.create_root_and_sub_tasks!(appeal_no_vso)
+      InitialTasksFactory.new(appeal_no_vso).create_root_and_sub_tasks!
       EvidenceSubmissionWindowTask.find_by(appeal: appeal_no_vso).update!(status: "completed")
       expect(DistributionTask.find_by(appeal: appeal_no_vso).status).to eq("assigned")
     end
@@ -61,8 +53,10 @@ describe EvidenceSubmissionWindowTask do
 
   context "timer_delay" do
     context "parent is not a DispositionTask" do
+      before { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
+
       let(:task) do
-        EvidenceSubmissionWindowTask.create!(appeal: appeal, assigned_to: Bva.singleton)
+        appeal.tasks.last
       end
 
       it "is marked as complete and vso tasks are created in 90 days" do

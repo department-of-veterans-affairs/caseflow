@@ -69,6 +69,10 @@ class Search extends React.PureComponent {
         title: 'Veteran not found',
         body: veteranNotFoundInstructions
       },
+      reserved_veteran_file_number: {
+        title: 'Invalid file number',
+        body: 'Please enter a valid Veteran ID and try again.'
+      },
       veteran_has_multiple_phone_numbers: {
         title: 'The Veteran has multiple active phone numbers',
         body: COPY.DUPLICATE_PHONE_NUMBER_MESSAGE

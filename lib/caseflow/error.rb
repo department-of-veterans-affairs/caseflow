@@ -51,24 +51,18 @@ module Caseflow::Error
     end
   end
 
+  class MissingRequiredProperty < SerializableError
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]
       @code = args[:code] || 500
       @message = args[:message] || "Invalid parent type for task #{@task_type}"
-    end
-  end
-
-  class DuplicateTaskActionPaths < SerializableError
-    attr_accessor :task_id, :user_id, :labels
-
-    def initialize(args)
-      @task_id = args[:task_id]
-      @user_id = args[:user_id]
-      @labels = args[:labels]
-      @code = args[:code] || 500
-      @message = args[:message] || "Task #{@task_id} for user #{user_id} has more than one available action"\
-                                   " with same path. Labels: #{labels.join(', ')}"
     end
   end
 

@@ -137,11 +137,6 @@ export const doDatesMatch = (date, query) => {
   return hasMatched;
 };
 
-export const getTimeWithoutTimeZone = (date, timeZone) => {
-  return moment(date).tz(timeZone).
-    format('H:mm');
-};
-
 export const getTime = (date) => {
   return moment(date).tz('America/New_York').
     format('h:mm a z').
@@ -156,4 +151,8 @@ export const getTimeInDifferentTimeZone = (date, timeZone) => {
 
 export const getDate = (date) => {
   return moment(date).format('YYYY-MM-DD');
+};
+
+export const getMinutesToMilliseconds = (minutes) => {
+  return minutes * 60 * 1000;
 };

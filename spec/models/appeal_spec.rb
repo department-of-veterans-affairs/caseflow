@@ -12,34 +12,6 @@ describe Appeal do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
-  context "priority and non-priority appeals" do
-    let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age) }
-    let!(:aod_motion_appeal) { create(:appeal, :advanced_on_docket_due_to_motion) }
-    let!(:denied_aod_motion_appeal) { create(:appeal, :denied_advance_on_docket) }
-    let!(:inapplicable_aod_motion_appeal) { create(:appeal, :inapplicable_aod_motion) }
-
-    context "#all_priority" do
-      subject { Appeal.all_priority }
-      it "returns aod appeals due to age and motion" do
-        expect(subject).to include aod_age_appeal
-        expect(subject).to include aod_motion_appeal
-        expect(subject).to_not include appeal
-        expect(subject).to_not include denied_aod_motion_appeal
-        expect(subject).to_not include inapplicable_aod_motion_appeal
-      end
-    end
-
-    context "#all_nonpriority" do
-      subject { Appeal.all_nonpriority }
-      it "returns non aod appeals" do
-        expect(subject).to include appeal
-        expect(subject).to_not include aod_motion_appeal
-        expect(subject).to include denied_aod_motion_appeal
-        expect(subject).to include inapplicable_aod_motion_appeal
-      end
-    end
-  end
-
   context "active appeals" do
     let!(:active_appeal) { create(:appeal, :with_tasks) }
     let!(:inactive_appeal) { create(:appeal, :outcoded) }
@@ -48,89 +20,6 @@ describe Appeal do
     it "returns only active appeals" do
       expect(subject).to include active_appeal
       expect(subject).to_not include inactive_appeal
-    end
-  end
-
-  context "ready appeals" do
-    let!(:direct_review_appeal) { create(:appeal, docket_type: "direct_review") }
-    let!(:hearing_appeal) { create(:appeal, docket_type: "hearing") }
-    let!(:evidence_submission_appeal) { create(:appeal, docket_type: "evidence_submission") }
-
-    before do
-      FeatureToggle.enable!(:ama_acd_tasks)
-    end
-    after do
-      FeatureToggle.disable!(:ama_acd_tasks)
-    end
-    subject { Appeal.ready_for_distribution }
-
-    it "returns appeals" do
-      [direct_review_appeal, evidence_submission_appeal, hearing_appeal].each do |appeal|
-        RootTask.create_root_and_sub_tasks!(appeal)
-      end
-
-      expect(subject).to include direct_review_appeal
-      expect(subject).to_not include evidence_submission_appeal
-      expect(subject).to_not include hearing_appeal
-    end
-
-    context "if mail tasks exist" do
-      let(:blocking_mail_task_class) { CongressionalInterestMailTask }
-      let(:nonblocking_mail_task_class) { AodMotionMailTask }
-      let(:user) { FactoryBot.create(:user) }
-
-      before do
-        OrganizationsUser.add_user_to_organization(user, MailTeam.singleton)
-      end
-
-      let!(:blocked_appeal) do
-        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
-        blocking_mail_task_class.create_from_params({
-                                                      appeal: appeal,
-                                                      parent_id: appeal.root_task.id
-                                                    }, user)
-        appeal
-      end
-      let!(:nonblocked_appeal) do
-        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
-        nonblocking_mail_task_class.create_from_params({
-                                                         appeal: appeal,
-                                                         parent_id: appeal.root_task.id
-                                                       }, user)
-        appeal
-      end
-      let!(:nonblocked_appeal2) do
-        appeal = create(:appeal, :with_tasks, docket_type: "direct_review")
-        blocking_mail_task_class.create_from_params({
-                                                      appeal: appeal,
-                                                      parent_id: appeal.root_task.id
-                                                    }, user)
-        MailTask.find_by(appeal: appeal).update!(status: "completed")
-        appeal
-      end
-
-      it "does not return appeals with open blocking mail tasks" do
-        expect(subject).to_not include blocked_appeal
-      end
-      it "returns appeals with open nonblocking mail tasks" do
-        expect(subject).to include nonblocked_appeal
-      end
-      it "does not return appeals with completed blocking mail tasks " do
-        expect(subject).to include nonblocked_appeal2
-      end
-    end
-  end
-
-  context "ready appeals sorted by date" do
-    it "returns appeals with distribution tasks ordered by when they became ready for distribution" do
-      first_appeal = create(:appeal, :with_tasks)
-      first_appeal.tasks.each { |task| task.update!(assigned_at: 2.days.ago, type: "DistributionTask") }
-      second_appeal = create(:appeal, :with_tasks)
-      second_appeal.tasks.each { |task| task.update!(assigned_at: 5.days.ago, type: "DistributionTask") }
-
-      sorted_appeals = Appeal.ordered_by_distribution_ready_date
-
-      expect(sorted_appeals[0]).to eq second_appeal
     end
   end
 
@@ -560,13 +449,17 @@ describe Appeal do
     subject { appeal.create_tasks_on_intake_success! }
 
     it "creates root and vso tasks" do
-      expect(RootTask).to receive(:create_root_and_sub_tasks!).once
+      expect_any_instance_of(InitialTasksFactory).to receive(:create_root_and_sub_tasks!).once
 
       subject
     end
 
     context "request issue has non-comp business line" do
-      let!(:appeal) { create(:appeal, request_issues: [create(:request_issue, benefit_type: :fiduciary)]) }
+      let!(:appeal) { create(:appeal, request_issues: [
+        create(:request_issue, benefit_type: :fiduciary),
+        create(:request_issue, benefit_type: :compensation),
+        create(:request_issue, :unidentified)
+        ]) }
 
       it "creates root task and veteran record request task" do
         expect(VeteranRecordRequest).to receive(:create!).once
@@ -922,31 +815,6 @@ describe Appeal do
         it "is at bva" do
           expect(subject).to eq("bva")
         end
-      end
-    end
-  end
-
-  context "#nonpriority_decisions_per_year" do
-    let!(:newer_decisions) do
-      (0...18).map do |num|
-        doc = create(:decision_document, decision_date: (num * 20).days.ago)
-        doc.appeal.update(docket_type: "direct_review")
-        doc.appeal
-      end
-    end
-    let!(:older_decisions) do
-      (0...2).map do |num|
-        doc = create(:decision_document, decision_date: (366 + (num * 20)).days.ago)
-        doc.appeal.update(docket_type: "direct_review")
-        doc.appeal
-      end
-    end
-
-    context "non-priority decision list" do
-      subject { Appeal.nonpriority_decisions_per_year }
-
-      it "returns decisions from the last year" do
-        expect(subject).to eq(18)
       end
     end
   end

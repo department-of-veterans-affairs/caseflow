@@ -18,7 +18,6 @@ class FetchHearingLocationsForVeteransJob < ApplicationJob
           LEFT OUTER JOIN tasks admin_actions
           ON t.id = admin_actions.parent_id
           AND admin_actions.type IN ('HearingAdminActionVerifyAddressTask', 'HearingAdminActionForeignVeteranCaseTask')
-          AND admin_actions.status NOT IN ('cancelled', 'completed')
           WHERE t.appeal_type = ?
           AND admin_actions.id IS NULL AND t.type = 'ScheduleHearingTask'
           AND t.status NOT IN ('cancelled', 'completed')

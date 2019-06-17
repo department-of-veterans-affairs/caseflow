@@ -22,7 +22,8 @@ class Intake < ApplicationRecord
     veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_valid: "veteran_not_valid",
-    duplicate_intake_in_progress: "duplicate_intake_in_progress"
+    duplicate_intake_in_progress: "duplicate_intake_in_progress",
+    reserved_veteran_file_number: "reserved_veteran_file_number"
   }.freeze
 
   FORM_TYPES = {
@@ -200,6 +201,9 @@ class Intake < ApplicationRecord
       self.error_code = :duplicate_intake_in_progress
       @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
 
+    elsif !check_reserved_file_number?
+      self.error_code = :reserved_veteran_file_number
+
     else
       validate_detail_on_start
 
@@ -279,6 +283,18 @@ class Intake < ApplicationRecord
 
   def file_number_valid?
     return false unless veteran_file_number
+
+    self.veteran_file_number = veteran_file_number.strip
+    veteran_file_number =~ /^[0-9]{8,9}$/
+  end
+
+  def file_number_reserved?
+    FeatureToggle.enabled?(:intake_reserved_file_number,
+                           user: RequestStore[:current_user]) && veteran_file_number == "123456789"
+  end
+
+  def check_reserved_file_number?
+    return false if file_number_reserved?
 
     self.veteran_file_number = veteran_file_number.strip
     veteran_file_number =~ /^[0-9]{8,9}$/

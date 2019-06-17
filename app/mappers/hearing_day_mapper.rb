@@ -79,9 +79,5 @@ module HearingDayMapper
 
       HearingRooms.find!(room_nbr).label
     end
-
-    def label_for_type(request_type)
-      HearingDay::REQUEST_TYPES.key(request_type).to_s.capitalize
-    end
   end
 end

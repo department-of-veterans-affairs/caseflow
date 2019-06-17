@@ -1,34 +1,41 @@
 # frozen_string_literal: true
 
-class HearingsController < ApplicationController
-  before_action :verify_access, except: [:show_print, :show, :update, :find_closest_hearing_locations]
+class HearingsController < HearingsApplicationController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_access_to_hearings, except: [:show_print, :show]
   before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
-  before_action :verify_access_to_hearing_prep_or_schedule, only: [:update]
-  before_action :check_hearing_prep_out_of_service
 
   def show
     render json: hearing.to_hash(current_user.id)
   end
 
   def update
-    if hearing.is_a?(LegacyHearing)
-      hearing.update_caseflow_and_vacols(update_params_legacy)
-      # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
-      HearingRepository.load_vacols_data(hearing)
-    else
-      Transcription.find_or_create_by(hearing: hearing)
-      hearing.update!(update_params)
-    end
+    update_hearing
+    update_advance_on_docket_motion unless advance_on_docket_motion_params.empty?
 
     render json: hearing.to_hash(current_user.id)
   end
 
-  def logo_name
-    "Hearing Prep"
+  def update_hearing
+    if hearing.is_a?(LegacyHearing)
+      params = HearingTimeService.build_legacy_params_with_time(hearing, update_params_legacy)
+      hearing.update_caseflow_and_vacols(params)
+      # Because of how we map the hearing time, we need to refresh the VACOLS data after saving
+      HearingRepository.load_vacols_data(hearing)
+    else
+      params = HearingTimeService.build_params_with_time(hearing, update_params)
+      Transcription.find_or_create_by(hearing: hearing)
+      hearing.update!(params)
+    end
   end
 
-  def logo_path
-    hearings_dockets_path
+  def update_advance_on_docket_motion
+    motion = AdvanceOnDocketMotion.find_or_create_by!(
+      person_id: advance_on_docket_motion_params[:person_id],
+      user_id: advance_on_docket_motion_params[:user_id]
+    )
+    motion.update(advance_on_docket_motion_params)
   end
 
   def find_closest_hearing_locations
@@ -65,22 +72,6 @@ class HearingsController < ApplicationController
     params[:id]
   end
 
-  def verify_access
-    verify_authorized_roles("Hearing Prep")
-  end
-
-  def verify_access_to_reader_or_hearings
-    verify_authorized_roles("Reader", "Hearing Prep", "Edit HearSched", "Build HearSched")
-  end
-
-  def verify_access_to_hearing_prep_or_schedule
-    verify_authorized_roles("Hearing Prep", "Edit HearSched", "Build HearSched", "RO ViewHearSched")
-  end
-
-  def set_application
-    RequestStore.store[:application] = "hearings"
-  end
-
   def update_params_legacy
     params.require("hearing").permit(:notes,
                                      :disposition,
@@ -88,6 +79,7 @@ class HearingsController < ApplicationController
                                      :aod,
                                      :transcript_requested,
                                      :prepped,
+                                     :scheduled_time_string,
                                      :scheduled_for,
                                      :judge_id,
                                      :room,
@@ -108,7 +100,7 @@ class HearingsController < ApplicationController
                                      :transcript_requested,
                                      :transcript_sent_date,
                                      :prepped,
-                                     :scheduled_time,
+                                     :scheduled_time_string,
                                      :judge_id,
                                      :room,
                                      :bva_poc,
@@ -127,4 +119,8 @@ class HearingsController < ApplicationController
                                      ])
   end
   # rubocop:enable Metrics/MethodLength
+
+  def advance_on_docket_motion_params
+    params.fetch(:advance_on_docket_motion, {}).permit(:user_id, :person_id, :reason, :granted)
+  end
 end

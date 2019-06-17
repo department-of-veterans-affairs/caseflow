@@ -22,6 +22,8 @@ class VBMSError < RuntimeError
   class UserNotAuthorized < Caseflow::Error::VBMS; end
   class VeteranEmployedByStation < Caseflow::Error::VBMS; end
   class BadClaim < Caseflow::Error::VBMS; end
+  class ClaimantAddressMissing < Caseflow::Error::VBMS; end
+  class MultiplePoas < Caseflow::Error::VBMS; end
   class CannotDeleteContention < Caseflow::Error::VBMS; end
   class ClaimDateInvalid < Caseflow::Error::VBMS; end
   class FilenumberDoesNotExist < Caseflow::Error::VBMS; end
@@ -30,6 +32,8 @@ class VBMSError < RuntimeError
   class MissingVeteranIdentifier < Caseflow::Error::VBMS; end
   class Unknown < Caseflow::Error::VBMS; end
   class UnknownUser < Caseflow::Error::VBMS; end
+  class BadSOAPMessage < Caseflow::Error::VBMS; end
+  class FileNumberNotFoundForClaimId < Caseflow::Error::VBMS; end
 
   attr_accessor :body, :code, :request
 
@@ -43,6 +47,9 @@ class VBMSError < RuntimeError
   end
 
   KNOWN_ERRORS = {
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4999/events/360484/
+    "Error retrieving fileNumber by provided claimId" => "FileNumberNotFoundForClaimId",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/331930/
     "upstream connect error or disconnect/reset before headers" => "Transient",
 
@@ -91,7 +98,10 @@ class VBMSError < RuntimeError
     "Veteran is employed by this station." => "VeteranEmployedByStation",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3467/events/278342/
-    "Unable to establish claim: " => "BadClaim",
+    "insertBenefitClaim: City is null" => "ClaimantAddressMissing",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/5068/events/364152/
+    "ORACLE ERROR when attempting to store PTCPNT_RLNSHP between the vet and the POA" => "MultiplePoas",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/4164/events/279584/
     "The contention is connected to an issue in ratings and cannot be deleted." => "CannotDeleteContention",
@@ -102,6 +112,9 @@ class VBMSError < RuntimeError
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3894/events/308951/
     "File Number does not exist within the system." => "FilenumberDoesNotExist",
 
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/5254/events/360180/
+    "FILENUMBER does not exist within the system." => "FilenumberDoesNotExist",
+
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3696/events/315030/
     "Document not found" => "DocumentNotFound",
 
@@ -110,6 +123,9 @@ class VBMSError < RuntimeError
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3728/events/331292/
     "The System has encountered an unknown error" => "Unknown",
+
+    # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3954/events/329778/
+    "Unable to parse SOAP message" => "BadSOAPMessage",
 
     # https://sentry.ds.va.gov/department-of-veterans-affairs/caseflow/issues/3276/events/314254/
     "missing required data" => "MissingData"

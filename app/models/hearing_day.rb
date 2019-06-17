@@ -57,11 +57,33 @@ class HearingDay < ApplicationRecord
     (hearings + vacols_hearings).reject { |hearing| closed_hearing_dispositions.include?(hearing.disposition) }
   end
 
+  def hearings_for_user(current_user)
+    caseflow_and_vacols_hearings = vacols_hearings + hearings
+
+    if current_user.vso_employee?
+      caseflow_and_vacols_hearings = caseflow_and_vacols_hearings.select do |hearing|
+        hearing.assigned_to_vso?(current_user)
+      end
+    end
+
+    if current_user.roles.include?("Hearing Prep")
+      caseflow_and_vacols_hearings = caseflow_and_vacols_hearings.select do |hearing|
+        hearing.assigned_to_judge?(current_user)
+      end
+    end
+
+    caseflow_and_vacols_hearings
+  end
+
   def to_hash
-    as_json.each_with_object({}) do |(k, v), result|
-      result[k.to_sym] = v
-    end.merge(judge_first_name: judge ? judge.full_name.split(" ").first : nil,
-              judge_last_name: judge ? judge.full_name.split(" ").last : nil)
+    serializable_hash(
+      methods: [
+        :judge_first_name,
+        :judge_last_name,
+        :readable_request_type,
+        :total_slots
+      ]
+    )
   end
 
   def hearing_day_full?
@@ -74,6 +96,18 @@ class HearingDay < ApplicationRecord
     end
 
     SLOTS_BY_TIMEZONE[HearingMapper.timezone(regional_office)]
+  end
+
+  def judge_first_name
+    judge ? judge.full_name.split(" ").first : nil
+  end
+
+  def judge_last_name
+    judge ? judge.full_name.split(" ").last : nil
+  end
+
+  def readable_request_type
+    Hearing::HEARING_TYPES[request_type.to_sym]
   end
 
   private
@@ -102,20 +136,6 @@ class HearingDay < ApplicationRecord
   end
 
   class << self
-    def to_hash(hearing_day)
-      if hearing_day.is_a?(HearingDay)
-        hearing_day.to_hash
-      else
-        HearingDayRepository.to_hash(hearing_day)
-      end
-    end
-
-    def array_to_hash(hearing_days)
-      hearing_days.map do |hearing_day|
-        HearingDay.to_hash(hearing_day)
-      end
-    end
-
     def create_hearing_day(hearing_hash)
       hearing_hash = hearing_hash.merge(created_by: current_user_css_id, updated_by: current_user_css_id)
       create(hearing_hash).to_hash
@@ -149,41 +169,36 @@ class HearingDay < ApplicationRecord
     end
 
     def upcoming_days_for_vso_user(start_date, end_date, user)
-      hearing_days_with_ama_hearings = HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
-        .where("DATE(scheduled_for) between ? and ?", start_date, end_date).select do |hearing_day|
-        hearing_day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) }
+      days_in_range = hearing_days_in_range(start_date, end_date)
+
+      ama_days = days_in_range.select { |day| day.hearings.any? { |hearing| hearing.assigned_to_vso?(user) } }
+
+      remaining_days = days_in_range.where.not(id: ama_days.pluck(:id)).order(:scheduled_for).limit(1000)
+
+      vacols_hearings_for_remaining_days = HearingRepository.fetch_hearings_for_parents(remaining_days.map(&:id))
+
+      loaded_hearings = LegacyHearing
+        .includes(appeal: [tasks: :assigned_to])
+        .where(id: vacols_hearings_for_remaining_days.values.flatten.pluck(:id))
+
+      vacols_days = remaining_days.select do |day|
+        vacols_hearing = vacols_hearings_for_remaining_days[day.id.to_s]
+
+        vacols_hearing&.any? do |hearing|
+          loaded_hearings.detect { |legacy_hearing| legacy_hearing.id == hearing.id }&.assigned_to_vso?(user)
+        end
       end
 
-      remaining_hearing_days = HearingDay.where("DATE(scheduled_for) between ? and ?", start_date, end_date)
-        .where.not(id: hearing_days_with_ama_hearings.pluck(:id)).order(:scheduled_for).limit(1000)
-
-      vacols_hearings_for_remaining_hearing_days = HearingRepository.fetch_hearings_for_parents(
-        remaining_hearing_days.pluck(:id)
-      )
-
-      caseflow_hearing_ids = vacols_hearings_for_remaining_hearing_days.values.flatten.pluck(:id)
-
-      loaded_caseflow_hearings = LegacyHearing.includes(appeal: [tasks: :assigned_to]).where(id: caseflow_hearing_ids)
-
-      hearing_days_with_vacols_hearings = remaining_hearing_days.select do |hearing_day|
-        !vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].nil? &&
-          vacols_hearings_for_remaining_hearing_days[hearing_day.id.to_s].any? do |hearing|
-            loaded_caseflow_hearings.detect { |legacy_hearing| legacy_hearing.id == hearing.id }.assigned_to_vso?(user)
-          end
-      end
-
-      hearing_days_with_ama_hearings + hearing_days_with_vacols_hearings
+      ama_days + vacols_days
     end
 
     def load_days(start_date, end_date, regional_office = nil)
       if regional_office.nil?
-        where("DATE(scheduled_for) between ? and ?", start_date, end_date) +
-          HearingDayRepository.load_video_days_for_range(start_date, end_date)
+        where("DATE(scheduled_for) between ? and ?", start_date, end_date)
       elsif regional_office == REQUEST_TYPES[:central]
         where("request_type = ? and DATE(scheduled_for) between ? and ?", REQUEST_TYPES[:central], start_date, end_date)
       else
-        where("regional_office = ? and DATE(scheduled_for) between ? and ?", regional_office, start_date, end_date) +
-          HearingDayRepository.load_video_days_for_regional_office(regional_office, start_date, end_date)
+        where("regional_office = ? and DATE(scheduled_for) between ? and ?", regional_office, start_date, end_date)
       end
     end
 
@@ -199,23 +214,18 @@ class HearingDay < ApplicationRecord
 
     def open_hearing_days_with_hearings_hash(start_date, end_date, regional_office = nil, current_user_id = nil)
       total_video_and_co = load_days(start_date, end_date, regional_office)
+      vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(total_video_and_co.pluck(:id))
 
-      # fetching all the RO keys of the dockets
+      total_video_and_co.map do |hearing_day|
+        all_hearings = (hearing_day.hearings || []) + (vacols_hearings_for_days[hearing_day.id.to_s] || [])
+        scheduled_hearings = filter_non_scheduled_hearings(all_hearings || [])
 
-      hearing_days_to_array_of_days_and_hearings(
-        total_video_and_co, regional_office.nil? || regional_office == "C"
-      ).map do |value|
-        scheduled_hearings = filter_non_scheduled_hearings(value[:hearings] || [])
-
-        total_slots = HearingDayRepository.fetch_hearing_day_slots(regional_office)
-
-        if scheduled_hearings.length >= total_slots || value[:hearing_day][:lock]
+        if scheduled_hearings.length >= hearing_day.total_slots || hearing_day.lock
           nil
         else
-          HearingDay.to_hash(value[:hearing_day]).slice(:id, :scheduled_for, :request_type, :room).tap do |day|
-            day[:hearings] = scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
-            day[:total_slots] = total_slots
-          end
+          hearing_day.to_hash.merge(
+            "hearings" => scheduled_hearings.map { |hearing| hearing.quick_to_hash(current_user_id) }
+          )
         end
       end.compact
     end
@@ -230,34 +240,11 @@ class HearingDay < ApplicationRecord
       end
     end
 
-    def find_hearing_day(request_type, hearing_key)
-      find(hearing_key)
-    rescue ActiveRecord::RecordNotFound
-      HearingDayRepository.find_hearing_day(request_type, hearing_key)
-    end
-
     private
 
-    def hearing_days_to_array_of_days_and_hearings(total_video_and_co, _is_video_hearing)
-      # We need to associate all of the hearing days from postgres with all of the
-      # hearings from VACOLS. For efficiency we make one call to VACOLS and then
-      # create a hash of the results using their ids.
-
-      vacols_hearings_for_days = HearingRepository.fetch_hearings_for_parents(
-        total_video_and_co.map { |hearing_day| hearing_day[:id] }
-      )
-
-      # Group the hearing days with the same keys as the hearings
-      grouped_hearing_days = total_video_and_co.group_by do |hearing_day|
-        hearing_day[:id].to_s
-      end
-
-      grouped_hearing_days.map do |key, day|
-        hearings = (vacols_hearings_for_days[key] || []) + (day[0].is_a?(HearingDay) ? day[0].hearings : [])
-
-        # There should only be one day, so we take the first value in our day array
-        { hearing_day: day[0], hearings: hearings }
-      end
+    def hearing_days_in_range(start_date, end_date)
+      HearingDay.includes(hearings: [appeal: [tasks: :assigned_to]])
+        .where("DATE(scheduled_for) between ? and ?", start_date, end_date)
     end
 
     def current_user_css_id

@@ -29,6 +29,7 @@ describe Hearing do
 
     context "when the hearing has a cancelled disposition task" do
       before do
+        hearing.hearing_task_association.hearing_task.update!(parent: create(:root_task))
         hearing.disposition_task.update!(status: Constants.TASK_STATUSES.cancelled)
       end
 
@@ -39,6 +40,25 @@ describe Hearing do
       let!(:transcription_task) { create(:transcription_task, parent: hearing.disposition_task) }
 
       it { is_expected.to eq(false) }
+    end
+  end
+
+  context "#advance_on_docket_motion" do
+    let!(:hearing) { create(:hearing, :with_tasks) }
+
+    before do
+      [false, false, true, false, false].each do |granted|
+        AdvanceOnDocketMotion.create(
+          user_id: create(:user).id,
+          person_id: hearing.claimant_id,
+          granted: granted,
+          reason: "age"
+        )
+      end
+    end
+
+    it "returns granted motion" do
+      expect(hearing.advance_on_docket_motion["granted"]).to eq(true)
     end
   end
 
@@ -60,17 +80,13 @@ describe Hearing do
     end
 
     before do
-      BGSService = ExternalApi::BGSService
+      stub_const("BGSService", ExternalApi::BGSService)
       RequestStore[:current_user] = user
 
       allow_any_instance_of(BGS::SecurityWebService).to receive(:find_participant_id)
         .with(css_id: user.css_id, station_id: user.station_id).and_return(vso_participant_id)
       allow_any_instance_of(BGS::OrgWebService).to receive(:find_poas_by_ptcpnt_id)
         .with(vso_participant_id).and_return(vso_participant_ids)
-    end
-
-    after do
-      BGSService = Fakes::BGSService
     end
 
     subject { hearing.assigned_to_vso?(user) }

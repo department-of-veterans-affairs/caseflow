@@ -205,8 +205,8 @@ describe MailTask do
     context "for an AppealWithdrawalMailTask" do
       let(:task_class) { AppealWithdrawalMailTask }
 
-      it "should always route to the VLJ support staff" do
-        expect(subject).to eq(Colocated.singleton)
+      it "should always route to BVA Intake" do
+        expect(subject).to eq(BvaIntake.singleton)
       end
     end
 
@@ -429,6 +429,47 @@ describe MailTask do
 
       it "should always route to Lit Support" do
         expect(subject).to eq(LitigationSupport.singleton)
+      end
+    end
+  end
+
+  describe ".available_actions" do
+    let(:mail_task) { task_class.create!(appeal: root_task.appeal, parent_id: root_task.id, assigned_to: mail_team) }
+
+    subject { mail_task.available_actions(user) }
+
+    context "when the current user is not a member of the lit support team" do
+      let(:generic_task_actions) do
+        [
+          Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+          Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
+          Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
+          Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+        ]
+      end
+
+      before { allow_any_instance_of(LitigationSupport).to receive(:user_has_access?).and_return(false) }
+
+      context "for a ClearAndUnmistakeableErrorMailTask" do
+        let(:task_class) { ClearAndUnmistakeableErrorMailTask }
+        it "returns the available_actions as defined by GenericTask" do
+          expect(subject).to eq(generic_task_actions)
+        end
+      end
+
+      context "for a ReconsiderationMotionMailTask" do
+        let(:task_class) { ReconsiderationMotionMailTask }
+        it "returns the available_actions as defined by GenericTask" do
+          expect(subject).to eq(generic_task_actions)
+        end
+      end
+
+      context "for a VacateMotionMailTask" do
+        let(:task_class) { VacateMotionMailTask }
+        it "returns the available_actions as defined by GenericTask" do
+          expect(subject).to eq(generic_task_actions)
+        end
       end
     end
   end

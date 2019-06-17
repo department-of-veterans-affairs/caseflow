@@ -84,7 +84,8 @@ export class AddIssuesPage extends React.Component {
       intakeForms,
       formType,
       veteran,
-      featureToggles
+      featureToggles,
+      editPage
     } = this.props;
 
     if (!formType) {
@@ -227,33 +228,26 @@ export class AddIssuesPage extends React.Component {
       </div>;
     };
 
-    const messageHeader = this.props.editPage ? 'Edit Issues' : 'Add / Remove Issues';
+    const messageHeader = editPage ? 'Edit Issues' : 'Add / Remove Issues';
 
     const withdrawError = () => {
-
       const withdrawalDate = new Date(intakeData.withdrawalDate);
-
       const currentDate = new Date();
-
       const receiptDate = new Date(intakeData.receiptDate);
-
       const formName = _.find(FORM_TYPES, { key: formType }).shortName;
-
-      let message;
+      let msg;
 
       if (validateDate(intakeData.withdrawalDate)) {
-
         if (withdrawalDate < receiptDate) {
-          message = `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
-
+          msg = `We cannot process your request. Please select a date after the ${formName}'s receipt date.`;
         } else if (withdrawalDate > currentDate) {
-
-          message = 'We cannot process your request. Please select a date prior to today\'s date.';
+          msg = 'We cannot process your request. Please select a date prior to today\'s date.';
         }
-
-        return message;
+      } else if (intakeData.withdrawalDate && intakeData.withdrawalDate.length >= 10) {
+        msg = 'We cannot process your request. Please enter a valid date.';
       }
 
+      return msg;
     };
 
     const columns = [
@@ -266,7 +260,7 @@ export class AddIssuesPage extends React.Component {
       // no-op unless the issue banner needs to be displayed
     };
 
-    if (this.props.editPage && haveIssuesChanged()) {
+    if (editPage && haveIssuesChanged()) {
       // flash a save message if user is on the edit page & issues have changed
       const issuesChangedBanner = <p>When you finish making changes, click "Save" to continue.</p>;
 

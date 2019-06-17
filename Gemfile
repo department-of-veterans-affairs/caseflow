@@ -5,6 +5,7 @@ source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
 gem "aasm", "4.11.0"
+gem "activerecord-import"
 gem "acts_as_tree"
 # BGS
 gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git", ref: "e94aff758739c499978041953e6d50fe58057e89"
@@ -12,7 +13,7 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "dddc821c2335c7de234a5454e4b4874e3f658420"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "603c7385bd5f021286a3f4f58fb2d99c772a4ca1"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
@@ -71,7 +72,6 @@ group :production, :staging, :ssh_forwarding, :development, :test do
 end
 
 group :test, :development, :demo do
-  gem "activerecord-import"
   # Security scanners
   gem "brakeman"
   gem "bullet"
@@ -105,7 +105,7 @@ group :test, :development, :demo do
 end
 
 group :development do
-  gem "bummr", "= 0.3.2", require: false
+  gem "bummr", require: false
   gem "derailed_benchmarks"
   gem "dotenv-rails"
   gem "fasterer", require: false

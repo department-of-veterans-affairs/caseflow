@@ -49,19 +49,19 @@ class ColocatedTask < Task
   end
 
   def available_actions(user)
-    if assigned_to != user
-      if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
-        return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
-      end
-
-      return []
+    if assigned_to == user
+      return available_actions_with_conditions([
+                                                 appropriate_timed_hold_task_action,
+                                                 Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+                                                 Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+                                               ])
     end
 
-    available_actions_with_conditions([
-                                        Constants.TASK_ACTIONS.PLACE_HOLD.to_h,
-                                        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
-                                        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-                                      ])
+    if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
+      return [Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h]
+    end
+
+    []
   end
 
   def available_actions_with_conditions(core_actions)
@@ -70,6 +70,7 @@ class ColocatedTask < Task
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
+    core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
       return ama_translation_actions(core_actions)
@@ -79,7 +80,18 @@ class ColocatedTask < Task
   end
 
   def actions_available?(_user)
-    active?
+    open?
+  end
+
+  def create_twin_of_type(params)
+    self.class.create!(
+      appeal: appeal,
+      parent: parent,
+      assigned_by: assigned_by,
+      action: params[:action],
+      instructions: params[:instructions],
+      assigned_to: Colocated.singleton
+    )
   end
 
   private
@@ -113,12 +125,11 @@ class ColocatedTask < Task
   end
 
   def update_location_in_vacols
-    all_colocated_tasks_for_legacy_appeal_complete = saved_change_to_status? &&
-                                                     !active? &&
-                                                     appeal_type == LegacyAppeal.name &&
-                                                     all_tasks_closed_for_appeal?
-
-    if all_colocated_tasks_for_legacy_appeal_complete
+    if saved_change_to_status? &&
+       !open? &&
+       all_tasks_closed_for_appeal? &&
+       appeal.is_a?(LegacyAppeal) &&
+       appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
@@ -142,7 +153,7 @@ class ColocatedTask < Task
   end
 
   def all_tasks_closed_for_appeal?
-    appeal.tasks.active.where(type: ColocatedTask.name).none?
+    appeal.tasks.open.where(type: ColocatedTask.name).none?
   end
 
   def on_hold_duration_is_set

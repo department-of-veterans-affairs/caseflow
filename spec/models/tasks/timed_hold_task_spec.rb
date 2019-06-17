@@ -67,7 +67,7 @@ describe TimedHoldTask do
         end
 
         it "does not change the status of the closed sibling tasks" do
-          expect(subject.active?).to be_truthy
+          expect(subject.open?).to be_truthy
           expect(cancelled_sibling.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(completed_sibling.status).to eq(Constants.TASK_STATUSES.completed)
         end
@@ -77,7 +77,7 @@ describe TimedHoldTask do
         let!(:existing_timed_hold_task) { FactoryBot.create(:timed_hold_task, **args) }
 
         it "cancels the existing sibling task" do
-          expect(subject.active?).to be_truthy
+          expect(subject.open?).to be_truthy
           expect(existing_timed_hold_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         end
       end
@@ -87,10 +87,10 @@ describe TimedHoldTask do
         let!(:existing_timed_hold_task) { FactoryBot.create(:timed_hold_task, **args) }
 
         it "cancels the TimedHoldTask but leaves the GenericTask alone" do
-          expect(subject.active?).to be_truthy
+          expect(subject.open?).to be_truthy
           expect(parent.children.count).to eq(3)
           expect(existing_timed_hold_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-          expect(existing_generic_task_sibling.reload.active?).to eq(true)
+          expect(existing_generic_task_sibling.reload.open?).to eq(true)
         end
       end
     end
@@ -122,8 +122,8 @@ describe TimedHoldTask do
     context "when there is no assigner argument" do
       let(:args) { initial_args.reject { |key, _| key == :assigned_by } }
 
-      it "sets assigned_by to parent assigned_to" do
-        expect(subject.assigned_by).to eq(parent.assigned_to)
+      it "sets assigned_by to nil" do
+        expect(subject.assigned_by).to eq(nil)
       end
     end
 
@@ -145,9 +145,20 @@ describe TimedHoldTask do
     context "when the task is active" do
       let(:status) { Constants.TASK_STATUSES.in_progress }
 
-      it "changes task status to completed" do
-        subject
-        expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+      context "when the TimedHoldTask does not have a parent task" do
+        it "changes task status to completed" do
+          subject
+          expect(task.status).to eq(Constants.TASK_STATUSES.completed)
+        end
+      end
+
+      context "when the TimedHoldTask has a parent task assigned to an organization" do
+        let(:parent_task) { FactoryBot.create(:generic_task, status: Constants.TASK_STATUSES.on_hold) }
+        let(:task) { FactoryBot.create(:timed_hold_task, status: status, parent: parent_task) }
+        it "sets the parent task status to assigned" do
+          subject
+          expect(parent_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        end
       end
     end
 
@@ -185,7 +196,9 @@ describe TimedHoldTask do
 
     describe ".timer_end_time" do
       it "returns the expected end time" do
-        expect(task.reload.timer_end_time).to eq task.task_timers.first.submitted_at
+        expect(task.reload.timer_end_time).to eq(
+          task.task_timers.first.submitted_at + TaskTimer.processing_retry_interval_hours.hours
+        )
       end
     end
 

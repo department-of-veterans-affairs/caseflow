@@ -5,6 +5,7 @@ class VaDotGovAddressValidator
 
   STATUSES = {
     matched_available_hearing_locations: :matched_available_hearing_locations,
+    philippines_exception: :defaulted_to_philippines_RO58,
     created_admin_action: :created_admin_action
   }.freeze
 
@@ -26,6 +27,11 @@ class VaDotGovAddressValidator
     rescue StandardError => error
       handle_error(error)
     end
+  end
+
+  def assign_ro_and_update_ahls(new_ro)
+    appeal.update!(closest_regional_office: new_ro)
+    assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
   end
 
   def validate
@@ -53,6 +59,16 @@ class VaDotGovAddressValidator
                                  ids: facility_ids)
   end
 
+  def assign_available_hearing_locations_for_ro(regional_office_id:)
+    facility_ids = facility_ids_for_ro(regional_office_id)
+    AvailableHearingLocations.where(appeal: appeal).destroy_all
+
+    VADotGovService.get_facility_data(ids: facility_ids)
+      .each do |alternate_hearing_location|
+        create_available_hearing_location(facility: alternate_hearing_location)
+      end
+  end
+
   def create_available_hearing_locations(va_dot_gov_address:)
     ro = fetch_and_update_ro(va_dot_gov_address: va_dot_gov_address)
     facility_ids = facility_ids_for_ro(ro[:closest_regional_office])
@@ -70,6 +86,22 @@ class VaDotGovAddressValidator
     end
 
     { status: STATUSES[:matched_available_hearing_locations], available_hearing_locations: available_hearing_locations }
+  end
+
+  def create_available_hearing_location(facility:)
+    AvailableHearingLocations.create(
+      veteran_file_number: appeal.veteran_file_number || "",
+      appeal: appeal,
+      distance: facility[:distance],
+      facility_id: facility[:facility_id],
+      name: facility[:name],
+      address: facility[:address],
+      city: facility[:city],
+      state: facility[:state],
+      zip_code: facility[:zip_code],
+      classification: facility[:classification],
+      facility_type: facility[:facility_type]
+    )
   end
 
   private
@@ -147,22 +179,6 @@ class VaDotGovAddressValidator
     @valid_states ||= RegionalOffice::CITIES.values.reject { |ro| ro[:facility_locator_id].nil? }.pluck(:state)
   end
 
-  def create_available_hearing_location(facility:)
-    AvailableHearingLocations.create(
-      veteran_file_number: appeal.veteran_file_number || "",
-      appeal: appeal,
-      distance: facility[:distance],
-      facility_id: facility[:facility_id],
-      name: facility[:name],
-      address: facility[:address],
-      city: facility[:city],
-      state: facility[:state],
-      zip_code: facility[:zip_code],
-      classification: facility[:classification],
-      facility_type: facility[:facility_type]
-    )
-  end
-
   def get_state_code(va_dot_gov_address)
     return "DC" if VaDotGovAddressValidatorExceptions.veteran_requested_central_office?(appeal)
 
@@ -174,6 +190,10 @@ class VaDotGovAddressValidator
   end
 
   def handle_error(error)
+    if VaDotGovAddressValidatorExceptions.check_for_philippines_and_maybe_update(appeal, address)
+      return { status: STATUSES[:philippines_exception] }
+    end
+
     case error
     when Caseflow::Error::VaDotGovInvalidInputError, Caseflow::Error::VaDotGovAddressCouldNotBeFoundError,
       Caseflow::Error::VaDotGovMultipleAddressError
@@ -196,12 +216,11 @@ class VaDotGovAddressValidator
   end
 
   def create_admin_action_for_schedule_hearing_task(instructions:, admin_action_type:)
-    task = ScheduleHearingTask.active.find_by(appeal: appeal)
+    task = ScheduleHearingTask.open.find_by(appeal: appeal)
 
     return if task.nil?
 
-    # Create only if another admin task is not in an active status.
-    admin_action_type.active.find_or_create_by(
+    admin_action_type.find_or_create_by(
       appeal: appeal,
       instructions: [instructions],
       assigned_to: HearingsManagement.singleton,

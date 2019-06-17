@@ -481,7 +481,17 @@ feature "Higher Level Review Edit issues" do
       )
       add_intake_rating_issue("ankylosis of hip")
 
-      expect(page).to have_content(Constants.INTAKE_STRINGS.adding_this_issue_vacols_optin)
+      expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_NEW)
+
+      click_edit_submit_and_confirm
+
+      expect(page).to have_current_path(
+        "/higher_level_reviews/#{higher_level_review.uuid}/edit/confirmation"
+      )
+
+      visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+
+      expect(page).to have_content(COPY::VACOLS_OPTIN_ISSUE_CLOSED_EDIT)
     end
   end
 
@@ -805,7 +815,7 @@ feature "Higher Level Review Edit issues" do
 
       let(:request_issues) { [request_issue, decision_request_issue, nonrating_decision_request_issue] }
 
-      it "does not remove & readd unedited issues" do
+      it "does not remove & re-add unedited issues" do
         verify_request_issue_contending_decision_issue_not_readded(
           "higher_level_reviews/#{rating_ep_claim_id}/edit",
           higher_level_review,
@@ -1479,6 +1489,28 @@ feature "Higher Level Review Edit issues" do
         end
 
         expect(page).to have_field(type: "textarea", match: :first, placeholder: "Right Knee")
+      end
+
+      scenario "edit contention text is saved" do
+        visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
+        expect(page).to have_content("Edit contention title")
+
+        within first(".issue-edit-text") do
+          click_edit_contention_issue
+        end
+
+        expect(page).to have_button("Submit", disabled: true)
+        expect(page).to have_field(type: "textarea", match: :first, placeholder: "PTSD")
+
+        fill_in(with: "Right Knee")
+        expect(page).to have_button("Submit", disabled: false)
+        click_button("Submit")
+        expect(page).to have_content("Right Knee")
+
+        click_button("Save")
+        expect(RequestIssue.where(edited_description: "Right Knee")).to_not be_nil
+        expect(page).to have_content("Edited")
+        expect(page).to have_content("Right Knee")
       end
     end
 
