@@ -110,6 +110,7 @@ class EstablishClaim < Dispatch::Task
   end
 
   def prepare_with_decision!
+    Rails.logger.info "Starting EstablishClaim (id = #{id})"
     try_prepare_with_decision!.tap do |result|
       Rails.logger.info "Prepared EstablishClaim (id = #{id}), Result: #{result}"
     end
@@ -160,9 +161,10 @@ class EstablishClaim < Dispatch::Task
   def try_prepare_with_decision!
     return :invalid if check_and_invalidate!
     return :already_prepared unless may_prepare?
-    return :missing_decision if appeal.decisions.empty?
 
     begin
+      return :missing_decision if appeal.decisions.empty?
+
       appeal.decisions.each(&:fetch_and_cache_document_from_vbms)
     rescue VBMS::ClientError, VBMSError, Caseflow::Error::VBMS => error
       Rails.logger.info "Failed EstablishClaim (id = #{id}), Error: #{error}"

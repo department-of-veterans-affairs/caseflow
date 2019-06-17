@@ -145,7 +145,7 @@ describe HearingDay do
 
           updated_vacols_child_hearing = vacols_child_hearing.reload
           expect(updated_vacols_child_hearing[:room]).to eql "5"
-          expect(updated_vacols_child_hearing.judge_id).to eql judge.vacols_attorney_id
+          expect(updated_vacols_child_hearing[:board_member]).to eql judge.vacols_attorney_id
           updated_caseflow_child_hearing = caseflow_child_hearing.reload
           expect(updated_caseflow_child_hearing.room).to eql "5"
           expect(updated_caseflow_child_hearing.judge).to eql judge

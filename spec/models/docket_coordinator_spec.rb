@@ -16,7 +16,7 @@ describe DocketCoordinator do
       .to receive(:nonpriority_receipts_per_year)
       .and_return(nonpriority_receipts_per_year)
 
-    allow(Appeal)
+    allow(Docket)
       .to receive(:nonpriority_decisions_per_year)
       .and_return(nonpriority_decisions_per_year)
   end

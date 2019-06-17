@@ -128,13 +128,13 @@ Rails.application.routes.draw do
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
-  get 'hearings/:hearing_id/details', to: "hearing_schedule#hearing_details_index"
+  get 'hearings/:hearing_id/details', to: "hearings_application#hearing_details_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day#index_print"
-  get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
-  get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
-  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"
-  get 'hearings/schedule/assign', to: "hearing_schedule#index"
+  get 'hearings/schedule/build', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/assign', to: "hearings_application#index"
   get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
   get 'hearings/:id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
@@ -219,6 +219,7 @@ Rails.application.routes.draw do
     member do
       post :reschedule
       post :request_hearing_disposition_change
+      patch :change_type, to: 'tasks/change_type#update'
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
     resources(:end_hold, only: [:create], controller: 'tasks/end_hold')

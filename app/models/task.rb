@@ -17,12 +17,11 @@ class Task < ApplicationRecord
 
   before_create :set_assigned_at
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
-  after_create :put_parent_on_hold
+  after_create :tell_parent_task_child_task_created
 
   before_update :set_timestamps
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
-  after_update :cancel_timed_hold, unless: :task_just_placed_on_hold?
 
   enum status: {
     Constants.TASK_STATUSES.assigned.to_sym => Constants.TASK_STATUSES.assigned,
@@ -31,6 +30,10 @@ class Task < ApplicationRecord
     Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed,
     Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
+
+  # This suppresses a warning about the :open scope overwriting the Kernel#open method
+  # https://ruby-doc.org/core-2.6.3/Kernel.html#method-i-open
+  class << self; undef_method :open; end
 
   scope :active, -> { where(status: active_statuses) }
 
@@ -170,6 +173,50 @@ class Task < ApplicationRecord
     params
   end
 
+  def update_task_type(params)
+    multi_transaction do
+      new_branch_task = first_ancestor_of_type.create_twin_of_type(params)
+      new_child_task = new_branch_task.last_descendant_of_type
+
+      if assigned_to.is_a?(User) && new_child_task.assigned_to.is_a?(User) &&
+         parent.assigned_to_same_org?(new_child_task.parent)
+        new_child_task.update!(assigned_to: assigned_to)
+      end
+
+      # Move children from the old childmost task to the new childmost task
+      children.open.each { |child| child.update!(parent_id: last_descendant_of_type.id) }
+      # Cancel all tasks under the old task type branch
+      first_ancestor_of_type.cancel_descendants
+
+      [first_ancestor_of_type.descendants, new_branch_task.first_ancestor_of_type.descendants].flatten
+    end
+  end
+
+  def assigned_to_same_org?(task_to_check)
+    assigned_to.is_a?(Organization) && assigned_to.eql?(task_to_check.assigned_to)
+  end
+
+  def first_ancestor_of_type
+    same_task_type?(parent) ? parent.first_ancestor_of_type : self
+  end
+
+  def last_descendant_of_type
+    child_of_task_type = children.open.detect { |child| same_task_type?(child) }
+    child_of_task_type&.last_descendant_of_type || self
+  end
+
+  def same_task_type?(task_to_check)
+    slice(:action, :type).eql?(task_to_check&.slice(:action, :type))
+  end
+
+  def cancel_descendants
+    descendants.each { |desc| desc.update!(status: Constants.TASK_STATUSES.cancelled) }
+  end
+
+  def create_twin_of_type(_params)
+    fail Caseflow::Error::ActionForbiddenError, message: "Cannot change type of this task"
+  end
+
   def update_from_params(params, current_user)
     verify_user_can_update!(current_user)
 
@@ -236,6 +283,11 @@ class Task < ApplicationRecord
 
   def when_child_task_completed(child_task)
     update_status_if_children_tasks_are_complete(child_task)
+  end
+
+  def when_child_task_created(child_task)
+    cancel_timed_hold unless child_task.is_a?(TimedHoldTask)
+    update!(status: :on_hold) if !on_hold?
   end
 
   def task_is_assigned_to_user_within_organization?(user)
@@ -367,7 +419,13 @@ class Task < ApplicationRecord
     parent.when_child_task_completed(self)
   end
 
-  def update_children_status_after_closed; end
+  def tell_parent_task_child_task_created
+    parent&.when_child_task_created(self)
+  end
+
+  def update_children_status_after_closed
+    active_child_timed_hold_task&.update!(status: Constants.TASK_STATUSES.cancelled)
+  end
 
   def task_just_closed?
     saved_change_to_attribute?("status") && !open?
@@ -375,10 +433,6 @@ class Task < ApplicationRecord
 
   def task_just_closed_and_has_parent?
     task_just_closed? && parent
-  end
-
-  def task_just_placed_on_hold?
-    saved_change_to_attribute?(:placed_on_hold_at)
   end
 
   def update_status_if_children_tasks_are_complete(child_task)
@@ -397,10 +451,6 @@ class Task < ApplicationRecord
 
   def set_assigned_at
     self.assigned_at = created_at unless assigned_at
-  end
-
-  def put_parent_on_hold
-    parent&.update(status: :on_hold)
   end
 
   def set_timestamps

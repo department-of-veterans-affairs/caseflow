@@ -18,9 +18,6 @@ DEVELOPMENT_JUDGE_TEAMS = {
 
 require "database_cleaner"
 
-# Explicitly include mail_task so we can create instances of MailTask's subclasses that are in the same file.
-require "mail_task"
-
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
@@ -59,6 +56,8 @@ class SeedDB
     User.create(css_id: "BVAGGREY", station_id: 101, full_name: "BVA Dispatch user without cases")
     dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "BVA Dispatch admin without cases")
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
+    bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
+    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
