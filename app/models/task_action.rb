@@ -4,13 +4,10 @@ class TaskAction
   include ActiveModel::Model
 
   def initialize(config, task, user)
-    @task = task
-    @user = user
-
     @label = config[:label]
     @value = config[:value]
 
-    build_data_attribute(config[:func])
+    build_data_attribute(config[:func], task, user)
   end
 
   def to_h
@@ -23,8 +20,8 @@ class TaskAction
 
   private
 
-  def build_data_attribute(func)
-    data = func ? TaskActionRepository.send(func, @task, @user) : nil
+  def build_data_attribute(func, task, user)
+    data = func ? TaskActionRepository.send(func, task, user) : nil
     @data = data
 
     if data&.delete(:returns_complete_hash)
