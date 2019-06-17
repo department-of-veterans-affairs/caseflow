@@ -13,7 +13,7 @@ class AppealsController < ApplicationController
         veteran_file_number = request.headers["HTTP_VETERAN_ID"]
 
         result = CaseSearchResultsForVeteranFileNumber.new(
-          file_number: veteran_file_number, user: current_user
+          file_number_or_ssn: veteran_file_number, user: current_user
         ).call
 
         render_search_results_as_json(result)
