@@ -64,7 +64,7 @@ RSpec.feature "Case Assignment flows" do
       click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
 
       expect(page).to have_content(
-        format(COPY::ADD_HEARING_ADMIN_TASK_ERROR_DUPLICATE, selected_opt_0.upcase, instructions)
+        format(COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR, selected_opt_0.upcase, instructions)
       )
 
       # step "removes the duplicate and submits the form for a new admin action"

@@ -174,7 +174,7 @@ class ColocatedTask < Task
     ).find_each do |duplicate_task|
       if duplicate_task.open?
         errors[:base] << format(
-          COPY::ADD_HEARING_ADMIN_TASK_ERROR_DUPLICATE,
+          COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR,
           Constants::CO_LOCATED_ADMIN_ACTIONS[action]&.upcase,
           instructions.join(", ")
         )
