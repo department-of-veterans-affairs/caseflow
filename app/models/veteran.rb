@@ -220,6 +220,13 @@ class Veteran < ApplicationRecord
       find_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
     end
 
+    def find_by_ssn(ssn, sync_name: false)
+      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      return unless file_number
+
+      find_and_maybe_backfill_name(file_number, sync_name: sync_name)
+    end
+
     def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
         find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
@@ -239,13 +246,6 @@ class Veteran < ApplicationRecord
     end
 
     private
-
-    def find_by_ssn(ssn, sync_name: false)
-      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
-      return unless file_number
-
-      find_and_maybe_backfill_name(file_number, sync_name: sync_name)
-    end
 
     def find_or_create_by_ssn(ssn, sync_name: false)
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)

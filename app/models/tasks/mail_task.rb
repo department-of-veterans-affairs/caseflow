@@ -52,7 +52,7 @@ class MailTask < GenericTask
       if [:assigned_to_type, :assigned_to_id].all? { |key| params.key?(key) }
         super
       else
-        default_assignee(parent, params)
+        default_assignee(parent)
       end
     end
 
@@ -80,11 +80,27 @@ class MailTask < GenericTask
     self.class.label
   end
 
-  # Waiting for backend implementation before allowing user access
-  # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
-  # def available_actions(user)
-  #   super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
-  # end
+  def available_actions(user)
+    super(user).present? ? super(user).unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h) : []
+  end
+
+  def create_twin_of_type(params)
+    task_type = Object.const_get(params[:action])
+    parent_task = task_type.create!(
+      appeal: appeal,
+      parent: parent,
+      assigned_by: assigned_by,
+      assigned_to: MailTeam.singleton
+    )
+
+    task_type.create!(
+      appeal: appeal,
+      parent: parent_task,
+      assigned_by: assigned_by,
+      assigned_to: task_type.default_assignee(parent_task),
+      instructions: params[:instructions]
+    )
+  end
 end
 
 require_dependency "address_change_mail_task"

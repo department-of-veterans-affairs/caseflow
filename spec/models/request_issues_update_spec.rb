@@ -668,6 +668,12 @@ describe RequestIssuesUpdate do
       expect(Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
       expect(edited_issue.reload.contention_updated_at).to eq(Time.zone.now)
     end
+
+    it "should re-assign EPE user to RequestIssuesUpdate user" do
+      expect(review.end_product_establishments.map(&:user)).to_not include(riu.user)
+      subject
+      expect(review.end_product_establishments.map(&:user).uniq).to eq([riu.user])
+    end
   end
 
   context "async logic scopes" do

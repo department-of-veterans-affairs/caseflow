@@ -130,11 +130,11 @@ describe EndProductEstablishment do
       end
     end
 
-    context "when eps with a valid modifiers already exist" do
+    context "when eps with a valid modifier already exists" do
       let!(:past_created_ep) do
         Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
-          bgs_attrs: { end_product_type_code: "030" }
+          bgs_attrs: { end_product_type_code: "030", status_type_code: "PEND" }
         )
       end
 
@@ -202,7 +202,7 @@ describe EndProductEstablishment do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier }
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
           )
         end
       end
@@ -212,12 +212,12 @@ describe EndProductEstablishment do
       end
     end
 
-    context "when existing EP has status CLR or CAN" do
+    context "when existing EP has status CLR" do
       before do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: %w[CLR CAN].sample }
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CLR" }
           )
         end
       end
@@ -227,6 +227,21 @@ describe EndProductEstablishment do
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
+      end
+    end
+
+    context "when existing EP has status CAN" do
+      before do
+        %w[030 031 032].each do |modifier|
+          Generators::EndProduct.build(
+            veteran_file_number: veteran_file_number,
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
+          )
+        end
+      end
+
+      it "considers those EP modifiers as closed" do
+        expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
       end
     end
 

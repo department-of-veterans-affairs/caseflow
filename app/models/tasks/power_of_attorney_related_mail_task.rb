@@ -9,7 +9,7 @@ class PowerOfAttorneyRelatedMailTask < MailTask
     COPY::POWER_OF_ATTORNEY_MAIL_TASK_LABEL
   end
 
-  def self.default_assignee(parent, _params)
+  def self.default_assignee(parent)
     fail Caseflow::Error::MailRoutingError unless case_active?(parent)
 
     return HearingAdmin.singleton if pending_hearing_task?(parent)

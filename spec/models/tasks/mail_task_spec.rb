@@ -205,8 +205,8 @@ describe MailTask do
     context "for an AppealWithdrawalMailTask" do
       let(:task_class) { AppealWithdrawalMailTask }
 
-      it "should always route to the VLJ support staff" do
-        expect(subject).to eq(Colocated.singleton)
+      it "should always route to BVA Intake" do
+        expect(subject).to eq(BvaIntake.singleton)
       end
     end
 
@@ -441,6 +441,7 @@ describe MailTask do
     context "when the current user is not a member of the lit support team" do
       let(:generic_task_actions) do
         [
+          Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.to_h,
           Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,

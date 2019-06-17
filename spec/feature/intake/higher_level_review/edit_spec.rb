@@ -1509,6 +1509,8 @@ feature "Higher Level Review Edit issues" do
 
         click_button("Save")
         expect(RequestIssue.where(edited_description: "Right Knee")).to_not be_nil
+        expect(page).to have_content("Edited")
+        expect(page).to have_content("Right Knee")
       end
     end
 

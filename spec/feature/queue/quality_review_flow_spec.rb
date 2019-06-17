@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.feature "Quality Review worflow" do
+RSpec.feature "Quality Review workflow" do
   let(:judge_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Javitz") }
   let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
 

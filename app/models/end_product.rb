@@ -191,6 +191,14 @@ class EndProduct
     !INACTIVE_STATUSES.include?(status_type_code)
   end
 
+  def cleared?
+    status_type_code == "CLR"
+  end
+
+  def canceled?
+    status_type_code == "CAN"
+  end
+
   def contentions
     @contentions ||= claim_id ? VBMSService.fetch_contentions(claim_id: claim_id) : nil
   end
