@@ -58,10 +58,10 @@ class RequestIssuesUpdate < ApplicationRecord
     review.end_product_establishments.each { |epe| epe.user = user } if review.processed_in_vbms?
 
     review.establish!
-
+    edited_issues.each { |issue| RequestIssueContention.new(issue).update_text! }
     potential_end_products_to_remove = []
     removed_or_withdrawn_issues.select(&:end_product_establishment).each do |request_issue|
-      request_issue.end_product_establishment.remove_contention!(request_issue)
+      RequestIssueContention.new(request_issue).remove!
       potential_end_products_to_remove << request_issue.end_product_establishment
     end
 
@@ -199,7 +199,7 @@ class RequestIssuesUpdate < ApplicationRecord
     edited_issue_data.each do |edited_issue|
       RequestIssue.find(
         edited_issue[:request_issue_id].to_s
-      ).save_edit_contention_text!(edited_issue[:edited_description])
+      ).save_edited_contention_text!(edited_issue[:edited_description])
     end
   end
 
