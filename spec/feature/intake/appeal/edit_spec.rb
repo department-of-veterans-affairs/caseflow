@@ -280,9 +280,7 @@ feature "Appeal Edit issues" do
         click_intake_add_issue
         add_intake_rating_issue("Back pain")
         add_intake_rating_issue("ankylosis of hip") # eligible issue
-
-        safe_click("#button-submit-update")
-        safe_click ".confirm"
+        click_edit_submit_and_confirm
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
 
@@ -311,8 +309,7 @@ feature "Appeal Edit issues" do
         visit "appeals/#{appeal.uuid}/edit/"
         click_remove_intake_issue_by_text("Back pain")
         click_remove_issue_confirmation
-        safe_click("#button-submit-update")
-        safe_click ".confirm"
+        click_edit_submit_and_confirm
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
         expect(li_optin.reload.rollback_processed_at).to_not be_nil

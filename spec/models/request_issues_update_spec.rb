@@ -603,6 +603,12 @@ describe RequestIssuesUpdate do
       expect(riu.withdrawn_request_issue_ids).to be_nil
       expect(subject).to be_truthy
     end
+
+    it "should re-assign EPE user to RequestIssuesUpdate user" do
+      expect(review.end_product_establishments.map(&:user)).to_not include(riu.user)
+      subject
+      expect(review.end_product_establishments.map(&:user).uniq).to eq([riu.user])
+    end
   end
 
   context "async logic scopes" do

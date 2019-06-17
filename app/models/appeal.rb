@@ -563,6 +563,10 @@ class Appeal < DecisionReview
     true
   end
 
+  def processed_in_vbms?
+    false
+  end
+
   def first_distributed_to_judge_date
     judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
     return unless judge_tasks.any?
