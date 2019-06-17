@@ -20,6 +20,7 @@ describe RequestIssue do
   let(:closed_at) { nil }
   let(:closed_status) { nil }
   let(:ineligible_reason) { nil }
+  let(:edited_description) { nil }
 
   let(:review) do
     create(
@@ -78,8 +79,6 @@ describe RequestIssue do
     )
   end
 
-  let(:edited_description) { nil }
-
   let!(:nonrating_request_issue) do
     create(
       :request_issue,
@@ -125,7 +124,48 @@ describe RequestIssue do
     end
   end
 
+  context "#guess_benefit_type" do
+    context "issue is unidentified" do
+      it "returns 'unidentified'" do
+        expect(unidentified_issue.guess_benefit_type).to eq "unidentified"
+      end
+    end
+
+    context "issue is ineligible" do
+      let(:ineligible_reason) { :duplicate_of_rating_issue_in_active_review }
+
+      it "returns 'ineligible'" do
+        expect(rating_request_issue.guess_benefit_type).to eq "ineligible"
+      end
+    end
+
+    context "issue has a contested_decision_issue" do
+      let(:decision_issue) { create(:decision_issue, benefit_type: "education") }
+      let(:request_issue) { create(:request_issue, contested_decision_issue: decision_issue) }
+
+      it "returns the parent decision issue's benefit_type" do
+        expect(request_issue.guess_benefit_type).to eq "education"
+      end
+    end
+
+    it "defaults to 'unknown'" do
+      expect(rating_request_issue.guess_benefit_type).to eq "unknown"
+    end
+  end
+
   context "#requires_record_request_task?" do
+    context "issue is ineligible" do
+      let(:benefit_type) { "education" }
+
+      before do
+        allow(nonrating_request_issue).to receive(:eligible?).and_return(false)
+      end
+
+      it "does not require record request task" do
+        expect(nonrating_request_issue.requires_record_request_task?).to eq false
+      end
+    end
+
     context "issue is unidentified" do
       it "does not require record request task" do
         expect(unidentified_issue.requires_record_request_task?).to eq false
@@ -253,6 +293,17 @@ describe RequestIssue do
         expect(DecisionIssue.unscoped.find_by(id: decision_issue.id)).to_not be_nil
         expect(RequestDecisionIssue.count).to eq 0
         expect(RequestDecisionIssue.unscoped.count).to eq 1
+      end
+    end
+
+    context "when a request issue is removed after it has been submitted, before it has been processed" do
+      let!(:request_issue1) do
+        create(:request_issue, decision_sync_submitted_at: 1.day.ago, decision_sync_processed_at: nil)
+      end
+
+      it "cancels the decision sync job" do
+        subject
+        expect(request_issue1.decision_sync_canceled_at).to eq Time.zone.now
       end
     end
   end
@@ -1400,11 +1451,8 @@ describe RequestIssue do
         end
 
         context "when no associated rating exists" do
-          it "resubmits for processing" do
-            subject
-            expect(rating_request_issue.decision_issues.count).to eq(0)
-            expect(rating_request_issue.processed?).to eq(false)
-            expect(rating_request_issue.decision_sync_attempted_at).to eq(Time.zone.now)
+          it "raises an error" do
+            expect { subject }.to raise_error(RequestIssue::NoAssociatedRating)
           end
         end
       end

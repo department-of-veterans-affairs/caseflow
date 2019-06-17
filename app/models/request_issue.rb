@@ -45,7 +45,8 @@ class RequestIssue < ApplicationRecord
     dismissed_death: "dismissed_death",
     dismissed_matter_of_law: "dismissed_matter_of_law",
     stayed: "stayed",
-    ineligible: "ineligible"
+    ineligible: "ineligible",
+    no_decision: "no_decision"
   }
 
   before_save :set_contested_rating_issue_profile_date
@@ -55,6 +56,13 @@ class RequestIssue < ApplicationRecord
     def initialize(request_issue_id)
       super("Request Issue #{request_issue_id} cannot create decision issue " \
         "due to not having any matching rating issues or contentions")
+    end
+  end
+
+  class NoAssociatedRating < StandardError
+    def initialize(request_issue_id)
+      super("Rating request Issue #{request_issue_id} cannot create decision issue " \
+        "due to not having an associated rating")
     end
   end
 
@@ -331,7 +339,9 @@ class RequestIssue < ApplicationRecord
   end
 
   def guess_benefit_type
+    return contested_decision_issue.benefit_type if contested_decision_issue
     return "unidentified" if is_unidentified
+    return "ineligible" unless eligible?
 
     "unknown"
   end
@@ -345,6 +355,7 @@ class RequestIssue < ApplicationRecord
 
     fail NotYetSubmitted unless submitted_and_ready?
 
+    clear_error!
     attempted!
 
     transaction do
@@ -410,8 +421,8 @@ class RequestIssue < ApplicationRecord
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
-  def save_edit_contention_text!(new_description)
-    update!(edited_description: new_description)
+  def save_edited_contention_text!(new_description)
+    update!(edited_description: new_description, contention_updated_at: nil)
   end
 
   def remove!
@@ -422,6 +433,7 @@ class RequestIssue < ApplicationRecord
       decision_issues.each(&:soft_delete_on_removed_request_issue)
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
+      canceled! if submitted_not_processed?
     end
   end
 
@@ -437,7 +449,7 @@ class RequestIssue < ApplicationRecord
   end
 
   def requires_record_request_task?
-    !is_unidentified && !benefit_type_requires_payee_code?
+    eligible? && !is_unidentified && !benefit_type_requires_payee_code?
   end
 
   def decision_or_promulgation_date
@@ -490,6 +502,12 @@ class RequestIssue < ApplicationRecord
     return unless limited_poa
 
     limited_poa[:limited_poa_access] == "Y"
+  end
+
+  def contention_disposition
+    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
+      disposition.contention_id.to_i == contention_reference_id
+    end
   end
 
   private
@@ -547,7 +565,7 @@ class RequestIssue < ApplicationRecord
 
   def create_decision_issues
     if rating?
-      return false unless end_product_establishment.associated_rating
+      fail NoAssociatedRating, id unless end_product_establishment.associated_rating
 
       create_decision_issues_from_rating
     end
@@ -592,12 +610,6 @@ class RequestIssue < ApplicationRecord
     return unless rating?
 
     end_product_establishment.associated_rating&.promulgation_date
-  end
-
-  def contention_disposition
-    @contention_disposition ||= end_product_establishment.fetch_dispositions_from_vbms.find do |disposition|
-      disposition.contention_id.to_i == contention_reference_id
-    end
   end
 
   def create_decision_issues_from_rating
@@ -782,6 +794,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    decision_review.tasks.active.any?
+    decision_review.tasks.open.any?
   end
 end

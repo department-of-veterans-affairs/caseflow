@@ -7,6 +7,8 @@ import { css } from 'glamor';
 import moment from 'moment';
 import { COLORS } from '../../constants/AppConstants';
 import AssignHearingsTabs from './AssignHearingsTabs';
+import StatusMessage from '../../components/StatusMessage';
+import COPY from '../../../COPY.json';
 
 const sectionNavigationListStyling = css({
   '& > li': {
@@ -30,7 +32,7 @@ const roSelectionStyling = css({ marginTop: '10px' });
 
 const UpcomingHearingDaysNav = ({
   upcomingHearingDays, selectedHearingDay,
-  onSelectedHearingDayChangeFactory
+  onSelectedHearingDayChange
 }) => (
   <div className="usa-width-one-fourth" {...roSelectionStyling}>
     <h3>Hearings to Schedule</h3>
@@ -45,7 +47,7 @@ const UpcomingHearingDaysNav = ({
           return <li key={hearingDay.id} >
             <Button
               styling={dateSelected ? buttonColorSelected : {}}
-              onClick={onSelectedHearingDayChangeFactory(hearingDay)}
+              onClick={() => onSelectedHearingDayChange(hearingDay)}
               linkStyling>
               {`${moment(hearingDay.scheduledFor).format('ddd M/DD/YYYY')}
               ${hearingDay.room}`}
@@ -57,10 +59,6 @@ const UpcomingHearingDaysNav = ({
 );
 
 export default class AssignHearings extends React.Component {
-
-  onSelectedHearingDayChangeFactory = (hearingDay) => () => {
-    this.props.onSelectedHearingDayChange(hearingDay);
-  };
 
   room = () => {
     const { selectedRegionalOffice, selectedHearingDay } = this.props;
@@ -76,16 +74,28 @@ export default class AssignHearings extends React.Component {
   render() {
     const {
       upcomingHearingDays, selectedHearingDay,
-      appealsReadyForHearing, selectedRegionalOffice
+      appealsReadyForHearing, selectedRegionalOffice,
+      onSelectedHearingDayChange
     } = this.props;
     const room = this.room();
+
+    if (_.isEmpty(upcomingHearingDays)) {
+      return <div {...css({ marginTop: 50 })}>
+        <StatusMessage
+          title= {COPY.ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_HEADER}
+          type="alert"
+          messageText={COPY.ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_MESSAGE}
+          wrapInAppSegment={false}
+        />
+      </div>;
+    }
 
     return (
       <React.Fragment>
         {<UpcomingHearingDaysNav
           upcomingHearingDays={upcomingHearingDays}
           selectedHearingDay={selectedHearingDay}
-          onSelectedHearingDayChangeFactory={this.onSelectedHearingDayChangeFactory} />
+          onSelectedHearingDayChange={onSelectedHearingDayChange} />
         }
         {appealsReadyForHearing &&
           <AssignHearingsTabs

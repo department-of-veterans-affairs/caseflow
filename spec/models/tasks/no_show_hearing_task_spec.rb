@@ -56,10 +56,10 @@ describe NoShowHearingTask do
         expect(no_show_hearing_task.status).to eq(Constants.TASK_STATUSES.completed)
 
         expect(distribution_task.children.count).to eq(2)
-        expect(distribution_task.children.active.count).to eq(1)
+        expect(distribution_task.children.open.count).to eq(1)
 
-        expect(distribution_task.children.active.first.type).to eq(HearingTask.name)
-        expect(distribution_task.children.active.first.children.first.type).to eq(ScheduleHearingTask.name)
+        expect(distribution_task.children.open.first.type).to eq(HearingTask.name)
+        expect(distribution_task.children.open.first.children.first.type).to eq(ScheduleHearingTask.name)
 
         expect(distribution_task.ready_for_distribution?).to eq(false)
       end
@@ -70,9 +70,9 @@ describe NoShowHearingTask do
       it "does not commit any changes to the database" do
         expect { no_show_hearing_task.reschedule_hearing }.to raise_error(StandardError)
 
-        expect(hearing_task.reload.active?).to eq(true)
-        expect(disposition_task.reload.active?).to eq(true)
-        expect(no_show_hearing_task.reload.active?).to eq(true)
+        expect(hearing_task.reload.open?).to eq(true)
+        expect(disposition_task.reload.open?).to eq(true)
+        expect(no_show_hearing_task.reload.open?).to eq(true)
 
         expect(distribution_task.children.count).to eq(1)
 

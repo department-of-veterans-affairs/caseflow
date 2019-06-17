@@ -96,7 +96,15 @@ class LegacyOptInModal extends React.Component {
       });
     }
     this.props.toggleLegacyOptInModal();
-  };
+  }
+
+  // do no allow the same legacy issue to be selected more than once
+  findOptinIssue = (legacyIssue, addedIssues) => {
+    return (addedIssues || []).find((element) => {
+      return element.vacolsId === legacyIssue.vacols_id &&
+        element.vacolsSequenceId === legacyIssue.vacols_sequence_id.toString();
+    });
+  }
 
   render() {
     let {
@@ -109,7 +117,8 @@ class LegacyOptInModal extends React.Component {
       const radioOptions = legacyAppeal.issues.map((issue) => {
         return {
           displayText: issue.description,
-          value: `${issue.vacols_id}-${issue.vacols_sequence_id}`
+          value: `${issue.vacols_id}-${issue.vacols_sequence_id}`,
+          disabled: Boolean(this.findOptinIssue(issue, intakeData.addedIssues))
         };
       });
 

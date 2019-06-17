@@ -1,7 +1,7 @@
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
-  "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a Veteran ID",
-  "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid claims file number to search for all available cases.",
+  "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a Veteran ID or SSN",
+  "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid claims file number or SSN to search for all available cases.",
   "CASE_SEARCH_ERROR_EMPTY_SEARCH_TERM": "Cannot search for no text",
   "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid Veteran ID “%s”",
   "CASE_SEARCH_ERROR_NO_CASES_FOUND_HEADING": "No cases found for “%s”",
@@ -237,19 +237,22 @@
 
   "MODAL_SUBMIT_BUTTON": "Submit",
   "MODAL_CANCEL_BUTTON": "Cancel",
+  "MODAL_CONFIRM_BUTTON": "Confirm",
 
   "REGIONAL_OFFICE_REQUIRED_MESSAGE": "Please select a regional office",
+
+  "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_TITLE": "Cancel hearing request",
+  "CANCEL_FOREIGN_VETERANS_CASE_TASK_MODAL_DETAIL": "Canceling this hearing request will release it to a hearing coordinator for review. A 90 day evidence hold may still apply to this case.",
 
   "CANCEL_TASK_MODAL_TITLE": "Cancel task",
   "CANCEL_TASK_MODAL_DETAIL": "Cancelling this task will return it to the assigner",
   "CANCEL_TASK_CONFIRMATION": "Task for %s's case has been cancelled",
   "CANCEL_TASK_CONFIRMATION_DETAIL": "Task for %s's case has been cancelled",
 
-  "CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE": "Assign Regional Office",
-  "CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL": "Assigning a Regional Office will place this case in the list of Veterans to be scheduled for the RO you choose. You will need to choose a location for the hearing when you schedule the Veteran.",
-  "CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_BUTTON": "Confirm",
-  "CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE": "Updated Task Successfully",
-  "CANCEL_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_DETAIL": "Task was cancelled and assigned to Regional Office",
+  "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_TITLE": "Assign Regional Office",
+  "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_DETAIL": "Assigning a Regional Office will place this case in the list of Veterans to be scheduled for the RO you choose. You will need to choose a location for the hearing when you schedule the Veteran.",
+  "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE": "Updated Task Successfully",
+  "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_DETAIL": "Task was cancelled and assigned to Regional Office",
 
   "HEARING_SCHEDULE_COMPLETE_ADMIN_MODAL": "Marking this task as complete will remove this admin action from your active tasks.",
   "NO_SHOW_HEARING_TASK_COMPLETE_MODAL_BODY": "Marking this case as complete will release it to a judge for review. A 90 day evidence hold may still apply to this case.",
@@ -271,7 +274,7 @@
   "CHANGE_TASK_TYPE_INSTRUCTIONS_LABEL": "Provide instructions and context for this change:",
   "CHANGE_TASK_TYPE_CONFIRMATION_TITLE": "You have changed the task type from '%s' to '%s'",
   "CHANGE_TASK_TYPE_CONFIRMATION_DETAIL": "These changes are now reflected in the currently active tasks section below.",
-  
+
   "COLOCATED_ACTION_SEND_TO_TEAM": "Send to %s team",
 
   "COLOCATED_ACTION_SEND_TO_ANOTHER_TEAM_HEAD": "Send action to %s",
@@ -359,9 +362,11 @@
   "TEAM_MANAGEMENT_PARTICIPANT_ID_COLUMN_HEADING": "BGS Participant ID",
   "TEAM_MANAGEMENT_UPDATE_ROW_BUTTON": "Update",
   "TEAM_MANAGEMENT_ADD_JUDGE_BUTTON": "+ Add Judge Team",
+  "TEAM_MANAGEMENT_ADD_PRIVATE_BAR_BUTTON": "+ Add Private Bar",
   "TEAM_MANAGEMENT_ADD_VSO_BUTTON": "+ Add VSO",
   "TEAM_MANAGEMENT_ADD_JUDGE_TEAM_MODAL_TITLE": "Create JudgeTeam",
   "TEAM_MANAGEMENT_SELECT_JUDGE_LABEL": "Select judge",
+  "TEAM_MANAGEMENT_ADD_PRIVATE_BAR_MODAL_TITLE": "Create Private Bar",
   "TEAM_MANAGEMENT_ADD_VSO_MODAL_TITLE": "Create VSO",
   "TEAM_MANAGEMENT_IHP_WRITING_VSO_OPTION": "IHP-writing VSO",
   "TEAM_MANAGEMENT_FIELD_VSO_OPTION": "Field VSO",
@@ -466,8 +471,15 @@
   "END_HOLD_MODAL_BODY": "Do you want to end the hold early?",
   "END_HOLD_SUCCESS_MESSAGE_TITLE": "Success! The hold has been ended early.",
 
+  "ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_HEADER": "No upcoming hearing days",
+  "ASSIGN_HEARINGS_HAS_NO_UPCOMING_DAYS_MESSAGE": "There are no upcoming hearing days for this regional office. Please add a hearing day.",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_HEADER": "There are no schedulable veterans",
   "ASSIGN_HEARINGS_TABS_VETERANS_NOT_ASSIGNED_MESSAGE": "Please verify that this RO has veterans to assign a hearing",
   "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_HEADER": "This RO has no available hearing days",
-  "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE": "Please contact your supervisor for further assistance. You can  see the list of schedulable Veterans by clicking on their respective tabs"
+  "ASSIGN_HEARINGS_TABS_NO_HEARING_DAY_MESSAGE": "Please contact your supervisor for further assistance. You can see the list of schedulable Veterans by clicking on their respective tabs",
+
+  "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_TITLE": "Send to Schedule Veterans List",
+  "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_DETAIL": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled. You must assign this case a Regional Office to proceed.",
+  "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE": "Updated Task Successfully",
+  "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL": "Successfully sent %s's case to the list of Veterans to be scheduled."
 }

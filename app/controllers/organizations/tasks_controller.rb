@@ -5,13 +5,20 @@ class Organizations::TasksController < OrganizationsController
   before_action :verify_role_access, only: [:index]
 
   def index
-    tasks = GenericQueue.new(user: organization).tasks
+    queue = GenericQueue.new(user: organization)
+    tasks = queue.tasks
+
+    # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
+    if organization.url == "hearings-management"
+      tasks = tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
+    end
 
     render json: {
       organization_name: organization.name,
       tasks: json_tasks(tasks),
       id: organization.id,
-      is_vso: organization.is_a?(::Representative)
+      is_vso: organization.is_a?(::Representative),
+      queue_config: queue.config
     }
   end
 
