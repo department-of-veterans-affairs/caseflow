@@ -88,14 +88,14 @@ class ScheduleHearingTask < GenericTask
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
-    hearing_task = most_recent_inactive_hearing_task_on_appeal
+    hearing_task = most_recent_closed_hearing_task_on_appeal
 
     if hearing_task&.hearing&.disposition.blank?
       fail Caseflow::Error::ActionForbiddenError, message: COPY::REQUEST_HEARING_DISPOSITION_CHANGE_FORBIDDEN_ERROR
     end
 
     # cancel my children, myself, and my hearing task ancestor
-    children.active.update_all(status: Constants.TASK_STATUSES.cancelled)
+    children.open.update_all(status: Constants.TASK_STATUSES.cancelled)
     update!(status: Constants.TASK_STATUSES.cancelled)
     ancestor_task_of_type(HearingTask)&.update!(status: Constants.TASK_STATUSES.cancelled)
 

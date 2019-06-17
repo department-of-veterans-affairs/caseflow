@@ -5,16 +5,17 @@ class LegacyHearing < ApplicationRecord
   include AssociatedVacolsModel
   include AppealConcern
 
+  # When these instance variable getters are called, first check if we've
+  # fetched the values from VACOLS. If not, first fetch all values and save them
+  # This allows us to easily call `hearing.veteran_first_name` and dynamically
+  # fetch the data from VACOLS if it does not already exist in memory
   vacols_attr_accessor :veteran_first_name, :veteran_middle_initial, :veteran_last_name
   vacols_attr_accessor :appellant_first_name, :appellant_middle_initial, :appellant_last_name
   vacols_attr_accessor :scheduled_for, :request_type, :venue_key, :vacols_record, :disposition
   vacols_attr_accessor :aod, :hold_open, :transcript_requested, :notes, :add_on
   vacols_attr_accessor :transcript_sent_date, :appeal_vacols_id
-  vacols_attr_accessor :representative_name, :representative, :hearing_day_id
-  vacols_attr_accessor :master_record
-  vacols_attr_accessor :docket_number, :appeal_type, :appellant_address_line_1
-  vacols_attr_accessor :appellant_address_line_2, :appellant_city, :appellant_state
-  vacols_attr_accessor :appellant_zip, :appellant_country, :room, :bva_poc, :judge_id
+  vacols_attr_accessor :representative_name, :hearing_day_id
+  vacols_attr_accessor :docket_number, :appeal_type, :room, :bva_poc, :judge_id
 
   belongs_to :appeal, class_name: "LegacyAppeal"
   belongs_to :user # the judge
@@ -30,6 +31,27 @@ class LegacyHearing < ApplicationRecord
   # when fetched intially.
   has_many :appeals, class_name: "LegacyAppeal", through: :appeal_stream_snapshots
 
+  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string,
+           to: :time
+
+  delegate :veteran_age, :veteran_gender, :vbms_id, :number_of_documents, :number_of_documents_after_certification,
+           :veteran, :veteran_file_number, :docket_name, :closest_regional_office, :available_hearing_locations,
+           to: :appeal,
+           allow_nil: true
+
+  delegate :external_id,
+           to: :appeal,
+           prefix: true
+
+  delegate :appellant_address, :appellant_address_line_1, :appellant_address_line_2,
+           :appellant_city, :appellant_country, :appellant_state, :appellant_zip,
+           to: :appeal,
+           allow_nil: true
+
+  delegate :representative,
+           to: :appeal,
+           allow_nil: true
+
   CO_HEARING = "Central"
   VIDEO_HEARING = "Video"
 
@@ -44,7 +66,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def disposition_task_in_progress
-    disposition_task ? disposition_task.active_with_no_children? : false
+    disposition_task ? disposition_task.open_with_no_children? : false
   end
 
   def disposition_editable
@@ -60,7 +82,7 @@ class LegacyHearing < ApplicationRecord
       task.type == TrackVeteranTask.name &&
         task.assigned_to.is_a?(Representative) &&
         task.assigned_to.user_has_access?(user) &&
-        task.active?
+        task.open?
     end
   end
 
@@ -113,8 +135,6 @@ class LegacyHearing < ApplicationRecord
   def time
     @time ||= HearingTimeService.new(hearing: self)
   end
-
-  delegate :central_office_time_string, :scheduled_time, :scheduled_time_string, to: :time
 
   def request_type_location
     if request_type == HearingDay::REQUEST_TYPES[:central]
@@ -189,21 +209,6 @@ class LegacyHearing < ApplicationRecord
     end
   end
 
-  delegate \
-    :veteran_age, \
-    :veteran_gender, \
-    :vbms_id, \
-    :number_of_documents, \
-    :number_of_documents_after_certification, \
-    :veteran,  \
-    :veteran_file_number, \
-    :docket_name,
-    :closest_regional_office,
-    :available_hearing_locations,
-    to: :appeal, allow_nil: true
-
-  delegate :external_id, to: :appeal, prefix: true
-
   # rubocop:disable Metrics/MethodLength
   def to_hash(current_user_id)
     serializable_hash(
@@ -219,7 +224,6 @@ class LegacyHearing < ApplicationRecord
         :hold_open,
         :notes,
         :add_on,
-        :master_record,
         :representative,
         :representative_name,
         :regional_office_key,
@@ -238,7 +242,9 @@ class LegacyHearing < ApplicationRecord
         :docket_name,
         :appeal_type,
         :appellant_address_line_1,
+        :appellant_address_line_2,
         :appellant_city,
+        :appellant_country,
         :appellant_state,
         :appellant_zip,
         :location,

@@ -257,6 +257,7 @@ export const prepareAppealForStore =
         externalId: appeal.attributes.external_id,
         docketName: appeal.attributes.docket_name,
         withdrawn: appeal.attributes.withdrawn,
+        removed: appeal.attributes.removed,
         isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
@@ -540,4 +541,9 @@ export const sortTaskList = (taskList) => {
     return new Date(next.closedAt || next.createdAt).getTime() -
     new Date(prev.closedAt || prev.createdAt).getTime();
   });
+};
+
+export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
+  return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
+    defaultToUnknown ? 'Unknown' : defaultToUnknown);
 };

@@ -2,9 +2,10 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import ApiUtil from '../util/ApiUtil';
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
-import ApiUtil from '../util/ApiUtil';
 import { extractAppealsAndAmaTasks } from './utils';
 
 import {
@@ -16,22 +17,33 @@ import {
 } from './uiReducer/uiActions';
 
 class OrganizationQueueLoadingScreen extends React.PureComponent {
-  // TODO: Short-circuit this request if we already have the tasks for this organization's queue.
-  createLoadPromise = () => ApiUtil.get(this.props.urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then(
-    (response) => {
-      const {
-        tasks: { data: tasks },
-        id,
-        organization_name: organizationName,
-        is_vso: isVso
-      } = JSON.parse(response.text);
-
-      this.props.setActiveOrganization(id, organizationName, isVso);
-      this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
-    }
-  );
-
   reload = () => window.location.reload();
+
+  createOrgQueueLoadPromise = () => {
+    const requestOptions = {
+      timeout: { response: getMinutesToMilliseconds(5) }
+    };
+
+    return ApiUtil.get(this.props.urlToLoad, requestOptions).
+      then(
+        (response) => {
+          const {
+            tasks: { data: tasks },
+            id,
+            organization_name: organizationName,
+            is_vso: isVso,
+            queue_config: queueConfig
+          } = JSON.parse(response.text);
+
+          this.props.setActiveOrganization(id, organizationName, isVso);
+          this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
+          this.props.setQueueConfig(queueConfig);
+        }
+      ).
+      catch(() => {
+        // handle frontend error
+      });
+  }
 
   render = () => {
     const failStatusMessageChildren = <div>
@@ -40,7 +52,7 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
     </div>;
 
     const loadingDataDisplay = <LoadingDataDisplay
-      createLoadPromise={this.createLoadPromise}
+      createLoadPromise={() => this.createOrgQueueLoadPromise()}
       loadingComponentProps={{
         spinnerColor: LOGO_COLORS.QUEUE.ACCENT,
         message: 'Loading cases...'

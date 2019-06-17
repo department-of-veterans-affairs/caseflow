@@ -24,11 +24,11 @@ describe HearingRepository do
   end
 
   context ".set_vacols_values" do
-    subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
     let(:date) { AppealRepository.normalize_vacols_date(7.days.from_now) }
     let(:hearing) { create(:legacy_hearing) }
     let(:hearing_day) { HearingDay.first }
-
+    let(:notes) { "test notes" }
+    let(:representative_name) { "test representative name" }
     let(:hearing_hash) do
       OpenStruct.new(
         hearing_date: date,
@@ -38,13 +38,15 @@ describe HearingRepository do
         aod: "Y",
         tranreq: nil,
         holddays: 90,
-        notes1: "test notes",
-        repname: "test rep name",
+        notes1: notes,
+        repname: representative_name,
         bfso: "E",
         bfregoff: "RO36",
         vdkey: hearing_day.id
       )
     end
+
+    subject { HearingRepository.set_vacols_values(hearing, hearing_hash) }
 
     it "assigns values properly" do
       expect(subject.request_type).to eq(HearingDay::REQUEST_TYPES[:video])
@@ -54,9 +56,8 @@ describe HearingRepository do
       expect(subject.aod).to eq :filed
       expect(subject.transcript_requested).to eq nil
       expect(subject.hold_open).to eq 90
-      expect(subject.notes).to eq "test notes"
-      expect(subject.representative_name).to eq "test rep name"
-      expect(subject.representative).to eq "Jewish War Veterans"
+      expect(subject.notes).to eq notes
+      expect(subject.representative_name).to eq representative_name
     end
   end
 
@@ -68,7 +69,6 @@ describe HearingRepository do
     let(:record1) do
       OpenStruct.new(
         hearing_type: HearingDay::REQUEST_TYPES[:travel],
-        master_record_type: nil,
         bfregoff: "RO36",
         hearing_pkseq: case_hearing.hearing_pkseq,
         folder_nr: "5678",
@@ -81,7 +81,6 @@ describe HearingRepository do
     it "should create hearing records" do
       expect(subject.size).to eq 1
       expect(subject.first.vacols_id).to eq case_hearing.hearing_pkseq.to_s
-      expect(subject.first.master_record).to eq false
     end
   end
 end

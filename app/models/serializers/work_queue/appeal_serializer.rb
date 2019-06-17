@@ -42,6 +42,8 @@ class WorkQueue::AppealSerializer
 
   attribute :withdrawn, &:withdrawn?
 
+  attribute :removed, &:removed?
+
   attribute :assigned_to_location
 
   attribute :completed_hearing_on_previous_appeal? do
@@ -81,6 +83,7 @@ class WorkQueue::AppealSerializer
   attribute :aod, &:advanced_on_docket
   attribute :docket_name
   attribute :docket_number
+  attribute :docket_range_date
   attribute :decision_date
   attribute :nod_date, &:receipt_date
 

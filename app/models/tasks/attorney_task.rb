@@ -44,7 +44,7 @@ class AttorneyTask < Task
   private
 
   def child_attorney_tasks_are_completed
-    if parent&.children_attorney_tasks&.active&.any?
+    if parent&.children_attorney_tasks&.open&.any?
       errors.add(:parent, "has open child tasks")
     end
   end
