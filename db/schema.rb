@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190603150958) do
+ActiveRecord::Schema.define(version: 20190617164845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -659,7 +659,7 @@ ActiveRecord::Schema.define(version: 20190603150958) do
     t.string "vacols_id", null: false
     t.string "witness"
     t.index ["user_id"], name: "index_legacy_hearings_on_user_id"
-    t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id"
+    t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id", unique: true
   end
 
   create_table "legacy_issue_optins", force: :cascade, comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review." do |t|
@@ -758,13 +758,6 @@ ActiveRecord::Schema.define(version: 20190603150958) do
     t.date "receipt_date", comment: "Receipt date of the RAMP form."
     t.string "veteran_file_number", null: false, comment: "The VBA corporate file number of the Veteran for this review. There can sometimes be more than one file number per Veteran."
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
-  end
-
-  create_table "reader_users", id: :serial, force: :cascade do |t|
-    t.datetime "documents_fetched_at"
-    t.integer "user_id", null: false
-    t.index ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at"
-    t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
   end
 
   create_table "record_synced_by_jobs", force: :cascade do |t|
@@ -1086,7 +1079,6 @@ ActiveRecord::Schema.define(version: 20190603150958) do
   add_foreign_key "organizations_users", "users"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
-  add_foreign_key "reader_users", "users"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "user_quotas", "users"

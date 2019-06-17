@@ -296,6 +296,17 @@ describe RequestIssue do
         expect(RequestDecisionIssue.unscoped.count).to eq 1
       end
     end
+
+    context "when a request issue is removed after it has been submitted, before it has been processed" do
+      let!(:request_issue1) do
+        create(:request_issue, decision_sync_submitted_at: 1.day.ago, decision_sync_processed_at: nil)
+      end
+
+      it "cancels the decision sync job" do
+        subject
+        expect(request_issue1.decision_sync_canceled_at).to eq Time.zone.now
+      end
+    end
   end
 
   context ".active" do
@@ -1441,11 +1452,8 @@ describe RequestIssue do
         end
 
         context "when no associated rating exists" do
-          it "resubmits for processing" do
-            subject
-            expect(rating_request_issue.decision_issues.count).to eq(0)
-            expect(rating_request_issue.processed?).to eq(false)
-            expect(rating_request_issue.decision_sync_attempted_at).to eq(Time.zone.now)
+          it "raises an error" do
+            expect { subject }.to raise_error(RequestIssue::NoAssociatedRating)
           end
         end
       end
