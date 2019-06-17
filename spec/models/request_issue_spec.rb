@@ -74,7 +74,8 @@ describe RequestIssue do
       vacols_sequence_id: vacols_sequence_id,
       closed_at: closed_at,
       closed_status: closed_status,
-      ineligible_reason: ineligible_reason
+      ineligible_reason: ineligible_reason,
+      edited_description: edited_description
     )
   end
 
