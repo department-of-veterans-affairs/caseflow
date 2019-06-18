@@ -75,6 +75,21 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         end
       end
 
+      context "POA has no address" do
+        before do
+          allow_any_instance_of(Fakes::BGSService).to receive(:find_address_by_participant_id).and_return(nil)
+          request.headers["FILENUMBER"] = file_number
+        end
+
+        it "returns just the POA name" do
+          get :details
+
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["poa"]).to eq("representative_type" => "Attorney", "representative_name" => "Clarence Darrow")
+        end
+      end
+
       context "and a veteran's file number as a string" do
         before do
           request.headers["FILENUMBER"] = file_number
