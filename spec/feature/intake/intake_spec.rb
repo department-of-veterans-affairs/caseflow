@@ -96,7 +96,6 @@ feature "Intake" do
 
       fill_in search_bar_title, with: "5678"
       click_on "Search"
-
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Veteran ID not found")
 
@@ -121,6 +120,22 @@ feature "Intake" do
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Something went wrong")
       expect(page).to have_content(/Error code \w+-\w+-\w+-\w+/)
+    end
+
+    scenario "Search for a veteran with an incident flash" do
+      allow_any_instance_of(Veteran).to receive(:incident_flash?).and_return true
+      visit "/intake"
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+      safe_click ".cf-submit.usa-button"
+
+      expect(page).to have_content(search_page_title)
+
+      fill_in search_bar_title, with: "12341234"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake/search")
+      expect(page).to have_content("The Veteran has an incident flash")
+      expect(page).to have_content(COPY::INCIDENT_FLASH_ERROR_START)
     end
 
     context "Veteran has too high of a sensitivity level for user" do
