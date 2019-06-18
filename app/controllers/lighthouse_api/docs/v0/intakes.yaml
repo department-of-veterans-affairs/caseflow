@@ -1,0 +1,13 @@
+# this is a dummy spec to support being read by the docs
+openapi: 3.0.0
+info:
+  title: Lighthouse Intakes API
+  description: API version 0 for Appeals Intakes provided by the Lighthouse Project
+  version: 0.0.1
+servers:
+  - url: /lighthouse_api/v0/intakes
+paths:
+  /higher_level_review:
+    post:
+      summary: Higher-Level Reviews endpoint.
+      description: Create a new Higher-Level Review
