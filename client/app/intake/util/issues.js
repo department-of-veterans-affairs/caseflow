@@ -55,9 +55,11 @@ export const validateDate = (date) => {
 export const validateDateNotInFuture = (date) => {
   const currentDate = new Date();
   const enteredDate = new Date(date);
+
   if (currentDate < enteredDate) {
-    return false
+    return false;
   }
+
   return true;
 };
 
