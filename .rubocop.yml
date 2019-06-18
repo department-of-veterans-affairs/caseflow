@@ -1,4 +1,6 @@
-require: rubocop-performance
+require:
+  - rubocop-performance
+  - rubocop-rails
 
 AllCops:
   Exclude:
@@ -13,11 +15,20 @@ AllCops:
     - 'client/node_modules/**/*'
     - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
   TargetRailsVersion: 5.1
+  TargetRubyVersion: 2.5
   UseCache: true
 
 Bundler/OrderedGems:
   Enabled: true
   TreatCommentsAsGroupSeparators: false
+
+Metrics/ModuleLength:
+  CountComments: false
+  Max: 100
+  Description: Avoid modules longer than 100 lines of code.
+  Enabled: true
+  Exclude:
+  - spec/**/*
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -35,83 +46,44 @@ Metrics/LineLength:
   Max: 120
 
 Metrics/BlockLength:
-  Enabled: false
+  CountComments: false
+  Enabled: true
+  Max: 25
+  ExcludedMethods:
+    - 'Struct.new'
+  Exclude:
+    - 'Gemfile'
+    - 'Rakefile'
+    - '**/*.rake'
+    - 'config/environments/*.rb'
+    - 'config/routes.rb'
+    - 'spec/**/*.rb'
+    - 'db/seeds.rb'
+    - 'bin/setup'
 
 Naming/RescuedExceptionsVariableName:
   Description: 'Use consistent rescued exceptions variables naming.'
   Enabled: true
   PreferredName: error
 
-Rails:
-  Enabled: true
-
-# temporarily disabled due to a bug in Rubocop 0.67.2
-Rails/ActiveRecordOverride:
-  Enabled: false
-
 Rails/Output:
   Exclude:
     - 'lib/**/*.rb'
 
-Rails/DynamicFindBy:
-  Enabled: false
-
-Rails/OutputSafety:
-  Enabled: false
-
 Rails/UnknownEnv:
   Enabled: false
 
-Rails/LexicallyScopedActionFilter:
-  Enabled: false
-
-Rails/SkipsModelValidations:
-  Enabled: false
-
-Rails/FilePath:
-  Enabled: false
-
-Rails/HasManyOrHasOneDependent:
-  Enabled: false
-
-Rails/InverseOf:
-  Enabled: false
-
-Rails/Present:
-  NotBlank: false
-  UnlessBlank: false
-
 Metrics/MethodLength:
-  Max: 20
+  Max: 10
   Exclude:
+    - 'db/migrate/*'
     - "spec/**/*"
 
 Metrics/ClassLength:
-  Max: 400
+  Max: 100
 
 Metrics/AbcSize:
-  Max: 30
-
-Style/DoubleNegation:
-  Enabled: false
-
-Style/NegatedIf:
-  Enabled: false
-
-Style/EachWithObject:
-  Enabled: false
-
-Style/GuardClause:
-  Enabled: false
-
-Style/RegexpLiteral:
-  Enabled: false
-
-Style/NumericPredicate:
-  Enabled: false
-
-Style/MultipleComparison:
-  Enabled: false
+  Max: 15
 
 Style/SymbolArray:
   EnforcedStyle: brackets
@@ -121,24 +93,6 @@ Style/SignalException:
 
 Style/TernaryParentheses:
   EnforcedStyle: require_parentheses_when_complex
-
-Style/IfUnlessModifier:
-  Enabled: false
-
-Style/RedundantBegin:
-  Enabled: false
-
-Naming/FileName:
-  Enabled: false
-
-Naming/HeredocDelimiterNaming:
-  Enabled: false
-
-Naming/VariableNumber:
-  Enabled: false
-
-Lint/UriEscapeUnescape:
-  Enabled: false
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
