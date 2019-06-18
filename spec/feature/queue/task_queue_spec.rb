@@ -656,25 +656,25 @@ RSpec.feature "Task queue" do
         OrganizationsUser.add_user_to_organization(attorney_user, judge_team)
       end
       let!(:orig_judge_task) do
-         FactoryBot.create(
-           :ama_judge_decision_review_task,
-           :on_hold,
-           assigned_to: judge_user,
-           appeal: appeal,
-           parent: root_task
-         )
-       end
+        FactoryBot.create(
+          :ama_judge_decision_review_task,
+          :on_hold,
+          assigned_to: judge_user,
+          appeal: appeal,
+          parent: root_task
+        )
+      end
 
-       let!(:orig_atty_task) do
-         FactoryBot.create(
-           :ama_attorney_task,
-           :completed,
-           assigned_to: attorney_user,
-           assigned_by: judge_user,
-           parent: orig_judge_task,
-           appeal: appeal
-         )
-       end
+      let!(:orig_atty_task) do
+        FactoryBot.create(
+          :ama_attorney_task,
+          :completed,
+          assigned_to: attorney_user,
+          assigned_by: judge_user,
+          parent: orig_judge_task,
+          appeal: appeal
+        )
+      end
 
       let!(:judge_task_done) do
         orig_judge_task.update!(status: Constants.TASK_STATUSES.completed)

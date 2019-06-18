@@ -122,7 +122,6 @@ RSpec.feature "AmaQueue" do
             :in_progress,
             assigned_to: attorney_user,
             assigned_by: judge_user,
-            parent: parent_task,
             appeal: appeals.first
           ),
           FactoryBot.create(

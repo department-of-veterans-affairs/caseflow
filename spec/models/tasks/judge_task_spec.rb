@@ -155,7 +155,7 @@ describe JudgeTask do
   end
 
   describe ".previous_task" do
-    let(:parent) { FactoryBot.create(:ama_judge_task, assigned_to: judge) }
+    let(:parent) { FactoryBot.create(:ama_judge_decision_review_task, assigned_to: judge) }
     let!(:child) do
       FactoryBot.create(
         :ama_attorney_task,
