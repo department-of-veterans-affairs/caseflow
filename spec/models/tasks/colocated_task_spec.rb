@@ -460,4 +460,45 @@ describe ColocatedTask do
       end
     end
   end
+
+  describe "Reassigned ColocatedTask for LegacyAppeal" do
+    let(:initial_assigner) { FactoryBot.create(:user) }
+    let!(:initial_assigner_staff) { FactoryBot.create(:staff, :attorney_role, sdomainid: initial_assigner.css_id) }
+    let(:reassigner) { FactoryBot.create(:user) }
+    let!(:reassigner_staff) { FactoryBot.create(:staff, sdomainid: reassigner.css_id) }
+
+    let(:appeal) do
+      FactoryBot.create(
+        :legacy_appeal,
+        vacols_case: FactoryBot.create(:case, bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow])
+      )
+    end
+
+    let(:org_task) do
+      FactoryBot.create(
+        :colocated_task,
+        appeal: appeal,
+        action: :retired_vlj,
+        assigned_by: initial_assigner,
+        assigned_to: Colocated.singleton
+      ).becomes(ColocatedTask)
+    end
+    let(:colocated_task) { org_task.children.first }
+
+    before do
+      reassign_params = {
+        assigned_to_type: User.name,
+        assigned_to_id: Colocated.singleton.next_assignee.id
+      }
+      colocated_task.reassign(reassign_params, reassigner)
+    end
+
+    it "charges the case to the original assigner in VACOLS" do
+      # Complete the re-assigned task.
+      org_task.children.open.first.update!(status: Constants.TASK_STATUSES.completed)
+
+      # Our AssociatedVacolsModels hold on to their VACOLS properties aggressively. Re-fetch the object to avoid that.
+      expect(LegacyAppeal.find(appeal.id).location_code).to eq(initial_assigner.vacols_uniq_id)
+    end
+  end
 end
