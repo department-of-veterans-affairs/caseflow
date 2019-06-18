@@ -58,6 +58,23 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
         request.headers["TOKEN"] = token
       end
 
+      context "POA is nil" do
+        before do
+          request.headers["FILENUMBER"] = file_number
+          allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poa_by_file_number).and_return(nil)
+        end
+
+        it "returns empty hash" do
+          get :details
+
+          expect(response.status).to eq 200
+
+          response_body = JSON.parse(response.body)
+
+          expect(response_body["poa"]).to eq({})
+        end
+      end
+
       context "and a veteran's file number as a string" do
         before do
           request.headers["FILENUMBER"] = file_number
