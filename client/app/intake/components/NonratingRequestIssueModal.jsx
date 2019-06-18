@@ -41,7 +41,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId: null,
       ineligibleReason: null,
       decisionReviewTitle: null,
-      dateError: false
+      dateError: ''
     };
   }
 
@@ -78,11 +78,13 @@ class NonratingRequestIssueModal extends React.Component {
   }
 
   errorOnDecisionDate = (value) => {
-    let error = validateDate(value) ? null : 'Please enter a valid decision date.';
-    if (!error) {
-      error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
+    if (value.length === 10) {
+      let error = validateDate(value) ? null : 'Please enter a valid decision date.';
+      if (!error) {
+        error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
+      }
+      return error;
     }
-    return error;
   }
 
   selectedNonratingIssueIdOnChange = (value) => {
@@ -247,7 +249,7 @@ class NonratingRequestIssueModal extends React.Component {
           { classNames: ['usa-button', 'add-issue'],
             name: this.getNextButtonText(),
             onClick: this.onAddIssue,
-            disabled: requiredFieldsMissing || this.state.dateError
+            disabled: requiredFieldsMissing || this.state.decisionDate.length < 10 || !!this.state.dateError
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
             name: 'None of these match, see more options',
