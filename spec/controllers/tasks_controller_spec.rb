@@ -257,7 +257,7 @@ RSpec.describe TasksController, type: :controller do
     context "Attorney task" do
       context "when current user is a judge" do
         let(:ama_appeal) { create(:appeal) }
-        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }
+        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user, appeal: ama_appeal) }
         let(:role) { :judge_role }
 
         let(:params) do
@@ -273,18 +273,28 @@ RSpec.describe TasksController, type: :controller do
           subject
 
           expect(response.status).to eq 200
-
           response_body = JSON.parse(response.body)["tasks"]["data"]
-          expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
+          expect(response_body.length).to eq 3
+
+          expect(response_body.first["attributes"]["type"]).to eq JudgeDecisionReviewTask.name
+          expect(response_body.first["attributes"]["appeal_id"]).to eq ama_appeal.id
+          expect(response_body.first["attributes"]["docket_number"]).to eq ama_appeal.docket_number
+          expect(response_body.first["attributes"]["appeal_type"]).to eq Appeal.name
+          expect(response_body.first["attributes"]["assigned_to"]["id"]).to eq user.id
+          expect(response_body.first["id"]).to eq AttorneyTask.find_by(appeal: ama_appeal).parent_id.to_s
+
+          expect(response_body.second["attributes"]["type"]).to eq JudgeAssignTask.name
           expect(response_body.second["attributes"]["appeal_id"]).to eq ama_appeal.id
           expect(response_body.second["attributes"]["docket_number"]).to eq ama_appeal.docket_number
           expect(response_body.second["attributes"]["appeal_type"]).to eq Appeal.name
+          expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
 
-          attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
-          expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
-          expect(attorney_task.assigned_to).to eq attorney
-          expect(attorney_task.parent_id).to eq ama_judge_task.id
-          expect(ama_judge_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
+          expect(response_body.last["attributes"]["type"]).to eq AttorneyTask.name
+          expect(response_body.last["attributes"]["appeal_id"]).to eq ama_appeal.id
+          expect(response_body.last["attributes"]["docket_number"]).to eq ama_appeal.docket_number
+          expect(response_body.last["attributes"]["appeal_type"]).to eq Appeal.name
+          expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
+          expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq attorney.id
         end
       end
     end

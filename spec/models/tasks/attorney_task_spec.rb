@@ -6,7 +6,7 @@ describe AttorneyTask do
   let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }
   let!(:judge_staff) { create(:staff, :judge_role, sdomainid: judge.css_id) }
   let(:appeal) { FactoryBot.create(:appeal) }
-  let!(:parent) { create(:ama_judge_task, assigned_by: judge, appeal: appeal) }
+  let!(:parent) { create(:ama_judge_decision_review_task, assigned_by: judge, appeal: appeal) }
 
   context ".create" do
     subject do
