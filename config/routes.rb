@@ -280,6 +280,13 @@ Rails.application.routes.draw do
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
-
   # :nocov:
+
+  namespace :lighthouse_api do
+    namespace :docs do
+      namespace :v0, defaults: { format: 'json' } do
+        get 'intakes', to: 'docs#intakes'
+      end
+    end
+  end
 end
