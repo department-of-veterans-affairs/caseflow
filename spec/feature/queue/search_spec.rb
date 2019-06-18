@@ -122,8 +122,7 @@ RSpec.feature "Search" do
                   :end_product_establishment,
                   source: higher_level_review,
                   veteran_file_number: appeal.veteran_file_number,
-                  synced_status: "CAN",
-                  committed_at: Time.zone.now
+                  synced_status: "CAN"
                 )
               end
               let!(:end_product_establishment_2) do
@@ -131,8 +130,7 @@ RSpec.feature "Search" do
                   :end_product_establishment,
                   source: higher_level_review,
                   veteran_file_number: appeal.veteran_file_number,
-                  synced_status: "CLR",
-                  committed_at: Time.zone.now
+                  synced_status: "CLR"
                 )
               end
               let!(:end_product_establishment_3) do
@@ -184,6 +182,8 @@ RSpec.feature "Search" do
               context "the EP has been established" do
                 before do
                   higher_level_review.reload.establish!
+                  end_product_establishment_1.commit!
+                  end_product_establishment_2.commit!
                 end
 
                 it "shows the end product status" do
