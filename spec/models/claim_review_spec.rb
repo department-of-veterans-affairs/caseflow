@@ -554,7 +554,7 @@ describe ClaimReview do
           before do
             Fakes::BGSService.manage_claimant_letter_v2_requests = nil
             Fakes::BGSService.generate_tracked_items_requests = nil
-            claim_review.end_product_establishments.first.update!(synced_status: "PEND")
+            claim_review.end_product_establishments.first.update!(synced_status: "CLR")
           end
 
           let(:informal_conference) { true }
