@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import querystring from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -90,10 +91,12 @@ class QueueApp extends React.PureComponent {
   }
 
   routedSearchResults = (props) => {
+    const veteranIdsParameter = props.match.params.caseflowVeteranIds ||
+      querystring.parse(props.location.search.replace(/^\?/, '')).veteran_ids;
     let caseflowVeteranIds;
 
-    if (props.match.params.caseflowVeteranIds) {
-      caseflowVeteranIds = props.match.params.caseflowVeteranIds.split(',');
+    if (veteranIdsParameter) {
+      caseflowVeteranIds = veteranIdsParameter.split(',');
     }
 
     return <CaseListView caseflowVeteranIds={caseflowVeteranIds} />;
@@ -286,13 +289,8 @@ class QueueApp extends React.PureComponent {
           {this.props.flash && <FlashAlerts flash={this.props.flash} />}
           <PageRoute
             exact
-            path="/search"
+            path={['/search', '/cases/:caseflowVeteranIds']}
             title="Caseflow"
-            render={this.routedSearchResults} />
-          <PageRoute
-            exact
-            path="/cases/:caseflowVeteranIds"
-            title="Case Search | Caseflow"
             render={this.routedSearchResults} />
           <PageRoute
             exact
