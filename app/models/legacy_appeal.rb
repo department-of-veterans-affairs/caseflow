@@ -708,6 +708,7 @@ class LegacyAppeal < ApplicationRecord
     return false unless nod_date
     return false unless soc_date
     return false unless receipt_date
+    return false if soc_date < Constants::DATES["AMA_ACTIVATION"].to_date
 
     soc_eligible_date = receipt_date - 60.days
     nod_eligible_date = receipt_date - 372.days
