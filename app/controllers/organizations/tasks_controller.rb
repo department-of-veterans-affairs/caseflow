@@ -5,8 +5,9 @@ class Organizations::TasksController < OrganizationsController
   before_action :verify_role_access, only: [:index]
 
   def index
-    # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
     tasks = GenericQueue.new(user: organization).tasks
+
+    # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
     if organization.url == "hearings-management"
       tasks = tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
     end
