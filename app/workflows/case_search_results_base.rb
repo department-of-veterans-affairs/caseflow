@@ -30,7 +30,7 @@ class CaseSearchResultsBase
   end
 
   def veterans_user_can_access
-    @veterans_user_can_access ||= veterans.select { |veteran| has_access?(veteran.file_number) }
+    @veterans_user_can_access ||= veterans.select { |veteran| access?(veteran.file_number) }
   end
 
   def json_appeals(appeals)
@@ -51,7 +51,7 @@ class CaseSearchResultsBase
 
   attr_reader :success
 
-  def has_access?(file_number)
+  def access?(file_number)
     !current_user_is_vso_employee? || BGSService.new.can_access?(file_number)
   end
 
