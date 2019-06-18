@@ -305,7 +305,7 @@ RSpec.describe AppealsController, type: :controller do
       let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: the_case) }
       let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
       let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
-      let!(:options) { { caseflow_veteran_ids: veteran_id, format: request_format } }
+      let!(:options) { { veteran_ids: veteran_id, format: request_format } }
 
       context "when current user is a System Admin" do
         before { User.authenticate!(roles: ["System Admin"]) }
@@ -423,7 +423,7 @@ RSpec.describe AppealsController, type: :controller do
           vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
           User.authenticate!(user: vso_user)
 
-          get :show_case_list, params: { caseflow_veteran_ids: appeal.veteran.id, format: :json }
+          get :show_case_list, params: { veteran_ids: appeal.veteran.id, format: :json }
           response_body = JSON.parse(response.body)
 
           expect(response.status).to eq 200
