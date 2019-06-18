@@ -112,7 +112,7 @@ class TasksController < ApplicationController
     ro = HearingDayMapper.validate_regional_office(params[:ro])
     tasks = ScheduleHearingTask.tasks_for_ro(ro)
     AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
-    params = { user: current_user, role: user_role }
+    params = { user: current_user, role: user_role, include_previous_task: false }
 
     render json: AmaAndLegacyTaskSerializer.new(
       tasks: tasks, params: params, ama_serializer: WorkQueue::RegionalOfficeTaskSerializer

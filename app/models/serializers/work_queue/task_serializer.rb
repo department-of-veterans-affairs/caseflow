@@ -100,6 +100,8 @@ class WorkQueue::TaskSerializer
   end
 
   attribute :previous_task do |object|
+    return {} if params[:include_previous_task] == false
+
     {
       assigned_at: object.previous_task.try(:assigned_at)
     }

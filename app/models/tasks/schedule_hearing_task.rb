@@ -19,7 +19,6 @@ class ScheduleHearingTask < GenericTask
       ).includes(
         :assigned_to, :assigned_by,
         appeal: [:available_hearing_locations],
-        hearing_task_association: [:hearing],
         attorney_case_reviews: [:attorney]
       )
 
