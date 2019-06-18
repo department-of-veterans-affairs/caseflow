@@ -493,7 +493,7 @@ describe ColocatedTask do
       colocated_task.reassign(reassign_params, reassigner)
     end
 
-    it "charges the case to the original assigner in VACOLS", focus: true do
+    it "charges the case to the original assigner in VACOLS" do
       # Complete the re-assigned task.
       org_task.children.open.first.update!(status: Constants.TASK_STATUSES.completed)
 
