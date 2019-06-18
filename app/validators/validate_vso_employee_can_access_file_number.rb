@@ -12,7 +12,7 @@ module ValidateVsoEmployeeCanAccessFileNumber
   def vso_employee_can_access_file
     return unless user.vso_employee?
 
-    errors.add(:workflow, prohibited_error) unless BGSService.new.can_access?(file_number)
+    errors.add(:workflow, prohibited_error) unless BGSService.new.can_access?(file_number_or_ssn)
     @status = :forbidden
   end
 
