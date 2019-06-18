@@ -16,11 +16,7 @@ class ScheduleHearingTask < GenericTask
         "status = ? OR status = ?",
         Constants.TASK_STATUSES.assigned.to_sym,
         Constants.TASK_STATUSES.in_progress.to_sym
-      ).includes(
-        :assigned_to, :assigned_by,
-        appeal: [:available_hearing_locations],
-        attorney_case_reviews: [:attorney]
-      )
+      ).includes(:assigned_to, :assigned_by, appeal: [:available_hearing_locations], attorney_case_reviews: [:attorney])
 
       appeal_tasks = incomplete_tasks.joins(
         "INNER JOIN appeals ON appeals.id = appeal_id AND tasks.appeal_type = 'Appeal'"
