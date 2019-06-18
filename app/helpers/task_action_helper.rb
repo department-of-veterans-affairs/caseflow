@@ -1,17 +1,13 @@
 # frozen_string_literal: true
 
 module TaskActionHelper
-  def build_hash(config, task, user)
-    if config[:func]
-      data = TaskActionRepository.send(config[:func], task, user)
+  def self.build_hash(config, task, user)
+    return config unless config[:func]
 
-      if data&.delete(:returns_complete_hash)
-        data
-      else
-        config.merge(data: data)
-      end
-    else
-      config
-    end
+    ret_val = TaskActionRepository.send(config[:func], task, user)
+
+    return ret_val if ret_val&.delete(:returns_complete_hash)
+
+    config.merge(data: ret_val)
   end
 end
