@@ -2,7 +2,7 @@
 
 describe LegacyAppeal do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(post_ama_start_date)
   end
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
