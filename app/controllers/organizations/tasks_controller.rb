@@ -17,13 +17,13 @@ class Organizations::TasksController < OrganizationsController
       tasks: json_tasks(tasks),
       id: organization.id,
       is_vso: organization.is_a?(::Representative),
-      queue_config: config
+      queue_config: queue_config
     }
   end
 
   private
 
-  def config
+  def queue_config
     QueueConfig.new(organization: organization).to_hash_for_user(current_user)
   end
 
