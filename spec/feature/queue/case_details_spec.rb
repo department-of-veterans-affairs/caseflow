@@ -936,15 +936,16 @@ RSpec.feature "Case details" do
       before do
         judge = FactoryBot.create(:user, station_id: 101)
         FactoryBot.create(:staff, :judge_role, user: judge)
-        judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
+        judge_assign_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
         atty = FactoryBot.create(:user, station_id: 101)
         FactoryBot.create(:staff, :attorney_role, user: atty)
-        atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
-        atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
+        atty_task_params = [{ appeal: appeal, parent_id: judge_assign_task.id, assigned_to: atty, assigned_by: judge }]
+        atty_task, judge_review_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first(2)
 
         atty_task.update!(status: Constants.TASK_STATUSES.completed)
-        judge_task.update!(status: Constants.TASK_STATUSES.completed)
+        judge_review_task.update!(status: Constants.TASK_STATUSES.completed)
+        judge_assign_task.update!(status: Constants.TASK_STATUSES.completed)
 
         bva_dispatcher = FactoryBot.create(:user)
         OrganizationsUser.add_user_to_organization(bva_dispatcher, BvaDispatch.singleton)

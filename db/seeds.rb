@@ -849,16 +849,17 @@ class SeedDB
     judge = FactoryBot.create(:user, station_id: 101)
     judge.update!(full_name: judge_name) if judge_name
     FactoryBot.create(:staff, :judge_role, user: judge)
-    judge_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
+    judge_assign_task = JudgeAssignTask.create!(appeal: appeal, parent: root_task, assigned_to: judge)
 
     atty = FactoryBot.create(:user, station_id: 101)
     atty.update!(full_name: attorney_name) if attorney_name
     FactoryBot.create(:staff, :attorney_role, user: atty)
-    atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
-    atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
+    atty_task_params = [{ appeal: appeal, parent_id: judge_assign_task.id, assigned_to: atty, assigned_by: judge }]
+    atty_task, judge_review_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first(2)
 
     atty_task.update!(status: Constants.TASK_STATUSES.completed)
-    judge_task.update!(status: Constants.TASK_STATUSES.completed)
+    judge_review_task.update!(status: Constants.TASK_STATUSES.completed)
+    judge_assign_task.update!(status: Constants.TASK_STATUSES.completed)
 
     qr_org_task = QualityReviewTask.create_from_root_task(root_task)
 
