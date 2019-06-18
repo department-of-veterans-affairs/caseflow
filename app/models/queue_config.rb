@@ -79,7 +79,7 @@ class QueueConfig
   # rubocop:disable Metrics/AbcSize
   def unassigned_tasks_tab
     {
-      label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, tasks.count),
+      label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_tasks.count),
       name: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name),
       # Compact to account for the maybe absent regional office column
