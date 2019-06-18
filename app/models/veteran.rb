@@ -153,6 +153,10 @@ class Veteran < ApplicationRecord
     @relationships ||= fetch_relationships
   end
 
+  def incident_flash?
+    bgs_record[:block_cadd_ind] == "S"
+  end
+
   # Postal code might be stored in address line 3 for international addresses
   def zip_code
     @zip_code || (@address_line3 if (@address_line3 || "").match?(/(?i)^[a-z0-9][a-z0-9\- ]{0,10}[a-z0-9]$/))

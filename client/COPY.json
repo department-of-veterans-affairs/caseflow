@@ -267,6 +267,7 @@
   "ADD_COLOCATED_TASK_CONFIRMATION_SUBJECT": "action",
   "ADD_COLOCATED_TASK_CONFIRMATION_TITLE": "You have assigned %s administrative %s (%s)",
   "ADD_COLOCATED_TASK_CONFIRMATION_DETAIL": "If you need to make any changes, please email your administration action team.",
+  "ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR": "There is already an open %s action on this case with the instructions \"%s\"",
   "ADD_HEARING_ADMIN_TASK_CONFIRMATION_DETAIL": "The task has been placed in your teams queue.",
 
   "CHANGE_TASK_TYPE_SUBHEAD": "Change task type",
@@ -425,6 +426,8 @@
   "NO_RELATIONSHIPS": "This Veteran currently has no known relationships. If you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "DUPLICATE_PHONE_NUMBER_TITLE": "Veteran Record Alert",
   "DUPLICATE_PHONE_NUMBER_MESSAGE": "Please contact VLJ Support to request that this veteran's information be updated to remove duplicate phone numbers currently on file to resolve this error.",
+  "INCIDENT_FLASH_ERROR_START": "Please send an encrypted email to the ",
+  "INCIDENT_FLASH_ERROR_END": " with the Veteran's SSN.  Request to temporarily unlock the flash, wait for confirmation, and try again.",
   "CLAIMANT_NOT_FOUND_START": "Please select the claimant listed on the form. If you do not see the claimant in the options below or if the claimant's information needs updated, and you have access, please add the claimant to the Corporate Database to continue processing this intake. If you do not have access, please ",
   "CLAIMANT_NOT_FOUND_END": " for assistance.",
   "INTAKE_EDIT_WITHDRAW_DATE": "Please include the date the withdrawal was requested",
@@ -481,5 +484,7 @@
   "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_TITLE": "Send to Schedule Veterans List",
   "SEND_TO_SCHEDULE_VETERAN_LIST_MODAL_DETAIL": "Sending to Schedule Veteran will place this case in the list of Veterans to be scheduled. You must assign this case a Regional Office to proceed.",
   "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_TITLE": "Updated Task Successfully",
-  "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL": "Successfully sent %s's case to the list of Veterans to be scheduled."
+  "SEND_TO_SCHEDULE_VETERAN_LIST_MESSAGE_DETAIL": "Successfully sent %s's case to the list of Veterans to be scheduled.",
+
+  "INVALID_RECORD_ERROR_TITLE": "Record is invalid"
 }
