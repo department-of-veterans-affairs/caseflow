@@ -89,7 +89,15 @@ class QueueApp extends React.PureComponent {
     }
   }
 
-  routedSearchResults = (props) => <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />;
+  routedSearchResults = (props) => {
+    let caseflowVeteranIds;
+
+    if (props.match.params.caseflowVeteranIds) {
+      caseflowVeteranIds = props.match.params.caseflowVeteranIds.split(',');
+    }
+
+    return <CaseListView caseflowVeteranIds={caseflowVeteranIds} />;
+  }
 
   viewForUserRole = () => {
     const { userRole } = this.props;
@@ -283,7 +291,7 @@ class QueueApp extends React.PureComponent {
             render={this.routedSearchResults} />
           <PageRoute
             exact
-            path="/cases/:caseflowVeteranId"
+            path="/cases/:caseflowVeteranIds"
             title="Case Search | Caseflow"
             render={this.routedSearchResults} />
           <PageRoute
