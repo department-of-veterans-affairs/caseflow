@@ -1,29 +1,35 @@
 # frozen_string_literal: true
 
 class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
-  validate :valid_caseflow_veteran_id
+  validate :veterans_exist
 
-  def initialize(caseflow_veteran_id:, user:)
+  def initialize(caseflow_veteran_ids:, user:)
     super(user: user)
-    @caseflow_veteran_id = caseflow_veteran_id
+    @caseflow_veteran_ids = caseflow_veteran_ids
   end
 
   protected
 
   def appeals
-    AppealFinder.new(user: user).find_appeals_for_veterans([veteran])
+    AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
   end
 
   def claim_reviews
-    ClaimReview.find_all_visible_by_file_number(file_number_or_ssn).map(&:search_table_ui_hash)
+    ClaimReview.find_all_visible_by_file_number(
+      veterans_user_can_access.map(&:file_number)
+    ).map(&:search_table_ui_hash)
+  end
+
+  def veterans
+    @veterans ||= Veteran.where(id: caseflow_veteran_ids)
   end
 
   private
 
-  attr_reader :caseflow_veteran_id
+  attr_reader :caseflow_veteran_ids
 
-  def valid_caseflow_veteran_id
-    return if file_number_or_ssn
+  def veterans_exist
+    return unless veterans_user_can_access.empty?
 
     errors.add(:workflow, not_found_error)
     @status = :not_found
@@ -32,15 +38,7 @@ class CaseSearchResultsForCaseflowVeteranId < ::CaseSearchResultsBase
   def not_found_error
     {
       "title": "Veteran not found",
-      "detail": "Could not find a Veteran matching the Caseflow Veteran id #{file_number_or_ssn}"
+      "detail": "Could not find a Veteran matching one of the Caseflow Veteran ids #{caseflow_veteran_ids}"
     }
-  end
-
-  def file_number_or_ssn
-    @file_number_or_ssn ||= veteran&.file_number
-  end
-
-  def veteran
-    @veteran ||= Veteran.find_by(id: caseflow_veteran_id)
   end
 end
