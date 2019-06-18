@@ -20,6 +20,9 @@ export PATH=/.yarn/bin:/.config/yarn/global/node_modules/.bin:/usr/local/bundle/
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
 export ORACLE_HOME=/opt/oracle/instantclient_12_2
 
+echo "Waiting for FACOLS to properly start up - 4 minutes"
+sleep 240
+
 echo "Starting Appeals App"
 date
 
