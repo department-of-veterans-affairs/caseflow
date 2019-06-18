@@ -90,6 +90,8 @@ class ClaimReview < DecisionReview
     end
 
     end_product_establishments.each do |end_product_establishment|
+      next unless end_product_establishment.status_active?
+
       end_product_establishment.perform!
       end_product_establishment.create_contentions!
       end_product_establishment.associate_rating_request_issues!
