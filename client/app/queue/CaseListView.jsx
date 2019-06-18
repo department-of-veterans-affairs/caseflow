@@ -46,7 +46,7 @@ class CaseListView extends React.PureComponent {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(`/cases/${caseflowVeteranIds.join(',')}`).
+    return ApiUtil.get('/search', { query: { veteran_ids: caseflowVeteranIds.join(',') } }).
       then((response) => {
         const returnedObject = JSON.parse(response.text);
 

@@ -26,7 +26,7 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         result = CaseSearchResultsForCaseflowVeteranId.new(
-          caseflow_veteran_ids: params[:caseflow_veteran_ids].split(","), user: current_user
+          caseflow_veteran_ids: params[:veteran_ids]&.split(","), user: current_user
         ).call
 
         render_search_results_as_json(result)
