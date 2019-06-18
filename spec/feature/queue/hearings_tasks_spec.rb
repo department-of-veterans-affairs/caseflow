@@ -109,7 +109,7 @@ RSpec.feature "Hearings tasks workflows" do
             FactoryBot.create(:no_show_hearing_task)
           end
           success_msg = "You have bulk assigned 4 No Show Hearing Task task(s)"
-          visit("/organizations/hearing-management")
+          visit("/organizations/hearings-management")
           click_button(text: "Assign Tasks")
           fill_in_and_submit_bulk_assign_modal
           expect(page).to have_content(success_msg)

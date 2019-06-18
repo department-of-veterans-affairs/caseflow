@@ -9,6 +9,10 @@ class GenericQueue
     (relevant_tasks + relevant_attorney_tasks).each(&:update_if_hold_expired!)
   end
 
+  def config
+    user.is_a?(Organization) ? QueueConfig.new(organization: user).to_h : {}
+  end
+
   private
 
   def relevant_tasks

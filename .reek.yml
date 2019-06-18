@@ -5,11 +5,13 @@ detectors:
   Attribute:
     exclude:
       - BulkTaskAssignment
+      - QueueConfig
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
     exclude:
       - FetchDocumentsForReaderJob#fetch_for_appeal
+      - AsyncableJobsReporter
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -18,8 +20,14 @@ detectors:
     enabled: false
   MissingSafeMethod:
     enabled: false
+  NestedIterators:
+    exclude:
+      - AsyncableJobsReporter
   NilCheck:
     enabled: false
+  RepeatedConditional:
+    exclude:
+      - QueueConfig
   TooManyMethods:
     exclude:
       - DispositionTask

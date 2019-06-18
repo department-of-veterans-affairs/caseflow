@@ -199,9 +199,6 @@ class Appeal < DecisionReview
     veteran_if_exists&.available_hearing_locations
   end
 
-  delegate :city,
-           :state, to: :appellant, prefix: true
-
   def regional_office
     nil
   end
@@ -223,6 +220,7 @@ class Appeal < DecisionReview
            :last_name,
            :middle_name,
            :name_suffix,
+           :address_line_1,
            :city,
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
@@ -563,6 +561,10 @@ class Appeal < DecisionReview
 
   def processed_in_caseflow?
     true
+  end
+
+  def processed_in_vbms?
+    false
   end
 
   def first_distributed_to_judge_date

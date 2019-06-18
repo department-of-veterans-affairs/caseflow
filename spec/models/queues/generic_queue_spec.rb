@@ -29,4 +29,25 @@ describe GenericQueue do
       end
     end
   end
+
+  describe ".config" do
+    subject { GenericQueue.new(user: assignee).config }
+
+    context "when the assignee is a user" do
+      let(:assignee) { FactoryBot.create(:user) }
+
+      it "returns an empty hash" do
+        expect(subject).to eq({})
+      end
+    end
+
+    context "when the assignee is an organization" do
+      let(:assignee) { FactoryBot.create(:organization) }
+
+      it "returns a hash with some elements" do
+        expect(subject).to_not eq({})
+        expect(subject.keys.length).to(be > 0)
+      end
+    end
+  end
 end
