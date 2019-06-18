@@ -122,7 +122,8 @@ RSpec.feature "Search" do
                   :end_product_establishment,
                   source: higher_level_review,
                   veteran_file_number: appeal.veteran_file_number,
-                  synced_status: "CAN"
+                  synced_status: "CAN",
+                  committed_at: Time.zone.now
                 )
               end
               let!(:end_product_establishment_2) do
@@ -130,7 +131,8 @@ RSpec.feature "Search" do
                   :end_product_establishment,
                   source: higher_level_review,
                   veteran_file_number: appeal.veteran_file_number,
-                  synced_status: "CLR"
+                  synced_status: "CLR",
+                  committed_at: Time.zone.now
                 )
               end
               let!(:end_product_establishment_3) do

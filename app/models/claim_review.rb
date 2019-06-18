@@ -89,7 +89,7 @@ class ClaimReview < DecisionReview
       fail NoEndProductsRequired, message: "Decision reviews processed in Caseflow should not have End Products"
     end
 
-    establish_all_end_products!
+    end_product_establishments.each(&:establish!)
     process_legacy_issues!
     clear_error!
     processed!
@@ -201,21 +201,6 @@ class ClaimReview < DecisionReview
 
   private
 
-  def establish_all_end_products!
-    end_product_establishments.each do |end_product_establishment|
-      next unless end_product_establishment.status_active?
-
-      end_product_establishment.perform!
-      end_product_establishment.create_contentions!
-      end_product_establishment.associate_rating_request_issues!
-      if informal_conference?
-        end_product_establishment.generate_claimant_letter!
-        end_product_establishment.generate_tracked_item!
-      end
-      end_product_establishment.commit!
-    end
-  end
-
   def incomplete_tasks?
     tasks.reject(&:completed?).any?
   end
@@ -228,10 +213,6 @@ class ClaimReview < DecisionReview
     return if tasks.any? { |task| task.is_a?(DecisionReviewTask) } # TODO: more specific check?
 
     DecisionReviewTask.create!(appeal: self, assigned_at: Time.zone.now, assigned_to: business_line)
-  end
-
-  def informal_conference?
-    false
   end
 
   def intake_processed_by
