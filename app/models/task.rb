@@ -87,7 +87,7 @@ class Task < ApplicationRecord
   end
 
   def build_action_hash(action, user)
-    TaskAction.new(action, self, user).to_h
+    TaskActionHelper.build_hash(action, self, user)
   end
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
