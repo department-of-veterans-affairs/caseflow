@@ -36,7 +36,7 @@ class Idt::Api::V1::VeteransController < Idt::Api::V1::BaseController
 
     poa_address = bgs.find_address_by_participant_id(poa[:participant_id])
 
-    return poa.reject { |key| key == :participant_id } unless poa_address
+    return poa unless poa_address
 
     poa.merge(poa_address)
   end

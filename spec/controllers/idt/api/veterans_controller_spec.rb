@@ -86,7 +86,11 @@ RSpec.describe Idt::Api::V1::VeteransController, type: :controller do
 
           response_body = JSON.parse(response.body)
 
-          expect(response_body["poa"]).to eq("representative_type" => "Attorney", "representative_name" => "Clarence Darrow")
+          expect(response_body["poa"]).to eq(
+            "representative_type" => "Attorney",
+            "representative_name" => "Clarence Darrow",
+            "participant_id" => power_of_attorney.bgs_participant_id
+          )
         end
       end
 
