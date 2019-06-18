@@ -18,7 +18,7 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   def claim_reviews
     veteran_file_numbers = veterans_user_can_access.map(&:file_number)
 
-    ClaimReview.find_all_visible_by_file_number(*veteran_file_numbers).map(&:search_table_ui_hash)
+    ClaimReview.find_all_visible_by_file_number(*veteran_file_numbers)
   end
 
   private

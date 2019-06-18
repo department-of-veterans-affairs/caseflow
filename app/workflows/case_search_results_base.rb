@@ -65,7 +65,7 @@ class CaseSearchResultsBase
     @search_results ||= {
       search_results: {
         appeals: json_appeals(appeals),
-        claim_reviews: claim_reviews
+        claim_reviews: claim_reviews.map(&:search_table_ui_hash)
       }
     }
   end
