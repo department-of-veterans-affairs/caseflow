@@ -197,6 +197,8 @@ class TaskRows extends React.PureComponent {
   showActionsSection = (task) => (task && !this.props.hideDropdown);
 
   mapDecisionDateToSortableObject = (appeal) => {
+    // if there's no decision date, then this object should be at the top 
+    // of the case timeline, thus the negative infinity default 
     return {
       isDecisionDate: true,
       createdAt: appeal.decisionDate || Number.NEGATIVE_INFINITY
