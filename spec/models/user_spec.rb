@@ -352,7 +352,7 @@ describe User do
     context "when appeal has in-progress attorney task assigned to user" do
       let!(:task) do
         create(:task,
-               type: "AttorneyDecisionTask",
+               type: "AttorneyTask",
                appeal: appeal,
                assigned_to: user,
                status: Constants.TASK_STATUSES.assigned)
@@ -374,7 +374,7 @@ describe User do
     context "when appeal has completed task assigned to user" do
       let!(:task) do
         create(:task,
-               type: "AttorneyDecisionTask",
+               type: "AttorneyTask",
                appeal: appeal,
                assigned_to: user,
                status: Constants.TASK_STATUSES.completed)

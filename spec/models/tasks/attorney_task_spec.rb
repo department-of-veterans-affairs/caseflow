@@ -33,7 +33,7 @@ describe AttorneyTask do
 
     context "there is a completed sibling task" do
       before do
-        AttorneyDecisionTask.create!(
+        AttorneyTask.create!(
           assigned_to: attorney,
           assigned_by: judge,
           appeal: appeal,
@@ -49,7 +49,7 @@ describe AttorneyTask do
 
     context "there is an uncompleted sibling task" do
       before do
-        AttorneyDecisionTask.create!(
+        AttorneyTask.create!(
           assigned_to: attorney,
           assigned_by: judge,
           appeal: appeal,

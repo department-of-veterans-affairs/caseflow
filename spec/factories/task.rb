@@ -200,8 +200,8 @@ FactoryBot.define do
       parent { create(:disposition_task, appeal: appeal) }
     end
 
-    factory :ama_attorney_task, class: AttorneyDecisionTask do
-      type { AttorneyDecisionTask.name }
+    factory :ama_attorney_task, class: AttorneyTask do
+      type { AttorneyTask.name }
       appeal { create(:appeal) }
       parent { create(:ama_judge_decision_review_task) }
       assigned_by { create(:user) }

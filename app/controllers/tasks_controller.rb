@@ -11,7 +11,6 @@ class TasksController < ApplicationController
     ColocatedTask: ColocatedTask,
     AttorneyRewriteTask: AttorneyRewriteTask,
     AttorneyDispatchReturnTask: AttorneyDispatchReturnTask,
-    AttorneyDecisionTask: AttorneyDecisionTask,
     AttorneyTask: AttorneyTask,
     AttorneyQualityReviewTask: AttorneyQualityReviewTask,
     GenericTask: GenericTask,
@@ -56,7 +55,7 @@ class TasksController < ApplicationController
   #
   # To create attorney task
   # e.g, for ama appeal => POST /tasks,
-  # { type: AttorneyDecisionTask,
+  # { type: AttorneyTask,
   #   external_id: "2CE3BEB0-FA7D-4ACA-A8D2-1F7D2BDFB1E7",
   #   title: "something",
   #   parent_id: 2,

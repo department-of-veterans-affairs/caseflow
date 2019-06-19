@@ -52,7 +52,7 @@ RSpec.describe TasksController, type: :controller do
         # Ensure we include recently completed tasks
         expect(response_body.count { |task| task["id"] == task13.id.to_s }).to eq 1
 
-        ama_tasks = response_body.select { |task| task["attributes"]["type"] == "AttorneyDecisionTask" }
+        ama_tasks = response_body.select { |task| task["attributes"]["type"] == "AttorneyTask" }
         expect(ama_tasks.size).to eq 4
         expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.assigned }).to eq 1
         expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.in_progress }).to eq 1
@@ -263,7 +263,7 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           [{
             "external_id": ama_appeal.uuid,
-            "type": AttorneyDecisionTask.name,
+            "type": AttorneyTask.name,
             "assigned_to_id": attorney.id,
             "parent_id": ama_judge_task.id
           }]
@@ -274,19 +274,11 @@ RSpec.describe TasksController, type: :controller do
 
           expect(response.status).to eq 200
           response_body = JSON.parse(response.body)["tasks"]["data"]
-          expect(response_body.length).to eq 3
 
           assign_task = response_body.detect { |task| task["id"] == ama_judge_task.id.to_s }
-          expect(assign_task["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
+          expect(assign_task["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
 
-          review_task = response_body.detect { |task| task["attributes"]["type"] == JudgeDecisionReviewTask.name }
-          expect(review_task["attributes"]["appeal_id"]).to eq ama_appeal.id
-          expect(review_task["attributes"]["docket_number"]).to eq ama_appeal.docket_number
-          expect(review_task["attributes"]["appeal_type"]).to eq Appeal.name
-          expect(review_task["attributes"]["assigned_to"]["id"]).to eq user.id
-          expect(review_task["id"]).to eq AttorneyTask.find_by(appeal: ama_appeal).parent_id.to_s
-
-          attorney_task = response_body.detect { |task| task["attributes"]["type"] == AttorneyDecisionTask.name }
+          attorney_task = response_body.detect { |task| task["attributes"]["type"] == AttorneyTask.name }
           expect(attorney_task["attributes"]["appeal_id"]).to eq ama_appeal.id
           expect(attorney_task["attributes"]["docket_number"]).to eq ama_appeal.docket_number
           expect(attorney_task["attributes"]["appeal_type"]).to eq Appeal.name

@@ -29,7 +29,7 @@ describe QualityReviewTask do
       let!(:atty) { FactoryBot.create(:user) }
       let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, user: atty) }
       let!(:atty_task_params) { [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }] }
-      let!(:atty_task) { AttorneyDecisionTask.create_many_from_params(atty_task_params, judge).first }
+      let!(:atty_task) { AttorneyTask.create_many_from_params(atty_task_params, judge).first }
 
       let!(:qr_user) { FactoryBot.create(:user) }
       let!(:qr_relationship) { OrganizationsUser.add_user_to_organization(qr_user, QualityReview.singleton) }

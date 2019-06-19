@@ -265,7 +265,7 @@ describe ColocatedTask do
         let(:action) { :poa_clarification }
 
         let!(:task2) do
-          AttorneyDecisionTask.create!(
+          AttorneyTask.create!(
             appeal: appeal_1,
             appeal_type: "LegacyAppeal",
             assigned_by: judge,

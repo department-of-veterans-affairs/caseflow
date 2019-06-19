@@ -115,7 +115,7 @@ class Task < ApplicationRecord
   end
 
   def children_attorney_tasks
-    children.where(type: AttorneyDecisionTask.name)
+    children.where(type: AttorneyTask.name)
   end
 
   def on_timed_hold?
