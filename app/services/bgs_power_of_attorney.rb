@@ -20,6 +20,7 @@ class BgsPowerOfAttorney
   end
 
   def fetch_bgs_record
+    binding.pry
     if claimant_participant_id
       bgs.fetch_poas_by_participant_ids([claimant_participant_id])[claimant_participant_id]
     else

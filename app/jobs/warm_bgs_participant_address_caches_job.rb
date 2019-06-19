@@ -6,6 +6,7 @@ class WarmBgsParticipantAddressCachesJob < CaseflowJob
 
   def perform
     RequestStore.store[:current_user] = User.system_user
+    RequestStore.store[:application] = "hearings"
 
     RegionalOffice::CITIES.each_key do |ro_id|
       process([ro_id].flatten) # could be array or string
