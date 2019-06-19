@@ -51,6 +51,13 @@ module Caseflow::Error
     end
   end
 
+  class MissingRequiredProperty < SerializableError
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]

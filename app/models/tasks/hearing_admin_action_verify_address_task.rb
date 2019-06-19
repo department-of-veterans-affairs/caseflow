@@ -24,7 +24,9 @@ class HearingAdminActionVerifyAddressTask < HearingAdminActionTask
 
     case params[:status]
     when Constants.TASK_STATUSES.cancelled
-      appeal.assign_ro_and_update_ahls(payload_values[:regional_office_value])
+      appeal.va_dot_gov_address_validator.assign_ro_and_update_ahls(
+        payload_values[:regional_office_value]
+      )
     end
 
     [self]

@@ -736,6 +736,10 @@ feature "Higher-Level Review" do
 
         fill_in "Decision date", with: "13/04/2019"
         expect(page).to have_content("Please enter a valid decision date")
+
+        Timecop.return
+        fill_in "Decision date", with: Time.zone.tomorrow.mdY
+        expect(page).to have_content("Decision date cannot be in the future")
       end
     end
 
@@ -1338,6 +1342,14 @@ feature "Higher-Level Review" do
           expect(page).to have_content(
             "#{COPY::VACOLS_OPTIN_ISSUE_NEW}:\nService connection, ankylosis of hip"
           )
+
+          click_intake_add_issue
+          add_intake_rating_issue("Left knee granted 2")
+
+          # these two legacy issues are already selected for other issues
+          expect(page).to have_field("ankylosis of hip", disabled: true, visible: false)
+          expect(page).to have_field("intervertebral disc syndrome", disabled: true, visible: false)
+          click_on("Cancel adding this issue")
 
           # add before_ama ratings
           click_intake_add_issue
