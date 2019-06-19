@@ -743,7 +743,7 @@ class LegacyAppeal < ApplicationRecord
     soc_eligible_date = receipt_date - 60.days
 
     # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    soc_date > soc_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
+    soc_date >= soc_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= soc_eligible_date }
   end
 
   def nod_date_eligible_for_opt_in?(receipt_date)
@@ -751,7 +751,7 @@ class LegacyAppeal < ApplicationRecord
 
     nod_eligible_date = receipt_date - 372.days
 
-    nod_date > nod_eligible_date
+    nod_date >= nod_eligible_date
   end
 
   def active_tasks

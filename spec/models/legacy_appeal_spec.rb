@@ -31,7 +31,6 @@ describe LegacyAppeal do
       scenario "when the ssoc date is before AMA was launched" do
         allow(appeal).to receive(:active?).and_return(true)
         allow(appeal).to receive(:issues).and_return(issues)
-        allow(appeal).to receive(:nod_date).and_return(nod_eligible_date + 1.day)
         allow(appeal).to receive(:soc_date).and_return(Constants::DATES["AMA_ACTIVATION"].to_date - 1.day)
 
         expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
