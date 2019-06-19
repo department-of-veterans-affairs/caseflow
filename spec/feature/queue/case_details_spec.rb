@@ -885,6 +885,7 @@ RSpec.feature "Case details" do
     let(:attorney_user) { FactoryBot.create(:user) }
     let(:judge_user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
+    let(:appeal) { root_task.appeal }
     let!(:request_issue) { create(:request_issue, decision_review: appeal) }
     let!(:judge_task) do
       FactoryBot.create(
