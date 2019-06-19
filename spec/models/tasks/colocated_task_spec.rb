@@ -177,7 +177,7 @@ describe ColocatedTask do
             action: :poa_clarification,
             parent: parent,
             instructions: [instructions]
-          ).becomes(ColocatedTask)
+          )
         end
 
         it "does not create a new co-located task" do
@@ -344,7 +344,7 @@ describe ColocatedTask do
         assigned_to: colocated_user,
         appeal: appeal_1,
         parent: org_task
-      ).becomes(ColocatedTask)
+      )
     end
 
     it "should vary depending on status of task" do
@@ -481,7 +481,7 @@ describe ColocatedTask do
         action: :retired_vlj,
         assigned_by: initial_assigner,
         assigned_to: Colocated.singleton
-      ).becomes(ColocatedTask)
+      )
     end
     let(:colocated_task) { org_task.children.first }
 
