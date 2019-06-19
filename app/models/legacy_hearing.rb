@@ -100,7 +100,9 @@ class LegacyHearing < ApplicationRecord
   end
 
   def regional_office_key
-    return (venue_key || appeal&.regional_office_key) if request_type == "T" || hearing_day.nil?
+    if request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
+      return (venue_key || appeal&.regional_office_key)
+    end
 
     hearing_day&.regional_office
   end
