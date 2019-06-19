@@ -67,6 +67,10 @@ class Organization < ApplicationRecord
     "#{path}/users"
   end
 
+  def ama_task_serializer
+    WorkQueue::TaskSerializer
+  end
+
   private
 
   def clean_url
