@@ -67,6 +67,13 @@ class Hearing < ApplicationRecord
     end
   end
 
+  def readable_location
+    return "Washington, DC" if request_type == HearingDay::REQUEST_TYPES[:central]
+    return "#{location.city}, #{location.state}" if location
+
+    nil
+  end
+
   def readable_request_type
     HEARING_TYPES[request_type.to_sym]
   end
