@@ -43,6 +43,12 @@ class OrganizationQueue extends React.PureComponent {
     this.props.clearCaseSelectSearch();
   }
 
+  qConfig = () => {
+    console.log("AYYYYYYYYYyyyyyyyyyyyyyyyyy =======");
+    console.log(this.props.queueConfig);
+    return this.props.queueConfig;
+  }
+
   queueConfig = () => {
     const config = {
       table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),
@@ -183,7 +189,7 @@ class OrganizationQueue extends React.PureComponent {
   makeQueueComponents = (config) => {
     return <div>
       <h1 {...fullWidth}>{config.table_title}</h1>
-      <QueueOrganizationDropdown organizations={config.organizations} />
+      <QueueOrganizationDropdown organizations={this.props.organizations} />
 
       <TabWindow
         name="tasks-organization-queue"
@@ -195,7 +201,7 @@ class OrganizationQueue extends React.PureComponent {
 
   render = () => {
     const { success, tasksAssignedByBulk } = this.props;
-    const body = this.makeQueueComponents(this.queueConfig());
+    const body = this.makeQueueComponents(this.qConfig());
 
     return <AppSegment filledBackground styling={containerStyles}>
       {success && <Alert type="success" title={success.title} message={success.detail} />}
@@ -227,7 +233,8 @@ const mapStateToProps = (state) => {
     unassignedTasks: getUnassignedOrganizationalTasks(state),
     assignedTasks: getAssignedOrganizationalTasks(state),
     completedTasks: getCompletedOrganizationalTasks(state),
-    trackingTasks: trackingTasksForOrganization(state)
+    trackingTasks: trackingTasksForOrganization(state),
+    queueConfig: state.queue.queueConfig
   };
 };
 
