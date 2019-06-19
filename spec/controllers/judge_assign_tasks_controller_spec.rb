@@ -2,7 +2,7 @@
 
 RSpec.describe JudgeAssignTasksController do
   describe "POST /judge_assign_tasks" do
-    context "when cases will be assigned to an attorney", focus: true do
+    context "when cases will be assigned to an attorney" do
       let!(:attorney) { create(:user) }
       let!(:judge) { create(:user) }
       let!(:attorney_staff) { create(:staff, :attorney_role, sdomainid: attorney.css_id) }

@@ -257,7 +257,7 @@ RSpec.describe TasksController, type: :controller do
     context "Attorney task" do
       context "when current user is a judge" do
         let(:ama_appeal) { create(:appeal) }
-        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user, appeal: ama_appeal) }
+        let(:ama_judge_task) { create(:ama_judge_task, assigned_to: user) }
         let(:role) { :judge_role }
 
         let(:params) do
@@ -273,17 +273,18 @@ RSpec.describe TasksController, type: :controller do
           subject
 
           expect(response.status).to eq 200
+
           response_body = JSON.parse(response.body)["tasks"]["data"]
+          expect(response_body.second["attributes"]["type"]).to eq AttorneyTask.name
+          expect(response_body.second["attributes"]["appeal_id"]).to eq ama_appeal.id
+          expect(response_body.second["attributes"]["docket_number"]).to eq ama_appeal.docket_number
+          expect(response_body.second["attributes"]["appeal_type"]).to eq Appeal.name
 
-          assign_task = response_body.detect { |task| task["id"] == ama_judge_task.id.to_s }
-          expect(assign_task["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
-
-          attorney_task = response_body.detect { |task| task["attributes"]["type"] == AttorneyTask.name }
-          expect(attorney_task["attributes"]["appeal_id"]).to eq ama_appeal.id
-          expect(attorney_task["attributes"]["docket_number"]).to eq ama_appeal.docket_number
-          expect(attorney_task["attributes"]["appeal_type"]).to eq Appeal.name
-          expect(attorney_task["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
-          expect(attorney_task["attributes"]["assigned_to"]["id"]).to eq attorney.id
+          attorney_task = AttorneyTask.find_by(appeal: ama_appeal)
+          expect(attorney_task.status).to eq Constants.TASK_STATUSES.assigned
+          expect(attorney_task.assigned_to).to eq attorney
+          expect(attorney_task.parent_id).to eq ama_judge_task.id
+          expect(ama_judge_task.reload.status).to eq Constants.TASK_STATUSES.on_hold
         end
       end
     end
