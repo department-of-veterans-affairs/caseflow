@@ -7,8 +7,7 @@ class WarmBgsParticipantAddressCachesJob < CaseflowJob
   def perform
     RequestStore.store[:current_user] = User.system_user
 
-    RegionalOffice::STATIONS.each do |station_id, ro_id|
-      next if ro_id == "NA"
+    RegionalOffice::CITIES.keys.each do |ro_id|
       process([ro_id].flatten) # could be array or string
     end
   end
@@ -17,14 +16,12 @@ class WarmBgsParticipantAddressCachesJob < CaseflowJob
     ro_ids.each do |ro_id|
       regional_office = HearingDayMapper.validate_regional_office(ro_id)
 
-      hearing_days_with_hearings = HearingDay.open_hearing_days_with_hearings_hash(
+      HearingDay.open_hearing_days_with_hearings_hash(
         Time.zone.today.beginning_of_day,
         Time.zone.today.beginning_of_day + 182.days,
         regional_office,
         RequestStore.store[:current_user].id
       )
-    rescue HearingDayMapper::InvalidRegionalOfficeError
-      # just skip to the next one
     rescue StandardError => error
       # Ensure errors are sent to Sentry, but don't block the job from continuing.
       Raven.capture_exception(error)
