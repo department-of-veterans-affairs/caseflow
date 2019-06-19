@@ -643,7 +643,6 @@ RSpec.feature "Task queue" do
       end
     end
 
-
     context "when it was created from a BvaDispatchTask" do
       let!(:bva_dispatch_user) { FactoryBot.create(:user) }
       let!(:bva_dispatch_relationship) do
@@ -747,8 +746,6 @@ RSpec.feature "Task queue" do
         fill_in "taskInstructions", with: "Please fix this"
 
         click_on COPY::MODAL_SUBMIT_BUTTON
-
-
 
         expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
 
