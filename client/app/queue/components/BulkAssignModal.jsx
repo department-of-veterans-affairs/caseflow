@@ -134,19 +134,25 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   filterTasksByRegionalOffice = (tasks) => {
+    let filteredTasks = tasks;
+
     if (this.state.modal.regionalOffice) {
-      tasks = tasks.filter((task) => {
+      filteredTasks = filteredTasks.filter((task) => {
         return regionalOfficeCity(task) === this.state.modal.regionalOffice;
       });
     }
-    return tasks;
+
+    return filteredTasks;
   }
 
   filterTasksByTaskType = (tasks) => {
+    let filteredTasks = tasks;
+
     if (this.state.modal.taskType) {
-      tasks = this.filterTasks('type', this.state.modal.taskType, tasks);
+      filteredTasks = this.filterTasks('type', this.state.modal.taskType, filteredTasks);
     }
-    return tasks
+
+    return filteredTasks;
   }
 
   generateUserOptions = () => {
@@ -161,7 +167,7 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   generateRegionalOfficeOptions = () => {
-    let filteredTasks = this.filterTasksByTaskType(this.props.tasks);
+    const filteredTasks = this.filterTasksByTaskType(this.props.tasks);
 
     const options = _.uniq(filteredTasks.map((task) => {
       return regionalOfficeCity(task);
@@ -171,7 +177,7 @@ class BulkAssignModal extends React.PureComponent {
   }
 
   generateTaskTypeOptions = () => {
-    let filteredTasks = this.filterTasksByRegionalOffice(this.props.tasks);
+    const filteredTasks = this.filterTasksByRegionalOffice(this.props.tasks);
 
     const taskOptions = _.uniq(filteredTasks.map((task) => task.type)).map((task) => {
       return {
@@ -187,6 +193,7 @@ class BulkAssignModal extends React.PureComponent {
     const actualOptions = [];
     const issueCounts = BULK_ASSIGN_ISSUE_COUNT;
     let filteredTasks = this.filterTasksByRegionalOffice(this.props.tasks);
+
     filteredTasks = this.filterTasksByTaskType(filteredTasks);
 
     for (let i = 0; i < issueCounts.length; i++) {
@@ -197,12 +204,12 @@ class BulkAssignModal extends React.PureComponent {
         });
         break;
       }
-      if (filteredTasks.length === issueCounts[i]) { continue; }
-
-      actualOptions.push({
-        value: issueCounts[i],
-        displayText: issueCounts[i]
-      });
+      if (filteredTasks.length > issueCounts[i]) {
+        actualOptions.push({
+          value: issueCounts[i],
+          displayText: issueCounts[i]
+        });
+      }
     }
 
     return actualOptions;
