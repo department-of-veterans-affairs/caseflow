@@ -205,7 +205,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def to_hash(current_user_id)
-    LegacyHearingSerializer.default(
+    ::LegacyHearingSerializer.default(
       self,
       params: { current_user_id: current_user_id }
     ).serializable_hash[:data][:attributes]
@@ -226,7 +226,7 @@ class LegacyHearing < ApplicationRecord
   end
 
   def to_hash_for_worksheet(current_user_id)
-    LegacyHearingSerializer.worksheet(
+    ::LegacyHearingSerializer.worksheet(
       self,
       params: { current_user_id: current_user_id }
     ).serializable_hash[:data][:attributes]

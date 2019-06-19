@@ -178,14 +178,14 @@ class Hearing < ApplicationRecord
   end
 
   def quick_to_hash(_current_user_id)
-    HearingSerializer.quick(self).serializable_hash[:data][:attributes]
+    ::HearingSerializer.quick(self).serializable_hash[:data][:attributes]
   end
 
   def to_hash(_current_user_id)
-    HearingSerializer.default(self).serializable_hash[:data][:attributes]
+    ::HearingSerializer.default(self).serializable_hash[:data][:attributes]
   end
 
   def to_hash_for_worksheet(current_user_id)
-    HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
+    ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
   end
 end

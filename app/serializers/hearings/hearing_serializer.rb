@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'hearing_serializer_base'
-
 class HearingSerializer
   include FastJsonapi::ObjectSerializer
   extend HearingSerializerBase
