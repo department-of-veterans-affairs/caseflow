@@ -186,7 +186,7 @@ class LegacyHearing < ApplicationRecord
 
   def readable_location
     if request_type == LegacyHearing::CO_HEARING
-      return "Washington DC"
+      return "Washington, DC"
     end
 
     regional_office_name
