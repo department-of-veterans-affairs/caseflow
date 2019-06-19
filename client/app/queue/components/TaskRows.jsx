@@ -4,7 +4,7 @@ import moment from 'moment';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
-import { GrayDot, GreenCheckmark } from '../../components/RenderFunctions';
+import { GrayDot, GreenCheckmark, MinusCircle } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { taskIsOnHold, sortTaskList } from '../utils';
 import StringUtil from '../../util/StringUtil';
@@ -60,6 +60,7 @@ const taskInfoWithIconTimelineContainer =
     paddingLeft: '0px' });
 const greyDotStyling = css({ paddingLeft: '6px' });
 const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
+const redWithdrawStyling = css({ paddingLeft: '0px' });
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
@@ -104,6 +105,17 @@ class TaskRows extends React.PureComponent {
   closedAtListItem = (task) => {
     return task.closedAt ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
       <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+  }
+
+  showWithdrawalDate = () => {
+    return this.props.appeal.withdrawalDate ? <div>
+      <dt>{COPY.TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL.toUpperCase()}</dt>
+      <dd><DateString date={this.props.appeal.withdrawalDate} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+  }
+
+  showDecisionDate = () => {
+    return this.props.appeal.decisionDate ? <div>
+      <dd><DateString date={this.props.appeal.decisionDate} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
   daysWaitingListItem = (task) => {
@@ -204,6 +216,8 @@ class TaskRows extends React.PureComponent {
     } = this.props;
 
     let timelineContainerText;
+    let timeLineIcon;
+    let grayIconLineStyling;
 
     if (appeal.withdrawn) {
       timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
@@ -213,21 +227,36 @@ class TaskRows extends React.PureComponent {
       timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
     }
 
+    if (appeal.withdrawn) {
+      timeLineIcon = <MinusCircle />;
+    } else if (appeal.decisionDate) {
+      timeLineIcon = <GreenCheckmark />;
+    } else {
+      timeLineIcon = <GrayDot />;
+    }
+
+    if (appeal.withdrawn) {
+      grayIconLineStyling = css({ top: '40px !important' });
+    } else if (!appeal.decisionDate) {
+      grayIconLineStyling = css({ top: '25px !important' });
+    }
+
     return <React.Fragment key={appeal.externalId}>
       { timeline && <tr>
         <td {...taskTimeTimelineContainerStyling}>
-          { appeal.decisionDate && moment(appeal.decisionDate).format('MM/DD/YYYY') }
+          {appeal.decisionDate ? this.showDecisionDate() : this.showWithdrawalDate()}
         </td>
         <td {...taskInfoWithIconTimelineContainer}
-          {...(!appeal.decisionDate && greyDotStyling)}>
-          {appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
+          {...(appeal.withdrawalDate ? redWithdrawStyling : greyDotTimelineStyling)}>
+          { timeLineIcon }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
             <div {...grayLineTimelineStyling}
-              {...(!appeal.decisionDate && css({ top: '25px !important' }))} />}</td>
+              {...grayIconLineStyling} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
           { timelineContainerText } <br />
         </td>
       </tr> }
+
       { sortTaskList(taskList).map((task, index) =>
         <tr key={task.uniqueId}>
           <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>

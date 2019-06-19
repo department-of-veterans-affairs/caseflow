@@ -17,6 +17,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import { formatDateStrUtc } from '../util/DateUtil';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
@@ -258,6 +259,7 @@ export const prepareAppealForStore =
         docketName: appeal.attributes.docket_name,
         withdrawn: appeal.attributes.withdrawn,
         removed: appeal.attributes.removed,
+        withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
         isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
