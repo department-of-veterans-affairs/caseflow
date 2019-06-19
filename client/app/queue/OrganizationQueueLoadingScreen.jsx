@@ -36,9 +36,6 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
             queue_config: queueConfig
           } = JSON.parse(response.text);
 
-          console.log("WELCOME TO THE JUNGLE");
-          // console.log(response);
-
           this.props.setActiveOrganization(id, organizationName, isVso);
           this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
           this.props.setQueueConfig(queueConfig);

@@ -44,8 +44,6 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   qConfig = () => {
-    console.log("AYYYYYYYYYyyyyyyyyyyyyyyyyy =======");
-    console.log(this.props.queueConfig);
     return this.props.queueConfig;
   }
 
