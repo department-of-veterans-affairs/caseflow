@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe AttorneyDecisionTask, focus: true do
+describe AttorneyDecisionTask do
   context ".create" do
     it "returns the correct label" do
       expect(AttorneyDecisionTask.new.label).to eq(

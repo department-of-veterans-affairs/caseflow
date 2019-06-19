@@ -120,7 +120,7 @@ class TaskActionRepository
       {
         selected: nil,
         options: nil,
-        type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyTask.name
+        type: task.is_a?(LegacyTask) ? AttorneyLegacyTask.name : AttorneyDecisionTask.name
       }
     end
 

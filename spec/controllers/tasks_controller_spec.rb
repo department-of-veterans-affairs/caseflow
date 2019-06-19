@@ -52,7 +52,7 @@ RSpec.describe TasksController, type: :controller do
         # Ensure we include recently completed tasks
         expect(response_body.count { |task| task["id"] == task13.id.to_s }).to eq 1
 
-        ama_tasks = response_body.select { |task| task["attributes"]["type"] == "AttorneyTask" }
+        ama_tasks = response_body.select { |task| task["attributes"]["type"] == "AttorneyDecisionTask" }
         expect(ama_tasks.size).to eq 4
         expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.assigned }).to eq 1
         expect(ama_tasks.count { |task| task["attributes"]["status"] == Constants.TASK_STATUSES.in_progress }).to eq 1
@@ -263,7 +263,7 @@ RSpec.describe TasksController, type: :controller do
         let(:params) do
           [{
             "external_id": ama_appeal.uuid,
-            "type": AttorneyTask.name,
+            "type": AttorneyDecisionTask.name,
             "assigned_to_id": attorney.id,
             "parent_id": ama_judge_task.id
           }]
@@ -289,7 +289,7 @@ RSpec.describe TasksController, type: :controller do
           expect(response_body.second["attributes"]["appeal_type"]).to eq Appeal.name
           expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
 
-          expect(response_body.last["attributes"]["type"]).to eq AttorneyTask.name
+          expect(response_body.last["attributes"]["type"]).to eq AttorneyDecisionTask.name
           expect(response_body.last["attributes"]["appeal_id"]).to eq ama_appeal.id
           expect(response_body.last["attributes"]["docket_number"]).to eq ama_appeal.docket_number
           expect(response_body.last["attributes"]["appeal_type"]).to eq Appeal.name

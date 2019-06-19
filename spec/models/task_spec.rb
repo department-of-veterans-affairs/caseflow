@@ -605,20 +605,20 @@ describe Task do
       end
 
       it "should not throw an error" do
-        expect { AttorneyTask.verify_user_can_create!(user, task) }.to_not raise_error
+        expect { AttorneyDecisionTask.verify_user_can_create!(user, task) }.to_not raise_error
       end
 
       context "when task is completed" do
         it "should throw an error" do
           task.update!(status: :completed)
-          expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
+          expect { AttorneyDecisionTask.verify_user_can_create!(user, task) }.to raise_error(
             Caseflow::Error::ActionForbiddenError
           )
         end
       end
     end
 
-    context "when task has no available actions with AttorneyTask type" do
+    context "when task has no available actions with AttorneyDecisionTask type" do
       let(:dummy_actions) do
         [
           { label: "test label", value: "test/path", func: "assign_to_privacy_team_data" }
@@ -626,7 +626,7 @@ describe Task do
       end
 
       it "should throw an error" do
-        expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
+        expect { AttorneyDecisionTask.verify_user_can_create!(user, task) }.to raise_error(
           Caseflow::Error::ActionForbiddenError
         )
       end
@@ -636,7 +636,7 @@ describe Task do
       let(:dummy_actions) { [] }
 
       it "should throw an error" do
-        expect { AttorneyTask.verify_user_can_create!(user, task) }.to raise_error(
+        expect { AttorneyDecisionTask.verify_user_can_create!(user, task) }.to raise_error(
           Caseflow::Error::ActionForbiddenError
         )
       end

@@ -165,7 +165,7 @@ describe JudgeTask do
         assigned_by: judge,
         status: Constants.TASK_STATUSES.completed,
         parent: parent
-      ).becomes(AttorneyTask)
+      ).becomes(AttorneyDecisionTask)
     end
 
     subject { parent.previous_task }

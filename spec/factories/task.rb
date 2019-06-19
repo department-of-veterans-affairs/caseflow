@@ -200,7 +200,7 @@ FactoryBot.define do
     end
 
     factory :ama_attorney_task do
-      type { AttorneyTask.name }
+      type { AttorneyDecisionTask.name }
       appeal { create(:appeal) }
       parent { create(:ama_judge_decision_review_task) }
     end

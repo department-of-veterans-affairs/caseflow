@@ -457,7 +457,7 @@ export const reassignTasksToUser = ({
     params = {
       data: {
         task: {
-          type: 'AttorneyTask',
+          type: 'AttorneyDecisionTask',
           assigned_to_id: assigneeId
         }
       }

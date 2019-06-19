@@ -828,12 +828,12 @@ RSpec.feature "Case details" do
     context "multiple tasks" do
       let!(:task2) do
         create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
-                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
+                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyDecisionTask,
                       parent_id: task.id, started_at: rand(1..20).days.ago)
       end
       let!(:task3) do
         create(:task, appeal: appeal, status: Constants.TASK_STATUSES.in_progress,
-                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyTask,
+                      assigned_by: judge_user, assigned_to: attorney_user, type: AttorneyDecisionTask,
                       parent_id: task.id, started_at: rand(1..20).days.ago, assigned_at: 15.days.ago)
       end
       it "two tasks are displayed in the TaskSnapshot" do
@@ -951,7 +951,7 @@ RSpec.feature "Case details" do
         atty = FactoryBot.create(:user, station_id: 101)
         FactoryBot.create(:staff, :attorney_role, user: atty)
         atty_task_params = [{ appeal: appeal, parent_id: judge_assign_task.id, assigned_to: atty, assigned_by: judge }]
-        atty_task, judge_review_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first(2)
+        atty_task, judge_review_task = AttorneyDecisionTask.create_many_from_params(atty_task_params, judge).first(2)
 
         atty_task.update!(status: Constants.TASK_STATUSES.completed)
         judge_review_task.update!(status: Constants.TASK_STATUSES.completed)
