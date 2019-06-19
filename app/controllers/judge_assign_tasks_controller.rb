@@ -26,7 +26,7 @@ class JudgeAssignTasksController < TasksController
   end
 
   def create_tasks
-    AttorneyTask.create_many_from_params(create_params, current_user)
+    AttorneyDecisionTask.create_many_from_params(create_params, current_user)
   end
 
   def update_tasks
