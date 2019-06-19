@@ -64,13 +64,14 @@ FactoryBot.define do
     factory :timed_hold_task, class: TimedHoldTask do
       type { TimedHoldTask.name }
       appeal { create(:appeal) }
-      assigned_to { FactoryBot.create(:user) }
+      assigned_to { create(:user) }
       days_on_hold { rand(1..100) }
-      parent { FactoryBot.create(:generic_task) }
+      parent { create(:generic_task) }
     end
 
     factory :colocated_task, class: ColocatedTask do
       type { ColocatedTask.name }
+      parent { create(:generic_task) }
 
       factory :ama_colocated_task, class: ColocatedTask do
         appeal { create(:appeal) }
@@ -203,6 +204,22 @@ FactoryBot.define do
       type { AttorneyTask.name }
       appeal { create(:appeal) }
       parent { create(:ama_judge_task) }
+      assigned_by { create(:user) }
+      assigned_to { create(:user) }
+
+      after(:build) do |_task, evaluator|
+        if evaluator.assigned_by
+          existing_staff_record = VACOLS::Staff.where(
+            sdomainid: evaluator.assigned_by.css_id, svlj: "J", sactive: "A"
+          ).first
+          create(:staff, :judge_role, user: evaluator.assigned_by) if existing_staff_record.blank?
+        end
+
+        if evaluator.assigned_to
+          existing_staff_record = VACOLS::Staff.where(sdomainid: evaluator.assigned_to.css_id, sactive: "A").first
+          create(:staff, :attorney_role, user: evaluator.assigned_to) if existing_staff_record.blank?
+        end
+      end
     end
 
     factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
