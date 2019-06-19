@@ -9,7 +9,8 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { extractAppealsAndAmaTasks } from './utils';
 
 import {
-  onReceiveQueue
+  onReceiveQueue,
+  setQueueConfig
 } from './QueueActions';
 
 import {
@@ -34,6 +35,9 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
             is_vso: isVso,
             queue_config: queueConfig
           } = JSON.parse(response.text);
+
+          console.log("WELCOME TO THE JUNGLE");
+          // console.log(response);
 
           this.props.setActiveOrganization(id, organizationName, isVso);
           this.props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
@@ -72,7 +76,8 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
-  setActiveOrganization
+  setActiveOrganization,
+  setQueueConfig
 }, dispatch);
 
 export default (connect(null, mapDispatchToProps)(OrganizationQueueLoadingScreen));
