@@ -197,7 +197,7 @@ class BulkAssignModal extends React.PureComponent {
         });
         break;
       }
-      if (filteredTasks.length == issueCounts[i]) { continue; }
+      if (filteredTasks.length === issueCounts[i]) { continue; }
 
       actualOptions.push({
         value: issueCounts[i],
@@ -208,7 +208,7 @@ class BulkAssignModal extends React.PureComponent {
     return actualOptions;
   }
 
-  generateDropdown = (label, fieldName, options, isRequired, defaultText) => <Dropdown
+  generateDropdown = (label, fieldName, options, isRequired) => <Dropdown
     name={label}
     options={options}
     value={this.state.modal[fieldName]}
