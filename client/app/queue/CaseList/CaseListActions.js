@@ -129,13 +129,12 @@ export const fetchAppealsUsingVeteranId = (searchQuery) =>
         dispatch(onReceiveAppealsUsingVeteranId(returnedObject.appeals));
         dispatch(onReceiveClaimReviewsUsingVeteranId(returnedObject.claim_reviews));
 
-        // Expect all of the appeals will be for the same Caseflow Veteran ID so we pull off the first for the URL.
-        const caseflowVeteranId = returnedObject.appeals.length > 0 ?
-          returnedObject.appeals[0].attributes.caseflow_veteran_id :
-          returnedObject.claim_reviews[0].caseflow_veteran_id;
+        const veteranIds = returnedObject.appeals.
+          map((appeal) => appeal.attributes).
+          concat(returnedObject.claim_reviews).
+          map((obj) => obj.caseflow_veteran_id);
 
-        return resolve(caseflowVeteranId);
-
+        return resolve([...new Set(veteranIds)]);
       }).
       catch((error) => {
         const backendError = error.response.body;
