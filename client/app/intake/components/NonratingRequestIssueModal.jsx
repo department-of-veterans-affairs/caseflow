@@ -15,7 +15,7 @@ import SearchableDropdown from '../../components/SearchableDropdown';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
-import { validateDate } from '../util/issues';
+import { validateDate, validateDateNotInFuture } from '../util/issues';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -41,7 +41,7 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleDueToId: null,
       ineligibleReason: null,
       decisionReviewTitle: null,
-      dateError: false
+      dateError: ''
     };
   }
 
@@ -73,8 +73,20 @@ class NonratingRequestIssueModal extends React.Component {
   decisionDateOnChange = (value) => {
     this.setState({
       decisionDate: value,
-      dateError: !validateDate(value)
+      dateError: this.errorOnDecisionDate(value)
     });
+  }
+
+  errorOnDecisionDate = (value) => {
+    if (value.length === 10) {
+      let error = validateDate(value) ? null : 'Please enter a valid decision date.';
+
+      if (!error) {
+        error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
+      }
+
+      return error;
+    }
   }
 
   selectedNonratingIssueIdOnChange = (value) => {
@@ -211,7 +223,7 @@ class NonratingRequestIssueModal extends React.Component {
             label="Decision date"
             strongLabel
             value={decisionDate}
-            errorMessage={this.state.dateError ? 'Please enter a valid decision date.' : null}
+            errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange} />
         </div>
 
@@ -239,7 +251,7 @@ class NonratingRequestIssueModal extends React.Component {
           { classNames: ['usa-button', 'add-issue'],
             name: this.getNextButtonText(),
             onClick: this.onAddIssue,
-            disabled: requiredFieldsMissing || this.state.dateError
+            disabled: requiredFieldsMissing || this.state.decisionDate.length < 10 || Boolean(this.state.dateError)
           },
           { classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
             name: 'None of these match, see more options',

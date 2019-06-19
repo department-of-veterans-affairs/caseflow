@@ -31,10 +31,11 @@ describe QueueConfig do
     end
   end
 
-  describe ".to_h" do
+  describe ".to_hash_for_user" do
     let(:organization) { FactoryBot.create(:organization) }
+    let(:user) { FactoryBot.create(:user) }
 
-    subject { QueueConfig.new(organization: organization).to_h }
+    subject { QueueConfig.new(organization: organization).to_hash_for_user(user) }
 
     describe "shape of the returned hash" do
       it "returns the correct top level keys in the response" do
@@ -55,7 +56,7 @@ describe QueueConfig do
     end
 
     describe "tabs" do
-      subject { QueueConfig.new(organization: organization).to_h[:tabs] }
+      subject { QueueConfig.new(organization: organization).to_hash_for_user(user)[:tabs] }
 
       context "with a non-VSO organization" do
         it "does not include a tab for tracking tasks" do
@@ -65,7 +66,9 @@ describe QueueConfig do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array([:label, :name, :description, :columns, :task_group, :allow_bulk_assign])
+            expect(tab.keys).to match_array(
+              [:label, :name, :description, :columns, :task_group, :allow_bulk_assign, :tasks]
+            )
           end
         end
 
@@ -74,9 +77,34 @@ describe QueueConfig do
             expect(tab[:columns]).to_not include(Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN)
           end
         end
+
+        context "when the organization has tasks assigned to it" do
+          let!(:unassigned_tasks) { FactoryBot.create_list(:generic_task, 4, assigned_to: organization) }
+          let!(:on_hold_tasks) { FactoryBot.create_list(:generic_task, 2, :on_hold, assigned_to: organization) }
+          let!(:completed_tasks) { FactoryBot.create_list(:generic_task, 7, :completed, assigned_to: organization) }
+
+          it "returns the tasks in the correct tabs" do
+            tabs = subject
+
+            # Tasks are serialized at this point so we need to convert integer task IDs to strings.
+            expect(tabs[0][:tasks].pluck(:id)).to match_array(unassigned_tasks.map { |t| t.id.to_s })
+            expect(tabs[1][:tasks].pluck(:id)).to match_array(on_hold_tasks.map { |t| t.id.to_s })
+            expect(tabs[2][:tasks].pluck(:id)).to match_array(completed_tasks.map { |t| t.id.to_s })
+          end
+
+          it "displays the correct labels for the tabs" do
+            tabs = subject
+
+            expect(tabs[0][:label]).to eq(
+              format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_tasks.count)
+            )
+            expect(tabs[1][:label]).to eq(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, on_hold_tasks.count))
+            expect(tabs[2][:label]).to eq(COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE)
+          end
+        end
       end
 
-      context "with an organization that displays regional office in " do
+      context "with an organization that displays regional office in queue table views" do
         before { allow(organization).to receive(:show_regional_office_in_queue?).and_return(true) }
 
         it "includes the regional column in the list of columns for all tabs" do
@@ -86,7 +114,7 @@ describe QueueConfig do
         end
       end
 
-      context "when a VSO" do
+      context "when the organization is a VSO" do
         let(:organization) { FactoryBot.create(:vso) }
 
         it "includes a tab for tracking tasks" do
@@ -96,7 +124,20 @@ describe QueueConfig do
 
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
-            expect(tab.keys).to match_array([:label, :name, :description, :columns, :task_group, :allow_bulk_assign])
+            expect(tab.keys).to match_array(
+              [:label, :name, :description, :columns, :task_group, :allow_bulk_assign, :tasks]
+            )
+          end
+        end
+
+        context "when the VSO has tracking tasks assigned to it" do
+          let!(:tracking_tasks) { FactoryBot.create_list(:track_veteran_task, 5, assigned_to: organization) }
+
+          it "returns the tasks in the tracking tasks tabs" do
+            tabs = subject
+
+            # Tasks are serialized at this point so we need to convert integer task IDs to strings.
+            expect(tabs[0][:tasks].pluck(:id)).to match_array(tracking_tasks.map { |t| t.id.to_s })
           end
         end
       end

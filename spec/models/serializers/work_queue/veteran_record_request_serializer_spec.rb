@@ -4,9 +4,7 @@ describe WorkQueue::VeteranRecordRequestSerializer do
   let(:veteran) { create(:veteran) }
   let(:appeal) { create(:appeal, veteran_file_number: veteran.file_number) }
   let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
-  let(:task) do
-    create(:veteran_record_request_task, appeal: appeal, assigned_to: non_comp_org).becomes(VeteranRecordRequest)
-  end
+  let(:task) { create(:veteran_record_request_task, appeal: appeal, assigned_to: non_comp_org) }
 
   subject { described_class.new(task) }
 
