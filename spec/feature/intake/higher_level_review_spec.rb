@@ -736,6 +736,10 @@ feature "Higher-Level Review" do
 
         fill_in "Decision date", with: "13/04/2019"
         expect(page).to have_content("Please enter a valid decision date")
+
+        Timecop.return
+        fill_in "Decision date", with: Time.zone.tomorrow.mdY
+        expect(page).to have_content("Decision date cannot be in the future")
       end
     end
 

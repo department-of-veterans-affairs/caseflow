@@ -26,6 +26,7 @@ class Hearing < ApplicationRecord
   delegate :veteran_last_name, to: :appeal
   delegate :appellant_first_name, to: :appeal
   delegate :appellant_last_name, to: :appeal
+  delegate :appellant_address_line_1, to: :appeal
   delegate :appellant_city, to: :appeal
   delegate :appellant_state, to: :appeal
   delegate :appellant_zip, to: :appeal
@@ -211,6 +212,7 @@ class Hearing < ApplicationRecord
         :veteran_last_name,
         :appellant_first_name,
         :appellant_last_name,
+        :appellant_address_line_1,
         :appellant_city,
         :appellant_state,
         :appellant_zip,
