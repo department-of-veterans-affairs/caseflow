@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Hearings::WorksheetsController, type: :controller, focus: true do
+RSpec.describe Hearings::WorksheetsController, type: :controller do
   let!(:user) { User.authenticate!(roles: ["Hearing Prep"]) }
   let(:legacy_hearing) { create(:legacy_hearing) }
   let(:hearing) { create(:hearing, :with_tasks) }
