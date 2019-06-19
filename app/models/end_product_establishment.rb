@@ -71,6 +71,21 @@ class EndProductEstablishment < ApplicationRecord
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
+  def establish!
+    return unless status_active?
+
+    perform!
+    create_contentions!
+    associate_rating_request_issues!
+
+    if source.try(:informal_conference)
+      generate_claimant_letter!
+      generate_tracked_item!
+    end
+
+    commit!
+  end
+
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!

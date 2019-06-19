@@ -115,6 +115,9 @@
     "label": "End hold early",
     "value": "modal/end_hold"
   },
+  "TOGGLE_TIMED_HOLD": {
+    "func": "toggle_timed_hold"
+  },
   "REASSIGN_TO_PERSON": {
     "label": "Re-assign to person",
     "value": "modal/reassign_to_person",
@@ -156,6 +159,9 @@
   "REVIEW_AMA_DECISION": {
     "label": "Decision ready for review",
     "value": "draft_decision/dispositions"
+  },
+  "REVIEW_DECISION_DRAFT": {
+    "func": "review_decision_draft"
   },
   "SCHEDULE_HEARING_SEND_TO_TEAM": {
     "label": "Hearing does need to be scheduled, send to hearing branch",
