@@ -118,6 +118,7 @@ module Asyncable
   end
 
   def submit_for_processing!(delay: 0)
+    binding.pry
     # One minute offset to prevent "this date is in the future" errors with external services
     when_to_start = delay.try(:to_datetime) ? delay.to_datetime + 1.minute : Time.zone.now + delay
 
@@ -129,7 +130,7 @@ module Asyncable
 
     update!(
       self.class.last_submitted_at_column => when_to_start,
-      self.class.submitted_at_column => Time.zone.now,
+      self.class.submitted_at_column => delay.try(:to_datetime) ? delay.to_datetime : Time.zone.now,
       self.class.processed_at_column => nil
     )
   end

@@ -222,6 +222,8 @@ class DecisionReview < ApplicationRecord
       rsc.create_remand_issues!
       rsc.create_decision_review_task_if_required!
 
+      binding.pry
+
       delay = rsc.receipt_date.future? ? (rsc.receipt_date + PROCESS_DELAY_VBMS_OFFSET_HOURS.hours).utc : 0
       rsc.submit_for_processing!(delay: delay)
 
