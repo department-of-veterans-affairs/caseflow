@@ -63,7 +63,7 @@ class UpdateAttorneyCaseReview
     return if success
 
     {
-      title: "Record is invalid",
+      title: COPY::INVALID_RECORD_ERROR_TITLE,
       detail: errors.full_messages.join(", ")
     }
   end

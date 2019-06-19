@@ -163,7 +163,7 @@ RSpec.feature "Attorney queue" do
           assigned_by: attorney,
           assigned_to: Colocated.singleton,
           parent: attorney_task
-        ).becomes(ColocatedTask)
+        )
       end
 
       it "displays a single row for the appeal in the attorney's on hold tab" do
@@ -187,7 +187,7 @@ RSpec.feature "Attorney queue" do
           appeal: appeal,
           assigned_by: attorney,
           assigned_to: Colocated.singleton
-        ).becomes(ColocatedTask)
+        )
       end
 
       it "displays a single row for the appeal in the attorney's on hold tab" do

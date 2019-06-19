@@ -149,7 +149,7 @@ describe Task do
 
     context "when user is an assignee" do
       let(:user) { create(:user) }
-      let(:task) { create(:generic_task, assigned_to: user).becomes(GenericTask) }
+      let(:task) { create(:generic_task, assigned_to: user) }
 
       it { is_expected.to be_truthy }
     end

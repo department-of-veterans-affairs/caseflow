@@ -65,7 +65,7 @@ describe AttorneyQueue do
           appeal: appeal,
           assigned_by: user,
           assigned_to: Colocated.singleton
-        ).becomes(ColocatedTask).tap do |task|
+        ).tap do |task|
           task.children.first.update!(status: Constants.TASK_STATUSES.on_hold)
         end
       end

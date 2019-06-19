@@ -121,7 +121,7 @@ describe Docket do
         end
 
         context "blocking mail tasks with status completed or cancelled" do
-          it "includes those appeals" do
+          it "includes those appeals", skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-503269122" do
             with_blocking_but_closed_tasks = create(:appeal, :with_tasks, docket_type: "direct_review")
             FoiaRequestMailTask.create_from_params({
                                                      appeal: with_blocking_but_closed_tasks,

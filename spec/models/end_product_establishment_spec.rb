@@ -553,59 +553,6 @@ describe EndProductEstablishment do
     end
   end
 
-  context "#remove_contention!" do
-    before do
-      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
-    end
-
-    let(:reference_id) { "stevenasmith" }
-    let(:request_issue_contention_reference_id) { contention_reference_id }
-    let(:contention_reference_id) { "1234" }
-
-    let(:request_issue) do
-      RequestIssue.new(
-        decision_review: source,
-        contested_rating_issue_reference_id: "reference-id",
-        contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-        contested_issue_description: "this is a big decision",
-        benefit_type: "compensation",
-        contention_reference_id: request_issue_contention_reference_id
-      )
-    end
-
-    let!(:contention) do
-      Generators::Contention.build(id: contention_reference_id, claim_id: reference_id, text: "Left knee")
-    end
-
-    subject { end_product_establishment.remove_contention!(request_issue) }
-
-    it "calls VBMS with the appropriate arguments to remove the contention" do
-      subject
-
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
-      expect(request_issue.contention_removed_at).to eq(Time.zone.now)
-    end
-
-    context "when VBMS throws an error" do
-      before do
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
-      end
-
-      it "does not remove contentions" do
-        expect { subject }.to raise_error(vbms_error)
-        expect(request_issue.contention_removed_at).to be_nil
-      end
-    end
-
-    context "when contention does not exist" do
-      let(:request_issue_contention_reference_id) { "9999" }
-
-      it "raises ContentionNotFound error" do
-        expect { subject }.to raise_error(EndProductEstablishment::ContentionNotFound)
-      end
-    end
-  end
-
   context "#result" do
     subject { end_product_establishment.result }
 

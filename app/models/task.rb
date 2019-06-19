@@ -86,16 +86,8 @@ class Task < ApplicationRecord
     actions_available?(user) ? available_actions(user).map { |action| build_action_hash(action, user) } : []
   end
 
-  def appropriate_timed_hold_task_action
-    on_timed_hold? ? Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h : Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h
-  end
-
   def build_action_hash(action, user)
-    {
-      label: action[:label],
-      value: action[:value],
-      data: action[:func] ? TaskActionRepository.send(action[:func], self, user) : nil
-    }
+    TaskActionHelper.build_hash(action, self, user)
   end
 
   # A wrapper around actions_allowable that also disallows doing actions to on_hold tasks.
