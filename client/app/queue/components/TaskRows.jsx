@@ -109,7 +109,8 @@ class TaskRows extends React.PureComponent {
 
   showWithdrawalDate = () => {
     return this.props.appeal.withdrawalDate ? <div>
-      <dt>{COPY.TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL.toUpperCase()}</dt>
+      <dt {...css({ color: '#757575',
+        fontSize: '1.5rem' })}>{COPY.TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL.toUpperCase()}</dt>
       <dd><DateString date={this.props.appeal.withdrawalDate} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
@@ -217,7 +218,7 @@ class TaskRows extends React.PureComponent {
 
     let timelineContainerText;
     let timeLineIcon;
-    let grayIconLineStyling;
+    let withdrawIconStyling;
 
     if (appeal.withdrawn) {
       timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
@@ -236,9 +237,9 @@ class TaskRows extends React.PureComponent {
     }
 
     if (appeal.withdrawn) {
-      grayIconLineStyling = css({ top: '40px !important' });
+      withdrawIconStyling = css({ top: '40px !important' });
     } else if (!appeal.decisionDate) {
-      grayIconLineStyling = css({ top: '25px !important' });
+      withdrawIconStyling = css({ top: '25px !important' });
     }
 
     return <React.Fragment key={appeal.externalId}>
@@ -251,7 +252,7 @@ class TaskRows extends React.PureComponent {
           { timeLineIcon }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
             <div {...grayLineTimelineStyling}
-              {...grayIconLineStyling} />}</td>
+              {...withdrawIconStyling} />}</td>
         <td {...taskInformationTimelineContainerStyling}>
           { timelineContainerText } <br />
         </td>
