@@ -46,6 +46,7 @@ class OrganizationQueue extends React.PureComponent {
 
   queueConfig = () => {
     const config = this.props.queueConfig;
+    
     config.active_tab_index = this.calculateActiveTabIndex(config);
 
     return config;
