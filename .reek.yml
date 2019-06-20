@@ -6,6 +6,9 @@ detectors:
     exclude:
       - BulkTaskAssignment
       - QueueConfig
+  DataClump:
+    exclude:
+      - HearingSerializerBase
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
