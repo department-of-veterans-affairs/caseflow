@@ -144,6 +144,21 @@ class ColocatedTask < Task
     # Only log information for ColocatedTasks that have a sibling that has been cancelled
     return if siblings.none? { |task| task.is_a?(ColocatedTask) && task.status == Constants.TASK_STATUSES.cancelled }
 
+    fields = [
+      :id,
+      :parent_id,
+      :type,
+      :status,
+      :assigned_by_id,
+      :assigned_to_id,
+      :assigned_to_type,
+      :created_at,
+      :updated_at,
+      :closed_at,
+      :placed_on_hold_at,
+      :on_hold_duration
+    ]
+
     msg = [
       # Description of why we are alerting us about this in the first place.
       "Data to aid in the investigation of ColocatedTasks for LegacyAppeals being charged to incorrect VACOLS location \
@@ -156,20 +171,7 @@ bug described in https://github.com/department-of-veterans-affairs/caseflow/issu
       "Future location: #{location_based_on_action}",
 
       # Information about the task tree's current state.
-      appeal.tasks.order(:created_at).pluck(
-        :id,
-        :parent_id,
-        :type,
-        :status,
-        :assigned_by_id,
-        :assigned_to_id,
-        :assigned_to_type,
-        :created_at,
-        :updated_at,
-        :closed_at,
-        :placed_on_hold_at,
-        :on_hold_duration
-      ).inspect
+      appeal.tasks.order(:created_at).map { |t| fields.map { |field| [field, t[field]] }.to_h }.inspect
     ].join("\n\n")
 
     Raven.capture_message(msg, extra: { application: "tasks" })
