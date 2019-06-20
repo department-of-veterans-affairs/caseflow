@@ -149,6 +149,9 @@ class ColocatedTask < Task
       "Data to aid in the investigation of ColocatedTasks for LegacyAppeals being charged to incorrect VACOLS location \
 bug described in https://github.com/department-of-veterans-affairs/caseflow/issues/11152",
 
+      # Task ID.
+      "Task triggering VACOLS location change ID: #{id}",
+
       # Future location.
       "Future location: #{location_based_on_action}",
 
