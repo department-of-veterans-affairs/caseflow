@@ -2,7 +2,7 @@
 
 class LegacyHearingSerializer
   include FastJsonapi::ObjectSerializer
-  extend HearingSerializerBase
+  include HearingSerializerBase
 
   attribute :add_on
   attribute :aod

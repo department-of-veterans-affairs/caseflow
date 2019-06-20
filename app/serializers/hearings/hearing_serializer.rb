@@ -2,7 +2,7 @@
 
 class HearingSerializer
   include FastJsonapi::ObjectSerializer
-  extend HearingSerializerBase
+  include HearingSerializerBase
 
   attribute :advance_on_docket_motion
   attribute :appeal_external_id
