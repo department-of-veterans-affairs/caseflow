@@ -185,7 +185,7 @@ class Hearing < ApplicationRecord
     ::HearingSerializer.default(self).serializable_hash[:data][:attributes]
   end
 
-  def to_hash_for_worksheet(current_user_id)
+  def to_hash_for_worksheet(_current_user_id)
     ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
   end
 end

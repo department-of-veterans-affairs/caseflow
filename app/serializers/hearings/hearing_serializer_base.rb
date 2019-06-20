@@ -2,30 +2,30 @@
 
 module HearingSerializerBase
   def default(object, **params)
-    self.new(object, **params)
+    new(object, **params)
   end
 
   def quick(object, **params)
     params[:params] ||= {}
     params[:params][:quick] = true
 
-    self.new(object, **params)
+    new(object, **params)
   end
 
   def worksheet(object, **params)
     params[:params] ||= {}
     params[:params][:worksheet] = true
 
-    self.new(object, **params)
+    new(object, **params)
   end
 
   protected
 
   def for_full
-    Proc.new { |_record, params| not params[:quick] }
+    proc { |_record, params| !params[:quick] }
   end
 
   def for_worksheet
-    Proc.new { |_record, params| params[:worksheet] }
+    proc { |_record, params| params[:worksheet] }
   end
 end
