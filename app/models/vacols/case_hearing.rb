@@ -85,18 +85,12 @@ class VACOLS::CaseHearing < VACOLS::Record
     end
 
     def create_hearing!(hearing_info)
-      hearing = nil
       MetricsService.record("VACOLS: create_hearing!",
                             service: :vacols,
                             name: "create_hearing") do
-        hearing = create!(
-          hearing_info.merge(
-            addtime: VacolsHelper.local_time_with_utc_timezone,
-            adduser: current_user_slogid
-          )
-        )
+        create!(hearing_info.merge(addtime: VacolsHelper.local_time_with_utc_timezone,
+                                   adduser: current_user_slogid))
       end
-      hearing
     end
 
     private
