@@ -18,9 +18,9 @@ class Organizations::TasksController < OrganizationsController
 
   def tasks
     if organization.url == "hearings-management"
-      GenericQueue.new(user: organization).tasks(1000).select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
+      GenericQueue.new(user: organization, limit: 1000).tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
     else
-      GenericQueue.new(user: organization).tasks(400)
+      GenericQueue.new(user: organization, limit: 400).tasks
     end
   end
 
