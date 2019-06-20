@@ -48,6 +48,7 @@ describe VeteranFinder do
 
     context "Veteran record does not exist" do
       it "returns array of Veterans matching file_number" do
+        expect(Veteran.find_by_file_number(file_number)).to be_nil
         expect(subject).to eq([Veteran.find_by_file_number(file_number)])
       end
     end
