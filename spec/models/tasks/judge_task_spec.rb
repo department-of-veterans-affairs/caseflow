@@ -202,7 +202,7 @@ describe JudgeTask do
 
     subject { child_task.update!(status: Constants.TASK_STATUSES.completed) }
 
-    context "when child task is an attorney task", focus: true do
+    context "when child task is an attorney task" do
       let(:child_task) do
         FactoryBot.create(
           :ama_attorney_task,
