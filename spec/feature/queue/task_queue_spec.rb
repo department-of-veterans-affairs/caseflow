@@ -925,7 +925,6 @@ RSpec.feature "Task queue" do
       step "select and submit the complete transcription action" do
         click_dropdown({ text: Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h[:label] }, schedule_row)
         expect(page).to have_content "Mark as complete"
-        fill_in "completeTaskInstructions", with: "These are my instructions"
         click_button "Mark complete"
         expect(page).to have_content "#{appeal.veteran_full_name}'s case has been marked complete"
       end
