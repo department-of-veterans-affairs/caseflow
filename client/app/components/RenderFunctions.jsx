@@ -648,7 +648,7 @@ export class GrayDot extends React.PureComponent {
 
 export class MinusCircle extends React.PureComponent {
   render() {
-    return <svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1">
+    return <svg width="38px" height="38px" viewBox="0 0 40 40" version="1.1">
       <g id="Artboard" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
         <path d="M20,0 C8.9516129,0 0,8.9516129 0,20 C0,31.0483871 8.9516129,40 20,40 C31.0483871,40 40,31.0483871 40,20 C40,8.9516129 31.0483871,0 20,0 Z" id="Path" fill="#FFFFFF" fillRule="nonzero"></path>
         <g id="minus-circle-solid" transform="translate(2.000000, 2.000000)" fill="#E31C3D" fillRule="nonzero">
