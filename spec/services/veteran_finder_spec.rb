@@ -43,24 +43,6 @@ describe VeteranFinder do
   let(:date_of_birth) { "21/12/1989" }
   let(:service) { [{ branch_of_service: "army" }] }
 
-  describe "#find_all" do
-    subject { described_class.find_all(file_number, ssn) }
-
-    context "Veteran record does not yet exist" do
-      it "returns empty array" do
-        expect(subject).to eq([])
-      end
-    end
-
-    context "Veteran record already exists" do
-      let!(:veteran) { create(:veteran, file_number: file_number) }
-
-      it "returns array of Veterans matching file_number" do
-        expect(subject).to eq([veteran])
-      end
-    end
-  end
-
   describe "#find_or_create_all" do
     subject { described_class.find_or_create_all(file_number, ssn) }
 
