@@ -200,6 +200,13 @@ FactoryBot.define do
       parent { create(:disposition_task, appeal: appeal) }
     end
 
+    factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
+      type { EvidenceSubmissionWindowTask.name }
+      appeal { create(:appeal) }
+      assigned_to { HearingsManagement.singleton }
+      parent { create(:disposition_task, appeal: appeal) }
+    end
+
     factory :ama_attorney_task, class: AttorneyTask do
       type { AttorneyTask.name }
       appeal { create(:appeal) }
