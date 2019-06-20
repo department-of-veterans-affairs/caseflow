@@ -107,7 +107,9 @@ class LegacyHearing < ApplicationRecord
   end
 
   def regional_office_key
-    return (venue_key || appeal&.regional_office_key) if request_type == "T" || hearing_day.nil?
+    if request_type == HearingDay::REQUEST_TYPES[:travel] || hearing_day.nil?
+      return (venue_key || appeal&.regional_office_key)
+    end
 
     hearing_day&.regional_office
   end
@@ -191,7 +193,7 @@ class LegacyHearing < ApplicationRecord
 
   def readable_location
     if request_type == LegacyHearing::CO_HEARING
-      return "Washington DC"
+      return "Washington, DC"
     end
 
     regional_office_name
@@ -209,63 +211,12 @@ class LegacyHearing < ApplicationRecord
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def to_hash(current_user_id)
-    serializable_hash(
-      methods: [
-        :disposition_editable,
-        :scheduled_for,
-        :scheduled_time_string,
-        :central_office_time_string,
-        :readable_request_type,
-        :disposition,
-        :aod,
-        :transcript_requested,
-        :hold_open,
-        :notes,
-        :add_on,
-        :representative,
-        :representative_name,
-        :regional_office_key,
-        :hearing_day_id,
-        :regional_office_name,
-        :regional_office_timezone,
-        :venue,
-        :veteran_first_name,
-        :veteran_last_name,
-        :appellant_first_name,
-        :appellant_last_name,
-        :vbms_id,
-        :current_issue_count,
-        :prepped,
-        :docket_number,
-        :docket_name,
-        :appeal_type,
-        :appellant_address_line_1,
-        :appellant_address_line_2,
-        :appellant_city,
-        :appellant_country,
-        :appellant_state,
-        :appellant_zip,
-        :location,
-        :readable_location,
-        :appeal_external_id,
-        :external_id,
-        :veteran_file_number,
-        :closest_regional_office,
-        :available_hearing_locations,
-        :bva_poc,
-        :room,
-        :judge_id
-      ],
-      except: [:military_service, :vacols_id]
-    ).merge(
-      viewed_by_current_user: hearing_views.all.any? do |hearing_view|
-        hearing_view.user_id == current_user_id
-      end
-    )
+    ::LegacyHearingSerializer.default(
+      self,
+      params: { current_user_id: current_user_id }
+    ).serializable_hash[:data][:attributes]
   end
-  # rubocop:enable Metrics/MethodLength
 
   alias quick_to_hash to_hash
 
@@ -282,19 +233,10 @@ class LegacyHearing < ApplicationRecord
   end
 
   def to_hash_for_worksheet(current_user_id)
-    serializable_hash(
-      methods: [:appeal_id,
-                :judge,
-                :summary,
-                :appeals_ready_for_hearing,
-                :cached_number_of_documents,
-                :military_service]
-    ).merge(
-      to_hash(current_user_id)
-    ).merge(
-      veteran_gender: fetch_veteran_gender,
-      veteran_age: fetch_veteran_age
-    )
+    ::LegacyHearingSerializer.worksheet(
+      self,
+      params: { current_user_id: current_user_id }
+    ).serializable_hash[:data][:attributes]
   end
 
   def appeals_ready_for_hearing

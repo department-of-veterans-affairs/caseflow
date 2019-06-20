@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.shared_examples "Address Verify Task for Appeal" do
+RSpec.shared_examples "Address Verify Task Frontend Workflow" do
   let!(:user) { create(:hearings_coordinator) }
   let(:root_task) { create(:root_task, appeal: appeal) }
   let(:distribution_task) { create(:distribution_task, appeal: appeal, parent: root_task) }
@@ -96,7 +96,7 @@ RSpec.feature HearingAdminActionVerifyAddressTask do
     let!(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
     let!(:appeal_id) { appeal.vacols_id }
 
-    include_examples "Address Verify Task for Appeal"
+    include_examples "Address Verify Task Frontend Workflow"
   end
 
   describe "Address Verify Workflow with AMA Appeal" do
@@ -104,6 +104,6 @@ RSpec.feature HearingAdminActionVerifyAddressTask do
     let!(:appeal) { create(:appeal, :hearing_docket, veteran: veteran) }
     let!(:appeal_id) { appeal.uuid }
 
-    include_examples "Address Verify Task for Appeal"
+    include_examples "Address Verify Task Frontend Workflow"
   end
 end
