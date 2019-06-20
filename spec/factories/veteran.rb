@@ -7,7 +7,7 @@ FactoryBot.define do
     name_suffix { "II" }
 
     transient do
-      ssn { Generators::Random.unique_ssn }
+      ssn { "987654321" }
 
       bgs_veteran_record do
         {
@@ -27,7 +27,7 @@ FactoryBot.define do
       end
     end
 
-    sequence(:file_number, 10_000_000)
+    sequence(:file_number, 100_000_000)
     sequence(:participant_id, 500_000_000)
 
     after(:build) do |veteran, evaluator|
