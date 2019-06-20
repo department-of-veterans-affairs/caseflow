@@ -32,6 +32,11 @@ class AttorneyTask < Task
     COPY::CASE_TIMELINE_ATTORNEY_TASK
   end
 
+  def update_parent_status
+    parent.begin_decision_review_phase if parent&.is_a?(JudgeAssignTask)
+    super
+  end
+
   def label
     COPY::ATTORNEY_TASK_LABEL
   end
