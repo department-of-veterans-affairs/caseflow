@@ -47,7 +47,8 @@ class HearingRepository
         vdbvapoc: hearing_day.bva_poc
       )
 
-      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).where(vdkey: hearing_day.id).order(:addtime).last
+      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).where(vdkey: hearing_day.id)
+        .order(addtime: :desc).last
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
       hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
