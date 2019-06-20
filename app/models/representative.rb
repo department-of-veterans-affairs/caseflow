@@ -18,6 +18,10 @@ class Representative < Organization
     ihp_writing_configs.include?(appeal.docket_type) && appeal.representatives.include?(self)
   end
 
+  def ama_task_serializer
+    WorkQueue::OrganizationTaskSerializer
+  end
+
   private
 
   def set_role

@@ -199,9 +199,6 @@ class Appeal < DecisionReview
     veteran_if_exists&.available_hearing_locations
   end
 
-  delegate :city,
-           :state, to: :appellant, prefix: true
-
   def regional_office
     nil
   end
@@ -223,6 +220,7 @@ class Appeal < DecisionReview
            :last_name,
            :middle_name,
            :name_suffix,
+           :address_line_1,
            :city,
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
@@ -565,6 +563,10 @@ class Appeal < DecisionReview
     true
   end
 
+  def processed_in_vbms?
+    false
+  end
+
   def first_distributed_to_judge_date
     judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
     return unless judge_tasks.any?
@@ -618,11 +620,6 @@ class Appeal < DecisionReview
     return ["cavc"] if request_issues.any? { |ri| ri.benefit_type == "fiduciary" }
 
     %w[supplemental_claim cavc]
-  end
-
-  def assign_ro_and_update_ahls(new_ro)
-    update!(closest_regional_office: new_ro)
-    va_dot_gov_address_validator.assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
   end
 
   private

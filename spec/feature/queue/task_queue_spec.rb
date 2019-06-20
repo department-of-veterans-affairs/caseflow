@@ -4,7 +4,6 @@ require "rails_helper"
 
 RSpec.feature "Task queue" do
   context "attorney user with assigned tasks" do
-
     let(:attorney_user) { FactoryBot.create(:user) }
 
     let!(:attorney_task) do
@@ -266,11 +265,11 @@ RSpec.feature "Task queue" do
     before do
       OrganizationsUser.add_user_to_organization(mail_user, mail_team)
       OrganizationsUser.add_user_to_organization(mail_user, lit_support_team)
-      OrganizationsUser.add_user_to_organization(pulac_user, PulacCerullo.singleton) 
+      OrganizationsUser.add_user_to_organization(pulac_user, PulacCerullo.singleton)
       User.authenticate!(user: mail_user)
     end
 
-    def validate_pulac_cerullo_tasks_created(task_type, label) 
+    def validate_pulac_cerullo_tasks_created(task_class, label)
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
 
@@ -288,17 +287,16 @@ RSpec.feature "Task queue" do
       click_dropdown(text: Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.label)
       click_button(text: "Submit")
 
-      
       mail_task = root_task.reload.children[0]
-      expect(mail_task.class).to eq(eval(task_type))
+      expect(mail_task.class).to eq(task_class)
       expect(mail_task.assigned_to).to eq(MailTeam.singleton)
       expect(mail_task.children.length).to eq(1)
       sleep 1
       child_task = mail_task.children[0]
 
       pulac_cerullo_task = child_task.children[0]
-      pulac_cerullo_user_task = pulac_cerullo_task.children[0];
-      expect(child_task.class).to eq(eval(task_type))
+      pulac_cerullo_user_task = pulac_cerullo_task.children[0]
+      expect(child_task.class).to eq(task_class)
       expect(pulac_cerullo_task.type).to eq("PulacCerulloTask")
       expect(pulac_cerullo_task.assigned_to.is_a?(Organization)).to eq(true)
       expect(pulac_cerullo_task.assigned_to.class).to eq(PulacCerullo)
@@ -309,7 +307,6 @@ RSpec.feature "Task queue" do
       visit "/queue"
       expect(page).to have_content("Assigned (1)")
       expect(page).to have_content(appeal.veteran_file_number)
-
     end
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
@@ -343,22 +340,29 @@ RSpec.feature "Task queue" do
 
     context "when a ClearAndUnmistakeableErrorMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { FactoryBot.create(:root_task) }
-      it "creates two child tasks: one Pulac Cerullo Task, and a child of that task assigned to the first user in the Pulac Cerullo org" do
-       validate_pulac_cerullo_tasks_created("ClearAndUnmistakeableErrorMailTask", COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL)
+      it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
+        "assigned to the first user in the Pulac Cerullo org" do
+        validate_pulac_cerullo_tasks_created(
+          ClearAndUnmistakeableErrorMailTask, COPY::CLEAR_AND_UNMISTAKABLE_ERROR_MAIL_TASK_LABEL
+        )
       end
     end
 
     context "when a ReconsiderationMotionMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { FactoryBot.create(:root_task) }
-      it "creates two child tasks: one Pulac Cerullo Task, and a child of that task assigned to the first user in the Pulac Cerullo org" do
-        validate_pulac_cerullo_tasks_created("ReconsiderationMotionMailTask", COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL)
+      it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
+        "assigned to the first user in the Pulac Cerullo org" do
+        validate_pulac_cerullo_tasks_created(
+          ReconsiderationMotionMailTask, COPY::RECONSIDERATION_MOTION_MAIL_TASK_LABEL
+        )
       end
     end
 
     context "when a VacateMotionMailTask task is routed to Pulac Cerullo" do
       let!(:root_task) { FactoryBot.create(:root_task) }
-      it "creates two child tasks: one Pulac Cerullo Task, and a child of that task assigned to the first user in the Pulac Cerullo org" do
-        validate_pulac_cerullo_tasks_created("VacateMotionMailTask", COPY::VACATE_MOTION_MAIL_TASK_LABEL)
+      it "creates two child tasks: one Pulac Cerullo Task, and a child of that task " \
+        "assigned to the first user in the Pulac Cerullo org" do
+        validate_pulac_cerullo_tasks_created(VacateMotionMailTask, COPY::VACATE_MOTION_MAIL_TASK_LABEL)
       end
     end
 
@@ -643,7 +647,6 @@ RSpec.feature "Task queue" do
       end
     end
 
-
     context "when it was created from a BvaDispatchTask" do
       let!(:bva_dispatch_user) { FactoryBot.create(:user) }
       let!(:bva_dispatch_relationship) do
@@ -656,25 +659,25 @@ RSpec.feature "Task queue" do
         OrganizationsUser.add_user_to_organization(attorney_user, judge_team)
       end
       let!(:orig_judge_task) do
-         FactoryBot.create(
-           :ama_judge_decision_review_task,
-           :on_hold,
-           assigned_to: judge_user,
-           appeal: appeal,
-           parent: root_task
-         )
-       end
+        FactoryBot.create(
+          :ama_judge_decision_review_task,
+          :on_hold,
+          assigned_to: judge_user,
+          appeal: appeal,
+          parent: root_task
+        )
+      end
 
-       let!(:orig_atty_task) do
-         FactoryBot.create(
-           :ama_attorney_task,
-           :completed,
-           assigned_to: attorney_user,
-           assigned_by: judge_user,
-           parent: orig_judge_task,
-           appeal: appeal
-         )
-       end
+      let!(:orig_atty_task) do
+        FactoryBot.create(
+          :ama_attorney_task,
+          :completed,
+          assigned_to: attorney_user,
+          assigned_by: judge_user,
+          parent: orig_judge_task,
+          appeal: appeal
+        )
+      end
 
       let!(:judge_task_done) do
         orig_judge_task.update!(status: Constants.TASK_STATUSES.completed)
@@ -708,7 +711,6 @@ RSpec.feature "Task queue" do
       end
 
       before do
-
         visit("/queue/appeals/#{appeal.external_id}")
 
         # Add a user to the Colocated team so the task assignment will suceed.
@@ -747,8 +749,6 @@ RSpec.feature "Task queue" do
         fill_in "taskInstructions", with: "Please fix this"
 
         click_on COPY::MODAL_SUBMIT_BUTTON
-
-
 
         expect(page).to have_content(COPY::ASSIGN_TASK_SUCCESS_MESSAGE % attorney_user.full_name)
 
@@ -900,7 +900,7 @@ RSpec.feature "Task queue" do
         expect(schedule_row).to have_content("DAYS ON HOLD 0 of #{days_on_hold}", normalize_ws: true)
         available_options = click_dropdown({ text: Constants.TASK_ACTIONS.END_TIMED_HOLD.to_h[:label] }, schedule_row)
         # the dropdown has the default options in addition to the end timed hold action
-        default_options = transcription_task.available_actions(user).map { |option| option[:label] }
+        default_options = transcription_task.available_actions_unwrapper(user).map { |option| option[:label] }
         expect(available_options.count).to eq default_options.count
         expect(available_options).to include(*default_options)
       end

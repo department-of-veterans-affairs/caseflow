@@ -163,7 +163,7 @@ describe JudgeTask do
         assigned_by: judge,
         status: Constants.TASK_STATUSES.completed,
         parent: parent
-      ).becomes(AttorneyTask)
+      )
     end
 
     subject { parent.previous_task }
@@ -207,7 +207,7 @@ describe JudgeTask do
           assigned_by: judge,
           assigned_to: attorney,
           parent: judge_task
-        ).becomes(AttorneyTask)
+        )
       end
 
       it "changes the judge task type to decision review" do
