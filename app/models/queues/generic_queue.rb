@@ -5,19 +5,20 @@ class GenericQueue
 
   attr_accessor :user
 
-  def tasks
-    (relevant_tasks + relevant_attorney_tasks).each(&:update_if_hold_expired!)
+  def tasks(limit = 10_000)
+    (relevant_tasks(limit) + relevant_attorney_tasks(limit)).each(&:update_if_hold_expired!)
   end
 
   private
 
-  def relevant_tasks
+  def relevant_tasks(limit)
     Task.incomplete_or_recently_closed
       .where(assigned_to: user)
       .includes(*task_includes)
+      .limit(limit)
   end
 
-  def relevant_attorney_tasks
+  def relevant_attorney_tasks(limit)
     return [] unless user.is_a?(User)
 
     # If the user is a judge there will be attorneys in the list, if the user is not a judge the list of attorneys will
@@ -25,6 +26,7 @@ class GenericQueue
     AttorneyTask.incomplete_or_recently_closed
       .where(assigned_to: Judge.new(user).attorneys)
       .includes(*task_includes)
+      .limit(limit)
   end
 
   def task_includes
