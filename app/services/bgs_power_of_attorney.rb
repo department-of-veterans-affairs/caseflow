@@ -20,11 +20,16 @@ class BgsPowerOfAttorney
   end
 
   def fetch_bgs_record
-    binding.pry
     if claimant_participant_id
-      bgs.fetch_poas_by_participant_ids([claimant_participant_id])[claimant_participant_id]
+      cache_key = "bgs-participant-#{claimant_participant_id}"
+      Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+        bgs.fetch_poas_by_participant_ids([claimant_participant_id])[claimant_participant_id]
+      end
     else
-      bgs.fetch_poa_by_file_number(file_number)
+      cache_key = "bgs-participant-#{file_number}"
+      Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+        bgs.fetch_poa_by_file_number(file_number)
+      end
     end
   end
 

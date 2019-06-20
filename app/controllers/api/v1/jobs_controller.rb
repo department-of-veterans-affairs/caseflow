@@ -19,7 +19,7 @@ class Api::V1::JobsController < Api::ApplicationController
     "fetch_hearing_locations_for_veterans_job" => FetchHearingLocationsForVeteransJob,
     "update_appellant_representation_job" => UpdateAppellantRepresentationJob,
     "hearing_disposition_change_job" => HearingDispositionChangeJob,
-    "warm_bgs_participant_address_caches_job" => WarmBgsParticipantAddressCachesJob
+    "warm_bgs_participant_caches_job" => WarmBgsParticipantCachesJob
   }.freeze
 
   def create
