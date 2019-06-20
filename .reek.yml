@@ -15,6 +15,7 @@ detectors:
     exclude:
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - AsyncableJobsReporter
+      - HearingSerializerBase
   InstanceVariableAssumption:
     exclude:
       - Appeal

@@ -3,7 +3,7 @@
 module HearingSerializerBase
   extend ActiveSupport::Concern
 
-  class_methods do 
+  class_methods do
     def default(object, **params)
       new(object, **params)
     end
