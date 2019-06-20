@@ -16,7 +16,7 @@ class JudgeAssignTask < JudgeTask
       "Still changing JudgeAssignTask type to JudgeDecisionReviewTask.",
       "See: https://github.com/department-of-veterans-affairs/caseflow/pull/11140#discussion_r295487938"
     ]
-    Raven.capture_message(msg, extra: { application: "tasks" }) if Time.zone.now > Time.zone.new(2019, 8, 1)
+    Raven.capture_message(msg, extra: { application: "tasks" }) if Time.zone.now > Time.zone.local(2019, 8, 1)
   end
 
   def label
