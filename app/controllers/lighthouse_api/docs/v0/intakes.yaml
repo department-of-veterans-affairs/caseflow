@@ -9,5 +9,5 @@ servers:
 paths:
   /higher_level_review:
     post:
-      summary: Higher-Level Reviews endpoint.
+      summary: Create Higher-Level Review
       description: Create a new Higher-Level Review
