@@ -1070,8 +1070,6 @@ RSpec.feature "Case details" do
   end
 
   context "has withdrawn decision reviews" do
-    include IntakeHelpers
-
     let(:veteran) do
       create(:veteran,
              first_name: "Bob",
@@ -1093,30 +1091,19 @@ RSpec.feature "Case details" do
         decision_review: appeal,
         contested_issue_description: "Left Knee",
         benefit_type: "compensation",
-        decision_date: 8.months.ago.to_date.mdY
+        decision_date: 8.months.ago.to_date.mdY,
+        closed_status: "withdrawn",
+        closed_at: 7.days.ago.to_datetime
       )
     end
 
-    let!(:intake_user) do
-      FactoryBot.create(:user, full_name: "Ed johnson", roles: ["Admin Intake"])
-    end
-
     before do
-      FeatureToggle.enable!(:withdraw_decision_review, users: [intake_user.css_id])
-      User.authenticate!(user: intake_user)
-    end
-
-    after do
-      FeatureToggle.disable!(:withdraw_decision_review, users: [intake_user.css_id])
+      appeal.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
     end
 
     scenario "withdraw entire review and show withdrawn on case timeline" do
-      visit "appeals/#{appeal.uuid}/edit/"
+      visit "/queue/appeals/#{appeal.uuid}"
 
-      click_withdraw_intake_issue_dropdown("Left Knee")
-      fill_in "withdraw-date", with: 7.months.ago.to_date.mdY
-      click_edit_submit
-      expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL.upcase)
       expect(page).to have_content("Appeal withdrawn")
     end
