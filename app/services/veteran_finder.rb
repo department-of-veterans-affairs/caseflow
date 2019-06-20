@@ -6,7 +6,16 @@ class VeteranFinder
       file_numbers_or_ssns.flat_map(&VeteranFinder.method(:find_by_file_number_or_ssn))
     end
 
+    def find_or_create_all(*file_numbers_or_ssns)
+      file_numbers_or_ssns.flat_map(&VeteranFinder.method(:find_or_create_by_file_number_or_ssn))
+    end
+
     private
+
+    def find_or_create_by_file_number_or_ssn(file_number_or_ssn)
+      veteran = Veteran.find_or_create_by_file_number_or_ssn(file_number_or_ssn)
+      Veteran.where(participant_id: veteran.participant_id)
+    end
 
     def find_by_file_number_or_ssn(file_number_or_ssn)
       if file_number_or_ssn.length == 9
