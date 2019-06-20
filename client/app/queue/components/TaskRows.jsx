@@ -255,7 +255,7 @@ class TaskRows extends React.PureComponent {
     const { taskList, timeline, appeal } = templateConfig;
     let timelineContainerText;
     let timeLineIcon;
-    let  withdrawIconStyling;
+    let withdrawIconStyling;
 
     if (appeal.withdrawn) {
       timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
@@ -264,7 +264,7 @@ class TaskRows extends React.PureComponent {
     } else {
       timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
     }
- 
+
     if (appeal.withdrawn) {
       timeLineIcon = <MinusCircle />;
     } else if (appeal.decisionDate) {
@@ -273,13 +273,11 @@ class TaskRows extends React.PureComponent {
       timeLineIcon = <GrayDot />;
     }
 
-
     if (appeal.withdrawn) {
-      withdrawIconStyling = grayLineTimelineStyling ;
+      withdrawIconStyling = grayLineTimelineStyling;
     } else if (!appeal.decisionDate) {
-     withdrawIconStyling = css({ top: '25px !important' });
+      withdrawIconStyling = css({ top: '25px !important' });
     }
-
 
     if (timeline) {
       return <tr>
