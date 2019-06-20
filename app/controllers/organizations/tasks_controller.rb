@@ -19,7 +19,8 @@ class Organizations::TasksController < OrganizationsController
   def tasks
     # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
     if organization.url == "hearings-management"
-      GenericQueue.new(user: organization, limit: 1000).tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
+      GenericQueue.new(user: organization, limit: 1000).tasks
+        .select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
     else
       GenericQueue.new(user: organization, limit: 400).tasks
     end
