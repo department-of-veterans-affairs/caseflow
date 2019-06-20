@@ -55,7 +55,8 @@ RSpec.feature "Schedule Veteran For A Hearing" do
       expect(page).to have_content("Time")
     end
 
-    scenario "address from BGS is displayed in schedule veteran modal" do
+    scenario "address from BGS is displayed in schedule veteran modal",
+             skip: "disabled until we pull addresss & POA from BGS again" do
       navigate_to_schedule_veteran_modal
 
       expect(page).to have_content FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1

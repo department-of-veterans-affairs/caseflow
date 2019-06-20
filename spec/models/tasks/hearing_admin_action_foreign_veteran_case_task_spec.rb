@@ -33,7 +33,7 @@ describe HearingAdminActionForeignVeteranCaseTask do
       expect(available_actions.length).to eq 3
       expect(available_actions).to include(
         Constants.TASK_ACTIONS.CANCEL_FOREIGN_VETERANS_CASE_TASK.to_h,
-        Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.SEND_TO_SCHEDULE_VETERAN_LIST.to_h
       )
     end

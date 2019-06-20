@@ -2,7 +2,7 @@
 
 class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   validate :file_number_or_ssn_presence
-  validate :veteran_exists, if: :current_user_is_vso_employee?
+  validate :veterans_exist, if: :current_user_is_vso_employee?
 
   def initialize(file_number_or_ssn:, user:)
     super(user: user)
@@ -12,13 +12,13 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   protected
 
   def appeals
-    AppealFinder.new(user: user).find_appeals_for_veterans(veterans)
+    AppealFinder.new(user: user).find_appeals_for_veterans(veterans_user_can_access)
   end
 
   def claim_reviews
-    veteran_file_numbers = veterans.map(&:file_number)
+    veteran_file_numbers = veterans_user_can_access.map(&:file_number)
 
-    ClaimReview.find_all_visible_by_file_number(*veteran_file_numbers).map(&:search_table_ui_hash)
+    ClaimReview.find_all_visible_by_file_number(*veteran_file_numbers)
   end
 
   private
@@ -39,8 +39,8 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
     }
   end
 
-  def veteran_exists
-    return unless veterans.empty?
+  def veterans_exist
+    return unless veterans_user_can_access.empty?
 
     errors.add(:workflow, not_found_error)
     @status = :not_found
@@ -55,9 +55,5 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
 
   def veterans
     @veterans ||= VeteranFinder.find_all(file_number_or_ssn)
-  end
-
-  def current_user_is_vso_employee?
-    user.vso_employee?
   end
 end

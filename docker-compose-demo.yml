@@ -11,7 +11,7 @@ services:
       - SERVICES=sqs
     volumes:
       - ./local/sqs/conf:/conf
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - ./local/sqs/localstack:/tmp/localstack"
 
   vacols-db-development:
     container_name: VACOLS_DB-development
@@ -68,6 +68,3 @@ services:
 
 volumes:
   postgresdata:
-  u01_development:
-  ORCL_development:
-  u02_development:

@@ -45,7 +45,8 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       FeatureToggle.disable!(:use_representative_info_from_bgs)
     end
 
-    scenario "address and poa info from BGS is displayed on docket page" do
+    scenario "address and poa info from BGS is displayed on docket page",
+             skip: "disabled until we pull addresss & POA from BGS again" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       expect(page).to have_content FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1
       expect(page).to have_content(
