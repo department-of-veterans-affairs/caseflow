@@ -24,7 +24,7 @@ RSpec.describe CaseReviewsController, type: :controller do
         end
 
         let(:root_task) { create(:root_task) }
-        let(:judge_task) { create(:ama_judge_task, assigned_to: judge, parent: root_task) }
+        let(:judge_task) { create(:ama_judge_decision_review_task, assigned_to: judge, parent: root_task) }
         let(:task) { create(:ama_attorney_task, assigned_to: attorney, assigned_by: judge, parent: judge_task) }
 
         context "when creating a draft decision" do
