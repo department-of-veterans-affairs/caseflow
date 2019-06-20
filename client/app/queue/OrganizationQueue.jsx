@@ -43,6 +43,9 @@ class OrganizationQueue extends React.PureComponent {
     this.props.clearCaseSelectSearch();
   }
 
+  // To load the contents of the page:
+  // tasks = request to /tasks?tab={config.name}
+
   queueConfig = () => {
     const config = {
       table_title: sprintf(COPY.ORGANIZATION_QUEUE_TABLE_TITLE, this.props.organizationName),

@@ -26,7 +26,22 @@ class QueueConfig
     }
   end
 
+  def tasks_for_tab(tab_name)
+    TASK_FUNCTION_FOR_TAB_NAME[tab_name]
+  end
+
   private
+
+  # TODO: We can reuse this in the tab definitions if we'd like.
+  # TODO: Does this do work by calling the tracking_tasks_tab function?
+  # TODO: Does this call the ..._tasks functions? Or does it return a reference to them?
+  #   we want the latter.
+  TASK_FUNCTION_FOR_TAB_NAME = {
+    Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME => tracking_tasks,
+    Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME => unassigned_tasks,
+    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME => assigned_tasks,
+    Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME => recently_completed_tasks
+  }.freeze
 
   def tabs
     [
@@ -76,7 +91,6 @@ class QueueConfig
     Task.active.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
   end
 
-  # rubocop:disable Metrics/AbcSize
   def unassigned_tasks_tab
     {
       label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_tasks.count),
@@ -98,13 +112,11 @@ class QueueConfig
       allow_bulk_assign: organization.can_bulk_assign_tasks?
     }
   end
-  # rubocop:enable Metrics/AbcSize
 
   def assigned_tasks
     Task.on_hold.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
   end
 
-  # rubocop:disable Metrics/AbcSize
   def assigned_tasks_tab
     {
       label: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_tasks.count),
@@ -126,7 +138,6 @@ class QueueConfig
       allow_bulk_assign: false
     }
   end
-  # rubocop:enable Metrics/AbcSize
 
   def recently_completed_tasks
     Task.recently_closed.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
