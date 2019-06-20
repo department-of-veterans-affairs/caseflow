@@ -20,6 +20,7 @@ describe RequestIssue do
   let(:closed_at) { nil }
   let(:closed_status) { nil }
   let(:ineligible_reason) { nil }
+  let(:edited_description) { nil }
 
   let(:review) do
     create(
@@ -77,8 +78,6 @@ describe RequestIssue do
       edited_description: edited_description
     )
   end
-
-  let(:edited_description) { nil }
 
   let!(:nonrating_request_issue) do
     create(

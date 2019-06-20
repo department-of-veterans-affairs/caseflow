@@ -194,7 +194,7 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index]
 
-  get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
+  get 'cases/:veteran_ids', to: 'appeals#show_case_list'
   get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
@@ -212,7 +212,7 @@ Rails.application.routes.draw do
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
 
-  get '/search', to: 'queue#index'
+  get '/search', to: 'appeals#show_case_list'
 
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update] do

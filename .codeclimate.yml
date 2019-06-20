@@ -7,6 +7,7 @@ checks:
     config:
       threshold: 4
   file-lines:
+    enabled: false
     config:
       threshold: 250
   method-complexity:

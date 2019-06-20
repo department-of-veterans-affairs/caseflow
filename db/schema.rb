@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190617164845) do
+ActiveRecord::Schema.define(version: 20190618173816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -793,6 +793,7 @@ ActiveRecord::Schema.define(version: 20190617164845) do
     t.string "closed_status", comment: "Indicates whether the request issue is closed, for example if it was removed from a Decision Review, the associated End Product got canceled, the Decision Review was withdrawn."
     t.integer "contention_reference_id", comment: "The ID of the contention created on the End Product for this request issue. This is populated after the contention is created in VBMS."
     t.datetime "contention_removed_at", comment: "When a request issue is removed from a Decision Review during an edit, if it has a contention in VBMS that is also removed. This field indicates when the contention has successfully been removed in VBMS."
+    t.datetime "contention_updated_at", comment: "Timestamp indicating when a contention was successfully updated in VBMS."
     t.integer "contested_decision_issue_id", comment: "The ID of the decision issue that this request issue contests. A Request issue will contest either a rating issue or a decision issue"
     t.string "contested_issue_description", comment: "Description of the contested rating or decision issue. Will be either a rating issue's decision text or a decision issue's description."
     t.string "contested_rating_issue_diagnostic_code", comment: "If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
@@ -955,6 +956,8 @@ ActiveRecord::Schema.define(version: 20190617164845) do
     t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
+    t.index ["status"], name: "index_tasks_on_status"
+    t.index ["type"], name: "index_tasks_on_type"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|
