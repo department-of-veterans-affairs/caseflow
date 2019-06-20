@@ -3,7 +3,7 @@
 describe WarmBgsParticipantCachesJob do
   context "default" do
     # cache keys are using default POA so no specific ids.
-    let(:poa_cache_key) { "bgs-participant-" }
+    let(:poa_cache_key) { "bgs-participant-poa-" }
     let(:address_cache_key) { "bgs-participant-address-" }
     let(:ro_id) { "RO04" }
     let(:vacols_case) { create(:case) }
