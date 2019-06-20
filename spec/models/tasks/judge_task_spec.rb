@@ -202,6 +202,25 @@ describe JudgeTask do
 
     subject { child_task.update!(status: Constants.TASK_STATUSES.completed) }
 
+    context "when child task is an attorney task", focus: true do
+      let(:child_task) do
+        FactoryBot.create(
+          :ama_attorney_task,
+          assigned_by: judge,
+          assigned_to: attorney,
+          parent: judge_task
+        )
+      end
+
+      it "changes the judge task type to decision review and sends an error to sentry" do
+        expect(judge_task.type).to eq(JudgeAssignTask.name)
+        expect(Raven).to receive(:capture_message).with("Still changing JudgeAssignTask type to JudgeDecisionReviewTask.
+      See: https://github.com/department-of-veterans-affairs/caseflow/pull/11140#discussion_r295487938")
+        subject
+        expect(Task.find(judge_task.id).type).to eq(JudgeDecisionReviewTask.name)
+      end
+    end
+
     context "when child task is an VLJ support staff admin action" do
       let(:child_task) { FactoryBot.create(:colocated_task, assigned_by: judge, parent: judge_task) }
 

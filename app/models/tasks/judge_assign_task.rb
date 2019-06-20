@@ -10,6 +10,9 @@ class JudgeAssignTask < JudgeTask
 
   def begin_decision_review_phase
     update!(type: JudgeDecisionReviewTask.name)
+    # Tell sentry so we know this is still happening. Remove this in a month
+    Raven.capture_message("Still changing JudgeAssignTask type to JudgeDecisionReviewTask.
+      See: https://github.com/department-of-veterans-affairs/caseflow/pull/11140#discussion_r295487938")
   end
 
   def label
