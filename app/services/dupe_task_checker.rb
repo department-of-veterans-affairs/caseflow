@@ -37,8 +37,8 @@ class DupeTaskChecker
         id in (SELECT \
         appeal_id \
         FROM tasks \
-        WHERE appeal_id=#{appeal_model.table_name}.id AND appeal_type=? \
-        AND status NOT IN ('completed', 'cancelled') AND type=? \
+        WHERE AND appeal_type=? AND type=? \
+        AND status NOT IN ('completed', 'cancelled') \
         GROUP BY appeal_id \
         HAVING count(appeal_id) > 1)", appeal_model.name, task_model.name)
     end
