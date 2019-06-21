@@ -38,8 +38,6 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :appellant_last_name, :appellant_name_suffix
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
-  vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
-  vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
@@ -79,6 +77,11 @@ class LegacyAppeal < ApplicationRecord
   # NOTE: we cannot currently match end products to a specific appeal.
   delegate :end_products,
            to: :veteran
+
+  delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip,
+           to: :bgs_address_service,
+           prefix: :appellant,
+           allow_nil: true
 
   delegate :vacols_representatives,
            to: :case_record
@@ -328,6 +331,11 @@ class LegacyAppeal < ApplicationRecord
         power_of_attorney.send("vacols_#{method_name}".to_sym)
       end
     end
+  end
+
+  #  LegacyHearing delegates representative here, which is equivalent to representative_name
+  def representative
+    representative_name
   end
 
   def representatives
@@ -741,6 +749,10 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
+
+  def bgs_address_service
+    @bgs_address_service ||= BgsAddressService.new(participant_id: representative_participant_id)
+  end
 
   def active_tasks
     tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
