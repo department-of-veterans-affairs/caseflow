@@ -58,7 +58,7 @@ RSpec.feature "Search" do
 
       context "when a claim has a higher level review and/or supplemental claim" do
         context "and it has no appeals" do
-          let!(:veteran) { FactoryBot.create(:veteran) }
+          let!(:veteran) { create(:veteran) }
           let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
 
           before do
@@ -234,10 +234,10 @@ RSpec.feature "Search" do
         end
 
         let!(:appeal_with_hearing) do
-          FactoryBot.create(
+          create(
             :legacy_appeal,
             :with_veteran,
-            vacols_case: FactoryBot.create(
+            vacols_case: create(
               :case,
               case_hearings: hearings
             )
@@ -386,7 +386,7 @@ RSpec.feature "Search" do
     let(:search_homepage_title) { COPY::CASE_SEARCH_HOME_PAGE_HEADING }
     let(:search_homepage_subtitle) { COPY::CASE_SEARCH_INPUT_INSTRUCTION }
 
-    let(:non_queue_user) { FactoryBot.create(:user) }
+    let(:non_queue_user) { create(:user) }
 
     before do
       FeatureToggle.enable!(:case_search_home_page)
