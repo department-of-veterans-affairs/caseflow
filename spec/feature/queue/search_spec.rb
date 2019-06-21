@@ -55,7 +55,7 @@ RSpec.feature "Search" do
 
       context "when a claim has a higher level review and/or supplemental claim" do
         context "and it has no appeals" do
-          let!(:veteran) { FactoryBot.create(:veteran) }
+          let!(:veteran) { create(:veteran) }
           let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
 
           before do
