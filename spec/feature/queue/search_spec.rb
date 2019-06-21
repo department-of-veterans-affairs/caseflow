@@ -34,9 +34,12 @@ RSpec.feature "Search" do
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
-      it "clicking on the x in the search bar returns browser to queue list page" do
+      it "clicking on the x in the search bar clears the search bar" do
+        expect(page).to have_field("search", with: invalid_veteran_id)
+
         click_on "button-clear-search"
-        expect(page).to_not have_content("1 case found for")
+
+        expect(page).to_not have_field("search", with: invalid_veteran_id)
       end
     end
 
@@ -296,9 +299,12 @@ RSpec.feature "Search" do
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
-      it "clicking on the x in the search bar returns browser to queue list page" do
+      it "clicking on the x in the search bar clears the search bar" do
+        expect(page).to have_field("search", with: veteran_with_no_appeals.file_number)
+
         click_on "button-clear-search"
-        expect(page).to_not have_content("1 case found for")
+
+        expect(page).to_not have_field("search", with: veteran_with_no_appeals.file_number)
       end
     end
 
