@@ -209,6 +209,13 @@ class Veteran < ApplicationRecord
     is_stale
   end
 
+  def update_cached_attributes!
+    [:first_name, :last_name, :middle_name, :name_suffix].each do |attr|
+      self[attr] = bgs_record[attr]
+    end
+    save!
+  end
+
   class << self
     def find_or_create_by_file_number(file_number, sync_name: false)
       find_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
@@ -263,12 +270,7 @@ class Veteran < ApplicationRecord
         )
 
         if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
-          veteran.update!(
-            first_name: veteran.bgs_record[:first_name],
-            last_name: veteran.bgs_record[:last_name],
-            middle_name: veteran.bgs_record[:middle_name],
-            name_suffix: veteran.bgs_record[:name_suffix]
-          )
+          veteran.update_cached_attributes!
         end
       end
       veteran
