@@ -4,7 +4,7 @@ import moment from 'moment';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
 import { DateString } from '../../util/DateUtil';
-import { GrayDot, GreenCheckmark } from '../../components/RenderFunctions';
+import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { taskIsOnHold, sortTaskList } from '../utils';
 import StringUtil from '../../util/StringUtil';
@@ -33,20 +33,6 @@ const cancelledGrayLineTimelineStyling = css(grayLineStyling, { left: '9%',
   top: '25px' });
 
 const greyDotAndlineStyling = css({ top: '25px' });
-
-const xWithSquare = css({
-  color: 'red',
-  'border-style': 'solid',
-  padding: '1px 1px 1px 1px'
-});
-
-const cancelIconStyling = css({
-  'padding-left': '8px !important'
-});
-
-const cancelIcon = () => {
-  return <i className={`fa fa-times ${xWithSquare}`}></i>;
-};
 
 const closedAtIcon = (task, timeline) => {
   return (task.closedAt && timeline ? <GreenCheckmark /> : <GrayDot />);
@@ -88,10 +74,9 @@ const isCancelled = (task) => {
 };
 const tdClassNames = (timeline, task) => {
   const containerClass = timeline ? taskInfoWithIconTimelineContainer : '';
-  const cancelledClass = isCancelled(task) ? cancelIconStyling : null;
   const closedAtClass = task.closedAt ? null : greyDotTimelineStyling;
 
-  return [containerClass, cancelledClass, closedAtClass].filter((val) => val).join(' ');
+  return [containerClass, closedAtClass].filter((val) => val).join(' ');
 };
 
 const cancelGrayTimeLineStyle = (task, timeline) => {
@@ -284,7 +269,7 @@ class TaskRows extends React.PureComponent {
             </CaseDetailsDescriptionList>
           </td>
           <td {...taskInfoWithIconContainer} className={tdClassNames(timeline, task)}>
-            { isCancelled(task) ? cancelIcon() : closedAtIcon(task, timeline) }
+            { isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline) }
             { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
               <div {...grayLineStyling} className={[cancelGrayTimeLineStyle(task, timeline),
                 task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
