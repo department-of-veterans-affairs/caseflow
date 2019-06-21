@@ -6,7 +6,7 @@ info:
 servers:
   - url: /lighthouse_api/{version}
 paths:
-  higher_level_reviews/:
+  /higher_level_reviews:
     post:
       summary: Creates a Higher-Level Review.
       requestBody:

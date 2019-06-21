@@ -285,7 +285,7 @@ Rails.application.routes.draw do
   namespace :lighthouse_api do
     namespace :docs do
       namespace :v0, defaults: { format: 'json' } do
-        get 'intakes', to: 'docs#intakes'
+        get 'decision_reviews', to: 'docs#decision_reviews'
       end
     end
   end
