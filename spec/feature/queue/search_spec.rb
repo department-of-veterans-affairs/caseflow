@@ -495,10 +495,8 @@ RSpec.feature "Search" do
   end
 
   context "has withdrawn decision reviews" do
-    let!(:caseflow_appeal) do
-      create(:appeal,
-             :with_tasks)
-    end
+    let!(:veteran) { create(:veteran) }
+    let!(:caseflow_appeal) { create(:appeal, :with_tasks, veteran_file_number: veteran.file_number) }
 
     def perform_search
       visit "/search"
