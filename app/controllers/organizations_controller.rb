@@ -4,6 +4,7 @@ class OrganizationsController < ApplicationController
   before_action :verify_organization_access
   before_action :verify_role_access
   before_action :verify_business_line, only: [:show]
+  # Needs to be run after verify_organization_access to ensure the user has access to the VSO in BGS
   before_action :add_user_to_vso, only: [:show]
   before_action :set_application
   skip_before_action :deny_vso_access
