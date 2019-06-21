@@ -494,6 +494,10 @@ RSpec.feature "Search" do
              :with_tasks)
     end
 
+    before do
+      caseflow_appeal.root_task.cancelled!
+    end
+
     def perform_search
       visit "/search"
       fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
@@ -501,7 +505,6 @@ RSpec.feature "Search" do
     end
 
     scenario "withdraw entire review and show withdrawn on search page" do
-      caseflow_appeal.root_task.update(status: Constants.TASK_STATUSES.cancelled)
       perform_search
       expect(page).to have_content("Withdrawn")
     end
