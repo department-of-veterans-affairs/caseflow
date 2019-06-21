@@ -4,6 +4,7 @@ class OrganizationsController < ApplicationController
   before_action :verify_organization_access
   before_action :verify_role_access
   before_action :verify_business_line, only: [:show]
+  before_action :add_user_to_vso, only: [:show]
   before_action :set_application
   skip_before_action :deny_vso_access
 
@@ -23,6 +24,13 @@ class OrganizationsController < ApplicationController
 
   def verify_role_access
     verify_authorized_roles(organization.role) if organization.role
+  end
+
+  def add_user_to_vso
+    # Users may belong to VSOs in BGS, but not Caseflow. This automatically adds them to the Caseflow VSO team.
+    return if current_user.roles.exclude?("VSO") || organization.users.include?(current_user)
+
+    OrganizationsUser.add_user_to_organization(current_user, organization)
   end
 
   def set_application
