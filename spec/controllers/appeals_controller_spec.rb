@@ -52,14 +52,13 @@ RSpec.describe AppealsController, type: :controller do
       end
 
       context "when request header contains existing Veteran ID that maps to multiple veterans" do
-        let!(:veteran_file_number_match) { create(:veteran, file_number: ssn, ssn: ssn) }
-        let!(:veteran_bgs_match) { create(:veteran, file_number: "12345678", ssn: ssn) }
+        let(:participant_id) { "987654" }
+        let!(:veteran_file_number_match) { create(:veteran, file_number: ssn, ssn: ssn, participant_id: participant_id) }
+        let!(:veteran_bgs_match) { create(:veteran, file_number: "12345678", ssn: ssn, participant_id: participant_id) }
         let!(:appeal) { create(:appeal, veteran_file_number: ssn) }
 
         before do
-          allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn)
-            .with(anything)
-            .and_return(nil)
+          allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn).and_return(nil)
 
           allow_any_instance_of(BGSService).to receive(:fetch_file_number_by_ssn)
             .with(ssn.to_s)
@@ -301,11 +300,13 @@ RSpec.describe AppealsController, type: :controller do
 
   describe "GET cases/:id" do
     context "Legacy Appeal" do
-      let(:the_case) { FactoryBot.create(:case) }
-      let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: the_case) }
-      let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: appeal.veteran_file_number) }
-      let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number) }
-      let!(:options) { { veteran_ids: veteran_id, format: request_format } }
+      let(:the_case) { create(:case) }
+      let(:file_number) { appeal.veteran_file_number }
+      let!(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: the_case) }
+      let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: file_number) }
+      let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: file_number) }
+      let(:options) { { veteran_ids: veteran_id, format: request_format } }
+      let(:veteran) { Veteran.find_by_file_number(file_number) }
 
       context "when current user is a System Admin" do
         before { User.authenticate!(roles: ["System Admin"]) }
@@ -314,7 +315,7 @@ RSpec.describe AppealsController, type: :controller do
           let(:request_format) { :html }
 
           context "with valid Veteran ID" do
-            let(:veteran_id) { appeal.veteran.id }
+            let(:veteran_id) { veteran.id }
 
             it "should return the single page app" do
               get :show_case_list, params: options
@@ -336,7 +337,7 @@ RSpec.describe AppealsController, type: :controller do
           let(:request_format) { :json }
 
           context "with valid Veteran ID" do
-            let(:veteran_id) { appeal.veteran.id }
+            let(:veteran_id) { veteran.id }
 
             it "should return a list of appeals for the Veteran" do
               get :show_case_list, params: options
@@ -377,7 +378,7 @@ RSpec.describe AppealsController, type: :controller do
           let(:request_format) { :json }
 
           context "with valid Veteran ID" do
-            let!(:veteran_id) { appeal.veteran.id }
+            let(:veteran_id) { veteran.id }
 
             it "returns an empty list of appeals and 2 claim reviews for the Veteran" do
               get :show_case_list, params: options
@@ -399,7 +400,7 @@ RSpec.describe AppealsController, type: :controller do
           end
 
           context "and does not have access to the file" do
-            let!(:veteran_id) { appeal.veteran.id }
+            let(:veteran_id) { appeal.veteran.id }
 
             it "responds with an error" do
               Fakes::BGSService.inaccessible_appeal_vbms_ids = [appeal.veteran_file_number]
