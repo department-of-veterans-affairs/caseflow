@@ -49,6 +49,10 @@ class Task < ApplicationRecord
                                  )
                                }
 
+  def structure_render(*atts)
+    TTY::Tree.new(structure(*atts)).render
+  end
+
   def structure(*atts)
     leaf_name = "#{self.class.name} #{attributes_to_s(*atts)}"
     { "#{leaf_name}": children.map { |child| child.structure(*atts) } }
