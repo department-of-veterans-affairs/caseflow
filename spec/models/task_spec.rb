@@ -1,6 +1,29 @@
 # frozen_string_literal: true
 
 describe Task do
+  describe ".structure" do
+    let(:root_task) { FactoryBot.create(:root_task, :on_hold) }
+    let!(:bva_task) { FactoryBot.create(:bva_dispatch_task, :on_hold, parent: root_task) }
+    let(:judge_task) { FactoryBot.create(:ama_judge_task, :completed, parent: root_task) }
+    let!(:attorney_task) { FactoryBot.create(:ama_attorney_task, :completed, parent: judge_task) }
+
+    subject { root_task.structure(true, :id, :status) }
+
+    it "outputs the task structure" do
+      root_key = "#{root_task.class.name} #{root_task.id}, #{root_task.status}".to_sym
+      judge_key = "#{judge_task.class.name} #{judge_task.id}, #{judge_task.status}".to_sym
+      bva_leaf = "#{bva_task.class.name} #{bva_task.id}, #{bva_task.status}"
+      attorney_leaf = "#{attorney_task.class.name} #{attorney_task.id}, #{attorney_task.status}"
+      expect(subject.key?(root_key)).to be_truthy
+      expect(subject[root_key].count).to eq 2
+      expect(subject[root_key].include?(bva_leaf)).to be_truthy
+      judge_index = (subject[root_key].index(bva_leaf) + 1) % subject[root_key].count
+      expect(subject[root_key][judge_index].key?(judge_key)).to be_truthy
+      expect(subject[root_key][judge_index][judge_key].count).to eq 1
+      expect(subject[root_key][judge_index][judge_key].first).to eq attorney_leaf
+    end
+  end
+
   describe ".when_child_task_completed" do
     let(:task) { FactoryBot.create(:task, :on_hold, type: Task.name) }
     let(:child) { FactoryBot.create(:task, :completed, type: Task.name, parent: task) }

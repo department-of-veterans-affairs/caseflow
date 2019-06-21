@@ -49,11 +49,8 @@ class Task < ApplicationRecord
                                  )
                                }
 
-  def structure(base = false, *args)
-    statuses = []
-    args.each { |arg| statuses << attributes[arg.to_s] }
-    p_statuses = statuses.any? ? " (#{statuses.flatten.compact.join(', ')})" : ""
-    leaf_name = "#{self.class.name}#{p_statuses}"
+  def structure(base = false, *atts)
+    leaf_name = "#{self.class.name} #{attributes_to_s(*atts)}"
     if children.count.zero?
       if base || parent.nil?
         { "#{leaf_name}": [] }
@@ -61,7 +58,7 @@ class Task < ApplicationRecord
         leaf_name
       end
     else
-      { "#{leaf_name}": children.map { |child| child.structure(false, *args) } }
+      { "#{leaf_name}": children.map { |child| child.structure(false, *atts) } }
     end
   end
 
@@ -410,6 +407,16 @@ class Task < ApplicationRecord
   end
 
   private
+
+  def attributes_to_s(*atts)
+    atts_list = []
+    atts.each do |att|
+      value = attributes[att.to_s]
+      value = "(#{att})" if value.blank?
+      atts_list << value
+    end
+    atts_list.flatten.compact.join(", ")
+  end
 
   def create_and_auto_assign_child_task(options = {})
     dup.tap do |child_task|
