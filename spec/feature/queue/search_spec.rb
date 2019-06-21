@@ -27,6 +27,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: ""
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
 
@@ -292,6 +293,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
+        fill_in "searchBarEmptyList", with: ""
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
 
