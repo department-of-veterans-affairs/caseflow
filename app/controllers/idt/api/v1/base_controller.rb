@@ -3,6 +3,7 @@
 class Idt::Api::V1::BaseController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :validate_token
+  before_action :set_application
 
   # :nocov:
   rescue_from StandardError do |error|
