@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe OrganizationsController, type: :controller, focus: true do
+describe OrganizationsController, type: :controller do
   describe "GET /organizations/:organization" do
     let(:participant_id) { "123456" }
     let(:vso_participant_id) { "789" }
