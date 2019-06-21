@@ -2,7 +2,7 @@
 
 class AppealsController < ApplicationController
   before_action :react_routed
-  before_action :set_application, only: [:document_count]
+  before_action :set_application, only: [:document_count, :power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.
   skip_before_action :deny_vso_access, only: [:index, :power_of_attorney, :show_case_list, :show, :veteran, :hearings]
 
@@ -26,7 +26,7 @@ class AppealsController < ApplicationController
       format.html { render template: "queue/index" }
       format.json do
         result = CaseSearchResultsForCaseflowVeteranId.new(
-          caseflow_veteran_id: params[:caseflow_veteran_id], user: current_user
+          caseflow_veteran_ids: params[:veteran_ids]&.split(","), user: current_user
         ).call
 
         render_search_results_as_json(result)
