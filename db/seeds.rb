@@ -56,6 +56,8 @@ class SeedDB
     User.create(css_id: "BVAGGREY", station_id: 101, full_name: "BVA Dispatch user without cases")
     dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "BVA Dispatch admin without cases")
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
+    bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
+    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
