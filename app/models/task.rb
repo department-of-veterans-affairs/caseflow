@@ -52,7 +52,7 @@ class Task < ApplicationRecord
   def structure(base = false, *args)
     statuses = []
     args.each { |arg| statuses << attributes[arg.to_s] }
-    p_statuses = statuses.any? ? " (#{statuses.join(', ')})" : ""
+    p_statuses = statuses.any? ? " (#{statuses.flatten.compact.join(', ')})" : ""
     leaf_name = "#{self.class.name}#{p_statuses}"
     if children.count.zero?
       if base || parent.nil?
