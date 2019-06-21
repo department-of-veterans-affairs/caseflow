@@ -109,8 +109,7 @@ class TaskRows extends React.PureComponent {
 
   showWithdrawalDate = () => {
     return this.props.appeal.withdrawalDate ? <div>
-      <dt {...css({ color: '#757575',
-        fontSize: '1.5rem' })}>{COPY.TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL.toUpperCase()}</dt>
+      <dt>{COPY.TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL}</dt>
       <dd><DateString date={this.props.appeal.withdrawalDate} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
@@ -255,7 +254,7 @@ class TaskRows extends React.PureComponent {
     const { taskList, timeline, appeal } = templateConfig;
     let timelineContainerText;
     let timeLineIcon;
-    let withdrawIconStyling;
+    let grayLineIconStyling;
 
     if (appeal.withdrawn) {
       timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
@@ -267,29 +266,27 @@ class TaskRows extends React.PureComponent {
 
     if (appeal.withdrawn) {
       timeLineIcon = <MinusCircle />;
+      grayLineIconStyling = grayLineTimelineStyling;
     } else if (appeal.decisionDate) {
       timeLineIcon = <GreenCheckmark />;
     } else {
       timeLineIcon = <GrayDot />;
-    }
-
-    if (appeal.withdrawn) {
-      withdrawIconStyling = grayLineTimelineStyling;
-    } else if (!appeal.decisionDate) {
-      withdrawIconStyling = css({ top: '25px !important' });
+      grayLineIconStyling = css({ top: '25px !important' });
     }
 
     if (timeline) {
       return <tr>
         <td {...taskTimeTimelineContainerStyling}>
-          { appeal.decisionDate ? this.showDecisionDate() : this.showWithdrawalDate() }
+          <CaseDetailsDescriptionList>
+            { appeal.decisionDate ? this.showDecisionDate() : this.showWithdrawalDate() }
+          </CaseDetailsDescriptionList>
         </td>
         <td {...taskInfoWithIconTimelineContainer}
           {...(appeal.withdrawalDate ? redWithdrawStyling : greyDotTimelineStyling)}>
-          { timeLineIcon }
+          {timeLineIcon}
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
           <div {...grayLineTimelineStyling}
-            {...withdrawIconStyling} />}
+            {...grayLineIconStyling} />}
         </td>
         <td {...taskInformationTimelineContainerStyling}>
           { timelineContainerText } <br />
