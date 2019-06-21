@@ -207,6 +207,8 @@ class Appeal < DecisionReview
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
 
+  alias aod advanced_on_docket
+
   delegate :first_name,
            :last_name,
            :name_suffix,

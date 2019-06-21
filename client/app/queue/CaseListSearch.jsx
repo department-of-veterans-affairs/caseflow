@@ -21,8 +21,8 @@ class CaseListSearch extends React.PureComponent {
   onSubmitSearch = (searchQuery) => {
     /* eslint-disable no-empty-function */
     // Error cases already handled inside the promise itself.
-    this.props.fetchAppealsUsingVeteranId(searchQuery).then((id) => {
-      const caseListPath = `/cases/${id}`;
+    this.props.fetchAppealsUsingVeteranId(searchQuery).then((veteranIds) => {
+      const caseListPath = `/search?veteran_ids=${veteranIds.join(',')}`;
 
       if (this.props.location.pathname === '/schedule') {
         return window.location = caseListPath;
