@@ -23,8 +23,10 @@ class Docket
   end
 
   def count(priority: nil, ready: nil)
-    # The underlying scopes here all use `group_by` statements,
-    # so we count using a subquery finding the relevant ids.
+    # The underlying scopes here all use `group_by` statements, so calling
+    # `count` on `appeals` will return a hash. To get the number of appeals, we
+    # can pluck the ids and ask for the size of the resulting array.
+    # See the docs for ActiveRecord::Calculations
     appeals(priority: priority, ready: ready).ids.size
   end
 
