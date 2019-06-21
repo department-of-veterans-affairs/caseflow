@@ -3,12 +3,12 @@
 require "rails_helper"
 
 RSpec.feature "Search" do
-  let(:attorney_user) { FactoryBot.create(:user) }
-  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+  let(:attorney_user) { create(:user) }
+  let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
-  let(:veteran_with_no_appeals) { FactoryBot.create(:veteran) }
-  let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
+  let(:veteran_with_no_appeals) { create(:veteran) }
+  let!(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
 
   before do
     User.authenticate!(user: attorney_user)
@@ -335,12 +335,12 @@ RSpec.feature "Search" do
 
     context "when one appeal found" do
       let!(:paper_appeal) do
-        FactoryBot.create(
+        create(
           :legacy_appeal,
           :with_veteran,
-          vacols_case: FactoryBot.create(
+          vacols_case: create(
             :case,
-            folder: FactoryBot.build(:folder, :paper_case)
+            folder: build(:folder, :paper_case)
           )
         )
       end
