@@ -943,6 +943,7 @@ RSpec.feature "Case details" do
         # Expect to only find the "NOD received" row and the "dispatch pending" rows.
         expect(page).to have_css("table#case-timeline-table tbody tr", count: 2)
       end
+
       context "has withdrawn decision reviews" do
         let(:veteran) do
           create(:veteran,

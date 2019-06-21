@@ -258,18 +258,13 @@ class TaskRows extends React.PureComponent {
 
     if (appeal.withdrawn) {
       timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
-    } else if (appeal.decisionDate) {
-      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
-    } else {
-      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
-    }
-
-    if (appeal.withdrawn) {
       timeLineIcon = <MinusCircle />;
       grayLineIconStyling = grayLineTimelineStyling;
     } else if (appeal.decisionDate) {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
       timeLineIcon = <GreenCheckmark />;
     } else {
+      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
       timeLineIcon = <GrayDot />;
       grayLineIconStyling = css({ top: '25px !important' });
     }
