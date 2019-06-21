@@ -40,7 +40,6 @@ RSpec.feature "Bulk task assignment" do
       expect(NoShowHearingTask.where(assigned_to: user).size).to eq 3
     end
 
-
     it "filters regional office by task types" do
       # RO17 == St. Petersburg
       # RO19 == Columbia

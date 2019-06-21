@@ -250,9 +250,9 @@ describe User do
 
       it "includes judge teams from the organization list" do
         is_expected.to include(
-          :id => judgeteam.id,
-          :name => "Assign",
-          :url => "queue/%<id>s/assign" % [id: user.id]
+          id: judgeteam.id,
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
         )
         expect(user.organizations).to include judgeteam
       end
