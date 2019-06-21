@@ -79,16 +79,8 @@ const tdClassNames = (timeline, task) => {
   return [containerClass, closedAtClass].filter((val) => val).join(' ');
 };
 
-const cancelGrayTimeLineStyle = (task, timeline) => {
-  if (timeline) {
-    if (isCancelled(task)) {
-      return cancelledGrayLineTimelineStyling;
-    }
-
-    return grayLineTimelineStyling;
-  }
-
-  return '';
+const cancelGrayTimeLineStyle = (timeline) => {
+  return timeline ? grayLineTimelineStyling : '';
 };
 
 class TaskRows extends React.PureComponent {
@@ -271,7 +263,7 @@ class TaskRows extends React.PureComponent {
           <td {...taskInfoWithIconContainer} className={tdClassNames(timeline, task)}>
             { isCancelled(task) ? <CancelIcon /> : closedAtIcon(task, timeline) }
             { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
-              <div {...grayLineStyling} className={[cancelGrayTimeLineStyle(task, timeline),
+              <div {...grayLineStyling} className={[cancelGrayTimeLineStyle(timeline),
                 task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
           </td>
           <td {...taskInformationContainerStyling}
