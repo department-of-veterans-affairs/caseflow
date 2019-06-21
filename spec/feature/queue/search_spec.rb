@@ -27,8 +27,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: ""
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -293,8 +292,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: ""
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
