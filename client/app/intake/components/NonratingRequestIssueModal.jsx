@@ -267,12 +267,12 @@ class NonratingRequestIssueModal extends React.Component {
         ]}
         visible
         closeHandler={closeHandler}
-        title={`Add nonrating issue ${issueNumber}`}
+        title={`Add issue ${issueNumber}`}
       >
         <p {...noteDiv}> If the issue is a rating issue, please select "None of these match, see more options" and add it as an unidentified rating issue.</p>
         <div>
           <h2>
-            Does issue {issueNumber} match any of these nonrating issue categories?
+            Does issue {issueNumber} match any of these non-rating issue categories?
           </h2>
           <div className="add-nonrating-request-issue">
             {benefitTypeElement}
