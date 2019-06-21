@@ -26,7 +26,7 @@ RSpec.feature "Search" do
         expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
-      it "searching in search bar works" do
+      it "searching in search bar works", skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-504491971" do
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
 
@@ -320,7 +320,7 @@ RSpec.feature "Search" do
         vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
         User.authenticate!(user: vso_user)
         visit "/search"
-        fill_in "searchBarEmptyList", with: "123456789"
+        fill_in "searchBarEmptyList", with: "666660000"
         click_on "Search"
 
         expect(page).to have_content("Could not find a Veteran matching the file number")
