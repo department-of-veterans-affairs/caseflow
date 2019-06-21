@@ -49,17 +49,9 @@ class Task < ApplicationRecord
                                  )
                                }
 
-  def structure(base = false, *atts)
+  def structure(*atts)
     leaf_name = "#{self.class.name} #{attributes_to_s(*atts)}"
-    if children.count.zero?
-      if base || parent.nil?
-        { "#{leaf_name}": [] }
-      else
-        leaf_name
-      end
-    else
-      { "#{leaf_name}": children.map { |child| child.structure(false, *atts) } }
-    end
+    { "#{leaf_name}": children.map { |child| child.structure(*atts) } }
   end
 
   def available_actions(_user)

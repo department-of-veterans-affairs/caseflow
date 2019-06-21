@@ -3,24 +3,34 @@
 describe Task do
   describe ".structure" do
     let(:root_task) { FactoryBot.create(:root_task, :on_hold) }
-    let!(:bva_task) { FactoryBot.create(:bva_dispatch_task, :on_hold, parent: root_task) }
+    let!(:bva_task) { FactoryBot.create(:bva_dispatch_task, :in_progress, parent: root_task) }
     let(:judge_task) { FactoryBot.create(:ama_judge_task, :completed, parent: root_task) }
     let!(:attorney_task) { FactoryBot.create(:ama_attorney_task, :completed, parent: judge_task) }
 
-    subject { root_task.structure(true, :id, :status) }
+    subject { root_task.structure(:id, :status) }
 
     it "outputs the task structure" do
       root_key = "#{root_task.class.name} #{root_task.id}, #{root_task.status}".to_sym
       judge_key = "#{judge_task.class.name} #{judge_task.id}, #{judge_task.status}".to_sym
-      bva_leaf = "#{bva_task.class.name} #{bva_task.id}, #{bva_task.status}"
-      attorney_leaf = "#{attorney_task.class.name} #{attorney_task.id}, #{attorney_task.status}"
+      bva_key = "#{bva_task.class.name} #{bva_task.id}, #{bva_task.status}".to_sym
+      attorney_key = "#{attorney_task.class.name} #{attorney_task.id}, #{attorney_task.status}".to_sym
+
       expect(subject.key?(root_key)).to be_truthy
       expect(subject[root_key].count).to eq 2
-      expect(subject[root_key].include?(bva_leaf)).to be_truthy
-      judge_index = (subject[root_key].index(bva_leaf) + 1) % subject[root_key].count
-      expect(subject[root_key][judge_index].key?(judge_key)).to be_truthy
-      expect(subject[root_key][judge_index][judge_key].count).to eq 1
-      expect(subject[root_key][judge_index][judge_key].first).to eq attorney_leaf
+      judge_task_found = false
+      bva_task_found = false
+      subject[root_key].each do |child_task|
+        if child_task.key? judge_key
+          judge_task_found = true
+          expect(child_task[judge_key].count).to eq 1
+          expect(child_task[judge_key].first.key?(attorney_key)).to be_truthy
+          expect(child_task[judge_key].first[attorney_key]).to eq []
+        elsif child_task.key? bva_key
+          bva_task_found = true
+        end
+      end
+      expect(judge_task_found).to be_truthy
+      expect(bva_task_found).to be_truthy
     end
   end
 
