@@ -49,6 +49,22 @@ class Task < ApplicationRecord
                                  )
                                }
 
+  def structure(base = false, *args)
+    statuses = []
+    args.each { |arg| statuses << attributes[arg.to_s] }
+    p_statuses = statuses.any? ? " (#{statuses.join(', ')})" : ""
+    leaf_name = "#{self.class.name}#{p_statuses}"
+    if children.count.zero?
+      if base || parent.nil?
+        { "#{leaf_name}": [] }
+      else
+        leaf_name
+      end
+    else
+      { "#{leaf_name}": children.map { |child| child.structure(false, *args) } }
+    end
+  end
+
   def available_actions(_user)
     []
   end
