@@ -760,7 +760,7 @@ class LegacyAppeal < ApplicationRecord
 
     nod_date >= nod_eligible_date
   end
-  
+
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: representative_participant_id)
   end
