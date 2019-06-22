@@ -13,6 +13,7 @@ class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :on_hold_duration_is_set, on: :update
+  validate :task_is_unique, on: :create
 
   after_update :update_location_in_vacols
 
@@ -51,7 +52,7 @@ class ColocatedTask < Task
   def available_actions(user)
     if assigned_to == user
       return available_actions_with_conditions([
-                                                 appropriate_timed_hold_task_action,
+                                                 Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
                                                  Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
                                                  Constants.TASK_ACTIONS.CANCEL_TASK.to_h
                                                ])
@@ -70,9 +71,7 @@ class ColocatedTask < Task
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
-    # Waiting for backend implementation before allowing user access
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
-    # core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+    core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
       return ama_translation_actions(core_actions)
@@ -83,6 +82,17 @@ class ColocatedTask < Task
 
   def actions_available?(_user)
     open?
+  end
+
+  def create_twin_of_type(params)
+    self.class.create!(
+      appeal: appeal,
+      parent: parent,
+      assigned_by: assigned_by,
+      action: params[:action],
+      instructions: params[:instructions],
+      assigned_to: Colocated.singleton
+    )
   end
 
   private
@@ -153,8 +163,23 @@ class ColocatedTask < Task
     end
   end
 
-  # ColocatedTasks on old-style holds can be placed on new timed holds which will not reset the placed_on_hold_at value.
-  def task_just_placed_on_hold?
-    super || (on_timed_hold? && children.open.where.not(type: TimedHoldTask.name).empty?)
+  def task_is_unique
+    ColocatedTask.where(
+      appeal_id: appeal_id,
+      assigned_to_id: assigned_to_id,
+      assigned_to_type: assigned_to_type,
+      action: action,
+      parent_id: parent_id,
+      instructions: instructions
+    ).find_each do |duplicate_task|
+      if duplicate_task.open?
+        errors[:base] << format(
+          COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR,
+          Constants::CO_LOCATED_ADMIN_ACTIONS[action]&.upcase,
+          instructions.join(", ")
+        )
+        break
+      end
+    end
   end
 end

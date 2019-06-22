@@ -16,7 +16,7 @@ RSpec.feature "Attorney checkout flow" do
     before do
       root_task = FactoryBot.create(:root_task)
       parent_task = FactoryBot.create(
-        :ama_judge_task,
+        :ama_judge_decision_review_task,
         assigned_to: judge_user,
         appeal: appeal,
         parent: root_task
@@ -43,8 +43,8 @@ RSpec.feature "Attorney checkout flow" do
     let(:decision_issue_text) { "This is a test decision issue" }
     let(:updated_decision_issue_text) { "This is updated text" }
 
-    let(:other_issue_tex) { "This is a second issue" }
-    let(:allowed_issue_tex) { "This is an allowed issue" }
+    let(:other_issue_text) { "This is a second issue" }
+    let(:allowed_issue_text) { "This is an allowed issue" }
 
     let(:decision_issue_disposition) { "Remanded" }
     let(:benefit_type) { "Education" }
@@ -112,7 +112,7 @@ RSpec.feature "Attorney checkout flow" do
       all("button", text: "+ Add decision", count: 2)[0].click
       expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
-      fill_in "Text Box", with: other_issue_tex
+      fill_in "Text Box", with: other_issue_text
 
       find(".Select-control", text: "Select disposition").click
       find("div", class: "Select-option", text: decision_issue_disposition).click
@@ -126,7 +126,7 @@ RSpec.feature "Attorney checkout flow" do
       all("button", text: "+ Add decision", count: 2)[0].click
       expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
-      fill_in "Text Box", with: allowed_issue_tex
+      fill_in "Text Box", with: allowed_issue_text
 
       find(".Select-control", text: "Select disposition").click
       find("div", class: "Select-option", text: "Allowed").click
@@ -154,7 +154,7 @@ RSpec.feature "Attorney checkout flow" do
       all("button", text: "+ Add decision", count: 2)[0].click
       expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
 
-      fill_in "Text Box", with: allowed_issue_tex
+      fill_in "Text Box", with: allowed_issue_text
 
       find(".Select-control", text: "Select disposition").click
       find("div", class: "Select-option", text: "Allowed").click
@@ -192,7 +192,7 @@ RSpec.feature "Attorney checkout flow" do
       expect(page).to have_content(decision_issue_text)
       expect(page).to have_content(decision_issue_disposition)
 
-      expect(page).to have_content(other_issue_tex)
+      expect(page).to have_content(other_issue_text)
 
       click_on "Continue"
 
@@ -249,7 +249,13 @@ RSpec.feature "Attorney checkout flow" do
 
       click_on "(#{appeal.veteran_file_number})"
 
+      # ensure decision issues show up on case details page
       expect(page).to have_content "Correct issues"
+      expect(page).to have_content(decision_issue_text)
+      expect(page).to have_content(other_issue_text)
+      expect(page).to have_content(allowed_issue_text)
+      expect(page).to have_content("Added to 2 issues", count: 2)
+
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
 
       expect(page).to have_content("Added to 2 issues", count: 2)

@@ -11,21 +11,13 @@ services:
       - SERVICES=sqs
     volumes:
       - ./local/sqs/conf:/conf
-      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - ./local/sqs/localstack:/tmp/localstack"
 
   vacols-db-development:
-    build: ./local/vacols/.
     container_name: VACOLS_DB-development
-    image: vacols_db
-    tty: true
-    stdin_open: true
-    command: bash -c "/home/oracle/setup/dockerInitWithSchema.sh"
-    volumes:
-      - "u01_development:/u01/app/oracle/oradata"
-      - "ORCL_development:/ORCL"
-      - "u02_development:/u02"
+    image: vacols_db:latest
     ports:
-      - "1522:1521"
+      - "1521:1521"
     depends_on:
       - appeals-localstack-aws
 
@@ -76,6 +68,3 @@ services:
 
 volumes:
   postgresdata:
-  u01_development:
-  ORCL_development:
-  u02_development:

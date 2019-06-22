@@ -18,9 +18,6 @@ DEVELOPMENT_JUDGE_TEAMS = {
 
 require "database_cleaner"
 
-# Explicitly include mail_task so we can create instances of MailTask's subclasses that are in the same file.
-require "mail_task"
-
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
@@ -59,6 +56,8 @@ class SeedDB
     User.create(css_id: "BVAGGREY", station_id: 101, full_name: "BVA Dispatch user without cases")
     dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "BVA Dispatch admin without cases")
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
+    bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
+    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -125,16 +124,16 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
 
-    create_no_show_hearings_tasks
+    create_different_hearings_tasks
     create_change_hearing_disposition_task
   end
 
-  def create_no_show_hearings_tasks
-    5.times do
+  def create_different_hearings_tasks
+    10.times do
       appeal = FactoryBot.create(
         :appeal,
         :hearing_docket,
-        closest_regional_office: %w[RO17 RO19 RO31].sample
+        closest_regional_office: ["RO17", "RO19", "RO31", nil].sample
       )
       root_task = FactoryBot.create(:root_task, appeal: appeal)
       distribution_task = FactoryBot.create(
@@ -154,7 +153,11 @@ class SeedDB
         appeal: appeal
       )
       disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
-      FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+      FactoryBot.create(
+        [:no_show_hearing_task, :evidence_submission_window_task].sample,
+        parent: disposition_task,
+        appeal: appeal
+      )
     end
   end
 
@@ -770,7 +773,7 @@ class SeedDB
   end
 
   def create_task_at_judge_review(appeal, judge, attorney)
-    parent = FactoryBot.create(:ama_judge_task,
+    parent = FactoryBot.create(:ama_judge_decision_review_task,
                                :in_progress,
                                assigned_to: judge,
                                appeal: appeal,
@@ -788,7 +791,7 @@ class SeedDB
 
   def create_task_at_colocated(appeal, judge, attorney, task_attributes = {})
     parent = FactoryBot.create(
-      :ama_judge_task,
+      :ama_judge_decision_review_task,
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
@@ -828,7 +831,7 @@ class SeedDB
 
   def create_task_at_attorney_review(appeal, judge, attorney)
     parent = FactoryBot.create(
-      :ama_judge_task,
+      :ama_judge_decision_review_task,
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
@@ -904,7 +907,7 @@ class SeedDB
     judge = FactoryBot.create(:user, station_id: 101)
     FactoryBot.create(:staff, :judge_role, user: judge)
     judge_task = FactoryBot.create(
-      :ama_judge_task,
+      :ama_judge_decision_review_task,
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
@@ -1029,8 +1032,8 @@ class SeedDB
 
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
-    r = Redis.new(url: Rails.application.secrets.redis_url_cache)
-    r.keys.each { |k| r.del(k) }
+    cm = CacheManager.new
+    CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
   end
 
   def setup_dispatch

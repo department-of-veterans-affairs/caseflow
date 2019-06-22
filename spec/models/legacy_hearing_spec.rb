@@ -193,8 +193,12 @@ describe LegacyHearing do
 
     context "when a hearing & appeal exist" do
       it "returns expected keys" do
+        expect(subject["appellant_address_line_1"]).to eq(appeal.appellant_address_line_1)
+        expect(subject["appellant_address_line_2"]).to eq(appeal.appellant_address_line_2)
         expect(subject["appellant_city"]).to eq(appeal.appellant_city)
+        expect(subject["appellant_country"]).to eq(appeal.appellant_country)
         expect(subject["appellant_state"]).to eq(appeal.appellant_state)
+        expect(subject["appellant_zip"]).to eq(appeal.appellant_zip)
         expect(subject["veteran_age"]).to eq(appeal.veteran_age)
         expect(subject["veteran_gender"]).to eq(appeal.veteran_gender)
         expect(subject["veteran_first_name"]).to eq(hearing.veteran_first_name)

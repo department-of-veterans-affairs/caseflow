@@ -158,7 +158,6 @@ RSpec.feature "Case details" do
         scenario "worksheet and details links are not visible" do
           visit vso.path
           click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-
           expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
           scroll_to("#hearings-section")
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
@@ -391,7 +390,6 @@ RSpec.feature "Case details" do
     scenario "case details page shows appropriate text" do
       visit "/queue"
       click_on "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})"
-
       # Call have_content() so we wait for the case details page to load
       expect(page).to have_content(appeal.veteran_full_name)
       expect(page).to have_content("DISPOSITION\n1 - Allowed")
@@ -723,23 +721,23 @@ RSpec.feature "Case details" do
       let!(:appeal) { FactoryBot.create(:appeal) }
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-      let!(:attorney_task) do
-        create(:ama_attorney_task, :completed, appeal: appeal, parent: root_task, assigned_to: user)
-      end
-      let!(:attorney_task2) do
-        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user)
-      end
       let!(:judge_task) do
-        create(:ama_judge_decision_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
-                                                status: Constants.TASK_STATUSES.completed,
-                                                closed_at: Time.zone.now)
+        create(
+          :ama_judge_decision_review_task,
+          appeal: appeal,
+          parent: root_task,
+          assigned_to: user
+        )
       end
+      let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, parent: judge_task, assigned_to: user) }
+      let!(:attorney_task2) { create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user) }
 
       before do
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
         attorney_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-02-01")
         attorney_task2.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-03-01")
+        judge_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: Time.zone.now)
       end
 
       it "should display judge & attorney tasks" do
@@ -875,8 +873,8 @@ RSpec.feature "Case details" do
       end
 
       it "is displayed in the TaskSnapshot" do
-        visit "/queue/appeals/#{legacy_appeal.vacols_id}"
 
+        visit "/queue/appeals/#{legacy_appeal.vacols_id}"
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
       end
@@ -888,15 +886,25 @@ RSpec.feature "Case details" do
     let(:judge_user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:appeal) { root_task.appeal }
-    let!(:atty_task) do
-      FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_by: judge_user,
-                                            assigned_to: attorney_user)
-    end
+    let!(:request_issue) { create(:request_issue, decision_review: appeal) }
     let!(:judge_task) do
-      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: atty_task, assigned_by: judge_user,
-                                         assigned_to: judge_user)
+      FactoryBot.create(
+        :ama_judge_decision_review_task,
+        appeal: appeal,
+        parent: root_task,
+        assigned_by: judge_user,
+        assigned_to: judge_user
+      )
     end
-
+    let!(:atty_task) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        appeal: appeal,
+        parent: judge_task,
+        assigned_by: judge_user,
+        assigned_to: attorney_user
+      )
+    end
     context "Attorney has been assigned" do
       it "is displayed in the Universal Case Title" do
         visit "/queue/appeals/#{appeal.uuid}"
@@ -904,6 +912,16 @@ RSpec.feature "Case details" do
         expect(page).to have_content(judge_user.full_name)
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ASSIGNED_ATTORNEY_LABEL)
         expect(page).to have_content(attorney_user.full_name)
+      end
+    end
+
+    context "Attorney has removed appeal" do
+      before { request_issue.remove! }
+      it "should not show attorney name" do
+        expect(appeal.reload.removed?).to eq(true)
+        visit "/queue/appeals/#{appeal.uuid}"
+        expect(page).to_not have_content(judge_user.full_name)
+        expect(page).to_not have_content(attorney_user.full_name)
       end
     end
   end
@@ -923,7 +941,6 @@ RSpec.feature "Case details" do
 
       it "should not show the tracking task in case timeline" do
         visit("/queue/appeals/#{tracking_task.appeal.uuid}")
-
         # Expect to only find the "NOD received" row and the "dispatch pending" rows.
         expect(page).to have_css("table#case-timeline-table tbody tr", count: 2)
       end
