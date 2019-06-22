@@ -177,7 +177,7 @@ describe ColocatedTask do
             action: :poa_clarification,
             parent: parent,
             instructions: [instructions]
-          ).becomes(ColocatedTask)
+          )
         end
 
         it "does not create a new co-located task" do
@@ -192,7 +192,7 @@ describe ColocatedTask do
   context ".update" do
     let!(:attorney_2) { FactoryBot.create(:user) }
     let!(:staff_2) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_2.css_id) }
-    let!(:colocated_admin_action) { FactoryBot.create(:colocated_task, assigned_by: attorney_2).becomes(ColocatedTask) }
+    let!(:colocated_admin_action) { create(:colocated_task, assigned_by: attorney_2) }
 
     context "when status is updated to on-hold" do
       it "should validate on-hold duration" do
@@ -344,7 +344,7 @@ describe ColocatedTask do
         assigned_to: colocated_user,
         appeal: appeal_1,
         parent: org_task
-      ).becomes(ColocatedTask)
+      )
     end
 
     it "should vary depending on status of task" do
@@ -481,7 +481,7 @@ describe ColocatedTask do
         action: :retired_vlj,
         assigned_by: initial_assigner,
         assigned_to: Colocated.singleton
-      ).becomes(ColocatedTask)
+      )
     end
     let(:colocated_task) { org_task.children.first }
 

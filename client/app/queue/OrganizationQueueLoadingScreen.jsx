@@ -9,7 +9,8 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import { extractAppealsAndAmaTasks } from './utils';
 
 import {
-  onReceiveQueue
+  onReceiveQueue,
+  setQueueConfig
 } from './QueueActions';
 
 import {
@@ -72,7 +73,8 @@ class OrganizationQueueLoadingScreen extends React.PureComponent {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onReceiveQueue,
-  setActiveOrganization
+  setActiveOrganization,
+  setQueueConfig
 }, dispatch);
 
 export default (connect(null, mapDispatchToProps)(OrganizationQueueLoadingScreen));
