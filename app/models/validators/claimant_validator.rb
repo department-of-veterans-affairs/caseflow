@@ -14,11 +14,10 @@ class ClaimantValidator < ActiveModel::Validator
   end
 
   def validate_payee_code(claimant)
+    return unless claimant.decision_review&.is_a?(ClaimReview)
     return if claimant.payee_code
-    return unless claimant.decision_review
-    return unless claimant.decision_review.is_a?(ClaimReview)
-    return unless benefit_type_requires_payee_code?(claimant)
     return if veteran_is_claimant?(claimant)
+    return unless benefit_type_requires_payee_code?(claimant)
 
     claimant.errors[:payee_code] << BLANK
     claimant.decision_review.errors[:benefit_type] << PAYEE_CODE_REQUIRED
@@ -32,11 +31,9 @@ class ClaimantValidator < ActiveModel::Validator
   end
 
   def validate_claimant_address(claimant)
-    return unless claimant.decision_review
-    return if claimant.decision_review.is_a?(Appeal)
-    return unless benefit_type_requires_payee_code?(claimant)
+    return unless claimant.decision_review&.is_a?(ClaimReview)
     return unless claimant.participant_id
-    return false if claimant.address_line_1.nil?
+    return unless claimant.address_line_1.nil?
 
     claimant.errors[:address] << BLANK
     claimant.decision_review.errors[:claimant] << CLAIMANT_ADDRESS_REQUIRED
