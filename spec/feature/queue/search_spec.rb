@@ -26,7 +26,7 @@ RSpec.feature "Search" do
         expect(page).to have_content(format(COPY::CASE_SEARCH_ERROR_INVALID_ID_HEADING, invalid_veteran_id))
       end
 
-      it "searching in search bar works", skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-504491971" do
+      it "searching in search bar works" do
         fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
         click_on "Search"
 
