@@ -22,7 +22,9 @@ class Intake < ApplicationRecord
     veteran_has_multiple_phone_numbers: "veteran_has_multiple_phone_numbers",
     veteran_not_accessible: "veteran_not_accessible",
     veteran_not_valid: "veteran_not_valid",
-    duplicate_intake_in_progress: "duplicate_intake_in_progress"
+    duplicate_intake_in_progress: "duplicate_intake_in_progress",
+    reserved_veteran_file_number: "reserved_veteran_file_number",
+    incident_flash: "incident_flash"
   }.freeze
 
   FORM_TYPES = {
@@ -187,22 +189,19 @@ class Intake < ApplicationRecord
   end
 
   def validate_start
-    if !file_number_valid?
-      self.error_code = :invalid_file_number
+    return false unless validate_file_number
 
-    elsif !veteran
+    if !veteran
       self.error_code = :veteran_not_found
-
     elsif !veteran.accessible?
       set_veteran_accessible_error
-
+    elsif veteran.incident_flash?
+      self.error_code = :incident_flash
     elsif duplicate_intake_in_progress
       self.error_code = :duplicate_intake_in_progress
       @error_data = { processed_by: duplicate_intake_in_progress.user.full_name }
-
     else
       validate_detail_on_start
-
     end
 
     !error_code
@@ -259,6 +258,20 @@ class Intake < ApplicationRecord
 
   private
 
+  def validate_file_number
+    if !file_number_valid?
+      self.error_code = :invalid_file_number
+    elsif file_number_reserved?
+      self.error_code = :reserved_veteran_file_number
+    end
+
+    !error_code
+  end
+
+  def validate_receipt_date_not_before_ama
+    errors.add(:receipt_date, "before_ama") if receipt_date < ama_activation_date
+  end
+
   def set_veteran_accessible_error
     return unless !veteran.accessible?
 
@@ -282,6 +295,11 @@ class Intake < ApplicationRecord
 
     self.veteran_file_number = veteran_file_number.strip
     veteran_file_number =~ /^[0-9]{8,9}$/
+  end
+
+  def file_number_reserved?
+    FeatureToggle.enabled?(:intake_reserved_file_number,
+                           user: RequestStore[:current_user]) && veteran_file_number == "123456789"
   end
 
   # Optionally implement this methods in subclass

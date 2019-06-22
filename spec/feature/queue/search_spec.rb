@@ -182,6 +182,8 @@ RSpec.feature "Search" do
               context "the EP has been established" do
                 before do
                   higher_level_review.reload.establish!
+                  end_product_establishment_1.commit!
+                  end_product_establishment_2.commit!
                 end
 
                 it "shows the end product status" do

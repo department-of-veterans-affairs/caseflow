@@ -196,13 +196,50 @@ class TaskRows extends React.PureComponent {
 
   showActionsSection = (task) => (task && !this.props.hideDropdown);
 
-  render = () => {
-    const {
-      appeal,
-      taskList,
-      timeline
-    } = this.props;
+  mapDecisionDateToSortableObject = (appeal) => {
+    // if there's no decision date, then this object should be at the top 
+    // of the case timeline, thus the negative infinity default 
+    return {
+      isDecisionDate: true,
+      createdAt: appeal.decisionDate || Number.NEGATIVE_INFINITY
+    };
+  }
 
+  taskTemplate = (templateConfig) => {
+    const { task, taskList, index, timeline, appeal } = templateConfig;
+
+    return <tr key={task.uniqueId}>
+      <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
+        <CaseDetailsDescriptionList>
+          { this.assignedOnListItem(task) }
+          { this.closedAtListItem(task) }
+          { !task.closedAt && this.daysWaitingListItem(task) }
+        </CaseDetailsDescriptionList>
+      </td>
+      <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
+        task.closedAt ? '' : greyDotTimelineStyling].join(' ')}>
+        { task.closedAt && timeline ? <GreenCheckmark /> : <GrayDot /> }
+        { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
+        <div {...grayLineStyling} className={[timeline ? grayLineTimelineStyling : '',
+          task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
+      </td>
+      <td {...taskInformationContainerStyling}
+        className={timeline ? taskInformationTimelineContainerStyling : ''}>
+        <CaseDetailsDescriptionList>
+          { timeline && task.timelineTitle }
+          { this.assignedToListItem(task) }
+          { this.assignedByListItem(task) }
+          { this.taskLabelListItem(task) }
+          { this.taskInstructionsListItem(task) }
+        </CaseDetailsDescriptionList>
+      </td>
+      { !timeline && <td {...taskActionsContainerStyling}>
+        { this.showActionsListItem(task, appeal) } </td> }
+    </tr>;
+  }
+
+  decisionDateTemplate = (templateConfig) => {
+    const { taskList, timeline, appeal } = templateConfig;
     let timelineContainerText;
 
     if (appeal.withdrawn) {
@@ -212,9 +249,8 @@ class TaskRows extends React.PureComponent {
     } else {
       timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
     }
-
-    return <React.Fragment key={appeal.externalId}>
-      { timeline && <tr>
+    if (timeline) {
+      return <tr>
         <td {...taskTimeTimelineContainerStyling}>
           { appeal.decisionDate && moment(appeal.decisionDate).format('MM/DD/YYYY') }
         </td>
@@ -222,42 +258,51 @@ class TaskRows extends React.PureComponent {
           {...(!appeal.decisionDate && greyDotStyling)}>
           {appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-            <div {...grayLineTimelineStyling}
-              {...(!appeal.decisionDate && css({ top: '25px !important' }))} />}</td>
+          <div {...grayLineTimelineStyling}
+            {...(!appeal.decisionDate && css({ top: '25px !important' }))} />}
+        </td>
         <td {...taskInformationTimelineContainerStyling}>
           { timelineContainerText } <br />
         </td>
-      </tr> }
-      { sortTaskList(taskList).map((task, index) =>
-        <tr key={task.uniqueId}>
-          <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
-            <CaseDetailsDescriptionList>
-              { this.assignedOnListItem(task) }
-              { this.closedAtListItem(task) }
-              { !task.closedAt && this.daysWaitingListItem(task) }
-            </CaseDetailsDescriptionList>
-          </td>
-          <td {...taskInfoWithIconContainer} className={[timeline ? taskInfoWithIconTimelineContainer : '',
-            task.closedAt ? '' : greyDotTimelineStyling].join(' ')}>
-            { task.closedAt && timeline ? <GreenCheckmark /> : <GrayDot /> }
-            { (((index < taskList.length) && timeline) || (index < taskList.length - 1 && !timeline)) &&
-              <div {...grayLineStyling} className={[timeline ? grayLineTimelineStyling : '',
-                task.closedAt ? '' : greyDotAndlineStyling].join(' ')} /> }
-          </td>
-          <td {...taskInformationContainerStyling}
-            className={timeline ? taskInformationTimelineContainerStyling : ''}>
-            <CaseDetailsDescriptionList>
-              { timeline && task.timelineTitle }
-              { this.assignedToListItem(task) }
-              { this.assignedByListItem(task) }
-              { this.taskLabelListItem(task) }
-              { this.taskInstructionsListItem(task) }
-            </CaseDetailsDescriptionList>
-          </td>
-          { !timeline && <td {...taskActionsContainerStyling}>
-            { this.showActionsListItem(task, appeal) } </td> }
-        </tr>
-      ) }
+      </tr>;
+    }
+  }
+
+  render = () => {
+    const {
+      appeal,
+      taskList,
+      timeline
+    } = this.props;
+
+    const taskListToSort = taskList;
+    const mappedDecisionDateObj = this.mapDecisionDateToSortableObject(appeal);
+
+    if (appeal.decisionDate) {
+      taskListToSort.push(mappedDecisionDateObj);
+    } else {
+      taskListToSort.unshift(mappedDecisionDateObj);
+    }
+
+    return <React.Fragment key={appeal.externalId}>
+
+      { sortTaskList(taskListToSort, appeal).map((task, index) => {
+        const templateConfig = {
+          task,
+          index,
+          timeline,
+          taskList,
+          appeal
+        };
+
+        if (!task.isDecisionDate) {
+          return this.taskTemplate(templateConfig);
+        }
+
+        return this.decisionDateTemplate(templateConfig);
+
+      }) }
+      {/* everything below here will not be in chronological order unless it's added to the task list on line 287*/}
       { timeline && appeal.isLegacyAppeal && <tr>
         <td {...taskTimeTimelineContainerStyling}>
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }

@@ -39,7 +39,7 @@ class BulkTaskAssignment
   def tasks_to_be_assigned
     @tasks_to_be_assigned ||= begin
       tasks = task_type.constantize
-        .open.where(assigned_to_id: organization.id)
+        .active.where(assigned_to_id: organization.id)
         .limit(task_count).order(:created_at)
       if regional_office
         tasks = tasks.joins(
