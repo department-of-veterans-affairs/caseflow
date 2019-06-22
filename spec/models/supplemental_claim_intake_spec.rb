@@ -129,7 +129,7 @@ describe SupplementalClaimIntake do
         let(:empty_address) { {:address_line_1=>nil, :address_line_2=>nil, :city=>nil, :state=>nil, :zip=>nil} }
 
         before do
-          allow_any_instance_of(BgsAddressService).to receive(:address).and_return(empty_address)
+          allow_any_instance_of(BgsAddressService).to receive(:fetch_bgs_record).and_return(empty_address)
         end
 
         it "adds claimant address required error" do
