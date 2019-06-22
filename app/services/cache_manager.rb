@@ -6,6 +6,8 @@ class CacheManager
   BUCKETS = {
     bgs: [
       "bgs_can_access_*",
+      "bgs-participant-poa-*",
+      "bgs-participant-address-*",
       "SupplementalClaim-*-ratings-*-cached-*",
       "HigherLevelReview-*-ratings-*-cached-*",
       "Appeal-*-ratings-*-cached-*"

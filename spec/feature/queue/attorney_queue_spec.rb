@@ -25,7 +25,14 @@ RSpec.feature "Attorney queue" do
     context "for AMA appeals" do
       let(:appeal) { FactoryBot.create(:appeal) }
       let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let(:judge_task) { FactoryBot.create(:ama_judge_task, appeal: appeal, assigned_to: judge, parent: root_task) }
+      let(:judge_task) do
+        FactoryBot.create(
+          :ama_judge_decision_review_task,
+          appeal: appeal,
+          assigned_to: judge,
+          parent: root_task
+        )
+      end
       let(:attorney_task) do
         FactoryBot.create(
           :ama_attorney_task,
@@ -66,7 +73,14 @@ RSpec.feature "Attorney queue" do
   describe "timed holds" do
     let(:appeal) { FactoryBot.create(:appeal) }
     let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-    let(:judge_task) { FactoryBot.create(:ama_judge_task, appeal: appeal, assigned_to: judge, parent: root_task) }
+    let(:judge_task) do
+      FactoryBot.create(
+        :ama_judge_decision_review_task,
+        appeal: appeal,
+        assigned_to: judge,
+        parent: root_task
+      )
+    end
     let!(:attorney_task) do
       FactoryBot.create(
         :ama_attorney_task,
@@ -143,7 +157,14 @@ RSpec.feature "Attorney queue" do
     context "when an AMA appeal has a ColocatedTask" do
       let(:appeal) { FactoryBot.create(:appeal) }
       let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-      let(:judge_task) { FactoryBot.create(:ama_judge_task, appeal: appeal, assigned_to: judge, parent: root_task) }
+      let(:judge_task) do
+        FactoryBot.create(
+          :ama_judge_decision_review_task,
+          appeal: appeal,
+          assigned_to: judge,
+          parent: root_task
+        )
+      end
       let(:attorney_task) do
         FactoryBot.create(
           :ama_attorney_task,
@@ -163,7 +184,7 @@ RSpec.feature "Attorney queue" do
           assigned_by: attorney,
           assigned_to: Colocated.singleton,
           parent: attorney_task
-        ).becomes(ColocatedTask)
+        )
       end
 
       it "displays a single row for the appeal in the attorney's on hold tab" do
@@ -187,7 +208,7 @@ RSpec.feature "Attorney queue" do
           appeal: appeal,
           assigned_by: attorney,
           assigned_to: Colocated.singleton
-        ).becomes(ColocatedTask)
+        )
       end
 
       it "displays a single row for the appeal in the attorney's on hold tab" do

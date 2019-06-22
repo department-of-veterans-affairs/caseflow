@@ -71,6 +71,21 @@ class EndProductEstablishment < ApplicationRecord
     raise Caseflow::Error::EstablishClaimFailedInVBMS.from_vbms_error(error)
   end
 
+  def establish!
+    return unless status_active?
+
+    perform!
+    create_contentions!
+    associate_rating_request_issues!
+
+    if source.try(:informal_conference)
+      generate_claimant_letter!
+      generate_tracked_item!
+    end
+
+    commit!
+  end
+
   # VBMS will return ALL contentions on a end product when you create contentions,
   # not just the ones that were just created.
   def create_contentions!
@@ -110,15 +125,6 @@ class EndProductEstablishment < ApplicationRecord
       issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
       contention
     end
-  end
-
-  def remove_contention!(request_issue)
-    contention = contention_for_object(request_issue)
-
-    fail ContentionNotFound, request_issue.contention_reference_id unless contention
-
-    VBMSService.remove_contention!(contention)
-    request_issue.update!(contention_removed_at: Time.zone.now)
   end
 
   # Committing an end product establishment is a way to signify that any other actions performed
@@ -303,6 +309,10 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
+  def contention_for_object(for_object)
+    contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
+  end
+
   private
 
   def status_type
@@ -451,7 +461,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def taken_modifiers
-    @taken_modifiers ||= veteran.end_products.select(&:active?).map(&:modifier)
+    @taken_modifiers ||= veteran.end_products.reject(&:cleared?).map(&:modifier)
   end
 
   def find_open_modifier
@@ -479,10 +489,6 @@ class EndProductEstablishment < ApplicationRecord
       contentions: contentions,
       user: user
     )
-  end
-
-  def contention_for_object(for_object)
-    contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
   end
 
   # These are values that need to be determined based on the source right before the end
