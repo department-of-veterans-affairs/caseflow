@@ -12,6 +12,7 @@ class LegacyAppeal < ApplicationRecord
   include CachedAttributes
   include AddressMapper
   include Taskable
+  include PrintsTaskTree
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -88,16 +89,6 @@ class LegacyAppeal < ApplicationRecord
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
-  end
-
-  def structure_render(*atts)
-    TTY::Tree.new(structure(*atts)).render
-  end
-
-  def structure(*atts)
-    leaf_name = "#{self.class.name} #{id}"
-    parentless_tasks = tasks.where(parent_id: nil).order(:id)
-    { "#{leaf_name}": parentless_tasks.map { |task| task.structure(*atts) } }
   end
 
   def advanced_on_docket

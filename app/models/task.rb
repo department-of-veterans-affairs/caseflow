@@ -7,6 +7,8 @@
 class Task < ApplicationRecord
   acts_as_tree
 
+  include PrintsTaskTree
+
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
@@ -48,15 +50,6 @@ class Task < ApplicationRecord
                                    type: DecisionReviewTask.descendants.map(&:name) + ["DecisionReviewTask"]
                                  )
                                }
-
-  def structure_render(*atts)
-    TTY::Tree.new(structure(*atts)).render
-  end
-
-  def structure(*atts)
-    leaf_name = "#{self.class.name} #{attributes_to_s(*atts)}"
-    { "#{leaf_name}": children.map { |child| child.structure(*atts) } }
-  end
 
   def available_actions(_user)
     []
@@ -403,16 +396,6 @@ class Task < ApplicationRecord
   end
 
   private
-
-  def attributes_to_s(*atts)
-    atts_list = []
-    atts.each do |att|
-      value = attributes[att.to_s]
-      value = "(#{att})" if value.blank?
-      atts_list << value
-    end
-    atts_list.flatten.compact.join(", ")
-  end
 
   def create_and_auto_assign_child_task(options = {})
     dup.tap do |child_task|

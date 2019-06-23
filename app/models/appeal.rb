@@ -7,6 +7,7 @@
 
 class Appeal < DecisionReview
   include Taskable
+  include PrintsTaskTree
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -38,16 +39,6 @@ class Appeal < DecisionReview
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
-
-  def structure_render(*atts)
-    TTY::Tree.new(structure(*atts)).render
-  end
-
-  def structure(*atts)
-    leaf_name = "#{self.class.name} #{id}"
-    parentless_tasks = tasks.where(parent_id: nil).order(:id)
-    { "#{leaf_name}": parentless_tasks.map { |task| task.structure(*atts) } }
-  end
 
   def document_fetcher
     @document_fetcher ||= DocumentFetcher.new(
