@@ -13,6 +13,31 @@ describe LegacyAppeal do
     create(:legacy_appeal, vacols_case: vacols_case)
   end
 
+  context "includes PrintsTaskTree concern" do
+    context "#structure" do
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+      let(:vacols_case) { create(:case, bfcorlid: "123456789S") }
+
+      subject { appeal.structure(:id) }
+
+      it "returns the task structure" do
+        expect_any_instance_of(RootTask).to receive(:structure).with(:id)
+        expect(subject.key?(:"LegacyAppeal #{appeal.id}")).to be_truthy
+      end
+
+      context "the appeal has more than one parentless task" do
+        let!(:colocated_task) { FactoryBot.create(:colocated_task, appeal: appeal, parent: nil) }
+
+        it "returns all parentless tasks" do
+          expect_any_instance_of(RootTask).to receive(:structure).with(:id)
+          expect_any_instance_of(ColocatedTask).to receive(:structure).with(:id)
+          expect(subject.key?(:"LegacyAppeal #{appeal.id}")).to be_truthy
+          expect(subject[:"LegacyAppeal #{appeal.id}"].count).to eq 2
+        end
+      end
+    end
+  end
+
   context "#eligible_for_soc_opt_in? and #matchable_to_request_issue?" do
     let(:soc_eligible_date) { receipt_date - 60.days }
     let(:nod_eligible_date) { receipt_date - 372.days }
