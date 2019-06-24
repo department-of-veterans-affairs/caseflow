@@ -80,6 +80,7 @@ class WorksheetFormEntry extends React.PureComponent {
     </div>;
   }
 }
+
 export class HearingWorksheet extends React.PureComponent {
   componentDidMount() {
     document.title = this.getWorksheetTitle();
@@ -132,18 +133,9 @@ export class HearingWorksheet extends React.PureComponent {
   render() {
     let { worksheet, worksheetIssues } = this.props;
 
-    const worksheetHeader = <WorksheetHeader
-      print={this.props.print}
-    />;
-
     const firstWorksheetPage = <div className="cf-hearings-first-page">
-      {worksheetHeader}
+      <WorksheetHeader />
       {this.props.worksheet.docket_name === 'hearing' ? this.getHearingWorksheet() : this.getLegacyHearingWorksheet()}
-      {this.props.print &&
-        <WorksheetFooter
-          veteranName={this.props.worksheet.veteran_fi_last_formatted}
-        />
-      }
     </div>;
 
     const secondWorksheetPage = <div className="cf-hearings-second-page">
@@ -210,10 +202,6 @@ export class HearingWorksheet extends React.PureComponent {
     </div>;
   }
 }
-
-HearingWorksheet.propTypes = {
-  print: PropTypes.bool
-};
 
 const mapStateToProps = (state) => ({
   worksheet: state.hearingWorksheet.worksheet,
