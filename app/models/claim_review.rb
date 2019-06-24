@@ -199,6 +199,10 @@ class ClaimReview < DecisionReview
     epe.request_issues
   end
 
+  def cancel_active_tasks
+    ClaimReviewActiveTaskCancellation.new(self).call
+  end
+
   private
 
   def incomplete_tasks?
