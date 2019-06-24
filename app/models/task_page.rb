@@ -20,7 +20,7 @@ class TaskPage
   def paged_tasks
     @page ||= 1
 
-    tasks_for_tab.page(page).per(TASKS_PER_PAGE)
+    tasks_for_tab.order(:created_at).page(page).per(TASKS_PER_PAGE)
   end
 
   # sorted_tasks(filtered_tasks(tasks_for_tab)).page(page).per(TASKS_PER_PAGE)

@@ -59,5 +59,38 @@ describe TaskPage do
     # TODO: Add more scenarios here.
   end
 
-  # TODO: Add tests for paged_tasks here.
+  describe ".paged_tasks" do
+    let(:assignee) { FactoryBot.create(:organization) }
+    let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
+    let(:page) { 1 }
+    let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
+
+    subject { TaskPage.new(arguments).paged_tasks }
+
+    before do
+      FactoryBot.create_list(:generic_task, TaskPage::TASKS_PER_PAGE + 1, assigned_to: assignee)
+    end
+
+    context "when the first page of tasks is requested" do
+      it "returns a full page of tasks" do
+        expect(subject.count).to eq(TaskPage::TASKS_PER_PAGE)
+      end
+    end
+
+    context "when the page argument is nil" do
+      let(:page) { nil }
+
+      it "returns the first page of tasks" do
+        expect(subject.count).to eq(TaskPage::TASKS_PER_PAGE)
+      end
+    end
+
+    context "when the second page of tasks is requested" do
+      let(:page) { 2 }
+
+      it "returns a single task" do
+        expect(subject.count).to eq(1)
+      end
+    end
+  end
 end
