@@ -425,8 +425,16 @@
 }
 
 .cf-hearings-worksheet-form {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+
   label {
     font-weight: bold;
+  }
+
+  > .cf-hearings-worksheet-data {
+    flex: 1 100%;
   }
 }
 

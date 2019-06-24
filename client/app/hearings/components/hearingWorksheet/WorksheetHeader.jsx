@@ -46,17 +46,18 @@ const copyButtonStyling = css({
 });
 
 const firstColumnStyling = css({
-  width: '30%',
-  marginBottom: '20px'
+  flex: '4',
+  marginBottom: '20px',
+  marginRight: '1.5rem'
 });
 
 const secondColumnStyling = css({
-  width: '65%',
+  flex: '6',
   marginBottom: '20px'
 });
 
 const secondRowStyling = css({
-  width: '100%',
+  flex: '1 100%',
   marginBottom: '20px'
 });
 
