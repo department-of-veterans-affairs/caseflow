@@ -71,6 +71,7 @@ class QueueConfig
     }
   end
 
+  # rubocop:disable Metrics/AbcSize
   def unassigned_tasks_tab
     name = Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
     tasks = TaskPage.new(assignee: organization, tab_name: name).tasks_for_tab
@@ -95,7 +96,9 @@ class QueueConfig
       allow_bulk_assign: organization.can_bulk_assign_tasks?
     }
   end
+  # rubocop:enable Metrics/AbcSize
 
+  # rubocop:disable Metrics/AbcSize
   def assigned_tasks_tab
     name = Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
     tasks = TaskPage.new(assignee: organization, tab_name: name).tasks_for_tab
@@ -120,6 +123,7 @@ class QueueConfig
       allow_bulk_assign: false
     }
   end
+  # rubocop:enable Metrics/AbcSize
 
   def completed_tasks_tab
     name = Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
