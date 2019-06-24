@@ -3,12 +3,12 @@
 require "rails_helper"
 
 RSpec.feature "Search" do
-  let(:attorney_user) { FactoryBot.create(:user) }
-  let!(:vacols_atty) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
+  let(:attorney_user) { create(:user) }
+  let!(:vacols_atty) { create(:staff, :attorney_role, sdomainid: attorney_user.css_id) }
 
   let(:invalid_veteran_id) { "obviouslyinvalidveteranid" }
-  let(:veteran_with_no_appeals) { FactoryBot.create(:veteran) }
-  let!(:appeal) { FactoryBot.create(:legacy_appeal, :with_veteran, vacols_case: FactoryBot.create(:case)) }
+  let(:veteran_with_no_appeals) { create(:veteran) }
+  let!(:appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
 
   before do
     User.authenticate!(user: attorney_user)
@@ -27,16 +27,19 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
-      it "clicking on the x in the search bar returns browser to queue list page" do
+      it "clicking on the x in the search bar clears the search bar" do
+        expect(page).to have_field("search", with: invalid_veteran_id)
+
         click_on "button-clear-search"
-        expect(page).to_not have_content("1 case found for")
+
+        expect(page).to_not have_field("search", with: invalid_veteran_id)
       end
     end
 
@@ -231,10 +234,10 @@ RSpec.feature "Search" do
         end
 
         let!(:appeal_with_hearing) do
-          FactoryBot.create(
+          create(
             :legacy_appeal,
             :with_veteran,
-            vacols_case: FactoryBot.create(
+            vacols_case: create(
               :case,
               case_hearings: hearings
             )
@@ -289,16 +292,19 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
         expect(page).to have_content(COPY::CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE)
       end
 
-      it "clicking on the x in the search bar returns browser to queue list page" do
+      it "clicking on the x in the search bar clears the search bar" do
+        expect(page).to have_field("search", with: veteran_with_no_appeals.file_number)
+
         click_on "button-clear-search"
-        expect(page).to_not have_content("1 case found for")
+
+        expect(page).to_not have_field("search", with: veteran_with_no_appeals.file_number)
       end
     end
 
@@ -329,12 +335,12 @@ RSpec.feature "Search" do
 
     context "when one appeal found" do
       let!(:paper_appeal) do
-        FactoryBot.create(
+        create(
           :legacy_appeal,
           :with_veteran,
-          vacols_case: FactoryBot.create(
+          vacols_case: create(
             :case,
-            folder: FactoryBot.build(:folder, :paper_case)
+            folder: build(:folder, :paper_case)
           )
         )
       end
@@ -380,7 +386,7 @@ RSpec.feature "Search" do
     let(:search_homepage_title) { COPY::CASE_SEARCH_HOME_PAGE_HEADING }
     let(:search_homepage_subtitle) { COPY::CASE_SEARCH_INPUT_INSTRUCTION }
 
-    let(:non_queue_user) { FactoryBot.create(:user) }
+    let(:non_queue_user) { create(:user) }
 
     before do
       FeatureToggle.enable!(:case_search_home_page)
@@ -408,7 +414,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
@@ -440,7 +446,7 @@ RSpec.feature "Search" do
       end
 
       it "searching in search bar works" do
-        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id
+        fill_in "searchBarEmptyList", with: appeal.sanitized_vbms_id, fill_options: { clear: :backspace }
         click_on "Search"
 
         expect(page).to have_content("1 case found for")
