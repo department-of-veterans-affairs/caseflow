@@ -125,18 +125,20 @@ class ColocatedTask < Task
     super(appeal: appeal)
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def update_location_in_vacols
     if saved_change_to_status? &&
        !open? &&
        all_tasks_closed_for_appeal? &&
-       appeal.is_a?(LegacyAppeal) &&
-       VACOLS::Case.find(appeal.vacols_id).bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow] &&
+       appeal_in_caseflow_vacols_location? &&
        assigned_to.is_a?(Organization)
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
+
+  def appeal_in_caseflow_vacols_location?
+    appeal.is_a?(LegacyAppeal) &&
+      VACOLS::Case.find(appeal.vacols_id).bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
+  end
 
   def location_based_on_action
     case action.to_sym
