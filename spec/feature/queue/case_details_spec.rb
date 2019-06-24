@@ -873,7 +873,6 @@ RSpec.feature "Case details" do
       end
 
       it "is displayed in the TaskSnapshot" do
-
         visit "/queue/appeals/#{legacy_appeal.vacols_id}"
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
@@ -943,6 +942,46 @@ RSpec.feature "Case details" do
         visit("/queue/appeals/#{tracking_task.appeal.uuid}")
         # Expect to only find the "NOD received" row and the "dispatch pending" rows.
         expect(page).to have_css("table#case-timeline-table tbody tr", count: 2)
+      end
+
+      context "has withdrawn decision reviews" do
+        let(:veteran) do
+          create(:veteran,
+                 first_name: "Bob",
+                 last_name: "Winters",
+                 file_number: "55555456")
+        end
+
+        let!(:appeal) do
+          create(:appeal,
+                 :with_tasks,
+                 veteran_file_number: veteran.file_number,
+                 docket_type: "direct_review",
+                 receipt_date: 10.months.ago.to_date.mdY)
+        end
+
+        let!(:request_issue) do
+          create(
+            :request_issue,
+            decision_review: appeal,
+            contested_issue_description: "Left Knee",
+            benefit_type: "compensation",
+            decision_date: 8.months.ago.to_date.mdY,
+            closed_status: "withdrawn",
+            closed_at: 7.days.ago.to_datetime
+          )
+        end
+
+        before do
+          appeal.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+        end
+
+        scenario "withdraw entire review and show withdrawn on case timeline" do
+          visit "/queue/appeals/#{appeal.uuid}"
+
+          expect(page).to have_content(COPY::TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL.upcase)
+          expect(page).to have_content("Appeal withdrawn")
+        end
       end
     end
 
