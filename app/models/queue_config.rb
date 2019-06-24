@@ -17,11 +17,7 @@ class QueueConfig
   end
 
   def to_hash_for_user(user)
-    # TODO: Is this too indirect?
-    serialized_tabs = tabs.each do |tab|
-      tasks = TaskPage.new(assinee: organization).tasks_for_tab(tab[:name])
-      tab[:tasks] = serialized_tasks_for_user(tasks, user)
-    end
+    serialized_tabs = tabs.each { |tab| tab[:tasks] = serialized_tasks_for_user(tab[:tasks], user) }
 
     {
       table_title: format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, organization.name),
@@ -56,9 +52,12 @@ class QueueConfig
   end
 
   def tracking_tasks_tab
+    name = Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
+    tasks = TaskPage.new(assinee: organization).tasks_for_tab(name)
+
     {
       label: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
-      name: Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME,
+      name: name,
       description: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, organization.name),
       columns: [
         Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
@@ -67,14 +66,18 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
       ],
       task_group: Constants.QUEUE_CONFIG.TRACKING_TASKS_GROUP,
+      tasks: tasks,
       allow_bulk_assign: false
     }
   end
 
   def unassigned_tasks_tab
+    name = Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+    tasks = TaskPage.new(assinee: organization).tasks_for_tab(name)
+
     {
-      label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_tasks.count),
-      name: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
+      label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, tasks.count),
+      name: name,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name),
       # Compact to account for the maybe absent regional office column
       columns: [
@@ -88,15 +91,18 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_GROUP,
+      tasks: tasks,
       allow_bulk_assign: organization.can_bulk_assign_tasks?
     }
   end
 
-
   def assigned_tasks_tab
+    name = Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+    tasks = TaskPage.new(assinee: organization).tasks_for_tab(name)
+
     {
-      label: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_tasks.count),
-      name: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME,
+      label: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, tasks.count),
+      name: name,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name),
       # Compact to account for the maybe absent regional office column
       columns: [
@@ -110,14 +116,18 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_GROUP,
+      tasks: tasks,
       allow_bulk_assign: false
     }
   end
 
   def completed_tasks_tab
+    name = Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
+    tasks = TaskPage.new(assinee: organization).tasks_for_tab(name)
+
     {
       label: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
-      name: Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME,
+      name: name,
       description: format(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION, organization.name),
       # Compact to account for the maybe absent regional office column
       columns: [
@@ -131,6 +141,7 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.COMPLETED_TASKS_GROUP,
+      tasks: tasks,
       allow_bulk_assign: false
     }
   end
