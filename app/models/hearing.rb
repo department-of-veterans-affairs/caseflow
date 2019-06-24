@@ -67,6 +67,13 @@ class Hearing < ApplicationRecord
     end
   end
 
+  def readable_location
+    return "Washington, DC" if request_type == HearingDay::REQUEST_TYPES[:central]
+    return "#{location.city}, #{location.state}" if location
+
+    nil
+  end
+
   def readable_request_type
     HEARING_TYPES[request_type.to_sym]
   end
@@ -171,85 +178,14 @@ class Hearing < ApplicationRecord
   end
 
   def quick_to_hash(_current_user_id)
-    serializable_hash(
-      methods: [
-        :external_id,
-        :veteran_first_name,
-        :veteran_last_name,
-        :regional_office_key,
-        :regional_office_name,
-        :regional_office_timezone,
-        :readable_request_type,
-        :scheduled_for,
-        :scheduled_time_string,
-        :central_office_time_string,
-        :appeal_external_id,
-        :veteran_file_number,
-        :evidence_window_waived,
-        :bva_poc,
-        :room,
-        :transcription,
-        :docket_number,
-        :docket_name,
-        :current_issue_count,
-        :location,
-        :worksheet_issues,
-        :closest_regional_office,
-        :available_hearing_locations,
-        :disposition_editable,
-        :advance_on_docket_motion,
-        :claimant_id
-      ],
-      except: [:military_service]
-    )
+    ::HearingSerializer.quick(self).serializable_hash[:data][:attributes]
   end
 
   def to_hash(_current_user_id)
-    serializable_hash(
-      methods: [
-        :external_id,
-        :veteran_first_name,
-        :veteran_last_name,
-        :appellant_first_name,
-        :appellant_last_name,
-        :appellant_address_line_1,
-        :appellant_city,
-        :appellant_state,
-        :appellant_zip,
-        :regional_office_key,
-        :regional_office_name,
-        :regional_office_timezone,
-        :readable_request_type,
-        :scheduled_for,
-        :scheduled_time_string,
-        :central_office_time_string,
-        :veteran_age,
-        :veteran_gender,
-        :appeal_external_id,
-        :veteran_file_number,
-        :evidence_window_waived,
-        :bva_poc,
-        :room,
-        :transcription,
-        :docket_number,
-        :docket_name,
-        :military_service,
-        :current_issue_count,
-        :representative,
-        :location,
-        :worksheet_issues,
-        :closest_regional_office,
-        :available_hearing_locations,
-        :disposition_editable,
-        :advance_on_docket_motion,
-        :claimant_id
-      ]
-    )
+    ::HearingSerializer.default(self).serializable_hash[:data][:attributes]
   end
 
-  def to_hash_for_worksheet(current_user_id)
-    serializable_hash(
-      methods: [:judge]
-    ).merge(to_hash(current_user_id))
+  def to_hash_for_worksheet(_current_user_id)
+    ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
   end
 end

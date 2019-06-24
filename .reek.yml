@@ -6,12 +6,16 @@ detectors:
     exclude:
       - BulkTaskAssignment
       - QueueConfig
+  DataClump:
+    exclude:
+      - HearingSerializerBase
   DuplicateMethodCall:
     enabled: false
   FeatureEnvy:
     exclude:
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - AsyncableJobsReporter
+      - HearingSerializerBase
   InstanceVariableAssumption:
     exclude:
       - Appeal

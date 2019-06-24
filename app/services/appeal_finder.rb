@@ -19,7 +19,7 @@ class AppealFinder
 
   def find_appeals_by_ssn_or_file_number(file_number_or_ssn)
     find_appeals_for_veterans(
-      veterans: VeteranFinder.find_all(file_number_or_ssn)
+      veterans: VeteranFinder.find_or_create_all(file_number_or_ssn)
     )
   end
 

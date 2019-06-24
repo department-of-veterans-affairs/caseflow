@@ -721,23 +721,23 @@ RSpec.feature "Case details" do
       let!(:appeal) { FactoryBot.create(:appeal) }
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
-      let!(:attorney_task) do
-        create(:ama_attorney_task, :completed, appeal: appeal, parent: root_task, assigned_to: user)
-      end
-      let!(:attorney_task2) do
-        create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user)
-      end
       let!(:judge_task) do
-        create(:ama_judge_decision_review_task, appeal: appeal, parent: attorney_task, assigned_to: user,
-                                                status: Constants.TASK_STATUSES.completed,
-                                                closed_at: Time.zone.now)
+        create(
+          :ama_judge_decision_review_task,
+          appeal: appeal,
+          parent: root_task,
+          assigned_to: user
+        )
       end
+      let!(:attorney_task) { create(:ama_attorney_task, appeal: appeal, parent: judge_task, assigned_to: user) }
+      let!(:attorney_task2) { create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_to: user) }
 
       before do
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
         attorney_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-02-01")
         attorney_task2.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-03-01")
+        judge_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: Time.zone.now)
       end
 
       it "should display judge & attorney tasks" do
@@ -885,15 +885,25 @@ RSpec.feature "Case details" do
     let(:attorney_user) { FactoryBot.create(:user) }
     let(:judge_user) { FactoryBot.create(:user) }
     let(:root_task) { FactoryBot.create(:root_task) }
-    let!(:appeal) { root_task.appeal }
+    let(:appeal) { root_task.appeal }
     let!(:request_issue) { create(:request_issue, decision_review: appeal) }
-    let!(:atty_task) do
-      FactoryBot.create(:ama_attorney_task, appeal: appeal, parent: root_task, assigned_by: judge_user,
-                                            assigned_to: attorney_user)
-    end
     let!(:judge_task) do
-      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: atty_task, assigned_by: judge_user,
-                                         assigned_to: judge_user)
+      FactoryBot.create(
+        :ama_judge_decision_review_task,
+        appeal: appeal,
+        parent: root_task,
+        assigned_by: judge_user,
+        assigned_to: judge_user
+      )
+    end
+    let!(:atty_task) do
+      FactoryBot.create(
+        :ama_attorney_task,
+        appeal: appeal,
+        parent: judge_task,
+        assigned_by: judge_user,
+        assigned_to: attorney_user
+      )
     end
     context "Attorney has been assigned" do
       it "is displayed in the Universal Case Title" do

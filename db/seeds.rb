@@ -773,7 +773,7 @@ class SeedDB
   end
 
   def create_task_at_judge_review(appeal, judge, attorney)
-    parent = FactoryBot.create(:ama_judge_task,
+    parent = FactoryBot.create(:ama_judge_decision_review_task,
                                :in_progress,
                                assigned_to: judge,
                                appeal: appeal,
@@ -791,7 +791,7 @@ class SeedDB
 
   def create_task_at_colocated(appeal, judge, attorney, task_attributes = {})
     parent = FactoryBot.create(
-      :ama_judge_task,
+      :ama_judge_decision_review_task,
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
@@ -831,7 +831,7 @@ class SeedDB
 
   def create_task_at_attorney_review(appeal, judge, attorney)
     parent = FactoryBot.create(
-      :ama_judge_task,
+      :ama_judge_decision_review_task,
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
@@ -907,7 +907,7 @@ class SeedDB
     judge = FactoryBot.create(:user, station_id: 101)
     FactoryBot.create(:staff, :judge_role, user: judge)
     judge_task = FactoryBot.create(
-      :ama_judge_task,
+      :ama_judge_decision_review_task,
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
@@ -1034,6 +1034,7 @@ class SeedDB
     DatabaseCleaner.clean_with(:truncation)
     cm = CacheManager.new
     CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
+    Fakes::EndProductStore.new.clear!
   end
 
   def setup_dispatch

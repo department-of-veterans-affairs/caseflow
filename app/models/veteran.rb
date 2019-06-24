@@ -233,8 +233,8 @@ class Veteran < ApplicationRecord
 
     def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
-          find_by_ssn(file_number_or_ssn, sync_name: sync_name)
+        find_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
+          find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
       else
         find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
       end
@@ -242,8 +242,8 @@ class Veteran < ApplicationRecord
 
     def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name) ||
-          find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name)
+        find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
+          find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       else
         find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       end
@@ -303,7 +303,7 @@ class Veteran < ApplicationRecord
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
         v.update!(
-          participant_id: v.ptcpnt_id,
+          participant_id: v.ptcpnt_id || v.bgs_record[:participant_id],
           first_name: v.bgs_record[:first_name],
           last_name: v.bgs_record[:last_name],
           middle_name: v.bgs_record[:middle_name],

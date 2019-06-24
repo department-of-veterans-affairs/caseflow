@@ -54,6 +54,6 @@ class CaseSearchResultsForVeteranFileNumber < ::CaseSearchResultsBase
   end
 
   def veterans
-    @veterans ||= VeteranFinder.find_all(file_number_or_ssn)
+    @veterans ||= VeteranFinder.find_or_create_all(file_number_or_ssn)
   end
 end

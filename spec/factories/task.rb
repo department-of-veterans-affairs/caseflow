@@ -210,7 +210,7 @@ FactoryBot.define do
     factory :ama_attorney_task, class: AttorneyTask do
       type { AttorneyTask.name }
       appeal { create(:appeal) }
-      parent { create(:ama_judge_task) }
+      parent { create(:ama_judge_decision_review_task) }
       assigned_by { create(:user) }
       assigned_to { create(:user) }
 
@@ -232,7 +232,7 @@ FactoryBot.define do
     factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
       type { AttorneyDispatchReturnTask.name }
       appeal { create(:appeal) }
-      parent { create(:ama_judge_task) }
+      parent { create(:ama_judge_decision_review_task) }
     end
 
     factory :transcription_task, class: TranscriptionTask do

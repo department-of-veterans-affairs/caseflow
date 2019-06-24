@@ -2,7 +2,9 @@
 
 describe JudgeQualityReviewTask do
   let(:judge) { FactoryBot.create(:user) }
-  let(:judge_task) { FactoryBot.create(:ama_judge_task, parent: FactoryBot.create(:root_task), assigned_to: judge) }
+  let(:judge_task) do
+    FactoryBot.create(:ama_judge_decision_review_task, parent: FactoryBot.create(:root_task), assigned_to: judge)
+  end
   let(:qr_user) { FactoryBot.create(:user) }
   let(:qr_task) { FactoryBot.create(:qr_task, assigned_to: qr_user, parent: judge_task) }
   let(:params) { { assigned_to: judge, appeal: qr_task.appeal, parent_id: qr_task.id } }

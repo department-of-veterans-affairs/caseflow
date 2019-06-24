@@ -28,7 +28,13 @@ RSpec.feature "Quality Review workflow" do
 
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let!(:judge_task) do
-      FactoryBot.create(:ama_judge_task, appeal: appeal, parent: root_task, assigned_to: judge_user, status: :completed)
+      FactoryBot.create(
+        :ama_judge_decision_review_task,
+        appeal: appeal,
+        parent: root_task,
+        assigned_to: judge_user,
+        status: :completed
+      )
     end
     let!(:attorney_task) do
       FactoryBot.create(

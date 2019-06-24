@@ -175,10 +175,6 @@ export default class AssignHearingsTabs extends React.Component {
 
   };
 
-  getHearingLocation = (hearing) => (
-    hearing.readableRequestType === 'Central' ? 'Washington, DC' : hearing.readableLocation
-  );
-
   formatSuggestedHearingLocation = (location) => {
     if (!location) {
       return '';
@@ -251,7 +247,7 @@ export default class AssignHearingsTabs extends React.Component {
         return true;
       }
 
-      const hearingLocation = this.getHearingLocation(hearing);
+      const hearingLocation = hearing.readableLocation;
 
       if (_.isEmpty(hearingLocation) && filteredBy === 'null') {
         return true;
@@ -271,7 +267,7 @@ export default class AssignHearingsTabs extends React.Component {
         isAdvancedOnDocket: hearing.aod
       }),
       docketNumber: this.getHearingDocketTag(hearing),
-      hearingLocation: this.getHearingLocation(hearing),
+      hearingLocation: hearing.readableLocation,
       time: this.getHearingTime(hearing.scheduledFor, hearing.regionalOfficeTimezone)
     }));
   };
@@ -287,7 +283,7 @@ export default class AssignHearingsTabs extends React.Component {
 
   getFilteredLocationsForUpcomingHearings = (data) => (
     data.map((row) => {
-      const location = this.getHearingLocation(row);
+      const location = row.readableLocation;
 
       return {
         displayText: location || '<<blank>>',
