@@ -52,8 +52,9 @@ class QueueConfig
   end
 
   def tracking_tasks_tab
+    # TODO: This seems like an unnecessary step.
     name = Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
-    tasks = TaskPage.new(assinee: organization).tasks_for_tab(name)
+    tasks = TaskPage.new(assignee: organization).tasks_for_tab(name)
 
     {
       label: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
@@ -73,7 +74,7 @@ class QueueConfig
 
   def unassigned_tasks_tab
     name = Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
-    tasks = TaskPage.new(assinee: organization).tasks_for_tab(name)
+    tasks = TaskPage.new(assignee: organization).tasks_for_tab(name)
 
     {
       label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, tasks.count),
@@ -98,7 +99,7 @@ class QueueConfig
 
   def assigned_tasks_tab
     name = Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
-    tasks = TaskPage.new(assinee: organization).tasks_for_tab(name)
+    tasks = TaskPage.new(assignee: organization).tasks_for_tab(name)
 
     {
       label: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, tasks.count),
@@ -123,7 +124,7 @@ class QueueConfig
 
   def completed_tasks_tab
     name = Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
-    tasks = TaskPage.new(assinee: organization).tasks_for_tab(name)
+    tasks = TaskPage.new(assignee: organization).tasks_for_tab(name)
 
     {
       label: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
