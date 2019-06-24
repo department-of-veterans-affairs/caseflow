@@ -226,6 +226,8 @@ class TaskRows extends React.PureComponent {
   taskTemplate = (templateConfig) => {
     const { task, taskList, index, timeline, appeal } = templateConfig;
 
+    const timelineTitle = isCancelled(task) ? `${task.type} cancelled` : task.timelineTitle;
+
     return <tr key={task.uniqueId}>
       <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
         <CaseDetailsDescriptionList>
@@ -243,7 +245,7 @@ class TaskRows extends React.PureComponent {
       <td {...taskInformationContainerStyling}
         className={timeline ? taskInformationTimelineContainerStyling : ''}>
         <CaseDetailsDescriptionList>
-          { timeline && task.timelineTitle }
+          { timeline && timelineTitle }
           { this.assignedToListItem(task) }
           { this.assignedByListItem(task) }
           { this.taskLabelListItem(task) }
