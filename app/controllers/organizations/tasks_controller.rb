@@ -8,10 +8,12 @@ class Organizations::TasksController < OrganizationsController
   def index
     render json: {
       organization_name: organization.name,
+      # TODO: Return a new attribute of this hash called something like "use_backend_paging"
+      # and return an empty set of tasks if that is true (we will populate them with API calls).
       tasks: json_tasks(tasks),
       id: organization.id,
       is_vso: organization.is_a?(::Representative),
-      queue_config: queue_config.to_hash_for_user(current_user)
+      queue_config: queue_config
     }
   end
 
@@ -63,7 +65,7 @@ class Organizations::TasksController < OrganizationsController
   end
 
   def queue_config
-    QueueConfig.new(organization: organization)
+    QueueConfig.new(organization: organization).to_hash_for_user(current_user)
   end
 
   def organization_url
