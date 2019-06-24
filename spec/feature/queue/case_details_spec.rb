@@ -504,6 +504,23 @@ RSpec.feature "Case details" do
       expect(find("tr", text: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING)).to have_selector(".gray-dot")
       expect(find("tr", text: COPY::CASE_TIMELINE_FORM_9_RECEIVED)).to have_selector(".green-checkmark")
     end
+
+    context "when appeal is assigned to Pulac Cerullo" do
+      let!(:appeal) { FactoryBot.create(:appeal) }
+      let(:user) { FactoryBot.create(:user) }
+      let!(:assigned_task) do
+        FactoryBot.create(
+          :pulac_cerullo_task,
+          status: Constants.TASK_STATUSES.completed,
+          assigned_to: user
+        )
+      end
+
+      before do
+        OrganizationsUser.add_user_to_organization(user, PulacCerullo.singleton)
+        User.authenticate!(user: user)
+      end
+    end
   end
 
   context "when there is a dispatch and decision_date" do
@@ -873,7 +890,6 @@ RSpec.feature "Case details" do
       end
 
       it "is displayed in the TaskSnapshot" do
-
         visit "/queue/appeals/#{legacy_appeal.vacols_id}"
         expect(page).to have_content(COPY::TASK_SNAPSHOT_ACTIVE_TASKS_LABEL)
         expect(page).to have_content(legacy_task.assigned_at.strftime("%m/%d/%Y"))
