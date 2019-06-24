@@ -131,7 +131,7 @@ class ColocatedTask < Task
        !open? &&
        all_tasks_closed_for_appeal? &&
        appeal.is_a?(LegacyAppeal) &&
-       appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow] &&
+       VACOLS::Case.find(appeal.vacols_id).bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow] &&
        assigned_to.is_a?(Organization)
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
