@@ -25,14 +25,14 @@ class TaskPage
   end
 
   def unassigned_tasks
-    Task.active.where(assigned_to: assignee).reject(&:hide_from_queue_table_view)
+    Task.visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
   def assigned_tasks
-    Task.on_hold.where(assigned_to: assignee).reject(&:hide_from_queue_table_view)
+    Task.visible_in_queue_table_view.where(assigned_to: assignee).on_hold
   end
 
   def recently_completed_tasks
-    Task.recently_closed.where(assigned_to: assignee).reject(&:hide_from_queue_table_view)
+    Task.visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
   end
 end
