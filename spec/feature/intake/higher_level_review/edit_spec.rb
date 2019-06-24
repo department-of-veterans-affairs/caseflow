@@ -7,6 +7,7 @@ feature "Higher Level Review Edit issues" do
 
   before do
     Timecop.freeze(post_ama_start_date)
+    FeatureToggle.enable!(:use_ama_activation_date)
   end
 
   let(:veteran) do
@@ -222,7 +223,8 @@ feature "Higher Level Review Edit issues" do
         benefit_type: "compensation",
         contested_issue_description: "Non-RAMP Issue before AMA Activation",
         contention_reference_id: "23456",
-        ineligible_reason: :before_ama
+        ineligible_reason: :before_ama,
+        untimely_exemption: true
       )
     end
 
@@ -236,7 +238,8 @@ feature "Higher Level Review Edit issues" do
         benefit_type: "compensation",
         contested_issue_description: "Issue before AMA Activation from RAMP",
         contention_reference_id: "123456",
-        ramp_claim_id: "ramp_claim_id"
+        ramp_claim_id: "ramp_claim_id",
+        untimely_exemption: true
       )
     end
 
@@ -452,7 +455,7 @@ feature "Higher Level Review Edit issues" do
       click_intake_add_issue
       add_intake_rating_issue(ri_before_ama.contention_text)
       add_intake_rating_issue("None of these match")
-
+      add_untimely_exemption_response("Yes")
       expect_ineligible_issue(number_of_issues)
       expect(page).to have_content(
         "#{ri_before_ama.contention_text} #{ineligible.before_ama}"
@@ -905,6 +908,7 @@ feature "Higher Level Review Edit issues" do
       # add issue before AMA
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+      add_untimely_exemption_response("Yes")
       expect(page).to have_content(
         "Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
       )
@@ -913,6 +917,7 @@ feature "Higher Level Review Edit issues" do
       # add RAMP issue before AMA
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
+      add_untimely_exemption_response("Yes")
       expect(page).to have_content("Issue before AMA Activation from RAMP\nDecision date:")
 
       safe_click("#button-submit-update")
@@ -1183,7 +1188,7 @@ feature "Higher Level Review Edit issues" do
 
         click_withdraw_intake_issue_dropdown("PTSD denied")
         expect(page).to_not have_content(/Requested issues\s*[0-9]+\. PTSD denied/i)
-        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 01\/19\/2018\s*Withdraw pending/i)
+        expect(page).to have_content(/[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdraw pending/i)
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -1231,7 +1236,7 @@ feature "Higher Level Review Edit issues" do
 
         expect(page).to have_content(/Requested issues\s*[0-9]+\. Left knee granted/i)
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 01\/19\/2018\s*Withdraw pending/i
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdraw pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -1252,7 +1257,7 @@ feature "Higher Level Review Edit issues" do
         visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
 
         expect(page).to have_content(
-          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 01\/19\/2018\s*Withdrawn on/i
+          /Withdrawn issues\s*[0-9]+\. PTSD denied\s*Decision date: 05\/09\/2019\s*Withdrawn on/i
         )
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
@@ -1330,6 +1335,7 @@ feature "Higher Level Review Edit issues" do
         click_edit_submit_and_confirm
 
         expect(page).to have_content(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        sleep 1
         expect(completed_task.reload.status).to eq(Constants.TASK_STATUSES.completed)
         expect(in_progress_task.reload.status).to eq(Constants.TASK_STATUSES.in_progress)
       end

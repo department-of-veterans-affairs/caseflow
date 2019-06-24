@@ -2,7 +2,7 @@
 
 describe LegacyAppeal do
   before do
-    Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
+    Timecop.freeze(post_ama_start_date)
   end
 
   let(:yesterday) { 1.day.ago.to_formatted_s(:short_date) }
@@ -23,6 +23,20 @@ describe LegacyAppeal do
     end
 
     let(:issues) { [Generators::Issue.build(vacols_sequence_id: 1, disposition: nil)] }
+
+    context "when the ssoc date is before when AMA was launched" do
+      let(:ama_date) { Constants::DATES["AMA_ACTIVATION"].to_date }
+      let(:receipt_date) { ama_date + 1.day }
+
+      scenario "when the ssoc date is before AMA was launched" do
+        allow(appeal).to receive(:active?).and_return(true)
+        allow(appeal).to receive(:issues).and_return(issues)
+        allow(appeal).to receive(:soc_date).and_return(Constants::DATES["AMA_ACTIVATION"].to_date - 1.day)
+
+        expect(appeal.eligible_for_soc_opt_in?(receipt_date)).to eq(false)
+        expect(appeal.matchable_to_request_issue?(receipt_date)).to eq(true)
+      end
+    end
 
     scenario "when is active but not eligible" do
       allow(appeal).to receive(:active?).and_return(true)
