@@ -824,7 +824,7 @@ feature "Supplemental Claim Edit issues" do
         scenario "show alert message when a decision review is added, removed and withdrawn" do
           visit "supplemental_claims/#{supplemental_claim.uuid}/edit"
           click_intake_add_issue
-          expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
+          expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
           add_intake_nonrating_issue(
             category: "Accrued",
             description: "Description for Accrued",

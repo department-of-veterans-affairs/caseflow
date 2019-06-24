@@ -623,7 +623,7 @@ feature "Higher Level Review Edit issues" do
         click_intake_no_matching_issues
         click_dropdown(text: active_nonrating_request_issue.nonrating_issue_category)
 
-        expect(page).to have_content("Does issue 2 match any of these issue categories?")
+        expect(page).to have_content("Does issue 2 match any of these non-rating issue categories?")
         expect(page).to_not have_content("Does issue match any of the issues actively being reviewed?")
         expect(page).to_not have_content("nonrating issue description")
       end
@@ -1436,7 +1436,7 @@ feature "Higher Level Review Edit issues" do
       scenario "show alert message when a decision review is added, removed and withdrawn" do
         visit "higher_level_reviews/#{higher_level_review.uuid}/edit"
         click_intake_add_issue
-        expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
+        expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
         add_intake_nonrating_issue(
           category: "Accrued",
           description: "Description for Accrued",
