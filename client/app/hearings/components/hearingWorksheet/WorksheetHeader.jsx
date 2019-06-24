@@ -67,51 +67,46 @@ class WorksheetHeader extends React.PureComponent {
   onWitnessChange = (event) => this.props.onWitnessChange(event.target.value);
   onMilitaryServiceChange = (event) => this.props.onMilitaryServiceChange(event.target.value);
 
+  getVeteranGender = (genderSymbol) => {
+    let gender = '';
+
+    if (genderSymbol === 'M') {
+      gender = 'Male';
+    } else if (genderSymbol === 'F') {
+      gender = 'Female';
+    }
+
+    return gender;
+  }
+
+  getAppellantName = (worksheet) => {
+    if (worksheet.appellant_first_name && worksheet.appellant_last_name) {
+      return `${worksheet.appellant_last_name}, ${worksheet.appellant_first_name}`;
+    }
+
+    return `${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`;
+  }
+
+  getDisposition = (dispositionSymbol) => {
+    const disposition = _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol });
+
+    return disposition ? disposition.label : '';
+  }
+    
   render() {
     const { worksheet } = this.props;
-
-    let olderVeteran = worksheet.veteran_age > 74;
-
+    const olderVeteran = worksheet.veteran_age > 74;
     const veteranClassNames = classNames({ 'cf-red-text': olderVeteran });
-
-    const getVeteranGender = (genderSymbol) => {
-      let gender = '';
-
-      if (genderSymbol === 'M') {
-        gender = 'Male';
-      } else if (genderSymbol === 'F') {
-        gender = 'Female';
-      }
-
-      return gender;
-    };
-
-    let negativeDispositionOptions = ['no_show', 'postponed', 'cancelled'];
-
-    const getAppellantName = () => {
-      if (worksheet.appellant_first_name && worksheet.appellant_last_name) {
-        return `${worksheet.appellant_last_name}, ${worksheet.appellant_first_name}`;
-      }
-
-      return `${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`;
-
-    };
-
+    const negativeDispositionOptions = ['no_show', 'postponed', 'cancelled'];
     const negativeDispositions = negativeDispositionOptions.includes(worksheet.disposition);
-
     const dispositionClassNames = classNames({ 'cf-red-text': negativeDispositions });
 
-    const getDisposition = (dispositionSymbol) => {
-      const disposition = _.find(DISPOSITION_OPTIONS, { value: dispositionSymbol });
-
-      return disposition ? disposition.label : '';
-    };
-
     return <div>
+      <div className="title">
+        <h1>{`${worksheet.veteran_first_name} ${worksheet.veteran_last_name}`}'s Hearing Worksheet</h1>
+      </div>
+
       <div className="cf-hearings-worksheet-data">
-        <div className="title">
-          <h1>{`${worksheet.veteran_first_name} ${worksheet.veteran_last_name}`}'s Hearing Worksheet</h1>
-        </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>VLJ</h4>
           <div className="cf-hearings-headers">{worksheet.judge ? worksheet.judge.full_name : ''}</div>
@@ -132,7 +127,7 @@ class WorksheetHeader extends React.PureComponent {
           <div className="cf-hearings-worksheet-data-cell">
             <h4>{!this.props.print ? "HEARING DISPOSITION" : "HEAR. DISP."}</h4>
             <div className={classNames('cf-hearings-headers', dispositionClassNames)}>
-              {getDisposition(worksheet.disposition)}
+              {this.getDisposition(worksheet.disposition)}
             </div>
           </div>
         }
@@ -146,27 +141,27 @@ class WorksheetHeader extends React.PureComponent {
             {`${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`}
           </b></div>
         </div>
-
         <div className="cf-hearings-worksheet-data-cell">
           <h4>VETERAN ID</h4>
-          {!this.props.print &&
-          <div {...copyButtonStyling}>
-            <Tooltip text="Click to copy to clipboard">
-              <CopyToClipboard text={worksheet.veteran_file_number}>
-                <button
-                  name="Copy Veteran ID"
-                  className={['usa-button-secondary cf-copy-to-clipboard']}>
-                  {worksheet.veteran_file_number}
-                  <ClipboardIcon />
-                </button>
-              </CopyToClipboard>
-            </Tooltip>
-          </div>
-          }
-          {this.props.print &&
-         <div className="cf-hearings-headers">
-           {worksheet.veteran_file_number}
-         </div>
+          {
+            !this.props.print ? (
+              <div {...copyButtonStyling}>
+                <Tooltip text="Click to copy to clipboard">
+                  <CopyToClipboard text={worksheet.veteran_file_number}>
+                    <button
+                      name="Copy Veteran ID"
+                      className={['usa-button-secondary cf-copy-to-clipboard']}>
+                      {worksheet.veteran_file_number}
+                      <ClipboardIcon />
+                    </button>
+                  </CopyToClipboard>
+                </Tooltip>
+              </div>
+            ) : (
+              <div className="cf-hearings-headers">
+                {worksheet.veteran_file_number}
+              </div>
+            )
           }
         </div>
         <div className="cf-hearings-worksheet-data-cell">
@@ -182,16 +177,18 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>GENDER</h4>
-          <div className="cf-hearings-headers">{getVeteranGender(worksheet.veteran_gender)}</div>
+          <div className="cf-hearings-headers">{this.getVeteranGender(worksheet.veteran_gender)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>APPELLANT NAME</h4>
-          <div className="cf-hearings-headers">{getAppellantName()}</div>
+          <h4>{!this.props.print ? "APPELLANT NAME" : "APPELLANT"}</h4>
+          <div className="cf-hearings-headers">{this.getAppellantName(worksheet)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>CITY/STATE</h4>
-          <div className="cf-hearings-headers">{worksheet.appellant_city && worksheet.appellant_state ?
-            `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}</div>
+          <div className="cf-hearings-headers">
+            {worksheet.appellant_city && worksheet.appellant_state ?
+            `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}
+          </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>{!this.props.print ? "POWER OF ATTORNEY" : "POWER OF ATTY."}</h4>
@@ -201,8 +198,8 @@ class WorksheetHeader extends React.PureComponent {
         </div>
       </div>
 
-      <form className="cf-hearings-worksheet-form cf-hearings-form-headers">
-        <div {...firstColumnStyling} className="cf-push-left cf-hearings-form-headers">
+      <form className="cf-hearings-worksheet-form">
+        <div {...firstColumnStyling}>
           <WorksheetFormEntry
             name={!this.props.print ? "Representative Name" : "Representative"}
             value={worksheet.representative_name}
@@ -213,7 +210,7 @@ class WorksheetHeader extends React.PureComponent {
             print={this.props.print}
           />
         </div>
-        <div {...secondColumnStyling} className="cf-push-right cf-hearings-form-headers">
+        <div {...secondColumnStyling}>
           <WorksheetFormEntry
             name={!this.props.print ? "Witness (W)/Observer (O) and Additional Details" : "Witness/Observer and Misc."}
             value={worksheet.witness}
@@ -224,7 +221,7 @@ class WorksheetHeader extends React.PureComponent {
             print={this.props.print}
           />
         </div>
-        <div {...secondRowStyling} className="cf-push-left cf-hearings-form-head">
+        <div {...secondRowStyling}>
           <WorksheetFormEntry
             name="Periods and circumstances of service"
             value={worksheet.military_service}
