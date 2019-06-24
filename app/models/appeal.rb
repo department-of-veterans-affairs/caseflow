@@ -488,10 +488,6 @@ class Appeal < DecisionReview
     tasks.any? { |t| t.is_a?(JudgeTask) }
   end
 
-  def withdrawn?
-    WithdrawnDecisionReviewPolicy.new(self).satisfied?
-  end
-
   def alerts
     @alerts ||= ApiStatusAlerts.new(decision_review: self).all.sort_by { |alert| alert[:details][:decisionDate] }
   end

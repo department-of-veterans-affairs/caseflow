@@ -1549,17 +1549,4 @@ describe Appeal do
       end
     end
   end
-
-  describe ".withdrawn?" do
-    it "calls WithdrawnDecisionReviewPolicy" do
-      appeal = build_stubbed(:appeal)
-      policy = instance_double(WithdrawnDecisionReviewPolicy)
-
-      expect(WithdrawnDecisionReviewPolicy).to receive(:new)
-        .with(appeal).and_return(policy)
-      expect(policy).to receive(:satisfied?)
-
-      appeal.withdrawn?
-    end
-  end
 end

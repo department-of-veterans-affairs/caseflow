@@ -232,6 +232,19 @@ describe DecisionReview do
     end
   end
 
+  describe ".withdrawn?" do
+    it "calls WithdrawnDecisionReviewPolicy" do
+      appeal = build_stubbed(:appeal)
+      policy = instance_double(WithdrawnDecisionReviewPolicy)
+
+      expect(WithdrawnDecisionReviewPolicy).to receive(:new)
+        .with(appeal).and_return(policy)
+      expect(policy).to receive(:satisfied?)
+
+      appeal.withdrawn?
+    end
+  end
+
   describe "#active_request_issues" do
     it "only returns active request issues" do
       review = build_stubbed(:appeal)
