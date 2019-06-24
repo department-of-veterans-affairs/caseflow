@@ -4,15 +4,25 @@ class HearingTaskAssociation < ApplicationRecord
   belongs_to :hearing_task
   belongs_to :hearing, polymorphic: true
 
-  validates :hearing_task_id, uniqueness: {
-    scope: [:hearing_type, :hearing_id],
-    message: lambda do |object, _data|
+  validate :hearing_has_one_active_hearing_task
+
+  private
+
+  def hearing_has_one_active_hearing_task
+    return if HearingTaskAssociation
+      .includes(:hearing_task)
+      .where(hearing_id: hearing_id, hearing_type: hearing_type)
+      .where("tasks.status NOT IN (?)", Task.closed_statuses)
+      .references(:hearing_task)
+      .empty?
+
+    errors.add(
+      :hearing_task,
       format(
         COPY::HEARING_TASK_ASSOCIATION_NOT_UNIQUE_MESSAGE,
-        object.hearing_type,
-        object.hearing_id,
-        object.hearing_task_id
+        hearing_type,
+        hearing_id
       )
-    end
-  }
+    )
+  end
 end

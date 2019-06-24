@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190619224829) do
+ActiveRecord::Schema.define(version: 20190618173816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -526,7 +526,6 @@ ActiveRecord::Schema.define(version: 20190619224829) do
     t.bigint "hearing_id", null: false
     t.bigint "hearing_task_id", null: false
     t.string "hearing_type", null: false
-    t.index ["hearing_id", "hearing_type", "hearing_task_id"], name: "index_hearing_task_associations_on_hearing_id_type_and_task_id", unique: true, comment: "Ensure a unique 1:1 relationship between hearings and hearing tasks."
     t.index ["hearing_task_id"], name: "index_hearing_task_associations_on_hearing_task_id"
     t.index ["hearing_type", "hearing_id"], name: "index_hearing_task_associations_on_hearing_type_and_hearing_id"
   end
