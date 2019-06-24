@@ -184,10 +184,6 @@ class DecisionReview < ApplicationRecord
     # no-op
   end
 
-  def cancel_active_tasks
-    tasks.each(&:cancel_task_and_child_subtasks)
-  end
-
   def contestable_issues
     return contestable_issues_from_decision_issues unless can_contest_rating_issues?
 
