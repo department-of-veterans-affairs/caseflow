@@ -51,7 +51,7 @@ class TaskPage
   def sorted_tasks(tasks)
     # TODO: Validate that we are sorting on a valid field
     @sort_by ||= "created_at"
-    @sort_order ||= "asc" # Check that sort_order is either asc/desc
+    @sort_order ||= "asc" # TODO: Check that sort_order is either asc/desc
 
     tasks.order(sort_by => sort_order)
   end
