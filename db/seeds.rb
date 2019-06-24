@@ -1034,6 +1034,7 @@ class SeedDB
     DatabaseCleaner.clean_with(:truncation)
     cm = CacheManager.new
     CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
+    Fakes::EndProductStore.new.clear!
   end
 
   def setup_dispatch
