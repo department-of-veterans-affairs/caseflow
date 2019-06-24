@@ -42,7 +42,7 @@ FactoryBot.define do
     trait :with_tasks do
       after(:create) do |hearing, _evaluator|
         create(:hearing_task_association, hearing: hearing, hearing_task: create(:hearing_task, appeal: hearing.appeal))
-        create(:disposition_task, parent: hearing.hearing_task_association.hearing_task, appeal: hearing.appeal)
+        create(:assign_hearing_disposition_task, parent: hearing.hearing_task_association.hearing_task, appeal: hearing.appeal)
       end
     end
   end

@@ -6,8 +6,8 @@ namespace :tasks do
   class NoTasksToChange < StandardError; end
 
   # usage:
-  # Change all HoldHearingTasks to DispositionTasks (dry run)
-  #   $ bundle exec rake tasks:change_type[HoldHearingTask,DispositionTask]"
+  # Change all HoldHearingTasks to AssignHearingDispositionTask (dry run)
+  #   $ bundle exec rake tasks:change_type[HoldHearingTask,AssignHearingDispositionTask]"
   # Change all HoldHearingTasks to DispositionTasks (execute)
   #   $ bundle exec rake tasks:change_type[HoldHearingTask,DispositionTask,false]"
   # Change HoldHearingTasks matching passed ids to DispositionTasks (dry run)

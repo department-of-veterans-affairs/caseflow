@@ -108,7 +108,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       create(:hearing_task_association, hearing: hearing, hearing_task: create(:hearing_task, appeal: hearing.appeal))
     end
     let!(:disposition_task) do
-      create(:disposition_task,
+      create(:assign_hearing_disposition_task,
              parent: hearing_task_association.hearing_task,
              appeal: hearing.appeal,
              status: Constants.TASK_STATUSES.completed)

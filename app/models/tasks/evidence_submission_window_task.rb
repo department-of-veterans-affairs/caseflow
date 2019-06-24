@@ -15,7 +15,7 @@ class EvidenceSubmissionWindowTask < GenericTask
   end
 
   def timer_ends_at
-    from_date = if parent.is_a?(DispositionTask)
+    from_date = if parent.is_a?(AssignHearingDispositionTask)
                   parent.hearing&.hearing_day&.scheduled_for
                 end
     from_date ||= appeal.receipt_date

@@ -54,7 +54,7 @@ describe LegacyHearing do
 
     context "when the hearing has an open disposition task" do
       let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
-      let!(:disposition_task) { create(:disposition_task, parent: hearing_task_association.hearing_task) }
+      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task_association.hearing_task) }
 
       it { is_expected.to eq(true) }
     end
@@ -62,7 +62,7 @@ describe LegacyHearing do
     context "when the hearing has a cancelled disposition task" do
       let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
       let!(:disposition_task) do
-        create(:disposition_task,
+        create(:assign_hearing_disposition_task,
                parent: hearing_task_association.hearing_task,
                status: Constants.TASK_STATUSES.cancelled)
       end
@@ -72,7 +72,7 @@ describe LegacyHearing do
 
     context "when the hearing has a disposition task with children" do
       let!(:hearing_task_association) { create(:hearing_task_association, hearing: hearing) }
-      let!(:disposition_task) { create(:disposition_task, parent: hearing_task_association.hearing_task) }
+      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task_association.hearing_task) }
       let!(:transcription_task) { create(:transcription_task, parent: disposition_task) }
 
       it { is_expected.to eq(false) }

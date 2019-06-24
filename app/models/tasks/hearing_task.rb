@@ -51,7 +51,7 @@ class HearingTask < GenericTask
   end
 
   def create_change_hearing_disposition_task(instructions = nil)
-    task_names = [DispositionTask.name, ChangeHearingDispositionTask.name]
+    task_names = [AssignHearingDispositionTask.name, ChangeHearingDispositionTask.name]
     active_disposition_tasks = children.open.where(type: task_names).to_a
 
     multi_transaction do
@@ -65,7 +65,7 @@ class HearingTask < GenericTask
   end
 
   def disposition_task
-    children.open.detect { |child| child.type == DispositionTask.name }
+    children.open.detect { |child| child.type == AssignHearingDispositionTask.name }
   end
 
   private
@@ -80,7 +80,7 @@ class HearingTask < GenericTask
 
   def update_status_if_children_tasks_are_complete(_child_task)
     if children.open.empty?
-      return update!(status: :cancelled) if children.select { |c| c.type == DispositionTask.name && c.cancelled? }.any?
+      return update!(status: :cancelled) if children.select { |c| c.type == AssignHearingDispositionTask.name && c.cancelled? }.any?
     end
 
     super

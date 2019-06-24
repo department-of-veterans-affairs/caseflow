@@ -350,11 +350,11 @@ RSpec.feature "Change hearing disposition" do
     end
 
     context "disposition task" do
-      let!(:task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+      let!(:task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
 
       it "can create a change hearing disposition task" do
         visit("/queue/appeals/#{appeal.uuid}")
-        expect(page).to have_content(DispositionTask.last.label)
+        expect(page).to have_content(AssignHearingDispositionTask.last.label)
         click_dropdown(text: Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.label)
         expect(page).to have_content(COPY::CREATE_CHANGE_HEARING_DISPOSITION_TASK_MODAL_TITLE)
         fill_in "Notes", with: instructions_text

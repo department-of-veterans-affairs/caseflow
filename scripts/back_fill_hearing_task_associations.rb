@@ -12,7 +12,7 @@
 #
 
 # All DispositionTasks are for Legacy Appeals in prod. Total 156 as of AM Feb 25th 2019
-hearing_tasks = Task.where(type: "DispositionTask", appeal_type: "LegacyAppeal").map(&:parent)
+hearing_tasks = Task.where(type: "AssignHearingDispositionTask", appeal_type: "LegacyAppeal").map(&:parent)
 
 task_association_exists = 0
 nbr_of_task_associations_created = 0

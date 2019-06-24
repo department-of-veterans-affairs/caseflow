@@ -3,7 +3,7 @@
 ##
 # Task automatically assigned to the Hearing Admin organization and/or a member of that team
 # when a disposition has not been set on a hearing that was held more than 48 hours ago.
-class ChangeHearingDispositionTask < DispositionTask
+class ChangeHearingDispositionTask < AssignHearingDispositionTask
   before_validation :set_assignee
 
   def available_actions(_user)

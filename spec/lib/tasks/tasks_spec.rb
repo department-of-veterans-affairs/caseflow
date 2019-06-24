@@ -13,7 +13,7 @@ describe "task rake tasks" do
   describe "tasks:change_type" do
     let(:from_task) { ScheduleHearingTask }
     let(:from_task_name) { from_task.name }
-    let(:to_task) { DispositionTask }
+    let(:to_task) { AssignHearingDispositionTask }
     let(:to_task_name) { to_task.name }
 
     subject do
