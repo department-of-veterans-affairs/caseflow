@@ -55,7 +55,7 @@ RSpec.feature "Search" do
 
       context "when a claim has a higher level review and/or supplemental claim" do
         context "and it has no appeals" do
-          let!(:veteran) { FactoryBot.create(:veteran) }
+          let!(:veteran) { create(:veteran) }
           let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
 
           before do
@@ -320,7 +320,7 @@ RSpec.feature "Search" do
         vso_user = create(:user, :vso_role, css_id: "BVA_VSO")
         User.authenticate!(user: vso_user)
         visit "/search"
-        fill_in "searchBarEmptyList", with: "123456789"
+        fill_in "searchBarEmptyList", with: "666660000"
         click_on "Search"
 
         expect(page).to have_content("Could not find a Veteran matching the file number")
@@ -494,6 +494,10 @@ RSpec.feature "Search" do
              :with_tasks)
     end
 
+    before do
+      caseflow_appeal.root_task.cancelled!
+    end
+
     def perform_search
       visit "/search"
       fill_in "searchBarEmptyList", with: caseflow_appeal.veteran_file_number
@@ -501,7 +505,6 @@ RSpec.feature "Search" do
     end
 
     scenario "withdraw entire review and show withdrawn on search page" do
-      caseflow_appeal.root_task.update(status: Constants.TASK_STATUSES.cancelled)
       perform_search
       expect(page).to have_content("Withdrawn")
     end

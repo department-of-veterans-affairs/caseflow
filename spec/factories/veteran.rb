@@ -7,7 +7,7 @@ FactoryBot.define do
     name_suffix { "II" }
 
     transient do
-      ssn { "987654321" }
+      ssn { Generators::Random.unique_ssn }
 
       bgs_veteran_record do
         {
@@ -33,7 +33,12 @@ FactoryBot.define do
     after(:build) do |veteran, evaluator|
       Fakes::BGSService.veteran_records ||= {}
       Fakes::BGSService.veteran_records[veteran.file_number] =
-        evaluator.bgs_veteran_record.merge(file_number: veteran.file_number, participant_id: veteran.participant_id)
+        evaluator.bgs_veteran_record.merge(
+          file_number: veteran.file_number,
+          # both for compatability
+          ptcpnt_id: veteran.participant_id,
+          participant_id: veteran.participant_id
+        )
     end
   end
 end
