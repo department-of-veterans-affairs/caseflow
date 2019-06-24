@@ -17,7 +17,11 @@ class QueueConfig
   end
 
   def to_hash_for_user(user)
-    serialized_tabs = tabs.each { |tab| tab[:tasks] = serialized_tasks_for_user(tab[:tasks], user) }
+    # TODO: Is this too indirect?
+    serialized_tabs = tabs.each do |tab|
+      tasks = TaskPage.new(assinee: organization).tasks_for_tab(tab[:name])
+      tab[:tasks] = serialized_tasks_for_user(tasks, user)
+    end
 
     {
       table_title: format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, organization.name),
@@ -26,22 +30,7 @@ class QueueConfig
     }
   end
 
-  def tasks_for_tab(tab_name)
-    TASK_FUNCTION_FOR_TAB_NAME[tab_name]
-  end
-
   private
-
-  # TODO: We can reuse this in the tab definitions if we'd like.
-  # TODO: Does this do work by calling the tracking_tasks_tab function?
-  # TODO: Does this call the ..._tasks functions? Or does it return a reference to them?
-  #   we want the latter.
-  TASK_FUNCTION_FOR_TAB_NAME = {
-    Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME => tracking_tasks,
-    Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME => unassigned_tasks,
-    Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME => assigned_tasks,
-    Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME => recently_completed_tasks
-  }.freeze
 
   def tabs
     [
@@ -66,10 +55,6 @@ class QueueConfig
     organization.is_a?(Representative)
   end
 
-  def tracking_tasks
-    TrackVeteranTask.active.where(assigned_to: organization)
-  end
-
   def tracking_tasks_tab
     {
       label: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
@@ -82,13 +67,8 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
       ],
       task_group: Constants.QUEUE_CONFIG.TRACKING_TASKS_GROUP,
-      tasks: tracking_tasks,
       allow_bulk_assign: false
     }
-  end
-
-  def unassigned_tasks
-    Task.active.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
   end
 
   def unassigned_tasks_tab
@@ -108,14 +88,10 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_GROUP,
-      tasks: unassigned_tasks,
       allow_bulk_assign: organization.can_bulk_assign_tasks?
     }
   end
 
-  def assigned_tasks
-    Task.on_hold.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
-  end
 
   def assigned_tasks_tab
     {
@@ -134,13 +110,8 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_GROUP,
-      tasks: assigned_tasks,
       allow_bulk_assign: false
     }
-  end
-
-  def recently_completed_tasks
-    Task.recently_closed.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
   end
 
   def completed_tasks_tab
@@ -160,7 +131,6 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.COMPLETED_TASKS_GROUP,
-      tasks: recently_completed_tasks,
       allow_bulk_assign: false
     }
   end
