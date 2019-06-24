@@ -9,16 +9,16 @@
 * Execute Caseflow’s product strategy; ship products and features into production
 * Measure success - defining Caseflow-wide success metrics as well as feature-level measures
 
-## Team leadership & culture*
+## Team leadership & culture
 * Co-facilitate conversations around team structure, norms, standards, and processes with other discipline leads
 * Foster a culture of continuous improvement, trust, and feedback
 * Manage/mentor/coach/hire Caseflow product managers
 	* Note: hiring for contractors only, not VA employees
 * Initiate and facilitate Caseflow Feedback cycles
-* Answers questions about team structure and role definition
+* Facilitates discussions around team structure and role definition (with other leads)
 * Collaboration with other disciplines, including design, engineering, project management, support, training, etc.
 
-## Vision and strategy*
+## Vision and strategy
 * Champion VA’s appeals modernization program vision, aligning with our team’s mission statement. This can include “managing up” so VA remains focused on the Veteran.
 * Create and champion Caseflow’s product vision. This includes how our suite of Caseflow products connect together.
 * Drive goal-setting at the Caseflow team level.
@@ -36,22 +36,10 @@ Note: Most of these responsibilities are shared or delegated among product manag
 * Facilitate prioritization discussions with stakeholders using the prioritization framework. Propose and articulate product priorities to stakeholders.
 	* E.g. stakeholders request a new project. Ensure the prioritization framework has been filled out. Explain what initiatives need to be deprioritized if the new work is prioritized. 
 * Oversee roadmapping activities among product managers, and ensure they are focusing on the highest leverage initiatives to achieve Caseflow-wide product vision
-* From user and business research, define the projects (epics) and user stories that are ultimately designed and implemented. Initiate then delegate and oversee the writing of product briefs/project outlines in order to align stakeholders, designers, engineers, project managers, support, training, and any other team members not mentions.
-	* Note: engineers and designers also define projects and user stories
-	* Note: this delegation depends on team staffing and bandwidth
-* In collaboration with other product managers, follow this general process for each project/epic:
-	* Start, and then update product brief/project outline (i.e. give context about the project, justify the project, define goals, define and iterate on user stories/requirements, list open questions and assumptions)
-	* Collaborate with design and engineering lead on epic/project staffing
-	* Coordinate kick off meetings for epics/projects to include all disciplines; collaborate and problem solve with design and engineering
-	* Help shape and make space for user and technical research needed as part of the project
-	* Keep team on track along the divergent and convergent pattern of research → feature definition → implementation
-	* Facilitate decision-making around MVP / scope for projects/features
-	* Co-create engineering tickets/user stories with eng/tech leads
-	* Define and socialize releases
-	* Collaborate with support and training on access and training needs per product feature
+* Define and document process each project/epic will follow
 * Sprint-by-sprint activities:
-	* Define sprint goals
-	* Decide sprint initiatives and tasks with design and engineering
+	* Help product managers define sprint goals
+	* Help decide sprint initiatives and tasks with product managers, design and engineering
   
 ## Product support
 * Problem solve support tickets with tech leads and others 
@@ -60,7 +48,8 @@ Note: Most of these responsibilities are shared or delegated among product manag
 ## Stakeholder management and communication
 * Owns relationship, regular updates, and expectation setting with Office of Information & Technology	* Maintain a regular cadence of meetings 
 	* Create and shares collateral with those stakeholders pre/post those meetings
-* Owns relationship, regular updates, and expectation with VBA, BVA, and other VA stakeholders	* Maintain a regular cadence of meetings
+* Owns relationship, regular updates, and expectation with VBA, BVA, and other VA stakeholders	
+* Maintain a regular cadence of meetings
 	* Create and shares collateral with those stakeholders pre/post those meetings
 * Connects product managers to key stakeholders in order to build deeper shared context on product initiatives, business priorities and goals, etc. 
 * Coach government partners in product management; evangelize how the Caseflow team works with stakeholders
