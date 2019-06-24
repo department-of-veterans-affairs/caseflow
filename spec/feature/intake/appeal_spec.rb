@@ -6,9 +6,7 @@ feature "Appeal Intake" do
   include IntakeHelpers
 
   before do
-    # Test that this works when only enabled on the current user
-
-    Timecop.freeze(post_ramp_start_date)
+    Timecop.freeze(post_ama_start_date)
   end
 
   let!(:current_user) do
@@ -37,11 +35,11 @@ feature "Appeal Intake" do
 
   let(:future_date) { (Time.zone.now + 30.days).to_date }
 
-  let(:receipt_date) { (post_ramp_start_date - 30.days).to_date }
+  let(:receipt_date) { (post_ama_start_date - 30.days).to_date }
 
   let(:untimely_days) { 372.days }
 
-  let(:profile_date) { (post_ramp_start_date - 35.days).to_datetime }
+  let(:profile_date) { (post_ama_start_date - 35.days).to_datetime }
 
   let(:nonrating_date) { Time.zone.yesterday }
 
@@ -301,7 +299,7 @@ feature "Appeal Intake" do
     click_intake_add_issue
 
     # expect the rating modal to be skipped
-    expect(page).to have_content("Does issue 1 match any of these issue categories?")
+    expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
@@ -491,7 +489,6 @@ feature "Appeal Intake" do
     expect(page).to have_content("5 issues")
     expect(page).to have_content("I am an exemption note")
     expect(page).to_not have_content("5. Really old injury #{Constants.INELIGIBLE_REQUEST_ISSUES.untimely}")
-    expect_ineligible_issue(5)
 
     # remove and re-add with different answer to exemption
     click_remove_intake_issue("5")
@@ -520,6 +517,7 @@ feature "Appeal Intake" do
     # add before_ama ratings
     click_intake_add_issue
     add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+    add_untimely_exemption_response("Yes")
     expect(page).to have_content(
       "7. Non-RAMP Issue before AMA Activation #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
     )
@@ -528,6 +526,7 @@ feature "Appeal Intake" do
     # Eligible because it comes from a RAMP decision
     click_intake_add_issue
     add_intake_rating_issue("Issue before AMA Activation from RAMP")
+    add_untimely_exemption_response("Yes")
     expect(page).to have_content("8. Issue before AMA Activation from RAMP\nDecision date:")
 
     # nonrating before_ama
@@ -538,6 +537,7 @@ feature "Appeal Intake" do
       description: "A nonrating issue before AMA",
       date: pre_ramp_start_date.to_date.mdY
     )
+    add_untimely_exemption_response("Yes")
     expect(page).to have_content(
       "A nonrating issue before AMA #{Constants.INELIGIBLE_REQUEST_ISSUES.before_ama}"
     )

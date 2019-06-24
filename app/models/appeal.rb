@@ -7,6 +7,7 @@
 
 class Appeal < DecisionReview
   include Taskable
+  include PrintsTaskTree
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -622,6 +623,10 @@ class Appeal < DecisionReview
     return ["cavc"] if request_issues.any? { |ri| ri.benefit_type == "fiduciary" }
 
     %w[supplemental_claim cavc]
+  end
+
+  def cancel_active_tasks
+    AppealActiveTaskCancellation.new(self).call
   end
 
   private
