@@ -5,8 +5,6 @@ class Organizations::TasksController < OrganizationsController
   before_action :verify_role_access, only: [:index]
 
   def index
-    # TODO: Return a new attribute of this hash called something like "use_backend_paging"
-    # and return an empty set of tasks if that is true (we will populate them with API calls).
     render json: {
       organization_name: organization.name,
       tasks: json_tasks(tasks),
