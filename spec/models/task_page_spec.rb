@@ -56,7 +56,16 @@ describe TaskPage do
       end
     end
 
-    # TODO: Add more scenarios here.
+    context "when there are some tasks for the given tab name" do
+      let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
+      let(:task_count) { TaskPage::TASKS_PER_PAGE + 3 }
+
+      before { FactoryBot.create_list(:generic_task, task_count, assigned_to: assignee) }
+
+      it "returns the correct number of tasks" do
+        expect(subject.count).to eq(task_count)
+      end
+    end
   end
 
   describe ".paged_tasks" do
@@ -65,11 +74,9 @@ describe TaskPage do
     let(:page) { 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    subject { TaskPage.new(arguments).paged_tasks }
+    before { FactoryBot.create_list(:generic_task, TaskPage::TASKS_PER_PAGE + 1, assigned_to: assignee) }
 
-    before do
-      FactoryBot.create_list(:generic_task, TaskPage::TASKS_PER_PAGE + 1, assigned_to: assignee)
-    end
+    subject { TaskPage.new(arguments).paged_tasks }
 
     context "when the first page of tasks is requested" do
       it "returns a full page of tasks" do
