@@ -489,7 +489,7 @@ class Appeal < DecisionReview
   end
 
   def withdrawn?
-    root_task&.status == Constants.TASK_STATUSES.cancelled
+    WithdrawnDecisionReviewPolicy.new(self).satisfied?
   end
 
   def alerts

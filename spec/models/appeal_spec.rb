@@ -1551,15 +1551,15 @@ describe Appeal do
   end
 
   describe ".withdrawn?" do
-    context "when root task is cancelled" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+    it "calls WithdrawnDecisionReviewPolicy" do
+      appeal = build_stubbed(:appeal)
+      policy = instance_double(WithdrawnDecisionReviewPolicy)
 
-      it "is withdrawn" do
-        expect(appeal.withdrawn?).to eq(false)
-        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
-        expect(appeal.withdrawn?).to eq(true)
-      end
+      expect(WithdrawnDecisionReviewPolicy).to receive(:new)
+        .with(appeal).and_return(policy)
+      expect(policy).to receive(:satisfied?)
+
+      appeal.withdrawn?
     end
   end
 end

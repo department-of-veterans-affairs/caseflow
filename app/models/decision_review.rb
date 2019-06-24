@@ -307,6 +307,14 @@ class DecisionReview < ApplicationRecord
     request_issues.any? && request_issues.all?(&:removed?)
   end
 
+  def active_request_issues
+    request_issues.active
+  end
+
+  def withdrawn_request_issues
+    request_issues.withdrawn
+  end
+
   private
 
   def veteran_invalid_fields
