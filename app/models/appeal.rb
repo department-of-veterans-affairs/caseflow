@@ -625,6 +625,10 @@ class Appeal < DecisionReview
     %w[supplemental_claim cavc]
   end
 
+  def cancel_active_tasks
+    AppealActiveTaskCancellation.new(self).call
+  end
+
   private
 
   def most_recently_assigned_to_label(tasks)
