@@ -192,7 +192,10 @@ describe ColocatedTask do
   context ".update" do
     let!(:attorney_2) { FactoryBot.create(:user) }
     let!(:staff_2) { FactoryBot.create(:staff, :attorney_role, sdomainid: attorney_2.css_id) }
-    let!(:colocated_admin_action) { create(:colocated_task, assigned_by: attorney_2) }
+    let(:org_colocated_task) do
+      FactoryBot.create(:colocated_task, assigned_by: attorney_2, assigned_to: Colocated.singleton)
+    end
+    let!(:colocated_admin_action) { org_colocated_task.children.first }
 
     context "when status is updated to on-hold" do
       it "should validate on-hold duration" do

@@ -548,11 +548,11 @@ RSpec.feature "Task queue" do
 
       it "the case should be returned in the attorneys queue when canceled" do
         visit("/queue/appeals/#{appeal.external_id}")
-        find(".Select-control", text: "Select an action…").click
-        expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.to_h[:label])
-        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.to_h[:label])
+        find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
+        expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.label)
+        expect(page).to have_content(Constants.TASK_ACTIONS.SCHEDULE_HEARING_SEND_TO_TEAM.label)
         find("div", class: "Select-option", text: Constants.TASK_ACTIONS.CANCEL_TASK.label).click
-        find("button", text: "Submit").click
+        find("button", text: COPY::MODAL_SUBMIT_BUTTON).click
         expect(page).to have_content("Task for Bob Smith's case has been cancelled")
         User.authenticate!(user: attorney)
         visit("/queue")
@@ -925,7 +925,6 @@ RSpec.feature "Task queue" do
       step "select and submit the complete transcription action" do
         click_dropdown({ text: Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h[:label] }, schedule_row)
         expect(page).to have_content "Mark as complete"
-        fill_in "completeTaskInstructions", with: "These are my instructions"
         click_button "Mark complete"
         expect(page).to have_content "#{appeal.veteran_full_name}'s case has been marked complete"
       end

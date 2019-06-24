@@ -59,7 +59,7 @@ class Generators::Veteran
         return_message: "Records found.",
         salutation_name: nil,
         sensitive_level_of_record: "0",
-        ssn: "111223334",
+        ssn: Generators::Random.unique_ssn,
         state: "VA",
         suffix_name: "II",
         temporary_custodian_indicator: nil,

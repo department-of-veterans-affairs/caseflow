@@ -62,6 +62,8 @@ gem "stringex", require: false
 gem "strong_migrations"
 # execjs runtime
 gem "therubyracer", platforms: :ruby
+# print trees
+gem "tty-tree"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 
