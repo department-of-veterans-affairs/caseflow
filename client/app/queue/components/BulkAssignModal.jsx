@@ -9,7 +9,7 @@ import QueueFlowModal from './QueueFlowModal';
 import Dropdown from '../../components/Dropdown';
 import { regionalOfficeCity } from '../utils';
 import { getUnassignedOrganizationalTasks } from '../selectors';
-import { bulkAssignTasks, onReceiveQueue } from '../QueueActions';
+import { bulkAssignTasks } from '../QueueActions';
 import {
   setActiveOrganization
 } from '../uiReducer/uiActions';
@@ -239,7 +239,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({ bulkAssignTasks,
-    onReceiveQueue,
     setActiveOrganization }, dispatch)
 );
 

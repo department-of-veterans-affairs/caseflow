@@ -21,7 +21,7 @@ RSpec.feature "Bulk task assignment" do
       submit.click
     end
 
-    it "is able to bulk assign tasks for the hearing management org", skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-504168657" do
+    it "is able to bulk assign tasks for the hearing management org" do
       3.times do
         FactoryBot.create(:no_show_hearing_task)
       end
@@ -38,6 +38,7 @@ RSpec.feature "Bulk task assignment" do
 
       fill_in_and_submit_bulk_assign_modal
       expect(page).to have_content(success_msg)
+      expect(user.tasks.where(type: "NoShowHearingTask").size).to eq 3
       expect(page).to have_content("Assigned (3)")
     end
 
