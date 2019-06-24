@@ -16,20 +16,35 @@ class Organizations::TasksController < OrganizationsController
   end
 
   # Endpoint for returning some subset of tasks.
-  def tasks
-    # Let's start with a single page (say, 25), unfiltered, for the unassigned tab.
+  # TODO: Define a route to this method (maybe a different controller entirely?)
+  def paged_tasks
+    # Let's start with a single page (say, 15), unfiltered, for the unassigned tab.
     # - What bucket of tasks are we drawing from (unassigned)
     # - What offset (none)
-    # /tasks?tab=unassigned
-    params = {
-      # Do we want to assume some default tab if no tab is passed?
-      tab: "unassigned"
-      # Assume first page if none passed
-      # Assume no filters/sorting if none passed
-    }
+    # /organizations/{org.url}/tasks?
+    #   tab=on_hold&
+    #   sort_by=case_details_link&
+    #   order=desc&
+    #   filter[]=col%3Ddocket_type%26val%3Dlegacy&
+    #   filter[]=col%3Dtask_action%26val%3Dtranslation&
+    #   page=3
+    #
+    # params = <ActionController::Parameters {
+    #   "tab"=>"on_hold",
+    #   "sort_by"=>"case_details_link",
+    #   "order"=>"desc",
+    #   "filter"=>["col=docket_type&val=legacy", "col=task_action&val=translation"],
+    #   "page"=>"3"
+    # }>
 
-    # TODO: page(1) is just a placeholder for whichever pagination library we end up using.
-    queue_config.tasks_for_tab(params[:tab]).page(1)
+    # TaskPage.new(
+    #   assignee: organization,
+    #   tab_name: params[:tab],
+    #   filters: params[:filter],
+    #   sort_order: params[:order],
+    #   sort_by: params[:sort_by],
+    #   page: params[:page]
+    # ).paged_tasks
   end
 
   private
