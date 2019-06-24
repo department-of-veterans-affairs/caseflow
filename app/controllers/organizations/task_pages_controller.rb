@@ -4,8 +4,23 @@ class Organizations::TaskPagesController < OrganizationsController
   before_action :verify_organization_access, only: [:index]
   before_action :verify_role_access, only: [:index]
 
+  # /organizations/{org.url}/tasks?
+  #   tab=on_hold&
+  #   sort_by=case_details_link&
+  #   order=desc&
+  #   filter[]=col%3Ddocket_type%26val%3Dlegacy&
+  #   filter[]=col%3Dtask_action%26val%3Dtranslation&
+  #   page=3
+  #
+  # params = <ActionController::Parameters {
+  #   "tab"=>"on_hold",
+  #   "sort_by"=>"case_details_link",
+  #   "order"=>"desc",
+  #   "filter"=>["col=docket_type&val=legacy", "col=task_action&val=translation"],
+  #   "page"=>"3"
+  # }>
+
   def index
-    # TODO: Raise a ruckus if required parameters are not included.
     tasks = TaskPage.new(
       assignee: organization,
       tab_name: params[:tab],
