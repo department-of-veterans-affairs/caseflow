@@ -7,8 +7,7 @@ describe WorkQueue::LegacyAppealSerializer do
   subject { described_class.new(legacy_appeal, params: { user: user }) }
 
   describe "#as_json" do
-    it "renders the appellant address from BGS",
-       skip: "disabled until we pull addresss & POA from BGS again" do
+    it "renders the appellant address from BGS" do
       serialized_appellant_address = {
         address_line_1: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1,
         address_line_2: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_2,
