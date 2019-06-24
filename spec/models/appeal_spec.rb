@@ -12,6 +12,19 @@ describe Appeal do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
 
+  context "includes PrintsTaskTree concern" do
+    context "#structure" do
+      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
+
+      subject { appeal.structure(:id) }
+
+      it "returns the task structure" do
+        expect_any_instance_of(RootTask).to receive(:structure).with(:id)
+        expect(subject.key?(:"Appeal #{appeal.id}")).to be_truthy
+      end
+    end
+  end
+
   context "active appeals" do
     let!(:active_appeal) { create(:appeal, :with_tasks) }
     let!(:inactive_appeal) { create(:appeal, :outcoded) }
