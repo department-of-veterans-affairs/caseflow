@@ -6,7 +6,7 @@ module DateTimeHelper
   end
 
   def ama_start_date
-    Constants::DATES["AMA_ACTIVATION_TEST"].to_date.in_time_zone
+    Constants::DATES["AMA_ACTIVATION"].to_date.in_time_zone
   end
 
   def pre_ama_start_date

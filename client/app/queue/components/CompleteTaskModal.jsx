@@ -28,11 +28,14 @@ const SEND_TO_LOCATION_MODAL_TYPE_ATTRS = {
     }),
     title: () => COPY.MARK_TASK_COMPLETE_TITLE,
     getContent: ({ props, state, setState }) => {
+      const taskConfiguration = taskActionData(props);
+
       return <React.Fragment>
         {
-          taskActionData(props) && taskActionData(props).modal_body
+          taskConfiguration && taskConfiguration.modal_body
         }
         {
+          (!taskConfiguration || !taskConfiguration.modal_hide_instructions) &&
           <TextareaField
             label="Instructions:"
             name="instructions"

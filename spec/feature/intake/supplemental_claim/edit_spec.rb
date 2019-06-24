@@ -618,7 +618,7 @@ feature "Supplemental Claim Edit issues" do
         click_withdraw_intake_issue_dropdown("PTSD denied")
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
-        expect(page).to have_content("1. PTSD denied\nDecision date: 01/20/2018\nWithdraw pending")
+        expect(page).to have_content("1. PTSD denied\nDecision date: 05/10/2019\nWithdraw pending")
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
         fill_in "withdraw-date", with: withdraw_date
@@ -665,7 +665,7 @@ feature "Supplemental Claim Edit issues" do
 
         expect(page).to_not have_content("Requested issues\n1. PTSD denied")
         expect(page).to have_content(
-          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 01\/20\/2018\nWithdraw pending/i
+          /Withdrawn issues\n[1-2]..PTSD denied\nDecision date: 05\/10\/2019\nWithdraw pending/i
         )
         expect(page).to have_content("Please include the date the withdrawal was requested")
 
@@ -686,7 +686,7 @@ feature "Supplemental Claim Edit issues" do
         visit "supplemental_claims/#{rating_ep_claim_id}/edit/"
 
         expect(page).to have_content("Requested issues\n1. Left knee granted")
-        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 01/20/2018\nWithdrawn on")
+        expect(page).to have_content("Withdrawn issues\n2. PTSD denied\nDecision date: 05/10/2019\nWithdrawn on")
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
       end
     end
