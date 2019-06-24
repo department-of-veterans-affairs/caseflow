@@ -27,6 +27,24 @@ RSpec.feature "ColocatedTask" do
       )
     end
 
+    it "should only create one colocated task", focus: true do
+      User.authenticate!(user: attorney_user)
+      visit("/queue/appeals/#{appeal.uuid}")
+
+      find(".Select-control", text: "Select an action…").click
+      find("div", class: "Select-option", text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label]).click
+
+      # Redirected to assign colocated action page
+      action = Constants.CO_LOCATED_ADMIN_ACTIONS.schedule_hearing
+      find(".Select-control", text: "Select an action").click
+      find("div", class: "Select-option", text: action).click
+      fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "note")
+      find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
+
+      expect(page).to have_content("You have assigned an administrative action (#{action})")
+      expect(ColocatedTask.count).to eq 1
+    end
+
     it "should return attorney task to active state" do
       # Attorney assigns task to VLJ support staff.
       User.authenticate!(user: attorney_user)

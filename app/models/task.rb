@@ -396,6 +396,7 @@ class Task < ApplicationRecord
   private
 
   def create_and_auto_assign_child_task(options = {})
+    # duping here
     dup.tap do |child_task|
       child_task.assigned_to = assigned_to.next_assignee(**options)
       child_task.parent = self
