@@ -124,6 +124,11 @@ class TaskRows extends React.PureComponent {
       <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
+  cancelledAtListItem = (task) => {
+    return <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL}</dt>
+      <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div>;
+  }
+
   daysWaitingListItem = (task) => {
     if (task.closedAt) {
       return null;
@@ -232,7 +237,7 @@ class TaskRows extends React.PureComponent {
       <td {...taskTimeContainerStyling} className={timeline ? taskTimeTimelineContainerStyling : ''}>
         <CaseDetailsDescriptionList>
           { this.assignedOnListItem(task) }
-          { this.closedAtListItem(task) }
+          { isCancelled(task) ? this.cancelledAtListItem(task) : this.closedAtListItem(task) }
           { !task.closedAt && this.daysWaitingListItem(task) }
         </CaseDetailsDescriptionList>
       </td>
