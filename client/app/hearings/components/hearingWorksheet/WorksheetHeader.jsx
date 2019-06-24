@@ -46,19 +46,15 @@ const copyButtonStyling = css({
 });
 
 const firstColumnStyling = css({
-  flex: '4',
-  marginBottom: '20px',
-  marginRight: '1.5rem'
+  flex: '40%'
 });
 
 const secondColumnStyling = css({
-  flex: '6',
-  marginBottom: '20px'
+  flex: '60%'
 });
 
 const secondRowStyling = css({
-  flex: '1 100%',
-  marginBottom: '20px'
+  flex: '100%'
 });
 
 class WorksheetHeader extends React.PureComponent {

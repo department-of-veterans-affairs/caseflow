@@ -272,10 +272,6 @@
   position: relative;
   margin-bottom: 1.765em;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
-
   label {
     font-size: 1.05em;
     padding-bottom: .3em;
@@ -289,7 +285,6 @@
   textarea {
     resize: vertical;
   }
-
 
   .cf-hearings-worksheet-header {
     margin-bottom: 1em;
@@ -433,11 +428,19 @@
     font-weight: bold;
   }
 
+  > div:first-child {
+    padding-right: 1.5rem;
+  }
+
+  > div:last-child {
+    margin-bottom: 0;
+    padding-right: 0;
+  }
+
   > .cf-hearings-worksheet-data {
     flex: 1 100%;
   }
 }
-
 
 .cf-hearings-print-appeal-stream {
   line-height: .2em;
