@@ -18,6 +18,14 @@ RSpec.feature "TranscriptionTeam" do
   end
 
   describe "transcription team member completes a transcription task" do
+    it "does not have an input field for instructions" do
+      visit("/organizations/transcription")
+      click_on veteran_link_text
+      click_dropdown(text: Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h[:label])
+
+      expect(page).to_not have_field("instructions")
+    end
+
     scenario "completes the task" do
       visit("/organizations/transcription")
       click_on veteran_link_text
