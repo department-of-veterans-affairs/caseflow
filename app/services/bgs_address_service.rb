@@ -15,11 +15,14 @@ class BgsAddressService
   end
 
   def fetch_bgs_record
-    bgs.find_address_by_participant_id(participant_id)
-  rescue Savon::Error
-    # If there is no addresses for this participant id then we get an error.
-    # catch it and return an empty array
-    nil
+    cache_key = "bgs-participant-address-#{participant_id}"
+    Rails.cache.fetch(cache_key, expires_in: 24.hours) do
+      bgs.find_address_by_participant_id(participant_id)
+    rescue Savon::Error
+      # If there is no address for this participant id then we get an error.
+      # catch it and return an empty array
+      nil
+    end
   end
 
   def bgs

@@ -129,10 +129,15 @@ class ColocatedTask < Task
     if saved_change_to_status? &&
        !open? &&
        all_tasks_closed_for_appeal? &&
-       appeal.is_a?(LegacyAppeal) &&
-       appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
+       appeal_in_caseflow_vacols_location? &&
+       assigned_to.is_a?(Organization)
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
+  end
+
+  def appeal_in_caseflow_vacols_location?
+    appeal.is_a?(LegacyAppeal) &&
+      VACOLS::Case.find(appeal.vacols_id).bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
   end
 
   def location_based_on_action
@@ -140,7 +145,7 @@ class ColocatedTask < Task
     when :schedule_hearing
       # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
       # actually held.
-      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled
+      return assigned_by.vacols_uniq_id if children.all? { |t| t.status == Constants.TASK_STATUSES.cancelled }
 
       # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
       ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)

@@ -6,7 +6,7 @@ feature "Higher-Level Review" do
   include IntakeHelpers
 
   before do
-    Timecop.freeze(post_ramp_start_date)
+    Timecop.freeze(post_ama_start_date)
 
     allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
@@ -561,7 +561,7 @@ feature "Higher-Level Review" do
     click_intake_add_issue
 
     # expect the rating modal to be skipped
-    expect(page).to have_content("Does issue 1 match any of these issue categories?")
+    expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
@@ -739,6 +739,7 @@ feature "Higher-Level Review" do
 
         Timecop.return
         fill_in "Decision date", with: Time.zone.tomorrow.mdY
+
         expect(page).to have_content("Decision date cannot be in the future")
       end
     end
@@ -878,6 +879,7 @@ feature "Higher-Level Review" do
       # add before_ama ratings
       click_intake_add_issue
       add_intake_rating_issue("Non-RAMP Issue before AMA Activation")
+      add_untimely_exemption_response("Yes")
       expect(page).to have_content(
         "8. Non-RAMP Issue before AMA Activation #{ineligible_constants.before_ama}"
       )
@@ -885,6 +887,7 @@ feature "Higher-Level Review" do
       # Eligible because it comes from a RAMP decision
       click_intake_add_issue
       add_intake_rating_issue("Issue before AMA Activation from RAMP")
+      add_untimely_exemption_response("Yes")
       expect(page).to have_content(
         "9. Issue before AMA Activation from RAMP\nDecision date:"
       )
@@ -901,6 +904,7 @@ feature "Higher-Level Review" do
         description: "A nonrating issue before AMA",
         date: pre_ramp_start_date.to_date.mdY
       )
+      add_untimely_exemption_response("Yes")
       expect(page).to have_content(
         "A nonrating issue before AMA #{ineligible_constants.before_ama}"
       )
