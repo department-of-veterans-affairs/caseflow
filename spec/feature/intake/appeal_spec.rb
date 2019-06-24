@@ -299,7 +299,7 @@ feature "Appeal Intake" do
     click_intake_add_issue
 
     # expect the rating modal to be skipped
-    expect(page).to have_content("Does issue 1 match any of these issue categories?")
+    expect(page).to have_content("Does issue 1 match any of these non-rating issue categories?")
     add_intake_nonrating_issue(
       category: "Active Duty Adjustments",
       description: "Description for Active Duty Adjustments",
