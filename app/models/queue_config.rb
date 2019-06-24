@@ -52,7 +52,6 @@ class QueueConfig
   end
 
   def tracking_tasks_tab
-    # TODO: This seems like an unnecessary step.
     name = Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
     tasks = TaskPage.new(assignee: organization, tab_name: name).tasks_for_tab
 
