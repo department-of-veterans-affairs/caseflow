@@ -22,7 +22,9 @@ class LegacyHearing < ApplicationRecord
   has_many :hearing_views, as: :hearing
   has_many :appeal_stream_snapshots, foreign_key: :hearing_id
   has_one :hearing_location, as: :hearing
-  has_many :hearing_task_association, as: :hearing
+  has_one :hearing_task_association,
+          -> { includes(:hearing_task).where(tasks: { status: Task.open_statuses }) },
+          as: :hearing
 
   alias_attribute :location, :hearing_location
   accepts_nested_attributes_for :hearing_location
