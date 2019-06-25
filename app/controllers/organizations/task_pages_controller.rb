@@ -39,11 +39,9 @@ class Organizations::TaskPagesController < OrganizationsController
   end
 
   def json_tasks(tasks)
-    Rails.logger.debug("starting AppealRepository.eager_load_legacy_appeals_for_tasks")
     tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
     params = { user: current_user }
 
-    Rails.logger.debug("starting AmaAndLegacyTaskSerializer")
     AmaAndLegacyTaskSerializer.new(
       tasks: tasks, params: params, ama_serializer: organization.ama_task_serializer
     ).call
