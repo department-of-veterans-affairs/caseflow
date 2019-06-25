@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class WithdrawnDecisionReviewPolicy
-  delegate :request_issues, to: :decision_review
+  delegate :active_request_issues, :withdrawn_request_issues, to: :decision_review
 
   def initialize(decision_review)
     @decision_review = decision_review
@@ -16,10 +16,10 @@ class WithdrawnDecisionReviewPolicy
   attr_reader :decision_review
 
   def no_active_request_issues?
-    request_issues.active.empty?
+    active_request_issues.empty?
   end
 
   def at_least_one_withdrawn_issue?
-    request_issues.withdrawn.any?
+    withdrawn_request_issues.any?
   end
 end
