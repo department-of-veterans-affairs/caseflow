@@ -30,7 +30,7 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
     end
     namespace :docs do
-      namespace :v0, defaults: { format: 'json' } do
+      namespace :v3, defaults: { format: 'json' } do
         get 'decision_reviews', to: 'docs#decision_reviews'
       end
     end

@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: Decision Reviews
   description: API version 0 for Decision Reviews provided by the Lighthouse Project
-  version: 0.0.1
+  version: 3.0.0
 servers:
   - url: /lighthouse_api/{version}
 paths:
