@@ -3,7 +3,7 @@
 ##
 # Task to schedule a hearing for a veteran making a claim.
 # Created by the intake process for any appeal electing to have a hearing.
-# Once completed, a DispositionTask is created.
+# Once completed, an AssignHearingDispositionTask is created.
 
 class ScheduleHearingTask < GenericTask
   before_validation :set_assignee
@@ -78,7 +78,7 @@ class ScheduleHearingTask < GenericTask
                                                      appeal: appeal,
                                                      hearing_location_attrs: hearing_location&.to_hash,
                                                      scheduled_time_string: scheduled_time_string)
-        DispositionTask.create_disposition_task!(appeal, parent, hearing)
+        AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
       elsif params[:status] == Constants.TASK_STATUSES.cancelled
         withdraw_hearing
       end
