@@ -1549,17 +1549,4 @@ describe Appeal do
       end
     end
   end
-
-  describe ".withdrawn?" do
-    context "when root task is cancelled" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-
-      it "is withdrawn" do
-        expect(appeal.withdrawn?).to eq(false)
-        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
-        expect(appeal.withdrawn?).to eq(true)
-      end
-    end
-  end
 end
