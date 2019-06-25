@@ -17,9 +17,16 @@ class GenericQueue
   def relevant_tasks
     Task.incomplete_or_recently_closed
       .where(assigned_to: user)
+      .where(appeal_type: relevant_appeal_types)
       .includes(*task_includes)
       .order(created_at: :asc)
       .limit(limit)
+  end
+
+  def relevant_appeal_types
+    return ["Appeal"] if user.is_a?(Vso)
+
+    ["Appeal", "LegacyAppeal"]
   end
 
   def relevant_attorney_tasks
