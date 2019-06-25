@@ -150,6 +150,7 @@ export class DailyDocketContainer extends React.Component {
 
         return true;
       }, (err) => {
+        console.log(err);
         this.props.handleDailyDocketServerError(err);
 
         return false;
@@ -289,6 +290,7 @@ export class DailyDocketContainer extends React.Component {
           displayLockModal={this.props.displayLockModal}
           updateLockHearingDay={this.updateLockHearingDay}
           displayLockSuccessMessage={this.props.displayLockSuccessMessage}
+          dailyDocketServerError={this.props.dailyDocketServerError}
           onErrorHearingDayLock={this.props.onErrorHearingDayLock} />
       }
 
