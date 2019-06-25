@@ -64,24 +64,37 @@ class TaskPager
   private
 
   def tracking_tasks
-    TrackVeteranTask.active.where(assigned_to: assignee)
+    TrackVeteranTask.includes(*task_includes).active.where(assigned_to: assignee)
   end
 
   def unassigned_tasks
-    Task.visible_in_queue_table_view.where(assigned_to: assignee).active
+    Task.includes(*task_includes)
+      .visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
   def assigned_tasks
-    Task.visible_in_queue_table_view.where(assigned_to: assignee).on_hold
+    Task.includes(*task_includes)
+      .visible_in_queue_table_view.where(assigned_to: assignee).on_hold
   end
 
   def recently_completed_tasks
-    Task.visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
+    Task.includes(*task_includes)
+      .visible_in_queue_table_view.where(assigned_to: assignee).recently_closed
   end
 
   def assignee_is_user_or_organization
     unless assignee.is_a?(User) || assignee.is_a?(Organization)
       errors.add(:assignee, COPY::TASK_PAGE_INVALID_ASSIGNEE_MESSAGE)
     end
+  end
+
+  def task_includes
+    [
+      { appeal: [:available_hearing_locations, :claimants] },
+      :assigned_by,
+      :assigned_to,
+      :children,
+      :parent
+    ]
   end
 end
