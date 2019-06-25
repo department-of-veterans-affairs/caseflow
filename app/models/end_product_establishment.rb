@@ -201,6 +201,7 @@ class EndProductEstablishment < ApplicationRecord
       )
       sync_source!
       close_request_issues_if_canceled!
+      close_request_issues_if_converted_to_ep400!
     end
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
@@ -373,6 +374,13 @@ class EndProductEstablishment < ApplicationRecord
     return unless status_canceled?
 
     request_issues.all.find_each(&:close_after_end_product_canceled!)
+  end
+
+  def close_request_issues_if_converted_to_ep400!
+    return unless status_cleared?
+    return unless result.claim_type_code.include?("400")
+
+    request_issues.each { |ri| RequestIssueClosure.new(ri).with_no_decision! }
   end
 
   def fetch_associated_rating
