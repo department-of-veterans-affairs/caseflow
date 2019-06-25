@@ -59,9 +59,9 @@ class TaskPager
     when Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
       tracking_tasks
     when Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
-      unassigned_tasks
+      active_tasks
     when Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
-      assigned_tasks
+      on_hold_tasks
     when Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
       recently_completed_tasks
     else
@@ -75,13 +75,12 @@ class TaskPager
     TrackVeteranTask.includes(*task_includes).active.where(assigned_to: assignee)
   end
 
-  # TODO: Rename this function so that it makes sense for users and organizations
-  def unassigned_tasks
+  def active_tasks
     Task.includes(*task_includes)
       .visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
-  def assigned_tasks
+  def on_hold_tasks
     Task.includes(*task_includes)
       .visible_in_queue_table_view.where(assigned_to: assignee).on_hold
   end
