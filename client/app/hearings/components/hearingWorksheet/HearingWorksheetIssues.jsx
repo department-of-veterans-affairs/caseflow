@@ -2,21 +2,21 @@ import React, { PureComponent } from 'react';
 import Table from '../../../components/Table';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import HearingWorksheetIssueFields from './HearingWorksheetIssueFields';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import HearingWorksheetIssueDelete from './HearingWorksheetIssueDelete';
 
 class HearingWorksheetIssues extends PureComponent {
 
-  getKeyForRow = (index) => index;
-
   render() {
-    let {
+    const {
+      issues,
       worksheetIssues,
       worksheetStreamsAppeal,
       appealKey,
       countOfIssuesInPreviousAppeals,
-      print
+      prior
     } = this.props;
 
     const columns = [
@@ -41,25 +41,24 @@ class HearingWorksheetIssues extends PureComponent {
       }
     ];
 
-    if (!this.props.prior) {
-      columns.push({
-        header: 'Preliminary Impressions',
-        align: 'left',
-        valueName: 'actions'
-      });
+    if (!prior) {
+      columns.push(
+        {
+          header: 'Preliminary Impressions',
+          align: 'left',
+          valueName: 'actions'
+        },
+        {
+          header: '',
+          align: 'left',
+          valueName: 'deleteIssue'
+        }
+      );
     }
 
-    if (!this.props.print && !this.props.prior) {
-      columns.push({
-        header: '',
-        align: 'left',
-        valueName: 'deleteIssue'
-      });
-    }
+    const rowObjects = Object.keys(issues).map((issue, key) => {
 
-    const rowObjects = Object.keys(this.props.issues).map((issue, key) => {
-
-      let issueRow = worksheetIssues[issue];
+      const issueRow = worksheetIssues[issue];
 
       return {
         counter: <b>{key + countOfIssuesInPreviousAppeals + 1}.</b>,
@@ -73,7 +72,7 @@ class HearingWorksheetIssues extends PureComponent {
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
           field="notes"
-          readOnly={print || this.props.prior}
+          readOnly={prior}
           maxLength={100}
         />,
         disposition: <HearingWorksheetIssueFields
@@ -85,7 +84,6 @@ class HearingWorksheetIssues extends PureComponent {
         actions: <HearingWorksheetPreImpressions
           appeal={worksheetStreamsAppeal}
           issue={issueRow}
-          print={print}
         />,
         deleteIssue: <HearingWorksheetIssueDelete
           appeal={worksheetStreamsAppeal}
@@ -101,7 +99,7 @@ class HearingWorksheetIssues extends PureComponent {
         columns={columns}
         rowObjects={rowObjects}
         summary="Worksheet Issues"
-        getKeyForRow={this.getKeyForRow}
+        getKeyForRow={_.identity}
       />
     </div>;
   }
@@ -119,6 +117,7 @@ HearingWorksheetIssues.propTypes = {
   appealKey: PropTypes.number.isRequired,
   issues: PropTypes.object.isRequired,
   prior: PropTypes.bool,
+  worksheetIssues: PropTypes.object,
   worksheetStreamsAppeal: PropTypes.object.isRequired,
   countOfIssuesInPreviousAppeals: PropTypes.number.isRequired
 };
