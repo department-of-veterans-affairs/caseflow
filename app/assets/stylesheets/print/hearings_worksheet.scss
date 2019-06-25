@@ -2,10 +2,13 @@
 @import 'uswds/src/stylesheets/core/_variables.scss';
 
 $cell-padding: 10px;
+$body-font-size: 14px;
 
 @media print {
   body {
-    -webkit-print-color-adjust: exact
+    counter-reset: page pages;
+    font-size: $body-font-size;
+    -webkit-print-color-adjust: exact;
   }
 
   body,
@@ -42,10 +45,7 @@ $cell-padding: 10px;
     font-size: 15px;
   }
 
-  h3 {
-    font-size: 14px;
-  }
-
+  h3,
   h4,
   h5,
   .cf-hearings-worksheet-data h4,
@@ -53,11 +53,19 @@ $cell-padding: 10px;
   .cf-hearings-worksheet-data p,
   .cf-hearings-worksheet-data-cell,
   .cf-print-footer {
-    font-size: 14px;
+    font-size: $body-font-size;
   }
 
   #cf-hearings-worksheet-summary {
     page-break-inside: avoid;
+
+    p {
+      min-height: 0;
+      margin: 5px 0;
+      padding: 0px;
+      font-size: $body-font-size;
+      line-height: 1.5rem;
+    }
   }
 
   .cf-hearings-worksheet-data {
@@ -107,10 +115,6 @@ $cell-padding: 10px;
     text-transform: uppercase;
   }
 
-  body {
-    counter-reset: page pages;
-  }
-
   .cf-print-footer {
     text-align: right;
     width: 100%;
@@ -131,6 +135,6 @@ $cell-padding: 10px;
 
   @page {
     size: 8.5in 11in;
-    margin: 0.5in 0.5in;
+    margin: 0.3in 0.5in;
   }
 }
