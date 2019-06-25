@@ -6,7 +6,7 @@ class TranscriptionTask < GenericTask
   class NonDispositionTaskParent < StandardError; end
 
   def check_parent_type
-    fail NonDispositionTaskParent unless parent.is_a? DispositionTask
+    fail NonDispositionTaskParent unless parent.is_a? AssignHearingDispositionTask
   end
 
   def available_actions(user)

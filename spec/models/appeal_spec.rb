@@ -920,7 +920,7 @@ describe Appeal do
       end
       let!(:disposition_task) do
         FactoryBot.create(
-          :disposition_task,
+          :assign_hearing_disposition_task,
           parent: hearing_task,
           appeal: appeal,
           status: Constants.TASK_STATUSES.in_progress
@@ -1534,7 +1534,7 @@ describe Appeal do
       end
       let!(:disposition_task) do
         FactoryBot.create(
-          :disposition_task,
+          :assign_hearing_disposition_task,
           parent: hearing_task,
           appeal: appeal,
           status: Constants.TASK_STATUSES.in_progress
