@@ -24,9 +24,9 @@ class GenericQueue
   end
 
   def relevant_appeal_types
-    return ["Appeal"] if user.is_a?(Vso)
+    return [Appeal.name] if user.is_a?(Vso)
 
-    ["Appeal", "LegacyAppeal"]
+    [Appeal.name, LegacyAppeal.name]
   end
 
   def relevant_attorney_tasks
