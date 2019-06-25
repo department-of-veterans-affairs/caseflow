@@ -120,10 +120,14 @@ $body-font-size: 14px;
     text-transform: uppercase;
   }
 
-  .cf-hearings-procedural-history {
+  .cf-hearings-appeal-procedural-history {
     border: 1px solid $color-gray;
     padding: 4px 10px;
-    margin: $cell-padding 0px;
+    margin: 10px 0px 5px 0px;
+
+    &:first-child {
+      margin: 5px 0px;
+    }
   }
 
   .cf-print-footer {
