@@ -267,6 +267,18 @@ GEM
       multi_json (~> 1.0)
       therubyracer (~> 0.12.1)
     json (1.8.6)
+    kaminari (1.1.1)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.1.1)
+      kaminari-activerecord (= 1.1.1)
+      kaminari-core (= 1.1.1)
+    kaminari-actionview (1.1.1)
+      actionview
+      kaminari-core (= 1.1.1)
+    kaminari-activerecord (1.1.1)
+      activerecord
+      kaminari-core (= 1.1.1)
+    kaminari-core (1.1.1)
     kramdown (1.17.0)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -565,6 +577,7 @@ DEPENDENCIES
   holidays (~> 6.4)
   jquery-rails
   jshint
+  kaminari
   loofah (>= 2.2.3)
   meta_request
   moment_timezone-rails
