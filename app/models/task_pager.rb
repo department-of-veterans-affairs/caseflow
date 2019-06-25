@@ -14,12 +14,12 @@ class TaskPager
   def initialize(args)
     super
 
+    @page ||= 1
+
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
   def paged_tasks
-    @page ||= 1
-
     tasks_for_tab.order(:created_at).page(page).per(TASKS_PER_PAGE)
   end
 
