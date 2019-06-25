@@ -35,8 +35,6 @@ class OrganizationQueue extends React.PureComponent {
     this.props.clearCaseSelectSearch();
   }
 
-  // To load the contents of the page:
-  // tasks = request to /tasks?tab={config.name}
   calculateActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
