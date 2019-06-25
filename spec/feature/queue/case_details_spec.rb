@@ -721,6 +721,7 @@ RSpec.feature "Case details" do
       let!(:appeal) { FactoryBot.create(:appeal) }
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
+      let!(:assign_task) { create(:ama_judge_task, appeal: appeal, assigned_to: user, parent: root_task) }
       let!(:judge_task) do
         create(
           :ama_judge_decision_review_task,
@@ -735,16 +736,18 @@ RSpec.feature "Case details" do
       before do
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
+        assign_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-01-01")
         attorney_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-02-01")
         attorney_task2.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-03-01")
         judge_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: Time.zone.now)
       end
 
-      it "should display judge & attorney tasks" do
+      it "should display judge & attorney tasks, but not judge assign tasks" do
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
-        expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+        expect(page.find_all("dl", text: COPY::CASE_TIMELINE_JUDGE_TASK).length).to eq 1
       end
+
       it "should sort tasks properly" do
         visit "/queue/appeals/#{appeal.uuid}"
         case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
