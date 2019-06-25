@@ -462,6 +462,7 @@
   "UNTIMELY_EVIDENCE_BULLET_THREE": "3. Requested the Hearing appeal option and submitted evidence outside of the 90-day window after their hearing",
   "WHAT_IS_INELIGIBLE_EVIDENCE": "What is ineligible evidence?",
 
+  "TASK_PAGE_INVALID_ASSIGNEE_MESSAGE": "must be either a User or an Organization",
   "TASK_DISTRIBUTOR_ASSIGNEE_POOL_USERS_ONLY_MESSAGE": "must contain only Users",
   "APPEAL_RECORD_SAVED_MESSAGE": "You can now begin intake for the next opt-in election.",
   "RAMP_COMPLETED_ALERT": "Send the \"RAMP Acknowledgement Letter\", listing all eligible contentions, and ineligible contentions if applicable.",
