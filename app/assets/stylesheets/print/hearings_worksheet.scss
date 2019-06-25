@@ -82,6 +82,10 @@ $body-font-size: 14px;
       width: auto;
     }
 
+    .cf-hearings-worksheet-data-cell.double {
+      flex: 0 0 40%;
+    }
+
     p {
       min-height: 1rem;
     }
@@ -110,9 +114,16 @@ $body-font-size: 14px;
   }
 
   .cf-hearings-worksheet-data label,
-  .cf-hearings-worksheet-data-cell h4 {
+  .cf-hearings-worksheet-data-cell h4,
+  .cf-hearings-procedural-history h4 {
     font-weight: 800;
     text-transform: uppercase;
+  }
+
+  .cf-hearings-procedural-history {
+    border: 1px solid $color-gray;
+    padding: 4px 10px;
+    margin: $cell-padding 0px;
   }
 
   .cf-print-footer {
