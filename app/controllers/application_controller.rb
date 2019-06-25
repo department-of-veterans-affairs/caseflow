@@ -282,7 +282,7 @@ class ApplicationController < ApplicationBaseController
       end
 
       format.json do
-        render json: { errors: [:vbms_error], error_uuid: error_uuid }, status: :internal_server_error
+        render json: { error_uuid: error_uuid }, status: :internal_server_error
       end
     end
   end
