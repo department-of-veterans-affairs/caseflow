@@ -46,6 +46,14 @@ class TaskPager
   #   tasks
   # end
 
+  def task_page_count
+    (total_task_count / TASKS_PER_PAGE.to_f).ceil
+  end
+
+  def total_task_count
+    @total_task_count ||= tasks_for_tab.count
+  end
+
   def tasks_for_tab
     case tab_name
     when Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
@@ -67,6 +75,7 @@ class TaskPager
     TrackVeteranTask.includes(*task_includes).active.where(assigned_to: assignee)
   end
 
+  # TODO: Rename this function so that it makes sense for users and organizations
   def unassigned_tasks
     Task.includes(*task_includes)
       .visible_in_queue_table_view.where(assigned_to: assignee).active

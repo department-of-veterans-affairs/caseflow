@@ -36,33 +36,28 @@ class TablePagination extends React.PureComponent {
 
   render() {
     const {
-      paginatedData,
+      casesPerPage,
       currentPage,
+      numberOfPages,
       totalCasesCount
     } = this.props;
-    const numberOfPages = paginatedData.length;
 
-    // Render the pagination summary
-    // Get previous number of cases so we can calculate the case range in
-    // the pagination summary
-    let previousCaseCount = 0;
+    let beginningCaseNumber = 0;
+    let endingCaseNumber = 0;
 
-    for (let i = 0; i < currentPage; i += 1) {
-      previousCaseCount += paginatedData[i] ? paginatedData[i].length : 0;
+    if (totalCasesCount) {
+      // Assume we are in one of the middle pages.
+      beginningCaseNumber = 1 + (currentPage * casesPerPage);
+      endingCaseNumber = (currentPage + 1) * casesPerPage;
+
+      // Correct for us being on the last page.
+      if (endingCaseNumber > totalCasesCount) {
+        endingCaseNumber = totalCasesCount;
+      }
     }
-    // If there are no pages, there is no data, so the range should be 0-0.
-    // Otherwise, the beginning of the range is the previous amount of cases + 1
-    const beginningCaseNumber = numberOfPages > 0 ? previousCaseCount + 1 : 0;
-    // If there are no pages, there is no data, so the range should be 0-0.
-    // Otherwise, the end of the range is the previous amount of cases + 
-    // the amount of data in the current page.
-    const endingCaseNumber = numberOfPages > 0 && paginatedData[currentPage] ?
-      previousCaseCount + paginatedData[currentPage].length :
-      0;
-    // Create the range
-    let currentCaseRange = `${beginningCaseNumber}-${endingCaseNumber}`;
-    // Create the entire summary
-    const paginationSummary = `Viewing ${currentCaseRange} of ${totalCasesCount} total cases`;
+
+    const paginationSummary = `Viewing ${beginningCaseNumber}-${endingCaseNumber} of ${totalCasesCount} total cases`;
+
     // Render the page buttons
     let pageButtons = [];
     let paginationButtons = [];
@@ -137,7 +132,7 @@ class TablePagination extends React.PureComponent {
 
 TablePagination.propTypes = {
   currentPage: PropTypes.number.isRequired,
-  paginatedData: PropTypes.arrayOf(PropTypes.array).isRequired,
+  numberOfPages: PropTypes.number.isRequired,
   totalCasesCount: PropTypes.number.isRequired,
   updatePage: PropTypes.func.isRequired
 };

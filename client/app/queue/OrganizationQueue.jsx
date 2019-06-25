@@ -18,6 +18,7 @@ import {
   getCompletedOrganizationalTasks,
   trackingTasksForOrganization
 } from './selectors';
+import { tasksWithAppealsFromRawTasks } from './utils';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
@@ -86,19 +87,23 @@ class OrganizationQueue extends React.PureComponent {
     return mapper[tabName];
   }
 
-  taskTableTabFactory = (tabConfig) => {
-    const { label, description } = tabConfig;
-    const cols = this.columnsFromConfig(tabConfig);
-    const tasks = this.tasksForTab(tabConfig.name);
+  taskTableTabFactory = (tabConfig, config) => {
+    const tasks = config.use_task_pages_api ?
+      tasksWithAppealsFromRawTasks(tabConfig.tasks) :
+      this.tasksForTab(tabConfig.name);
 
     return {
-      label,
+      label: tabConfig.label,
       page: <React.Fragment>
-        <p className="cf-margin-top-0">{description}</p>
+        <p className="cf-margin-top-0">{tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
         <TaskTable
-          customColumns={cols}
+          customColumns={this.columnsFromConfig(tabConfig)}
           tasks={tasks}
+          useTaskPagesApi={config.use_task_pages_api}
+          tasksPerPage={config.tasks_per_page}
+          numberOfPages={tabConfig.task_page_count}
+          totalTaskCount={tabConfig.total_task_count}
         />
       </React.Fragment>
     };
