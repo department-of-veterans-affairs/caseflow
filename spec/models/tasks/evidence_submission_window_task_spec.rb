@@ -52,7 +52,7 @@ describe EvidenceSubmissionWindowTask do
   end
 
   context "timer_delay" do
-    context "parent is not a DispositionTask" do
+    context "parent is not a AssignHearingDispositionTask" do
       before { InitialTasksFactory.new(appeal).create_root_and_sub_tasks! }
 
       let(:task) do
@@ -70,7 +70,7 @@ describe EvidenceSubmissionWindowTask do
       end
     end
 
-    context "parent is a DispositionTask and there is a held hearing" do
+    context "parent is a AssignHearingDispositionTask and there is a held hearing" do
       let(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
       let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
       let(:hearing_day) { create(:hearing_day, scheduled_for: appeal.receipt_date + 15.days) }
@@ -91,7 +91,7 @@ describe EvidenceSubmissionWindowTask do
       end
       let!(:parent) do
         FactoryBot.create(
-          :disposition_task,
+          :assign_hearing_disposition_task,
           parent: hearing_task,
           appeal: appeal,
           status: Constants.TASK_STATUSES.in_progress
