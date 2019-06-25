@@ -224,6 +224,8 @@ RSpec.feature "Hearing Schedule Daily Docket" do
         scenario "judge can create a new AOD motion" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
           click_dropdown(name: "#{hearing.external_id}-aod", text: "Granted")
+          click_button("Save")
+          expect(page).to have_content("Please select an AOD reason")
           click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Age")
           click_button("Save")
 
