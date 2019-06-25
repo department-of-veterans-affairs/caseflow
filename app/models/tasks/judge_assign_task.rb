@@ -22,4 +22,8 @@ class JudgeAssignTask < JudgeTask
   def label
     COPY::JUDGE_ASSIGN_TASK_LABEL
   end
+
+  def hide_from_case_timeline
+    true
+  end
 end
