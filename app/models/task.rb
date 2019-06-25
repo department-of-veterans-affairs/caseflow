@@ -7,6 +7,8 @@
 class Task < ApplicationRecord
   acts_as_tree
 
+  include PrintsTaskTree
+
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
@@ -140,7 +142,7 @@ class Task < ApplicationRecord
   end
 
   def self.recently_closed
-    closed.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+    closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now)
   end
 
   def self.incomplete_or_recently_closed

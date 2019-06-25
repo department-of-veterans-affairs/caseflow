@@ -634,6 +634,19 @@ export class GreenCheckmark extends React.PureComponent {
   }
 }
 
+export class CancelIcon extends React.PureComponent {
+  render () {
+    return <svg width="38px" height="38px" viewBox="0 0 40 40" version="1.1">
+      <g id="Artboard" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+        <path d="M20,0 C8.9516129,0 0,8.9516129 0,20 C0,31.0483871 8.9516129,40 20,40 C31.0483871,40 40,31.0483871 40,20 C40,8.9516129 31.0483871,0 20,0 Z" id="Path" fill="#FFFFFF" fillRule="nonzero"></path>
+        <g id="minus-circle-solid" transform="translate(2.000000, 2.000000)" fill="#E31C3D" fillRule="nonzero">
+          <path d="M18,0 C8.05645161,0 0,8.05645161 0,18 C0,27.9435484 8.05645161,36 18,36 C27.9435484,36 36,27.9435484 36,18 C36,8.05645161 27.9435484,0 18,0 Z M8.41935484,20.9032258 C7.94032258,20.9032258 7.5483871,20.5112903 7.5483871,20.0322581 L7.5483871,15.9677419 C7.5483871,15.4887097 7.94032258,15.0967742 8.41935484,15.0967742 L27.5806452,15.0967742 C28.0596774,15.0967742 28.4516129,15.4887097 28.4516129,15.9677419 L28.4516129,20.0322581 C28.4516129,20.5112903 28.0596774,20.9032258 27.5806452,20.9032258 L8.41935484,20.9032258 Z" id="Shape"></path>
+        </g>
+      </g>
+    </svg>;
+  }
+}
+
 export class GrayDot extends React.PureComponent {
   render() {
     return <svg width="25px" height="25px" viewBox="0 0 25 25" version="1.1">
