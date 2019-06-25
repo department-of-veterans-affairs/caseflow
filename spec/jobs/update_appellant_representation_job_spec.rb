@@ -54,7 +54,7 @@ describe UpdateAppellantRepresentationJob do
         (1..legacy_appeal_count).map do |_|
           legacy_appeal = create(:legacy_appeal, vacols_case: create(:case))
           create(
-            :disposition_task,
+            :assign_hearing_disposition_task,
             appeal: legacy_appeal,
             assigned_to: HearingsManagement.singleton,
             parent: create(:hearing_task, appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
@@ -164,7 +164,7 @@ describe UpdateAppellantRepresentationJob do
       (1..legacy_appeal_count).map do |_|
         legacy_appeal = create(:legacy_appeal, vacols_case: create(:case))
         create(
-          :disposition_task,
+          :assign_hearing_disposition_task,
           appeal: legacy_appeal,
           assigned_to: HearingsManagement.singleton,
           parent: create(:hearing_task, appeal: legacy_appeal, assigned_to: HearingsManagement.singleton)
