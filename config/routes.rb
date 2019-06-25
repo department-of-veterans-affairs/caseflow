@@ -29,6 +29,11 @@ Rails.application.routes.draw do
     namespace :v2 do
       resources :appeals, only: :index
     end
+    namespace :docs do
+      namespace :v0, defaults: { format: 'json' } do
+        get 'decision_reviews', to: 'docs#decision_reviews'
+      end
+    end
   end
 
   namespace :idt do
@@ -281,12 +286,4 @@ Rails.application.routes.draw do
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
   # :nocov:
-
-  namespace :lighthouse_api do
-    namespace :docs do
-      namespace :v0, defaults: { format: 'json' } do
-        get 'decision_reviews', to: 'docs#decision_reviews'
-      end
-    end
-  end
 end
