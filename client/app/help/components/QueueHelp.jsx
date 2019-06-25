@@ -7,7 +7,10 @@ class QueueHelp extends React.Component {
     return <div className="cf-help-content">
       <h1 id="#top">Welcome to the Queue Help page!</h1>
       <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> Frequently Asked Questions (FAQs)</a> for Queue, as well as links to the Training Guide and the Quick Reference.
-        These items are provided to assist you as you access and use Queue. If you require further assistance after reviewing these items, please contact the Caseflow Product Support Team by phone (1-844-876-5548) or email <a href="mailto:caseflow@va.gov">(caseflow@va.gov)</a>. We look forward to assisting you.
+        These items are provided to assist you as you access and use Queue.
+        If you require further assistance after reviewing these items, please contact the Caseflow team
+        via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via
+        <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
       </p>
 
       <h1 id="training-videos">Training Videos</h1>
