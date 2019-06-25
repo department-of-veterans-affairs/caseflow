@@ -456,6 +456,24 @@ RSpec.feature "AmaQueue" do
     end
 
     it "judge can return report to attorney for corrections" do
+      step "judge reviews case and assigns a task to an attorney" do
+        visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Assign to attorney")
+        click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+
+        click_on "Submit"
+
+        expect(page).to have_content("Assigned 1 case")
+      end
+
       step "attorney completes task and returns the case to the judge" do
         User.authenticate!(user: attorney_user)
         visit "/queue"
@@ -503,7 +521,6 @@ RSpec.feature "AmaQueue" do
         fill_in "Document ID:", with: valid_document_id
         expect(page).to have_content(judge_user.full_name)
         fill_in "notes", with: "all done"
-        click_label("untimely_evidence")
         click_on "Continue"
 
         expect(page).to have_content(
@@ -569,6 +586,93 @@ RSpec.feature "AmaQueue" do
     end
 
     it "checkout details (documentID, judge, attorney notes) are preserved in attorney checkout" do
+      step "judge reviews case and assigns a task to an attorney" do
+        visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Assign to attorney")
+        click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+
+        click_on "Submit"
+
+        expect(page).to have_content("Assigned 1 case")
+      end
+
+      step "attorney completes task and returns the case to the judge" do
+        User.authenticate!(user: attorney_user)
+        visit "/queue"
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
+
+        expect(page).not_to have_content("Select special issues (optional)")
+
+        expect(page).to have_content("Add decisions")
+
+        # Add a first decision issue
+        all("button", text: "+ Add decision", count: 2)[0].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
+
+        click_on "Save"
+
+        # Add a second decision issue
+        all("button", text: "+ Add decision", count: 2)[1].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Remanded").click
+
+        click_on "Save"
+        click_on "Continue"
+
+        expect(page).to have_content("Select Remand Reasons")
+        find_field("Legally inadequate notice", visible: false).sibling("label").click
+        find_field("Post AOJ", visible: false).sibling("label").click
+        click_on "Continue"
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+
+        fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge_user.full_name)
+        fill_in "notes", with: "all done"
+        click_label("untimely_evidence")
+        click_on "Continue"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
+          "sent to #{judge_user.full_name} for review."
+        )
+      end
+
+      step "judge returns case to attorney for corrections" do
+        User.authenticate!(user: judge_user)
+        visit "/queue"
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Return to attorney")
+        expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
+        fill_in "taskInstructions", with: "Please fix this"
+
+        click_on "Submit"
+
+        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+      end
+
       step "attorney corrects case and returns it to the judge" do
         User.authenticate!(user: attorney_user)
         visit "/queue"
@@ -601,6 +705,14 @@ RSpec.feature "AmaQueue" do
           "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
           "sent to #{judge_user.full_name} for review."
         )
+      end
+
+      step "judge sees the case in their review queue" do
+        User.authenticate!(user: judge_user)
+        visit "/queue"
+
+        expect(page).to have_content veteran_full_name
+        expect(page).to have_content valid_document_id
       end
     end
   end
