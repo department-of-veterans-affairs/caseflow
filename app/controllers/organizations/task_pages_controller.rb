@@ -4,7 +4,7 @@ class Organizations::TaskPagesController < OrganizationsController
   before_action :verify_organization_access, only: [:index]
   before_action :verify_role_access, only: [:index]
 
-  # /organizations/{org.url}/tasks?
+  # /organizations/{org.url}/task_pages?
   #   tab=on_hold&
   #   sort_by=case_details_link&
   #   order=desc&
