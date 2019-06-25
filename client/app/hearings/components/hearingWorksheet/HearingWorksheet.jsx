@@ -147,7 +147,11 @@ export class HearingWorksheet extends React.PureComponent {
           <div className="cf-hearings-worksheet cf-app-segment--alt">
             <div className="cf-hearings-first-page">
               <WorksheetHeader />
-              {this.props.worksheet.docket_name === 'hearing' ? this.getHearingWorksheet() : this.getLegacyHearingWorksheet()}
+              {
+                this.props.worksheet.docket_name === 'hearing' ?
+                  this.getHearingWorksheet() :
+                  this.getLegacyHearingWorksheet()
+              }
             </div>
             <div className="cf-hearings-second-page">
               <form className="cf-hearings-worksheet-form">
