@@ -51,14 +51,13 @@ class QueueConfig
     organization.is_a?(Representative)
   end
 
-  def tracking_tasks
-    TrackVeteranTask.active.where(assigned_to: organization)
-  end
-
   def tracking_tasks_tab
+    name = Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
+    tasks = TaskPager.new(assignee: organization, tab_name: name).tasks_for_tab
+
     {
       label: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
-      name: Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME,
+      name: name,
       description: format(COPY::ALL_CASES_QUEUE_TABLE_TAB_DESCRIPTION, organization.name),
       columns: [
         Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
@@ -67,20 +66,19 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN
       ],
       task_group: Constants.QUEUE_CONFIG.TRACKING_TASKS_GROUP,
-      tasks: tracking_tasks,
+      tasks: tasks,
       allow_bulk_assign: false
     }
   end
 
-  def unassigned_tasks
-    Task.active.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
-  end
-
   # rubocop:disable Metrics/AbcSize
   def unassigned_tasks_tab
+    name = Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+    tasks = TaskPager.new(assignee: organization, tab_name: name).tasks_for_tab
+
     {
-      label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, unassigned_tasks.count),
-      name: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
+      label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, tasks.count),
+      name: name,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, organization.name),
       # Compact to account for the maybe absent regional office column
       columns: [
@@ -94,21 +92,20 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_GROUP,
-      tasks: unassigned_tasks,
+      tasks: tasks,
       allow_bulk_assign: organization.can_bulk_assign_tasks?
     }
   end
   # rubocop:enable Metrics/AbcSize
 
-  def assigned_tasks
-    Task.on_hold.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
-  end
-
   # rubocop:disable Metrics/AbcSize
   def assigned_tasks_tab
+    name = Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
+    tasks = TaskPager.new(assignee: organization, tab_name: name).tasks_for_tab
+
     {
-      label: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, assigned_tasks.count),
-      name: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME,
+      label: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, tasks.count),
+      name: name,
       description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, organization.name),
       # Compact to account for the maybe absent regional office column
       columns: [
@@ -122,20 +119,19 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_GROUP,
-      tasks: assigned_tasks,
+      tasks: tasks,
       allow_bulk_assign: false
     }
   end
   # rubocop:enable Metrics/AbcSize
 
-  def recently_completed_tasks
-    Task.recently_closed.where(assigned_to: organization).reject(&:hide_from_queue_table_view)
-  end
-
   def completed_tasks_tab
+    name = Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
+    tasks = TaskPager.new(assignee: organization, tab_name: name).tasks_for_tab
+
     {
       label: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
-      name: Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME,
+      name: name,
       description: format(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION, organization.name),
       # Compact to account for the maybe absent regional office column
       columns: [
@@ -149,7 +145,7 @@ class QueueConfig
         Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.COMPLETED_TASKS_GROUP,
-      tasks: recently_completed_tasks,
+      tasks: tasks,
       allow_bulk_assign: false
     }
   end
