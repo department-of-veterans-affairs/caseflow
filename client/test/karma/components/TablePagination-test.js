@@ -13,12 +13,9 @@ describe('TablePagination', () => {
 
   beforeEach(() => {
     props = {
+      casesPerPage: 3,
       currentPage: 0,
-      paginatedData: [
-        createTask(3),
-        createTask(3),
-        createTask(3)
-      ],
+      numberOfPages: 3,
       totalCasesCount: 9,
       updatePage: sinon.spy(updateFunction)
     };
