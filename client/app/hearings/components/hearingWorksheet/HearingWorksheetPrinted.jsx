@@ -19,7 +19,9 @@ export class HearingWorksheetPrinted extends React.Component {
         <form className="cf-hearings-worksheet-form" id="cf-hearings-worksheet-summary">
           <div className="cf-hearings-worksheet-data">
             <label>Hearing Summary</label>
-            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary) }} />
+            <div 
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary).replace(/\r|\n/g, "") }}
+            />
           </div>
         </form>
       </div>
