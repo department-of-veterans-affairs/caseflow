@@ -506,19 +506,29 @@ RSpec.feature "Case details" do
     end
 
     context "when appeal is assigned to Pulac Cerullo" do
-      let!(:appeal) { FactoryBot.create(:appeal) }
-      let(:user) { FactoryBot.create(:user) }
-      let!(:assigned_task) do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let!(:appeal) { root_task.appeal }
+      let!(:pulac_cerullo) do
         FactoryBot.create(
           :pulac_cerullo_task,
           status: Constants.TASK_STATUSES.completed,
-          assigned_to: user
+          instructions: ["completed"],
+          closed_at: 1.day.ago,
+          appeal: appeal,
+          parent: root_task
         )
       end
 
-      before do
-        OrganizationsUser.add_user_to_organization(user, PulacCerullo.singleton)
-        User.authenticate!(user: user)
+      scenario "displays Pulac Cerullo task in order on  case timeline" do
+        visit "/queue/appeals/#{appeal.external_id}"
+
+        case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
+        first_row_with_task = case_timeline_rows[0]
+        second_row_with_task = case_timeline_rows[1]
+        third_row_with_task = case_timeline_rows[2]
+        expect(first_row_with_task).to have_content("Dispatch from BVA pending")
+        expect(second_row_with_task).to have_content("PulacCerulloTask completed")
+        expect(third_row_with_task).to have_content("Notice of disagreement received")
       end
     end
   end
