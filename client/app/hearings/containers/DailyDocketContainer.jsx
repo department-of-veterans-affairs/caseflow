@@ -150,7 +150,6 @@ export class DailyDocketContainer extends React.Component {
 
         return true;
       }, (err) => {
-        console.log(err);
         this.props.handleDailyDocketServerError(err);
 
         return false;
