@@ -88,6 +88,12 @@ class DecisionReview < ApplicationRecord
     id.to_s
   end
 
+  def withdrawal_date
+    return unless withdrawn?
+
+    request_issues.withdrawn.map(&:withdrawal_date).compact.max
+  end
+
   def ui_hash
     {
       veteran: {
@@ -182,10 +188,6 @@ class DecisionReview < ApplicationRecord
 
   def establish!
     # no-op
-  end
-
-  def cancel_active_tasks
-    tasks.each(&:cancel_task_and_child_subtasks)
   end
 
   def contestable_issues

@@ -84,7 +84,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     let!(:hearing) { create(:hearing, :with_tasks) }
     let!(:postponed_hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 3)) }
 
-    scenario "User can update fields" do
+    scenario "User can update fields", skip: "flake click_dropdown" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "9:00 am").click
@@ -108,7 +108,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       create(:hearing_task_association, hearing: hearing, hearing_task: create(:hearing_task, appeal: hearing.appeal))
     end
     let!(:disposition_task) do
-      create(:disposition_task,
+      create(:assign_hearing_disposition_task,
              parent: hearing_task_association.hearing_task,
              appeal: hearing.appeal,
              status: Constants.TASK_STATUSES.completed)

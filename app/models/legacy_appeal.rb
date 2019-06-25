@@ -12,6 +12,7 @@ class LegacyAppeal < ApplicationRecord
   include CachedAttributes
   include AddressMapper
   include Taskable
+  include PrintsTaskTree
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -713,15 +714,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def eligible_for_soc_opt_in?(receipt_date)
-    return false unless nod_date
-    return false unless soc_date
     return false unless receipt_date
+    return false unless soc_date
+    return false if soc_date < Constants::DATES["AMA_ACTIVATION"].to_date
 
-    soc_eligible_date = receipt_date - 60.days
-    nod_eligible_date = receipt_date - 372.days
-
-    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    soc_date > soc_eligible_date || nod_date > nod_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
+    soc_date_eligible_for_opt_in?(receipt_date) || nod_date_eligible_for_opt_in?(receipt_date)
   end
 
   def serializer_class
@@ -749,6 +746,21 @@ class LegacyAppeal < ApplicationRecord
   end
 
   private
+
+  def soc_date_eligible_for_opt_in?(receipt_date)
+    soc_eligible_date = receipt_date - 60.days
+
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
+    soc_date >= soc_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= soc_eligible_date }
+  end
+
+  def nod_date_eligible_for_opt_in?(receipt_date)
+    return false unless nod_date
+
+    nod_eligible_date = receipt_date - 372.days
+
+    nod_date >= nod_eligible_date
+  end
 
   def bgs_address_service
     @bgs_address_service ||= BgsAddressService.new(participant_id: representative_participant_id)

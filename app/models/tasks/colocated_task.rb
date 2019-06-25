@@ -129,61 +129,23 @@ class ColocatedTask < Task
     if saved_change_to_status? &&
        !open? &&
        all_tasks_closed_for_appeal? &&
-       appeal.is_a?(LegacyAppeal) &&
-       appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
-      begin
-        log_for_investigation_11152
-      ensure
-        AppealRepository.update_location!(appeal, location_based_on_action)
-      end
+       appeal_in_caseflow_vacols_location? &&
+       assigned_to.is_a?(Organization)
+      AppealRepository.update_location!(appeal, location_based_on_action)
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
-  def log_for_investigation_11152
-    # Only log information for ColocatedTasks that have a sibling that has been cancelled
-    return if siblings.none? { |task| task.is_a?(ColocatedTask) && task.status == Constants.TASK_STATUSES.cancelled }
-
-    fields = [
-      :id,
-      :parent_id,
-      :type,
-      :status,
-      :assigned_by_id,
-      :assigned_to_id,
-      :assigned_to_type,
-      :created_at,
-      :updated_at,
-      :closed_at,
-      :placed_on_hold_at,
-      :on_hold_duration
-    ]
-
-    msg = [
-      # Description of why we are alerting us about this in the first place.
-      "Data to aid in the investigation of ColocatedTasks for LegacyAppeals being charged to incorrect VACOLS location \
-bug described in https://github.com/department-of-veterans-affairs/caseflow/issues/11152",
-
-      # Task ID.
-      "Task triggering VACOLS location change ID: #{id}",
-
-      # Future location.
-      "Future location: #{location_based_on_action}",
-
-      # Information about the task tree's current state.
-      appeal.tasks.order(:created_at).map { |t| fields.map { |field| [field, t[field]] }.to_h }.inspect
-    ].join("\n\n")
-
-    Raven.capture_message(msg, extra: { application: "tasks" })
+  def appeal_in_caseflow_vacols_location?
+    appeal.is_a?(LegacyAppeal) &&
+      VACOLS::Case.find(appeal.vacols_id).bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
   end
-  # rubocop:enable Metrics/MethodLength
 
   def location_based_on_action
     case action.to_sym
     when :schedule_hearing
       # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
       # actually held.
-      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled
+      return assigned_by.vacols_uniq_id if children.all? { |t| t.status == Constants.TASK_STATUSES.cancelled }
 
       # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
       ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)

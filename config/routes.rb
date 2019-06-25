@@ -238,6 +238,7 @@ Rails.application.routes.draw do
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
+    resources :task_pages, only: [:index], controller: 'organizations/task_pages'
     resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
     resources :members, only: [:index], controller: 'organizations/members'
   end

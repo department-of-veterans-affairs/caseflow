@@ -21,7 +21,7 @@ class Organizations::TasksController < OrganizationsController
 
     # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
     if organization.url == "hearings-management"
-      tasks = GenericQueue.new(user: organization, limit: 300).tasks
+      tasks = GenericQueue.new(user: organization, limit: 400).tasks
       Rails.logger.debug("starting AOD filter")
       tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
     else
