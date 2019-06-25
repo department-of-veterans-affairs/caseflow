@@ -21,7 +21,7 @@ export default class IntakeEditFrame extends React.PureComponent {
   displayClearedEpMessage = (details) => {
     return `Other end products associated with this ${details.formName} have already been decided,
       so issues are no longer editable. If this is a problem, please contact the Caseflow team
-      via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.`
+      via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.`;
   }
 
   displayDtaMessage = () => {
