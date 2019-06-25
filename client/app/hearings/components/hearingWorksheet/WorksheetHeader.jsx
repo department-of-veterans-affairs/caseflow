@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Textarea from 'react-textarea-autosize';
+import PropTypes from 'prop-types';
 import { ClipboardIcon } from '../../../components/RenderFunctions';
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { onRepNameChange, onWitnessChange, onMilitaryServiceChange } from '../../actions/hearingWorksheetActions';
@@ -232,6 +233,11 @@ class WorksheetHeader extends React.PureComponent {
     </div>;
   }
 }
+
+WorksheetHeader.propTypes = {
+  print: PropTypes.bool
+};
+
 const mapStateToProps = (state) => ({
   worksheet: state.hearingWorksheet.worksheet
 });
