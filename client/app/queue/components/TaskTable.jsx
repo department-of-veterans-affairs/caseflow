@@ -408,6 +408,7 @@ export class TaskTableUnconnected extends React.PureComponent {
     casesPerPage={this.props.tasksPerPage}
     numberOfPages={this.props.numberOfPages}
     totalTaskCount={this.props.totalTaskCount}
+    taskPagesApiEndpoint={this.props.taskPagesApiEndpoint}
     enablePagination
     rowClassNames={(task) =>
       this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;

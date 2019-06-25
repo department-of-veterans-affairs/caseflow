@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { css, hover } from 'glamor';
 import _ from 'lodash';
-import scrollToComponent from 'react-scroll-to-component';
 
 import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
@@ -11,6 +10,9 @@ import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
 import TablePagination from '../components/TablePagination';
 import { COLORS } from '../constants/AppConstants';
+import ApiUtil from '../util/ApiUtil';
+import LoadingScreen from '../components/LoadingScreen';
+import { tasksWithAppealsFromRawTasks } from './utils';
 
 /**
  * This component can be used to easily build tables.
@@ -32,19 +34,6 @@ import { COLORS } from '../constants/AppConstants';
  *
  * see StyleGuideTables.jsx for usage example.
  */
-const scrollTo = (dest = this, opts) => scrollToComponent(dest, _.defaults(opts, {
-  align: 'top',
-  duration: 800,
-  ease: 'outCube',
-  offset: -35
-}));
-
-const focusElement = (el = this) => {
-  if (el.tabIndex <= 0) {
-    el.setAttribute('tabindex', '-1');
-  }
-  el.focus();
-};
 
 const helperClasses = {
   center: 'cf-txt-c',
@@ -204,6 +193,7 @@ export default class QueueTable extends React.PureComponent {
       areDropdownFiltersOpen: {},
       filteredByList: {},
       taskPageFromApi: [],
+      loadingComponent: null,
       currentPage: 0
     };
 
@@ -290,23 +280,28 @@ export default class QueueTable extends React.PureComponent {
   updateCurrentPage = (newPage) => {
     this.setState({ currentPage: newPage });
 
-    scrollTo(this);
-    focusElement(this.elementForFocus);
-
     if (this.props.useTaskPagesApi) {
       this.requestNewPage(newPage);
     }
   }
 
   requestNewPage = (newPage) => {
-    // TODO: Request newPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
+    this.setState({ loadingComponent: <LoadingScreen /> });
 
-    // TODO: Set response to this.state.taskPageFromApi
-    // this.setState({ taskPageFromApi: TODO: RESPONSE HERE });
+    // Request newPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
+    return ApiUtil.get(`${this.props.taskPagesApiEndpoint}&page=${newPage + 1}`).then((response) => {
+      const {
+        tasks: { data: tasks }
+      } = JSON.parse(response.text);
 
-    // Make request to the backend (show a loading spinner).
-    // Load response rows into state (pull them out of state in the render function).
-    // Stop displaying the loading spinner.
+      this.setState({
+        taskPageFromApi: tasksWithAppealsFromRawTasks(tasks),
+        loadingComponent: null
+      });
+    }).
+      catch(() => {
+        this.setState({ loadingComponent: null });
+      });
   };
 
   render() {
@@ -336,7 +331,7 @@ export default class QueueTable extends React.PureComponent {
     } = this.props;
 
     if (useTaskPagesApi) {
-      if (this.state.taskPageFromApi) {
+      if (this.state.taskPageFromApi.length) {
         rowObjects = this.state.taskPageFromApi;
       }
     } else {
@@ -381,15 +376,9 @@ export default class QueueTable extends React.PureComponent {
         updatePage={(newPage) => this.updateCurrentPage(newPage)} />;
     }
 
-    return <div className="cf-table-wrapper" ref={(div) => {
-      this.elementForFocus = div;
-    }}>
-      <FilterSummary
-        filteredByList={this.state.filteredByList}
-        alternateColumnNames={this.props.alternateColumnNames}
-        clearFilteredByList={(newList) => this.updateFilteredByList(newList)} />
-      { paginationElements }
-      <table
+    // Show a spinner if we are loading tasks from the API.
+    const body = this.state.loadingComponent ?
+      this.state.loadingComponent : <table
         id={id}
         className={`usa-table-borderless ${this.props.className}`}
         summary={summary}
@@ -421,7 +410,17 @@ export default class QueueTable extends React.PureComponent {
           bodyStyling={bodyStyling}
           {...this.state} />
         <FooterRow columns={columns} />
-      </table>
+      </table>;
+
+    return <div className="cf-table-wrapper" ref={(div) => {
+      this.elementForFocus = div;
+    }}>
+      <FilterSummary
+        filteredByList={this.state.filteredByList}
+        alternateColumnNames={this.props.alternateColumnNames}
+        clearFilteredByList={(newList) => this.updateFilteredByList(newList)} />
+      { paginationElements }
+      { body }
       { paginationElements }
     </div>;
   }
@@ -449,6 +448,7 @@ QueueTable.propTypes = {
   }),
   userReadableColumnNames: PropTypes.object,
   useTaskPagesApi: PropTypes.bool,
+  taskPagesApiEndpoint: PropTypes.string,
   alternateColumnNames: PropTypes.object,
   enablePagination: PropTypes.bool,
   casesPerPage: PropTypes.number

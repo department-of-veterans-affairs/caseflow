@@ -104,6 +104,7 @@ class OrganizationQueue extends React.PureComponent {
           tasksPerPage={config.tasks_per_page}
           numberOfPages={tabConfig.task_page_count}
           totalTaskCount={tabConfig.total_task_count}
+          taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
         />
       </React.Fragment>
     };

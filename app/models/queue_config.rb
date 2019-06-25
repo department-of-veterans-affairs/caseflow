@@ -53,7 +53,8 @@ class QueueConfig
       label: format(tab[:label], task_pager.total_task_count),
       tasks: tasks,
       task_page_count: task_pager.task_page_count,
-      total_task_count: task_pager.total_task_count
+      total_task_count: task_pager.total_task_count,
+      task_page_endpoint_base_path: "#{organization.path}/task_pages?tab=#{tab[:name]}"
     )
   end
 
