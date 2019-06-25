@@ -4,7 +4,6 @@ import { mount } from 'enzyme';
 import sinon from 'sinon';
 
 import TablePagination from '../../../app/components/TablePagination';
-import { createTask } from '../../factory';
 
 describe('TablePagination', () => {
   let wrapper;
