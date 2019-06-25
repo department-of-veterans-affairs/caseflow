@@ -46,7 +46,8 @@ class GenericQueue
       { appeal: [:available_hearing_locations, :claimants] },
       :assigned_by,
       :assigned_to,
-      :children
+      :children,
+      :parent
     ]
   end
 end

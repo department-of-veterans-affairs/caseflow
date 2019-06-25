@@ -38,6 +38,8 @@ class QueueConfig
   end
 
   def serialized_tasks_for_user(tasks, user)
+    return [] if tasks.empty?
+
     primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
 
     organization.ama_task_serializer.new(
