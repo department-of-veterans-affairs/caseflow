@@ -156,7 +156,6 @@ class Test::UsersController < ApplicationController
     end
   end
 
-
   private
 
   def new_default_end_products
