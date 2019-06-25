@@ -43,7 +43,8 @@ class Task < ApplicationRecord
 
   scope :closed, -> { where(status: closed_statuses) }
 
-  scope :not_tracking, -> { where.not(type: TrackVeteranTask.name) }
+  # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
+  scope :visible_in_queue_table_view, -> { where.not(type: [TrackVeteranTask.name, TimedHoldTask.name]) }
 
   scope :not_decisions_review, lambda {
                                  where.not(
@@ -142,7 +143,7 @@ class Task < ApplicationRecord
   end
 
   def self.recently_closed
-    closed.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+    closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now)
   end
 
   def self.incomplete_or_recently_closed
