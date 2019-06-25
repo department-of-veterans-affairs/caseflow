@@ -142,7 +142,7 @@ class Task < ApplicationRecord
   end
 
   def self.recently_closed
-    closed.where(closed_at: (Time.zone.now - 1.weeks)..Time.zone.now)
+    closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now)
   end
 
   def self.incomplete_or_recently_closed
