@@ -152,7 +152,7 @@ class SeedDB
         parent: parent_hearing_task,
         appeal: appeal
       )
-      disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
+      disposition_task = FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
       FactoryBot.create(
         [:no_show_hearing_task, :evidence_submission_window_task].sample,
         parent: disposition_task,
@@ -169,7 +169,7 @@ class SeedDB
     root_task = FactoryBot.create(:root_task, appeal: appeal)
     distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
     parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
-    FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
+    FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
 
     hearing = FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day)
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)

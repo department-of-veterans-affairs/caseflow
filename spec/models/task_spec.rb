@@ -393,7 +393,7 @@ describe Task do
           )
         end
         let(:task) do
-          FactoryBot.create(:disposition_task, parent: hearing_task, appeal: root_task.appeal, assigned_to: user)
+          FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: root_task.appeal, assigned_to: user)
         end
 
         subject do

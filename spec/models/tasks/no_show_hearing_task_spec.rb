@@ -8,7 +8,7 @@ describe NoShowHearingTask do
   let!(:completed_scheduling_task) do
     FactoryBot.create(:schedule_hearing_task, :completed, parent: hearing_task, appeal: appeal)
   end
-  let(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+  let(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
   let(:no_show_hearing_task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
 
   context "create a new NoShowHearingTask" do
