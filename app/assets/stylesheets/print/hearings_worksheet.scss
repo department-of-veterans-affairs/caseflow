@@ -23,6 +23,11 @@ $body-font-size: 14px;
     display: none;
   }
 
+  .cf-hearings-appeal-procedural-history
+  #cf-hearings-worksheet-summary {
+    page-break-inside: avoid;
+  }
+
   b {
     font-weight: 400;
   }
@@ -57,8 +62,6 @@ $body-font-size: 14px;
   }
 
   #cf-hearings-worksheet-summary {
-    page-break-inside: avoid;
-
     p {
       min-height: 0;
       margin: 5px 0;
