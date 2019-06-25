@@ -47,6 +47,9 @@ class OrganizationQueue extends React.PureComponent {
   queueConfig = () => {
     const config = this.props.queueConfig;
 
+    console.log("CONFIG OBJECT");
+    console.dir(this.props.queueConfig);
+
     config.active_tab_index = this.calculateActiveTabIndex(config);
 
     return config;
@@ -75,21 +78,50 @@ class OrganizationQueue extends React.PureComponent {
     });
   }
 
-  tasksForTab = (tabName) => {
-    const mapper = {
-      [QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME]: this.props.unassignedTasks,
-      [QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME]: this.props.assignedTasks,
-      [QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME]: this.props.completedTasks,
-      [QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME]: this.props.trackingTasks
-    };
+  // tasksForTab = (tabName) => {
+  //   const mapper = {
+  //     [QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME]: this.props.unassignedTasks,
+  //     [QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME]: this.props.assignedTasks,
+  //     [QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME]: this.props.completedTasks,
+  //     [QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME]: this.props.trackingTasks
+  //   };
+  //
+  //   return mapper[tabName];
+  // }
 
-    return mapper[tabName];
+  reformatTaskForTaskTable = (task) => {
+
+    const attributes = {
+      externalAppealId: task.attributes.appeal_id.toString()
+    }
+
+    const appeal = {
+      isLegacyAppeal: task.attributes.is_legacy,
+      docketName: task.attributes.docket_name,
+      docketNumber: task.attributes.docket_number,
+      veteranFullName: task.attributes.veteran_full_name,
+      issueCount: task.attributes.issue_count,
+      isAdvancedOnDocket: task.attributes.aod,
+      caseType: task.attributes.case_type
+    }
+
+    _.extend(task, attributes, {appeal: appeal });
+
   }
 
   taskTableTabFactory = (tabConfig) => {
-    const { label, description } = tabConfig;
+    const { label, description, tasks } = tabConfig;
     const cols = this.columnsFromConfig(tabConfig);
-    const tasks = this.tasksForTab(tabConfig.name);
+    // const tasks = this.tasksForTab(tabConfig.name);
+
+    const taskTableTasks = tasks.map(this.reformatTaskForTaskTable);
+
+    console.dir(tasks);
+    console.dir("reformatted tasks");
+    // console.dir(tabConfig);
+    // console.dir(tasks);
+    // console.dir("REFORMATTED TASKS");
+    console.dir(taskTableTasks);
 
     return {
       label,
