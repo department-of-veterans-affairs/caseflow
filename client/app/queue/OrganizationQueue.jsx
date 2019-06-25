@@ -98,6 +98,7 @@ class OrganizationQueue extends React.PureComponent {
         <p className="cf-margin-top-0">{tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
         <TaskTable
+          key={tabConfig.name}
           customColumns={this.columnsFromConfig(tabConfig)}
           tasks={tasks}
           useTaskPagesApi={config.use_task_pages_api}

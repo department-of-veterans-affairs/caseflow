@@ -9,7 +9,10 @@ import { DoubleArrow } from '../components/RenderFunctions';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
 import TablePagination from '../components/TablePagination';
-import { COLORS } from '../constants/AppConstants';
+import {
+  COLORS,
+  LOGO_COLORS
+} from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
@@ -279,14 +282,15 @@ export default class QueueTable extends React.PureComponent {
 
   updateCurrentPage = (newPage) => {
     this.setState({ currentPage: newPage });
-
-    if (this.props.useTaskPagesApi) {
-      this.requestNewPage(newPage);
-    }
+    this.requestNewPage(newPage);
   }
 
   requestNewPage = (newPage) => {
-    this.setState({ loadingComponent: <LoadingScreen /> });
+    if (!this.props.useTaskPagesApi) {
+      return;
+    }
+
+    this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
     // Request newPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
     return ApiUtil.get(`${this.props.taskPagesApiEndpoint}&page=${newPage + 1}`).then((response) => {
