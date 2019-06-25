@@ -21,7 +21,7 @@ class Organizations::TaskPagesController < OrganizationsController
   # }>
 
   def index
-    tasks = TaskPage.new(
+    tasks = TaskPager.new(
       assignee: organization,
       tab_name: params[:tab],
       page: params[:page]

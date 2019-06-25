@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TaskPage
+class TaskPager
   include ActiveModel::Model
 
   validates :tab_name, presence: true

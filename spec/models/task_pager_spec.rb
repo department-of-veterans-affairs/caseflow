@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-describe TaskPage do
+describe TaskPager do
   describe ".new" do
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
 
-    subject { TaskPage.new(arguments) }
+    subject { TaskPager.new(arguments) }
 
     context "when object is created with no arguments" do
       let(:arguments) { {} }
@@ -46,7 +46,7 @@ describe TaskPage do
     let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
     let(:arguments) { { assignee: assignee, tab_name: tab_name } }
 
-    subject { TaskPage.new(arguments).tasks_for_tab }
+    subject { TaskPager.new(arguments).tasks_for_tab }
 
     context "when the tab name is not recognized" do
       let(:tab_name) { "some unknown tab name" }
@@ -58,7 +58,7 @@ describe TaskPage do
 
     context "when there are some tasks for the given tab name" do
       let(:tab_name) { Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME }
-      let(:task_count) { TaskPage::TASKS_PER_PAGE + 3 }
+      let(:task_count) { TaskPager::TASKS_PER_PAGE + 3 }
 
       before { FactoryBot.create_list(:generic_task, task_count, assigned_to: assignee) }
 
@@ -74,13 +74,13 @@ describe TaskPage do
     let(:page) { 1 }
     let(:arguments) { { assignee: assignee, tab_name: tab_name, page: page } }
 
-    before { FactoryBot.create_list(:generic_task, TaskPage::TASKS_PER_PAGE + 1, assigned_to: assignee) }
+    before { FactoryBot.create_list(:generic_task, TaskPager::TASKS_PER_PAGE + 1, assigned_to: assignee) }
 
-    subject { TaskPage.new(arguments).paged_tasks }
+    subject { TaskPager.new(arguments).paged_tasks }
 
     context "when the first page of tasks is requested" do
       it "returns a full page of tasks" do
-        expect(subject.count).to eq(TaskPage::TASKS_PER_PAGE)
+        expect(subject.count).to eq(TaskPager::TASKS_PER_PAGE)
       end
     end
 
@@ -88,7 +88,7 @@ describe TaskPage do
       let(:page) { nil }
 
       it "returns the first page of tasks" do
-        expect(subject.count).to eq(TaskPage::TASKS_PER_PAGE)
+        expect(subject.count).to eq(TaskPager::TASKS_PER_PAGE)
       end
     end
 

@@ -53,7 +53,7 @@ class QueueConfig
 
   def tracking_tasks_tab
     name = Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
-    tasks = TaskPage.new(assignee: organization, tab_name: name).tasks_for_tab
+    tasks = TaskPager.new(assignee: organization, tab_name: name).tasks_for_tab
 
     {
       label: COPY::ALL_CASES_QUEUE_TABLE_TAB_TITLE,
@@ -74,7 +74,7 @@ class QueueConfig
   # rubocop:disable Metrics/AbcSize
   def unassigned_tasks_tab
     name = Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
-    tasks = TaskPage.new(assignee: organization, tab_name: name).tasks_for_tab
+    tasks = TaskPager.new(assignee: organization, tab_name: name).tasks_for_tab
 
     {
       label: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE, tasks.count),
@@ -101,7 +101,7 @@ class QueueConfig
   # rubocop:disable Metrics/AbcSize
   def assigned_tasks_tab
     name = Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
-    tasks = TaskPage.new(assignee: organization, tab_name: name).tasks_for_tab
+    tasks = TaskPager.new(assignee: organization, tab_name: name).tasks_for_tab
 
     {
       label: format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, tasks.count),
@@ -127,7 +127,7 @@ class QueueConfig
 
   def completed_tasks_tab
     name = Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
-    tasks = TaskPage.new(assignee: organization, tab_name: name).tasks_for_tab
+    tasks = TaskPager.new(assignee: organization, tab_name: name).tasks_for_tab
 
     {
       label: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
