@@ -272,6 +272,8 @@ Rails.application.routes.draw do
 
   # :nocov:
   namespace :test do
+    get "/error", to: "users#show_error"
+
     resources :users, only: [:index]
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
