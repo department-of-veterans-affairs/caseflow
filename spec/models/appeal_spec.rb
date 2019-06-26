@@ -920,7 +920,7 @@ describe Appeal do
       end
       let!(:disposition_task) do
         FactoryBot.create(
-          :disposition_task,
+          :assign_hearing_disposition_task,
           parent: hearing_task,
           appeal: appeal,
           status: Constants.TASK_STATUSES.in_progress
@@ -1534,7 +1534,7 @@ describe Appeal do
       end
       let!(:disposition_task) do
         FactoryBot.create(
-          :disposition_task,
+          :assign_hearing_disposition_task,
           parent: hearing_task,
           appeal: appeal,
           status: Constants.TASK_STATUSES.in_progress
@@ -1546,19 +1546,6 @@ describe Appeal do
         expect(subject[0][:type]).to eq("scheduled_hearing")
         expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
         expect(subject[0][:details][:type]).to eq("video")
-      end
-    end
-  end
-
-  describe ".withdrawn?" do
-    context "when root task is cancelled" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-
-      it "is withdrawn" do
-        expect(appeal.withdrawn?).to eq(false)
-        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
-        expect(appeal.withdrawn?).to eq(true)
       end
     end
   end
