@@ -82,7 +82,7 @@ const cancelGrayTimeLineStyle = (timeline) => {
   return timeline ? grayLineTimelineStyling : '';
 };
 
-const redWithdrawStyling = css({ paddingLeft: '0px' });
+const timelineLeftPaddingStyle = css({ paddingLeft: '0px' });
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
@@ -305,7 +305,7 @@ class TaskRows extends React.PureComponent {
           </CaseDetailsDescriptionList>
         </td>
         <td {...taskInfoWithIconTimelineContainer}
-          {...(appeal.withdrawalDate ? redWithdrawStyling : greyDotTimelineStyling)}>
+          {...(appeal.withdrawalDate || appeal.decisionDate ? timelineLeftPaddingStyle : greyDotTimelineStyling)}>
           {timeLineIcon}
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
           <div {...grayLineTimelineStyling}
