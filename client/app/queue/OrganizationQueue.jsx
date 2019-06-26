@@ -52,15 +52,15 @@ class OrganizationQueue extends React.PureComponent {
     return config;
   }
 
-  createColumnObject = (column, config) => {
+  createColumnObject = (column, config, tasks) => {
     const functionForColumn = {
-      hearingBadgeColumn: hearingBadgeColumn(config.tasks),
-      detailsColumn: detailsColumn(config.tasks, false, config.userRole),
-      taskColumn: taskColumn(config.tasks),
-      regionalOfficeColumn: regionalOfficeColumn(config.tasks),
-      typeColumn: typeColumn(config.tasks, false),
-      assignedToColumn: assignedToColumn(config.tasks),
-      docketNumberColumn: docketNumberColumn(config.tasks, false),
+      hearingBadgeColumn: hearingBadgeColumn(tasks),
+      detailsColumn: detailsColumn(tasks, false, config.userRole),
+      taskColumn: taskColumn(tasks),
+      regionalOfficeColumn: regionalOfficeColumn(tasks),
+      typeColumn: typeColumn(tasks, false),
+      assignedToColumn: assignedToColumn(tasks),
+      docketNumberColumn: docketNumberColumn(tasks, false),
       daysWaitingColumn: daysWaitingColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
       issueCountColumn: issueCountColumn(false)
@@ -69,9 +69,9 @@ class OrganizationQueue extends React.PureComponent {
     return functionForColumn[column];
   }
 
-  columnsFromConfig = (tabConfig) => {
+  columnsFromConfig = (tabConfig, tasks) => {
     return tabConfig.columns.map((column) => {
-      return this.createColumnObject(column, tabConfig);
+      return this.createColumnObject(column, tabConfig, tasks);
     });
   }
 
@@ -88,8 +88,8 @@ class OrganizationQueue extends React.PureComponent {
 
   taskTableTabFactory = (tabConfig) => {
     const { label, description } = tabConfig;
-    const cols = this.columnsFromConfig(tabConfig);
     const tasks = this.tasksForTab(tabConfig.name);
+    const cols = this.columnsFromConfig(tabConfig, tasks);
 
     return {
       label,
