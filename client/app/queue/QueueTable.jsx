@@ -195,7 +195,7 @@ export default class QueueTable extends React.PureComponent {
       sortColIdx: null,
       areDropdownFiltersOpen: {},
       filteredByList: {},
-      taskPageFromApi: [],
+      tasksFromApiForPage: {},
       loadingComponent: null,
       currentPage: 0
     };
@@ -286,6 +286,15 @@ export default class QueueTable extends React.PureComponent {
     return paginatedData;
   }
 
+  componentDidMount = () => {
+    this.setState({
+      tasksFromApiForPage: {
+        ...this.state.tasksFromApiForPage,
+        ...{ [this.state.currentPage]: this.props.rowObjects }
+      }
+    });
+  }
+
   updateCurrentPage = (newPage) => {
     this.setState({ currentPage: newPage });
     this.requestNewPage(newPage);
@@ -293,6 +302,10 @@ export default class QueueTable extends React.PureComponent {
 
   requestNewPage = (newPage) => {
     if (!this.props.useTaskPagesApi) {
+      return;
+    }
+
+    if (this.state.tasksFromApiForPage[newPage]) {
       return;
     }
 
@@ -305,7 +318,10 @@ export default class QueueTable extends React.PureComponent {
       } = JSON.parse(response.text);
 
       this.setState({
-        taskPageFromApi: tasksWithAppealsFromRawTasks(tasks),
+        tasksFromApiForPage: {
+          ...this.state.tasksFromApiForPage,
+          ...{ [newPage]: tasksWithAppealsFromRawTasks(tasks) }
+        },
         loadingComponent: null
       });
     }).
@@ -341,8 +357,8 @@ export default class QueueTable extends React.PureComponent {
     } = this.props;
 
     if (useTaskPagesApi) {
-      if (this.state.taskPageFromApi.length) {
-        rowObjects = this.state.taskPageFromApi;
+      if (this.state.tasksFromApiForPage[this.state.currentPage]) {
+        rowObjects = this.state.tasksFromApiForPage[this.state.currentPage];
       }
     } else {
       // Steps to calculate table data to display:
