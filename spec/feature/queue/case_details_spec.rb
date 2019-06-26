@@ -507,15 +507,30 @@ RSpec.feature "Case details" do
 
     context "when appeal is assigned to Pulac Cerullo" do
       let(:root_task) { FactoryBot.create(:root_task) }
-      let!(:appeal) { root_task.appeal }
+      let!(:appeal) do
+        FactoryBot.create(
+          :appeal,
+          veteran_file_number: "500000102",
+          receipt_date: 6.months.ago.to_date.mdY,
+          docket_type: "evidence_submission"
+        )
+      end
+
+      let!(:decision_document) do
+        FactoryBot.create(
+          :decision_document,
+          appeal: appeal,
+          decision_date: 5.months.ago.to_date
+        )
+      end
+
       let!(:pulac_cerullo) do
         FactoryBot.create(
           :pulac_cerullo_task,
           status: Constants.TASK_STATUSES.completed,
           instructions: ["completed"],
-          closed_at: 1.day.ago,
-          appeal: appeal,
-          parent: root_task
+          closed_at: 45.days.ago,
+          appeal: appeal
         )
       end
 
@@ -526,8 +541,8 @@ RSpec.feature "Case details" do
         first_row_with_task = case_timeline_rows[0]
         second_row_with_task = case_timeline_rows[1]
         third_row_with_task = case_timeline_rows[2]
-        expect(first_row_with_task).to have_content("Dispatch from BVA pending")
-        expect(second_row_with_task).to have_content("PulacCerulloTask completed")
+        expect(first_row_with_task).to have_content("PulacCerulloTask completed")
+        expect(second_row_with_task).to have_content("Dispatched from BVA")
         expect(third_row_with_task).to have_content("Notice of disagreement received")
       end
     end
