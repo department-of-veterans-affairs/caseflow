@@ -21,8 +21,23 @@ export class HearingWorksheetPrinted extends React.Component {
         <h4>Issues</h4>
         {
           Object.values(currentIssues).map((issue, key) => (
-            <div key={key}>
-              {issue.id}
+            <div className="cf-hearing-worksheet-issues-wrapper" key={key}>
+              <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-description">
+                <h4>Description</h4>
+                <p>{issue.description}</p>
+              </div>
+              <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-disposition">
+                <h4>Disp.</h4>
+                <p>{issue.disposition}</p>
+              </div>
+              {
+                issue.notes && 
+                <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-notes">
+                  <h4>Notes</h4>
+                  <p>{issue.notes}</p>
+                </div>
+              }
+              <HearingWorksheetPreImpressions issue={issue} print={true} />
             </div>
           ))
         }
