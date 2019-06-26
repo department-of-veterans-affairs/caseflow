@@ -504,6 +504,48 @@ RSpec.feature "Case details" do
       expect(find("tr", text: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING)).to have_selector(".gray-dot")
       expect(find("tr", text: COPY::CASE_TIMELINE_FORM_9_RECEIVED)).to have_selector(".green-checkmark")
     end
+
+    context "when appeal is assigned to Pulac Cerullo" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let!(:appeal) do
+        FactoryBot.create(
+          :appeal,
+          veteran_file_number: "500000102",
+          receipt_date: 6.months.ago.to_date.mdY,
+          docket_type: "evidence_submission"
+        )
+      end
+
+      let!(:decision_document) do
+        FactoryBot.create(
+          :decision_document,
+          appeal: appeal,
+          decision_date: 5.months.ago.to_date
+        )
+      end
+
+      let!(:pulac_cerullo) do
+        FactoryBot.create(
+          :pulac_cerullo_task,
+          status: Constants.TASK_STATUSES.completed,
+          instructions: ["completed"],
+          closed_at: 45.days.ago,
+          appeal: appeal
+        )
+      end
+
+      scenario "displays Pulac Cerullo task in order on  case timeline" do
+        visit "/queue/appeals/#{appeal.external_id}"
+
+        case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
+        first_row_with_task = case_timeline_rows[0]
+        second_row_with_task = case_timeline_rows[1]
+        third_row_with_task = case_timeline_rows[2]
+        expect(first_row_with_task).to have_content("PulacCerulloTask completed")
+        expect(second_row_with_task).to have_content(COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA)
+        expect(third_row_with_task).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+      end
+    end
   end
 
   context "when there is a dispatch and decision_date" do
