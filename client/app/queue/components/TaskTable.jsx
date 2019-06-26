@@ -115,7 +115,7 @@ export const regionalOfficeColumn = (tasks) => {
     header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
     enableFilter: true,
     tableData: tasks,
-    columnName: 'closestRegionalOffice',
+    columnName: 'closestRegionalOffice.location_hash.city',
     anyFiltersAreSet: true,
     label: 'Filter by regional office',
     valueFunction: (task) => {
