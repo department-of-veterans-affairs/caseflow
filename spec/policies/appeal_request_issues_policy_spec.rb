@@ -67,7 +67,8 @@ describe AppealRequestIssuesPolicy do
       end
     end
 
-    context "when user is a member of the Case Review team, regardless of the appeal's tasks" do
+    context "when user is a member of the Case Review team, and the appeal has not
+            been assigned to an attorney yet" do
       let(:user) { create(:user) }
 
       it "returns true" do
@@ -79,6 +80,22 @@ describe AppealRequestIssuesPolicy do
                status: Constants.TASK_STATUSES.assigned)
 
         expect(subject).to be true
+      end
+    end
+
+    context "when user is a member of the Case Review team, and the appeal has
+            already been assigned to an attorney" do
+      let(:user) { create(:user) }
+
+      it "returns false" do
+        OrganizationsUser.add_user_to_organization(user, BvaIntake.singleton)
+        create(:task,
+               type: "AttorneyTask",
+               appeal: appeal,
+               assigned_to: build_stubbed(:user),
+               status: Constants.TASK_STATUSES.assigned)
+
+        expect(subject).to be false
       end
     end
   end

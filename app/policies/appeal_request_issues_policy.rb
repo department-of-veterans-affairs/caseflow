@@ -7,20 +7,28 @@ class AppealRequestIssuesPolicy
   end
 
   def editable?
-    return true if case_review_team_member?
+    return true if editable_by_case_review_team_member?
 
-    appeal_has_in_progress_or_assigned_judge_or_attorney_tasks_assigned_to_user?
+    case_is_in_active_review_by_current_user?
   end
 
   private
 
   attr_reader :user, :appeal
 
-  def case_review_team_member?
+  def editable_by_case_review_team_member?
+    current_user_is_case_review_team_member? && case_is_not_in_active_review?
+  end
+
+  def current_user_is_case_review_team_member?
     BvaIntake.singleton.user_has_access?(user)
   end
 
-  def appeal_has_in_progress_or_assigned_judge_or_attorney_tasks_assigned_to_user?
+  def case_is_not_in_active_review?
+    Task.where(appeal: appeal, type: "AttorneyTask").empty?
+  end
+
+  def case_is_in_active_review_by_current_user?
     Task.where(
       appeal: appeal,
       assigned_to: user,
