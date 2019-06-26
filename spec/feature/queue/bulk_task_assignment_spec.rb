@@ -22,7 +22,7 @@ RSpec.feature "Bulk task assignment" do
       submit.click
     end
 
-    it "is able to bulk assign tasks for the hearing management org" do
+    it "is able to bulk assign tasks for the hearing management org", skip: "flake" do
       3.times do
         FactoryBot.create(:no_show_hearing_task)
       end
