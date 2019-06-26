@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import DOMPurify from 'dompurify';
 import WorksheetFooter from './WorksheetFooter';
 import WorksheetHeader from './WorksheetHeader';
+import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import Table from '../../../components/Table';
 import { filterCurrentIssues, filterIssuesOnAppeal } from '../../utils';
 import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil';

@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 const WorksheetFooter = ({ veteranName }) => (
   <div className="cf-print-footer">
     <div>
-      {veteranName},
-      <span className="cf-print-number" />
+      {veteranName}
     </div>
   </div>
 );

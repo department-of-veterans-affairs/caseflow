@@ -82,7 +82,6 @@ class HearingWorksheetIssues extends PureComponent {
           maxLength={100}
         />,
         actions: <HearingWorksheetPreImpressions
-          appeal={worksheetStreamsAppeal}
           issue={issueRow}
         />,
         deleteIssue: <HearingWorksheetIssueDelete
