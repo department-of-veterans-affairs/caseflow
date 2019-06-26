@@ -61,26 +61,6 @@
     {
       "warning_type": "File Access",
       "warning_code": 16,
-      "fingerprint": "2634aabd9d9e0db706787681879ec9f759417bb967a833a0a3bef30c6f42ed0b",
-      "check_name": "SendFile",
-      "message": "Parameter value used in file name",
-      "file": "app/controllers/dispatch/establish_claims_controller.rb",
-      "line": 39,
-      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
-      "code": "send_file(task.appeal.decisions[params[:decision_number].to_i].serve, :type => \"application/pdf\", :disposition => \"inline\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Dispatch::EstablishClaimsController",
-        "method": "pdf"
-      },
-      "user_input": "params[:decision_number]",
-      "confidence": "Weak",
-      "note": ""
-    },
-    {
-      "warning_type": "File Access",
-      "warning_code": 16,
       "fingerprint": "51625fbaea06d71b4cf619f3192432518766296d1356e21eb5f31f3d517a1c7a",
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
@@ -117,8 +97,24 @@
       "user_input": "vacols_ids.map do\n sanitize_sql_array([\"into PRIORLOC (LOCDOUT, LOCDTO, LOCSTTO, LOCSTOUT, LOCKEY) values (SYSDATE, SYSDATE, ?, ?, ?)\", location, (RequestStore.store[:current_user].vacols_uniq_id or \"DSUSER\").upcase, vacols_id])\n end.join(\" \")",
       "confidence": "Medium",
       "note": "False positive, all input is sanitized by sanitize_sql_array"
+    },
+    {
+      "warning_type": "Missing Encryption",
+      "warning_code": 109,
+      "fingerprint": "6a26086cd2400fbbfb831b2f8d7291e320bcc2b36984d2abc359e41b3b63212b",
+      "check_name": "ForceSSL",
+      "message": "The application does not force use of HTTPS: `config.force_ssl` is not enabled",
+      "file": "config/environments/production.rb",
+      "line": 1,
+      "link": "https://brakemanscanner.org/docs/warning_types/missing_encryption/",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High",
+      "note": "The application does not force use of HTTPS: `config.force_ssl` is not enabled"
     }
   ],
-  "updated": "2019-06-26 17:22:48 -0400",
+  "updated": "2019-06-26 17:40:52 -0400",
   "brakeman_version": "4.5.1"
 }
