@@ -88,7 +88,6 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   taskTableTabFactory = (tabConfig, config) => {
-    const { label, description } = tabConfig;
     const tasks = config.use_task_pages_api ?
       tasksWithAppealsFromRawTasks(tabConfig.tasks) :
       this.tasksForTab(tabConfig.name);
@@ -101,7 +100,7 @@ class OrganizationQueue extends React.PureComponent {
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
         <TaskTable
           key={tabConfig.name}
-          customColumns={this.columnsFromConfig(tabConfig)}
+          customColumns={cols}
           tasks={tasks}
           useTaskPagesApi={config.use_task_pages_api}
           tasksPerPage={config.tasks_per_page}
