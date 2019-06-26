@@ -542,8 +542,8 @@ RSpec.feature "Case details" do
         second_row_with_task = case_timeline_rows[1]
         third_row_with_task = case_timeline_rows[2]
         expect(first_row_with_task).to have_content("PulacCerulloTask completed")
-        expect(second_row_with_task).to have_content("Dispatched from BVA")
-        expect(third_row_with_task).to have_content("Notice of disagreement received")
+        expect(second_row_with_task).to have_content(COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA)
+        expect(third_row_with_task).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
       end
     end
   end
