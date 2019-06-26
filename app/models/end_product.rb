@@ -48,6 +48,13 @@ class EndProduct
     "030BGNRPMC" => "PMC Board Grant Non-Rating"
   }.freeze
 
+  CORRECTION_REVIEW_CODES = {
+    "930AMABGRC" => "AMA BVA Grant Rating Control",
+    "930AMABGNRC" => "AMA BVA Grant Non-Rating Control",
+    "930ABGRCPMC" => "AMA PMC BVA Grant Rating Control",
+    "930ABGNRCPMC" => "AMA PMC BVA Grant Non-Rating Control"
+  }
+
   DISPATCH_CODES = {
     # TODO(jd): Remove this when we've verified they are
     # no longer needed. Maybe 30 days after May 2017?
@@ -79,7 +86,7 @@ class EndProduct
     "070RMBVAGPMC" => "PMC Remand with BVA Grant"
   }.freeze
 
-  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES).merge(EFFECTUATION_CODES)
+  CODES = DISPATCH_CODES.merge(RAMP_CODES).merge(DECISION_REVIEW_CODES).merge(DTA_CODES).merge(EFFECTUATION_CODES).merge(CORRECTION_REVIEW_CODES)
 
   DISPATCH_MODIFIERS = %w[070 071 072 073 074 075 076 077 078 079 170 171 175 176 177 178 179 172].freeze
 

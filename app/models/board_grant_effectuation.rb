@@ -23,6 +23,13 @@ class BoardGrantEffectuation < ApplicationRecord
     pension_nonrating: "030BGNRPMC"
   }.freeze
 
+  END_PRODUCT_CORRECTION_CODES = {
+    rating: "930AMABGRC",
+    nonrating: "930AMABGNRC",
+    pension_rating: "930ABGRCPMC",
+    pension_nonrating: "930ABGNRCPMC"
+  }.freeze
+
   delegate :contention_text, to: :granted_decision_issue
   delegate :veteran, to: :appeal
 
@@ -67,6 +74,11 @@ class BoardGrantEffectuation < ApplicationRecord
 
   def benefit_type
     granted_decision_issue.benefit_type
+  end
+
+  # This method is not implemented yet
+  def correction?
+    false
   end
 
   def hydrate_from_granted_decision_issue
@@ -128,10 +140,15 @@ class BoardGrantEffectuation < ApplicationRecord
 
   def end_product_code
     return unless processed_in_vbms?
+    correction? ? END_PRODUCT_CORRECTION_CODES[issue_code_type] : END_PRODUCT_CODES[issue_code_type]
+  end
 
-    issue_code_type = granted_decision_issue.rating? ? :rating : :nonrating
-    issue_code_type = "pension_#{issue_code_type}".to_sym if benefit_type == "pension"
-    END_PRODUCT_CODES[issue_code_type]
+  def issue_code_type
+    @issue_code_type ||= begin
+      key = granted_decision_issue.rating? ? :rating : :nonrating
+      key = "pension_#{key}".to_sym if benefit_type == "pension"
+      key
+    end
   end
 
   def end_product_station

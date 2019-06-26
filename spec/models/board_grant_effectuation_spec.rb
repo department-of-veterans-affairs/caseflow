@@ -207,6 +207,22 @@ describe BoardGrantEffectuation do
             code: "030BGR"
           )
         end
+
+        context "when it is a correction" do
+          it "creates rating correction end product establishment" do
+            allow_any_instance_of(BoardGrantEffectuation).to receive(:correction?).and_return(true)
+
+            expect(subject.end_product_establishment).to have_attributes(
+              source: decision_document,
+              veteran_file_number: decision_document.appeal.veteran.file_number,
+              claim_date: decision_document.decision_date,
+              payee_code: "00",
+              benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+              user: User.system_user,
+              code: "930AMABGRC"
+            )
+          end
+        end
       end
 
       context "when non rating issue" do
@@ -232,6 +248,22 @@ describe BoardGrantEffectuation do
             code: "030BGRNR"
           )
         end
+
+        context "when it is a correction" do
+          it "creates non-rating correction end product establishment" do
+            allow_any_instance_of(BoardGrantEffectuation).to receive(:correction?).and_return(true)
+
+            expect(subject.end_product_establishment).to have_attributes(
+              source: decision_document,
+              veteran_file_number: decision_document.appeal.veteran.file_number,
+              claim_date: decision_document.decision_date,
+              payee_code: "00",
+              benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+              user: User.system_user,
+              code: "930AMABGNRC"
+            )
+          end
+        end
       end
     end
 
@@ -251,6 +283,22 @@ describe BoardGrantEffectuation do
             user: User.system_user,
             code: "030BGRPMC"
           )
+        end
+
+        context "when it is a correction" do
+          it "creates rating correction end product establishment" do
+            allow_any_instance_of(BoardGrantEffectuation).to receive(:correction?).and_return(true)
+
+            expect(subject.end_product_establishment).to have_attributes(
+              source: decision_document,
+              veteran_file_number: decision_document.appeal.veteran.file_number,
+              claim_date: decision_document.decision_date,
+              payee_code: "00",
+              benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+              user: User.system_user,
+              code: "930ABGRCPMC"
+            )
+          end
         end
       end
 
@@ -276,6 +324,22 @@ describe BoardGrantEffectuation do
             user: User.system_user,
             code: "030BGNRPMC"
           )
+        end
+
+        context "when it is a correction" do
+          it "creates non-rating correction end product establishment" do
+            allow_any_instance_of(BoardGrantEffectuation).to receive(:correction?).and_return(true)
+
+            expect(subject.end_product_establishment).to have_attributes(
+              source: decision_document,
+              veteran_file_number: decision_document.appeal.veteran.file_number,
+              claim_date: decision_document.decision_date,
+              payee_code: "00",
+              benefit_type_code: decision_document.appeal.veteran.benefit_type_code,
+              user: User.system_user,
+              code: "930ABGNRCPMC"
+            )
+          end
         end
       end
     end
