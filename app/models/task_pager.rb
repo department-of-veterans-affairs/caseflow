@@ -47,7 +47,7 @@ class TaskPager
   # end
 
   def task_page_count
-    (total_task_count / TASKS_PER_PAGE.to_f).ceil
+    @task_page_count ||= paged_tasks.total_pages
   end
 
   def total_task_count
