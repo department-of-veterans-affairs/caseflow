@@ -146,8 +146,8 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :disposition_task, class: DispositionTask do
-      type { DispositionTask.name }
+    factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
+      type { AssignHearingDispositionTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
       parent { create(:hearing_task) }
@@ -202,14 +202,14 @@ FactoryBot.define do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
       assigned_to { HearingsManagement.singleton }
-      parent { create(:disposition_task, appeal: appeal) }
+      parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 
     factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
       type { EvidenceSubmissionWindowTask.name }
       appeal { create(:appeal) }
       assigned_to { HearingsManagement.singleton }
-      parent { create(:disposition_task, appeal: appeal) }
+      parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 
     factory :ama_attorney_task, class: AttorneyTask do
