@@ -6,9 +6,10 @@ import { css } from 'glamor';
 
 import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
-import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
+import { docketNumberColumn, hearingBadgeColumn, detailsColumn,
   taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
   assignedToColumn, daysWaitingColumn, readerLinkColumn } from './components/TaskTable';
+import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Alert from '../components/Alert';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -98,15 +99,17 @@ class OrganizationQueue extends React.PureComponent {
       page: <React.Fragment>
         <p className="cf-margin-top-0">{tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
-        <TaskTable
+        <QueueTable
           key={tabConfig.name}
-          customColumns={cols}
-          tasks={tasks}
+          columns={cols}
+          rowObjects={tasks}
+          getKeyForRow={(_rowNumber, task) => task.uniqueId}
           useTaskPagesApi={config.use_task_pages_api}
-          tasksPerPage={config.tasks_per_page}
+          casesPerPage={config.tasks_per_page}
           numberOfPages={tabConfig.task_page_count}
           totalTaskCount={tabConfig.total_task_count}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
+          enablePagination
         />
       </React.Fragment>
     };

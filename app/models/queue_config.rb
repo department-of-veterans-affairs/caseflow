@@ -59,7 +59,6 @@ class QueueConfig
   end
 
   def serialized_tasks_for_user(tasks, user)
-    return [] unless FeatureToggle.enabled?(:use_task_pages_api)
     return [] if tasks.empty?
 
     primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
