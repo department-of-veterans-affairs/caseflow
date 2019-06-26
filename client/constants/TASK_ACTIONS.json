@@ -92,6 +92,11 @@
     "value": "modal/return_to_attorney",
     "func": "return_to_attorney_data"
   },
+  "LIT_SUPPORT_ASSIGN_JUDGE_DRAFT_MOTION_TO_VACATE": {
+    "label": "Send to judge for Draft Motion to Vacate",
+    "value": "modal/assign_to_judge",
+    "func": "assign_to_judge_data"
+  },
   "LIT_SUPPORT_PULAC_CERULLO": {
     "label": "Notify OGC of Pulac-Cerullo",
     "value": "modal/assign_to_pulac_cerullo",
