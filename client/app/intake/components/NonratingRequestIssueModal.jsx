@@ -1,6 +1,8 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import React from 'react';
+import { css } from 'glamor';
+import { COLORS } from '../../constants/AppConstants';
 
 import {
   addNonratingRequestIssue,
@@ -18,6 +20,11 @@ import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES.json';
 import { validateDate, validateDateNotInFuture } from '../util/issues';
 
 const NO_MATCH_TEXT = 'None of these match';
+
+const noteDiv = css({
+  fontSize: '1.5rem',
+  color: COLORS.GREY
+});
 
 const nonratingRequestIssueCategories = (benefitType = 'compensation') => {
   return ISSUE_CATEGORIES[benefitType].map((category) => {
@@ -262,9 +269,11 @@ class NonratingRequestIssueModal extends React.Component {
         closeHandler={closeHandler}
         title={`Add issue ${issueNumber}`}
       >
+        <p {...noteDiv}> If the issue is a rating issue, please select
+        "None of these match, see more options" and add it as an unidentified rating issue.</p>
         <div>
           <h2>
-            Does issue {issueNumber} match any of these issue categories?
+            Does issue {issueNumber} match any of these non-rating issue categories?
           </h2>
           <div className="add-nonrating-request-issue">
             {benefitTypeElement}

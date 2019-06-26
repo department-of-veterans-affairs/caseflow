@@ -231,7 +231,8 @@ class TaskActionRepository
 
     def complete_transcription_data(_task, _user)
       {
-        modal_body: COPY::COMPLETE_TRANSCRIPTION_BODY
+        modal_body: COPY::COMPLETE_TRANSCRIPTION_BODY,
+        modal_hide_instructions: true
       }
     end
 

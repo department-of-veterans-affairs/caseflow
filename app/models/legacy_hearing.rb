@@ -61,7 +61,7 @@ class LegacyHearing < ApplicationRecord
 
   def disposition_task
     if hearing_task?
-      hearing_task_association.hearing_task.children.detect { |child| child.type == DispositionTask.name }
+      hearing_task_association.hearing_task.children.detect { |child| child.type == AssignHearingDispositionTask.name }
     end
   end
 

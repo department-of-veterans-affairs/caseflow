@@ -264,7 +264,13 @@ export default class QueueTable extends React.PureComponent {
 
         // Only return the data point if it contains the value of the filter
         filteredData = filteredData.filter((row) => {
-          return filteredByList[columnName].includes(_.get(row, columnName));
+          const cellValue = _.get(row, columnName);
+
+          if (typeof cellValue === 'undefined' || cellValue === null) {
+            return filteredByList[columnName].includes('null');
+          }
+
+          return filteredByList[columnName].includes(cellValue);
         });
       }
     }

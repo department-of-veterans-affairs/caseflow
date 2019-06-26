@@ -19,6 +19,7 @@ gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
 # Use jquery as the JavaScript library
 gem "jquery-rails"
+gem "kaminari"
 # active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
 gem "loofah", ">= 2.2.3"
 gem "moment_timezone-rails"
@@ -62,6 +63,8 @@ gem "stringex", require: false
 gem "strong_migrations"
 # execjs runtime
 gem "therubyracer", platforms: :ruby
+# print trees
+gem "tty-tree"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 

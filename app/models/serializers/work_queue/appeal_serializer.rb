@@ -86,6 +86,7 @@ class WorkQueue::AppealSerializer
   attribute :docket_range_date
   attribute :decision_date
   attribute :nod_date, &:receipt_date
+  attribute :withdrawal_date
 
   attribute :certification_date do
     nil

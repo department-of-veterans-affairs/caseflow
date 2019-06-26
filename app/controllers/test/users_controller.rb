@@ -142,6 +142,20 @@ class Test::UsersController < ApplicationController
     head :unauthorized unless current_user.global_admin?
   end
 
+  def show_error
+    error = StandardError.new("test")
+    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+    respond_to do |format|
+      format.html do
+        render "errors/500", layout: "application", status: :internal_server_error
+      end
+
+      format.json do
+        render json: { error_uuid: error_uuid }, status: :internal_server_error
+      end
+    end
+  end
+
   private
 
   def new_default_end_products

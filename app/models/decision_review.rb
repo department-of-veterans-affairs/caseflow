@@ -88,6 +88,12 @@ class DecisionReview < ApplicationRecord
     id.to_s
   end
 
+  def withdrawal_date
+    return unless withdrawn?
+
+    request_issues.withdrawn.map(&:withdrawal_date).compact.max
+  end
+
   def ui_hash
     {
       veteran: {
@@ -299,6 +305,18 @@ class DecisionReview < ApplicationRecord
 
   def removed?
     request_issues.any? && request_issues.all?(&:removed?)
+  end
+
+  def withdrawn?
+    WithdrawnDecisionReviewPolicy.new(self).satisfied?
+  end
+
+  def active_request_issues
+    request_issues.active
+  end
+
+  def withdrawn_request_issues
+    request_issues.withdrawn
   end
 
   private

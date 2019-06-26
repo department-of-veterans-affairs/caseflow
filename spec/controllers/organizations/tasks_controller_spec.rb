@@ -59,8 +59,7 @@ RSpec.describe Organizations::TasksController, type: :controller do
         ),
         create(
           :task,
-          appeal: appeal,
-          appeal_type: "LegacyAppeal",
+          appeal: create(:appeal),
           type: :GenericTask,
           assigned_to: vso
         )
@@ -68,12 +67,12 @@ RSpec.describe Organizations::TasksController, type: :controller do
     end
 
     context "when user has VSO role and belongs to the VSO" do
-      it "should return tasks" do
+      it "should return only AMA tasks" do
         get :index, params: { organization_url: url }
         expect(response.status).to eq 200
         response_body = JSON.parse(response.body)["tasks"]["data"]
 
-        expect(response_body.size).to eq 2
+        expect(response_body.size).to eq 1
         expect(response_body[0]["attributes"]["available_hearing_locations"]).to be_empty
       end
 
