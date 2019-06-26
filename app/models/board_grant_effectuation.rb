@@ -140,6 +140,7 @@ class BoardGrantEffectuation < ApplicationRecord
 
   def end_product_code
     return unless processed_in_vbms?
+
     correction? ? END_PRODUCT_CORRECTION_CODES[issue_code_type] : END_PRODUCT_CODES[issue_code_type]
   end
 
