@@ -56,6 +56,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :pulac_cerullo_task, class: PulacCerulloTask do
+      type { PulacCerulloTask.name }
+      appeal { create(:appeal) }
+    end
+
     factory :privacy_act_task, class: PrivacyActTask do
       type { PrivacyActTask.name }
       appeal { create(:appeal) }
