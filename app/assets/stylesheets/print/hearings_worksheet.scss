@@ -114,8 +114,9 @@ $body-font-size: 14px;
     text-transform: uppercase;
   }
 
-  .cf-hearings-appeal-procedural-history {
-    border: 1px solid $color-gray;
+  .cf-hearings-appeal-procedural-history,
+  .cf-hearings-all-issues-wrapper {
+    border: 1px solid $color-black-light;
     padding: 4px 10px;
     margin: 10px 0px 5px 0px;
 
@@ -130,7 +131,7 @@ $body-font-size: 14px;
     flex-flow: wrap;
     padding: 3px 5px;
     margin: $cell-padding 0px;
-    background-color: #F1F1F1;
+    background-color: $color-gray-lightest;
 
     .cf-hearing-worksheet-issue-field {
       h4,
