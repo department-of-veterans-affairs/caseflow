@@ -11,11 +11,21 @@ import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil'
 
 export class HearingWorksheetPrinted extends React.Component {
 
-  getLegacyHearingWorksheetIssuesSection(appeal) {
+  isLegacy() {
+    const { worksheet } = this.props;
+
+    return worksheet.docket_name === 'legacy';
+  }
+
+  getHearingWorksheetIssuesSection(appeal) {
     const { worksheetIssues } = this.props;
-    const currentIssues = filterCurrentIssues(
-      filterIssuesOnAppeal(worksheetIssues, appeal.id)
-    );
+    const currentIssues = appeal
+      ? filterCurrentIssues(filterIssuesOnAppeal(worksheetIssues, appeal.id))
+      : worksheetIssues;
+
+    if (_.isEmpty(currentIssues)) {
+      return;
+    }
 
     return (
       <div>
@@ -99,7 +109,7 @@ export class HearingWorksheetPrinted extends React.Component {
                 {appeal.dic && "  DIC"}
               </h4>
               {this.getLegacyHearingWorksheetDocsSection(appeal)}
-              {this.getLegacyHearingWorksheetIssuesSection(appeal)}
+              {this.getHearingWorksheetIssuesSection(appeal)}
             </div>
           ))
         }
@@ -108,14 +118,19 @@ export class HearingWorksheetPrinted extends React.Component {
   }
 
   render() {
-    const { worksheet } = this.props;
-    const isLegacy = worksheet.docket_name === 'legacy';
+    const { worksheet, worksheetIssues } = this.props;
 
     return (
       <div>
         <WorksheetFooter veteranName={worksheet.veteran_fi_last_formatted} />
         <WorksheetHeader print={true} />
-        {isLegacy && this.getLegacyHearingSection()}
+        {this.isLegacy && this.getLegacyHearingSection()}
+        {
+          !this.isLegacy && !_.isEmpty(worksheetIssues) &&
+          <div className="cf-hearings-all-issues-wrapper">
+            {this.getHearingWorksheetIssuesSection()}
+          </div>
+        }
         <form className="cf-hearings-worksheet-form" id="cf-hearings-worksheet-summary">
           <div className="cf-hearings-worksheet-data">
             <label>Hearing Summary</label>
