@@ -1,6 +1,4 @@
-require "rails_helper"
-
-RSpec.describe Api::Docs::V3::DocsController, type: :request do
+describe Api::Docs::V3::DocsController, type: :request do
   describe '#decision_reviews' do
     it 'should successfully return openapi spec' do
       get '/api/docs/v3/decision_reviews'
@@ -12,10 +10,10 @@ RSpec.describe Api::Docs::V3::DocsController, type: :request do
       before(:each) do
         get '/api/docs/v3/decision_reviews'
       end
-      let(:hlr_doc){
+      let(:hlr_doc) do
         json = JSON.parse(response.body)
         json['paths']['/higher_level_reviews']
-      }
+      end
       it 'should have POST' do
         expect(hlr_doc).to include('post')
       end
