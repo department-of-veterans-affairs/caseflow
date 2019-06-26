@@ -8,7 +8,7 @@ import Tooltip from '../components/Tooltip';
 import { DoubleArrow } from '../components/RenderFunctions';
 import TableFilter from '../components/TableFilter';
 import FilterSummary from '../components/FilterSummary';
-import TablePagination from '../components/TablePagination';
+import Pagination from '../components/Pagination';
 import {
   COLORS,
   LOGO_COLORS
@@ -372,11 +372,12 @@ export default class QueueTable extends React.PureComponent {
     let paginationElements = null;
 
     if (enablePagination) {
-      paginationElements = <TablePagination
-        casesPerPage={casesPerPage}
-        currentPage={this.state.currentPage}
-        numberOfPages={numberOfPages}
-        totalCasesCount={totalTaskCount}
+      paginationElements = <Pagination
+        pageSize={casesPerPage}
+        currentPage={this.state.currentPage + 1}
+        currentCases={rowObjects.length}
+        totalPages={numberOfPages}
+        totalCases={totalTaskCount}
         updatePage={(newPage) => this.updateCurrentPage(newPage)} />;
     }
 
