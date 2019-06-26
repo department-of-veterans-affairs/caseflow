@@ -95,7 +95,7 @@ fresh:
 	git fresh
 
 reset:
-	bundle exec rake db:reset
+	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
 	bundle exec rails runner scripts/enable_features_dev.rb
 
 bundle-install:
