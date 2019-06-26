@@ -33,9 +33,7 @@ detectors:
     exclude:
       - QueueConfig
   TooManyMethods:
-    exclude:
-      - DispositionTask
-      - RootTask
+    enabled: false
   TooManyStatements:
     enabled: false
   UtilityFunction:

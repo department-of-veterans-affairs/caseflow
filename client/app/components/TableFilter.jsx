@@ -43,6 +43,7 @@ class TableFilter extends React.PureComponent {
 
     for (let key in countByColumnName) { // eslint-disable-line guard-for-in
       let displayText = `<<blank>> (${countByColumnName[key]})`;
+      let keyValue = 'null';
 
       if (key && key !== 'null' && key !== 'undefined') {
         if (customFilterLabels && customFilterLabels[key]) {
@@ -51,17 +52,15 @@ class TableFilter extends React.PureComponent {
           displayText = `${_.capitalize(key)} (${countByColumnName[key]})`;
         }
 
-        uniqueOptions.push({
-          value: key,
-          displayText,
-          checked: filtersForColumn ? filtersForColumn.includes(key) : false
-        });
-      } else {
-        uniqueOptions.push({
-          value: 'null',
-          displayText
-        });
+        keyValue = key;
       }
+
+      uniqueOptions.push({
+        value: keyValue,
+        displayText,
+        checked: filtersForColumn ? filtersForColumn.includes(keyValue) : false
+      });
+
     }
 
     return _.sortBy(uniqueOptions, 'displayText');
