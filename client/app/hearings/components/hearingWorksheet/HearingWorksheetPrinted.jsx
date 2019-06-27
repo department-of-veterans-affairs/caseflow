@@ -129,14 +129,13 @@ export class HearingWorksheetPrinted extends React.Component {
   getLegacyHearingSection() {
     const { worksheetAppeals } = this.props;
 
-    // worksheetAppeals["1"] = worksheetAppeals["23"];//test
-
     return (
       <div>
         {
           Object.values(worksheetAppeals).map((appeal, key) => (
             <div key={key} className="cf-hearings-appeal-procedural-history">
-              <h4>
+              <h4>Procedural History</h4>
+              <h4 className="cf-txt-r">
                 Appeal Stream {key + 1} - Docket #{appeal.docket_number}
                 {appeal.contested_claim && '  CC'}
                 {appeal.dic && '  DIC'}
