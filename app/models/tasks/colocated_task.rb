@@ -54,6 +54,7 @@ class ColocatedTask < Task
       return available_actions_with_conditions([
                                                  Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
                                                  Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+                                                 Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
                                                  Constants.TASK_ACTIONS.CANCEL_TASK.to_h
                                                ])
     end
