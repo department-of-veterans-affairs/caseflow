@@ -35,7 +35,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :can_edit_request_issues do |object, params|
-    params[:user]&.can_edit_request_issues?(object)
+    AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
 
   attribute(:hearings) { |object| hearings(object) }
