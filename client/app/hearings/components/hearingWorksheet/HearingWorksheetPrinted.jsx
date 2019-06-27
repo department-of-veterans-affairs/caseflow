@@ -6,6 +6,7 @@ import WorksheetFooter from './WorksheetFooter';
 import WorksheetHeader from './WorksheetHeader';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import Table from '../../../components/Table';
+import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES.json';
 import { filterCurrentIssues, filterIssuesOnAppeal } from '../../utils';
 import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil';
 
@@ -31,26 +32,58 @@ export class HearingWorksheetPrinted extends React.Component {
       <div>
         <h4>Issues</h4>
         {
-          Object.values(currentIssues).map((issue, key) => (
-            <div className="cf-hearing-worksheet-issues-wrapper" key={key}>
-              <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-description">
-                <h4>Description</h4>
-                <p>{issue.description}</p>
-              </div>
-              <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-disposition">
-                <h4>Disp.</h4>
-                <p>{issue.disposition}</p>
-              </div>
-              {
-                issue.notes &&
+          Object.values(currentIssues).
+            map((issue, key) => (
+              <div className="cf-hearing-worksheet-issues-wrapper" key={key}>
+                {
+                  !this.isLegacy() &&
+                <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-benefit-type">
+                  <h4>Benefit</h4>
+                  <p>{BENEFIT_TYPES[issue.program]}</p>
+                </div>
+                }
+                {
+                  !this.isLegacy() &&
+                <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-diagnostic-code">
+                  <h4>Diagnostic</h4>
+                  <p>{issue.diagnostic_code}</p>
+                </div>
+                }
+                {
+                  !this.isLegacy() &&
+                <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-disposition">
+                  <h4>Disp.</h4>
+                  <p>{issue.disposition}</p>
+                </div>
+                }
+                <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-description">
+                  <h4>Description</h4>
+                  <p>{issue.description}</p>
+                </div>
+                {
+                  this.isLegacy() &&
+                <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-legacy-disposition">
+                  <h4>Disp.</h4>
+                  <p>{issue.disposition}</p>
+                </div>
+                }
+                {
+                  issue.notes &&
                 <div className="cf-hearing-worksheet-issue-field">
                   <h4>Notes</h4>
                   <p>{issue.notes}</p>
                 </div>
-              }
-              <HearingWorksheetPreImpressions issue={issue} print={true} />
-            </div>
-          ))
+                }
+                {
+                  !this.isLegacy() && issue.worksheet_notes &&
+                <div className="cf-hearing-worksheet-issue-field">
+                  <h4>Worksheet Notes</h4>
+                  <p>{issue.worksheet_notes}</p>
+                </div>
+                }
+                <HearingWorksheetPreImpressions issue={issue} print />
+              </div>
+            ))
         }
       </div>
     );
