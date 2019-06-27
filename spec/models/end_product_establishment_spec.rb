@@ -208,7 +208,7 @@ describe EndProductEstablishment do
       end
 
       it "returns NoAvailableModifiers error" do
-        expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+        expect { subject }.to raise_error(FindOpenEndProductModifier::NoAvailableModifiers)
       end
     end
 
@@ -241,7 +241,7 @@ describe EndProductEstablishment do
       end
 
       it "considers those EP modifiers as closed" do
-        expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+        expect { subject }.to raise_error(FindOpenEndProductModifier::NoAvailableModifiers)
       end
     end
 
