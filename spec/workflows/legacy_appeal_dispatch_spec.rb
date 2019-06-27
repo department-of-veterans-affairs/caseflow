@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "rails_helper"
 
 describe LegacyAppealDispatch do
@@ -7,14 +9,14 @@ describe LegacyAppealDispatch do
         legacy_appeal = create(:legacy_appeal, vacols_case: create(:case))
 
         params = {
-          appeal_id: legacy_appeal.id,
+          appeal_id: legacy_appeal.id
         }
 
         dispatch = LegacyAppealDispatch.new(appeal: legacy_appeal, params: params)
 
         expect { dispatch.call }.to raise_error do |e|
-           expect(e.class).to eq Caseflow::Error::OutcodeValidationFailure
-           expect(e.message).to eq "Validation failed: Citation number is invalid"
+          expect(e.class).to eq Caseflow::Error::OutcodeValidationFailure
+          expect(e.message).to eq "Validation failed: Citation number is invalid"
         end
       end
     end

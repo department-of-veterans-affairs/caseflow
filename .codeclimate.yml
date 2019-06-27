@@ -77,4 +77,3 @@ exclude_patterns:
   - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
   - 'tmp/**/*'
   - 'app/assets/**/*'
-  - 'spec/**/*'

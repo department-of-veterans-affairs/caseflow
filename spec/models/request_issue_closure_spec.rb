@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe RequestIssueClosure do
   let(:decision_review) { create(:higher_level_review) }
   let(:end_product_establishment) { nil }
@@ -19,7 +21,7 @@ describe RequestIssueClosure do
     subject { request_issue_closure.with_no_decision! }
 
     context "end product is cleared" do
-      let(:end_product_establishment) { create(:end_product_establishment, :cleared)}
+      let(:end_product_establishment) { create(:end_product_establishment, :cleared) }
 
       it "closes the request issue and cancels decision issue sync" do
         subject
