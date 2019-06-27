@@ -92,7 +92,7 @@ class QueueConfig
         Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
         Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
         Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
-        Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
+        organization.is_a?(Representative) ? nil : Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
       ].compact,
       task_group: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_GROUP,
       tasks: tasks,
