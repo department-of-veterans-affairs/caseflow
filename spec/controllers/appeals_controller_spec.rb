@@ -53,8 +53,12 @@ RSpec.describe AppealsController, type: :controller do
 
       context "when request header contains existing Veteran ID that maps to multiple veterans" do
         let(:participant_id) { "987654" }
-        let!(:veteran_file_number_match) { create(:veteran, file_number: ssn, ssn: ssn, participant_id: participant_id) }
-        let!(:veteran_bgs_match) { create(:veteran, file_number: "12345678", ssn: ssn, participant_id: participant_id) }
+        let!(:veteran_file_number_match) do
+          create(:veteran, file_number: ssn, ssn: ssn, participant_id: participant_id)
+        end
+        let!(:veteran_bgs_match) do
+          create(:veteran, file_number: "12345678", ssn: ssn, participant_id: participant_id)
+        end
         let!(:appeal) { create(:appeal, veteran_file_number: ssn) }
 
         before do
@@ -153,7 +157,7 @@ RSpec.describe AppealsController, type: :controller do
       context "and has access to the file" do
         let!(:veteran) { create(:veteran) }
         let(:appeal) do
-          create(:appeal, 
+          create(:appeal,
                  veteran_file_number: veteran.file_number,
                  claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
         end
@@ -174,7 +178,7 @@ RSpec.describe AppealsController, type: :controller do
         it "returns 404 error" do
           appeal = create(:appeal, claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
           create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
-          
+
           request.headers["HTTP_VETERAN_ID"] = "123"
 
           expect_any_instance_of(Fakes::BGSService).to_not receive(:fetch_poas_by_participant_id)
