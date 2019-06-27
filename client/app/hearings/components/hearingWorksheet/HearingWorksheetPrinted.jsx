@@ -157,9 +157,9 @@ export class HearingWorksheetPrinted extends React.Component {
       <div>
         <WorksheetFooter veteranName={worksheet.veteran_fi_last_formatted} />
         <WorksheetHeader print />
-        {this.isLegacy && this.getLegacyHearingSection()}
+        {this.isLegacy() && this.getLegacyHearingSection()}
         {
-          !this.isLegacy && !_.isEmpty(worksheetIssues) &&
+          !this.isLegacy() && !_.isEmpty(worksheetIssues) &&
           <div className="cf-hearings-all-issues-wrapper">
             {this.getHearingWorksheetIssuesSection()}
           </div>
