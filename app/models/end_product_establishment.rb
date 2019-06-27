@@ -418,7 +418,7 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def open_modifier
-    @open_modifier ||= FindOpenEndProductModifier.new(self, veteran).find
+    @open_modifier ||= EndProductModifierFinder.new(self, veteran).find
   end
 
   def fetched_result

@@ -2,7 +2,7 @@
 
 # An EP modifier is a BGS requirement - it helps delineate EPs with the same claim_type_code
 # from one another. e.g. if you have multiple HLRs.
-class FindOpenEndProductModifier
+class EndProductModifierFinder
   class NoAvailableModifiers < StandardError; end
 
   def initialize(end_product_establishment, veteran)
