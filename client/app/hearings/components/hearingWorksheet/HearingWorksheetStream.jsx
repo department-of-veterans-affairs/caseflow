@@ -32,7 +32,7 @@ class HearingWorksheetStream extends Component {
     return (
       <div>
         {
-          Object.values(this.props.worksheetAppeals).forEach((appeal, key) => {
+          Object.values(this.props.worksheetAppeals).map((appeal, key) => {
             const appealIssues = filterIssuesOnAppeal(this.props.worksheetIssues, appeal.id);
             const appealWorksheetIssues = prior ? filterPriorIssues(appealIssues) : filterCurrentIssues(appealIssues);
             const currentIssueCount = issueCount;
@@ -59,6 +59,8 @@ class HearingWorksheetStream extends Component {
                 }
                 <div className="cf-help-divider" />
               </div>;
+            } else {
+              return null;
             }
           })
         }
