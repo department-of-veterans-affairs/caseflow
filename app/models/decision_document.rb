@@ -71,6 +71,10 @@ class DecisionDocument < ApplicationRecord
     HigherLevelReview::END_PRODUCT_MODIFIERS
   end
 
+  def invalid_modifiers
+    []
+  end
+
   # The decision document is the source for all board grant eps, so we define this method
   # to be called any time a corresponding board grant end product change statuses.
   def on_sync(end_product_establishment)
