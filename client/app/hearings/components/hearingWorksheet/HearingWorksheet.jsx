@@ -142,25 +142,21 @@ export class HearingWorksheet extends React.PureComponent {
             <WorksheetHeaderVeteranSelection />
           </div>
           <div className="cf-hearings-worksheet cf-app-segment--alt">
-            <div className="cf-hearings-first-page">
-              <WorksheetHeader />
-              {
-                this.props.worksheet.docket_name === 'hearing' ?
-                  this.getHearingWorksheet() :
-                  this.getLegacyHearingWorksheet()
-              }
-            </div>
-            <div className="cf-hearings-second-page">
-              <form className="cf-hearings-worksheet-form">
-                <WorksheetFormEntry
-                  name="Hearing Summary"
-                  value={this.props.worksheet.summary || DEFAULT_SUMMARY_VALUE}
-                  onChange={this.onSummaryChange}
-                  id="worksheet-hearing-summary"
-                  minRows={1}
-                />
-              </form>
-            </div>
+            <WorksheetHeader />
+            {
+              this.props.worksheet.docket_name === 'hearing' ?
+                this.getHearingWorksheet() :
+                this.getLegacyHearingWorksheet()
+            }
+            <form className="cf-hearings-worksheet-form">
+              <WorksheetFormEntry
+                name="Hearing Summary"
+                value={this.props.worksheet.summary || DEFAULT_SUMMARY_VALUE}
+                onChange={this.onSummaryChange}
+                id="worksheet-hearing-summary"
+                minRows={1}
+              />
+            </form>
           </div>
         </div>
         <div className="cf-push-right">
