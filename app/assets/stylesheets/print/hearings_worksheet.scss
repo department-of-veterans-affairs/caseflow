@@ -130,15 +130,27 @@ $body-font-size: 14px;
     }
   }
 
+  .cf-hearings-appeal-procedural-history {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+
+    > h4 {
+      flex: 0 0 50%;
+    }
+  }
+
   .cf-hearing-worksheet-issues-wrapper {
     display: flex;
     flex-direction: row;
     flex-flow: wrap;
-    padding: 3px 5px;
+    padding: 0px 5px;
     margin: $cell-padding 0px;
     background-color: $color-gray-lightest;
 
     .cf-hearing-worksheet-issue-field {
+      margin: 5px 0px 0px 0px;
+
       h4,
       p {
         display: inline-block;
@@ -147,13 +159,28 @@ $body-font-size: 14px;
       h4 {
         margin: 0px 1rem 0px 0px;
       }
+
+      p {
+        margin: 0px;
+      }
     }
 
     .cf-hearing-worksheet-issue-description {
       flex: 0 0 80%;
     }
 
+    .cf-hearing-worksheet-issue-diagnostic-code,
+    .cf-hearing-worksheet-issue-benefit-type,
     .cf-hearing-worksheet-issue-disposition {
+      flex: 0 0 33%;
+    }
+
+    .cf-hearing-worksheet-issue-diagnostic-code,
+    .cf-hearing-worksheet-issue-disposition {
+      padding: 0px 0px 0px $cell-padding;
+    }
+
+    .cf-hearing-worksheet-issue-legacy-disposition {
       flex: 0 0 20%;
       padding: 0px 0px 0px $cell-padding;
     }
@@ -166,7 +193,7 @@ $body-font-size: 14px;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      margin: $cell-padding 0px;
+      margin: 5px 0px;
 
       .cf-form-checkboxes {
         flex: 0 0 16%;
@@ -217,6 +244,6 @@ $body-font-size: 14px;
 
   @page {
     size: 8.5in 11in;
-    margin: 0.3in 0.5in;
+    margin: 0.25in 0.25in;
   }
 }
