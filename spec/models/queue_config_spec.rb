@@ -79,6 +79,9 @@ describe QueueConfig do
         end
 
         context "when the organization has tasks assigned to it" do
+          before { FeatureToggle.enable!(:use_task_pages_api) }
+          after { FeatureToggle.disable!(:use_task_pages_api) }
+
           let!(:unassigned_tasks) { FactoryBot.create_list(:generic_task, 4, assigned_to: organization) }
           let!(:on_hold_tasks) { FactoryBot.create_list(:generic_task, 2, :on_hold, assigned_to: organization) }
           let!(:completed_tasks) { FactoryBot.create_list(:generic_task, 7, :completed, assigned_to: organization) }
@@ -131,6 +134,9 @@ describe QueueConfig do
         end
 
         context "when the VSO has tracking tasks assigned to it" do
+          before { FeatureToggle.enable!(:use_task_pages_api) }
+          after { FeatureToggle.disable!(:use_task_pages_api) }
+
           let!(:tracking_tasks) { FactoryBot.create_list(:track_veteran_task, 5, assigned_to: organization) }
 
           it "returns the tasks in the tracking tasks tabs" do
