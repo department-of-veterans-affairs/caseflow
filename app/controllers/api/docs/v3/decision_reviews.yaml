@@ -4,7 +4,7 @@ info:
   description: API version 0 for Decision Reviews provided by the Lighthouse Project
   version: 3.0.0
 servers:
-  - url: /lighthouse_api/{version}
+  - url: /api/{version}
 paths:
   /higher_level_reviews:
     post:
@@ -121,8 +121,6 @@ paths:
                         required:
                           - decision_text
                           - decision_date
-                          - ineligible_due_to_id
-                          - ineligible_reason
                           - withdrawal_date
                           - nonrating_issue_category
                         properties:
@@ -131,18 +129,16 @@ paths:
                           decision_date:
                             type: string
                             format: date
-                          ineligible_due_to_id:
-                            type: string
-                          ineligible_reason:
-                            type: string
                           withdrawal_date:
                             type: string
                             format: date
                           nonrating_issue_category:
                             $ref: "#/components/schemas/nonrating_issue_category"
       responses:
-        '200':
+        '202':
           description: Created
+        '400':
+          description: Invalid Request
         '500':
           description: Failed
 components:
