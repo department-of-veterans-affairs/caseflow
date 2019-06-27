@@ -46,14 +46,22 @@ class TaskPager
   #   tasks
   # end
 
+  def task_page_count
+    @task_page_count ||= paged_tasks.total_pages
+  end
+
+  def total_task_count
+    @total_task_count ||= tasks_for_tab.count
+  end
+
   def tasks_for_tab
     case tab_name
     when Constants.QUEUE_CONFIG.TRACKING_TASKS_TAB_NAME
       tracking_tasks
     when Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
-      unassigned_tasks
+      active_tasks
     when Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME
-      assigned_tasks
+      on_hold_tasks
     when Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
       recently_completed_tasks
     else
@@ -67,12 +75,12 @@ class TaskPager
     TrackVeteranTask.includes(*task_includes).active.where(assigned_to: assignee)
   end
 
-  def unassigned_tasks
+  def active_tasks
     Task.includes(*task_includes)
       .visible_in_queue_table_view.where(assigned_to: assignee).active
   end
 
-  def assigned_tasks
+  def on_hold_tasks
     Task.includes(*task_includes)
       .visible_in_queue_table_view.where(assigned_to: assignee).on_hold
   end
