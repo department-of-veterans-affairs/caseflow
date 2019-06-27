@@ -19,7 +19,8 @@ RSpec.feature "AmaQueue" do
         expect(current_path).to eq "/search"
       end
     end
-    it "should be able to search for a case", skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-504416406" do
+    it "should be able to search for a case",
+       skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-504416406" do
       step "by veteran file number" do
         User.authenticate!(user: no_queue_user)
         visit "/queue"
