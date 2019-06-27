@@ -11,6 +11,7 @@ import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES.json';
 import { filterCurrentIssues, filterIssuesOnAppeal } from '../../utils';
 import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil';
 import { openPrintDialogue } from '../../../util/PrintUtil';
+import querystring from 'querystring';
 
 const getLegacyHearingWorksheetDocsSection = (appeal) => {
   return (
@@ -52,11 +53,15 @@ const getLegacyHearingWorksheetDocsSection = (appeal) => {
 export class HearingWorksheetPrinted extends React.Component {
 
   componentDidMount() {
-    window.onafterprint = () => window.close();
-
     document.title = getWorksheetTitle(this.props.worksheet);
 
-    openPrintDialogue();
+    const queryString = querystring.parse(window.location.search.slice(1));
+
+    if (!queryString['do_not_open_print_prompt']) {
+      window.onafterprint = () => window.close();
+
+      openPrintDialogue();
+    }    
   }
 
   isLegacy() {
