@@ -5,12 +5,22 @@ import DOMPurify from 'dompurify';
 import WorksheetFooter from './WorksheetFooter';
 import WorksheetHeader from './WorksheetHeader';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
+import { getWorksheetTitle } from './HearingWorksheet';
 import Table from '../../../components/Table';
 import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES.json';
 import { filterCurrentIssues, filterIssuesOnAppeal } from '../../utils';
 import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil';
+import { openPrintDialogue } from '../../../util/PrintUtil';
 
 export class HearingWorksheetPrinted extends React.Component {
+
+  componentDidMount() {
+    window.onafterprint = () => window.close();
+
+    document.title = getWorksheetTitle(this.props.worksheet);
+
+    openPrintDialogue();
+  }
 
   isLegacy() {
     const { worksheet } = this.props;
