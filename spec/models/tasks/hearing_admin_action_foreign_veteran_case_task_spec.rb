@@ -40,7 +40,7 @@ describe HearingAdminActionForeignVeteranCaseTask do
   end
 
   context "after update" do
-    let!(:regional_office_code) { "RO50"}
+    let!(:regional_office_code) { "RO50" }
 
     before do
       OrganizationsUser.add_user_to_organization(user, HearingsManagement.singleton)
