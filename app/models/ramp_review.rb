@@ -103,6 +103,10 @@ class RampReview < ApplicationRecord
     [end_product_modifier]
   end
 
+  def invalid_modifiers
+    []
+  end
+
   def remove_issues!
     issues.destroy_all unless issues.empty?
   end
@@ -124,7 +128,6 @@ class RampReview < ApplicationRecord
       code: end_product_code,
       payee_code: payee_code,
       claimant_participant_id: claimant_participant_id,
-      valid_modifiers: valid_modifiers,
       source: self,
       station: "397", # AMC
       benefit_type_code: veteran.benefit_type_code,
