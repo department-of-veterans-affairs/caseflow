@@ -57,11 +57,11 @@ export class HearingWorksheetPrinted extends React.Component {
 
     const queryString = querystring.parse(window.location.search.slice(1));
 
-    if (!queryString['do_not_open_print_prompt']) {
+    if (!queryString.do_not_open_print_prompt) {
       window.onafterprint = () => window.close();
 
       openPrintDialogue();
-    }    
+    }
   }
 
   isLegacy() {

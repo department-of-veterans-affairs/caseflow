@@ -59,9 +59,10 @@ class HearingWorksheetStream extends Component {
                 }
                 <div className="cf-help-divider" />
               </div>;
-            } else {
-              return null;
             }
+
+            return null;
+
           })
         }
       </div>
