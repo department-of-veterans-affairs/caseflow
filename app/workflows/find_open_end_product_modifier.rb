@@ -29,7 +29,8 @@ class FindOpenEndProductModifier
   # In decision reviews, we may create 2 end products at the same time. To avoid using
   # the same modifier, we add used modifiers to the invalid_modifiers array.
   def invalid_modifiers
-    @invalid_modifiers = (source.respond_to?(:invalid_modifiers) && source.invalid_modifiers) || []
+    @invalid_modifiers = (end_product_establishment.source.respond_to?(:invalid_modifiers) &&
+      end_product_establishment.source.invalid_modifiers) || []
   end
 
   def valid_modifiers
