@@ -10,7 +10,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
   let!(:schedule_hearing_task) { create(:schedule_hearing_task, :completed, appeal: appeal) }
   let!(:verify_address_task) do
     create(
-      :hearing_admin_action_verify_address_task, 
+      :hearing_admin_action_verify_address_task,
       parent: parent_hearing_task,
       appeal: appeal,
       assigned_to: HearingsManagement.singleton,
@@ -20,7 +20,7 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
 
   describe "UI tests" do
     let(:instructions_text) { "This is why I want to cancel the task!" }
-    
+
     context "with a hearing admin member" do
       before do
         OrganizationsUser.add_user_to_organization(user, HearingAdmin.singleton)
@@ -62,7 +62,8 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
 
           click_button("Confirm")
 
-          expect(page).to have_content COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
+          expect(page)
+            .to have_content COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
         end
 
         it "can submit form with Regional Office and notes" do
@@ -71,7 +72,8 @@ RSpec.shared_examples "Address Verify Task Frontend Workflow" do
 
           click_button("Confirm")
 
-          expect(page).to have_content COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
+          expect(page)
+            .to have_content COPY::CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE_MODAL_UPDATED_SUCCESS_TITLE
         end
       end
     end

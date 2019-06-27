@@ -662,10 +662,11 @@ describe EndProductEstablishment do
     context "when a matching end product has been established" do
       let(:reference_id) { matching_ep.claim_id }
       let(:status_type_code) { "CLR" }
+      let(:claim_type_code) { "030HLRR" }
       let!(:matching_ep) do
         Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
-          bgs_attrs: { status_type_code: status_type_code }
+          bgs_attrs: { status_type_code: status_type_code, claim_type_code: claim_type_code }
         )
       end
 
@@ -741,6 +742,19 @@ describe EndProductEstablishment do
           it "does not fail" do
             subject
           end
+        end
+      end
+
+      context "when the end product has been cleared and no decision issues are expected" do
+        let(:status_type_code) { "CLR" }
+        let(:claim_type_code) { "400RA" }
+
+        it "closes request issues with no_decision" do
+          subject
+
+          expect(end_product_establishment.reload.synced_status).to eq("CLR")
+          expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
+          expect(request_issues.first.closed_status).to eq("no_decision")
         end
       end
 

@@ -15,7 +15,9 @@ describe Docket do
     end
 
     # priority
-    let!(:aod_age_appeal) { create(:appeal, :advanced_on_docket_due_to_age, :with_tasks, docket_type: "direct_review") }
+    let!(:aod_age_appeal) do
+      create(:appeal, :advanced_on_docket_due_to_age, :with_tasks, docket_type: "direct_review")
+    end
     let!(:aod_motion_appeal) do
       create(:appeal, :advanced_on_docket_due_to_motion, :with_tasks, docket_type: "direct_review")
     end
@@ -64,7 +66,6 @@ describe Docket do
             it has at least one Distribution Task with status assigned
             AND
             it doesn't have any blocking Mail Tasks." do
-
           expected_appeals = [
             appeal,
             denied_aod_motion_appeal,
@@ -121,7 +122,8 @@ describe Docket do
         end
 
         context "blocking mail tasks with status completed or cancelled" do
-          it "includes those appeals", skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-503269122" do
+          it "includes those appeals",
+             skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-503269122" do
             with_blocking_but_closed_tasks = create(:appeal, :with_tasks, docket_type: "direct_review")
             FoiaRequestMailTask.create_from_params({
                                                      appeal: with_blocking_but_closed_tasks,
