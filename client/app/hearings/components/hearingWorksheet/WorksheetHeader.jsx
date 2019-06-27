@@ -89,7 +89,7 @@ class WorksheetHeader extends React.PureComponent {
 
     return disposition ? disposition.label : '';
   }
-    
+
   render() {
     const { worksheet } = this.props;
     const olderVeteran = worksheet.veteran_age > 74;
@@ -109,11 +109,11 @@ class WorksheetHeader extends React.PureComponent {
           <div className="cf-hearings-headers">{worksheet.judge ? worksheet.judge.full_name : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? "HEARING TYPE" : "HEAR. TYPE"}</h4>
+          <h4>{!this.props.print ? 'HEARING TYPE' : 'HEAR. TYPE'}</h4>
           <div className="cf-hearings-headers">{worksheet.readable_request_type}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? "REGIONAL OFFICE" : "R.O."}</h4>
+          <h4>{!this.props.print ? 'REGIONAL OFFICE' : 'R.O.'}</h4>
           <div className="cf-hearings-headers">{worksheet.regional_office_name}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
@@ -122,7 +122,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
-            <h4>{!this.props.print ? "HEARING DISPOSITION" : "HEAR. DISP."}</h4>
+            <h4>{!this.props.print ? 'HEARING DISPOSITION' : 'HEAR. DISP.'}</h4>
             <div className={classNames('cf-hearings-headers', dispositionClassNames)}>
               {this.getDisposition(worksheet.disposition)}
             </div>
@@ -133,7 +133,7 @@ class WorksheetHeader extends React.PureComponent {
       <div className="cf-hearings-worksheet-data">
         <h2 className="cf-hearings-worksheet-header">Veteran/Appellant Information</h2>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? "VETERAN NAME" : "VETERAN"}</h4>
+          <h4>{!this.props.print ? 'VETERAN NAME' : 'VETERAN'}</h4>
           <div className="cf-hearings-headers"><b>
             {`${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`}
           </b></div>
@@ -177,18 +177,18 @@ class WorksheetHeader extends React.PureComponent {
           <div className="cf-hearings-headers">{this.getVeteranGender(worksheet.veteran_gender)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? "APPELLANT NAME" : "APPELLANT"}</h4>
+          <h4>{!this.props.print ? 'APPELLANT NAME' : 'APPELLANT'}</h4>
           <div className="cf-hearings-headers">{this.getAppellantName(worksheet)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
           <h4>CITY/STATE</h4>
           <div className="cf-hearings-headers">
             {worksheet.appellant_city && worksheet.appellant_state ?
-            `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}
+              `${worksheet.appellant_city}, ${worksheet.appellant_state}` : ''}
           </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? "POWER OF ATTORNEY" : "POWER OF ATTY."}</h4>
+          <h4>{!this.props.print ? 'POWER OF ATTORNEY' : 'POWER OF ATTY.'}</h4>
           <div className="cf-hearings-headers">
             {worksheet.representative}
           </div>
@@ -198,7 +198,7 @@ class WorksheetHeader extends React.PureComponent {
       <form className="cf-hearings-worksheet-form">
         <div {...firstColumnStyling}>
           <WorksheetFormEntry
-            name={!this.props.print ? "Representative Name" : "Representative"}
+            name={!this.props.print ? 'Representative Name' : 'Representative'}
             value={worksheet.representative_name}
             onChange={this.onRepNameChange}
             id="appellant-vet-rep-name"
@@ -209,7 +209,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div {...secondColumnStyling}>
           <WorksheetFormEntry
-            name={!this.props.print ? "Witness (W)/Observer (O) and Additional Details" : "Witness/Observer and Misc."}
+            name={!this.props.print ? 'Witness (W)/Observer (O) and Additional Details' : 'Witness/Observer and Misc.'}
             value={worksheet.witness}
             onChange={this.onWitnessChange}
             id="appellant-vet-witness"

@@ -101,7 +101,7 @@ export class HearingWorksheet extends React.PureComponent {
 
   onSummaryChange = (value) => this.props.onSummaryChange(value);
 
-  getLegacyHearingWorksheet = () => { 
+  getLegacyHearingWorksheet = () => {
     return (
       <div>
         <HearingWorksheetDocs {...this.props} />

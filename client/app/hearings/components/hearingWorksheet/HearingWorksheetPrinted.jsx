@@ -19,9 +19,9 @@ export class HearingWorksheetPrinted extends React.Component {
 
   getHearingWorksheetIssuesSection(appeal) {
     const { worksheetIssues } = this.props;
-    const currentIssues = appeal
-      ? filterCurrentIssues(filterIssuesOnAppeal(worksheetIssues, appeal.id))
-      : worksheetIssues;
+    const currentIssues = appeal ?
+      filterCurrentIssues(filterIssuesOnAppeal(worksheetIssues, appeal.id)) :
+      worksheetIssues;
 
     if (_.isEmpty(currentIssues)) {
       return;
@@ -42,8 +42,8 @@ export class HearingWorksheetPrinted extends React.Component {
                 <p>{issue.disposition}</p>
               </div>
               {
-                issue.notes && 
-                <div className="cf-hearing-worksheet-issue-field cf-hearing-worksheet-issue-notes">
+                issue.notes &&
+                <div className="cf-hearing-worksheet-issue-field">
                   <h4>Notes</h4>
                   <p>{issue.notes}</p>
                 </div>
@@ -82,7 +82,7 @@ export class HearingWorksheetPrinted extends React.Component {
         <div className="cf-hearings-worksheet-data-cell">
           <h4>Certification</h4>
           <div className="cf-hearings-headers">
-            {!appeal.certification_date ? "Not certified" : formatDateStr(appeal.certification_date)}
+            {!appeal.certification_date ? 'Not certified' : formatDateStr(appeal.certification_date)}
           </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell double">
@@ -96,7 +96,7 @@ export class HearingWorksheetPrinted extends React.Component {
   getLegacyHearingSection() {
     const { worksheetAppeals } = this.props;
 
-    //worksheetAppeals["1"] = worksheetAppeals["23"];//test
+    // worksheetAppeals["1"] = worksheetAppeals["23"];//test
 
     return (
       <div>
@@ -105,8 +105,8 @@ export class HearingWorksheetPrinted extends React.Component {
             <div key={key} className="cf-hearings-appeal-procedural-history">
               <h4>
                 Appeal Stream {key + 1} - Docket #{appeal.docket_number}
-                {appeal.contested_claim && "  CC"}
-                {appeal.dic && "  DIC"}
+                {appeal.contested_claim && '  CC'}
+                {appeal.dic && '  DIC'}
               </h4>
               {this.getLegacyHearingWorksheetDocsSection(appeal)}
               {this.getHearingWorksheetIssuesSection(appeal)}
@@ -123,7 +123,7 @@ export class HearingWorksheetPrinted extends React.Component {
     return (
       <div>
         <WorksheetFooter veteranName={worksheet.veteran_fi_last_formatted} />
-        <WorksheetHeader print={true} />
+        <WorksheetHeader print />
         {this.isLegacy && this.getLegacyHearingSection()}
         {
           !this.isLegacy && !_.isEmpty(worksheetIssues) &&
@@ -134,8 +134,8 @@ export class HearingWorksheetPrinted extends React.Component {
         <form className="cf-hearings-worksheet-form" id="cf-hearings-worksheet-summary">
           <div className="cf-hearings-worksheet-data">
             <label>Hearing Summary</label>
-            <div 
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary).replace(/\r|\n/g, "") }}
+            <div
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary).replace(/\r|\n/g, '') }}
             />
           </div>
         </form>
