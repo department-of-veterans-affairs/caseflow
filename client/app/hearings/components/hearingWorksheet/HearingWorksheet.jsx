@@ -48,6 +48,10 @@ const DEFAULT_SUMMARY_VALUE = '<p><strong>Contentions</strong></p> <p></p>' +
   '<p></p> <p><strong>Evidence</strong></p> <p></p> <p></p> <p><strong>Comments' +
   ' and special instructions to attorneys</strong></span></p> <p></p> <p></p>';
 
+export const getWorksheetTitle = (worksheet) => (
+  `${worksheet.veteran_first_name[0]}. ${worksheet.veteran_last_name}'s Hearing Worksheet`
+);
+
 class WorksheetFormEntry extends React.PureComponent {
 
   render() {
@@ -77,14 +81,8 @@ class WorksheetFormEntry extends React.PureComponent {
 
 export class HearingWorksheet extends React.PureComponent {
   componentDidMount() {
-    document.title = this.getWorksheetTitle();
+    document.title = getWorksheetTitle(this.props.worksheet);
   }
-
-  getWorksheetTitle = () => {
-    const { worksheet } = this.props;
-
-    return `${worksheet.veteran_first_name[0]}. ${worksheet.veteran_last_name}'s Hearing Worksheet`;
-  };
 
   save = (worksheet, worksheetIssues) => () => {
     this.props.saveWorksheet(worksheet);
