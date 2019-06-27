@@ -17,8 +17,7 @@ gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/conn
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
-# Use jquery as the JavaScript library
-gem "jquery-rails"
+gem "kaminari"
 # active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
 gem "loofah", ">= 2.2.3"
 gem "moment_timezone-rails"

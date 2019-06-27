@@ -118,9 +118,8 @@ describe "Withdrawing an appeal" do
   def remove_all_eligible_request_issues
     appeal = appeal_with_ineligible_request_issues
     ineligible_request_issue = appeal.request_issues.where.not(ineligible_reason: nil).first
-    eligible_request_issue = appeal.request_issues.where(ineligible_reason: nil).first
     request_issues_data = [
-      { request_issue_id: ineligible_request_issue.id },
+      { request_issue_id: ineligible_request_issue.id }
     ]
 
     RequestIssuesUpdate.new(
@@ -132,7 +131,6 @@ describe "Withdrawing an appeal" do
 
   def withdraw_request_issue_and_leave_other_one_closed
     appeal = appeal_with_closed_request_issues
-    closed_request_issue = appeal.request_issues.where.not(closed_at: nil).first
     eligible_request_issue = appeal.request_issues.where(closed_at: nil).first
     request_issues_data = [
       { request_issue_id: eligible_request_issue.id, withdrawal_date: Time.zone.now }
@@ -175,7 +173,7 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_tasks,
-        docket_type: "direct_review",
+        docket_type: "direct_review"
       )
       appeal.request_issues = build_list(
         :request_issue, 2, contested_issue_description: "Knee pain", decision_review: appeal
@@ -191,7 +189,7 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_tasks,
-        docket_type: "direct_review",
+        docket_type: "direct_review"
       )
       eligible_request_issue = create(
         :request_issue,
@@ -216,7 +214,7 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_tasks,
-        docket_type: "direct_review",
+        docket_type: "direct_review"
       )
       eligible_request_issue = create(
         :request_issue,
