@@ -109,11 +109,11 @@ class WorksheetHeader extends React.PureComponent {
           <div className="cf-hearings-headers">{worksheet.judge ? worksheet.judge.full_name : ''}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? 'HEARING TYPE' : 'HEAR. TYPE'}</h4>
+          <h4>{this.props.print ? 'HEAR. TYPE' : 'HEARING TYPE'}</h4>
           <div className="cf-hearings-headers">{worksheet.readable_request_type}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? 'REGIONAL OFFICE' : 'R.O.'}</h4>
+          <h4>{this.props.print ? 'R.O.' : 'REGIONAL OFFICE'}</h4>
           <div className="cf-hearings-headers">{worksheet.regional_office_name}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
@@ -122,7 +122,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         {worksheet.scheduled_for && new Date(worksheet.scheduled_for) < new Date() &&
           <div className="cf-hearings-worksheet-data-cell">
-            <h4>{!this.props.print ? 'HEARING DISPOSITION' : 'HEAR. DISP.'}</h4>
+            <h4>{this.props.print ? 'HEAR. DISP.' : 'HEARING DISPOSITION'}</h4>
             <div className={classNames('cf-hearings-headers', dispositionClassNames)}>
               {this.getDisposition(worksheet.disposition)}
             </div>
@@ -133,7 +133,7 @@ class WorksheetHeader extends React.PureComponent {
       <div className="cf-hearings-worksheet-data">
         <h2 className="cf-hearings-worksheet-header">Veteran/Appellant Information</h2>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? 'VETERAN NAME' : 'VETERAN'}</h4>
+          <h4>{this.props.print ? 'VETERAN' : 'VETERAN NAME'}</h4>
           <div className="cf-hearings-headers"><b>
             {`${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`}
           </b></div>
@@ -141,7 +141,11 @@ class WorksheetHeader extends React.PureComponent {
         <div className="cf-hearings-worksheet-data-cell">
           <h4>VETERAN ID</h4>
           {
-            !this.props.print ? (
+            this.props.print ? (
+              <div className="cf-hearings-headers">
+                {worksheet.veteran_file_number}
+              </div>
+            ) : (
               <div {...copyButtonStyling}>
                 <Tooltip text="Click to copy to clipboard">
                   <CopyToClipboard text={worksheet.veteran_file_number}>
@@ -153,10 +157,6 @@ class WorksheetHeader extends React.PureComponent {
                     </button>
                   </CopyToClipboard>
                 </Tooltip>
-              </div>
-            ) : (
-              <div className="cf-hearings-headers">
-                {worksheet.veteran_file_number}
               </div>
             )
           }
@@ -188,7 +188,7 @@ class WorksheetHeader extends React.PureComponent {
           </div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? 'POWER OF ATTORNEY' : 'POWER OF ATTY.'}</h4>
+          <h4>{this.props.print ? 'POWER OF ATTY.' : 'POWER OF ATTORNEY'}</h4>
           <div className="cf-hearings-headers">
             {worksheet.representative}
           </div>
@@ -198,7 +198,7 @@ class WorksheetHeader extends React.PureComponent {
       <form className="cf-hearings-worksheet-form">
         <div {...firstColumnStyling}>
           <WorksheetFormEntry
-            name={!this.props.print ? 'Representative Name' : 'Representative'}
+            name={this.props.print ? 'Representative' : 'Representative Name'}
             value={worksheet.representative_name}
             onChange={this.onRepNameChange}
             id="appellant-vet-rep-name"

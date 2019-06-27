@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
 import HearingWorksheetStream from './HearingWorksheetStream';
 import WorksheetHeader from './WorksheetHeader';
 import AutoSave from '../../../components/AutoSave';

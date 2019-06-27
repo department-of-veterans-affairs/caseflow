@@ -32,7 +32,7 @@ class HearingWorksheetStream extends Component {
     return (
       <div>
         {
-          Object.values(this.props.worksheetAppeals).map((appeal, key) => {
+          Object.values(this.props.worksheetAppeals).forEach((appeal, key) => {
             const appealIssues = filterIssuesOnAppeal(this.props.worksheetIssues, appeal.id);
             const appealWorksheetIssues = prior ? filterPriorIssues(appealIssues) : filterCurrentIssues(appealIssues);
             const currentIssueCount = issueCount;

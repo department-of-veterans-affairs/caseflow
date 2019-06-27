@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -6,11 +7,47 @@ import WorksheetFooter from './WorksheetFooter';
 import WorksheetHeader from './WorksheetHeader';
 import HearingWorksheetPreImpressions from './HearingWorksheetPreImpressions';
 import { getWorksheetTitle } from './HearingWorksheet';
-import Table from '../../../components/Table';
 import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES.json';
 import { filterCurrentIssues, filterIssuesOnAppeal } from '../../utils';
 import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil';
 import { openPrintDialogue } from '../../../util/PrintUtil';
+
+const getLegacyHearingWorksheetDocsSection = (appeal) => {
+  return (
+    <div className="cf-hearings-worksheet-data">
+      <div className="cf-hearings-worksheet-data-cell">
+        <h4>Prior BVA Deci.</h4>
+        <div className="cf-hearings-headers">{formatDateStr(appeal.prior_bva_decision_date)}</div>
+      </div>
+      <div className="cf-hearings-worksheet-data-cell">
+        <h4>NOD</h4>
+        <div className="cf-hearings-headers">{formatDateStr(appeal.nod_date)}</div>
+      </div>
+      <div className="cf-hearings-worksheet-data-cell">
+        <h4>SOC</h4>
+        <div className="cf-hearings-headers">{formatDateStr(appeal.soc_date)}</div>
+      </div>
+      <div className="cf-hearings-worksheet-data-cell">
+        <h4>Form 9</h4>
+        <div className="cf-hearings-headers">{formatDateStr(appeal.form9_date)}</div>
+      </div>
+      <div className="cf-hearings-worksheet-data-cell">
+        <h4>SSOC</h4>
+        <div className="cf-hearings-headers">{formatArrayOfDateStrings(appeal.ssoc_dates)}</div>
+      </div>
+      <div className="cf-hearings-worksheet-data-cell">
+        <h4>Certification</h4>
+        <div className="cf-hearings-headers">
+          {appeal.certification_date ? formatDateStr(appeal.certification_date) : 'Not certified'}
+        </div>
+      </div>
+      <div className="cf-hearings-worksheet-data-cell double">
+        <h4>Docs since Cert.</h4>
+        <div className="cf-hearings-headers">{appeal.cached_number_of_documents_after_certification}</div>
+      </div>
+    </div>
+  );
+};
 
 export class HearingWorksheetPrinted extends React.Component {
 
@@ -99,43 +136,6 @@ export class HearingWorksheetPrinted extends React.Component {
     );
   }
 
-  getLegacyHearingWorksheetDocsSection(appeal) {
-    return (
-      <div className="cf-hearings-worksheet-data">
-        <div className="cf-hearings-worksheet-data-cell">
-          <h4>Prior BVA Deci.</h4>
-          <div className="cf-hearings-headers">{formatDateStr(appeal.prior_bva_decision_date)}</div>
-        </div>
-        <div className="cf-hearings-worksheet-data-cell">
-          <h4>NOD</h4>
-          <div className="cf-hearings-headers">{formatDateStr(appeal.nod_date)}</div>
-        </div>
-        <div className="cf-hearings-worksheet-data-cell">
-          <h4>SOC</h4>
-          <div className="cf-hearings-headers">{formatDateStr(appeal.soc_date)}</div>
-        </div>
-        <div className="cf-hearings-worksheet-data-cell">
-          <h4>Form 9</h4>
-          <div className="cf-hearings-headers">{formatDateStr(appeal.form9_date)}</div>
-        </div>
-        <div className="cf-hearings-worksheet-data-cell">
-          <h4>SSOC</h4>
-          <div className="cf-hearings-headers">{formatArrayOfDateStrings(appeal.ssoc_dates)}</div>
-        </div>
-        <div className="cf-hearings-worksheet-data-cell">
-          <h4>Certification</h4>
-          <div className="cf-hearings-headers">
-            {!appeal.certification_date ? 'Not certified' : formatDateStr(appeal.certification_date)}
-          </div>
-        </div>
-        <div className="cf-hearings-worksheet-data-cell double">
-          <h4>Docs since Cert.</h4>
-          <div className="cf-hearings-headers">{appeal.cached_number_of_documents_after_certification}</div>
-        </div>
-      </div>
-    );
-  }
-
   getLegacyHearingSection() {
     const { worksheetAppeals } = this.props;
 
@@ -150,7 +150,7 @@ export class HearingWorksheetPrinted extends React.Component {
                 {appeal.contested_claim && '  CC'}
                 {appeal.dic && '  DIC'}
               </h4>
-              {this.getLegacyHearingWorksheetDocsSection(appeal)}
+              {getLegacyHearingWorksheetDocsSection(appeal)}
               {this.getHearingWorksheetIssuesSection(appeal)}
             </div>
           ))
