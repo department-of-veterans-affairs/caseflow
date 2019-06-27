@@ -25,7 +25,7 @@ describe EndProductEstablishment do
   let(:reference_id) { nil }
   let(:same_office) { false }
   let(:source) { create(:higher_level_review, veteran_file_number: veteran_file_number, same_office: same_office) }
-  let(:invalid_modifiers) { nil }
+  let(:invalid_modifiers) { [] }
   let(:synced_status) { nil }
   let(:committed_at) { nil }
   let(:fake_claim_id) { "FAKECLAIMID" }
@@ -208,7 +208,7 @@ describe EndProductEstablishment do
       end
 
       it "returns NoAvailableModifiers error" do
-        expect { subject }.to raise_error(FindOpenEndProductModifier::NoAvailableModifiers)
+        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
       end
     end
 
@@ -241,7 +241,7 @@ describe EndProductEstablishment do
       end
 
       it "considers those EP modifiers as closed" do
-        expect { subject }.to raise_error(FindOpenEndProductModifier::NoAvailableModifiers)
+        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
       end
     end
 
