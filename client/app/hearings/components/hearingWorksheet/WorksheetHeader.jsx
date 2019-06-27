@@ -177,7 +177,7 @@ class WorksheetHeader extends React.PureComponent {
           <div className="cf-hearings-headers">{this.getVeteranGender(worksheet.veteran_gender)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
-          <h4>{!this.props.print ? 'APPELLANT NAME' : 'APPELLANT'}</h4>
+          <h4>{this.props.print ? 'APPELLANT' : 'APPELLANT NAME'}</h4>
           <div className="cf-hearings-headers">{this.getAppellantName(worksheet)}</div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
@@ -209,7 +209,7 @@ class WorksheetHeader extends React.PureComponent {
         </div>
         <div {...secondColumnStyling}>
           <WorksheetFormEntry
-            name={!this.props.print ? 'Witness (W)/Observer (O) and Additional Details' : 'Witness/Observer and Misc.'}
+            name={this.props.print ? 'Witness/Observer and Misc.' : 'Witness (W)/Observer (O) and Additional Details'}
             value={worksheet.witness}
             onChange={this.onWitnessChange}
             id="appellant-vet-witness"
