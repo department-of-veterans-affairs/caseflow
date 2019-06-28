@@ -27,6 +27,8 @@ class User < ApplicationRecord
 
   before_create :normalize_css_id
 
+  delegate :to_s, to: :css_id
+
   def username
     css_id
   end
