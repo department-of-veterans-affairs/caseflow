@@ -62,8 +62,7 @@ const FilterSummary = ({ filteredByList, clearFilteredByList }) => {
 
 FilterSummary.propTypes = {
   filteredByList: PropTypes.object.isRequired,
-  clearFilteredByList: PropTypes.func.isRequired,
-  alternateColumnNames: PropTypes.object
+  clearFilteredByList: PropTypes.func.isRequired
 };
 
 export default FilterSummary;
