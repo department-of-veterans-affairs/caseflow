@@ -187,6 +187,10 @@ class Veteran < ApplicationRecord
     super || ptcpnt_id
   end
 
+  def ssn
+    super || bgs_record[:ssn]
+  end
+
   def validate_address
     VADotGovService.validate_address(
       address_line1: address_line1,
@@ -388,7 +392,7 @@ class Veteran < ApplicationRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type, :first_name, :last_name, :name_suffix]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn]
   end
 
   def military_address?
