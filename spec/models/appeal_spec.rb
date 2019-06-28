@@ -468,11 +468,13 @@ describe Appeal do
     end
 
     context "request issue has non-comp business line" do
-      let!(:appeal) { create(:appeal, request_issues: [
-        create(:request_issue, benefit_type: :fiduciary),
-        create(:request_issue, benefit_type: :compensation),
-        create(:request_issue, :unidentified)
-        ]) }
+      let!(:appeal) do
+        create(:appeal, request_issues: [
+                 create(:request_issue, benefit_type: :fiduciary),
+                 create(:request_issue, benefit_type: :compensation),
+                 create(:request_issue, :unidentified)
+               ])
+      end
 
       it "creates root task and veteran record request task" do
         expect(VeteranRecordRequest).to receive(:create!).once
@@ -1546,19 +1548,6 @@ describe Appeal do
         expect(subject[0][:type]).to eq("scheduled_hearing")
         expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
         expect(subject[0][:details][:type]).to eq("video")
-      end
-    end
-  end
-
-  describe ".withdrawn?" do
-    context "when root task is cancelled" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-
-      it "is withdrawn" do
-        expect(appeal.withdrawn?).to eq(false)
-        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
-        expect(appeal.withdrawn?).to eq(true)
       end
     end
   end

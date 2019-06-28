@@ -162,7 +162,8 @@ RSpec.feature "Quality Review workflow" do
         click_on "Continue"
 
         expect(page).to have_content(
-          "Thank you for drafting #{veteran_full_name}'s decision. It's been sent to #{judge_user.full_name} for review."
+          "Thank you for drafting #{veteran_full_name}'s decision. " \
+          "It's been sent to #{judge_user.full_name} for review."
         )
       end
 

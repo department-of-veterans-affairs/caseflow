@@ -7,6 +7,7 @@ import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
 import HearingWorksheet from '../components/hearingWorksheet/HearingWorksheet';
+import HearingWorksheetPrinted from '../components/hearingWorksheet/HearingWorksheetPrinted';
 
 class HearingWorksheetContainer extends React.Component {
 
@@ -29,10 +30,11 @@ class HearingWorksheetContainer extends React.Component {
           }}
           failStatusMessageProps={{
             title: 'Unable to load the hearing worksheet.'
-          }}>
-          <HearingWorksheet
-            print={this.props.print}
-          />
+          }}
+        >
+          {
+            this.props.print ? <HearingWorksheetPrinted /> : <HearingWorksheet />
+          }
         </LoadingDataDisplay>
       </React.Fragment>
     );

@@ -575,7 +575,6 @@ DEPENDENCIES
   foreman
   guard-rspec
   holidays (~> 6.4)
-  jquery-rails
   jshint
   kaminari
   loofah (>= 2.2.3)

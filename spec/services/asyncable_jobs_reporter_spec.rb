@@ -87,7 +87,8 @@ describe AsyncableJobsReporter do
   describe "#as_csv" do
     it "returns a CSV-formatted string" do
       csv = subject.as_csv
-      expect(csv).to match /SupplementalClaim,\d+,#{6.days.ago},#{6.days.ago},#{7.days.ago},bad,#{veteran.participant_id}/
+      expect(csv)
+        .to match(/SupplementalClaim,\d+,#{6.days.ago},#{6.days.ago},#{7.days.ago},bad,#{veteran.participant_id}/)
       expect(CSV.parse(csv).count).to eq(7) # jobs + header
     end
   end
