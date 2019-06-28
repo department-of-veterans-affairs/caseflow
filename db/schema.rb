@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190628164424) do
+ActiveRecord::Schema.define(version: 20190628171759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1037,7 +1037,7 @@ ActiveRecord::Schema.define(version: 20190628164424) do
     t.string "last_name"
     t.string "middle_name"
     t.string "name_suffix"
-    t.string "participant_id", null: false
+    t.string "participant_id", default: "0", null: false
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
   end
 
