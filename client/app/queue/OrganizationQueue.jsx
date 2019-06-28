@@ -21,7 +21,10 @@ import {
 } from './selectors';
 import { tasksWithAppealsFromRawTasks } from './utils';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
-import { fullWidth } from './constants';
+import {
+  COLUMN_NAMES,
+  fullWidth
+} from './constants';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
 
 const containerStyles = css({
@@ -109,6 +112,7 @@ class OrganizationQueue extends React.PureComponent {
           numberOfPages={tabConfig.task_page_count}
           totalTaskCount={tabConfig.total_task_count}
           taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
+          alternateColumnNames={COLUMN_NAMES}
           enablePagination
         />
       </React.Fragment>

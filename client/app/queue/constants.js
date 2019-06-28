@@ -170,7 +170,8 @@ export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DU
 
 export const COLUMN_NAMES = {
   'appeal.caseType': 'Case Type',
-  'appeal.docketName': 'Docket Number',
+  'appeal.docketName': COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+  'assignedTo.name': COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
   'closestRegionalOffice.location_hash.city': 'Regional Office',
   label: 'Task(s)'
 };
