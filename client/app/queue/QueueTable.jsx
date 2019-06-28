@@ -428,7 +428,6 @@ export default class QueueTable extends React.PureComponent {
     }}>
       <FilterSummary
         filteredByList={this.state.filteredByList}
-        alternateColumnNames={this.props.alternateColumnNames}
         clearFilteredByList={(newList) => this.updateFilteredByList(newList)} />
       { paginationElements }
       { body }
@@ -460,7 +459,6 @@ QueueTable.propTypes = {
   userReadableColumnNames: PropTypes.object,
   useTaskPagesApi: PropTypes.bool,
   taskPagesApiEndpoint: PropTypes.string,
-  alternateColumnNames: PropTypes.object,
   enablePagination: PropTypes.bool,
   casesPerPage: PropTypes.number
 };
