@@ -73,7 +73,11 @@ class OrganizationQueue extends React.PureComponent {
 
   columnsFromConfig = (tabConfig, tasks) => {
     return tabConfig.columns.map((column) => {
-      return this.createColumnObject(column, tabConfig, tasks);
+      return {
+        ...this.createColumnObject(column, tabConfig, tasks),
+        // Add name to column hash so we can address same column when handling requests on front- and back-end.
+        name: column
+      };
     });
   }
 

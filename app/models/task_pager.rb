@@ -6,8 +6,8 @@ class TaskPager
   validates :tab_name, presence: true
   validate :assignee_is_user_or_organization
 
-  attr_accessor :assignee, :tab_name, :page
-  # attr_accessor :filters, :sort_by, :sort_order
+  attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order
+  # attr_accessor :filters
 
   TASKS_PER_PAGE = 15
 
@@ -15,25 +15,37 @@ class TaskPager
     super
 
     @page ||= 1
+    @sort_by ||= Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
+    @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
   def paged_tasks
-    tasks_for_tab.order(:created_at).page(page).per(TASKS_PER_PAGE)
+    sorted_tasks(tasks_for_tab).page(page).per(TASKS_PER_PAGE)
   end
 
-  # sorted_tasks(filtered_tasks(tasks_for_tab)).page(page).per(TASKS_PER_PAGE)
-  #
-  # # TODO: Enable sorting on fields in different tables.
-  # def sorted_tasks(tasks)
-  #   # TODO: Validate that we are sorting on a valid field
-  #   @sort_by ||= "created_at"
-  #   @sort_order ||= "asc" # TODO: Check that sort_order is either asc/desc
-  #
-  #   tasks.order(sort_by => sort_order)
-  # end
-  #
+  # TODO: Is there a more rails-y way of doing this?
+  def sorted_tasks(tasks)
+    case sort_by
+    when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
+      tasks.order(type: sort_order.to_sym, action: sort_order.to_sym)
+    # Columns not yet supported:
+    #
+    # APPEAL_TYPE_COLUMN
+    # CASE_DETAILS_LINK_COLUMN
+    # DAYS_ON_HOLD_COLUMN
+    # DOCUMENT_COUNT_READER_LINK_COLUMN
+    # DOCKET_NUMBER_COLUMN
+    # HEARING_BADGE_COLUMN
+    # ISSUE_COUNT_COLUMN
+    # REGIONAL_OFFICE_COLUMN
+    # TASK_ASSIGNEE_COLUMN
+    else
+      tasks.order(:created_at)
+    end
+  end
+
   # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
   # def filtered_tasks(tasks)
   #   filters&.each do |filter_string|

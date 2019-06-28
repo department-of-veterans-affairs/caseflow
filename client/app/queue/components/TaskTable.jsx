@@ -105,6 +105,8 @@ export const taskColumn = (tasks) => {
     label: 'Filter by task',
     valueName: 'label',
     valueFunction: (task) => actionNameOfTask(task),
+    // TODO: Can we move this value to the back-end?
+    backendCanSort: true,
     getSortValue: (task) => actionNameOfTask(task)
   };
 };

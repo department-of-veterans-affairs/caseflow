@@ -16,6 +16,7 @@ import {
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
 
 /**
  * This component can be used to easily build tables.
@@ -68,8 +69,8 @@ const HeaderRow = (props) => {
         let sortIcon;
         let filterIcon;
 
-        // Temporarily disable sorting and filtering until we support those features in the task page API.
-        if (!props.useTaskPagesApi && column.getSortValue) {
+        // TODO: Check if the column is back-end sort-able.
+        if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
           const topColor = props.sortColIdx === columnNumber && !props.sortAscending ?
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
@@ -77,7 +78,7 @@ const HeaderRow = (props) => {
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
 
-          sortIcon = <span {...iconStyle} onClick={() => props.setSortOrder(columnNumber)}>
+          sortIcon = <span {...iconStyle} onClick={() => props.setSortOrder(columnNumber, column.name)}>
             <DoubleArrow topColor={topColor} bottomColor={botColor} />
           </span>;
         }
@@ -193,6 +194,7 @@ export default class QueueTable extends React.PureComponent {
     const state = {
       sortAscending: true,
       sortColIdx: null,
+      sortColName: null,
       areDropdownFiltersOpen: {},
       filteredByList: {},
       tasksFromApi: [],
@@ -286,20 +288,53 @@ export default class QueueTable extends React.PureComponent {
     return paginatedData;
   }
 
+  setColumnSortOrder = (colIdx, colName) => this.setState(
+    {
+      sortColIdx: colIdx,
+      sortColName: colName,
+      sortAscending: !this.state.sortAscending
+    },
+    this.requestTasks
+  );
+
   updateCurrentPage = (newPage) => {
-    this.setState({ currentPage: newPage });
-    this.requestNewPage(newPage);
+    this.setState(
+      { currentPage: newPage },
+      this.requestTasks
+    );
   }
 
-  requestNewPage = (newPage) => {
+  // /organizations/vlj-support-staff/tasks?tab=on_hold
+  // &page=2
+  // &sort_by=detailsColumn
+  // &order=desc
+  requestUrl = () => {
+    // Request currentPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
+    const params = { [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: this.state.currentPage + 1 };
+
+    if (this.state.sortColName) {
+      params[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] = this.state.sortColName;
+      params[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] = this.state.sortAscending ?
+        QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC :
+        QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
+    }
+
+    const queryString = Object.keys(params).map(
+      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+    ).
+      join('&');
+
+    return `${this.props.taskPagesApiEndpoint}&${queryString}`;
+  }
+
+  requestTasks = () => {
     if (!this.props.useTaskPagesApi) {
       return;
     }
 
     this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
-    // Request newPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
-    return ApiUtil.get(`${this.props.taskPagesApiEndpoint}&page=${newPage + 1}`).then((response) => {
+    return ApiUtil.get(this.requestUrl()).then((response) => {
       const {
         tasks: { data: tasks }
       } = JSON.parse(response.text);
@@ -400,10 +435,7 @@ export default class QueueTable extends React.PureComponent {
         <HeaderRow
           columns={columns}
           headerClassName={headerClassName}
-          setSortOrder={(colIdx, ascending = !this.state.sortAscending) => this.setState({
-            sortColIdx: colIdx,
-            sortAscending: ascending
-          })}
+          setSortOrder={this.setColumnSortOrder}
           toggleDropdownFilterVisibility={this.toggleDropdownFilterVisibility}
           isDropdownFilterOpen={this.state.areDropdownFiltersOpen}
           updateFilteredByList={this.updateFilteredByList}
@@ -454,6 +486,7 @@ QueueTable.propTypes = {
   styling: PropTypes.object,
   defaultSort: PropTypes.shape({
     sortColIdx: PropTypes.number,
+    sortColName: PropTypes.string,
     sortAscending: PropTypes.bool
   }),
   userReadableColumnNames: PropTypes.object,
