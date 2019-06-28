@@ -35,7 +35,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :can_edit_request_issues do |object, params|
-    params[:user]&.can_edit_request_issues?(object)
+    AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).editable?
   end
 
   attribute(:hearings) { |object| hearings(object) }
@@ -86,6 +86,7 @@ class WorkQueue::AppealSerializer
   attribute :docket_range_date
   attribute :decision_date
   attribute :nod_date, &:receipt_date
+  attribute :withdrawal_date
 
   attribute :certification_date do
     nil

@@ -495,14 +495,7 @@ RSpec.feature "Search" do
   end
 
   context "has withdrawn decision reviews" do
-    let!(:caseflow_appeal) do
-      create(:appeal,
-             :with_tasks)
-    end
-
-    before do
-      caseflow_appeal.root_task.cancelled!
-    end
+    let!(:caseflow_appeal) { create(:appeal) }
 
     def perform_search
       visit "/search"
@@ -510,8 +503,12 @@ RSpec.feature "Search" do
       click_on "Search"
     end
 
-    scenario "withdraw entire review and show withdrawn on search page" do
+    it "shows 'Withdrawn' text on search results page" do
+      policy = instance_double(WithdrawnDecisionReviewPolicy)
+      allow(WithdrawnDecisionReviewPolicy).to receive(:new).with(caseflow_appeal).and_return policy
+      allow(policy).to receive(:satisfied?).and_return true
       perform_search
+
       expect(page).to have_content("Withdrawn")
     end
   end

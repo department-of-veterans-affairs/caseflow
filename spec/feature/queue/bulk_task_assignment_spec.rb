@@ -17,15 +17,15 @@ RSpec.feature "Bulk task assignment" do
       task_type.click
       number_of_tasks = options.find { |option| option.text =~ /3/ }
       number_of_tasks.click
+      expect(page).to_not have_content("Please select a value")
       submit = all("button", text: "Assign Tasks")[0]
       submit.click
     end
 
-    it "is able to bulk assign tasks for the hearing management org", skip: "flake https://github.com/department-of-veterans-affairs/caseflow/issues/10516#issuecomment-504168657" do
+    it "is able to bulk assign tasks for the hearing management org", skip: "flake" do
       3.times do
         FactoryBot.create(:no_show_hearing_task)
       end
-      success_msg = "You have bulk assigned 3 No Show Hearing Task task(s)"
       visit("/organizations/hearings-management")
       click_button(text: "Assign Tasks")
       expect(page).to have_content("Bulk Assign Tasks")
@@ -37,10 +37,9 @@ RSpec.feature "Bulk task assignment" do
       expect(page).to_not have_content("Loading")
 
       fill_in_and_submit_bulk_assign_modal
-      expect(page).to have_content(success_msg)
       expect(page).to have_content("Assigned (3)")
+      expect(NoShowHearingTask.where(assigned_to: user).size).to eq 3
     end
-
 
     it "filters regional office by task types" do
       # RO17 == St. Petersburg
