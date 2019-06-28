@@ -118,7 +118,7 @@ describe Distribution do
     let!(:due_direct_review_cases) do
       (0...6).map do
         create(:appeal,
-               :with_tasks,
+               :with_post_intake_tasks,
                docket_type: "direct_review",
                receipt_date: 11.months.ago,
                target_decision_date: 1.month.from_now)
@@ -127,7 +127,7 @@ describe Distribution do
 
     let!(:priority_direct_review_case) do
       appeal = create(:appeal,
-                      :with_tasks,
+                      :with_post_intake_tasks,
                       :advanced_on_docket_due_to_age,
                       docket_type: "direct_review",
                       receipt_date: 1.month.ago)
@@ -138,7 +138,7 @@ describe Distribution do
     let!(:other_direct_review_cases) do
       (0...20).map do
         create(:appeal,
-               :with_tasks,
+               :with_post_intake_tasks,
                docket_type: "direct_review",
                receipt_date: 61.days.ago,
                target_decision_date: 304.days.from_now)
@@ -147,13 +147,13 @@ describe Distribution do
 
     let!(:evidence_submission_cases) do
       (0...43).map do
-        create(:appeal, :with_tasks, docket_type: "evidence_submission")
+        create(:appeal, :with_post_intake_tasks, docket_type: "evidence_submission")
       end
     end
 
     let!(:hearing_cases) do
       (0...43).map do
-        create(:appeal, :with_tasks, docket_type: "hearing")
+        create(:appeal, :with_post_intake_tasks, docket_type: "hearing")
       end
     end
 

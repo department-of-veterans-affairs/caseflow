@@ -541,7 +541,7 @@ class SeedDB
 
     FactoryBot.create(
       :appeal,
-      :with_tasks,
+      :with_post_intake_tasks,
       number_of_claimants: 1,
       closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
@@ -893,7 +893,7 @@ class SeedDB
 
     appeal = FactoryBot.create(
       :appeal,
-      :with_tasks,
+      :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: vet.file_number,
       docket_type: "hearing",
@@ -1099,7 +1099,7 @@ class SeedDB
 
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :with_tasks,
+      :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
@@ -1110,7 +1110,7 @@ class SeedDB
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :with_tasks,
+      :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",

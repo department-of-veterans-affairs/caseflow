@@ -26,7 +26,7 @@ describe Appeal do
   end
 
   context "active appeals" do
-    let!(:active_appeal) { create(:appeal, :with_tasks) }
+    let!(:active_appeal) { create(:appeal, :with_post_intake_tasks) }
     let!(:inactive_appeal) { create(:appeal, :outcoded) }
 
     subject { Appeal.active }
