@@ -361,12 +361,26 @@ To run caseflow:
 ```
 foreman start
 ```
-**Note:**  If you had just run `bundle exec rake local:build` to set up your local environment, docker-compose has already been called, and the docker containers you need are running in the background. If these containers are stopped or killed—restarting your computer, running `docker-compose down`, etc.—you must start them back up.
 
-For example, after restarting your computer, you must instead run:
+**Note:** The Docker containers must always be running in order for the Rails application to start successfully. Some rake tasks will start them automatically, but if you restart your computer or otherwise stop Docker, you'll want to run `docker-compose up -d` to start the containers initially.
+
 ```
 docker-compose up -d
 foreman start
+```
+
+Spinning up the docker containers is fast, but not instantaneous Occasionally, running `foreman start` *immediately* after `docker-compose up -d`, can cause the rails server to fail to start because not all of the containers are ready. For example, the following _may_ not work:
+
+```
+docker-compose up -d && foreman start
+```
+
+`Makefile.example` provides a bunch of useful shortcuts, one of which is the `run` directive. `run` will ensure that all of the dockers containers are ready before running `foreman start`.
+
+Example:
+
+```
+make -f Makefile.example run
 ```
 
 #### Separate Front & Backend Servers ####################################################
