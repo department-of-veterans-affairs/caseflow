@@ -10,6 +10,7 @@ import { getWorksheetTitle } from './HearingWorksheet';
 import BENEFIT_TYPES from '../../../../constants/BENEFIT_TYPES.json';
 import { filterCurrentIssues, filterIssuesOnAppeal } from '../../utils';
 import { formatDateStr, formatArrayOfDateStrings } from '../../../util/DateUtil';
+import { formatNameShort } from '../../../util/FormatUtil';
 import { openPrintDialogue } from '../../../util/PrintUtil';
 import querystring from 'querystring';
 
@@ -169,7 +170,9 @@ export class HearingWorksheetPrinted extends React.Component {
 
     return (
       <div>
-        <WorksheetFooter veteranName={worksheet.veteran_fi_last_formatted} />
+        <WorksheetFooter
+          veteranName={formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}
+        />
         <WorksheetHeader print />
         {this.isLegacy() && this.getLegacyHearingSection()}
         {
