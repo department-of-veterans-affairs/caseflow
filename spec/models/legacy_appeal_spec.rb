@@ -1621,7 +1621,9 @@ describe LegacyAppeal do
     let(:vacols_case) { create(:case) }
     subject { appeal.veteran }
 
-    let(:veteran_record) { { file_number: appeal.sanitized_vbms_id, first_name: "Ed", last_name: "Merica" } }
+    let(:veteran_record) do
+      { file_number: appeal.sanitized_vbms_id, first_name: "Ed", last_name: "Merica", ptcpnt_id: "1234" }
+    end
 
     before do
       Fakes::BGSService.veteran_records = { appeal.sanitized_vbms_id => veteran_record }
