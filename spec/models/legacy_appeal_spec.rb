@@ -1630,7 +1630,6 @@ describe LegacyAppeal do
     end
 
     it "returns veteran loaded with BGS values" do
-      binding.pry
       is_expected.to have_attributes(first_name: "Ed", last_name: "Merica")
     end
   end
