@@ -121,8 +121,8 @@ paths:
                         required:
                           - decision_text
                           - decision_date
-                          - withdrawal_date
-                          - nonrating_issue_category
+                          # withdrawal_date (NOT required)
+                          # nonrating_issue_category (NOT required)
                         properties:
                           decision_text:
                             type: string
