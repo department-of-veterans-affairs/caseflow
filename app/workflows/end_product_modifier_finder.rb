@@ -39,6 +39,7 @@ class EndProductModifierFinder
                            CORRECTION_END_PRODUCT_MODIFIERS
                          else
                            end_product_establishment_source.valid_modifiers
+                         end
   end
 
   def end_product_establishment_source
