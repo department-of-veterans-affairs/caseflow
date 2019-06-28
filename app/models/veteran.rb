@@ -331,7 +331,7 @@ class Veteran < ApplicationRecord
     # veteran, we should never see this error. Reporting it to sentry if it happens
     unless error.message.match?(/Sensitive File/)
       Raven.capture_exception(error)
-      raise error
+      fail error
     end
 
     # Set the veteran as inaccessible if a sensitivity error is thrown
