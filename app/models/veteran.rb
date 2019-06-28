@@ -111,8 +111,8 @@ class Veteran < ApplicationRecord
     result = bgs.fetch_veteran_info(file_number)
 
     # If the result is nil, the veteran wasn't found.
-    # If the file number is nil, that's another way of saying the veteran wasn't found.
-    result && result[:file_number] && result
+    # If the participant id is nil, that's another way of saying the veteran wasn't found.
+    return result if result && result[:ptcpnt_id]
   rescue BGS::ShareError => error
     @access_error = error.message
 
