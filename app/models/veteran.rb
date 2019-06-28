@@ -11,7 +11,7 @@ class Veteran < ApplicationRecord
            foreign_key: :veteran_file_number,
            primary_key: :file_number, class_name: "AvailableHearingLocations"
 
-  bgs_attr_accessor :ptcpnt_id, :sex, :ssn, :address_line1, :address_line2,
+  bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
                     :service, :date_of_birth, :date_of_death
@@ -203,7 +203,7 @@ class Veteran < ApplicationRecord
     return false unless accessible? && bgs_record.is_a?(Hash)
 
     is_stale = (first_name.nil? || last_name.nil?)
-    [:first_name, :last_name, :middle_name, :name_suffix].each do |name|
+    [:first_name, :last_name, :middle_name, :name_suffix, :ssn].each do |name|
       is_stale = true if self[name] != bgs_record[name]
     end
     is_stale
