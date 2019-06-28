@@ -210,7 +210,7 @@ class Veteran < ApplicationRecord
   end
 
   def update_cached_attributes!
-    [:first_name, :last_name, :middle_name, :name_suffix].each do |attr|
+    [:first_name, :last_name, :middle_name, :name_suffix, :ssn].each do |attr|
       self[attr] = bgs_record[attr]
     end
     save!
