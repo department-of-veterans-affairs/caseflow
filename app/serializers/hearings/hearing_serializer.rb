@@ -50,9 +50,6 @@ class HearingSerializer
   attribute :transcription
   attribute :uuid
   attribute :veteran_age, if: for_full
-  attribute :veteran_fi_last_formatted, if: for_worksheet do |hearing|
-    FullName.new(hearing.veteran_first_name, "", hearing.veteran_last_name).formatted(:readable_fi_last_formatted)
-  end
   attribute :veteran_file_number
   attribute :veteran_first_name
   attribute :veteran_gender, if: for_full

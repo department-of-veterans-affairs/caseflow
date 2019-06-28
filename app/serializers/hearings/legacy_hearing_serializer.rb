@@ -55,7 +55,6 @@ class LegacyHearingSerializer
   attribute :vbms_id
   attribute :venue
   attribute :veteran_age, if: for_worksheet, &:fetch_veteran_age
-  attribute :veteran_fi_last_formatted, if: for_worksheet
   attribute :veteran_file_number
   attribute :veteran_first_name
   attribute :veteran_gender, if: for_worksheet, &:fetch_veteran_gender
