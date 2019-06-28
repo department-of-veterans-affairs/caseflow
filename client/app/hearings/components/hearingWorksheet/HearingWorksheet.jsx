@@ -10,6 +10,7 @@ import WorksheetHeaderVeteranSelection from './WorksheetHeaderVeteranSelection';
 import ContestedIssues from '../../../queue/components/ContestedIssues';
 import { now } from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
+import { formatNameShort } from '../../../util/FormatUtil';
 import CFRichTextEditor from '../../../components/CFRichTextEditor';
 import Button from '../../../components/Button';
 import ContentSection from '../../../components/ContentSection';
@@ -48,7 +49,7 @@ const DEFAULT_SUMMARY_VALUE = '<p><strong>Contentions</strong></p> <p></p>' +
   ' and special instructions to attorneys</strong></span></p> <p></p> <p></p>';
 
 export const getWorksheetTitle = (worksheet) => (
-  `${worksheet.veteran_first_name[0]}. ${worksheet.veteran_last_name}'s Hearing Worksheet`
+  `${formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}'s Hearing Worksheet`
 );
 
 class WorksheetFormEntry extends React.PureComponent {

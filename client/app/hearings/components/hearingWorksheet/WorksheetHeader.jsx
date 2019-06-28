@@ -13,6 +13,7 @@ import _ from 'lodash';
 import { DISPOSITION_OPTIONS } from '../../constants';
 import Tooltip from '../../../components/Tooltip';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
+import { formatNameLong, formatNameLongReversed } from '../../../util/FormatUtil';
 
 class WorksheetFormEntry extends React.PureComponent {
   render() {
@@ -78,10 +79,10 @@ class WorksheetHeader extends React.PureComponent {
 
   getAppellantName = (worksheet) => {
     if (worksheet.appellant_first_name && worksheet.appellant_last_name) {
-      return `${worksheet.appellant_last_name}, ${worksheet.appellant_first_name}`;
+      return formatNameLongReversed(worksheet.appellant_first_name, worksheet.appellant_last_name);
     }
 
-    return `${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`;
+    return formatNameLongReversed(worksheet.veteran_first_name, worksheet.veteran_last_name);
   }
 
   getDisposition = (dispositionSymbol) => {
@@ -100,7 +101,9 @@ class WorksheetHeader extends React.PureComponent {
 
     return <div>
       <div className="title">
-        <h1>{`${worksheet.veteran_first_name} ${worksheet.veteran_last_name}`}'s Hearing Worksheet</h1>
+        <h1>
+          {`${formatNameLong(worksheet.veteran_first_name, worksheet.veteran_last_name)}`}'s Hearing Worksheet
+        </h1>
       </div>
 
       <div className="cf-hearings-worksheet-data">
@@ -135,7 +138,7 @@ class WorksheetHeader extends React.PureComponent {
         <div className="cf-hearings-worksheet-data-cell">
           <h4>{this.props.print ? 'VETERAN' : 'VETERAN NAME'}</h4>
           <div className="cf-hearings-headers"><b>
-            {`${worksheet.veteran_last_name}, ${worksheet.veteran_first_name}`}
+            {`${formatNameLongReversed(worksheet.veteran_first_name, worksheet.veteran_last_name)}`}
           </b></div>
         </div>
         <div className="cf-hearings-worksheet-data-cell">
