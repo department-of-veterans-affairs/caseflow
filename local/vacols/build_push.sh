@@ -14,6 +14,8 @@ USAGE=$(cat <<-END
 END
 )
 
+THIS_SCRIPT_DIR=$(dirname $0)
+
 if [[ $# -eq 0 ]] ; then
   echo "$USAGE"
   exit 0
@@ -41,8 +43,7 @@ if [[ $# -gt 1 ]]; then
 fi
 
 build(){
-  parent_dir=$(dirname $0)
-  build_facols_dir="${parent_dir}/build_facols"
+  build_facols_dir="${THIS_SCRIPT_DIR}/build_facols"
 
   echo "${bold}Building FACOLS from Base Oracle...${normal}"
 
@@ -103,7 +104,7 @@ push(){
 
 download(){
   # get circleci latest image from this same repo
-  facols_image=$(cat ../../.circleci/config.yml| grep facols | awk '{print $3}')
+  facols_image=$(cat ${THIS_SCRIPT_DIR}/../../.circleci/config.yml| grep facols | awk '{print $3}')
   eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
   docker pull $facols_image
   docker tag $facols_image vacols_db:latest
