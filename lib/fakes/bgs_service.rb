@@ -585,7 +585,7 @@ class Fakes::BGSService
   def fetch_file_number_by_ssn(ssn)
     return if ssn_not_found
 
-    self.class.veteran_records.each do |file_number, rec|
+    (self.class.veteran_records || {}).each do |file_number, rec|
       if rec[:ssn].to_s == ssn.to_s
         return file_number
       end
