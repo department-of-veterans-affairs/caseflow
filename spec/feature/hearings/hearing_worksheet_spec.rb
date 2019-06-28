@@ -54,7 +54,7 @@ RSpec.feature "Hearing prep" do
       expect(page).to have_content("These are the notes being taken here")
       expect(page).to have_content("This is military service")
 
-      visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet/print?do_not_open_print_prompt=1"
+      visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet/print?keep_open=true"
       expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
       expect(page).to have_content("These are the notes being taken here")
