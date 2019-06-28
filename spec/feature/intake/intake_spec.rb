@@ -96,7 +96,6 @@ feature "Intake" do
 
       fill_in search_bar_title, with: "5678"
       click_on "Search"
-
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Veteran ID not found")
 
@@ -121,6 +120,22 @@ feature "Intake" do
       expect(page).to have_current_path("/intake/search")
       expect(page).to have_content("Something went wrong")
       expect(page).to have_content(/Error code \w+-\w+-\w+-\w+/)
+    end
+
+    scenario "Search for a veteran with an incident flash" do
+      allow_any_instance_of(Veteran).to receive(:incident_flash?).and_return true
+      visit "/intake"
+      select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+      safe_click ".cf-submit.usa-button"
+
+      expect(page).to have_content(search_page_title)
+
+      fill_in search_bar_title, with: "12341234"
+      click_on "Search"
+
+      expect(page).to have_current_path("/intake/search")
+      expect(page).to have_content("The Veteran has an incident flash")
+      expect(page).to have_content(COPY::INCIDENT_FLASH_ERROR_START)
     end
 
     context "Veteran has too high of a sensitivity level for user" do
@@ -282,6 +297,41 @@ feature "Intake" do
         # verify user can proceed with new intake
         visit "/intake"
         expect(page).to have_content("Welcome to Caseflow Intake!")
+      end
+    end
+
+    context "Veteran has reserved file number" do
+      let!(:current_user) do
+        User.authenticate!(roles: ["Admin Intake"])
+      end
+
+      before do
+        FeatureToggle.enable!(:intake_reserved_file_number, users: [current_user.css_id])
+      end
+
+      after do
+        FeatureToggle.disable!(:intake_reserved_file_number, users: [current_user.css_id])
+      end
+
+      let(:veteran) do
+        Generators::Veteran.build(
+          file_number: "123456789",
+          address_line1: "this address is more than 20 chars",
+          first_name: "Ed",
+          last_name: "Merica"
+        )
+      end
+
+      scenario "Search for a veteran with reserved file_number" do
+        visit "/intake"
+        select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
+        safe_click ".cf-submit.usa-button"
+
+        fill_in search_bar_title, with: "123456789"
+        click_on "Search"
+
+        expect(page).to have_current_path("/intake/search")
+        expect(page).to have_content("Invalid file number")
       end
     end
   end

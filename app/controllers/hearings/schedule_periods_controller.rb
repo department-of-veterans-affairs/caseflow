@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-class Hearings::SchedulePeriodsController < HearingScheduleController
+class Hearings::SchedulePeriodsController < HearingsApplicationController
+  include HearingsConcerns::VerifyAccess
+
   before_action :verify_build_hearing_schedule_access
 
   def index
@@ -32,7 +34,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
 
   def create
     file_name = params["schedule_period"]["type"] + Time.zone.now.to_s + ".xlsx"
-    uploaded_file = Base64Service.to_file(params["file"], file_name)
+    uploaded_file = Base64Service.to_file(params["schedule_period"]["file"], file_name)
     S3Service.store_file(SchedulePeriod::S3_SUB_BUCKET + "/" + file_name, uploaded_file.tempfile, :filepath)
     schedule_period = SchedulePeriod.create!(schedule_period_params.merge(user_id: current_user.id,
                                                                           file_name: file_name))
@@ -63,7 +65,7 @@ class Hearings::SchedulePeriodsController < HearingScheduleController
   private
 
   def schedule_period_params
-    params.require(:schedule_period).permit(:type, :file, :start_date, :end_date)
+    params.require(:schedule_period).permit(:type, :start_date, :end_date)
   end
 
   def schedule_period

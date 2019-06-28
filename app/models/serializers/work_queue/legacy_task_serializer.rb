@@ -12,6 +12,7 @@ class WorkQueue::LegacyTaskSerializer
   attribute :assigned_on
   attribute :docket_name
   attribute :docket_date
+  attribute :docket_range_date, &:docket_date
   attribute :appeal_id
   attribute :user_id
   attribute :added_by_name

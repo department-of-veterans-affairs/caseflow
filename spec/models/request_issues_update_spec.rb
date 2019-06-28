@@ -14,6 +14,10 @@ describe RequestIssuesUpdate do
     allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
   end
 
+  def allow_update_contention
+    allow(Fakes::VBMSService).to receive(:update_contention!).and_call_original
+  end
+
   # TODO: make it simpler to set up a completed claim review, with end product data
   # and contention data stubbed out properly
   let(:review) { create(:higher_level_review, veteran_file_number: veteran.file_number) }
@@ -46,30 +50,41 @@ describe RequestIssuesUpdate do
   let!(:vacols_sequence_id) { 1 }
   let!(:vacols_issue) { create(:case_issue, issseq: vacols_sequence_id) }
   let!(:vacols_case) { create(:case, bfkey: vacols_id, case_issues: [vacols_issue, create(:case_issue, issseq: 2)]) }
+  let(:edited_description) { "I am an edited description" }
   let(:legacy_appeal) do
     create(:legacy_appeal, vacols_case: vacols_case)
+  end
+  let(:contention_updated_at) { nil }
+
+  let!(:existing_request_issue) do
+    RequestIssue.new(
+      decision_review: review,
+      contested_rating_issue_profile_date: Time.zone.local(2017, 4, 5),
+      contested_rating_issue_reference_id: "issue1",
+      contention_reference_id: request_issue_contentions[0].id,
+      contested_issue_description: request_issue_contentions[0].text,
+      rating_issue_associated_at: 5.days.ago,
+      contention_updated_at: contention_updated_at
+    )
+  end
+
+  let!(:existing_legacy_opt_in_request_issue) do
+    RequestIssue.new(
+      decision_review: review,
+      contested_rating_issue_profile_date: Time.zone.local(2017, 4, 6),
+      contested_rating_issue_reference_id: "issue2",
+      contention_reference_id: request_issue_contentions[1].id,
+      contested_issue_description: request_issue_contentions[1].text,
+      rating_issue_associated_at: 5.days.ago,
+      vacols_id: vacols_id,
+      vacols_sequence_id: vacols_sequence_id
+    )
   end
 
   let!(:existing_request_issues) do
     [
-      RequestIssue.new(
-        decision_review: review,
-        contested_rating_issue_profile_date: Time.zone.local(2017, 4, 5),
-        contested_rating_issue_reference_id: "issue1",
-        contention_reference_id: request_issue_contentions[0].id,
-        contested_issue_description: request_issue_contentions[0].text,
-        rating_issue_associated_at: 5.days.ago
-      ),
-      RequestIssue.new(
-        decision_review: review,
-        contested_rating_issue_profile_date: Time.zone.local(2017, 4, 6),
-        contested_rating_issue_reference_id: "issue2",
-        contention_reference_id: request_issue_contentions[1].id,
-        contested_issue_description: request_issue_contentions[1].text,
-        rating_issue_associated_at: 5.days.ago,
-        vacols_id: vacols_id,
-        vacols_sequence_id: vacols_sequence_id
-      )
+      existing_request_issue,
+      existing_legacy_opt_in_request_issue
     ]
   end
 
@@ -100,14 +115,6 @@ describe RequestIssuesUpdate do
       }]
     end
 
-    let(:existing_legacy_opt_in_request_issue_id) do
-      review.request_issues.find { |issue| issue.vacols_sequence_id == vacols_sequence_id }.id
-    end
-
-    let(:existing_request_issue_id) do
-      existing_request_issues.first.id
-    end
-
     context "#veteran" do
       it "delegates to review" do
         expect(request_issues_update.veteran).to eq(request_issues_update.review.veteran)
@@ -135,7 +142,7 @@ describe RequestIssuesUpdate do
       end
 
       context "when new issues weren't added as part of the update" do
-        let(:request_issues_data) { [{ request_issue_id: existing_legacy_opt_in_request_issue_id }] }
+        let(:request_issues_data) { [{ request_issue_id: existing_legacy_opt_in_request_issue.id }] }
 
         it { is_expected.to eq([]) }
       end
@@ -149,15 +156,33 @@ describe RequestIssuesUpdate do
       subject { request_issues_update.removed_issues }
 
       context "when new issues were removed as part of the update" do
-        let(:request_issues_data) { [{ request_issue_id: existing_legacy_opt_in_request_issue_id }] }
+        let(:request_issues_data) { [{ request_issue_id: existing_legacy_opt_in_request_issue.id }] }
 
-        it { is_expected.to contain_exactly(RequestIssue.find(existing_request_issue_id)) }
+        it { is_expected.to contain_exactly(existing_request_issue) }
       end
 
       context "when new issues were added as part of the update" do
         let(:request_issues_data) { request_issues_data_with_new_issue }
 
         it { is_expected.to eq([]) }
+      end
+    end
+
+    context "#edited_issues" do
+      before do
+        request_issues_update.perform!
+      end
+
+      subject { request_issues_update.edited_issues }
+
+      context "when issue descriptions were edited as part of the update" do
+        let(:request_issues_data) do
+          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
+           { request_issue_id: existing_request_issue.id,
+             edited_description: edited_description }]
+        end
+
+        it { is_expected.to contain_exactly(existing_request_issue) }
       end
     end
 
@@ -176,14 +201,36 @@ describe RequestIssuesUpdate do
 
       context "when issues are exactly the same as existing issues" do
         let(:request_issues_data) do
-          [{ request_issue_id: existing_legacy_opt_in_request_issue_id },
-           { request_issue_id: existing_request_issue_id }]
+          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
+           { request_issue_id: existing_request_issue.id }]
         end
 
         it "fails and adds to errors" do
           expect(subject).to be_falsey
 
           expect(request_issues_update.error_code).to eq(:no_changes)
+        end
+      end
+
+      context "when an issue's contention text is edited" do
+        let(:request_issues_data) do
+          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
+           { request_issue_id: existing_request_issue.id,
+             edited_description: edited_description }]
+        end
+
+        it "updates the request issue's edited description" do
+          expect(subject).to be_truthy
+          expect(existing_request_issue.reload.edited_description).to eq(edited_description)
+        end
+
+        context "if the contention text has been updated in VBMS before" do
+          let(:contention_updated_at) { 1.day.ago }
+
+          it "resets contention_updated_at" do
+            subject
+            expect(existing_request_issue.reload.contention_updated_at).to be_nil
+          end
         end
       end
 
@@ -267,7 +314,7 @@ describe RequestIssuesUpdate do
 
       context "when issues contain a subset of existing issues" do
         # remove issue with legacy opt in
-        let(:request_issues_data) { [{ request_issue_id: existing_request_issue_id }] }
+        let(:request_issues_data) { [{ request_issue_id: existing_request_issue.id }] }
 
         let(:nonrating_end_product_establishment) do
           create(
@@ -297,15 +344,13 @@ describe RequestIssuesUpdate do
           )
 
           expect(request_issues_update.after_request_issue_ids).to contain_exactly(
-            existing_request_issue_id
+            existing_request_issue.id
           )
 
-          removed_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
-          expect(removed_issue.decision_review).to_not be_nil
-          expect(removed_issue.contention_removed_at).to_not be_nil
-          expect(removed_issue).to be_closed
-          expect(removed_issue).to be_removed
-          expect(removed_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
+          expect(existing_legacy_opt_in_request_issue.reload.contention_removed_at).to_not be_nil
+          expect(existing_legacy_opt_in_request_issue).to be_closed
+          expect(existing_legacy_opt_in_request_issue).to be_removed
+          expect(existing_legacy_opt_in_request_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
 
           expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
@@ -360,7 +405,7 @@ describe RequestIssuesUpdate do
         context "with decision issues" do
           let!(:deleted_decision_issue) do
             create(:decision_issue,
-                   request_issues: [RequestIssue.find(existing_legacy_opt_in_request_issue_id)],
+                   request_issues: [existing_legacy_opt_in_request_issue],
                    participant_id: veteran.participant_id)
           end
 
@@ -368,7 +413,7 @@ describe RequestIssuesUpdate do
             expect(subject).to be_truthy
 
             expect(RequestDecisionIssue.find_by(
-                     request_issue_id: existing_legacy_opt_in_request_issue_id,
+                     request_issue_id: existing_legacy_opt_in_request_issue.id,
                      decision_issue_id: deleted_decision_issue.id
                    )).to be_nil
 
@@ -379,8 +424,8 @@ describe RequestIssuesUpdate do
             let!(:not_deleted_decision_issue) do
               create(:decision_issue,
                      request_issues: [
-                       RequestIssue.find(existing_request_issue_id),
-                       RequestIssue.find(existing_legacy_opt_in_request_issue_id)
+                       existing_request_issue,
+                       existing_legacy_opt_in_request_issue
                      ],
                      participant_id: veteran.participant_id)
             end
@@ -389,7 +434,7 @@ describe RequestIssuesUpdate do
               expect(subject).to be_truthy
 
               expect(RequestDecisionIssue.find_by(
-                       request_issue_id: existing_legacy_opt_in_request_issue_id,
+                       request_issue_id: existing_legacy_opt_in_request_issue.id,
                        decision_issue_id: deleted_decision_issue.id
                      )).to be_nil
 
@@ -398,12 +443,12 @@ describe RequestIssuesUpdate do
               # record associating not_deleted_decision_issue with the deleted request issue
               # should be deleted
               expect(RequestDecisionIssue.find_by(
-                       request_issue_id: existing_legacy_opt_in_request_issue_id,
+                       request_issue_id: existing_legacy_opt_in_request_issue.id,
                        decision_issue_id: not_deleted_decision_issue.id
                      )).to be_nil
 
               expect(RequestDecisionIssue.find_by(
-                       request_issue_id: existing_request_issue_id,
+                       request_issue_id: existing_request_issue.id,
                        decision_issue_id: not_deleted_decision_issue.id
                      )).to_not be_nil
 
@@ -415,8 +460,8 @@ describe RequestIssuesUpdate do
 
       context "when an issue is withdrawn" do
         let(:request_issues_data) do
-          [{ request_issue_id: existing_legacy_opt_in_request_issue_id, withdrawal_date: Time.zone.now },
-           { request_issue_id: existing_request_issue_id }]
+          [{ request_issue_id: existing_legacy_opt_in_request_issue.id, withdrawal_date: Time.zone.now },
+           { request_issue_id: existing_request_issue.id }]
         end
 
         it "withdraws issue, removes contention, and does not rollback legacy issue opt in" do
@@ -435,15 +480,14 @@ describe RequestIssuesUpdate do
           )
 
           expect(request_issues_update.withdrawn_request_issue_ids).to contain_exactly(
-            existing_legacy_opt_in_request_issue_id
+            existing_legacy_opt_in_request_issue.id
           )
 
-          withdrawn_issue = RequestIssue.find_by(id: existing_legacy_opt_in_request_issue_id)
-          expect(withdrawn_issue.decision_review).to_not be_nil
-          expect(withdrawn_issue.contention_removed_at).to_not be_nil
-          expect(withdrawn_issue).to be_closed
-          expect(withdrawn_issue).to be_withdrawn
-          expect(withdrawn_issue.legacy_issue_optin.rollback_processed_at).to be_nil
+          expect(existing_legacy_opt_in_request_issue.reload.decision_review).to_not be_nil
+          expect(existing_legacy_opt_in_request_issue.contention_removed_at).to_not be_nil
+          expect(existing_legacy_opt_in_request_issue).to be_closed
+          expect(existing_legacy_opt_in_request_issue).to be_withdrawn
+          expect(existing_legacy_opt_in_request_issue.legacy_issue_optin.rollback_processed_at).to be_nil
 
           expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
@@ -465,7 +509,7 @@ describe RequestIssuesUpdate do
 
         context "when an issue is withdrawn and there are no more active issues" do
           let(:request_issues_data) do
-            [{ request_issue_id: existing_legacy_opt_in_request_issue_id, withdrawal_date: Time.zone.now }]
+            [{ request_issue_id: existing_legacy_opt_in_request_issue.id, withdrawal_date: Time.zone.now }]
           end
 
           let!(:in_progress_task) do
@@ -497,7 +541,7 @@ describe RequestIssuesUpdate do
       end
 
       context "when remove_contention raises VBMS service error" do
-        let(:request_issues_data) { [{ request_issue_id: existing_request_issue_id }] }
+        let(:request_issues_data) { [{ request_issue_id: existing_request_issue.id }] }
 
         it "saves error message and logs error" do
           capture_raven_log
@@ -572,13 +616,22 @@ describe RequestIssuesUpdate do
   context "#establish!" do
     let!(:before_issue) { create(:request_issue_with_epe, decision_review: review, contention_reference_id: "1") }
     let!(:after_issue) { create(:request_issue_with_epe, decision_review: review, contention_reference_id: "2") }
+    let(:edited_issue) do
+      create(
+        :request_issue_with_epe,
+        decision_review: review,
+        contention_reference_id: "3",
+        edited_description: edited_description
+      )
+    end
 
     let!(:riu) do
       create(:request_issues_update, :requires_processing,
              review: review,
              withdrawn_request_issue_ids: nil,
              before_request_issue_ids: [before_issue.id],
-             after_request_issue_ids: [after_issue.id])
+             after_request_issue_ids: [after_issue.id],
+             edited_request_issue_ids: [edited_issue.id])
     end
 
     let!(:before_issue_contention) do
@@ -597,11 +650,31 @@ describe RequestIssuesUpdate do
       )
     end
 
+    let!(:edited_issue_contention) do
+      Generators::Contention.build(
+        claim_id: edited_issue.end_product_establishment.reference_id,
+        text: "old request issue description",
+        id: "3"
+      )
+    end
+
+    before { allow_update_contention }
+
     subject { riu.establish! }
 
-    it "should be successful" do
-      expect(riu.withdrawn_request_issue_ids).to be_nil
+    it "should be successful and update contentions in VBMS" do
       expect(subject).to be_truthy
+
+      updated_contention = edited_issue_contention
+      updated_contention.text = edited_description
+      expect(Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
+      expect(edited_issue.reload.contention_updated_at).to eq(Time.zone.now)
+    end
+
+    it "should re-assign EPE user to RequestIssuesUpdate user" do
+      expect(review.end_product_establishments.map(&:user)).to_not include(riu.user)
+      subject
+      expect(review.end_product_establishments.map(&:user).uniq).to eq([riu.user])
     end
   end
 

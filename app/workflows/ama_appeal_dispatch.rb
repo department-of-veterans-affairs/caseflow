@@ -14,6 +14,7 @@ class AmaAppealDispatch
     complete_dispatch_task!
     complete_dispatch_root_task!
     close_request_issues_as_decided!
+    store_poa_participant_id
   rescue ActiveRecord::RecordInvalid => error
     if error.message.match?(/^Validation failed:/)
       raise(Caseflow::Error::OutcodeValidationFailure, message: error.message)
@@ -64,5 +65,9 @@ class AmaAppealDispatch
 
   def close_request_issues_as_decided!
     appeal.request_issues.each(&:close_decided_issue!)
+  end
+
+  def store_poa_participant_id
+    appeal.update!(poa_participant_id: appeal.power_of_attorney&.participant_id)
   end
 end

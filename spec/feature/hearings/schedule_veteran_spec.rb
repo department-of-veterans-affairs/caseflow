@@ -39,19 +39,34 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     let!(:veteran) { create(:veteran, file_number: "123454787") }
     let!(:hearing_location_dropdown_label) { "Hearing Location" }
+    let(:appellant_appeal_link_text) do
+      "#{legacy_appeal.appellant[:first_name]} #{legacy_appeal.appellant[:last_name]} | #{veteran.file_number}"
+    end
 
-    scenario "Schedule Veteran for central hearing" do
+    def navigate_to_schedule_veteran_modal
       visit "hearings/schedule/assign"
       expect(page).to have_content("Regional Office")
       click_dropdown(text: "Central")
       click_button("Legacy Veterans Waiting")
-      appeal_link = page.find(:xpath, "//tbody/tr/td[2]/a")
-      appeal_link.click
+      click_link appellant_appeal_link_text
       expect(page).not_to have_content("loading to VACOLS.", wait: 30)
       expect(page).to have_content("Currently active tasks", wait: 30)
       click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
       expect(page).to have_content("Time")
+    end
 
+    scenario "address from BGS is displayed in schedule veteran modal" do
+      navigate_to_schedule_veteran_modal
+
+      expect(page).to have_content FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1
+      expect(page).to have_content(
+        "#{FakeConstants.BGS_SERVICE.DEFAULT_CITY}, " \
+        "#{FakeConstants.BGS_SERVICE.DEFAULT_STATE} #{FakeConstants.BGS_SERVICE.DEFAULT_ZIP}"
+      )
+    end
+
+    scenario "Schedule Veteran for central hearing" do
+      navigate_to_schedule_veteran_modal
       # Wait for the contents of the dropdown to finish loading before clicking into the dropdown.
       expect(page).to have_content(hearing_location_dropdown_label)
       click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
@@ -128,14 +143,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
   end
 
   context "when scheduling an AMA hearing" do
-    before do
-      FeatureToggle.enable!(:ama_acd_tasks)
-    end
-
-    after do
-      FeatureToggle.disable!(:ama_acd_tasks)
-    end
-
     let!(:hearing_day) do
       create(
         :hearing_day,

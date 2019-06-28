@@ -37,6 +37,28 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     let!(:legacy_hearing) { create(:legacy_hearing, vacols_id: case_hearing.hearing_pkseq, appeal: legacy_appeal) }
     let!(:staff) { create(:staff, stafkey: "RO18", stc2: 2, stc3: 3, stc4: 4) }
 
+    before do
+      FeatureToggle.enable!(:use_representative_info_from_bgs)
+    end
+
+    after do
+      FeatureToggle.disable!(:use_representative_info_from_bgs)
+    end
+
+    scenario "address and poa info from BGS is displayed on docket page" do
+      visit "hearings/schedule/docket/" + hearing_day.id.to_s
+      expect(page).to have_content FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1
+      expect(page).to have_content(
+        [
+          FakeConstants.BGS_SERVICE.DEFAULT_CITY,
+          FakeConstants.BGS_SERVICE.DEFAULT_STATE,
+          FakeConstants.BGS_SERVICE.DEFAULT_ZIP
+        ].join(" ")
+      )
+
+      expect(page).to have_content FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME
+    end
+
     scenario "User can update fields" do
       visit "hearings/schedule/docket/" + hearing_day.id.to_s
       click_dropdown(name: "#{legacy_hearing.external_id}-disposition", index: 1)
@@ -62,7 +84,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
     let!(:hearing) { create(:hearing, :with_tasks) }
     let!(:postponed_hearing_day) { create(:hearing_day, scheduled_for: Date.new(2019, 3, 3)) }
 
-    scenario "User can update fields" do
+    scenario "User can update fields", skip: "flake click_dropdown" do
       visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
       fill_in "Notes", with: "This is a note about the hearing!"
       find("label", text: "9:00 am").click
@@ -86,7 +108,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       create(:hearing_task_association, hearing: hearing, hearing_task: create(:hearing_task, appeal: hearing.appeal))
     end
     let!(:disposition_task) do
-      create(:disposition_task,
+      create(:assign_hearing_disposition_task,
              parent: hearing_task_association.hearing_task,
              appeal: hearing.appeal,
              status: Constants.TASK_STATUSES.completed)
@@ -171,6 +193,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
 
     context "with an AMA hearing" do
       let!(:hearing) { create(:hearing, :with_tasks, hearing_day: hearing_day) }
+      let!(:person) { Person.find_by(participant_id: hearing.appeal.appellant.participant_id) }
 
       scenario "User can update hearing prep fields" do
         visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
@@ -193,7 +216,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
         let!(:aod_motion) do
           AdvanceOnDocketMotion.create!(
             user_id: create(:user).id,
-            person_id: hearing.claimant_id,
+            person_id: person.id,
             granted: false,
             reason: "age"
           )
@@ -217,7 +240,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
         let!(:aod_motion) do
           AdvanceOnDocketMotion.create!(
             user_id: create(:user).id,
-            person_id: hearing.claimant_id,
+            person_id: person.id,
             granted: true,
             reason: "age"
           )
@@ -234,7 +257,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
         let!(:aod_motion) do
           AdvanceOnDocketMotion.create!(
             user_id: current_user.id,
-            person_id: hearing.claimant_id,
+            person_id: person.id,
             granted: true,
             reason: "age"
           )

@@ -7,36 +7,45 @@ describe BulkTaskAssignment do
     let(:organization) { HearingsManagement.singleton }
     let!(:no_show_hearing_task1) do
       FactoryBot.create(
-        :no_show_hearing_task, 
-        assigned_to: organization, 
-        created_at: 5.days.ago)
+        :no_show_hearing_task,
+        assigned_to: organization,
+        created_at: 5.days.ago
+      )
     end
     let!(:no_show_hearing_task2) do
-      FactoryBot.create(:no_show_hearing_task, 
-        assigned_to: organization, 
-        created_at: 2.days.ago)
+      FactoryBot.create(:no_show_hearing_task,
+                        assigned_to: organization,
+                        created_at: 2.days.ago)
     end
     let!(:no_show_hearing_task3) do
-      FactoryBot.create(:no_show_hearing_task, 
-        assigned_to: organization, 
-        created_at: 1.days.ago)
+      FactoryBot.create(:no_show_hearing_task,
+                        assigned_to: organization,
+                        created_at: 1.day.ago)
+    end
+
+    # Even it is the oldest task, it should skip it becasue it is on hold
+    let!(:no_show_hearing_task4) do
+      FactoryBot.create(:no_show_hearing_task,
+                        assigned_to: organization,
+                        status: :on_hold,
+                        created_at: 6.days.ago)
     end
 
     let(:assigned_to) { create(:user) }
     let(:assigned_by) { create(:user) }
 
-    let(:params) do 
+    let(:params) do
       {
-        assigned_to_id: assigned_to.id, 
-        assigned_by: assigned_by, 
-        organization_id: organization_id, 
-        task_type: task_type, 
-        task_count: task_count, 
+        assigned_to_id: assigned_to.id,
+        assigned_by: assigned_by,
+        organization_url: organization_url,
+        task_type: task_type,
+        task_count: task_count,
         regional_office: regional_office
       }
     end
     let(:task_type) { "NoShowHearingTask" }
-    let(:organization_id) { organization.id }
+    let(:organization_url) { organization.url }
     let(:task_count) { 2 }
     let(:regional_office) { nil }
 
@@ -45,7 +54,7 @@ describe BulkTaskAssignment do
         organization.users << assigned_by
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
-        error = ["does not belong to organization with id #{organization.id}"]
+        error = ["does not belong to organization with url #{organization.url}"]
         expect(bulk_assignment.errors[:assigned_to]).to eq error
       end
     end
@@ -99,38 +108,37 @@ describe BulkTaskAssignment do
     end
 
     context "when organization is not valid" do
-      let(:organization_id) { 1234 }
+      let(:organization_url) { 1234 }
 
       it "does not bulk assigns tasks" do
         organization.users << assigned_by
         organization.users << assigned_to
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
-        error = ["could not find an organization with id #{organization_id}"]
-        expect(bulk_assignment.errors[:organization_id]).to eq error
+        error = ["could not find an organization with url #{organization_url}"]
+        expect(bulk_assignment.errors[:organization_url]).to eq error
       end
     end
 
     context "when organization cannot bulk assign" do
-      let(:organization_id) { create(:organization).id }
+      let(:organization_url) { create(:organization).url }
 
       it "does not bulk assigns tasks" do
         organization.users << assigned_by
         organization.users << assigned_to
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
-        error = ["with id #{organization_id} cannot bulk assign tasks"]
+        error = ["with url #{organization_url} cannot bulk assign tasks"]
         expect(bulk_assignment.errors[:organization]).to eq error
       end
     end
-
 
     context "when assigned by user does not belong to organization" do
       it "does not bulk assigns tasks" do
         organization.users << assigned_to
         bulk_assignment = BulkTaskAssignment.new(params)
         expect(bulk_assignment.valid?).to eq false
-        error = ["does not belong to organization with id #{organization.id}"]
+        error = ["does not belong to organization with url #{organization.url}"]
         expect(bulk_assignment.errors[:assigned_by]).to eq error
       end
     end

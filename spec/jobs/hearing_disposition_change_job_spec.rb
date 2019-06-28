@@ -25,7 +25,7 @@ describe HearingDispositionChangeJob do
       FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
     end
 
-    FactoryBot.create(:disposition_task, appeal: appeal, parent: parent_hearing_task)
+    FactoryBot.create(:assign_hearing_disposition_task, appeal: appeal, parent: parent_hearing_task)
   end
 
   def create_disposition_task_for_legacy_hearings_ancestry(associated_hearing: nil)
@@ -39,31 +39,31 @@ describe HearingDispositionChangeJob do
     hearing = FactoryBot.create(:legacy_hearing, hearing_args)
 
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
-    FactoryBot.create(:disposition_task, appeal: appeal, parent: parent_hearing_task)
+    FactoryBot.create(:assign_hearing_disposition_task, appeal: appeal, parent: parent_hearing_task)
   end
 
-  describe ".hearing_disposition_tasks" do
+  describe ".assign_hearing_disposition_task" do
     subject { HearingDispositionChangeJob.new.hearing_disposition_tasks }
 
     # Property: Class that subclasses DispositionTask.
     context "when there are ChangeHearingDispositionTasks" do
       let!(:disposition_tasks) do
-        FactoryBot.create_list(:disposition_task, 6, parent: FactoryBot.create(:hearing_task))
+        FactoryBot.create_list(:assign_hearing_disposition_task, 6, parent: FactoryBot.create(:hearing_task))
       end
       let!(:change_disposition_tasks) do
         FactoryBot.create_list(:change_hearing_disposition_task, 3, parent: FactoryBot.create(:hearing_task))
       end
 
-      it "only returns the DispositionTasks" do
+      it "only returns the AssignHearingDispositionTasks" do
         # Confirm that the ChangeHearingDispositionTasks are in the database.
-        expect(ChangeHearingDispositionTask.active.where.not(status: Constants.TASK_STATUSES.on_hold).count).to(
+        expect(ChangeHearingDispositionTask.active.count).to(
           eq(change_disposition_tasks.length)
         )
 
         tasks = subject
 
         expect(tasks.length).to eq(disposition_tasks.length)
-        expect(tasks.pluck(:type).uniq).to eq([DispositionTask.name])
+        expect(tasks.pluck(:type).uniq).to eq([AssignHearingDispositionTask.name])
       end
     end
   end
@@ -77,7 +77,7 @@ describe HearingDispositionChangeJob do
 
       context "when disposition is held" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.held }
-        it "returns a label matching the hearing disposition and call DispositionTask.hold!" do
+        it "returns a label matching the hearing disposition and call AssignHearingDispositionTask.hold!" do
           expect(task).to receive(:hold!).exactly(1).times
           expect(subject).to eq(disposition)
         end
@@ -85,7 +85,7 @@ describe HearingDispositionChangeJob do
 
       context "when disposition is cancelled" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
-        it "returns a label matching the hearing disposition and call DispositionTask.cancel!" do
+        it "returns a label matching the hearing disposition and call AssignHearingDispositionTask.cancel!" do
           expect(task).to receive(:cancel!).exactly(1).times
           expect(subject).to eq(disposition)
         end
@@ -93,7 +93,7 @@ describe HearingDispositionChangeJob do
 
       context "when disposition is postponed" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
-        it "returns a label matching the hearing disposition and call DispositionTask.postpone!" do
+        it "returns a label matching the hearing disposition and call AssignHearingDispositionTask.postpone!" do
           expect(task).to receive(:postpone!).exactly(1).times
           expect(subject).to eq(disposition)
         end
@@ -101,7 +101,7 @@ describe HearingDispositionChangeJob do
 
       context "when disposition is no_show" do
         let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.no_show }
-        it "returns a label matching the hearing disposition and call DispositionTask.no_show!" do
+        it "returns a label matching the hearing disposition and call AssignHearingDispositionTask.no_show!" do
           expect(task).to receive(:no_show!).exactly(1).times
           expect(subject).to eq(disposition)
         end
@@ -153,7 +153,7 @@ describe HearingDispositionChangeJob do
       context "when disposition is held" do
         let(:hearing) { FactoryBot.create(:case_hearing, :disposition_held) }
         let(:label) { Constants.HEARING_DISPOSITION_TYPES.held }
-        it "returns a label matching the hearing disposition and call DispositionTask.hold!" do
+        it "returns a label matching the hearing disposition and call AssignHearingDispositionTask.hold!" do
           expect(task).to receive(:hold!).exactly(1).times
           expect(subject).to eq(label)
         end
@@ -379,7 +379,7 @@ describe HearingDispositionChangeJob do
       end
     end
 
-    context "when there are no DispositionTasks to be processed" do
+    context "when there are no AssignHearingDispositionTask to be processed" do
       it "runs successfully but does not do any work" do
         expect { subject }.to_not raise_error
       end

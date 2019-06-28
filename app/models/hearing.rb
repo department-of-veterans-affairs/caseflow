@@ -26,6 +26,7 @@ class Hearing < ApplicationRecord
   delegate :veteran_last_name, to: :appeal
   delegate :appellant_first_name, to: :appeal
   delegate :appellant_last_name, to: :appeal
+  delegate :appellant_address_line_1, to: :appeal
   delegate :appellant_city, to: :appeal
   delegate :appellant_state, to: :appeal
   delegate :appellant_zip, to: :appeal
@@ -66,12 +67,15 @@ class Hearing < ApplicationRecord
     end
   end
 
-  def readable_request_type
-    HEARING_TYPES[request_type.to_sym]
+  def readable_location
+    return "Washington, DC" if request_type == HearingDay::REQUEST_TYPES[:central]
+    return "#{location.city}, #{location.state}" if location
+
+    nil
   end
 
-  def master_record
-    false
+  def readable_request_type
+    HEARING_TYPES[request_type.to_sym]
   end
 
   def assigned_to_vso?(user)
@@ -79,7 +83,7 @@ class Hearing < ApplicationRecord
       task.type == TrackVeteranTask.name &&
         task.assigned_to.is_a?(Representative) &&
         task.assigned_to.user_has_access?(user) &&
-        task.active?
+        task.open?
     end
   end
 
@@ -95,12 +99,12 @@ class Hearing < ApplicationRecord
 
   def disposition_task
     if hearing_task?
-      hearing_task_association.hearing_task.children.detect { |child| child.type == DispositionTask.name }
+      hearing_task_association.hearing_task.children.detect { |child| child.type == AssignHearingDispositionTask.name }
     end
   end
 
   def disposition_task_in_progress
-    disposition_task ? disposition_task.active_with_no_children? : false
+    disposition_task ? disposition_task.open_with_no_children? : false
   end
 
   def disposition_editable
@@ -112,7 +116,9 @@ class Hearing < ApplicationRecord
   end
 
   def claimant_id
-    appeal.appellant.id
+    return nil if appeal.appellant.nil?
+
+    Person.find_by(participant_id: appeal.appellant.participant_id).id
   end
 
   def advance_on_docket_motion
@@ -172,84 +178,14 @@ class Hearing < ApplicationRecord
   end
 
   def quick_to_hash(_current_user_id)
-    serializable_hash(
-      methods: [
-        :external_id,
-        :veteran_first_name,
-        :veteran_last_name,
-        :regional_office_key,
-        :regional_office_name,
-        :regional_office_timezone,
-        :readable_request_type,
-        :scheduled_for,
-        :scheduled_time_string,
-        :central_office_time_string,
-        :appeal_external_id,
-        :veteran_file_number,
-        :evidence_window_waived,
-        :bva_poc,
-        :room,
-        :transcription,
-        :docket_number,
-        :docket_name,
-        :current_issue_count,
-        :location,
-        :worksheet_issues,
-        :closest_regional_office,
-        :available_hearing_locations,
-        :disposition_editable,
-        :advance_on_docket_motion,
-        :claimant_id
-      ],
-      except: [:military_service]
-    )
+    ::HearingSerializer.quick(self).serializable_hash[:data][:attributes]
   end
 
   def to_hash(_current_user_id)
-    serializable_hash(
-      methods: [
-        :external_id,
-        :veteran_first_name,
-        :veteran_last_name,
-        :appellant_first_name,
-        :appellant_last_name,
-        :appellant_city,
-        :appellant_state,
-        :appellant_zip,
-        :regional_office_key,
-        :regional_office_name,
-        :regional_office_timezone,
-        :readable_request_type,
-        :scheduled_for,
-        :scheduled_time_string,
-        :central_office_time_string,
-        :veteran_age,
-        :veteran_gender,
-        :appeal_external_id,
-        :veteran_file_number,
-        :evidence_window_waived,
-        :bva_poc,
-        :room,
-        :transcription,
-        :docket_number,
-        :docket_name,
-        :military_service,
-        :current_issue_count,
-        :representative,
-        :location,
-        :worksheet_issues,
-        :closest_regional_office,
-        :available_hearing_locations,
-        :disposition_editable,
-        :advance_on_docket_motion,
-        :claimant_id
-      ]
-    )
+    ::HearingSerializer.default(self).serializable_hash[:data][:attributes]
   end
 
-  def to_hash_for_worksheet(current_user_id)
-    serializable_hash(
-      methods: [:judge]
-    ).merge(to_hash(current_user_id))
+  def to_hash_for_worksheet(_current_user_id)
+    ::HearingSerializer.worksheet(self).serializable_hash[:data][:attributes]
   end
 end

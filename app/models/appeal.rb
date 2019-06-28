@@ -7,6 +7,7 @@
 
 class Appeal < DecisionReview
   include Taskable
+  include PrintsTaskTree
 
   has_many :appeal_views, as: :appeal
   has_many :claims_folder_searches, as: :appeal
@@ -29,60 +30,11 @@ class Appeal < DecisionReview
     validates_associated :claimants
   end
 
-  scope :join_aod_motions, lambda {
-    joins(claimants: :person)
-      .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
-  }
-
-  scope :all_priority, lambda {
-    join_aod_motions
-      .where("advance_on_docket_motions.created_at > appeals.established_at")
-      .where("advance_on_docket_motions.granted = ?", true)
-      .or(join_aod_motions
-        .where("people.date_of_birth <= ?", 75.years.ago))
-      .group("appeals.id")
-  }
-
-  # rubocop:disable Metrics/LineLength
-  scope :all_nonpriority, lambda {
-    join_aod_motions
-      .where("people.date_of_birth > ?", 75.years.ago)
-      .group("appeals.id")
-      .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
-  }
-  # rubocop:enable Metrics/LineLength
-
-  scope :ready_for_distribution, lambda {
-    joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
-              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
-      .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
-              MailTask.blocking_subclasses, Task.inactive_statuses, 0)
-  }
-
-  scope :non_ihp, lambda {
-    joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? then 1 end) = ?",
-              InformalHearingPresentationTask.name, 0)
-  }
-
   scope :active, lambda {
     joins(:tasks)
       .group("appeals.id")
       .having("count(case when tasks.type = ? and tasks.status not in (?) then 1 end) >= ?",
-              RootTask.name, Task.inactive_statuses, 1)
-  }
-
-  scope :ordered_by_distribution_ready_date, lambda {
-    joins(:tasks)
-      .group("appeals.id")
-      .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
-  }
-
-  scope :priority_ordered_by_distribution_ready_date, lambda {
-    from(all_priority).ordered_by_distribution_ready_date
+              RootTask.name, Task.closed_statuses, 1)
   }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
@@ -109,14 +61,6 @@ class Appeal < DecisionReview
     end
   end
 
-  def self.nonpriority_decisions_per_year
-    appeal_ids = all_nonpriority
-      .joins(:decision_documents)
-      .where("decision_date > ?", 1.year.ago)
-      .select("appeals.id")
-    where(id: appeal_ids).count
-  end
-
   def ui_hash
     super.merge(
       docketType: docket_type,
@@ -138,12 +82,13 @@ class Appeal < DecisionReview
   def assigned_to_location
     return COPY::CASE_LIST_TABLE_POST_DECISION_LABEL if root_task&.status == Constants.TASK_STATUSES.completed
 
-    active_tasks = tasks.active.not_tracking
+    active_tasks = tasks.active.visible_in_queue_table_view
     return most_recently_assigned_to_label(active_tasks) if active_tasks.any?
 
-    on_hold_tasks = tasks.on_hold.not_tracking
+    on_hold_tasks = tasks.on_hold.visible_in_queue_table_view
     return most_recently_assigned_to_label(on_hold_tasks) if on_hold_tasks.any?
 
+    # this condition is no longer needed since we only want active or on hold tasks
     return most_recently_assigned_to_label(tasks) if tasks.any?
 
     status_hash[:type].to_s.titleize
@@ -207,7 +152,7 @@ class Appeal < DecisionReview
   end
 
   def active?
-    tasks.active.where(type: RootTask.name).any?
+    tasks.open.where(type: RootTask.name).any?
   end
 
   def ready_for_distribution_at
@@ -255,9 +200,6 @@ class Appeal < DecisionReview
     veteran_if_exists&.available_hearing_locations
   end
 
-  delegate :city,
-           :state, to: :appellant, prefix: true
-
   def regional_office
     nil
   end
@@ -265,6 +207,8 @@ class Appeal < DecisionReview
   def advanced_on_docket
     claimants.any? { |claimant| claimant.advanced_on_docket(receipt_date) }
   end
+
+  alias aod advanced_on_docket
 
   delegate :first_name,
            :last_name,
@@ -279,6 +223,7 @@ class Appeal < DecisionReview
            :last_name,
            :middle_name,
            :name_suffix,
+           :address_line_1,
            :city,
            :zip,
            :state, to: :appellant, prefix: true, allow_nil: true
@@ -523,7 +468,7 @@ class Appeal < DecisionReview
   end
 
   def pending_schedule_hearing_task?
-    tasks.active.where(type: ScheduleHearingTask.name).any?
+    tasks.open.where(type: ScheduleHearingTask.name).any?
   end
 
   def hearing_pending?
@@ -531,20 +476,16 @@ class Appeal < DecisionReview
   end
 
   def evidence_submission_hold_pending?
-    tasks.active.where(type: EvidenceSubmissionWindowTask.name).any?
+    tasks.open.where(type: EvidenceSubmissionWindowTask.name).any?
   end
 
   def at_vso?
     # This task is always open, this can be used once that task is completed
-    # tasks.active.where(type: InformalHearingPresentationTask.name).any?
+    # tasks.open.where(type: InformalHearingPresentationTask.name).any?
   end
 
   def distributed_to_a_judge?
     tasks.any? { |t| t.is_a?(JudgeTask) }
-  end
-
-  def withdrawn?
-    root_task&.status == Constants.TASK_STATUSES.cancelled
   end
 
   def alerts
@@ -621,6 +562,10 @@ class Appeal < DecisionReview
     true
   end
 
+  def processed_in_vbms?
+    false
+  end
+
   def first_distributed_to_judge_date
     judge_tasks = tasks.select { |t| t.is_a?(JudgeTask) }
     return unless judge_tasks.any?
@@ -676,15 +621,14 @@ class Appeal < DecisionReview
     %w[supplemental_claim cavc]
   end
 
-  def assign_ro_and_update_ahls(new_ro)
-    update!(closest_regional_office: new_ro)
-    va_dot_gov_address_validator.assign_available_hearing_locations_for_ro(regional_office_id: new_ro)
+  def cancel_active_tasks
+    AppealActiveTaskCancellation.new(self).call
   end
 
   private
 
   def most_recently_assigned_to_label(tasks)
-    tasks.order(:updated_at).last.assigned_to_label
+    tasks.order(:created_at).last&.assigned_to_label
   end
 
   def maybe_create_translation_task

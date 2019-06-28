@@ -69,12 +69,12 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
   def legacy_appeals_with_hearings
     LegacyAppeal.joins(:tasks).where(
-      "tasks.type = ? AND tasks.status NOT IN (?)", "DispositionTask", Task.inactive_statuses
+      "tasks.type = ? AND tasks.status NOT IN (?)", "AssignHearingDispositionTask", Task.closed_statuses
     )
   end
 
   def active_appeals
-    Appeal.joins(:tasks).where("tasks.type = ? AND tasks.status NOT IN (?)", "RootTask", Task.inactive_statuses)
+    Appeal.joins(:tasks).where("tasks.type = ? AND tasks.status NOT IN (?)", "RootTask", Task.closed_statuses)
   end
 
   def record_runtime(start_time)

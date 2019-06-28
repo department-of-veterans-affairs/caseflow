@@ -1,14 +1,6 @@
 # frozen_string_literal: true
 
 describe DirectReviewDocket do
-  before do
-    FeatureToggle.enable!(:ama_acd_tasks)
-  end
-
-  after do
-    FeatureToggle.disable!(:ama_acd_tasks)
-  end
-
   context "#due_count" do
     subject { DirectReviewDocket.new.due_count }
 
@@ -61,14 +53,6 @@ describe DirectReviewDocket do
 
   context "#nonpriority_receipts_per_year" do
     subject { DirectReviewDocket.new.nonpriority_receipts_per_year }
-
-    context "before April 1st, 2019" do
-      before { Timecop.freeze(Date.new(2019, 3, 30)) }
-
-      it "returns baseline" do
-        expect(subject).to eq(38_500)
-      end
-    end
 
     context "before Feb 29th, 2020" do
       before do

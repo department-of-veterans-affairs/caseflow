@@ -61,6 +61,7 @@ describe User do
         "pg_user_id" => user.id,
         "email" => nil,
         "roles" => [],
+        "efolder_documents_fetched_at" => nil,
         "selected_regional_office" => nil,
         :display_name => css_id.upcase,
         "name" => "Tom Brady"
@@ -249,9 +250,9 @@ describe User do
 
       it "includes judge teams from the organization list" do
         is_expected.to include(
-          :id => judgeteam.id,
-          :name => "Assign",
-          :url => "queue/%<id>s/assign" % [id: user.id]
+          id: judgeteam.id,
+          name: "Assign",
+          url: format("queue/%<id>s/assign", id: user.id)
         )
         expect(user.organizations).to include judgeteam
       end
@@ -340,45 +341,6 @@ describe User do
     context "when user with roles that contain Admin Intake" do
       before { session["user"]["roles"] = ["Admin Intake"] }
       it { is_expected.to be_truthy }
-    end
-  end
-
-  context "#can_edit_request_issues?" do
-    let(:appeal) { create(:appeal) }
-
-    subject { user.can_edit_request_issues?(appeal) }
-
-    context "when appeal has in-progress attorney task assigned to user" do
-      let!(:task) do
-        create(:task,
-               type: "AttorneyTask",
-               appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.assigned)
-      end
-      it { is_expected.to be true }
-    end
-
-    context "when appeal has in-progress judge task assigned to user" do
-      let!(:task) do
-        create(:task,
-               type: "JudgeDecisionReviewTask",
-               appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.in_progress)
-      end
-      it { is_expected.to be true }
-    end
-
-    context "when appeal has completed task assigned to user" do
-      let!(:task) do
-        create(:task,
-               type: "AttorneyTask",
-               appeal: appeal,
-               assigned_to: user,
-               status: Constants.TASK_STATUSES.completed)
-      end
-      it { is_expected.to be false }
     end
   end
 

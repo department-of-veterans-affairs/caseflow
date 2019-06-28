@@ -6,6 +6,7 @@ import AmaIssueList from '../../components/AmaIssueList';
 import ISSUE_INFO from '../../../constants/ISSUE_INFO.json';
 import CaseDetailsDescriptionList from './CaseDetailsDescriptionList';
 import { dispositionLabelForDescription } from './LegacyIssueListItem';
+import DecisionIssues from '../components/DecisionIssues';
 
 const singleIssueContainerStyling = css({
   display: 'inline-block',
@@ -27,7 +28,10 @@ export default function CaseDetailsIssueList(props) {
   if (!props.isLegacyAppeal) {
     return <AmaIssueList
       requestIssues={props.issues}
-      decisionIssues={props.decisionIssues} />;
+      decisionIssues={props.decisionIssues}>
+      <DecisionIssues
+        decisionIssues={props.decisionIssues} />
+    </AmaIssueList>;
   }
 
   return <React.Fragment>

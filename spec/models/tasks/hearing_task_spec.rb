@@ -8,7 +8,7 @@ describe HearingTask do
     let(:instructions) { "These are the instructions I've written for you." }
     let!(:disposition_task) do
       FactoryBot.create(
-        :disposition_task,
+        :assign_hearing_disposition_task,
         parent: hearing_task,
         appeal: appeal,
         status: Constants.TASK_STATUSES.in_progress
@@ -30,15 +30,15 @@ describe HearingTask do
       change_hearing_disposition_task = ChangeHearingDispositionTask.last
       expect(change_hearing_disposition_task.appeal).to eq appeal
       expect(change_hearing_disposition_task.parent).to eq hearing_task
-      expect(change_hearing_disposition_task.active?).to be_truthy
+      expect(change_hearing_disposition_task.open?).to be_truthy
       expect(change_hearing_disposition_task.instructions).to match_array [instructions]
     end
   end
 
-  describe "#disposition_task" do
+  describe "#assign_hearing_disposition_task" do
     let(:root_task) { FactoryBot.create(:root_task) }
     let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: root_task.appeal) }
-    let(:disposition_task_type) { :disposition_task }
+    let(:disposition_task_type) { :assign_hearing_disposition_task }
     let(:disposition_task_status) { Constants.TASK_STATUSES.assigned }
     let!(:disposition_task) do
       FactoryBot.create(

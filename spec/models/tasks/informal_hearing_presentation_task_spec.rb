@@ -14,7 +14,7 @@ describe InformalHearingPresentationTask do
       let(:expected_actions) do
         [
           Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
+          Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
           Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
           Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
@@ -64,7 +64,6 @@ describe InformalHearingPresentationTask do
     end
 
     before do
-      FeatureToggle.enable!(:ama_acd_tasks)
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
 

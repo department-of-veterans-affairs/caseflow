@@ -13,6 +13,7 @@ class ColocatedTask < Task
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :on_hold_duration_is_set, on: :update
+  validate :task_is_unique, on: :create
 
   after_update :update_location_in_vacols
 
@@ -50,11 +51,15 @@ class ColocatedTask < Task
 
   def available_actions(user)
     if assigned_to == user
-      return available_actions_with_conditions([
-                                                 appropriate_timed_hold_task_action,
-                                                 Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
-                                                 Constants.TASK_ACTIONS.CANCEL_TASK.to_h
-                                               ])
+      base_actions = [
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+        Constants.TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+
+      base_actions.push(Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h) if Colocated.singleton.user_is_admin?(user)
+
+      return available_actions_with_conditions(base_actions)
     end
 
     if task_is_assigned_to_user_within_organization?(user) && Colocated.singleton.admins.include?(user)
@@ -70,9 +75,7 @@ class ColocatedTask < Task
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
-    # Waiting for backend implementation before allowing user access
-    # https://github.com/department-of-veterans-affairs/caseflow/pull/10693
-    # core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
+    core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
 
     if action == "translation" && appeal.is_a?(Appeal)
       return ama_translation_actions(core_actions)
@@ -82,7 +85,18 @@ class ColocatedTask < Task
   end
 
   def actions_available?(_user)
-    active?
+    open?
+  end
+
+  def create_twin_of_type(params)
+    self.class.create!(
+      appeal: appeal,
+      parent: parent,
+      assigned_by: assigned_by,
+      action: params[:action],
+      instructions: params[:instructions],
+      assigned_to: Colocated.singleton
+    )
   end
 
   private
@@ -117,12 +131,17 @@ class ColocatedTask < Task
 
   def update_location_in_vacols
     if saved_change_to_status? &&
-       !active? &&
+       !open? &&
        all_tasks_closed_for_appeal? &&
-       appeal.is_a?(LegacyAppeal) &&
-       appeal.location_code == LegacyAppeal::LOCATION_CODES[:caseflow]
+       appeal_in_caseflow_vacols_location? &&
+       assigned_to.is_a?(Organization)
       AppealRepository.update_location!(appeal, location_based_on_action)
     end
+  end
+
+  def appeal_in_caseflow_vacols_location?
+    appeal.is_a?(LegacyAppeal) &&
+      VACOLS::Case.find(appeal.vacols_id).bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
   end
 
   def location_based_on_action
@@ -130,7 +149,7 @@ class ColocatedTask < Task
     when :schedule_hearing
       # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
       # actually held.
-      return assigned_by.vacols_uniq_id if status == Constants.TASK_STATUSES.cancelled
+      return assigned_by.vacols_uniq_id if children.all? { |t| t.status == Constants.TASK_STATUSES.cancelled }
 
       # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
       ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
@@ -144,7 +163,7 @@ class ColocatedTask < Task
   end
 
   def all_tasks_closed_for_appeal?
-    appeal.tasks.active.where(type: ColocatedTask.name).none?
+    appeal.tasks.open.where(type: ColocatedTask.name).none?
   end
 
   def on_hold_duration_is_set
@@ -153,8 +172,23 @@ class ColocatedTask < Task
     end
   end
 
-  # ColocatedTasks on old-style holds can be placed on new timed holds which will not reset the placed_on_hold_at value.
-  def task_just_placed_on_hold?
-    super || (on_timed_hold? && children.active.where.not(type: TimedHoldTask.name).empty?)
+  def task_is_unique
+    ColocatedTask.where(
+      appeal_id: appeal_id,
+      assigned_to_id: assigned_to_id,
+      assigned_to_type: assigned_to_type,
+      action: action,
+      parent_id: parent_id,
+      instructions: instructions
+    ).find_each do |duplicate_task|
+      if duplicate_task.open?
+        errors[:base] << format(
+          COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR,
+          Constants::CO_LOCATED_ADMIN_ACTIONS[action]&.upcase,
+          instructions.join(", ")
+        )
+        break
+      end
+    end
   end
 end

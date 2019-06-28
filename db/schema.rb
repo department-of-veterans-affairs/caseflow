@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190529143622) do
+ActiveRecord::Schema.define(version: 20190618173816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,7 @@ ActiveRecord::Schema.define(version: 20190529143622) do
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
     t.datetime "establishment_submitted_at", comment: "Timestamp for when the the intake was submitted for asynchronous processing."
     t.boolean "legacy_opt_in_approved", comment: "Indicates whether a Veteran opted to withdraw matching issues from the legacy process. If there is a matching legacy issue and it is not withdrawn then it is ineligible for the decision review."
+    t.string "poa_participant_id", comment: "Used to identify the power of attorney (POA) at the time the appeal was dispatched to BVA. Sometimes the POA changes in BGS after the fact, and BGS only returns the current representative."
     t.date "receipt_date", comment: "Receipt date of the appeal form. Used to determine which issues are within the timeliness window to be appealed. Only issues decided prior to the receipt date will show up as contestable issues."
     t.date "target_decision_date", comment: "If the appeal docket is direct review, this sets the target decision date for the appeal, which is one year after the receipt date."
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "The universally unique identifier for the appeal, which can be used to navigate to appeals/appeal_uuid. This allows a single ID to determine an appeal whether it is a legacy appeal or an AMA appeal."
@@ -658,7 +659,7 @@ ActiveRecord::Schema.define(version: 20190529143622) do
     t.string "vacols_id", null: false
     t.string "witness"
     t.index ["user_id"], name: "index_legacy_hearings_on_user_id"
-    t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id"
+    t.index ["vacols_id"], name: "index_legacy_hearings_on_vacols_id", unique: true
   end
 
   create_table "legacy_issue_optins", force: :cascade, comment: "When a VACOLS issue from a legacy appeal is opted-in to AMA, this table keeps track of the related request_issue, and the status of processing the opt-in, or rollback if the request issue is removed from a Decision Review." do |t|
@@ -759,13 +760,6 @@ ActiveRecord::Schema.define(version: 20190529143622) do
     t.index ["veteran_file_number"], name: "index_ramp_refilings_on_veteran_file_number"
   end
 
-  create_table "reader_users", id: :serial, force: :cascade do |t|
-    t.datetime "documents_fetched_at"
-    t.integer "user_id", null: false
-    t.index ["documents_fetched_at"], name: "index_reader_users_on_documents_fetched_at"
-    t.index ["user_id"], name: "index_reader_users_on_user_id", unique: true
-  end
-
   create_table "record_synced_by_jobs", force: :cascade do |t|
     t.string "error"
     t.datetime "processed_at"
@@ -799,6 +793,7 @@ ActiveRecord::Schema.define(version: 20190529143622) do
     t.string "closed_status", comment: "Indicates whether the request issue is closed, for example if it was removed from a Decision Review, the associated End Product got canceled, the Decision Review was withdrawn."
     t.integer "contention_reference_id", comment: "The ID of the contention created on the End Product for this request issue. This is populated after the contention is created in VBMS."
     t.datetime "contention_removed_at", comment: "When a request issue is removed from a Decision Review during an edit, if it has a contention in VBMS that is also removed. This field indicates when the contention has successfully been removed in VBMS."
+    t.datetime "contention_updated_at", comment: "Timestamp indicating when a contention was successfully updated in VBMS."
     t.integer "contested_decision_issue_id", comment: "The ID of the decision issue that this request issue contests. A Request issue will contest either a rating issue or a decision issue"
     t.string "contested_issue_description", comment: "Description of the contested rating or decision issue. Will be either a rating issue's decision text or a decision issue's description."
     t.string "contested_rating_issue_diagnostic_code", comment: "If the contested issue is a rating issue, this is the rating issue's diagnostic code. Will be nil if this request issue contests a decision issue."
@@ -946,7 +941,7 @@ ActiveRecord::Schema.define(version: 20190529143622) do
     t.string "appeal_type", null: false
     t.datetime "assigned_at"
     t.integer "assigned_by_id"
-    t.integer "assigned_to_id"
+    t.integer "assigned_to_id", null: false
     t.string "assigned_to_type", null: false
     t.datetime "closed_at"
     t.datetime "created_at", null: false
@@ -961,6 +956,8 @@ ActiveRecord::Schema.define(version: 20190529143622) do
     t.index ["appeal_type", "appeal_id"], name: "index_tasks_on_appeal_type_and_appeal_id"
     t.index ["assigned_to_type", "assigned_to_id"], name: "index_tasks_on_assigned_to_type_and_assigned_to_id"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
+    t.index ["status"], name: "index_tasks_on_status"
+    t.index ["type"], name: "index_tasks_on_type"
   end
 
   create_table "team_quotas", id: :serial, force: :cascade do |t|
@@ -997,6 +994,7 @@ ActiveRecord::Schema.define(version: 20190529143622) do
   create_table "users", id: :serial, force: :cascade do |t|
     t.datetime "created_at"
     t.string "css_id", null: false
+    t.datetime "efolder_documents_fetched_at", comment: "Date when efolder documents were cached in s3 for this user"
     t.string "email"
     t.string "full_name"
     t.datetime "last_login_at"
@@ -1084,7 +1082,6 @@ ActiveRecord::Schema.define(version: 20190529143622) do
   add_foreign_key "organizations_users", "users"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"
-  add_foreign_key "reader_users", "users"
   add_foreign_key "request_issues_updates", "users"
   add_foreign_key "schedule_periods", "users"
   add_foreign_key "user_quotas", "users"

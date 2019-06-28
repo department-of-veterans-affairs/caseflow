@@ -528,19 +528,19 @@ RSpec.describe TasksController, type: :controller do
         [
           {
             "instructions": incarcerated_instructions,
-            "type": "HearingAdminActionIncarceratedVeteranTask",
+            "type": HearingAdminActionIncarceratedVeteranTask.name,
             "external_id": appeal.external_id,
             "parent_id": schedule_hearing_task.id.to_s
           },
           {
             "instructions": contested_instructions_1,
-            "type": "HearingAdminActionContestedClaimantTask",
+            "type": HearingAdminActionContestedClaimantTask.name,
             "external_id": appeal.external_id,
             "parent_id": schedule_hearing_task.id.to_s
           },
           {
             "instructions": contested_instructions_2,
-            "type": "HearingAdminActionContestedClaimantTask",
+            "type": HearingAdminActionContestedClaimantTask.name,
             "external_id": appeal.external_id,
             "parent_id": schedule_hearing_task.id.to_s
           }
@@ -878,7 +878,7 @@ RSpec.describe TasksController, type: :controller do
 
     context "when the task is a no show hearing task with a HearingTask ancestor" do
       let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-      let(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+      let(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
       let!(:task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
       let(:params) do
         {

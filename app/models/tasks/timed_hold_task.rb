@@ -33,7 +33,7 @@ class TimedHoldTask < GenericTask
   end
 
   def when_timer_ends
-    update!(status: :completed) if active?
+    update!(status: :completed) if open?
   end
 
   # Function to set the end time for the related TaskTimer when this class is instantiated.
@@ -78,7 +78,7 @@ class TimedHoldTask < GenericTask
 
   # We cancel the siblings after we have created the new task so that the parent task stays on hold.
   def cancel_active_siblings
-    siblings.select { |sibling_task| sibling_task.active? && sibling_task.is_a?(TimedHoldTask) }
+    siblings.select { |sibling_task| sibling_task.open? && sibling_task.is_a?(TimedHoldTask) }
       .each { |sibling_task| sibling_task.update!(status: Constants.TASK_STATUSES.cancelled) }
   end
 end

@@ -25,7 +25,7 @@ describe EndProductEstablishment do
   let(:reference_id) { nil }
   let(:same_office) { false }
   let(:source) { create(:higher_level_review, veteran_file_number: veteran_file_number, same_office: same_office) }
-  let(:invalid_modifiers) { nil }
+  let(:invalid_modifiers) { [] }
   let(:synced_status) { nil }
   let(:committed_at) { nil }
   let(:fake_claim_id) { "FAKECLAIMID" }
@@ -130,11 +130,11 @@ describe EndProductEstablishment do
       end
     end
 
-    context "when eps with a valid modifiers already exist" do
+    context "when eps with a valid modifier already exists" do
       let!(:past_created_ep) do
         Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
-          bgs_attrs: { end_product_type_code: "030" }
+          bgs_attrs: { end_product_type_code: "030", status_type_code: "PEND" }
         )
       end
 
@@ -202,22 +202,22 @@ describe EndProductEstablishment do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier }
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
           )
         end
       end
 
       it "returns NoAvailableModifiers error" do
-        expect { subject }.to raise_error(EndProductEstablishment::NoAvailableModifiers)
+        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
       end
     end
 
-    context "when existing EP has status CLR or CAN" do
+    context "when existing EP has status CLR" do
       before do
         %w[030 031 032].each do |modifier|
           Generators::EndProduct.build(
             veteran_file_number: veteran_file_number,
-            bgs_attrs: { end_product_type_code: modifier, status_type_code: %w[CLR CAN].sample }
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CLR" }
           )
         end
       end
@@ -227,6 +227,21 @@ describe EndProductEstablishment do
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
+      end
+    end
+
+    context "when existing EP has status CAN" do
+      before do
+        %w[030 031 032].each do |modifier|
+          Generators::EndProduct.build(
+            veteran_file_number: veteran_file_number,
+            bgs_attrs: { end_product_type_code: modifier, status_type_code: "CAN" }
+          )
+        end
+      end
+
+      it "considers those EP modifiers as closed" do
+        expect { subject }.to raise_error(EndProductModifierFinder::NoAvailableModifiers)
       end
     end
 
@@ -538,59 +553,6 @@ describe EndProductEstablishment do
     end
   end
 
-  context "#remove_contention!" do
-    before do
-      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
-    end
-
-    let(:reference_id) { "stevenasmith" }
-    let(:request_issue_contention_reference_id) { contention_reference_id }
-    let(:contention_reference_id) { "1234" }
-
-    let(:request_issue) do
-      RequestIssue.new(
-        decision_review: source,
-        contested_rating_issue_reference_id: "reference-id",
-        contested_rating_issue_profile_date: Date.new(2018, 4, 30),
-        contested_issue_description: "this is a big decision",
-        benefit_type: "compensation",
-        contention_reference_id: request_issue_contention_reference_id
-      )
-    end
-
-    let!(:contention) do
-      Generators::Contention.build(id: contention_reference_id, claim_id: reference_id, text: "Left knee")
-    end
-
-    subject { end_product_establishment.remove_contention!(request_issue) }
-
-    it "calls VBMS with the appropriate arguments to remove the contention" do
-      subject
-
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention)
-      expect(request_issue.contention_removed_at).to eq(Time.zone.now)
-    end
-
-    context "when VBMS throws an error" do
-      before do
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
-      end
-
-      it "does not remove contentions" do
-        expect { subject }.to raise_error(vbms_error)
-        expect(request_issue.contention_removed_at).to be_nil
-      end
-    end
-
-    context "when contention does not exist" do
-      let(:request_issue_contention_reference_id) { "9999" }
-
-      it "raises ContentionNotFound error" do
-        expect { subject }.to raise_error(EndProductEstablishment::ContentionNotFound)
-      end
-    end
-  end
-
   context "#result" do
     subject { end_product_establishment.result }
 
@@ -700,10 +662,11 @@ describe EndProductEstablishment do
     context "when a matching end product has been established" do
       let(:reference_id) { matching_ep.claim_id }
       let(:status_type_code) { "CLR" }
+      let(:claim_type_code) { "030HLRR" }
       let!(:matching_ep) do
         Generators::EndProduct.build(
           veteran_file_number: veteran_file_number,
-          bgs_attrs: { status_type_code: status_type_code }
+          bgs_attrs: { status_type_code: status_type_code, claim_type_code: claim_type_code }
         )
       end
 
@@ -779,6 +742,19 @@ describe EndProductEstablishment do
           it "does not fail" do
             subject
           end
+        end
+      end
+
+      context "when the end product has been cleared and no decision issues are expected" do
+        let(:status_type_code) { "CLR" }
+        let(:claim_type_code) { "400RA" }
+
+        it "closes request issues with no_decision" do
+          subject
+
+          expect(end_product_establishment.reload.synced_status).to eq("CLR")
+          expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
+          expect(request_issues.first.closed_status).to eq("no_decision")
         end
       end
 

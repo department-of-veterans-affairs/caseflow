@@ -416,7 +416,7 @@ class Fakes::BGSService
           power_of_attorney:
             {
               legacy_poa_cd: "3QQ",
-              nm: "Clarence Darrow",
+              nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
               org_type_nm: "POA Attorney",
               ptcpnt_id: "ERROR-ID"
             },
@@ -583,8 +583,14 @@ class Fakes::BGSService
   end
 
   def fetch_file_number_by_ssn(ssn)
-    # reverse is a hack to return something different than what is passed.
-    ssn_not_found ? nil : ssn.to_s.reverse
+    return if ssn_not_found
+
+    self.class.veteran_records.each do |file_number, rec|
+      if rec[:ssn].to_s == ssn.to_s
+        return file_number
+      end
+    end
+    nil # i.e. not found
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
@@ -738,7 +744,7 @@ class Fakes::BGSService
       power_of_attorney:
         {
           legacy_poa_cd: "3QQ",
-          nm: "Clarence Darrow",
+          nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
           org_type_nm: "POA Attorney",
           ptcpnt_id: "600153863"
         },
@@ -780,18 +786,18 @@ class Fakes::BGSService
   # rubocop:disable Metrics/MethodLength
   def default_address
     {
-      addrs_one_txt: "9999 MISSION ST",
-      addrs_three_txt: "APT 2",
-      addrs_two_txt: "UBER",
-      city_nm: "SAN FRANCISCO",
-      cntry_nm: "USA",
+      addrs_one_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_1,
+      addrs_three_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_3,
+      addrs_two_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_2,
+      city_nm: FakeConstants.BGS_SERVICE.DEFAULT_CITY,
+      cntry_nm: FakeConstants.BGS_SERVICE.DEFAULT_COUNTRY,
       efctv_dt: 15.days.ago.to_formatted_s(:short_date),
       jrn_dt: 15.days.ago.to_formatted_s(:short_date),
       jrn_lctn_id: "283",
       jrn_obj_id: "SHARE  - PCAN",
       jrn_status_type_cd: "U",
       jrn_user_id: "CASEFLOW1",
-      postal_cd: "CA",
+      postal_cd: FakeConstants.BGS_SERVICE.DEFAULT_STATE,
       ptcpnt_addrs_id: "15069061",
       ptcpnt_addrs_type_nm: "Mailing",
       ptcpnt_id: "600085544",
@@ -801,7 +807,7 @@ class Fakes::BGSService
       trsury_addrs_three_txt: "APT 2",
       trsury_addrs_two_txt: "9999 MISSION ST",
       trsury_seq_nbr: "5",
-      zip_prefix_nbr: "94103"
+      zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
     }
   end
   # rubocop:enable Metrics/MethodLength

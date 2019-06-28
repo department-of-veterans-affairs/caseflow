@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
-class Hearings::HearingDayController < HearingScheduleController
+class Hearings::HearingDayController < HearingsApplicationController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_view_hearing_schedule_access
+  before_action :verify_access_to_hearings, only: [:update]
   before_action :verify_build_hearing_schedule_access, only: [:destroy, :create]
   skip_before_action :deny_vso_access, only: [:index, :show, :index_print]
 
@@ -117,7 +121,7 @@ class Hearings::HearingDayController < HearingScheduleController
 
   def invalid_record_error(hearing)
     render json: {
-      "errors": ["title": "Record is invalid", "detail": hearing.errors.full_messages.join(" ,")]
+      "errors": ["title": COPY::INVALID_RECORD_ERROR_TITLE, "detail": hearing.errors.full_messages.join(" ,")]
     }, status: :bad_request
   end
 

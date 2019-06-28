@@ -9,7 +9,7 @@ class ColocatedTaskDistributor < RoundRobinTaskDistributor
   def next_assignee(options = {})
     open_assignee = options.dig(:appeal)
       &.tasks
-      &.active
+      &.open
       &.find_by(assigned_to: assignee_pool)
       &.assigned_to
 

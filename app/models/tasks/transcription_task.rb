@@ -6,7 +6,7 @@ class TranscriptionTask < GenericTask
   class NonDispositionTaskParent < StandardError; end
 
   def check_parent_type
-    fail NonDispositionTaskParent unless parent.is_a? DispositionTask
+    fail NonDispositionTaskParent unless parent.is_a? AssignHearingDispositionTask
   end
 
   def available_actions(user)
@@ -15,7 +15,7 @@ class TranscriptionTask < GenericTask
     if (assigned_to && assigned_to == user) || task_is_assigned_to_users_organization?(user)
       [
         Constants.TASK_ACTIONS.RESCHEDULE_HEARING.to_h,
-        appropriate_timed_hold_task_action,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h,
         Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
       ] | hearing_admin_actions

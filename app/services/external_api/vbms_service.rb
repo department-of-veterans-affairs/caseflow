@@ -155,6 +155,18 @@ class ExternalApi::VBMSService
     send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))
   end
 
+  def self.update_contention!(contention)
+    @vbms_client ||= init_vbms_client
+
+    request = VBMS::Requests::UpdateContention.new(
+      contention: contention,
+      v5: FeatureToggle.enabled?(:claims_service_v5),
+      send_userid: FeatureToggle.enabled?(:vbms_include_user)
+    )
+
+    send_and_log_request(contention.claim_id, request, vbms_client_with_user(User.system_user))
+  end
+
   def self.associate_rating_request_issues!(claim_id:, rating_issue_contention_map:)
     # rating_issue_contention_map format: { issue_id: contention_id, issue_id2: contention_id2 }
     @vbms_client ||= init_vbms_client

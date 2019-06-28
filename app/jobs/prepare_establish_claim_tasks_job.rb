@@ -26,7 +26,7 @@ class PrepareEstablishClaimTasksJob < ApplicationJob
   end
 
   def unfinished_jobs_report
-    jobs = AsyncableJobs.new.jobs.select(&:expired_without_processing?)
+    jobs = AsyncableJobs.new(page_size: -1).jobs.select(&:expired_without_processing?)
     job_reporter = AsyncableJobsReporter.new(jobs: jobs)
     msg = "Expired Jobs: #{jobs.count} expired unfinished asyncable jobs exist in the queue.\n"
     msg += job_reporter.summarize

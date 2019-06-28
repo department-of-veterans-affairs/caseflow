@@ -20,7 +20,7 @@ describe TranscriptionTask do
       let!(:root_task) { create(:root_task, appeal: appeal) }
       let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-      let!(:disposition_task) { create(:disposition_task, parent: hearing_task, appeal: appeal) }
+      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
       let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
       it "cancels all tasks in the hierarchy and creates a new schedule_hearing_task" do
@@ -35,9 +35,9 @@ describe TranscriptionTask do
         new_hearing_task = root_task.children.where.not(status: Constants.TASK_STATUSES.cancelled).first
         new_schedule_hearing_task = new_hearing_task.children.first
 
-        expect(new_hearing_task.active?).to eq(true)
+        expect(new_hearing_task.open?).to eq(true)
         expect(new_hearing_task.type).to eq(HearingTask.name)
-        expect(new_schedule_hearing_task.active?).to eq(true)
+        expect(new_schedule_hearing_task.open?).to eq(true)
         expect(new_schedule_hearing_task.type).to eq(ScheduleHearingTask.name)
       end
     end
@@ -52,7 +52,7 @@ describe TranscriptionTask do
       let!(:root_task) { create(:root_task, appeal: appeal) }
       let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
       let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-      let!(:disposition_task) { create(:disposition_task, parent: hearing_task, appeal: appeal) }
+      let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
       let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
       it "completes the task" do
@@ -68,7 +68,7 @@ describe TranscriptionTask do
     let!(:root_task) { create(:root_task, appeal: appeal) }
     let!(:hearing_task) { create(:hearing_task, parent: root_task, appeal: appeal) }
     let!(:schedule_hearing_task) { create(:schedule_hearing_task, parent: hearing_task, appeal: appeal) }
-    let!(:disposition_task) { create(:disposition_task, parent: hearing_task, appeal: appeal) }
+    let!(:disposition_task) { create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
     let!(:transcription_task) { create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
     it "returns the hearing task" do

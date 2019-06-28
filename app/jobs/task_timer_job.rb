@@ -22,6 +22,7 @@ class TaskTimerJob < CaseflowJob
 
       task_timer.attempted!
       task_timer.task.when_timer_ends
+      task_timer.clear_error!
       task_timer.processed!
     end
   rescue StandardError => error

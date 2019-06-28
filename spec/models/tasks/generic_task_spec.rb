@@ -13,7 +13,7 @@ describe GenericTask do
         [
           Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
           Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-          Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.to_h,
+          Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
           Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
           Constants.TASK_ACTIONS.CANCEL_TASK.to_h
         ]
@@ -64,7 +64,7 @@ describe GenericTask do
     context "task has an active hearing task ancestor" do
       let(:appeal) { FactoryBot.create(:appeal) }
       let!(:hearing_task) { FactoryBot.create(:hearing_task, appeal: appeal) }
-      let(:disposition_task_type) { :disposition_task }
+      let(:disposition_task_type) { :assign_hearing_disposition_task }
       let(:disposition_task_status) { Constants.TASK_STATUSES.assigned }
       let!(:disposition_task) do
         FactoryBot.create(
@@ -148,7 +148,7 @@ describe GenericTask do
         end
 
         context "task is not a ScheduleHearingTask" do
-          let!(:task) { FactoryBot.create(:disposition_task, parent: hearing_task_2, appeal: appeal) }
+          let!(:task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task_2, appeal: appeal) }
 
           it "returns no actions" do
             expect(subject).to eq []
@@ -451,7 +451,7 @@ describe GenericTask do
         expect { subject }.to_not raise_error
         expect(task.status).to eq(Constants.TASK_STATUSES.cancelled)
 
-        new_task = task.parent.children.active.first
+        new_task = task.parent.children.open.first
         expect(new_task.children.length).to eq(incomplete_children_cnt)
 
         task.reload

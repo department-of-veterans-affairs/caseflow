@@ -40,16 +40,38 @@ RSpec.feature "Case Assignment flows" do
 
       expect(page).to have_content(COPY::ADD_COLOCATED_TASK_SUBHEAD)
 
-      # step "fills in and submits the form for a new admin action"
+      # step "fills in and submits the form for two identical admin actions"
       opt_idx = rand(Constants::CO_LOCATED_ADMIN_ACTIONS.length)
       selected_opt_0 = Constants::CO_LOCATED_ADMIN_ACTIONS.values[opt_idx]
+      instructions = generate_words(5)
 
       click_dropdown(text: selected_opt_0) do
         visible_options = page.find_all(".Select-option")
         expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
       end
 
-      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: generate_words(5)
+      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+
+      click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
+
+      expect(all('div[id^="action_"]').count).to eq 2
+
+      within all('div[id^="action_"]')[1] do
+        click_dropdown(text: selected_opt_0)
+        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+      end
+
+      click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
+
+      expect(page).to have_content(
+        format(COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR, selected_opt_0.upcase, instructions)
+      )
+
+      # step "removes the duplicate and submits the form for a new admin action"
+
+      within all('div[id^="action_"]')[1] do
+        click_on COPY::ADD_COLOCATED_TASK_REMOVE_BUTTON_LABEL
+      end
 
       click_on COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL
 
@@ -59,7 +81,7 @@ RSpec.feature "Case Assignment flows" do
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE, 2))
       expect(page).to have_content(format(COPY::QUEUE_PAGE_ON_HOLD_TAB_TITLE, 1))
 
-      # step "navigates again to the 'submit admin action' page"
+      # step "navigates to the 'submit admin action' page for a different veteran"
       click_on "#{appeals[1].veteran_full_name} (#{appeals[1].sanitized_vbms_id})"
       click_dropdown(text: Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h[:label])
 

@@ -23,14 +23,6 @@ describe ScheduleHearingTask do
   context "create a new ScheduleHearingTask" do
     let(:appeal) { FactoryBot.create(:appeal, :hearing_docket) }
 
-    before do
-      FeatureToggle.enable!(:ama_acd_tasks)
-    end
-
-    after do
-      FeatureToggle.disable!(:ama_acd_tasks)
-    end
-
     subject do
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
@@ -111,11 +103,11 @@ describe ScheduleHearingTask do
         expect(Hearing.first.appeal).to eq(schedule_hearing_task.appeal)
       end
 
-      it "creates a DispositionTask and associated object" do
+      it "creates a AssignHearingDispositionTask and associated object" do
         schedule_hearing_task.update_from_params(update_params, hearings_management_user)
 
-        expect(DispositionTask.count).to eq(1)
-        expect(DispositionTask.first.appeal).to eq(schedule_hearing_task.appeal)
+        expect(AssignHearingDispositionTask.count).to eq(1)
+        expect(AssignHearingDispositionTask.first.appeal).to eq(schedule_hearing_task.appeal)
         expect(HearingTaskAssociation.count).to eq(1)
         expect(HearingTaskAssociation.first.hearing).to eq(Hearing.first)
         expect(HearingTaskAssociation.first.hearing_task).to eq(HearingTask.first)
@@ -198,7 +190,7 @@ describe ScheduleHearingTask do
     let(:past_hearing_disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
     let(:hearing) { FactoryBot.create(:hearing, appeal: appeal, disposition: past_hearing_disposition) }
     let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+    let!(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
     let!(:association) { FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: hearing_task) }
     let!(:hearing_task_2) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
     let!(:association_2) do
@@ -216,14 +208,14 @@ describe ScheduleHearingTask do
     it "creates new hearing and change hearing disposition tasks and cancels unwanted tasks" do
       subject
 
-      expect(hearing_task.reload.active?).to be_falsey
-      expect(disposition_task.reload.active?).to be_falsey
+      expect(hearing_task.reload.open?).to be_falsey
+      expect(disposition_task.reload.open?).to be_falsey
       expect(hearing_task_2.reload.status).to eq Constants.TASK_STATUSES.cancelled
       expect(task.reload.status).to eq Constants.TASK_STATUSES.cancelled
-      new_hearing_tasks = appeal.tasks.active.where(type: HearingTask.name)
+      new_hearing_tasks = appeal.tasks.open.where(type: HearingTask.name)
       expect(new_hearing_tasks.count).to eq 1
       expect(new_hearing_tasks.first.hearing).to eq hearing
-      new_change_tasks = appeal.tasks.active.where(type: ChangeHearingDispositionTask.name)
+      new_change_tasks = appeal.tasks.open.where(type: ChangeHearingDispositionTask.name)
       expect(new_change_tasks.count).to eq 1
       expect(new_change_tasks.first.parent).to eq new_hearing_tasks.first
     end

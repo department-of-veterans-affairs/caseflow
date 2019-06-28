@@ -5,29 +5,29 @@ RSpec.describe BulkTaskAssignmentsController, type: :controller do
     let(:organization) { HearingsManagement.singleton }
     let!(:schedule_hearing1) do
       FactoryBot.create(
-        :no_show_hearing_task, 
-        assigned_to: organization, 
-        created_at: 5.days.ago)
+        :no_show_hearing_task,
+        assigned_to: organization,
+        created_at: 5.days.ago
+      )
     end
     let!(:schedule_hearing2) do
-      FactoryBot.create(:no_show_hearing_task, 
-        assigned_to: organization, 
-        created_at: 2.days.ago)
+      FactoryBot.create(:no_show_hearing_task,
+                        assigned_to: organization,
+                        created_at: 2.days.ago)
     end
 
     let(:assigned_to) { create(:user) }
     let(:assigned_by) { create(:user) }
 
-    let(:params) do 
+    let(:params) do
       {
         assigned_to_id: assigned_to.id,
-        organization_id: organization_id, 
-        task_type: task_type, 
+        organization_url: organization.url,
+        task_type: task_type,
         task_count: task_count
       }
     end
     let(:task_type) { "NoShowHearingTask" }
-    let(:organization_id) { organization.id }
     let(:task_count) { 2 }
 
     context "when user has access" do

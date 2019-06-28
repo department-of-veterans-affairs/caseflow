@@ -1,0 +1,17 @@
+{
+  "ASSIGNED_TASKS_TAB_NAME": "assigned",
+  "COMPLETED_TASKS_TAB_NAME": "completed",
+  "TRACKING_TASKS_TAB_NAME": "tracking",
+  "UNASSIGNED_TASKS_TAB_NAME": "unassigned",
+
+  "APPEAL_TYPE_COLUMN": "typeColumn",
+  "CASE_DETAILS_LINK_COLUMN": "detailsColumn",
+  "DAYS_ON_HOLD_COLUMN": "daysWaitingColumn",
+  "DOCUMENT_COUNT_READER_LINK_COLUMN": "readerLinkColumn",
+  "DOCKET_NUMBER_COLUMN": "docketNumberColumn",
+  "HEARING_BADGE_COLUMN": "hearingBadgeColumn",
+  "ISSUE_COUNT_COLUMN": "issueCountColumn",
+  "REGIONAL_OFFICE_COLUMN": "regionalOfficeColumn",
+  "TASK_ASSIGNEE_COLUMN": "assignedToColumn",
+  "TASK_TYPE_COLUMN": "taskColumn"
+}

@@ -7,16 +7,11 @@ class RetrieveDocumentsForReaderJob < ApplicationJob
   application_attr :reader
 
   def perform
-    find_all_reader_users_by_documents_fetched_at.each do |user|
-      start_fetch_job(user)
-    end
+    users = BatchUsersForReaderQuery.process
+    users.each { |user| start_fetch_job(user) }
   end
 
   def start_fetch_job(user)
     FetchDocumentsForReaderUserJob.perform_later(user)
-  end
-
-  def find_all_reader_users_by_documents_fetched_at
-    ReaderUser.all_by_documents_fetched_at
   end
 end

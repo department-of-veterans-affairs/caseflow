@@ -3,7 +3,7 @@
 class BulkTaskAssignment
   include ActiveModel::Model
 
-  validates :assigned_to_id, :organization_id, :task_type, presence: true
+  validates :assigned_to_id, :organization_url, :task_type, presence: true
   validate :task_type_is_valid
   validate :assigned_to_exists
   validate :organization_exists
@@ -12,7 +12,7 @@ class BulkTaskAssignment
   validate :assigned_by_part_of_organization
   validate :organization_can_bulk_assign
 
-  attr_accessor :assigned_to_id, :assigned_by, :organization_id, :task_type, :regional_office, :task_count
+  attr_accessor :assigned_to_id, :assigned_by, :organization_url, :task_type, :regional_office, :task_count
 
   def initialize(attributes = {})
     super
@@ -39,7 +39,7 @@ class BulkTaskAssignment
   def tasks_to_be_assigned
     @tasks_to_be_assigned ||= begin
       tasks = task_type.constantize
-        .active.where(assigned_to_id: organization_id)
+        .active.where(assigned_to_id: organization.id)
         .limit(task_count).order(:created_at)
       if regional_office
         tasks = tasks.joins(
@@ -55,7 +55,7 @@ class BulkTaskAssignment
   end
 
   def organization
-    @organization ||= Organization.includes(:users).find_by(id: organization_id)
+    @organization ||= Organization.includes(:users).find_by(url: organization_url)
   end
 
   def task_type_is_valid
@@ -81,24 +81,24 @@ class BulkTaskAssignment
   def organization_exists
     return if organization
 
-    errors.add(:organization_id, "could not find an organization with id #{organization_id}")
+    errors.add(:organization_url, "could not find an organization with url #{organization_url}")
   end
 
   def assigned_to_part_of_organization
     return if organization&.users&.include?(assigned_to)
 
-    errors.add(:assigned_to, "does not belong to organization with id #{organization_id}")
+    errors.add(:assigned_to, "does not belong to organization with url #{organization_url}")
   end
 
   def assigned_by_part_of_organization
     return if organization&.users&.include?(assigned_by)
 
-    errors.add(:assigned_by, "does not belong to organization with id #{organization_id}")
+    errors.add(:assigned_by, "does not belong to organization with url #{organization_url}")
   end
 
   def organization_can_bulk_assign
     return if organization&.can_bulk_assign_tasks?
 
-    errors.add(:organization, "with id #{organization_id} cannot bulk assign tasks")
+    errors.add(:organization, "with url #{organization_url} cannot bulk assign tasks")
   end
 end

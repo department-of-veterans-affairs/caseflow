@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import querystring from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -44,10 +45,12 @@ import AssignToView from './AssignToView';
 import CreateMailTaskDialog from './CreateMailTaskDialog';
 import AddJudgeTeamModal from './AddJudgeTeamModal';
 import AddVsoModal from './AddVsoModal';
+import AddPrivateBarModal from './AddPrivateBarModal';
 import PostponeHearingTaskModal from './PostponeHearingTaskModal';
 import ChangeTaskTypeModal from './ChangeTaskTypeModal';
 import StartHoldModal from './components/StartHoldModal';
 import EndHoldModal from './components/EndHoldModal';
+import BulkAssignModal from './components/BulkAssignModal';
 
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
@@ -87,7 +90,17 @@ class QueueApp extends React.PureComponent {
     }
   }
 
-  routedSearchResults = (props) => <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />;
+  routedSearchResults = (props) => {
+    const veteranIdsParameter = props.match.params.caseflowVeteranIds ||
+      querystring.parse(props.location.search.replace(/^\?/, '')).veteran_ids;
+    let caseflowVeteranIds;
+
+    if (veteranIdsParameter) {
+      caseflowVeteranIds = veteranIdsParameter.split(',');
+    }
+
+    return <CaseListView caseflowVeteranIds={caseflowVeteranIds} />;
+  }
 
   viewForUserRole = () => {
     const { userRole } = this.props;
@@ -220,6 +233,8 @@ class QueueApp extends React.PureComponent {
   routedSendColocatedTaskModal = (props) =>
     <CompleteTaskModal modalType="send_colocated_task" {...props.match.params} />;
 
+  routedBulkAssignTaskModal = (props) => <BulkAssignModal {...props} />;
+
   routedOrganization = (props) => <OrganizationQueueLoadingScreen
     urlToLoad={`${props.location.pathname}/tasks`}>
     <OrganizationQueue {...this.props} />
@@ -232,6 +247,8 @@ class QueueApp extends React.PureComponent {
   routedAddJudgeTeam = (props) => <AddJudgeTeamModal {...props.match.params} />;
 
   routedAddVsoModal = (props) => <AddVsoModal {...props.match.params} />;
+
+  routedAddPrivateBarModal = (props) => <AddPrivateBarModal {...props.match.params} />;
 
   routedPostponeHearingTaskModal = (props) => <PostponeHearingTaskModal {...props.match.params} />;
 
@@ -272,13 +289,8 @@ class QueueApp extends React.PureComponent {
           {this.props.flash && <FlashAlerts flash={this.props.flash} />}
           <PageRoute
             exact
-            path="/search"
+            path={['/search', '/cases/:caseflowVeteranIds']}
             title="Caseflow"
-            render={this.routedSearchResults} />
-          <PageRoute
-            exact
-            path="/cases/:caseflowVeteranId"
-            title="Case Search | Caseflow"
             render={this.routedSearchResults} />
           <PageRoute
             exact
@@ -478,9 +490,12 @@ class QueueApp extends React.PureComponent {
             path="/queue/appeals/:appealId/tasks/:taskId/modal/change_task_type"
             title="Change Task Type | Caseflow"
             render={this.routedChangeTaskTypeModal} />
+          <Route
+            path="/organizations/:organization/modal/bulk_assign_tasks"
+            render={this.routedBulkAssignTaskModal} />
           <PageRoute
             exact
-            path="/organizations/:organization"
+            path={['/organizations/:organization', '/organizations/:organization/modal/:modalType']}
             title="Organization Queue | Caseflow"
             render={this.routedOrganization} />
           <PageRoute
@@ -494,6 +509,9 @@ class QueueApp extends React.PureComponent {
           <Route
             path="/team_management/add_vso"
             render={this.routedAddVsoModal} />
+          <Route
+            path="/team_management/add_private_bar"
+            render={this.routedAddPrivateBarModal} />
           <PageRoute
             path="/team_management"
             title="Team Management | Caseflow"

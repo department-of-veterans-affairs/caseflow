@@ -2,7 +2,6 @@
 
 class Distribution < ApplicationRecord
   include ActiveModel::Serializers::JSON
-  include LegacyCaseDistribution
   include AmaCaseDistribution
 
   has_many :distributed_cases
@@ -30,13 +29,9 @@ class Distribution < ApplicationRecord
 
     update(status: "started")
 
-    if FeatureToggle.enabled?(:ama_auto_case_distribution, user: RequestStore.store[:current_user])
-      ama_distribution
-      update(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
-    else
-      legacy_distribution
-      update(status: "completed", completed_at: Time.zone.now, statistics: legacy_statistics)
-    end
+    ama_distribution
+
+    update(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
   rescue StandardError => error
     update(status: "error")
     raise error

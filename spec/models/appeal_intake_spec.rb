@@ -222,7 +222,7 @@ describe AppealIntake do
         decision_date: Date.new(2018, 12, 25),
         nonrating_issue_description: "nonrating request issue decision text"
       )
-      expect(intake.detail.tasks.count).to eq 1
+      expect(intake.detail.tasks.count).to eq 2
       expect(intake.detail.submitted?).to eq true
       expect(intake.detail.attempted?).to eq true
       expect(intake.detail.processed?).to eq true

@@ -1,11 +1,19 @@
 # frozen_string_literal: true
 
 class HearingsManagement < Organization
+  def self.singleton
+    HearingsManagement.first || HearingsManagement.create(name: "Hearings Management", url: "hearings-management")
+  end
+
   def can_bulk_assign_tasks?
     true
   end
 
-  def self.singleton
-    HearingsManagement.first || HearingsManagement.create(name: "Hearing Management", url: "hearing-management")
+  def show_regional_office_in_queue?
+    true
+  end
+
+  def use_task_pages_api?
+    true
   end
 end

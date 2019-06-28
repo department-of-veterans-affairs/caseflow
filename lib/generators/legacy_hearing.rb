@@ -19,8 +19,7 @@ class Generators::LegacyHearing
         veteran_last_name: generate_last_name,
         appellant_first_name: generate_first_name,
         appellant_middle_initial: "A",
-        appellant_last_name: generate_last_name,
-        master_record: false
+        appellant_last_name: generate_last_name
       }
     end
 

@@ -5,14 +5,7 @@ require "faker"
 
 describe FetchDocumentsForReaderUserJob do
   context ".perform" do
-    let(:user) do
-      Generators::User.create(roles: ["Reader"])
-    end
-
-    let!(:reader_user) do
-      Generators::ReaderUser.create(user_id: user.id)
-    end
-
+    let(:user) { create(:user) }
     let(:document) { create(:document) }
 
     let(:appeal) do
@@ -32,9 +25,9 @@ describe FetchDocumentsForReaderUserJob do
       it "retrieves the appeal document and updates the fetched at time" do
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything).and_return(doc_struct).once
 
-        expect(reader_user.documents_fetched_at).to be_nil
-        FetchDocumentsForReaderUserJob.perform_now(reader_user)
-        expect(reader_user.documents_fetched_at).to_not be_nil
+        expect(user.efolder_documents_fetched_at).to be_nil
+        FetchDocumentsForReaderUserJob.perform_now(user)
+        expect(user.efolder_documents_fetched_at).to_not be_nil
       end
     end
 
@@ -56,9 +49,9 @@ describe FetchDocumentsForReaderUserJob do
       it "retrieves the appeal document and updates the fetched at time" do
         expect(EFolderService).to receive(:fetch_documents_for).with(ama_appeal, anything).and_return(doc_struct).once
 
-        expect(reader_user.documents_fetched_at).to be_nil
-        FetchDocumentsForReaderUserJob.perform_now(reader_user)
-        expect(reader_user.documents_fetched_at).to_not be_nil
+        expect(user.efolder_documents_fetched_at).to be_nil
+        FetchDocumentsForReaderUserJob.perform_now(user)
+        expect(user.efolder_documents_fetched_at).to_not be_nil
       end
     end
 
@@ -87,9 +80,9 @@ describe FetchDocumentsForReaderUserJob do
       it "retrieves the appeal document and updates the fetched at time" do
         expect(EFolderService).to receive(:fetch_documents_for).with(ama_appeal, anything).and_return(doc_struct).once
 
-        expect(reader_user.documents_fetched_at).to be_nil
-        FetchDocumentsForReaderUserJob.perform_now(reader_user)
-        expect(reader_user.documents_fetched_at).to_not be_nil
+        expect(user.efolder_documents_fetched_at).to be_nil
+        FetchDocumentsForReaderUserJob.perform_now(user)
+        expect(user.efolder_documents_fetched_at).to_not be_nil
       end
     end
 
@@ -99,7 +92,7 @@ describe FetchDocumentsForReaderUserJob do
         expect(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
           .and_raise(Caseflow::Error::DocumentRetrievalError.new(code: 502, message: msg)).once
 
-        expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }.not_to raise_error
+        expect { FetchDocumentsForReaderUserJob.perform_now(user) }.not_to raise_error
       end
     end
 
@@ -108,7 +101,7 @@ describe FetchDocumentsForReaderUserJob do
         allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
           .and_raise(Caseflow::Error::EfolderAccessForbidden.new(code: 401, message: "error"))
 
-        expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }.not_to raise_error
+        expect { FetchDocumentsForReaderUserJob.perform_now(user) }.not_to raise_error
       end
     end
 
@@ -117,7 +110,7 @@ describe FetchDocumentsForReaderUserJob do
         allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
           .and_raise(Caseflow::Error::ClientRequestError.new(code: 400, message: "error"))
 
-        expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }.not_to raise_error
+        expect { FetchDocumentsForReaderUserJob.perform_now(user) }.not_to raise_error
       end
     end
 
@@ -126,7 +119,7 @@ describe FetchDocumentsForReaderUserJob do
         allow(EFolderService).to receive(:fetch_documents_for).with(appeal, anything)
           .and_raise(HTTPClient::KeepAliveDisconnected.new("You lose."))
 
-        expect { FetchDocumentsForReaderUserJob.perform_now(reader_user) }
+        expect { FetchDocumentsForReaderUserJob.perform_now(user) }
           .to raise_error(HTTPClient::KeepAliveDisconnected)
       end
     end

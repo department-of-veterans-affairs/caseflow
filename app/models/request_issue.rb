@@ -59,6 +59,13 @@ class RequestIssue < ApplicationRecord
     end
   end
 
+  class NoAssociatedRating < StandardError
+    def initialize(request_issue_id)
+      super("Rating request Issue #{request_issue_id} cannot create decision issue " \
+        "due to not having an associated rating")
+    end
+  end
+
   class NotYetSubmitted < StandardError; end
   class MissingContentionDisposition < StandardError; end
   class MissingDecisionDate < StandardError
@@ -348,6 +355,7 @@ class RequestIssue < ApplicationRecord
 
     fail NotYetSubmitted unless submitted_and_ready?
 
+    clear_error!
     attempted!
 
     transaction do
@@ -413,8 +421,8 @@ class RequestIssue < ApplicationRecord
     close!(status: :withdrawn, closed_at_value: withdrawal_date.to_datetime)
   end
 
-  def save_edit_contention_text!(new_description)
-    update!(edited_description: new_description)
+  def save_edited_contention_text!(new_description)
+    update!(edited_description: new_description, contention_updated_at: nil)
   end
 
   def remove!
@@ -425,6 +433,7 @@ class RequestIssue < ApplicationRecord
       decision_issues.each(&:soft_delete_on_removed_request_issue)
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
+      canceled! if submitted_not_processed?
     end
   end
 
@@ -556,7 +565,7 @@ class RequestIssue < ApplicationRecord
 
   def create_decision_issues
     if rating?
-      return false unless end_product_establishment.associated_rating
+      fail NoAssociatedRating, id unless end_product_establishment.associated_rating
 
       create_decision_issues_from_rating
     end
@@ -785,6 +794,6 @@ class RequestIssue < ApplicationRecord
   end
 
   def appeal_active?
-    decision_review.tasks.active.any?
+    decision_review.tasks.open.any?
   end
 end

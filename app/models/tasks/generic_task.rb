@@ -12,9 +12,9 @@ class GenericTask < Task
   # Use the existence of an organization-level task to prevent duplicates since there should only ever be one org-level
   # task active at a time for a single appeal.
   def verify_org_task_unique
-    return if !active?
+    return if !open?
 
-    if appeal.tasks.active.where(
+    if appeal.tasks.open.where(
       type: type,
       assigned_to: assigned_to,
       parent: parent
@@ -38,7 +38,7 @@ class GenericTask < Task
       return [
         Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h,
-        appropriate_timed_hold_task_action,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.CANCEL_TASK.to_h
       ]
@@ -78,8 +78,8 @@ class GenericTask < Task
     hearing_task.create_change_hearing_disposition_task(instructions)
   end
 
-  def most_recent_inactive_hearing_task_on_appeal
-    appeal.tasks.inactive.order(closed_at: :desc).where(type: HearingTask.name).last
+  def most_recent_closed_hearing_task_on_appeal
+    appeal.tasks.closed.order(closed_at: :desc).where(type: HearingTask.name).last
   end
 
   def task_is_assigned_to_organization_user_administers?(user)
@@ -92,7 +92,7 @@ class GenericTask < Task
     return [] unless HearingAdmin.singleton.user_has_access?(user)
 
     hearing_task = ancestor_task_of_type(HearingTask)
-    return [] unless hearing_task&.active? && hearing_task&.disposition_task&.present?
+    return [] unless hearing_task&.open? && hearing_task&.disposition_task&.present?
 
     [
       Constants.TASK_ACTIONS.CREATE_CHANGE_HEARING_DISPOSITION_TASK.to_h
@@ -103,7 +103,7 @@ class GenericTask < Task
     return [] unless type == ScheduleHearingTask.name
     return [] unless HearingsManagement.singleton.user_has_access?(user)
 
-    return [] if most_recent_inactive_hearing_task_on_appeal&.hearing&.disposition.blank?
+    return [] if most_recent_closed_hearing_task_on_appeal&.hearing&.disposition.blank?
 
     [
       Constants.TASK_ACTIONS.CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK.to_h

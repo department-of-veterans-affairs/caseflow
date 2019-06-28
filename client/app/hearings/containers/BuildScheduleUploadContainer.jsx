@@ -99,7 +99,7 @@ export class BuildScheduleUploadContainer extends React.Component {
 
     const data = this.formatData();
 
-    ApiUtil.post('/hearings/schedule_periods', { data }).
+    ApiUtil.post('/hearings/schedule_periods', { data: { schedule_period: data } }).
       then((response) => {
         if (_.has(response.body, 'error')) {
           if (this.props.fileType === SPREADSHEET_TYPES.RoSchedulePeriod.value) {

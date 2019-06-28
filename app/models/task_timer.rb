@@ -15,6 +15,6 @@ class TaskTimer < ApplicationRecord
   end
 
   def self.with_active_tasks
-    includes(:task).where.not(tasks: { status: Task.inactive_statuses })
+    includes(:task).where.not(tasks: { status: Task.closed_statuses })
   end
 end

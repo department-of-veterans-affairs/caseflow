@@ -21,15 +21,10 @@ class AttorneyTask < Task
 
     return [] if assigned_to != user
 
-    review_decision_label = if ama?
-                              Constants.TASK_ACTIONS.REVIEW_AMA_DECISION.to_h
-                            else
-                              Constants.TASK_ACTIONS.REVIEW_LEGACY_DECISION.to_h
-                            end
     [
-      review_decision_label,
+      Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      appropriate_timed_hold_task_action
+      Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h
     ]
   end
 
@@ -49,7 +44,7 @@ class AttorneyTask < Task
   private
 
   def child_attorney_tasks_are_completed
-    if parent&.children_attorney_tasks&.active&.any?
+    if parent&.children_attorney_tasks&.open&.any?
       errors.add(:parent, "has open child tasks")
     end
   end

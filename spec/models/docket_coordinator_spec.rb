@@ -3,8 +3,6 @@
 describe DocketCoordinator do
   before do
     FeatureToggle.enable!(:test_facols)
-    FeatureToggle.enable!(:ama_auto_case_distribution)
-    FeatureToggle.enable!(:ama_acd_tasks)
     Timecop.freeze(Time.utc(2020, 4, 1, 12, 0, 0))
 
     4.times do
@@ -18,15 +16,13 @@ describe DocketCoordinator do
       .to receive(:nonpriority_receipts_per_year)
       .and_return(nonpriority_receipts_per_year)
 
-    allow(Appeal)
+    allow(Docket)
       .to receive(:nonpriority_decisions_per_year)
       .and_return(nonpriority_decisions_per_year)
   end
 
   after do
     FeatureToggle.disable!(:test_facols)
-    FeatureToggle.disable!(:ama_auto_case_distribution)
-    FeatureToggle.disable!(:ama_acd_tasks)
   end
 
   let(:nonpriority_receipts_per_year) { 100 }

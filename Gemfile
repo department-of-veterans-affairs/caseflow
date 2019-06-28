@@ -13,12 +13,11 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "business_time", "~> 0.9.3"
 gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "8dde00d67b7c629e4b871f8dcb3617bfe989b3db"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "dddc821c2335c7de234a5454e4b4874e3f658420"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "603c7385bd5f021286a3f4f58fb2d99c772a4ca1"
 gem "dogstatsd-ruby"
 gem "fast_jsonapi"
 gem "holidays", "~> 6.4"
-# Use jquery as the JavaScript library
-gem "jquery-rails"
+gem "kaminari"
 # active_model_serializers has a default dependency on loofah 2.2.2 which has a security vuln (CVE-2018-16468)
 gem "loofah", ">= 2.2.3"
 gem "moment_timezone-rails"
@@ -62,6 +61,8 @@ gem "stringex", require: false
 gem "strong_migrations"
 # execjs runtime
 gem "therubyracer", platforms: :ruby
+# print trees
+gem "tty-tree"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 

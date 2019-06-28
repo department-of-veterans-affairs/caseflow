@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 class GenericQueue
-  include ActiveModel::Model
-
-  attr_accessor :user
+  def initialize(limit: 10_000, user:)
+    @limit = limit
+    @user = user
+  end
 
   def tasks
     (relevant_tasks + relevant_attorney_tasks).each(&:update_if_hold_expired!)
@@ -11,10 +12,21 @@ class GenericQueue
 
   private
 
+  attr_reader :limit, :user
+
   def relevant_tasks
     Task.incomplete_or_recently_closed
       .where(assigned_to: user)
+      .where(appeal_type: relevant_appeal_types)
       .includes(*task_includes)
+      .order(created_at: :asc)
+      .limit(limit)
+  end
+
+  def relevant_appeal_types
+    return [Appeal.name] if user.is_a?(Vso)
+
+    [Appeal.name, LegacyAppeal.name]
   end
 
   def relevant_attorney_tasks
@@ -25,6 +37,8 @@ class GenericQueue
     AttorneyTask.incomplete_or_recently_closed
       .where(assigned_to: Judge.new(user).attorneys)
       .includes(*task_includes)
+      .order(created_at: :asc)
+      .limit(limit)
   end
 
   def task_includes
@@ -32,7 +46,8 @@ class GenericQueue
       { appeal: [:available_hearing_locations, :claimants] },
       :assigned_by,
       :assigned_to,
-      :children
+      :children,
+      :parent
     ]
   end
 end

@@ -111,20 +111,10 @@ class Veteran < ApplicationRecord
     result = bgs.fetch_veteran_info(file_number)
 
     # If the result is nil, the veteran wasn't found.
-    # If the file number is nil, that's another way of saying the veteran wasn't found.
-    result && result[:file_number] && result
+    # If the participant id is nil, that's another way of saying the veteran wasn't found.
+    return result if result && result[:ptcpnt_id]
   rescue BGS::ShareError => error
-    @access_error = error.message
-
-    # Now that we are always checking find_flashes for access control before we fetch the
-    # veteran, we should never see this error. Reporting it to sentry if it happens
-    unless error.message.match?(/Sensitive File/)
-      Raven.capture_exception(error)
-      raise error
-    end
-
-    # Set the veteran as inaccessible if a sensitivity error is thrown
-    @accessible = false
+    handle_bgs_share_error(error)
   end
 
   def accessible?
@@ -151,6 +141,10 @@ class Veteran < ApplicationRecord
 
   def relationships
     @relationships ||= fetch_relationships
+  end
+
+  def incident_flash?
+    bgs_record[:block_cadd_ind] == "S"
   end
 
   # Postal code might be stored in address line 3 for international addresses
@@ -220,10 +214,17 @@ class Veteran < ApplicationRecord
       find_and_maybe_backfill_name(file_number, sync_name: sync_name) || create_by_file_number(file_number)
     end
 
+    def find_by_ssn(ssn, sync_name: false)
+      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
+      return unless file_number
+
+      find_and_maybe_backfill_name(file_number, sync_name: sync_name)
+    end
+
     def find_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name) ||
-          find_by_ssn(file_number_or_ssn, sync_name: sync_name)
+        find_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
+          find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
       else
         find_and_maybe_backfill_name(file_number_or_ssn, sync_name: sync_name)
       end
@@ -231,21 +232,14 @@ class Veteran < ApplicationRecord
 
     def find_or_create_by_file_number_or_ssn(file_number_or_ssn, sync_name: false)
       if file_number_or_ssn.to_s.length == 9
-        find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name) ||
-          find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name)
+        find_or_create_by_ssn(file_number_or_ssn, sync_name: sync_name) ||
+          find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       else
         find_or_create_by_file_number(file_number_or_ssn, sync_name: sync_name)
       end
     end
 
     private
-
-    def find_by_ssn(ssn, sync_name: false)
-      file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
-      return unless file_number
-
-      find_and_maybe_backfill_name(file_number, sync_name: sync_name)
-    end
 
     def find_or_create_by_ssn(ssn, sync_name: false)
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
@@ -299,7 +293,7 @@ class Veteran < ApplicationRecord
       before_create_veteran_by_file_number # Used to simulate race conditions
       veteran.tap do |v|
         v.update!(
-          participant_id: v.ptcpnt_id,
+          participant_id: v.ptcpnt_id || v.bgs_record[:participant_id],
           first_name: v.bgs_record[:first_name],
           last_name: v.bgs_record[:last_name],
           middle_name: v.bgs_record[:middle_name],
@@ -329,6 +323,20 @@ class Veteran < ApplicationRecord
   end
 
   private
+
+  def handle_bgs_share_error(error)
+    @access_error = error.message
+
+    # Now that we are always checking find_flashes for access control before we fetch the
+    # veteran, we should never see this error. Reporting it to sentry if it happens
+    unless error.message.match?(/Sensitive File/)
+      Raven.capture_exception(error)
+      fail error
+    end
+
+    # Set the veteran as inaccessible if a sensitivity error is thrown
+    @accessible = false
+  end
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)

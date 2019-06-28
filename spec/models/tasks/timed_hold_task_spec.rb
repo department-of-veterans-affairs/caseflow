@@ -67,7 +67,7 @@ describe TimedHoldTask do
         end
 
         it "does not change the status of the closed sibling tasks" do
-          expect(subject.active?).to be_truthy
+          expect(subject.open?).to be_truthy
           expect(cancelled_sibling.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(completed_sibling.status).to eq(Constants.TASK_STATUSES.completed)
         end
@@ -77,7 +77,7 @@ describe TimedHoldTask do
         let!(:existing_timed_hold_task) { FactoryBot.create(:timed_hold_task, **args) }
 
         it "cancels the existing sibling task" do
-          expect(subject.active?).to be_truthy
+          expect(subject.open?).to be_truthy
           expect(existing_timed_hold_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
         end
       end
@@ -87,10 +87,10 @@ describe TimedHoldTask do
         let!(:existing_timed_hold_task) { FactoryBot.create(:timed_hold_task, **args) }
 
         it "cancels the TimedHoldTask but leaves the GenericTask alone" do
-          expect(subject.active?).to be_truthy
+          expect(subject.open?).to be_truthy
           expect(parent.children.count).to eq(3)
           expect(existing_timed_hold_task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-          expect(existing_generic_task_sibling.reload.active?).to eq(true)
+          expect(existing_generic_task_sibling.reload.open?).to eq(true)
         end
       end
     end

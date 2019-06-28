@@ -12,13 +12,16 @@ export REDIS_URL_SIDEKIQ=redis://appeals-redis:6379
 export DOCKERIZED=true
 export DEMO_PORT=1521
 export DEMO_DB="(DESCRIPTION=
-    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-development)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SERVICE_NAME=BVAP.localdomain)))"
-
+    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=VACOLS_DB-development)(PORT=1521)))(RECV_TIMEOUT=120)(SEND_TIMEOUT=5)(CONNECT_DATA=(SID=BVAP)))"
+    
 
 export PATH=/.yarn/bin:/.config/yarn/global/node_modules/.bin:/usr/local/bundle/bin:/usr/local/bundle/gems/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/oracle/instantclient_12_2
 
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_2
 export ORACLE_HOME=/opt/oracle/instantclient_12_2
+
+echo "Waiting for FACOLS to properly start up - 4 minutes"
+sleep 240
 
 echo "Starting Appeals App"
 date

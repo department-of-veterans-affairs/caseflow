@@ -550,6 +550,28 @@ describe ClaimReview do
           expect(Fakes::VBMSService).to have_received(:create_contentions!)
         end
 
+        context "when the end product is no longer active" do
+          before do
+            Fakes::BGSService.manage_claimant_letter_v2_requests = nil
+            Fakes::BGSService.generate_tracked_items_requests = nil
+            claim_review.end_product_establishments.first.update!(synced_status: "CLR")
+          end
+
+          let(:informal_conference) { true }
+
+          it "does not attempt subsequent actions on the end product and completes the establishment job" do
+            subject
+
+            expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
+            expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
+            expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+            expect(Fakes::BGSService.manage_claimant_letter_v2_requests).to be_nil
+            expect(Fakes::BGSService.generate_tracked_items_requests).to be_nil
+            expect(claim_review.establishment_processed_at).to eq Time.zone.now
+            expect(claim_review.establishment_error).to be_nil
+          end
+        end
+
         context "when some of the contentions have already been saved" do
           let(:one_day_ago) { 1.day.ago }
 

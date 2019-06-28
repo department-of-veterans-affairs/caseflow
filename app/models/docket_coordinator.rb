@@ -108,6 +108,6 @@ class DocketCoordinator
   end
 
   def nonpriority_decisions_per_year
-    @nonpriority_decisions_per_year ||= [LegacyAppeal, Appeal].map(&:nonpriority_decisions_per_year).reduce(0, :+)
+    @nonpriority_decisions_per_year ||= [LegacyAppeal, Docket].map(&:nonpriority_decisions_per_year).reduce(0, :+)
   end
 end
