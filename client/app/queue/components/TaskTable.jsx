@@ -28,7 +28,6 @@ import {
   CATEGORIES,
   redText,
   LEGACY_APPEAL_TYPES,
-  COLUMN_NAMES,
   DOCKET_NAME_FILTERS
 } from '../constants';
 import COPY from '../../../COPY.json';
@@ -403,7 +402,6 @@ export class TaskTableUnconnected extends React.PureComponent {
     rowObjects={this.props.tasks}
     getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-    alternateColumnNames={COLUMN_NAMES}
     enablePagination
     rowClassNames={(task) =>
       this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;

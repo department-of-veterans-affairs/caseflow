@@ -21,15 +21,15 @@ class QueueConfig
       table_title: format(COPY::ORGANIZATION_QUEUE_TABLE_TITLE, organization.name),
       active_tab: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
       tasks_per_page: TaskPager::TASKS_PER_PAGE,
-      use_task_pages_api: use_task_pages_api?,
+      use_task_pages_api: use_task_pages_api?(user),
       tabs: tabs.map { |tab| attach_tasks_to_tab(tab, user) }
     }
   end
 
   private
 
-  def use_task_pages_api?
-    FeatureToggle.enabled?(:use_task_pages_api) && organization.use_task_pages_api?
+  def use_task_pages_api?(user)
+    FeatureToggle.enabled?(:use_task_pages_api, user: user) && organization.use_task_pages_api?
   end
 
   def tabs
@@ -46,7 +46,7 @@ class QueueConfig
 
     # Only return tasks in the configuration if we are using it to populate the first page of results.
     # Otherwise avoid the overhead of the additional database requests.
-    tasks = use_task_pages_api? ? serialized_tasks_for_user(task_pager.paged_tasks, user) : []
+    tasks = use_task_pages_api?(user) ? serialized_tasks_for_user(task_pager.paged_tasks, user) : []
 
     tab.merge(
       label: format(tab[:label], task_pager.total_task_count),

@@ -111,20 +111,10 @@ class Veteran < ApplicationRecord
     result = bgs.fetch_veteran_info(file_number)
 
     # If the result is nil, the veteran wasn't found.
-    # If the file number is nil, that's another way of saying the veteran wasn't found.
-    result && result[:file_number] && result
+    # If the participant id is nil, that's another way of saying the veteran wasn't found.
+    return result if result && result[:ptcpnt_id]
   rescue BGS::ShareError => error
-    @access_error = error.message
-
-    # Now that we are always checking find_flashes for access control before we fetch the
-    # veteran, we should never see this error. Reporting it to sentry if it happens
-    unless error.message.match?(/Sensitive File/)
-      Raven.capture_exception(error)
-      raise error
-    end
-
-    # Set the veteran as inaccessible if a sensitivity error is thrown
-    @accessible = false
+    handle_bgs_share_error(error)
   end
 
   def accessible?
@@ -333,6 +323,20 @@ class Veteran < ApplicationRecord
   end
 
   private
+
+  def handle_bgs_share_error(error)
+    @access_error = error.message
+
+    # Now that we are always checking find_flashes for access control before we fetch the
+    # veteran, we should never see this error. Reporting it to sentry if it happens
+    unless error.message.match?(/Sensitive File/)
+      Raven.capture_exception(error)
+      fail error
+    end
+
+    # Set the veteran as inaccessible if a sensitivity error is thrown
+    @accessible = false
+  end
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)
