@@ -29,7 +29,7 @@ class HearingWorksheetDocs extends Component {
 
     return <div className="cf-app-segment">
       <Accordion
-        style={this.props.print ? 'borderless' : 'bordered'}
+        style="bordered"
         defaultActiveKey={[accordionTitle]}
       >
         <AccordionSection
