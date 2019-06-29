@@ -506,7 +506,6 @@ RSpec.feature "Case details" do
     end
 
     context "when appeal is assigned to Pulac Cerullo" do
-      let(:root_task) { FactoryBot.create(:root_task) }
       let!(:appeal) do
         FactoryBot.create(
           :appeal,

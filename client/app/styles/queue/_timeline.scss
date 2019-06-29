@@ -1,0 +1,74 @@
+
+.grayLineStyling {
+  width: 5px;
+  background: $color-gray-lighter;
+  margin: auto;
+  position: absolute;
+  top: 30px;
+  left: 49.5%;
+  bottom: 0;
+}
+
+.grayLineStyling,
+.grayLineTimelineStyling {
+    left: 9%;
+    margin-left: 12px;
+    top: 39px !important;
+}
+
+.taskContainerStyling {
+  border: none;
+  vertical-align: top;
+  padding: 3px;
+  padding-bottom: 3rem;
+
+}
+
+.taskInformationContainerStyling {
+  width: 25%;
+}
+
+.taskContainerStyling,
+.taskInformationTimelineContainerStyling {
+  align: left;
+  width: 50%;
+  maxWidth: 235px;
+}
+
+.taskContainerStyling,
+.taskTimeTimelineContainerStyling {
+  width: 40%; 
+  border: none !important;
+} 
+
+
+.taskInfoWithIconContainer {
+  text-align: center;
+  border: none;
+  padding: 0 0 0 0;
+  position: relative;
+  vertical-align: top;
+  width: 15px;
+}
+
+.taskInfoWithIconContainer,
+.taskInfoWithIconTimelineContainer {
+  text-align: left;
+  margin-left: 5px;
+  width: 10%;
+  padding-left: 0px;
+}
+
+
+.greyDotTimelineStyling { 
+	padding: 0px 0px 0px 5px;
+}
+
+.timelineLeftPaddingStyle { 
+	padding-left: 0px; 
+}
+
+.grayLineIconStyling { 
+  top: '25px !important' 
+}
+

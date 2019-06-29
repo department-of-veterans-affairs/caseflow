@@ -13,6 +13,7 @@ import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTION
 import ActionsDropdown from '../components/ActionsDropdown';
 import OnHoldLabel from '../components/OnHoldLabel';
 import TASK_STATUSES from '../../../constants/TASK_STATUSES.json';
+import DecisionDateTimeLine from '../components/DecisionDateTimeLine';
 
 export const grayLineStyling = css({
   width: '5px',
@@ -82,8 +83,6 @@ const cancelGrayTimeLineStyle = (timeline) => {
   return timeline ? grayLineTimelineStyling : '';
 };
 
-const timelineLeftPaddingStyle = css({ paddingLeft: '0px' });
-
 class TaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -132,17 +131,6 @@ class TaskRows extends React.PureComponent {
   cancelledAtListItem = (task) => {
     return <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL}</dt>
       <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div>;
-  }
-
-  showWithdrawalDate = () => {
-    return this.props.appeal.withdrawalDate ? <div>
-      <dt>{COPY.TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL}</dt>
-      <dd><DateString date={this.props.appeal.withdrawalDate} dateFormat="MM/DD/YYYY" /></dd></div> : null;
-  }
-
-  showDecisionDate = () => {
-    return this.props.appeal.decisionDate ? <div>
-      <dd><DateString date={this.props.appeal.decisionDate} dateFormat="MM/DD/YYYY" /></dd></div> : null;
   }
 
   daysWaitingListItem = (task) => {
@@ -278,46 +266,6 @@ class TaskRows extends React.PureComponent {
     </tr>;
   }
 
-  decisionDateTemplate = (templateConfig) => {
-    const { taskList, timeline, appeal } = templateConfig;
-    let timelineContainerText;
-    let timeLineIcon;
-    let grayLineIconStyling;
-
-    if (appeal.withdrawn) {
-      timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
-      timeLineIcon = <CancelIcon />;
-      grayLineIconStyling = grayLineTimelineStyling;
-    } else if (appeal.decisionDate) {
-      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
-      timeLineIcon = <GreenCheckmark />;
-    } else {
-      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
-      timeLineIcon = <GrayDot />;
-      grayLineIconStyling = css({ top: '25px !important' });
-    }
-
-    if (timeline) {
-      return <tr>
-        <td {...taskTimeTimelineContainerStyling}>
-          <CaseDetailsDescriptionList>
-            { appeal.decisionDate ? this.showDecisionDate() : this.showWithdrawalDate() }
-          </CaseDetailsDescriptionList>
-        </td>
-        <td {...taskInfoWithIconTimelineContainer}
-          {...(appeal.withdrawalDate || appeal.decisionDate ? timelineLeftPaddingStyle : greyDotTimelineStyling)}>
-          {timeLineIcon}
-          { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-          <div {...grayLineTimelineStyling}
-            {...grayLineIconStyling} />}
-        </td>
-        <td {...taskInformationTimelineContainerStyling}>
-          { timelineContainerText } <br />
-        </td>
-      </tr>;
-    }
-  }
-
   render = () => {
     const {
       appeal,
@@ -349,9 +297,12 @@ class TaskRows extends React.PureComponent {
           return this.taskTemplate(templateConfig);
         }
 
-        return this.decisionDateTemplate(templateConfig);
-
+        return <DecisionDateTimeLine
+          appeal = {appeal}
+          timeline ={timeline}
+          taskList = {taskList} />;
       }) }
+
       {/* everything below here will not be in chronological order unless it's added to the task list on line 287*/}
       { timeline && appeal.isLegacyAppeal && <tr>
         <td {...taskTimeTimelineContainerStyling}>
