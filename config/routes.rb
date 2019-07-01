@@ -34,6 +34,7 @@ Rails.application.routes.draw do
         get 'decision_reviews', to: 'docs#decision_reviews'
       end
     end
+    get "metadata", to: 'metadata#index'
   end
 
   namespace :idt do
