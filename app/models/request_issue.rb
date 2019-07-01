@@ -272,6 +272,13 @@ class RequestIssue < ApplicationRecord
     return specials unless specials.empty?
   end
 
+  # If contentions get a DTA disposition, send their IDs when creating the new DTA contentions
+  def original_contention_ids
+    return unless contested_decision_issue&.remanded?
+
+    contested_decision_issue.request_issues.map(&:contention_reference_id)
+  end
+
   def withdrawal_date
     closed_at if withdrawn?
   end

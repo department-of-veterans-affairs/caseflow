@@ -391,6 +391,45 @@ describe EndProductEstablishment do
         )
       end
     end
+
+    context "when issues are from dta decisions" do
+      let!(:prior_request_issues) do
+        [
+          create(:request_issue, contention_reference_id: "101010"),
+          create(:request_issue, contention_reference_id: "121212")
+        ]
+      end
+
+      let!(:dta_decision_issue) do
+        create(:decision_issue, request_issues: prior_request_issues, disposition: "DTA Error")
+      end
+
+      let!(:request_issues) do
+        [
+          create(
+            :request_issue,
+            end_product_establishment: end_product_establishment,
+            decision_review: source,
+            contested_decision_issue: dta_decision_issue,
+            contested_issue_description: "I am contesting a dta decision"
+          )
+        ]
+      end
+
+      it "sends the original contention ids when creating the contention" do
+        subject
+
+        expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+          veteran_file_number: veteran_file_number,
+          claim_id: end_product_establishment.reference_id,
+          contentions: array_including(
+            { description: "I am contesting a dta decision",
+              original_contention_ids: [101010, 121212] }
+          ),
+          user: current_user
+        )
+      end
+    end
   end
 
   context "#associate_rating_request_issues!" do
