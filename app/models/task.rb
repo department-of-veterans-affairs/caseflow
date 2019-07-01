@@ -21,7 +21,7 @@ class Task < ApplicationRecord
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
   after_create :tell_parent_task_child_task_created
 
-  before_update :set_timestamps
+  before_save :set_timestamps
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
 
@@ -449,17 +449,17 @@ class Task < ApplicationRecord
   end
 
   def set_timestamps
-    if will_save_change_to_status?
-      case status_change_to_be_saved&.last&.to_sym
-      when :assigned
-        self.assigned_at = updated_at
-      when :in_progress
-        self.started_at = updated_at
-      when :on_hold
-        self.placed_on_hold_at = updated_at
-      when :completed, :cancelled
-        self.closed_at = updated_at
-      end
+    return unless will_save_change_to_status?
+
+    case status_change_to_be_saved&.last&.to_sym
+    when :assigned
+      self.assigned_at = Time.zone.now if !will_save_change_to_assigned_at?
+    when :in_progress
+      self.started_at = Time.zone.now if !will_save_change_to_started_at?
+    when :on_hold
+      self.placed_on_hold_at = Time.zone.now if !will_save_change_to_placed_on_hold_at?
+    when :completed, :cancelled
+      self.closed_at = Time.zone.now if !will_save_change_to_closed_at?
     end
   end
 end
