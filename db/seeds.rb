@@ -849,8 +849,26 @@ class SeedDB
   end
 
   def create_task_at_quality_review(qr_user = nil, judge_name = nil, attorney_name = nil)
-    root_task = FactoryBot.create(:root_task)
-    appeal = root_task.appeal
+    vet = FactoryBot.create(
+      :veteran,
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+    notes = "Pain disorder with 100\% evaluation per examination"
+
+    appeal = FactoryBot.create(
+      :appeal,
+      :with_post_intake_tasks,
+      number_of_claimants: 1,
+      veteran_file_number: vet.file_number,
+      docket_type: "direct_review",
+      closest_regional_office: "RO17",
+      request_issues: FactoryBot.create_list(
+        :request_issue, 1, :nonrating, notes: notes
+      )
+    )
+    root_task = appeal.root_task
 
     judge = FactoryBot.create(:user, station_id: 101)
     judge.update!(full_name: judge_name) if judge_name
@@ -965,7 +983,20 @@ class SeedDB
     create_task_at_colocated(@ama_appeals[11], judge, attorney)
 
     9.times do
-      appeal = FactoryBot.create(:appeal)
+      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+      notes = "Pain disorder with 100\% evaluation per examination"
+      appeals << FactoryBot.create(
+        :appeal,
+          :with_post_intake_tasks,
+          number_of_claimants: 1,
+          veteran_file_number: Faker::Number.number(9).to_s,
+          docket_type: "direct_review",
+          closest_regional_office: "RO17",
+          request_issues: FactoryBot.create_list(
+            :request_issue, 2, contested_issue_description: description, notes: notes
+          )
+        )
+
       create_task_at_judge_assignment(appeal, judge, Time.zone.today)
     end
 
