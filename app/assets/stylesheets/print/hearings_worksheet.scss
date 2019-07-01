@@ -24,6 +24,10 @@ $body-font-size: 14px;
     page-break-inside: avoid;
   }
 
+  .cf-printed-worksheet {
+    page-break-before: always;
+  }
+
   b {
     font-weight: 400;
   }
