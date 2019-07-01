@@ -395,8 +395,8 @@ describe EndProductEstablishment do
     context "when issues are from dta decisions" do
       let!(:prior_request_issues) do
         [
-          create(:request_issue, contention_reference_id: "101010"),
-          create(:request_issue, contention_reference_id: "121212")
+          create(:request_issue, contention_reference_id: "101"),
+          create(:request_issue, contention_reference_id: "121")
         ]
       end
 
@@ -423,8 +423,8 @@ describe EndProductEstablishment do
           veteran_file_number: veteran_file_number,
           claim_id: end_product_establishment.reference_id,
           contentions: array_including(
-            { description: "I am contesting a dta decision",
-              original_contention_ids: [101010, 121212] }
+            description: "I am contesting a dta decision",
+            original_contention_ids: [101, 121]
           ),
           user: current_user
         )
