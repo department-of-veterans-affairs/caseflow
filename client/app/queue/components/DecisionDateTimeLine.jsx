@@ -7,7 +7,6 @@ import CaseDetailsDescriptionList from '../components/CaseDetailsDescriptionList
 import { caseTimelineTasksForAppeal } from '../../queue/selectors';
 import moment from 'moment';
 
-
 const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
 const timelineLeftPaddingStyle = css({ paddingLeft: '0px' });
 
@@ -23,12 +22,12 @@ class DecisionDateTimeLine extends React.PureComponent {
     const showWithdrawalDate = () => {
       return appeal.withdrawalDate ? <div>
         <dt>{COPY.TASK_SNAPSHOT_TASK_WITHDRAWAL_DATE_LABEL}</dt>
-        <dd>{moment(appeal.withdrawalDate).format("MM/DD/YYYY")}</dd></div> : null;
+        <dd>{moment(appeal.withdrawalDate).format('MM/DD/YYYY')}</dd></div> : null;
     };
 
     const showDecisionDate = () => {
       return appeal.decisionDate ? <div>
-        <dd>{moment(appeal.decisionDate).format("MM/DD/YYYY")}</dd></div> : null;
+        <dd>{moment(appeal.decisionDate).format('MM/DD/YYYY')}</dd></div> : null;
     };
 
     let timelineContainerText;

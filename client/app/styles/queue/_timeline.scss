@@ -35,7 +35,7 @@
   maxWidth: 235px;
 }
 
-.taskContainerStyling,
+.taskInformationContainerStyling,
 .taskTimeTimelineContainerStyling {
   width: 40%; 
   border: none !important;
@@ -69,6 +69,9 @@
 }
 
 .grayLineIconStyling { 
-  top: '25px !important' 
+  top: 25px !important 
 }
 
+.greyDotStyling {
+  padding-left: 6px
+}

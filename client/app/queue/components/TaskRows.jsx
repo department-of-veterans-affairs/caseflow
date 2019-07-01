@@ -3,7 +3,6 @@ import React from 'react';
 import moment from 'moment';
 import Button from '../../components/Button';
 import COPY from '../../../COPY.json';
-import { DateString } from '../../util/DateUtil';
 import { GrayDot, GreenCheckmark, CancelIcon } from '../../components/RenderFunctions';
 import { COLORS } from '../../constants/AppConstants';
 import { taskIsOnHold, sortTaskList } from '../utils';
@@ -66,7 +65,6 @@ const taskInfoWithIconTimelineContainer =
     width: '10%',
     paddingLeft: '0px' });
 
-const greyDotStyling = css({ paddingLeft: '6px' });
 const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
 const isCancelled = (task) => {
   return task.status === TASK_STATUSES.cancelled;
@@ -120,17 +118,17 @@ class TaskRows extends React.PureComponent {
     }
 
     return task.assignedOn ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_ASSIGNMENT_DATE_LABEL}</dt>
-      <dd><DateString date={task.assignedOn} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+      <dd>{moment(task.assignedOn).format('MM/DD/YYYY')}</dd></div> : null;
   }
 
   closedAtListItem = (task) => {
     return task.closedAt ? <div><dt>{COPY.TASK_SNAPSHOT_TASK_COMPLETED_DATE_LABEL}</dt>
-      <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div> : null;
+      <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd></div> : null;
   }
 
   cancelledAtListItem = (task) => {
     return <div><dt>{COPY.TASK_SNAPSHOT_TASK_CANCELLED_DATE_LABEL}</dt>
-      <dd><DateString date={task.closedAt} dateFormat="MM/DD/YYYY" /></dd></div>;
+      <dd>{moment(task.closedAt).format('MM/DD/YYYY')}</dd></div>;
   }
 
   daysWaitingListItem = (task) => {
@@ -305,23 +303,23 @@ class TaskRows extends React.PureComponent {
 
       {/* everything below here will not be in chronological order unless it's added to the task list on line 287*/}
       { timeline && appeal.isLegacyAppeal && <tr>
-        <td {...taskTimeTimelineContainerStyling}>
+        <td className="taskContainerStyling taskTimeTimelineContainerStyling">
           { appeal.form9Date ? moment(appeal.form9Date).format('MM/DD/YYYY') : null }
         </td>
-        <td {...taskInfoWithIconTimelineContainer} className={appeal.form9Date ? '' : greyDotStyling}>
+        <td {...taskInfoWithIconTimelineContainer} className={appeal.form9Date ? '' : 'greyDotStyling'}>
           { appeal.form9Date ? <GreenCheckmark /> : <GrayDot /> }
-          { appeal.nodDate && <div {...grayLineTimelineStyling} />}</td>
-        <td {...taskInformationTimelineContainerStyling}>
+          { appeal.nodDate && <div className="grayLineStyling grayLineTimelineStyling" />}</td>
+        <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { appeal.form9Date ? COPY.CASE_TIMELINE_FORM_9_RECEIVED : COPY.CASE_TIMELINE_FORM_9_PENDING}
         </td>
       </tr> }
       { timeline && appeal.nodDate && <tr>
-        <td {...taskTimeTimelineContainerStyling}>
+        <td className="taskContainerStyling taskTimeTimelineContainerStyling">
           { moment(appeal.nodDate).format('MM/DD/YYYY') }
         </td>
-        <td {...taskInfoWithIconTimelineContainer}>
+        <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
           { <GreenCheckmark /> } </td>
-        <td {...taskInformationTimelineContainerStyling}>
+        <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           { COPY.CASE_TIMELINE_NOD_RECEIVED } <br />
         </td>
       </tr> }
