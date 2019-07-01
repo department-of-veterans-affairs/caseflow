@@ -206,7 +206,7 @@ class Veteran < ApplicationRecord
   def stale_name?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil?)
+    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil?)
     [:first_name, :last_name, :middle_name, :name_suffix, :ssn].each do |name|
       is_stale = true if self[name] != bgs_record[name]
     end
@@ -226,6 +226,12 @@ class Veteran < ApplicationRecord
     end
 
     def find_by_ssn(ssn, sync_name: false)
+      found_locally = find_by(ssn: ssn)
+      if found_locally && sync_name && found_locally.stale_name?
+        found_locally.update_cached_attributes!
+      end
+      return found_locally if found_locally
+
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
@@ -253,6 +259,12 @@ class Veteran < ApplicationRecord
     private
 
     def find_or_create_by_ssn(ssn, sync_name: false)
+      found_locally = find_by(ssn: ssn)
+      if found_locally && sync_name && found_locally.stale_name?
+        found_locally.update_cached_attributes!
+      end
+      return found_locally if found_locally
+
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
@@ -284,15 +296,8 @@ class Veteran < ApplicationRecord
       veteran = Veteran.new(file_number: file_number)
 
       unless veteran.found?
-        Rails.logger.warn(
-          %(create_by_file_number file_number:#{file_number} found:false accessible:#{veteran.accessible?})
-        )
         return nil
       end
-
-      Rails.logger.warn(
-        %(create_by_file_number file_number:#{file_number} found:true accessible:#{veteran.accessible?})
-      )
 
       return veteran unless veteran.accessible?
 
