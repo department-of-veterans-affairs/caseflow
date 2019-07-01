@@ -341,6 +341,18 @@ The last env var silences one of the Oracle warnings on startup.
 
 (Reload the file `source ~/.bash_profile`)
 
+#### Makefile
+
+An example Makefile is included in the repo, that can ease some of the setup and common development tasks. To use it,
+try:
+
+```
+% cp Makefile.example Makefile
+```
+
+Many of the examples that follow have alternate `make` targets for convenience. They are spelled out here
+for clarity as to what is happening "behind the scenes."
+
 #### Database environment setup
 
 To rapidly set up your local development (and testing) environment, run:
@@ -359,7 +371,7 @@ Your development setup of caseflow runs Redis, Postgres and OracleDB (VACOLS) in
 
 #### All in one ########################################################################
 ```
-foreman start
+make run
 ```
 #### Separate Front & Backend Servers ####################################################
 
@@ -433,7 +445,9 @@ already included in this repo.
 
 To run the test suite:
 
-    bundle exec rake
+```
+% make test
+```
 
 ### Testing frontend changes in feature specs
 
