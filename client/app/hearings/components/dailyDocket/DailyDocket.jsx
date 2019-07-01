@@ -157,7 +157,7 @@ export default class DailyDocket extends React.Component {
 
       <div className="cf-app-segment">
         <div className="cf-push-left">
-          <Button onClick={navigateToPrintPage}>
+          <Button onClick={() => navigateToPrintPage()}>
             Download & Print Page
           </Button>
         </div>
