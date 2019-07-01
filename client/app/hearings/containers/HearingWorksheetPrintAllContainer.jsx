@@ -64,9 +64,9 @@ class HearingWorksheetPrintAllContainer extends React.Component {
           {
             this.state.worksheets &&
             this.state.worksheets.map(
-              (worksheet) => (
-                <div className="cf-printed-worksheet" key={worksheet.worksheet.id}>
-                  <HearingWorksheetPrinted {...worksheet} />
+              (worksheetProps) => (
+                <div className="cf-printed-worksheet" key={worksheetProps.worksheet.external_id}>
+                  <HearingWorksheetPrinted {...worksheetProps} updateTitle={false} />
                 </div>
               )
             )
