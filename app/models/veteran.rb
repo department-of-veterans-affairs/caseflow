@@ -188,7 +188,7 @@ class Veteran < ApplicationRecord
   end
 
   def ssn
-    super || bgs_record[:ssn]
+    super || (bgs_record.is_a?(Hash) && bgs_record[:ssn])
   end
 
   def validate_address
