@@ -1038,7 +1038,7 @@ ActiveRecord::Schema.define(version: 20190701170815) do
     t.string "middle_name"
     t.string "name_suffix"
     t.string "participant_id"
-    t.string "ssn"
+    t.string "ssn", comment: "The cached Social Security Number"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
     t.index ["participant_id"], name: "index_veterans_on_participant_id"
     t.index ["ssn"], name: "index_veterans_on_ssn"
