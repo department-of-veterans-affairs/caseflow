@@ -54,7 +54,11 @@ const getLegacyHearingWorksheetDocsSection = (appeal) => {
 export class HearingWorksheetPrinted extends React.Component {
 
   componentDidMount() {
-    document.title = getWorksheetTitle(this.props.worksheet);
+    const { worksheet, updateTitle } = this.props;
+
+    if (updateTitle) {
+      document.title = getWorksheetTitle(worksheet);
+    }
 
     const queryString = querystring.parse(window.location.search.slice(1));
 
@@ -173,7 +177,7 @@ export class HearingWorksheetPrinted extends React.Component {
         <WorksheetFooter
           veteranName={formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}
         />
-        <WorksheetHeader print />
+        <WorksheetHeader worksheet={worksheet} print />
         {this.isLegacy() && this.getLegacyHearingSection()}
         {
           !this.isLegacy() && !_.isEmpty(worksheetIssues) &&
@@ -197,13 +201,18 @@ export class HearingWorksheetPrinted extends React.Component {
 HearingWorksheetPrinted.propTypes = {
   worksheet: PropTypes.object,
   worksheetAppeals: PropTypes.object,
-  worksheetIssues: PropTypes.object
+  worksheetIssues: PropTypes.object,
+  updateTitle: PropTypes.bool
 };
 
-const mapStateToProps = (state) => ({
-  worksheet: state.hearingWorksheet.worksheet,
-  worksheetAppeals: state.hearingWorksheet.worksheetAppeals,
-  worksheetIssues: state.hearingWorksheet.worksheetIssues
+HearingWorksheetPrinted.defaultProps = {
+  updateTitle: true
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  worksheet: ownProps.worksheet || state.hearingWorksheet.worksheet,
+  worksheetAppeals: ownProps.worksheetAppeals || state.hearingWorksheet.worksheetAppeals,
+  worksheetIssues: ownProps.worksheetIssues || state.hearingWorksheet.worksheetIssues
 });
 
 export default connect(mapStateToProps)(HearingWorksheetPrinted);
