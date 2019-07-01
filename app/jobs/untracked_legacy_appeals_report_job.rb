@@ -22,6 +22,8 @@ class UntrackedLegacyAppealsReportJob < CaseflowJob
     return if appeal_ids.empty?
 
     msg = "Found #{appeal_ids.count} legacy appeals charged to CASEFLOW in VACOLS with no active Caseflow tasks.\n"
+    msg += "These appeals will not progress unless location is manually corrected in VACOLS or an applicable Caseflow "
+    msg += "task is manually created. Research and fix these appeals accordingly.\n"
     msg += "LegacyAppeal.where(id: #{appeal_ids.sort})"
 
     Rails.logger.info(msg)
