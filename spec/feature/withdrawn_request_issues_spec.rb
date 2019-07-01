@@ -11,7 +11,7 @@ feature "attorney checkout flow when appeal has withdrawn request issues" do
     User.authenticate!(user: attorney)
     visit "/queue/appeals/#{appeal.uuid}"
 
-    expect(page).to have_content("Closed status: WITHDRAWN")
+    expect(page).to have_content("Disposition: Withdrawn")
 
     select_decision_ready_for_review
     click_add_decision_on_first_issue

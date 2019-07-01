@@ -3,6 +3,7 @@ import { css } from 'glamor';
 
 import BENEFIT_TYPES from '../../constants/BENEFIT_TYPES.json';
 import { COLORS } from '../constants/AppConstants';
+import _ from 'lodash';
 
 const issueListStyling = css({
   paddingLeft: '1em'
@@ -37,8 +38,8 @@ export const AmaIssue = (props) => {
       <div {...issueContentStyling} {...issueNoteStyling}>Note from NOD: {props.issue.notes}</div> }
     { props.issue.closed_status && props.issue.closed_status === 'withdrawn' &&
       <div {...issueContentStyling}>
-        <strong>Closed status</strong>: <span {...issueClosedStatusStyling}>
-          {props.issue.closed_status.toUpperCase()}</span>
+        <strong>Disposition</strong>: <span {...issueClosedStatusStyling}>
+          {_.capitalize(props.issue.closed_status)}</span>
       </div> }
     { props.children && React.cloneElement(props.children, { requestIssue: props.issue }) }
   </li>;

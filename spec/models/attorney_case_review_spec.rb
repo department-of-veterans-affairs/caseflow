@@ -45,39 +45,35 @@ describe AttorneyCaseReview do
       let(:issues) do
         [
           { disposition: "allowed", description: "something1",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue1.id, request_issue2.id] },
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue1.id, request_issue2.id] },
           { disposition: "remanded", description: "something2",
-             benefit_type: "compensation", diagnostic_code: "9999",
-             request_issue_ids: [request_issue1.id, request_issue2.id],
-             remand_reasons: [
-               { code: "va_records", post_aoj: false },
-               { code: "incorrect_notice_sent", post_aoj: true },
-               { code: "due_process_deficiency", post_aoj: false }
-             ]
-          },
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue1.id, request_issue2.id],
+            remand_reasons: [
+              { code: "va_records", post_aoj: false },
+              { code: "incorrect_notice_sent", post_aoj: true },
+              { code: "due_process_deficiency", post_aoj: false }
+            ] },
           { disposition: "allowed", description: "something3",
-             benefit_type: "compensation", diagnostic_code: "9999",
-             request_issue_ids: [request_issue3.id, request_issue4.id] },
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue3.id, request_issue4.id] },
           { disposition: "allowed", description: "something4",
-             benefit_type: "compensation", diagnostic_code: "9999",
-             request_issue_ids: [request_issue5.id] },
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue5.id] },
           { disposition: "remanded", description: "something5",
-             benefit_type: "compensation", diagnostic_code: "9999",
-             request_issue_ids: [request_issue5.id],
-             remand_reasons: [
-               { code: "va_records", post_aoj: false },
-               { code: "incorrect_notice_sent", post_aoj: true }
-             ]
-           },
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue5.id],
+            remand_reasons: [
+              { code: "va_records", post_aoj: false },
+              { code: "incorrect_notice_sent", post_aoj: true }
+            ] },
           { disposition: "allowed", description: "something6",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [request_issue6.id]
-          },
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [request_issue6.id] },
           { disposition: "withdrawn", description: "withdrawn decision issue",
-           benefit_type: "compensation", diagnostic_code: "9999",
-           request_issue_ids: [withdrawn_request_issue.id]
-          },
+            benefit_type: "compensation", diagnostic_code: "9999",
+            request_issue_ids: [withdrawn_request_issue.id] }
         ]
       end
 
