@@ -12,6 +12,25 @@ export const now = () => {
     format('h:mm a');
 };
 
+export const getWorksheetAppealsAndIssues = (worksheet) => {
+  const worksheetAppeals = _.keyBy(worksheet.appeals_ready_for_hearing, 'id');
+  let worksheetIssues = _(worksheetAppeals).flatMap('worksheet_issues').
+    keyBy('id').
+    value();
+
+  if (_.isEmpty(worksheetIssues)) {
+    worksheetIssues = _.keyBy(worksheet_issues, 'id');
+  }
+
+  const worksheet = _.omit(worksheet, ['appeals_ready_for_hearing']);
+
+  return {
+    worksheet,
+    worksheetAppeals,
+    worksheetIssues
+  };
+};
+
 export const sortHearings = (hearings) => (
   _.orderBy(Object.values(hearings || {}), (hearing) => hearing.scheduledFor, 'asc')
 );

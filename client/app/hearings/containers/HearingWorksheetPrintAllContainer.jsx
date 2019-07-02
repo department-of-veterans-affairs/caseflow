@@ -2,6 +2,7 @@ import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import ApiUtil from '../../util/ApiUtil';
+import { getWorksheetAppealsAndIssues } from '../utils';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import HearingWorksheetPrinted from '../components/hearingWorksheet/HearingWorksheetPrinted';
@@ -18,24 +19,6 @@ class HearingWorksheetPrintAllContainer extends React.Component {
     };
   }
 
-  blergh = (response) => {
-    const worksheet = response.body;
-    const worksheetAppeals = _.keyBy(worksheet.appeals_ready_for_hearing, 'id');
-    let worksheetIssues = _(worksheetAppeals).flatMap('worksheet_issues').
-      keyBy('id').
-      value();
-
-    if (_.isEmpty(worksheetIssues)) {
-      worksheetIssues = _.keyBy(worksheet.worksheet_issues, 'id');
-    }
-
-    return {
-      worksheet,
-      worksheetAppeals,
-      worksheetIssues
-    };
-  }
-
   loadHearingWorksheets = () => {
     let { hearingIds } = this.props;
     let getAllWorksheets = hearingIds.map(
@@ -43,7 +26,7 @@ class HearingWorksheetPrintAllContainer extends React.Component {
     );
 
     return Promise.all(getAllWorksheets).then((responses) => {
-      this.setState({ worksheets: responses.map(this.blergh) });
+      this.setState({ worksheets: getWorksheetAppealsAndIssues(response.body) });
     });
   };
 
