@@ -43,6 +43,8 @@ class Veteran < ApplicationRecord
   BENEFIT_TYPE_CODE_LIVE = "1"
   BENEFIT_TYPE_CODE_DEATH = "2"
 
+  CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :ssn]
+
   # TODO: get middle initial from BGS
   def name
     FullName.new(first_name, "", last_name)
@@ -207,16 +209,11 @@ class Veteran < ApplicationRecord
     return false unless accessible? && bgs_record.is_a?(Hash)
 
     is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil?)
-    [:first_name, :last_name, :middle_name, :name_suffix, :ssn].each do |name|
-      next if self[name] == bgs_record[name]
-
-      is_stale = true
-    end
-    is_stale
+    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |name| self[name] != bgs_record[name] }
   end
 
   def update_cached_attributes!
-    [:first_name, :last_name, :middle_name, :name_suffix, :ssn].each do |attr|
+    CACHED_BGS_ATTRIBUTES.each do |attr|
       self[attr] = bgs_record[attr]
     end
     save!
