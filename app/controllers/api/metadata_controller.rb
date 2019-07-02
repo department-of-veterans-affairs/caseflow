@@ -16,7 +16,7 @@ class Api::MetadataController < ActionController::Base
         versions: [
           {
             version: "3",
-            internal_only: false,
+            internal_only: true,
             status: VERSION_STATUS[:draft],
             path: "/api/docs/v3/decision_reviews",
             healthcheck: "/health-check"
