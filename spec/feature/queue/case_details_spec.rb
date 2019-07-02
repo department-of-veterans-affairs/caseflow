@@ -535,11 +535,12 @@ RSpec.feature "Case details" do
 
       scenario "displays Pulac Cerullo task in order on  case timeline" do
         visit "/queue/appeals/#{appeal.external_id}"
-
+binding.pry
         case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
         first_row_with_task = case_timeline_rows[0]
         second_row_with_task = case_timeline_rows[1]
         third_row_with_task = case_timeline_rows[2]
+
         expect(first_row_with_task).to have_content("PulacCerulloTask completed")
         expect(second_row_with_task).to have_content(COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA)
         expect(third_row_with_task).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)

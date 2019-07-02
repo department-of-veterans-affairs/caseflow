@@ -48,24 +48,84 @@ class DecisionDateTimeLine extends React.PureComponent {
         marginLeft: 0 });
     }
 
+    dateColumn = (appealCompletedDate = null) => {
+      return <td className="taskContainerStyling taskTimeTimelineContainerStyling">
+        <CaseDetailsDescriptionList>
+          <div>
+            <dd>{appealCompletedDate && moment(appealCompletedDate).format('MM/DD/YYYY')}</dd>
+          </div>
+        </CaseDetailsDescriptionList>
+      </td>
+    };
+
+    iconColumn = () => {
+      return <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer"
+        {...(appeal.withdrawalDate || appeal.decisionDate ? timelineLeftPaddingStyle : greyDotTimelineStyling)}>
+        {timeLineIcon}
+        { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
+        <div className="grayLineStyling grayLineTimelineStyling" {...grayLineIconStyling} />}
+      </td>
+    }
+
+    descriptionColumn (timelineText) => {
+      <td className="taskContainerStyling taskInformationTimelineContainerStyling">
+        { timelineText } <br />
+      </td>
+    }
+
+    withdrawalTimeline = () => {
+      return <React.Fragment>
+        { dateColumn(appeal.withdrawalDate) }
+        { iconColumn() }
+        { descriptionColumn(COPY.CASE_TIMELINE_APPEAL_WITHDRAWN) }
+      </React.Fragment>;
+    }
+
+    completedTimeline = () => {
+      return <React.Fragment>
+        { dateColumn(appeal.decisionDate) }
+        { iconColumn() }
+        { descriptionColumn(COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA) }
+      </React.Fragment>;
+    }
+
+    timelineTop = (date, icon, text) => {
+      return <React.Fragment>
+        { dateColumn(date) }
+        { iconColumn(icon) }
+        { descriptionColumn(text) }
+      </React.Fragment>;
+    }
+
+    const appealPending = !(appeal.decisionDate || appeal.withdrawalDate)
+
     return <React.Fragment>
-      {timeline && <tr>
-        <td className="taskContainerStyling taskTimeTimelineContainerStyling">
-          <CaseDetailsDescriptionList>
-            { appeal.decisionDate ? showDecisionDate() : showWithdrawalDate() }
-          </CaseDetailsDescriptionList>
-        </td>
-        <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer"
-          {...(appeal.withdrawalDate || appeal.decisionDate ? timelineLeftPaddingStyle : greyDotTimelineStyling)}>
-          {timeLineIcon}
-          { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-          <div className="grayLineStyling grayLineTimelineStyling" {...grayLineIconStyling} />}
-        </td>
-        <td className="taskContainerStyling taskInformationTimelineContainerStyling">
-          { timelineContainerText } <br />
-        </td>
-      </tr>}
+      { timeline }
+      <tr>
+        { appeal.withdrawalDate && timelineTop(appeal.withdrawalDate, cancelIcon, COPY.CASE_TIMELINE_APPEAL_WITHDRAWN) }
+        { appeal.decisionDate && timelineTop(appeal.decisionDate, cancelIcon, COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA) }
+        { appealPending && timelineTop(null, cancelIcon, COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING) }
+      </tr>
     </React.Fragment>;
+
+    // return <React.Fragment>
+    //   {timeline && <tr>
+    //     <td className="taskContainerStyling taskTimeTimelineContainerStyling">
+    //       <CaseDetailsDescriptionList>
+    //         { appeal.decisionDate ? showDecisionDate() : showWithdrawalDate() }
+    //       </CaseDetailsDescriptionList>
+    //     </td>
+    //     <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer"
+    //       {...(appeal.withdrawalDate || appeal.decisionDate ? timelineLeftPaddingStyle : greyDotTimelineStyling)}>
+    //       {timeLineIcon}
+    //       { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
+    //       <div className="grayLineStyling grayLineTimelineStyling" {...grayLineIconStyling} />}
+    //     </td>
+    //     <td className="taskContainerStyling taskInformationTimelineContainerStyling">
+    //       { timelineContainerText } <br />
+    //     </td>
+    //   </tr>}
+    // </React.Fragment>;
   }
 }
 
@@ -76,4 +136,3 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 export default connect(mapStateToProps)(DecisionDateTimeLine);
-
