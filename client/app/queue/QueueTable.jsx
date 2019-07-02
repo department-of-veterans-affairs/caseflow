@@ -69,16 +69,15 @@ const HeaderRow = (props) => {
         let sortIcon;
         let filterIcon;
 
-        // TODO: Check if the column is back-end sort-able.
         if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
-          const topColor = props.sortColIdx === columnNumber && !props.sortAscending ?
+          const topColor = props.sortColName === column.name && !props.sortAscending ?
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
-          const botColor = props.sortColIdx === columnNumber && props.sortAscending ?
+          const botColor = props.sortColName === column.name && props.sortAscending ?
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
 
-          sortIcon = <span {...iconStyle} onClick={() => props.setSortOrder(columnNumber, column.name)}>
+          sortIcon = <span {...iconStyle} onClick={() => props.setSortOrder(column.name)}>
             <DoubleArrow topColor={topColor} bottomColor={botColor} />
           </span>;
         }
@@ -191,7 +190,6 @@ export default class QueueTable extends React.PureComponent {
     const { defaultSort } = this.props;
     const state = {
       sortAscending: true,
-      sortColIdx: null,
       sortColName: null,
       filteredByList: {},
       tasksFromApi: [],
@@ -211,20 +209,17 @@ export default class QueueTable extends React.PureComponent {
   sortRowObjects = () => {
     const { rowObjects } = this.props;
     const {
-      sortColIdx,
+      sortColName,
       sortAscending
     } = this.state;
 
-    if (sortColIdx === null) {
+    if (sortColName === null) {
       return rowObjects;
     }
 
-    const builtColumns = getColumns(this.props);
+    const columnToSortBy = getColumns(this.props).find((column) => sortColName === column.name);
 
-    return _.orderBy(rowObjects,
-      (row) => builtColumns[sortColIdx].getSortValue(row),
-      sortAscending ? 'asc' : 'desc'
-    );
+    return _.orderBy(rowObjects, (row) => columnToSortBy.getSortValue(row), sortAscending ? 'asc' : 'desc');
   }
 
   updateFilteredByList = (newList) => {
@@ -275,12 +270,9 @@ export default class QueueTable extends React.PureComponent {
     return paginatedData;
   }
 
-  setColumnSortOrder = (colIdx, colName) => this.setState(
-    {
-      sortColIdx: colIdx,
-      sortColName: colName,
-      sortAscending: !this.state.sortAscending
-    },
+  setColumnSortOrder = (colName) => this.setState(
+    { sortColName: colName,
+      sortAscending: !this.state.sortAscending },
     this.requestTasks
   );
 
@@ -470,7 +462,6 @@ QueueTable.propTypes = {
   id: PropTypes.string,
   styling: PropTypes.object,
   defaultSort: PropTypes.shape({
-    sortColIdx: PropTypes.number,
     sortColName: PropTypes.string,
     sortAscending: PropTypes.bool
   }),
