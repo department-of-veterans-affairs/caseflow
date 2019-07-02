@@ -172,28 +172,34 @@ export class HearingWorksheetPrinted extends React.Component {
   render() {
     const { worksheet, worksheetIssues } = this.props;
 
+    // Putting the footer in a thead tag is a workaround to get it to display on each
+    // page.
     return (
-      <div>
-        <WorksheetFooter
-          veteranName={formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}
-        />
-        <WorksheetHeader worksheet={worksheet} print />
-        {this.isLegacy() && this.getLegacyHearingSection()}
-        {
-          !this.isLegacy() && !_.isEmpty(worksheetIssues) &&
-          <div className="cf-hearings-all-issues-wrapper">
-            {this.getHearingWorksheetIssuesSection()}
+      <table>
+        <thead>
+          <WorksheetFooter
+            veteranName={formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}
+          />
+        </thead>
+        <tbody>
+          <WorksheetHeader worksheet={worksheet} print />
+          {this.isLegacy() && this.getLegacyHearingSection()}
+          {
+            !this.isLegacy() && !_.isEmpty(worksheetIssues) &&
+            <div className="cf-hearings-all-issues-wrapper">
+              {this.getHearingWorksheetIssuesSection()}
+            </div>
+          }
+          <div className="cf-hearings-worksheet-form" id="cf-hearings-worksheet-summary">
+            <div className="cf-hearings-worksheet-data">
+              <label>Hearing Summary</label>
+              <div
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary).replace(/\r|\n/g, '') }}
+              />
+            </div>
           </div>
-        }
-        <form className="cf-hearings-worksheet-form" id="cf-hearings-worksheet-summary">
-          <div className="cf-hearings-worksheet-data">
-            <label>Hearing Summary</label>
-            <div
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary).replace(/\r|\n/g, '') }}
-            />
-          </div>
-        </form>
-      </div>
+        </tbody>
+      </table>
     );
   }
 }
