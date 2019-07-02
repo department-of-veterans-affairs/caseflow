@@ -29,7 +29,7 @@ class TaskPager
   def sorted_tasks(tasks)
     case sort_by
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
-      tasks.order(type: sort_order.to_sym, action: sort_order.to_sym)
+      tasks.order(type: sort_order.to_sym, action: sort_order.to_sym, created_at: sort_order.to_sym)
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN

@@ -32,6 +32,7 @@ import {
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 
 const hasDASRecord = (task, requireDasRecord) => {
   return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
@@ -42,6 +43,7 @@ const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requir
 export const docketNumberColumn = (tasks, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+    name: QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'appeal.docketName',
@@ -73,6 +75,7 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
 export const hearingBadgeColumn = () => {
   return {
     header: '',
+    name: QUEUE_CONFIG.HEARING_BADGE_COLUMN,
     valueFunction: (task) => <HearingBadge task={task} />
   };
 };
@@ -80,6 +83,7 @@ export const hearingBadgeColumn = () => {
 export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   return {
     header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
+    name: QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
     valueFunction: (task) => <CaseDetailsLink
       task={task}
       appeal={task.appeal}
@@ -97,6 +101,7 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
 export const taskColumn = (tasks) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    name: QUEUE_CONFIG.TASK_TYPE_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'label',
@@ -114,6 +119,7 @@ export const taskColumn = (tasks) => {
 export const regionalOfficeColumn = (tasks) => {
   return {
     header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'closestRegionalOffice.location_hash.city',
@@ -129,6 +135,7 @@ export const regionalOfficeColumn = (tasks) => {
 export const issueCountColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
+    name: QUEUE_CONFIG.ISSUE_COUNT_COLUMN,
     valueFunction: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null,
     span: collapseColumn(requireDasRecord),
     getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null
@@ -138,6 +145,7 @@ export const issueCountColumn = (requireDasRecord) => {
 export const typeColumn = (tasks, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'appeal.caseType',
@@ -163,6 +171,7 @@ export const typeColumn = (tasks, requireDasRecord) => {
 export const assignedToColumn = (tasks) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
+    name: QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'assignedTo.name',
@@ -176,6 +185,7 @@ export const assignedToColumn = (tasks) => {
 export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
+    name: QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN,
     span: collapseColumn(requireDasRecord),
     valueFunction: (task) => {
       if (!hasDASRecord(task, requireDasRecord)) {
@@ -196,6 +206,7 @@ export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
 export const daysWaitingColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
+    name: QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
