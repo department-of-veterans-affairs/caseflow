@@ -208,7 +208,9 @@ class Veteran < ApplicationRecord
 
     is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil?)
     [:first_name, :last_name, :middle_name, :name_suffix, :ssn].each do |name|
-      is_stale = true if self[name] != bgs_record[name]
+      next if self[name] == bgs_record[name]
+
+      is_stale = true
     end
     is_stale
   end
