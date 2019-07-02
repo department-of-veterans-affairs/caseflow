@@ -110,7 +110,6 @@ export const taskColumn = (tasks) => {
     label: 'Filter by task',
     valueName: 'label',
     valueFunction: (task) => actionNameOfTask(task),
-    // TODO: Can we move this value to the back-end?
     backendCanSort: true,
     getSortValue: (task) => actionNameOfTask(task)
   };
@@ -218,6 +217,7 @@ export const daysWaitingColumn = (requireDasRecord) => {
           diff(task.placedOnHoldAt, 'days')} limit={task.onHoldDuration} warning /> : null }
       </React.Fragment>;
     },
+    backendCanSort: true,
     getSortValue: (task) => moment().startOf('day').
       diff(moment(task.assignedOn), 'days')
   };
@@ -326,6 +326,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
+      backendCanSort: true,
       getSortValue: (task) => moment().startOf('day').
         diff(moment(task.assignedOn), 'days')
     } : null;
@@ -354,6 +355,7 @@ export class TaskTableUnconnected extends React.PureComponent {
       header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
       name: QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN,
       valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
+      backendCanSort: true,
       getSortValue: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null
     } : null;
   }

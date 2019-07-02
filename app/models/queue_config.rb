@@ -29,7 +29,6 @@ class QueueConfig
   private
 
   def use_task_pages_api?(user)
-    # return true
     FeatureToggle.enabled?(:use_task_pages_api, user: user) && organization.use_task_pages_api?
   end
 
