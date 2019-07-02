@@ -671,15 +671,17 @@ describe Veteran do
     end
   end
 
-  describe "#stale_name?" do
+  describe "#stale_attributes?" do
     let(:first_name) { "Jane" }
     let(:last_name) { "Doe" }
     let(:middle_name) { "Q" }
     let(:name_suffix) { "Esq" }
+    let(:ssn) { "666000000" }
     let(:bgs_first_name) { first_name }
     let(:bgs_last_name) { last_name }
     let(:bgs_middle_name) { middle_name }
     let(:bgs_name_suffix) { name_suffix }
+    let(:bgs_ssn) { ssn }
     let!(:veteran) do
       create(
         :veteran,
@@ -687,16 +689,18 @@ describe Veteran do
         last_name: last_name,
         middle_name: middle_name,
         name_suffix: name_suffix,
+        ssn: ssn,
         bgs_veteran_record: {
           first_name: bgs_first_name,
           last_name: bgs_last_name,
           middle_name: bgs_middle_name,
-          name_suffix: bgs_name_suffix
+          name_suffix: bgs_name_suffix,
+          ssn: bgs_ssn
         }
       )
     end
 
-    subject { veteran.stale_name? }
+    subject { veteran.stale_attributes? }
 
     context "no difference" do
       it { is_expected.to eq(false) }
@@ -734,6 +738,16 @@ describe Veteran do
 
     context "name_suffix does not match BGS" do
       let(:bgs_name_suffix) { "Changed" }
+
+      it { is_expected.to eq(true) }
+    end
+
+    context "ssn does not match BGS" do
+      let(:bgs_ssn) { "666999999" }
+
+      before do
+        Fakes::BGSService.veteran_records[veteran.file_number][:ssn] = bgs_ssn
+      end
 
       it { is_expected.to eq(true) }
     end

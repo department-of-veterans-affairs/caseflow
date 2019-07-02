@@ -98,14 +98,6 @@ class User < ApplicationRecord
     nil
   end
 
-  def can_edit_request_issues?(appeal)
-    Task.where(
-      appeal: appeal,
-      assigned_to: self,
-      status: [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
-    ).select { |t| t.is_a?(JudgeTask) || t.is_a?(AttorneyTask) }.any?
-  end
-
   def participant_id
     @participant_id ||= bgs.get_participant_id_for_user(self)
   end

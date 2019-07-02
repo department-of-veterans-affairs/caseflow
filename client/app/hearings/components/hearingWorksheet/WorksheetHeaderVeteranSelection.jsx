@@ -12,6 +12,7 @@ import SearchableDropdown from '../../../components/SearchableDropdown';
 import SmallLoader from '../../../components/SmallLoader';
 import _ from 'lodash';
 import ApiUtil from '../../../util/ApiUtil';
+import { formatNameShort } from '../../../util/FormatUtil';
 
 const headerSelectionStyling = css({
   display: 'block',
@@ -57,7 +58,7 @@ class WorksheetHeaderVeteranSelection extends React.PureComponent {
 
   getOptionLabel = (hearing) => (
     <div>
-      {`${hearing.veteran_first_name[0]}. ${hearing.veteran_last_name} `}
+      {`${formatNameShort(hearing.veteran_first_name, hearing.veteran_last_name)} `}
       ({hearing.current_issue_count} {hearing.current_issue_count === 1 ? 'issue' : 'issues'})
       {'  '}{hearing.prepped ? <FoundIcon /> : ''}
     </div>

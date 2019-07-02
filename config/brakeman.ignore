@@ -1,13 +1,32 @@
 {
   "ignored_warnings": [
     {
+      "warning_type": "Cross-Site Request Forgery",
+      "warning_code": 86,
+      "fingerprint": "0bc3c7bb01027bba366908970aa5640bc505eb03a24d696949caf361ef6ea7f4",
+      "check_name": "ForgerySetting",
+      "message": "`protect_from_forgery` should be configured with `with: :exception`",
+      "file": "app/controllers/api/docs/v3/docs_controller.rb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_request_forgery/",
+      "code": "protect_from_forgery(:with => :null_session)",
+      "render_path": null,
+      "location": {
+        "type": "controller",
+        "controller": "Api::Docs::V3::DocsController"
+      },
+      "user_input": null,
+      "confidence": "Medium",
+      "note": "This is an API, :null_session is the appropriate CSRF protection"
+    },
+    {
       "warning_type": "File Access",
       "warning_code": 16,
       "fingerprint": "140e07405ecb20ab6aa52f2f41aeeef0ed7830d781698d6b752ee3d8b0a9c065",
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
       "file": "app/controllers/hearings/schedule_periods_controller.rb",
-      "line": 57,
+      "line": 59,
       "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
       "code": "send_file(SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location, :type => \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\", :disposition => (\"attachment; filename='#{SchedulePeriod.find(params[:schedule_period_id]).file_name}'\"))",
       "render_path": null,
@@ -38,26 +57,6 @@
       "user_input": null,
       "confidence": "Medium",
       "note": "Because it's an API, :null_session is the appropriate CSRF protection"
-    },
-    {
-      "warning_type": "File Access",
-      "warning_code": 16,
-      "fingerprint": "2634aabd9d9e0db706787681879ec9f759417bb967a833a0a3bef30c6f42ed0b",
-      "check_name": "SendFile",
-      "message": "Parameter value used in file name",
-      "file": "app/controllers/dispatch/establish_claims_controller.rb",
-      "line": 35,
-      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
-      "code": "send_file(task.appeal.decisions[params[:decision_number].to_i].serve, :type => \"application/pdf\", :disposition => \"inline\")",
-      "render_path": null,
-      "location": {
-        "type": "method",
-        "class": "Dispatch::EstablishClaimsController",
-        "method": "pdf"
-      },
-      "user_input": "params[:decision_number]",
-      "confidence": "Weak",
-      "note": ""
     },
     {
       "warning_type": "File Access",
@@ -113,9 +112,9 @@
       "location": null,
       "user_input": null,
       "confidence": "High",
-      "note": "We're not sure yet of the implications of turning on SSL"
+      "note": "The application does not force use of HTTPS: `config.force_ssl` is not enabled"
     }
   ],
-  "updated": "2019-05-24 10:04:33 -0400",
+  "updated": "2019-06-26 17:40:52 -0400",
   "brakeman_version": "4.5.1"
 }

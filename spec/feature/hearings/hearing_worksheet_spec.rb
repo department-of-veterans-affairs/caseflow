@@ -16,9 +16,11 @@ RSpec.feature "Hearing prep" do
     end
 
     context "worksheet header" do
-      let!(:legacy_hearing_two) { create(:legacy_hearing,
-                                         user: current_user,
-                                         hearing_day: legacy_hearing.hearing_day) }
+      let!(:legacy_hearing_two) do
+        create(:legacy_hearing,
+               user: current_user,
+               hearing_day: legacy_hearing.hearing_day)
+      end
 
       scenario "Hearing worksheet switch veterans" do
         visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet"
@@ -54,7 +56,7 @@ RSpec.feature "Hearing prep" do
       expect(page).to have_content("These are the notes being taken here")
       expect(page).to have_content("This is military service")
 
-      visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet/print?do_not_open_print_prompt=1"
+      visit "/hearings/" + legacy_hearing.external_id.to_s + "/worksheet/print?keep_open=true"
       expect(page).to have_content("This is a rep name")
       expect(page).to have_content("This is a witness")
       expect(page).to have_content("These are the notes being taken here")

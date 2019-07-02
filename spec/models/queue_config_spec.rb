@@ -39,7 +39,7 @@ describe QueueConfig do
 
     describe "shape of the returned hash" do
       it "returns the correct top level keys in the response" do
-        expect(subject.keys).to match_array([:table_title, :active_tab, :tabs])
+        expect(subject.keys).to match_array([:table_title, :active_tab, :tasks_per_page, :use_task_pages_api, :tabs])
       end
     end
 
@@ -58,6 +58,9 @@ describe QueueConfig do
     describe "tabs" do
       subject { QueueConfig.new(organization: organization).to_hash_for_user(user)[:tabs] }
 
+      before { FeatureToggle.enable!(:use_task_pages_api) }
+      after { FeatureToggle.disable!(:use_task_pages_api) }
+
       context "with a non-VSO organization" do
         it "does not include a tab for tracking tasks" do
           expect(subject.length).to eq(3)
@@ -67,7 +70,17 @@ describe QueueConfig do
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
             expect(tab.keys).to match_array(
-              [:label, :name, :description, :columns, :task_group, :allow_bulk_assign, :tasks]
+              [
+                :label,
+                :name,
+                :description,
+                :columns,
+                :allow_bulk_assign,
+                :tasks,
+                :task_page_count,
+                :total_task_count,
+                :task_page_endpoint_base_path
+              ]
             )
           end
         end
@@ -78,10 +91,15 @@ describe QueueConfig do
           end
         end
 
-        context "when the organization has tasks assigned to it" do
+        context "when the organization uses the task pages API and has tasks assigned to it" do
+          before { FeatureToggle.enable!(:use_task_pages_api) }
+          after { FeatureToggle.disable!(:use_task_pages_api) }
+
           let!(:unassigned_tasks) { FactoryBot.create_list(:generic_task, 4, assigned_to: organization) }
           let!(:on_hold_tasks) { FactoryBot.create_list(:generic_task, 2, :on_hold, assigned_to: organization) }
           let!(:completed_tasks) { FactoryBot.create_list(:generic_task, 7, :completed, assigned_to: organization) }
+
+          before { allow(organization).to receive(:use_task_pages_api?).and_return(true) }
 
           it "returns the tasks in the correct tabs" do
             tabs = subject
@@ -125,19 +143,30 @@ describe QueueConfig do
         it "has the correct shape for each tab hash" do
           subject.each do |tab|
             expect(tab.keys).to match_array(
-              [:label, :name, :description, :columns, :task_group, :allow_bulk_assign, :tasks]
+              [
+                :label,
+                :name,
+                :description,
+                :columns,
+                :allow_bulk_assign,
+                :tasks,
+                :task_page_count,
+                :total_task_count,
+                :task_page_endpoint_base_path
+              ]
             )
           end
         end
 
         context "when the VSO has tracking tasks assigned to it" do
+          before { FeatureToggle.enable!(:use_task_pages_api) }
+          after { FeatureToggle.disable!(:use_task_pages_api) }
+
           let!(:tracking_tasks) { FactoryBot.create_list(:track_veteran_task, 5, assigned_to: organization) }
 
           it "returns the tasks in the tracking tasks tabs" do
-            tabs = subject
-
             # Tasks are serialized at this point so we need to convert integer task IDs to strings.
-            expect(tabs[0][:tasks].pluck(:id)).to match_array(tracking_tasks.map { |t| t.id.to_s })
+            expect(subject[0][:tasks].pluck(:id)).to match_array(tracking_tasks.map { |t| t.id.to_s })
           end
         end
       end

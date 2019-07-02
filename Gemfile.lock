@@ -23,8 +23,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/connect_vbms.git
-  revision: 603c7385bd5f021286a3f4f58fb2d99c772a4ca1
-  ref: 603c7385bd5f021286a3f4f58fb2d99c772a4ca1
+  revision: 3d06cb2ebd7fe1335e54df87cf8f4cfdbd7c732c
+  ref: 3d06cb2ebd7fe1335e54df87cf8f4cfdbd7c732c
   specs:
     connect_vbms (1.2.0)
       httpclient (~> 2.8.0)
@@ -575,7 +575,6 @@ DEPENDENCIES
   foreman
   guard-rspec
   holidays (~> 6.4)
-  jquery-rails
   jshint
   kaminari
   loofah (>= 2.2.3)
