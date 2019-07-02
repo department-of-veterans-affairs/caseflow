@@ -87,8 +87,6 @@ const HeaderRow = (props) => {
         if (!props.useTaskPagesApi && (column.enableFilter || column.getFilterValues)) {
           filterIcon = <TableFilter
             {...column}
-            toggleDropdownFilterVisibility={(columnName) => props.toggleDropdownFilterVisibility(columnName)}
-            isDropdownFilterOpen={props.isDropdownFilterOpen[column.columnName]}
             updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
             filteredByList={props.filteredByList} />;
         }
@@ -193,7 +191,6 @@ export default class QueueTable extends React.PureComponent {
     const state = {
       sortAscending: true,
       sortColIdx: null,
-      areDropdownFiltersOpen: {},
       filteredByList: {},
       tasksFromApi: [],
       loadingComponent: null,
@@ -227,16 +224,6 @@ export default class QueueTable extends React.PureComponent {
       sortAscending ? 'asc' : 'desc'
     );
   }
-
-  toggleDropdownFilterVisibility = (columnName) => {
-    const originalValue = _.get(this.state, [
-      'areDropdownFiltersOpen', columnName
-    ], false);
-    const newState = Object.assign({}, this.state);
-
-    newState.areDropdownFiltersOpen[columnName] = !originalValue;
-    this.setState({ newState });
-  };
 
   updateFilteredByList = (newList) => {
     this.setState({ filteredByList: newList });
@@ -404,8 +391,6 @@ export default class QueueTable extends React.PureComponent {
             sortColIdx: colIdx,
             sortAscending: ascending
           })}
-          toggleDropdownFilterVisibility={this.toggleDropdownFilterVisibility}
-          isDropdownFilterOpen={this.state.areDropdownFiltersOpen}
           updateFilteredByList={this.updateFilteredByList}
           filteredByList={this.state.filteredByList}
           useTaskPagesApi={useTaskPagesApi}
