@@ -22,7 +22,7 @@ FactoryBot.define do
     transient do
       associated_judge do
         judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
-        judge_team = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+        JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
 
         judge
       end
@@ -101,8 +101,7 @@ FactoryBot.define do
     # Currently only creates realistic task trees for direct_review docket
     # Hearing and Evidence dockets have open branches
     trait :assigned_to_judge do
-
-      after(:create) do |appeal, _evaluator|
+      after(:create) do |appeal, evaluator|
         appeal.create_tasks_on_intake_success!
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
         distribution_tasks.each(&:ready_for_distribution!)
@@ -110,11 +109,10 @@ FactoryBot.define do
         JudgeAssignTask.create!(appeal: appeal,
                                 parent: appeal.root_task,
                                 appeal_type: Appeal.name,
-                                assigned_at: _evaluator.active_task_assigned_at,
-                                assigned_to: _evaluator.associated_judge,
+                                assigned_at: evaluator.active_task_assigned_at,
+                                assigned_to: evaluator.associated_judge,
                                 action: COPY::JUDGE_ASSIGN_TASK_LABEL)
         appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
-
       end
     end
 
