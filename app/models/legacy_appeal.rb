@@ -227,9 +227,7 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= begin
-      Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number) || Veteran.find_or_create_by_ssn(veteran_ssn)
-    end
+    @veteran ||= VeteranFinder.find_or_create_all(veteran_file_number, veteran_ssn).first
   end
 
   def veteran_ssn
