@@ -8,10 +8,8 @@ import { caseTimelineTasksForAppeal } from '../../queue/selectors';
 import moment from 'moment';
 
 const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
-const timelineLeftPaddingStyle = css({ paddingLeft: '0px' });
-const grayLineIconStyling = css({ top: '25px',
-  left: '35.5%',
-  marginLeft: 0 });
+const timelineLeftPaddingStyle = css({ paddingLeft: '0px'});
+const grayLineIconStyling = css({top: '25px !important', left: '35.5%', marginLeft: 0})
 
 class DecisionDateTimeLine extends React.PureComponent {
 
@@ -33,6 +31,12 @@ class DecisionDateTimeLine extends React.PureComponent {
         <dd>{moment(appeal.decisionDate).format('MM/DD/YYYY')}</dd></div> : null;
     };
 
+    // const showGrayIcon = () => {
+    //   return !appeal.withdrawn || !appeal.decisionDate ? <span>
+    //     <GrayDot /><div className="grayLineStyling grayLineIconStyling"></div>
+    //   </span> : ''
+    // }
+
     return <React.Fragment>
       {timeline && <tr>
         <td className="taskContainerStyling taskTimeTimelineContainerStyling">
@@ -43,8 +47,9 @@ class DecisionDateTimeLine extends React.PureComponent {
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer"
           {...(appeal.withdrawalDate || appeal.decisionDate ? timelineLeftPaddingStyle : greyDotTimelineStyling)}>
           {appeal.withdrawn ? <CancelIcon /> : appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
-          { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate) || (appeal.withdrawn)) &&
-          <div className="grayLineStyling grayLineTimelineStyling" {...grayLineIconStyling} />}
+          { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate) || (appeal.withdrawn) || (appeal.decisionDate)) &&
+          <div className="grayLineStyling grayLineTimelineStyling"
+          {...grayLineIconStyling} />}
         </td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
           {appeal.withdrawn ? COPY.CASE_TIMELINE_APPEAL_WITHDRAWN : appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING } <br />
