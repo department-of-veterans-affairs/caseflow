@@ -165,6 +165,37 @@ describe EndProductEstablishment do
         )
       end
 
+      context "when it is a correction end product" do
+        let(:code) { "930AMABGRC" }
+
+        it "creates an end product with the correction valid modifier" do
+          subject
+          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+            claim_hash: {
+              benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
+              payee_code: "00",
+              predischarge: false,
+              claim_type: "Claim",
+              end_product_modifier: "930",
+              end_product_code: "930AMABGRC",
+              end_product_label: "AMA BVA Grant Rating Control",
+              station_of_jurisdiction: "397",
+              date: 2.days.ago.to_date,
+              suppress_acknowledgement_letter: false,
+              gulf_war_registry: false,
+              claimant_participant_id: "11223344",
+              limited_poa_code: "ABC",
+              limited_poa_access: true
+            },
+            veteran_hash: veteran.reload.to_vbms_hash,
+            user: current_user
+          )
+          expect(end_product_establishment.reload).to have_attributes(
+            modifier: "930"
+          )
+        end
+      end
+
       context "when invalid modifiers is set" do
         let(:invalid_modifiers) { ["031"] }
 

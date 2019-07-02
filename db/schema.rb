@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190618173816) do
+ActiveRecord::Schema.define(version: 20190701170815) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1038,7 +1038,10 @@ ActiveRecord::Schema.define(version: 20190618173816) do
     t.string "middle_name"
     t.string "name_suffix"
     t.string "participant_id"
+    t.string "ssn", comment: "The cached Social Security Number"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true
+    t.index ["participant_id"], name: "index_veterans_on_participant_id"
+    t.index ["ssn"], name: "index_veterans_on_ssn"
   end
 
   create_table "vso_configs", force: :cascade do |t|
