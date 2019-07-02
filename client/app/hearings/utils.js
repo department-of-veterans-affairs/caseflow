@@ -19,7 +19,7 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
     value();
 
   if (_.isEmpty(worksheetIssues)) {
-    worksheetIssues = _.keyBy(worksheet_issues, 'id');
+    worksheetIssues = _.keyBy(worksheet.worksheet_issues, 'id');
   }
 
   const worksheetWithoutAppeals = _.omit(worksheet, ['appeals_ready_for_hearing']);
