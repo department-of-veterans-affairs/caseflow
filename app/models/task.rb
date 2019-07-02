@@ -454,13 +454,14 @@ class Task < ApplicationRecord
     on_hold: :placed_on_hold_at,
     completed: :closed_at,
     cancelled: :closed_at
-  }
+  }.freeze
 
   def set_timestamps
     return unless will_save_change_to_attribute?(:status)
 
     timestamp_to_update = STATUS_TIMESTAMPS[status_change_to_be_saved&.last&.to_sym]
     return if will_save_change_to_attribute?(timestamp_to_update)
+
     self[timestamp_to_update] = Time.zone.now
   end
 end
