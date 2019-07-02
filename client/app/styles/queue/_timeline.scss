@@ -13,7 +13,7 @@
 .grayLineTimelineStyling {
   left: 9%;
   margin-left: 12px;
-  top: 39px;
+  top: 39px !important;
 }
 
 .taskContainerStyling {
@@ -62,7 +62,7 @@
 }
 
 .timelineLeftPaddingStyle {
-	padding-left:0;
+	padding-left: 0;
 }
 
 .greyDotStyling {

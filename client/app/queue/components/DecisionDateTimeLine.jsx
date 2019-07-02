@@ -9,6 +9,9 @@ import moment from 'moment';
 
 const greyDotTimelineStyling = css({ padding: '0px 0px 0px 5px' });
 const timelineLeftPaddingStyle = css({ paddingLeft: '0px' });
+const grayLineIconStyling = css({ top: '25px',
+  left: '35.5%',
+  marginLeft: 0 });
 
 class DecisionDateTimeLine extends React.PureComponent {
 
@@ -30,24 +33,6 @@ class DecisionDateTimeLine extends React.PureComponent {
         <dd>{moment(appeal.decisionDate).format('MM/DD/YYYY')}</dd></div> : null;
     };
 
-    let timelineContainerText;
-    let timeLineIcon;
-    let grayLineIconStyling;
-
-    if (appeal.withdrawn) {
-      timelineContainerText = COPY.CASE_TIMELINE_APPEAL_WITHDRAWN;
-      timeLineIcon = <CancelIcon />;
-    } else if (appeal.decisionDate) {
-      timelineContainerText = COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA;
-      timeLineIcon = <GreenCheckmark />;
-    } else {
-      timelineContainerText = COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING;
-      timeLineIcon = <GrayDot />;
-      grayLineIconStyling = css({ top: '25px !important',
-        left: '35.5%',
-        marginLeft: 0 });
-    }
-
     return <React.Fragment>
       {timeline && <tr>
         <td className="taskContainerStyling taskTimeTimelineContainerStyling">
@@ -57,12 +42,12 @@ class DecisionDateTimeLine extends React.PureComponent {
         </td>
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer"
           {...(appeal.withdrawalDate || appeal.decisionDate ? timelineLeftPaddingStyle : greyDotTimelineStyling)}>
-          {timeLineIcon}
-          { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
+          {appeal.withdrawn ? <CancelIcon /> : appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
+          { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate) || (appeal.withdrawn)) &&
           <div className="grayLineStyling grayLineTimelineStyling" {...grayLineIconStyling} />}
         </td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
-          { timelineContainerText } <br />
+          {appeal.withdrawn ? COPY.CASE_TIMELINE_APPEAL_WITHDRAWN : appeal.decisionDate ? COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING } <br />
         </td>
       </tr>}
     </React.Fragment>;
