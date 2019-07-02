@@ -1,20 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
 import HearingWorksheetStream from './HearingWorksheetStream';
 import WorksheetHeader from './WorksheetHeader';
-import classNames from 'classnames';
 import AutoSave from '../../../components/AutoSave';
 import { LOGO_COLORS } from '../../../constants/AppConstants';
 import _ from 'lodash';
 import WorksheetHeaderVeteranSelection from './WorksheetHeaderVeteranSelection';
 import ContestedIssues from '../../../queue/components/ContestedIssues';
 import { now } from '../../utils';
-import { navigateToPrintPage, openPrintDialogue } from '../../../util/PrintUtil';
-import WorksheetFooter from './WorksheetFooter';
+import { navigateToPrintPage } from '../../../util/PrintUtil';
+import { formatNameShort } from '../../../util/FormatUtil';
 import CFRichTextEditor from '../../../components/CFRichTextEditor';
-import DOMPurify from 'dompurify';
 import Button from '../../../components/Button';
 import ContentSection from '../../../components/ContentSection';
 import HearingWorksheetDocs from './HearingWorksheetDocs';
@@ -51,6 +48,10 @@ const DEFAULT_SUMMARY_VALUE = '<p><strong>Contentions</strong></p> <p></p>' +
   '<p></p> <p><strong>Evidence</strong></p> <p></p> <p></p> <p><strong>Comments' +
   ' and special instructions to attorneys</strong></span></p> <p></p> <p></p>';
 
+export const getWorksheetTitle = (worksheet) => (
+  `${formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}'s Hearing Worksheet`
+);
+
 class WorksheetFormEntry extends React.PureComponent {
 
   render() {
@@ -70,29 +71,18 @@ class WorksheetFormEntry extends React.PureComponent {
       )
     };
 
-    return <div className="cf-hearings-worksheet-data">
-      {this.props.print ?
-        <React.Fragment>
-          <label htmlFor={this.props.id}>{this.props.name}</label>
-          <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(this.props.value) }} />
-        </React.Fragment> :
-        <CFRichTextEditor {...textAreaProps} />}
-    </div>;
+    return (
+      <div className="cf-hearings-worksheet-data">
+        <CFRichTextEditor {...textAreaProps} />
+      </div>
+    );
   }
 }
+
 export class HearingWorksheet extends React.PureComponent {
   componentDidMount() {
-    document.title = this.getWorksheetTitle();
-    if (this.props.print) {
-      openPrintDialogue();
-    }
+    document.title = getWorksheetTitle(this.props.worksheet);
   }
-
-  getWorksheetTitle = () => {
-    const { worksheet } = this.props;
-
-    return `${worksheet.veteran_first_name[0]}. ${worksheet.veteran_last_name}'s Hearing Worksheet`;
-  };
 
   save = (worksheet, worksheetIssues) => () => {
     this.props.saveWorksheet(worksheet);
@@ -110,70 +100,34 @@ export class HearingWorksheet extends React.PureComponent {
   onSummaryChange = (value) => this.props.onSummaryChange(value);
 
   getLegacyHearingWorksheet = () => {
-    return <div>
-      <HearingWorksheetDocs {...this.props} />
-      <HearingWorksheetStream {...this.props} print={this.props.print} />
-    </div>;
-  };
+    return (
+      <div>
+        <HearingWorksheetDocs {...this.props} />
+        <HearingWorksheetStream {...this.props} />
+      </div>
+    );
+  }
 
   getHearingWorksheet = () => {
-    return <div className="cf-hearings-worksheet-data cf-hearings-worksheet-issues">
-      <ContentSection
-        header={<div>Issues</div>}
-        content={<ContestedIssues
-          requestIssues={_.values(this.props.worksheetIssues)}
-          decisionIssues={[]}
-          hearingWorksheet
-        />}
-      />
-    </div>;
-  };
+    return (
+      <div className="cf-hearings-worksheet-data cf-hearings-worksheet-issues">
+        <ContentSection
+          header={<div>Issues</div>}
+          content={<ContestedIssues
+            requestIssues={_.values(this.props.worksheetIssues)}
+            decisionIssues={[]}
+            hearingWorksheet
+          />}
+        />
+      </div>
+    );
+  }
 
   render() {
-    let { worksheet, worksheetIssues } = this.props;
+    const { worksheet, worksheetIssues } = this.props;
 
-    const worksheetHeader = <WorksheetHeader
-      print={this.props.print}
-    />;
-
-    const firstWorksheetPage = <div className="cf-hearings-first-page">
-      {worksheetHeader}
-      {this.props.worksheet.docket_name === 'hearing' ? this.getHearingWorksheet() : this.getLegacyHearingWorksheet()}
-      {this.props.print &&
-        <WorksheetFooter
-          veteranName={this.props.worksheet.veteran_fi_last_formatted}
-        />
-      }
-    </div>;
-
-    const secondWorksheetPage = <div className="cf-hearings-second-page">
-      <form className="cf-hearings-worksheet-form">
-        <WorksheetFormEntry
-          name="Hearing Summary"
-          value={this.props.worksheet.summary || DEFAULT_SUMMARY_VALUE}
-          onChange={this.onSummaryChange}
-          id="worksheet-hearing-summary"
-          minRows={1}
-          print={this.props.print}
-        />
-      </form>
-      {this.props.print &&
-        <WorksheetFooter
-          veteranName={this.props.worksheet.veteran_fi_last_formatted}
-        />
-      }
-    </div>;
-
-    const wrapperClassNames = classNames('cf-hearings-worksheet', {
-      'cf-app-segment--alt': !this.props.print
-    });
-
-    const printWrapperClassNames = classNames('cf-hearings-worksheet', {
-      'cf-app-segment--alt cf_hearing_body': this.props.print
-    });
-
-    return <div>
-      {!this.props.print &&
+    return (
+      <div>
         <div>
           <div>
             <AutoSave
@@ -185,19 +139,24 @@ export class HearingWorksheet extends React.PureComponent {
             />
             <WorksheetHeaderVeteranSelection />
           </div>
-          <div className={wrapperClassNames}>
-            {firstWorksheetPage}
-            {secondWorksheetPage}
+          <div className="cf-hearings-worksheet cf-app-segment--alt">
+            <WorksheetHeader />
+            {
+              this.props.worksheet.docket_name === 'hearing' ?
+                this.getHearingWorksheet() :
+                this.getLegacyHearingWorksheet()
+            }
+            <form className="cf-hearings-worksheet-form">
+              <WorksheetFormEntry
+                name="Hearing Summary"
+                value={this.props.worksheet.summary || DEFAULT_SUMMARY_VALUE}
+                onChange={this.onSummaryChange}
+                id="worksheet-hearing-summary"
+                minRows={1}
+              />
+            </form>
           </div>
         </div>
-      }
-      {this.props.print &&
-    <div className={printWrapperClassNames}>
-      {firstWorksheetPage}
-      {secondWorksheetPage}
-    </div>
-      }
-      {!this.props.print &&
         <div className="cf-push-right">
           <Button
             classNames={['usa-button-secondary']}
@@ -206,14 +165,10 @@ export class HearingWorksheet extends React.PureComponent {
             aria-label="Save as PDF"
           />
         </div>
-      }
-    </div>;
+      </div>
+    );
   }
 }
-
-HearingWorksheet.propTypes = {
-  print: PropTypes.bool
-};
 
 const mapStateToProps = (state) => ({
   worksheet: state.hearingWorksheet.worksheet,

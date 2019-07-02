@@ -357,11 +357,37 @@ Your development setup of caseflow runs Redis, Postgres and OracleDB (VACOLS) in
 
 ### Running Caseflow ###################################################
 
-#### All in one ########################################################################
+To run caseflow:
 ```
 foreman start
 ```
+
+**Note:** The Docker containers must always be running in order for the Rails application to start successfully. Some rake tasks will start them automatically, but if you restart your computer or otherwise stop Docker, you'll want to run `docker-compose up -d` to start the containers initially.
+
+```
+docker-compose up -d
+foreman start
+```
+
+Spinning up the docker containers is fast, but not instantaneous Occasionally, running `foreman start` *immediately* after `docker-compose up -d`, can cause the rails server to fail to start because not all of the containers are ready. For example, the following _may_ not work:
+
+```
+docker-compose up -d && foreman start
+```
+
+`Makefile.example` provides a bunch of useful shortcuts, one of which is the `run` directive. `run` will ensure that all of the dockers containers are ready before running `foreman start`.
+
+Example:
+
+```
+make -f Makefile.example run
+```
+
 #### Separate Front & Backend Servers ####################################################
+
+`foreman start` starts both the back-end server and the front-end server.
+
+They can, alternatively, be started separately:
 
 _Backend_
 `REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000`

@@ -20,6 +20,7 @@ import NavigationBar from '../components/NavigationBar';
 import CaseSearchLink from '../components/CaseSearchLink';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import { LOGO_COLORS } from '../constants/AppConstants';
+import { formatNameShort } from '../util/FormatUtil';
 
 const fireSingleDocumentModeEvent = _.memoize(() => {
   window.analyticsEvent(CATEGORIES.VIEW_DOCUMENT_PAGE, 'single-document-mode');
@@ -124,8 +125,8 @@ export class DecisionReviewer extends React.PureComponent {
   }
 
   getClaimsFolderPageTitle = (appeal) => appeal && appeal.veteran_first_name ?
-    `${appeal.veteran_first_name.charAt(0)}. \
-      ${appeal.veteran_last_name}'s Claims Folder` : 'Claims Folder | Caseflow Reader';
+    `${formatNameShort(appeal.veteran_first_name, appeal.veteran_last_name)}'s Claims Folder` :
+    'Claims Folder | Caseflow Reader';
 
   render = () => <React.Fragment>
     <NavigationBar

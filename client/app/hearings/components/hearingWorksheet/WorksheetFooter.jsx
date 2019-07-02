@@ -3,11 +3,8 @@ import PropTypes from 'prop-types';
 
 const WorksheetFooter = ({ veteranName }) => (
   <div className="cf-print-footer">
-    <div className="cf-push-right">
-      <div>
-        {veteranName},
-        <span className="cf-print-number" />
-      </div>
+    <div>
+      {veteranName}
     </div>
   </div>
 );
