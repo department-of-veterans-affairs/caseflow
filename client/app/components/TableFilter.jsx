@@ -16,15 +16,10 @@ import FilterOption from './FilterOption';
  *   - @tableData {array} the entire data set for the table (required to calculate
  *     the options each column can be filtered on)
  *   - @columnName {string} the name of the column in the table data
- *   - @toggleDropdownFilterVisibility {function} changes the status of the filter
- *     dropdown's visibility, and dispatches an action to change a new value in the
- *     store to capture this information
  *   - @filteredByList {object} the list of filters that have been selected;
  *     this data comes from the store, and is an object where each key is a column name,
  *     which then points to an array of the specific options that column is filtered by
  *   - @updateFilters {function} updates the filteredByList
- *   - @isDropdownFilterOpen {boolean} a property from the store that is updated by
- *     toggleDropdownFilterVisibility, and should receive the specific column name
  *   - @anyFiltersAreSet {boolean} determines whether the "Clear All Filters" option
  *     in the dropdown is enabled
  *   - @customFilterLabels {object} key-value pairs translating the data values to
@@ -35,6 +30,12 @@ import FilterOption from './FilterOption';
  */
 
 class TableFilter extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    this.state = { open: false };
+  }
+
   filterDropdownOptions = (tableDataByRow, columnName) => {
     let countByColumnName = _.countBy(tableDataByRow, columnName);
     let uniqueOptions = [];
@@ -66,6 +67,10 @@ class TableFilter extends React.PureComponent {
     return _.sortBy(uniqueOptions, 'displayText');
   }
 
+  toggleDropdown = () => this.setState({ open: !this.state.open });
+
+  hideDropdown = () => this.setState({ open: false });
+
   updateSelectedFilter = (value, columnName) => {
     const { filteredByList } = this.props;
     const filtersForColumn = _.get(filteredByList, String(columnName));
@@ -81,9 +86,13 @@ class TableFilter extends React.PureComponent {
       newFilters = newFilters.concat([value]);
     }
 
-    filteredByList[columnName] = newFilters;
-    this.props.updateFilters(filteredByList);
-    this.props.toggleDropdownFilterVisibility(columnName);
+    // Clone here so that we are sending a new list to updateFilters() instead of the same list that has already been
+    // modified. If we send the existing list to updateFilters() we do not trigger a re-render.
+    let newFilteredByList = _.clone(filteredByList);
+
+    newFilteredByList[columnName] = newFilters;
+    this.props.updateFilters(newFilteredByList);
+    this.toggleDropdown();
   }
 
   clearFilteredByList = (columnName) => {
@@ -92,16 +101,14 @@ class TableFilter extends React.PureComponent {
     filterList[columnName] = [];
 
     this.props.updateFilters(filterList);
-    this.props.toggleDropdownFilterVisibility(columnName);
+    this.hideDropdown();
   }
 
   render() {
     const {
       tableData,
       columnName,
-      toggleDropdownFilterVisibility,
       filteredByList,
-      isDropdownFilterOpen,
       anyFiltersAreSet,
       label,
       valueName,
@@ -127,16 +134,16 @@ class TableFilter extends React.PureComponent {
           label={label}
           getRef={this.props.getFilterIconRef}
           selected={
-            isDropdownFilterOpen ||
+            this.state.open ||
             (filteredByList[columnName] ? filteredByList[columnName].length > 0 : false)}
-          handleActivate={() => toggleDropdownFilterVisibility(columnName)} />
+          handleActivate={this.toggleDropdown} />
 
-        {isDropdownFilterOpen &&
+        {this.state.open &&
           <QueueDropdownFilter
             clearFilters={() => this.clearFilteredByList(columnName)}
             name={valueName}
             isClearEnabled={anyFiltersAreSet}
-            handleClose={() => toggleDropdownFilterVisibility(columnName)}
+            handleClose={this.toggleDropdown}
             addClearFiltersRow>
             <FilterOption
               options={filterOptions}
@@ -156,10 +163,8 @@ TableFilter.propTypes = {
   customFilterLabels: PropTypes.object,
   label: PropTypes.string,
   valueName: PropTypes.string,
-  toggleDropdownFilterVisibility: PropTypes.func,
   filteredByList: PropTypes.object,
-  updateFilters: PropTypes.func,
-  isDropdownFilterOpen: PropTypes.bool
+  updateFilters: PropTypes.func
 };
 
 export default TableFilter;
