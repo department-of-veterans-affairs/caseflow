@@ -99,7 +99,7 @@ export default class DailyDocket extends React.Component {
 
   navigateToPrintAllPage = () => {
     const hearingIds = this.dailyDocketHearings().map((hearing) => hearing.externalId);
-    const queryString = encodeQueryParams({ hearing_ids: hearingIds });
+    const queryString = encodeQueryParams({ hearing_ids: hearingIds.join(',') });
 
     navigateToPrintPage(`/hearings/worksheet/print${queryString}`);
   }

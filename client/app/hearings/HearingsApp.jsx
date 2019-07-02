@@ -66,8 +66,9 @@ export default class HearingsApp extends React.PureComponent {
     <HearingWorksheetContainer hearingId={params.hearingId} />;
   routeForPrintedHearingWorksheets = (props) => {
     const queryString = querystring.parse(props.location.search.replace(/^\?/, ''));
+    const hearingIds = (queryString.hearing_ids || '').split(',');
 
-    return detect().name === 'chrome' ? <HearingWorksheetPrintAllContainer hearingIds={queryString.hearing_ids} /> :
+    return detect().name === 'chrome' ? <HearingWorksheetPrintAllContainer hearingIds={hearingIds} /> :
       <UnsupportedBrowserBanner appName="Hearings" />;
   };
 
