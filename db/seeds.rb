@@ -598,10 +598,9 @@ class SeedDB
 
     es = "evidence_submission"
     dr = "direct_review"
+    # Older style, tasks to be created later
     [
       { number_of_claimants: nil, veteran_file_number: "783740847", docket_type: es, request_issue_count: 3 },
-      { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
-      { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 },
       { number_of_claimants: 1, veteran_file_number: "228081153", docket_type: es, request_issue_count: 1 },
       { number_of_claimants: 1, veteran_file_number: "152003980", docket_type: dr, request_issue_count: 3 },
       { number_of_claimants: 1, veteran_file_number: "375273128", docket_type: dr, request_issue_count: 1 },
@@ -617,6 +616,25 @@ class SeedDB
         number_of_claimants: params[:number_of_claimants],
         veteran_file_number: params[:veteran_file_number],
         docket_type: params[:docket_type],
+        request_issues: FactoryBot.create_list(
+          :request_issue, params[:request_issue_count], :nonrating, notes: notes
+        )
+      )
+    end
+
+    # Newer style, tasks created through the Factory trait
+    [
+      { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
+      { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 },
+    ].each do |params|
+      FactoryBot.create(
+        :appeal,
+        :assigned_to_judge,
+        number_of_claimants: params[:number_of_claimants],
+        active_task_assigned_at: Time.zone.now,
+        veteran_file_number: params[:veteran_file_number],
+        docket_type: params[:docket_type],
+        closest_regional_office: "RO17",
         request_issues: FactoryBot.create_list(
           :request_issue, params[:request_issue_count], :nonrating, notes: notes
         )
@@ -762,6 +780,25 @@ class SeedDB
 
   def create_root_task(appeal)
     FactoryBot.create(:root_task, appeal: appeal)
+  end
+
+  def create_appeal_at_judge_assignment(judge: User.find_by_css_id("BVAAABSHIRE"), assigned_at: Time.zone.now)
+    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+    notes = "Pain disorder with 100\% evaluation per examination"
+
+    FactoryBot.create(
+      :appeal,
+      :assigned_to_judge,
+      number_of_claimants: 1,
+      associated_judge: judge,
+      active_task_assigned_at: assigned_at,
+      veteran_file_number: Generators::Random.unique_ssn,
+      docket_type: "direct_review",
+      closest_regional_office: "RO17",
+      request_issues: FactoryBot.create_list(
+        :request_issue, 2, contested_issue_description: description, notes: notes
+      )
+    )
   end
 
   def create_task_at_judge_assignment(appeal, judge, assigned_at = Time.zone.yesterday)
@@ -968,36 +1005,23 @@ class SeedDB
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
 
+    # At Judge Assignment
+    #evidence submission docket
     create_task_at_judge_assignment(@ama_appeals[0], judge, 35.days.ago)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
-    create_task_at_judge_assignment(@ama_appeals[2], judge)
-    create_task_at_judge_assignment(@ama_appeals[3], judge)
-    create_task_at_judge_review(@ama_appeals[4], judge, attorney)
-    create_task_at_judge_review(@ama_appeals[5], judge, attorney)
-    create_task_at_colocated(@ama_appeals[6], judge, attorney)
+
+    create_task_at_judge_review(@ama_appeals[2], judge, attorney)
+    create_task_at_judge_review(@ama_appeals[3], judge, attorney)
+    create_task_at_colocated(@ama_appeals[4], judge, attorney)
     create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, action: "translation")
-    create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
-    create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
-    create_task_at_judge_assignment(@ama_appeals[9], judge)
-    create_task_at_judge_review(@ama_appeals[10], judge, attorney)
-    create_task_at_colocated(@ama_appeals[11], judge, attorney)
+    create_task_at_attorney_review(@ama_appeals[5], judge, attorney)
+    create_task_at_attorney_review(@ama_appeals[6], judge, attorney)
+    create_task_at_judge_assignment(@ama_appeals[7], judge)
+    create_task_at_judge_review(@ama_appeals[8], judge, attorney)
+    create_task_at_colocated(@ama_appeals[9], judge, attorney)
 
     9.times do
-      description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
-      notes = "Pain disorder with 100\% evaluation per examination"
-      appeals << FactoryBot.create(
-        :appeal,
-          :with_post_intake_tasks,
-          number_of_claimants: 1,
-          veteran_file_number: Faker::Number.number(9).to_s,
-          docket_type: "direct_review",
-          closest_regional_office: "RO17",
-          request_issues: FactoryBot.create_list(
-            :request_issue, 2, contested_issue_description: description, notes: notes
-          )
-        )
-
-      create_task_at_judge_assignment(appeal, judge, Time.zone.today)
+      create_appeal_at_judge_assignment(judge, Time.zone.today)
     end
 
     create_colocated_legacy_tasks(attorney)
@@ -1174,8 +1198,8 @@ class SeedDB
     # create them in all envs
     create_annotations
     create_tags
-    create_ama_appeals
     create_users
+    create_ama_appeals
     create_hearing_days
     create_veterans_ready_for_hearing
     create_tasks
