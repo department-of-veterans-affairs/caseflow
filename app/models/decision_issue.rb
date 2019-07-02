@@ -97,6 +97,10 @@ class DecisionIssue < ApplicationRecord
     appeal? ? decision_review.outcoded? : disposition.present?
   end
 
+  def remanded?
+    REMAND_DISPOSITIONS.include?(disposition)
+  end
+
   def ui_hash
     {
       id: id,
