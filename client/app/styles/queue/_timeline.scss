@@ -37,14 +37,13 @@
 
 .taskInformationContainerStyling,
 .taskTimeTimelineContainerStyling {
-  width: 40%; 
-} 
-
+  width: 40%;
+}
 
 .taskInfoWithIconContainer {
   text-align: center;
   border: none;
-  padding: 0 0 0 0;
+  padding: 0;
   position: relative;
   vertical-align: top;
   width: 15px;
@@ -58,15 +57,14 @@
   padding-left: 0;
 }
 
-
 .greyDotTimelineStyling { 
 	padding: 0 0 0 5px;
 }
 
 .timelineLeftPaddingStyle { 
-	padding-left: 0; 
+	padding-left: 0;
 }
 
 .greyDotStyling {
-  padding-left: 6px
+  padding-left: 6px;
 }
