@@ -15,12 +15,18 @@ class EvidenceSubmissionWindowTask < GenericTask
   end
 
   def timer_ends_at
-    from_date = if parent.is_a?(AssignHearingDispositionTask)
-                  parent.hearing&.hearing_day&.scheduled_for
-                end
+    from_date = hearing.hearing_day&.scheduled_for if hearing.present?
     from_date ||= appeal.receipt_date
 
     from_date + 90.days
+  end
+
+  def hearing
+    @hearing ||= if parent.is_a?(AssignHearingDispositionTask)
+                   parent.hearing
+                 elsif parent.is_a?(DistributionTask)
+                   parent.children.find_by(type: "HearingTask")&.hearing
+                 end
   end
 
   private
