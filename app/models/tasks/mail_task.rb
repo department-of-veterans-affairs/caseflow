@@ -62,7 +62,7 @@ class MailTask < GenericTask
     end
 
     def pending_hearing_task?(parent)
-      parent.appeal.tasks.open.any? { |t| t.is_a?(HearingTask) }
+      parent.appeal.tasks.open.any? { |task| task.is_a?(HearingTask) }
     end
 
     def case_active?(parent)
