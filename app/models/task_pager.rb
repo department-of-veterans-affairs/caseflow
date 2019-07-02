@@ -25,7 +25,6 @@ class TaskPager
     sorted_tasks(tasks_for_tab).page(page).per(TASKS_PER_PAGE)
   end
 
-  # TODO: Is there a more rails-y way of doing this?
   def sorted_tasks(tasks)
     case sort_by
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
