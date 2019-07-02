@@ -118,7 +118,7 @@ class EndProductEstablishment < ApplicationRecord
       if FeatureToggle.enabled?(:send_original_dta_contentions, user: RequestStore.store[:current_user])
         issue.try(:original_contention_ids) && contention[:original_contention_ids] = issue.original_contention_ids
       end
-      
+
       contention
     end
   end
