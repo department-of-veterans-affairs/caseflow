@@ -14,6 +14,7 @@ import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
 import { isPreviouslyScheduledHearing } from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
+import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 
 const alertStyling = css({
   marginBottom: '30px'
@@ -96,6 +97,13 @@ export default class DailyDocket extends React.Component {
     this.setState({ editedDispositionModalProps: null });
   }
 
+  navigateToPrintAllPage = () => {
+    const hearingIds = this.dailyDocketHearings().map((hearing) => hearing.externalId);
+    const queryString = encodeQueryParams({ hearing_ids: hearingIds });
+
+    navigateToPrintPage(`/hearings/worksheet/print${queryString}`);
+  }
+
   render() {
 
     const regionalOffice = this.getRegionalOffice();
@@ -162,7 +170,7 @@ export default class DailyDocket extends React.Component {
           </Button>
         </div>
         <div className="cf-push-right">
-          <Button classNames={['usa-button-secondary']}>
+          <Button classNames={['usa-button-secondary']} onClick={this.navigateToPrintAllPage}>
             Print all Hearing Worksheets
           </Button>
         </div>
