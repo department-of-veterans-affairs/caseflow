@@ -103,6 +103,10 @@ $body-font-size: 14px;
     }
   }
 
+  .title h1 {
+    margin: 0px 0px 5px 0px;
+  }
+
   h1,
   h2,
   h3,
@@ -238,12 +242,22 @@ $body-font-size: 14px;
     }
   }
 
-  thead {
-    .cf-print-footer {
-      float: right;
-      position: relative;
-      top: 988px;
-      height: 0px;
+  table {
+    thead {
+      .cf-print-footer {
+        float: right;
+        position: relative;
+        top: 988px;
+        height: 0px;
+      }
+    }
+
+    tr,
+    tr > td {
+      margin: 0px;
+      padding: 0px;
+      display: block;
+      border: none;
     }
   }
 

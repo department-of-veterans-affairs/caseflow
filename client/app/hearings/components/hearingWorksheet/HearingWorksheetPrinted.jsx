@@ -172,32 +172,41 @@ export class HearingWorksheetPrinted extends React.Component {
   render() {
     const { worksheet, worksheetIssues } = this.props;
 
-    // Putting the footer in a thead tag is a workaround to get it to display on each
-    // page.
+    // Putting the footer in a thead tag is a workaround to get the footer for each
+    // to display on each respective page. This also requires a table to wrap it,
+    // otherwise react will throw a bunch of warnings.
     return (
       <table>
         <thead>
-          <WorksheetFooter
-            veteranName={formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}
-          />
+          <tr>
+            <td>
+              <WorksheetFooter
+                veteranName={formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}
+              />
+            </td>
+          </tr>
         </thead>
         <tbody>
-          <WorksheetHeader worksheet={worksheet} print />
-          {this.isLegacy() && this.getLegacyHearingSection()}
-          {
-            !this.isLegacy() && !_.isEmpty(worksheetIssues) &&
-            <div className="cf-hearings-all-issues-wrapper">
-              {this.getHearingWorksheetIssuesSection()}
-            </div>
-          }
-          <div className="cf-hearings-worksheet-form" id="cf-hearings-worksheet-summary">
-            <div className="cf-hearings-worksheet-data">
-              <label>Hearing Summary</label>
-              <div
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary).replace(/\r|\n/g, '') }}
-              />
-            </div>
-          </div>
+          <tr>
+            <td>
+              <WorksheetHeader worksheet={worksheet} print />
+              {this.isLegacy() && this.getLegacyHearingSection()}
+              {
+                !this.isLegacy() && !_.isEmpty(worksheetIssues) &&
+                <div className="cf-hearings-all-issues-wrapper">
+                  {this.getHearingWorksheetIssuesSection()}
+                </div>
+              }
+              <div className="cf-hearings-worksheet-form" id="cf-hearings-worksheet-summary">
+                <div className="cf-hearings-worksheet-data">
+                  <label>Hearing Summary</label>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary).replace(/\r|\n/g, '') }}
+                  />
+                </div>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     );
