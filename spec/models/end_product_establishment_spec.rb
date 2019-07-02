@@ -416,18 +416,22 @@ describe EndProductEstablishment do
         ]
       end
 
-      it "sends the original contention ids when creating the contention" do
-        subject
+      context "when send send_original_dta_contentions is enabled" do
+        before { FeatureToggle.enable!(:send_original_dta_contentions) }
 
-        expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
-          veteran_file_number: veteran_file_number,
-          claim_id: end_product_establishment.reference_id,
-          contentions: array_including(
-            description: "I am contesting a dta decision",
-            original_contention_ids: [101, 121]
-          ),
-          user: current_user
-        )
+        it "sends the original contention ids when creating the contention" do
+          subject
+
+          expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+            veteran_file_number: veteran_file_number,
+            claim_id: end_product_establishment.reference_id,
+            contentions: array_including(
+              description: "I am contesting a dta decision",
+              original_contention_ids: [101, 121]
+            ),
+            user: current_user
+          )
+        end
       end
     end
   end
