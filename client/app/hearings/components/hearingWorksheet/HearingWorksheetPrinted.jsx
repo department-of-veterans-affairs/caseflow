@@ -172,7 +172,7 @@ export class HearingWorksheetPrinted extends React.Component {
   render() {
     const { worksheet, worksheetIssues } = this.props;
 
-    // Putting the footer in a thead tag is a workaround to get the footer for each
+    // Putting the footer in a thead tag is a workaround to get the footer
     // to display on each respective page. This also requires a table to wrap it,
     // otherwise react will throw a bunch of warnings.
     return (
