@@ -291,6 +291,7 @@ export default class QueueTable extends React.PureComponent {
     // Request currentPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
     const params = { [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: this.state.currentPage + 1 };
 
+    // Add sorting parameters to query string if any sorting parameters have been explicitly set.
     if (this.state.sortColName) {
       params[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] = this.state.sortColName;
       params[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] = this.state.sortAscending ?
