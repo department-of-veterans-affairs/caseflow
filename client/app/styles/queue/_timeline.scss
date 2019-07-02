@@ -11,9 +11,9 @@
 
 .grayLineStyling,
 .grayLineTimelineStyling {
-    left: 9%;
-    margin-left: 12px;
-    top: 39px !important;
+  left: 9%;
+  margin-left: 12px;
+  top: 39px;
 }
 
 .taskContainerStyling {
@@ -30,15 +30,14 @@
 
 .taskContainerStyling,
 .taskInformationTimelineContainerStyling {
-  align: left;
+  text-align: left;
   width: 50%;
-  maxWidth: 235px;
+  max-width: 235px;
 }
 
 .taskInformationContainerStyling,
 .taskTimeTimelineContainerStyling {
   width: 40%; 
-  border: none !important;
 } 
 
 
@@ -56,20 +55,16 @@
   text-align: left;
   margin-left: 5px;
   width: 10%;
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 
 .greyDotTimelineStyling { 
-	padding: 0px 0px 0px 5px;
+	padding: 0 0 0 5px;
 }
 
 .timelineLeftPaddingStyle { 
-	padding-left: 0px; 
-}
-
-.grayLineIconStyling { 
-  top: 25px !important 
+	padding-left: 0; 
 }
 
 .greyDotStyling {
