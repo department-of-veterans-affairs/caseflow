@@ -159,7 +159,7 @@ describe "Withdrawing an appeal" do
     @appeal ||= begin
       appeal = create(
         :appeal,
-        :with_tasks,
+        :with_post_intake_tasks,
         docket_type: "direct_review",
         request_issues: build_list(:request_issue, 1, contested_issue_description: "Knee pain")
       )
@@ -172,7 +172,7 @@ describe "Withdrawing an appeal" do
     @appeal_with_many_request_issues ||= begin
       appeal = create(
         :appeal,
-        :with_tasks,
+        :with_post_intake_tasks,
         docket_type: "direct_review"
       )
       appeal.request_issues = build_list(
@@ -188,7 +188,7 @@ describe "Withdrawing an appeal" do
     @appeal_with_ineligible_request_issues ||= begin
       appeal = create(
         :appeal,
-        :with_tasks,
+        :with_post_intake_tasks,
         docket_type: "direct_review"
       )
       eligible_request_issue = create(
@@ -213,7 +213,7 @@ describe "Withdrawing an appeal" do
     @appeal_with_closed_request_issues ||= begin
       appeal = create(
         :appeal,
-        :with_tasks,
+        :with_post_intake_tasks,
         docket_type: "direct_review"
       )
       eligible_request_issue = create(
