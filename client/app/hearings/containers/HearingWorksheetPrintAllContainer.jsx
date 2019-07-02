@@ -26,7 +26,9 @@ class HearingWorksheetPrintAllContainer extends React.Component {
     );
 
     return Promise.all(getAllWorksheets).then((responses) => {
-      this.setState({ worksheets: getWorksheetAppealsAndIssues(response.body) });
+      this.setState({
+        worksheets: responses.map((response) => getWorksheetAppealsAndIssues(response.body))
+      });
     });
   };
 
