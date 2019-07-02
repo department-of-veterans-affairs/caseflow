@@ -25,7 +25,7 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
   const worksheetWithoutAppeals = _.omit(worksheet, ['appeals_ready_for_hearing']);
 
   return {
-    worksheetWithoutAppeals,
+    worksheet: worksheetWithoutAppeals,
     worksheetAppeals,
     worksheetIssues
   };
