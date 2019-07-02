@@ -347,7 +347,7 @@ An example Makefile is included in the repo, that can ease some of the setup and
 try:
 
 ```
-% cp Makefile.example Makefile
+% ln -s Makefile.example Makefile
 ```
 
 Many of the examples that follow have alternate `make` targets for convenience. They are spelled out here
