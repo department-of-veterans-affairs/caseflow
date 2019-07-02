@@ -203,7 +203,7 @@ class Veteran < ApplicationRecord
     )
   end
 
-  def stale_name?
+  def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
     is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil?)
@@ -227,7 +227,7 @@ class Veteran < ApplicationRecord
 
     def find_by_ssn(ssn, sync_name: false)
       found_locally = find_by(ssn: ssn)
-      if found_locally && sync_name && found_locally.stale_name?
+      if found_locally && sync_name && found_locally.stale_attributes?
         found_locally.update_cached_attributes!
       end
       return found_locally if found_locally
@@ -260,7 +260,7 @@ class Veteran < ApplicationRecord
 
     def find_or_create_by_ssn(ssn, sync_name: false)
       found_locally = find_by(ssn: ssn)
-      if found_locally && sync_name && found_locally.stale_name?
+      if found_locally && sync_name && found_locally.stale_attributes?
         found_locally.update_cached_attributes!
       end
       return found_locally if found_locally
@@ -285,7 +285,7 @@ class Veteran < ApplicationRecord
           )
         )
 
-        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
+        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_attributes?
           veteran.update_cached_attributes!
         end
       end

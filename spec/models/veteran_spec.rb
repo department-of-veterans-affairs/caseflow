@@ -671,7 +671,7 @@ describe Veteran do
     end
   end
 
-  describe "#stale_name?" do
+  describe "#stale_attributes?" do
     let(:first_name) { "Jane" }
     let(:last_name) { "Doe" }
     let(:middle_name) { "Q" }
@@ -700,7 +700,7 @@ describe Veteran do
       )
     end
 
-    subject { veteran.stale_name? }
+    subject { veteran.stale_attributes? }
 
     context "no difference" do
       it { is_expected.to eq(false) }
