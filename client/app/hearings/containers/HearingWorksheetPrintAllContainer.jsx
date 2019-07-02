@@ -1,12 +1,19 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import StatusMessage from '../../components/StatusMessage';
 import ApiUtil from '../../util/ApiUtil';
 import { getWorksheetAppealsAndIssues } from '../utils';
 import { LOGO_COLORS } from '../../constants/AppConstants';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import HearingWorksheetPrinted from '../components/hearingWorksheet/HearingWorksheetPrinted';
 
-const failedToLoad = <div><p>Failed to load</p></div>;
+const failedToLoad = (
+  <div>
+    <p>One or more hearing worksheets failed to load</p>
+  </div>
+);
 
 class HearingWorksheetPrintAllContainer extends React.Component {
 
@@ -32,6 +39,22 @@ class HearingWorksheetPrintAllContainer extends React.Component {
   };
 
   render() {
+    let { hearingIds } = this.props;
+
+    if (_.isEmpty(hearingIds)) {
+      return (
+        <React.Fragment>
+          <AppSegment filledBackground>
+            <StatusMessage
+              type="alert"
+              title="No Hearings Specified"
+              messageText="Could not find hearings worksheets because none were specified"
+            />
+          </AppSegment>
+        </React.Fragment>
+      );
+    }
+
     return (
       <React.Fragment>
         <LoadingDataDisplay
