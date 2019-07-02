@@ -22,10 +22,10 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
     worksheetIssues = _.keyBy(worksheet_issues, 'id');
   }
 
-  const worksheet = _.omit(worksheet, ['appeals_ready_for_hearing']);
+  const worksheetWithoutAppeals = _.omit(worksheet, ['appeals_ready_for_hearing']);
 
   return {
-    worksheet,
+    worksheetWithoutAppeals,
     worksheetAppeals,
     worksheetIssues
   };
