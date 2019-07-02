@@ -14,6 +14,10 @@ The name "Bat Team" refers to the ["batman" military role](https://en.wikipedia.
 It is a [growing software industry practice](https://twitter.com/mipsytipsy/status/1059392900239306755)
 and an experiment in [agile development](https://www.icidigital.com/blog/web-development/batman-can-save-agile-team).
 
+## Friquently asked questions
+
+Everyone on the team is to update and reference the Bat Team [FAQ page](https://github.com/department-of-veterans-affairs/caseflow/wiki/Batman-Team)
+
 ## Rituals
 
 The Bat Team listens in the #appeals-batteam channel. They should be the only engineers actively participating
