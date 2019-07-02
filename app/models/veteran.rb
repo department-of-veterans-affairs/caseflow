@@ -239,14 +239,14 @@ class Veteran < ApplicationRecord
       end
     end
 
-    private
-
     def find_or_create_by_ssn(ssn, sync_name: false)
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
       find_or_create_by_file_number(file_number, sync_name: sync_name)
     end
+
+    private
 
     def find_and_maybe_backfill_name(file_number, sync_name: false)
       veteran = find_by(file_number: file_number)

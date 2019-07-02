@@ -227,10 +227,14 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number)
+    @veteran ||= begin
+      Veteran.find_or_create_by_file_number_or_ssn(veteran_file_number) || Veteran.find_or_create_by_ssn(veteran_ssn)
+    end
   end
 
   def veteran_ssn
+    return case_record.correspondent.ssn if case_record&.correspondent&.ssn
+
     vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
   end
 
