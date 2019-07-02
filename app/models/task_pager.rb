@@ -27,19 +27,25 @@ class TaskPager
 
   def sorted_tasks(tasks)
     case sort_by
+    when Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
+      tasks.order(assigned_at: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN
+      tasks.order(closed_at: sort_order.to_sym)
     when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
       tasks.order(type: sort_order.to_sym, action: sort_order.to_sym, created_at: sort_order.to_sym)
     # Columns not yet supported:
     #
     # APPEAL_TYPE_COLUMN
     # CASE_DETAILS_LINK_COLUMN
-    # DAYS_ON_HOLD_COLUMN
     # DOCUMENT_COUNT_READER_LINK_COLUMN
     # DOCKET_NUMBER_COLUMN
     # HEARING_BADGE_COLUMN
     # ISSUE_COUNT_COLUMN
     # REGIONAL_OFFICE_COLUMN
     # TASK_ASSIGNEE_COLUMN
+    # TASK_ASSIGNER_COLUMN
+    # TASK_HOLD_LENGTH_COLUMN
+    #
     else
       tasks.order(:created_at)
     end
