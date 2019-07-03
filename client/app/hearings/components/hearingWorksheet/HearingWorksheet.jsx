@@ -11,6 +11,7 @@ import ContestedIssues from '../../../queue/components/ContestedIssues';
 import { now } from '../../utils';
 import { navigateToPrintPage } from '../../../util/PrintUtil';
 import { formatNameShort } from '../../../util/FormatUtil';
+import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 import CFRichTextEditor from '../../../components/CFRichTextEditor';
 import Button from '../../../components/Button';
 import ContentSection from '../../../components/ContentSection';
@@ -98,7 +99,12 @@ export class HearingWorksheet extends React.PureComponent {
       [this.save(worksheet, worksheetIssues)()]
     ).then(
       () => {
-        const queryString = encodeQueryParams({ hearing_ids: worksheet.external_id, keep_open: true })
+        const queryString = encodeQueryParams(
+          {
+            hearing_ids: worksheet.external_id,
+            keep_open: true
+          }
+        );
 
         navigateToPrintPage(`/hearings/worksheet/print${queryString}`);
       }
