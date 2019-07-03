@@ -223,7 +223,6 @@ describe RegionalOffice do
     end
 
     it "returns all RO and AHL facility ids" do
-      puts subject
       expect(subject).to match_array(expected_ids)
     end
   end
