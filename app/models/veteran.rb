@@ -11,7 +11,7 @@ class Veteran < ApplicationRecord
            foreign_key: :veteran_file_number,
            primary_key: :file_number, class_name: "AvailableHearingLocations"
 
-  bgs_attr_accessor :ptcpnt_id, :sex, :ssn, :address_line1, :address_line2,
+  bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
                     :military_postal_type_code, :military_post_office_type_code,
                     :service, :date_of_birth, :date_of_death
@@ -42,6 +42,8 @@ class Veteran < ApplicationRecord
   # C&P Live = '1', C&P Death = '2'
   BENEFIT_TYPE_CODE_LIVE = "1"
   BENEFIT_TYPE_CODE_DEATH = "2"
+
+  CACHED_BGS_ATTRIBUTES = [:first_name, :last_name, :middle_name, :name_suffix, :ssn].freeze
 
   # TODO: get middle initial from BGS
   def name
@@ -111,20 +113,10 @@ class Veteran < ApplicationRecord
     result = bgs.fetch_veteran_info(file_number)
 
     # If the result is nil, the veteran wasn't found.
-    # If the file number is nil, that's another way of saying the veteran wasn't found.
-    result && result[:file_number] && result
+    # If the participant id is nil, that's another way of saying the veteran wasn't found.
+    return result if result && result[:ptcpnt_id]
   rescue BGS::ShareError => error
-    @access_error = error.message
-
-    # Now that we are always checking find_flashes for access control before we fetch the
-    # veteran, we should never see this error. Reporting it to sentry if it happens
-    unless error.message.match?(/Sensitive File/)
-      Raven.capture_exception(error)
-      raise error
-    end
-
-    # Set the veteran as inaccessible if a sensitivity error is thrown
-    @accessible = false
+    handle_bgs_share_error(error)
   end
 
   def accessible?
@@ -197,6 +189,10 @@ class Veteran < ApplicationRecord
     super || ptcpnt_id
   end
 
+  def ssn
+    super || (bgs_record.is_a?(Hash) && bgs_record[:ssn])
+  end
+
   def validate_address
     VADotGovService.validate_address(
       address_line1: address_line1,
@@ -209,14 +205,19 @@ class Veteran < ApplicationRecord
     )
   end
 
-  def stale_name?
+  def stale_attributes?
     return false unless accessible? && bgs_record.is_a?(Hash)
 
-    is_stale = (first_name.nil? || last_name.nil?)
-    [:first_name, :last_name, :middle_name, :name_suffix].each do |name|
-      is_stale = true if self[name] != bgs_record[name]
-    end
+    is_stale = (first_name.nil? || last_name.nil? || self[:ssn].nil?)
+    is_stale ||= CACHED_BGS_ATTRIBUTES.any? { |name| self[name] != bgs_record[name] }
     is_stale
+  end
+
+  def update_cached_attributes!
+    CACHED_BGS_ATTRIBUTES.each do |attr|
+      self[attr] = bgs_record[attr]
+    end
+    save!
   end
 
   class << self
@@ -225,6 +226,12 @@ class Veteran < ApplicationRecord
     end
 
     def find_by_ssn(ssn, sync_name: false)
+      found_locally = find_by(ssn: ssn)
+      if found_locally && sync_name && found_locally.stale_attributes?
+        found_locally.update_cached_attributes!
+      end
+      return found_locally if found_locally
+
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
@@ -252,6 +259,12 @@ class Veteran < ApplicationRecord
     private
 
     def find_or_create_by_ssn(ssn, sync_name: false)
+      found_locally = find_by(ssn: ssn)
+      if found_locally && sync_name && found_locally.stale_attributes?
+        found_locally.update_cached_attributes!
+      end
+      return found_locally if found_locally
+
       file_number = BGSService.new.fetch_file_number_by_ssn(ssn)
       return unless file_number
 
@@ -272,13 +285,8 @@ class Veteran < ApplicationRecord
           )
         )
 
-        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_name?
-          veteran.update!(
-            first_name: veteran.bgs_record[:first_name],
-            last_name: veteran.bgs_record[:last_name],
-            middle_name: veteran.bgs_record[:middle_name],
-            name_suffix: veteran.bgs_record[:name_suffix]
-          )
+        if veteran.accessible? && veteran.bgs_record.is_a?(Hash) && veteran.stale_attributes?
+          veteran.update_cached_attributes!
         end
       end
       veteran
@@ -288,15 +296,8 @@ class Veteran < ApplicationRecord
       veteran = Veteran.new(file_number: file_number)
 
       unless veteran.found?
-        Rails.logger.warn(
-          %(create_by_file_number file_number:#{file_number} found:false accessible:#{veteran.accessible?})
-        )
         return nil
       end
-
-      Rails.logger.warn(
-        %(create_by_file_number file_number:#{file_number} found:true accessible:#{veteran.accessible?})
-      )
 
       return veteran unless veteran.accessible?
 
@@ -333,6 +334,20 @@ class Veteran < ApplicationRecord
   end
 
   private
+
+  def handle_bgs_share_error(error)
+    @access_error = error.message
+
+    # Now that we are always checking find_flashes for access control before we fetch the
+    # veteran, we should never see this error. Reporting it to sentry if it happens
+    unless error.message.match?(/Sensitive File/)
+      Raven.capture_exception(error)
+      fail error
+    end
+
+    # Set the veteran as inaccessible if a sensitivity error is thrown
+    @accessible = false
+  end
 
   def fetch_end_products
     bgs_end_products = bgs.get_end_products(file_number)
@@ -382,7 +397,7 @@ class Veteran < ApplicationRecord
   def vbms_attributes
     self.class.bgs_attributes \
       - [:military_postal_type_code, :military_post_office_type_code, :ptcpnt_id] \
-      + [:file_number, :address_type, :first_name, :last_name, :name_suffix]
+      + [:file_number, :address_type, :first_name, :last_name, :name_suffix, :ssn]
   end
 
   def military_address?

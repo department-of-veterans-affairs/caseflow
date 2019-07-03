@@ -5,10 +5,10 @@ describe "Withdrawing an appeal" do
     it "allows it to be distributed" do
       add_blocking_mail_task_to_appeal
       withdraw_all_request_issues
-
       tasks = appeal.tasks.reload
 
       expect(all_blocking_mail_tasks(tasks).pluck(:status).uniq).to eq ["cancelled"]
+
       expect(distribution_task(tasks).status).to eq "assigned"
       expect(track_veteran_task(tasks).status).to eq "in_progress"
       expect(appeal.root_task.status).to eq "on_hold"
@@ -118,9 +118,8 @@ describe "Withdrawing an appeal" do
   def remove_all_eligible_request_issues
     appeal = appeal_with_ineligible_request_issues
     ineligible_request_issue = appeal.request_issues.where.not(ineligible_reason: nil).first
-    eligible_request_issue = appeal.request_issues.where(ineligible_reason: nil).first
     request_issues_data = [
-      { request_issue_id: ineligible_request_issue.id },
+      { request_issue_id: ineligible_request_issue.id }
     ]
 
     RequestIssuesUpdate.new(
@@ -132,7 +131,6 @@ describe "Withdrawing an appeal" do
 
   def withdraw_request_issue_and_leave_other_one_closed
     appeal = appeal_with_closed_request_issues
-    closed_request_issue = appeal.request_issues.where.not(closed_at: nil).first
     eligible_request_issue = appeal.request_issues.where(closed_at: nil).first
     request_issues_data = [
       { request_issue_id: eligible_request_issue.id, withdrawal_date: Time.zone.now }
@@ -165,7 +163,8 @@ describe "Withdrawing an appeal" do
         docket_type: "direct_review",
         request_issues: build_list(:request_issue, 1, contested_issue_description: "Knee pain")
       )
-      create_distribution_and_track_veteran_tasks(appeal)
+      create_track_veteran_tasks(appeal)
+      update_distribution_task_to_be_on_hold(appeal)
       appeal
     end
   end
@@ -175,13 +174,14 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_tasks,
-        docket_type: "direct_review",
+        docket_type: "direct_review"
       )
       appeal.request_issues = build_list(
         :request_issue, 2, contested_issue_description: "Knee pain", decision_review: appeal
       )
       appeal.save!
-      create_distribution_and_track_veteran_tasks(appeal)
+      create_track_veteran_tasks(appeal)
+      update_distribution_task_to_be_on_hold(appeal)
       appeal
     end
   end
@@ -191,7 +191,7 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_tasks,
-        docket_type: "direct_review",
+        docket_type: "direct_review"
       )
       eligible_request_issue = create(
         :request_issue,
@@ -206,7 +206,8 @@ describe "Withdrawing an appeal" do
       )
       appeal.request_issues = [eligible_request_issue, ineligible_request_issue]
       appeal.save!
-      create_distribution_and_track_veteran_tasks(appeal)
+      create_track_veteran_tasks(appeal)
+      update_distribution_task_to_be_on_hold(appeal)
       appeal
     end
   end
@@ -216,7 +217,7 @@ describe "Withdrawing an appeal" do
       appeal = create(
         :appeal,
         :with_tasks,
-        docket_type: "direct_review",
+        docket_type: "direct_review"
       )
       eligible_request_issue = create(
         :request_issue,
@@ -232,14 +233,19 @@ describe "Withdrawing an appeal" do
       )
       appeal.request_issues = [eligible_request_issue, closed_request_issue]
       appeal.save!
-      create_distribution_and_track_veteran_tasks(appeal)
+      create_track_veteran_tasks(appeal)
+      update_distribution_task_to_be_on_hold(appeal)
       appeal
     end
   end
 
-  def create_distribution_and_track_veteran_tasks(appeal)
-    create(:distribution_task, appeal: appeal)
+  def create_track_veteran_tasks(appeal)
     create(:track_veteran_task, appeal: appeal)
+  end
+
+  def update_distribution_task_to_be_on_hold(appeal)
+    # Distribution task is created as part of :with_tasks trait on the appeal factory
+    distribution_task(appeal.tasks).update(status: Constants.TASK_STATUSES.on_hold)
   end
 
   def user

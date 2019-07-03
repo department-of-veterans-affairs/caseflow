@@ -6,9 +6,10 @@ import { css } from 'glamor';
 
 import BulkAssignButton from './components/BulkAssignButton';
 import TabWindow from '../components/TabWindow';
-import TaskTable, { docketNumberColumn, hearingBadgeColumn, detailsColumn,
+import { docketNumberColumn, hearingBadgeColumn, detailsColumn,
   taskColumn, regionalOfficeColumn, issueCountColumn, typeColumn,
   assignedToColumn, daysWaitingColumn, readerLinkColumn } from './components/TaskTable';
+import QueueTable from './QueueTable';
 import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
 import Alert from '../components/Alert';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
@@ -18,6 +19,7 @@ import {
   getCompletedOrganizationalTasks,
   trackingTasksForOrganization
 } from './selectors';
+import { tasksWithAppealsFromRawTasks } from './utils';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
 import { fullWidth } from './constants';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
@@ -52,15 +54,15 @@ class OrganizationQueue extends React.PureComponent {
     return config;
   }
 
-  createColumnObject = (column, config) => {
+  createColumnObject = (column, config, tasks) => {
     const functionForColumn = {
-      hearingBadgeColumn: hearingBadgeColumn(config.tasks),
-      detailsColumn: detailsColumn(config.tasks, false, config.userRole),
-      taskColumn: taskColumn(config.tasks),
-      regionalOfficeColumn: regionalOfficeColumn(config.tasks),
-      typeColumn: typeColumn(config.tasks, false),
-      assignedToColumn: assignedToColumn(config.tasks),
-      docketNumberColumn: docketNumberColumn(config.tasks, false),
+      hearingBadgeColumn: hearingBadgeColumn(tasks),
+      detailsColumn: detailsColumn(tasks, false, config.userRole),
+      taskColumn: taskColumn(tasks),
+      regionalOfficeColumn: regionalOfficeColumn(tasks),
+      typeColumn: typeColumn(tasks, false),
+      assignedToColumn: assignedToColumn(tasks),
+      docketNumberColumn: docketNumberColumn(tasks, false),
       daysWaitingColumn: daysWaitingColumn(false),
       readerLinkColumn: readerLinkColumn(false, true),
       issueCountColumn: issueCountColumn(false)
@@ -69,9 +71,9 @@ class OrganizationQueue extends React.PureComponent {
     return functionForColumn[column];
   }
 
-  columnsFromConfig = (tabConfig) => {
+  columnsFromConfig = (tabConfig, tasks) => {
     return tabConfig.columns.map((column) => {
-      return this.createColumnObject(column, tabConfig);
+      return this.createColumnObject(column, tabConfig, tasks);
     });
   }
 
@@ -86,19 +88,28 @@ class OrganizationQueue extends React.PureComponent {
     return mapper[tabName];
   }
 
-  taskTableTabFactory = (tabConfig) => {
-    const { label, description } = tabConfig;
-    const cols = this.columnsFromConfig(tabConfig);
-    const tasks = this.tasksForTab(tabConfig.name);
+  taskTableTabFactory = (tabConfig, config) => {
+    const tasks = config.use_task_pages_api ?
+      tasksWithAppealsFromRawTasks(tabConfig.tasks) :
+      this.tasksForTab(tabConfig.name);
+    const cols = this.columnsFromConfig(tabConfig, tasks);
 
     return {
-      label,
+      label: tabConfig.label,
       page: <React.Fragment>
-        <p className="cf-margin-top-0">{description}</p>
+        <p className="cf-margin-top-0">{tabConfig.description}</p>
         { tabConfig.allow_bulk_assign && <BulkAssignButton /> }
-        <TaskTable
-          customColumns={cols}
-          tasks={tasks}
+        <QueueTable
+          key={tabConfig.name}
+          columns={cols}
+          rowObjects={tasks}
+          getKeyForRow={(_rowNumber, task) => task.uniqueId}
+          useTaskPagesApi={config.use_task_pages_api}
+          casesPerPage={config.tasks_per_page}
+          numberOfPages={tabConfig.task_page_count}
+          totalTaskCount={tabConfig.total_task_count}
+          taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
+          enablePagination
         />
       </React.Fragment>
     };

@@ -28,11 +28,11 @@ import {
   CATEGORIES,
   redText,
   LEGACY_APPEAL_TYPES,
-  COLUMN_NAMES,
   DOCKET_NAME_FILTERS
 } from '../constants';
 import COPY from '../../../COPY.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG.json';
 
 const hasDASRecord = (task, requireDasRecord) => {
   return (task.appeal.isLegacyAppeal && requireDasRecord) ? Boolean(task.taskId) : true;
@@ -43,6 +43,7 @@ const collapseColumn = (requireDasRecord) => (task) => hasDASRecord(task, requir
 export const docketNumberColumn = (tasks, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
+    name: QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'appeal.docketName',
@@ -74,6 +75,7 @@ export const docketNumberColumn = (tasks, requireDasRecord) => {
 export const hearingBadgeColumn = () => {
   return {
     header: '',
+    name: QUEUE_CONFIG.HEARING_BADGE_COLUMN,
     valueFunction: (task) => <HearingBadge task={task} />
   };
 };
@@ -81,6 +83,7 @@ export const hearingBadgeColumn = () => {
 export const detailsColumn = (tasks, requireDasRecord, userRole) => {
   return {
     header: COPY.CASE_LIST_TABLE_VETERAN_NAME_COLUMN_TITLE,
+    name: QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
     valueFunction: (task) => <CaseDetailsLink
       task={task}
       appeal={task.appeal}
@@ -98,6 +101,7 @@ export const detailsColumn = (tasks, requireDasRecord, userRole) => {
 export const taskColumn = (tasks) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    name: QUEUE_CONFIG.TASK_TYPE_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'label',
@@ -113,9 +117,10 @@ export const taskColumn = (tasks) => {
 export const regionalOfficeColumn = (tasks) => {
   return {
     header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN,
     enableFilter: true,
     tableData: tasks,
-    columnName: 'closestRegionalOffice',
+    columnName: 'closestRegionalOffice.location_hash.city',
     anyFiltersAreSet: true,
     label: 'Filter by regional office',
     valueFunction: (task) => {
@@ -128,6 +133,7 @@ export const regionalOfficeColumn = (tasks) => {
 export const issueCountColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_ISSUE_COUNT_COLUMN_TITLE,
+    name: QUEUE_CONFIG.ISSUE_COUNT_COLUMN,
     valueFunction: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null,
     span: collapseColumn(requireDasRecord),
     getSortValue: (task) => hasDASRecord(task, requireDasRecord) ? task.appeal.issueCount : null
@@ -137,6 +143,7 @@ export const issueCountColumn = (requireDasRecord) => {
 export const typeColumn = (tasks, requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_TYPE_COLUMN_TITLE,
+    name: QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'appeal.caseType',
@@ -162,6 +169,7 @@ export const typeColumn = (tasks, requireDasRecord) => {
 export const assignedToColumn = (tasks) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
+    name: QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
     enableFilter: true,
     tableData: tasks,
     columnName: 'assignedTo.name',
@@ -175,6 +183,7 @@ export const assignedToColumn = (tasks) => {
 export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
   return {
     header: COPY.CASE_LIST_TABLE_APPEAL_DOCUMENT_COUNT_COLUMN_TITLE,
+    name: QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN,
     span: collapseColumn(requireDasRecord),
     valueFunction: (task) => {
       if (!hasDASRecord(task, requireDasRecord)) {
@@ -195,6 +204,7 @@ export const readerLinkColumn = (requireDasRecord, includeNewDocsIcon) => {
 export const daysWaitingColumn = (requireDasRecord) => {
   return {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_WAITING_COLUMN_TITLE,
+    name: QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
     span: collapseColumn(requireDasRecord),
     tooltip: <React.Fragment>Calendar days since <br /> this case was assigned</React.Fragment>,
     align: 'center',
@@ -298,6 +308,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   caseDueDateColumn = () => {
     return this.props.includeDueDate ? {
       header: COPY.CASE_LIST_TABLE_DAYS_WAITING_COLUMN_TITLE,
+      name: QUEUE_CONFIG.TASK_DUE_DATE_COLUMN,
       tooltip: <React.Fragment>Calendar days this case <br /> has been assigned to you</React.Fragment>,
       align: 'center',
       valueFunction: (task) => {
@@ -313,6 +324,7 @@ export class TaskTableUnconnected extends React.PureComponent {
         </React.Fragment>;
       },
       span: this.collapseColumnIfNoDASRecord,
+      backendCanSort: true,
       getSortValue: (task) => moment().startOf('day').
         diff(moment(task.assignedOn), 'days')
     } : null;
@@ -324,6 +336,7 @@ export class TaskTableUnconnected extends React.PureComponent {
 
   caseDaysOnHoldColumn = () => (this.props.includeDaysOnHold ? {
     header: COPY.CASE_LIST_TABLE_TASK_DAYS_ON_HOLD_COLUMN_TITLE,
+    name: QUEUE_CONFIG.TASK_HOLD_LENGTH_COLUMN,
     align: 'center',
     valueFunction: (task) => {
       return <React.Fragment>
@@ -338,6 +351,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   completedDateColumn = () => {
     return this.props.includeCompletedDate ? {
       header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
+      name: QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN,
       valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
       getSortValue: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null
     } : null;
@@ -346,6 +360,7 @@ export class TaskTableUnconnected extends React.PureComponent {
   completedToNameColumn = () => {
     return this.props.includeCompletedToName ? {
       header: COPY.CASE_LIST_TABLE_COMPLETED_BACK_TO_NAME_COLUMN_TITLE,
+      name: QUEUE_CONFIG.TASK_ASSIGNER_COLUMN,
       valueFunction: (task) =>
         task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
       getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
@@ -403,7 +418,6 @@ export class TaskTableUnconnected extends React.PureComponent {
     rowObjects={this.props.tasks}
     getKeyForRow={this.props.getKeyForRow || this.getKeyForRow}
     defaultSort={{ sortColIdx: this.getDefaultSortableColumn() }}
-    alternateColumnNames={COLUMN_NAMES}
     enablePagination
     rowClassNames={(task) =>
       this.taskHasDASRecord(task) || !this.props.requireDasRecord ? null : 'usa-input-error'} />;

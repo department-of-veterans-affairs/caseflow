@@ -28,7 +28,7 @@ describe BulkTaskAssignment do
       FactoryBot.create(:no_show_hearing_task,
                         assigned_to: organization,
                         status: :on_hold,
-                        created_at: 6.day.ago)
+                        created_at: 6.days.ago)
     end
 
     let(:assigned_to) { create(:user) }
