@@ -38,7 +38,7 @@ class DecisionDateTimeLine extends React.PureComponent {
             <span className="timelineLeftPaddingStyle"></span> : <span className="greyDotTimelineStyling"></span>}
           {appeal.withdrawn ? <CancelIcon /> : appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-          <div>{appeal.withdrawn ?
+          <div>{appeal.withdrawn || appeal.decisionDate ?
             <span className="grayLineStyling grayLineTimelineStyling">
             </span> : <span className="grayBvaPendingLineStyling"></span>}</div>}
         </td>
