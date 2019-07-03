@@ -15,11 +15,11 @@ class DataIntegrityChecker
   end
 
   def report?
-    !report.compact.empty?
+    !@report.compact.empty?
   end
 
   def report
-    @report.join("\n")
+    @report.compact.join("\n")
   end
 
   def slack_channel
