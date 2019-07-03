@@ -357,6 +357,7 @@ feature "Appeal Edit issues" do
       create(:veteran,
              first_name: "Ed",
              last_name: "Merica",
+             ssn: nil,
              bgs_veteran_record: {
                sex: nil,
                ssn: nil,
