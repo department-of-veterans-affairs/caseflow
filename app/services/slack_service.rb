@@ -1,19 +1,42 @@
 # frozen_string_literal: true
 
 class SlackService
-  include ActiveModel::Model
+  DEFAULT_CHANNEL = "#appeals-app-alerts".freeze
 
-  attr_accessor :url
+  def initialize(url:)
+    @url = url
+  end
+
+  attr_reader :url
+
+  def send_notification(msg, title = "", channel = DEFAULT_CHANNEL)
+    return unless url
+
+    slack_msg = format_slack_msg(msg, title, channel)
+
+    params = { body: slack_msg.to_json, headers: { "Content-Type" => "application/json" } }
+    http_service.post(url, params)
+  end
+
+  private
 
   def http_service
     HTTPClient.new
   end
 
-  def send_notification(msg)
-    return unless url
+  def format_slack_msg(msg, title, channel)
+    channel.prepend("#") unless channel =~ /^#/
 
-    body = { "text": msg }.to_json
-    params = { body: body, headers: { "Content-Type" => "application/json" } }
-    http_service.post(url, params)
+    {
+      username: "Caseflow",
+      channel: channel,
+      attachments: [
+        {
+          title: title,
+          color: "#ccc",
+          text: msg
+        }
+      ]
+    }
   end
 end
