@@ -1384,7 +1384,7 @@ class RegionalOffice
     end
 
     def ros_with_hearings
-      CITIES.values.select { |val| val[:hold_hearings] }
+      CITIES.select { |_key, value| value[:hold_hearings] }
     end
 
     # Returns RegionalOffice objects for each RO that has the passed station code
