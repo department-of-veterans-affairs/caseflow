@@ -661,7 +661,6 @@ describe Appeal do
       let!(:task) { create(:ama_attorney_task, assigned_to: attorney, appeal: appeal) }
       let!(:task2) { create(:ama_attorney_task, assigned_to: attorney2, appeal: appeal) }
 
-
       subject { appeal.assigned_attorney }
 
       it "should know the right assigned attorney with two tasks" do

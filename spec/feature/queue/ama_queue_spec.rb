@@ -417,7 +417,6 @@ RSpec.feature "AmaQueue" do
     let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge_user) }
 
-
     let(:judge_user2) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Andrea R. Harless") }
     let!(:judge_staff2) { FactoryBot.create(:staff, :judge_role, user: judge_user2) }
     let!(:judgeteam2) { JudgeTeam.create_for_judge(judge_user2) }
