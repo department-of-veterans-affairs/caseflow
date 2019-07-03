@@ -241,8 +241,8 @@ WorksheetHeader.propTypes = {
   print: PropTypes.bool
 };
 
-const mapStateToProps = (state) => ({
-  worksheet: state.hearingWorksheet.worksheet
+const mapStateToProps = (state, ownProps) => ({
+  worksheet: ownProps.worksheet || state.hearingWorksheet.worksheet
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
