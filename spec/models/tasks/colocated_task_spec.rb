@@ -37,7 +37,8 @@ describe ColocatedTask do
 
         it "creates co-located tasks and updates the VACOLS location" do
           expect(vacols_case.bfcurloc).to be_nil
-          expect(Task.where(type: ColocatedTask.name).count).to eq 0
+          expect(ColocatedTask.count).to eq(0)
+          expect(AojColocatedTask.count).to eq(0)
 
           team_task = subject.detect { |t| t.assigned_to.is_a?(Colocated) }
           expect(team_task.valid?).to be true
@@ -49,10 +50,11 @@ describe ColocatedTask do
           expect(user_task.status).to eq "assigned"
           expect(user_task.assigned_at).to_not eq nil
           expect(user_task.assigned_by).to eq attorney
-          expect(user_task.action).to eq "aoj"
+          expect(user_task).to be_a(AojColocatedTask)
           expect(user_task.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
           expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
-          expect(Task.where(type: ColocatedTask.name).count).to eq 2
+          expect(ColocatedTask.count).to eq(2)
+          expect(AojColocatedTask.count).to eq(2)
         end
       end
 
@@ -60,12 +62,12 @@ describe ColocatedTask do
         user_tasks = subject.select { |t| t.assigned_to.is_a?(User) }
         expect(user_tasks.first.valid?).to be true
         expect(user_tasks.first.status).to eq "assigned"
-        expect(user_tasks.first.action).to eq "aoj"
+        expect(user_tasks.first).to be_a(AojColocatedTask)
         expect(user_tasks.first.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
 
         expect(user_tasks.second.valid?).to be true
         expect(user_tasks.second.status).to eq "assigned"
-        expect(user_tasks.second.action).to eq "poa_clarification"
+        expect(user_tasks.second).to be_a(PoaClarificationColocatedTask)
         expect(user_tasks.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
       end
 
@@ -111,14 +113,14 @@ describe ColocatedTask do
         expect(subject.first.reload.status).to eq(Constants.TASK_STATUSES.on_hold)
         expect(subject.first.assigned_at).to_not eq nil
         expect(subject.first.assigned_by).to eq attorney
-        expect(subject.first.action).to eq "aoj"
+        expect(subject.first).to be_a(AojColocatedTask)
         expect(subject.first.assigned_to).to eq(Colocated.singleton)
 
         expect(subject.second.valid?).to be true
         expect(subject.second.reload.status).to eq(Constants.TASK_STATUSES.assigned)
         expect(subject.second.assigned_at).to_not eq nil
         expect(subject.second.assigned_by).to eq attorney
-        expect(subject.second.action).to eq "aoj"
+        expect(subject.second).to be_a(AojColocatedTask)
         expect(subject.second.assigned_to).to eq User.find_by(css_id: colocated_members[0].css_id)
 
         expect(AppealRepository).to_not receive(:update_location!)

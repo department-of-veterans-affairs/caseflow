@@ -9,11 +9,11 @@
 # Note: Full list of colocated tasks in /client/constants/CO_LOCATED_ADMIN_ACTIONS.json
 
 class ColocatedTask < Task
-  validates :action, inclusion: { in: Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s) }
   validates :assigned_by, presence: true
   validates :parent, presence: true, if: :ama?
   validate :on_hold_duration_is_set, on: :update
   validate :task_is_unique, on: :create
+  validate :valid_action_or_type
 
   after_update :update_location_in_vacols
 
@@ -22,7 +22,22 @@ class ColocatedTask < Task
     def create_many_from_params(params_array, user)
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
-        team_tasks = super(params_array.map { |p| p.merge(assigned_to: Colocated.singleton) }, user)
+        params_array = params_array.map do |params|
+
+          # Find the task type for a given action.
+          input_action = params.delete(:action).to_s
+          # TODO: Think of a better way to do this.
+          new_task_type = ColocatedTask.subclasses.find do |task_class|
+            task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[input_action]
+          end
+          # TODO: Fail if there is no new_task_type.
+          params.merge!(type: new_task_type.name)
+
+          # TODO: Determine where this should be assigned shortly.
+          params.merge!(assigned_to: Colocated.singleton)
+        end
+
+        team_tasks = super(params_array, user)
 
         all_tasks = team_tasks.map { |team_task| [team_task, team_task.children.first] }.flatten
 
@@ -46,7 +61,7 @@ class ColocatedTask < Task
   end
 
   def label
-    action
+    action || self.class.label
   end
 
   def available_actions(user)
@@ -190,5 +205,29 @@ class ColocatedTask < Task
         break
       end
     end
+
+    def valid_action_or_type
+      unless Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s).include?(action) || ColocatedTask.subclasses.include?(self.class)
+        errors[:base] << "invalid action (#{action}) or type (#{type})"
+      end
+    end
   end
 end
+
+require_dependency "poa_clarification_colocated_task"
+require_dependency "ihp_colocated_task"
+require_dependency "hearing_clarification_colocated_task"
+require_dependency "aoj_colocated_task"
+require_dependency "extension_colocated_task"
+require_dependency "missing_hearing_transcripts_colocated_task"
+require_dependency "unaccredited_rep_colocated_task"
+require_dependency "foia_colocated_task"
+require_dependency "retired_vlj_colocated_task"
+require_dependency "arneson_colocated_task"
+require_dependency "new_rep_arguments_colocated_task"
+require_dependency "pending_scanning_vbms_colocated_task"
+require_dependency "address_verification_colocated_task"
+require_dependency "schedule_hearing_colocated_task"
+require_dependency "missing_records_colocated_task"
+require_dependency "translation_colocated_task"
+require_dependency "other_colocated_task"
