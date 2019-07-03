@@ -191,12 +191,12 @@ describe "Withdrawing an appeal" do
         :with_tasks,
         docket_type: "direct_review"
       )
-      eligible_request_issue = create(
+      create(
         :request_issue,
         contested_issue_description: "Knee pain",
         decision_review: appeal
       )
-      ineligible_request_issue = create(
+      create(
         :request_issue,
         contested_issue_description: "Back pain",
         ineligible_reason: "untimely",
@@ -214,12 +214,12 @@ describe "Withdrawing an appeal" do
         :with_tasks,
         docket_type: "direct_review"
       )
-      eligible_request_issue = create(
+      create(
         :request_issue,
         contested_issue_description: "Knee pain",
         decision_review: appeal
       )
-      closed_request_issue = create(
+      create(
         :request_issue,
         contested_issue_description: "Back pain",
         closed_status: :decided,
