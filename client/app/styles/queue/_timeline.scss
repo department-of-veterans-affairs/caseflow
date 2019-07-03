@@ -16,6 +16,16 @@
   margin-left: 12px;
 }
 
+.grayBvaPendingLineStyling {
+  width: 5px;
+  background: $color-gray-lighter;
+  margin-left: 0;
+  position: absolute;
+  top: 25px;
+  left: 35.5%;
+  bottom: 0;
+}
+
 .taskContainerStyling {
   border: none;
   vertical-align: top;
