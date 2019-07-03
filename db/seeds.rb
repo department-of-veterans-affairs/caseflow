@@ -1021,7 +1021,7 @@ class SeedDB
     create_task_at_colocated(@ama_appeals[9], judge, attorney)
 
     9.times do
-      create_appeal_at_judge_assignment(judge, Time.zone.today)
+      create_appeal_at_judge_assignment(judge: judge, assigned_at: Time.zone.today)
     end
 
     create_colocated_legacy_tasks(attorney)

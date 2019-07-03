@@ -101,7 +101,7 @@ class TaskActionRepository
 
     def reassign_to_judge_data(task, user = nil)
       {
-        selected: user,
+        selected: nil,
         options: users_to_options(Judge.list_all),
         type: task.type
       }

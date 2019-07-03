@@ -417,6 +417,11 @@ RSpec.feature "AmaQueue" do
     let!(:judge_staff) { FactoryBot.create(:staff, :judge_role, user: judge_user) }
     let!(:judgeteam) { JudgeTeam.create_for_judge(judge_user) }
 
+
+    let(:judge_user2) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Andrea R. Harless") }
+    let!(:judge_staff2) { FactoryBot.create(:staff, :judge_role, user: judge_user2) }
+    let!(:judgeteam2) { JudgeTeam.create_for_judge(judge_user2) }
+
     let(:attorney_user) { FactoryBot.create(:user, station_id: User::BOARD_STATION_ID, full_name: "Steven Ahr") }
     let!(:attorney_staff) { FactoryBot.create(:staff, :attorney_role, user: attorney_user) }
 
@@ -713,6 +718,37 @@ RSpec.feature "AmaQueue" do
 
         expect(page).to have_content veteran_full_name
         expect(page).to have_content valid_document_id
+      end
+    end
+    it "judge can reassign the case to another judge" do
+      step "judge reviews case and reassigns to another judge" do
+        visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Re-assign to a judge")
+        click_dropdown(prompt: "Select a user", text: judge_user2.full_name)
+
+        fill_in "taskInstructions", with: "Going on leave, please manage this case"
+        click_on "Submit"
+
+        expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
+      end
+      step "judge2 has the case in their queue" do
+        User.authenticate!(user: judge_user2)
+        visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+        click_on veteran_full_name
       end
     end
   end
