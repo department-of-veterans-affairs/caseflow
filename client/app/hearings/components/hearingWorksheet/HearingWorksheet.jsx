@@ -94,7 +94,11 @@ export class HearingWorksheet extends React.PureComponent {
   };
 
   openPdf = (worksheet, worksheetIssues) => () => {
-    Promise.resolve([this.save(worksheet, worksheetIssues)()]).then(navigateToPrintPage);
+    Promise.resolve(
+      [this.save(worksheet, worksheetIssues)()]
+    ).then(
+      () => navigateToPrintPage(`/hearings/worksheet/print?hearing_ids=${worksheet.external_id}`)
+    );
   };
 
   onSummaryChange = (value) => this.props.onSummaryChange(value);

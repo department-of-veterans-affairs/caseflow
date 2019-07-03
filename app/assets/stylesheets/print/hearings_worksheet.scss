@@ -24,6 +24,10 @@ $body-font-size: 14px;
     page-break-inside: avoid;
   }
 
+  .cf-printed-worksheet {
+    page-break-before: always;
+  }
+
   b {
     font-weight: 400;
   }
@@ -47,8 +51,8 @@ $body-font-size: 14px;
     font-size: $body-font-size;
   }
 
-  .title h1,
-  .cf-hearings-worksheet-data .cf-hearings-worksheet-header {
+  .cf-hearings-worksheet-data .cf-hearings-worksheet-header,
+  table {
     margin: 0px 0px 0px 0px;
   }
 
@@ -97,6 +101,10 @@ $body-font-size: 14px;
     .cf-hearings-worksheet-data {
       display: block;
     }
+  }
+
+  .title h1 {
+    margin: 0px 0px 5px 0px;
   }
 
   h1,
@@ -234,16 +242,27 @@ $body-font-size: 14px;
     }
   }
 
-  .cf-print-footer {
-    text-align: right;
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    right: $cell-padding;
+  table {
+    thead {
+      .cf-print-footer {
+        float: right;
+        position: relative;
+        top: 958px;
+        height: 0px;
+      }
+    }
+
+    tr,
+    tr > td {
+      margin: 0px;
+      padding: 0px;
+      display: block;
+      border: none;
+    }
   }
 
   @page {
     size: 8.5in 11in;
-    margin: 0.25in 0.25in;
+    margin: 0.4in 0.35in;
   }
 }
