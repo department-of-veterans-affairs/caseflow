@@ -91,11 +91,19 @@ class TaskActionRepository
       }.merge(extras)
     end
 
-    def assign_to_judge_data(task, _user = nil)
+    def qr_return_to_judge_data(task, _user = nil)
       {
         selected: task.root_task.children.find { |child| child.is_a?(JudgeTask) }&.assigned_to,
         options: users_to_options(Judge.list_all),
         type: JudgeQualityReviewTask.name
+      }
+    end
+
+    def reassign_to_judge_data(task, _user = nil)
+      {
+        selected: nil,
+        options: users_to_options(Judge.list_all),
+        type: task.type
       }
     end
 

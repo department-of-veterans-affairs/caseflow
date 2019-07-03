@@ -18,6 +18,7 @@ describe JudgeQualityReviewTask do
         [
           Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
           Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
+          Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h,
           Constants.TASK_ACTIONS.JUDGE_QR_RETURN_TO_ATTORNEY.to_h,
           Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
           Constants.TASK_ACTIONS.CANCEL_TASK.to_h

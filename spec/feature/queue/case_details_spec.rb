@@ -1003,7 +1003,7 @@ RSpec.feature "Case details" do
 
         let!(:appeal) do
           create(:appeal,
-                 :with_tasks,
+                 :with_post_intake_tasks,
                  veteran_file_number: veteran.file_number,
                  docket_type: "direct_review",
                  receipt_date: 10.months.ago.to_date.mdY)
