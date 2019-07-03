@@ -94,9 +94,9 @@ describe EvidenceSubmissionWindowTask do
       let!(:parent) do
         FactoryBot.create(
           :assign_hearing_disposition_task,
+          :in_progress,
           parent: hearing_task,
-          appeal: appeal,
-          status: Constants.TASK_STATUSES.in_progress
+          appeal: appeal
         )
       end
       let!(:task) do
