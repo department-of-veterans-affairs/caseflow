@@ -247,7 +247,7 @@ $body-font-size: 14px;
       .cf-print-footer {
         float: right;
         position: relative;
-        top: 988px;
+        top: 958px;
         height: 0px;
       }
     }
@@ -263,6 +263,6 @@ $body-font-size: 14px;
 
   @page {
     size: 8.5in 11in;
-    margin: 0.25in 0.25in;
+    margin: 0.4in 0.35in;
   }
 }
