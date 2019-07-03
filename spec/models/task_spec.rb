@@ -720,6 +720,27 @@ describe Task do
         expect(task.closed_at).to_not eq(nil)
       end
     end
+
+    context "when a timestamp is passed" do
+      it "should set passed timestamps" do
+        two_weeks_ago = 2.weeks.ago
+        expect(task.placed_on_hold_at).to eq(nil)
+        task.update!(status: Constants.TASK_STATUSES.on_hold, placed_on_hold_at: two_weeks_ago)
+        expect(task.placed_on_hold_at).to eq(two_weeks_ago)
+
+        # change status to completed
+        one_week_ago = 1.week.ago
+        task.update!(status: Constants.TASK_STATUSES.completed, closed_at: one_week_ago)
+        expect(task.closed_at).to eq(one_week_ago)
+
+        # change the status back to on hold and ensure timestamp is updated
+        task.update!(status: Constants.TASK_STATUSES.on_hold, placed_on_hold_at: one_week_ago)
+        expect(task.placed_on_hold_at).to eq(one_week_ago)
+
+        task.update!(status: Constants.TASK_STATUSES.in_progress, started_at: two_weeks_ago)
+        expect(task.started_at).to eq(two_weeks_ago)
+      end
+    end
   end
 
   describe "task timer relationship" do
