@@ -97,7 +97,11 @@ export class HearingWorksheet extends React.PureComponent {
     Promise.resolve(
       [this.save(worksheet, worksheetIssues)()]
     ).then(
-      () => navigateToPrintPage(`/hearings/worksheet/print?hearing_ids=${worksheet.external_id}`)
+      () => {
+        const queryString = encodeQueryParams({ hearing_ids: worksheet.external_id, keep_open: true })
+
+        navigateToPrintPage(`/hearings/worksheet/print${queryString}`);
+      }
     );
   };
 
