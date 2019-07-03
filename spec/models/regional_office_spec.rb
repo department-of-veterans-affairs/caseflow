@@ -54,4 +54,38 @@ describe RegionalOffice do
       expect(subject.last).to have_attributes(key: "RO71", city: "Pittsburgh Foreign Cases")
     end
   end
+
+  context ".facility_ids" do
+    subject { RegionalOffice.facility_ids }
+
+    it "returns all RO and AHL facility ids" do
+      expect(subject.count).to eq 160
+    end
+  end
+
+  context ".ro_facility_ids" do
+    subject { RegionalOffice.ro_facility_ids }
+
+    it "returns all RO facility ids" do
+      expect(subject.count).to eq 58
+    end
+  end
+
+  context ".ro_facility_ids_for_state for TX" do
+    subject { RegionalOffice.ro_facility_ids_for_state("TX") }
+
+    it "returns ro facility ids for Texas" do
+      expect(subject).to match_array(%w[vba_349 vba_362])
+    end
+  end
+
+  context ".find_ro_by_facility_id" do
+    let(:ro_facility_id) { "vba_377" }
+    let(:ahl_facility_id) { "vba_405" }
+
+    it "returns RO ids for either RO or AHL facility ids" do
+      expect(RegionalOffice.find_ro_by_facility_id(ro_facility_id)).to eq "RO77"
+      expect(RegionalOffice.find_ro_by_facility_id(ahl_facility_id)).to eq "RO05"
+    end
+  end
 end
