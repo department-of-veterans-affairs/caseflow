@@ -23,8 +23,8 @@ class Organizations::TaskPagesController < OrganizationsController
   def index
     tasks = TaskPager.new(
       assignee: organization,
-      tab_name: params[:tab],
-      page: params[:page]
+      tab_name: params[Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM.to_sym],
+      page: params[Constants.QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM.to_sym]
     ).paged_tasks
 
     render json: {
