@@ -5,6 +5,7 @@ class TaskPager
 
   validates :tab_name, presence: true
   validate :assignee_is_user_or_organization
+  validate :sort_order_is_valid
 
   attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order
   # attr_accessor :filters
@@ -47,7 +48,7 @@ class TaskPager
     # TASK_HOLD_LENGTH_COLUMN
     #
     else
-      tasks.order(:created_at)
+      tasks.order(created_at: sort_order.to_sym)
     end
   end
 
@@ -111,6 +112,11 @@ class TaskPager
     unless assignee.is_a?(User) || assignee.is_a?(Organization)
       errors.add(:assignee, COPY::TASK_PAGE_INVALID_ASSIGNEE_MESSAGE)
     end
+  end
+
+  def sort_order_is_valid
+    valid_sort_orders = [Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC, Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC]
+    errors.add(:sort_order, COPY::TASK_PAGE_INVALID_SORT_ORDER) unless valid_sort_orders.include?(sort_order)
   end
 
   def task_includes
