@@ -13,6 +13,7 @@
   "ISSUE_COUNT_COLUMN": "issueCountColumn",
   "REGIONAL_OFFICE_COLUMN": "regionalOfficeColumn",
   "TASK_ASSIGNEE_COLUMN": "assignedToColumn",
+  "TASK_TYPE_COLUMN": "taskColumn",
 
   "TAB_NAME_REQUEST_PARAM": "tab",
   "PAGE_NUMBER_REQUEST_PARAM": "page"
