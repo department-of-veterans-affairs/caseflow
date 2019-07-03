@@ -170,7 +170,11 @@ export default class DailyDocket extends React.Component {
           </Button>
         </div>
         <div className="cf-push-right">
-          <Button classNames={['usa-button-secondary']} onClick={this.navigateToPrintAllPage}>
+          <Button
+            classNames={['usa-button-secondary']}
+            onClick={this.navigateToPrintAllPage}
+            disabled={_.isEmpty(this.docketHearings)}
+          >
             Print all Hearing Worksheets
           </Button>
         </div>
