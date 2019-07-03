@@ -37,7 +37,7 @@ describe RampElectionIntake do
   end
 
   context "#cancel!" do
-    subject { intake.cancel!(reason: "other", other: "Spelling canceled and cancellation is fun") }
+    subject { intake.cancel!(reason: "other", other: "Spelling cancelled and cancellation is fun") }
 
     let(:detail) do
       create(:ramp_election,
@@ -59,10 +59,10 @@ describe RampElectionIntake do
     it "cancels and clears detail values" do
       subject
 
-      expect(intake.reload).to be_canceled
+      expect(intake.reload).to be_cancelled
       expect(intake).to have_attributes(
         cancel_reason: "other",
-        cancel_other: "Spelling canceled and cancellation is fun"
+        cancel_other: "Spelling cancelled and cancellation is fun"
       )
       expect(detail.reload).to have_attributes(
         option_selected: nil,
@@ -76,7 +76,7 @@ describe RampElectionIntake do
 
       it "returns and does nothing" do
         expect(intake).to_not be_persisted
-        expect(intake).to_not be_canceled
+        expect(intake).to_not be_cancelled
         expect(intake).to have_attributes(
           cancel_reason: nil,
           cancel_other: nil
@@ -93,7 +93,7 @@ describe RampElectionIntake do
 
       it "returns and does nothing" do
         expect(intake).to_not be_persisted
-        expect(intake).to_not be_canceled
+        expect(intake).to_not be_cancelled
         expect(intake).to have_attributes(
           cancel_reason: nil,
           cancel_other: nil
@@ -298,11 +298,11 @@ describe RampElectionIntake do
         end
       end
 
-      context "a new Intake for an existing canceled RAMP election" do
+      context "a new Intake for an existing cancelled RAMP election" do
         let(:status_type_code) { "CAN" }
         let(:preexisting_ep_receive_date) { detail.receipt_date.to_date.to_formatted_s(:short_date) }
 
-        it "does not attempt to re-use the existing canceled EP" do
+        it "does not attempt to re-use the existing cancelled EP" do
           expect(veteran_end_products.count).to eq 2
           expect(veteran_end_products.map(&:claim_id)).to include(preexisting_ep.claim_id)
 

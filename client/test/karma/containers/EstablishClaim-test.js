@@ -24,7 +24,7 @@ describe('EstablishClaim', () => {
           decisions: [{
             label: null
           }],
-          non_canceled_end_products_within_30_days: [],
+          non_cancelled_end_products_within_30_days: [],
           pending_eps: [],
           station_key: '397',
           regional_office_key: 'RO11'
@@ -166,7 +166,7 @@ describe('EstablishClaim', () => {
           decisions: [{
             label: null
           }],
-          non_canceled_end_products_within_30_days: [],
+          non_cancelled_end_products_within_30_days: [],
           pending_eps: []
         },
         user: 'a'

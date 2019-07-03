@@ -59,16 +59,16 @@ class DispatchStats < Caseflow::Stats
       EstablishClaim.where(completed_at: range).for_partial_grant_or_remand.count
     end,
 
-    establish_claim_canceled: lambda do |range|
-      EstablishClaim.where(completed_at: range).canceled.count
+    establish_claim_cancelled: lambda do |range|
+      EstablishClaim.where(completed_at: range).cancelled.count
     end,
 
-    establish_claim_canceled_full_grant: lambda do |range|
-      EstablishClaim.where(completed_at: range).canceled.for_full_grant.count
+    establish_claim_cancelled_full_grant: lambda do |range|
+      EstablishClaim.where(completed_at: range).cancelled.for_full_grant.count
     end,
 
-    establish_claim_canceled_partial_grant_remand: lambda do |range|
-      EstablishClaim.where(completed_at: range).canceled.for_partial_grant_or_remand.count
+    establish_claim_cancelled_partial_grant_remand: lambda do |range|
+      EstablishClaim.where(completed_at: range).cancelled.for_partial_grant_or_remand.count
     end,
 
     establish_claim_completed_success: lambda do |range|

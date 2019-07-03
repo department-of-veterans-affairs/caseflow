@@ -1457,9 +1457,9 @@ describe LegacyAppeal do
     end
   end
 
-  context "#non_canceled_end_products_within_30_days" do
+  context "#non_cancelled_end_products_within_30_days" do
     let!(:vacols_case) { create(:case_with_decision, bfddec: 1.day.ago) }
-    let(:result) { appeal.non_canceled_end_products_within_30_days }
+    let(:result) { appeal.non_cancelled_end_products_within_30_days }
 
     let!(:twenty_day_old_pending_ep) do
       Generators::EndProduct.build(

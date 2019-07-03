@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
     t.string "docket_type", comment: "The docket type selected by the Veteran on their appeal form, which can be hearing, evidence submission, or direct review."
     t.datetime "established_at", comment: "Timestamp for when the appeal has successfully been intaken into Caseflow by the user."
     t.datetime "establishment_attempted_at", comment: "Timestamp for when the appeal's establishment was last attempted."
-    t.datetime "establishment_canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "establishment_cancelled_at", comment: "Timestamp when job was abandoned"
     t.string "establishment_error", comment: "The error message if attempting to establish the appeal resulted in an error. This gets cleared once the establishment is successful."
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the establishment has succeeded in processing."
@@ -140,7 +140,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
     t.string "contention_reference_id", comment: "The ID of the contention created in VBMS. Indicates successful creation of the contention. If the EP has been rated, this contention could have been connected to a rating issue. That connection is used to map the rating issue back to the decision issue."
     t.bigint "decision_document_id", comment: "The ID of the decision document which triggered this effectuation."
     t.datetime "decision_sync_attempted_at", comment: "When the EP is cleared, an asyncronous job attempts to map the resulting rating issue back to the decision issue. Timestamp representing the time the job was last attempted."
-    t.datetime "decision_sync_canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "decision_sync_cancelled_at", comment: "Timestamp when job was abandoned"
     t.string "decision_sync_error", comment: "Async job processing last error message. See description for decision_sync_attempted_at for the decision sync job description."
     t.datetime "decision_sync_last_submitted_at", comment: "Timestamp for when the the job is eligible to run (can be reset to restart the job)."
     t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp. See description for decision_sync_attempted_at for the decision sync job description."
@@ -240,7 +240,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
     t.bigint "appeal_id", null: false
     t.string "appeal_type"
     t.datetime "attempted_at"
-    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "cancelled_at", comment: "Timestamp when job was abandoned"
     t.string "citation_number", null: false
     t.datetime "created_at", null: false
     t.date "decision_date", null: false
@@ -368,7 +368,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
     t.string "development_item_reference_id", comment: "When a Veteran requests an informal conference with their higher level review, a tracked item is created. This stores the ID of the of the tracked item, it is also used to indicate the success of creating the tracked item."
     t.string "doc_reference_id", comment: "When a Veteran requests an informal conference, a claimant letter is generated. This stores the document ID of the claimant letter, and is also used to track the success of creating the claimant letter."
     t.datetime "established_at", comment: "Timestamp for when the end product was established."
-    t.datetime "last_synced_at", comment: "The time that the status of the end product was last synced with BGS. The end product is synced until it is canceled or cleared, meaning it is no longer active."
+    t.datetime "last_synced_at", comment: "The time that the status of the end product was last synced with BGS. The end product is synced until it is cancelled or cleared, meaning it is no longer active."
     t.boolean "limited_poa_access", comment: "Indicates whether the limited Power of Attorney has access to view documents"
     t.string "limited_poa_code", comment: "The limited Power of Attorney code, which indicates whether the claim has a POA specifically for this claim, which can be different than the Veteran's POA"
     t.string "modifier", comment: "The end product modifier. For higher level reviews, the modifiers range from 030-039. For supplemental claims, they range from 040-049. The same modifier cannot be used twice for an active end product per Veteran. Once an end product is no longer active, the modifier can be used again."
@@ -377,7 +377,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
     t.bigint "source_id", null: false, comment: "The ID of the source that resulted in this end product establishment."
     t.string "source_type", null: false, comment: "The type of source that resulted in this end product establishment."
     t.string "station", comment: "The station ID of the end product's station."
-    t.string "synced_status", comment: "The status of the end product, which is synced by a job. Once and end product is cleared (CLR) or canceled (CAN) the status is final and the end product will not continue being synced."
+    t.string "synced_status", comment: "The status of the end product, which is synced by a job. Once and end product is cleared (CLR) or cancelled (CAN) the status is final and the end product will not continue being synced."
     t.integer "user_id", comment: "The ID of the user who performed the decision review intake."
     t.string "veteran_file_number", null: false, comment: "The file number of the Veteran submitted when establishing the end product."
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
@@ -565,7 +565,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
   create_table "higher_level_reviews", force: :cascade, comment: "Intake data for Higher Level Reviews." do |t|
     t.string "benefit_type", comment: "The benefit type selected by the Veteran on their form, also known as a Line of Business."
     t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
-    t.datetime "establishment_canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "establishment_cancelled_at", comment: "Timestamp when job was abandoned"
     t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
@@ -582,11 +582,11 @@ ActiveRecord::Schema.define(version: 20190702171142) do
   end
 
   create_table "intakes", id: :serial, force: :cascade, comment: "Represents the intake of an form or request made by a veteran." do |t|
-    t.string "cancel_other", comment: "Notes added if a user canceled an intake for any reason other than the stock set of options."
-    t.string "cancel_reason", comment: "The reason the intake was canceled. Could have been manually canceled by a user, or automatic."
+    t.string "cancel_other", comment: "Notes added if a user cancelled an intake for any reason other than the stock set of options."
+    t.string "cancel_reason", comment: "The reason the intake was cancelled. Could have been manually cancelled by a user, or automatic."
     t.datetime "completed_at", comment: "Timestamp for when the intake was completed, whether it was successful or not."
     t.datetime "completion_started_at", comment: "Timestamp for when the user submitted the intake to be completed."
-    t.string "completion_status", comment: "Indicates whether the intake was successful, or was closed by being canceled, expired, or due to an error."
+    t.string "completion_status", comment: "Indicates whether the intake was successful, or was closed by being cancelled, expired, or due to an error."
     t.integer "detail_id", comment: "The ID of the record created as a result of the intake."
     t.string "detail_type", comment: "The type of the record created as a result of the intake."
     t.string "error_code", comment: "If the intake was unsuccessful due to a set of known errors, the error code is stored here. An error is also stored here for RAMP elections that are connected to an active end product, even though the intake is a success."
@@ -721,10 +721,10 @@ ActiveRecord::Schema.define(version: 20190702171142) do
     t.string "vacols_id", null: false, comment: "The VACOLS BFKEY of the legacy appeal that has been closed and opted into RAMP."
   end
 
-  create_table "ramp_election_rollbacks", force: :cascade, comment: "If a RAMP election needs to get rolled back, for example if the EP is canceled, it is tracked here. Also any VACOLS issues that were closed in the legacy system and opted into RAMP are re-opened in the legacy system." do |t|
+  create_table "ramp_election_rollbacks", force: :cascade, comment: "If a RAMP election needs to get rolled back, for example if the EP is cancelled, it is tracked here. Also any VACOLS issues that were closed in the legacy system and opted into RAMP are re-opened in the legacy system." do |t|
     t.datetime "created_at", null: false, comment: "Timestamp for when the rollback was created."
     t.bigint "ramp_election_id", comment: "The ID of the RAMP Election being rolled back."
-    t.string "reason", comment: "The reason for rolling back the RAMP Election. Rollbacks happen automatically for canceled RAMP Election End Products, but can also happen for other reason such as by request."
+    t.string "reason", comment: "The reason for rolling back the RAMP Election. Rollbacks happen automatically for cancelled RAMP Election End Products, but can also happen for other reason such as by request."
     t.string "reopened_vacols_ids", comment: "The IDs of any legacy appeals which were reopened as a result of rolling back the RAMP Election, corresponding to the VACOLS BFKEY.", array: true
     t.datetime "updated_at", null: false, comment: "Timestamp for when the rollback was last updated."
     t.bigint "user_id", comment: "The user who created the RAMP Election rollback, typically a system user."
@@ -792,7 +792,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
   create_table "request_issues", force: :cascade, comment: "Each Request Issue represents the Veteran's response to a Rating Issue. Request Issues come in three flavors: rating, nonrating, and unidentified. They are attached to a Decision Review and (for those that track contentions) an End Product Establishment. A Request Issue can contest a rating issue, a decision issue, or a nonrating issue without a decision issue." do |t|
     t.string "benefit_type", null: false, comment: "The Line of Business the issue is connected with."
     t.datetime "closed_at", comment: "Timestamp when the request issue was closed. The reason it was closed is in closed_status."
-    t.string "closed_status", comment: "Indicates whether the request issue is closed, for example if it was removed from a Decision Review, the associated End Product got canceled, the Decision Review was withdrawn."
+    t.string "closed_status", comment: "Indicates whether the request issue is closed, for example if it was removed from a Decision Review, the associated End Product got cancelled, the Decision Review was withdrawn."
     t.integer "contention_reference_id", comment: "The ID of the contention created on the End Product for this request issue. This is populated after the contention is created in VBMS."
     t.datetime "contention_removed_at", comment: "When a request issue is removed from a Decision Review during an edit, if it has a contention in VBMS that is also removed. This field indicates when the contention has successfully been removed in VBMS."
     t.datetime "contention_updated_at", comment: "Timestamp indicating when a contention was successfully updated in VBMS."
@@ -806,7 +806,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
     t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
     t.string "decision_review_type", comment: "Class name of the decision review that this request issue belongs to"
     t.datetime "decision_sync_attempted_at", comment: "Async job processing last attempted timestamp"
-    t.datetime "decision_sync_canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "decision_sync_cancelled_at", comment: "Timestamp when job was abandoned"
     t.string "decision_sync_error", comment: "Async job processing last error message"
     t.datetime "decision_sync_last_submitted_at", comment: "Async job processing most recent start timestamp"
     t.datetime "decision_sync_processed_at", comment: "Async job processing completed timestamp"
@@ -840,7 +840,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
     t.integer "after_request_issue_ids", null: false, comment: "An array of the active request issue IDs after a user has finished editing a decision review. Used with before_request_issue_ids to determine appropriate actions (such as which contentions need to be added).", array: true
     t.datetime "attempted_at", comment: "Timestamp for when the request issue update processing was last attempted."
     t.integer "before_request_issue_ids", null: false, comment: "An array of the active request issue IDs previously on the decision review before this editing session. Used with after_request_issue_ids to determine appropriate actions (such as which contentions need to be removed).", array: true
-    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "cancelled_at", comment: "Timestamp when job was abandoned"
     t.integer "edited_request_issue_ids", comment: "An array of the request issue IDs that were edited during this request issues update", array: true
     t.string "error", comment: "The error message if the last attempt at processing the request issues update was not successful."
     t.datetime "last_submitted_at", comment: "Timestamp for when the processing for the request issues update was last submitted. Used to determine how long to continue retrying the processing job. Can be reset to allow for additional retries."
@@ -902,7 +902,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
     t.bigint "decision_review_remanded_id", comment: "If an Appeal or Higher Level Review decision is remanded, including Duty to Assist errors, it automatically generates a new Supplemental Claim.  If this Supplemental Claim was generated, then the ID of the original Decision Review with the remanded decision is stored here."
     t.string "decision_review_remanded_type", comment: "The type of the Decision Review remanded if applicable, used with decision_review_remanded_id to as a composite key to identify the remanded Decision Review."
     t.datetime "establishment_attempted_at", comment: "Timestamp for the most recent attempt at establishing a claim."
-    t.datetime "establishment_canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "establishment_cancelled_at", comment: "Timestamp when job was abandoned"
     t.string "establishment_error", comment: "The error captured for the most recent attempt at establishing a claim if it failed.  This is removed once establishing the claim succeeds."
     t.datetime "establishment_last_submitted_at", comment: "Timestamp for the latest attempt at establishing the End Products for the Decision Review."
     t.datetime "establishment_processed_at", comment: "Timestamp for when the End Product Establishments for the Decision Review successfully finished processing."
@@ -926,7 +926,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
 
   create_table "task_timers", force: :cascade, comment: "Task timers allow tasks to be run asynchronously after some future date, like EvidenceSubmissionWindowTask." do |t|
     t.datetime "attempted_at", comment: "Async timestamp for most recent attempt to run."
-    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "cancelled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false, comment: "Automatic timestamp for record creation."
     t.string "error", comment: "Async any error message from most recent failed attempt to run."
     t.datetime "last_submitted_at", comment: "Async timestamp for most recent job start."
@@ -1010,7 +1010,7 @@ ActiveRecord::Schema.define(version: 20190702171142) do
   create_table "vbms_uploaded_documents", force: :cascade do |t|
     t.bigint "appeal_id", null: false
     t.datetime "attempted_at"
-    t.datetime "canceled_at", comment: "Timestamp when job was abandoned"
+    t.datetime "cancelled_at", comment: "Timestamp when job was abandoned"
     t.datetime "created_at", null: false
     t.string "document_type", null: false
     t.string "error"

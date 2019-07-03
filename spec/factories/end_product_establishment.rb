@@ -14,7 +14,7 @@ FactoryBot.define do
       synced_status { "CLR" }
     end
 
-    trait :canceled do
+    trait :cancelled do
       synced_status { "CAN" }
     end
 

@@ -15,7 +15,7 @@ class Dispatch::Task < ApplicationRecord
 
   enum completion_status: {
     routed_to_arc: 0,
-    canceled: 1,
+    cancelled: 1,
     expired: 2,
     routed_to_ro: 3,
     assigned_existing_ep: 4,
@@ -170,7 +170,7 @@ class Dispatch::Task < ApplicationRecord
   def cancel!(feedback = nil)
     assign_attributes(comment: feedback)
 
-    complete!(status: :canceled)
+    complete!(status: :cancelled)
   end
 
   def progress_status

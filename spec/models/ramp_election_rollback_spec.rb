@@ -78,7 +78,7 @@ describe RampElectionRollback do
       it { is_expected.to be false }
     end
 
-    context "when end product isn't canceled" do
+    context "when end product isn't cancelled" do
       let(:ep_status) { "PEND" }
 
       it { is_expected.to be false }

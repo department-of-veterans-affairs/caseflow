@@ -366,7 +366,7 @@ describe RequestIssuesUpdate do
 
           expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
 
-          # ep should not be canceled because 1 rating request issue still exists
+          # ep should not be cancelled because 1 rating request issue still exists
           rating_end_product_establishment.reload
           expect(rating_end_product_establishment.synced_status).to eq(nil)
         end
@@ -394,7 +394,7 @@ describe RequestIssuesUpdate do
           review.request_issues.reload
           expect(subject).to be_truthy
 
-          # expect end product to be canceled
+          # expect end product to be cancelled
           found_nonrating_ep = EndProductEstablishment.find_by(
             id: nonrating_end_product_establishment.id,
             synced_status: "CAN"
@@ -503,7 +503,7 @@ describe RequestIssuesUpdate do
 
           expect(review.request_issues.first.rating_issue_associated_at).to eq(Time.zone.now)
 
-          # ep should not be canceled because 1 rating request issue still exists
+          # ep should not be cancelled because 1 rating request issue still exists
           expect(rating_end_product_establishment.reload.synced_status).to eq(nil)
         end
 

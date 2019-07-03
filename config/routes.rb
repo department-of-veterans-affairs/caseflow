@@ -63,7 +63,7 @@ Rails.application.routes.draw do
     get "/", to: redirect("/dispatch/establish-claim")
     get 'missing-decision', to: 'establish_claims#unprepared_tasks'
     get 'admin', to: 'establish_claims#admin'
-    get 'canceled', to: 'establish_claims#canceled_tasks'
+    get 'cancelled', to: 'establish_claims#cancelled_tasks'
     get 'work-assignments', to: 'establish_claims#work_assignments'
     patch 'employee-count/:count', to: 'establish_claims#update_employee_count'
 

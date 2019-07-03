@@ -72,7 +72,7 @@ const getEndProductUpdate = ({
 
   if (epBefore && !epAfter) {
     return <Fragment>
-      <strong>A {claimReviewName} {epType} EP is being canceled.</strong>
+      <strong>A {claimReviewName} {epType} EP is being cancelled.</strong>
       <p>All contentions on this EP were removed</p>
     </Fragment>;
   } else if (epBefore && epAfter && epChanged) {

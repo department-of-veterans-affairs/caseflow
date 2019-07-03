@@ -263,8 +263,8 @@ export default class EstablishClaim extends React.Component {
   }
 
   shouldShowAssociatePage() {
-    return this.props.task.appeal.non_canceled_end_products_within_30_days &&
-      this.props.task.appeal.non_canceled_end_products_within_30_days.length > 0;
+    return this.props.task.appeal.non_cancelled_end_products_within_30_days &&
+      this.props.task.appeal.non_cancelled_end_products_within_30_days.length > 0;
   }
 
   isAssociatePage() {
@@ -490,7 +490,7 @@ export default class EstablishClaim extends React.Component {
           { this.isAssociatePage() &&
           <AssociatePage
             loading={this.state.loading}
-            endProducts={this.props.task.appeal.non_canceled_end_products_within_30_days}
+            endProducts={this.props.task.appeal.non_cancelled_end_products_within_30_days}
             history={this.history}
             task={this.props.task}
             decisionType={decisionType}

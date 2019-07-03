@@ -28,7 +28,7 @@ describe RequestIssueClosure do
 
         expect(request_issue.closed_status).to eq("no_decision")
         expect(request_issue.closed_at).to be_within(1.second).of Time.zone.now
-        expect(request_issue.decision_sync_canceled_at).to be_within(1.second).of Time.zone.now
+        expect(request_issue.decision_sync_cancelled_at).to be_within(1.second).of Time.zone.now
       end
 
       context "request issue is already closed" do

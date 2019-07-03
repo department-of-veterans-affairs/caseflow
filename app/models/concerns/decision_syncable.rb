@@ -24,8 +24,8 @@ module DecisionSyncable
       :decision_sync_error
     end
 
-    def canceled_at_column
-      :decision_sync_canceled_at
+    def cancelled_at_column
+      :decision_sync_cancelled_at
     end
   end
 end

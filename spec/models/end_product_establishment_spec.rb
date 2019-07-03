@@ -832,14 +832,14 @@ describe EndProductEstablishment do
         end
       end
 
-      context "when the end product is canceled" do
+      context "when the end product is cancelled" do
         let(:status_type_code) { "CAN" }
 
         it "closes request issues" do
           subject
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
-          expect(request_issues.first.closed_status).to eq("end_product_canceled")
+          expect(request_issues.first.closed_status).to eq("end_product_cancelled")
         end
       end
 
@@ -892,10 +892,10 @@ describe EndProductEstablishment do
     end
   end
 
-  context "#status_canceled?" do
-    subject { end_product_establishment.status_canceled? }
+  context "#status_cancelled?" do
+    subject { end_product_establishment.status_cancelled? }
 
-    context "returns true if canceled" do
+    context "returns true if cancelled" do
       let(:synced_status) { "CAN" }
 
       it { is_expected.to eq(true) }

@@ -28,7 +28,7 @@ RSpec.feature "Intake Manager Page" do
       RampElectionIntake.create!(
         veteran_file_number: "1100",
         completed_at: 5.minutes.ago,
-        completion_status: :canceled,
+        completion_status: :cancelled,
         user: current_user
       )
 
@@ -51,7 +51,7 @@ RSpec.feature "Intake Manager Page" do
       RampElectionIntake.create!(
         veteran_file_number: "1114",
         completed_at: 4.hours.ago,
-        completion_status: :canceled,
+        completion_status: :cancelled,
         cancel_reason: :duplicate_ep,
         user: current_user
       )
@@ -59,9 +59,9 @@ RSpec.feature "Intake Manager Page" do
       RampElectionIntake.create!(
         veteran_file_number: "1118",
         completed_at: 8.hours.ago,
-        completion_status: :canceled,
+        completion_status: :cancelled,
         cancel_reason: :other,
-        cancel_other: "I am canceled just because",
+        cancel_other: "I am cancelled just because",
         user: current_user
       )
 
@@ -83,7 +83,7 @@ RSpec.feature "Intake Manager Page" do
       expect(find("#table-row-2")).to have_content("Error: sensitivity")
 
       expect(find("#table-row-1")).to have_content("Canceled: duplicate EP created outside Caseflow")
-      expect(find("#table-row-0")).to have_content("Canceled: I am canceled just because")
+      expect(find("#table-row-0")).to have_content("Canceled: I am cancelled just because")
 
       expect(page).not_to have_selector("#table-row-5")
     end

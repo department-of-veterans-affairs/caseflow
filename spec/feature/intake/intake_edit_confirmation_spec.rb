@@ -59,7 +59,7 @@ feature "Intake Edit Confirmation" do
             expect(page).to have_content("A #{decision_review.class.review_title} Nonrating EP is being established")
           end
 
-          it "shows when an EP is being canceled" do
+          it "shows when an EP is being cancelled" do
             visit edit_path
             # first add a nonrating issue so we can remove the rating issue & EP
             click_intake_add_issue
@@ -70,7 +70,7 @@ feature "Intake Edit Confirmation" do
             click_edit_submit
 
             expect(page).to have_current_path("/#{edit_path}/confirmation")
-            expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
+            expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being cancelled")
           end
 
           it "shows when an EP is being updated" do
@@ -114,7 +114,7 @@ feature "Intake Edit Confirmation" do
           click_edit_submit
 
           expect(page).to have_current_path("/#{edit_path}/confirmation")
-          expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being canceled")
+          expect(page).to have_content("A #{decision_review.class.review_title} Rating EP is being cancelled")
           expect(page).to_not have_content("If you need to edit this, go to VBMS claim details")
         end
       end

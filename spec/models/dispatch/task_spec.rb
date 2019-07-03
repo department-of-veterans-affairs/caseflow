@@ -86,7 +86,7 @@ describe Dispatch::Task do
     subject { Dispatch::Task.completed_success }
 
     let!(:successful_task) { FakeTask.create!(completion_status: :routed_to_arc) }
-    let!(:canceled_task) { FakeTask.create!(completion_status: :canceled) }
+    let!(:cancelled_task) { FakeTask.create!(completion_status: :cancelled) }
 
     it "returns only the successfully completed task" do
       is_expected.to eq [successful_task]
@@ -293,7 +293,7 @@ describe Dispatch::Task do
       is_expected.to be_truthy
 
       expect(task.reload).to be_completed
-      expect(task).to be_canceled
+      expect(task).to be_cancelled
       expect(task.reload.comment).to eq("feedbackz")
     end
   end

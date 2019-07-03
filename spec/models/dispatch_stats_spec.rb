@@ -77,16 +77,16 @@ describe DispatchStats do
       expect(prev_weekly_stats[:establish_claim_started]).to eq(1)
     end
 
-    it "calculates and saves all canceled dispatch_stats" do
+    it "calculates and saves all cancelled dispatch_stats" do
       Generators::EstablishClaim.create(completed_at: 30.minutes.ago, completion_status: 1)
 
       DispatchStats.calculate_all!
 
-      expect(monthly_stats[:establish_claim_canceled]).to eq(1)
-      expect(weekly_stats[:establish_claim_canceled]).to eq(1)
-      expect(daily_stats[:establish_claim_canceled]).to eq(1)
-      expect(hourly_stats[:establish_claim_canceled]).to eq(1)
-      expect(prev_weekly_stats[:establish_claim_canceled]).to eq(0)
+      expect(monthly_stats[:establish_claim_cancelled]).to eq(1)
+      expect(weekly_stats[:establish_claim_cancelled]).to eq(1)
+      expect(daily_stats[:establish_claim_cancelled]).to eq(1)
+      expect(hourly_stats[:establish_claim_cancelled]).to eq(1)
+      expect(prev_weekly_stats[:establish_claim_cancelled]).to eq(0)
     end
 
     it "filters remands and partial grants from full grants" do

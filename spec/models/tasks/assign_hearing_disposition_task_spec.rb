@@ -269,7 +269,7 @@ describe AssignHearingDispositionTask do
       subject { disposition_task.cancel! }
 
       context "the appeal is an AMA appeal" do
-        context "the task's hearing's disposition is canceled" do
+        context "the task's hearing's disposition is cancelled" do
           let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.cancelled }
 
           it "cancels the disposition task and its parent hearing task" do
@@ -319,7 +319,7 @@ describe AssignHearingDispositionTask do
           end
         end
 
-        context "the task's hearing's disposition is not canceled" do
+        context "the task's hearing's disposition is not cancelled" do
           let(:disposition) { Constants.HEARING_DISPOSITION_TYPES.postponed }
 
           it "raises an error" do

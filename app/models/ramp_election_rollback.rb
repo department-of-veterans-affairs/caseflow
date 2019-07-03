@@ -12,7 +12,7 @@ class RampElectionRollback < ApplicationRecord
   belongs_to :ramp_election
 
   validates :user, :ramp_election, :reason, presence: true
-  validate  :validate_canceled_end_product
+  validate  :validate_cancelled_end_product
 
   before_create :reopen_vacols_appeals!, :rollback_ramp_election
 
@@ -43,11 +43,11 @@ class RampElectionRollback < ApplicationRecord
   end
 
   # We currently don't cancel the associated ramp election EP, we
-  # require that it was canceled manually beforehand
-  def validate_canceled_end_product
+  # require that it was cancelled manually beforehand
+  def validate_cancelled_end_product
     establishment = EndProductEstablishment.find_by(source: ramp_election)
-    unless establishment&.status_canceled?
-      errors.add(:ramp_election, "end_product_not_canceled")
+    unless establishment&.status_cancelled?
+      errors.add(:ramp_election, "end_product_not_cancelled")
     end
   end
 end

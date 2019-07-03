@@ -8,7 +8,7 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
   before_action :verify_manager_access, only: [
     :unprepared_tasks,
     :update_employee_count,
-    :canceled_tasks,
+    :cancelled_tasks,
     :work_assignments
   ]
   skip_before_action :verify_admin_access, only: [:index]
@@ -21,7 +21,7 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
   def show
     start_task!
 
-    return render "canceled" if task.canceled?
+    return render "cancelled" if task.cancelled?
     return render "assigned_existing_ep" if task.assigned_existing_ep?
     return render "complete" if task.completed?
 
@@ -97,8 +97,8 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
     end
   end
 
-  def canceled_tasks
-    @canceled_tasks = EstablishClaim.past_weeks(5).canceled.newest_first
+  def cancelled_tasks
+    @cancelled_tasks = EstablishClaim.past_weeks(5).cancelled.newest_first
   end
 
   private

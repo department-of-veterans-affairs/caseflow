@@ -6,14 +6,14 @@ class RequestIssueClosure
   end
 
   delegate :closed_at, :end_product_establishment, :contention_reference_id,
-           :legacy_issue_optin, :contention_disposition, :canceled!, :close!, to: :request_issue
+           :legacy_issue_optin, :contention_disposition, :cancelled!, :close!, to: :request_issue
 
   def with_no_decision!
     return unless end_product_establishment&.status_cleared?
     return if contention_disposition
 
     close!(status: :no_decision) do
-      canceled!
+      cancelled!
       legacy_issue_optin&.flag_for_rollback!
     end
   end

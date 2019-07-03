@@ -103,7 +103,7 @@ feature "Appeal Intake" do
     visit "/intake"
     expect(page).to have_content("Something went wrong")
     intake.reload
-    expect(intake.completion_status).to eq("canceled")
+    expect(intake.completion_status).to eq("cancelled")
     visit "/intake"
     expect(page).to_not have_content("Something went wrong")
     expect(page).to have_content("Which form are you processing?")
@@ -735,7 +735,7 @@ feature "Appeal Intake" do
     intake.reload
     expect(intake.completed_at).to eq(Time.zone.now)
     expect(intake.cancel_reason).to eq("other")
-    expect(intake).to be_canceled
+    expect(intake).to be_cancelled
   end
 
   scenario "adding nonrating issue with non-comp benefit type" do

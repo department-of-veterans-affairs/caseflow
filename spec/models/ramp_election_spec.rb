@@ -52,7 +52,7 @@ describe RampElection do
 
       after { FeatureToggle.disable!(:automatic_ramp_rollback) }
 
-      context "when status is canceled" do
+      context "when status is cancelled" do
         it "rolls back the ramp election" do
           subject
           expect(RampElectionRollback.find_by(
@@ -63,7 +63,7 @@ describe RampElection do
         end
       end
 
-      context "when status is not canceled" do
+      context "when status is not cancelled" do
         let(:synced_status) { "CLR" }
 
         it "rolls back the ramp election" do

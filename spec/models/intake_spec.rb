@@ -174,14 +174,14 @@ describe Intake do
       )
     end
 
-    let!(:canceled_intake) do
+    let!(:cancelled_intake) do
       Intake.create!(
         veteran_file_number: veteran_file_number,
         detail: detail,
         user: user,
         started_at: 10.minutes.ago,
         completed_at: 5.minutes.ago,
-        completion_status: :canceled,
+        completion_status: :cancelled,
         cancel_reason: :duplicate_ep
       )
     end
@@ -249,7 +249,7 @@ describe Intake do
         user: user,
         started_at: 10.minutes.ago,
         completed_at: 5.minutes.ago,
-        completion_status: :canceled,
+        completion_status: :cancelled,
         cancel_reason: :duplicate_ep
       )
 
@@ -274,15 +274,15 @@ describe Intake do
         user: user,
         started_at: 10.minutes.ago,
         completed_at: 5.minutes.ago,
-        completion_status: :canceled,
+        completion_status: :cancelled,
         cancel_reason: :other,
         cancel_other: "I get established manually"
       )
     end
 
-    it "returns included intakes (canceled, actionable errors that have not yet been resolved)" do
+    it "returns included intakes (cancelled, actionable errors that have not yet been resolved)" do
       expect(subject).to_not include(completed_intake)
-      expect(subject).to include(canceled_intake)
+      expect(subject).to include(cancelled_intake)
       expect(subject).to include(
         intake_not_accessible,
         intake_not_valid
@@ -327,14 +327,14 @@ describe Intake do
         veteran_file_number: veteran_file_number,
         detail_type: "SupplementalClaim",
         completed_at: 3.days.ago,
-        completion_status: "canceled"
+        completion_status: "cancelled"
       )
       Intake.create!(
         user: user,
         veteran_file_number: veteran_file_number,
         detail_type: "HigherLevelReview",
         completed_at: 3.days.ago,
-        completion_status: "canceled"
+        completion_status: "cancelled"
       )
       Intake.create!(
         user: user,
@@ -367,11 +367,11 @@ describe Intake do
 
   context "#complete_with_status!" do
     it "saves intake with proper tagging" do
-      intake.complete_with_status!(:canceled)
+      intake.complete_with_status!(:cancelled)
       intake.reload
 
       expect(intake.completed_at).to eq(Time.zone.now)
-      expect(intake).to be_canceled
+      expect(intake).to be_cancelled
     end
   end
 

@@ -268,7 +268,7 @@ feature "Intake" do
       expect(intake.completed_at).to eq(Time.zone.now)
       expect(intake.cancel_reason).to eq("other")
       expect(intake.cancel_other).to eq("blue!")
-      expect(intake).to be_canceled
+      expect(intake).to be_cancelled
     end
 
     context "BGS error" do
@@ -292,7 +292,7 @@ feature "Intake" do
         expect(page).to have_content("Error: bgs error. Intake has been cancelled, please retry.")
 
         # verify that current intake has been cancelled
-        expect(Intake.find_by(completion_status: "canceled", veteran_file_number: "12341234")).to_not be_nil
+        expect(Intake.find_by(completion_status: "cancelled", veteran_file_number: "12341234")).to_not be_nil
 
         # verify user can proceed with new intake
         visit "/intake"

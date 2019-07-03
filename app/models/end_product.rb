@@ -206,7 +206,7 @@ class EndProduct
     status_type_code == "CLR"
   end
 
-  def canceled?
+  def cancelled?
     status_type_code == "CAN"
   end
 

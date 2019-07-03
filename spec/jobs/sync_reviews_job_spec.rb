@@ -45,9 +45,9 @@ describe SyncReviewsJob do
       )
     end
 
-    context "when there are canceled or cleared end product establishments" do
-      let!(:end_product_establishment_canceled) do
-        create(:end_product_establishment, :canceled, established_at: 4.days.ago)
+    context "when there are cancelled or cleared end product establishments" do
+      let!(:end_product_establishment_cancelled) do
+        create(:end_product_establishment, :cancelled, established_at: 4.days.ago)
       end
 
       let!(:end_product_establishment_cleared) do
@@ -55,7 +55,7 @@ describe SyncReviewsJob do
       end
 
       it "does not sync them" do
-        expect(EndProductSyncJob).to_not receive(:perform_later).with(end_product_establishment_canceled.id)
+        expect(EndProductSyncJob).to_not receive(:perform_later).with(end_product_establishment_cancelled.id)
         expect(EndProductSyncJob).to_not receive(:perform_later).with(end_product_establishment_cleared.id)
 
         SyncReviewsJob.perform_now("limit" => 2)

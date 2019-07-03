@@ -303,7 +303,7 @@ describe RequestIssue do
 
       it "cancels the decision sync job" do
         subject
-        expect(request_issue1.decision_sync_canceled_at).to eq Time.zone.now
+        expect(request_issue1.decision_sync_cancelled_at).to eq Time.zone.now
       end
     end
   end
@@ -1272,14 +1272,14 @@ describe RequestIssue do
     end
   end
 
-  context "#close_after_end_product_canceled!" do
-    subject { rating_request_issue.close_after_end_product_canceled! }
-    let(:end_product_establishment) { create(:end_product_establishment, :canceled) }
+  context "#close_after_end_product_cancelled!" do
+    subject { rating_request_issue.close_after_end_product_cancelled! }
+    let(:end_product_establishment) { create(:end_product_establishment, :cancelled) }
 
     it "closes the request issue" do
       subject
       expect(rating_request_issue.closed_at).to eq(Time.zone.now)
-      expect(rating_request_issue.closed_status).to eq("end_product_canceled")
+      expect(rating_request_issue.closed_status).to eq("end_product_cancelled")
     end
 
     context "if the request issue is already closed" do

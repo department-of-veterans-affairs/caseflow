@@ -54,7 +54,7 @@ describe RampClosedAppeal do
   context "#reclose!" do
     subject { ramp_closed_appeal.reclose! }
 
-    context "when end product was canceled" do
+    context "when end product was cancelled" do
       let!(:current_end_product) do
         end_product.tap do |_ep|
           create(
@@ -132,7 +132,7 @@ describe RampClosedAppeal do
 
     let(:veteran) { Generators::Veteran.build(file_number: "23232323", participant_id: "323232") }
 
-    let(:ramp_election_canceled_ep) do
+    let(:ramp_election_cancelled_ep) do
       create(:ramp_election,
              veteran_file_number: veteran.file_number,
              option_selected: :higher_level_review,
@@ -140,17 +140,17 @@ describe RampClosedAppeal do
              established_at: 2.days.ago)
     end
 
-    let!(:ramp_closed_appeals_canceled_ep) do
+    let!(:ramp_closed_appeals_cancelled_ep) do
       [
         RampClosedAppeal.create!(
           vacols_id: "CANCELED1",
           nod_date: 2.years.ago,
-          ramp_election: ramp_election_canceled_ep
+          ramp_election: ramp_election_cancelled_ep
         ),
         RampClosedAppeal.create!(
           vacols_id: "CANCELED2",
           nod_date: 1.year.ago,
-          ramp_election: ramp_election_canceled_ep
+          ramp_election: ramp_election_cancelled_ep
         )
       ]
     end
@@ -165,7 +165,7 @@ describe RampClosedAppeal do
                     ])
       create(
         :end_product_establishment,
-        source: ramp_election_canceled_ep,
+        source: ramp_election_cancelled_ep,
         veteran_file_number: veteran.file_number,
         last_synced_at: 2.days.ago,
         synced_status: "CAN"
@@ -174,8 +174,8 @@ describe RampClosedAppeal do
 
     it "finds reopened appeals based off of ramp closed appeals" do
       expect(subject.count).to eq 3
-      expect(subject).to include ramp_closed_appeals_canceled_ep.first
-      expect(subject).to include ramp_closed_appeals_canceled_ep.last
+      expect(subject).to include ramp_closed_appeals_cancelled_ep.first
+      expect(subject).to include ramp_closed_appeals_cancelled_ep.last
     end
   end
 end

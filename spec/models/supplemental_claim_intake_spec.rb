@@ -55,7 +55,7 @@ describe SupplementalClaimIntake do
     it "cancels and deletes the supplemental claim record created" do
       subject
 
-      expect(intake.reload).to be_canceled
+      expect(intake.reload).to be_cancelled
       expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
       expect(intake).to have_attributes(
         cancel_reason: "system_error",

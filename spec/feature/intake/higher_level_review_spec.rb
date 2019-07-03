@@ -1284,7 +1284,7 @@ feature "Higher-Level Review" do
       intake.reload
       expect(intake.completed_at).to eq(Time.zone.now)
       expect(intake.cancel_reason).to eq("other")
-      expect(intake).to be_canceled
+      expect(intake).to be_cancelled
     end
 
     context "with active legacy appeal" do

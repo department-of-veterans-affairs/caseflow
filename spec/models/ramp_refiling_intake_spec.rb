@@ -505,7 +505,7 @@ describe RampRefilingIntake do
     it "cancels and deletes the refiling record created" do
       subject
 
-      expect(intake.reload).to be_canceled
+      expect(intake.reload).to be_cancelled
       expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
       expect(intake).to have_attributes(
         cancel_reason: "system_error",
@@ -519,7 +519,7 @@ describe RampRefilingIntake do
 
       it "returns and does nothing" do
         expect(intake).to_not be_persisted
-        expect(intake).to_not be_canceled
+        expect(intake).to_not be_cancelled
         expect(intake).to have_attributes(
           cancel_reason: nil,
           cancel_other: nil
@@ -532,7 +532,7 @@ describe RampRefilingIntake do
 
       it "returns and does nothing" do
         expect(intake).to_not be_persisted
-        expect(intake).to_not be_canceled
+        expect(intake).to_not be_cancelled
         expect(intake).to have_attributes(
           cancel_reason: nil,
           cancel_other: nil

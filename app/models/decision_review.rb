@@ -46,8 +46,8 @@ class DecisionReview < ApplicationRecord
       :establishment_last_submitted_at
     end
 
-    def canceled_at_column
-      :establishment_canceled_at
+    def cancelled_at_column
+      :establishment_cancelled_at
     end
 
     def review_title

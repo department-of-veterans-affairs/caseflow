@@ -57,7 +57,7 @@ export default class FlaggedForReview extends Component {
           <h1>Claims for manager review</h1>
           <p>
           This list shows claims that did not result in an End Product (EP)
-          because the user canceled midway through processing, or did not finish
+          because the user cancelled midway through processing, or did not finish
           establishing the claim after receiving an alert message. After an EP is
           successfully established, you can <a href="" className="cf-action-refresh">refresh</a> the
           page to update this list.

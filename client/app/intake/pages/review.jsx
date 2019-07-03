@@ -71,7 +71,7 @@ class ReviewNextButton extends React.PureComponent {
       formType
     } = this.props;
 
-    // selected form might be null or empty if the review has been canceled
+    // selected form might be null or empty if the review has been cancelled
     // in that case, just use null as data types since page will be redirected
     const selectedForm = _.find(FORM_TYPES, { key: formType });
     const intakeData = selectedForm ? intakeForms[selectedForm.key] : null;

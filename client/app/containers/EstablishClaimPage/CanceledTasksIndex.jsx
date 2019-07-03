@@ -9,7 +9,7 @@ export default class CanceledTasksIndex extends React.Component {
   render() {
 
     let {
-      canceledTasks
+      cancelledTasks
     } = this.props;
 
     let tableColumns = [
@@ -53,7 +53,7 @@ export default class CanceledTasksIndex extends React.Component {
       <div className="usa-width-one-whole">
         <Table
           columns={tableColumns}
-          rowObjects={canceledTasks}
+          rowObjects={cancelledTasks}
           summary={`Canceled EPs: ${dateRange()}`} />
       </div>
     </div>;
@@ -61,5 +61,5 @@ export default class CanceledTasksIndex extends React.Component {
 }
 
 CanceledTasksIndex.propTypes = {
-  canceledTasks: PropTypes.arrayOf(PropTypes.object)
+  cancelledTasks: PropTypes.arrayOf(PropTypes.object)
 };

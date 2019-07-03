@@ -38,11 +38,11 @@ describe AsyncableJobs do
            establishment_error: "bad problem")
   end
 
-  let!(:sc_canceled) do
+  let!(:sc_cancelled) do
     create(:supplemental_claim,
            veteran_file_number: veteran.file_number,
            establishment_error: "bad problem",
-           establishment_canceled_at: 2.days.ago)
+           establishment_cancelled_at: 2.days.ago)
   end
 
   describe "#jobs" do
@@ -54,7 +54,7 @@ describe AsyncableJobs do
       expect(subject.jobs).to include(sc_not_submitted)
       expect(subject.jobs).to include(sc_not_attempted_expired)
       expect(subject.jobs).to include(sc_not_attempted)
-      expect(subject.jobs).to_not include(sc_canceled)
+      expect(subject.jobs).to_not include(sc_cancelled)
     end
 
     it "sorts by the submited_at column, descending order" do

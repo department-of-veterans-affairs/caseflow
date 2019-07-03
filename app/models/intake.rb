@@ -11,7 +11,7 @@ class Intake < ApplicationRecord
 
   enum completion_status: {
     success: "success",
-    canceled: "canceled",
+    cancelled: "cancelled",
     error: "error",
     expired: "expired"
   }
@@ -150,7 +150,7 @@ class Intake < ApplicationRecord
         cancel_reason: reason,
         cancel_other: other
       )
-      complete_with_status!(:canceled)
+      complete_with_status!(:cancelled)
     end
   end
 

@@ -49,7 +49,7 @@ class EstablishClaim < Dispatch::Task
       include: [:user, appeal: {
         include: [
           :pending_eps,
-          :non_canceled_end_products_within_30_days,
+          :non_cancelled_end_products_within_30_days,
           decisions: { methods: :received_at }
         ],
         methods: [

@@ -35,10 +35,10 @@ describe HigherLevelReviewIntake do
       )
     end
 
-    let!(:canceled_epe) do
+    let!(:cancelled_epe) do
       create(
         :end_product_establishment,
-        :canceled,
+        :cancelled,
         veteran_file_number: veteran_file_number,
         established_at: Time.zone.yesterday
       )
@@ -89,7 +89,7 @@ describe HigherLevelReviewIntake do
     it "cancels and deletes the Higher-Level Review record created" do
       subject
 
-      expect(intake.reload).to be_canceled
+      expect(intake.reload).to be_cancelled
       expect { detail.reload }.to raise_error ActiveRecord::RecordNotFound
       expect(intake).to have_attributes(
         cancel_reason: "system_error",

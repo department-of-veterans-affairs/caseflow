@@ -236,8 +236,8 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
     end
 
-    scenario "View canceled EPs page" do
-      reason = "Cuz it's canceled"
+    scenario "View cancelled EPs page" do
+      reason = "Cuz it's cancelled"
 
       create(:establish_claim,
              user: create(:user, full_name: "Cance L. Smith"),
@@ -247,9 +247,9 @@ RSpec.feature "Establish Claim - ARC Dispatch" do
       end
 
       visit "/dispatch/work-assignments"
-      click_on "View canceled tasks"
+      click_on "View cancelled tasks"
 
-      # should see the canceled tasks
+      # should see the cancelled tasks
       page.within_window windows.last do
         expect(page).to be_titled("Canceled EPs")
         expect(page).to have_content("Canceled EPs")

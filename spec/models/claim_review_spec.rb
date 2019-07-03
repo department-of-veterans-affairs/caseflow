@@ -132,11 +132,11 @@ describe ClaimReview do
       )
     end
 
-    let!(:claim_review_canceled) do
+    let!(:claim_review_cancelled) do
       create(
         :higher_level_review,
         receipt_date: receipt_date,
-        establishment_canceled_at: 2.days.ago
+        establishment_cancelled_at: 2.days.ago
       )
     end
 
@@ -146,9 +146,9 @@ describe ClaimReview do
       end
     end
 
-    context ".canceled" do
-      it "only returns canceled jobs" do
-        expect(HigherLevelReview.canceled).to eq([claim_review_canceled])
+    context ".cancelled" do
+      it "only returns cancelled jobs" do
+        expect(HigherLevelReview.cancelled).to eq([claim_review_cancelled])
       end
     end
 
@@ -163,7 +163,7 @@ describe ClaimReview do
     context ".attemptable" do
       it "matches reviews that could be attempted" do
         expect(HigherLevelReview.attemptable).not_to include(claim_review_recently_attempted)
-        expect(HigherLevelReview.attemptable).not_to include(claim_review_canceled)
+        expect(HigherLevelReview.attemptable).not_to include(claim_review_cancelled)
       end
     end
 
@@ -419,10 +419,10 @@ describe ClaimReview do
       end
     end
 
-    context "when there is a canceled end product establishment" do
-      let!(:canceled_epe) do
+    context "when there is a cancelled end product establishment" do
+      let!(:cancelled_epe) do
         create(:end_product_establishment,
-               :canceled,
+               :cancelled,
                code: rating_request_issue.end_product_code,
                source: claim_review,
                veteran_file_number: claim_review.veteran.file_number)
@@ -430,7 +430,7 @@ describe ClaimReview do
 
       let(:issues) { [non_rating_request_issue, rating_request_issue] }
 
-      it "does not attempt to re-use the canceled EPE" do
+      it "does not attempt to re-use the cancelled EPE" do
         subject
 
         expect(claim_review.reload.end_product_establishments.count).to eq(3)

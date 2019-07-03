@@ -196,7 +196,7 @@ class EndProductEstablishment < ApplicationRecord
         last_synced_at: Time.zone.now
       )
       sync_source!
-      close_request_issues_if_canceled!
+      close_request_issues_if_cancelled!
       close_request_issues_with_no_decision!
     end
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
@@ -218,7 +218,7 @@ class EndProductEstablishment < ApplicationRecord
     }
   end
 
-  def status_canceled?
+  def status_cancelled?
     synced_status == CANCELED_STATUS
   end
 
@@ -359,17 +359,17 @@ class EndProductEstablishment < ApplicationRecord
 
   def cancel!
     transaction do
-      # delete end product in bgs & set sync status to canceled
+      # delete end product in bgs & set sync status to cancelled
       BGSService.new.cancel_end_product(veteran_file_number, code, modifier)
       update!(synced_status: CANCELED_STATUS)
-      close_request_issues_if_canceled!
+      close_request_issues_if_cancelled!
     end
   end
 
-  def close_request_issues_if_canceled!
-    return unless status_canceled?
+  def close_request_issues_if_cancelled!
+    return unless status_cancelled?
 
-    request_issues.all.find_each(&:close_after_end_product_canceled!)
+    request_issues.all.find_each(&:close_after_end_product_cancelled!)
   end
 
   def close_request_issues_with_no_decision!

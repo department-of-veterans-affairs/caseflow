@@ -546,7 +546,7 @@ RSpec.feature "Task queue" do
         expect(vacols_case.reload.bfcurloc).to eq LegacyAppeal::LOCATION_CODES[:caseflow]
       end
 
-      it "the case should be returned in the attorneys queue when canceled" do
+      it "the case should be returned in the attorneys queue when cancelled" do
         visit("/queue/appeals/#{appeal.external_id}")
         find(".Select-control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         expect(page).to have_content(Constants.TASK_ACTIONS.CANCEL_TASK.label)
@@ -936,7 +936,7 @@ RSpec.feature "Task queue" do
         expect(page).to have_content("No active tasks")
       end
 
-      step "verify that the associated TimedHoldTask has been canceled" do
+      step "verify that the associated TimedHoldTask has been cancelled" do
         expect(timed_hold_task.reload.open?).to be_falsey
       end
     end

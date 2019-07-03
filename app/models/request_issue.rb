@@ -40,7 +40,7 @@ class RequestIssue < ApplicationRecord
   enum closed_status: {
     decided: "decided",
     removed: "removed",
-    end_product_canceled: "end_product_canceled",
+    end_product_cancelled: "end_product_cancelled",
     withdrawn: "withdrawn",
     dismissed_death: "dismissed_death",
     dismissed_matter_of_law: "dismissed_matter_of_law",
@@ -416,10 +416,10 @@ class RequestIssue < ApplicationRecord
     close!(status: :decided)
   end
 
-  def close_after_end_product_canceled!
-    return unless end_product_establishment&.reload&.status_canceled?
+  def close_after_end_product_cancelled!
+    return unless end_product_establishment&.reload&.status_cancelled?
 
-    close!(status: :end_product_canceled) do
+    close!(status: :end_product_cancelled) do
       legacy_issue_optin&.flag_for_rollback!
     end
   end
@@ -440,7 +440,7 @@ class RequestIssue < ApplicationRecord
       decision_issues.each(&:soft_delete_on_removed_request_issue)
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
-      canceled! if submitted_not_processed?
+      cancelled! if submitted_not_processed?
     end
   end
 
