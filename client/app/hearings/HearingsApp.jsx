@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter, Switch } from 'react-router-dom';
@@ -66,7 +67,7 @@ export default class HearingsApp extends React.PureComponent {
     <HearingWorksheetContainer hearingId={params.hearingId} />;
   routeForPrintedHearingWorksheets = (props) => {
     const queryString = querystring.parse(props.location.search.replace(/^\?/, ''));
-    const hearingIds = (queryString.hearing_ids || '').split(',');
+    const hearingIds = (queryString.hearing_ids || '').split(',').filter(_.negate(_.isEmpty));
 
     return detect().name === 'chrome' ? <HearingWorksheetPrintAllContainer hearingIds={hearingIds} /> :
       <UnsupportedBrowserBanner appName="Hearings" />;
