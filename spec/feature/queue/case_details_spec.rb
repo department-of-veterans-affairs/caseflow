@@ -782,10 +782,10 @@ RSpec.feature "Case details" do
       before do
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
-        assign_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-01-01")
-        attorney_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-02-01")
-        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-03-01")
-        judge_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: Time.zone.now)
+        assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-02-01")
+        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-03-01")
+        judge_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
       end
 
       it "should display judge & attorney tasks, but not judge assign tasks" do

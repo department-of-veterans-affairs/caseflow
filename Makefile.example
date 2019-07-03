@@ -5,7 +5,7 @@
 #
 # To use this file:
 #
-#   % cp Makefile.example Makefile
+#   % ln -s Makefile.example Makefile
 #
 # Examples:
 #
