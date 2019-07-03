@@ -10,7 +10,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
   let!(:schedule_hearing_task) { create(:schedule_hearing_task, :completed, appeal: appeal) }
   let!(:verify_address_task) do
     create(
-      :hearing_admin_action_verify_address_task, 
+      :hearing_admin_action_verify_address_task,
       parent: parent_hearing_task,
       appeal: appeal,
       assigned_to: HearingsManagement.singleton,
@@ -29,7 +29,8 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
       available_actions = verify_address_task.available_actions(user)
 
       expect(available_actions.length).to eq 1
-      expect(available_actions).to include(Constants.TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.to_h)
+      expect(available_actions)
+        .to include(Constants.TASK_ACTIONS.CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE.to_h)
     end
   end
 
@@ -54,7 +55,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
 
       expect(verify_address_task.status).to eq Constants.TASK_STATUSES.completed
       expect(appeal.class.first.closest_regional_office).to eq "RO17"
-      expect(appeal.class.first.available_hearing_locations.map { |ahl| ahl.facility_id }.uniq.count).to eq 2
+      expect(appeal.class.first.available_hearing_locations.map(&:facility_id).uniq.count).to eq 2
     end
 
     it "throws an access error trying to update from params with random user" do
@@ -71,7 +72,7 @@ RSpec.shared_examples "Address Verify Task for Appeal" do
       RequestStore[:current_user] = user
 
       payload = {
-        "status": Constants.TASK_STATUSES.cancelled, 
+        "status": Constants.TASK_STATUSES.cancelled,
         "business_payloads": {
           "values": {
             "regional_office_value": "RO50"

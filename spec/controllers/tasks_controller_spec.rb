@@ -86,7 +86,7 @@ RSpec.describe TasksController, type: :controller do
       it "should process the request succesfully" do
         get :index, params: { user_id: user.id, role: "colocated" }
         response_body = JSON.parse(response.body)["tasks"]["data"]
-        expect(response_body.size).to eq 3
+        expect(response_body.size).to eq 4
 
         assigned = response_body.find { |task| task["id"] == task4.id.to_s }
         expect(assigned["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
@@ -101,6 +101,10 @@ RSpec.describe TasksController, type: :controller do
 
         ama = response_body.find { |task| task["id"] == task_ama_colocated_aod.id.to_s }
         expect(ama["attributes"]["aod"]).to be true
+
+        recently_completed_task = response_body.find { |task| task["id"] == task6.id.to_s }
+        expect(recently_completed_task["attributes"]["status"]).to eq Constants.TASK_STATUSES.completed
+        expect(recently_completed_task["attributes"]["assigned_to"]["id"]).to eq user.id
       end
     end
 
@@ -878,7 +882,7 @@ RSpec.describe TasksController, type: :controller do
 
     context "when the task is a no show hearing task with a HearingTask ancestor" do
       let(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-      let(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+      let(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
       let!(:task) { FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal) }
       let(:params) do
         {

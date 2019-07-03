@@ -120,7 +120,9 @@ feature "Intake Review Page" do
       end
 
       context "when the claimant is missing an address" do
-        before { allow_any_instance_of(BgsAddressService).to receive(:address).and_return(nil) }
+        before do
+          allow_any_instance_of(BgsAddressService).to receive(:fetch_bgs_record).and_return(nil)
+        end
 
         describe "given an appeal" do
           it "does not require the claimant to have an address" do

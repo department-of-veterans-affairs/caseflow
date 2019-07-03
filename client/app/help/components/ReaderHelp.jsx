@@ -8,7 +8,12 @@ class CertificationHelp extends React.Component {
 
       <h1 id="#top">Welcome to the Reader Help page!</h1>
 
-      <p>Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> FAQs</a> for Reader. If you need help with a topic not covered on this page, please contact the Caseflow Product Support Team by calling 1-844-876-5548. We will assist you as quickly as possible. </p>
+      <p>
+        Here you will find <a href="#training-videos"> Training Videos</a> and <a href="#faq"> FAQs</a> for Reader.
+        If you need help with a topic not covered on this page, please contact the Caseflow team
+        via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
+        via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
+      </p>
 
       <h1 id="training-videos">Training Videos</h1>
       <div className="cf-help-divider"></div>

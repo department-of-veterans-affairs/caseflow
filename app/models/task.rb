@@ -7,10 +7,12 @@
 class Task < ApplicationRecord
   acts_as_tree
 
+  include PrintsTaskTree
+
   belongs_to :assigned_to, polymorphic: true
   belongs_to :assigned_by, class_name: "User"
   belongs_to :appeal, polymorphic: true
-  has_many :attorney_case_reviews
+  has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy
 
   validates :assigned_to, :appeal, :type, :status, presence: true
@@ -19,7 +21,7 @@ class Task < ApplicationRecord
   after_create :create_and_auto_assign_child_task, if: :automatically_assign_org_task?
   after_create :tell_parent_task_child_task_created
 
-  before_update :set_timestamps
+  before_save :set_timestamps
   after_update :update_parent_status, if: :task_just_closed_and_has_parent?
   after_update :update_children_status_after_closed, if: :task_just_closed?
 
@@ -41,7 +43,8 @@ class Task < ApplicationRecord
 
   scope :closed, -> { where(status: closed_statuses) }
 
-  scope :not_tracking, -> { where.not(type: TrackVeteranTask.name) }
+  # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
+  scope :visible_in_queue_table_view, -> { where.not(type: [TrackVeteranTask.name, TimedHoldTask.name]) }
 
   scope :not_decisions_review, lambda {
                                  where.not(
@@ -140,7 +143,7 @@ class Task < ApplicationRecord
   end
 
   def self.recently_closed
-    closed.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now)
+    closed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now)
   end
 
   def self.incomplete_or_recently_closed
@@ -445,18 +448,20 @@ class Task < ApplicationRecord
     self.assigned_at = created_at unless assigned_at
   end
 
+  STATUS_TIMESTAMPS = {
+    assigned: :assigned_at,
+    in_progress: :started_at,
+    on_hold: :placed_on_hold_at,
+    completed: :closed_at,
+    cancelled: :closed_at
+  }.freeze
+
   def set_timestamps
-    if will_save_change_to_status?
-      case status_change_to_be_saved&.last&.to_sym
-      when :assigned
-        self.assigned_at = updated_at
-      when :in_progress
-        self.started_at = updated_at
-      when :on_hold
-        self.placed_on_hold_at = updated_at
-      when :completed, :cancelled
-        self.closed_at = updated_at
-      end
-    end
+    return unless will_save_change_to_attribute?(:status)
+
+    timestamp_to_update = STATUS_TIMESTAMPS[status_change_to_be_saved&.last&.to_sym]
+    return if will_save_change_to_attribute?(timestamp_to_update)
+
+    self[timestamp_to_update] = Time.zone.now
   end
 end

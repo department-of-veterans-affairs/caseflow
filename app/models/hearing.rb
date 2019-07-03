@@ -7,7 +7,9 @@ class Hearing < ApplicationRecord
   has_one :transcription
   has_many :hearing_views, as: :hearing
   has_one :hearing_location, as: :hearing
-  has_one :hearing_task_association, as: :hearing
+  has_one :hearing_task_association,
+          -> { includes(:hearing_task).where(tasks: { status: Task.open_statuses }) },
+          as: :hearing
   has_many :hearing_issue_notes
 
   class HearingDayFull < StandardError; end
@@ -99,7 +101,7 @@ class Hearing < ApplicationRecord
 
   def disposition_task
     if hearing_task?
-      hearing_task_association.hearing_task.children.detect { |child| child.type == DispositionTask.name }
+      hearing_task_association.hearing_task.children.detect { |child| child.type == AssignHearingDispositionTask.name }
     end
   end
 

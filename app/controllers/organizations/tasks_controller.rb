@@ -17,15 +17,17 @@ class Organizations::TasksController < OrganizationsController
   private
 
   def tasks
+    return [] if queue_config[:use_task_pages_api]
+
     Rails.logger.debug("starting GenericQueue tasks")
 
     # Temporarily limit hearings-management tasks to AOD tasks, because currently no tasks are loading
     if organization.url == "hearings-management"
-      tasks = GenericQueue.new(user: organization, limit: 300).tasks
+      tasks = GenericQueue.new(user: organization, limit: 1000).tasks
       Rails.logger.debug("starting AOD filter")
       tasks.select { |task| task.appeal.is_a?(Appeal) || task.appeal.aod }
     else
-      GenericQueue.new(user: organization, limit: 400).tasks
+      GenericQueue.new(user: organization, limit: 1000).tasks
     end
   end
 
