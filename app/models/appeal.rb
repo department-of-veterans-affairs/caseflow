@@ -111,7 +111,7 @@ class Appeal < DecisionReview
   end
 
   def reviewing_judge_name
-    task = tasks.where.not(status: "cancelled").where(type: "JudgeDecisionReviewTask").order(created_at: :desc).first
+    task = tasks.not_cancelled.where(type: JudgeDecisionReviewTask.name).order(created_at: :desc).first
     task ? task.assigned_to.try(:full_name) : ""
   end
 

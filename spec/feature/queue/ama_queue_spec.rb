@@ -720,7 +720,8 @@ RSpec.feature "AmaQueue" do
         expect(page).to have_content valid_document_id
       end
     end
-    it "judge can reassign the case to another judge" do
+
+    it "judge can reassign the assign task to another judge" do
       step "judge reviews case and reassigns to another judge" do
         visit "/queue"
         expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
@@ -747,6 +748,105 @@ RSpec.feature "AmaQueue" do
         find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
         expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
         click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+        click_on veteran_full_name
+      end
+    end
+
+    it "judge can reassign the review judge tasks to another judge" do
+      step "judge reviews case and assigns a task to an attorney" do
+        visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "0"))
+
+        find(".cf-dropdown-trigger", text: COPY::CASE_LIST_TABLE_QUEUE_DROPDOWN_LABEL).click
+        expect(page).to have_content(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL)
+        click_on COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Assign to attorney")
+        click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+
+        click_on "Submit"
+
+        expect(page).to have_content("Assigned 1 case")
+      end
+
+      step "attorney completes task and returns the case to the judge" do
+        User.authenticate!(user: attorney_user)
+        visit "/queue"
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
+
+        expect(page).not_to have_content("Select special issues (optional)")
+
+        expect(page).to have_content("Add decisions")
+
+        # Add a first decision issue
+        all("button", text: "+ Add decision", count: 2)[0].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Allowed").click
+
+        click_on "Save"
+
+        # Add a second decision issue
+        all("button", text: "+ Add decision", count: 2)[1].click
+        expect(page).to have_content COPY::DECISION_ISSUE_MODAL_TITLE
+        expect(page.find(".dropdown-Diagnostic.code")).to have_content("Diagnostic code")
+
+        fill_in "Text Box", with: "test"
+
+        find(".Select-control", text: "Select disposition").click
+        find("div", class: "Select-option", text: "Remanded").click
+
+        click_on "Save"
+        expect(page).not_to have_content("This field is required")
+        click_on "Continue"
+
+        expect(page).to have_content("Select Remand Reasons")
+        find_field("Legally inadequate notice", visible: false).sibling("label").click
+        find_field("Post AOJ", visible: false).sibling("label").click
+        click_on "Continue"
+
+        expect(page).to have_content("Submit Draft Decision for Review")
+        # these now should be preserved the next time the attorney checks out
+        fill_in "Document ID:", with: valid_document_id
+        expect(page).to have_content(judge_user.full_name)
+        fill_in "notes", with: "all done"
+        click_on "Continue"
+
+        expect(page).to have_content(
+          "Thank you for drafting #{veteran_full_name}'s decision. It's been "\
+          "sent to #{judge_user.full_name} for review."
+        )
+      end
+
+      step "judge reviews case and reassigns to another judge" do
+        User.authenticate!(user: judge_user)
+        visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "1"))
+
+        click_on veteran_full_name
+
+        click_dropdown(prompt: "Select an action", text: "Re-assign to a judge")
+        click_dropdown(prompt: "Select a user", text: judge_user2.full_name)
+
+        fill_in "taskInstructions", with: "Going on leave, please manage this case"
+        click_on "Submit"
+
+        expect(page).to have_content("Task reassigned to #{judge_user2.full_name}")
+      end
+
+      step "judge2 has the case in their queue" do
+        User.authenticate!(user: judge_user2)
+        visit "/queue"
+        expect(page).to have_content(format(COPY::JUDGE_CASE_REVIEW_TABLE_TITLE, "1"))
 
         click_on veteran_full_name
       end

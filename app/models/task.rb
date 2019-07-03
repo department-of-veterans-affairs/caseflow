@@ -43,6 +43,8 @@ class Task < ApplicationRecord
 
   scope :closed, -> { where(status: closed_statuses) }
 
+  scope :not_cancelled, -> { where(status: not_cancelled_statuses) }
+
   # Equivalent to .reject(&:hide_from_queue_table_view) but offloads that to the database.
   scope :visible_in_queue_table_view, -> { where.not(type: [TrackVeteranTask.name, TimedHoldTask.name]) }
 
@@ -66,6 +68,12 @@ class Task < ApplicationRecord
 
   def self.active_statuses
     [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.in_progress]
+  end
+
+  def self.not_cancelled_statuses
+    statuses = Constants.TASK_STATUSES.to_h.values
+    statuses.delete(Constants.TASK_STATUSES.cancelled)
+    statuses
   end
 
   def self.open_statuses
