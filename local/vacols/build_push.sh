@@ -64,7 +64,7 @@ build(){
   fi
 
   # Build Docker
-  echo -e "\tCreating Caseflow App Docker Image"
+  echo -e "\tCreating FACOLS App Docker Image"
   echo "--------"
   echo ""
 
@@ -77,12 +77,12 @@ build(){
     rm -rf $build_facols_dir
     docker_build="SUCCESS"
     echo ""
-    echo "Building Caseflow Docker App: ${bold}${docker_build}${normal}"
+    echo "Building FACOLS Docker App: ${bold}${docker_build}${normal}"
     return 0
   else
     docker_build="FAILED"
     echo ""
-    echo "Building Caseflow Docker App: ${bold}${docker_build}${normal}"
+    echo "Building FACOLS Docker App: ${bold}${docker_build}${normal}"
     echo "Please check above if there were execution errors."
     return 1
   fi
@@ -92,10 +92,10 @@ push(){
   eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
   docker tag vacols_db:latest vacols_db:${today}
   docker tag vacols_db:${today} 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today}
+  docker tag vacols_db:latest 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
   if docker push 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today} ; then
+    docker push 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
     echo "${bold}Success. ${normal}The latest docker image has been pushed."
-    echo "${bold}REMEMBER TO CHANGE THE CIRCLE CI CONFIG to use this image.${normal}"
-    echo -e "\t008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today}"
   else
     echo "${bold}Failed to Upload. ${normal}Probably you don't have permissions to do this. Ask the DevOps Team please"
   fi
