@@ -13,5 +13,12 @@
   "ISSUE_COUNT_COLUMN": "issueCountColumn",
   "REGIONAL_OFFICE_COLUMN": "regionalOfficeColumn",
   "TASK_ASSIGNEE_COLUMN": "assignedToColumn",
-  "TASK_TYPE_COLUMN": "taskColumn"
+  "TASK_ASSIGNER_COLUMN": "completedToNameColumn",
+  "TASK_CLOSED_DATE_COLUMN": "completedDateColumn",
+  "TASK_DUE_DATE_COLUMN": "caseDueDateColumn",
+  "TASK_HOLD_LENGTH_COLUMN": "caseDaysOnHoldColumn",
+  "TASK_TYPE_COLUMN": "taskColumn",
+
+  "TAB_NAME_REQUEST_PARAM": "tab",
+  "PAGE_NUMBER_REQUEST_PARAM": "page"
 }
