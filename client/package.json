@@ -21,7 +21,9 @@
     "build:production": "NODE_ENV=production yarn run build",
     "dev:clear-build": "rm ../app/assets/javascripts/*webpack* || true",
     "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
-    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js"
+    "dev:hot": "yarn run dev:clear-build && NODE_ENV=development-hot node webpack-hot-server.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "cacheDirectories": [
     "node_modules",
@@ -95,7 +97,8 @@
     "url-loader": "^1.0.1",
     "uswds": "^1.6.4",
     "uuid": "^3.0.1",
-    "webpack": "^3.10.0"
+    "webpack": "^3.10.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@department-of-veterans-affairs/eslint-config-appeals": "https://github.com/department-of-veterans-affairs/eslint-config-appeals#f50522e",
@@ -123,5 +126,6 @@
     "prettier": "1.17.1",
     "sinon": "^2.1.0",
     "webpack-dev-server": "^2.4.2"
-  }
+  },
+  "snyk": true
 }
