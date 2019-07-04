@@ -99,11 +99,11 @@ class ColocatedTask < Task
   end
 
   def create_twin_of_type(params)
-    self.class.create!(
+    task_type = ColocatedTask.find_subclass_by_action(params[:action])
+    task_type.create!(
       appeal: appeal,
       parent: parent,
       assigned_by: assigned_by,
-      action: params[:action],
       instructions: params[:instructions],
       assigned_to: Colocated.singleton
     )
