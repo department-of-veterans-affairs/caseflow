@@ -389,7 +389,7 @@ feature "Appeal Edit issues" do
       expect(page).to have_content("The Veteran's profile has missing or invalid information")
       expect(page).to have_content("Please fill in the following field(s) in the Veteran's profile in VBMS or")
       expect(page).to have_content(
-        "the corporate database, then retry establishing the EP in Caseflow: ssn, country"
+        "the corporate database, then retry establishing the EP in Caseflow: country"
       )
       expect(page).to have_content("This Veteran's address is too long. Please edit it in VBMS or SHARE")
       expect(page).to have_button("Save", disabled: true)
