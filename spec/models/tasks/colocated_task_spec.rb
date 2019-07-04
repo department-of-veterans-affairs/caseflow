@@ -160,7 +160,7 @@ describe ColocatedTask do
       end
 
       context "at the same time" do
-        let(:params_list) { [task_params, task_params] }
+        let(:params_list) { [task_params, task_params.clone] }
 
         it "does not create any co-located tasks" do
           expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /already an open POA CLARIFICATION action/)
@@ -170,19 +170,9 @@ describe ColocatedTask do
 
       context "when one already exists" do
         let(:params_list) { [task_params] }
-        let!(:existing_action) do
-          FactoryBot.create(
-            :colocated_task,
-            appeal: appeal_1,
-            assigned_by: attorney,
-            assigned_to: colocated_org,
-            action: :poa_clarification,
-            parent: parent,
-            instructions: [instructions]
-          )
-        end
 
         it "does not create a new co-located task" do
+          ColocatedTask.create_many_from_params([task_params.clone], attorney)
           before_count = ColocatedTask.all.count
           expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /already an open POA CLARIFICATION action/)
           expect(ColocatedTask.all.count).to eq before_count
@@ -418,13 +408,17 @@ describe ColocatedTask do
     end
 
     context "for legacy appeals, the new assigned to location is set correctly" do
-      let(:org_colocated_task) do
-        FactoryBot.create(
-          :colocated_task,
+      let(:task_params) do
+        {
+          appeal: create(:legacy_appeal, vacols_case: create(:case)),
           assigned_by: attorney,
+          action: action,
           assigned_to: org,
-          action: action
-        )
+          parent: create(:root_task)
+        }
+      end
+      let(:org_colocated_task) do
+        ColocatedTask.create_many_from_params([task_params], attorney).first
       end
       let(:legacy_colocated_task) { org_colocated_task.children.first }
 

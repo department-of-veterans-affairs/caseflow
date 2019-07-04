@@ -23,18 +23,9 @@ class ColocatedTask < Task
       # Create all ColocatedTasks in one transaction so that if any fail they all fail.
       ActiveRecord::Base.multi_transaction do
         params_array = params_array.map do |params|
-
           # Find the task type for a given action.
-          input_action = params.delete(:action).to_s
-          # TODO: Think of a better way to do this.
-          new_task_type = ColocatedTask.subclasses.find do |task_class|
-            task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[input_action]
-          end
-          # TODO: Fail if there is no new_task_type.
-          params.merge!(type: new_task_type.name)
-
-          # TODO: Determine where this should be assigned shortly.
-          params.merge!(assigned_to: Colocated.singleton)
+          new_task_type = find_subclass_by_action(params.delete(:action).to_s)
+          params.merge!(type: new_task_type&.name, assigned_to: Colocated.singleton)
         end
 
         team_tasks = super(params_array, user)
@@ -57,6 +48,10 @@ class ColocatedTask < Task
       elsif !(user.attorney_in_vacols? || user.judge_in_vacols?)
         fail Caseflow::Error::ActionForbiddenError, message: "Current user cannot access this task"
       end
+    end
+
+    def find_subclass_by_action(action)
+      subclasses.find { |task_class| task_class.label == Constants::CO_LOCATED_ADMIN_ACTIONS[action] }
     end
   end
 
@@ -85,14 +80,14 @@ class ColocatedTask < Task
   end
 
   def available_actions_with_conditions(core_actions)
-    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
+    if %w[TranslationColocatedTask ScheduleHearingColocatedTask].include?(type) && appeal.is_a?(LegacyAppeal)
       return legacy_translation_or_hearing_actions(core_actions)
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
     core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
 
-    if action == "translation" && appeal.is_a?(Appeal)
+    if is_a?(TranslationColocatedTask) && appeal.is_a?(Appeal)
       return ama_translation_actions(core_actions)
     end
 
@@ -122,7 +117,7 @@ class ColocatedTask < Task
   end
 
   def legacy_translation_or_hearing_actions(actions)
-    return legacy_schedule_hearing_actions(actions) if action == "schedule_hearing"
+    return legacy_schedule_hearing_actions(actions) if is_a?(ScheduleHearingColocatedTask)
 
     legacy_translation_actions(actions)
   end
@@ -136,7 +131,7 @@ class ColocatedTask < Task
 
   def legacy_translation_actions(actions)
     send_to_team = Constants.TASK_ACTIONS.SEND_TO_TEAM.to_h
-    send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants::CO_LOCATED_ADMIN_ACTIONS[action])
+    send_to_team[:label] = format(COPY::COLOCATED_ACTION_SEND_TO_TEAM, Constants.CO_LOCATED_ADMIN_ACTIONS.translation)
     actions.unshift(send_to_team)
   end
 
@@ -160,8 +155,8 @@ class ColocatedTask < Task
   end
 
   def location_based_on_action
-    case action.to_sym
-    when :schedule_hearing
+    case type
+    when ScheduleHearingColocatedTask.name
       # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
       # actually held.
       return assigned_by.vacols_uniq_id if children.all? { |t| t.status == Constants.TASK_STATUSES.cancelled }
@@ -170,15 +165,15 @@ class ColocatedTask < Task
       ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
 
       LegacyAppeal::LOCATION_CODES[:caseflow]
-    when :translation
-      LegacyAppeal::LOCATION_CODES[action.to_sym]
+    when TranslationColocatedTask.name
+      LegacyAppeal::LOCATION_CODES[:translation]
     else
       assigned_by.vacols_uniq_id
     end
   end
 
   def all_tasks_closed_for_appeal?
-    appeal.tasks.open.where(type: ColocatedTask.name).none?
+    appeal.tasks.open.select { |task| task.is_a?(ColocatedTask) }.none?
   end
 
   def on_hold_duration_is_set
@@ -192,24 +187,25 @@ class ColocatedTask < Task
       appeal_id: appeal_id,
       assigned_to_id: assigned_to_id,
       assigned_to_type: assigned_to_type,
-      action: action,
+      type: type,
       parent_id: parent_id,
       instructions: instructions
     ).find_each do |duplicate_task|
       if duplicate_task.open?
         errors[:base] << format(
           COPY::ADD_COLOCATED_TASK_ACTION_DUPLICATE_ERROR,
-          Constants::CO_LOCATED_ADMIN_ACTIONS[action]&.upcase,
+          self.class.label&.upcase,
           instructions.join(", ")
         )
         break
       end
     end
+  end
 
-    def valid_action_or_type
-      unless Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s).include?(action) || ColocatedTask.subclasses.include?(self.class)
-        errors[:base] << "invalid action (#{action}) or type (#{type})"
-      end
+  def valid_action_or_type
+    unless Constants::CO_LOCATED_ADMIN_ACTIONS.keys.map(&:to_s).include?(action) ||
+           ColocatedTask.subclasses.include?(self.class)
+      errors[:base] << "Action is not included in the list"
     end
   end
 end

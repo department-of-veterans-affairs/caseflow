@@ -390,12 +390,12 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.first["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.first["attributes"]["label"]).to eq "Address verification"
 
             expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.second["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.second["attributes"]["label"]).to eq "Address verification"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
             expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
@@ -403,7 +403,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
-            expect(response_body.last["attributes"]["label"]).to eq "missing_records"
+            expect(response_body.last["attributes"]["label"]).to eq "Missing records"
           end
         end
 
@@ -439,12 +439,12 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.first["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.first["attributes"]["label"]).to eq "Address verification"
 
             expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.second["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.second["attributes"]["label"]).to eq "Address verification"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
             expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
@@ -452,7 +452,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
-            expect(response_body.last["attributes"]["label"]).to eq "missing_records"
+            expect(response_body.last["attributes"]["label"]).to eq "Missing records"
           end
         end
 
@@ -475,7 +475,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.last["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.last["attributes"]["label"]).to eq "Address verification"
           end
         end
 
@@ -498,7 +498,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.last["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.last["attributes"]["label"]).to eq "Address verification"
           end
         end
 
