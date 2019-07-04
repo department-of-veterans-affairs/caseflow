@@ -54,7 +54,11 @@ const getLegacyHearingWorksheetDocsSection = (appeal) => {
 export class HearingWorksheetPrinted extends React.Component {
 
   componentDidMount() {
-    document.title = getWorksheetTitle(this.props.worksheet);
+    const { worksheet, updateTitle } = this.props;
+
+    if (updateTitle) {
+      document.title = getWorksheetTitle(worksheet);
+    }
 
     const queryString = querystring.parse(window.location.search.slice(1));
 
@@ -168,28 +172,43 @@ export class HearingWorksheetPrinted extends React.Component {
   render() {
     const { worksheet, worksheetIssues } = this.props;
 
+    // Putting the footer in a thead tag is a workaround to get the footer
+    // to display on each respective page. This also requires a table to wrap it,
+    // otherwise react will throw a bunch of warnings.
     return (
-      <div>
-        <WorksheetFooter
-          veteranName={formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}
-        />
-        <WorksheetHeader print />
-        {this.isLegacy() && this.getLegacyHearingSection()}
-        {
-          !this.isLegacy() && !_.isEmpty(worksheetIssues) &&
-          <div className="cf-hearings-all-issues-wrapper">
-            {this.getHearingWorksheetIssuesSection()}
-          </div>
-        }
-        <form className="cf-hearings-worksheet-form" id="cf-hearings-worksheet-summary">
-          <div className="cf-hearings-worksheet-data">
-            <label>Hearing Summary</label>
-            <div
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary).replace(/\r|\n/g, '') }}
-            />
-          </div>
-        </form>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <td>
+              <WorksheetFooter
+                veteranName={formatNameShort(worksheet.veteran_first_name, worksheet.veteran_last_name)}
+              />
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <WorksheetHeader worksheet={worksheet} print />
+              {this.isLegacy() && this.getLegacyHearingSection()}
+              {
+                !this.isLegacy() && !_.isEmpty(worksheetIssues) &&
+                <div className="cf-hearings-all-issues-wrapper">
+                  {this.getHearingWorksheetIssuesSection()}
+                </div>
+              }
+              <div className="cf-hearings-worksheet-form" id="cf-hearings-worksheet-summary">
+                <div className="cf-hearings-worksheet-data">
+                  <label>Hearing Summary</label>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(worksheet.summary).replace(/\r|\n/g, '') }}
+                  />
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     );
   }
 }
@@ -197,13 +216,18 @@ export class HearingWorksheetPrinted extends React.Component {
 HearingWorksheetPrinted.propTypes = {
   worksheet: PropTypes.object,
   worksheetAppeals: PropTypes.object,
-  worksheetIssues: PropTypes.object
+  worksheetIssues: PropTypes.object,
+  updateTitle: PropTypes.bool
 };
 
-const mapStateToProps = (state) => ({
-  worksheet: state.hearingWorksheet.worksheet,
-  worksheetAppeals: state.hearingWorksheet.worksheetAppeals,
-  worksheetIssues: state.hearingWorksheet.worksheetIssues
+HearingWorksheetPrinted.defaultProps = {
+  updateTitle: true
+};
+
+const mapStateToProps = (state, ownProps) => ({
+  worksheet: ownProps.worksheet || state.hearingWorksheet.worksheet,
+  worksheetAppeals: ownProps.worksheetAppeals || state.hearingWorksheet.worksheetAppeals,
+  worksheetIssues: ownProps.worksheetIssues || state.hearingWorksheet.worksheetIssues
 });
 
 export default connect(mapStateToProps)(HearingWorksheetPrinted);
