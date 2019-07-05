@@ -21,14 +21,6 @@ describe UntrackedLegacyAppealsChecker do
       end
     end
 
-    describe ".legacy_appeal_ids_without_active_tasks" do
-      subject { described_class.new.legacy_appeal_ids_without_active_tasks }
-
-      it "returns the appeal IDs of the untracked_legacy_appeals" do
-        expect(subject).to match_array(untracked_legacy_appeals.pluck(:id))
-      end
-    end
-
     describe "#call" do
       it "builds a report that includes the IDs of the untracked legacy appeals to Slack" do
         subject.call
@@ -47,14 +39,6 @@ describe UntrackedLegacyAppealsChecker do
       tracked_legacy_appeals.each do |appeal|
         VACOLS::Case.find_by(bfkey: appeal.vacols_id).update!(bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow])
         FactoryBot.create(:generic_task, assigned_to: FactoryBot.create(:user), appeal: appeal)
-      end
-    end
-
-    describe ".legacy_appeal_ids_without_active_tasks" do
-      subject { described_class.new.legacy_appeal_ids_without_active_tasks }
-
-      it "returns an empty array since all legacy appeals are tracked" do
-        expect(subject).to eq([])
       end
     end
 

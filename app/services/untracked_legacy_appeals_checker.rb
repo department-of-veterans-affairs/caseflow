@@ -6,6 +6,8 @@ class UntrackedLegacyAppealsChecker < DataIntegrityChecker
     build_report(appeal_ids)
   end
 
+  private
+
   def legacy_appeal_ids_without_active_tasks
     vacols_ids = VACOLS::Case.where(bfcurloc: LegacyAppeal::LOCATION_CODES[:caseflow]).pluck(:bfkey)
     legacy_appeals_charged_to_caseflow_ids = LegacyAppeal.where(vacols_id: vacols_ids).pluck(:id)
@@ -15,8 +17,6 @@ class UntrackedLegacyAppealsChecker < DataIntegrityChecker
 
     legacy_appeals_charged_to_caseflow_ids.sort - legacy_appeal_with_active_tasks_ids.sort
   end
-
-  private
 
   def build_report(appeal_ids)
     return if appeal_ids.empty?
