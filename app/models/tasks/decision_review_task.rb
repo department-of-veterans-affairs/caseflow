@@ -47,7 +47,7 @@ class DecisionReviewTask < GenericTask
   end
 
   def validate_decision_issue_per_request_issue(decision_issue_params)
-    appeal.request_issues.map(&:id).sort == decision_issue_params.map do |decision_issue_param|
+    appeal.request_issues.active.map(&:id).sort == decision_issue_params.map do |decision_issue_param|
       decision_issue_param[:request_issue_id].to_i
     end.sort
   end
