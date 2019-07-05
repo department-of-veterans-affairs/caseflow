@@ -21,9 +21,12 @@ class UntrackedLegacyAppealsChecker < DataIntegrityChecker
   def build_report(appeal_ids)
     return if appeal_ids.empty?
 
-    add_to_report "Found #{appeal_ids.count} legacy appeals charged to CASEFLOW in VACOLS with no active Caseflow tasks."
+    count = appeal_ids.count
+    ids = appeal_ids.sort
+
+    add_to_report "Found #{count} legacy appeals charged to CASEFLOW in VACOLS with no active Caseflow tasks."
     all_to_report "These appeals will not progress unless location is manually corrected in VACOLS "
     add_to_report "or an applicable Caseflow task is manually created. Research and fix these appeals accordingly."
-    add_to_report "LegacyAppeal.where(id: #{appeal_ids.sort})"
+    add_to_report "LegacyAppeal.where(id: #{ids})"
   end
 end

@@ -8,8 +8,6 @@ class DataIntegrityChecker
     @report = []
   end
 
-  attr_writer :report
-
   def call
     # override your model/query here
   end
