@@ -4,9 +4,9 @@ class DataIntegrityChecksJob < CaseflowJob
   queue_as :low_priority
   application_attr :queue
 
-  CHECKERS = [
-    "ExpiredAsyncJobsChecker",
-    "UntrackedLegacyAppealsChecker"
+  CHECKERS = %w[
+    ExpiredAsyncJobsChecker
+    UntrackedLegacyAppealsChecker
   ].freeze
 
   def perform
