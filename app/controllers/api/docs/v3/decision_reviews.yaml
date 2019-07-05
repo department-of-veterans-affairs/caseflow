@@ -228,9 +228,18 @@ paths:
                             evidence:
                               type: array
                               description: Will be empty https://github.com/department-of-veterans-affairs/caseflow/blob/c57d95f6ea11985b7658782cc82005107e9c3156/app/models/serializers/v2/appeal_status_serializer.rb#L37
-          '400':
+          '404':
+            description: id not found
+            content:
+              application/vnd.api+json:
+                schema:
+                  type: object
+                  properties:
+                    errors:
+                      $ref: "#/components/schemas/errors"
+          '4XX':
             description: Invalid Request
-          '500':
+          '5XX':
             description: Failed
 components:
   schemas:
@@ -482,3 +491,12 @@ components:
         - "88"
         - "89"
         - "99"
+    errors:
+      type: array
+      items:
+        type: object
+        properties:
+          title:
+            type: string
+          detail:
+            type: string
