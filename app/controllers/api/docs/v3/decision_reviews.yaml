@@ -143,104 +143,116 @@ paths:
           description: Failed
   /higher_level_reviews/status/{id}:
     get:
-      summary:
-        responses:
-          '200':
-            description: Status found
-            content:
-              application/vnd.api+json:
-                schema:
-                  type: object
-                  properties:
-                    data:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        type:
-                          type: string
-                          description: Will be "higherLevelReview"
-                        attributes:
-                          type: object
-                          properties:
-                            appealIds:
-                              type: array
-                              items:
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of an Accepted Higher-Level Review
+          schema:
+            type : integer
+            format: int64
+            minimum: 1
+      summary: After submitting a Higher-Level Review, you can check to see it's current status
+      responses:
+        '200':
+          description: Status found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      type:
+                        type: string
+                        description: Will be "higherLevelReview"
+                      attributes:
+                        type: object
+                        properties:
+                          appealIds:
+                            type: array
+                            items:
+                              type: string
+                          updated:
+                            type: string
+                            format: date-time
+                          incompleteHistory:
+                            type: boolean
+                          active:
+                            type: boolean
+                          description:
+                            type: string
+                          location:
+                            type: string
+                          aoj:
+                            type: string
+                          programArea:
+                            type: string
+                          status:
+                            type: object
+                            properties:
+                              type:
                                 type: string
-                            updated:
-                              type: string
-                              format: date-time
-                            incompleteHistory:
-                              type: boolean
-                            active:
-                              type: boolean
-                            description:
-                              type: string
-                            location:
-                              type: string
-                            aoj:
-                              type: string
-                            programArea:
-                              type: string
-                            status:
+                              details:
+                                type: object
+                                properties:
+                                  description:
+                                    type: string
+                                  disposition:
+                                    type: string
+                          alerts:
+                            type: array
+                            items:
+                              type: object
+                          issues:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                active:
+                                  type: boolean
+                                lastAction:
+                                  type: string
+                                  format: date-time
+                                date:
+                                  type: string
+                                  format: date-time
+                                description:
+                                  type: string
+                                diagnosticCode:
+                                  type: string
+                          events:
+                            type: array
+                            items:
                               type: object
                               properties:
                                 type:
                                   type: string
-                                details:
-                                  type: object
-                                  properties:
-                                    description:
-                                      type: string
-                                    disposition:
-                                      type: string
-                            alerts:
-                              type: array
-                              items:
-                                type: object
-                            issues:
-                              type: array
-                              items:
-                                type: object
-                                properties:
-                                  active:
-                                    type: boolean
-                                  lastAction:
-                                    type: string
-                                    format: date-time
-                                  date:
-                                    type: string
-                                    format: date-time
-                                  description:
-                                    type: string
-                                  diagnosticCode:
-                                    type: string
-                            events:
-                              type: array
-                              items:
-                                type: object
-                                properties:
-                                  type:
-                                    type: string
-                                  date:
-                                    type: string
-                                    format: date-time
-                            evidence:
-                              type: array
-                              description: Will be empty https://github.com/department-of-veterans-affairs/caseflow/blob/c57d95f6ea11985b7658782cc82005107e9c3156/app/models/serializers/v2/appeal_status_serializer.rb#L37
-          '404':
-            description: id not found
-            content:
-              application/vnd.api+json:
-                schema:
-                  type: object
-                  properties:
-                    errors:
-                      $ref: "#/components/schemas/errors"
-          '4XX':
-            description: Invalid Request
-          '5XX':
-            description: Failed
+                                date:
+                                  type: string
+                                  format: date-time
+                          evidence:
+                            type: array
+                            description: Will be empty https://github.com/department-of-veterans-affairs/caseflow/blob/c57d95f6ea11985b7658782cc82005107e9c3156/app/models/serializers/v2/appeal_status_serializer.rb#L37
+                            items:
+                              type: object
+                              nullable: true
+        '404':
+          description: id not found
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
+        '4XX':
+          description: Invalid Request
+        '5XX':
+          description: Failed
 components:
   schemas:
     nonrating_issue_category:
