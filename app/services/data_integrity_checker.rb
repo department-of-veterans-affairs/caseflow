@@ -22,6 +22,10 @@ class DataIntegrityChecker
     @report.compact.join("\n")
   end
 
+  def add_to_report(msg)
+    @report << msg
+  end
+
   def slack_channel
     "#appeals-app-alerts"
     # override this to specify a different channel
