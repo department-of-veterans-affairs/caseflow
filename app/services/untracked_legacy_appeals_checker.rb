@@ -25,7 +25,7 @@ class UntrackedLegacyAppealsChecker < DataIntegrityChecker
     ids = appeal_ids.sort
 
     add_to_report "Found #{count} legacy appeals charged to CASEFLOW in VACOLS with no active Caseflow tasks."
-    all_to_report "These appeals will not progress unless location is manually corrected in VACOLS "
+    add_to_report "These appeals will not progress unless location is manually corrected in VACOLS "
     add_to_report "or an applicable Caseflow task is manually created. Research and fix these appeals accordingly."
     add_to_report "LegacyAppeal.where(id: #{ids})"
   end
