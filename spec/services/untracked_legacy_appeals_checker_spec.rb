@@ -62,8 +62,6 @@ describe UntrackedLegacyAppealsChecker do
       it "does not build a report" do
         subject.call
 
-        binding.pry
-
         expect(subject.report?).to be_falsey
       end
     end
