@@ -20,15 +20,15 @@ describe DataIntegrityChecksJob do
   describe "#perform" do
     it "does not send slack notifications unless there is a report" do
       described_class.perform_now
-  
+
       expect(expired_async_jobs_checker).to have_received(:call).once
       expect(expired_async_jobs_checker).to have_received(:report?).once
       expect(expired_async_jobs_checker).to_not have_received(:report)
-  
+
       expect(untracked_legacy_appeals_checker).to have_received(:call).once
       expect(untracked_legacy_appeals_checker).to have_received(:report?).once
       expect(untracked_legacy_appeals_checker).to_not have_received(:report)
-  
+
       expect(slack_service).to_not have_received(:send_notification)
     end
   end
