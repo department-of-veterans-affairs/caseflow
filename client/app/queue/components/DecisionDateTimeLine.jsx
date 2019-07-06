@@ -26,6 +26,37 @@ class DecisionDateTimeLine extends React.PureComponent {
         <dd>{moment(appeal.decisionDate).format('MM/DD/YYYY')}</dd></div> : null;
     };
 
+    const showWithdrawnDecisionText = () => {
+      return appeal.withdrawn ?
+        <span>{COPY.CASE_TIMELINE_APPEAL_WITHDRAWN}</span> :
+        <span>{COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING}</span>;
+    };
+
+    const showDecisionDateText = () => {
+      return appeal.decisionDate ?
+        <span>{COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA}</span> :
+        <span>{COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING}</span>;
+    };
+
+    const showWithdrawnIconStyle = () => {
+      return appeal.withdrawn ?
+        <span className="timelineLeftPaddingStyle">
+          <CancelIcon /></span> : <span className="greyDotTimelineStyling"><GrayDot /></span>;
+    };
+
+    const showDecisionDateIcon = () => {
+      return appeal.decisionDate ?
+        <span className="timelineLeftPaddingStyle">
+          <GreenCheckmark /></span> : <span className="greyDotTimelineStyling"><GrayDot /></span>;
+    };
+
+    const showTaskListStyling = () => {
+      return (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
+          <div>{appeal.withdrawn || appeal.decisionDate ?
+            <span className="grayLineStyling grayLineTimelineStyling">
+            </span> : <span className="grayBvaPendingLineStyling"></span>}</div>;
+    };
+
     return <React.Fragment>
       {timeline && <tr>
         <td className="taskContainerStyling taskTimeTimelineContainerStyling">
@@ -34,17 +65,11 @@ class DecisionDateTimeLine extends React.PureComponent {
           </CaseDetailsDescriptionList>
         </td>
         <td className="taskInfoWithIconContainer taskInfoWithIconTimelineContainer">
-          {appeal.withdrawalDate || appeal.decisionDate ?
-            <span className="timelineLeftPaddingStyle"></span> : <span className="greyDotTimelineStyling"></span>}
-          {appeal.withdrawn ? <CancelIcon /> : appeal.decisionDate ? <GreenCheckmark /> : <GrayDot /> }
-          { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
-          <div>{appeal.withdrawn || appeal.decisionDate ?
-            <span className="grayLineStyling grayLineTimelineStyling">
-            </span> : <span className="grayBvaPendingLineStyling"></span>}</div>}
+          {appeal.decisionDate ? showDecisionDateIcon() : showWithdrawnIconStyle()}
+          {showTaskListStyling()}
         </td>
         <td className="taskContainerStyling taskInformationTimelineContainerStyling">
-          {appeal.withdrawn ? COPY.CASE_TIMELINE_APPEAL_WITHDRAWN : appeal.decisionDate ?
-            COPY.CASE_TIMELINE_DISPATCHED_FROM_BVA : COPY.CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING } <br />
+          {appeal.withdrawn ? showWithdrawnDecisionText() : showDecisionDateText()} <br />
         </td>
       </tr>}
     </React.Fragment>;
