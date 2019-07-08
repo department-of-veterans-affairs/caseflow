@@ -24,8 +24,9 @@ class ColocatedTask < Task
       ActiveRecord::Base.multi_transaction do
         params_array = params_array.map do |params|
           # Find the task type for a given action.
-          new_task_type = find_subclass_by_action(params.delete(:action).to_s)
-          params.merge!(type: new_task_type&.name, assigned_to: Colocated.singleton)
+          create_params = params.clone
+          new_task_type = find_subclass_by_action(create_params.delete(:action).to_s)
+          create_params.merge!(type: new_task_type&.name, assigned_to: Colocated.singleton)
         end
 
         team_tasks = super(params_array, user)

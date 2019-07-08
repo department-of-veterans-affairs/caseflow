@@ -160,7 +160,7 @@ describe ColocatedTask do
       end
 
       context "at the same time" do
-        let(:params_list) { [task_params, task_params.clone] }
+        let(:params_list) { [task_params, task_params] }
 
         it "does not create any co-located tasks" do
           expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /already an open POA CLARIFICATION action/)
@@ -170,9 +170,19 @@ describe ColocatedTask do
 
       context "when one already exists" do
         let(:params_list) { [task_params] }
+        let!(:existing_action) do
+          FactoryBot.create(
+            :colocated_task,
+            :poa_clarification,
+            appeal: appeal_1,
+            assigned_by: attorney,
+            assigned_to: colocated_org,
+            parent: parent,
+            instructions: [instructions]
+          )
+        end
 
         it "does not create a new co-located task" do
-          ColocatedTask.create_many_from_params([task_params.clone], attorney)
           before_count = ColocatedTask.all.count
           expect { subject }.to raise_error(ActiveRecord::RecordInvalid, /already an open POA CLARIFICATION action/)
           expect(ColocatedTask.all.count).to eq before_count
@@ -408,17 +418,13 @@ describe ColocatedTask do
     end
 
     context "for legacy appeals, the new assigned to location is set correctly" do
-      let(:task_params) do
-        {
-          appeal: create(:legacy_appeal, vacols_case: create(:case)),
-          assigned_by: attorney,
-          action: action,
-          assigned_to: org,
-          parent: create(:root_task)
-        }
-      end
       let(:org_colocated_task) do
-        ColocatedTask.create_many_from_params([task_params], attorney).first
+        FactoryBot.create(
+          :colocated_task,
+          action,
+          assigned_by: attorney,
+          assigned_to: org
+        )
       end
       let(:legacy_colocated_task) { org_colocated_task.children.first }
 
@@ -449,7 +455,7 @@ describe ColocatedTask do
       end
 
       context "when the location code is not CASEFLOW" do
-        let(:action) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample }
+        let(:action) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.sample.to_sym }
         let(:location_code) { "FAKELOC" }
 
         it "does not change the case's location_code" do
