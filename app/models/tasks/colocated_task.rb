@@ -81,14 +81,14 @@ class ColocatedTask < Task
   end
 
   def available_actions_with_conditions(core_actions)
-    if %w[TranslationColocatedTask ScheduleHearingColocatedTask].include?(type) && appeal.is_a?(LegacyAppeal)
+    if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       return legacy_translation_or_hearing_actions(core_actions)
     end
 
     core_actions.unshift(Constants.TASK_ACTIONS.COLOCATED_RETURN_TO_ATTORNEY.to_h)
     core_actions.unshift(Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h)
 
-    if is_a?(TranslationColocatedTask) && appeal.is_a?(Appeal)
+    if action == "translation" && appeal.is_a?(Appeal)
       return ama_translation_actions(core_actions)
     end
 
@@ -118,7 +118,7 @@ class ColocatedTask < Task
   end
 
   def legacy_translation_or_hearing_actions(actions)
-    return legacy_schedule_hearing_actions(actions) if is_a?(ScheduleHearingColocatedTask)
+    return legacy_schedule_hearing_actions(actions) if action == "schedule_hearing"
 
     legacy_translation_actions(actions)
   end
@@ -146,7 +146,7 @@ class ColocatedTask < Task
        all_tasks_closed_for_appeal? &&
        appeal_in_caseflow_vacols_location? &&
        assigned_to.is_a?(Organization)
-      AppealRepository.update_location!(appeal, location_based_on_action)
+      AppealRepository.update_location!(appeal, vacols_location)
     end
   end
 
@@ -155,9 +155,9 @@ class ColocatedTask < Task
       VACOLS::Case.find(appeal.vacols_id).bfcurloc == LegacyAppeal::LOCATION_CODES[:caseflow]
   end
 
-  def location_based_on_action
-    case type
-    when ScheduleHearingColocatedTask.name
+  def vacols_location
+    case action.to_sym
+    when :schedule_hearing
       # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
       # actually held.
       return assigned_by.vacols_uniq_id if children.all? { |t| t.status == Constants.TASK_STATUSES.cancelled }
@@ -166,8 +166,8 @@ class ColocatedTask < Task
       ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
 
       LegacyAppeal::LOCATION_CODES[:caseflow]
-    when TranslationColocatedTask.name
-      LegacyAppeal::LOCATION_CODES[:translation]
+    when :translation
+      LegacyAppeal::LOCATION_CODES[action.to_sym]
     else
       assigned_by.vacols_uniq_id
     end
