@@ -4,11 +4,11 @@ info:
   description: API version 3 for Decision Reviews provided by the Lighthouse Project
   version: 3.0.0
 servers:
-  url: https://dev-api.va.gov/services/appeals/{version}
-  description: "VA.gov API development environment"
-  variables:
-    version:
-      default: "v3"
+  - url: https://dev-api.va.gov/services/appeals/{version}
+    description: "VA.gov API development environment"
+    variables:
+      version:
+        default: "v3"
 paths:
   /higher_level_reviews:
     post:
