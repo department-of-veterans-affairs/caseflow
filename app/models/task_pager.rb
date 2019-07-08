@@ -5,9 +5,10 @@ class TaskPager
 
   validates :tab_name, presence: true
   validate :assignee_is_user_or_organization
+  validate :sort_order_is_valid
 
-  attr_accessor :assignee, :tab_name, :page
-  # attr_accessor :filters, :sort_by, :sort_order
+  attr_accessor :assignee, :tab_name, :page, :sort_by, :sort_order
+  # attr_accessor :filters
 
   TASKS_PER_PAGE = 15
 
@@ -15,25 +16,42 @@ class TaskPager
     super
 
     @page ||= 1
+    @sort_by ||= Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN
+    @sort_order ||= Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC
 
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
   def paged_tasks
-    tasks_for_tab.order(:created_at).page(page).per(TASKS_PER_PAGE)
+    sorted_tasks(tasks_for_tab).page(page).per(TASKS_PER_PAGE)
   end
 
-  # sorted_tasks(filtered_tasks(tasks_for_tab)).page(page).per(TASKS_PER_PAGE)
-  #
-  # # TODO: Enable sorting on fields in different tables.
-  # def sorted_tasks(tasks)
-  #   # TODO: Validate that we are sorting on a valid field
-  #   @sort_by ||= "created_at"
-  #   @sort_order ||= "asc" # TODO: Check that sort_order is either asc/desc
-  #
-  #   tasks.order(sort_by => sort_order)
-  # end
-  #
+  def sorted_tasks(tasks)
+    case sort_by
+    when Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN, Constants.QUEUE_CONFIG.TASK_DUE_DATE_COLUMN
+      tasks.order(assigned_at: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.TASK_CLOSED_DATE_COLUMN
+      tasks.order(closed_at: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN
+      tasks.order(type: sort_order.to_sym, action: sort_order.to_sym, created_at: sort_order.to_sym)
+    # Columns not yet supported:
+    #
+    # APPEAL_TYPE_COLUMN
+    # CASE_DETAILS_LINK_COLUMN
+    # DOCUMENT_COUNT_READER_LINK_COLUMN
+    # DOCKET_NUMBER_COLUMN
+    # HEARING_BADGE_COLUMN
+    # ISSUE_COUNT_COLUMN
+    # REGIONAL_OFFICE_COLUMN
+    # TASK_ASSIGNEE_COLUMN
+    # TASK_ASSIGNER_COLUMN
+    # TASK_HOLD_LENGTH_COLUMN
+    #
+    else
+      tasks.order(created_at: sort_order.to_sym)
+    end
+  end
+
   # # TODO: Some filters are on other tables that we will need to join to (appeal docket type)
   # def filtered_tasks(tasks)
   #   filters&.each do |filter_string|
@@ -94,6 +112,11 @@ class TaskPager
     unless assignee.is_a?(User) || assignee.is_a?(Organization)
       errors.add(:assignee, COPY::TASK_PAGE_INVALID_ASSIGNEE_MESSAGE)
     end
+  end
+
+  def sort_order_is_valid
+    valid_sort_orders = [Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC, Constants.QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC]
+    errors.add(:sort_order, COPY::TASK_PAGE_INVALID_SORT_ORDER) unless valid_sort_orders.include?(sort_order)
   end
 
   def task_includes
