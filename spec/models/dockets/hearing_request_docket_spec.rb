@@ -274,17 +274,17 @@ describe HearingRequestDocket do
   end
 
   def matching_all_conditions_except_ready_for_distribution
-    appeal = create(:appeal, :advanced_on_docket_due_to_age, :with_tasks, docket_type: "hearing")
+    appeal = create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: "hearing")
     create(:hearing, disposition: "held", appeal: appeal)
   end
 
   def matching_all_conditions_except_priority_and_ready_for_distribution
-    appeal = create(:appeal, :with_tasks, docket_type: "hearing")
+    appeal = create(:appeal, :with_post_intake_tasks, docket_type: "hearing")
     create(:hearing, disposition: "held", appeal: appeal)
   end
 
   def matching_only_priority_and_ready_for_distribution
-    create(:appeal, :advanced_on_docket_due_to_age, :with_tasks, docket_type: "direct_review")
+    create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: "direct_review")
   end
 
   def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_inactive_judge
