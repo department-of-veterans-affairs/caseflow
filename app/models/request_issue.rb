@@ -365,6 +365,10 @@ class RequestIssue < ApplicationRecord
     clear_error!
     attempted!
 
+    # pre-fetch the internal veteran record before we start the transaction
+    # to avoid a slow BGS call causing the transaction to timeout
+    end_product_establishment.veteran
+
     transaction do
       return unless create_decision_issues
 

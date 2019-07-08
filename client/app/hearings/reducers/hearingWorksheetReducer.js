@@ -1,6 +1,7 @@
 import update from 'immutability-helper';
 import { ACTIONS } from '../constants';
 import _ from 'lodash';
+import { getWorksheetAppealsAndIssues } from '../utils';
 
 export const newHearingIssueState = (state, action, spec) => {
   _.extend(spec, { edited: { $set: true } });
@@ -21,16 +22,11 @@ export const newHearingWorksheetState = (state, action, spec) => {
 export const hearingWorksheetReducer = function(state = {}, action = {}) {
   switch (action.type) {
   case ACTIONS.POPULATE_WORKSHEET: {
-    const worksheetAppeals = _.keyBy(action.payload.worksheet.appeals_ready_for_hearing, 'id');
-    let worksheetIssues = _(worksheetAppeals).flatMap('worksheet_issues').
-      keyBy('id').
-      value();
-
-    if (_.isEmpty(worksheetIssues)) {
-      worksheetIssues = _.keyBy(action.payload.worksheet.worksheet_issues, 'id');
-    }
-
-    const worksheet = _.omit(action.payload.worksheet, ['appeals_ready_for_hearing']);
+    const {
+      worksheet,
+      worksheetAppeals,
+      worksheetIssues
+    } = getWorksheetAppealsAndIssues(action.payload.worksheet);
 
     return update(state, {
       worksheetIssues: { $set: worksheetIssues },

@@ -6,12 +6,25 @@ FactoryBot.define do
       number_of_claimants { nil }
     end
 
+    transient do
+      active_task_assigned_at { Time.zone.now }
+    end
+
     sequence(:veteran_file_number, 500_000_000)
     docket_type { Constants.AMA_DOCKETS.evidence_submission }
 
     transient do
       veteran do
         Veteran.find_by(file_number: veteran_file_number) || create(:veteran, file_number: veteran_file_number)
+      end
+    end
+
+    transient do
+      associated_judge do
+        judge = User.find_or_create_by(css_id: "BVAAABSHIRE", station_id: 101)
+        JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
+
+        judge
       end
     end
 
@@ -71,7 +84,7 @@ FactoryBot.define do
       end
     end
 
-    trait :with_tasks do
+    trait :with_post_intake_tasks do
       after(:create) do |appeal, _evaluator|
         appeal.create_tasks_on_intake_success!
       end
@@ -82,6 +95,24 @@ FactoryBot.define do
         appeal.create_tasks_on_intake_success!
         distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
         distribution_tasks.each(&:ready_for_distribution!)
+      end
+    end
+
+    # Currently only creates realistic task trees for direct_review docket
+    # Hearing and Evidence dockets have open branches
+    trait :assigned_to_judge do
+      after(:create) do |appeal, evaluator|
+        appeal.create_tasks_on_intake_success!
+        distribution_tasks = appeal.tasks.select { |task| task.is_a?(DistributionTask) }
+        distribution_tasks.each(&:ready_for_distribution!)
+
+        JudgeAssignTask.create!(appeal: appeal,
+                                parent: appeal.root_task,
+                                appeal_type: Appeal.name,
+                                assigned_at: evaluator.active_task_assigned_at,
+                                assigned_to: evaluator.associated_judge,
+                                action: COPY::JUDGE_ASSIGN_TASK_LABEL)
+        appeal.tasks.where(type: DistributionTask.name).update(status: :completed)
       end
     end
 

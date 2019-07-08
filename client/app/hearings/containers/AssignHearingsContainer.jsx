@@ -8,6 +8,7 @@ import { css } from 'glamor';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import ApiUtil from '../../util/ApiUtil';
+import { getMinutesToMilliseconds } from '../../util/DateUtil';
 import {
   onReceiveUpcomingHearingDays,
   onSelectedHearingDayChange,
@@ -75,7 +76,8 @@ class AssignHearingsContainer extends React.PureComponent {
 
     const requestUrl = `/hearings/schedule/assign/hearing_days?regional_office=${roValue}`;
 
-    return ApiUtil.get(requestUrl).then((response) => {
+    return ApiUtil.get(requestUrl, { timeout: { response: getMinutesToMilliseconds(5) } }
+    ).then((response) => {
       const resp = ApiUtil.convertToCamelCase(JSON.parse(response.text));
 
       this.props.onReceiveUpcomingHearingDays(_.keyBy(resp.hearingDays, 'id'));

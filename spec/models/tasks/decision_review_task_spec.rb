@@ -34,7 +34,8 @@ describe DecisionReviewTask do
       [
         create(:request_issue, :rating, decision_review: hlr, benefit_type: benefit_type),
         create(:request_issue, :rating, decision_review: hlr, benefit_type: benefit_type),
-        create(:request_issue, :nonrating, decision_review: hlr, benefit_type: benefit_type)
+        create(:request_issue, :nonrating, decision_review: hlr, benefit_type: benefit_type),
+        create(:request_issue, :removed, decision_review: hlr, benefit_type: benefit_type)
       ]
     end
     let(:decision_date) { "01/01/2019" }

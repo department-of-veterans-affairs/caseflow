@@ -21,7 +21,7 @@ class Hearings::WorksheetsController < HearingsController
 
     respond_to do |format|
       format.html do
-        render template: "hearings/index", locals: { print_stylesheet: "print/hearings_worksheet" }
+        render template: "hearings/index"
       end
 
       format.json do
@@ -30,8 +30,13 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  def show_print
-    show
+  def print
+    stylesheets = {
+      override_stylesheet: "print/hearings_worksheet_overrides",
+      print_stylesheet: "print/hearings_worksheet"
+    }
+
+    render template: "hearings/index", locals: stylesheets
   end
 
   def update
