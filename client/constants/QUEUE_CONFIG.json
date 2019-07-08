@@ -20,5 +20,10 @@
   "TASK_TYPE_COLUMN": "taskColumn",
 
   "TAB_NAME_REQUEST_PARAM": "tab",
-  "PAGE_NUMBER_REQUEST_PARAM": "page"
+  "PAGE_NUMBER_REQUEST_PARAM": "page",
+  "SORT_COLUMN_REQUEST_PARAM": "sort_by",
+  "SORT_DIRECTION_REQUEST_PARAM": "order",
+  
+  "COLUMN_SORT_ORDER_ASC": "asc",
+  "COLUMN_SORT_ORDER_DESC": "desc"
 }
