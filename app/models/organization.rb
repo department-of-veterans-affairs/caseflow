@@ -71,6 +71,74 @@ class Organization < ApplicationRecord
     "#{path}/users"
   end
 
+  def queue_tabs
+    [
+      unassigned_tasks_tab,
+      assigned_tasks_tab,
+      completed_tasks_tab
+    ]
+  end
+
+  def unassigned_tasks_tab
+    {
+      label: COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE,
+      name: Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME,
+      description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, name),
+      # Compact to account for the maybe absent regional office column
+      columns: [
+        Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
+        Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN,
+        show_regional_office_in_queue? ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
+        Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+        Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
+        Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
+        is_a?(Representative) ? nil : Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN
+      ].compact,
+      allow_bulk_assign: can_bulk_assign_tasks?
+    }
+  end
+
+  def assigned_tasks_tab
+    {
+      label: COPY::QUEUE_PAGE_ASSIGNED_TAB_TITLE,
+      name: Constants.QUEUE_CONFIG.ASSIGNED_TASKS_TAB_NAME,
+      description: format(COPY::ORGANIZATIONAL_QUEUE_PAGE_ASSIGNED_TASKS_DESCRIPTION, name),
+      # Compact to account for the maybe absent regional office column
+      columns: [
+        Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
+        Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN,
+        show_regional_office_in_queue? ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
+        Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
+        Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
+        Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
+      ].compact,
+      allow_bulk_assign: false
+    }
+  end
+
+  def completed_tasks_tab
+    {
+      label: COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE,
+      name: Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME,
+      description: format(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION, name),
+      # Compact to account for the maybe absent regional office column
+      columns: [
+        Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
+        Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN,
+        show_regional_office_in_queue? ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
+        Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+        Constants.QUEUE_CONFIG.TASK_ASSIGNEE_COLUMN,
+        Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
+        Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN
+      ].compact,
+      allow_bulk_assign: false
+    }
+  end
+
   def ama_task_serializer
     WorkQueue::TaskSerializer
   end
