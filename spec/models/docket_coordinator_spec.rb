@@ -64,7 +64,7 @@ describe DocketCoordinator do
   let!(:due_direct_review_cases) do
     (0...due_direct_review_count).map do
       create(:appeal,
-             :with_tasks,
+             :with_post_intake_tasks,
              docket_type: "direct_review",
              receipt_date: 11.months.ago,
              target_decision_date: 1.month.from_now)
@@ -74,7 +74,7 @@ describe DocketCoordinator do
   let!(:other_direct_review_cases) do
     (0...10).map do
       create(:appeal,
-             :with_tasks,
+             :with_post_intake_tasks,
              docket_type: "direct_review",
              receipt_date: 61.days.ago,
              target_decision_date: 304.days.from_now)
@@ -85,13 +85,13 @@ describe DocketCoordinator do
 
   let!(:evidence_submission_cases) do
     (0...other_docket_count).map do
-      create(:appeal, :with_tasks, docket_type: "evidence_submission")
+      create(:appeal, :with_post_intake_tasks, docket_type: "evidence_submission")
     end
   end
 
   let!(:hearing_cases) do
     (0...other_docket_count).map do
-      create(:appeal, :with_tasks, docket_type: "hearing")
+      create(:appeal, :with_post_intake_tasks, docket_type: "hearing")
     end
   end
 
