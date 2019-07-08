@@ -84,19 +84,19 @@ FactoryBot.define do
       trait :ihp do
         initialize_with { IhpColocatedTask.new(attributes) }
         type { IhpColocatedTask.name }
-        instructions { "Hello. It appears that the VSO has not reviewed this case and has not provided an IHP." }
+        instructions { ["Hello. It appears that the VSO has not reviewed this case and has not provided an IHP."] }
       end
 
       trait :poa_clarification do
         initialize_with { PoaClarificationColocatedTask.new(attributes) }
         type { PoaClarificationColocatedTask.name }
         instructions do
-          "We received some correspondence from the Veteran's attorney in November " \
+          ["We received some correspondence from the Veteran's attorney in November " \
           "indicating the attorney wants to withdraw from representation of the Veteran. " \
           "I don't see any paperwork from the Veteran appointing a new rep or otherwise " \
           "acknowledging the withdraw of the old one. Please contact the Veteran to " \
           "clarify if they have current representation. If the Veteran no longer " \
-          "wishes the current representative to act on his behalf, please get that in writing."
+          "wishes the current representative to act on his behalf, please get that in writing."]
         end
       end
 
@@ -104,10 +104,10 @@ FactoryBot.define do
         initialize_with { HearingClarificationColocatedTask.new(attributes) }
         type { HearingClarificationColocatedTask.name }
         instructions do
-          "A March statement filed by the Veteran indicates that they desired " \
+          ["A March statement filed by the Veteran indicates that they desired " \
           "a 'Televideo conference hearing' for all their appeals. No hearing " \
           "was scheduled. Please clarify whether the Veteran still desires a " \
-          "Board hearing, and, if so, please reroute as necessary to schedule one. Thanks!"
+          "Board hearing, and, if so, please reroute as necessary to schedule one. Thanks!"]
         end
       end
 
@@ -115,8 +115,8 @@ FactoryBot.define do
         initialize_with { AojColocatedTask.new(attributes) }
         type { AojColocatedTask.name }
         instructions do
-          "Please clarify whether the Veteran desires AOJ review of any evidence, to include VA " \
-          "treatment records dated through June, submitted since an April statement of the case. Thank you!"
+          ["Please clarify whether the Veteran desires AOJ review of any evidence, to include VA " \
+          "treatment records dated through June, submitted since an April statement of the case. Thank you!"]
         end
       end
 
@@ -124,8 +124,8 @@ FactoryBot.define do
         initialize_with { ExtensionColocatedTask.new(attributes) }
         type { ExtensionColocatedTask.name }
         instructions do
-          "The Veteran's POA submitted a letter requesting a 90 day extension. Please send " \
-          "letter granting the extension."
+          ["The Veteran's POA submitted a letter requesting a 90 day extension. Please send " \
+          "letter granting the extension."]
         end
       end
 
@@ -133,25 +133,25 @@ FactoryBot.define do
         initialize_with { MissingHearingTranscriptsColocatedTask.new(attributes) }
         type { MissingHearingTranscriptsColocatedTask.name }
         instructions do
-          "Good evening, could you please return this to the hearing " \
+          ["Good evening, could you please return this to the hearing " \
           "branch as the hearing was just held and the transcripts are " \
-          "not yet available. Thank you."
+          "not yet available. Thank you."]
         end
       end
 
       trait :unaccredited_rep do
         initialize_with { UnaccreditedRepColocatedTask.new(attributes) }
         type { UnaccreditedRepColocatedTask.name }
-        instructions { "Unaccredited rep" }
+        instructions { ["Unaccredited rep"] }
       end
 
       trait :foia do
         initialize_with { FoiaColocatedTask.new(attributes) }
         type { FoiaColocatedTask.name }
         instructions do
-          "The Veteran's representative submitted FOIA request in December of last year, which " \
+          ["The Veteran's representative submitted FOIA request in December of last year, which " \
           "was acknowledged the same month. To date, there has been no response provided. " \
-          "Please follow up on the FOIA request."
+          "Please follow up on the FOIA request."]
         end
       end
 
@@ -159,24 +159,24 @@ FactoryBot.define do
         initialize_with { RetiredVljColocatedTask.new(attributes) }
         type { RetiredVljColocatedTask.name }
         instructions do
-          "VLJ Snuffy conducted the hearing in June. Since they are now retired, the " \
+          ["VLJ Snuffy conducted the hearing in June. Since they are now retired, the " \
           "Veteran needs to be provided notice of this and an opportunity to request " \
-          "hearing before another VLJ."
+          "hearing before another VLJ."]
         end
       end
 
       trait :arneson do
         initialize_with { ArnesonColocatedTask.new(attributes) }
         type { ArnesonColocatedTask.name }
-        instructions { "email was sent re Arneson letter/ the Veteran needing to be offered a third hearing." }
+        instructions { ["email was sent re Arneson letter/ the Veteran needing to be offered a third hearing."] }
       end
 
       trait :new_rep_arguments do
         initialize_with { NewRepArgumentsColocatedTask.new(attributes) }
         type { NewRepArgumentsColocatedTask.name }
         instructions do
-          "The Veteran recently switched to a new POA. Please determine if the " \
-          "new POA will provide new arguments for the issues on appeal."
+          ["The Veteran recently switched to a new POA. Please determine if the " \
+          "new POA will provide new arguments for the issues on appeal."]
         end
       end
 
@@ -184,10 +184,10 @@ FactoryBot.define do
         initialize_with { PendingScanningVbmsColocatedTask.new(attributes) }
         type { PendingScanningVbmsColocatedTask.name }
         instructions do
-          "There is a pending scanning banner in VBMS indicating documents " \
+          ["There is a pending scanning banner in VBMS indicating documents " \
           "from November are pending scanning. The last documents uploaded " \
           "to the file are from October. Please hold the case in abeyance " \
-          "for 2 weeks to allow the documents to be uploaded and the PSB to clear."
+          "for 2 weeks to allow the documents to be uploaded and the PSB to clear."]
         end
       end
 
@@ -195,10 +195,10 @@ FactoryBot.define do
         initialize_with { AddressVerificationColocatedTask.new(attributes) }
         type { AddressVerificationColocatedTask.name }
         instructions do
-          "VACOLS and Caseflow lists two different addresses for the Veteran. " \
+          ["VACOLS and Caseflow lists two different addresses for the Veteran. " \
           "From reviewing the recent documents in the file, it appears that " \
           "the address in Caseflow is the most recent address. Please verify " \
-          "the Veteran's current address and update VACOLS if warranted."
+          "the Veteran's current address and update VACOLS if warranted."]
         end
       end
 
@@ -206,8 +206,8 @@ FactoryBot.define do
         initialize_with { ScheduleHearingColocatedTask.new(attributes) }
         type { ScheduleHearingColocatedTask.name }
         instructions do
-          "The Veteran has requested a Board hearing as to all appealed issues. " \
-          "To date, no Board hearing has been scheduled."
+          ["The Veteran has requested a Board hearing as to all appealed issues. " \
+          "To date, no Board hearing has been scheduled."]
         end
       end
 
@@ -215,8 +215,8 @@ FactoryBot.define do
         initialize_with { MissingRecordsColocatedTask.new(attributes) }
         type { MissingRecordsColocatedTask.name }
         instructions do
-          "The Veteran had a Board Video Conference Hearing in September with " \
-          "Judge Snuffy. The Hearing transcripts are not of record."
+          ["The Veteran had a Board Video Conference Hearing in September with " \
+          "Judge Snuffy. The Hearing transcripts are not of record."]
         end
       end
 
@@ -224,16 +224,16 @@ FactoryBot.define do
         initialize_with { TranslationColocatedTask.new(attributes) }
         type { TranslationColocatedTask.name }
         instructions do
-          "There are multiple document files that still require translation from " \
+          ["There are multiple document files that still require translation from " \
           "Spanish to English. The files in Spanish have been marked in Caseflow. " \
-          "Please have these documents translated. Thank you!"
+          "Please have these documents translated. Thank you!"]
         end
       end
 
       trait :other do
         initialize_with { OtherColocatedTask.new(attributes) }
         type { OtherColocatedTask.name }
-        instructions { "Please request a waiver of AOJ consideration for new evidence" }
+        instructions { ["Please request a waiver of AOJ consideration for new evidence"] }
       end
 
       after(:build) do |task|
