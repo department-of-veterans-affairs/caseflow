@@ -835,9 +835,11 @@ describe EndProductEstablishment do
       context "when the end product is canceled" do
         let(:status_type_code) { "CAN" }
 
-        it "closes request issues" do
+        it "closes request issues and cancels establishment" do
           subject
+          
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
+          expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
           expect(request_issues.first.closed_status).to eq("end_product_canceled")
         end
