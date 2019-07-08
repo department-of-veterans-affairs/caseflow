@@ -22,11 +22,7 @@ class EvidenceSubmissionWindowTask < GenericTask
   end
 
   def hearing
-    @hearing ||= if parent.is_a?(AssignHearingDispositionTask)
-                   parent.hearing
-                 elsif parent.is_a?(DistributionTask)
-                   parent.children.find_by(type: "HearingTask")&.hearing
-                 end
+    appeal.hearings.order(&:id).last
   end
 
   private
