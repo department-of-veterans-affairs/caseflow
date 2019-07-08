@@ -667,6 +667,9 @@ class Appeal < DecisionReview
   def create_business_line_tasks
     request_issues.select(&:requires_record_request_task?).each do |req_issue|
       business_line = req_issue.business_line
+
+      fail Caseflow::Error::MissingBusinessLine, req_issue.benefit_type unless business_line
+
       VeteranRecordRequest.create!(
         parent: root_task,
         appeal: self,

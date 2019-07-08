@@ -37,6 +37,12 @@ module Caseflow::Error
 
   class FetchHearingLocationsJobError < SerializableError; end
 
+  class MissingBusinessLine < StandardError
+    def initialize(benefit_type)
+      @message = "No Business Line found for #{benefit_type}"
+    end
+  end
+
   class ActionForbiddenError < SerializableError
     def initialize(args = {})
       @code = args[:code] || 403
