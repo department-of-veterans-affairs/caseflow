@@ -22,7 +22,7 @@ describe Veteran do
       middle_name: "Janice",
       last_name: "Juniper",
       name_suffix: "II",
-      ssn: "123456789",
+      ssn: ssn,
       address_line1: "122 Mullberry St.",
       address_line2: "PO BOX 123",
       address_line3: address_line3,
@@ -46,6 +46,7 @@ describe Veteran do
   let(:address_line3) { "Daisies" }
   let(:date_of_birth) { "21/12/1989" }
   let(:service) { [{ branch_of_service: "army" }] }
+  let(:ssn) { "123456789" }
 
   context ".find_or_create_by_file_number" do
     subject { Veteran.find_or_create_by_file_number(file_number, sync_name: sync_name) }
@@ -485,6 +486,24 @@ describe Veteran do
     context "when the date has already passed this year" do
       let(:date_of_birth) { "1/1/1987" }
       it { is_expected.to eq(35) }
+    end
+  end
+
+  context "#ssn" do
+    subject { veteran.ssn }
+
+    context "when populated returns the value" do
+      it { is_expected.to eq("123456789") }
+    end
+
+    context "when there is no ssn returns nil" do
+      let(:ssn) { nil }
+      it { is_expected.to eq(nil) }
+    end
+
+    context "when there is no veteran record returns nil" do
+      let(:veteran_record) { nil }
+      it { is_expected.to eq(nil) }
     end
   end
 
