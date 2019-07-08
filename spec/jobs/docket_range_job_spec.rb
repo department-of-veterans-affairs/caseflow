@@ -9,7 +9,9 @@ describe DocketRangeJob do
     let(:docket_coord) { DocketCoordinator.new }
     before do
       30.times do |index|
-        create(:appeal, :with_tasks, docket_range_date: (index < 16) ? nil : Time.utc(today.year, today.month, 1))
+        create(:appeal,
+               :with_post_intake_tasks,
+               docket_range_date: (index < 16) ? nil : Time.utc(today.year, today.month, 1))
       end
 
       allow(DocketCoordinator).to receive(:new)

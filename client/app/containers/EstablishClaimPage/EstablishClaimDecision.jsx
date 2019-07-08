@@ -174,7 +174,7 @@ export class EstablishClaimDecision extends React.Component {
               tabs={tabs}
               onChange={this.onTabSelected} />
           </div>}
-          {!this.hasMultipleDecisions() && tabs[0].page}
+          {!this.hasMultipleDecisions() && tabs.length > 0 && tabs[0].page}
 
           <div className="usa-width-one-half">
             <TextField

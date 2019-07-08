@@ -21,6 +21,7 @@ Rails.application.config.assets.precompile += %w( 0.webpack-bundle.js )
 
 # Precompile print stylesheets.
 Rails.application.config.assets.precompile += %w( print/hearings_worksheet.css )
+Rails.application.config.assets.precompile += %w( print/hearings_worksheet_overrides.css )
 Rails.application.config.assets.precompile += %w( print/hearings_schedule.css )
 
 Rails.application.config.assets.precompile += %w( favicon.ico )
