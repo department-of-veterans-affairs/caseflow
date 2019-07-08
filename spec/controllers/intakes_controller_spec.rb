@@ -4,18 +4,23 @@ RSpec.describe IntakesController do
   before do
     Fakes::Initializer.load!
     User.authenticate!(roles: ["Mail Intake"])
+    FeatureToggle.enable!(:intake_reserved_file_number)
 
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
     allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
     allow(bgs).to receive(:fetch_veteran_info).and_call_original
   end
 
+  after do
+    FeatureToggle.disable!(:intake_reserved_file_number)
+  end
+
   let(:bgs) { BGSService.new }
 
   describe "#create" do
-    let(:file_number) { "123456789" }
-    let(:ssn) { file_number.to_s.reverse } # our fakes do this
-    let!(:veteran) { create(:veteran, file_number: file_number) }
+    let(:file_number) { "123456788" }
+    let(:ssn) { "666660000" }
+    let!(:veteran) { create(:veteran, file_number: file_number, ssn: ssn) }
 
     it "should search by Veteran file number" do
       post :create, params: { file_number: file_number, form_type: "higher_level_review" }
@@ -58,6 +63,19 @@ RSpec.describe IntakesController do
         expect(vet.first_name).to eq "Ed"
         expect(vet.last_name).to eq "Merica"
         expect(bgs).to have_received(:fetch_veteran_info).exactly(1).times
+      end
+    end
+
+    context "veteran in BGS with reserved file number" do
+      let(:file_number) { "123456789" }
+      let!(:veteran) {} # no-op
+      before { Generators::Veteran.build(file_number: file_number, first_name: "Ed", last_name: "Merica") }
+
+      it "should search by reserved Veteran file number" do
+        expect(Veteran.find_by_file_number_or_ssn(file_number)).to be_nil
+        post :create, params: { file_number: file_number, form_type: "higher_level_review" }
+        expect(response.status).to eq(422)
+        expect(Intake.last.veteran_file_number).to eq(file_number)
       end
     end
 

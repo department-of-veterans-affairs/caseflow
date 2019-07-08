@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 class Hearings::WorksheetsController < HearingsController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_access_to_reader_or_hearings, except: [:update]
+  before_action :verify_edit_worksheet_access, only: [:update]
+
   rescue_from ActiveRecord::RecordNotFound do |e|
     Rails.logger.debug "Worksheets Controller failed: #{e.message}"
     render json: { "errors": ["message": e.message, code: 1000] }, status: :not_found
@@ -16,7 +21,7 @@ class Hearings::WorksheetsController < HearingsController
 
     respond_to do |format|
       format.html do
-        render template: "hearings/index", locals: { print_stylesheet: "print/hearings_worksheet" }
+        render template: "hearings/index"
       end
 
       format.json do
@@ -25,8 +30,13 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  def show_print
-    show
+  def print
+    stylesheets = {
+      override_stylesheet: "print/hearings_worksheet_overrides",
+      print_stylesheet: "print/hearings_worksheet"
+    }
+
+    render template: "hearings/index", locals: stylesheets
   end
 
   def update

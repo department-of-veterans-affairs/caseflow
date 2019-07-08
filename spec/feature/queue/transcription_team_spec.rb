@@ -9,7 +9,7 @@ RSpec.feature "TranscriptionTeam" do
   let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
   let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
   let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-  let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+  let!(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
   let!(:transcription_task) { FactoryBot.create(:transcription_task, parent: disposition_task, appeal: appeal) }
 
   before do
@@ -18,6 +18,14 @@ RSpec.feature "TranscriptionTeam" do
   end
 
   describe "transcription team member completes a transcription task" do
+    it "does not have an input field for instructions" do
+      visit("/organizations/transcription")
+      click_on veteran_link_text
+      click_dropdown(text: Constants.TASK_ACTIONS.COMPLETE_TRANSCRIPTION.to_h[:label])
+
+      expect(page).to_not have_field("instructions")
+    end
+
     scenario "completes the task" do
       visit("/organizations/transcription")
       click_on veteran_link_text

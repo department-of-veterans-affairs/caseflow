@@ -29,10 +29,9 @@ class HearingWorksheetContainer extends React.Component {
           }}
           failStatusMessageProps={{
             title: 'Unable to load the hearing worksheet.'
-          }}>
-          <HearingWorksheet
-            print={this.props.print}
-          />
+          }}
+        >
+          <HearingWorksheet />
         </LoadingDataDisplay>
       </React.Fragment>
     );
@@ -40,8 +39,7 @@ class HearingWorksheetContainer extends React.Component {
 }
 
 HearingWorksheetContainer.propTypes = {
-  hearingId: PropTypes.string.isRequired,
-  print: PropTypes.bool
+  hearingId: PropTypes.string.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

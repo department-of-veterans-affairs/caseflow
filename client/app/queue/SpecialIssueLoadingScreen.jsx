@@ -5,19 +5,26 @@ import { bindActionCreators } from 'redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 
 import { setSpecialIssues } from './QueueActions';
 
 class SpecialIssueLoadingScreen extends React.PureComponent {
-  createLoadPromise = () => ApiUtil.get(
-    `/appeals/${this.props.appealExternalId}/special_issues`, { timeout: { response: 5 * 60 * 1000 } }).then(
-    (response) => {
-      // eslint-disable-next-line no-unused-vars
-      const { appeal_id, id, ...specialIssues } = JSON.parse(response.text);
+  createLoadPromise = () => {
+    const requestOptions = {
+      timeout: { response: getMinutesToMilliseconds(5) }
+    };
 
-      this.props.setSpecialIssues(specialIssues);
-    }
-  );
+    return ApiUtil.get(
+      `/appeals/${this.props.appealExternalId}/special_issues`, requestOptions).then(
+      (response) => {
+        // eslint-disable-next-line no-unused-vars
+        const { appeal_id, id, ...specialIssues } = JSON.parse(response.text);
+
+        this.props.setSpecialIssues(specialIssues);
+      }
+    );
+  }
 
   reload = () => window.location.reload();
 

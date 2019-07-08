@@ -18,9 +18,6 @@ DEVELOPMENT_JUDGE_TEAMS = {
 
 require "database_cleaner"
 
-# Explicitly include mail_task so we can create instances of MailTask's subclasses that are in the same file.
-require "mail_task"
-
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
 # rubocop:disable Metrics/AbcSize
@@ -59,6 +56,8 @@ class SeedDB
     User.create(css_id: "BVAGGREY", station_id: 101, full_name: "BVA Dispatch user without cases")
     dispatch_admin = User.create(css_id: "BVAGBLACK", station_id: 101, full_name: "BVA Dispatch admin without cases")
     OrganizationsUser.make_user_admin(dispatch_admin, BvaDispatch.singleton)
+    bva_intake_admin = User.create(css_id: "BVAGBLUE", station_id: 101, full_name: "BVA Intake admin")
+    OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
 
     Functions.grant!("System Admin", users: User.all.pluck(:css_id))
 
@@ -125,16 +124,16 @@ class SeedDB
     OrganizationsUser.add_user_to_organization(hearings_member, HearingsManagement.singleton)
     OrganizationsUser.add_user_to_organization(hearings_member, HearingAdmin.singleton)
 
-    create_no_show_hearings_tasks
+    create_different_hearings_tasks
     create_change_hearing_disposition_task
   end
 
-  def create_no_show_hearings_tasks
-    5.times do
+  def create_different_hearings_tasks
+    10.times do
       appeal = FactoryBot.create(
         :appeal,
         :hearing_docket,
-        closest_regional_office: %w[RO17 RO19 RO31].sample
+        closest_regional_office: ["RO17", "RO19", "RO31", nil].sample
       )
       root_task = FactoryBot.create(:root_task, appeal: appeal)
       distribution_task = FactoryBot.create(
@@ -153,8 +152,12 @@ class SeedDB
         parent: parent_hearing_task,
         appeal: appeal
       )
-      disposition_task = FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
-      FactoryBot.create(:no_show_hearing_task, parent: disposition_task, appeal: appeal)
+      disposition_task = FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
+      FactoryBot.create(
+        [:no_show_hearing_task, :evidence_submission_window_task].sample,
+        parent: disposition_task,
+        appeal: appeal
+      )
     end
   end
 
@@ -166,7 +169,7 @@ class SeedDB
     root_task = FactoryBot.create(:root_task, appeal: appeal)
     distribution_task = FactoryBot.create(:distribution_task, appeal: appeal, parent: root_task)
     parent_hearing_task = FactoryBot.create(:hearing_task, parent: distribution_task, appeal: appeal)
-    FactoryBot.create(:disposition_task, parent: parent_hearing_task, appeal: appeal)
+    FactoryBot.create(:assign_hearing_disposition_task, parent: parent_hearing_task, appeal: appeal)
 
     hearing = FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day)
     FactoryBot.create(:hearing_task_association, hearing: hearing, hearing_task: parent_hearing_task)
@@ -538,7 +541,7 @@ class SeedDB
 
     FactoryBot.create(
       :appeal,
-      :with_tasks,
+      :with_post_intake_tasks,
       number_of_claimants: 1,
       closest_regional_office: ro_key,
       veteran_file_number: vet.file_number,
@@ -595,10 +598,9 @@ class SeedDB
 
     es = "evidence_submission"
     dr = "direct_review"
+    # Older style, tasks to be created later
     [
       { number_of_claimants: nil, veteran_file_number: "783740847", docket_type: es, request_issue_count: 3 },
-      { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
-      { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 },
       { number_of_claimants: 1, veteran_file_number: "228081153", docket_type: es, request_issue_count: 1 },
       { number_of_claimants: 1, veteran_file_number: "152003980", docket_type: dr, request_issue_count: 3 },
       { number_of_claimants: 1, veteran_file_number: "375273128", docket_type: dr, request_issue_count: 1 },
@@ -614,6 +616,25 @@ class SeedDB
         number_of_claimants: params[:number_of_claimants],
         veteran_file_number: params[:veteran_file_number],
         docket_type: params[:docket_type],
+        request_issues: FactoryBot.create_list(
+          :request_issue, params[:request_issue_count], :nonrating, notes: notes
+        )
+      )
+    end
+
+    # Newer style, tasks created through the Factory trait
+    [
+      { number_of_claimants: nil, veteran_file_number: "963360019", docket_type: dr, request_issue_count: 2 },
+      { number_of_claimants: 1, veteran_file_number: "604969679", docket_type: dr, request_issue_count: 1 },
+    ].each do |params|
+      FactoryBot.create(
+        :appeal,
+        :assigned_to_judge,
+        number_of_claimants: params[:number_of_claimants],
+        active_task_assigned_at: Time.zone.now,
+        veteran_file_number: params[:veteran_file_number],
+        docket_type: params[:docket_type],
+        closest_regional_office: "RO17",
         request_issues: FactoryBot.create_list(
           :request_issue, params[:request_issue_count], :nonrating, notes: notes
         )
@@ -761,6 +782,25 @@ class SeedDB
     FactoryBot.create(:root_task, appeal: appeal)
   end
 
+  def create_appeal_at_judge_assignment(judge: User.find_by_css_id("BVAAABSHIRE"), assigned_at: Time.zone.now)
+    description = "Service connection for pain disorder is granted with an evaluation of 70\% effective May 1 2011"
+    notes = "Pain disorder with 100\% evaluation per examination"
+
+    FactoryBot.create(
+      :appeal,
+      :assigned_to_judge,
+      number_of_claimants: 1,
+      associated_judge: judge,
+      active_task_assigned_at: assigned_at,
+      veteran_file_number: Generators::Random.unique_ssn,
+      docket_type: "direct_review",
+      closest_regional_office: "RO17",
+      request_issues: FactoryBot.create_list(
+        :request_issue, 2, contested_issue_description: description, notes: notes
+      )
+    )
+  end
+
   def create_task_at_judge_assignment(appeal, judge, assigned_at = Time.zone.yesterday)
     FactoryBot.create(:ama_judge_task,
                       assigned_to: judge,
@@ -770,7 +810,7 @@ class SeedDB
   end
 
   def create_task_at_judge_review(appeal, judge, attorney)
-    parent = FactoryBot.create(:ama_judge_task,
+    parent = FactoryBot.create(:ama_judge_decision_review_task,
                                :in_progress,
                                assigned_to: judge,
                                appeal: appeal,
@@ -788,7 +828,7 @@ class SeedDB
 
   def create_task_at_colocated(appeal, judge, attorney, task_attributes = {})
     parent = FactoryBot.create(
-      :ama_judge_task,
+      :ama_judge_decision_review_task,
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
@@ -828,7 +868,7 @@ class SeedDB
 
   def create_task_at_attorney_review(appeal, judge, attorney)
     parent = FactoryBot.create(
-      :ama_judge_task,
+      :ama_judge_decision_review_task,
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
@@ -846,8 +886,26 @@ class SeedDB
   end
 
   def create_task_at_quality_review(qr_user = nil, judge_name = nil, attorney_name = nil)
-    root_task = FactoryBot.create(:root_task)
-    appeal = root_task.appeal
+    vet = FactoryBot.create(
+      :veteran,
+      file_number: Faker::Number.number(9).to_s,
+      first_name: Faker::Name.first_name,
+      last_name: Faker::Name.last_name
+    )
+    notes = "Pain disorder with 100\% evaluation per examination"
+
+    appeal = FactoryBot.create(
+      :appeal,
+      :with_post_intake_tasks,
+      number_of_claimants: 1,
+      veteran_file_number: vet.file_number,
+      docket_type: "direct_review",
+      closest_regional_office: "RO17",
+      request_issues: FactoryBot.create_list(
+        :request_issue, 1, :nonrating, notes: notes
+      )
+    )
+    root_task = appeal.root_task
 
     judge = FactoryBot.create(:user, station_id: 101)
     judge.update!(full_name: judge_name) if judge_name
@@ -857,8 +915,8 @@ class SeedDB
     atty = FactoryBot.create(:user, station_id: 101)
     atty.update!(full_name: attorney_name) if attorney_name
     FactoryBot.create(:staff, :attorney_role, user: atty)
-    atty_task_params = [{ appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }]
-    atty_task = AttorneyTask.create_many_from_params(atty_task_params, judge).first
+    atty_task_params = { appeal: appeal, parent_id: judge_task.id, assigned_to: atty, assigned_by: judge }
+    atty_task = AttorneyTask.create!(atty_task_params)
 
     atty_task.update!(status: Constants.TASK_STATUSES.completed)
     judge_task.update!(status: Constants.TASK_STATUSES.completed)
@@ -890,7 +948,7 @@ class SeedDB
 
     appeal = FactoryBot.create(
       :appeal,
-      :with_tasks,
+      :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: vet.file_number,
       docket_type: "hearing",
@@ -904,7 +962,7 @@ class SeedDB
     judge = FactoryBot.create(:user, station_id: 101)
     FactoryBot.create(:staff, :judge_role, user: judge)
     judge_task = FactoryBot.create(
-      :ama_judge_task,
+      :ama_judge_decision_review_task,
       :on_hold,
       assigned_to: judge,
       appeal: appeal,
@@ -947,23 +1005,23 @@ class SeedDB
     attorney = User.find_by(css_id: "BVASCASPER1")
     judge = User.find_by(css_id: "BVAAABSHIRE")
 
+    # At Judge Assignment
+    #evidence submission docket
     create_task_at_judge_assignment(@ama_appeals[0], judge, 35.days.ago)
     create_task_at_judge_assignment(@ama_appeals[1], judge)
-    create_task_at_judge_assignment(@ama_appeals[2], judge)
-    create_task_at_judge_assignment(@ama_appeals[3], judge)
-    create_task_at_judge_review(@ama_appeals[4], judge, attorney)
-    create_task_at_judge_review(@ama_appeals[5], judge, attorney)
-    create_task_at_colocated(@ama_appeals[6], judge, attorney)
+
+    create_task_at_judge_review(@ama_appeals[2], judge, attorney)
+    create_task_at_judge_review(@ama_appeals[3], judge, attorney)
+    create_task_at_colocated(@ama_appeals[4], judge, attorney)
     create_task_at_colocated(FactoryBot.create(:appeal), judge, attorney, action: "translation")
-    create_task_at_attorney_review(@ama_appeals[7], judge, attorney)
-    create_task_at_attorney_review(@ama_appeals[8], judge, attorney)
-    create_task_at_judge_assignment(@ama_appeals[9], judge)
-    create_task_at_judge_review(@ama_appeals[10], judge, attorney)
-    create_task_at_colocated(@ama_appeals[11], judge, attorney)
+    create_task_at_attorney_review(@ama_appeals[5], judge, attorney)
+    create_task_at_attorney_review(@ama_appeals[6], judge, attorney)
+    create_task_at_judge_assignment(@ama_appeals[7], judge)
+    create_task_at_judge_review(@ama_appeals[8], judge, attorney)
+    create_task_at_colocated(@ama_appeals[9], judge, attorney)
 
     9.times do
-      appeal = FactoryBot.create(:appeal)
-      create_task_at_judge_assignment(appeal, judge, Time.zone.today)
+      create_appeal_at_judge_assignment(judge: judge, assigned_at: Time.zone.today)
     end
 
     create_colocated_legacy_tasks(attorney)
@@ -1029,8 +1087,9 @@ class SeedDB
 
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
-    r = Redis.new(url: Rails.application.secrets.redis_url_cache)
-    r.keys.each { |k| r.del(k) }
+    cm = CacheManager.new
+    CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
+    Fakes::EndProductStore.new.clear!
   end
 
   def setup_dispatch
@@ -1095,7 +1154,7 @@ class SeedDB
 
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :with_tasks,
+      :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "808415990",
       docket_type: "hearing",
@@ -1106,7 +1165,7 @@ class SeedDB
     )
     @ama_appeals << FactoryBot.create(
       :appeal,
-      :with_tasks,
+      :with_post_intake_tasks,
       number_of_claimants: 1,
       veteran_file_number: "992190636",
       docket_type: "hearing",
@@ -1139,8 +1198,8 @@ class SeedDB
     # create them in all envs
     create_annotations
     create_tags
-    create_ama_appeals
     create_users
+    create_ama_appeals
     create_hearing_days
     create_veterans_ready_for_hearing
     create_tasks

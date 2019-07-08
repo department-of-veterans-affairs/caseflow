@@ -23,6 +23,14 @@ describe BulkTaskAssignment do
                         created_at: 1.day.ago)
     end
 
+    # Even it is the oldest task, it should skip it becasue it is on hold
+    let!(:no_show_hearing_task4) do
+      FactoryBot.create(:no_show_hearing_task,
+                        assigned_to: organization,
+                        status: :on_hold,
+                        created_at: 6.days.ago)
+    end
+
     let(:assigned_to) { create(:user) }
     let(:assigned_by) { create(:user) }
 

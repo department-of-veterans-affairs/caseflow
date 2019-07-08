@@ -29,6 +29,12 @@ Rails.application.routes.draw do
     namespace :v2 do
       resources :appeals, only: :index
     end
+    namespace :docs do
+      namespace :v3, defaults: { format: 'json' } do
+        get 'decision_reviews', to: 'docs#decision_reviews'
+      end
+    end
+    get "metadata", to: 'metadata#index'
   end
 
   namespace :idt do
@@ -128,15 +134,15 @@ Rails.application.routes.draw do
   end
   get '/hearings/dockets', to: redirect("/hearings/schedule")
   get 'hearings/schedule', to: "hearings/hearing_day#index"
-  get 'hearings/:hearing_id/details', to: "hearing_schedule#hearing_details_index"
+  get 'hearings/:hearing_id/details', to: "hearings_application#hearing_details_index"
   get 'hearings/schedule/docket/:id', to: "hearings/hearing_day#index"
   get 'hearings/schedule/docket/:id/print', to: "hearings/hearing_day#index_print"
-  get 'hearings/schedule/build', to: "hearing_schedule#build_schedule_index"
-  get 'hearings/schedule/build/upload', to: "hearing_schedule#build_schedule_index"
-  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearing_schedule#build_schedule_index"
-  get 'hearings/schedule/assign', to: "hearing_schedule#index"
+  get 'hearings/schedule/build', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearings_application#build_schedule_index"
+  get 'hearings/schedule/assign', to: "hearings_application#index"
+  get 'hearings/worksheet/print', to: "hearings/worksheets#print"
   get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
-  get 'hearings/:id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
@@ -194,7 +200,7 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index]
 
-  get 'cases/:caseflow_veteran_id', to: 'appeals#show_case_list'
+  get 'cases/:veteran_ids', to: 'appeals#show_case_list'
   get 'cases_to_schedule/:ro', to: 'tasks#ready_for_hearing_schedule'
 
   scope path: '/queue' do
@@ -212,13 +218,14 @@ Rails.application.routes.draw do
   post '/team_management/national_vso', to: 'team_management#create_national_vso'
   post '/team_management/field_vso', to: 'team_management#create_field_vso'
 
-  get '/search', to: 'queue#index'
+  get '/search', to: 'appeals#show_case_list'
 
   resources :legacy_tasks, only: [:create, :update]
   resources :tasks, only: [:index, :create, :update] do
     member do
       post :reschedule
       post :request_hearing_disposition_change
+      patch :change_type, to: 'tasks/change_type#update'
     end
     resources(:place_hold, only: [:create], controller: 'tasks/place_hold')
     resources(:end_hold, only: [:create], controller: 'tasks/end_hold')
@@ -232,6 +239,7 @@ Rails.application.routes.draw do
 
   resources :organizations, only: [:show], param: :url do
     resources :tasks, only: [:index], controller: 'organizations/tasks'
+    resources :task_pages, only: [:index], controller: 'organizations/task_pages'
     resources :users, only: [:index, :create, :update, :destroy], controller: 'organizations/users'
     resources :members, only: [:index], controller: 'organizations/members'
   end
@@ -270,6 +278,8 @@ Rails.application.routes.draw do
 
   # :nocov:
   namespace :test do
+    get "/error", to: "users#show_error"
+
     resources :users, only: [:index]
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
@@ -279,6 +289,5 @@ Rails.application.routes.draw do
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
-
   # :nocov:
 end

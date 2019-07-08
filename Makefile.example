@@ -5,7 +5,7 @@
 #
 # To use this file:
 #
-#   % cp Makefile.example Makefile
+#   % ln -s Makefile.example Makefile
 #
 # Examples:
 #
@@ -95,11 +95,16 @@ fresh:
 	git fresh
 
 reset:
-	bundle exec rake db:reset
+	bundle exec rake db:drop db:create db:schema:load local:vacols:seed db:seed
 	bundle exec rails runner scripts/enable_features_dev.rb
 
-install:
+bundle-install:
 	bundle check || bundle install
+
+client-install:
+	cd client && yarn install
+
+install: bundle-install client-install
 
 update: fresh install migrate
 

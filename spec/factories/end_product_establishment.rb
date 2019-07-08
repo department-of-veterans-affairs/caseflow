@@ -8,6 +8,7 @@ FactoryBot.define do
     code { "030HLRR" }
     modifier { "030" }
     payee_code { EndProduct::DEFAULT_PAYEE_CODE }
+    user { create(:user) }
 
     trait :cleared do
       synced_status { "CLR" }

@@ -47,7 +47,8 @@ class HearingRepository
         vdbvapoc: hearing_day.bva_poc
       )
 
-      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).find_by(vdkey: hearing_day.id)
+      vacols_record = VACOLS::CaseHearing.for_appeal(appeal.vacols_id).where(vdkey: hearing_day.id)
+        .order(addtime: :desc).last
       hearing = LegacyHearing.assign_or_create_from_vacols_record(vacols_record)
 
       hearing.update(hearing_location_attributes: hearing_location_attrs) unless hearing_location_attrs.nil?
@@ -147,19 +148,12 @@ class HearingRepository
         venue_key: vacols_record.hearing_venue,
         disposition: VACOLS::CaseHearing::HEARING_DISPOSITIONS[vacols_record.hearing_disp.try(:to_sym)],
         representative_name: vacols_record.repname,
-        representative: VACOLS::Case::REPRESENTATIVES[vacols_record.bfso][:full_name],
         aod: VACOLS::CaseHearing::HEARING_AODS[vacols_record.aod.try(:to_sym)],
         hold_open: vacols_record.holddays,
         transcript_requested: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.tranreq.try(:to_sym)],
         transcript_sent_date: AppealRepository.normalize_vacols_date(vacols_record.transent),
         add_on: VACOLS::CaseHearing::BOOLEAN_MAP[vacols_record.addon.try(:to_sym)],
         notes: vacols_record.notes1,
-        appellant_address_line_1: vacols_record.saddrst1,
-        appellant_address_line_2: vacols_record.saddrst2,
-        appellant_city: vacols_record.saddrcty,
-        appellant_state: vacols_record.saddrstt,
-        appellant_country: vacols_record.saddrcnty,
-        appellant_zip: vacols_record.saddrzip,
         appeal_type: VACOLS::Case::TYPES[vacols_record.bfac],
         docket_number: vacols_record.tinum || "Missing Docket Number",
         veteran_first_name: vacols_record.snamef,
@@ -172,7 +166,6 @@ class HearingRepository
         request_type: vacols_record.hearing_type,
         scheduled_for: date,
         hearing_day_id: vacols_record.vdkey,
-        master_record: false,
         bva_poc: vacols_record.vdbvapoc,
         judge_id: hearing.user_id
       }

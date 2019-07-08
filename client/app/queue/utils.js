@@ -3,7 +3,6 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment';
 import StringUtil from '../util/StringUtil';
-import ApiUtil from '../util/ApiUtil';
 import {
   redText,
   ISSUE_DISPOSITIONS,
@@ -18,6 +17,7 @@ import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES.json';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES.json';
 import TASK_STATUSES from '../../constants/TASK_STATUSES.json';
 import CO_LOCATED_ADMIN_ACTIONS from '../../constants/CO_LOCATED_ADMIN_ACTIONS.json';
+import { formatDateStrUtc } from '../util/DateUtil';
 
 /**
  * For legacy attorney checkout flow, filter out already-decided issues. Undecided
@@ -52,79 +52,85 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
   };
 };
 
+const taskAttributesFromRawTask = (task) => {
+  const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
+    firstName: task.attributes.decision_prepared_by.first_name,
+    lastName: task.attributes.decision_prepared_by.last_name
+  } : null;
+
+  return {
+    uniqueId: task.id,
+    isLegacy: false,
+    type: task.attributes.type,
+    appealType: task.attributes.appeal_type,
+    addedByCssId: null,
+    appealId: task.attributes.appeal_id,
+    externalAppealId: task.attributes.external_appeal_id,
+    assignedOn: task.attributes.assigned_at,
+    closestRegionalOffice: task.attributes.closest_regional_office,
+    createdAt: task.attributes.created_at,
+    closedAt: task.attributes.closed_at,
+    assigneeName: task.attributes.assignee_name,
+    assignedTo: {
+      cssId: task.attributes.assigned_to.css_id,
+      name: task.attributes.assigned_to.name,
+      id: task.attributes.assigned_to.id,
+      isOrganization: task.attributes.assigned_to.is_organization,
+      type: task.attributes.assigned_to.type
+    },
+    assignedBy: {
+      firstName: task.attributes.assigned_by.first_name,
+      lastName: task.attributes.assigned_by.last_name,
+      cssId: task.attributes.assigned_by.css_id,
+      pgId: task.attributes.assigned_by.pg_id
+    },
+    taskId: task.id,
+    label: task.attributes.label,
+    documentId: task.attributes.document_id,
+    externalHearingId: task.attributes.external_hearing_id,
+    workProduct: null,
+    previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
+    placedOnHoldAt: task.attributes.placed_on_hold_at,
+    status: task.attributes.status,
+    onHoldDuration: task.attributes.on_hold_duration,
+    instructions: task.attributes.instructions,
+    decisionPreparedBy,
+    availableActions: task.attributes.available_actions,
+    caseReviewId: task.attributes.attorney_case_review_id,
+    timelineTitle: task.attributes.timeline_title,
+    hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
+    hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
+    hideFromCaseTimeline: task.attributes.hide_from_case_timeline
+  };
+};
+
 export const prepareTasksForStore = (tasks) =>
   tasks.reduce((acc, task) => {
-    const decisionPreparedBy = task.attributes.decision_prepared_by.first_name ? {
-      firstName: task.attributes.decision_prepared_by.first_name,
-      lastName: task.attributes.decision_prepared_by.last_name
-    } : null;
-
-    acc[task.id] = {
-      uniqueId: task.id,
-      isLegacy: false,
-      type: task.attributes.type,
-      appealType: task.attributes.appeal_type,
-      addedByCssId: null,
-      appealId: task.attributes.appeal_id,
-      externalAppealId: task.attributes.external_appeal_id,
-      assignedOn: task.attributes.assigned_at,
-      closestRegionalOffice: task.attributes.closest_regional_office,
-      createdAt: task.attributes.created_at,
-      closedAt: task.attributes.closed_at,
-      assigneeName: task.attributes.assignee_name,
-      assignedTo: {
-        cssId: task.attributes.assigned_to.css_id,
-        name: task.attributes.assigned_to.name,
-        id: task.attributes.assigned_to.id,
-        isOrganization: task.attributes.assigned_to.is_organization,
-        type: task.attributes.assigned_to.type
-      },
-      assignedBy: {
-        firstName: task.attributes.assigned_by.first_name,
-        lastName: task.attributes.assigned_by.last_name,
-        cssId: task.attributes.assigned_by.css_id,
-        pgId: task.attributes.assigned_by.pg_id
-      },
-      taskId: task.id,
-      label: task.attributes.label,
-      documentId: task.attributes.document_id,
-      externalHearingId: task.attributes.external_hearing_id,
-      workProduct: null,
-      previousTaskAssignedOn: task.attributes.previous_task.assigned_at,
-      placedOnHoldAt: task.attributes.placed_on_hold_at,
-      status: task.attributes.status,
-      onHoldDuration: task.attributes.on_hold_duration,
-      instructions: task.attributes.instructions,
-      decisionPreparedBy,
-      availableActions: task.attributes.available_actions,
-      caseReviewId: task.attributes.attorney_case_review_id,
-      timelineTitle: task.attributes.timeline_title,
-      hideFromQueueTableView: task.attributes.hide_from_queue_table_view,
-      hideFromTaskSnapshot: task.attributes.hide_from_task_snapshot,
-      hideFromCaseTimeline: task.attributes.hide_from_case_timeline
-    };
+    acc[task.id] = taskAttributesFromRawTask(task);
 
     return acc;
   }, {});
+
+const appealAttributesFromRawTask = (task) => ({
+  id: task.attributes.appeal_id,
+  type: task.attributes.appeal_type,
+  externalId: task.attributes.external_appeal_id,
+  docketName: task.attributes.docket_name,
+  isLegacyAppeal: task.attributes.docket_name === 'legacy',
+  caseType: task.attributes.case_type,
+  isAdvancedOnDocket: task.attributes.aod,
+  issueCount: task.attributes.issue_count,
+  docketNumber: task.attributes.docket_number,
+  veteranFullName: task.attributes.veteran_full_name,
+  veteranFileNumber: task.attributes.veteran_file_number,
+  isPaperCase: task.attributes.paper_case
+});
 
 const extractAppealsFromTasks =
   (tasks) => {
     return tasks.reduce((accumulator, task) => {
       if (!accumulator[task.attributes.external_appeal_id]) {
-        accumulator[task.attributes.external_appeal_id] = {
-          id: task.attributes.appeal_id,
-          type: task.attributes.appeal_type,
-          externalId: task.attributes.external_appeal_id,
-          docketName: task.attributes.docket_name,
-          isLegacyAppeal: task.attributes.docket_name === 'legacy',
-          caseType: task.attributes.case_type,
-          isAdvancedOnDocket: task.attributes.aod,
-          issueCount: task.attributes.issue_count,
-          docketNumber: task.attributes.docket_number,
-          veteranFullName: task.attributes.veteran_full_name,
-          veteranFileNumber: task.attributes.veteran_file_number,
-          isPaperCase: task.attributes.paper_case
-        };
+        accumulator[task.attributes.external_appeal_id] = appealAttributesFromRawTask(task);
       }
 
       return accumulator;
@@ -136,6 +142,11 @@ export const extractAppealsAndAmaTasks =
   tasks: {},
   appeals: extractAppealsFromTasks(tasks),
   amaTasks: prepareTasksForStore(tasks) });
+
+export const tasksWithAppealsFromRawTasks = (tasks) => tasks.map((task) => ({
+  ...taskAttributesFromRawTask(task),
+  appeal: appealAttributesFromRawTask(task)
+}));
 
 export const prepareLegacyTasksForStore = (tasks) => {
   const mappedLegacyTasks = tasks.map((task) => {
@@ -258,6 +269,8 @@ export const prepareAppealForStore =
         externalId: appeal.attributes.external_id,
         docketName: appeal.attributes.docket_name,
         withdrawn: appeal.attributes.withdrawn,
+        removed: appeal.attributes.removed,
+        withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
         isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
         caseType: appeal.attributes.type,
         isAdvancedOnDocket: appeal.attributes.aod,
@@ -546,24 +559,4 @@ export const sortTaskList = (taskList) => {
 export const regionalOfficeCity = (objWithLocation, defaultToUnknown) => {
   return _.get(objWithLocation, 'closestRegionalOffice.location_hash.city',
     defaultToUnknown ? 'Unknown' : defaultToUnknown);
-};
-
-export const createOrgQueueLoadPromise = (props, url) => {
-  return ApiUtil.get(url, { timeout: { response: 5 * 60 * 1000 } }).
-    then(
-      (response) => {
-        const {
-          tasks: { data: tasks },
-          id,
-          organization_name: organizationName,
-          is_vso: isVso
-        } = JSON.parse(response.text);
-
-        props.setActiveOrganization(id, organizationName, isVso);
-        props.onReceiveQueue(extractAppealsAndAmaTasks(tasks));
-      }
-    ).
-    catch(() => {
-      // handle frontend error
-    });
 };

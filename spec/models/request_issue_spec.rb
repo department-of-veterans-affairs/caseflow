@@ -20,6 +20,7 @@ describe RequestIssue do
   let(:closed_at) { nil }
   let(:closed_status) { nil }
   let(:ineligible_reason) { nil }
+  let(:edited_description) { nil }
 
   let(:review) do
     create(
@@ -77,8 +78,6 @@ describe RequestIssue do
       edited_description: edited_description
     )
   end
-
-  let(:edited_description) { nil }
 
   let!(:nonrating_request_issue) do
     create(
@@ -296,6 +295,17 @@ describe RequestIssue do
         expect(RequestDecisionIssue.unscoped.count).to eq 1
       end
     end
+
+    context "when a request issue is removed after it has been submitted, before it has been processed" do
+      let!(:request_issue1) do
+        create(:request_issue, decision_sync_submitted_at: 1.day.ago, decision_sync_processed_at: nil)
+      end
+
+      it "cancels the decision sync job" do
+        subject
+        expect(request_issue1.decision_sync_canceled_at).to eq Time.zone.now
+      end
+    end
   end
 
   context ".active" do
@@ -319,6 +329,41 @@ describe RequestIssue do
       expect(subject.find_by(id: removed_request_issue.id)).to be_nil
       expect(subject.find_by(id: decided_request_issue.id)).to_not be_nil
       expect(subject.find_by(id: open_eligible_request_issue.id)).to_not be_nil
+    end
+  end
+
+  context "#original_contention_ids" do
+    subject { rating_request_issue.original_contention_ids }
+
+    let(:original_request_issues) do
+      [
+        create(:request_issue, contention_reference_id: "101"),
+        create(:request_issue, contention_reference_id: "121")
+      ]
+    end
+    let(:disposition) { "granted" }
+    let!(:decision_issue) { create(:decision_issue, request_issues: original_request_issues, disposition: disposition) }
+
+    context "when there is not a contested decision issue" do
+      let(:contested_decision_issue_id) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is a contested decision issue" do
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      context "when the decision issue does not have a dta disposition" do
+        it { is_expected.to be_falsey }
+      end
+
+      context "when the decision issue has a dta disposition" do
+        let(:disposition) { "DTA Error" }
+
+        it "includes an array of the contention reference IDs from the decision issues request issues" do
+          expect(subject).to eq([101, 121])
+        end
+      end
     end
   end
 
@@ -1441,11 +1486,8 @@ describe RequestIssue do
         end
 
         context "when no associated rating exists" do
-          it "resubmits for processing" do
-            subject
-            expect(rating_request_issue.decision_issues.count).to eq(0)
-            expect(rating_request_issue.processed?).to eq(false)
-            expect(rating_request_issue.decision_sync_attempted_at).to eq(Time.zone.now)
+          it "raises an error" do
+            expect { subject }.to raise_error(RequestIssue::NoAssociatedRating)
           end
         end
       end

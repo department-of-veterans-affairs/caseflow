@@ -219,7 +219,7 @@ module IntakeHelpers
     legacy_issues: false
   )
     add_button_text = legacy_issues ? "Next" : "Add this issue"
-    expect(page.text).to match(/Does issue \d+ match any of these issue categories?/)
+    expect(page.text).to match(/Does issue \d+ match any of these non-rating issue categories?/)
     expect(page).to have_button(add_button_text, disabled: true)
 
     # has_css will wait 5 seconds by default, and we want an instant decision.
@@ -662,10 +662,10 @@ module IntakeHelpers
 
   # rubocop:disable Metrics/AbcSize
   def verify_request_issue_contending_decision_issue_not_readded(
-      page_url,
-      decision_review,
-      contested_decision_issues
-    )
+    page_url,
+    decision_review,
+    contested_decision_issues
+  )
     # verify that not modifying a request issue contesting a decision issue
     # does not result in readding
 

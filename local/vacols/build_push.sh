@@ -4,15 +4,17 @@ bold=$(tput bold)
 normal=$(tput sgr0)
 
 USAGE=$(cat <<-END
-./build_push.sh [local|remote]
+./build_push.sh [local|remote|rake]
 
-   This is a handy script which allows you to build FACOLS locally for your development.
+   This is a handy script which allows you to build, push or download FACOLS locally for your use.
    ${bold}You must first mfa using the issue_mfa.sh since it will download dependencies.${normal}
    Example Usage (build but not push): ./build_push.sh local
    Example Usage (build and push): ./build_push.sh remote
 
 END
 )
+
+THIS_SCRIPT_DIR=$(dirname $0)
 
 if [[ $# -eq 0 ]] ; then
   echo "$USAGE"
@@ -41,8 +43,7 @@ if [[ $# -gt 1 ]]; then
 fi
 
 build(){
-  parent_dir=$(dirname $0)
-  build_facols_dir="${parent_dir}/build_facols"
+  build_facols_dir="${THIS_SCRIPT_DIR}/build_facols"
 
   echo "${bold}Building FACOLS from Base Oracle...${normal}"
 
@@ -63,7 +64,7 @@ build(){
   fi
 
   # Build Docker
-  echo -e "\tCreating Caseflow App Docker Image"
+  echo -e "\tCreating FACOLS App Docker Image"
   echo "--------"
   echo ""
 
@@ -76,12 +77,12 @@ build(){
     rm -rf $build_facols_dir
     docker_build="SUCCESS"
     echo ""
-    echo "Building Caseflow Docker App: ${bold}${docker_build}${normal}"
+    echo "Building FACOLS Docker App: ${bold}${docker_build}${normal}"
     return 0
   else
     docker_build="FAILED"
     echo ""
-    echo "Building Caseflow Docker App: ${bold}${docker_build}${normal}"
+    echo "Building FACOLS Docker App: ${bold}${docker_build}${normal}"
     echo "Please check above if there were execution errors."
     return 1
   fi
@@ -91,15 +92,24 @@ push(){
   eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
   docker tag vacols_db:latest vacols_db:${today}
   docker tag vacols_db:${today} 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today}
+  docker tag vacols_db:latest 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
   if docker push 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today} ; then
+    docker push 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
     echo "${bold}Success. ${normal}The latest docker image has been pushed."
-    echo "${bold}REMEMBER TO CHANGE THE CIRCLE CI CONFIG to use this image.${normal}"
-    echo -e "\t008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:${today}"
   else
     echo "${bold}Failed to Upload. ${normal}Probably you don't have permissions to do this. Ask the DevOps Team please"
   fi
 
 }
+
+download(){
+  # get circleci latest image from this same repo
+  facols_image=$(cat ${THIS_SCRIPT_DIR}/../../.circleci/config.yml| grep facols | awk '{print $3}')
+  eval $(aws ecr get-login --no-include-email --region us-gov-west-1)
+  docker pull $facols_image
+  docker tag $facols_image vacols_db:latest
+}
+
 
 if [[ "$1" == "local" ]]; then
   build
@@ -109,4 +119,7 @@ elif [[ "$1" == "remote" ]]; then
   if [[ $? -eq 0 ]]; then
     push
   fi
+
+elif [[ "$1" == "rake" ]]; then
+  download
 fi

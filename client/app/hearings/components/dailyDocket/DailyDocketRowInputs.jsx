@@ -11,7 +11,6 @@ import { AppealHearingLocationsDropdown } from '../../../components/DataDropdown
 import HearingTime from '../modalForms/HearingTime';
 import { pencilSymbol } from '../../../components/RenderFunctions';
 
-import { regionalOfficeCity } from '../../../queue/utils';
 import { DISPOSITION_OPTIONS } from '../../constants';
 
 const staticSpacing = css({ marginTop: '5px' });
@@ -141,7 +140,7 @@ export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion, userId }) =
   />;
 };
 
-export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId }) => {
+export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId, invalid }) => {
   const aodMotion = hearing.advanceOnDocketMotion;
   const aodGrantableByThisUser = aodMotion &&
     (aodMotion.userId === userId || _.isNil(aodMotion.userId));
@@ -149,7 +148,9 @@ export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId }
   return <SearchableDropdown
     label="AOD Reason"
     readOnly={readOnly || !aodGrantableByThisUser}
+    required={aodMotion && !_.isNil(aodMotion.granted)}
     name={`${hearing.externalId}-aodReason`}
+    errorMessage={invalid ? 'Please select an AOD reason' : null}
     strongLabel
     options={[{ value: 'financial_distress',
       label: 'Financial Distress' },
@@ -203,7 +204,7 @@ export const NotesField = ({ hearing, update, readOnly }) => {
 };
 
 export const HearingLocationDropdown = ({ hearing, readOnly, regionalOffice, update }) => {
-  const roIsDifferent = regionalOffice !== regionalOfficeCity(hearing);
+  const roIsDifferent = regionalOffice !== hearing.closestRegionalOffice;
   let staticHearingLocations = _.isEmpty(hearing.availableHearingLocations) ?
     [hearing.location] : _.values(hearing.availableHearingLocations);
 

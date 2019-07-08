@@ -51,6 +51,21 @@ module Caseflow::Error
     end
   end
 
+  class MissingRequiredProperty < SerializableError
+    def initialize(args)
+      @code = args[:code] || 400
+      @message = args[:message]
+    end
+  end
+
+  class InvalidTaskTableTab < SerializableError
+    def initialize(args)
+      @tab_name = args[:tab_name]
+      @code = args[:code] || 400
+      @message = args[:message] || "\"#{@tab_name}\" is not a valid tab name"
+    end
+  end
+
   class InvalidParentTask < SerializableError
     def initialize(args)
       @task_type = args[:task_type]

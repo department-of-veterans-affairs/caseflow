@@ -40,9 +40,9 @@ describe Distribution do
   context "#distribute!" do
     subject { Distribution.create(judge: judge) }
 
-    let(:legacy_priority_count) { 15 }
+    let(:legacy_priority_count) { 14 }
 
-    let!(:priority_cases) do
+    let!(:legacy_priority_cases) do
       (1..legacy_priority_count).map do |i|
         create(:case,
                :aod,
@@ -55,7 +55,7 @@ describe Distribution do
       end
     end
 
-    let!(:nonpriority_cases) do
+    let!(:legacy_nonpriority_cases) do
       (15..100).map do |i|
         create(:case,
                bfd19: 1.year.ago,
@@ -68,7 +68,7 @@ describe Distribution do
     end
 
     let!(:same_judge_priority_hearings) do
-      priority_cases[0..1].map do |appeal|
+      legacy_priority_cases[0..1].map do |appeal|
         create(:case_hearing,
                :disposition_held,
                folder_nr: appeal.bfkey,
@@ -78,7 +78,7 @@ describe Distribution do
     end
 
     let!(:same_judge_nonpriority_hearings) do
-      nonpriority_cases[29..33].map do |appeal|
+      legacy_nonpriority_cases[29..33].map do |appeal|
         create(:case_hearing,
                :disposition_held,
                folder_nr: appeal.bfkey,
@@ -88,7 +88,7 @@ describe Distribution do
     end
 
     let!(:other_judge_hearings) do
-      nonpriority_cases[2..27].map do |appeal|
+      legacy_nonpriority_cases[2..27].map do |appeal|
         create(:case_hearing,
                :disposition_held,
                folder_nr: appeal.bfkey,
@@ -102,7 +102,7 @@ describe Distribution do
         .to receive(:nonpriority_receipts_per_year)
         .and_return(100)
 
-      allow(Appeal)
+      allow(Docket)
         .to receive(:nonpriority_decisions_per_year)
         .and_return(1000)
 
@@ -118,7 +118,7 @@ describe Distribution do
     let!(:due_direct_review_cases) do
       (0...6).map do
         create(:appeal,
-               :with_tasks,
+               :with_post_intake_tasks,
                docket_type: "direct_review",
                receipt_date: 11.months.ago,
                target_decision_date: 1.month.from_now)
@@ -127,7 +127,7 @@ describe Distribution do
 
     let!(:priority_direct_review_case) do
       appeal = create(:appeal,
-                      :with_tasks,
+                      :with_post_intake_tasks,
                       :advanced_on_docket_due_to_age,
                       docket_type: "direct_review",
                       receipt_date: 1.month.ago)
@@ -135,12 +135,10 @@ describe Distribution do
       appeal
     end
 
-    let(:legacy_priority_count) { 14 }
-
     let!(:other_direct_review_cases) do
       (0...20).map do
         create(:appeal,
-               :with_tasks,
+               :with_post_intake_tasks,
                docket_type: "direct_review",
                receipt_date: 61.days.ago,
                target_decision_date: 304.days.from_now)
@@ -149,13 +147,13 @@ describe Distribution do
 
     let!(:evidence_submission_cases) do
       (0...43).map do
-        create(:appeal, :with_tasks, docket_type: "evidence_submission")
+        create(:appeal, :with_post_intake_tasks, docket_type: "evidence_submission")
       end
     end
 
     let!(:hearing_cases) do
       (0...43).map do
-        create(:appeal, :with_tasks, docket_type: "hearing")
+        create(:appeal, :with_post_intake_tasks, docket_type: "hearing")
       end
     end
 
@@ -171,7 +169,7 @@ describe Distribution do
       expect(subject.completed_at).to eq(Time.zone.now)
       expect(subject.statistics["batch_size"]).to eq(15)
       expect(subject.statistics["total_batch_size"]).to eq(45)
-      expect(subject.statistics["priority_count"]).to eq(15)
+      expect(subject.statistics["priority_count"]).to eq(legacy_priority_count + 1)
       expect(subject.statistics["legacy_proportion"]).to eq(0.4)
       expect(subject.statistics["direct_review_proportion"]).to eq(0.2)
       expect(subject.statistics["evidence_submission_proportion"]).to eq(0.2)
@@ -183,6 +181,10 @@ describe Distribution do
       expect(subject.distributed_cases.first.docket).to eq("legacy")
       expect(subject.distributed_cases.first.ready_at).to eq(2.days.ago.beginning_of_day)
       expect(subject.distributed_cases.where(priority: true).count).to eq(5)
+      expect(subject.distributed_cases.where(genpop: true).count).to eq(5)
+      expect(subject.distributed_cases.where(priority: true, genpop: false).count).to eq(2)
+      expect(subject.distributed_cases.where(priority: false, genpop_query: "not_genpop").count).to eq(0)
+      expect(subject.distributed_cases.where(priority: false, genpop_query: "any").map(&:docket_index).max).to eq(30)
       expect(subject.distributed_cases.where(priority: true, docket: "direct_review").count).to eq(1)
       expect(subject.distributed_cases.where(docket: "legacy").count).to be >= 8
       expect(subject.distributed_cases.where(docket: "direct_review").count).to be >= 3

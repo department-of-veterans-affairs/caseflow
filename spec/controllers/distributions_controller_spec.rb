@@ -5,9 +5,6 @@ require "rails_helper"
 describe DistributionsController do
   describe "#new" do
     context "current user is not a judge" do
-      before { FeatureToggle.enable!(:automatic_case_distribution) }
-      after { FeatureToggle.disable!(:automatic_case_distribution) }
-
       it "renders an error" do
         User.authenticate!(user: create(:user))
         get :new
@@ -17,13 +14,34 @@ describe DistributionsController do
       end
     end
 
-    context "feature is not enabled" do
-      it "renders an error" do
-        User.authenticate!(user: create(:user))
+    context "there is a pending distribution" do
+      it "returns the pending distribution and no more were created" do
+        judge = create(:user)
+        create(:staff, :judge_role, sdomainid: judge.css_id)
+        User.authenticate!(user: judge)
+
+        distribution = Distribution.create!(judge: judge, status: "pending")
+        number_of_distributions = Distribution.count
+
         get :new
 
         body = JSON.parse(response.body)
-        expect(body["errors"].first["error"]).to eq "feature_not_enabled"
+        expect(body["distribution"]["id"]).to eq distribution.id
+        expect(body["distribution"]["status"]).to eq "pending"
+        expect(Distribution.count).to eq number_of_distributions
+      end
+    end
+
+    context "current user is a judge" do
+      it "renders the created distribution as json" do
+        judge = create(:user)
+        create(:staff, :judge_role, sdomainid: judge.css_id)
+        User.authenticate!(user: judge)
+        get :new
+
+        expect(response.status).to eq 200
+        body = JSON.parse(response.body)
+        expect(body["distribution"].keys).to match_array(%w[id created_at updated_at status distributed_cases_count])
       end
     end
   end

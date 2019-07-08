@@ -7,6 +7,7 @@ import { associateTasksWithAppeals,
 import { ACTIONS } from './constants';
 import { hideErrorMessage, showErrorMessage, showSuccessMessage } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 import _ from 'lodash';
 import pluralize from 'pluralize';
 
@@ -87,7 +88,7 @@ export const getNewDocumentsForAppeal = (appealId) => (dispatch) => {
     }
   });
   const requestOptions = {
-    timeout: { response: 5 * 60 * 1000 }
+    timeout: { response: getMinutesToMilliseconds(5) }
   };
 
   ApiUtil.get(`/appeals/${appealId}/new_documents`, requestOptions).then((response) => {
@@ -124,7 +125,7 @@ export const getNewDocumentsForTask = (taskId) => (dispatch) => {
     }
   });
   const requestOptions = {
-    timeout: { response: 5 * 60 * 1000 }
+    timeout: { response: getMinutesToMilliseconds(5) }
   };
 
   ApiUtil.get(`/tasks/${taskId}/new_documents`, requestOptions).then((response) => {
@@ -505,7 +506,7 @@ export const reassignTasksToUser = ({
 const refreshTasks = (dispatch, userId, userRole) => {
   return Promise.all([
     ApiUtil.get(`/tasks?user_id=${userId}&role=${userRole}`),
-    ApiUtil.get(`/queue/${userId}`, { timeout: { response: 5 * 60 * 1000 } })
+    ApiUtil.get(`/queue/${userId}`, { timeout: { response: getMinutesToMilliseconds(5) } })
   ]).then((responses) => {
     dispatch(onReceiveQueue(extractAppealsAndAmaTasks(responses[0].body.tasks.data)));
     dispatch(onReceiveQueue({
@@ -611,3 +612,6 @@ export const setAppealAod = (externalAppealId) => ({
     externalAppealId
   }
 });
+
+export const setQueueConfig = (config) => ({ type: ACTIONS.SET_QUEUE_CONFIG,
+  payload: { config } });

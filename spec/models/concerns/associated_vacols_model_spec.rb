@@ -12,6 +12,7 @@ describe AssociatedVacolsModel do
       return false if fail_load_vacols_data
 
       model.foo = "bar"
+      model.setteronly = "set"
     end
   end
 
@@ -19,6 +20,8 @@ describe AssociatedVacolsModel do
     include AssociatedVacolsModel
 
     vacols_attr_accessor :foo, :bar, :foobar
+    vacols_attr_setter :setteronly
+    vacols_attr_getter :getteronly
     attr_accessor :attr
 
     def self.repository
@@ -43,20 +46,21 @@ describe AssociatedVacolsModel do
       end
     end
 
-    context "ensure setter sets value" do
-      it do
-        expect(model.foo).to eq("bar")
-        model.foo = "hello"
-        expect(model.foo).to eq("hello")
-      end
+    it "setters set, getters get values" do
+      expect(model.foo).to eq("bar")
+      model.foo = "hello"
+      expect(model.foo).to eq("hello")
+
+      expect { model.setteronly }.to raise_error(NoMethodError)
+      expect { model.setteronly = "test" }.to_not raise_error
+      expect { model.getteronly }.to_not raise_error
+      expect { model.getteronly = "test" }.to raise_error(NoMethodError)
     end
 
-    context "fields not set trigger a call to load data" do
-      it do
-        model.bar = "hello"
-        expect(Raven).to receive(:capture_exception)
-        expect(model.foo).to eq("bar")
-      end
+    it "triggers a call to load data when fields not set " do
+      model.bar = "hello"
+      expect(Raven).to receive(:capture_exception)
+      expect(model.foo).to eq("bar")
     end
   end
 
@@ -67,6 +71,50 @@ describe AssociatedVacolsModel do
 
     it "returns false for variables set with attr_accessor" do
       expect(TestVacolsModel.vacols_field?(:attr)).to be_falsy
+    end
+
+    it "returns false for variables set with only getter" do
+      expect(TestVacolsModel.vacols_field?(:getteronly)).to be_falsy
+    end
+
+    it "returns false for variables set with only setter" do
+      expect(TestVacolsModel.vacols_field?(:setteronly)).to be_falsy
+    end
+  end
+
+  context ".vacols_setter?" do
+    it "returns true for variables set with vacols_attr_accessor" do
+      expect(TestVacolsModel.vacols_setter?(:foo)).to be_truthy
+    end
+
+    it "returns false for variables set with attr_accessor" do
+      expect(TestVacolsModel.vacols_setter?(:attr)).to be_falsy
+    end
+
+    it "returns false for variables set with only getter" do
+      expect(TestVacolsModel.vacols_setter?(:getteronly)).to be_falsy
+    end
+
+    it "returns true for variables set with only setter" do
+      expect(TestVacolsModel.vacols_setter?(:setteronly)).to be_truthy
+    end
+  end
+
+  context ".vacols_getter?" do
+    it "returns true for variables set with vacols_attr_accessor" do
+      expect(TestVacolsModel.vacols_getter?(:foo)).to be_truthy
+    end
+
+    it "returns false for variables set with attr_accessor" do
+      expect(TestVacolsModel.vacols_getter?(:attr)).to be_falsy
+    end
+
+    it "returns true for variables set with only getter" do
+      expect(TestVacolsModel.vacols_getter?(:getteronly)).to be_truthy
+    end
+
+    it "returns false for variables set with only setter" do
+      expect(TestVacolsModel.vacols_getter?(:setteronly)).to be_falsy
     end
   end
 

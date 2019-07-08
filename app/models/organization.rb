@@ -20,6 +20,14 @@ class Organization < ApplicationRecord
     false
   end
 
+  def show_regional_office_in_queue?
+    false
+  end
+
+  def use_task_pages_api?
+    false
+  end
+
   def non_admins
     organizations_users.includes(:user).non_admin.map(&:user)
   end
@@ -61,6 +69,10 @@ class Organization < ApplicationRecord
 
   def user_admin_path
     "#{path}/users"
+  end
+
+  def ama_task_serializer
+    WorkQueue::TaskSerializer
   end
 
   private

@@ -12,8 +12,8 @@ describe HearingRequestDocket do
         OR
         appeals that have no hearings at all
         appeals that have no hearings with disposition held" do
-      _another_inactive_judge = create(:user, last_login_at: 70.days.ago)
-      JudgeTeam.create_for_judge(_another_inactive_judge)
+      another_inactive_judge = create(:user, last_login_at: 70.days.ago)
+      JudgeTeam.create_for_judge(another_inactive_judge)
       create_appeals_that_should_not_be_returned_by_query
       # base conditions = priority, distributable, hearing docket
       first_appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_inactive_judge
@@ -205,6 +205,28 @@ describe HearingRequestDocket do
     end
   end
 
+  describe "#count" do
+    context "priority and readiness for distribution not specified" do
+      it "returns all hearing docket appeals" do
+        matching_all_conditions_except_priority_and_ready_for_distribution
+        non_priority_with_no_held_hearings
+        create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+
+        expect(HearingRequestDocket.new.count).to eq 3
+      end
+    end
+
+    context "priority: true and ready: true" do
+      it "only returns hearing docket appeals that are priority and ready for distribution" do
+        matching_all_conditions_except_priority_and_ready_for_distribution
+        non_priority_with_no_held_hearings
+        create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+
+        expect(HearingRequestDocket.new.count(priority: true, ready: true)).to eq 1
+      end
+    end
+  end
+
   private
 
   def create_appeals_that_should_not_be_returned_by_query
@@ -252,17 +274,17 @@ describe HearingRequestDocket do
   end
 
   def matching_all_conditions_except_ready_for_distribution
-    appeal = create(:appeal, :advanced_on_docket_due_to_age, :with_tasks, docket_type: "hearing")
+    appeal = create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: "hearing")
     create(:hearing, disposition: "held", appeal: appeal)
   end
 
   def matching_all_conditions_except_priority_and_ready_for_distribution
-    appeal = create(:appeal, :with_tasks, docket_type: "hearing")
+    appeal = create(:appeal, :with_post_intake_tasks, docket_type: "hearing")
     create(:hearing, disposition: "held", appeal: appeal)
   end
 
   def matching_only_priority_and_ready_for_distribution
-    create(:appeal, :advanced_on_docket_due_to_age, :with_tasks, docket_type: "direct_review")
+    create(:appeal, :advanced_on_docket_due_to_age, :with_post_intake_tasks, docket_type: "direct_review")
   end
 
   def matching_all_base_conditions_with_most_recent_held_hearing_tied_to_inactive_judge
@@ -276,7 +298,7 @@ describe HearingRequestDocket do
 
   def create_priority_distributable_hearing_appeal_not_tied_to_any_judge
     appeal = create(:appeal, :ready_for_distribution, :advanced_on_docket_due_to_motion, docket_type: "hearing")
-    hearing = create(:hearing, disposition: "held", appeal: appeal)
+    create(:hearing, disposition: "held", appeal: appeal)
     appeal
   end
 
@@ -303,7 +325,7 @@ describe HearingRequestDocket do
     hearing.update(judge: active_judge)
 
     not_tied = create(:hearing_day, scheduled_for: 2.days.ago)
-    hearing = create(:hearing, disposition: "held", appeal: appeal, hearing_day: not_tied)
+    create(:hearing, disposition: "held", appeal: appeal, hearing_day: not_tied)
     appeal
   end
 
@@ -314,7 +336,7 @@ describe HearingRequestDocket do
     hearing.update(judge: distribution_judge)
 
     not_tied = create(:hearing_day, scheduled_for: 2.days.ago)
-    hearing = create(:hearing, disposition: "held", appeal: appeal, hearing_day: not_tied)
+    create(:hearing, disposition: "held", appeal: appeal, hearing_day: not_tied)
     appeal
   end
 

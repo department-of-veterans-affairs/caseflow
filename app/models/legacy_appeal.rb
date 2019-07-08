@@ -12,6 +12,7 @@ class LegacyAppeal < ApplicationRecord
   include CachedAttributes
   include AddressMapper
   include Taskable
+  include PrintsTaskTree
 
   belongs_to :appeal_series
   has_many :dispatch_tasks, foreign_key: :appeal_id, class_name: "Dispatch::Task"
@@ -38,8 +39,6 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :appellant_last_name, :appellant_name_suffix
   vacols_attr_accessor :outcoder_first_name, :outcoder_middle_initial, :outcoder_last_name
   vacols_attr_accessor :appellant_relationship, :appellant_ssn
-  vacols_attr_accessor :appellant_address_line_1, :appellant_address_line_2
-  vacols_attr_accessor :appellant_city, :appellant_state, :appellant_country, :appellant_zip
   vacols_attr_accessor :hearing_request_type, :video_hearing_requested
   vacols_attr_accessor :hearing_requested, :hearing_held
   vacols_attr_accessor :regional_office_key
@@ -52,7 +51,6 @@ class LegacyAppeal < ApplicationRecord
   vacols_attr_accessor :file_type
   vacols_attr_accessor :case_record
   vacols_attr_accessor :number_of_issues
-
   vacols_attr_accessor :outcoding_date
   vacols_attr_accessor :last_location_change_date
   vacols_attr_accessor :docket_number, :docket_date, :citation_number
@@ -68,6 +66,26 @@ class LegacyAppeal < ApplicationRecord
   # because it is using an Appeal object
   attr_accessor :assigned_to_attorney_date, :reassigned_to_judge_date, :assigned_to_location_date, :added_by,
                 :created_at, :document_id, :assigned_by, :updated_at, :attorney_id
+
+  delegate :documents, :number_of_documents, :manifest_vbms_fetched_at, :manifest_vva_fetched_at,
+           to: :document_fetcher
+
+  delegate :address_line_1, :address_line_2, :address_line_3, :city, :state, :zip, :country, :age, :sex,
+           to: :veteran,
+           prefix: true,
+           allow_nil: true
+
+  # NOTE: we cannot currently match end products to a specific appeal.
+  delegate :end_products,
+           to: :veteran
+
+  delegate :address, :address_line_1, :address_line_2, :city, :country, :state, :zip,
+           to: :bgs_address_service,
+           prefix: :appellant,
+           allow_nil: true
+
+  delegate :vacols_representatives,
+           to: :case_record
 
   cache_attribute :aod do
     self.class.repository.aod(vacols_id)
@@ -150,9 +168,6 @@ class LegacyAppeal < ApplicationRecord
     @va_dot_gov_address_validator ||= VaDotGovAddressValidator.new(appeal: self)
   end
 
-  delegate :documents, :number_of_documents,
-           :manifest_vbms_fetched_at, :manifest_vva_fetched_at, to: :document_fetcher
-
   def number_of_documents_after_certification
     return 0 unless certification_date
 
@@ -218,20 +233,6 @@ class LegacyAppeal < ApplicationRecord
   def veteran_ssn
     vbms_id.ends_with?("C") ? (veteran&.ssn) : sanitized_vbms_id
   end
-
-  delegate :address_line_1,
-           :address_line_2,
-           :address_line_3,
-           :city,
-           :state,
-           :zip,
-           :country,
-           :age,
-           :sex,
-           to: :veteran, prefix: true, allow_nil: true
-
-  # NOTE: we cannot currently match end products to a specific appeal.
-  delegate :end_products, to: :veteran
 
   def congressional_interest_addresses
     case_record.mail.map(&:congressional_address)
@@ -333,7 +334,10 @@ class LegacyAppeal < ApplicationRecord
     end
   end
 
-  delegate :vacols_representatives, to: :case_record
+  #  LegacyHearing delegates representative here, which is equivalent to representative_name
+  def representative
+    representative_name
+  end
 
   def representatives
     Representative.where(participant_id: [power_of_attorney.bgs_participant_id] - [nil])
@@ -710,15 +714,11 @@ class LegacyAppeal < ApplicationRecord
   end
 
   def eligible_for_soc_opt_in?(receipt_date)
-    return false unless nod_date
-    return false unless soc_date
     return false unless receipt_date
+    return false unless soc_date
+    return false if soc_date < Constants::DATES["AMA_ACTIVATION"].to_date
 
-    soc_eligible_date = receipt_date - 60.days
-    nod_eligible_date = receipt_date - 372.days
-
-    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
-    soc_date > soc_eligible_date || nod_date > nod_eligible_date || ssoc_dates.any? { |d| d > soc_eligible_date }
+    soc_date_eligible_for_opt_in?(receipt_date) || nod_date_eligible_for_opt_in?(receipt_date)
   end
 
   def serializer_class
@@ -747,6 +747,25 @@ class LegacyAppeal < ApplicationRecord
 
   private
 
+  def soc_date_eligible_for_opt_in?(receipt_date)
+    soc_eligible_date = receipt_date - 60.days
+
+    # ssoc_dates are the VACOLS bfssoc* columns - see the AppealRepository class
+    soc_date >= soc_eligible_date || ssoc_dates.any? { |ssoc_date| ssoc_date >= soc_eligible_date }
+  end
+
+  def nod_date_eligible_for_opt_in?(receipt_date)
+    return false unless nod_date
+
+    nod_eligible_date = receipt_date - 372.days
+
+    nod_date >= nod_eligible_date
+  end
+
+  def bgs_address_service
+    @bgs_address_service ||= BgsAddressService.new(participant_id: representative_participant_id)
+  end
+
   def active_tasks
     tasks.where(status: [Constants.TASK_STATUSES.in_progress, Constants.TASK_STATUSES.assigned])
   end
@@ -761,9 +780,9 @@ class LegacyAppeal < ApplicationRecord
 
   def use_representative_info_from_bgs?
     FeatureToggle.enabled?(:use_representative_info_from_bgs, user: RequestStore[:current_user]) &&
-      (RequestStore.store[:application] = "queue" ||
-       RequestStore.store[:application] = "hearing_schedule" ||
-       RequestStore.store[:application] = "idt")
+      (RequestStore.store[:application] == "queue" ||
+       RequestStore.store[:application] == "hearings" ||
+       RequestStore.store[:application] == "idt")
   end
 
   def representative_to_hash
@@ -833,8 +852,14 @@ class LegacyAppeal < ApplicationRecord
       BGSService.new
     end
 
-    def fetch_appeals_by_file_number(file_number)
-      repository.appeals_by_vbms_id(convert_file_number_to_vacols(file_number))
+    def fetch_appeals_by_file_number(*file_numbers)
+      if file_numbers.empty?
+        fail ArgumentError, "Expected at least one file number to fetch by"
+      end
+
+      repository.appeals_by_vbms_id(
+        file_numbers.map { |num| convert_file_number_to_vacols(num) }
+      )
     rescue Caseflow::Error::InvalidFileNumber
       raise ActiveRecord::RecordNotFound
     end

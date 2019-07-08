@@ -6,6 +6,7 @@ import { bindActionCreators } from 'redux';
 import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
+import { getMinutesToMilliseconds } from '../util/DateUtil';
 import { associateTasksWithAppeals } from './utils';
 
 import {
@@ -56,7 +57,11 @@ class QueueLoadingScreen extends React.PureComponent {
       return Promise.resolve();
     }
 
-    return ApiUtil.get(urlToLoad, { timeout: { response: 5 * 60 * 1000 } }).then((response) => {
+    const requestOptions = {
+      timeout: { response: getMinutesToMilliseconds(5) }
+    };
+
+    return ApiUtil.get(urlToLoad, requestOptions).then((response) => {
       this.props.onReceiveQueue({
         amaTasks: {},
         ...associateTasksWithAppeals(JSON.parse(response.text))

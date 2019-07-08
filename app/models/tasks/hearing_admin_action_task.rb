@@ -32,7 +32,7 @@ class HearingAdminActionTask < GenericTask
 
     if assigned_to == user
       [
-        appropriate_timed_hold_task_action,
+        Constants.TASK_ACTIONS.TOGGLE_TIMED_HOLD.to_h,
         Constants.TASK_ACTIONS.MARK_COMPLETE.to_h,
         Constants.TASK_ACTIONS.REASSIGN_TO_PERSON.to_h
       ] | hearing_admin_actions
@@ -56,41 +56,13 @@ class HearingAdminActionTask < GenericTask
       errors.add(:on_hold_duration, "has to be specified")
     end
   end
-
-  # HearingAdminActionTasks on old-style holds can be placed on new timed holds which will not reset the
-  # placed_on_hold_at value.
-  def task_just_placed_on_hold?
-    super || (on_timed_hold? && children.open.where.not(type: TimedHoldTask.name).empty?)
-  end
 end
 
-class HearingAdminActionVerifyPoaTask < HearingAdminActionTask
-  def self.label
-    "Verify power of attorney"
-  end
-end
-class HearingAdminActionIncarceratedVeteranTask < HearingAdminActionTask
-  def self.label
-    "Veteran is incarcerated"
-  end
-end
-class HearingAdminActionContestedClaimantTask < HearingAdminActionTask
-  def self.label
-    "Contested claimant issue"
-  end
-end
-class HearingAdminActionMissingFormsTask < HearingAdminActionTask
-  def self.label
-    "Missing forms"
-  end
-end
-class HearingAdminActionFoiaPrivacyRequestTask < HearingAdminActionTask
-  def self.label
-    "FOIA/Privacy request"
-  end
-end
-class HearingAdminActionOtherTask < HearingAdminActionTask
-  def self.label
-    "Other"
-  end
-end
+require_dependency "hearing_admin_action_contested_claimant_task"
+require_dependency "hearing_admin_action_foia_privacy_request_task"
+require_dependency "hearing_admin_action_foreign_veteran_case_task"
+require_dependency "hearing_admin_action_incarcerated_veteran_task"
+require_dependency "hearing_admin_action_missing_forms_task"
+require_dependency "hearing_admin_action_other_task"
+require_dependency "hearing_admin_action_verify_address_task"
+require_dependency "hearing_admin_action_verify_poa_task"

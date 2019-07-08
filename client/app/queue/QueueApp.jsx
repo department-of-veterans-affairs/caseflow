@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import querystring from 'querystring';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -89,7 +90,17 @@ class QueueApp extends React.PureComponent {
     }
   }
 
-  routedSearchResults = (props) => <CaseListView caseflowVeteranId={props.match.params.caseflowVeteranId} />;
+  routedSearchResults = (props) => {
+    const veteranIdsParameter = props.match.params.caseflowVeteranIds ||
+      querystring.parse(props.location.search.replace(/^\?/, '')).veteran_ids;
+    let caseflowVeteranIds;
+
+    if (veteranIdsParameter) {
+      caseflowVeteranIds = veteranIdsParameter.split(',');
+    }
+
+    return <CaseListView caseflowVeteranIds={caseflowVeteranIds} />;
+  }
 
   viewForUserRole = () => {
     const { userRole } = this.props;
@@ -278,13 +289,8 @@ class QueueApp extends React.PureComponent {
           {this.props.flash && <FlashAlerts flash={this.props.flash} />}
           <PageRoute
             exact
-            path="/search"
+            path={['/search', '/cases/:caseflowVeteranIds']}
             title="Caseflow"
-            render={this.routedSearchResults} />
-          <PageRoute
-            exact
-            path="/cases/:caseflowVeteranId"
-            title="Case Search | Caseflow"
             render={this.routedSearchResults} />
           <PageRoute
             exact
@@ -342,6 +348,9 @@ class QueueApp extends React.PureComponent {
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CREATE_MAIL_TASK.value}`}
             render={this.routedCreateMailTask} />
+          <Route
+            path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_JUDGE.value}`}
+            render={this.routedReassignToUser} />
           <Route
             path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.REASSIGN_TO_PERSON.value}`}
             render={this.routedReassignToUser} />

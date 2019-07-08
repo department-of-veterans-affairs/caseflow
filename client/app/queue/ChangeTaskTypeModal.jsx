@@ -34,16 +34,13 @@ class ChangeTaskTypeModal extends React.PureComponent {
   validateForm = () => Boolean(this.state.actionOption) && Boolean(this.state.instructions);
 
   buildPayload = () => {
-    const { appeal } = this.props;
     const { actionOption, instructions } = this.state;
 
     return {
       data: {
         task: {
           action: actionOption.value,
-          instructions,
-          type: taskActionData(this.props).type || actionOption.value,
-          external_id: appeal.externalId
+          instructions
         }
       }
     };
@@ -62,7 +59,7 @@ class ChangeTaskTypeModal extends React.PureComponent {
       detail: COPY.CHANGE_TASK_TYPE_CONFIRMATION_DETAIL
     };
 
-    return this.props.requestPatch(`/tasks/${task.taskId}`, payload, successMsg).
+    return this.props.requestPatch(`/tasks/${task.taskId}/change_type`, payload, successMsg).
       then((response) => {
         const amaTasks = JSON.parse(response.text).tasks.data;
 

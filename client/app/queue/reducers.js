@@ -50,7 +50,8 @@ export const initialState = {
   attorneys: {},
   organizationId: null,
   organizations: [],
-  loadingAppealDetail: {}
+  loadingAppealDetail: {},
+  queueConfig: {}
 };
 
 // eslint-disable-next-line max-statements
@@ -539,6 +540,9 @@ export const workQueueReducer = (state = initialState, action = {}) => {
         }
       }
     });
+  }
+  case ACTIONS.SET_QUEUE_CONFIG: {
+    return update(state, { queueConfig: { $set: action.payload.config } });
   }
   default:
     return state;

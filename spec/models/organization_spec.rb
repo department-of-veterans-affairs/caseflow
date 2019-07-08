@@ -148,4 +148,60 @@ describe Organization do
       expect(subject).to eq(false)
     end
   end
+
+  describe ".show_regional_office_in_queue?" do
+    subject { organization.show_regional_office_in_queue? }
+
+    context "for a generic organization" do
+      let(:organization) { FactoryBot.create(:organization) }
+
+      it "does not show the regional office column in the queue table view" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "for HearingAdmin organization" do
+      let(:organization) { HearingAdmin.singleton }
+
+      it "shows the regional office column in the queue table view" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "for HearingsManagement organization" do
+      let(:organization) { HearingsManagement.singleton }
+
+      it "shows the regional office column in the queue table view" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
+
+  describe ".use_task_pages_api?" do
+    subject { organization.use_task_pages_api? }
+
+    context "for a generic organization" do
+      let(:organization) { FactoryBot.create(:organization) }
+
+      it "does not use the task pages API" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "for VLJ Support Staff" do
+      let(:organization) { Colocated.singleton }
+
+      it "uses the task pages API" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "for HearingsManagement organization" do
+      let(:organization) { HearingsManagement.singleton }
+
+      it "uses the task pages API" do
+        expect(subject).to eq(true)
+      end
+    end
+  end
 end

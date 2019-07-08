@@ -8,7 +8,7 @@ describe DecisionReviewTask do
   let(:benefit_type) { "education" }
 
   describe "#label" do
-    subject { create(:higher_level_review_task).becomes(described_class) }
+    subject { create(:higher_level_review_task) }
 
     it "uses the review_title of the parent appeal" do
       expect(subject.label).to eq "Higher-Level Review"
@@ -34,7 +34,8 @@ describe DecisionReviewTask do
       [
         create(:request_issue, :rating, decision_review: hlr, benefit_type: benefit_type),
         create(:request_issue, :rating, decision_review: hlr, benefit_type: benefit_type),
-        create(:request_issue, :nonrating, decision_review: hlr, benefit_type: benefit_type)
+        create(:request_issue, :nonrating, decision_review: hlr, benefit_type: benefit_type),
+        create(:request_issue, :removed, decision_review: hlr, benefit_type: benefit_type)
       ]
     end
     let(:decision_date) { "01/01/2019" }
@@ -60,7 +61,7 @@ describe DecisionReviewTask do
         }
       ]
     end
-    let(:task) { create(:task, appeal: hlr, status: task_status).becomes(described_class) }
+    let(:task) { create(:higher_level_review_task, appeal: hlr, status: task_status) }
     subject { task.complete_with_payload!(decision_issue_params, decision_date) }
 
     context "assigned task" do

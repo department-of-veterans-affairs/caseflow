@@ -18,7 +18,9 @@ class Api::V1::JobsController < Api::ApplicationController
     "task_timer_job" => TaskTimerJob,
     "fetch_hearing_locations_for_veterans_job" => FetchHearingLocationsForVeteransJob,
     "update_appellant_representation_job" => UpdateAppellantRepresentationJob,
-    "hearing_disposition_change_job" => HearingDispositionChangeJob
+    "untracked_legacy_appeals_report_job" => UntrackedLegacyAppealsReportJob,
+    "hearing_disposition_change_job" => HearingDispositionChangeJob,
+    "warm_bgs_participant_caches_job" => WarmBgsParticipantCachesJob
   }.freeze
 
   def create

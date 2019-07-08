@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
-class HearingsController < ApplicationController
+class HearingsController < HearingsApplicationController
   include HearingsConcerns::VerifyAccess
+
+  before_action :verify_access_to_hearings, except: [:show_print, :show]
+  before_action :verify_access_to_reader_or_hearings, only: [:show_print, :show]
 
   def show
     render json: hearing.to_hash(current_user.id)
@@ -28,19 +31,13 @@ class HearingsController < ApplicationController
   end
 
   def update_advance_on_docket_motion
+    advance_on_docket_motion_params.require(:reason)
+
     motion = AdvanceOnDocketMotion.find_or_create_by!(
       person_id: advance_on_docket_motion_params[:person_id],
       user_id: advance_on_docket_motion_params[:user_id]
     )
     motion.update(advance_on_docket_motion_params)
-  end
-
-  def logo_name
-    "Hearings"
-  end
-
-  def logo_path
-    hearings_dockets_path
   end
 
   def find_closest_hearing_locations
@@ -75,10 +72,6 @@ class HearingsController < ApplicationController
 
   def hearing_external_id
     params[:id]
-  end
-
-  def set_application
-    RequestStore.store[:application] = "hearings"
   end
 
   def update_params_legacy

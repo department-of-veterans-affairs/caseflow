@@ -10,23 +10,24 @@ class Docket
   def appeals(priority: nil, ready: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
 
-    scope = docket_appeals
+    scope = docket_appeals.active
     scope = scope.ready_for_distribution if ready == true
 
     if priority == true
-      scope = scope.all_priority
+      scope = scope.priority
       return scope.ordered_by_distribution_ready_date
     end
 
-    scope = scope.all_nonpriority if priority == false
+    scope = scope.nonpriority if priority == false
     scope.order("receipt_date")
   end
 
   def count(priority: nil, ready: nil)
-    # The underlying scopes here all use `group_by` statements,
-    # so we count using a subquery finding the relevant ids.
-    appeal_ids = appeals(priority: priority, ready: ready).select("appeals.id")
-    Appeal.where(id: appeal_ids).count
+    # The underlying scopes here all use `group_by` statements, so calling
+    # `count` on `appeals` will return a hash. To get the number of appeals, we
+    # can pluck the ids and ask for the size of the resulting array.
+    # See the docs for ActiveRecord::Calculations
+    appeals(priority: priority, ready: ready).ids.size
   end
 
   def weight
@@ -55,10 +56,17 @@ class Docket
   end
   # rubocop:enable Lint/UnusedMethodArgument
 
+  def self.nonpriority_decisions_per_year
+    Appeal.extending(Scopes).nonpriority
+      .joins(:decision_documents)
+      .where("decision_date > ?", 1.year.ago)
+      .pluck(:id).size
+  end
+
   private
 
   def docket_appeals
-    Appeal.active.where(docket_type: docket_type)
+    Appeal.where(docket_type: docket_type).extending(Scopes)
   end
 
   def assign_judge_tasks_for_appeals(appeals, judge)
@@ -77,6 +85,53 @@ class Docket
       Rails.logger.info("Closing distribution task with task id #{task.id} to #{task.assigned_to.css_id}")
 
       task
+    end
+  end
+
+  module Scopes
+    def priority
+      join_aod_motions
+        .where("advance_on_docket_motions.created_at > appeals.established_at")
+        .where("advance_on_docket_motions.granted = ?", true)
+        .or(join_aod_motions
+          .where("people.date_of_birth <= ?", 75.years.ago))
+        .group("appeals.id")
+    end
+
+    # rubocop:disable Metrics/LineLength
+    def nonpriority
+      join_aod_motions
+        .where("people.date_of_birth > ?", 75.years.ago)
+        .group("appeals.id")
+        .having("count(case when advance_on_docket_motions.granted and advance_on_docket_motions.created_at > appeals.established_at then 1 end) = ?", 0)
+    end
+    # rubocop:enable Metrics/LineLength
+
+    def join_aod_motions
+      joins(claimants: :person)
+        .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
+    end
+
+    def ready_for_distribution
+      joins(:tasks)
+        .group("appeals.id")
+        .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
+                DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+        .having("count(case when tasks.type in (?) and tasks.status not in (?) then 1 end) = ?",
+                MailTask.blocking_subclasses, Task.closed_statuses, 0)
+    end
+
+    def ordered_by_distribution_ready_date
+      joins(:tasks)
+        .group("appeals.id")
+        .order("max(case when tasks.type = 'DistributionTask' then tasks.assigned_at end)")
+    end
+
+    def non_ihp
+      joins(:tasks)
+        .group("appeals.id")
+        .having("count(case when tasks.type = ? then 1 end) = ?",
+                InformalHearingPresentationTask.name, 0)
     end
   end
 end

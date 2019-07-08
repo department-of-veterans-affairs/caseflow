@@ -56,6 +56,11 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
+    factory :pulac_cerullo_task, class: PulacCerulloTask do
+      type { PulacCerulloTask.name }
+      appeal { create(:appeal) }
+    end
+
     factory :privacy_act_task, class: PrivacyActTask do
       type { PrivacyActTask.name }
       appeal { create(:appeal) }
@@ -64,15 +69,16 @@ FactoryBot.define do
     factory :timed_hold_task, class: TimedHoldTask do
       type { TimedHoldTask.name }
       appeal { create(:appeal) }
-      assigned_to { FactoryBot.create(:user) }
+      assigned_to { create(:user) }
       days_on_hold { rand(1..100) }
-      parent { FactoryBot.create(:generic_task) }
+      parent { create(:generic_task) }
     end
 
-    factory :colocated_task do
+    factory :colocated_task, class: ColocatedTask do
       type { ColocatedTask.name }
+      parent { create(:generic_task) }
 
-      factory :ama_colocated_task do
+      factory :ama_colocated_task, class: ColocatedTask do
         appeal { create(:appeal) }
       end
 
@@ -140,8 +146,8 @@ FactoryBot.define do
       appeal { create(:appeal) }
     end
 
-    factory :disposition_task, class: DispositionTask do
-      type { DispositionTask.name }
+    factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
+      type { AssignHearingDispositionTask.name }
       assigned_to { Bva.singleton }
       appeal { create(:appeal) }
       parent { create(:hearing_task) }
@@ -196,19 +202,42 @@ FactoryBot.define do
       type { NoShowHearingTask.name }
       appeal { create(:appeal) }
       assigned_to { HearingsManagement.singleton }
-      parent { create(:disposition_task, appeal: appeal) }
+      parent { create(:assign_hearing_disposition_task, appeal: appeal) }
     end
 
-    factory :ama_attorney_task do
+    factory :evidence_submission_window_task, class: EvidenceSubmissionWindowTask do
+      type { EvidenceSubmissionWindowTask.name }
+      appeal { create(:appeal) }
+      assigned_to { HearingsManagement.singleton }
+      parent { create(:assign_hearing_disposition_task, appeal: appeal) }
+    end
+
+    factory :ama_attorney_task, class: AttorneyTask do
       type { AttorneyTask.name }
       appeal { create(:appeal) }
-      parent { create(:ama_judge_task) }
+      parent { create(:ama_judge_decision_review_task) }
+      assigned_by { create(:user) }
+      assigned_to { create(:user) }
+
+      after(:build) do |_task, evaluator|
+        if evaluator.assigned_by
+          existing_staff_record = VACOLS::Staff.where(
+            sdomainid: evaluator.assigned_by.css_id, svlj: "J", sactive: "A"
+          ).first
+          create(:staff, :judge_role, user: evaluator.assigned_by) if existing_staff_record.blank?
+        end
+
+        if evaluator.assigned_to
+          existing_staff_record = VACOLS::Staff.where(sdomainid: evaluator.assigned_to.css_id, sactive: "A").first
+          create(:staff, :attorney_role, user: evaluator.assigned_to) if existing_staff_record.blank?
+        end
+      end
     end
 
     factory :ama_judge_dispatch_return_to_attorney_task, class: AttorneyDispatchReturnTask do
       type { AttorneyDispatchReturnTask.name }
       appeal { create(:appeal) }
-      parent { create(:ama_judge_task) }
+      parent { create(:ama_judge_decision_review_task) }
     end
 
     factory :transcription_task, class: TranscriptionTask do
@@ -218,7 +247,7 @@ FactoryBot.define do
       assigned_to { TranscriptionTeam.singleton }
     end
 
-    factory :ama_vso_task do
+    factory :ama_vso_task, class: GenericTask do
       type { GenericTask.name }
       appeal { create(:appeal) }
       parent { create(:root_task) }
@@ -232,13 +261,13 @@ FactoryBot.define do
       assigned_to { QualityReview.singleton }
     end
 
-    factory :quality_review_task do
+    factory :quality_review_task, class: QualityReviewTask do
       type { QualityReviewTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
     end
 
-    factory :bva_dispatch_task do
+    factory :bva_dispatch_task, class: BvaDispatchTask do
       type { BvaDispatchTask.name }
       appeal { create(:appeal) }
       assigned_by { nil }
