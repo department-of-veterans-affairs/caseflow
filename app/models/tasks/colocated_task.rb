@@ -156,18 +156,17 @@ class ColocatedTask < Task
   end
 
   def vacols_location
-    case action.to_sym
-    when :schedule_hearing
+    if action == "schedule_hearing" || type == ScheduleHearingColocatedTask.name
       # Return to attorney if the task is cancelled. For instance, if the VLJ support staff sees that the hearing was
       # actually held.
-      return assigned_by.vacols_uniq_id if children.all? { |t| t.status == Constants.TASK_STATUSES.cancelled }
+      return assigned_by.vacols_uniq_id if children.all? { |child| child.status == Constants.TASK_STATUSES.cancelled }
 
       # Schedule hearing with a task (instead of changing Location in VACOLS, the old way)
       ScheduleHearingTask.create!(appeal: appeal, parent: appeal.root_task)
 
       LegacyAppeal::LOCATION_CODES[:caseflow]
-    when :translation
-      LegacyAppeal::LOCATION_CODES[action.to_sym]
+    elsif action == "translation" || type == TranslationColocatedTask.name
+      LegacyAppeal::LOCATION_CODES[:translation]
     else
       assigned_by.vacols_uniq_id
     end
