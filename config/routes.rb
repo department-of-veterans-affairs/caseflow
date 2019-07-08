@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     end
     namespace :v2 do
       resources :appeals, only: :index
+      resources :hearings, only: :show, param: :hearing_day
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
