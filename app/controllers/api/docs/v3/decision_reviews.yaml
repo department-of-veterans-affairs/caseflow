@@ -143,8 +143,22 @@ paths:
           description: Accepted
         '4XX':
           description: Invalid Request
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
         '5XX':
           description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
   /higher_level_reviews/status/{id}:
     get:
       parameters:
@@ -255,8 +269,22 @@ paths:
                     $ref: "#/components/schemas/errors"
         '4XX':
           description: Invalid Request
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
         '5XX':
           description: Failed
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    $ref: "#/components/schemas/errors"
 components:
   schemas:
     nonrating_issue_category:
