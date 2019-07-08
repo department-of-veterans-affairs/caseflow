@@ -1,0 +1,32 @@
+# frozen_string_literal: true
+
+class UnassignedTasksTab < QueueTab
+  def label
+    COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
+  end
+
+  def name
+    Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+  end
+
+  def description
+    COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION
+  end
+
+  def columns
+    [
+      Constants.QUEUE_CONFIG.HEARING_BADGE_COLUMN,
+      Constants.QUEUE_CONFIG.CASE_DETAILS_LINK_COLUMN,
+      Constants.QUEUE_CONFIG.TASK_TYPE_COLUMN,
+      show_regional_office_column ? Constants.QUEUE_CONFIG.REGIONAL_OFFICE_COLUMN : nil,
+      Constants.QUEUE_CONFIG.APPEAL_TYPE_COLUMN,
+      Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
+      Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
+      show_reader_link_column ? Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN : nil
+    ]
+  end
+
+  def allow_bulk_assign?
+    !!allow_bulk_assign
+  end
+end
