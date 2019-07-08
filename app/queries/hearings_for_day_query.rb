@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class HearingsForDayQuery
-
   def initialize(day:)
     @day = day
   end
@@ -11,7 +10,7 @@ class HearingsForDayQuery
 
     fail ActiveRecord::RecordNotFound unless days.any?
 
-    days_ids = days.map { |day| day.id }
+    days_ids = days.map(&:id)
     hearings = Hearing.where(hearing_day_id: days_ids)
     legacy_hearings = HearingRepository.fetch_hearings_for_parents(days_ids).values.flatten
 
