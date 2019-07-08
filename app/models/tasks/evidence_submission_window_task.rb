@@ -22,7 +22,7 @@ class EvidenceSubmissionWindowTask < GenericTask
   end
 
   def hearing
-    appeal.hearings.order(&:id).last
+    appeal.hearings.max_by(&:id)
   end
 
   private
