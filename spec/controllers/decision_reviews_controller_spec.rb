@@ -24,6 +24,16 @@ describe DecisionReviewsController, type: :controller do
       end
     end
 
+    context "user has Admin Intake role" do
+      let(:user) { User.authenticate!(roles: ["Admin Intake"]) }
+
+      it "displays org queue page" do
+        get :index, params: { business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 200
+      end
+    end
+
     context "user is in org" do
       before do
         OrganizationsUser.add_user_to_organization(user, non_comp_org)

@@ -13,7 +13,7 @@ describe RecordSyncedByJob do
     end
 
     let!(:old_record_synced_by_job) do
-      RecordSyncedByJob.create!(record: recent_appeal_with_sync, processed_at: 2.days.ago)
+      RecordSyncedByJob.create!(record: old_appeal_with_sync, processed_at: 2.days.ago)
     end
 
     context "when the limit is 1" do

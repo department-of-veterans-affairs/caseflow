@@ -1,5 +1,8 @@
-<% if local_assigns.has_key?(:print_stylesheet) %>
 <% content_for :head do %>
+<% if local_assigns.has_key?(:override_stylesheet) %>
+<%= stylesheet_link_tag override_stylesheet, media: 'all' %>
+<% end %>
+<% if local_assigns.has_key?(:print_stylesheet) %>
 <%= stylesheet_link_tag print_stylesheet, media: 'print' %>
 <% end %>
 <% end %>
