@@ -51,7 +51,9 @@ export default class ErrorAlert extends React.PureComponent {
           <Fragment>
             A previously submitted update has not yet finished processing. Please wait a few minutes and try again.
             <br /><br />
-            If it's still not working after that, please contact customer support.
+            If it's still not working after that, please contact the Caseflow team
+            via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
+            via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
           </Fragment>
         )
       },
@@ -60,7 +62,11 @@ export default class ErrorAlert extends React.PureComponent {
         body: (
           <Fragment>
             <div>Error code {this.props.errorUUID}</div>
-            <div>Please try again. If the problem persists, please contact Caseflow support.</div>
+            <div>
+              Please try again. If the problem persists, please contact the Caseflow team
+              via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket
+              via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a>.
+            </div>
           </Fragment>
         )
       },

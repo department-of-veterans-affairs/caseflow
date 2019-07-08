@@ -21,7 +21,8 @@ class SaveButtonUnconnected extends React.Component {
       originalIssueNumber: this.props.state.addedIssues.length,
       showModals: {
         issueChangeModal: false,
-        unidentifiedIssueModal: false
+        unidentifiedIssueModal: false,
+        reviewRemovedModal: false
       }
     };
   }
@@ -30,11 +31,16 @@ class SaveButtonUnconnected extends React.Component {
     // do validation and show modals
     let showModals = {
       issueChangeModal: false,
-      unidentifiedIssueModal: false
+      unidentifiedIssueModal: false,
+      reviewRemovedModal: false
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      showModals.issueChangeModal = true;
+      if (this.props.state.addedIssues.length === 0) {
+        showModals.reviewRemovedModal = true;
+      } else {
+        showModals.issueChangeModal = true;
+      }
     }
 
     if (this.props.state.addedIssues.filter((i) => i.isUnidentified).length > 0) {
@@ -87,11 +93,10 @@ class SaveButtonUnconnected extends React.Component {
       originalIssues,
       requestStatus,
       veteranValid,
+      processedInCaseflow,
       withdrawalDate,
       receiptDate
     } = this.props;
-
-    let disableDueToIssueCount = false;
 
     const invalidVeteran = !veteranValid && (_.some(
       addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
@@ -105,13 +110,17 @@ class SaveButtonUnconnected extends React.Component {
 
     const saveDisabled = _.isEqual(
       addedIssues, originalIssues
-    ) || disableDueToIssueCount || invalidVeteran || !withdrawDateValid;
+    ) || invalidVeteran || !withdrawDateValid;
 
     const withdrawReview = !_.isEmpty(addedIssues) && _.every(
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
     );
 
     const saveButtonText = withdrawReview ? 'Withdraw' : 'Save';
+
+    const removeVbmsCopy = 'This will remove the review and cancel all the End Products associated with it.';
+
+    const removeCaseflowCopy = 'This review and all tasks associated with it will be removed.';
 
     const originalIssueNumberCopy = `The review originally had ${this.state.originalIssueNumber}
        ${pluralize('issue', this.state.originalIssueNumber)} but now has ${this.props.state.addedIssues.length}.`;
@@ -125,6 +134,17 @@ class SaveButtonUnconnected extends React.Component {
           {originalIssueNumberCopy}
         </p>
         <p>Please check that this is the correct number.</p>
+      </SaveAlertConfirmModal>}
+
+      {this.state.showModals.reviewRemovedModal && <SaveAlertConfirmModal
+        title="Remove review?"
+        buttonText= "Yes, remove"
+        onClose={() => this.closeModal('reviewRemovedModal')}
+        onConfirm={() => this.confirmModal('reviewRemovedModal')}>
+        <p>
+          {originalIssueNumberCopy}
+        </p>
+        <p>{processedInCaseflow ? removeCaseflowCopy : removeVbmsCopy}</p>
       </SaveAlertConfirmModal>}
 
       { this.state.showModals.unidentifiedIssueModal && <SaveAlertConfirmModal
