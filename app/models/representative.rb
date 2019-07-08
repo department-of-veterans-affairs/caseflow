@@ -32,7 +32,7 @@ class Representative < Organization
   end
 
   def tracking_tasks_tab
-    TrackingTasksTab.new(assignee_name: name)
+    ::TrackingTasksTab.new(assignee_name: name)
   end
 
   def ama_task_serializer
