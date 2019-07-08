@@ -140,10 +140,10 @@ paths:
                             $ref: "#/components/schemas/nonrating_issue_category"
       responses:
         '202':
-          description: Created
-        '400':
+          description: Accepted
+        '4XX':
           description: Invalid Request
-        '500':
+        '5XX':
           description: Failed
   /higher_level_reviews/status/{id}:
     get:
