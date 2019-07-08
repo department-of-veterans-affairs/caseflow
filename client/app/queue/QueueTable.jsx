@@ -16,6 +16,7 @@ import {
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG.json';
 
 /**
  * This component can be used to easily build tables.
@@ -68,7 +69,7 @@ const HeaderRow = (props) => {
         let sortIcon;
         let filterIcon;
 
-        if (!props.useTaskPagesApi && column.getSortValue) {
+        if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
           const topColor = props.sortColName === column.name && !props.sortAscending ?
             COLORS.PRIMARY :
             COLORS.GREY_LIGHT;
@@ -276,19 +277,44 @@ export default class QueueTable extends React.PureComponent {
   );
 
   updateCurrentPage = (newPage) => {
-    this.setState({ currentPage: newPage });
-    this.requestNewPage(newPage);
+    this.setState(
+      { currentPage: newPage },
+      this.requestTasks
+    );
   }
 
-  requestNewPage = (newPage) => {
+  // /organizations/vlj-support-staff/tasks?tab=on_hold
+  // &page=2
+  // &sort_by=detailsColumn
+  // &order=desc
+  requestUrl = () => {
+    // Request currentPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
+    const params = { [QUEUE_CONFIG.PAGE_NUMBER_REQUEST_PARAM]: this.state.currentPage + 1 };
+
+    // Add sorting parameters to query string if any sorting parameters have been explicitly set.
+    if (this.state.sortColName) {
+      params[QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM] = this.state.sortColName;
+      params[QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM] = this.state.sortAscending ?
+        QUEUE_CONFIG.COLUMN_SORT_ORDER_ASC :
+        QUEUE_CONFIG.COLUMN_SORT_ORDER_DESC;
+    }
+
+    const queryString = Object.keys(params).map(
+      (key) => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+    ).
+      join('&');
+
+    return `${this.props.taskPagesApiEndpoint}&${queryString}`;
+  }
+
+  requestTasks = () => {
     if (!this.props.useTaskPagesApi) {
       return;
     }
 
     this.setState({ loadingComponent: <LoadingScreen spinnerColor={LOGO_COLORS.QUEUE.ACCENT} /> });
 
-    // Request newPage + 1 since our API indexes starting at 1 and the pagination element indexes starting at 0.
-    return ApiUtil.get(`${this.props.taskPagesApiEndpoint}&page=${newPage + 1}`).then((response) => {
+    return ApiUtil.get(this.requestUrl()).then((response) => {
       const {
         tasks: { data: tasks }
       } = JSON.parse(response.text);
