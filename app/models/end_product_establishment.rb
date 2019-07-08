@@ -310,6 +310,10 @@ class EndProductEstablishment < ApplicationRecord
     contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
   end
 
+  def veteran
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
+  end
+
   private
 
   def status_type
@@ -402,10 +406,6 @@ class EndProductEstablishment < ApplicationRecord
       contention_map[issue.contested_rating_issue_reference_id] = issue.contention_reference_id
       contention_map
     end
-  end
-
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
   end
 
   def establish_claim_in_vbms(end_product)
