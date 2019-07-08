@@ -476,8 +476,8 @@ describe ColocatedTask do
     let(:org_task) do
       FactoryBot.create(
         :colocated_task,
+        :retired_vlj,
         appeal: appeal,
-        action: :retired_vlj,
         assigned_by: initial_assigner,
         assigned_to: Colocated.singleton
       )
