@@ -37,16 +37,16 @@ class QueueConfig
   end
 
   def attach_tasks_to_tab(tab, user)
-    task_pager = TaskPager.new(assignee: organization, tab_name: tab[:name])
+    task_pager = TaskPager.new(assignee: organization, tab_name: tab.name)
 
     # Only return tasks in the configuration if we are using it to populate the first page of results.
     # Otherwise avoid the overhead of the additional database requests.
     tasks = use_task_pages_api?(user) ? serialized_tasks_for_user(task_pager.paged_tasks, user) : []
 
-    endpoint = "#{organization.path}/task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab[:name]}"
+    endpoint = "#{organization.path}/task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
 
-    tab.merge(
-      label: format(tab[:label], task_pager.total_task_count),
+    tab.to_hash.merge(
+      label: format(tab.label, task_pager.total_task_count),
       tasks: tasks,
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,

@@ -89,15 +89,15 @@ class Organization < ApplicationRecord
       show_regional_office_column: show_regional_office_in_queue?,
       show_reader_link_column: show_reader_link_column?,
       allow_bulk_assign: can_bulk_assign_tasks?
-    ).to_hash
+    )
   end
 
   def assigned_tasks_tab
-    AssignedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?).to_hash
+    AssignedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def completed_tasks_tab
-    CompletedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?).to_hash
+    CompletedTasksTab.new(assignee_name: name, show_regional_office_column: show_regional_office_in_queue?)
   end
 
   def ama_task_serializer
