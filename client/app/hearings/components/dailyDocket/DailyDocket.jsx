@@ -7,11 +7,14 @@ import _ from 'lodash';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import Alert from '../../../components/Alert';
 import { LockModal, RemoveHearingModal, DispositionModal } from './DailyDocketModals';
+import Button from '../../../components/Button';
 import StatusMessage from '../../../components/StatusMessage';
 import { getHearingAppellantName } from './DailyDocketRowDisplayText';
 import DailyDocketRows from './DailyDocketRows';
 import DailyDocketEditLinks from './DailyDocketEditLinks';
 import { isPreviouslyScheduledHearing } from '../../utils';
+import { navigateToPrintPage } from '../../../util/PrintUtil';
+import { encodeQueryParams } from '../../../util/QueryParamsUtil';
 
 const alertStyling = css({
   marginBottom: '30px'
@@ -94,6 +97,13 @@ export default class DailyDocket extends React.Component {
     this.setState({ editedDispositionModalProps: null });
   }
 
+  navigateToPrintAllPage = () => {
+    const hearingIds = this.dailyDocketHearings().map((hearing) => hearing.externalId);
+    const queryString = encodeQueryParams({ hearing_ids: hearingIds.join(',') });
+
+    navigateToPrintPage(`/hearings/worksheet/print${queryString}`);
+  }
+
   render() {
 
     const regionalOffice = this.getRegionalOffice();
@@ -150,6 +160,23 @@ export default class DailyDocket extends React.Component {
           Hearing type: {dailyDocket.readableRequestType} <br />
           Regional office: {dailyDocket.regionalOffice}<br />
           Room number: {dailyDocket.room}
+        </div>
+      </div>
+
+      <div className="cf-app-segment">
+        <div className="cf-push-left">
+          <Button onClick={() => navigateToPrintPage()}>
+            Download & Print Page
+          </Button>
+        </div>
+        <div className="cf-push-right">
+          <Button
+            classNames={['usa-button-secondary']}
+            onClick={this.navigateToPrintAllPage}
+            disabled={_.isEmpty(docketHearings)}
+          >
+            Print all Hearing Worksheets
+          </Button>
         </div>
       </div>
 
