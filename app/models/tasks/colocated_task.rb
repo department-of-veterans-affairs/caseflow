@@ -81,6 +81,8 @@ class ColocatedTask < Task
   end
 
   def available_actions_with_conditions(core_actions)
+    # Break this out into respective subclasses once ColocatedTasks are migrated
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
     if %w[translation schedule_hearing].include?(action) && appeal.is_a?(LegacyAppeal)
       return legacy_translation_or_hearing_actions(core_actions)
     end
@@ -156,6 +158,8 @@ class ColocatedTask < Task
   end
 
   def vacols_location
+    # Break this out into respective subclasses once ColocatedTasks are migrated
+    # https://github.com/department-of-veterans-affairs/caseflow/pull/11295#issuecomment-509659069
     if action == "schedule_hearing" || type == ScheduleHearingColocatedTask.name
       schedule_hearing_vacols_location
     elsif action == "translation" || type == TranslationColocatedTask.name
