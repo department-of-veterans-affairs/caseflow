@@ -7,10 +7,6 @@ class ScheduleHearingColocatedTask < ColocatedTask
 
   def available_actions_with_conditions(core_actions)
     core_actions = super(core_actions)
-    if appeal.is_a?(LegacyAppeal)
-      return legacy_schedule_hearing_actions(core_actions)
-    end
-
-    core_actions
+    appeal.is_a?(LegacyAppeal) ? legacy_schedule_hearing_actions(core_actions) : core_actions
   end
 end
