@@ -390,12 +390,12 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.first["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.first["attributes"]["label"]).to eq "Address verification"
 
             expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.second["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.second["attributes"]["label"]).to eq "Address verification"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
             expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
@@ -403,7 +403,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
-            expect(response_body.last["attributes"]["label"]).to eq "missing_records"
+            expect(response_body.last["attributes"]["label"]).to eq "Missing records"
           end
         end
 
@@ -439,12 +439,12 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.first["attributes"]["status"]).to eq Constants.TASK_STATUSES.on_hold
             expect(response_body.first["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.first["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.first["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.first["attributes"]["label"]).to eq "Address verification"
 
             expect(response_body.second["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.second["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.second["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.second["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.second["attributes"]["label"]).to eq "Address verification"
             # assignee should be the same person
             id = response_body.second["attributes"]["assigned_to"]["id"]
             expect(response_body.last["attributes"]["assigned_to"]["id"]).to eq id
@@ -452,7 +452,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "another one"
-            expect(response_body.last["attributes"]["label"]).to eq "missing_records"
+            expect(response_body.last["attributes"]["label"]).to eq "Missing records"
           end
         end
 
@@ -475,7 +475,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.last["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.last["attributes"]["label"]).to eq "Address verification"
           end
         end
 
@@ -498,7 +498,7 @@ RSpec.describe TasksController, type: :controller do
             expect(response_body.last["attributes"]["status"]).to eq Constants.TASK_STATUSES.assigned
             expect(response_body.last["attributes"]["appeal_id"]).to eq appeal.id
             expect(response_body.last["attributes"]["instructions"][0]).to eq "do this"
-            expect(response_body.last["attributes"]["label"]).to eq "address_verification"
+            expect(response_body.last["attributes"]["label"]).to eq "Address verification"
           end
         end
 
@@ -661,9 +661,9 @@ RSpec.describe TasksController, type: :controller do
       create(:appeal, veteran: create(:veteran))
     end
 
-    let!(:colocated_task) { create(:colocated_task, appeal: legacy_appeal, assigned_by: assigning_user) }
+    let!(:colocated_task) { create(:colocated_task, :ihp, appeal: legacy_appeal, assigned_by: assigning_user) }
     let!(:ama_colocated_task) do
-      create(:ama_colocated_task, appeal: appeal, assigned_to: colocated_user, assigned_by: assigning_user)
+      create(:ama_colocated_task, :ihp, appeal: appeal, assigned_to: colocated_user, assigned_by: assigning_user)
     end
 
     context "when user is a judge" do
@@ -763,7 +763,7 @@ RSpec.describe TasksController, type: :controller do
         response_body = JSON.parse(response.body)
         expect(response_body["tasks"].length).to eq 2
 
-        colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "ColocatedTask" }
+        colocated_task = response_body["tasks"].find { |task| task["attributes"]["type"] == "IhpColocatedTask" }
         expect(colocated_task).to_not be_nil
         expect(colocated_task["attributes"]["assigned_to"]["css_id"]).to eq colocated_user.css_id
         expect(colocated_task["attributes"]["appeal_id"]).to eq appeal.id
@@ -773,7 +773,7 @@ RSpec.describe TasksController, type: :controller do
     context "when user is VSO" do
       let(:vso_user) { create(:user, roles: ["VSO"]) }
       let!(:vso_task) do
-        create(:ama_colocated_task, appeal: appeal, assigned_to: vso_user, assigned_by: assigning_user)
+        create(:ama_colocated_task, :ihp, appeal: appeal, assigned_to: vso_user, assigned_by: assigning_user)
       end
       before { User.authenticate!(user: vso_user) }
 
@@ -784,7 +784,7 @@ RSpec.describe TasksController, type: :controller do
         expect(response_body["tasks"].length).to eq 1
 
         task = response_body["tasks"][0]
-        expect(task["attributes"]["type"]).to eq "ColocatedTask"
+        expect(task["attributes"]["type"]).to eq "IhpColocatedTask"
         expect(task["attributes"]["assigned_to"]["css_id"]).to eq vso_user.css_id
         expect(task["attributes"]["appeal_id"]).to eq appeal.id
 

@@ -36,7 +36,7 @@ class SaveButtonUnconnected extends React.Component {
     };
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
-      if (this.props.state.addedIssues.length === 0 && this.props.removeDecisionReviews) {
+      if (this.props.state.addedIssues.length === 0) {
         showModals.reviewRemovedModal = true;
       } else {
         showModals.issueChangeModal = true;
@@ -91,20 +91,12 @@ class SaveButtonUnconnected extends React.Component {
     const {
       addedIssues,
       originalIssues,
-      issueCount,
       requestStatus,
-      removeDecisionReviews,
       veteranValid,
       processedInCaseflow,
       withdrawalDate,
       receiptDate
     } = this.props;
-
-    let disableDueToIssueCount = false;
-
-    if (!issueCount && !removeDecisionReviews) {
-      disableDueToIssueCount = true;
-    }
 
     const invalidVeteran = !veteranValid && (_.some(
       addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)
@@ -118,7 +110,7 @@ class SaveButtonUnconnected extends React.Component {
 
     const saveDisabled = _.isEqual(
       addedIssues, originalIssues
-    ) || disableDueToIssueCount || invalidVeteran || !withdrawDateValid;
+    ) || invalidVeteran || !withdrawDateValid;
 
     const withdrawReview = !_.isEmpty(addedIssues) && _.every(
       addedIssues, (issue) => issue.withdrawalPending || issue.withdrawalDate
@@ -191,7 +183,6 @@ const SaveButton = connect(
     originalIssues: state.originalIssues,
     requestStatus: state.requestStatus,
     issueCount: issueCountSelector(state),
-    removeDecisionReviews: state.featureToggles.removeDecisionReviews,
     veteranValid: state.veteranValid,
     processedInCaseflow: state.processedInCaseflow,
     withdrawalDate: state.withdrawalDate,

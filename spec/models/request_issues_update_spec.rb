@@ -191,14 +191,6 @@ describe RequestIssuesUpdate do
 
       subject { request_issues_update.perform! }
 
-      context "when request issues are empty" do
-        it "fails and adds to errors" do
-          expect(subject).to be_falsey
-
-          expect(request_issues_update.error_code).to eq(:request_issues_data_empty)
-        end
-      end
-
       context "when issues are exactly the same as existing issues" do
         let(:request_issues_data) do
           [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
