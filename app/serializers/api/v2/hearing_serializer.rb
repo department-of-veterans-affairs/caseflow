@@ -18,7 +18,7 @@ class Api::V2::HearingSerializer
   end
   attribute :scheduled_for, &:scheduled_for
   attribute :ssn do |hearing|
-    hearing.appeal&.veteran.ssn
+    hearing.appeal.veteran&.ssn
   end
   attribute :state do |hearing|
     hearing.hearing_location&.state
