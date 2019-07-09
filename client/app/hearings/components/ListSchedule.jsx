@@ -190,7 +190,7 @@ class ListSchedule extends React.Component {
         name="hearing-schedule-list"
         tabs={[
           {
-            label: 'Your Hearings',
+            label: 'Your Hearing Days',
             page: <ListTable onApply={this.props.onApply}
               key={`judgeHearings${this.state.dateRangeKey}`}
               user={this.props.user}
@@ -198,7 +198,7 @@ class ListSchedule extends React.Component {
               hearingScheduleColumns={hearingScheduleColumns} />
           },
           {
-            label: 'All Hearings',
+            label: 'All Hearing Days',
             page: <ListTable onApply={() => this.props.onApply({ showAll: true })}
               key={`allHearings${this.state.dateRangeKey}`}
               user={this.props.user}
