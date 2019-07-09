@@ -9,10 +9,6 @@
 # the current status of the EP when the EndProductEstablishment is synced.
 
 class EndProductEstablishment < ApplicationRecord
-  attr_accessor :valid_modifiers
-  # In decision reviews, we may create 2 end products at the same time. To avoid using
-  # the same modifier, we add used modifiers to the invalid_modifiers array.
-  attr_writer :invalid_modifiers
   belongs_to :source, polymorphic: true
   belongs_to :user
 
@@ -31,7 +27,6 @@ class EndProductEstablishment < ApplicationRecord
   class EstablishedEndProductNotFound < StandardError; end
   class ContentionCreationFailed < StandardError; end
   class InvalidEndProductError < StandardError; end
-  class NoAvailableModifiers < StandardError; end
   class ContentionNotFound < StandardError; end
 
   class << self
@@ -54,8 +49,6 @@ class EndProductEstablishment < ApplicationRecord
 
   def perform!(commit: false)
     return if reference_id
-
-    set_establishment_values_from_source
 
     fail InvalidEndProductError unless end_product_to_establish.valid?
 
@@ -92,8 +85,6 @@ class EndProductEstablishment < ApplicationRecord
     records_ready_for_contentions = calculate_records_ready_for_contentions
     return if records_ready_for_contentions.empty?
 
-    set_establishment_values_from_source
-
     contentions = build_contentions(records_ready_for_contentions)
 
     # VBMS returns all the contentions on the claim, old and new, so keep track
@@ -123,6 +114,11 @@ class EndProductEstablishment < ApplicationRecord
     records_ready_for_contentions.map do |issue|
       contention = { description: issue.contention_text }
       issue.try(:special_issues) && contention[:special_issues] = issue.special_issues
+
+      if FeatureToggle.enabled?(:send_original_dta_contentions, user: RequestStore.store[:current_user])
+        issue.try(:original_contention_ids) && contention[:original_contention_ids] = issue.original_contention_ids
+      end
+
       contention
     end
   end
@@ -201,6 +197,7 @@ class EndProductEstablishment < ApplicationRecord
       )
       sync_source!
       close_request_issues_if_canceled!
+      close_request_issues_with_no_decision!
     end
   rescue EstablishedEndProductNotFound, AppealRepository::AppealNotValidToReopen => error
     raise error
@@ -313,6 +310,10 @@ class EndProductEstablishment < ApplicationRecord
     contentions.find { |contention| contention.id.to_i == for_object.contention_reference_id.to_i }
   end
 
+  def veteran
+    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
+  end
+
   private
 
   def status_type
@@ -375,6 +376,13 @@ class EndProductEstablishment < ApplicationRecord
     request_issues.all.find_each(&:close_after_end_product_canceled!)
   end
 
+  def close_request_issues_with_no_decision!
+    return unless status_cleared?
+    return unless result.claim_type_code =~ /^400/
+
+    request_issues.each { |ri| RequestIssueClosure.new(ri).with_no_decision! }
+  end
+
   def fetch_associated_rating
     potential_decision_ratings.find do |rating|
       rating.associated_end_products.any? { |end_product| end_product.claim_id == reference_id }
@@ -400,14 +408,6 @@ class EndProductEstablishment < ApplicationRecord
     end
   end
 
-  def invalid_modifiers
-    @invalid_modifiers || []
-  end
-
-  def veteran
-    @veteran ||= Veteran.find_or_create_by_file_number(veteran_file_number, sync_name: true)
-  end
-
   def establish_claim_in_vbms(end_product)
     veteran.unload_bgs_record
 
@@ -419,7 +419,11 @@ class EndProductEstablishment < ApplicationRecord
   end
 
   def end_product_to_establish
-    @end_product_to_establish ||= end_product_with_modifier(find_open_modifier)
+    @end_product_to_establish ||= end_product_with_modifier(open_modifier)
+  end
+
+  def open_modifier
+    @open_modifier ||= EndProductModifierFinder.new(self, veteran).find
   end
 
   def fetched_result
@@ -460,22 +464,6 @@ class EndProductEstablishment < ApplicationRecord
     result
   end
 
-  def taken_modifiers
-    @taken_modifiers ||= veteran.end_products.reject(&:cleared?).map(&:modifier)
-  end
-
-  def find_open_modifier
-    return valid_modifiers.first if valid_modifiers.count == 1
-
-    valid_modifiers.each do |modifier|
-      if !(taken_modifiers + invalid_modifiers).include?(modifier)
-        return modifier
-      end
-    end
-
-    fail NoAvailableModifiers
-  end
-
   def sync_source!
     return unless source&.respond_to?(:on_sync)
 
@@ -489,15 +477,6 @@ class EndProductEstablishment < ApplicationRecord
       contentions: contentions,
       user: user
     )
-  end
-
-  # These are values that need to be determined based on the source right before the end
-  # product is established. There is a potential to refactor this method away.
-  def set_establishment_values_from_source
-    self.attributes = {
-      invalid_modifiers: source.respond_to?(:invalid_modifiers) && source.invalid_modifiers,
-      valid_modifiers: source.valid_modifiers
-    }
   end
 
   def generate_claimant_letter_in_bgs

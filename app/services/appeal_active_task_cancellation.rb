@@ -8,7 +8,7 @@ class AppealActiveTaskCancellation
   end
 
   def call
-    if WithdrawnDecisionReviewPolicy.new(appeal).satisfied?
+    if appeal.withdrawn?
       # Withdrawn appeals must be included in the automatic distribution pool.
       # For an appeal to be considered ready for distribution, it must have an
       # assigned DistributionTask. In order for the appeal to progress after

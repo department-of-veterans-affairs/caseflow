@@ -318,17 +318,54 @@ describe RequestIssue do
     end
   end
 
-  context ".active_or_decided" do
-    subject { RequestIssue.active_or_decided }
+  context ".active_or_decided_or_withdrawn" do
+    subject { RequestIssue.active_or_decided_or_withdrawn }
 
     let!(:decided_request_issue) { create(:request_issue, :decided) }
     let!(:removed_request_issue) { create(:request_issue, :removed) }
+    let!(:withdrawn_request_issue) { create(:request_issue, :withdrawn) }
     let!(:open_eligible_request_issue) { create(:request_issue) }
 
-    it "returns open eligible or closed decided issues" do
+    it "returns open eligible or closed decided or withdrawn issues" do
       expect(subject.find_by(id: removed_request_issue.id)).to be_nil
       expect(subject.find_by(id: decided_request_issue.id)).to_not be_nil
+      expect(subject.find_by(id: withdrawn_request_issue.id)).to_not be_nil
       expect(subject.find_by(id: open_eligible_request_issue.id)).to_not be_nil
+    end
+  end
+
+  context "#original_contention_ids" do
+    subject { rating_request_issue.original_contention_ids }
+
+    let(:original_request_issues) do
+      [
+        create(:request_issue, contention_reference_id: "101"),
+        create(:request_issue, contention_reference_id: "121")
+      ]
+    end
+    let(:disposition) { "granted" }
+    let!(:decision_issue) { create(:decision_issue, request_issues: original_request_issues, disposition: disposition) }
+
+    context "when there is not a contested decision issue" do
+      let(:contested_decision_issue_id) { nil }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when there is a contested decision issue" do
+      let(:contested_decision_issue_id) { decision_issue.id }
+
+      context "when the decision issue does not have a dta disposition" do
+        it { is_expected.to be_falsey }
+      end
+
+      context "when the decision issue has a dta disposition" do
+        let(:disposition) { "DTA Error" }
+
+        it "includes an array of the contention reference IDs from the decision issues request issues" do
+          expect(subject).to eq([101, 121])
+        end
+      end
     end
   end
 

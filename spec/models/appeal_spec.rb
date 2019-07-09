@@ -26,7 +26,7 @@ describe Appeal do
   end
 
   context "active appeals" do
-    let!(:active_appeal) { create(:appeal, :with_tasks) }
+    let!(:active_appeal) { create(:appeal, :with_post_intake_tasks) }
     let!(:inactive_appeal) { create(:appeal, :outcoded) }
 
     subject { Appeal.active }
@@ -468,11 +468,13 @@ describe Appeal do
     end
 
     context "request issue has non-comp business line" do
-      let!(:appeal) { create(:appeal, request_issues: [
-        create(:request_issue, benefit_type: :fiduciary),
-        create(:request_issue, benefit_type: :compensation),
-        create(:request_issue, :unidentified)
-        ]) }
+      let!(:appeal) do
+        create(:appeal, request_issues: [
+                 create(:request_issue, benefit_type: :fiduciary),
+                 create(:request_issue, benefit_type: :compensation),
+                 create(:request_issue, :unidentified)
+               ])
+      end
 
       it "creates root task and veteran record request task" do
         expect(VeteranRecordRequest).to receive(:create!).once
@@ -652,24 +654,41 @@ describe Appeal do
   end
 
   context "is taskable" do
-    context "#assigned_attorney" do
+    context ".assigned_attorney" do
       let(:attorney) { create(:user) }
+      let(:attorney2) { create(:user) }
       let(:appeal) { create(:appeal) }
       let!(:task) { create(:ama_attorney_task, assigned_to: attorney, appeal: appeal) }
+      let!(:task2) { create(:ama_attorney_task, assigned_to: attorney2, appeal: appeal) }
 
       subject { appeal.assigned_attorney }
 
-      it { is_expected.to eq attorney }
+      it "should know the right assigned attorney with two tasks" do
+        expect(subject).to eq attorney2
+      end
+
+      it "should know the right assigned attorney with a cancelled task" do
+        task2.update(status: "cancelled")
+        expect(subject).to eq attorney
+      end
     end
 
-    context "#assigned_judge" do
+    context ".assigned_judge" do
       let(:judge) { create(:user) }
+      let(:judge2) { create(:user) }
       let(:appeal) { create(:appeal) }
       let!(:task) { create(:ama_judge_task, assigned_to: judge, appeal: appeal) }
+      let!(:task2) { create(:ama_judge_task, assigned_to: judge2, appeal: appeal) }
 
       subject { appeal.assigned_judge }
 
-      it { is_expected.to eq judge }
+      it "should know the right assigned judge with two tasks" do
+        expect(subject).to eq judge2
+      end
+      it "should know the right assigned judge with a cancelled tasks" do
+        task2.update(status: "cancelled")
+        expect(subject).to eq judge
+      end
     end
   end
 
@@ -920,7 +939,7 @@ describe Appeal do
       end
       let!(:disposition_task) do
         FactoryBot.create(
-          :disposition_task,
+          :assign_hearing_disposition_task,
           parent: hearing_task,
           appeal: appeal,
           status: Constants.TASK_STATUSES.in_progress
@@ -1534,7 +1553,7 @@ describe Appeal do
       end
       let!(:disposition_task) do
         FactoryBot.create(
-          :disposition_task,
+          :assign_hearing_disposition_task,
           parent: hearing_task,
           appeal: appeal,
           status: Constants.TASK_STATUSES.in_progress
@@ -1546,19 +1565,6 @@ describe Appeal do
         expect(subject[0][:type]).to eq("scheduled_hearing")
         expect(subject[0][:details][:date]).to eq(hearing_scheduled_for.to_date)
         expect(subject[0][:details][:type]).to eq("video")
-      end
-    end
-  end
-
-  describe ".withdrawn?" do
-    context "when root task is cancelled" do
-      let(:appeal) { FactoryBot.create(:appeal) }
-      let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
-
-      it "is withdrawn" do
-        expect(appeal.withdrawn?).to eq(false)
-        root_task.update!(status: Constants.TASK_STATUSES.cancelled)
-        expect(appeal.withdrawn?).to eq(true)
       end
     end
   end

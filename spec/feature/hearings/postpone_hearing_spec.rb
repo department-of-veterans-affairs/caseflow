@@ -42,9 +42,11 @@ RSpec.feature "Postpone hearing" do
     end
     let!(:hearing) { FactoryBot.create(:hearing, appeal: appeal, hearing_day: hearing_day) }
     let!(:hearing_task) { create(:hearing_task, parent: RootTask.find_by(appeal: appeal), appeal: appeal) }
-    let!(:disposition_task) { DispositionTask.create_disposition_task!(appeal, hearing_task, hearing) }
+    let!(:disposition_task) do
+      AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, hearing_task, hearing)
+    end
 
-    scenario "and reschedule" do
+    scenario "and reschedule", skip: "flake https://circleci.com/gh/department-of-veterans-affairs/caseflow/72265" do
       visit "/queue/appeals/#{appeal.external_id}"
 
       click_dropdown(text: Constants.TASK_ACTIONS.POSTPONE_HEARING.to_h[:label])

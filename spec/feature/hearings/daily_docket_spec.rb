@@ -108,7 +108,7 @@ RSpec.feature "Hearing Schedule Daily Docket" do
       create(:hearing_task_association, hearing: hearing, hearing_task: create(:hearing_task, appeal: hearing.appeal))
     end
     let!(:disposition_task) do
-      create(:disposition_task,
+      create(:assign_hearing_disposition_task,
              parent: hearing_task_association.hearing_task,
              appeal: hearing.appeal,
              status: Constants.TASK_STATUSES.completed)
@@ -224,7 +224,6 @@ RSpec.feature "Hearing Schedule Daily Docket" do
         scenario "judge can create a new AOD motion" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
           click_dropdown(name: "#{hearing.external_id}-aod", text: "Granted")
-          click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Age")
           click_button("Save")
 
           expect(page).to have_content("You have successfully updated")
@@ -281,6 +280,8 @@ RSpec.feature "Hearing Schedule Daily Docket" do
         scenario "judge can create a new AOD motion" do
           visit "hearings/schedule/docket/" + hearing.hearing_day.id.to_s
           click_dropdown(name: "#{hearing.external_id}-aod", text: "Granted")
+          click_button("Save")
+          expect(page).to have_content("Please select an AOD reason")
           click_dropdown(name: "#{hearing.external_id}-aodReason", text: "Financial Distress")
           click_button("Save")
 

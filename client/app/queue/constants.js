@@ -1,3 +1,4 @@
+
 /* eslint-disable max-lines */
 import { css } from 'glamor';
 import _ from 'lodash';
@@ -167,12 +168,6 @@ export const PAGE_TITLES = {
 
 export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
-
-export const COLUMN_NAMES = {
-  'appeal.caseType': 'Case Type',
-  'appeal.docketName': 'Docket Number',
-  label: 'Task(s)'
-};
 
 export const DOCKET_NAME_FILTERS = {
   direct_review: 'Direct Review',

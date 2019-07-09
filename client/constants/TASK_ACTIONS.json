@@ -123,6 +123,11 @@
   "TOGGLE_TIMED_HOLD": {
     "func": "toggle_timed_hold"
   },
+  "REASSIGN_TO_JUDGE": {
+    "label": "Re-assign to a judge",
+    "value": "modal/reassign_to_judge",
+    "func": "reassign_to_judge_data"
+  },
   "REASSIGN_TO_PERSON": {
     "label": "Re-assign to person",
     "value": "modal/reassign_to_person",
@@ -140,7 +145,7 @@
   "QR_RETURN_TO_JUDGE": {
     "label": "Return to judge",
     "value": "modal/assign_to_judge",
-    "func": "assign_to_judge_data"
+    "func": "qr_return_to_judge_data"
   },
   "JUDGE_QR_RETURN_TO_ATTORNEY": {
     "label": "Return to attorney",

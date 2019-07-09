@@ -82,11 +82,19 @@ const cancelGrayTimeLineStyle = (timeline) => {
   return timeline ? grayLineTimelineStyling : '';
 };
 
-const redWithdrawStyling = css({ paddingLeft: '0px' });
+const timelineLeftPaddingStyle = css({ paddingLeft: '0px' });
 
 class TaskRows extends React.PureComponent {
   constructor(props) {
     super(props);
+
+    const mappedDecisionDateObj = this.mapDecisionDateToSortableObject(this.props.appeal);
+
+    if (this.props.appeal.decisionDate) {
+      this.props.taskList.push(mappedDecisionDateObj);
+    } else {
+      this.props.taskList.unshift(mappedDecisionDateObj);
+    }
 
     this.state = {
       taskInstructionsIsVisible: { }
@@ -305,7 +313,7 @@ class TaskRows extends React.PureComponent {
           </CaseDetailsDescriptionList>
         </td>
         <td {...taskInfoWithIconTimelineContainer}
-          {...(appeal.withdrawalDate ? redWithdrawStyling : greyDotTimelineStyling)}>
+          {...(appeal.withdrawalDate || appeal.decisionDate ? timelineLeftPaddingStyle : greyDotTimelineStyling)}>
           {timeLineIcon}
           { (taskList.length > 0 || (appeal.isLegacyAppeal && appeal.form9Date) || (appeal.nodDate)) &&
           <div {...grayLineTimelineStyling}
@@ -325,18 +333,9 @@ class TaskRows extends React.PureComponent {
       timeline
     } = this.props;
 
-    const taskListToSort = taskList;
-    const mappedDecisionDateObj = this.mapDecisionDateToSortableObject(appeal);
-
-    if (appeal.decisionDate) {
-      taskListToSort.push(mappedDecisionDateObj);
-    } else {
-      taskListToSort.unshift(mappedDecisionDateObj);
-    }
-
     return <React.Fragment key={appeal.externalId}>
 
-      { sortTaskList(taskListToSort, appeal).map((task, index) => {
+      { sortTaskList(taskList, appeal).map((task, index) => {
         const templateConfig = {
           task,
           index,

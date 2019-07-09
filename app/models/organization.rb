@@ -24,6 +24,10 @@ class Organization < ApplicationRecord
     false
   end
 
+  def use_task_pages_api?
+    false
+  end
+
   def non_admins
     organizations_users.includes(:user).non_admin.map(&:user)
   end

@@ -91,6 +91,7 @@ class DecisionReviewsController < ApplicationController
   def verify_access
     return false unless business_line
     return true if current_user.admin?
+    return true if current_user.can?("Admin Intake")
     return true if business_line.user_has_access?(current_user)
 
     Rails.logger.info("User with roles #{current_user.roles.join(', ')} "\

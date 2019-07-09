@@ -29,6 +29,12 @@ Rails.application.routes.draw do
     namespace :v2 do
       resources :appeals, only: :index
     end
+    namespace :docs do
+      namespace :v3, defaults: { format: 'json' } do
+        get 'decision_reviews', to: 'docs#decision_reviews'
+      end
+    end
+    get "metadata", to: 'metadata#index'
   end
 
   namespace :idt do
@@ -135,8 +141,8 @@ Rails.application.routes.draw do
   get 'hearings/schedule/build/upload', to: "hearings_application#build_schedule_index"
   get 'hearings/schedule/build/upload/:schedule_period_id', to: "hearings_application#build_schedule_index"
   get 'hearings/schedule/assign', to: "hearings_application#index"
+  get 'hearings/worksheet/print', to: "hearings/worksheets#show_print"
   get 'hearings/:id/worksheet', to: "hearings/worksheets#show", as: 'hearing_worksheet'
-  get 'hearings/:id/worksheet/print', to: "hearings/worksheets#show_print"
   post 'hearings/hearing_day', to: "hearings/hearing_day#create"
   get 'hearings/schedule/:schedule_period_id/download', to: "hearings/schedule_periods#download"
   get 'hearings/schedule/assign/hearing_days', to: "hearings/hearing_day#index_with_hearings"
@@ -272,6 +278,8 @@ Rails.application.routes.draw do
 
   # :nocov:
   namespace :test do
+    get "/error", to: "users#show_error"
+
     resources :users, only: [:index]
     if ApplicationController.dependencies_faked?
       post "/set_user/:id", to: "users#set_user", as: "set_user"
@@ -281,6 +289,5 @@ Rails.application.routes.draw do
     post "/log_in_as_user", to: "users#log_in_as_user", as: "log_in_as_user"
     post "/toggle_feature", to: "users#toggle_feature", as: "toggle_feature"
   end
-
   # :nocov:
 end

@@ -137,7 +137,9 @@ RSpec.feature "Case details" do
 
         expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
         scroll_to("#hearings-section")
-        worksheet_link = page.find("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
+        worksheet_link = page.find(
+          "a[href='/hearings/worksheet/print?keep_open=true&hearing_ids=#{hearing.external_id}']"
+        )
         expect(worksheet_link.text).to eq(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
 
         details_link = page.find("a[href='/hearings/#{hearing.external_id}/details']")
@@ -161,7 +163,9 @@ RSpec.feature "Case details" do
           expect(page).to have_current_path("/queue/appeals/#{appeal.vacols_id}")
           scroll_to("#hearings-section")
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_WORKSHEET_LINK_COPY)
-          expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/worksheet/print?keep_open=true']")
+          expect(page).to_not(
+            have_css("a[href='/hearings/worksheet/print?keep_open=true&hearing_ids=#{hearing.external_id}']")
+          )
           expect(page).to_not have_content(COPY::CASE_DETAILS_HEARING_DETAILS_LINK_COPY)
           expect(page).to_not have_css("a[href='/hearings/#{hearing.external_id}/details']")
         end
@@ -504,6 +508,48 @@ RSpec.feature "Case details" do
       expect(find("tr", text: COPY::CASE_TIMELINE_DISPATCH_FROM_BVA_PENDING)).to have_selector(".gray-dot")
       expect(find("tr", text: COPY::CASE_TIMELINE_FORM_9_RECEIVED)).to have_selector(".green-checkmark")
     end
+
+    context "when appeal is assigned to Pulac Cerullo" do
+      let(:root_task) { FactoryBot.create(:root_task) }
+      let!(:appeal) do
+        FactoryBot.create(
+          :appeal,
+          veteran_file_number: "500000102",
+          receipt_date: 6.months.ago.to_date.mdY,
+          docket_type: "evidence_submission"
+        )
+      end
+
+      let!(:decision_document) do
+        FactoryBot.create(
+          :decision_document,
+          appeal: appeal,
+          decision_date: 5.months.ago.to_date
+        )
+      end
+
+      let!(:pulac_cerullo) do
+        FactoryBot.create(
+          :pulac_cerullo_task,
+          status: Constants.TASK_STATUSES.completed,
+          instructions: ["completed"],
+          closed_at: 45.days.ago,
+          appeal: appeal
+        )
+      end
+
+      scenario "displays Pulac Cerullo task in order on  case timeline" do
+        visit "/queue/appeals/#{appeal.external_id}"
+
+        case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
+        first_row_with_task = case_timeline_rows[0]
+        second_row_with_task = case_timeline_rows[1]
+        third_row_with_task = case_timeline_rows[2]
+        expect(first_row_with_task).to have_content("PulacCerulloTask completed")
+        expect(second_row_with_task).to have_content(COPY::CASE_TIMELINE_DISPATCHED_FROM_BVA)
+        expect(third_row_with_task).to have_content(COPY::CASE_TIMELINE_NOD_RECEIVED)
+      end
+    end
   end
 
   context "when there is a dispatch and decision_date" do
@@ -721,6 +767,7 @@ RSpec.feature "Case details" do
       let!(:appeal) { FactoryBot.create(:appeal) }
       let!(:appeal2) { FactoryBot.create(:appeal) }
       let!(:root_task) { create(:root_task, appeal: appeal, assigned_to: user) }
+      let!(:assign_task) { create(:ama_judge_task, appeal: appeal, assigned_to: user, parent: root_task) }
       let!(:judge_task) do
         create(
           :ama_judge_decision_review_task,
@@ -735,16 +782,18 @@ RSpec.feature "Case details" do
       before do
         # The status attribute needs to be set here due to update_parent_status hook in the task model
         # the updated_at attribute needs to be set here due to the set_timestamps hook in the task model
-        attorney_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-02-01")
-        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, updated_at: "2019-03-01")
-        judge_task.update!(status: Constants.TASK_STATUSES.completed, updated_at: Time.zone.now)
+        assign_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-01-01")
+        attorney_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-02-01")
+        attorney_task2.update!(status: Constants.TASK_STATUSES.completed, closed_at: "2019-03-01")
+        judge_task.update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now)
       end
 
-      it "should display judge & attorney tasks" do
+      it "should display judge & attorney tasks, but not judge assign tasks" do
         visit "/queue/appeals/#{appeal.uuid}"
         expect(page).to have_content(COPY::CASE_TIMELINE_ATTORNEY_TASK)
-        expect(page).to have_content(COPY::CASE_TIMELINE_JUDGE_TASK)
+        expect(page.find_all("dl", text: COPY::CASE_TIMELINE_JUDGE_TASK).length).to eq 1
       end
+
       it "should sort tasks properly" do
         visit "/queue/appeals/#{appeal.uuid}"
         case_timeline_rows = page.find_all("table#case-timeline-table tbody tr")
@@ -954,7 +1003,7 @@ RSpec.feature "Case details" do
 
         let!(:appeal) do
           create(:appeal,
-                 :with_tasks,
+                 :with_post_intake_tasks,
                  veteran_file_number: veteran.file_number,
                  docket_type: "direct_review",
                  receipt_date: 10.months.ago.to_date.mdY)

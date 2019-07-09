@@ -140,7 +140,7 @@ export const AmaAodDropdown = ({ hearing, readOnly, updateAodMotion, userId }) =
   />;
 };
 
-export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId }) => {
+export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId, invalid }) => {
   const aodMotion = hearing.advanceOnDocketMotion;
   const aodGrantableByThisUser = aodMotion &&
     (aodMotion.userId === userId || _.isNil(aodMotion.userId));
@@ -148,7 +148,9 @@ export const AodReasonDropdown = ({ hearing, readOnly, updateAodMotion, userId }
   return <SearchableDropdown
     label="AOD Reason"
     readOnly={readOnly || !aodGrantableByThisUser}
+    required={aodMotion && !_.isNil(aodMotion.granted)}
     name={`${hearing.externalId}-aodReason`}
+    errorMessage={invalid ? 'Please select an AOD reason' : null}
     strongLabel
     options={[{ value: 'financial_distress',
       label: 'Financial Distress' },

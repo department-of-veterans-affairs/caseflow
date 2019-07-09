@@ -16,6 +16,7 @@ detectors:
       - FetchDocumentsForReaderJob#fetch_for_appeal
       - AsyncableJobsReporter
       - HearingSerializerBase
+      - DataIntegrityChecksJob
   InstanceVariableAssumption:
     exclude:
       - Appeal
@@ -33,9 +34,7 @@ detectors:
     exclude:
       - QueueConfig
   TooManyMethods:
-    exclude:
-      - DispositionTask
-      - RootTask
+    enabled: false
   TooManyStatements:
     enabled: false
   UtilityFunction:

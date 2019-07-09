@@ -872,7 +872,7 @@ binding.pry
     let(:veteran_link_text) { "#{appeal.veteran_full_name} (#{appeal.veteran_file_number})" }
     let!(:root_task) { FactoryBot.create(:root_task, appeal: appeal) }
     let!(:hearing_task) { FactoryBot.create(:hearing_task, parent: root_task, appeal: appeal) }
-    let!(:disposition_task) { FactoryBot.create(:disposition_task, parent: hearing_task, appeal: appeal) }
+    let!(:disposition_task) { FactoryBot.create(:assign_hearing_disposition_task, parent: hearing_task, appeal: appeal) }
     let!(:transcription_task) do
       FactoryBot.create(:transcription_task, parent: disposition_task, appeal: appeal, assigned_to: user)
     end

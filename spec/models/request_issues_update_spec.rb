@@ -177,9 +177,9 @@ describe RequestIssuesUpdate do
 
       context "when issue descriptions were edited as part of the update" do
         let(:request_issues_data) do
-          [{ request_issue_id: existing_legacy_opt_in_request_issue.id},
+          [{ request_issue_id: existing_legacy_opt_in_request_issue.id },
            { request_issue_id: existing_request_issue.id,
-               edited_description: edited_description }]
+             edited_description: edited_description }]
         end
 
         it { is_expected.to contain_exactly(existing_request_issue) }
@@ -190,14 +190,6 @@ describe RequestIssuesUpdate do
       let(:vbms_error) { VBMS::HTTPError.new("500", "More EPs more problems") }
 
       subject { request_issues_update.perform! }
-
-      context "when request issues are empty" do
-        it "fails and adds to errors" do
-          expect(subject).to be_falsey
-
-          expect(request_issues_update.error_code).to eq(:request_issues_data_empty)
-        end
-      end
 
       context "when issues are exactly the same as existing issues" do
         let(:request_issues_data) do
@@ -616,12 +608,14 @@ describe RequestIssuesUpdate do
   context "#establish!" do
     let!(:before_issue) { create(:request_issue_with_epe, decision_review: review, contention_reference_id: "1") }
     let!(:after_issue) { create(:request_issue_with_epe, decision_review: review, contention_reference_id: "2") }
-    let(:edited_issue) { create(
-      :request_issue_with_epe,
-      decision_review: review,
-      contention_reference_id: "3",
-      edited_description: edited_description
-      )}
+    let(:edited_issue) do
+      create(
+        :request_issue_with_epe,
+        decision_review: review,
+        contention_reference_id: "3",
+        edited_description: edited_description
+      )
+    end
 
     let!(:riu) do
       create(:request_issues_update, :requires_processing,
