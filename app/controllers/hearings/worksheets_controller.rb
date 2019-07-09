@@ -30,7 +30,7 @@ class Hearings::WorksheetsController < HearingsController
     end
   end
 
-  def print
+  def show_print
     stylesheets = {
       override_stylesheet: "print/hearings_worksheet_overrides",
       print_stylesheet: "print/hearings_worksheet"
