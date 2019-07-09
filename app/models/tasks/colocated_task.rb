@@ -198,6 +198,7 @@ class ColocatedTask < Task
       appeal_id: appeal_id,
       assigned_to_id: assigned_to_id,
       assigned_to_type: assigned_to_type,
+      action: action,
       type: type,
       parent_id: parent_id,
       instructions: instructions

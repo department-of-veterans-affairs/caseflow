@@ -10,5 +10,7 @@ class ScheduleHearingColocatedTask < ColocatedTask
     if appeal.is_a?(LegacyAppeal)
       return legacy_schedule_hearing_actions(core_actions)
     end
+
+    core_actions
   end
 end
