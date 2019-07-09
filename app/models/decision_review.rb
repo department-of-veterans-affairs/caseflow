@@ -13,7 +13,7 @@ class DecisionReview < ApplicationRecord
   has_many :request_decision_issues, through: :request_issues
   has_many :decision_issues, as: :decision_review, dependent: :destroy
   has_many :tasks, as: :appeal, dependent: :destroy
-  has_many :request_issues_updates, as: :review
+  has_many :request_issues_updates, as: :review, dependent: :destroy
   has_one :intake, as: :detail
 
   cache_attribute :cached_serialized_ratings, cache_key: :ratings_cache_key, expires_in: 1.day do
