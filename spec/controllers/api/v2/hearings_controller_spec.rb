@@ -17,15 +17,13 @@ RSpec.describe Api::V2::HearingsController, type: :controller do
         1234578
         2019-1-1
         07-08-2019
-        2019-07-09T20:23:00+00:00
-        2019-07-09T20:23:00Z
         July\ 7,\ 2019
         July\ 7\ 2019
         !@#$
         nil
       ].each do |bad_date|
         it "returns 422 with date \"#{bad_date}\"" do
-          get :show, params: { hearing_day: "invalid" }
+          get :show, params: { hearing_day: bad_date }
           expect(response.status).to eq 422
         end
       end
