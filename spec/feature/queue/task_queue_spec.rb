@@ -248,7 +248,7 @@ RSpec.feature "Task queue" do
     end
   end
 
-  context "Field VSO team queue", focus: true do
+  context "Field VSO team queue" do
     let(:vso_employee) { FactoryBot.create(:user, roles: ["VSO"]) }
     let(:vso) { FactoryBot.create(:field_vso) }
 
