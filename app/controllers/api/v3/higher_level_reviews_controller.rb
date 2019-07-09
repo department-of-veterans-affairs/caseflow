@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3:: < ActionController::Base
+class Api::V3::HigherLevelReviewsController < ActionController::Base
   protect_from_forgery with: :null_session
 
   def create
