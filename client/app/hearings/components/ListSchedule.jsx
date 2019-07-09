@@ -85,7 +85,7 @@ class ListTable extends React.Component {
         {this.props.user.userRoleBuild && <div style={{ marginBottom: 25 }}>
           <Button classNames={['usa-button-secondary']}
             onClick={this.props.openModal}>
-            Add Hearing Date
+            Add Hearing Day
           </Button>
         </div>}
         <QueueTable
@@ -192,6 +192,7 @@ class ListSchedule extends React.Component {
           {
             label: 'Your Hearing Days',
             page: <ListTable onApply={this.props.onApply}
+              openModal={this.props.openModal}
               key={`judgeHearings${this.state.dateRangeKey}`}
               user={this.props.user}
               hearingScheduleRows={hearingScheduleRows}
@@ -200,6 +201,7 @@ class ListSchedule extends React.Component {
           {
             label: 'All Hearing Days',
             page: <ListTable onApply={() => this.props.onApply({ showAll: true })}
+              openModal={this.props.openModal}
               key={`allHearings${this.state.dateRangeKey}`}
               user={this.props.user}
               hearingScheduleRows={hearingScheduleRows}
@@ -214,6 +216,7 @@ class ListSchedule extends React.Component {
     const hearingScheduleColumns = this.getHearingScheduleColumns(hearingScheduleRows);
     const list = this.props.user.userRoleHearingPrep ? this.getTabbedList(hearingScheduleColumns, hearingScheduleRows) :
       <ListTable onApply={this.props.onApply}
+        openModal={this.props.openModal}
         user={this.props.user}
         hearingScheduleRows={hearingScheduleRows}
         hearingScheduleColumns={hearingScheduleColumns} />;
