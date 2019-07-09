@@ -59,7 +59,7 @@ RSpec.describe Api::V2::HearingsController, type: :controller do
           it { expect(JSON.parse(subject.body)["hearings"].size).to eq 2 }
           it do
             response_body = JSON.parse(subject.body)
-            expected_times = hearings.map { |hearing| hearing.scheduled_for }
+            expected_times = hearings.map(&:scheduled_for)
             scheduled_times = response_body["hearings"].map { |hearing| hearing["scheduled_for"] }
 
             expect(scheduled_times).to match_array(expected_times)
