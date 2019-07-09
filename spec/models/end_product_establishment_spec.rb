@@ -837,7 +837,7 @@ describe EndProductEstablishment do
 
         it "closes request issues and cancels establishment" do
           subject
-          
+
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
           expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)
