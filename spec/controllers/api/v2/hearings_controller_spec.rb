@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Api::V2::HearingsController, type: :controller, focus: true do
+RSpec.describe Api::V2::HearingsController, type: :controller do
   let(:api_key) { ApiKey.create!(consumer_name: "Jobs Tester").key_string }
 
   before(:each) do
