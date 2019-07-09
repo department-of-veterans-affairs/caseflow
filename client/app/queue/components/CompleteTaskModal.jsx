@@ -88,7 +88,7 @@ class CompleteTaskModal extends React.Component {
   };
   getContentArgs = () => ({
     assignerName: this.getTaskAssignerName(),
-    teamName: CO_LOCATED_ADMIN_ACTIONS[this.props.task.label],
+    teamName: this.props.task.label,
     appeal: this.props.appeal,
     props: this.props,
     state: this.state,
