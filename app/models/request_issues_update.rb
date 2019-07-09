@@ -131,7 +131,7 @@ class RequestIssuesUpdate < ApplicationRecord
   end
 
   def validate_before_perform
-    !changes?
+    if !changes?
       @error_code = :no_changes
     elsif RequestIssuesUpdate.where(review: review).processable.exists?
       @error_code = :previous_update_not_done_processing

@@ -181,10 +181,9 @@ feature "Appeal Edit issues" do
   end
 
   context "with remove decision review enabled" do
-    fscenario "allows all request issues to be removed and saved" do
+    scenario "allows all request issues to be removed and saved" do
       visit "appeals/#{appeal.uuid}/edit/"
       # remove all issues
-      binding.pry
       click_remove_intake_issue(1)
       click_remove_issue_confirmation
       click_remove_intake_issue(1)
@@ -704,7 +703,7 @@ feature "Appeal Edit issues" do
       context "when appeal is non-comp benefit type" do
         let!(:request_issue) { create(:request_issue, benefit_type: "education") }
 
-        fscenario "remove all non-comp decision reviews" do
+        scenario "remove all non-comp decision reviews" do
           visit "appeals/#{appeal.uuid}/edit"
           # remove all request issues
           appeal.request_issues.length.times do
@@ -715,7 +714,6 @@ feature "Appeal Edit issues" do
           click_edit_submit
           expect(page).to have_content("Remove review?")
           expect(page).to have_content("This review and all tasks associated with it will be removed.")
-          binding.pry
           click_intake_confirm
 
           expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
