@@ -341,6 +341,18 @@ The last env var silences one of the Oracle warnings on startup.
 
 (Reload the file `source ~/.bash_profile`)
 
+#### Makefile
+
+An example Makefile is included in the repo, that can ease some of the setup and common development tasks. To use it,
+try:
+
+```
+% ln -s Makefile.example Makefile
+```
+
+Many of the examples that follow have alternate `make` targets for convenience. They are spelled out here
+for clarity as to what is happening "behind the scenes."
+
 #### Database environment setup
 
 To rapidly set up your local development (and testing) environment, run:
@@ -359,7 +371,7 @@ Your development setup of caseflow runs Redis, Postgres and OracleDB (VACOLS) in
 
 To run caseflow:
 ```
-foreman start
+make run
 ```
 
 **Note:** The Docker containers must always be running in order for the Rails application to start successfully. Some rake tasks will start them automatically, but if you restart your computer or otherwise stop Docker, you'll want to run `docker-compose up -d` to start the containers initially.
@@ -459,7 +471,9 @@ already included in this repo.
 
 To run the test suite:
 
-    bundle exec rake
+```
+% make test
+```
 
 ### Testing frontend changes in feature specs
 

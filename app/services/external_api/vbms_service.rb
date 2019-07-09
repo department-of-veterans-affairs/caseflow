@@ -187,14 +187,6 @@ class ExternalApi::VBMSService
     send_and_log_request(claim_id, request)
   end
 
-  def self.list_document_types
-    @vbms_client ||= init_vbms_client
-
-    request = VBMS::Requests::ListTypeCategory.new
-
-    send_and_log_request(nil, request)
-  end
-
   def self.vbms_client_with_user(user)
     return @vbms_client if user.nil?
 

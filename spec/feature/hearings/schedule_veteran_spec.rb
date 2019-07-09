@@ -155,7 +155,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     let!(:appeal) do
       create(
         :appeal,
-        :with_tasks,
+        :with_post_intake_tasks,
         docket_type: "hearing",
         closest_regional_office: "RO39",
         veteran: create(:veteran)

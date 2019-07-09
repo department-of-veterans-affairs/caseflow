@@ -159,8 +159,12 @@ class RequestIssue < ApplicationRecord
       active_or_ineligible.or(withdrawn)
     end
 
-    def active_or_decided
-      active.or(decided).order(id: :asc)
+    def active_or_decided_or_withdrawn
+      active.or(decided).or(withdrawn).order(id: :asc)
+    end
+
+    def active_or_withdrawn
+      active.or(withdrawn)
     end
 
     def unidentified
@@ -272,6 +276,13 @@ class RequestIssue < ApplicationRecord
     return specials unless specials.empty?
   end
 
+  # If contentions get a DTA disposition, send their IDs when creating the new DTA contentions
+  def original_contention_ids
+    return unless contested_decision_issue&.remanded?
+
+    contested_decision_issue.request_issues.map(&:contention_reference_id)
+  end
+
   def withdrawal_date
     closed_at if withdrawn?
   end
@@ -357,6 +368,10 @@ class RequestIssue < ApplicationRecord
 
     clear_error!
     attempted!
+
+    # pre-fetch the internal veteran record before we start the transaction
+    # to avoid a slow BGS call causing the transaction to timeout
+    end_product_establishment.veteran
 
     transaction do
       return unless create_decision_issues

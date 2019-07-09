@@ -23,8 +23,7 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
 
     context "with the correct parameters" do
       context "for a colocated task" do
-        let(:task_class_name) { ColocatedTask }
-        let(:old_task_type) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.first }
+        let(:task_class_name) { IhpColocatedTask }
         let(:new_task_type) { Constants::CO_LOCATED_ADMIN_ACTIONS.keys.last }
 
         let(:parent_task) do
@@ -33,7 +32,6 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
             parent_id: root_task.id,
             assigned_by: assigner,
             assigned_to: Colocated.singleton,
-            action: old_task_type,
             instructions: [old_instructions]
           )
         end
@@ -45,7 +43,7 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
           response_body = JSON.parse(response.body)["tasks"]["data"].sort_by { |hash| hash["id"].to_i }.reverse!
           expect(response_body.length).to eq 4
           expect(response_body.first["id"]).not_to eq task.id.to_s
-          expect(response_body.first["attributes"]["label"]).to eq new_task_type
+          expect(response_body.first["attributes"]["label"]).to eq Constants::CO_LOCATED_ADMIN_ACTIONS[new_task_type]
           expect(response_body.first["attributes"]["status"]).to eq task.status
           expect(response_body.first["attributes"]["instructions"]).to include old_instructions
           expect(response_body.first["attributes"]["instructions"]).to include new_instructions
@@ -56,7 +54,7 @@ RSpec.describe Tasks::ChangeTypeController, type: :controller do
           new_parent_id = Task.find(response_body.first["id"]).parent_id
           new_parent = response_body.find { |t| t["id"] == new_parent_id.to_s }
           expect(new_parent["id"]).not_to eq parent_task.id.to_s
-          expect(new_parent["attributes"]["label"]).to eq new_task_type
+          expect(new_parent["attributes"]["label"]).to eq Constants::CO_LOCATED_ADMIN_ACTIONS[new_task_type]
           expect(new_parent["attributes"]["status"]).to eq parent_task.status
           expect(new_parent["attributes"]["instructions"]).to include old_instructions
           expect(new_parent["attributes"]["instructions"]).to include new_instructions

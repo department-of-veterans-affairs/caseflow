@@ -1,7 +1,9 @@
+import _ from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import { detect } from 'detect-browser';
+import querystring from 'querystring';
 import NavigationBar from '../components/NavigationBar';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import AppFrame from '../components/AppFrame';
@@ -15,6 +17,7 @@ import AssignHearingsContainer from './containers/AssignHearingsContainer';
 import DailyDocketContainer from './containers/DailyDocketContainer';
 import HearingDetailsContainer from './containers/DetailsContainer';
 import HearingWorksheetContainer from './containers/HearingWorksheetContainer';
+import HearingWorksheetPrintAllContainer from './containers/HearingWorksheetPrintAllContainer';
 import ScrollToTop from '../components/ScrollToTop';
 import UnsupportedBrowserBanner from '../components/UnsupportedBrowserBanner';
 
@@ -60,17 +63,23 @@ export default class HearingsApp extends React.PureComponent {
   routeForDailyDocket = (print) => () => <DailyDocketContainer user={this.userPermissionProps()} print={print} />;
   routeForHearingDetails = ({ match: { params }, history }) =>
     <HearingDetailsContainer hearingId={params.hearingId} history={history} {...this.userPermissionProps()} />;
-  routeForHearingWorksheet = (print) => ({ match: { params } }) =>
-    detect().name === 'chrome' ? <HearingWorksheetContainer print={print} hearingId={params.hearingId} /> :
+  routeForHearingWorksheet = () => ({ match: { params } }) =>
+    <HearingWorksheetContainer hearingId={params.hearingId} />;
+  routeForPrintedHearingWorksheets = (props) => {
+    const queryString = querystring.parse(props.location.search.replace(/^\?/, ''));
+    const hearingIds = (queryString.hearing_ids || '').split(',').filter(_.negate(_.isEmpty));
+
+    return detect().name === 'chrome' ? <HearingWorksheetPrintAllContainer hearingIds={hearingIds} /> :
       <UnsupportedBrowserBanner appName="Hearings" />;
+  };
 
   render = () => <BrowserRouter basename="/hearings">
     <Switch>
       <PageRoute
         exact
-        path="/:hearingId/worksheet/print"
+        path="/worksheet/print"
         title="Hearing Worksheet"
-        render={this.routeForHearingWorksheet(true)}
+        render={this.routeForPrintedHearingWorksheets}
       />
       <PageRoute
         exact

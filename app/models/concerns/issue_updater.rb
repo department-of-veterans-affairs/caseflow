@@ -37,7 +37,7 @@ module IssueUpdater
 
   def create_decision_issues!
     issues.each do |issue_attrs|
-      request_issues = appeal.request_issues.active.where(id: issue_attrs[:request_issue_ids])
+      request_issues = appeal.request_issues.active_or_withdrawn.where(id: issue_attrs[:request_issue_ids])
       next if request_issues.empty?
 
       decision_issue = DecisionIssue.create!(

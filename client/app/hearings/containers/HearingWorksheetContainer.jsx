@@ -7,7 +7,6 @@ import connect from 'react-redux/es/connect/connect';
 import LoadingDataDisplay from '../../components/LoadingDataDisplay';
 import ApiUtil from '../../util/ApiUtil';
 import HearingWorksheet from '../components/hearingWorksheet/HearingWorksheet';
-import HearingWorksheetPrinted from '../components/hearingWorksheet/HearingWorksheetPrinted';
 
 class HearingWorksheetContainer extends React.Component {
 
@@ -32,9 +31,7 @@ class HearingWorksheetContainer extends React.Component {
             title: 'Unable to load the hearing worksheet.'
           }}
         >
-          {
-            this.props.print ? <HearingWorksheetPrinted /> : <HearingWorksheet />
-          }
+          <HearingWorksheet />
         </LoadingDataDisplay>
       </React.Fragment>
     );
@@ -42,8 +39,7 @@ class HearingWorksheetContainer extends React.Component {
 }
 
 HearingWorksheetContainer.propTypes = {
-  hearingId: PropTypes.string.isRequired,
-  print: PropTypes.bool
+  hearingId: PropTypes.string.isRequired
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
