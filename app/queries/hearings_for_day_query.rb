@@ -2,6 +2,9 @@
 
 class HearingsForDayQuery
   def initialize(day:)
+    fail ArgumentError.new "can not query for nil hearing day" if day.nil?
+    fail ArugmentError.new "hearing day query only accepts date instance" unless day.is_a? Date
+
     @day = day
   end
 
