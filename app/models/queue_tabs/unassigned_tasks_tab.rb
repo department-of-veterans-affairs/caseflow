@@ -25,7 +25,7 @@ class UnassignedTasksTab < QueueTab
       Constants.QUEUE_CONFIG.DOCKET_NUMBER_COLUMN,
       Constants.QUEUE_CONFIG.DAYS_ON_HOLD_COLUMN,
       show_reader_link_column ? Constants.QUEUE_CONFIG.DOCUMENT_COUNT_READER_LINK_COLUMN : nil
-    ]
+    ].compact
   end
 
   def allow_bulk_assign?
